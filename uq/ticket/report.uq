@@ -1,0 +1,30 @@
+QUERY ReportStorage (
+    key CHAR(50),
+)
+PAGE (
+    product ID ASC,
+    value VALUE,
+    init VALUE,
+) {
+    PAGE SELECT a.id as product, a.value, a.init
+        FROM Book as a
+            JOIN Product as b ON a.id=b.id
+        WHERE a.id > $pageStart AND SEARCH(b.name, b.no ON key)
+        ORDER BY a.id ASC
+        LIMIT $pageSize;
+};
+
+QUERY HistoryStorage (
+    project ID,
+)
+PAGE (
+    id ID DESC,
+    value VALUE,
+    ref ID,
+) {
+    PAGE SELECT a.id, a.value, a.ref
+        FROM History as a
+        WHERE a.id < $pageStart AND a.project=project
+        ORDER BY a.id DESC
+        LIMIT $pageSize;
+};

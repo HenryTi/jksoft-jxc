@@ -1,0 +1,34 @@
+{
+    "name": "SaleMain",
+    "type": "id",
+    "private": false,
+    "sys": true,
+    "fields": [
+        {
+            "name": "id",
+            "type": "id",
+            "null": false
+        },
+        {
+            "name": "no",
+            "type": "char",
+            "size": 20
+        },
+        {
+            "name": "customer",
+            "type": "id"
+        }
+    ],
+    "keys": [
+        {
+            "name": "no",
+            "type": "char",
+            "size": 20
+        }
+    ],
+    "global": false,
+    "idType": 3,
+    "isMinute": true,
+    "typeId": 38,
+    "version": 1
+}

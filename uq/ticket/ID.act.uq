@@ -1,0 +1,39 @@
+ACT SaveProduct ver 0.1 (
+    pNo CHAR(20),
+	name CHAR(50),
+)
+RETURNS ret (
+    id ID,
+) {
+    -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
+    VAR id ID;
+    SET id=a.id FROM Product as a WHERE a.no=pNo;
+    IF id IS NULL {
+        SET id = ID(Product new,pNo);
+        WITH Product as a ID=id SET a.name=name;
+    }
+    ELSE {
+        SET id=-id;
+    }
+    INTO ret SELECT id;
+};
+
+ACT SaveContact ver 0.1 (
+    pNo CHAR(20),
+	name CHAR(50),
+)
+RETURNS ret (
+    id ID,
+) {
+    -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
+    VAR id ID;
+    SET id=a.id FROM Contact as a WHERE a.no=pNo;
+    IF id IS NULL {
+        SET id = ID(Contact new,pNo);
+        WITH Contact as a ID=id SET a.name=name;
+    }
+    ELSE {
+        SET id=-id;
+    }
+    INTO ret SELECT id;
+};

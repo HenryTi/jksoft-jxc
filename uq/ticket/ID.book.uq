@@ -1,0 +1,36 @@
+
+IDX Book (
+    id,
+    init VALUE DEFAULT 0,
+    value Value,
+);
+
+ENUM ProjectType (
+    Storage = 201,
+);
+
+ID Project (
+    id,
+    KEY type ENUM ProjectType,
+    KEY item ID,
+);
+
+ID History (
+    id MINUTE,
+    project ID,         -- 科目
+    value Value,
+    ref ID,             -- 相关凭证
+    INDEX project_id(project, id) UNIQUE,
+);
+
+IDX Done (
+    id,
+    done Quantity,
+);
+
+-- lock some number
+IDX Lock (
+    id,
+    lock Quantity,
+    validTo TIMESTAMP,      -- 有效至
+);

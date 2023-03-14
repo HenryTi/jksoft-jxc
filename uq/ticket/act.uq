@@ -1,0 +1,96 @@
+ACT BookSheetPurchase (
+    id ID,
+) {
+    IF not exists(SELECT a.xi FROM IxMySheet as a WHERE a.ix=$user AND a.xi=id) {
+        RETURN;
+    }
+    WITH IxMySheet IX=$user XI=id DEL;
+    IF (SELECT SUM(a.quantity-b.done) FROM DetailQPA as a JOIN Done as b ON b.id=a.id WHERE a.sheet=id)<>0 {
+        QUEUE QueueStoreIn ADD id;
+    }
+};
+
+ACT BookSheetStoreIn ver 0.8 (
+    id ID,
+) {
+    IF not exists(SELECT a.xi FROM IxMySheet as a WHERE a.ix=$user AND a.xi=id and entityid(id)=typeof SheetStoreIn) {
+        RETURN;
+    }
+    TABLE originSheets(KEY id ID);
+    WITH IxMySheet IX=$user XI=id DEL;
+    -- 下面记账
+    FOR (VAR id ID, value VALUE, origin ID, originSheet ID, item ID, quantity QUANTITY, price PRICE, amount AMOUNT
+        OF SELECT a.id, a.value, a.origin, b.sheet as originSheet, b.item, b.quantity, b.price, b.amount
+            FROM DetailOrigin as a JOIN DetailQPA as b ON b.id=a.origin
+            WHERE a.sheet=id
+            ORDER BY a.id ASC
+    ) {
+        INTO originSheets IGNORE SELECT originSheet as id;
+        WITH Done ID=origin SET done+=value;
+        WITH Book ID=item SET value+=value;
+        VAR project ID = ID(Project new KEY type=ProjectType.Storage, item=item);
+        VAR history ID;
+        WITH History as a ID to history SET a.project=project, a.value=value, a.ref=id;
+    }
+    FOR (VAR origin ID OF SELECT a.id as origin FROM originSheets as a) {
+        IF (SELECT sum(b.quantity-c.done)
+                FROM DetailQPA as b
+                    JOIN Done as c on c.id=b.id 
+                WHERE b.sheet=origin
+           )=0
+        {
+            QUEUE QueueStoreIn Del origin;
+        }
+    }
+};
+
+ACT BookSheetSale (
+    id ID,
+) {
+    IF not exists(SELECT a.xi FROM IxMySheet as a WHERE a.ix=$user AND a.xi=id) {
+        RETURN;
+    }
+    WITH IxMySheet IX=$user XI=id DEL;
+    IF (SELECT SUM(a.quantity-b.done) FROM DetailQPA as a JOIN Done as b ON b.id=a.id WHERE a.sheet=id)<>0 {
+        QUEUE QueueStoreOut ADD id;
+    }
+};
+
+ACT BookSheetStoreOut ver 0.2 (
+    id ID,
+) {
+    IF not exists(SELECT a.xi FROM IxMySheet as a WHERE a.ix=$user AND a.xi=id and entityid(id)=typeof SheetStoreOut) {
+        RETURN;
+    }
+    TABLE originSheets(KEY id ID);
+    WITH IxMySheet IX=$user XI=id DEL;
+    -- 下面记账
+    FOR (VAR id ID, value VALUE, origin ID, originSheet ID, item ID, quantity QUANTITY, price PRICE, amount AMOUNT
+        OF SELECT a.id, a.value as value, a.origin, b.sheet as originSheet, b.item, b.quantity, b.price, b.amount
+            FROM DetailOrigin as a JOIN DetailQPA as b ON b.id=a.origin
+            WHERE a.sheet=id
+            ORDER BY a.id ASC
+    ) {
+        LOG concat_ws(',', 'sheet=', id, 'originSheet=', originSheet, 'value=', value) subject 'book done';
+        INTO originSheets IGNORE SELECT originSheet as id;
+        WITH Done ID=origin SET done+=value;
+        WITH Book ID=item SET value-=value;
+        VAR project ID = ID(Project new KEY type=ProjectType.Storage, item=item);
+        VAR history ID;
+        WITH History as a ID to history SET a.project=project, a.value=-value, a.ref=id;
+    }
+    FOR (VAR origin ID OF SELECT a.id as origin FROM originSheets as a) {
+        VAR unfinish VALUE;
+        SET unfinish = (SELECT sum(b.quantity-c.done)
+            FROM DetailQPA as b
+                JOIN Done as c on c.id=b.id 
+            WHERE b.sheet=origin
+        );
+        LOG concat_ws(',', 'unfinish=', unfinish, 'origin=', origin) subject 'remove from pending';
+        IF unfinish=0
+        {
+            QUEUE QueueStoreOut Del origin;
+        }
+    }
+};
+
