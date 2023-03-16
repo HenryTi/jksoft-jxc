@@ -72,7 +72,7 @@ ID SheetStoreIn ver 0.1 (
     id MINUTE,
     KEY no,
     operator ID,            -- user
-);
+) JOIN DetailOrigin ON sheet;
 
 ID SheetStoreOut ver 0.1 (
     id MINUTE,

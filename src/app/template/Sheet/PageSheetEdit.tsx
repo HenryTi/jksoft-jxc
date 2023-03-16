@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { ButtonAsync, List, LMR, Sep } from "tonwa-com";
 import { PartProps } from "../Part";
-import { DetailBase, SheetBase, PartSheet } from "./PartSheet";
+import { PartSheet } from "./PartSheet";
+import { DetailBase, SheetBase } from './EditingBase';
 
 interface PageSheetEditProps<S extends SheetBase, D extends DetailBase> extends PartProps<PartSheet<S, D>> {
     sheet: S;
@@ -14,7 +15,6 @@ interface PageSheetEditProps<S extends SheetBase, D extends DetailBase> extends 
     onEditRow: (detail: any) => Promise<void>;
 }
 
-// S = Sheet type
 export function PageSheetEdit<S extends SheetBase, D extends DetailBase>({ Part, onEditRow, onAddRow }: PageSheetEditProps<S, D>) {
     const uqApp = useUqApp();
     const navigate = useNavigate();

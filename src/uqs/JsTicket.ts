@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Mar 14 2023 16:01:21 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Wed Mar 15 2023 22:15:45 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqQuery, UqAction, UqID, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -19,6 +19,25 @@ export interface IDX {
 export interface IX {
     ix: number;
     xi: number;
+}
+
+export enum EnumID {
+	Project = 'project',
+	History = 'history',
+	Product = 'product',
+	Contact = 'contact',
+	Batch = 'batch',
+	MeasureUnitName = 'measureunitname',
+	MeasureUnit = 'measureunit',
+	UnitItem = 'unititem',
+	SheetPurchase = 'sheetpurchase',
+	SheetSale = 'sheetsale',
+	SheetStoreIn = 'sheetstorein',
+	SheetStoreOut = 'sheetstoreout',
+	Detail = 'detail',
+	DetailQPA = 'detailqpa',
+	DetailOrigin = 'detailorigin',
+	PriceName = 'pricename',
 }
 
 export interface Param$role_My {
@@ -139,16 +158,16 @@ export interface ParamBookSheetPurchase {
 export interface ResultBookSheetPurchase {
 }
 
-export interface ParamBookSheetStoreIn {
-	id: number;
-}
-export interface ResultBookSheetStoreIn {
-}
-
 export interface ParamBookSheetSale {
 	id: number;
 }
 export interface ResultBookSheetSale {
+}
+
+export interface ParamBookSheetStoreIn {
+	id: number;
+}
+export interface ResultBookSheetStoreIn {
 }
 
 export interface ParamBookSheetStoreOut {
@@ -585,7 +604,7 @@ export interface ResultReportStorage {
 }
 
 export interface ParamHistoryStorage {
-	project: number;
+	item: number;
 }
 export interface ReturnHistoryStorage$page {
 	id: number;
@@ -633,8 +652,8 @@ export interface UqExt extends Uq {
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
 	BookSheetPurchase: UqAction<ParamBookSheetPurchase, ResultBookSheetPurchase>;
-	BookSheetStoreIn: UqAction<ParamBookSheetStoreIn, ResultBookSheetStoreIn>;
 	BookSheetSale: UqAction<ParamBookSheetSale, ResultBookSheetSale>;
+	BookSheetStoreIn: UqAction<ParamBookSheetStoreIn, ResultBookSheetStoreIn>;
 	BookSheetStoreOut: UqAction<ParamBookSheetStoreOut, ResultBookSheetStoreOut>;
 	SaveProduct: UqAction<ParamSaveProduct, ResultSaveProduct>;
 	SaveContact: UqAction<ParamSaveContact, ResultSaveContact>;
@@ -989,8 +1008,8 @@ export const uqSchema={
         ],
         "returns": [] as any
     },
-    "booksheetstorein": {
-        "name": "BookSheetStoreIn",
+    "booksheetsale": {
+        "name": "BookSheetSale",
         "type": "action",
         "private": false,
         "sys": true,
@@ -1002,8 +1021,8 @@ export const uqSchema={
         ],
         "returns": [] as any
     },
-    "booksheetsale": {
-        "name": "BookSheetSale",
+    "booksheetstorein": {
+        "name": "BookSheetStoreIn",
         "type": "action",
         "private": false,
         "sys": true,
@@ -2280,7 +2299,7 @@ export const uqSchema={
         "sys": true,
         "fields": [
             {
-                "name": "project",
+                "name": "item",
                 "type": "id"
             }
         ],

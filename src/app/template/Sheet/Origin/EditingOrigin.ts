@@ -1,7 +1,7 @@
 import { PageMoreCacheData } from "app/coms";
 import { atom, PrimitiveAtom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { SheetBase, EditingBase, DetailQuantityBase } from "../PartSheet";
+import { SheetBase, EditingBase, DetailQuantityBase } from "../EditingBase";
 import { PartOrigin } from "./PartOrigin";
 
 export class EditingOrigin<S extends SheetBase, D extends DetailQuantityBase> extends EditingBase<S> {
@@ -60,18 +60,21 @@ export class EditingOrigin<S extends SheetBase, D extends DetailQuantityBase> ex
         setAtomValue(this.atomDetails, detais);
     }
 
-    addDetail(detail: D) {
-        const details = getAtomValue(this.atomDetails);
-        setAtomValue(this.atomDetails, [...details, detail]);
+    private buildNewDetails(details: any[], detail: any): any[] {
+        let { id } = detail;
+        let index = details.findIndex(v => v.id === id);
+        if (index >= 0) {
+            return [...details.splice(index, 1, detail)];
+        }
+        else {
+            return [...details, detail];
+        }
     }
 
-    updateDetail(detail: D) {
-        let { id } = detail;
-        const details = getAtomValue(this.atomDetails);
-        let index = details.findIndex(v => v.id === id);
-        details.splice(index, 1, detail);
-        setAtomValue(this.atomDetails, [...details]);
-        this.refreshSubmitable();
+    protected updateDetailAtom(detail: any): void {
+        let details = getAtomValue(this.atomDetails);
+        let newDetails = this.buildNewDetails(details, detail);
+        setAtomValue(this.atomDetails, newDetails);
     }
 
     override async newSheet(target: number): Promise<S> {

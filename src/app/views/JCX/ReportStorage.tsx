@@ -1,14 +1,15 @@
 import { PageReport, PartReport } from "app/template";
 import { PageHistory } from "app/template/Report/PageHistory";
-import { UqApp } from "app/UqApp";
-import { Route, useParams } from "react-router-dom";
+import { UqApp, useUqApp } from "app/UqApp";
+import { Link, Route, useParams } from "react-router-dom";
 import { IDView, Page } from "tonwa-app";
-import { dateFromMinuteId, EasyTime, FA, LMR } from "tonwa-com";
+import { dateFromMinuteId, EasyTime, FA, LMR, useEffectOnce } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
-import { Product, ReturnReportStorage$page } from "uqs/JsTicket";
+import { EnumID, Product, ReturnReportStorage$page, SheetStoreIn, SheetStoreOut } from "uqs/JsTicket";
 
 const pathStorage = 'storage';
 const pathStorageHistory = 'storage-history';
+const pathStorageDetail = 'storage-detail';
 const pathStorageSheet = 'storage-sheet';
 
 export class PartStorage extends PartReport {
@@ -50,11 +51,23 @@ export class PartStorage extends PartReport {
         this.navigate(`../${pathStorageHistory}/${item.product}`);
     }
 
+    readonly DetailRef = ({ value }: { value: any }) => {
+        return <>
+            <IDView uq={this.uq} id={value.sheet} Template={this.SheetRef} />
+            &nbsp;
+            <small>{value.id}</small>
+        </>;
+    }
+    readonly SheetRef = ({ value }: { value: any }) => {
+        const { $entity, no } = value;
+        let Template = dirMap[$entity as EnumID];
+        return <Template value={value} />;
+    }
     readonly ViewItemHistory = ({ value: row }: { value: any }): JSX.Element => {
         const { id, value, ref } = row;
         return <LMR className="px-3 py-2">
             <div className="w-8c me-3 small text-muted"><EasyTime date={dateFromMinuteId(id)} /></div>
-            <div>单据明细ID: {ref}</div>
+            <div><IDView uq={this.uq} id={ref} Template={this.DetailRef} /></div>
             <div className="d-flex align-items-center">
                 <div className="me-4 fs-5">{(value).toFixed(0)}</div>
                 <FA name="angle-right" className="text-muted" />
@@ -63,7 +76,7 @@ export class PartStorage extends PartReport {
     }
 
     readonly onHistoryClick = async (item: any) => {
-        this.navigate(`../${pathStorageSheet}/${item.ref}`);
+        this.navigate(`../${pathStorageDetail}/${item.ref}`);
     }
 }
 
@@ -75,15 +88,96 @@ function PageStorageHistory() {
     return <PageHistory Part={PartStorage} />
 }
 
+function PageDetail() {
+    const uqApp = useUqApp();
+    const uq = uqApp.uqs.JsTicket;
+    const { id } = useParams();
+    function ViewDetail({ value }: { value: any }) {
+        return <div>
+            Detail: {JSON.stringify(value)}
+        </div>
+    }
+    function ViewDetailOrigin({ value }: { value: any }) {
+        return <div>
+            DetailOrigin: {JSON.stringify(value)}
+        </div>
+    }
+    function ViewDetailQPA({ value }: { value: any }) {
+        return <div>
+            DetailQPA: {JSON.stringify(value)}
+        </div>
+    }
+    function DetailTemplate({ value }: { value: any }) {
+        let v: JSX.Element;
+        switch (value.$entity) {
+            case EnumID.Detail: v = <ViewDetail value={value} />; break;
+            case EnumID.DetailOrigin: v = <ViewDetailOrigin value={value} />; break;
+            case EnumID.DetailQPA: v = <ViewDetailQPA value={value} />; break;
+        }
+        return <div>
+            <Link to={`../${pathStorageSheet}/${value.sheet}`}>
+                <div className="px-3 my-3">整单：{value.sheet}</div>
+            </Link>
+            <div className="px-3 my-3">{v}</div>
+        </div>;
+    }
+    return <Page header="单据明细">
+        <IDView uq={uq} id={Number(id)} Template={DetailTemplate} />
+    </Page>
+}
+
 function PageSheet() {
     const { id } = useParams();
-    return <Page header="单据明细">
-        <div className="p-3">单据明细id: {id}</div>
+    useEffectOnce(() => {
+
+    });
+    return <Page header="整单内容">
+        <div className="p-3">整单id: {id}</div>
     </Page>
 }
 
 export const routeReportStorage = <>
     <Route path={pathStorage} element={<PageStorage />} />
     <Route path={`${pathStorageHistory}/:id`} element={<PageStorageHistory />} />
+    <Route path={`${pathStorageDetail}/:id`} element={<PageDetail />} />
     <Route path={`${pathStorageSheet}/:id`} element={<PageSheet />} />
 </>;
+
+function DirStoreIn({ value }: { value: SheetStoreIn; }) {
+    return <>入库单 {value.no}</>
+}
+
+function DirStoreOut({ value }: { value: SheetStoreOut; }) {
+    return <>出库单 {value.no}</>
+}
+
+const dirMap: { [entity in EnumID]?: (props: { value: any; }) => JSX.Element } = {
+    [EnumID.SheetStoreIn]: DirStoreIn,
+    [EnumID.SheetStoreOut]: DirStoreOut,
+}
+
+function DetailStoreIn({ value }: { value: SheetStoreIn; }) {
+    return <>入库单 Detail {value.no}</>
+}
+
+function DetailStoreOut({ value }: { value: SheetStoreOut; }) {
+    return <>出库单 Detail {value.no}</>
+}
+
+const detailMap: { [entity in EnumID]?: (props: { value: any; }) => JSX.Element } = {
+    [EnumID.SheetStoreIn]: DetailStoreIn,
+    [EnumID.SheetStoreOut]: DetailStoreOut,
+}
+
+function SheetStoreIn({ value }: { value: SheetStoreIn; }) {
+    return <>入库单 Sheet {value.no}</>
+}
+
+function SheetStoreOut({ value }: { value: SheetStoreOut; }) {
+    return <>出库单 Sheet {value.no}</>
+}
+
+const sheetMap: { [entity in EnumID]?: (props: { value: any; }) => JSX.Element } = {
+    [EnumID.SheetStoreIn]: SheetStoreIn,
+    [EnumID.SheetStoreOut]: SheetStoreOut,
+}

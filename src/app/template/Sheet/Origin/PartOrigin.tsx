@@ -2,7 +2,8 @@ import { UqApp } from "app/UqApp";
 import { UqAction, UqID, UqQuery } from "tonwa-uq";
 import { DetailQPA } from "uqs/JsTicket";
 import { PartProps } from "../../Part";
-import { DetailQuantityBase, SheetBase, PartSheet } from "../PartSheet";
+import { PartSheet } from "../PartSheet";
+import { DetailQuantityBase, SheetBase } from '../EditingBase';
 import { EditingOrigin } from "./EditingOrigin";
 import { PageOriginNew } from "./PageOriginNew";
 

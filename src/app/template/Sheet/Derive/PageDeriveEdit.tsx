@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useModal } from "tonwa-app";
 import { useEffectOnce } from "tonwa-com";
 import { PageSheetEdit } from "../PageSheetEdit";
-import { SheetBase } from "../PartSheet";
+import { SheetBase } from "../EditingBase";
 import { PartDerive } from "./PartDerive";
 
 export function PageDeriveEdit<S extends SheetBase, D extends object>({ Part }: PartProps<PartDerive<S, D>>) {

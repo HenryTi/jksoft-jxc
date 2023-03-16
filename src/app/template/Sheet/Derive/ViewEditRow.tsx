@@ -39,10 +39,13 @@ export function ViewEditRow<S extends SheetBase, D extends object = any>({ row, 
             }
             detail.$changedValue = newValue;
             detail.value = newValue;
-            inp.current.value = String(newValue);
+            if (inp.current) {
+                inp.current.value = String(newValue);
+            }
             editing.refreshSubmitable();
         }
         async function onClick() {
+            if (!inp.current) return;
             let { value: inpValue } = inp.current;
             if (inpValue.trim().length > 0) return;
             await changeValue(operatableValue);

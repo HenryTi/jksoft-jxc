@@ -1,5 +1,5 @@
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { DetailBase, SheetBase, EditingBase, DetailValueBase } from "../PartSheet";
+import { DetailBase, SheetBase, EditingBase, DetailValueBase } from "../EditingBase";
 import { atom, PrimitiveAtom } from "jotai";
 import { PartDerive } from "./PartDerive";
 
@@ -92,6 +92,20 @@ export class EditingDerive<S extends SheetBase, D extends DetailValueBase> exten
             group.sheets.push(v);
         }
         return Object.keys(groupColl).map(v => groupColl[Number(v)]);
+    }
+
+    protected updateDetailAtom(detail: any): void {
+        let { id } = detail;
+        let rows = getAtomValue(this.atomRows);
+        for (let row of rows) {
+            let { details } = row;
+            let index = details.findIndex(v => v.id === id);
+            if (index >= 0) {
+                details.splice(index, 1, detail);
+                break;
+            }
+        }
+        setAtomValue(this.atomRows, [...rows]);
     }
 
     refreshSubmitable() {

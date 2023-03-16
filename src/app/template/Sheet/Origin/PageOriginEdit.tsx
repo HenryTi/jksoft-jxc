@@ -4,7 +4,7 @@ import { useEffectOnce } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { PartProps } from "../../Part";
 import { PartOrigin } from "./PartOrigin";
-import { DetailBase, DetailQuantityBase, SheetBase } from "../PartSheet";
+import { DetailQuantityBase, SheetBase } from "../EditingBase";
 import { PageSheetEdit } from "../PageSheetEdit";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -52,13 +52,18 @@ export function PageOriginEdit<S extends SheetBase, D extends DetailQuantityBase
             closeModal();
             return;
         }
-        let value = { ...detail, ...ret, sheet: sheet.id };
+        let value = { ...detail, ...ret }; //, sheet: sheet.id };
+        // let id = 
+        await editing.setDetail(value);
+        // value.id = id;
+        /*
         let id = await uq.ActID({
             ID: IDDetail,
             value,
         });
         value.id = id;
         editing.addDetail(value);
+        */
         onAddRow();
     }
 
@@ -67,13 +72,6 @@ export function PageOriginEdit<S extends SheetBase, D extends DetailQuantityBase
         let newDetail = { ...row, sheet: sheet.id, ...ret }
         let retId = editing.setDetail(newDetail);
         row.id = retId;
-        /*
-        await uq.ActID({
-            ID: IDDetail,
-            value: newDetail
-        });
-        editing.updateDetail(newDetail);
-        */
     }
     return <PageSheetEdit Part={Part} onAddRow={onAddRow} onEditRow={onEditRow} sheet={sheet} />;
 }

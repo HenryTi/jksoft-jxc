@@ -48,7 +48,7 @@ RETURNS ret (
         , a.value as originValue, ifnull(b.done, 0) as done
         FROM Detail as a
             LEFT JOIN Done as b ON b.id=a.id
-        WHERE a.sheet=id AND a.value<>b.done;
+        WHERE a.sheet=id AND a.value<>ifnull(b.done, 0);
 };
 
 Query GetDetailOriginQPAs (
@@ -88,7 +88,7 @@ RETURNS ret (
         , ifnull(b.done, 0) as done
         FROM DetailQPA as a 
             LEFT JOIN Done as b ON b.id=a.id
-        WHERE a.sheet=id AND a.quantity<>b.done;
+        WHERE a.sheet=id AND a.quantity<>ifnull(b.done, 0);
 };
 
 QUERY SearchProduct ver 0.2 (

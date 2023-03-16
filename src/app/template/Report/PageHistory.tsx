@@ -7,11 +7,13 @@ import { PartReport } from "./PartReport";
 export function PageHistory({ Part }: PartProps<PartReport>) {
     const uqApp = useUqApp();
     const part = uqApp.partOf(Part);
+    const { uq } = part;
+    uq.SheetStoreIn.name
     const navigate = useNavigate();
     part.navigate = navigate;
     const { QueryHistory, ViewItemHistory, captionHistory, historySortField, onHistoryClick } = part;
     const { id: paramId } = useParams();
-    const param = { project: Number(paramId) };
+    const param = { item: Number(paramId) };
     return <PageQueryMore
         header={captionHistory}
         param={param}

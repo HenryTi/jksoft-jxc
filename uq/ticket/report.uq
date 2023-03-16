@@ -15,13 +15,14 @@ PAGE (
 };
 
 QUERY HistoryStorage (
-    project ID,
+    item ID,
 )
 PAGE (
     id ID DESC,
     value VALUE,
     ref ID,
 ) {
+    VAR project ID = ID(Project new KEY type=ProjectType.Storage, item=item);
     PAGE SELECT a.id, a.value, a.ref
         FROM History as a
         WHERE a.id < $pageStart AND a.project=project

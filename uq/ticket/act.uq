@@ -1,19 +1,54 @@
 ACT BookSheetPurchase (
     id ID,
 ) {
+    PROC BookSheetOrigin(id, typeof QueueStoreIn);
+};
+
+ACT BookSheetSale (
+    id ID,
+) {
+    PROC BookSheetOrigin(id, typeof QueueStoreOut);
+};
+
+PROC BookSheetOrigin (
+    id ID,
+    queueType INT,
+) {
     IF not exists(SELECT a.xi FROM IxMySheet as a WHERE a.ix=$user AND a.xi=id) {
         RETURN;
     }
     WITH IxMySheet IX=$user XI=id DEL;
-    IF (SELECT SUM(a.quantity-b.done) FROM DetailQPA as a JOIN Done as b ON b.id=a.id WHERE a.sheet=id)<>0 {
-        QUEUE QueueStoreIn ADD id;
+    VAR sumTodo VALUE = (
+        SELECT SUM(a.quantity-ifnull(b.done, 0)) 
+            FROM DetailQPA as a 
+                LEFT JOIN Done as b ON b.id=a.id 
+            WHERE a.sheet=id
+        );
+
+    IF sumTodo<>0 {
+        QUEUE (queueType) ADD id;
     }
 };
 
-ACT BookSheetStoreIn ver 0.8 (
+ACT BookSheetStoreIn ver 0.2 (
     id ID,
 ) {
-    IF not exists(SELECT a.xi FROM IxMySheet as a WHERE a.ix=$user AND a.xi=id and entityid(id)=typeof SheetStoreIn) {
+    PROC BookSheetDerive(id, 1, typeof SheetStoreIn, typeof QueueStoreIn);
+};
+
+ACT BookSheetStoreOut ver 0.2 (
+    id ID,
+) {
+    PROC BookSheetDerive(id, -1, typeof SheetStoreOut, typeof QueueStoreOut);
+};
+
+PROC BookSheetDerive ver 0.8 (
+    id ID,
+    neg TINYINT,        -- 1 or -1
+    sheetType INT,
+    queueType INT,
+) {
+    IF not exists(SELECT a.xi FROM IxMySheet as a WHERE a.ix=$user AND a.xi=id and entityid(id)=sheetType) {
         RETURN;
     }
     TABLE originSheets(KEY id ID);
@@ -25,12 +60,13 @@ ACT BookSheetStoreIn ver 0.8 (
             WHERE a.sheet=id
             ORDER BY a.id ASC
     ) {
+        VAR delta VALUE = neg * value;
         INTO originSheets IGNORE SELECT originSheet as id;
         WITH Done ID=origin SET done+=value;
-        WITH Book ID=item SET value+=value;
+        WITH Book ID=item SET value+=delta;
         VAR project ID = ID(Project new KEY type=ProjectType.Storage, item=item);
         VAR history ID;
-        WITH History as a ID to history SET a.project=project, a.value=value, a.ref=id;
+        WITH History as a ID to history SET a.project=project, a.value=delta, a.ref=id;
     }
     FOR (VAR origin ID OF SELECT a.id as origin FROM originSheets as a) {
         IF (SELECT sum(b.quantity-c.done)
@@ -39,23 +75,12 @@ ACT BookSheetStoreIn ver 0.8 (
                 WHERE b.sheet=origin
            )=0
         {
-            QUEUE QueueStoreIn Del origin;
+            QUEUE (queueType) Del origin;
         }
     }
 };
 
-ACT BookSheetSale (
-    id ID,
-) {
-    IF not exists(SELECT a.xi FROM IxMySheet as a WHERE a.ix=$user AND a.xi=id) {
-        RETURN;
-    }
-    WITH IxMySheet IX=$user XI=id DEL;
-    IF (SELECT SUM(a.quantity-b.done) FROM DetailQPA as a JOIN Done as b ON b.id=a.id WHERE a.sheet=id)<>0 {
-        QUEUE QueueStoreOut ADD id;
-    }
-};
-
+/*
 ACT BookSheetStoreOut ver 0.2 (
     id ID,
 ) {
@@ -93,4 +118,4 @@ ACT BookSheetStoreOut ver 0.2 (
         }
     }
 };
-
+*/

@@ -1,7 +1,8 @@
 import { UqID, UqQuery } from "tonwa-uq";
 import { PartProps } from "app/template/Part";
 import { UqApp } from "app/UqApp";
-import { DetailBase, SheetBase, PartSheet } from "../PartSheet";
+import { PartSheet } from "../PartSheet";
+import { DetailBase, SheetBase } from '../EditingBase';
 import { PageDeriveSelect } from "./PageDeriveSelect";
 import { ViewEditRow } from "./ViewEditRow";
 import { EditingDerive } from "./EditingDerive";
@@ -28,7 +29,7 @@ export abstract class PartDerive<S extends SheetBase, D extends DetailBase> exte
         this.origin = this.getOriginSheetPart();
 
         let uq = this.uq;
-        this.IDDetail = uq.DetailQPA;
+        this.IDDetail = uq.DetailOrigin;
         this.QueryGetDetails = uq.GetDetailQPAs;
         this.ModalSheetStart = PageDeriveSelect as any;
         this.ViewItemEditRow = ViewEditRow as any;
