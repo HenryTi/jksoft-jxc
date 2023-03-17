@@ -28,12 +28,6 @@ export function ViewEditRow<S extends SheetBase, D extends object = any>({ row, 
                 if ((newValue === undefined || newValue === 0) && id !== undefined) id = -id;
                 let newDetail = { id, sheet: sheetDerive.id, origin, value: newValue };
                 let retId = await editing.setDetail(newDetail);
-                /*
-                let retId = await uq.ActID({
-                    ID: uq.DetailOrigin,
-                    value: newDetail
-                });
-                */
                 if (id === undefined) detail.id = retId;
                 setDisabled(false);
             }

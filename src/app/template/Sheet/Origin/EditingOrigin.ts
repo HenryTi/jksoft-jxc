@@ -56,10 +56,6 @@ export class EditingOrigin<S extends SheetBase, D extends DetailQuantityBase> ex
         setAtomValue(this.atomSheet, sheet);
     }
 
-    setDetails(detais: D[]) {
-        setAtomValue(this.atomDetails, detais);
-    }
-
     private buildNewDetails(details: any[], detail: any): any[] {
         let { id } = detail;
         let index = details.findIndex(v => v.id === id);

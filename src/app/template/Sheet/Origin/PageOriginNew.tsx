@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useModal } from "tonwa-app";
 import { FA, LMR, SearchBox } from "tonwa-com";
 import { PartProps } from "../../Part";
-import { DetailQuantityBase, SheetBase } from "../PartSheet";
+import { DetailQuantityBase, SheetBase } from "../EditingBase";
 import { PartOrigin } from "./PartOrigin";
 
 export function PageOriginNew<S extends SheetBase, D extends DetailQuantityBase>({ Part }: PartProps<PartOrigin<S, D>>) {
@@ -29,26 +29,6 @@ export function PageOriginNew<S extends SheetBase, D extends DetailQuantityBase>
     const query = QuerySearchSheetItem; //JsTicket.SearchContact;
     async function onItemClick(item: any) {
         let sheet = await editing.newSheet(item.id);
-        /*
-        let no = await uq.IDNO({ ID });
-        let [id] = await uq.ActIX({
-            IX: IxMySheet,
-            ID: ID,
-            values: [{
-                ix: undefined,
-                xi: {
-                    no, target: item.id
-                }
-            }]
-        });
-        let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
-        if (data) {
-            data.addItem({ ix: undefined, xi: id });
-        }
-        let sheet = part.buildSheet(id, no, item.id);
-        editing.setSheet(sheet);
-        editing.setDetails([]);
-        */
         closeModal(sheet);
     }
     return <PageQueryMore header={`新建${caption}`}
