@@ -252,6 +252,7 @@ export interface Uq {
     $name: string;
     Role: { [key: string]: string[] };
     idObj<T = any>(id: number): Promise<T>;
+    idJoins(id: number): Promise<{ ID: ID; main: [string, any]; joins: [string, any[]][]; }>;
     idCache<T = any>(id: number): T;
     IDValue<T>(type: string, value: string): T;
     Acts(param: any): Promise<any>;
@@ -262,6 +263,7 @@ export interface Uq {
     QueryID<T>(param: ParamQueryID): Promise<T[]>;
     IDNO(param: ParamIDNO): Promise<string>;
     IDEntity(typeId: number): ID;
+    IDFromName(IDName: string): ID;
     ID<T = any>(param: ParamID): Promise<T[]>;
     IXr<T>(param: ParamIX): Promise<T[]>; // IX id 反查IX list
     KeyID<T>(param: ParamKeyID): Promise<T[]>;
@@ -1046,6 +1048,10 @@ export class UqMan {
         return this.entityTypes[typeId] as ID;
     };
 
+    protected IDFromName = (IDName: string): ID => {
+        return this.ids[IDName];
+    }
+
     protected $IDNO = async (param: ParamIDNO): Promise<string> => {
         return await this.apiIDNO(param, EnumResultType.sql) as any as string;
     }
@@ -1104,6 +1110,20 @@ export class UqMan {
             delete this.cachePromise[id];
         }
         return obj;
+    }
+
+    protected idJoins = async (id: number) => {
+        let ret = await this.apiPost('id-joins', EnumResultType.data, { id });
+        let arr = (ret as any[]).shift();
+        let resultMain = arr?.[0];
+        if (resultMain === undefined) {
+            throw new Error('id-joins return no value');
+        }
+        let { ID: IDName } = resultMain;
+        let ID = this.IDFromName(IDName);
+        let resultJoins = ret;
+        let [uppackedMain, uppackedJoins] = ID.unpackJoins(resultMain, resultJoins);
+        return { ID, main: uppackedMain, joins: uppackedJoins };
     }
 
     protected ID = async (param: ParamID): Promise<any[]> => {

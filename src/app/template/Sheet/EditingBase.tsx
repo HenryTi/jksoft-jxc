@@ -80,9 +80,10 @@ export abstract class EditingBase<S extends SheetBase, R = any> implements Editi
             ID: IDDetail,
             value: { ...detail, sheet: sheet.id }
         });
-
-        detail.id = retId;
-        detail.sheet = sheet.id;
+        if (retId > 0) {
+            detail.id = retId;
+            detail.sheet = sheet.id;
+        }
         this.updateDetailAtom(detail);
         this.refreshSubmitable();
         return retId;

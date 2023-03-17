@@ -17,6 +17,7 @@ export abstract class PartOrigin<S extends SheetBase, D extends DetailQuantityBa
     abstract get QuerySearchSheetItem(): UqQuery<any, any>;
 
     abstract PageDetailItemSelect: () => JSX.Element;
+    abstract get PageSheetDetail(): <T extends PartSheet<S, D>>(props: (PartProps<T> & { detail: Partial<D>; })) => JSX.Element;
     // abstract ModalSheetEdit: (props: { id: number }) => JSX.Element;
     abstract PageSheetEdit: () => JSX.Element;
     // abstract PageSheetNew: () => JSX.Element;

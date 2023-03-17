@@ -1,9 +1,10 @@
 import { PageReport, PartReport } from "app/template";
 import { PageHistory } from "app/template/Report/PageHistory";
 import { UqApp, useUqApp } from "app/UqApp";
+import React, { useState } from "react";
 import { Link, Route, useParams } from "react-router-dom";
-import { IDView, Page } from "tonwa-app";
-import { dateFromMinuteId, EasyTime, FA, LMR, useEffectOnce } from "tonwa-com";
+import { IDView, Page, PageSpinner } from "tonwa-app";
+import { dateFromMinuteId, EasyTime, FA, List, LMR, Sep, useEffectOnce } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
 import { EnumID, Product, ReturnReportStorage$page, SheetStoreIn, SheetStoreOut } from "uqs/JsTicket";
 
@@ -127,12 +128,46 @@ function PageDetail() {
 }
 
 function PageSheet() {
+    const uqApp = useUqApp();
+    const uq = uqApp.uqs.JsTicket;
     const { id } = useParams();
+    const [sheetMain, setSheetMain] = useState(undefined);
+    const [sheetJoins, setSheetJoins] = useState<[string, any[]][]>(undefined);
     useEffectOnce(() => {
-
+        (async function () {
+            let { ID, main, joins } = await uq.idJoins(Number(id));
+            setSheetMain(main);
+            setSheetJoins(joins);
+        })();
     });
+    let content: any;
+    if (!sheetMain || !sheetJoins) {
+        content = <PageSpinner />;
+    }
+    else {
+        let [sheetType, main] = sheetMain;
+        let viewJoins = sheetJoins.map(v => {
+            let [detailType, details] = v;
+            function ViewItem({ value }: { value: any }) {
+                return <div className="px-3 my-2">
+                    {JSON.stringify(value)}
+                </div>;
+            }
+            return <React.Fragment key={detailType}>
+                <Sep />
+                <List items={details} ViewItem={ViewItem} />
+                <Sep />
+            </React.Fragment>;
+        });
+        let Dir = dirMap[sheetType as EnumID];
+        content = <>
+            <div className="px-3 my-2"><Dir value={main} /></div>
+            {viewJoins}
+        </>;
+    }
+
     return <Page header="整单内容">
-        <div className="p-3">整单id: {id}</div>
+        {content}
     </Page>
 }
 
@@ -144,11 +179,19 @@ export const routeReportStorage = <>
 </>;
 
 function DirStoreIn({ value }: { value: SheetStoreIn; }) {
-    return <>入库单 {value.no}</>
+    return <>
+        <span className="text-danger">入库单</span> &nbsp;
+        <b>{value.no}</b> &nbsp;
+        <small className="text-muted">{value.id}</small> &nbsp;
+    </>;
 }
 
 function DirStoreOut({ value }: { value: SheetStoreOut; }) {
-    return <>出库单 {value.no}</>
+    return <>
+        <span className="text-success">出库单</span> &nbsp;
+        <b>{value.no}</b> &nbsp;
+        <small className="text-muted">{value.id}</small> &nbsp;
+    </>;
 }
 
 const dirMap: { [entity in EnumID]?: (props: { value: any; }) => JSX.Element } = {

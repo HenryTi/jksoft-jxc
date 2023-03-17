@@ -49,6 +49,55 @@ export class UqID<M extends { id?: number }> extends UqIBase {
     }
     cacheTuidFieldValues(value: any): void { }
     unpackTuidIds(values: string[]): any[] { return; }
+    unpackJoins(resultMain: any, resultJoins: any[][]): [[string, any], [string, any[]][]] {
+        let main = {} as any;
+        // let results: any[][] = await this.uqApi.post(`id/${this.name}/${id}`, undefined);
+        main = this.unpackStr(resultMain?.value, this.fields, undefined);
+        let retJoins: [string, any[]][] = []
+        let p = 0;
+        let joins: { ID: string; field: string; }[] = this.schema.joins;
+        for (let join of joins) {
+            let { ID: IDName, field: fieldName } = join;
+            let IDJoin = this.uq.entities[IDName] as ID;
+            let { fields } = IDJoin;
+            let field = fields.find(v => v.name === fieldName);
+            let result = resultJoins[p];
+            retJoins.push([IDName, result.map(v => this.unpackStr(v.value, fields, field))]);
+            ++p;
+        }
+        return [[this.name, main], retJoins];
+    }
+
+    private unpackStr(str: string, fields: Field[], exclude: Field) {
+        let ret: any = {};
+        let p = 0;
+        let ch0 = 0, ch = 0, c = p, i = 0, len = str.length, fLen = fields.length;
+        let sep = 12;
+        const setFieldValue = () => {
+            let f = fields[i];
+            if (f === exclude) {
+                ++i;
+                f = fields[i];
+            }
+            let { name } = f;
+            if (p > c) {
+                let v = str.substring(c, p);
+                ret[name] = this.to(ret, v, f);
+            }
+        }
+        for (; p < len; p++) {
+            ch0 = ch;
+            ch = str.charCodeAt(p);
+            if (ch === sep) {
+                setFieldValue();
+                c = p + 1;
+                ++i;
+                if (i >= fLen) break;
+            }
+        }
+        setFieldValue();
+        return ret;
+    }
 }
 
 export class ID extends UqID<any> {

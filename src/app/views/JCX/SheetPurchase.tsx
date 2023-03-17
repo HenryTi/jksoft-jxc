@@ -5,7 +5,7 @@ import { UqAction, UqID, UqQuery } from "tonwa-uq";
 import { PartProps } from "app/template/Part";
 import { UqApp, useUqApp } from "app/UqApp";
 import { SheetPurchase, DetailQPA } from "uqs/JsTicket";
-import { PageOriginEdit, PartSheet, PartOrigin } from "../../template/Sheet";
+import { PageOriginEdit, PartSheet, PartOrigin, PageDetailQPA, PartDetail } from "../../template";
 import { PageProductSelect, ViewProduct } from "./IDProduct";
 import { ChangeEvent, useState } from "react";
 import { Band, FormRow, FormRowsView } from "app/coms";
@@ -101,6 +101,7 @@ function PagePurchaseEdit() {
 }
 
 function PageSheetDetail({ detail, Part }: (PartProps<PartSheet> & { detail: Partial<DetailQPA> })) {
+    /*
     const uqApp = useUqApp();
     const { uq } = uqApp.partOf(Part);
     const { quantity, price, amount, item } = detail;
@@ -151,9 +152,20 @@ function PageSheetDetail({ detail, Part }: (PartProps<PartSheet> & { detail: Par
             <FormRowsView rows={formRows} register={register} errors={errors} />
         </form>
     </Page>;
+
+    */
+    return <PageDetailQPA detail={detail} PartSheet={Part} Part={DetailPartPurchase} />;
 }
 
-// <Route path={pathPurchaseNew} element={<PagePurchaseNew />} />
+class DetailPartPurchase extends PartDetail<DetailQPA> {
+    get caption(): string { return '明细'; }
+    get path(): string { return undefined; }
+    get itemCaption(): string { return '产品'; }
+    get ViewItemTemplate(): ({ value }: { value: any; }) => JSX.Element {
+        return ViewProduct;
+    }
+}
+
 export const routePurchase = <>
     <Route path={`${pathPurchaseEdit}/:id`} element={<PagePurchaseEdit />} />
     <Route path={pathPurchaseEdit} element={<PagePurchaseEdit />} />

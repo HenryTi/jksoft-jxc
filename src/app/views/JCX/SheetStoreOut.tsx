@@ -21,7 +21,6 @@ export class SheetPartStoreOut extends PartDerive<SheetStoreOut, DetailOrigin> {
     readonly ID: UqID<any>;
     readonly QueryOrigin: UqQuery<any, any>;
     readonly ActBookSheet: UqAction<any, any>;
-    readonly PageSheetDetail: (props: (PartProps<PartSheet<SheetStoreOut, DetailOrigin>> & { detail: Partial<DetailOrigin>; })) => JSX.Element;
     readonly ViewTarget: (props: { sheet: SheetStoreOut }) => JSX.Element;
     readonly ViewTargetBand: (props: { sheet: SheetStoreOut }) => JSX.Element;
 

@@ -64,7 +64,8 @@ export class EditingOrigin<S extends SheetBase, D extends DetailQuantityBase> ex
         let { id } = detail;
         let index = details.findIndex(v => v.id === id);
         if (index >= 0) {
-            return [...details.splice(index, 1, detail)];
+            details[index] = detail;
+            return [...details];
         }
         else {
             return [...details, detail];

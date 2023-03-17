@@ -12,8 +12,7 @@ export function PageOriginEdit<S extends SheetBase, D extends DetailQuantityBase
     const uqApp = useUqApp();
     const navigate = useNavigate();
     const part = uqApp.partOf(Part);
-    const { editing, uq
-        , IDDetail
+    const { editing
         , ModalSheetStart, PageDetailItemSelect, PageSheetDetail
         , buildDetailFromSelectedItem
     } = part;
@@ -67,11 +66,14 @@ export function PageOriginEdit<S extends SheetBase, D extends DetailQuantityBase
         onAddRow();
     }
 
-    async function onEditRow(row: any) {
-        let ret = await openModal(<PageSheetDetail detail={row} Part={Part} />);
-        let newDetail = { ...row, sheet: sheet.id, ...ret }
-        let retId = editing.setDetail(newDetail);
-        row.id = retId;
+    async function onEditRow(detail: any) {
+        let ret = await openModal(<PageSheetDetail detail={detail} Part={Part} />);
+        if (ret === undefined) return;
+        let newDetail = { ...detail, ...ret }
+        let retId = await editing.setDetail(newDetail);
+        if (retId > 0) {
+            detail.id = retId;
+        }
     }
     return <PageSheetEdit Part={Part} onAddRow={onAddRow} onEditRow={onEditRow} sheet={sheet} />;
 }

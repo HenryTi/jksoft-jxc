@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Mar 15 2023 22:15:45 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Thu Mar 16 2023 12:58:28 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqQuery, UqAction, UqID, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1988,7 +1988,13 @@ export const uqSchema={
         ],
         "global": false,
         "idType": 3,
-        "isMinute": true
+        "isMinute": true,
+        "joins": [
+            {
+                "ID": "detailqpa",
+                "field": "sheet"
+            }
+        ]
     },
     "sheetsale": {
         "name": "SheetSale",
@@ -2020,7 +2026,13 @@ export const uqSchema={
         ],
         "global": false,
         "idType": 3,
-        "isMinute": true
+        "isMinute": true,
+        "joins": [
+            {
+                "ID": "detailqpa",
+                "field": "sheet"
+            }
+        ]
     },
     "sheetstorein": {
         "name": "SheetStoreIn",
@@ -2052,7 +2064,13 @@ export const uqSchema={
         ],
         "global": false,
         "idType": 3,
-        "isMinute": true
+        "isMinute": true,
+        "joins": [
+            {
+                "ID": "detailorigin",
+                "field": "sheet"
+            }
+        ]
     },
     "sheetstoreout": {
         "name": "SheetStoreOut",
@@ -2084,7 +2102,13 @@ export const uqSchema={
         ],
         "global": false,
         "idType": 3,
-        "isMinute": true
+        "isMinute": true,
+        "joins": [
+            {
+                "ID": "detailorigin",
+                "field": "sheet"
+            }
+        ]
     },
     "detail": {
         "name": "Detail",

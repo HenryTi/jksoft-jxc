@@ -5,7 +5,7 @@ import { UqAction, UqID, UqQuery } from "tonwa-uq";
 import { PartProps } from "app/template/Part";
 import { UqApp, useUqApp } from "app/UqApp";
 import { SheetSale, DetailQPA } from "uqs/JsTicket";
-import { PageOriginEdit, PageOriginNew, PartSheet, PartOrigin } from "../../template/Sheet";
+import { PageOriginEdit, PageOriginNew, PartSheet, PartOrigin, PartDetail, PageDetailQPA } from "../../template/Sheet";
 import { PageProductSelectForSale, ViewProduct } from "./IDProduct";
 import { ChangeEvent, useState } from "react";
 import { Band, FormRow, FormRowsView } from "app/coms";
@@ -52,7 +52,7 @@ export class SheetPartSale extends PartOrigin<SheetSale, DetailQPA>  {
 
         this.PageDetailItemSelect = PageProductSelectForSale;
         this.caption = captionSale;
-        this.PageSheetEdit = PagePurchaseEdit;
+        this.PageSheetEdit = PageSaleEdit;
         this.PageSheetDetail = PageSheetDetail;
 
         this.ViewItemEditRow = function ({ row }: { row: DetailQPA }) {
@@ -61,7 +61,7 @@ export class SheetPartSale extends PartOrigin<SheetSale, DetailQPA>  {
                 <IDView uq={uq} id={item} Template={ViewProduct} />
                 <div className="align-self-end text-end d-flex align-items-end">
                     <div>
-                        <span><small>单价:</small> {price.toFixed(4)} <small>金额:</small> {amount.toFixed(4)}</span>
+                        <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount.toFixed(4)}</span>
                         <br />
                         <small>数量:</small> <b>{quantity}</b>
                     </div>
@@ -97,11 +97,12 @@ export class SheetPartSale extends PartOrigin<SheetSale, DetailQPA>  {
     }
 }
 
-function PagePurchaseEdit() {
+function PageSaleEdit() {
     return <PageOriginEdit Part={SheetPartSale} />;
 }
 
 function PageSheetDetail({ detail, Part }: (PartProps<PartSheet> & { detail: Partial<DetailQPA> })) {
+    /*
     const uqApp = useUqApp();
     const { uq } = uqApp.partOf(Part);
     const { quantity, price, amount, item } = detail;
@@ -153,9 +154,21 @@ function PageSheetDetail({ detail, Part }: (PartProps<PartSheet> & { detail: Par
             <FormRowsView rows={formRows} register={register} errors={errors} />
         </form>
     </Page>;
+    */
+    return <PageDetailQPA detail={detail} PartSheet={Part} Part={DetailPartSale} />;
+}
+
+class DetailPartSale extends PartDetail<DetailQPA> {
+    get caption(): string { return '明细'; }
+    get path(): string { return undefined; }
+    get itemCaption(): string { return '产品'; }
+    get ViewItemTemplate(): ({ value }: { value: any; }) => JSX.Element {
+        return ViewProduct;
+    }
+    get priceDisabled() { return true; }
 }
 
 export const routeSale = <>
-    <Route path={`${pathSaleEdit}/:id`} element={<PagePurchaseEdit />} />
-    <Route path={pathSaleEdit} element={<PagePurchaseEdit />} />
+    <Route path={`${pathSaleEdit}/:id`} element={<PageSaleEdit />} />
+    <Route path={pathSaleEdit} element={<PageSaleEdit />} />
 </>;

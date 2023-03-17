@@ -16,7 +16,7 @@ export abstract class PartDerive<S extends SheetBase, D extends DetailBase> exte
     abstract QueryOrigin: UqQuery<any, any>;
 
     readonly ModalSheetStart: (props: PartProps<PartSheet<S, D>>) => JSX.Element;
-    readonly PageDetailItemSelect: () => JSX.Element;
+    //readonly PageDetailItemSelect: () => JSX.Element;
     readonly ViewItemEditRow: (props: { row: any, Part: new (uqApp: UqApp) => PartSheet<S, D> }) => JSX.Element;
 
     readonly ViewItemSource: ({ id }: { id: number; }) => JSX.Element;

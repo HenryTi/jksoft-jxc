@@ -394,6 +394,7 @@ export abstract class Entity {
 
     // ch=8 backspace, 有什么特别意义吗？看不懂 2022-8-16
     // 根据代码看起来，像是null的意思
+    // 2023-3-16：ch=8，就是null
     protected unpackRow(ret: any, fields: Field[], data: string, p: number, sep: number = 9): number {
         let ch0 = 0, ch = 0, c = p, i = 0, len = data.length, fLen = fields.length;
         const setFieldValue = () => {
@@ -465,7 +466,7 @@ export abstract class Entity {
         return len;
     }
 
-    private to(ret: any, v: string, f: Field): any {
+    protected to(ret: any, v: string, f: Field): any {
         switch (f.type) {
             default: return v;
             case 'text':

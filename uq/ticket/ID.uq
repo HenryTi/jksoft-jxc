@@ -56,29 +56,29 @@ ID UnitItem (
 QUEUE QueueStoreIn ONCE ONLY;
 QUEUE QueueStoreOut ONCE ONLY;
 
-ID SheetPurchase (
+ID SheetPurchase ver 0.3 (
     id MINUTE,
     KEY no,
     target ID,              -- vendor
-);
+) JOIN DetailQPA ON sheet;
 
-ID SheetSale (
+ID SheetSale ver 0.3 (
     id MINUTE,
     KEY no,
     target ID,              -- customer
-);
+) JOIN DetailQPA ON sheet;
 
-ID SheetStoreIn ver 0.1 (
+ID SheetStoreIn ver 0.3 (
     id MINUTE,
     KEY no,
     operator ID,            -- user
 ) JOIN DetailOrigin ON sheet;
 
-ID SheetStoreOut ver 0.1 (
+ID SheetStoreOut ver 0.3 (
     id MINUTE,
     KEY no,
     operator ID,            -- user
-);
+) JOIN DetailOrigin ON sheet;
 
 -- 所有单据的明细，单值
 ID Detail (

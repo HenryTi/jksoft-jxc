@@ -1,7 +1,4 @@
-import { PageMoreCacheData } from "app/coms";
 import { UqApp } from "app/UqApp";
-import { atom, PrimitiveAtom } from "jotai";
-import { getAtomValue, setAtomValue } from "tonwa-com";
 import { UqAction, UqID, UqIX, UqQuery } from "tonwa-uq";
 import { PartInput, PartProps } from "../Part";
 import { DetailBase, Editing, SheetBase } from "./EditingBase";
@@ -18,8 +15,6 @@ export abstract class PartSheet<S extends SheetBase = any, D extends DetailBase 
     abstract get QuerySearchSheetItem(): UqQuery<any, any>;
 
     abstract get ModalSheetStart(): (props: PartProps<PartSheet<S, D>>) => JSX.Element;
-    abstract get PageSheetDetail(): <T extends PartSheet<S, D>>(props: (PartProps<T> & { detail: Partial<D>; })) => JSX.Element;
-    abstract get PageDetailItemSelect(): () => JSX.Element;
     abstract get ViewItemEditRow(): (props: { row: any; Part: new (uqApp: UqApp) => PartSheet<S, D> }) => JSX.Element;
     abstract get ViewTarget(): (props: { sheet: S; }) => JSX.Element;
     abstract get ViewTargetBand(): (props: { sheet: S; }) => JSX.Element;
