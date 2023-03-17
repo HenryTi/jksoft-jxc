@@ -26,8 +26,8 @@ export abstract class EditingBase<S extends SheetBase, R = any> implements Editi
     constructor(part: PartSheet<S, any>) {
         this.part = part;
         this.atomSheet = atom(undefined as S);
-        this.atomSubmitable = atom(false);
-        this.atomIsMine = atom(false);
+        this.atomSubmitable = atom(false) as any;
+        this.atomIsMine = atom(false) as any;
     }
 
     reset(): void {

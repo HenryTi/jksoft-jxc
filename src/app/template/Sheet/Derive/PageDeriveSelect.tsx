@@ -4,7 +4,7 @@ import { useUqApp } from "app/UqApp";
 import { useState } from "react";
 import { IDView, Page, useModal } from "tonwa-app";
 import { FA, List, LMR, SearchBox } from "tonwa-com";
-import { DetailBase, SheetBase } from "../PartSheet";
+import { DetailBase, SheetBase } from "../EditingBase";
 import { PartDerive } from "./PartDerive";
 
 interface SheetGroup {

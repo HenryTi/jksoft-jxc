@@ -53,7 +53,7 @@ export class SheetPartSale extends PartOrigin<SheetSale, DetailQPA>  {
         this.PageDetailItemSelect = PageProductSelectForSale;
         this.caption = captionSale;
         this.PageSheetEdit = PageSaleEdit;
-        this.PageSheetDetail = PageSheetDetail;
+        this.PageSheetDetail = PageSheetDetail as any;
 
         this.ViewItemEditRow = function ({ row }: { row: DetailQPA }) {
             let { item, quantity, price, amount } = row;
@@ -101,7 +101,7 @@ function PageSaleEdit() {
     return <PageOriginEdit Part={SheetPartSale} />;
 }
 
-function PageSheetDetail({ detail, Part }: (PartProps<PartSheet> & { detail: Partial<DetailQPA> })) {
+function PageSheetDetail({ detail, Part }: (PartProps<SheetPartSale> & { detail: Partial<DetailQPA> })) {
     /*
     const uqApp = useUqApp();
     const { uq } = uqApp.partOf(Part);
@@ -155,7 +155,7 @@ function PageSheetDetail({ detail, Part }: (PartProps<PartSheet> & { detail: Par
         </form>
     </Page>;
     */
-    return <PageDetailQPA detail={detail} PartSheet={Part} Part={DetailPartSale} />;
+    return <PageDetailQPA detail={detail} PartSheet={Part as any} Part={DetailPartSale} />;
 }
 
 class DetailPartSale extends PartDetail<DetailQPA> {

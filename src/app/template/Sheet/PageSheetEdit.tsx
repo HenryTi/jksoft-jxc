@@ -88,7 +88,7 @@ export function PageSheetEdit<S extends SheetBase, D extends DetailBase>({ Part,
             <Band label={'编号'} labelClassName="text-end">
                 {sheet.no}
             </Band>
-            <ViewTargetBand sheet={sheet} />
+            <ViewTargetBand sheet={sheet as any} />
         </div>
         {rows.length > 6 ? <>{button}<Sep /></> : <Sep />}
         <List items={rows} ViewItem={ViewItemOfList} none={<None />} onItemClick={onEditRow} />

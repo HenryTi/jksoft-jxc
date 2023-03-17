@@ -1,16 +1,13 @@
 import { Part } from "app/template/Part";
 import { useForm } from "react-hook-form";
 import { IDView, Page, useModal } from "tonwa-app";
-import { UqAction, UqID, UqQuery } from "tonwa-uq";
 import { PartProps } from "app/template/Part";
 import { UqApp, useUqApp } from "app/UqApp";
-import { SheetPurchase, DetailQPA } from "uqs/JsTicket";
+import { DetailQPA } from "uqs/JsTicket";
 import { ChangeEvent, useState } from "react";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { FA, LMR } from "tonwa-com";
-import { PartSheet } from "../PartSheet";
-import { ViewProduct } from "app/views/JCX/IDProduct";
 import { SheetBase } from "../EditingBase";
+import { PartOrigin } from "./PartOrigin";
 
 export abstract class PartDetail<D extends DetailQPA> extends Part {
     buildFormRows(detial: Partial<D>): FormRow[] {
@@ -47,12 +44,12 @@ export abstract class PartDetail<D extends DetailQPA> extends Part {
 
 interface Props<D extends DetailQPA> extends PartProps<PartDetail<D>> {
     detail: Partial<D>;
-    PartSheet: new (uqApp: UqApp) => PartSheet<SheetBase, D>;
+    PartSheet: new (uqApp: UqApp) => PartOrigin<SheetBase, D>;
 }
 
 export function PageDetailQPA<D extends DetailQPA>({ detail, Part, PartSheet }: Props<D>) {
     const uqApp = useUqApp();
-    const { uq } = uqApp.partOf(PartSheet);
+    const partSheet = uqApp.partOf(PartSheet);
     const part = uqApp.partOf(Part);
     const { quantity, price, amount, item } = detail;
     const { closeModal } = useModal();
@@ -60,14 +57,24 @@ export function PageDetailQPA<D extends DetailQPA>({ detail, Part, PartSheet }: 
     const [hasValue, setHasValue] = useState(quantity != undefined);
     function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { value, name } = evt.target;
-        let v = Number(value);
-        switch (name) {
-            case 'quantity': onQuantityChange(v); break;
-            case 'price': onPriceChange(v); break;
+        if (value.trim().length === 0) {
+            (detail as any)[name] = undefined;
         }
-        setHasValue(!Number.isNaN(v));
+        else {
+            let v = Number(value);
+            (detail as any)[name] = Number.isNaN(v) === true ? undefined : v;
+        }
+        const { price, amount, quantity } = detail;
+        let hv = amount !== undefined && price !== undefined && quantity !== undefined;
+        setHasValue(hv);
+        if (hasValue === false) return;
+        switch (name) {
+            case 'quantity': onQuantityChange(quantity); break;
+            case 'price': onPriceChange(price); break;
+        }
     }
     function setAmountValue(amount: number) {
+        if (Number.isNaN(amount) === true) return;
         detail.amount = amount;
         setValue('amount', amount.toFixed(4));
     }
@@ -78,6 +85,7 @@ export function PageDetailQPA<D extends DetailQPA>({ detail, Part, PartSheet }: 
         setAmountValue(value * p);
     }
     function onPriceChange(value: number) {
+        detail.price = value;
         let q = getValues('quantity') ?? quantity;
         if (!q) return;
         setAmountValue(value * q);
@@ -93,13 +101,19 @@ export function PageDetailQPA<D extends DetailQPA>({ detail, Part, PartSheet }: 
     */
     const formRows = part.buildFormRows(detail);
     formRows.forEach(v => (v as any).options = { ...(v as any).options, ...options });
-    formRows.push({ type: 'submit', label: hasValue === true ? '提交' : '关闭' });
+    formRows.push({ type: 'submit', label: '提交', options: { disabled: hasValue === false } });
 
     async function onSubmit(data: any) {
         // closeModal(data);
         // amount 字段disabled。setValue('amount'), 改变了input显示，但是取值没有改变。
         // 只能用下面变通
         let { amount, price } = detail;
+
+        let { quantity } = data;
+        if (Number.isNaN(quantity) === false) {
+            let value = { ...detail }; //, sheet: sheet.id };
+            await partSheet.editing.setDetail(value);
+        }
         closeModal({ ...data, amount, price });
     }
     const { caption, ViewItemTop } = part;

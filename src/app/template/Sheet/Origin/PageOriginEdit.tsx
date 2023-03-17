@@ -41,7 +41,9 @@ export function PageOriginEdit<S extends SheetBase, D extends DetailQuantityBase
         if (selectedItem === undefined) return;
         // 新建一个detail
         let detail = buildDetailFromSelectedItem(selectedItem);
-        let ret = await openModal(<PageSheetDetail detail={detail} Part={Part} />);
+        //let ret = 
+        await openModal(<PageSheetDetail detail={detail} Part={Part} />);
+        /*
         if (!ret) {
             closeModal();
             return;
@@ -54,6 +56,7 @@ export function PageOriginEdit<S extends SheetBase, D extends DetailQuantityBase
         let value = { ...detail, ...ret }; //, sheet: sheet.id };
         // let id = 
         await editing.setDetail(value);
+        */
         // value.id = id;
         /*
         let id = await uq.ActID({

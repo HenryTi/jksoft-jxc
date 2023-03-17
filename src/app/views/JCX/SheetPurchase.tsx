@@ -53,7 +53,7 @@ export class SheetPartPurchase extends PartOrigin<SheetPurchase, DetailQPA> {
         this.PageDetailItemSelect = PageProductSelect;
         this.caption = captionPurchase;
         this.PageSheetEdit = PagePurchaseEdit;
-        this.PageSheetDetail = PageSheetDetail;
+        this.PageSheetDetail = PageSheetDetail as any;
 
         this.ViewItemEditRow = function ({ row }: { row: DetailQPA }) {
             let { item, quantity, price, amount } = row;
@@ -61,7 +61,7 @@ export class SheetPartPurchase extends PartOrigin<SheetPurchase, DetailQPA> {
                 <IDView uq={uq} id={item} Template={ViewProduct} />
                 <div className="align-self-end text-end d-flex align-items-end">
                     <div>
-                        <span><small>单价:</small> {price.toFixed(4)} <small>金额:</small> {amount.toFixed(4)}</span>
+                        <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount.toFixed(4)}</span>
                         <br />
                         <small>数量:</small> <b>{quantity}</b>
                     </div>
@@ -100,7 +100,7 @@ function PagePurchaseEdit() {
     return <PageOriginEdit Part={SheetPartPurchase} />;
 }
 
-function PageSheetDetail({ detail, Part }: (PartProps<PartSheet> & { detail: Partial<DetailQPA> })) {
+function PageSheetDetail({ detail, Part }: (PartProps<SheetPartPurchase> & { detail: Partial<DetailQPA> })) {
     /*
     const uqApp = useUqApp();
     const { uq } = uqApp.partOf(Part);
@@ -154,7 +154,7 @@ function PageSheetDetail({ detail, Part }: (PartProps<PartSheet> & { detail: Par
     </Page>;
 
     */
-    return <PageDetailQPA detail={detail} PartSheet={Part} Part={DetailPartPurchase} />;
+    return <PageDetailQPA detail={detail} PartSheet={Part as any} Part={DetailPartPurchase} />;
 }
 
 class DetailPartPurchase extends PartDetail<DetailQPA> {
