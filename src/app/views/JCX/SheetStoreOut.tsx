@@ -9,15 +9,12 @@ import { SheetStoreOut, DetailOrigin } from "uqs/JsTicket";
 import { SheetPartSale } from "./SheetSale";
 import { pathStoreIn } from "./SheetStoreIn";
 
-export const captionStoreIn = '出库单';
+export const captionStoreOut = '出库单';
 export const pathStoreOut = 'store-out';
-// const pathStoreInNew = 'store-in';
-/// const pathStoreInEdit = 'store-in';
 
 export class SheetPartStoreOut extends PartDerive<SheetStoreOut, DetailOrigin> {
     readonly caption: string;
-    readonly pathNew: string;
-    readonly pathEdit: string;
+    readonly path: string;
     readonly ID: UqID<any>;
     readonly QueryOrigin: UqQuery<any, any>;
     readonly ActBookSheet: UqAction<any, any>;
@@ -27,9 +24,8 @@ export class SheetPartStoreOut extends PartDerive<SheetStoreOut, DetailOrigin> {
     constructor(uqApp: UqApp) {
         super(uqApp);
 
-        this.caption = captionStoreIn;
-        this.pathNew = pathStoreOut;
-        this.pathEdit = pathStoreIn;
+        this.caption = captionStoreOut;
+        this.path = pathStoreOut;
 
         let uq = this.uq;
         this.ID = uq.SheetStoreOut;

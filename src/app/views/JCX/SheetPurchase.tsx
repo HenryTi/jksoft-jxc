@@ -16,8 +16,7 @@ export const captionPurchase = '采购单';
 const pathPurchaseEdit = 'purchase-edit';
 
 export class SheetPartPurchase extends PartOrigin<SheetPurchase, DetailQPA> {
-    readonly pathNew: string;
-    readonly pathEdit: string;
+    readonly path: string;
 
     readonly ID: UqID<any>;
     readonly IDDetail: UqID<any>;
@@ -39,11 +38,10 @@ export class SheetPartPurchase extends PartOrigin<SheetPurchase, DetailQPA> {
 
     constructor(uqApp: UqApp) {
         super(uqApp);
+
+        this.path = pathPurchaseEdit;
+
         const { JsTicket: uq } = uqApp.uqs;
-
-        this.pathNew = pathPurchaseEdit;
-        this.pathEdit = pathPurchaseEdit;
-
         this.ID = uq.SheetPurchase;
         this.IDDetail = uq.DetailQPA;
         this.QueryGetDetails = uq.GetDetailQPAs;

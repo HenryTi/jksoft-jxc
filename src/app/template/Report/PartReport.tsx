@@ -1,7 +1,7 @@
 import { UqQuery } from "tonwa-uq";
-import { Part } from "../Part";
+import { PartWithPath } from "../Part";
 
-export abstract class PartReport extends Part {
+export abstract class PartReport extends PartWithPath {
     abstract get QueryReport(): UqQuery<any, any>;
     abstract get sortField(): string;
     abstract get ViewItem(): (props: { value: any }) => JSX.Element;

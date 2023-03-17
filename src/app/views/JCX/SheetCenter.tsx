@@ -42,12 +42,12 @@ export function PageSheetCenter() {
         if (part === undefined) {
             return <div>{JSON.stringify(value)}</div>;
         }
-        let { pathEdit } = part;
+        let { path } = part;
         function ViewListItem({ id }: { id: any }) {
             return <IDView id={id} uq={uq} Template={part.ViewSheetListItem} />;
         }
 
-        return <Link to={`../${pathEdit}/${id}`}>
+        return <Link to={`../${path}/${id}`}>
             <div className="px-3 py-2">
                 <ViewListItem id={id} />
             </div>
@@ -80,9 +80,9 @@ export function PageSheetCenter() {
     >
         <div className="px-3 py-2 border-bottom d-flex flex-wrap p-2">
             {partArr.map((v, index) => {
-                let { caption, pathNew } = v;
+                let { caption, path } = v;
                 return <Link key={index}
-                    to={`../${pathNew}`}
+                    to={`../${path}`}
                     className="px-3 px-2 btn btn-outline-primary m-2"
                 >
                     {caption}

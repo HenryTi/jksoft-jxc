@@ -1,0 +1,55 @@
+-- 实现排序和分组
+IDX Seq (
+    id,
+    seq TEXT,               -- id序列，tab分隔，ln分行。排序和分组
+);
+
+ENUM PropDataType (
+    bigint = 1,         -- 8字节大整数
+    number = 2,         -- 固定4位小数，实际存放整数
+    bool = 3,           -- 0或1
+    date = 4,           -- 整数表示的日期，1970-1-1为0
+    datetime = 5,       -- 整数秒时间，1970-1-1 0:0utc 为0
+    radio = 101,        -- 单选
+    check = 102,        -- 多选
+    char = 1001,        -- CHAR(100)
+    text = 2001,        -- MEDIUMTEXT
+);
+-- 可选项也是一个prop
+ID Prop (
+    id,
+    KEY name CHAR(50),
+    caption CHAR(100),          -- 如果需要不同于名字的界面显示
+    type ENUM PropDataType,
+);
+
+-- ix=ID type，则特定ID有多少属性
+-- ix=Prop，则特定属性，有多少可选项
+IX IxProp (
+    ix,                 -- ID type or Prop
+    xi Prop,            -- prop
+);
+
+IX IxValue (
+    ix,
+    xi,
+    value BIGINT,
+);
+
+IX IxChar (
+    ix,
+    xi,
+    value CHAR(100),
+);
+
+IX IxText (
+    ix,
+    xi,
+    value TEXT(medium),
+);
+
+-- 可选项有否
+IX IxHave (
+    ix,
+    xi,
+);

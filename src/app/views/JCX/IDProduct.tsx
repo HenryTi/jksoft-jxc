@@ -13,6 +13,7 @@ export const pathProductEdit = 'product-edit';
 
 class IDPartProduct extends PartID {
     readonly caption: string;
+    readonly path: string;
 
     // IDList
     readonly ViewItem: (value: any) => JSX.Element;

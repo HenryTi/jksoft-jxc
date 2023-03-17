@@ -15,8 +15,7 @@ export const pathStoreIn = 'store-in';
 
 export class SheetPartStoreIn extends PartDerive<SheetStoreIn, DetailOrigin> {
     readonly caption: string;
-    readonly pathNew: string;
-    readonly pathEdit: string;
+    readonly path: string;
     readonly ID: UqID<any>;
     readonly QueryOrigin: UqQuery<any, any>;
     readonly ActBookSheet: UqAction<any, any>;
@@ -27,8 +26,7 @@ export class SheetPartStoreIn extends PartDerive<SheetStoreIn, DetailOrigin> {
         super(uqApp);
 
         this.caption = captionStoreIn;
-        this.pathNew = pathStoreIn;
-        this.pathEdit = pathStoreIn;
+        this.path = pathStoreIn;
 
         let uq = this.uq;
         this.ID = uq.SheetStoreIn;

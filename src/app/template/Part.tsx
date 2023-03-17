@@ -12,14 +12,16 @@ export abstract class Part {
         this.uq = uqApp.uqs.JsTicket;
     }
     abstract get caption(): string;
+}
+
+export abstract class PartWithPath extends Part {
     abstract get path(): string;
     navigate: NavigateFunction;
 }
 
-export abstract class PartInput extends Part {
+export abstract class PartInput extends PartWithPath {
     get name(): string { return this.ID.name; }
     abstract get ID(): UqID<any>;
-    get path(): string { return 'path' };
 }
 
 export interface PartProps<T extends Part> {

@@ -6,9 +6,6 @@ import { DetailBase, Editing, SheetBase } from "./EditingBase";
 export abstract class PartSheet<S extends SheetBase = any, D extends DetailBase = any> extends PartInput {
     readonly IxMySheet: UqIX<any>;
 
-    abstract get pathNew(): string;
-    abstract get pathEdit(): string;
-
     abstract get IDDetail(): UqID<DetailBase>;
     abstract get QueryGetDetails(): UqQuery<{ id: number }, { ret: any[] }>;
     abstract get ActBookSheet(): UqAction<any, any>;

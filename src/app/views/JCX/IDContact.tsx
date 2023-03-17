@@ -12,6 +12,7 @@ export const pathContactEdit = 'contact-edit';
 
 class IDPartContact extends PartID {
     readonly caption: string;
+    readonly path: string;
 
     // IDList
     readonly ViewItem: (value: any) => JSX.Element;

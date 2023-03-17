@@ -65,8 +65,6 @@ function DefaultBandTemplate(props: BandTemplateProps) {
     else {
         detailContext.label = label;
         detailContext.content = content;
-        //detailContext.values = { ...detailContext.values.values };
-        // detailContext.onValuesChanged = detailContext.onValuesChanged;
         toEdit = pathEditDetail;
         rightIcon = <RightIcon toEdit={toEdit} icon={rightIcon} />;
     }

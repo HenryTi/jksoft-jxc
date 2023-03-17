@@ -16,8 +16,7 @@ export const captionSale = '销售单';
 const pathSaleEdit = 'sale-edit';
 
 export class SheetPartSale extends PartOrigin<SheetSale, DetailQPA>  {
-    readonly pathNew: string;
-    readonly pathEdit: string;
+    readonly path: string;
 
     readonly ID: UqID<any>;
     readonly IDDetail: UqID<any>;
@@ -39,11 +38,9 @@ export class SheetPartSale extends PartOrigin<SheetSale, DetailQPA>  {
 
     constructor(uqApp: UqApp) {
         super(uqApp);
+        this.path = pathSaleEdit;
+
         const { JsTicket: uq } = uqApp.uqs;
-
-        this.pathNew = pathSaleEdit;
-        this.pathEdit = pathSaleEdit;
-
         this.ID = uq.SheetSale;
         this.IDDetail = uq.DetailQPA;
         this.QueryGetDetails = uq.GetDetailQPAs;

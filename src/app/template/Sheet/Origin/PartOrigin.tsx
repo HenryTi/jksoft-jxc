@@ -8,9 +8,6 @@ import { EditingOrigin } from "./EditingOrigin";
 import { PageOriginNew } from "./PageOriginNew";
 
 export abstract class PartOrigin<S extends SheetBase, D extends DetailQuantityBase> extends PartSheet<S, D> {
-    abstract pathNew: string;
-    abstract pathEdit: string;
-
     abstract IDDetail: UqID<DetailQPA>;
     abstract QueryGetDetails: UqQuery<{ id: number }, { ret: any[] }>;
     abstract get ActBookSheet(): UqAction<any, any>;
@@ -29,7 +26,6 @@ export abstract class PartOrigin<S extends SheetBase, D extends DetailQuantityBa
 
     constructor(uqApp: UqApp) {
         super(uqApp);
-        let uq = this.uq;
 
         this.ModalSheetStart = PageOriginNew as any;
         this.editing = new EditingOrigin(this);
