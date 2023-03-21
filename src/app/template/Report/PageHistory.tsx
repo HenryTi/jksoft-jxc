@@ -6,7 +6,7 @@ import { PartReport } from "./PartReport";
 
 export function PageHistory({ Part }: PartProps<PartReport>) {
     const uqApp = useUqApp();
-    const part = uqApp.partOf(Part);
+    const part = uqApp.objectOf(Part);
     const { uq } = part;
     uq.SheetStoreIn.name
     const navigate = useNavigate();

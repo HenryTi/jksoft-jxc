@@ -1,26 +1,26 @@
-import { Part } from "app/template/Part";
 import { useForm } from "react-hook-form";
 import { IDView, Page, useModal } from "tonwa-app";
 import { PartProps } from "app/template/Part";
-import { UqApp, useUqApp } from "app/UqApp";
-import { DetailQPA } from "uqs/JsTicket";
+import { DetailQPA } from "uqs/UqDefault";
 import { ChangeEvent, useState } from "react";
 import { Band, FormRow, FormRowsView } from "app/coms";
+import { UqApp, useUqApp } from "../../../UqApp";
+import { Part } from "../../../tool";
 import { SheetBase } from "../EditingBase";
 import { PartOrigin } from "./PartOrigin";
 
 export abstract class PartDetail<D extends DetailQPA> extends Part {
     buildFormRows(detial: Partial<D>): FormRow[] {
-        let { price, quantity, amount } = detial;
+        let { price, value, amount } = detial;
         return [
-            this.buildQuantityRow(quantity),
+            this.buildValueRow(value),
             this.buildPriceRow(price),
             this.buildAmountRow(amount),
         ];
     }
-    protected get quantityDisabled(): boolean { return false; }
-    protected buildQuantityRow(value: number): FormRow {
-        return { name: 'quantity', label: '数量', type: 'number', options: { value, disabled: this.quantityDisabled } };
+    protected get valueDisabled(): boolean { return false; }
+    protected buildValueRow(value: number): FormRow {
+        return { name: 'value', label: '数量', type: 'number', options: { value, disabled: this.valueDisabled } };
     }
     protected get priceDisabled(): boolean { return false; }
     protected buildPriceRow(value: number, disabled: boolean = false): FormRow {
@@ -49,12 +49,12 @@ interface Props<D extends DetailQPA> extends PartProps<PartDetail<D>> {
 
 export function PageDetailQPA<D extends DetailQPA>({ detail, Part, PartSheet }: Props<D>) {
     const uqApp = useUqApp();
-    const partSheet = uqApp.partOf(PartSheet);
-    const part = uqApp.partOf(Part);
-    const { quantity, price, amount, item } = detail;
+    const partSheet = uqApp.objectOf(PartSheet);
+    const part = uqApp.objectOf(Part);
+    const { value, price, amount, item } = detail;
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
-    const [hasValue, setHasValue] = useState(quantity != undefined);
+    const [hasValue, setHasValue] = useState(value != undefined);
     function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { value, name } = evt.target;
         if (value.trim().length === 0) {
@@ -64,12 +64,12 @@ export function PageDetailQPA<D extends DetailQPA>({ detail, Part, PartSheet }: 
             let v = Number(value);
             (detail as any)[name] = Number.isNaN(v) === true ? undefined : v;
         }
-        const { price, amount, quantity } = detail;
+        const { price, amount, value: quantity } = detail;
         let hv = amount !== undefined && price !== undefined && quantity !== undefined;
         setHasValue(hv);
         if (hasValue === false) return;
         switch (name) {
-            case 'quantity': onQuantityChange(quantity); break;
+            case 'value': onQuantityChange(quantity); break;
             case 'price': onPriceChange(price); break;
         }
     }
@@ -79,14 +79,14 @@ export function PageDetailQPA<D extends DetailQPA>({ detail, Part, PartSheet }: 
         setValue('amount', amount.toFixed(4));
     }
     function onQuantityChange(value: number) {
-        detail.quantity = value;
+        detail.value = value;
         let p = getValues('price') ?? price;
         if (!p) return;
         setAmountValue(value * p);
     }
     function onPriceChange(value: number) {
         detail.price = value;
-        let q = getValues('quantity') ?? quantity;
+        let q = getValues('quantity') ?? value;
         if (!q) return;
         setAmountValue(value * q);
     }

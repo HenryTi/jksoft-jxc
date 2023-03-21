@@ -1,11 +1,12 @@
 import { Band } from "app/coms";
 import { PartProps } from "app/template";
 import { PageDeriveEdit, PartSheet, PartDerive } from "app/template/Sheet";
+import { BaseID, BaseIDPropUnit } from "app/tool";
 import { UqApp } from "app/UqApp";
 import { Route } from "react-router-dom";
 import { UserView } from "tonwa-app";
 import { UqAction, UqID, UqQuery } from "tonwa-uq";
-import { SheetStoreIn, DetailQPA, DetailOrigin } from "uqs/JsTicket";
+import { SheetStoreIn, DetailQPA, Detail } from "uqs/UqDefault";
 import { SheetPartPurchase } from "./SheetPurchase";
 
 export const captionStoreIn = '入库单';
@@ -13,10 +14,10 @@ export const pathStoreIn = 'store-in';
 // const pathStoreInNew = 'store-in';
 /// const pathStoreInEdit = 'store-in';
 
-export class SheetPartStoreIn extends PartDerive<SheetStoreIn, DetailOrigin> {
+export class SheetPartStoreIn extends PartDerive<SheetStoreIn, Detail> {
+    readonly baseID: BaseID;
     readonly caption: string;
     readonly path: string;
-    readonly ID: UqID<any>;
     readonly QueryOrigin: UqQuery<any, any>;
     readonly ActBookSheet: UqAction<any, any>;
     readonly ViewTarget: (props: { sheet: SheetStoreIn }) => JSX.Element;
@@ -27,9 +28,9 @@ export class SheetPartStoreIn extends PartDerive<SheetStoreIn, DetailOrigin> {
 
         this.caption = captionStoreIn;
         this.path = pathStoreIn;
+        this.baseID = uqApp.objectOf(BaseIDStoreIn);
 
         let uq = this.uq;
-        this.ID = uq.SheetStoreIn;
         this.QueryOrigin = uq.SearchStoreIn;
         this.ActBookSheet = uq.BookSheetStoreIn;
 
@@ -42,11 +43,15 @@ export class SheetPartStoreIn extends PartDerive<SheetStoreIn, DetailOrigin> {
             </Band>;
         }
     }
-    protected getOriginSheetPart(): PartSheet { return this.uqApp.partOf(SheetPartPurchase) as any; }
+    protected getOriginSheetPart(): PartSheet { return this.uqApp.objectOf(SheetPartPurchase) as any; }
 
     buildSheet(id: number, no: string, target: number): SheetStoreIn {
         return { id, no, operator: target };
     }
+}
+
+class BaseIDStoreIn extends BaseIDPropUnit {
+    readonly prop = 'storein';
 }
 
 function PageStoreInEdit() {

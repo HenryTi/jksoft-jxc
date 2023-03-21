@@ -1,10 +1,10 @@
 import { PageMoreCacheData } from "app/coms";
 import { atom, PrimitiveAtom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { SheetBase, EditingBase, DetailQuantityBase } from "../EditingBase";
+import { SheetBase, EditingBase, DetailBase } from "../EditingBase";
 import { PartOrigin } from "./PartOrigin";
 
-export class EditingOrigin<S extends SheetBase, D extends DetailQuantityBase> extends EditingBase<S> {
+export class EditingOrigin<S extends SheetBase, D extends DetailBase> extends EditingBase<S> {
     readonly atomDetails: PrimitiveAtom<D[]>;
 
     constructor(part: PartOrigin<S, D>) {
@@ -84,9 +84,9 @@ export class EditingOrigin<S extends SheetBase, D extends DetailQuantityBase> ex
         let details = getAtomValue(this.atomDetails);
         let submitable: boolean = false;
         for (let detail of details) {
-            let { quantity } = detail;
-            if (quantity === undefined) continue;
-            if (quantity === 0) continue;
+            let { value } = detail;
+            if (value === undefined) continue;
+            if (value === 0) continue;
             submitable = true;
             break;
         }

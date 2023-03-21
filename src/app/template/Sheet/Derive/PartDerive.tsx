@@ -12,7 +12,7 @@ export abstract class PartDerive<S extends SheetBase, D extends DetailBase> exte
 
     readonly IDDetail: UqID<any>;
     readonly QueryGetDetails: UqQuery<{ id: number }, { ret: any[] }>;
-    readonly QuerySearchSheetItem: UqQuery<any, any>;
+    // readonly QuerySearchSheetItem: UqQuery<any, any>;
     abstract QueryOrigin: UqQuery<any, any>;
 
     readonly ModalSheetStart: (props: PartProps<PartSheet<S, D>>) => JSX.Element;
@@ -21,7 +21,7 @@ export abstract class PartDerive<S extends SheetBase, D extends DetailBase> exte
 
     readonly ViewItemSource: ({ id }: { id: number; }) => JSX.Element;
     readonly sourceSearchPlaceholder: string;
-    declare readonly editing: EditingDerive<S, any>;
+    readonly editing: EditingDerive<S, any>;
 
     constructor(uqApp: UqApp) {
         super(uqApp);
@@ -29,7 +29,7 @@ export abstract class PartDerive<S extends SheetBase, D extends DetailBase> exte
         this.origin = this.getOriginSheetPart();
 
         let uq = this.uq;
-        this.IDDetail = uq.DetailOrigin;
+        this.IDDetail = uq.Detail;
         this.QueryGetDetails = uq.GetDetailQPAs;
         this.ModalSheetStart = PageDeriveSelect as any;
         this.ViewItemEditRow = ViewEditRow as any;

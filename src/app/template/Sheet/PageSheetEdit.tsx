@@ -18,7 +18,7 @@ interface PageSheetEditProps<S extends SheetBase, D extends DetailBase> extends 
 export function PageSheetEdit<S extends SheetBase, D extends DetailBase>({ Part, onEditRow, onAddRow }: PageSheetEditProps<S, D>) {
     const uqApp = useUqApp();
     const navigate = useNavigate();
-    const part = uqApp.partOf(Part);
+    const part = uqApp.objectOf(Part);
     const { editing, caption
         , ViewItemEditRow, ViewTargetBand
     } = part;

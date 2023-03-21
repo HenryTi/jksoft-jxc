@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 import { getAtomValue, setAtomValue } from 'tonwa-com';
-import { AppConfig, UqAppBase, UqAppContext, ViewUqAppBase } from "tonwa-app";
+import { AppConfig, UqAppBase, UqAppContext } from "tonwa-app";
 import { UqConfig, UqQuery } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
-import { ViewsRoutes } from './views';
 import { appEnv } from './appEnv';
+import { BaseIDUnit } from './tool';
 
 const appConfig: AppConfig = {
     version: '0.1.0',
@@ -45,6 +45,8 @@ export class UqApp extends UqAppBase<UQs> {
     unitBizDate: number;
     unitBizMonth: number;
 
+    baseIDUnit: BaseIDUnit;
+
     get pathLogin() { return '/login'; }
     // 数据服务器提醒客户端刷新，下面代码重新调入的数据
     refresh = async () => {
@@ -67,25 +69,26 @@ export class UqApp extends UqAppBase<UQs> {
         this.unitBizDate = tz.unitBizDate ?? 1;
     }
 
-    protected override async loadOnLogined(): Promise<void> {
+    protected loadWithoutLogin(): Promise<void> {
+        return;
     }
 
-    private readonly cache = new Map<new (uqApp: UqApp) => any, any>();
-    partOf<T>(constructor: new (uqApp: UqApp) => T) {
-        let ret = this.cache.get(constructor) as T;
-        if (ret === undefined) {
-            ret = new constructor(this);
-            this.cache.set(constructor, ret);
-        }
-        return ret;
+    protected override async loadOnLogined(): Promise<void> {
+        this.baseIDUnit = new BaseIDUnit(this, 99);
     }
+
+    get uq() { return this.uqs.UqDefault; }
 }
 
 const uqConfigs = uqConfigsFromJson(uqconfigJson);
-
-export const uqApp = new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
+export function createUqApp() {
+    return new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
+}
+// export const uqApp = new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
+/*
 export function ViewUqApp() {
     return <ViewUqAppBase uqApp={uqApp}>
         <ViewsRoutes />
     </ViewUqAppBase>
 }
+*/

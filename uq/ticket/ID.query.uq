@@ -5,7 +5,7 @@ Query GetDetails (
 RETURNS ret (
     * of Detail,
 ) {
-    INTO ret SELECT * a FROM Detail as a WHERE a.sheet=id;
+    INTO ret SELECT * a FROM Detail as a WHERE a.base=id;
 };
 
 Query GetDetailQPAs (
@@ -14,24 +14,22 @@ Query GetDetailQPAs (
 RETURNS ret (
     * of DetailQPA,
 ) {
-    INTO ret SELECT * a FROM DetailQPA as a WHERE a.sheet=id;
+    INTO ret SELECT * a FROM DetailQPA as a WHERE a.base=id;
 };
 
 Query GetDetailOrigin (
     id ID,
 )
 RETURNS ret (
-    * of DetailOrigin,
+    * of Detail,
     originSheet ID,
     originItem ID,                -- 商品不同包装或者批次，甚至不同的人或者单位, 也可以指向源单明细
     originValue VALUE,
-    originRowCount INT,
 ) {
     INTO ret SELECT * a
-        , b.sheet as originSheet, b.item as originItem, b.value as originValue
-        , (select count(*) from Detail as d WHERE d.sheet=b.sheet) as originRowCount
-        FROM DetailOrigin as a JOIN Detail as b ON b.id=a.origin
-        WHERE a.sheet=id;
+        , b.base as originSheet, b.item as originItem, b.value as originValue
+        FROM Detail as a JOIN Detail as b ON b.id=a.item
+        WHERE a.base=id;
 };
 
 Query GetDetailFromOrigin (
@@ -44,31 +42,29 @@ RETURNS ret (
     originValue VALUE,
     done VALUE,
 ) {
-    INTO ret SELECT a.id as origin, a.sheet as originSheet, a.item as originItem
+    INTO ret SELECT a.id as origin, a.base as originSheet, a.item as originItem
         , a.value as originValue, ifnull(b.done, 0) as done
         FROM Detail as a
             LEFT JOIN Done as b ON b.id=a.id
-        WHERE a.sheet=id AND a.value<>ifnull(b.done, 0);
+        WHERE a.base=id AND a.value<>ifnull(b.done, 0);
 };
 
 Query GetDetailOriginQPAs (
     id ID,
 )
 RETURNS ret (
-    * of DetailOrigin,
+    * of Detail,
     originSheet ID,            -- SheetPurchase or SheetSale
     originItem ID,                -- 商品不同包装或者批次，甚至不同的人或者单位
-    originQuantity Quantity,
+    originValue VALUE,
     originPrice Price,
     originAmount Amount,
-    originRowCount INT,
 ) {
     INTO ret SELECT * a
-        , b.sheet as originSheet, b.item as originItem
-        , b.quantity as originQuantity, b.price as originPrice, b.amount as originAmount
-        , (select count(*) from DetailQPA as d WHERE d.sheet=b.sheet) as originRowCount
-        FROM DetailOrigin as a JOIN DetailQPA as b ON b.id=a.origin
-        WHERE a.sheet=id;
+        , b.base as originSheet, b.item as originItem
+        , b.value as originValue, b.price as originPrice, b.amount as originAmount
+        FROM Detail as a JOIN DetailQPA as b ON b.id=a.item
+        WHERE a.base=id;
 };
 
 Query GetDetailQPAsFromOrigin (
@@ -78,17 +74,33 @@ RETURNS ret (
     origin ID,
     originSheet ID,             -- SheetPurchase or SheetSale
     originItem ID,              -- 商品不同包装或者批次，甚至不同的人或者单位
-    originQuantity Quantity,
+    originValue VALUE,
     originPrice Price,
     originAmount Amount,
     done VALUE,
 ) {
-    INTO ret SELECT a.id as origin, a.sheet as originSheet, a.item as originItem
-        , a.quantity as originQuantity, a.price as originPrice, a.amount as originAmount
+    INTO ret SELECT a.id as origin, a.base as originSheet, a.item as originItem
+        , a.value as originValue, a.price as originPrice, a.amount as originAmount
         , ifnull(b.done, 0) as done
         FROM DetailQPA as a 
             LEFT JOIN Done as b ON b.id=a.id
-        WHERE a.sheet=id AND a.quantity<>ifnull(b.done, 0);
+        WHERE a.base=id AND a.value<>ifnull(b.done, 0);
+};
+
+QUERY SearchItem ver 0.2 (
+    base ID,
+    key CHAR(50),
+)
+PAGE (
+    id ID desc,
+    no CHAR(50),
+    ex CHAR(50),
+) {
+    PAGE SELECT a.id, a.no, a.ex
+        FROM Item as a
+        WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
+        ORDER BY a.id desc
+        LIMIT $pageSize;
 };
 
 QUERY SearchProduct ver 0.2 (

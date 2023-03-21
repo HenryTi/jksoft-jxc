@@ -1,12 +1,12 @@
-//=== UqApp builder created on Thu Mar 16 2023 12:58:28 GMT-0400 (Eastern Daylight Time) ===//
-import * as JsTicket from './JsTicket';
+//=== UqApp builder created on Mon Mar 20 2023 20:54:15 GMT-0400 (Eastern Daylight Time) ===//
+import * as UqDefault from './UqDefault';
 
 export interface UQs {
-	JsTicket: JsTicket.UqExt;
+	UqDefault: UqDefault.UqExt;
 }
 
 export const uqsSchema = {
-	"jksoft/jksoft-mini-jxc-trial": JsTicket.uqSchema,
+	"jksoft/jksoft-mini-jxc-trial": UqDefault.uqSchema,
 }
 
-export * as JsTicket from './JsTicket';
+export * as UqDefault from './UqDefault';

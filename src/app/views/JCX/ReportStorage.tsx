@@ -6,7 +6,7 @@ import { Link, Route, useParams } from "react-router-dom";
 import { IDView, Page, PageSpinner } from "tonwa-app";
 import { dateFromMinuteId, EasyTime, FA, List, LMR, Sep, useEffectOnce } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
-import { EnumID, Product, ReturnReportStorage$page, SheetStoreIn, SheetStoreOut } from "uqs/JsTicket";
+import { EnumID, Product, ReturnReportStorage$page, SheetStoreIn, SheetStoreOut } from "uqs/UqDefault";
 
 const pathStorage = 'storage';
 const pathStorageHistory = 'storage-history';
@@ -91,7 +91,7 @@ function PageStorageHistory() {
 
 function PageDetail() {
     const uqApp = useUqApp();
-    const uq = uqApp.uqs.JsTicket;
+    const uq = uqApp.uqs.UqDefault;
     const { id } = useParams();
     function ViewDetail({ value }: { value: any }) {
         return <div>
@@ -112,7 +112,7 @@ function PageDetail() {
         let v: JSX.Element;
         switch (value.$entity) {
             case EnumID.Detail: v = <ViewDetail value={value} />; break;
-            case EnumID.DetailOrigin: v = <ViewDetailOrigin value={value} />; break;
+            // case EnumID.DetailOrigin: v = <ViewDetailOrigin value={value} />; break;
             case EnumID.DetailQPA: v = <ViewDetailQPA value={value} />; break;
         }
         return <div>
@@ -129,7 +129,7 @@ function PageDetail() {
 
 function PageSheet() {
     const uqApp = useUqApp();
-    const uq = uqApp.uqs.JsTicket;
+    const uq = uqApp.uqs.UqDefault;
     const { id } = useParams();
     const [sheetMain, setSheetMain] = useState(undefined);
     const [sheetJoins, setSheetJoins] = useState<[string, any[]][]>(undefined);

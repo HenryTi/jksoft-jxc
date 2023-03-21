@@ -1,3 +1,46 @@
+-- independant, searchable
+ID Item (
+    id,
+    KEY base ID,            -- eg, unit type join id
+    KEY no,
+    ex CHAR(200),
+);
+
+ID Sheet (
+    id MINUTE,
+    KEY base ID,
+    KEY no,
+    item ID,
+    operator ID,            -- employee Item
+    ex CHAR(100),
+);
+
+-- dependant
+ID Atom (
+    id MINUTE,
+    base ID,                -- (main + type) => owner, or type in main
+    item ID,                -- item id easy to load values
+    ex CHAR(50),            -- should be ascii，tab values
+    INDEX owner_id(base, id) UNIQUE,
+);
+
+ID Join (
+    id MINUTE,
+    KEY base ID,
+    KEY item ID,
+);
+
+IX IxFlow (
+    ix,
+    xi Sheet,               -- sheet
+);
+
+IX IxUserItem (
+    ix,                     -- unit JOIN $user Prop
+    xi User,                -- baseID
+    item ID Item,           -- user related item
+);
+
 ID Product (
     id,
     KEY no,
@@ -60,51 +103,43 @@ ID SheetPurchase ver 0.3 (
     id MINUTE,
     KEY no,
     target ID,              -- vendor
-) JOIN DetailQPA ON sheet;
+) JOIN DetailQPA ON base;
 
 ID SheetSale ver 0.3 (
     id MINUTE,
     KEY no,
     target ID,              -- customer
-) JOIN DetailQPA ON sheet;
+) JOIN DetailQPA ON base;
 
-ID SheetStoreIn ver 0.3 (
+ID SheetStoreIn ver 0.4 (
     id MINUTE,
     KEY no,
     operator ID,            -- user
-) JOIN DetailOrigin ON sheet;
+) JOIN Detail ON base;
 
 ID SheetStoreOut ver 0.3 (
     id MINUTE,
     KEY no,
     operator ID,            -- user
-) JOIN DetailOrigin ON sheet;
+) JOIN Detail ON base;
 
 -- 所有单据的明细，单值
 ID Detail (
     id MINUTE,
-    sheet ID,            -- SheetPurchase or SheetSale
+    base ID,               -- SheetPurchase or SheetSale
     item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位, 也可以指向源单明细
     value VALUE,
-    INDEX sheet_id(sheet, id) UNIQUE,
+    INDEX base_id(base, id) UNIQUE,
 );
 
 ID DetailQPA (
     id MINUTE,
-    sheet ID,            -- SheetPurchase or SheetSale
+    base ID,            -- SheetPurchase or SheetSale
     item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位
-    quantity Quantity,
+    value Quantity,
     price Price,
     amount Amount,
-    INDEX sheet_id(sheet, id) UNIQUE,
-);
-
-ID DetailOrigin ver 0.1 (
-    id MINUTE,
-    sheet ID,            -- Sheet main
-    origin ID,
-    value VALUE,
-    INDEX sheet_id(sheet, id) UNIQUE,
+    INDEX base_id(base, id) UNIQUE,
 );
 
 IX *IxMySheet (

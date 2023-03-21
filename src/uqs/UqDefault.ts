@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Mar 16 2023 12:58:28 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Mon Mar 20 2023 20:54:15 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqQuery, UqAction, UqID, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -24,6 +24,11 @@ export interface IX {
 export enum EnumID {
 	Project = 'project',
 	History = 'history',
+	Prop = 'prop',
+	Item = 'item',
+	Sheet = 'sheet',
+	Atom = 'atom',
+	Join = 'join',
 	Product = 'product',
 	Contact = 'contact',
 	Batch = 'batch',
@@ -36,7 +41,6 @@ export enum EnumID {
 	SheetStoreOut = 'sheetstoreout',
 	Detail = 'detail',
 	DetailQPA = 'detailqpa',
-	DetailOrigin = 'detailorigin',
 	PriceName = 'pricename',
 }
 
@@ -176,6 +180,18 @@ export interface ParamBookSheetStoreOut {
 export interface ResultBookSheetStoreOut {
 }
 
+export interface ParamSaveItem {
+	base: number;
+	pNo: string;
+	ex: string;
+}
+export interface ReturnSaveItemRet {
+	id: number;
+}
+export interface ResultSaveItem {
+	ret: ReturnSaveItemRet[];
+}
+
 export interface ParamSaveProduct {
 	pNo: string;
 	name: string;
@@ -226,12 +242,51 @@ export interface HistoryInActs extends ID {
 	ref: number | ID;
 }
 
+export enum PropDataType {
+	none = 0,
+	bigint = 1,
+	number = 2,
+	bool = 3,
+	date = 4,
+	datetime = 5,
+	type = 81,
+	radio = 101,
+	check = 102,
+	picker = 201,
+	group = 301,
+	char = 1001,
+	text = 2001,
+	itemPicker = 9998,
+	item = 9999
+}
+
+export interface Prop extends ID {
+	base: number;
+	name: string;
+	ex: string;
+	type: any;
+}
+
+export const Prop = {
+}
+
+export interface PropInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	name: string;
+	ex: string;
+	type: any;
+}
+
+export interface IxProp extends IX {
+}
+
 export interface ParamGetDetails {
 	id: number;
 }
 export interface ReturnGetDetailsRet {
 	id: number;
-	sheet: number;
+	base: number;
 	item: number;
 	value: number;
 }
@@ -244,9 +299,9 @@ export interface ParamGetDetailQPAs {
 }
 export interface ReturnGetDetailQPAsRet {
 	id: number;
-	sheet: number;
+	base: number;
 	item: number;
-	quantity: number;
+	value: number;
 	price: number;
 	amount: number;
 }
@@ -259,13 +314,12 @@ export interface ParamGetDetailOrigin {
 }
 export interface ReturnGetDetailOriginRet {
 	id: number;
-	sheet: number;
-	origin: number;
+	base: number;
+	item: number;
 	value: number;
 	originSheet: number;
 	originItem: number;
 	originValue: number;
-	originRowCount: number;
 }
 export interface ResultGetDetailOrigin {
 	ret: ReturnGetDetailOriginRet[];
@@ -290,15 +344,14 @@ export interface ParamGetDetailOriginQPAs {
 }
 export interface ReturnGetDetailOriginQPAsRet {
 	id: number;
-	sheet: number;
-	origin: number;
+	base: number;
+	item: number;
 	value: number;
 	originSheet: number;
 	originItem: number;
-	originQuantity: number;
+	originValue: number;
 	originPrice: number;
 	originAmount: number;
-	originRowCount: number;
 }
 export interface ResultGetDetailOriginQPAs {
 	ret: ReturnGetDetailOriginQPAsRet[];
@@ -311,13 +364,26 @@ export interface ReturnGetDetailQPAsFromOriginRet {
 	origin: number;
 	originSheet: number;
 	originItem: number;
-	originQuantity: number;
+	originValue: number;
 	originPrice: number;
 	originAmount: number;
 	done: number;
 }
 export interface ResultGetDetailQPAsFromOrigin {
 	ret: ReturnGetDetailQPAsFromOriginRet[];
+}
+
+export interface ParamSearchItem {
+	base: number;
+	key: string;
+}
+export interface ReturnSearchItem$page {
+	id: number;
+	no: string;
+	ex: string;
+}
+export interface ResultSearchItem {
+	$page: ReturnSearchItem$page[];
 }
 
 export interface ParamSearchProduct {
@@ -394,6 +460,60 @@ export interface ReturnSearchStoreOut$page {
 }
 export interface ResultSearchStoreOut {
 	$page: ReturnSearchStoreOut$page[];
+}
+
+export interface Item extends ID {
+	base: number;
+	no?: string;
+	ex: string;
+}
+
+export interface ItemInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	no?: string;
+	ex: string;
+}
+
+export interface Sheet extends ID {
+	base: number;
+	no?: string;
+	item: number;
+	operator: number;
+	ex: string;
+}
+
+export interface SheetInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	no?: string;
+	item: number | ID;
+	operator: number | ID;
+	ex: string;
+}
+
+export interface Atom extends ID {
+	base: number;
+	item: number;
+	ex: string;
+}
+
+export interface AtomInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	item: number | ID;
+	ex: string;
+}
+
+export interface Join extends ID {
+	base: number;
+	item: number;
+}
+
+export interface JoinInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	item: number | ID;
 }
 
 export interface Product extends ID {
@@ -531,46 +651,33 @@ export interface SheetStoreOutInActs extends ID {
 }
 
 export interface Detail extends ID {
-	sheet: number;
+	base: number;
 	item: number;
 	value: number;
 }
 
 export interface DetailInActs extends ID {
 	ID?: UqID<any>;
-	sheet: number | ID;
+	base: number | ID;
 	item: number | ID;
 	value: number;
 }
 
 export interface DetailQPA extends ID {
-	sheet: number;
+	base: number;
 	item: number;
-	quantity: number;
+	value: number;
 	price: number;
 	amount: number;
 }
 
 export interface DetailQPAInActs extends ID {
 	ID?: UqID<any>;
-	sheet: number | ID;
+	base: number | ID;
 	item: number | ID;
-	quantity: number;
+	value: number;
 	price: number;
 	amount: number;
-}
-
-export interface DetailOrigin extends ID {
-	sheet: number;
-	origin: number;
-	value: number;
-}
-
-export interface DetailOriginInActs extends ID {
-	ID?: UqID<any>;
-	sheet: number | ID;
-	origin: number | ID;
-	value: number;
 }
 
 export interface IxMySheet extends IX {
@@ -618,6 +725,12 @@ export interface ResultHistoryStorage {
 export interface ParamActs {
 	project?: ProjectInActs[];
 	history?: HistoryInActs[];
+	prop?: PropInActs[];
+	ixProp?: IxProp[];
+	item?: ItemInActs[];
+	sheet?: SheetInActs[];
+	atom?: AtomInActs[];
+	join?: JoinInActs[];
 	product?: ProductInActs[];
 	contact?: ContactInActs[];
 	batch?: BatchInActs[];
@@ -630,7 +743,6 @@ export interface ParamActs {
 	sheetStoreOut?: SheetStoreOutInActs[];
 	detail?: DetailInActs[];
 	detailQPA?: DetailQPAInActs[];
-	detailOrigin?: DetailOriginInActs[];
 	ixMySheet?: IxMySheet[];
 	priceName?: PriceNameInActs[];
 }
@@ -655,16 +767,20 @@ export interface UqExt extends Uq {
 	BookSheetSale: UqAction<ParamBookSheetSale, ResultBookSheetSale>;
 	BookSheetStoreIn: UqAction<ParamBookSheetStoreIn, ResultBookSheetStoreIn>;
 	BookSheetStoreOut: UqAction<ParamBookSheetStoreOut, ResultBookSheetStoreOut>;
+	SaveItem: UqAction<ParamSaveItem, ResultSaveItem>;
 	SaveProduct: UqAction<ParamSaveProduct, ResultSaveProduct>;
 	SaveContact: UqAction<ParamSaveContact, ResultSaveContact>;
 	Project: UqID<any>;
 	History: UqID<any>;
+	Prop: UqID<any>;
+	IxProp: UqIX<any>;
 	GetDetails: UqQuery<ParamGetDetails, ResultGetDetails>;
 	GetDetailQPAs: UqQuery<ParamGetDetailQPAs, ResultGetDetailQPAs>;
 	GetDetailOrigin: UqQuery<ParamGetDetailOrigin, ResultGetDetailOrigin>;
 	GetDetailFromOrigin: UqQuery<ParamGetDetailFromOrigin, ResultGetDetailFromOrigin>;
 	GetDetailOriginQPAs: UqQuery<ParamGetDetailOriginQPAs, ResultGetDetailOriginQPAs>;
 	GetDetailQPAsFromOrigin: UqQuery<ParamGetDetailQPAsFromOrigin, ResultGetDetailQPAsFromOrigin>;
+	SearchItem: UqQuery<ParamSearchItem, ResultSearchItem>;
 	SearchProduct: UqQuery<ParamSearchProduct, ResultSearchProduct>;
 	SearchProductForPurchase: UqQuery<ParamSearchProductForPurchase, ResultSearchProductForPurchase>;
 	SearchProductForSale: UqQuery<ParamSearchProductForSale, ResultSearchProductForSale>;
@@ -672,6 +788,10 @@ export interface UqExt extends Uq {
 	SearchContact: UqQuery<ParamSearchContact, ResultSearchContact>;
 	SearchStoreIn: UqQuery<ParamSearchStoreIn, ResultSearchStoreIn>;
 	SearchStoreOut: UqQuery<ParamSearchStoreOut, ResultSearchStoreOut>;
+	Item: UqID<any>;
+	Sheet: UqID<any>;
+	Atom: UqID<any>;
+	Join: UqID<any>;
 	Product: UqID<any>;
 	Contact: UqID<any>;
 	Batch: UqID<any>;
@@ -684,7 +804,6 @@ export interface UqExt extends Uq {
 	SheetStoreOut: UqID<any>;
 	Detail: UqID<any>;
 	DetailQPA: UqID<any>;
-	DetailOrigin: UqID<any>;
 	IxMySheet: UqIX<any>;
 	PriceName: UqID<any>;
 	ReportStorage: UqQuery<ParamReportStorage, ResultReportStorage>;
@@ -1047,6 +1166,39 @@ export const uqSchema={
         ],
         "returns": [] as any
     },
+    "saveitem": {
+        "name": "SaveItem",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "pNo",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 200
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
     "saveproduct": {
         "name": "SaveProduct",
         "type": "action",
@@ -1179,6 +1331,96 @@ export const uqSchema={
         "idType": 3,
         "isMinute": true
     },
+    "propdatatype": {
+        "name": "PropDataType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "none": 0,
+            "bigint": 1,
+            "number": 2,
+            "bool": 3,
+            "date": 4,
+            "datetime": 5,
+            "type": 81,
+            "radio": 101,
+            "check": 102,
+            "picker": 201,
+            "group": 301,
+            "char": 1001,
+            "text": 2001,
+            "itemPicker": 9998,
+            "item": 9999
+        }
+    },
+    "prop": {
+        "name": "Prop",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "name",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 100
+            },
+            {
+                "name": "type",
+                "type": "enum"
+            }
+        ],
+        "values": {},
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "name",
+                "type": "char",
+                "size": 50
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "ixprop": {
+        "name": "IxProp",
+        "type": "ix",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "ix",
+                "type": "id"
+            },
+            {
+                "name": "xi",
+                "type": "id",
+                "ID": "$nu",
+                "tuid": "$nu"
+            }
+        ],
+        "ixx": false,
+        "hasSort": false,
+        "xiType": 0
+    },
     "getdetails": {
         "name": "GetDetails",
         "type": "query",
@@ -1200,7 +1442,7 @@ export const uqSchema={
                         "null": false
                     },
                     {
-                        "name": "sheet",
+                        "name": "base",
                         "type": "id"
                     },
                     {
@@ -1238,7 +1480,7 @@ export const uqSchema={
                         "null": false
                     },
                     {
-                        "name": "sheet",
+                        "name": "base",
                         "type": "id"
                     },
                     {
@@ -1246,7 +1488,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "quantity",
+                        "name": "value",
                         "type": "dec",
                         "scale": 4,
                         "precision": 18
@@ -1288,11 +1530,11 @@ export const uqSchema={
                         "null": false
                     },
                     {
-                        "name": "sheet",
+                        "name": "base",
                         "type": "id"
                     },
                     {
-                        "name": "origin",
+                        "name": "item",
                         "type": "id"
                     },
                     {
@@ -1314,10 +1556,6 @@ export const uqSchema={
                         "type": "dec",
                         "scale": 4,
                         "precision": 18
-                    },
-                    {
-                        "name": "originRowCount",
-                        "type": "int"
                     }
                 ]
             }
@@ -1387,11 +1625,11 @@ export const uqSchema={
                         "null": false
                     },
                     {
-                        "name": "sheet",
+                        "name": "base",
                         "type": "id"
                     },
                     {
-                        "name": "origin",
+                        "name": "item",
                         "type": "id"
                     },
                     {
@@ -1409,7 +1647,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "originQuantity",
+                        "name": "originValue",
                         "type": "dec",
                         "scale": 4,
                         "precision": 18
@@ -1425,10 +1663,6 @@ export const uqSchema={
                         "type": "dec",
                         "scale": 4,
                         "precision": 18
-                    },
-                    {
-                        "name": "originRowCount",
-                        "type": "int"
                     }
                 ]
             }
@@ -1462,7 +1696,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "originQuantity",
+                        "name": "originValue",
                         "type": "dec",
                         "scale": 4,
                         "precision": 18
@@ -1486,6 +1720,45 @@ export const uqSchema={
                         "precision": 18
                     }
                 ]
+            }
+        ]
+    },
+    "searchitem": {
+        "name": "SearchItem",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "key",
+                "type": "char",
+                "size": 50
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 50
+                    }
+                ],
+                "order": "desc"
             }
         ]
     },
@@ -1700,6 +1973,160 @@ export const uqSchema={
                 "order": "asc"
             }
         ]
+    },
+    "item": {
+        "name": "Item",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 200
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "sheet": {
+        "name": "Sheet",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "item",
+                "type": "id"
+            },
+            {
+                "name": "operator",
+                "type": "id"
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 100
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "atom": {
+        "name": "Atom",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "item",
+                "type": "id"
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 50
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "join": {
+        "name": "Join",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "item",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "item",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
     },
     "product": {
         "name": "Product",
@@ -1992,7 +2419,7 @@ export const uqSchema={
         "joins": [
             {
                 "ID": "detailqpa",
-                "field": "sheet"
+                "field": "base"
             }
         ]
     },
@@ -2030,7 +2457,7 @@ export const uqSchema={
         "joins": [
             {
                 "ID": "detailqpa",
-                "field": "sheet"
+                "field": "base"
             }
         ]
     },
@@ -2067,8 +2494,8 @@ export const uqSchema={
         "isMinute": true,
         "joins": [
             {
-                "ID": "detailorigin",
-                "field": "sheet"
+                "ID": "detail",
+                "field": "base"
             }
         ]
     },
@@ -2105,8 +2532,8 @@ export const uqSchema={
         "isMinute": true,
         "joins": [
             {
-                "ID": "detailorigin",
-                "field": "sheet"
+                "ID": "detail",
+                "field": "base"
             }
         ]
     },
@@ -2122,7 +2549,7 @@ export const uqSchema={
                 "null": false
             },
             {
-                "name": "sheet",
+                "name": "base",
                 "type": "id"
             },
             {
@@ -2153,7 +2580,7 @@ export const uqSchema={
                 "null": false
             },
             {
-                "name": "sheet",
+                "name": "base",
                 "type": "id"
             },
             {
@@ -2161,7 +2588,7 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "quantity",
+                "name": "value",
                 "type": "dec",
                 "scale": 4,
                 "precision": 18
@@ -2174,37 +2601,6 @@ export const uqSchema={
             },
             {
                 "name": "amount",
-                "type": "dec",
-                "scale": 4,
-                "precision": 18
-            }
-        ],
-        "keys": [] as any,
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "detailorigin": {
-        "name": "DetailOrigin",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "sheet",
-                "type": "id"
-            },
-            {
-                "name": "origin",
-                "type": "id"
-            },
-            {
-                "name": "value",
                 "type": "dec",
                 "scale": 4,
                 "precision": 18

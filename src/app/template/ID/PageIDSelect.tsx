@@ -6,17 +6,18 @@ import { useUqApp } from "app/UqApp";
 import { PartProps } from "../Part";
 import { PartID } from "./PartID";
 import { useModal } from "tonwa-app";
+import { QueryMore } from "app/tool";
 
 interface PageIDSelectProps {
     ViewItem?: ({ value }: { value: any }) => JSX.Element;
-    query?: UqQuery<any, any>;
+    query?: QueryMore;
 }
 
 export function PageIDSelect({ Part, query, ViewItem }: PartProps<PartID> & PageIDSelectProps) {
     const { closeModal } = useModal();
     const uqApp = useUqApp();
-    const { caption, placeholder, query: queryInPart, ViewItem: ViewItemInPart, autoLoadOnOpen } = uqApp.partOf(Part);
-    query = query ?? queryInPart;
+    const { caption, placeholder, searchItems: searchItemsInPart, ViewItemID: ViewItemInPart, autoLoadOnOpen } = uqApp.objectOf(Part);
+    query = query ?? searchItemsInPart;
     ViewItem = ViewItem ?? ViewItemInPart;
     const [searchParam, setSearchParam] = useState(autoLoadOnOpen === true ? { key: undefined as string } : undefined);
     const searchBox = <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder={placeholder} />;

@@ -1,5 +1,8 @@
-import { FormRow } from "app/coms";
-import { UqQuery } from "tonwa-uq";
+import { FormInput, FormRow } from "app/coms";
+import { BaseID, QueryMore } from "app/tool";
+import { UqApp, useUqApp } from "app/UqApp";
+import { UqID } from "tonwa-uq";
+import { Item } from "uqs/UqDefault";
 import { PartInput } from "../Part";
 
 export interface IDViewRowProps {
@@ -9,21 +12,82 @@ export interface IDViewRowProps {
 }
 
 export abstract class PartID extends PartInput {
+    readonly ID: UqID<any>;
+
     // IDList
-    readonly abstract ViewItem: (value: any) => JSX.Element;
-    readonly abstract query: UqQuery<any, any>;
-    readonly abstract listTop?: JSX.Element;
+    readonly searchItems: QueryMore;
+    readonly ViewItemID: (value: any) => JSX.Element;
+    readonly listTop?: JSX.Element;
 
     // IDNew
-    readonly abstract formRows: FormRow[];
-    readonly abstract onNo: (no: string) => void;
-    readonly abstract actSave: (no: string, data: any) => Promise<any>;
+    readonly formRows: FormRow[];
+    readonly onNo: (no: string) => void;
+    readonly actSave: (no: string, data: any) => Promise<any>;
 
     // IDSelect
-    readonly abstract placeholder?: string;
+    get placeholder(): string { return `${this.caption}编号名称`; }
     //readonly abstract onItemClick: (item: any) => Promise<void>;
-    readonly abstract autoLoadOnOpen?: boolean;   // auto load data on open
+    readonly autoLoadOnOpen: boolean;   // auto load data on open
 
     // IDView
-    readonly abstract viewRows: IDViewRowProps[];
+    readonly viewRows: IDViewRowProps[];
+
+    constructor(uqApp: UqApp) {
+        super(uqApp);
+        this.ID = uqApp.uq.Item;
+
+        let uq = this.uq;
+        this.searchItems = async (param: any, pageStart: any, pageSize: number) => {
+            let base = await this.baseID.getId();
+            let newParam = { ...param, base };
+            let { $page } = await uq.SearchItem.page(newParam, pageStart, pageSize);
+            return $page;
+        }
+
+        const rowNO: FormInput = { name: 'no', label: '编号', type: 'text', options: { maxLength: 20, disabled: true } };
+        this.formRows = [
+            rowNO,
+            { name: 'ex', label: '名称', type: 'text', options: { maxLength: 50 } },
+            { type: 'submit' },
+        ];
+        this.onNo = (no: string) => {
+            rowNO.options.value = no;
+        }
+        this.actSave = async (no: string, data: any) => {
+            let base = await this.baseID.getId() as number;
+            const { ex } = data;
+            let ret = await uq.SaveItem.submit({ base, pNo: no, ex });
+            return ret;
+        }
+
+        this.viewRows = [
+            { name: 'id', label: 'id', readonly: true },
+            { name: 'no', label: '编号', readonly: true },
+            { name: 'ex', label: '名称' },
+        ];
+
+        this.autoLoadOnOpen = true;
+        this.listTop = <ListTop />;
+
+        this.ViewItemID = ViewItemID;
+    }
+}
+
+export function ViewItemID({ value: { no, ex } }: { value: Item }) {
+    return <div className="d-block">
+        <div><b>{ex}</b></div>
+        <div className='small text-muted'>{no}</div>
+    </div>;
+}
+
+function ListTop() {
+    const uqApp = useUqApp();
+    const { UqDefault } = uqApp.uqs;
+    async function onClick() {
+        let ret = await UqDefault.Sp.submit({});
+        alert('click ok');
+    }
+    return <div className="px-3 py-3">
+        <button className='btn btn-outline-primary' onClick={onClick}>test auto reload entities</button>
+    </div>;
 }

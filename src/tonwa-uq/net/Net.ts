@@ -2,7 +2,7 @@ import { UqTokenApi } from "./uqApi";
 import { UserApi } from "./userApi";
 import { HttpChannel } from './httpChannel';
 import { buildHosts } from './host';
-import { LocalDb } from "../tool";
+import { isPromise, LocalDb } from "../tool";
 
 export interface PromiseValue<T> {
     resolve: (value?: T | PromiseLike<T>) => void;
@@ -137,14 +137,6 @@ export class Net {
         return `${url}uq/${testOrProd}/${db}/`;
     }
 
-    private isPromise(obj: any) {
-        return (
-            !!obj &&
-            (typeof obj === "object" || typeof obj === "function") &&
-            typeof obj.then === "function"
-        );
-    }
-
     async getHttpChannel(uq: string): Promise<HttpChannel> {
         let channel = this.uqChannels[uq];
         if (channel === undefined) {
@@ -157,7 +149,7 @@ export class Net {
             return await channel;
         }
 
-        if (this.isPromise(channel) === false) return channel as HttpChannel;
+        if (isPromise(channel) === false) return channel as HttpChannel;
         return await (channel as Promise<HttpChannel>);
     }
 

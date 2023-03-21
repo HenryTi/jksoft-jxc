@@ -5,27 +5,46 @@ IDX Seq (
 );
 
 ENUM PropDataType (
+    none = 0,           -- 有否，无值
     bigint = 1,         -- 8字节大整数
     number = 2,         -- 固定4位小数，实际存放整数
     bool = 3,           -- 0或1
     date = 4,           -- 整数表示的日期，1970-1-1为0
     datetime = 5,       -- 整数秒时间，1970-1-1 0:0utc 为0
+    type = 81,          -- id type，定义一种ID类别
     radio = 101,        -- 单选
     check = 102,        -- 多选
+    picker = 201,       -- ID
+    group = 301,        -- prop 分组
     char = 1001,        -- CHAR(100)
     text = 2001,        -- MEDIUMTEXT
-);
--- 可选项也是一个prop
-ID Prop (
-    id,
-    KEY name CHAR(50),
-    caption CHAR(100),          -- 如果需要不同于名字的界面显示
-    type ENUM PropDataType,
+    itemPicker = 9998,  -- Picker项
+    item = 9999,        -- 可选项
 );
 
--- ix=ID type，则特定ID有多少属性
--- ix=Prop，则特定属性，有多少可选项
-IX IxProp (
+-- 可选项也是一个prop
+-- IDType 也是一个Prop，name：$id$entity
+ID Prop ver 0.3 (
+    id,
+    KEY base ID,               -- owner prop
+    KEY name CHAR(50),
+    ex CHAR(100),               -- 可以是标题，也可以是对数据结构的描述
+    type ENUM PropDataType,
+)
++ (base, name, type)
+VALUES
+(0, NameOf Prop, PropDataType.none),
+(0, NameOf Atom, PropDataType.none),
+(0, NameOf Item, PropDataType.none),
+(0, NameOf Join, PropDataType.none),
+(0, NameOf Sheet, PropDataType.none),
+(0, NameOf $user, PropDataType.none),
+;
+
+-- ix=IDType，特定ID有多少属性
+-- ix=Prop，特定属性，有多少可选项
+-- ix=ID value, 可选项有否
+IX *IxProp (
     ix,                 -- ID type or Prop
     xi Prop,            -- prop
 );
@@ -46,10 +65,4 @@ IX IxText (
     ix,
     xi,
     value TEXT(medium),
-);
-
--- 可选项有否
-IX IxHave (
-    ix,
-    xi,
 );

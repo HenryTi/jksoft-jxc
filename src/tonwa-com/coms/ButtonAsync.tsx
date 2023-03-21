@@ -1,4 +1,4 @@
-import React, { CSSProperties, MouseEvent, MouseEventHandler, useRef } from "react";
+import React, { CSSProperties, MouseEvent, MouseEventHandler, ReactNode, useRef } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { ComAsync } from "./ComAsync";
@@ -47,3 +47,11 @@ export function ButtonAsync(props: { onClick: (evt: MouseEvent<HTMLButtonElement
         return <button {...props} onClick={newOnClick}>{children}</button>;
     }
 }
+
+export function ButtonSubmit({ className, isSubmiting, children, disabled }: { className: string; isSubmiting: boolean; children: ReactNode; disabled?: boolean; }) {
+    return <button type="submit" disabled={isSubmiting || (disabled ?? false)} className={(className ?? '') + ' position-relative'}>
+        {children}
+        {isSubmiting && <ComAsync isWaiting={true} />}
+    </button>;
+}
+

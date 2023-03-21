@@ -1,22 +1,22 @@
 import { UqApp, useUqApp } from "app/UqApp";
-import { ReturnGetDetailQPAsFromOriginRet } from "uqs/JsTicket";
+import { ReturnGetDetailQPAsFromOriginRet } from "uqs/UqDefault";
 import { ChangeEvent, FocusEvent, useRef, useState } from "react";
 import { ViceTitle } from "app/coms";
 import { FA, List, LMR } from "tonwa-com";
-import { SheetBase, PartDerive } from "app/template";
+import { SheetBase, PartDerive, DetailBase } from "app/template";
 
-export function ViewEditRow<S extends SheetBase, D extends object = any>({ row, Part }: { row: any, Part: new (uqApp: UqApp) => PartDerive<S, D> }) {
+export function ViewEditRow<S extends SheetBase, D extends DetailBase = any>({ row, Part }: { row: any, Part: new (uqApp: UqApp) => PartDerive<S, D> }) {
     const uqApp = useUqApp();
-    const part = uqApp.partOf(Part);
+    const part = uqApp.objectOf(Part);
     const { uq, editing } = part;
     const { sheet } = row;
     const [details, setDetails] = useState<any[]>(row.details);
     function ViewItemDetail({ value: detail }: { value: ReturnGetDetailQPAsFromOriginRet & { id: number; $changedValue: number; value: number } }) {
         let inp = useRef(undefined as HTMLInputElement);
-        let { id, origin, originQuantity, value, done } = detail;
+        let { id, origin, originValue, value, done } = detail;
         let [disabled, setDisabled] = useState(false);
         done = done ?? 0;
-        let operatableValue = originQuantity - done;
+        let operatableValue = originValue - done;
         async function changeValue(newValue: number) {
             if (newValue !== undefined) {
                 if (newValue < 0) newValue = 0;

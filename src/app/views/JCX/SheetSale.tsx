@@ -1,16 +1,16 @@
 import { Route, useNavigate, useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import { IDView, Page, useModal } from "tonwa-app";
 import { UqAction, UqID, UqQuery } from "tonwa-uq";
 import { PartProps } from "app/template/Part";
 import { UqApp, useUqApp } from "app/UqApp";
-import { SheetSale, DetailQPA } from "uqs/JsTicket";
+import { SheetSale, DetailQPA } from "uqs/UqDefault";
 import { PageOriginEdit, PageOriginNew, PartSheet, PartOrigin, PartDetail, PageDetailQPA } from "../../template/Sheet";
-import { PageProductSelectForSale, ViewProduct } from "./IDProduct";
-import { ChangeEvent, useState } from "react";
+import { PageProductSelectForSale } from "./IDProduct";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { FA, LMR } from "tonwa-com";
-import { ViewContact } from "./IDContact";
+import { ViewItemID } from "app/template";
+import { BaseID, BaseIDPropUnit, QueryMore } from "app/tool";
+import { IDPartContact } from "./IDContact";
 
 export const captionSale = '销售单';
 const pathSaleEdit = 'sale-edit';
@@ -18,12 +18,16 @@ const pathSaleEdit = 'sale-edit';
 export class SheetPartSale extends PartOrigin<SheetSale, DetailQPA>  {
     readonly path: string;
 
+    /*
     readonly ID: UqID<any>;
     readonly IDDetail: UqID<any>;
     readonly QueryGetDetails: UqQuery<{ id: number }, { ret: any[] }>;
-    readonly ActBookSheet: UqAction<any, any>;
     readonly QuerySearchSheetItem: UqQuery<any, any>;
+    */
+    readonly ActBookSheet: UqAction<any, any>;
+    readonly QuerySearchItem: QueryMore;
 
+    readonly baseID: BaseID;
     readonly caption: string;
 
     readonly PageDetailItemSelect: () => JSX.Element;
@@ -39,13 +43,17 @@ export class SheetPartSale extends PartOrigin<SheetSale, DetailQPA>  {
     constructor(uqApp: UqApp) {
         super(uqApp);
         this.path = pathSaleEdit;
+        this.baseID = uqApp.objectOf(BaseIDSale);
 
-        const { JsTicket: uq } = uqApp.uqs;
+        const { UqDefault: uq } = uqApp.uqs;
+        /*
         this.ID = uq.SheetSale;
         this.IDDetail = uq.DetailQPA;
         this.QueryGetDetails = uq.GetDetailQPAs;
-        this.ActBookSheet = uq.BookSheetSale;
         this.QuerySearchSheetItem = uq.SearchContact;
+        */
+        this.ActBookSheet = uq.BookSheetSale;
+        this.QuerySearchItem = uqApp.objectOf(IDPartContact).searchItems;
 
         this.PageDetailItemSelect = PageProductSelectForSale;
         this.caption = captionSale;
@@ -53,14 +61,14 @@ export class SheetPartSale extends PartOrigin<SheetSale, DetailQPA>  {
         this.PageSheetDetail = PageSheetDetail as any;
 
         this.ViewItemEditRow = function ({ row }: { row: DetailQPA }) {
-            let { item, quantity, price, amount } = row;
+            let { item, value, price, amount } = row;
             return <LMR className="px-3 py-2">
-                <IDView uq={uq} id={item} Template={ViewProduct} />
+                <IDView uq={uq} id={item} Template={ViewItemID} />
                 <div className="align-self-end text-end d-flex align-items-end">
                     <div>
                         <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount.toFixed(4)}</span>
                         <br />
-                        <small>数量:</small> <b>{quantity}</b>
+                        <small>数量:</small> <b>{value}</b>
                     </div>
                     <FA name="pencil-square-o" className="ms-3 text-info" />
                 </div>
@@ -74,7 +82,7 @@ export class SheetPartSale extends PartOrigin<SheetSale, DetailQPA>  {
         }
 
         this.ViewTarget = function ({ sheet }: { sheet: SheetSale }) {
-            return <IDView id={sheet.target} uq={uq} Template={ViewContact} />;
+            return <IDView id={sheet.target} uq={uq} Template={ViewItemID} />;
         }
 
         this.ViewTargetBand = ({ sheet }: { sheet: SheetSale }) => {
@@ -92,6 +100,10 @@ export class SheetPartSale extends PartOrigin<SheetSale, DetailQPA>  {
         let detail = { item: selectedItem.id, price: selectedItem.price, };
         return detail;
     }
+}
+
+class BaseIDSale extends BaseIDPropUnit {
+    readonly prop = 'sale';
 }
 
 function PageSaleEdit() {
@@ -160,7 +172,7 @@ class DetailPartSale extends PartDetail<DetailQPA> {
     get path(): string { return undefined; }
     get itemCaption(): string { return '产品'; }
     get ViewItemTemplate(): ({ value }: { value: any; }) => JSX.Element {
-        return ViewProduct;
+        return ViewItemID;
     }
     get priceDisabled() { return true; }
 }

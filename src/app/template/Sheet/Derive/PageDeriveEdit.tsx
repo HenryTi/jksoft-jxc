@@ -4,13 +4,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useModal } from "tonwa-app";
 import { useEffectOnce } from "tonwa-com";
 import { PageSheetEdit } from "../PageSheetEdit";
-import { SheetBase } from "../EditingBase";
+import { DetailBase, SheetBase } from "../EditingBase";
 import { PartDerive } from "./PartDerive";
 
-export function PageDeriveEdit<S extends SheetBase, D extends object>({ Part }: PartProps<PartDerive<S, D>>) {
+export function PageDeriveEdit<S extends SheetBase, D extends DetailBase>({ Part }: PartProps<PartDerive<S, D>>) {
     const sheet: any = {};
     const uqApp = useUqApp();
-    const part = uqApp.partOf(Part);
+    const part = uqApp.objectOf(Part);
     const { editing, ModalSheetStart } = part;
     const { openModal } = useModal();
     const navigate = useNavigate();

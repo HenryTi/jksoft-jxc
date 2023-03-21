@@ -5,3 +5,4 @@ export * from './caseString';
 export * from './getObjPropIgnoreCase';
 export * from './uqConfig';
 export * from './propertyOf';
+export * from './isPromise';

@@ -19,10 +19,10 @@ PROC BookSheetOrigin (
     }
     WITH IxMySheet IX=$user XI=id DEL;
     VAR sumTodo VALUE = (
-        SELECT SUM(a.quantity-ifnull(b.done, 0)) 
+        SELECT SUM(a.value-ifnull(b.done, 0)) 
             FROM DetailQPA as a 
                 LEFT JOIN Done as b ON b.id=a.id 
-            WHERE a.sheet=id
+            WHERE a.base=id
         );
 
     IF sumTodo<>0 {
@@ -54,10 +54,10 @@ PROC BookSheetDerive ver 0.8 (
     TABLE originSheets(KEY id ID);
     WITH IxMySheet IX=$user XI=id DEL;
     -- 下面记账
-    FOR (VAR id ID, value VALUE, origin ID, originSheet ID, item ID, quantity QUANTITY, price PRICE, amount AMOUNT
-        OF SELECT a.id, a.value, a.origin, b.sheet as originSheet, b.item, b.quantity, b.price, b.amount
-            FROM DetailOrigin as a JOIN DetailQPA as b ON b.id=a.origin
-            WHERE a.sheet=id
+    FOR (VAR id ID, value VALUE, origin ID, originSheet ID, item ID, value QUANTITY, price PRICE, amount AMOUNT
+        OF SELECT a.id, a.value, a.item as origin, b.base as originSheet, b.item, b.value, b.price, b.amount
+            FROM Detail as a JOIN DetailQPA as b ON b.id=a.item
+            WHERE a.base=id
             ORDER BY a.id ASC
     ) {
         VAR delta VALUE = neg * value;
@@ -69,10 +69,10 @@ PROC BookSheetDerive ver 0.8 (
         WITH History as a ID to history SET a.project=project, a.value=delta, a.ref=id;
     }
     FOR (VAR origin ID OF SELECT a.id as origin FROM originSheets as a) {
-        IF (SELECT sum(b.quantity-c.done)
+        IF (SELECT sum(b.value-c.done)
                 FROM DetailQPA as b
                     JOIN Done as c on c.id=b.id 
-                WHERE b.sheet=origin
+                WHERE b.base=origin
            )=0
         {
             QUEUE (queueType) Del origin;

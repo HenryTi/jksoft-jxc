@@ -1,21 +1,22 @@
 import { Band } from "app/coms";
 import { PartProps } from "app/template";
 import { PageDeriveEdit, PartSheet, PartDerive } from "app/template/Sheet";
+import { BaseID, BaseIDPropUnit } from "app/tool";
 import { UqApp } from "app/UqApp";
 import { Route } from "react-router-dom";
 import { UserView } from "tonwa-app";
 import { UqAction, UqID, UqQuery } from "tonwa-uq";
-import { SheetStoreOut, DetailOrigin } from "uqs/JsTicket";
+import { SheetStoreOut, Detail } from "uqs/UqDefault";
 import { SheetPartSale } from "./SheetSale";
 import { pathStoreIn } from "./SheetStoreIn";
 
 export const captionStoreOut = '出库单';
 export const pathStoreOut = 'store-out';
 
-export class SheetPartStoreOut extends PartDerive<SheetStoreOut, DetailOrigin> {
+export class SheetPartStoreOut extends PartDerive<SheetStoreOut, Detail> {
     readonly caption: string;
     readonly path: string;
-    readonly ID: UqID<any>;
+    readonly baseID: BaseID;
     readonly QueryOrigin: UqQuery<any, any>;
     readonly ActBookSheet: UqAction<any, any>;
     readonly ViewTarget: (props: { sheet: SheetStoreOut }) => JSX.Element;
@@ -26,9 +27,9 @@ export class SheetPartStoreOut extends PartDerive<SheetStoreOut, DetailOrigin> {
 
         this.caption = captionStoreOut;
         this.path = pathStoreOut;
+        this.baseID = uqApp.objectOf(BaseIDStoreOut);
 
         let uq = this.uq;
-        this.ID = uq.SheetStoreOut;
         this.QueryOrigin = uq.SearchStoreOut;
         this.ActBookSheet = uq.BookSheetStoreOut;
 
@@ -41,11 +42,15 @@ export class SheetPartStoreOut extends PartDerive<SheetStoreOut, DetailOrigin> {
             </Band>;
         }
     }
-    protected getOriginSheetPart(): PartSheet { return this.uqApp.partOf(SheetPartSale) as any; }
+    protected getOriginSheetPart(): PartSheet { return this.uqApp.objectOf(SheetPartSale) as any; }
 
     buildSheet(id: number, no: string, target: number): SheetStoreOut {
         return { id, no, operator: target };
     }
+}
+
+class BaseIDStoreOut extends BaseIDPropUnit {
+    readonly prop = 'storeout';
 }
 
 function PageStoreOutEdit() {

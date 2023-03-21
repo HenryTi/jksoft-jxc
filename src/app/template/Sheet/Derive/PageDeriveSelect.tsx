@@ -15,9 +15,9 @@ interface SheetGroup {
 export function PageDeriveSelect<S extends SheetBase, D extends DetailBase>({ Part }: PartProps<PartDerive<S, D>>) {
     const uqApp = useUqApp();
     const { closeModal } = useModal();
-    const part = uqApp.partOf(Part);
+    const part = uqApp.objectOf(Part);
     const { editing } = part;
-    const uq = uqApp.uqs.JsTicket;
+    const uq = uqApp.uqs.UqDefault;
     const [items, setItems] = useState(null as SheetGroup[]);
     async function onSearch(key: string) {
         let sheetGroups = await editing.search(key);

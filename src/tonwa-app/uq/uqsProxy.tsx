@@ -2,27 +2,31 @@ import { UQsMan } from "tonwa-uq";
 import { Uq } from "./Uq";
 
 export function uqsProxy(uqsMan: UQsMan) {
-    const uqReacts: { [key: string]: any } = {};
+    const uqs: { [key: string]: any } = {};
     function setUq(uqKey: string, proxy: any): void {
         if (!uqKey) return;
         let lower = uqKey.toLowerCase();
-        uqReacts[uqKey] = proxy;
-        if (lower !== uqKey) uqReacts[lower] = proxy;
+        uqs[uqKey] = proxy;
+        if (lower !== uqKey) uqs[lower] = proxy;
     }
-    for (let uqMan of uqsMan.uqMans) {
+    const { uqMans } = uqsMan;
+    const len = uqMans.length;
+    for (let i = 0; i < len; i++) {
+        const uqMan = uqMans[i];
         let uqReact = new Uq(uqMan);
         let proxy = uqReact.$_createProxy();
         setUq(uqMan.getUqKey(), proxy);
         setUq(uqMan.getUqKeyWithConfig(), proxy);
+        if (i === 0) setUq('uqdefault', proxy);
     }
     function onUqProxyError(key: string) {
-        for (let i in uqReacts) {
-            let uqReact = uqReacts[i];
+        for (let i in uqs) {
+            let uqReact = uqs[i];
             uqReact.localMap.removeAll();
         }
         console.error(`uq proxy ${key} error`);
     }
-    return new Proxy(uqReacts, {
+    return new Proxy(uqs, {
         get: (target, key, receiver) => {
             let lk = (key as string).toLowerCase();
             let ret = target[lk];

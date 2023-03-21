@@ -1,5 +1,5 @@
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { DetailBase, SheetBase, EditingBase, DetailValueBase } from "../EditingBase";
+import { SheetBase, EditingBase, DetailBase } from "../EditingBase";
 import { atom, PrimitiveAtom } from "jotai";
 import { PartDerive } from "./PartDerive";
 
@@ -8,7 +8,7 @@ interface SheetGroup {
     sheets: any[];
 }
 
-export class EditingDerive<S extends SheetBase, D extends DetailValueBase> extends EditingBase<S> {
+export class EditingDerive<S extends SheetBase, D extends DetailBase> extends EditingBase<S> {
     declare protected part: PartDerive<S, any>;
     readonly atomRows: PrimitiveAtom<{ sheet: S; details: D[] }[]>;
 
@@ -37,14 +37,14 @@ export class EditingDerive<S extends SheetBase, D extends DetailValueBase> exten
         const groupColl: { [origin: number]: { sheet: SheetBase; details: DetailBase[]; } } = {};
         let rows: { sheet: SheetBase, details: DetailBase[] }[] = [];
         for (let detail of details) {
-            let { origin } = detail;
-            let group = groupColl[origin];
+            let { item } = detail;
+            let group = groupColl[item];
             if (group === undefined) {
                 group = {
-                    sheet: { id: origin },
+                    sheet: { id: item },
                     details: []
                 }
-                groupColl[origin] = group;
+                groupColl[item] = group;
                 rows.push(group);
             }
             group.details.push(detail);

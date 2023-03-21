@@ -36,7 +36,7 @@ export interface RoleName {
     color?: string;
 }
 
-export abstract class UqAppBase<U = any> {
+export abstract class UqAppBase<UQS = any> {
     private readonly appConfig: AppConfig;
     private readonly uqConfigs: UqConfig[];
     private readonly uqsSchema: { [uq: string]: any; };
@@ -54,9 +54,8 @@ export abstract class UqAppBase<U = any> {
     readonly pageCache = new PageCache();
 
     uqsMan: UQsMan;
-    store: any;
     guest: number;
-    uqs: U;
+    uqs: UQS;
     uqUnit: UqUnit;
 
     constructor(appConfig: AppConfig, uqConfigs: UqConfig[], uqsSchema: { [uq: string]: any; }, appEnv: AppEnv) {
@@ -153,7 +152,7 @@ export abstract class UqAppBase<U = any> {
             let uqsMan = await createUQsMan(this.net, this.appConfig.version, this.uqConfigs, this.uqsSchema);
             console.log('createUQsMan');
             this.uqsMan = uqsMan;
-            this.uqs = uqsProxy(uqsMan) as U;
+            this.uqs = uqsProxy(uqsMan) as UQS;
 
             if (this.uqs) {
                 // this.uq = this.defaultUq;
@@ -209,6 +208,16 @@ export abstract class UqAppBase<U = any> {
         return this.roleNames[role];
     }
     */
+
+    private readonly objects = new Map<new (uqApp: any) => any, any>();
+    objectOf<T, A extends UqAppBase>(constructor: new (uqApp: A) => T) {
+        let ret = this.objects.get(constructor) as T;
+        if (ret === undefined) {
+            ret = new constructor(this as any);
+            this.objects.set(constructor, ret);
+        }
+        return ret;
+    }
 }
 
 class LocalStorageDb extends LocalDb {
@@ -265,7 +274,7 @@ const queryClient = new QueryClient({
     },
 });
 
-export function ViewUqAppBase({ uqApp, children }: { uqApp: UqAppBase; children: ReactNode; }) {
+export function ViewUqApp({ uqApp, children }: { uqApp: UqAppBase; children: ReactNode; }) {
     const [modalStack] = useAtom(uqApp.modal.stack);
     let [appInited, setAppInited] = useState<boolean>(false);
     useEffectOnce(() => {

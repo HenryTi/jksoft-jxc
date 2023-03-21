@@ -7,7 +7,7 @@ export const pathReportCenter = 'report';
 
 function PageReportCenter() {
     const uqApp = useUqApp();
-    const parts = [PartStorage].map(v => uqApp.partOf(v));
+    const parts = [PartStorage].map(v => uqApp.objectOf(v));
     return <Page header="报表中心">
         {parts.map((v, index) => {
             const { path, caption } = v;

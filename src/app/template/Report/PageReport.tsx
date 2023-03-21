@@ -7,7 +7,7 @@ import { PartReport } from "./PartReport";
 
 export function PageReport({ Part, children }: PartProps<PartReport> & { children?: ReactNode }) {
     const uqApp = useUqApp();
-    const part = uqApp.partOf(Part);
+    const part = uqApp.objectOf(Part);
     const { caption, QueryReport: ReportQuery, sortField, ViewItem, onItemClick } = part;
     const navigate = useNavigate();
     part.navigate = navigate;

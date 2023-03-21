@@ -211,7 +211,7 @@ function FormRowView({ row, register, errors }: FormRowViewProps) {
                 inputProps={register(name, newOptions)} defaultValue={options?.value} />;
         case 'submit':
             return <Band>
-                <input type="submit" disabled={options.disabled} readOnly={readOnly} className="btn btn-primary" value={label ?? '提交'} />
+                <input type="submit" disabled={options?.disabled} readOnly={readOnly} className="btn btn-primary" value={label ?? '提交'} />
             </Band>;
     }
 }

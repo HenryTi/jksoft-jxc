@@ -1,12 +1,13 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { List, Sep, Spinner, useEffectOnce } from "tonwa-com";
-import { UqQuery } from "tonwa-uq";
+import { isPromise, UqQuery } from "tonwa-uq";
 import { ModalContext, Page, PageProps, Scroller } from "tonwa-app";
 import { useNavigationType } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
+import { QueryMore } from "app/tool";
 
 interface PageQueryMoreProps<P, R> extends PageProps {
-    query: UqQuery<P, R> | ((param: any, pageStart: any, pageSize: number) => Promise<any[]>);
+    query: UqQuery<P, R> | QueryMore;
     param: P;
     sortField: string;
     pageStart?: any;
@@ -76,6 +77,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
             current.items = null;
             return;
         }
+        let valuesParam = await buildValueParam(param);
         let { pageStart, querying, isPopFirst, items, allLoaded } = current;
         if (allLoaded === true) return;
         if (isPopFirst === true) {
@@ -107,11 +109,11 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
             let sz = more === true ? pageMoreSize : pageSize;
             let szAsk = sz + 1;
             if (typeof query === 'function') {
-                let ret = await query(param, pageStart, szAsk);
+                let ret = await query(valuesParam, pageStart, szAsk);
                 arrResult = ret;
             }
             else {
-                let ret = await query.page(param, pageStart, szAsk);
+                let ret = await query.page(valuesParam, pageStart, szAsk);
                 let { $page } = ret as any;
                 arrResult = $page;
             }
@@ -198,4 +200,30 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         </div>
         }
     </Page>;
+}
+
+async function buildValueParam(param: any) {
+    if (!param) return param;
+    let ret = {} as any;
+    let arr: string[] = [];
+    let promises: Promise<any>[] = [];
+    for (let i in param) {
+        let p = param[i];
+        if (isPromise(p) === true) {
+            arr.push(i);
+            promises.push(p);
+        }
+        else {
+            ret[i] = p;
+        }
+    }
+    let len = promises.length;
+    if (len > 0) {
+        let retPromises = await Promise.all(promises);
+        for (let i = 0; i < len; i++) {
+            let prop = arr[i];
+            ret[prop] = retPromises[i];
+        }
+    }
+    return ret;
 }

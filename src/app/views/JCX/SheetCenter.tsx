@@ -18,11 +18,11 @@ const PartArr: (new (uqApp: UqApp) => PartSheet)[] = [
 ];
 export function PageSheetCenter() {
     const uqApp = useUqApp();
-    const { JsTicket: uq } = uqApp.uqs;
+    const { UqDefault: uq } = uqApp.uqs;
     const { IxMySheet } = uq;
     const partColl: { [entity: string]: PartSheet } = {};
     const partArr = PartArr.map(v => {
-        const part = uqApp.partOf(v);
+        const part = uqApp.objectOf(v);
         const { name } = part;
         partColl[name] = part;
         return part;

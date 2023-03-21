@@ -18,11 +18,11 @@ interface PageIDNewProps {
 */
 export function PageIDNew({ Part }: PartProps<PartID>) {
     const uqApp = useUqApp();
-    const { caption, ID, formRows, onNo, actSave } = uqApp.partOf(Part);
+    const { caption, ID, formRows, onNo, actSave } = uqApp.objectOf(Part);
     const navigate = useNavigate();
-    const { JsTicket } = uqApp.uqs;
+    const { UqDefault } = uqApp.uqs;
     const { data: retNo } = useQuery('PageIDNew', async () => {
-        let retNo = await JsTicket.IDNO({ ID });
+        let retNo = await UqDefault.IDNO({ ID });
         return retNo;
     }, { cacheTime: 0, refetchOnWindowFocus: false });
     onNo(retNo);

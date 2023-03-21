@@ -4,13 +4,13 @@ import { IDView, Page, useModal } from "tonwa-app";
 import { UqAction, UqID, UqQuery } from "tonwa-uq";
 import { PartProps } from "app/template/Part";
 import { UqApp, useUqApp } from "app/UqApp";
-import { SheetPurchase, DetailQPA } from "uqs/JsTicket";
-import { PageOriginEdit, PartSheet, PartOrigin, PageDetailQPA, PartDetail } from "../../template";
-import { PageProductSelect, ViewProduct } from "./IDProduct";
-import { ChangeEvent, useState } from "react";
-import { Band, FormRow, FormRowsView } from "app/coms";
+import { SheetPurchase, DetailQPA } from "uqs/UqDefault";
+import { PageOriginEdit, PartSheet, PartOrigin, PageDetailQPA, PartDetail, ViewItemID } from "../../template";
+import { IDPartProduct, PageProductSelect } from "./IDProduct";
+import { Band } from "app/coms";
 import { FA, LMR } from "tonwa-com";
-import { ViewContact } from "./IDContact";
+import { BaseID, BaseIDPropUnit, QueryMore } from "app/tool";
+import { IDPartContact } from "./IDContact";
 
 export const captionPurchase = '采购单';
 const pathPurchaseEdit = 'purchase-edit';
@@ -18,12 +18,14 @@ const pathPurchaseEdit = 'purchase-edit';
 export class SheetPartPurchase extends PartOrigin<SheetPurchase, DetailQPA> {
     readonly path: string;
 
-    readonly ID: UqID<any>;
-    readonly IDDetail: UqID<any>;
-    readonly QueryGetDetails: UqQuery<{ id: number }, { ret: any[] }>;
+    // readonly ID: UqID<any>;
+    // readonly IDDetail: UqID<any>;
+    // readonly QueryGetDetails: UqQuery<{ id: number }, { ret: any[] }>;
+    // readonly QuerySearchSheetItem: UqQuery<any, any>;
     readonly ActBookSheet: UqAction<any, any>;
-    readonly QuerySearchSheetItem: UqQuery<any, any>;
+    readonly QuerySearchItem: QueryMore;
 
+    readonly baseID: BaseID;
     readonly caption: string;
 
     readonly PageDetailItemSelect: () => JSX.Element;
@@ -40,13 +42,17 @@ export class SheetPartPurchase extends PartOrigin<SheetPurchase, DetailQPA> {
         super(uqApp);
 
         this.path = pathPurchaseEdit;
+        this.baseID = uqApp.objectOf(BaseIDPurchase);
 
-        const { JsTicket: uq } = uqApp.uqs;
+        const { UqDefault: uq } = uqApp.uqs;
+        /*
         this.ID = uq.SheetPurchase;
         this.IDDetail = uq.DetailQPA;
         this.QueryGetDetails = uq.GetDetailQPAs;
-        this.ActBookSheet = uq.BookSheetPurchase;
         this.QuerySearchSheetItem = uq.SearchContact;
+        */
+        this.ActBookSheet = uq.BookSheetPurchase;
+        this.QuerySearchItem = uqApp.objectOf(IDPartContact).searchItems;
 
         this.PageDetailItemSelect = PageProductSelect;
         this.caption = captionPurchase;
@@ -54,14 +60,14 @@ export class SheetPartPurchase extends PartOrigin<SheetPurchase, DetailQPA> {
         this.PageSheetDetail = PageSheetDetail as any;
 
         this.ViewItemEditRow = function ({ row }: { row: DetailQPA }) {
-            let { item, quantity, price, amount } = row;
+            let { item, value, price, amount } = row;
             return <LMR className="px-3 py-2">
-                <IDView uq={uq} id={item} Template={ViewProduct} />
+                <IDView uq={uq} id={item} Template={ViewItemID} />
                 <div className="align-self-end text-end d-flex align-items-end">
                     <div>
                         <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount.toFixed(4)}</span>
                         <br />
-                        <small>数量:</small> <b>{quantity}</b>
+                        <small>数量:</small> <b>{value}</b>
                     </div>
                     <FA name="pencil-square-o" className="ms-3 text-info" />
                 </div>
@@ -75,7 +81,7 @@ export class SheetPartPurchase extends PartOrigin<SheetPurchase, DetailQPA> {
         }
 
         this.ViewTarget = ({ sheet }: { sheet: SheetPurchase }) => {
-            return <IDView id={sheet.target} uq={uq} Template={ViewContact} />;
+            return <IDView id={sheet.target} uq={uq} Template={ViewItemID} />;
         }
 
         this.ViewTargetBand = ({ sheet }: { sheet: SheetPurchase }) => {
@@ -92,6 +98,10 @@ export class SheetPartPurchase extends PartOrigin<SheetPurchase, DetailQPA> {
         let detail = { item: selectedItem.id };
         return detail;
     }
+}
+
+class BaseIDPurchase extends BaseIDPropUnit {
+    readonly prop = 'purchase';
 }
 
 function PagePurchaseEdit() {
@@ -160,7 +170,7 @@ class DetailPartPurchase extends PartDetail<DetailQPA> {
     get path(): string { return undefined; }
     get itemCaption(): string { return '产品'; }
     get ViewItemTemplate(): ({ value }: { value: any; }) => JSX.Element {
-        return ViewProduct;
+        return ViewItemID;
     }
 }
 

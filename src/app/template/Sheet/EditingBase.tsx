@@ -4,9 +4,7 @@ import { getAtomValue, setAtomValue } from "tonwa-com";
 import { PartSheet } from "./PartSheet";
 
 export interface SheetBase { id?: number; no?: string; }
-export interface DetailBase { id?: number; }
-export interface DetailQuantityBase { id?: number; quantity: number; }
-export interface DetailValueBase { id?: number; value: number; }
+export interface DetailBase { id?: number; value: number; }
 
 export interface Editing<S extends SheetBase, R = any> {
     atomSheet: PrimitiveAtom<S>;
