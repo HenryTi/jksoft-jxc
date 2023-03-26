@@ -1,3 +1,8 @@
+CONST ItemType = {
+    Product: 'product',
+    Contact: 'contact',
+};
+
 -- independant, searchable
 ID Item (
     id,
@@ -6,65 +11,52 @@ ID Item (
     ex CHAR(200),
 );
 
+CONST SheetType ver 0.2 = {
+    Purchase: 'Purchase',
+    Sale: 'Sale',
+    StoreIn: 'storein',
+    StoreOut: 'storeout',
+};
 ID Sheet (
     id MINUTE,
     KEY base ID,
     KEY no,
     item ID,
     operator ID,            -- employee Item
-    ex CHAR(100),
+    value VALUE,
+    v1 VALUE,
+    v2 VALUE,
+    v3 VALUE,
 );
 
 -- dependant
-ID Atom (
+ID Bind (
     id MINUTE,
-    base ID,                -- (main + type) => owner, or type in main
-    item ID,                -- item id easy to load values
+    KEY base ID,            -- (main + type) => owner, or type in main
+    KEY item ID,            -- item id easy to load values
     ex CHAR(50),            -- should be ascii，tab values
-    INDEX owner_id(base, id) UNIQUE,
 );
 
-ID Join (
+const FlowState = {
+    Start: '$start',
+    Ready: 'ready',
+};
+
+IX IxFlow ver 0.1 (
+    ix,                     -- ID(unit, prop('ixflow'), prop('$start'), $user)
+    xi Sheet INDEX,         -- sheet
+);
+
+-- 所有单据的明细，单值
+ID Detail (
     id MINUTE,
-    KEY base ID,
-    KEY item ID,
-);
-
-IX IxFlow (
-    ix,
-    xi Sheet,               -- sheet
-);
-
-IX IxUserItem (
-    ix,                     -- unit JOIN $user Prop
-    xi User,                -- baseID
-    item ID Item,           -- user related item
-);
-
-ID Product (
-    id,
-    KEY no,
-    name CHAR(50),
-);
-
--- 单位，个人，供应商，客户，都生成唯一id。如果有不同的字段，用IDX扩展
-ID Contact (
-    id,
-    KEY no,
-    name CHAR(100),
-);
-ENUM ContactType (vendor = 1, customer = 2);
-IX IxContactType (
-    ix Contact,
-    xi ENUM ContactType Index,
-);
-
-ID Batch (
-    id MINUTE,
-    KEY product ID,
-    KEY no,                 -- 批次号: 可以自动生成，也可以输入
-    date DATE,              -- 生产日期
-    before DATE,            -- 效期
+    base ID,               -- SheetPurchase or SheetSale
+    item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位, 也可以指向源单明细
+    value VALUE,
+    v1 VALUE,
+    v2 VALUE,
+    v3 VALUE,
+    INDEX base_id(base, id) UNIQUE,
 );
 
 ENUM MeasureUnitType (
@@ -94,68 +86,4 @@ ID UnitItem (
     id,
     KEY item ID,            -- product or batch, or else
     key unit ID,            -- measureUnitName or measureUnit, or else
-);
-
-QUEUE QueueStoreIn ONCE ONLY;
-QUEUE QueueStoreOut ONCE ONLY;
-
-ID SheetPurchase ver 0.3 (
-    id MINUTE,
-    KEY no,
-    target ID,              -- vendor
-) JOIN DetailQPA ON base;
-
-ID SheetSale ver 0.3 (
-    id MINUTE,
-    KEY no,
-    target ID,              -- customer
-) JOIN DetailQPA ON base;
-
-ID SheetStoreIn ver 0.4 (
-    id MINUTE,
-    KEY no,
-    operator ID,            -- user
-) JOIN Detail ON base;
-
-ID SheetStoreOut ver 0.3 (
-    id MINUTE,
-    KEY no,
-    operator ID,            -- user
-) JOIN Detail ON base;
-
--- 所有单据的明细，单值
-ID Detail (
-    id MINUTE,
-    base ID,               -- SheetPurchase or SheetSale
-    item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位, 也可以指向源单明细
-    value VALUE,
-    INDEX base_id(base, id) UNIQUE,
-);
-
-ID DetailQPA (
-    id MINUTE,
-    base ID,            -- SheetPurchase or SheetSale
-    item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位
-    value Quantity,
-    price Price,
-    amount Amount,
-    INDEX base_id(base, id) UNIQUE,
-);
-
-IX *IxMySheet (
-    ix USER,
-    xi
-);
-
-ENUM PriceType (
-    listSale = 101,
-);
-ID PriceName (          -- 价格名目定义，比如 listSale=目录价
-    id,
-    KEY target ID,
-    KEY type ENUM PriceType,
-);
-IDX Price (
-    id,                 -- Product, Batch, PriceName
-    price Price,
 );

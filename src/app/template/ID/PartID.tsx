@@ -1,7 +1,7 @@
 import { FormInput, FormRow } from "app/coms";
-import { BaseID, QueryMore } from "app/tool";
+import { SeedJoin, QueryMore } from "app/tool";
 import { UqApp, useUqApp } from "app/UqApp";
-import { UqID } from "tonwa-uq";
+import { UqID, UqQuery } from "tonwa-uq";
 import { Item } from "uqs/UqDefault";
 import { PartInput } from "../Part";
 
@@ -12,6 +12,8 @@ export interface IDViewRowProps {
 }
 
 export abstract class PartID extends PartInput {
+    abstract get IDType(): string;
+    readonly query: UqQuery<any, any>;
     readonly ID: UqID<any>;
 
     // IDList
@@ -38,9 +40,9 @@ export abstract class PartID extends PartInput {
 
         let uq = this.uq;
         this.searchItems = async (param: any, pageStart: any, pageSize: number) => {
-            let base = await this.baseID.getId();
-            let newParam = { ...param, base };
-            let { $page } = await uq.SearchItem.page(newParam, pageStart, pageSize);
+            let newParam = { ...param, IDType: this.IDType };
+            let query = this.query ?? uq.SearchItem;
+            let { $page } = await query.page(newParam, pageStart, pageSize);
             return $page;
         }
 
@@ -54,9 +56,8 @@ export abstract class PartID extends PartInput {
             rowNO.options.value = no;
         }
         this.actSave = async (no: string, data: any) => {
-            let base = await this.baseID.getId() as number;
             const { ex } = data;
-            let ret = await uq.SaveItem.submit({ base, pNo: no, ex });
+            let ret = await uq.SaveItem.submit({ IDType: this.IDType, pNo: no, ex });
             return ret;
         }
 
@@ -84,7 +85,6 @@ function ListTop() {
     const uqApp = useUqApp();
     const { UqDefault } = uqApp.uqs;
     async function onClick() {
-        let ret = await UqDefault.Sp.submit({});
         alert('click ok');
     }
     return <div className="px-3 py-3">

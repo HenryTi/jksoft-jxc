@@ -1,68 +1,48 @@
 import { Link, Route } from "react-router-dom";
 import { IDView } from "tonwa-app";
 import { PageQueryMore, ViceTitle } from "app/coms";
-import { PartSheet } from "app/template";
+import { PartSheet, ViewItemID } from "app/template";
 import { UqApp, useUqApp } from "app/UqApp";
 import { SheetPartPurchase } from "./SheetPurchase";
-import { SheetPartSale } from "./SheetSale";
-// import { SheetPartStoreIn } from "./SheetStoreIn1";
+import { PartSheetSale } from "./SheetSale";
 import { SheetPartStoreOut } from "./SheetStoreOut";
 import { SheetPartStoreIn } from "./SheetStoreIn";
+import { Sheet } from "uqs/UqDefault";
 
 export const pathSheetCenter = 'sheet-center';
 const PartArr: (new (uqApp: UqApp) => PartSheet)[] = [
     SheetPartPurchase,
     SheetPartStoreIn,
-    SheetPartSale,
+    PartSheetSale,
     SheetPartStoreOut,
 ];
 export function PageSheetCenter() {
     const uqApp = useUqApp();
-    const { UqDefault: uq } = uqApp.uqs;
-    const { IxMySheet } = uq;
+    const { uq } = uqApp;
     const partColl: { [entity: string]: PartSheet } = {};
     const partArr = PartArr.map(v => {
         const part = uqApp.objectOf(v);
-        const { name } = part;
-        partColl[name] = part;
+        const { sheetType } = part;
+        partColl[sheetType] = part;
         return part;
     });
     async function query(param: any, pageStart: any, pageSize: number): Promise<any[]> {
-        let ret = await uq.IX({
-            IX: IxMySheet,
-            ix: undefined,
-            page: { start: pageStart, size: pageSize },
-            order: 'desc',
-        });
-        return ret;
+        let ret = await uq.GetMySheets.page(param, pageStart, pageSize);
+        return ret.$page;
     }
-    function TemplateSheetItem({ value }: { value: any }) {
-        let { id, $entity } = value;
-        let part = partColl[$entity];
-        if (part === undefined) {
-            return <div>{JSON.stringify(value)}</div>;
-        }
-        let { path } = part;
-        function ViewListItem({ id }: { id: any }) {
-            return <IDView id={id} uq={uq} Template={part.ViewSheetListItem} />;
-        }
-
+    function ViewItem({ value }: { value: Sheet & { type: string; } }) {
+        const { id, no, type, ex, item, operator } = value;
+        let part = partColl[type];
+        let { caption, path } = part;
         return <Link to={`../${path}/${id}`}>
-            <div className="px-3 py-2">
-                <ViewListItem id={id} />
+            <div className="px-3 py-2 d-flex">
+                <div className="w-10c me-3">
+                    <div>{caption}</div>
+                    <div className="small text-muted">{no}</div>
+                </div>
+                <IDView id={item} uq={uq} Template={ViewItemID} />
             </div>
         </Link>;
-    }
-    function ViewItem({ value }: { value: any }) {
-        const { xi } = value;
-        return <IDView uq={uq} id={xi} Template={TemplateSheetItem} />;
-        /*
-        return <LinkModal modal={<PageSheetEdit id={xi} />}>
-            <div className="px-3 py-2">
-                <ViewItemSheet id={xi} />
-            </div>
-        </LinkModal>
-        */
     }
     function Top({ items }: { items: any[] }) {
         if (!items) return null;
@@ -71,7 +51,7 @@ export function PageSheetCenter() {
     }
     return <PageQueryMore header={'单据中心'}
         param={{}}
-        sortField={'xi'}
+        sortField={'id'}
         query={query}
         pageSize={15}
         pageMoreSize={5}

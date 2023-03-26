@@ -9,7 +9,6 @@ export async function refetchApi(channel: HttpChannel, url: string, options: any
 
 export abstract class ApiBase {
     protected readonly net: Net;
-    // protected token: string;
     protected path: string;
 
     constructor(net: Net, path: string) {
@@ -18,6 +17,10 @@ export abstract class ApiBase {
     }
 
     protected abstract getHttpChannel(): Promise<HttpChannel>;
+
+    protected customHeader(): { [key: string]: string } {
+        return undefined;
+    }
 
     async xcall(caller: Caller<any>): Promise<any> {
         let channel = await this.getHttpChannel();
@@ -31,21 +34,21 @@ export abstract class ApiBase {
 
     public async get(path: string, params: any = undefined): Promise<any> {
         let channel = await this.getHttpChannel();
-        return await channel.get(this.path + path, params);
+        return await channel.get(this.path + path, params, this.customHeader());
     }
 
     public async post(path: string, params: any): Promise<any> {
         let channel = await this.getHttpChannel();
-        return await channel.post(this.path + path, params);
+        return await channel.post(this.path + path, params, this.customHeader());
     }
 
     public async put(path: string, params: any): Promise<any> {
         let channel = await this.getHttpChannel();
-        return await channel.put(this.path + path, params);
+        return await channel.put(this.path + path, params, this.customHeader());
     }
 
     public async delete(path: string, params: any): Promise<any> {
         let channel = await this.getHttpChannel();
-        return await channel.delete(this.path + path, params);
+        return await channel.delete(this.path + path, params, this.customHeader());
     }
 }

@@ -1,21 +1,22 @@
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { SheetBase, EditingBase, DetailBase } from "../EditingBase";
+import { EditingBase } from "../EditingBase";
 import { atom, PrimitiveAtom } from "jotai";
 import { PartDerive } from "./PartDerive";
+import { Detail, FlowState, Sheet } from "uqs/UqDefault";
 
 interface SheetGroup {
     target: number;
     sheets: any[];
 }
 
-export class EditingDerive<S extends SheetBase, D extends DetailBase> extends EditingBase<S> {
-    declare protected part: PartDerive<S, any>;
-    readonly atomRows: PrimitiveAtom<{ sheet: S; details: D[] }[]>;
+export class EditingDerive extends EditingBase {
+    declare protected part: PartDerive;
+    readonly atomRows: PrimitiveAtom<{ sheet: Sheet; details: Detail[] }[]>;
 
-    constructor(part: PartDerive<S, any>) {
+    constructor(part: PartDerive) {
         super(part);
         this.part = part;
-        this.atomRows = atom(undefined as { sheet: S; details: D[] }[]);
+        this.atomRows = atom(undefined as { sheet: Sheet; details: Detail[] }[]);
     }
 
     reset() {
@@ -23,7 +24,7 @@ export class EditingDerive<S extends SheetBase, D extends DetailBase> extends Ed
         setAtomValue(this.atomRows, undefined);
     }
 
-    getSheet(): S {
+    getSheet(): Sheet {
         return getAtomValue(this.atomSheet);
     }
 
@@ -31,17 +32,17 @@ export class EditingDerive<S extends SheetBase, D extends DetailBase> extends Ed
         let { uq } = this.part;
         let [sheet, { ret: details }] = await Promise.all([
             uq.idObj(sheetId),
-            uq.GetDetailOriginQPAs.query({ id: sheetId }),
+            uq.GetDetailOrigin.query({ id: sheetId }),
         ]);
         setAtomValue(this.atomSheet, sheet);
-        const groupColl: { [origin: number]: { sheet: SheetBase; details: DetailBase[]; } } = {};
-        let rows: { sheet: SheetBase, details: DetailBase[] }[] = [];
+        const groupColl: { [origin: number]: { sheet: Sheet; details: Detail[]; } } = {};
+        let rows: { sheet: Sheet, details: Detail[] }[] = [];
         for (let detail of details) {
             let { item } = detail;
             let group = groupColl[item];
             if (group === undefined) {
                 group = {
-                    sheet: { id: item },
+                    sheet: { id: item } as Sheet,
                     details: []
                 }
                 groupColl[item] = group;
@@ -58,9 +59,9 @@ export class EditingDerive<S extends SheetBase, D extends DetailBase> extends Ed
         let { uq, uqApp } = this.part;
         let [sheet, { ret: details }] = await Promise.all([
             uq.idObj(origin),
-            uq.GetDetailQPAsFromOrigin.query({ id: origin }),
+            uq.GetDetailOrigin.query({ id: origin }),
         ]);
-        let sheetDerive: S = getAtomValue(this.atomSheet);
+        let sheetDerive: Sheet = getAtomValue(this.atomSheet);
         if (sheetDerive === undefined) {
             let user = getAtomValue(uqApp.user);
             await this.newSheet(user.id);
@@ -76,8 +77,8 @@ export class EditingDerive<S extends SheetBase, D extends DetailBase> extends Ed
     }
 
     async search(key: string): Promise<SheetGroup[]> {
-        let { QueryOrigin } = this.part;
-        let ret = await QueryOrigin.page({ key }, undefined, 1000);
+        let { QueryOrigin, sheetType } = this.part;
+        let ret = await QueryOrigin.page({ sheet: sheetType, state: FlowState.Ready, key }, undefined, 1000);
         // 按target分组
         const groupColl: { [target: number]: SheetGroup } = {};
         for (let v of ret.$page) {

@@ -4,33 +4,33 @@ IDX Book (
     init VALUE DEFAULT 0,
     value Value,
 );
-
-ENUM ProjectType (
+-- Subject 应该也会去掉
+ENUM SubjectType (
     Storage = 201,
 );
 
-ID Project (
+ID Subject (
     id,
-    KEY type ENUM ProjectType,
+    KEY type ENUM SubjectType,
     KEY item ID,
 );
 
 ID History (
     id MINUTE,
-    project ID,         -- 科目
+    subject ID,         -- 科目
     value Value,
     ref ID,             -- 相关凭证
-    INDEX project_id(project, id) UNIQUE,
+    INDEX subject_id(subject, id) UNIQUE,
 );
 
 IDX Done (
     id,
-    done Quantity,
+    value VALUE,
 );
 
 -- lock some number
 IDX Lock (
     id,
-    lock Quantity,
+    value VALUE,
     validTo TIMESTAMP,      -- 有效至
 );

@@ -27,18 +27,19 @@ ENUM PropDataType (
 ID Prop ver 0.3 (
     id,
     KEY base ID,               -- owner prop
-    KEY name CHAR(50),
+    KEY name PropName,
     ex CHAR(100),               -- 可以是标题，也可以是对数据结构的描述
     type ENUM PropDataType,
 )
 + (base, name, type)
 VALUES
-(0, NameOf Prop, PropDataType.none),
-(0, NameOf Atom, PropDataType.none),
-(0, NameOf Item, PropDataType.none),
-(0, NameOf Join, PropDataType.none),
-(0, NameOf Sheet, PropDataType.none),
-(0, NameOf $user, PropDataType.none),
+(0,     NameOf Prop,        PropDataType.none),
+(0,     NameOf Bind,        PropDataType.none),
+(0,     NameOf Item,        PropDataType.none),
+(0,     NameOf Sheet,       PropDataType.none),
+(0,     NameOf IxFlow,      PropDataType.none),
+(0,     '$user',            PropDataType.none),
+(0,     '$unit',            PropDataType.none),
 ;
 
 -- ix=IDType，特定ID有多少属性
@@ -52,17 +53,8 @@ IX *IxProp (
 IX IxValue (
     ix,
     xi,
-    value BIGINT,
-);
-
-IX IxChar (
-    ix,
-    xi,
-    value CHAR(100),
-);
-
-IX IxText (
-    ix,
-    xi,
-    value TEXT(medium),
+    int BIGINT,
+    dec VALUE,
+    str CHAR(100),
+    text TEXT(medium),
 );

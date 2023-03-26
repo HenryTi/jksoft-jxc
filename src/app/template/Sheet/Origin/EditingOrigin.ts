@@ -1,15 +1,16 @@
 import { PageMoreCacheData } from "app/coms";
 import { atom, PrimitiveAtom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { SheetBase, EditingBase, DetailBase } from "../EditingBase";
+import { Detail, Sheet } from "uqs/UqDefault";
+import { EditingBase } from "../EditingBase";
 import { PartOrigin } from "./PartOrigin";
 
-export class EditingOrigin<S extends SheetBase, D extends DetailBase> extends EditingBase<S> {
-    readonly atomDetails: PrimitiveAtom<D[]>;
+export class EditingOrigin extends EditingBase {
+    readonly atomDetails: PrimitiveAtom<Detail[]>;
 
-    constructor(part: PartOrigin<S, D>) {
+    constructor(part: PartOrigin) {
         super(part);
-        this.atomDetails = atom(undefined as D[]);
+        this.atomDetails = atom(undefined as Detail[]);
     }
 
     get atomRows() { return this.atomDetails; }
@@ -31,28 +32,7 @@ export class EditingOrigin<S extends SheetBase, D extends DetailBase> extends Ed
         this.refreshSubmitable();
     }
 
-    async removeEmptySheet() {
-        let sheet = getAtomValue(this.atomSheet);
-        if (sheet === undefined) return;
-        let details = getAtomValue(this.atomDetails);
-        if (details?.length > 0) return;
-        let { uqApp, uq, ID, IxMySheet, QueryGetDetails } = this.part;
-        let sheetId = sheet.id;
-        await uq.ActIX({
-            IX: IxMySheet,
-            ID: ID,
-            values: [{
-                ix: undefined,
-                xi: -sheetId
-            }]
-        });
-        let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
-        if (data) {
-            data.removeItem<{ xi: number }>(v => v.xi === sheetId);
-        }
-    }
-
-    setSheet(sheet: S) {
+    setSheet(sheet: Sheet) {
         setAtomValue(this.atomSheet, sheet);
     }
 
@@ -74,7 +54,7 @@ export class EditingOrigin<S extends SheetBase, D extends DetailBase> extends Ed
         setAtomValue(this.atomDetails, newDetails);
     }
 
-    override async newSheet(target: number): Promise<S> {
+    override async newSheet(target: number): Promise<Sheet> {
         let sheet = await super.newSheet(target);
         setAtomValue(this.atomDetails, []);
         return sheet;

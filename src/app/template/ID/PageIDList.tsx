@@ -4,10 +4,10 @@ import { PartProps } from '../Part';
 import { PartID } from './PartID';
 
 export function PageIDList({ Part }: PartProps<PartID>) {
-    const { caption, ViewItemID, searchItems, listTop, baseID } = usePart(Part);
+    const { caption, ViewItemID, searchItems, listTop, IDType } = usePart(Part);
 
     let searchParam = {
-        base: baseID.getId(),           // 运行Promise，自动先调用返回
+        IDType,
         key: undefined as string,
     };
     function ViewItem({ value }: { value: any }) {

@@ -7,4 +7,5 @@ DataType (
     Quantity DEC(18, 4),
     Value DEC(18,4),
     NO CHAR(30),
+    PropName CHAR(50),
 );

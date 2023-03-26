@@ -4,10 +4,9 @@ import { FA, LMR, SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { useUqApp } from "app/UqApp";
 import { PartProps } from "../../Part";
-import { DetailBase, SheetBase } from "../EditingBase";
 import { PartOrigin } from "./PartOrigin";
 
-export function PageOriginNew<S extends SheetBase, D extends DetailBase>({ Part }: PartProps<PartOrigin<S, D>>) {
+export function PageOriginNew({ Part }: PartProps<PartOrigin>) {
     const uqApp = useUqApp();
     const { closeModal } = useModal();
     const part = uqApp.objectOf(Part);

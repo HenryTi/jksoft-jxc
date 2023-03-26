@@ -1,57 +1,20 @@
 ACT SaveItem ver 0.1 (
-    base ID,
+    IDType CHAR(100),
     pNo CHAR(20),
 	ex CHAR(200),
 )
 RETURNS ret (
     id ID,
 ) {
+    VAR base ID;
+    PROC BaseItem(IDType, base);
+
     -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
     VAR id ID;
     SET id = ID(Item KEY base=base, no=pNo);
     IF id IS NULL {
         SET id = ID(Item new KEY base=base,no=pNo);
         WITH Item as a ID=id SET a.ex=ex;
-    }
-    ELSE {
-        SET id=-id;
-    }
-    INTO ret SELECT id;
-};
-
-ACT SaveProduct ver 0.1 (
-    pNo CHAR(20),
-	name CHAR(50),
-)
-RETURNS ret (
-    id ID,
-) {
-    -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
-    VAR id ID;
-    SET id=a.id FROM Product as a WHERE a.no=pNo;
-    IF id IS NULL {
-        SET id = ID(Product new,pNo);
-        WITH Product as a ID=id SET a.name=name;
-    }
-    ELSE {
-        SET id=-id;
-    }
-    INTO ret SELECT id;
-};
-
-ACT SaveContact ver 0.1 (
-    pNo CHAR(20),
-	name CHAR(50),
-)
-RETURNS ret (
-    id ID,
-) {
-    -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
-    VAR id ID;
-    SET id=a.id FROM Contact as a WHERE a.no=pNo;
-    IF id IS NULL {
-        SET id = ID(Contact new,pNo);
-        WITH Contact as a ID=id SET a.name=name;
     }
     ELSE {
         SET id=-id;

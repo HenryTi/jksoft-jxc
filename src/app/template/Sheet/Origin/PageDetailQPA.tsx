@@ -1,17 +1,20 @@
 import { useForm } from "react-hook-form";
 import { IDView, Page, useModal } from "tonwa-app";
 import { PartProps } from "app/template/Part";
-import { DetailQPA } from "uqs/UqDefault";
+import { Detail } from "uqs/UqDefault";
 import { ChangeEvent, useState } from "react";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { UqApp, useUqApp } from "../../../UqApp";
 import { Part } from "../../../tool";
-import { SheetBase } from "../EditingBase";
 import { PartOrigin } from "./PartOrigin";
 
-export abstract class PartDetail<D extends DetailQPA> extends Part {
-    buildFormRows(detial: Partial<D>): FormRow[] {
-        let { price, value, amount } = detial;
+const fieldQuantity = 'value';
+const fieldPrice = 'v1';
+const fieldAmount = 'v2';
+
+export abstract class PartDetail extends Part {
+    buildFormRows(detial: Detail): FormRow[] {
+        let { value, v1: price, v2: amount } = detial;
         return [
             this.buildValueRow(value),
             this.buildPriceRow(price),
@@ -20,15 +23,15 @@ export abstract class PartDetail<D extends DetailQPA> extends Part {
     }
     protected get valueDisabled(): boolean { return false; }
     protected buildValueRow(value: number): FormRow {
-        return { name: 'value', label: '数量', type: 'number', options: { value, disabled: this.valueDisabled } };
+        return { name: fieldQuantity, label: '数量', type: 'number', options: { value, disabled: this.valueDisabled } };
     }
     protected get priceDisabled(): boolean { return false; }
     protected buildPriceRow(value: number, disabled: boolean = false): FormRow {
-        return { name: 'price', label: '单价', type: 'number', options: { value, disabled: this.priceDisabled } };
+        return { name: fieldPrice, label: '单价', type: 'number', options: { value, disabled: this.priceDisabled } };
     }
     protected get amountDisabled(): boolean { return true; }
     buildAmountRow(value: number, disabled: boolean = false): FormRow {
-        return { name: 'amount', label: '金额', type: 'number', options: { value, disabled: this.amountDisabled } };
+        return { name: fieldAmount, label: '金额', type: 'number', options: { value, disabled: this.amountDisabled } };
     }
 
     abstract get itemCaption(): string
@@ -42,16 +45,16 @@ export abstract class PartDetail<D extends DetailQPA> extends Part {
     abstract get ViewItemTemplate(): ({ value }: { value: any }) => JSX.Element;
 }
 
-interface Props<D extends DetailQPA> extends PartProps<PartDetail<D>> {
-    detail: Partial<D>;
-    PartSheet: new (uqApp: UqApp) => PartOrigin<SheetBase, D>;
+interface Props extends PartProps<PartDetail> {
+    detail: Detail;
+    PartSheet: new (uqApp: UqApp) => PartOrigin;
 }
 
-export function PageDetailQPA<D extends DetailQPA>({ detail, Part, PartSheet }: Props<D>) {
+export function PageDetailQPA({ detail, Part, PartSheet }: Props) {
     const uqApp = useUqApp();
     const partSheet = uqApp.objectOf(PartSheet);
     const part = uqApp.objectOf(Part);
-    const { value, price, amount, item } = detail;
+    const { value, v1: price, v2: amount, item } = detail;
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [hasValue, setHasValue] = useState(value != undefined);
@@ -64,41 +67,36 @@ export function PageDetailQPA<D extends DetailQPA>({ detail, Part, PartSheet }: 
             let v = Number(value);
             (detail as any)[name] = Number.isNaN(v) === true ? undefined : v;
         }
-        const { price, amount, value: quantity } = detail;
+        switch (name) {
+            case fieldQuantity: onQuantityChange(detail.value); break;
+            case fieldPrice: onPriceChange(detail.v1); break;
+        }
+        const { v1: price, v2: amount, value: quantity } = detail;
         let hv = amount !== undefined && price !== undefined && quantity !== undefined;
         setHasValue(hv);
-        if (hasValue === false) return;
-        switch (name) {
-            case 'value': onQuantityChange(quantity); break;
-            case 'price': onPriceChange(price); break;
-        }
     }
-    function setAmountValue(amount: number) {
-        if (Number.isNaN(amount) === true) return;
-        detail.amount = amount;
-        setValue('amount', amount.toFixed(4));
+    function setAmountValue(quantity: number, price: number) {
+        if (quantity === undefined || price === undefined) {
+            detail.v2 = undefined;
+            setValue(fieldAmount, '');
+        }
+        let amount = quantity * price;
+        detail.v2 = amount;
+        setValue(fieldAmount, amount.toFixed(4));
     }
     function onQuantityChange(value: number) {
         detail.value = value;
-        let p = getValues('price') ?? price;
+        let p = getValues(fieldPrice) ?? price;
         if (!p) return;
-        setAmountValue(value * p);
+        setAmountValue(value, p);
     }
     function onPriceChange(value: number) {
-        detail.price = value;
-        let q = getValues('quantity') ?? value;
+        detail.v1 = value;
+        let q = getValues(fieldQuantity) ?? value;
         if (!q) return;
-        setAmountValue(value * q);
+        setAmountValue(value, q);
     }
     const options = { onChange, valueAsNumber: true };
-    /*
-    let formRows: FormRow[] = [
-        { name: 'quantity', label: '数量', type: 'number', options: { ...options, value: quantity } },
-        { name: 'price', label: '单价', type: 'number', options: { ...options, value: price ?? 1 } },
-        { name: 'amount', label: '金额', type: 'number', options: { ...options, value: amount, disabled: true } },
-        { type: 'submit', label: hasValue === true ? '提交' : '关闭' },
-    ];
-    */
     const formRows = part.buildFormRows(detail);
     formRows.forEach(v => (v as any).options = { ...(v as any).options, ...options });
     formRows.push({ type: 'submit', label: '提交', options: { disabled: hasValue === false } });
@@ -107,7 +105,7 @@ export function PageDetailQPA<D extends DetailQPA>({ detail, Part, PartSheet }: 
         // closeModal(data);
         // amount 字段disabled。setValue('amount'), 改变了input显示，但是取值没有改变。
         // 只能用下面变通
-        let { amount, price } = detail;
+        let { v1: price, v2: amount } = detail;
 
         let { quantity } = data;
         if (Number.isNaN(quantity) === false) {
@@ -118,6 +116,7 @@ export function PageDetailQPA<D extends DetailQPA>({ detail, Part, PartSheet }: 
     }
     const { caption, ViewItemTop } = part;
     return <Page header={caption}>
+        <div className="mt-3"></div>
         <ViewItemTop item={item} />
         <form className="container" onSubmit={handleSubmit(onSubmit)}>
             <FormRowsView rows={formRows} register={register} errors={errors} />

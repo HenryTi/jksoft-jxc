@@ -25,7 +25,7 @@ export class Uq {
                 if (lk[0] === '$') {
                     switch (lk) {
                         case '$': return this;
-                        case '$name': return this.$_uqMan.name;
+                        // case '$name': return this.$_uqMan.name;
                     }
                 }
                 let ret = target[lk];
@@ -35,7 +35,7 @@ export class Uq {
                 func = (this as any)[key];
                 if (func !== undefined) return func;
                 this.errUnexistEntity(String(key));
-            }
+            },
         });
         return ret;
     }

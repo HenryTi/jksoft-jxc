@@ -1,19 +1,19 @@
 import { UqApp, useUqApp } from "app/UqApp";
-import { ReturnGetDetailQPAsFromOriginRet } from "uqs/UqDefault";
+import { ReturnGetDetailOriginRet } from "uqs/UqDefault";
 import { ChangeEvent, FocusEvent, useRef, useState } from "react";
 import { ViceTitle } from "app/coms";
 import { FA, List, LMR } from "tonwa-com";
-import { SheetBase, PartDerive, DetailBase } from "app/template";
+import { PartDerive } from "app/template";
 
-export function ViewEditRow<S extends SheetBase, D extends DetailBase = any>({ row, Part }: { row: any, Part: new (uqApp: UqApp) => PartDerive<S, D> }) {
+export function ViewEditRow({ row, Part }: { row: any, Part: new (uqApp: UqApp) => PartDerive }) {
     const uqApp = useUqApp();
     const part = uqApp.objectOf(Part);
     const { uq, editing } = part;
     const { sheet } = row;
     const [details, setDetails] = useState<any[]>(row.details);
-    function ViewItemDetail({ value: detail }: { value: ReturnGetDetailQPAsFromOriginRet & { id: number; $changedValue: number; value: number } }) {
+    function ViewItemDetail({ value: detail }: { value: ReturnGetDetailOriginRet & { id: number; $changedValue: number; value: number } }) {
         let inp = useRef(undefined as HTMLInputElement);
-        let { id, origin, originValue, value, done } = detail;
+        let { id, item: origin, originValue, value, done } = detail;
         let [disabled, setDisabled] = useState(false);
         done = done ?? 0;
         let operatableValue = originValue - done;
@@ -79,6 +79,6 @@ export function ViewEditRow<S extends SheetBase, D extends DetailBase = any>({ r
             <span>source: {sheet.id}</span>
             <button className="btn btn-sm btn-link pb-0" onClick={onLoadOrigin}><FA name="plus" /></button>
         </ViceTitle>
-        <List items={details} ViewItem={ViewItemDetail} itemKey={item => item.origin} />
+        <List items={details} ViewItem={ViewItemDetail} itemKey={row => row.id} />
     </div>
 }

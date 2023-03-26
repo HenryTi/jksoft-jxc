@@ -48,10 +48,11 @@ export abstract class EntityCaller<T> extends Caller<T> {
 
     get headers(): { [header: string]: string } {
         let { ver, uq } = this.entity;
-        let { uqVersion } = uq;
+        let { uqVersion, unit } = uq;
         return {
             uq: `${uqVersion}`,
             en: `${ver}`,
+            unit: unit === undefined ? undefined : String(unit),
         }
     }
 

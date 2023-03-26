@@ -13,8 +13,8 @@ export function uqsProxy(uqsMan: UQsMan) {
     const len = uqMans.length;
     for (let i = 0; i < len; i++) {
         const uqMan = uqMans[i];
-        let uqReact = new Uq(uqMan);
-        let proxy = uqReact.$_createProxy();
+        let uq = new Uq(uqMan);
+        let proxy = uq.$_createProxy();
         setUq(uqMan.getUqKey(), proxy);
         setUq(uqMan.getUqKeyWithConfig(), proxy);
         if (i === 0) setUq('uqdefault', proxy);

@@ -1,45 +1,63 @@
-ACT BookSheetPurchase (
+ACT BookSheet (
     id ID,
 ) {
-    PROC BookSheetOrigin(id, typeof QueueStoreIn);
-};
-
-ACT BookSheetSale (
-    id ID,
-) {
-    PROC BookSheetOrigin(id, typeof QueueStoreOut);
-};
-
-PROC BookSheetOrigin (
-    id ID,
-    queueType INT,
-) {
-    IF not exists(SELECT a.xi FROM IxMySheet as a WHERE a.ix=$user AND a.xi=id) {
+    VAR stateId ID = (SELECT a.ix FROM IxFlow as a WHERE a.xi=id);
+    VAR meInUnit ID;
+    PROC BaseMeInUnit(meInUnit);
+    IF not exists(SELECT a.id FROM Bind as a WHERE a.id=stateId AND a.base=meInUnit) {
         RETURN;
     }
-    WITH IxMySheet IX=$user XI=id DEL;
-    VAR sumTodo VALUE = (
-        SELECT SUM(a.value-ifnull(b.done, 0)) 
-            FROM DetailQPA as a 
-                LEFT JOIN Done as b ON b.id=a.id 
-            WHERE a.base=id
-        );
+    WITH IxFlow XI=id DEL;
 
-    IF sumTodo<>0 {
-        QUEUE (queueType) ADD id;
-    }
+    VAR base ID = (SELECT a.base FROM Sheet as a WHERE a.id=id);
+    VAR sheetName CHAR(50) = (SELECT b.name FROM Bind as a JOIN Prop as b on a.item=b.id);
+    PROC BaseSheetState(sheetName, FlowState.ready, stateId);
+    WITH IxFlow IX=stateId XI=id;
+};
+
+ACT SaveSheet (
+    sheetType CHAR(50),
+    no NO,
+    item ID,
+    operator ID,            -- employee Item
+    value VALUE,
+    v1 VALUE,
+    v2 VALUE,
+    v3 VALUE,
+)
+RETURNS ret (
+    id ID,
+) {
+    VAR base ID;
+    PROC BaseSheet(sheetType, base);
+
+    VAR sheetId ID;
+    WITH Sheet as a ID to sheetId Key(base, no) SET a.item=item, a.operator=operator
+        , a.value=value, a.v1=v1, a.v2=v2, a.v3=v3;
+
+    VAR baseSheetStart ID;
+    PROC BaseSheetStart(baseSheetStart);
+    WITH IxFlow IX=baseSheetStart XI=sheetId;
+
+    INTO ret SELECT sheetId as id;
+};
+
+ACT RemoveSheet (
+    id ID,
+) {
+    WITH IxFlow XI=id DEL;
 };
 
 ACT BookSheetStoreIn ver 0.2 (
     id ID,
 ) {
-    PROC BookSheetDerive(id, 1, typeof SheetStoreIn, typeof QueueStoreIn);
+    PROC BookSheetDerive(id, 1, 1, 1);
 };
 
 ACT BookSheetStoreOut ver 0.2 (
     id ID,
 ) {
-    PROC BookSheetDerive(id, -1, typeof SheetStoreOut, typeof QueueStoreOut);
+    PROC BookSheetDerive(id, -1, 1, 2);
 };
 
 PROC BookSheetDerive ver 0.8 (
@@ -48,29 +66,31 @@ PROC BookSheetDerive ver 0.8 (
     sheetType INT,
     queueType INT,
 ) {
+    /*
     IF not exists(SELECT a.xi FROM IxMySheet as a WHERE a.ix=$user AND a.xi=id and entityid(id)=sheetType) {
         RETURN;
     }
+    */
     TABLE originSheets(KEY id ID);
-    WITH IxMySheet IX=$user XI=id DEL;
+    -- WITH IxMySheet IX=$user XI=id DEL;
     -- 下面记账
     FOR (VAR id ID, value VALUE, origin ID, originSheet ID, item ID, value QUANTITY, price PRICE, amount AMOUNT
-        OF SELECT a.id, a.value, a.item as origin, b.base as originSheet, b.item, b.value, b.price, b.amount
-            FROM Detail as a JOIN DetailQPA as b ON b.id=a.item
+        OF SELECT a.id, a.value, a.item as origin, b.base as originSheet, b.item, b.value, b.v1 as price, b.v2 as amount
+            FROM Detail as a JOIN Detail as b ON b.id=a.item
             WHERE a.base=id
             ORDER BY a.id ASC
     ) {
         VAR delta VALUE = neg * value;
         INTO originSheets IGNORE SELECT originSheet as id;
-        WITH Done ID=origin SET done+=value;
+        WITH Done as a ID=origin SET a.value += value;
         WITH Book ID=item SET value+=delta;
-        VAR project ID = ID(Project new KEY type=ProjectType.Storage, item=item);
+        VAR subject ID = ID(Subject new KEY type=SubjectType.Storage, item=item);
         VAR history ID;
-        WITH History as a ID to history SET a.project=project, a.value=delta, a.ref=id;
+        WITH History as a ID to history SET a.subject=subject, a.value=delta, a.ref=id;
     }
     FOR (VAR origin ID OF SELECT a.id as origin FROM originSheets as a) {
-        IF (SELECT sum(b.value-c.done)
-                FROM DetailQPA as b
+        IF (SELECT sum(b.value-c.value)
+                FROM Detail as b
                     JOIN Done as c on c.id=b.id 
                 WHERE b.base=origin
            )=0

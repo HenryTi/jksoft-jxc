@@ -5,7 +5,8 @@ import { UqConfig, UqQuery } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
-import { BaseIDUnit } from './tool';
+//import { SeedUnit } from './tool';
+import { UqExt } from 'uqs/UqDefault';
 
 const appConfig: AppConfig = {
     version: '0.1.0',
@@ -45,8 +46,6 @@ export class UqApp extends UqAppBase<UQs> {
     unitBizDate: number;
     unitBizMonth: number;
 
-    baseIDUnit: BaseIDUnit;
-
     get pathLogin() { return '/login'; }
     // 数据服务器提醒客户端刷新，下面代码重新调入的数据
     refresh = async () => {
@@ -74,10 +73,26 @@ export class UqApp extends UqAppBase<UQs> {
     }
 
     protected override async loadOnLogined(): Promise<void> {
-        this.baseIDUnit = new BaseIDUnit(this, 99);
+        this.setUnit(99);
     }
 
-    get uq() { return this.uqs.UqDefault; }
+    private uqDefault: any;
+    private unit: number;
+    get uq() {
+        let ret: UqExt;
+        if (this.uqDefault === undefined) {
+            this.uqDefault = ret = this.uqs.UqDefault;
+            (ret.$ as any).$_uqMan.unit = this.unit;
+        }
+        else {
+            ret = this.uqDefault;
+        }
+        return ret;
+    }
+    setUnit(unit: number) {
+        this.unit = unit;
+        this.uqDefault = undefined;
+    }
 }
 
 const uqConfigs = uqConfigsFromJson(uqconfigJson);

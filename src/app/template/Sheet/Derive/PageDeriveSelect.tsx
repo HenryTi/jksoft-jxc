@@ -4,7 +4,6 @@ import { useUqApp } from "app/UqApp";
 import { useState } from "react";
 import { IDView, Page, useModal } from "tonwa-app";
 import { FA, List, LMR, SearchBox } from "tonwa-com";
-import { DetailBase, SheetBase } from "../EditingBase";
 import { PartDerive } from "./PartDerive";
 
 interface SheetGroup {
@@ -12,7 +11,7 @@ interface SheetGroup {
     sheets: any[];
 }
 
-export function PageDeriveSelect<S extends SheetBase, D extends DetailBase>({ Part }: PartProps<PartDerive<S, D>>) {
+export function PageDeriveSelect({ Part }: PartProps<PartDerive>) {
     const uqApp = useUqApp();
     const { closeModal } = useModal();
     const part = uqApp.objectOf(Part);

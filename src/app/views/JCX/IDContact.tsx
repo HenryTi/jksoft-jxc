@@ -1,7 +1,6 @@
 import { PageIDList, PageIDNew, PageIDView, PartID } from "app/template/ID";
-import { BaseID, BaseIDPropUnit } from "app/tool";
-import { UqApp } from "app/UqApp";
 import { Route } from "react-router-dom";
+import { ItemType } from "uqs/UqDefault";
 
 export const pathContactNew = 'contact-new';
 export const pathContactList = 'contact-list';
@@ -9,19 +8,9 @@ export const pathContactView = 'contact-view';
 export const pathContactEdit = 'contact-edit';
 
 export class IDPartContact extends PartID {
+    readonly IDType = ItemType.Contact;
     readonly path: string;
-
-    readonly baseID: BaseID;
-    get caption(): string { return '往来单位' }
-
-    constructor(uqApp: UqApp) {
-        super(uqApp);
-        this.baseID = uqApp.objectOf(BaseIDContact);
-    }
-}
-
-class BaseIDContact extends BaseIDPropUnit {
-    readonly prop = 'contact';
+    readonly caption = '往来单位';
 }
 
 function PageContactNew() {

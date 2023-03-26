@@ -2,14 +2,14 @@ QUERY ReportStorage (
     key CHAR(50),
 )
 PAGE (
-    product ID ASC,
+    item ID ASC,
     value VALUE,
     init VALUE,
 ) {
-    PAGE SELECT a.id as product, a.value, a.init
+    PAGE SELECT a.id as item, a.value, a.init
         FROM Book as a
-            JOIN Product as b ON a.id=b.id
-        WHERE a.id > $pageStart AND SEARCH(b.name, b.no ON key)
+            JOIN Item as b ON a.id=b.id
+        WHERE a.id > $pageStart AND SEARCH(b.ex, b.no ON key)
         ORDER BY a.id ASC
         LIMIT $pageSize;
 };
@@ -22,10 +22,10 @@ PAGE (
     value VALUE,
     ref ID,
 ) {
-    VAR project ID = ID(Project new KEY type=ProjectType.Storage, item=item);
+    VAR subject ID = ID(Subject new KEY type=SubjectType.Storage, item=item);
     PAGE SELECT a.id, a.value, a.ref
         FROM History as a
-        WHERE a.id < $pageStart AND a.project=project
+        WHERE a.id < $pageStart AND a.subject=subject
         ORDER BY a.id DESC
         LIMIT $pageSize;
 };

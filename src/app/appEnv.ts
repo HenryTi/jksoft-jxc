@@ -1,8 +1,8 @@
 import { AppEnv } from "tonwa-app";
 import { from62 } from "tonwa-com";
 
-const defaultUnitName = '百灵威';
-const defaultUnit = 24;
+// const defaultUnitName = '百灵威';
+// const defaultUnit = 24;
 
 export const appEnv: AppEnv = (function () {
     let testing: boolean; // = isTesting();
@@ -44,6 +44,8 @@ export const appEnv: AppEnv = (function () {
         if (isNaN(unit) === true) unit = undefined;
     }
     else {
+        unit = 0;
+        /*
         // 下面都是为了兼容以前的操作。
         // 整个url上，只要有test作为独立的字符串出现，就是testing
         testing = /(\btest\b)/i.test(document.location.href);
@@ -79,6 +81,7 @@ export const appEnv: AppEnv = (function () {
             unit = defaultUnit;
         }
         if (!unit) unit = 0;
+        */
     }
     let isDevelopment = import.meta.env.DEV;
     return { isDevelopment, testing, unit };

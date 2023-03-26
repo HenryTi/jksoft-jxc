@@ -4,11 +4,11 @@ import { useEffectOnce } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { PartProps } from "../../Part";
 import { PartOrigin } from "./PartOrigin";
-import { DetailBase, SheetBase } from "../EditingBase";
 import { PageSheetEdit } from "../PageSheetEdit";
 import { useNavigate, useParams } from "react-router-dom";
+import { Sheet } from "uqs/UqDefault";
 
-export function PageOriginEdit<S extends SheetBase, D extends DetailBase>({ Part }: PartProps<PartOrigin<S, D>>) {
+export function PageOriginEdit({ Part }: PartProps<PartOrigin>) {
     const uqApp = useUqApp();
     const navigate = useNavigate();
     const part = uqApp.objectOf(Part);
@@ -17,7 +17,7 @@ export function PageOriginEdit<S extends SheetBase, D extends DetailBase>({ Part
         , buildDetailFromSelectedItem
     } = part;
     const { atomSheet } = editing;
-    const sheet = useAtomValue(atomSheet) as S;
+    const sheet = useAtomValue(atomSheet) as Sheet;
     const { id: paramId } = useParams();
     const { openModal, closeModal } = useModal();
 

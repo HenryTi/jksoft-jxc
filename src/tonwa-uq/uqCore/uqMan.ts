@@ -248,8 +248,9 @@ function IDPath(path: string): string { return path; }
 enum EnumResultType { data, sql };
 
 export interface Uq {
-    $: Uq;
-    $name: string;
+    $: UqMan;
+    // $name: string;
+    // $setUnit(unit: number): void;
     Role: { [key: string]: string[] };
     idObj<T = any>(id: number): Promise<T>;
     idJoins(id: number): Promise<{ ID: ID; main: [string, any]; joins: [string, any[]][]; }>;
@@ -319,6 +320,8 @@ export class UqMan {
     readonly id: number;
     readonly net: Net;
     readonly uqApi: UqApi;
+    readonly baseUrl = 'tv/';
+    unit: number;
     proxy: any;
     $proxy: any;
 
@@ -339,8 +342,7 @@ export class UqMan {
         this.localModifyMax = this.localMap.child('$modifyMax');
         this.localEntities = this.localMap.child('$access');
         this.tuidsCache = new TuidsCache(this);
-        let baseUrl = 'tv/';
-        this.uqApi = new UqApi(this.net, baseUrl, this.name /* this.uqOwner, this.uqName */);
+        this.uqApi = new UqApi(this); // this.net, baseUrl, this.name /* this.uqOwner, this.uqName */);
     }
 
     getID(name: string): ID { return this.ids[name.toLowerCase()]; };
@@ -427,6 +429,7 @@ export class UqMan {
             let schema = this.uqSchema[i];
             let { name, type } = schema;
             let entity = this.fromType(name, type);
+            if (entity === undefined) continue;
             entity.buildSchema(schema);
         }
     }
@@ -723,47 +726,6 @@ export class UqMan {
         return this.entities[name] !== undefined
             || this.entities[name.toLowerCase()] !== undefined;
     }
-    /*
-        createProxy(): any {
-            let ret = new Proxy(this.entities, {
-                get: (target, key, receiver) => {
-                    let lk = (key as string).toLowerCase();
-                    if (lk[0] === '$') {
-                        switch (lk) {
-                            default: throw new Error(`unknown ${lk} property in uq`);
-                            case '$': return this.$proxy;
-                            case '$name': return this.name;
-                        }
-                    }
-                    let ret = target[lk];
-                    if (ret !== undefined) return ret;
-                    let func: any = (this as any)[key];
-                    if (func !== undefined) return func;
-                    this.errUndefinedEntity(String(key));
-                }
-            });
-            this.proxy = ret;
-            this.$proxy = new Proxy(this.entities, {
-                get: (target, key, receiver) => {
-                    let lk = (key as string).toLowerCase();
-                    let ret: any = target[lk];
-                    if (ret !== undefined) return ret;
-                    let func: any = (this as any)['$' + (key as string)];
-                    if (func !== undefined) return func;
-                    this.errUndefinedEntity(String(key));
-                }
-            });
-            //this.idCache = new IDCache(this);
-            return ret;
-        }
-    
-        private errUndefinedEntity(entity: string) {
-            let err = new Error(`entity ${this.name}.${entity} not defined`);
-            err.name = UqError.unexist_entity;
-            this.clearLocalEntities();
-            throw err;
-        }
-    */
 
     private async apiPost(api: string, resultType: EnumResultType, apiParam: any): Promise<any> {
         if (resultType === EnumResultType.sql) api = 'sql-' + api;
@@ -814,7 +776,11 @@ export class UqMan {
         }
         return obj;
     }
-
+    /*
+    protected $setUnit = (unit: number) => {
+        this.unit = unit;
+    }
+    */
     protected Acts = async (param: any): Promise<any> => {
         //let apiParam = this.ActsApiParam(param);
         let ret = await this.apiActs(param, EnumResultType.data); // await this.apiPost('acts', apiParam);

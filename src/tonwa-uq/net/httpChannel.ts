@@ -24,12 +24,11 @@ export class HttpChannel {
     }
 
     async xcall(urlPrefix: string, caller: Caller<any>): Promise<void> {
-        let options = this.buildOptions();
+        let options = this.buildOptions(undefined);
         let { headers, path, method } = caller;
         if (headers !== undefined) {
             let h = options.headers;
             for (let i in headers) {
-                //h.append(i, encodeURI(headers[i]));
                 h[i] = encodeURI(headers[i]);
             }
         }
@@ -46,7 +45,7 @@ export class HttpChannel {
         return ret.res;
     }
 
-    async get(url: string, params: any = undefined): Promise<any> {
+    async get(url: string, params: any = undefined, headers: any = undefined): Promise<any> {
         if (params) {
             let keys = Object.keys(params);
             if (keys.length > 0) {
@@ -59,27 +58,27 @@ export class HttpChannel {
                 }
             }
         }
-        let options = this.buildOptions();
+        let options = this.buildOptions(headers);
         options.method = 'GET';
         return await this.innerFetchResult(url, options);
     }
 
-    async post(url: string, params: any): Promise<any> {
-        let options = this.buildOptions();
+    async post(url: string, params: any, headers: any = undefined): Promise<any> {
+        let options = this.buildOptions(headers);
         options.method = 'POST';
         options.body = JSON.stringify(params);
         return await this.innerFetchResult(url, options);
     }
 
-    async put(url: string, params: any): Promise<any> {
-        let options = this.buildOptions();
+    async put(url: string, params: any, headers: any = undefined): Promise<any> {
+        let options = this.buildOptions(headers);
         options.method = 'PUT';
         options.body = JSON.stringify(params);
         return await this.innerFetchResult(url, options);
     }
 
-    async delete(url: string, params: any): Promise<any> {
-        let options = this.buildOptions();
+    async delete(url: string, params: any, headers: any = undefined): Promise<any> {
+        let options = this.buildOptions(headers);
         options.method = 'DELETE';
         options.body = JSON.stringify(params);
         return await this.innerFetchResult(url, options);
@@ -151,7 +150,7 @@ export class HttpChannel {
     }
 
     async callFetch(url: string, method: string, body: any): Promise<any> {
-        let options = this.buildOptions();
+        let options = this.buildOptions(undefined);
         options.method = method;
         options.body = body;
         return new Promise<any>(async (resolve, reject) => {
@@ -159,10 +158,10 @@ export class HttpChannel {
         });
     }
 
-    private buildOptions(): { method: string; headers: { [name: string]: string }; body: any } {
-        let headers = this.buildHeaders();
+    private buildOptions(headers: { [name: string]: string }): { method: string; headers: { [name: string]: string }; body: any } {
+        let newHeaders = this.buildHeaders(headers);
         let options = {
-            headers: headers,
+            headers: newHeaders,
             method: undefined as any,
             body: undefined as any,
             // cache: 'no-cache',
@@ -170,7 +169,7 @@ export class HttpChannel {
         return options;
     }
 
-    protected buildHeaders(): { [name: string]: string } {
+    protected buildHeaders(paramHeaders: { [name: string]: string }): { [name: string]: string } {
         let { language, culture } = this;
         let headers: { [name: string]: string } = {};
         headers['Content-Type'] = 'application/json;charset=UTF-8';
@@ -179,6 +178,9 @@ export class HttpChannel {
         headers['Accept-Language'] = lang;
         if (this.authToken) {
             headers['Authorization'] = this.authToken;
+        }
+        if (paramHeaders !== undefined) {
+            Object.assign(headers, paramHeaders);
         }
         return headers;
     }

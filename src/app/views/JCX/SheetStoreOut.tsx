@@ -1,56 +1,44 @@
 import { Band } from "app/coms";
-import { PartProps } from "app/template";
 import { PageDeriveEdit, PartSheet, PartDerive } from "app/template/Sheet";
-import { BaseID, BaseIDPropUnit } from "app/tool";
 import { UqApp } from "app/UqApp";
 import { Route } from "react-router-dom";
 import { UserView } from "tonwa-app";
-import { UqAction, UqID, UqQuery } from "tonwa-uq";
-import { SheetStoreOut, Detail } from "uqs/UqDefault";
-import { SheetPartSale } from "./SheetSale";
-import { pathStoreIn } from "./SheetStoreIn";
+import { UqAction, UqQuery } from "tonwa-uq";
+import { SheetType, Sheet } from "uqs/UqDefault";
+import { PartSheetSale } from "./SheetSale";
 
-export const captionStoreOut = '出库单';
-export const pathStoreOut = 'store-out';
+const captionStoreOut = '出库单';
+const pathStoreOut = 'store-out';
 
-export class SheetPartStoreOut extends PartDerive<SheetStoreOut, Detail> {
+export class SheetPartStoreOut extends PartDerive {
+    readonly sheetType = SheetType.StoreOut;
     readonly caption: string;
     readonly path: string;
-    readonly baseID: BaseID;
     readonly QueryOrigin: UqQuery<any, any>;
     readonly ActBookSheet: UqAction<any, any>;
-    readonly ViewTarget: (props: { sheet: SheetStoreOut }) => JSX.Element;
-    readonly ViewTargetBand: (props: { sheet: SheetStoreOut }) => JSX.Element;
+    readonly ViewTarget: (props: { sheet: Sheet }) => JSX.Element;
+    readonly ViewTargetBand: (props: { sheet: Sheet }) => JSX.Element;
 
     constructor(uqApp: UqApp) {
         super(uqApp);
 
         this.caption = captionStoreOut;
         this.path = pathStoreOut;
-        this.baseID = uqApp.objectOf(BaseIDStoreOut);
 
         let uq = this.uq;
-        this.QueryOrigin = uq.SearchStoreOut;
+        this.QueryOrigin = uq.SearchSheetReady;
         this.ActBookSheet = uq.BookSheetStoreOut;
 
-        this.ViewTarget = ({ sheet }: { sheet: SheetStoreOut }) => {
+        this.ViewTarget = ({ sheet }: { sheet: Sheet }) => {
             return <UserView id={sheet.operator} />;
         }
-        this.ViewTargetBand = ({ sheet }: { sheet: SheetStoreOut }) => {
+        this.ViewTargetBand = ({ sheet }: { sheet: Sheet }) => {
             return <Band labelClassName="text-end" label={'操作员'}>
                 <this.ViewTarget sheet={sheet} />
             </Band>;
         }
     }
-    protected getOriginSheetPart(): PartSheet { return this.uqApp.objectOf(SheetPartSale) as any; }
-
-    buildSheet(id: number, no: string, target: number): SheetStoreOut {
-        return { id, no, operator: target };
-    }
-}
-
-class BaseIDStoreOut extends BaseIDPropUnit {
-    readonly prop = 'storeout';
+    protected getOriginSheetPart(): PartSheet { return this.uqApp.objectOf(PartSheetSale) as any; }
 }
 
 function PageStoreOutEdit() {

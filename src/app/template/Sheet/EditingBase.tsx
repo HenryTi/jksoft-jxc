@@ -1,13 +1,14 @@
 import { PageMoreCacheData } from "app/coms";
 import { atom, PrimitiveAtom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
+import { Sheet } from "uqs/UqDefault";
 import { PartSheet } from "./PartSheet";
 
-export interface SheetBase { id?: number; no?: string; }
-export interface DetailBase { id?: number; value: number; }
+// export interface SheetBase { id?: number; base?: number; no?: string; item?: number; }
+// export interface DetailBase { id?: number; base?: number; item?: number; value: number; }
 
-export interface Editing<S extends SheetBase, R = any> {
-    atomSheet: PrimitiveAtom<S>;
+export interface Editing<R = any> {
+    atomSheet: PrimitiveAtom<Sheet>;
     get atomRows(): PrimitiveAtom<R>;
     atomSubmitable: PrimitiveAtom<boolean>;
     atomIsMine: PrimitiveAtom<boolean>;
@@ -15,15 +16,15 @@ export interface Editing<S extends SheetBase, R = any> {
     discard(): Promise<void>;
 }
 
-export abstract class EditingBase<S extends SheetBase, R = any> implements Editing<S, R> {
-    protected part: PartSheet<S, any>;
-    readonly atomSheet: PrimitiveAtom<S>;
+export abstract class EditingBase<R = any> implements Editing<R> {
+    protected part: PartSheet;
+    readonly atomSheet: PrimitiveAtom<Sheet>;
     readonly atomSubmitable: PrimitiveAtom<boolean>;
     readonly atomIsMine: PrimitiveAtom<boolean>;
 
-    constructor(part: PartSheet<S, any>) {
+    constructor(part: PartSheet) {
         this.part = part;
-        this.atomSheet = atom(undefined as S);
+        this.atomSheet = atom(undefined as Sheet);
         this.atomSubmitable = atom(false) as any;
         this.atomIsMine = atom(false) as any;
     }
@@ -36,27 +37,26 @@ export abstract class EditingBase<S extends SheetBase, R = any> implements Editi
 
     abstract load(sheet: number): Promise<void>;
 
-    async newSheet(target: number) {
+    async newSheet(item: number) {
         let { uq, ID } = this.part;
         let no = await uq.IDNO({ ID });
-        let sheet = this.part.buildSheet(undefined, no, target);
+        let sheet = { no, item } as Sheet;
         setAtomValue(this.atomSheet, sheet);
         return sheet;
     }
 
-    private async setSheetAsMine() {
+    private async saveSheet() {
         const isMine = getAtomValue(this.atomIsMine);
         if (isMine === true) return;
-        let { uqApp, uq, ID, IxMySheet } = this.part;
+        let { uqApp, uq, sheetType } = this.part;
+        //let seedStart = uqApp.objectOf(SeedStart);
+        //let seedStartId = await seedStart.getId();
         const sheet = getAtomValue(this.atomSheet);
-        let [id] = await uq.ActIX({
-            IX: IxMySheet,
-            ID: ID,
-            values: [{
-                ix: undefined,
-                xi: sheet,
-            }]
+        let ret = await uq.SaveSheet.submit({
+            ...sheet,
+            sheetType,
         });
+        let { id } = ret;
         sheet.id = id;
         setAtomValue(this.atomSheet, sheet);
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
@@ -71,16 +71,16 @@ export abstract class EditingBase<S extends SheetBase, R = any> implements Editi
     // 第一次生成detail时，生成sheet id
     // detail.id === undefine? 则新增，否则修改
     async setDetail(detail: any): Promise<number> {
-        await this.setSheetAsMine();
+        await this.saveSheet();
         let { uq, IDDetail } = this.part;
         let sheet = getAtomValue(this.atomSheet);
         let retId = await uq.ActID({
             ID: IDDetail,
-            value: { ...detail, sheet: sheet.id }
+            value: { ...detail, base: sheet.id }
         });
         if (retId > 0) {
             detail.id = retId;
-            detail.sheet = sheet.id;
+            detail.base = sheet.id;
         }
         this.updateDetailAtom(detail);
         this.refreshSubmitable();
@@ -92,9 +92,9 @@ export abstract class EditingBase<S extends SheetBase, R = any> implements Editi
     protected abstract refreshSubmitable(): void;
 
     async discard() {
-        let { uq, IxMySheet } = this.part;
+        let { uq } = this.part;
         let sheet = getAtomValue(this.atomSheet);
-        await uq.ActIX({ IX: IxMySheet, values: [{ ix: undefined, xi: -sheet.id }] });
+        await uq.RemoveSheet.submit({ id: sheet.id });
         this.removeSheetFromCache();
     }
 

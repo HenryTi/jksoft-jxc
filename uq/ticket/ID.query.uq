@@ -7,7 +7,7 @@ RETURNS ret (
 ) {
     INTO ret SELECT * a FROM Detail as a WHERE a.base=id;
 };
-
+/*
 Query GetDetailQPAs (
     id ID,
 )
@@ -16,6 +16,7 @@ RETURNS ret (
 ) {
     INTO ret SELECT * a FROM DetailQPA as a WHERE a.base=id;
 };
+*/
 
 Query GetDetailOrigin (
     id ID,
@@ -25,13 +26,21 @@ RETURNS ret (
     originSheet ID,
     originItem ID,                -- 商品不同包装或者批次，甚至不同的人或者单位, 也可以指向源单明细
     originValue VALUE,
+    originV1 VALUE,
+    originV2 VALUE,
+    originV3 VALUE,
+    done VALUE,
 ) {
     INTO ret SELECT * a
-        , b.base as originSheet, b.item as originItem, b.value as originValue
-        FROM Detail as a JOIN Detail as b ON b.id=a.item
+        , b.base as originSheet, b.item as originItem
+        , b.value as originValue, b.v1 as originV1, b.v2 as originV2, b.v3 as originV3
+        , c.value as done
+        FROM Detail as a 
+            JOIN Detail as b ON b.id=a.item
+            JOIN Done as c ON c.id=b.id
         WHERE a.base=id;
 };
-
+/*
 Query GetDetailFromOrigin (
     id ID,
 )
@@ -86,9 +95,9 @@ RETURNS ret (
             LEFT JOIN Done as b ON b.id=a.id
         WHERE a.base=id AND a.value<>ifnull(b.done, 0);
 };
-
+*/
 QUERY SearchItem ver 0.2 (
-    base ID,
+    IDType CHAR(100),
     key CHAR(50),
 )
 PAGE (
@@ -96,6 +105,9 @@ PAGE (
     no CHAR(50),
     ex CHAR(50),
 ) {
+    VAR base ID;
+    PROC BaseItem(IDType, base);
+
     PAGE SELECT a.id, a.no, a.ex
         FROM Item as a
         WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
@@ -103,33 +115,23 @@ PAGE (
         LIMIT $pageSize;
 };
 
-QUERY SearchProduct ver 0.2 (
-    key CHAR(50),
+QUERY GetMySheets (
 )
 PAGE (
-    id ID desc,
-    no CHAR(50),
-    name CHAR(50),
+    * Sheet DESC
 ) {
-    PAGE SELECT a.id, a.no, a.name
-        FROM Product as a
-        WHERE a.id<$pageStart AND SEARCH(a.no, a.name LIKE key)
-        ORDER BY a.id desc
-        LIMIT $pageSize;
-};
+    VAR ix ID;
+    PROC BaseSheetStart(ix);
 
-QUERY SearchProductForPurchase ver 0.2 (
-    key CHAR(50),
-)
-PAGE (
-    id ID desc,
-    no CHAR(50),
-    name CHAR(50),
-) {
-    PAGE SELECT a.id, a.no, a.name
-        FROM Product as a
-        WHERE a.id<$pageStart AND SEARCH(a.no, a.name LIKE key)
-        ORDER BY a.id desc
+    -- 这里以后再加分配给我的某个流程点的单据
+    -- 目前先获取我正在录入的单据
+    PAGE SELECT * b
+        FROM IxFlow as a
+            JOIN Sheet as b ON a.xi=b.id
+            JOIN Bind as c ON c.id=b.base
+            JOIN Prop as d ON d.id=c.item
+        WHERE b.id<$pageStart AND a.ix=ix
+        ORDER BY b.id DESC
         LIMIT $pageSize;
 };
 
@@ -137,68 +139,37 @@ QUERY SearchProductForSale ver 0.2 (
     key CHAR(50),
 )
 PAGE (
-    id ID desc,
+    id ID DESC,
     no CHAR(50),
-    name CHAR(50),
-    price PRICE,
+    ex CHAR(50),
+    v1 VALUE,
 ) {
-    PAGE SELECT a.id, a.no, a.name, c.price
-        FROM Product as a
-            JOIN PriceName as b ON b.target=a.id AND b.type=PriceType.listSale
-            JOIN Price as c on c.id=b.id
-        WHERE a.id<$pageStart AND SEARCH(a.no, a.name LIKE key)
+    VAR basePriceListSale ID;
+    PROC BasePriceListSale(basePriceListSale);
+
+    PAGE SELECT a.id, a.no, a.ex, b.dec as v1
+        FROM Item as a
+            JOIN IxValue as b ON b.ix=a.id AND b.xi=basePriceListSale
+        WHERE a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
         ORDER BY a.id desc
         LIMIT $pageSize;
 };
 
-ACT Sp (
-) {
-    VAR a INT = 1;
-};
-
-QUERY SearchContact ver 0.2 (
-    key CHAR(50),
-)
-PAGE (
-    id ID desc,
-    no CHAR(50),
-    name CHAR(50),
-) {
-    PAGE SELECT a.id, a.no, a.name
-        FROM Contact as a
-        WHERE a.id<$pageStart AND SEARCH(a.no, a.name LIKE key)
-        ORDER BY a.id desc
-        LIMIT $pageSize;
-};
-
-QUERY SearchStoreIn ver 0.2 (
+QUERY SearchSheetReady (
+    sheet PropName,
+    state PropName,
     key CHAR(50),       -- 供应商编号或名称
 )
 PAGE (
-    id ID asc,
-    target ID,
+    * of Sheet ASC,
 ) {
-    PAGE SELECT a.id, a.target as target
-        FROM QueueStoreIn QUEUE 
-            JOIN SheetPurchase as a
-            JOIN Contact as b ON b.id=a.target
-        WHERE a.id>$pageStart AND SEARCH(b.no, b.name LIKE key) 
-        ORDER BY a.id asc
-        LIMIT $pageSize;
-};
-
-QUERY SearchStoreOut ver 0.2 (
-    key CHAR(50),       -- 供应商编号或名称
-)
-PAGE (
-    id ID asc,
-    target ID,
-) {
-    PAGE SELECT a.id, a.target as target
-        FROM QueueStoreOut QUEUE 
-            JOIN SheetSale as a
-            JOIN Contact as b ON b.id=a.target
-        WHERE a.id>$pageStart AND SEARCH(b.no, b.name LIKE key) 
-        ORDER BY a.id asc
+    VAR ix ID;
+    PROC BaseSheetState(sheet, state, ix);
+    PAGE SELECT * b
+        FROM IxFlow as a
+            JOIN Sheet as b ON b.id=a.xi
+            LEFT JOIN Item as c ON c.id=b.item
+        WHERE a.ix=ix AND b.id>$pageStart AND SEARCH(b.no, c.no, c.ex LIKE key)
+        ORDER BY b.id asc
         LIMIT $pageSize;
 };
