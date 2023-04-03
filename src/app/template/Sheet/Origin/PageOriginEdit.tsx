@@ -2,20 +2,20 @@ import { useAtomValue } from "jotai";
 import { useModal } from "tonwa-app";
 import { useEffectOnce } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
-import { PartProps } from "../../Part";
-import { PartOrigin } from "./PartOrigin";
+import { GenProps } from "app/tool";
+import { GenOrigin } from "./GenOrigin";
 import { PageSheetEdit } from "../PageSheetEdit";
 import { useNavigate, useParams } from "react-router-dom";
 import { Sheet } from "uqs/UqDefault";
 
-export function PageOriginEdit({ Part }: PartProps<PartOrigin>) {
+export function PageOriginEdit({ Gen }: GenProps<GenOrigin>) {
     const uqApp = useUqApp();
     const navigate = useNavigate();
-    const part = uqApp.objectOf(Part);
+    const gen = uqApp.objectOf(Gen);
     const { editing
         , ModalSheetStart, PageDetailItemSelect, PageSheetDetail
         , buildDetailFromSelectedItem
-    } = part;
+    } = gen;
     const { atomSheet } = editing;
     const sheet = useAtomValue(atomSheet) as Sheet;
     const { id: paramId } = useParams();
@@ -29,7 +29,7 @@ export function PageOriginEdit({ Part }: PartProps<PartOrigin>) {
                 await editing.load(sheetId);
                 return;
             }
-            let ret = await openModal<number>(<ModalSheetStart Part={Part} />);
+            let ret = await openModal<number>(<ModalSheetStart Gen={Gen} />);
             if (ret === undefined) {
                 navigate(-1);
             }
@@ -42,7 +42,7 @@ export function PageOriginEdit({ Part }: PartProps<PartOrigin>) {
         // 新建一个detail
         let detail = buildDetailFromSelectedItem(selectedItem);
         //let ret = 
-        await openModal(<PageSheetDetail detail={detail} Part={Part} />);
+        await openModal(<PageSheetDetail detail={detail} Gen={Gen} />);
         /*
         if (!ret) {
             closeModal();
@@ -70,7 +70,7 @@ export function PageOriginEdit({ Part }: PartProps<PartOrigin>) {
     }
 
     async function onEditRow(detail: any) {
-        let ret = await openModal(<PageSheetDetail detail={detail} Part={Part} />);
+        let ret = await openModal(<PageSheetDetail detail={detail} Gen={Gen} />);
         if (ret === undefined) return;
         let newDetail = { ...detail, ...ret }
         let retId = await editing.setDetail(newDetail);
@@ -78,5 +78,5 @@ export function PageOriginEdit({ Part }: PartProps<PartOrigin>) {
             detail.id = retId;
         }
     }
-    return <PageSheetEdit Part={Part} onAddRow={onAddRow} onEditRow={onEditRow} sheet={sheet} />;
+    return <PageSheetEdit Gen={Gen} onAddRow={onAddRow} onEditRow={onEditRow} sheet={sheet} />;
 }

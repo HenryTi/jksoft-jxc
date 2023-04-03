@@ -1,4 +1,4 @@
-import { PageReport, PartReport } from "app/template";
+import { PageReport, GenReport } from "app/template";
 import { PageHistory } from "app/template/Report/PageHistory";
 import { UqApp, useUqApp } from "app/UqApp";
 import React, { useState } from "react";
@@ -13,7 +13,7 @@ const pathStorageHistory = 'storage-history';
 const pathStorageDetail = 'storage-detail';
 const pathStorageSheet = 'storage-sheet';
 
-export class PartStorage extends PartReport {
+export class GenStorage extends GenReport {
     readonly caption = '库存报表';
     readonly path = pathStorage;
     readonly sortField: string;
@@ -82,11 +82,11 @@ export class PartStorage extends PartReport {
 }
 
 function PageStorage() {
-    return <PageReport Part={PartStorage}></PageReport>
+    return <PageReport Gen={GenStorage}></PageReport>
 }
 
 function PageStorageHistory() {
-    return <PageHistory Part={PartStorage} />
+    return <PageHistory Gen={GenStorage} />
 }
 
 function PageDetail() {

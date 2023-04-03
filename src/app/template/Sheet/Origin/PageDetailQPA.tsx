@@ -1,18 +1,18 @@
 import { useForm } from "react-hook-form";
 import { IDView, Page, useModal } from "tonwa-app";
-import { PartProps } from "app/template/Part";
+import { GenProps } from "app/tool";
 import { Detail } from "uqs/UqDefault";
 import { ChangeEvent, useState } from "react";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { UqApp, useUqApp } from "../../../UqApp";
-import { Part } from "../../../tool";
-import { PartOrigin } from "./PartOrigin";
+import { Gen } from "../../../tool";
+import { GenOrigin } from "./GenOrigin";
 
 const fieldQuantity = 'value';
 const fieldPrice = 'v1';
 const fieldAmount = 'v2';
 
-export abstract class PartDetail extends Part {
+export abstract class GenDetail extends Gen {
     buildFormRows(detial: Detail): FormRow[] {
         let { value, v1: price, v2: amount } = detial;
         return [
@@ -45,15 +45,15 @@ export abstract class PartDetail extends Part {
     abstract get ViewItemTemplate(): ({ value }: { value: any }) => JSX.Element;
 }
 
-interface Props extends PartProps<PartDetail> {
+interface Props extends GenProps<GenDetail> {
     detail: Detail;
-    PartSheet: new (uqApp: UqApp) => PartOrigin;
+    GenSheet: new (uqApp: UqApp) => GenOrigin;
 }
 
-export function PageDetailQPA({ detail, Part, PartSheet }: Props) {
+export function PageDetailQPA({ detail, Gen, GenSheet }: Props) {
     const uqApp = useUqApp();
-    const partSheet = uqApp.objectOf(PartSheet);
-    const part = uqApp.objectOf(Part);
+    const genSheet = uqApp.objectOf(GenSheet);
+    const gen = uqApp.objectOf(Gen);
     const { value, v1: price, v2: amount, item } = detail;
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
@@ -97,7 +97,7 @@ export function PageDetailQPA({ detail, Part, PartSheet }: Props) {
         setAmountValue(value, q);
     }
     const options = { onChange, valueAsNumber: true };
-    const formRows = part.buildFormRows(detail);
+    const formRows = gen.buildFormRows(detail);
     formRows.forEach(v => (v as any).options = { ...(v as any).options, ...options });
     formRows.push({ type: 'submit', label: '提交', options: { disabled: hasValue === false } });
 
@@ -110,11 +110,11 @@ export function PageDetailQPA({ detail, Part, PartSheet }: Props) {
         let { quantity } = data;
         if (Number.isNaN(quantity) === false) {
             let value = { ...detail }; //, sheet: sheet.id };
-            await partSheet.editing.setDetail(value);
+            await genSheet.editing.setDetail(value);
         }
         closeModal({ ...data, amount, price });
     }
-    const { caption, ViewItemTop } = part;
+    const { caption, ViewItemTop } = gen;
     return <Page header={caption}>
         <div className="mt-3"></div>
         <ViewItemTop item={item} />

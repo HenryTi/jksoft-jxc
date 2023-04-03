@@ -1,22 +1,22 @@
-import { PageIDList, PageIDNew, PageIDView, PartID, PageIDSelect } from "app/template/ID";
+import { PageIDList, PageIDNew, PageIDView, GenID, PageIDSelect } from "app/template/ID";
 import { UqApp } from "app/UqApp";
 import { Route } from "react-router-dom";
 import { LMR } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
-import { Item, ItemType } from "uqs/UqDefault";
+import { Item, ItemType, uqSchema } from "uqs/UqDefault";
 
 export const pathProductNew = 'product-new';
 export const pathProductList = 'product-list';
 export const pathProductView = 'product-view';
 export const pathProductEdit = 'product-edit';
 
-export class IDPartProduct extends PartID {
-    readonly IDType = ItemType.Product;
+export class GenProduct extends GenID {
+    readonly itemName = 'product';
     readonly path: string;
-    readonly caption = '产品';
+    get exLabel(): string { return '描述' }
 }
 
-class IDPartProductForSale extends IDPartProduct {
+class GenProductForSale extends GenProduct {
     declare readonly ViewItemID: (value: any) => JSX.Element;
     declare readonly query: UqQuery<any, any>;
     constructor(uqApp: UqApp) {
@@ -34,29 +34,17 @@ class IDPartProductForSale extends IDPartProduct {
     }
 }
 
-function PageProductNew() {
-    return <PageIDNew Part={IDPartProduct} />;
-}
-
-function PageProductView() {
-    return <PageIDView Part={IDPartProduct} />;
-}
-
-function PageProductList() {
-    return <PageIDList Part={IDPartProduct} />
-}
-
 export function PageProductSelect() {
-    return <PageIDSelect Part={IDPartProduct} />;
+    return <PageIDSelect Gen={GenProduct} />;
 }
 
 // show price on product item
 export function PageProductSelectForSale() {
-    return <PageIDSelect Part={IDPartProductForSale} />;
+    return <PageIDSelect Gen={GenProductForSale} />;
 }
 
 export const routeProduct = <>
-    <Route path={pathProductNew} element={<PageProductNew />} />
-    <Route path={pathProductList} element={<PageProductList />} />
-    <Route path={`${pathProductView}/:id`} element={<PageProductView />} />
+    <Route path={pathProductNew} element={<PageIDNew Gen={GenProduct} />} />
+    <Route path={pathProductList} element={<PageIDList Gen={GenProduct} />} />
+    <Route path={`${pathProductView}/:id`} element={<PageIDView Gen={GenProduct} />} />
 </>;

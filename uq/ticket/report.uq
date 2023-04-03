@@ -7,7 +7,7 @@ PAGE (
     init VALUE,
 ) {
     PAGE SELECT a.id as item, a.value, a.init
-        FROM Book as a
+        FROM Balance as a
             JOIN Item as b ON a.id=b.id
         WHERE a.id > $pageStart AND SEARCH(b.ex, b.no ON key)
         ORDER BY a.id ASC

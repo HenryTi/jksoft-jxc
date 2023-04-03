@@ -1,2 +1,2 @@
 export * from './PageDeriveEdit';
-export * from './PartDerive';
+export * from './GenDerive';

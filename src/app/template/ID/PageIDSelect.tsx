@@ -3,8 +3,8 @@ import { SearchBox } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
 import { PageQueryMore } from "app/coms";
 import { useUqApp } from "app/UqApp";
-import { PartProps } from "../Part";
-import { PartID } from "./PartID";
+import { GenProps } from "app/tool";
+import { GenID } from "./GenID";
 import { useModal } from "tonwa-app";
 import { QueryMore } from "app/tool";
 
@@ -13,10 +13,10 @@ interface PageIDSelectProps {
     query?: QueryMore;
 }
 
-export function PageIDSelect({ Part, query, ViewItem }: PartProps<PartID> & PageIDSelectProps) {
+export function PageIDSelect({ Gen, query, ViewItem }: GenProps<GenID> & PageIDSelectProps) {
     const { closeModal } = useModal();
     const uqApp = useUqApp();
-    const { caption, placeholder, searchItems: searchItemsInPart, ViewItemID: ViewItemInPart, autoLoadOnOpen } = uqApp.objectOf(Part);
+    const { caption, placeholder, searchItems: searchItemsInPart, ViewItemID: ViewItemInPart, autoLoadOnOpen } = uqApp.objectOf(Gen);
     query = query ?? searchItemsInPart;
     ViewItem = ViewItem ?? ViewItemInPart;
     const [searchParam, setSearchParam] = useState(autoLoadOnOpen === true ? { key: undefined as string } : undefined);

@@ -9,6 +9,7 @@ import { routeIDCenter } from "./IDCenter";
 import { routeStoreOut } from "./SheetStoreOut";
 import { routeReportStorage } from "./ReportStorage";
 import { routeReportCenter } from "./ReportCenter";
+import { routePrice } from "./SettingPrice";
 
 export const pathJXC = 'jxc';
 const routes = <>
@@ -24,6 +25,8 @@ const routes = <>
 
     {routeReportCenter}
     {routeReportStorage}
+
+    {routePrice}
 </>;
 export const routeJCX = <>
     <Route path={`${pathJXC}/*`}>

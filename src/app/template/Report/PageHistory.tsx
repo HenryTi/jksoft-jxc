@@ -1,15 +1,15 @@
 import { PageQueryMore } from "app/coms";
 import { useUqApp } from "app/UqApp";
 import { useNavigate, useParams } from "react-router-dom";
-import { PartProps } from "../Part";
-import { PartReport } from "./PartReport";
+import { GenProps } from "app/tool";
+import { GenReport } from "./GenReport";
 
-export function PageHistory({ Part }: PartProps<PartReport>) {
+export function PageHistory({ Gen }: GenProps<GenReport>) {
     const uqApp = useUqApp();
-    const part = uqApp.objectOf(Part);
+    const gen = uqApp.objectOf(Gen);
     const navigate = useNavigate();
-    part.navigate = navigate;
-    const { QueryHistory, ViewItemHistory, captionHistory, historySortField, onHistoryClick } = part;
+    gen.navigate = navigate;
+    const { QueryHistory, ViewItemHistory, captionHistory, historySortField, onHistoryClick } = gen;
     const { id: paramId } = useParams();
     const param = { item: Number(paramId) };
     return <PageQueryMore

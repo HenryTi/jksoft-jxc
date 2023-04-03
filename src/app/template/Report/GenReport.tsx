@@ -1,7 +1,7 @@
 import { UqQuery } from "tonwa-uq";
-import { PartWithPath } from "../Part";
+import { GentWithPath } from "app/tool";
 
-export abstract class PartReport extends PartWithPath {
+export abstract class GenReport extends GentWithPath {
     abstract get QueryReport(): UqQuery<any, any>;
     abstract get sortField(): string;
     abstract get ViewItem(): (props: { value: any }) => JSX.Element;

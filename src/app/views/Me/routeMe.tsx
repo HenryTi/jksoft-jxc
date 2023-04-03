@@ -1,5 +1,5 @@
-import { AppLogout } from "app/tool/brand/AppImage";
-import { Outlet, Route, Routes } from "react-router-dom";
+import { AppLogout } from "app/brand";
+import { Route, Routes } from "react-router-dom";
 import { PageChangePassword, UserQuit } from "tonwa-app";
 import { PageAbout } from "./PageAbout";
 import { PageEditMe } from "./PageEditMe";

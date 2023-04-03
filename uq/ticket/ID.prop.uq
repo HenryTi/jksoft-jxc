@@ -3,7 +3,7 @@ IDX Seq (
     id,
     seq TEXT,               -- id序列，tab分隔，ln分行。排序和分组
 );
-
+/*
 ENUM PropDataType (
     none = 0,           -- 有否，无值
     bigint = 1,         -- 8字节大整数
@@ -37,24 +37,79 @@ VALUES
 (0,     NameOf Bind,        PropDataType.none),
 (0,     NameOf Item,        PropDataType.none),
 (0,     NameOf Sheet,       PropDataType.none),
-(0,     NameOf IxFlow,      PropDataType.none),
 (0,     '$user',            PropDataType.none),
 (0,     '$unit',            PropDataType.none),
 ;
-
+*/
 -- ix=IDType，特定ID有多少属性
 -- ix=Prop，特定属性，有多少可选项
 -- ix=ID value, 可选项有否
 IX *IxProp (
     ix,                 -- ID type or Prop
-    xi Prop,            -- prop
+    xi,                 -- prop
 );
-
-IX IxValue (
+IX IxPropValue (
     ix,
     xi,
     int BIGINT,
     dec VALUE,
     str CHAR(100),
-    text TEXT(medium),
+);
+
+-- 一个ix，多个选项。比如，userunit的permit
+-- userunit可以有多个permit. ix=(userunit@permit), xi=permit id
+-- userunit可以有多个role. ix=(userunit@role), xi=role id
+-- userunit实际拥有的permit，是通过role和permit merge的结果。ix=(userunit@runningPermit), xi=permit id
+IX IxSetting(
+    ix,
+    xi,
+);
+-- setting跟prop分开。有可能value和setting需要分开处理。比如系统重置
+IX IxSettingValue (
+    ix,
+    xi,
+    int BIGINT,
+    dec VALUE,
+    str CHAR(100),
+);
+
+ID UserUnit (
+    id,
+    KEY user ID,
+    KEY unit ID,
+);
+
+ID UnitPhrase (
+    id,
+    KEY unit ID,            --- unit
+    KEY phrase ID,          --- phrase id
+);
+
+IX IxStateItem (
+    ix,                     -- UnitPhrase(unit, $phrase(item.state))
+    xi,                     -- item id
+);
+
+IX IxMyDraft (
+    ix,                     -- UserUnit
+    xi INDEX,
+);
+
+-- 包括上一环节产生的待处理
+IX IxStateSheet (
+    ix,                     -- UnitPhrase(unit, $phrase(sheet.State))
+    xi INDEX,               -- sheet id
+);
+
+ID BindItem (
+    id,
+    KEY base ID,            -- (main + type) => owner, or type in main
+    KEY item ID,            -- item id easy to load values
+);
+
+-- 发送到单据状态，需要base = SheetStatePhrase @ receiver;
+ID BindSheet (
+    id MINUTE,
+    KEY base ID,            -- (main + type) => owner, or type in main
+    KEY sheet ID,            -- item id easy to load values
 );

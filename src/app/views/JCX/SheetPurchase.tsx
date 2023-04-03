@@ -1,45 +1,34 @@
 import { Route } from "react-router-dom";
 import { UqAction } from "tonwa-uq";
-import { PartProps } from "app/template/Part";
+import { GenProps } from "app/tool";
 import { UqApp } from "app/UqApp";
-import { Detail, SheetType } from "uqs/UqDefault";
-import { PageOriginEdit, PartSheet, PartOrigin, PageDetailQPA, PartDetail, ViewItemID } from "../../template";
+import { Detail, SheetType, uqSchema } from "uqs/UqDefault";
+import { PageOriginEdit, GenSheet, GenOrigin, PageDetailQPA, GenDetail, ViewItemID } from "../../template";
 import { PageProductSelect } from "./IDProduct";
-import { QueryMore, SeedSheet } from "app/tool";
-import { IDPartContact } from "./IDContact";
+import { QueryMore } from "app/tool";
+import { GenContact } from "./IDContact";
 
-const captionPurchase = '采购单';
 const pathPurchaseEdit = 'purchase-edit';
 
-class SeedPurchase extends SeedSheet {
-    readonly sheet = SheetType.Purchase;
-}
+export class GenPurchase extends GenOrigin {
+    readonly sheetName = 'purchase';
+    readonly path = pathPurchaseEdit;
 
-export class SheetPartPurchase extends PartOrigin {
-    readonly sheetType = SheetType.Purchase;
-    readonly path: string;
-
-    readonly ActBookSheet: UqAction<any, any>;
     readonly QuerySearchItem: QueryMore;
-
-    readonly caption: string;
 
     readonly PageDetailItemSelect: () => JSX.Element;
     readonly PageSheetEdit: () => JSX.Element;
-    readonly PageSheetDetail: (props: PartProps<PartSheet> & { detail: Partial<Detail>; }) => JSX.Element;
+    readonly PageSheetDetail: (props: GenProps<GenSheet> & { detail: Partial<Detail>; }) => JSX.Element;
     readonly ViewItemSource: ({ id }: { id: number; }) => JSX.Element;
     readonly sourceSearchPlaceholder: string;
 
+    readonly targetCaption = '供应商';
+
     constructor(uqApp: UqApp) {
         super(uqApp);
-
-        this.path = pathPurchaseEdit;
-        const { UqDefault: uq } = uqApp.uqs;
-        this.ActBookSheet = uq.BookSheet;
-        this.QuerySearchItem = uqApp.objectOf(IDPartContact).searchItems;
+        this.QuerySearchItem = uqApp.objectOf(GenContact).searchItems;
 
         this.PageDetailItemSelect = PageProductSelect;
-        this.caption = captionPurchase;
         this.PageSheetEdit = PagePurchaseEdit;
         this.PageSheetDetail = PageSheetDetail as any;
     }
@@ -51,14 +40,14 @@ export class SheetPartPurchase extends PartOrigin {
 }
 
 function PagePurchaseEdit() {
-    return <PageOriginEdit Part={SheetPartPurchase} />;
+    return <PageOriginEdit Gen={GenPurchase} />;
 }
 
-function PageSheetDetail({ detail, Part }: (PartProps<SheetPartPurchase> & { detail: Detail })) {
-    return <PageDetailQPA detail={detail} PartSheet={Part as any} Part={DetailPartPurchase} />;
+function PageSheetDetail({ detail, Gen }: (GenProps<GenPurchase> & { detail: Detail })) {
+    return <PageDetailQPA detail={detail} GenSheet={Gen as any} Gen={GenDetailPurchase} />;
 }
 
-class DetailPartPurchase extends PartDetail {
+class GenDetailPurchase extends GenDetail {
     get caption(): string { return '明细'; }
     get path(): string { return undefined; }
     get itemCaption(): string { return '产品'; }

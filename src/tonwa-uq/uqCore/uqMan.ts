@@ -256,6 +256,7 @@ export interface Uq {
     idJoins(id: number): Promise<{ ID: ID; main: [string, any]; joins: [string, any[]][]; }>;
     idCache<T = any>(id: number): T;
     IDValue<T>(type: string, value: string): T;
+    Biz(id: number, act: string): Promise<void>;
     Acts(param: any): Promise<any>;
     ActIX<T>(param: ParamActIX<T>): Promise<number[]>;
     ActIXSort(param: ParamActIXSort): Promise<void>;
@@ -428,6 +429,7 @@ export class UqMan {
         for (let i in this.uqSchema) {
             let schema = this.uqSchema[i];
             let { name, type } = schema;
+            if (name === undefined || type === undefined) continue;
             let entity = this.fromType(name, type);
             if (entity === undefined) continue;
             entity.buildSchema(schema);
@@ -632,9 +634,9 @@ export class UqMan {
         return ix;
     }
     private fromType(name: string, type: string): Entity {
-        let Part = type.split('|');
-        type = Part[0];
-        let id = Number(Part[1]);
+        let arr = type.split('|');
+        type = arr[0];
+        let id = Number(arr[1]);
         switch (type) {
             default:
                 break;
@@ -776,11 +778,10 @@ export class UqMan {
         }
         return obj;
     }
-    /*
-    protected $setUnit = (unit: number) => {
-        this.unit = unit;
+
+    protected Biz = async (id: number, act: string): Promise<void> => {
+        await this.uqApi.bizSheet(id, act);
     }
-    */
     protected Acts = async (param: any): Promise<any> => {
         //let apiParam = this.ActsApiParam(param);
         let ret = await this.apiActs(param, EnumResultType.data); // await this.apiPost('acts', apiParam);
@@ -922,8 +923,8 @@ export class UqMan {
     protected ActDetail = async (param: ParamActDetail<any, any>) => {
         let ret = await this.apiActDetail(param, EnumResultType.data);
         let val: string = ret[0].ret;
-        let Part = val.split('\n');
-        let items = Part.map(v => v.split('\t'));
+        let arr = val.split('\n');
+        let items = arr.map(v => v.split('\t'));
         ret = {
             main: ids(items[0])[0],
             detail: ids(items[1]),

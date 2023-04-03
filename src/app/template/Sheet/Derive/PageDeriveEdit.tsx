@@ -1,16 +1,16 @@
-import { PartProps } from "app/template/Part";
+import { GenProps } from "app/tool";
 import { useUqApp } from "app/UqApp";
 import { useNavigate, useParams } from "react-router-dom";
 import { useModal } from "tonwa-app";
 import { useEffectOnce } from "tonwa-com";
 import { PageSheetEdit } from "../PageSheetEdit";
-import { PartDerive } from "./PartDerive";
+import { GenDerive } from "./GenDerive";
 
-export function PageDeriveEdit({ Part }: PartProps<PartDerive>) {
+export function PageDeriveEdit({ Gen }: GenProps<GenDerive>) {
     const sheet: any = {};
     const uqApp = useUqApp();
-    const part = uqApp.objectOf(Part);
-    const { editing, ModalSheetStart } = part;
+    const gen = uqApp.objectOf(Gen);
+    const { editing, ModalSheetStart } = gen;
     const { openModal } = useModal();
     const navigate = useNavigate();
     const { id: paramId } = useParams();
@@ -23,7 +23,7 @@ export function PageDeriveEdit({ Part }: PartProps<PartDerive>) {
                     return;
                 }
             }
-            let sheetOriginId = await openModal(<ModalSheetStart Part={Part} />);
+            let sheetOriginId = await openModal(<ModalSheetStart Gen={Gen} />);
             if (sheetOriginId === undefined) {
                 navigate(-1);
                 return;
@@ -36,5 +36,5 @@ export function PageDeriveEdit({ Part }: PartProps<PartDerive>) {
     }
     async function onEditRow(row: any) {
     }
-    return <PageSheetEdit Part={Part} sheet={sheet} onEditRow={onEditRow} onAddRow={onAddRow} />;
+    return <PageSheetEdit Gen={Gen} sheet={sheet} onEditRow={onEditRow} onAddRow={onAddRow} />;
 }

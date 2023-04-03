@@ -1,4 +1,3 @@
-export * from './brand';
-export * from './Part';
-export * from './Seed';
+// export * from './brand';
+export * from './Gen';
 export * from './QueryMore';

@@ -2,18 +2,18 @@ import { useForm } from "react-hook-form";
 import { ChangeEvent, useState } from "react";
 import { IDView, Page, useModal } from "tonwa-app";
 import { ButtonAsync, ButtonSubmit, FA, List, LMR } from "tonwa-com";
-import { PropDataType } from "uqs/UqDefault";
+// import { PropDataType } from "uqs/UqDefault";
 import { Band } from "app/coms";
-import { usePart } from "../tool";
+import { useGen } from "../tool";
 import { NextRight, NextTop } from "./NextTop";
 import { PageNextProps, RadioItem } from "./types";
-import { PropPart } from "./PropPart";
+import { GenProp } from "./GenProp";
 
 export function PageRadio(props: PageNextProps) {
     const { openModal } = useModal();
-    const part = usePart(PropPart);
+    const gen = useGen(GenProp);
     let { id: propId, type } = props;
-    let header = type === PropDataType.radio ? '单选' : '多选';
+    let header = undefined as string; // type === PropDataType.radio ? '单选' : '多选';
     let [items, setItems] = useState(props.items ?? []);
     function ViewRadio({ value: { name, caption } }: { value: RadioItem; }) {
         return <LMR className="px-3 py-2 align-items-center">
@@ -27,7 +27,7 @@ export function PageRadio(props: PageNextProps) {
     function ViewItem({ value }: { value: RadioItem; }) {
         let { id, name, caption } = value;
         if (name === undefined) {
-            return <IDView uq={part.uq} id={id} Template={ViewRadio} />;
+            return <IDView uq={gen.uq} id={id} Template={ViewRadio} />;
         }
         return <ViewRadio value={value} />;
     }
@@ -59,7 +59,7 @@ export function PageRadio(props: PageNextProps) {
 }
 
 function PageEditItem({ id, name, caption }: { id: number; name: string; caption?: string; }) {
-    const part = usePart(PropPart);
+    const gen = useGen(GenProp);
     const { openModal, closeModal } = useModal();
     const [submitable, setSubmitable] = useState(name !== undefined);
     const [submiting, setSubmiting] = useState(false);
@@ -69,7 +69,7 @@ function PageEditItem({ id, name, caption }: { id: number; name: string; caption
     }
     async function onSubmit(data: any) {
         setSubmiting(true);
-        let radioItemId = await part.setRadioItem(id, data);
+        let radioItemId = await gen.setRadioItem(id, data);
         setSubmiting(false);
         closeModal({ id: radioItemId, name: data.name, caption: data.caption });
     }

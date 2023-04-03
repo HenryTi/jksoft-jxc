@@ -1,7 +1,7 @@
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { EditingBase } from "../EditingBase";
+import { Editing } from "../Editing";
 import { atom, PrimitiveAtom } from "jotai";
-import { PartDerive } from "./PartDerive";
+import { GenDerive } from "./GenDerive";
 import { Detail, FlowState, Sheet } from "uqs/UqDefault";
 
 interface SheetGroup {
@@ -9,13 +9,13 @@ interface SheetGroup {
     sheets: any[];
 }
 
-export class EditingDerive extends EditingBase {
-    declare protected part: PartDerive;
+export class EditingDerive extends Editing {
+    declare protected gen: GenDerive;
     readonly atomRows: PrimitiveAtom<{ sheet: Sheet; details: Detail[] }[]>;
 
-    constructor(part: PartDerive) {
-        super(part);
-        this.part = part;
+    constructor(gen: GenDerive) {
+        super(gen);
+        this.gen = gen;
         this.atomRows = atom(undefined as { sheet: Sheet; details: Detail[] }[]);
     }
 
@@ -29,7 +29,7 @@ export class EditingDerive extends EditingBase {
     }
 
     async load(sheetId: number) {
-        let { uq } = this.part;
+        let { uq } = this.gen;
         let [sheet, { ret: details }] = await Promise.all([
             uq.idObj(sheetId),
             uq.GetDetailOrigin.query({ id: sheetId }),
@@ -56,7 +56,7 @@ export class EditingDerive extends EditingBase {
     }
 
     async loadOrigin(origin: number) {
-        let { uq, uqApp } = this.part;
+        let { uq, uqApp } = this.gen;
         let [sheet, { ret: details }] = await Promise.all([
             uq.idObj(origin),
             uq.GetDetailOrigin.query({ id: origin }),
@@ -77,8 +77,8 @@ export class EditingDerive extends EditingBase {
     }
 
     async search(key: string): Promise<SheetGroup[]> {
-        let { QueryOrigin, sheetType } = this.part;
-        let ret = await QueryOrigin.page({ sheet: sheetType, state: FlowState.Ready, key }, undefined, 1000);
+        let { QueryOrigin, typePhrase } = this.gen;
+        let ret = await QueryOrigin.page({ sheet: typePhrase, state: FlowState.Ready, key }, undefined, 1000);
         // 按target分组
         const groupColl: { [target: number]: SheetGroup } = {};
         for (let v of ret.$page) {

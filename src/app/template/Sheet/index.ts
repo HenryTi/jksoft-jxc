@@ -1,4 +1,4 @@
 export * from './Origin';
 export * from './Derive';
-export * from './PartSheet';
-export * from './EditingBase';
+export * from './GenSheet';
+export * from './Editing';

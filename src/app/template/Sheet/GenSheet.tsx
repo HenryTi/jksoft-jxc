@@ -1,21 +1,28 @@
-import { SeedSheet } from "app/tool";
 import { UqApp } from "app/UqApp";
-import { UqAction, UqID, UqIX, UqQuery } from "tonwa-uq";
+import { UqAction, UqID, UqQuery } from "tonwa-uq";
 import { Detail, Sheet } from "uqs/UqDefault";
-import { PartInput, PartProps } from "../Part";
-import { Editing } from "./EditingBase";
+import { GenInput, GenProps } from "app/tool";
+import { Editing } from "./Editing";
+import { BizSheet } from "app/Biz";
 
-export abstract class PartSheet extends PartInput {
-    abstract get sheetType(): string;
+export abstract class GenSheet extends GenInput {
+    abstract get sheetName(): string;
+    get bizSheet(): BizSheet { return this.biz.sheets[this.sheetName] }
+    get caption() {
+        let { name, caption } = this.bizSheet;
+        return caption ?? name;
+    }
+    get typePhrase() {
+        let { name, type } = this.bizSheet;
+        return `${type}.${name}`;
+    }
+    abstract get targetCaption(): string;
 
     readonly ID: UqID<Sheet>;
     readonly QueryGetDetails: UqQuery<{ id: number }, { ret: any[] }>;
-    readonly IDDetail: UqID<Detail>;
 
-    abstract get ActBookSheet(): UqAction<any, any>;
-
-    abstract get ModalSheetStart(): (props: PartProps<PartSheet>) => JSX.Element;
-    abstract get ViewItemEditRow(): (props: { row: any; Part: new (uqApp: UqApp) => PartSheet }) => JSX.Element;
+    abstract get ModalSheetStart(): (props: GenProps<GenSheet>) => JSX.Element;
+    abstract get ViewItemEditRow(): (props: { row: any; Gen: new (uqApp: UqApp) => GenSheet }) => JSX.Element;
     abstract get ViewTarget(): (props: { sheet: Sheet; }) => JSX.Element;
     abstract get ViewTargetBand(): (props: { sheet: Sheet; }) => JSX.Element;
     abstract buildDetailFromSelectedItem: (selectedItem: any) => any;
@@ -25,7 +32,6 @@ export abstract class PartSheet extends PartInput {
         super(uqApp);
         let uq = this.uq;
         this.ID = uq.Sheet;
-        this.IDDetail = uq.Detail;
         this.QueryGetDetails = uq.GetDetails;
     }
 

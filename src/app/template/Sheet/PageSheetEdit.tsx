@@ -5,23 +5,23 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { ButtonAsync, List, LMR, Sep } from "tonwa-com";
-import { PartProps } from "../Part";
-import { PartSheet } from "./PartSheet";
-import { DetailBase, SheetBase } from './EditingBase';
+import { Sheet } from "uqs/UqDefault";
+import { GenProps } from "app/tool";
+import { GenSheet } from "./GenSheet";
 
-interface PageSheetEditProps<S extends SheetBase, D extends DetailBase> extends PartProps<PartSheet<S, D>> {
-    sheet: S;
+interface PageSheetEditProps extends GenProps<GenSheet> {
+    sheet: Sheet;
     onAddRow: () => Promise<void>;
     onEditRow: (detail: any) => Promise<void>;
 }
 
-export function PageSheetEdit<S extends SheetBase, D extends DetailBase>({ Part, onEditRow, onAddRow }: PageSheetEditProps<S, D>) {
+export function PageSheetEdit({ Gen, onEditRow, onAddRow }: PageSheetEditProps) {
     const uqApp = useUqApp();
     const navigate = useNavigate();
-    const part = uqApp.objectOf(Part);
+    const gen = uqApp.objectOf(Gen);
     const { editing, caption
         , ViewItemEditRow, ViewTargetBand
-    } = part;
+    } = gen;
     const sheet = useAtomValue(editing.atomSheet);
     const rows = useAtomValue(editing.atomRows);
     const submitable = useAtomValue(editing.atomSubmitable);
@@ -63,7 +63,7 @@ export function PageSheetEdit<S extends SheetBase, D extends DetailBase>({ Part,
     </LMR>;
     async function onSubmit() {
         setVisible(false);
-        await editing.bookSheet();
+        await editing.bookSheet(undefined);
         setVisible(true);
         function addDetailOnOk() {
             closeModal();
@@ -81,11 +81,11 @@ export function PageSheetEdit<S extends SheetBase, D extends DetailBase>({ Part,
         navigate(-1);
     }
     function ViewItemOfList({ value }: { value: any }) {
-        return <ViewItemEditRow row={value} Part={Part} />;
+        return <ViewItemEditRow row={value} Gen={Gen} />;
     }
     return <Page header={caption}>
         <div className="py-2 tonwa-bg-gray-3 container">
-            <Band label={'编号'} labelClassName="text-end">
+            <Band label={'编号'}>
                 {sheet.no}
             </Band>
             <ViewTargetBand sheet={sheet as any} />

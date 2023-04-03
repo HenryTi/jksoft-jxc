@@ -3,16 +3,15 @@ import { useModal } from "tonwa-app";
 import { FA, LMR, SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { useUqApp } from "app/UqApp";
-import { PartProps } from "../../Part";
-import { PartOrigin } from "./PartOrigin";
+import { GenProps } from "app/tool";
+import { GenOrigin } from "./GenOrigin";
 
-export function PageOriginNew({ Part }: PartProps<PartOrigin>) {
+export function PageOriginNew({ Gen }: GenProps<GenOrigin>) {
     const uqApp = useUqApp();
     const { closeModal } = useModal();
-    const part = uqApp.objectOf(Part);
-    const { editing, caption, QuerySearchItem } = part;
+    const gen = uqApp.objectOf(Gen);
+    const { editing, caption, QuerySearchItem, targetCaption } = gen;
     const [searchParam, setSearchParam] = useState<{ key: string; }>(undefined);
-    const right = <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder="往来单位" />;
     async function onSearch(key: string) {
         setSearchParam({
             key,
@@ -39,6 +38,9 @@ export function PageOriginNew({ Part }: PartProps<PartOrigin>) {
         pageSize={4}
         pageMoreSize={1}
     >
-        {right}
+        <div className="m-3">
+            选择{targetCaption}
+        </div>
+        <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder={targetCaption} />
     </PageQueryMore>;
 }

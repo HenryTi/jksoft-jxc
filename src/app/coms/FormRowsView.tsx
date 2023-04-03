@@ -10,6 +10,7 @@ export interface BandProps {
 
 export interface BandInputProps {
     label?: string;
+    labelClassName?: string;
     type: HTMLInputTypeAttribute,
     inputProps: UseFormRegisterReturn,
     errors?: Partial<FieldErrorsImpl<{
@@ -27,12 +28,12 @@ function registerOptions(type: HTMLInputTypeAttribute, options: RegisterOptions)
 }
 
 export function BandInput(props: BandInputProps) {
-    const { label, inputProps, errors, type, defaultValue } = props;
+    const { label, inputProps, errors, type, defaultValue, labelClassName } = props;
     const { name } = inputProps;
     let error = errors[name];
     let cnInput = 'form-control ';
     if (error) cnInput += 'is-invalid';
-    return <Band label={label}>
+    return <Band label={label} labelClassName={labelClassName}>
         <input {...inputProps} className={cnInput} type={type} defaultValue={defaultValue} />
         {error && <div className="invalid-feedback mt-1">
             {error.message?.toString()}
@@ -40,11 +41,11 @@ export function BandInput(props: BandInputProps) {
     </Band>
 }
 
-export function Band({ label, labelClassName, labelSize, children }: BandProps) {
-    labelSize = labelSize ?? 3;
+export function Band({ label, labelClassName, children }: BandProps) {
+    labelClassName = labelClassName ?? 'form-label col-md-2 col-3 text-end';
     return <div className={'mb-3 row'}>
-        <label className={(labelClassName ?? '') + ' form-label col-' + labelSize}>{label}</label>
-        <div className={'col-' + (12 - labelSize)} >
+        <label className={labelClassName}>{label}</label>
+        <div className={'col'} >
             {children}
         </div>
     </ div>;
@@ -110,6 +111,7 @@ interface FormProps {
     errors?: Partial<FieldErrorsImpl<{
         [x: string]: any;
     }>>;
+    labelClassName?: string;
 }
 
 export interface FormRowsViewProps extends FormProps {
@@ -120,14 +122,15 @@ export interface FormRowViewProps extends FormProps {
     row: FormRow;
 }
 
-export function FormRowsView({ rows, register, errors }: FormRowsViewProps) {
-    return <>{rows.map((row, index) => <FormRowView key={index} row={row} register={register} errors={errors} />)}</>
+export function FormRowsView(props: FormRowsViewProps) {
+    let { rows } = props;
+    return <>{rows.map((row, index) => <FormRowView key={index} row={row} {...props} />)}</>
 }
 
-function FormRowView({ row, register, errors }: FormRowViewProps) {
+function FormRowView({ row, register, errors, labelClassName }: FormRowViewProps) {
     const { label, inputs } = row as FormBand;
     if (inputs !== undefined) {
-        return <Band label={label}>{
+        return <Band label={label} labelClassName={labelClassName}>{
             inputs.map((v, index) => {
                 const { label, name, type, options, readOnly } = v;
                 if (type === 'checkbox') {
@@ -182,7 +185,7 @@ function FormRowView({ row, register, errors }: FormRowViewProps) {
                 }
             }
         }
-        return <Band label={label}>
+        return <Band label={label} labelClassName={labelClassName}>
             <select multiple={multiple} className={cnInput} {...register(name, options)}>
                 {
                     defaultValue === undefined &&
@@ -208,6 +211,7 @@ function FormRowView({ row, register, errors }: FormRowViewProps) {
         default:
             let newOptions = registerOptions(type, options);
             return <BandInput label={label} type={type} errors={errors}
+                labelClassName={labelClassName}
                 inputProps={register(name, newOptions)} defaultValue={options?.value} />;
         case 'submit':
             return <Band>

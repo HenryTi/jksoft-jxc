@@ -22,6 +22,7 @@ ID Sheet (
     KEY base ID,
     KEY no,
     item ID,
+    origin ID,              -- 源单
     operator ID,            -- employee Item
     value VALUE,
     v1 VALUE,
@@ -29,35 +30,37 @@ ID Sheet (
     v3 VALUE,
 );
 
--- dependant
-ID Bind (
-    id MINUTE,
-    KEY base ID,            -- (main + type) => owner, or type in main
-    KEY item ID,            -- item id easy to load values
-    ex CHAR(50),            -- should be ascii，tab values
-);
-
 const FlowState = {
     Start: '$start',
     Ready: 'ready',
 };
 
-IX IxFlow ver 0.1 (
-    ix,                     -- ID(unit, prop('ixflow'), prop('$start'), $user)
-    xi Sheet INDEX,         -- sheet
-);
-
 -- 所有单据的明细，单值
 ID Detail (
     id MINUTE,
-    base ID,               -- SheetPurchase or SheetSale
+    base ID,                -- SheetPurchase or SheetSale
     item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位, 也可以指向源单明细
+    origin ID,              -- 源单
     value VALUE,
     v1 VALUE,
     v2 VALUE,
     v3 VALUE,
     INDEX base_id(base, id) UNIQUE,
 );
+
+ID User (
+    id,
+    KEY tonwaUser INT,
+);
+
+ID Unit ver 0.2 (
+    id, 
+    KEY no,
+    caption CHAR(100),
+)
++ (no)
+VALUES
+('$$$');
 
 ENUM MeasureUnitType (
     count = 1,              -- 个数

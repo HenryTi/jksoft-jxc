@@ -1,13 +1,14 @@
-import { Part } from "../tool";
-import { Prop, PropDataType } from "uqs/UqDefault";
+import { Gen } from "../tool";
+// import { Prop, PropDataType } from "uqs/UqDefault";
 
-export class PropPart extends Part {
+export class GenProp extends Gen {
     readonly caption = '属性';
     readonly IDPropIds: { [IDName: string]: number } = {};
 
     async loadIDPropId(IDName: string): Promise<number> {
         let propId = this.IDPropIds[IDName];
         if (propId !== undefined) return propId;
+        /*
         let { Prop } = this.uq;
         let [ret] = await this.uq.KeyID({ ID: Prop, key: { owner: 0, name: IDName } });
         if (ret === undefined) {
@@ -17,13 +18,16 @@ export class PropPart extends Part {
         let { id } = ret as any;
         this.IDPropIds[IDName] = id as number;
         return id as number;
+        */
     }
 
-    async saveIxIDProp(IDName: string, data: Prop) {
+    async saveIxIDProp(IDName: string, data: any/*Prop*/) {
+        /*
         let id = await this.loadIDPropId(IDName);
         let { Prop, IxProp } = this.uq;
         let ret = await this.uq.ActIX({ IX: IxProp, ID: Prop, values: [{ ix: id, xi: { ...data, owner: id } }] });
         return ret;
+        */
     }
 
     async loadIDProps(IDName: string): Promise<{ id: number, items: { id: number; }[] }[]> {
@@ -48,6 +52,7 @@ export class PropPart extends Part {
     }
 
     async setRadioItem(propId: number, item: { id: number, name: string, caption: string }) {
+        /*
         let { Prop, IxProp } = this.uq;
         let [ret] = await this.uq.ActIX({
             IX: IxProp,
@@ -58,5 +63,6 @@ export class PropPart extends Part {
             }]
         });
         return ret;
+        */
     }
 }

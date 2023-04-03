@@ -1,13 +1,12 @@
-import { usePart } from '../../tool';
+import { GenProps, useGen } from '../../tool';
 import { PageQueryMore } from '../../coms';
-import { PartProps } from '../Part';
-import { PartID } from './PartID';
+import { GenID } from './GenID';
 
-export function PageIDList({ Part }: PartProps<PartID>) {
-    const { caption, ViewItemID, searchItems, listTop, IDType } = usePart(Part);
+export function PageIDList({ Gen }: GenProps<GenID>) {
+    const { caption, ViewItemID, searchItems, listTop, phrase } = useGen(Gen);
 
     let searchParam = {
-        IDType,
+        item: phrase,
         key: undefined as string,
     };
     function ViewItem({ value }: { value: any }) {

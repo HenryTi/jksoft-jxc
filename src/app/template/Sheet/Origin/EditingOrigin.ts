@@ -1,15 +1,14 @@
-import { PageMoreCacheData } from "app/coms";
 import { atom, PrimitiveAtom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Detail, Sheet } from "uqs/UqDefault";
-import { EditingBase } from "../EditingBase";
-import { PartOrigin } from "./PartOrigin";
+import { Editing } from "../Editing";
+import { GenOrigin } from "./GenOrigin";
 
-export class EditingOrigin extends EditingBase {
+export class EditingOrigin extends Editing {
     readonly atomDetails: PrimitiveAtom<Detail[]>;
 
-    constructor(part: PartOrigin) {
-        super(part);
+    constructor(gen: GenOrigin) {
+        super(gen);
         this.atomDetails = atom(undefined as Detail[]);
     }
 
@@ -21,7 +20,7 @@ export class EditingOrigin extends EditingBase {
     }
 
     async load(id: number) {
-        let { uq, QueryGetDetails } = this.part;
+        let { uq, QueryGetDetails } = this.gen;
         let [sheet, { ret: details }] = await Promise.all([
             uq.idObj(id),
             QueryGetDetails.query({ id }),

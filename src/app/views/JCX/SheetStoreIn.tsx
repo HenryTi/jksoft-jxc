@@ -1,53 +1,43 @@
 import { Band } from "app/coms";
-import { PageDeriveEdit, PartSheet, PartDerive } from "app/template/Sheet";
-import { SeedJoin, SeedSheet } from "app/tool";
+import { PageDeriveEdit, GenSheet, GenDerive } from "app/template/Sheet";
 import { UqApp } from "app/UqApp";
 import { Route } from "react-router-dom";
 import { UserView } from "tonwa-app";
 import { UqAction, UqQuery } from "tonwa-uq";
-import { SheetType, Sheet } from "uqs/UqDefault";
-import { SheetPartPurchase } from "./SheetPurchase";
+import { GenPurchase } from "./SheetPurchase";
+import { Sheet, uqSchema } from "uqs/UqDefault";
 
-const captionStoreIn = '入库单';
 const pathStoreIn = 'store-in';
 
-class SeedStoreIn extends SeedSheet {
-    readonly sheet = SheetType.StoreIn;
-}
-
-export class SheetPartStoreIn extends PartDerive {
-    readonly sheetType = SheetType.StoreIn;
-    readonly caption: string;
-    readonly path: string;
+export class GenStoreIn extends GenDerive {
+    readonly sheetName = 'storein';
+    readonly path = pathStoreIn;
     readonly QueryOrigin: UqQuery<any, any>;
-    readonly ActBookSheet: UqAction<any, any>;
     readonly ViewTarget: (props: { sheet: Sheet }) => JSX.Element;
     readonly ViewTargetBand: (props: { sheet: Sheet }) => JSX.Element;
+
+    readonly targetCaption = '库房';
 
     constructor(uqApp: UqApp) {
         super(uqApp);
 
-        this.caption = captionStoreIn;
-        this.path = pathStoreIn;
-
         let uq = this.uq;
         this.QueryOrigin = uq.SearchSheetReady;
-        this.ActBookSheet = uq.BookSheetStoreIn;
 
         this.ViewTarget = ({ sheet }: { sheet: Sheet }) => {
             return <UserView id={sheet.operator} />;
         }
         this.ViewTargetBand = ({ sheet }: { sheet: Sheet }) => {
-            return <Band labelClassName="text-end" label={'操作员'}>
+            return <Band label={'操作员'}>
                 <this.ViewTarget sheet={sheet} />
             </Band>;
         }
     }
-    protected getOriginSheetPart(): PartSheet { return this.uqApp.objectOf(SheetPartPurchase) as any; }
+    protected getOriginSheetGen(): GenSheet { return this.uqApp.objectOf(GenPurchase) as any; }
 }
 
 function PageStoreInEdit() {
-    return <PageDeriveEdit Part={SheetPartStoreIn} />;
+    return <PageDeriveEdit Gen={GenStoreIn} />;
 }
 
 export const routeStoreIn = <>

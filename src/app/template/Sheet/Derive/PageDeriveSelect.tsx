@@ -1,21 +1,21 @@
 import { ViceTitle } from "app/coms";
-import { PartProps } from "app/template/Part";
+import { GenProps } from "app/tool";
 import { useUqApp } from "app/UqApp";
 import { useState } from "react";
 import { IDView, Page, useModal } from "tonwa-app";
 import { FA, List, LMR, SearchBox } from "tonwa-com";
-import { PartDerive } from "./PartDerive";
+import { GenDerive } from "./GenDerive";
 
 interface SheetGroup {
     target: number;
     sheets: any[];
 }
 
-export function PageDeriveSelect({ Part }: PartProps<PartDerive>) {
+export function PageDeriveSelect({ Gen }: GenProps<GenDerive>) {
     const uqApp = useUqApp();
     const { closeModal } = useModal();
-    const part = uqApp.objectOf(Part);
-    const { editing } = part;
+    const gen = uqApp.objectOf(Gen);
+    const { editing } = gen;
     const uq = uqApp.uqs.UqDefault;
     const [items, setItems] = useState(null as SheetGroup[]);
     async function onSearch(key: string) {
@@ -40,7 +40,10 @@ export function PageDeriveSelect({ Part }: PartProps<PartDerive>) {
             <FA name="angle-right" />
         </LMR>;
     }
-    return <Page header={`选择${part.origin.caption}`}>
+    return <Page header={`新建${gen.caption}`}>
+        <div className="m-3">
+            选择{gen.origin.caption}
+        </div>
         <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder={'供应商号或名称，或者单据号'} />
         <List items={items} ViewItem={ViewItemGroup} />
     </Page>

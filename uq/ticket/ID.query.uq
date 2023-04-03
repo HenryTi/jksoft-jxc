@@ -95,7 +95,7 @@ RETURNS ret (
             LEFT JOIN Done as b ON b.id=a.id
         WHERE a.base=id AND a.value<>ifnull(b.done, 0);
 };
-*/
+
 QUERY SearchItem ver 0.2 (
     IDType CHAR(100),
     key CHAR(50),
@@ -114,27 +114,7 @@ PAGE (
         ORDER BY a.id desc
         LIMIT $pageSize;
 };
-
-QUERY GetMySheets (
-)
-PAGE (
-    * Sheet DESC
-) {
-    VAR ix ID;
-    PROC BaseSheetStart(ix);
-
-    -- 这里以后再加分配给我的某个流程点的单据
-    -- 目前先获取我正在录入的单据
-    PAGE SELECT * b
-        FROM IxFlow as a
-            JOIN Sheet as b ON a.xi=b.id
-            JOIN Bind as c ON c.id=b.base
-            JOIN Prop as d ON d.id=c.item
-        WHERE b.id<$pageStart AND a.ix=ix
-        ORDER BY b.id DESC
-        LIMIT $pageSize;
-};
-
+*/
 QUERY SearchProductForSale ver 0.2 (
     key CHAR(50),
 )
@@ -145,11 +125,11 @@ PAGE (
     v1 VALUE,
 ) {
     VAR basePriceListSale ID;
-    PROC BasePriceListSale(basePriceListSale);
+    -- PROC BasePriceListSale(basePriceListSale);
 
     PAGE SELECT a.id, a.no, a.ex, b.dec as v1
         FROM Item as a
-            JOIN IxValue as b ON b.ix=a.id AND b.xi=basePriceListSale
+            JOIN IxPropValue as b ON b.ix=a.id AND b.xi=basePriceListSale
         WHERE a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
         ORDER BY a.id desc
         LIMIT $pageSize;
@@ -164,9 +144,9 @@ PAGE (
     * of Sheet ASC,
 ) {
     VAR ix ID;
-    PROC BaseSheetState(sheet, state, ix);
+    -- PROC BaseSheetState(sheet, state, ix);
     PAGE SELECT * b
-        FROM IxFlow as a
+        FROM IxMyDraft as a
             JOIN Sheet as b ON b.id=a.xi
             LEFT JOIN Item as c ON c.id=b.item
         WHERE a.ix=ix AND b.id>$pageStart AND SEARCH(b.no, c.no, c.ex LIKE key)

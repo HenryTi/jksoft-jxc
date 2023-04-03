@@ -1,4 +1,4 @@
-import { PropDataType } from "uqs/UqDefault";
+// import { PropDataType } from "uqs/UqDefault";
 import { PageRadio } from "./PageRadio";
 import { PagePicker } from "./PagePicker";
 
@@ -12,20 +12,21 @@ export interface PageNextProps {
     id: number;
     name: string;
     caption?: string;
-    type: PropDataType;
+    type: any, //PropDataType;
     items?: RadioItem[];
 }
 
 type PageNext = (props: PageNextProps) => JSX.Element;
 
 export interface TypeItem {
-    type?: PropDataType,
+    type?: any, //PropDataType,
     caption: string;
     PageNext?: PageNext;
     memo?: string;
 };
 
-export const arrType: PropDataType[] = [
+export const arrType: any/*PropDataType*/[] = [
+    /*
     PropDataType.char,
     PropDataType.picker,
     PropDataType.radio,
@@ -35,9 +36,11 @@ export const arrType: PropDataType[] = [
     PropDataType.date,
     PropDataType.datetime,
     PropDataType.text,
+    */
 ];
 
-export const collPropDataType: { [type in PropDataType]: TypeItem } = {
+export const collPropDataType: { [type in any/*PropDataType*/]: TypeItem } = {
+    /*
     [PropDataType.char]: { caption: '文本', memo: '长度100以内的文本' },
     [PropDataType.picker]: { caption: 'ID', PageNext: PagePicker, memo: '选择基础信息' },
     [PropDataType.radio]: { caption: '单选项', PageNext: PageRadio, memo: '只能选一项' },
@@ -53,6 +56,7 @@ export const collPropDataType: { [type in PropDataType]: TypeItem } = {
     [PropDataType.itemPicker]: undefined,
     [PropDataType.type]: undefined,
     [PropDataType.group]: undefined,
+    */
 };
 
 (function () {

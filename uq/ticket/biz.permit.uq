@@ -1,0 +1,19 @@
+
+Biz Permit 销售员 {
+    Permit 入库;
+    Permit 发货;
+    Permit 检验;
+}
+Biz Permit 入库员 {
+    Permit 入库;
+    Permit 发货;
+}
+Biz Permit 检验员;
+
+Biz Role 经理 {
+    With 销售员(检验);
+    Role 销售部经理;
+};
+Biz Role 销售部经理 {
+    With 入库员;
+}

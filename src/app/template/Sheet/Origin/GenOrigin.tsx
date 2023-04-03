@@ -1,6 +1,6 @@
 import { UqApp } from "app/UqApp";
-import { PartProps } from "../../Part";
-import { PartSheet } from "../PartSheet";
+import { GenProps } from "app/tool";
+import { GenSheet } from "../GenSheet";
 import { EditingOrigin } from "./EditingOrigin";
 import { PageOriginNew } from "./PageOriginNew";
 import { QueryMore } from "app/tool";
@@ -10,10 +10,10 @@ import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
 import { ViewItemID } from "app/template/ID";
 
-export abstract class PartOrigin extends PartSheet {
+export abstract class GenOrigin extends GenSheet {
     abstract QuerySearchItem: QueryMore;
     abstract PageDetailItemSelect: () => JSX.Element;
-    abstract get PageSheetDetail(): <T extends PartSheet>(props: (PartProps<T> & { detail: Detail; })) => JSX.Element;
+    abstract get PageSheetDetail(): <T extends GenSheet>(props: (GenProps<T> & { detail: Detail; })) => JSX.Element;
     abstract PageSheetEdit: () => JSX.Element;
 
     readonly ViewNO: (props: { no: string }) => JSX.Element;
@@ -21,7 +21,7 @@ export abstract class PartOrigin extends PartSheet {
     readonly ViewTarget: (props: { sheet: Sheet; }) => JSX.Element;
     readonly ViewTargetBand: (props: { sheet: Sheet; }) => JSX.Element;
 
-    readonly ModalSheetStart: (props: PartProps<PartSheet>) => JSX.Element;
+    readonly ModalSheetStart: (props: GenProps<GenSheet>) => JSX.Element;
     declare readonly editing: EditingOrigin;
 
     constructor(uqApp: UqApp) {
@@ -47,7 +47,7 @@ export abstract class PartOrigin extends PartSheet {
         }
 
         this.ViewNO = function ({ no }: { no: string }) {
-            return <Band label={'编号'} labelClassName="text-end">
+            return <Band label={'编号'}>
                 {no}
             </Band>
         }
@@ -57,7 +57,7 @@ export abstract class PartOrigin extends PartSheet {
         }
 
         this.ViewTargetBand = ({ sheet }: { sheet: Sheet }) => {
-            return <Band labelClassName="text-end" label={'往来单位'}>
+            return <Band label={'往来单位'}>
                 <this.ViewTarget sheet={sheet} />
             </Band>;
         }

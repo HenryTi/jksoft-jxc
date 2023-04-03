@@ -73,11 +73,16 @@ export class UqApp extends UqAppBase<UQs> {
     }
 
     protected override async loadOnLogined(): Promise<void> {
-        this.setUnit(99);
+        // this.setUnit(99);
+        let { ret } = await this.uq.MyUnits.query({});
+        if (ret.length > 0) {
+            let { id: unit } = ret[0];
+            this.setUnit(unit);
+        }
     }
 
     private uqDefault: any;
-    private unit: number;
+    unit: number = 0;
     get uq() {
         let ret: UqExt;
         if (this.uqDefault === undefined) {

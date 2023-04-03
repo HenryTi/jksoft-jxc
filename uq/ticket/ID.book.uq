@@ -1,6 +1,6 @@
 
-IDX Book (
-    id,
+IDX Balance (
+    id,                     -- biz subject
     init VALUE DEFAULT 0,
     value Value,
 );
@@ -11,8 +11,8 @@ ENUM SubjectType (
 
 ID Subject (
     id,
-    KEY type ENUM SubjectType,
     KEY item ID,
+    KEY type ID,        -- biz subject
 );
 
 ID History (

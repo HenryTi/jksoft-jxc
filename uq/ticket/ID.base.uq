@@ -1,3 +1,4 @@
+/*
 PROC Base(
     rootTypeName CHAR(100),
     typeName CHAR(100),
@@ -76,3 +77,4 @@ PROC BasePriceListSale (
     VAR priceProp ID = ID(Prop New KEY base=productProp, name='price');
     SET OUT base = ID(Prop New KEY base=priceProp, name='listSale');
 };
+*/

@@ -472,17 +472,11 @@ export abstract class Entity {
             case 'text':
             case 'char':
                 return this.reverseNT(v);
-            //case 'time':
             case 'datetime':
             case 'timestamp':
                 let n = Number(v);
                 let date = isNaN(n) === true ? new Date(v) : new Date(n * 1000);
                 return date;
-            /*
-            case 'date':
-                let Part = v.split('-');
-                return new Date(Number(Part[0]), Number(Part[1]) - 1, Number(Part[2]));
-            */
             case 'enum':
             case 'tinyint':
             case 'smallint':

@@ -1,39 +1,39 @@
 import { Link, Route } from "react-router-dom";
 import { IDView } from "tonwa-app";
 import { PageQueryMore, ViceTitle } from "app/coms";
-import { PartSheet, ViewItemID } from "app/template";
+import { GenSheet, ViewItemID } from "app/template";
 import { UqApp, useUqApp } from "app/UqApp";
-import { SheetPartPurchase } from "./SheetPurchase";
-import { PartSheetSale } from "./SheetSale";
-import { SheetPartStoreOut } from "./SheetStoreOut";
-import { SheetPartStoreIn } from "./SheetStoreIn";
+import { GenPurchase } from "./SheetPurchase";
+import { GenSale } from "./SheetSale";
+import { GenStoreOut } from "./SheetStoreOut";
+import { GenStoreIn } from "./SheetStoreIn";
 import { Sheet } from "uqs/UqDefault";
 
 export const pathSheetCenter = 'sheet-center';
-const PartArr: (new (uqApp: UqApp) => PartSheet)[] = [
-    SheetPartPurchase,
-    SheetPartStoreIn,
-    PartSheetSale,
-    SheetPartStoreOut,
+const GenArr: (new (uqApp: UqApp) => GenSheet)[] = [
+    GenPurchase,
+    GenStoreIn,
+    GenSale,
+    GenStoreOut,
 ];
 export function PageSheetCenter() {
     const uqApp = useUqApp();
     const { uq } = uqApp;
-    const partColl: { [entity: string]: PartSheet } = {};
-    const partArr = PartArr.map(v => {
-        const part = uqApp.objectOf(v);
-        const { sheetType } = part;
-        partColl[sheetType] = part;
-        return part;
+    const genColl: { [entity: string]: GenSheet } = {};
+    const genArr = GenArr.map(v => {
+        const gen = uqApp.objectOf(v);
+        const { typePhrase } = gen;
+        genColl[typePhrase] = gen;
+        return gen;
     });
     async function query(param: any, pageStart: any, pageSize: number): Promise<any[]> {
-        let ret = await uq.GetMySheets.page(param, pageStart, pageSize);
+        let ret = await uq.GetMyDrafts.page(param, pageStart, pageSize);
         return ret.$page;
     }
-    function ViewItem({ value }: { value: Sheet & { type: string; } }) {
-        const { id, no, type, ex, item, operator } = value;
-        let part = partColl[type];
-        let { caption, path } = part;
+    function ViewItem({ value }: { value: Sheet & { phrase: string; } }) {
+        const { id, no, phrase, item, operator } = value;
+        let gen = genColl[phrase];
+        let { caption, path } = gen;
         return <Link to={`../${path}/${id}`}>
             <div className="px-3 py-2 d-flex">
                 <div className="w-10c me-3">
@@ -59,7 +59,7 @@ export function PageSheetCenter() {
         Top={Top}
     >
         <div className="px-3 py-2 border-bottom d-flex flex-wrap p-2">
-            {partArr.map((v, index) => {
+            {genArr.map((v, index) => {
                 let { caption, path } = v;
                 return <Link key={index}
                     to={`../${path}`}

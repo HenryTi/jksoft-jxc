@@ -4,8 +4,8 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { LabelRowEdit, Page } from "tonwa-app";
 import { Sep } from "tonwa-com";
-import { PartProps } from "../Part";
-import { PartID, IDViewRowProps } from "./PartID";
+import { GenProps } from "app/tool";
+import { GenID, IDViewRowProps } from "./GenID";
 
 /*
 export interface RowProps {
@@ -20,9 +20,9 @@ interface PageIDViewProps {
     rows: RowProps[];
 }
 */
-export function PageIDView({ Part }: PartProps<PartID>) {
+export function PageIDView({ Gen }: GenProps<GenID>) {
     const uqApp = useUqApp();
-    const { caption, viewRows, ID } = uqApp.objectOf(Part);
+    const { caption, viewRows, ID } = uqApp.objectOf(Gen);
     const { id: idString } = useParams();
     const id = Number(idString);
     const { UqDefault } = uqApp.uqs;

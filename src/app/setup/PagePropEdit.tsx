@@ -2,30 +2,28 @@ import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { IDView, Page, useModal } from "tonwa-app";
 import { ButtonSubmit, FA, List, LMR, Sep, useEffectOnce } from "tonwa-com";
-import { EnumID, Prop, PropDataType } from "uqs/UqDefault";
-import { collIDCustom } from "./defs";
 import { Band } from "app/coms";
 import { ChangeEvent, useState } from "react";
-import { usePart } from "../tool";
+import { useGen } from "../tool";
 import { arrType, collPropDataType, TypeItem } from "./types";
-import { PropPart } from "./PropPart";
+import { GenProp } from "./GenProp";
 
 export function PagePropEdit() {
-    const part = usePart(PropPart);
+    const gen = useGen(GenProp);
     const { openModal } = useModal();
     const { prop } = useParams();
     const [arr, setArr] = useState<any[]>(undefined);
     useEffectOnce(() => {
         (async function () {
-            let ret = await part.loadIDProps(prop);
+            let ret = await gen.loadIDProps(prop);
             setArr(ret);
         })();
     });
     function ViewItemProp({ value }: { value: { id: number; items: { id: number }[] }; }) {
         let { id, items } = value;
-        function ViewProp({ value }: { value: Prop & { $removed: boolean; }; }) {
+        function ViewProp({ value }: { value: any/*Prop*/ & { $removed: boolean; }; }) {
             const { id, name, ex, type, $removed } = value;
-            const { caption: typeCaption, PageNext, memo } = collPropDataType[type as PropDataType];
+            const { caption: typeCaption, PageNext, memo } = collPropDataType[type as any /*PropDataType*/];
             function onAct() {
                 if (PageNext !== undefined) {
                     openModal(<PageNext id={id} name={name} caption={ex} type={type} items={items as any} />);
@@ -68,19 +66,19 @@ export function PagePropEdit() {
                 </div>
             </div>;
         }
-        return <IDView uq={part.uq} id={id} Template={ViewProp} />;
+        return <IDView uq={gen.uq} id={id} Template={ViewProp} />;
     }
     async function onAdd() {
         let ret = await openModal(<PagePropNew IDName={prop} />);
         if (!ret) return;
-        let propTypeId = await part.loadIDPropId(prop);
+        let propTypeId = await gen.loadIDPropId(prop);
         let newId = ret;
         setArr([...arr, { ix: propTypeId, xi: newId }]);
     }
     const right = <button className="btn btn-sm btn-success me-2" onClick={onAdd}>
         <FA name="plus" />
     </button>;
-    const caption = collIDCustom[prop as EnumID].caption;
+    const caption = 'collIDCustom[prop as EnumID].caption';
     return <Page header={caption + '属性编辑'} right={right}>
         {
             arr && arr.length > 0 && <>
@@ -92,16 +90,17 @@ export function PagePropEdit() {
 }
 
 function PagePropNew({ IDName }: { IDName: string; }) {
-    const part = usePart(PropPart);
+    const gen = useGen(GenProp);
     const { openModal, closeModal } = useModal();
     const { register, handleSubmit, getValues } = useForm();
     const [type, setType] = useState<TypeItem>(undefined);
     const [submitable, setSubmitable] = useState(false);
     const [submiting, setSubmiting] = useState(false);
     async function onSubmit(data: any) {
+        /*
         setSubmiting(true);
         let { PageNext } = type;
-        let [ret] = await part.saveIxIDProp(IDName, data);
+        let [ret] = await gen.saveIxIDProp(IDName, data);
         if (PageNext !== undefined) {
             await openModal(<PageNext id={ret} name={data.name} caption={data.caption} type={type.type} />);
         }
@@ -109,9 +108,10 @@ function PagePropNew({ IDName }: { IDName: string; }) {
         }
         setSubmiting(false);
         closeModal(ret);
+        */
     }
     function onChange(evt: ChangeEvent<HTMLInputElement>) {
-        let value = Number(evt.target.value) as PropDataType;
+        let value = Number(evt.target.value) as any /* PropDataType */;
         let type = collPropDataType[value];
         setType(type);
         let name = getValues('name');

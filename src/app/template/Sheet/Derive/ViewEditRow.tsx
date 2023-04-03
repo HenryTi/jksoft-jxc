@@ -3,12 +3,13 @@ import { ReturnGetDetailOriginRet } from "uqs/UqDefault";
 import { ChangeEvent, FocusEvent, useRef, useState } from "react";
 import { ViceTitle } from "app/coms";
 import { FA, List, LMR } from "tonwa-com";
-import { PartDerive } from "app/template";
+import { GenDerive } from "app/template";
+import { GenProps } from "app/tool";
 
-export function ViewEditRow({ row, Part }: { row: any, Part: new (uqApp: UqApp) => PartDerive }) {
+export function ViewEditRow({ row, Gen }: { row: any; } & GenProps<GenDerive>) {
     const uqApp = useUqApp();
-    const part = uqApp.objectOf(Part);
-    const { uq, editing } = part;
+    const gen = uqApp.objectOf(Gen);
+    const { uq, editing } = gen;
     const { sheet } = row;
     const [details, setDetails] = useState<any[]>(row.details);
     function ViewItemDetail({ value: detail }: { value: ReturnGetDetailOriginRet & { id: number; $changedValue: number; value: number } }) {

@@ -1,2 +1,2 @@
 export * from './PageReport';
-export * from './PartReport';
+export * from './GenReport';

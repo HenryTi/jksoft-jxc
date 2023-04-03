@@ -2,15 +2,15 @@ import { PageQueryMore } from "app/coms";
 import { useUqApp } from "app/UqApp";
 import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { PartProps } from "../Part";
-import { PartReport } from "./PartReport";
+import { GenProps } from "app/tool";
+import { GenReport } from "./GenReport";
 
-export function PageReport({ Part, children }: PartProps<PartReport> & { children?: ReactNode }) {
+export function PageReport({ Gen, children }: GenProps<GenReport> & { children?: ReactNode }) {
     const uqApp = useUqApp();
-    const part = uqApp.objectOf(Part);
-    const { caption, QueryReport: ReportQuery, sortField, ViewItem, onItemClick } = part;
+    const gen = uqApp.objectOf(Gen);
+    const { caption, QueryReport: ReportQuery, sortField, ViewItem, onItemClick } = gen;
     const navigate = useNavigate();
-    part.navigate = navigate;
+    gen.navigate = navigate;
     let param = {};
     return <PageQueryMore
         header={caption}

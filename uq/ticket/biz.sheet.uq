@@ -1,0 +1,72 @@
+Biz SHEET Purchase '采购单' {
+    detail;
+
+    ACT (sheetId ID) {
+        -- VAR a INT = 5, receiver ID;
+        -- SET receiver = $unit;
+        -- 挂StoreIn的待处理队列，可以是主表，也可以是detail
+        Biz Pend sheetId ON StoreIn; -- FOR receiver;
+        -- Biz State s1 FOR receiver;                     -- 转状态
+        -- Biz Subject c += 1 ref 5;
+        -- Biz Subject c += 2 ref 3;
+    };
+    STATE s1 {
+    }
+}
+
+Biz SHEET Sale '销售单' {
+    detail;
+    ACT (sheetId ID) {
+        Biz Pend sheetId ON StoreOut; -- FOR receiver;
+    }
+}
+
+Biz SHEET StoreIn '入库单' {
+    detail;
+}
+
+Biz SHEET StoreOut '出库单' {
+    detail;
+}
+
+Biz SHEET a ver 0.61 {
+    prop a '显示a' int ;
+    prop b '显示b' int ;
+    prop c '类型' radio (big '大' = 1, 中 = 2, small '小' = 3,);
+    detail da '显示detail a';
+    detail db '显示detail b' {
+        prop b char;
+    };
+    detail {
+        prop a int;
+        prop b int;
+    }
+    state s0 {
+        Setting next '下一步' char = 's2';
+        ACT ProcStoreIn '入库' (id ID) {
+        }
+    }
+    state s1 '状态s1' {
+        ACT (sheetId ID) {
+            VAR sheetItem VALUE = 0;
+            SET sheetItem = a.item FROM Sheet as a WHERE a.id=sheetId;
+            FOR detailId in detail {
+                VAR item ID, value VALUE, v1 VALUE, v2 VALUE;
+                SET item=a.item, value=a.value, v1=a.v1, v2=a.v2
+                    FROM Detail as a JOIN Item as b ON b.id=a.item
+                    WHERE a.id=detailId;
+                VAR aInS1 INT = 3;
+                SET aInS1 = aInS1 + value;
+                VAR ids ID = sheetId;
+            }
+            Biz State s2;
+            -- VAR t ID =3@a.db.b + 3@a.db.b + sheetId@a.a + (3+2)@a.b + 2@b.a + 3@db.b;
+        }
+    }
+    state s2 '状态s2' {
+        ACT ProcStoreOut2 (id ID) {
+        }
+    }
+
+    Setting 流水 '下一步' char = 's2';
+};

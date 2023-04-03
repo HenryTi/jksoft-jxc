@@ -1,51 +1,20 @@
 ACT BookSheet (
     id ID,
 ) {
-    VAR stateId ID = (SELECT a.ix FROM IxFlow as a WHERE a.xi=id);
+    /*
+    VAR stateId ID = (SELECT a.ix FROM IxMyDraft as a WHERE a.xi=id);
     VAR meInUnit ID;
-    PROC BaseMeInUnit(meInUnit);
+    -- PROC BaseMeInUnit(meInUnit);
     IF not exists(SELECT a.id FROM Bind as a WHERE a.id=stateId AND a.base=meInUnit) {
         RETURN;
     }
-    WITH IxFlow XI=id DEL;
+    WITH IxMyDraft XI=id DEL;
 
-    VAR base ID = (SELECT a.base FROM Sheet as a WHERE a.id=id);
-    VAR sheetName CHAR(50) = (SELECT b.name FROM Bind as a JOIN Prop as b on a.item=b.id);
-    PROC BaseSheetState(sheetName, FlowState.ready, stateId);
-    WITH IxFlow IX=stateId XI=id;
-};
-
-ACT SaveSheet (
-    sheetType CHAR(50),
-    no NO,
-    item ID,
-    operator ID,            -- employee Item
-    value VALUE,
-    v1 VALUE,
-    v2 VALUE,
-    v3 VALUE,
-)
-RETURNS ret (
-    id ID,
-) {
-    VAR base ID;
-    PROC BaseSheet(sheetType, base);
-
-    VAR sheetId ID;
-    WITH Sheet as a ID to sheetId Key(base, no) SET a.item=item, a.operator=operator
-        , a.value=value, a.v1=v1, a.v2=v2, a.v3=v3;
-
-    VAR baseSheetStart ID;
-    PROC BaseSheetStart(baseSheetStart);
-    WITH IxFlow IX=baseSheetStart XI=sheetId;
-
-    INTO ret SELECT sheetId as id;
-};
-
-ACT RemoveSheet (
-    id ID,
-) {
-    WITH IxFlow XI=id DEL;
+    -- VAR base ID = (SELECT a.base FROM Sheet as a WHERE a.id=id);
+    -- VAR sheetName CHAR(50) = (SELECT b.name FROM Bind as a JOIN Prop as b on a.item=b.id);
+    -- PROC BaseSheetState(sheetName, FlowState.ready, stateId);
+    WITH IxMyDraft IX=stateId XI=id;
+    */
 };
 
 ACT BookSheetStoreIn ver 0.2 (
@@ -83,7 +52,7 @@ PROC BookSheetDerive ver 0.8 (
         VAR delta VALUE = neg * value;
         INTO originSheets IGNORE SELECT originSheet as id;
         WITH Done as a ID=origin SET a.value += value;
-        WITH Book ID=item SET value+=delta;
+        WITH Balance ID=item SET value+=delta;
         VAR subject ID = ID(Subject new KEY type=SubjectType.Storage, item=item);
         VAR history ID;
         WITH History as a ID to history SET a.subject=subject, a.value=delta, a.ref=id;

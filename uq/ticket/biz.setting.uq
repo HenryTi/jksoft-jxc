@@ -1,0 +1,4 @@
+
+Biz Setting 公司规程 {
+    Prop name '公司名称' char;
+};

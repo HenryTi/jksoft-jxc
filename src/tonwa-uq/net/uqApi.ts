@@ -35,6 +35,9 @@ export class UqApi extends ApiBase {
         let ret = await this.get('entities');
         return ret;
     }
+    async bizSheet(id: number, act: string): Promise<void> {
+        await this.post('biz', { id, act });
+    }
     async getAdmins(): Promise<any[]> {
         let ret = await this.get('get-admins');
         return ret;
@@ -52,9 +55,9 @@ export class UqApi extends ApiBase {
     async getRoles(): Promise<string[]> {
         let ret = await this.get('get-roles',);
         if (!ret) return null;
-        let Part: string[] = (ret as string).split('|');
+        let arr: string[] = (ret as string).split('|');
         let s: string[] = [];
-        for (let p of Part) {
+        for (let p of arr) {
             p = p.trim();
             if (!p) continue;
             s.push(p);

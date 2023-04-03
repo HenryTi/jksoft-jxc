@@ -1,0 +1,215 @@
+FUNC PhraseId ver 0.1 (
+    phrase CHAR(100)
+) 
+RETURNS ID {
+    VAR phraseId ID;
+    SET phraseId = (SELECT id FROM $phrase WHERE name=phrase);
+    VAR unitPhrase ID = ID(UnitPhrase New KEY unit=$unit, phrase=phraseId);
+    return unitPhrase;
+};
+
+FUNC Phrase ver 0.1 (
+    phraseId ID
+) 
+RETURNS CHAR(200) {
+    VAR phrase CHAR(200) = (SELECT a.name 
+        FROM $Phrase as a 
+            JOIN UnitPhrase as b ON b.phrase=a.id AND b.unit=$unit 
+        WHERE b.id=phraseId
+    );
+    return phrase;
+};
+
+FUNC Me()
+RETURNS ID {
+    VAR me ID = ID(UserUnit New KEY user=$user, unit=$unit);
+    return me; -- $user unit
+};
+
+Biz Query MyUnits ver 0.3 (
+)
+RETURNS ret (
+    id ID,
+) {
+    INTO ret SELECT a.unit as id
+        FROM UserUnit as a
+        WHERE a.user=$user;
+};
+
+Biz ACT SaveItem(
+    item CHAR(100),
+    no NO,
+    ex CHAR(200),
+)
+RETURNS ret (
+    id ID,
+) {
+    VAR base ID = PhraseId(item);
+
+    -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
+    VAR id ID = 0;
+    SET id = ID(Item KEY base=base, no=no);
+    IF id IS NULL {
+        SET id = ID(Item new KEY base=base,no=no);
+        WITH Item as a ID=id SET a.ex=ex;
+    }
+    ELSE {
+        SET id=-id;
+    }
+    INTO ret SELECT id;
+}
+
+Biz ACT SaveSetting(
+    phrase CHAR(200),
+    id ID,
+    int BIGINT,
+    dec VALUE,
+    str CHAR(100),
+) {
+    VAR phraseId ID = PhraseId(phrase);
+    IF phraseId IS NOT NULL {
+        WITH IxSettingValue IX=id XI=phraseId
+            SET int=int, dec=dec, str=str;
+    }
+};
+
+Biz ACT SaveProp(
+    phrase CHAR(200),
+    id ID,
+    int BIGINT,
+    dec VALUE,
+    str CHAR(100),
+) {
+    VAR phraseId ID = PhraseId(phrase);
+    IF phraseId IS NOT NULL {
+        WITH IxPropValue IX=id XI=phraseId
+            SET int=int, dec=dec, str=str;
+    }
+};
+
+Biz ACT SaveSheet (
+    sheet CHAR(100),
+    no NO,
+    item ID,
+    -- operator ID,            -- employee Item
+    value VALUE,
+    v1 VALUE,
+    v2 VALUE,
+    v3 VALUE,
+)
+RETURNS ret (
+    id ID,
+) {
+    VAR base ID = PhraseId(sheet);
+    VAR me ID = Me();
+
+    VAR sheetId ID;
+    WITH Sheet as a ID to sheetId Key(base, no) 
+        SET a.item=item, a.operator=me
+            , a.value=value, a.v1=v1, a.v2=v2, a.v3=v3;
+
+    WITH IxMyDraft IX=me XI=sheetId;
+
+    INTO ret SELECT sheetId as id;
+};
+
+Biz ACT SaveDetail (
+    base ID,
+    id ID,
+    item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位, 也可以指向源单明细
+    value VALUE,
+    v1 VALUE,
+    v2 VALUE,
+    v3 VALUE,
+) 
+RETURNS ret (
+    id ID,
+) {
+    VAR me ID = Me();
+    IF base IS NULL OR NOT EXISTS(SELECT xi FROM IxMyDraft WHERE ix=me AND xi=base) {
+        -- 如果base sheet没有在我的draft里面，不能写入明细。这是安全保证
+        RETURN;
+    }
+    IF id IS NULL {
+        SET id = ID(Detail New);
+        WITH Detail ID=id SET base=base, item=item, value=value, v1=v1, v2=v2, v3=v3;
+    }
+    ELSE {
+        WITH Detail ID=id SET item=item, value=value, v1=v1, v2=v2, v3=v3;
+    }
+    INTO ret SELECT id;
+};
+
+Biz ACT RemoveDraft (
+    id ID,
+) {
+    VAR me ID = Me();
+    WITH IxMyDraft IX=me XI=id DEL;
+};
+
+Biz QUERY GetMyDrafts ver 0.1 (
+)
+PAGE (
+    * Sheet DESC,
+    phrase CHAR(200),
+) {
+    VAR me ID = Me();
+    -- 获取我正在录入的单据
+    PAGE SELECT * b, phrase(b.base) as phrase
+        FROM IxMyDraft as a
+            JOIN Sheet as b ON a.xi=b.id
+        WHERE b.id<$pageStart AND a.ix=me
+        ORDER BY b.id DESC
+        LIMIT $pageSize;
+};
+
+Biz Query SearchItem (
+    item CHAR(100),
+    key CHAR(50),
+)
+PAGE (
+    id ID desc,
+    no CHAR(50),
+    ex CHAR(50),
+) {
+    VAR base ID = PhraseId(item);
+
+    PAGE SELECT a.id, a.no, a.ex
+        FROM Item as a
+        WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
+        ORDER BY a.id desc
+        LIMIT $pageSize;
+};
+
+Biz Query SearchItemSettings (
+    item CHAR(100),
+    key CHAR(50),
+    names CHAR(300),
+)
+PAGE (
+    id ID desc,
+    no CHAR(50),
+    ex CHAR(50),
+)
+RETURNS props (
+    id ID,
+    prop ID,
+    propName CHAR(50),
+    value CHAR(200),
+) {
+    VAR base ID = PhraseId(item);
+
+    PAGE SELECT a.id, a.no, a.ex
+        FROM Item as a
+        WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
+        ORDER BY a.id desc
+        LIMIT $pageSize;
+
+    INTO props SELECT a.id, d.id as prop
+        , d.name as propName
+        , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
+        FROM $page as a 
+            JOIN IxSettingValue as b ON b.ix=a.id
+            JOIN $Phrase as d ON d.id=b.xi
+        WHERE LOCATE(d.name, names)>0;
+};
