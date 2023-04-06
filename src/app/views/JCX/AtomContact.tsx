@@ -1,4 +1,4 @@
-import { PageIDList, PageIDNew, PageIDView, GenID } from "app/template/ID";
+import { PageAtomList, PageAtomNew, PageAtomView, GenAtom } from "app/template/Atom";
 import { Route } from "react-router-dom";
 
 export const pathContactNew = 'contact-new';
@@ -6,21 +6,21 @@ export const pathContactList = 'contact-list';
 export const pathContactView = 'contact-view';
 export const pathContactEdit = 'contact-edit';
 
-export class GenContact extends GenID {
-    readonly itemName = 'contact';
+export class GenContact extends GenAtom {
+    readonly atomName = 'contact';
     readonly path: string;
 }
 
 function PageContactNew() {
-    return <PageIDNew Gen={GenContact} />;
+    return <PageAtomNew Gen={GenContact} />;
 }
 
 function PageContactView() {
-    return <PageIDView Gen={GenContact} />;
+    return <PageAtomView Gen={GenContact} />;
 }
 
 function PageContactList() {
-    return <PageIDList Gen={GenContact} />
+    return <PageAtomList Gen={GenContact} />
 }
 
 export const routeContact = <>

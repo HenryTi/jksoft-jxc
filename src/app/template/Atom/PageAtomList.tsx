@@ -1,9 +1,9 @@
 import { GenProps, useGen } from '../../tool';
 import { PageQueryMore } from '../../coms';
-import { GenID } from './GenID';
+import { GenAtom } from './GenAtom';
 
-export function PageIDList({ Gen }: GenProps<GenID>) {
-    const { caption, ViewItemID, searchItems, listTop, phrase } = useGen(Gen);
+export function PageAtomList({ Gen }: GenProps<GenAtom>) {
+    const { caption, ViewItemAtom: ViewItemID, searchAtoms: searchItems, listTop, phrase } = useGen(Gen);
 
     let searchParam = {
         item: phrase,

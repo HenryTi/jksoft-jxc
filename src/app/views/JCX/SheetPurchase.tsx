@@ -1,12 +1,11 @@
 import { Route } from "react-router-dom";
-import { UqAction } from "tonwa-uq";
 import { GenProps } from "app/tool";
 import { UqApp } from "app/UqApp";
-import { Detail, SheetType, uqSchema } from "uqs/UqDefault";
+import { Detail } from "uqs/UqDefault";
 import { PageOriginEdit, GenSheet, GenOrigin, PageDetailQPA, GenDetail, ViewItemID } from "../../template";
-import { PageProductSelect } from "./IDProduct";
+import { ModalSelectProduct } from "./AtomProduct";
 import { QueryMore } from "app/tool";
-import { GenContact } from "./IDContact";
+import { GenContact } from "./AtomContact";
 
 const pathPurchaseEdit = 'purchase-edit';
 
@@ -16,7 +15,7 @@ export class GenPurchase extends GenOrigin {
 
     readonly QuerySearchItem: QueryMore;
 
-    readonly PageDetailItemSelect: () => JSX.Element;
+    readonly ModalSelectDetailAtom: () => JSX.Element;
     readonly PageSheetEdit: () => JSX.Element;
     readonly PageSheetDetail: (props: GenProps<GenSheet> & { detail: Partial<Detail>; }) => JSX.Element;
     readonly ViewItemSource: ({ id }: { id: number; }) => JSX.Element;
@@ -26,14 +25,14 @@ export class GenPurchase extends GenOrigin {
 
     constructor(uqApp: UqApp) {
         super(uqApp);
-        this.QuerySearchItem = uqApp.objectOf(GenContact).searchItems;
+        this.QuerySearchItem = uqApp.objectOf(GenContact).searchAtoms;
 
-        this.PageDetailItemSelect = PageProductSelect;
+        this.ModalSelectDetailAtom = ModalSelectProduct;
         this.PageSheetEdit = PagePurchaseEdit;
         this.PageSheetDetail = PageSheetDetail as any;
     }
 
-    readonly buildDetailFromSelectedItem = (selectedItem: any): any => {
+    readonly buildDetailFromSelectedAtom = (selectedItem: any): any => {
         let detail = { item: selectedItem.id };
         return detail;
     }

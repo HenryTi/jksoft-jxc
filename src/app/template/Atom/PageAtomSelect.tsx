@@ -1,24 +1,21 @@
 import { useState } from "react";
 import { SearchBox } from "tonwa-com";
-import { UqQuery } from "tonwa-uq";
 import { PageQueryMore } from "app/coms";
 import { useUqApp } from "app/UqApp";
 import { GenProps } from "app/tool";
-import { GenID } from "./GenID";
+import { GenAtom } from "./GenAtom";
 import { useModal } from "tonwa-app";
-import { QueryMore } from "app/tool";
+import { OpAtomAssigns } from "app/Biz";
 
-interface PageIDSelectProps {
+interface PageAtomSelectProps<G extends GenAtom> extends GenProps<G> {
     ViewItem?: ({ value }: { value: any }) => JSX.Element;
-    query?: QueryMore;
+    assigns?: string[]
 }
 
-export function PageIDSelect({ Gen, query, ViewItem }: GenProps<GenID> & PageIDSelectProps) {
+export function PageAtomSelect<G extends GenAtom>({ Gen, ViewItem, assigns }: PageAtomSelectProps<G>) {
     const { closeModal } = useModal();
     const uqApp = useUqApp();
-    const { caption, placeholder, searchItems: searchItemsInPart, ViewItemID: ViewItemInPart, autoLoadOnOpen } = uqApp.objectOf(Gen);
-    query = query ?? searchItemsInPart;
-    ViewItem = ViewItem ?? ViewItemInPart;
+    const { caption, placeholder, bizAtom, autoLoadOnOpen } = uqApp.objectOf(Gen);
     const [searchParam, setSearchParam] = useState(autoLoadOnOpen === true ? { key: undefined as string } : undefined);
     const searchBox = <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder={placeholder} />;
     async function onSearch(key: string) {
@@ -29,8 +26,14 @@ export function PageIDSelect({ Gen, query, ViewItem }: GenProps<GenID> & PageIDS
     async function onItemClick(selectedItem: any) {
         closeModal(selectedItem);
     }
+    async function searchAtoms(param: any, pageStart: any, pageSize: number) {
+        let opAtomAssigns = new OpAtomAssigns(bizAtom, assigns);
+        let ret = await opAtomAssigns.search(param, pageStart, pageSize);
+        return ret;
+    }
+
     return <PageQueryMore header={`选择${caption}`}
-        query={query}
+        query={searchAtoms}
         param={searchParam}
         sortField="id"
         ViewItem={ViewItem}

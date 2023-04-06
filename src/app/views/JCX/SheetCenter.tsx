@@ -22,7 +22,7 @@ export function PageSheetCenter() {
     const genColl: { [entity: string]: GenSheet } = {};
     const genArr = GenArr.map(v => {
         const gen = uqApp.objectOf(v);
-        const { typePhrase } = gen;
+        const { phrase: typePhrase } = gen;
         genColl[typePhrase] = gen;
         return gen;
     });
@@ -33,6 +33,7 @@ export function PageSheetCenter() {
     function ViewItem({ value }: { value: Sheet & { phrase: string; } }) {
         const { id, no, phrase, item, operator } = value;
         let gen = genColl[phrase];
+        if (gen === undefined) debugger;
         let { caption, path } = gen;
         return <Link to={`../${path}/${id}`}>
             <div className="px-3 py-2 d-flex">

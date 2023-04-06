@@ -12,27 +12,25 @@ export abstract class GenSheet extends GenInput {
         let { name, caption } = this.bizSheet;
         return caption ?? name;
     }
-    get typePhrase() {
+    get phrase() {
         let { name, type } = this.bizSheet;
         return `${type}.${name}`;
     }
     abstract get targetCaption(): string;
 
-    readonly ID: UqID<Sheet>;
-    readonly QueryGetDetails: UqQuery<{ id: number }, { ret: any[] }>;
+    readonly Atom: UqID<Sheet>;
 
     abstract get ModalSheetStart(): (props: GenProps<GenSheet>) => JSX.Element;
     abstract get ViewItemEditRow(): (props: { row: any; Gen: new (uqApp: UqApp) => GenSheet }) => JSX.Element;
     abstract get ViewTarget(): (props: { sheet: Sheet; }) => JSX.Element;
     abstract get ViewTargetBand(): (props: { sheet: Sheet; }) => JSX.Element;
-    abstract buildDetailFromSelectedItem: (selectedItem: any) => any;
+    abstract buildDetailFromSelectedAtom: (selectedItem: any) => any;
     abstract get editing(): Editing;
 
     constructor(uqApp: UqApp) {
         super(uqApp);
         let uq = this.uq;
-        this.ID = uq.Sheet;
-        this.QueryGetDetails = uq.GetDetails;
+        this.Atom = uq.Sheet;
     }
 
     // 单据列表项显示

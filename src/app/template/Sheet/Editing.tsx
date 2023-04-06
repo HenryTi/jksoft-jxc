@@ -44,9 +44,9 @@ export abstract class Editing {
     abstract load(sheet: number): Promise<void>;
 
     async newSheet(item: number) {
-        let { uq, ID } = this.gen;
-        let no = await uq.IDNO({ ID });
-        let sheet = { no, item } as Sheet;
+        let { uq, Atom, phrase } = this.gen;
+        let no = await uq.IDNO({ ID: Atom });
+        let sheet = { no, item: item, phrase } as any;
         setAtomValue(this.atomSheet, sheet);
         return sheet;
     }
@@ -54,7 +54,7 @@ export abstract class Editing {
     private async saveSheet() {
         const isMine = getAtomValue(this.atomIsMine);
         if (isMine === true) return;
-        let { uqApp, uq, typePhrase: phrase } = this.gen;
+        let { uqApp, uq, phrase: phrase } = this.gen;
         const sheet = getAtomValue(this.atomSheet);
         let ret = await uq.SaveSheet.submit({
             ...sheet,
@@ -65,7 +65,7 @@ export abstract class Editing {
         setAtomValue(this.atomSheet, sheet);
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (data) {
-            data.addItem({ ix: undefined, xi: id });
+            data.addItem(sheet);
         }
         setAtomValue(this.atomIsMine, true);
     }
@@ -100,7 +100,7 @@ export abstract class Editing {
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (data) {
             let sheetId = sheet.id;
-            data.removeItem<{ ix: number, xi: number }>(v => v.xi === sheetId) as any;
+            data.removeItem<{ id: number; }>(v => v.id === sheetId) as any;
         }
     }
 }

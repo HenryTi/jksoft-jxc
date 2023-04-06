@@ -1,5 +1,7 @@
 Biz SHEET Purchase '采购单' {
-    detail;
+    detail {
+        Assign done DEC;
+    };
 
     ACT (sheetId ID) {
         -- VAR a INT = 5, receiver ID;
@@ -21,28 +23,48 @@ Biz SHEET Sale '销售单' {
     }
 }
 
-Biz SHEET StoreIn '入库单' {
+Biz SHEET StoreIn ver 0.8 '入库单' {
     detail;
+    ACT (sheetId ID) {
+        VAR donePhraseId ID = PhraseId(Concat(SheetPhrase(sheetId), '.detail.done'));
+        FOR detailId in detail {
+            VAR item ID, value VALUE, v1 VALUE, v2 VALUE;
+            SET item=a.item, value=a.value, v1=a.v1, v2=a.v2
+                FROM Detail as a
+                WHERE a.id=detailId;
+            Biz Subject storage of item += value ref detailId;
+            WITH IxAssignValue IX=detailId XI=donePhraseId SET dec=value;
+        }
+    }
 }
 
 Biz SHEET StoreOut '出库单' {
     detail;
+    ACT (sheetId ID) {
+        VAR donePhraseId ID = PhraseId(Concat(SheetPhrase(sheetId), '.detail.done'));
+        FOR detailId in detail {
+            VAR item ID, value VALUE, v1 VALUE, v2 VALUE;
+            SET item=a.item, value=a.value, v1=a.v1, v2=a.v2
+                FROM Detail as a
+                WHERE a.id=detailId;
+            Biz Subject storage -= value ref detailId;
+            WITH IxAssignValue IX=detailId XI=donePhraseId SET dec=value;
+        }
+    }
 }
 
-Biz SHEET a ver 0.61 {
+Biz SHEET a ver 0.62 {
     prop a '显示a' int ;
     prop b '显示b' int ;
     prop c '类型' radio (big '大' = 1, 中 = 2, small '小' = 3,);
-    detail da '显示detail a';
-    detail db '显示detail b' {
-        prop b char;
-    };
     detail {
         prop a int;
         prop b int;
     }
+    ACT (sheetId ID) {
+    }
     state s0 {
-        Setting next '下一步' char = 's2';
+        Assign next '下一步' char = 's2';
         ACT ProcStoreIn '入库' (id ID) {
         }
     }
@@ -53,7 +75,7 @@ Biz SHEET a ver 0.61 {
             FOR detailId in detail {
                 VAR item ID, value VALUE, v1 VALUE, v2 VALUE;
                 SET item=a.item, value=a.value, v1=a.v1, v2=a.v2
-                    FROM Detail as a JOIN Item as b ON b.id=a.item
+                    FROM Detail as a JOIN Atom as b ON b.id=a.item
                     WHERE a.id=detailId;
                 VAR aInS1 INT = 3;
                 SET aInS1 = aInS1 + value;
@@ -68,5 +90,5 @@ Biz SHEET a ver 0.61 {
         }
     }
 
-    Setting 流水 '下一步' char = 's2';
+    Assign 流水 '下一步' char = 's2';
 };

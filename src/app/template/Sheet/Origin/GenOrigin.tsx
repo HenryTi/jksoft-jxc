@@ -4,15 +4,15 @@ import { GenSheet } from "../GenSheet";
 import { EditingOrigin } from "./EditingOrigin";
 import { PageOriginNew } from "./PageOriginNew";
 import { QueryMore } from "app/tool";
-import { Detail, Sheet } from "uqs/UqDefault";
+import { Atom, Detail, Sheet } from "uqs/UqDefault";
 import { FA, LMR } from "tonwa-com";
 import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
-import { ViewItemID } from "app/template/ID";
+import { ViewItemID } from "app/template/Atom";
 
 export abstract class GenOrigin extends GenSheet {
     abstract QuerySearchItem: QueryMore;
-    abstract PageDetailItemSelect: () => JSX.Element;
+    abstract ModalSelectDetailAtom: () => JSX.Element;
     abstract get PageSheetDetail(): <T extends GenSheet>(props: (GenProps<T> & { detail: Detail; })) => JSX.Element;
     abstract PageSheetEdit: () => JSX.Element;
 

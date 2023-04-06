@@ -20,11 +20,8 @@ export class EditingOrigin extends Editing {
     }
 
     async load(id: number) {
-        let { uq, QueryGetDetails } = this.gen;
-        let [sheet, { ret: details }] = await Promise.all([
-            uq.idObj(id),
-            QueryGetDetails.query({ id }),
-        ]);
+        let { uq } = this.gen;
+        let { main: [sheet], details } = await uq.GetSheet.query({ id, assigns: undefined });
         setAtomValue(this.atomSheet, sheet);
         setAtomValue(this.atomRows, details);
         setAtomValue(this.atomIsMine, true);

@@ -12,7 +12,6 @@ const pathStoreOut = 'store-out';
 export class GenStoreOut extends GenDerive {
     readonly sheetName = 'storeout';
     readonly path = pathStoreOut;
-    readonly QueryOrigin: UqQuery<any, any>;
     readonly ViewTarget: (props: { sheet: Sheet }) => JSX.Element;
     readonly ViewTargetBand: (props: { sheet: Sheet }) => JSX.Element;
 
@@ -20,9 +19,6 @@ export class GenStoreOut extends GenDerive {
 
     constructor(uqApp: UqApp) {
         super(uqApp);
-
-        let uq = this.uq;
-        this.QueryOrigin = uq.SearchSheetReady;
 
         this.ViewTarget = ({ sheet }: { sheet: Sheet }) => {
             return <UserView id={sheet.operator} />;

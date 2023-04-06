@@ -1,25 +1,14 @@
-CONST ItemType = {
-    Product: 'product',
-    Contact: 'contact',
-};
-
 -- independant, searchable
-ID Item (
+ID Atom (
     id,
-    KEY base ID,            -- eg, unit type join id
+    KEY base ID,            -- eg, sitePhrase
     KEY no,
     ex CHAR(200),
 );
 
-CONST SheetType ver 0.2 = {
-    Purchase: 'Purchase',
-    Sale: 'Sale',
-    StoreIn: 'storein',
-    StoreOut: 'storeout',
-};
 ID Sheet (
     id MINUTE,
-    KEY base ID,
+    KEY base ID,            -- sitePhrase
     KEY no,
     item ID,
     origin ID,              -- 源单
@@ -29,11 +18,6 @@ ID Sheet (
     v2 VALUE,
     v3 VALUE,
 );
-
-const FlowState = {
-    Start: '$start',
-    Ready: 'ready',
-};
 
 -- 所有单据的明细，单值
 ID Detail (
@@ -48,19 +32,32 @@ ID Detail (
     INDEX base_id(base, id) UNIQUE,
 );
 
+ID Subject (
+    id,
+    KEY base ID,            -- sitePhrase
+    KEY atom ID,            -- atom id or 0 for all
+);
+
 ID User (
     id,
     KEY tonwaUser INT,
 );
 
-ID Unit ver 0.2 (
-    id, 
+ID Site ver 0.2 (
+    id,
     KEY no,
-    caption CHAR(100),
+    ex CHAR(100),
 )
 + (no)
 VALUES
 ('$$$');
+
+ID Group (
+    id,
+    KEY base ID,            -- site@phrase, or base group
+    KEY no,
+    ex CHAR(100),
+);
 
 ENUM MeasureUnitType (
     count = 1,              -- 个数

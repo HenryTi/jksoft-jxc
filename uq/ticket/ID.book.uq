@@ -4,16 +4,6 @@ IDX Balance (
     init VALUE DEFAULT 0,
     value Value,
 );
--- Subject 应该也会去掉
-ENUM SubjectType (
-    Storage = 201,
-);
-
-ID Subject (
-    id,
-    KEY item ID,
-    KEY type ID,        -- biz subject
-);
 
 ID History (
     id MINUTE,
@@ -21,16 +11,4 @@ ID History (
     value Value,
     ref ID,             -- 相关凭证
     INDEX subject_id(subject, id) UNIQUE,
-);
-
-IDX Done (
-    id,
-    value VALUE,
-);
-
--- lock some number
-IDX Lock (
-    id,
-    value VALUE,
-    validTo TIMESTAMP,      -- 有效至
 );

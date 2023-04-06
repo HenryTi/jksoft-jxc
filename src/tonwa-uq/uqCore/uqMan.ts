@@ -1072,7 +1072,7 @@ export class UqMan {
                 this.cachePromise[id] = promise;
             }
             let ret = await promise;
-            obj = ret[0];
+            obj = ret?.[0];
             this.cache[id] = (obj === undefined) ? null : obj;
             delete this.cachePromise[id];
         }

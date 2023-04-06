@@ -1,33 +1,20 @@
 import { PageMoreCacheData } from "app/coms";
-import { UqApp, useUqApp } from "app/UqApp";
+import { useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { LabelRowEdit, Page } from "tonwa-app";
 import { Sep } from "tonwa-com";
 import { GenProps } from "app/tool";
-import { GenID, IDViewRowProps } from "./GenID";
+import { GenAtom, IDViewRowProps } from "./GenAtom";
 
-/*
-export interface RowProps {
-    name: string;
-    label: string;
-    readonly?: boolean;
-}
-
-interface PageIDViewProps {
-    header: string;
-    ID: UqID<any>;
-    rows: RowProps[];
-}
-*/
-export function PageIDView({ Gen }: GenProps<GenID>) {
+export function PageAtomView({ Gen }: GenProps<GenAtom>) {
     const uqApp = useUqApp();
-    const { caption, viewRows, ID } = uqApp.objectOf(Gen);
+    const { caption, viewRows, Atom } = uqApp.objectOf(Gen);
     const { id: idString } = useParams();
     const id = Number(idString);
     const { UqDefault } = uqApp.uqs;
     const { data } = useQuery('PageProductView', async () => {
-        let ret = await UqDefault.ID({ IDX: ID, id });
+        let ret = await UqDefault.ID({ IDX: Atom, id });
         return ret[0] ?? {};
     }, {
         refetchOnWindowFocus: false,
@@ -37,7 +24,7 @@ export function PageIDView({ Gen }: GenProps<GenID>) {
         let value = data[name];
         console.log(`prop value ${name}`, value);
         async function onValueChanged(value: string | number) {
-            await UqDefault.ActIDProp(ID, id, name, value);
+            await UqDefault.ActIDProp(Atom, id, name, value);
             let data = uqApp.pageCache.getData<PageMoreCacheData>();
             if (data) {
                 let item = data.getItem<{ id: number }>(v => v.id === id) as any;

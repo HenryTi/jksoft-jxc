@@ -3,44 +3,7 @@ IDX Seq (
     id,
     seq TEXT,               -- id序列，tab分隔，ln分行。排序和分组
 );
-/*
-ENUM PropDataType (
-    none = 0,           -- 有否，无值
-    bigint = 1,         -- 8字节大整数
-    number = 2,         -- 固定4位小数，实际存放整数
-    bool = 3,           -- 0或1
-    date = 4,           -- 整数表示的日期，1970-1-1为0
-    datetime = 5,       -- 整数秒时间，1970-1-1 0:0utc 为0
-    type = 81,          -- id type，定义一种ID类别
-    radio = 101,        -- 单选
-    check = 102,        -- 多选
-    picker = 201,       -- ID
-    group = 301,        -- prop 分组
-    char = 1001,        -- CHAR(100)
-    text = 2001,        -- MEDIUMTEXT
-    itemPicker = 9998,  -- Picker项
-    item = 9999,        -- 可选项
-);
 
--- 可选项也是一个prop
--- IDType 也是一个Prop，name：$id$entity
-ID Prop ver 0.3 (
-    id,
-    KEY base ID,               -- owner prop
-    KEY name PropName,
-    ex CHAR(100),               -- 可以是标题，也可以是对数据结构的描述
-    type ENUM PropDataType,
-)
-+ (base, name, type)
-VALUES
-(0,     NameOf Prop,        PropDataType.none),
-(0,     NameOf Bind,        PropDataType.none),
-(0,     NameOf Item,        PropDataType.none),
-(0,     NameOf Sheet,       PropDataType.none),
-(0,     '$user',            PropDataType.none),
-(0,     '$unit',            PropDataType.none),
-;
-*/
 -- ix=IDType，特定ID有多少属性
 -- ix=Prop，特定属性，有多少可选项
 -- ix=ID value, 可选项有否
@@ -56,16 +19,16 @@ IX IxPropValue (
     str CHAR(100),
 );
 
--- 一个ix，多个选项。比如，userunit的permit
--- userunit可以有多个permit. ix=(userunit@permit), xi=permit id
--- userunit可以有多个role. ix=(userunit@role), xi=role id
--- userunit实际拥有的permit，是通过role和permit merge的结果。ix=(userunit@runningPermit), xi=permit id
-IX IxSetting(
+-- 一个ix，多个选项。比如，usersite的permit
+-- usersite可以有多个permit. ix=(usersite@permit), xi=permit id
+-- usersite可以有多个role. ix=(usersite@role), xi=role id
+-- usersite实际拥有的permit，是通过role和permit merge的结果。ix=(usersite@runningPermit), xi=permit id
+IX IxAssign(
     ix,
     xi,
 );
--- setting跟prop分开。有可能value和setting需要分开处理。比如系统重置
-IX IxSettingValue (
+-- assign跟prop分开。有可能value和assign需要分开处理。比如系统重置
+IX IxAssignValue (
     ix,
     xi,
     int BIGINT,
@@ -73,43 +36,44 @@ IX IxSettingValue (
     str CHAR(100),
 );
 
-ID UserUnit (
+ID UserSite (
     id,
     KEY user ID,
-    KEY unit ID,
+    KEY site ID,
+    INDEX site(site, user) UNIQUE,
 );
 
-ID UnitPhrase (
+ID SitePhrase (
     id,
-    KEY unit ID,            --- unit
+    KEY site ID,            --- site
     KEY phrase ID,          --- phrase id
 );
 
-IX IxStateItem (
-    ix,                     -- UnitPhrase(unit, $phrase(item.state))
+IX IxStateAtom (
+    ix,                     -- SitePhrase(site, $phrase(item.state))
     xi,                     -- item id
 );
 
 IX IxMyDraft (
-    ix,                     -- UserUnit
+    ix,                     -- UserSite
     xi INDEX,
 );
 
 -- 包括上一环节产生的待处理
 IX IxStateSheet (
-    ix,                     -- UnitPhrase(unit, $phrase(sheet.State))
+    ix,                     -- SitePhrase(unit, $phrase(sheet.State))
     xi INDEX,               -- sheet id
 );
 
-ID BindItem (
+ID BindAtom (
     id,
     KEY base ID,            -- (main + type) => owner, or type in main
-    KEY item ID,            -- item id easy to load values
+    KEY atom ID,            -- item id easy to load values
 );
 
 -- 发送到单据状态，需要base = SheetStatePhrase @ receiver;
-ID BindSheet (
-    id MINUTE,
+ID BindPhraseTo (
+    id,
     KEY base ID,            -- (main + type) => owner, or type in main
-    KEY sheet ID,            -- item id easy to load values
+    KEY to ID,            -- item id easy to load values
 );

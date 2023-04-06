@@ -3,16 +3,14 @@ import { PageDeriveEdit, GenSheet, GenDerive } from "app/template/Sheet";
 import { UqApp } from "app/UqApp";
 import { Route } from "react-router-dom";
 import { UserView } from "tonwa-app";
-import { UqAction, UqQuery } from "tonwa-uq";
 import { GenPurchase } from "./SheetPurchase";
-import { Sheet, uqSchema } from "uqs/UqDefault";
+import { Sheet } from "uqs/UqDefault";
 
 const pathStoreIn = 'store-in';
 
 export class GenStoreIn extends GenDerive {
     readonly sheetName = 'storein';
     readonly path = pathStoreIn;
-    readonly QueryOrigin: UqQuery<any, any>;
     readonly ViewTarget: (props: { sheet: Sheet }) => JSX.Element;
     readonly ViewTargetBand: (props: { sheet: Sheet }) => JSX.Element;
 
@@ -20,9 +18,6 @@ export class GenStoreIn extends GenDerive {
 
     constructor(uqApp: UqApp) {
         super(uqApp);
-
-        let uq = this.uq;
-        this.QueryOrigin = uq.SearchSheetReady;
 
         this.ViewTarget = ({ sheet }: { sheet: Sheet }) => {
             return <UserView id={sheet.operator} />;

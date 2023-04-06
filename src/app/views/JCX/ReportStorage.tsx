@@ -6,7 +6,7 @@ import { Link, Route, useParams } from "react-router-dom";
 import { IDView, Page, PageSpinner } from "tonwa-app";
 import { dateFromMinuteId, EasyTime, FA, List, LMR, Sep, useEffectOnce } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
-import { EnumID, Item, ReturnReportStorage$page, Sheet, SheetType } from "uqs/UqDefault";
+import { EnumID, Atom, ReturnReportStorage$page, Sheet } from "uqs/UqDefault";
 
 const pathStorage = 'storage';
 const pathStorageHistory = 'storage-history';
@@ -32,15 +32,15 @@ export class GenStorage extends GenReport {
     }
 
     readonly ViewItem = ({ value: row }: { value: ReturnReportStorage$page; }): JSX.Element => {
-        const { item, value, init } = row;
-        function ViewProduct({ value: { ex, no } }: { value: Item }) {
+        const { atom, value, init } = row;
+        function ViewProduct({ value: { ex, no } }: { value: Atom }) {
             return <div>
                 <small className="text-muted">{no}</small>
                 <div><b>{ex}</b></div>
             </div>
         }
         return <LMR className="px-3 py-2 align-items-center">
-            <IDView uq={this.uq} id={item} Template={ViewProduct} />
+            <IDView uq={this.uq} id={atom} Template={ViewProduct} />
             <div className="d-flex align-items-center">
                 <div className="me-4 fs-5">{(value + init).toFixed(0)}</div>
                 <FA name="angle-right" className="text-muted" />
@@ -178,6 +178,11 @@ function DirStoreOut({ value }: { value: Sheet; }) {
     </>;
 }
 
+enum SheetType {
+    StoreIn,
+    StoreOut,
+}
+
 const dirMap: { [sheet: string]: (props: { value: any; }) => JSX.Element } = {
     [SheetType.StoreIn]: DirStoreIn,
     [SheetType.StoreOut]: DirStoreOut,
@@ -191,7 +196,7 @@ function DetailStoreOut({ value }: { value: Sheet; }) {
     return <>出库单 Detail {value.no}</>
 }
 
-const detailMap: { [entity in EnumID]?: (props: { value: any; }) => JSX.Element } = {
+const detailMap: { [entity in SheetType]?: (props: { value: any; }) => JSX.Element } = {
     [SheetType.StoreIn]: DetailStoreIn,
     [SheetType.StoreOut]: DetailStoreOut,
 }
@@ -204,7 +209,7 @@ function SheetStoreOut({ value }: { value: Sheet; }) {
     return <>出库单 Sheet {value.no}</>
 }
 
-const sheetMap: { [entity in EnumID]?: (props: { value: any; }) => JSX.Element } = {
+const sheetMap: { [entity in SheetType]?: (props: { value: any; }) => JSX.Element } = {
     [SheetType.StoreIn]: SheetStoreIn,
     [SheetType.StoreOut]: SheetStoreOut,
 }

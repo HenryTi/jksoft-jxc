@@ -2,17 +2,17 @@ import { Route } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { FA, LMR, Sep } from "tonwa-com";
-import { pathContactList, pathContactNew } from "./IDContact";
-import { pathProductList, pathProductNew } from "./IDProduct";
+import { pathContactList, pathContactNew } from "./AtomContact";
+import { pathProductList, pathProductNew } from "./AtomProduct";
 
 interface Cmd {
     to: string;
     caption: string;
 }
 
-export const pathIDCenter = 'id-center';
+export const pathAtomCenter = 'atom-center';
 
-export function PageIDCenter() {
+export function PageAtomCenter() {
     const cmdContacts: Cmd[] = [
         { to: pathContactNew, caption: '新建往来单位' },
     ]
@@ -46,4 +46,4 @@ export function PageIDCenter() {
     </Page>;
 }
 
-export const routeIDCenter = <Route path={pathIDCenter} element={<PageIDCenter />} />;
+export const routeAtomCenter = <Route path={pathAtomCenter} element={<PageAtomCenter />} />;

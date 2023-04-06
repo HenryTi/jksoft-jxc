@@ -37,7 +37,7 @@ export abstract class GenDetail extends Gen {
     abstract get itemCaption(): string
     ViewItemTop = ({ item }: { item: number }): JSX.Element => {
         return <div className="container">
-            <Band label={this.itemCaption} labelClassName="py-2 fw-bold">
+            <Band label={this.itemCaption}>
                 <IDView uq={this.uq} id={item} Template={this.ViewItemTemplate} />
             </Band>
         </div>

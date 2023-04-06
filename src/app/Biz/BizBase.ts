@@ -3,7 +3,7 @@ import { Biz } from "./Biz";
 
 export class BizBase {
     protected readonly biz: Biz;
-    protected readonly uq: UqExt;
+    readonly uq: UqExt;
     readonly name: string;
     readonly type: string;
     caption: string;
@@ -13,6 +13,10 @@ export class BizBase {
         this.uq = biz.uq;
         this.name = name;
         this.type = type;
+    }
+
+    get phrase() {
+        return `${this.type}.${this.name}`;
     }
 
     fromSchema(schema: any) {

@@ -30,5 +30,5 @@ export abstract class GentWithPath extends Gen {
 }
 
 export abstract class GenInput extends GentWithPath {
-    abstract get ID(): UqID<any>;
+    abstract get Atom(): UqID<any>;
 }

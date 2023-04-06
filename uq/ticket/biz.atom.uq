@@ -1,15 +1,15 @@
-Biz Item b ver 0.5 {
+Biz Atom b ver 0.5 {
     prop a int ;
     prop b char = 1;
     prop c char;
-    Setting 流水 '下一步' char = 's2';
+    Assign 流水 '下一步' char = 's2';
 };
 
 Biz Subject c Balance History {
-    Setting 流水 '下一步' char = 's2';
+    Assign 流水 '下一步' char = 's2';
 }
 
-Biz Item Contact '往来单位' {
+Biz Atom Contact '往来单位' {
     prop a '联系人' int ;
     prop b '类型' radio (big '大' = 1, 中 = 2, small '小' = 3,);
     prop c '可信度' radio (高, 中, 低);
@@ -19,13 +19,13 @@ Biz Item Contact '往来单位' {
     state 经理级别可见;          -- 可以跟可用同时存在，也可以不同时
 };
 
-Biz Item Product '产品' {
-    prop 厂家 ID Contact;
-    setting retailPrice '零售价' dec;
+Biz Atom Product '产品' {
+    Prop 厂家 ID Contact;
+    Assign retailPrice '零售价' dec;
 };
 
 -- 产品批次
-Biz Item Batch {
+Biz Atom Batch {
     base Product;
     prop 效期 date;
 };

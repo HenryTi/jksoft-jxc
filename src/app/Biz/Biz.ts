@@ -1,7 +1,8 @@
 import { UqApp } from 'app/UqApp';
 import { UqExt, uqSchema } from 'uqs/UqDefault';
 import { Entity } from './Entity';
-import { EntityItem } from './EntityItem';
+import { EntityAtom } from './EntityAtom';
+import { EntityGroup } from './EntityGroup';
 import { EntitySetting } from './EntitySetting';
 import { EntitySheet } from './EntitySheet';
 import { EntitySubject } from './EntitySubject';
@@ -9,11 +10,12 @@ import { EntitySubject } from './EntitySubject';
 export class Biz {
     readonly uq: UqExt;
     readonly sheets: { [name: string]: EntitySheet } = {}
-    readonly items: { [name: string]: EntityItem } = {}
+    readonly atoms: { [name: string]: EntityAtom } = {}
     readonly settings: { [name: string]: EntitySetting } = {}
     readonly permits: { [name: string]: EntityPermit } = {}
     readonly roles: { [name: string]: EntityRole } = {}
     readonly subjects: { [name: string]: EntitySubject } = {}
+    readonly groups: { [name: string]: EntityGroup } = {}
 
     constructor(uqApp: UqApp) {
         this.uq = uqApp.uq;
@@ -23,11 +25,12 @@ export class Biz {
     private buildEntities() {
         const builders: { [type: string]: (name: string, type: string) => Entity } = {
             sheet: this.buildSheet,
-            item: this.buildItem,
+            atom: this.buildAtom,
             setting: this.buildSetting,
             permit: this.buildPermit,
             role: this.buildRole,
             subject: this.buildSubject,
+            group: this.buildGroup,
         }
         let { $biz } = uqSchema;
         let arr: [Entity, any][] = [];
@@ -52,9 +55,9 @@ export class Biz {
         return this.sheets[bizEntity.name] = bizEntity;
     }
 
-    private buildItem = (name: string, type: string): Entity => {
-        let bizEntity = new EntityItem(this, name, type);
-        return this.items[bizEntity.name] = bizEntity;
+    private buildAtom = (name: string, type: string): Entity => {
+        let bizEntity = new EntityAtom(this, name, type);
+        return this.atoms[bizEntity.name] = bizEntity;
     }
 
     private buildSetting = (name: string, type: string): Entity => {
@@ -77,6 +80,11 @@ export class Biz {
     private buildSubject = (name: string, type: string): Entity => {
         let bizEntity = new EntitySubject(this, name, type);
         return this.subjects[bizEntity.name] = bizEntity;
+    }
+
+    private buildGroup = (name: string, type: string): Entity => {
+        let bizEntity = new EntityGroup(this, name, type);
+        return this.groups[bizEntity.name] = bizEntity;
     }
 }
 

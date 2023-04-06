@@ -4,15 +4,15 @@ import { FormRowsView } from "app/coms";
 import { useUqApp } from "app/UqApp";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
-import { GenID } from "./GenID";
+import { GenAtom } from "./GenAtom";
 import { GenProps } from "app/tool";
 
-export function PageIDNew({ Gen }: GenProps<GenID>) {
+export function PageAtomNew({ Gen }: GenProps<GenAtom>) {
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
-    const { caption, actSave, labelClassName } = gen;
+    const { caption, actSave } = gen;
     const navigate = useNavigate();
-    const { data: { no, formRows } } = useQuery('PageIDNew', async () => {
+    const { data: { no, formRows } } = useQuery('PageAtomNew', async () => {
         let ret = await gen.buildNew();
         return ret;
     }, { cacheTime: 100, refetchOnWindowFocus: false });
@@ -25,7 +25,7 @@ export function PageIDNew({ Gen }: GenProps<GenID>) {
 
     return <Page header={`新建${caption}`}>
         <form onSubmit={handleSubmit(onSubmit)} className="container my-3 pe-5">
-            <FormRowsView rows={formRows} {...{ labelClassName, register, errors }} />
+            <FormRowsView rows={formRows} {...{ register, errors }} />
         </form>
     </Page>;
 }

@@ -2,7 +2,7 @@ import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Editing } from "../Editing";
 import { atom, PrimitiveAtom } from "jotai";
 import { GenDerive } from "./GenDerive";
-import { Detail, FlowState, Sheet } from "uqs/UqDefault";
+import { Detail, Sheet } from "uqs/UqDefault";
 
 interface SheetGroup {
     target: number;
@@ -30,22 +30,19 @@ export class EditingDerive extends Editing {
 
     async load(sheetId: number) {
         let { uq } = this.gen;
-        let [sheet, { ret: details }] = await Promise.all([
-            uq.idObj(sheetId),
-            uq.GetDetailOrigin.query({ id: sheetId }),
-        ]);
+        let { main: [sheet], details } = await uq.GetSheet.query({ id: sheetId, assigns: undefined });
         setAtomValue(this.atomSheet, sheet);
         const groupColl: { [origin: number]: { sheet: Sheet; details: Detail[]; } } = {};
         let rows: { sheet: Sheet, details: Detail[] }[] = [];
         for (let detail of details) {
-            let { item } = detail;
-            let group = groupColl[item];
+            let { origin } = detail;
+            let group = groupColl[origin];
             if (group === undefined) {
                 group = {
-                    sheet: { id: item } as Sheet,
+                    sheet: { id: origin } as Sheet,
                     details: []
                 }
-                groupColl[item] = group;
+                groupColl[origin] = group;
                 rows.push(group);
             }
             group.details.push(detail);
@@ -57,42 +54,22 @@ export class EditingDerive extends Editing {
 
     async loadOrigin(origin: number) {
         let { uq, uqApp } = this.gen;
-        let [sheet, { ret: details }] = await Promise.all([
-            uq.idObj(origin),
-            uq.GetDetailOrigin.query({ id: origin }),
-        ]);
+        const assigns = ['done'];
+        let { main: [sheet], details } = await uq.GetSheet.query({ id: origin, assigns: assigns.join('\t') });
         let sheetDerive: Sheet = getAtomValue(this.atomSheet);
         if (sheetDerive === undefined) {
-            let user = getAtomValue(uqApp.user);
-            await this.newSheet(user.id);
+            // let user = getAtomValue(uqApp.user);
+            let item = undefined;
+            await this.newSheet(item/*user.id*/);
         }
 
         let rows = getAtomValue(this.atomRows);
-        let row = { sheet, details: details as any[] };
+        let row = { sheet, details: details.map(v => this.gen.detailFromOrigin(v)) };
         setAtomValue(
             this.atomRows,
             rows === undefined ? [row] : [...rows, row]
         );
         this.refreshSubmitable();
-    }
-
-    async search(key: string): Promise<SheetGroup[]> {
-        let { QueryOrigin, typePhrase } = this.gen;
-        let ret = await QueryOrigin.page({ sheet: typePhrase, state: FlowState.Ready, key }, undefined, 1000);
-        // 按target分组
-        const groupColl: { [target: number]: SheetGroup } = {};
-        for (let v of ret.$page) {
-            let { target } = v;
-            let group = groupColl[target];
-            if (group === undefined) {
-                groupColl[target] = group = {
-                    target,
-                    sheets: []
-                };
-            }
-            group.sheets.push(v);
-        }
-        return Object.keys(groupColl).map(v => groupColl[Number(v)]);
     }
 
     protected updateDetailAtom(detail: any): void {

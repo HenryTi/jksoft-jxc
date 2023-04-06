@@ -13,8 +13,8 @@ export function PageOriginEdit({ Gen }: GenProps<GenOrigin>) {
     const navigate = useNavigate();
     const gen = uqApp.objectOf(Gen);
     const { editing
-        , ModalSheetStart, PageDetailItemSelect, PageSheetDetail
-        , buildDetailFromSelectedItem
+        , ModalSheetStart, ModalSelectDetailAtom, PageSheetDetail
+        , buildDetailFromSelectedAtom
     } = gen;
     const { atomSheet } = editing;
     const sheet = useAtomValue(atomSheet) as Sheet;
@@ -37,10 +37,10 @@ export function PageOriginEdit({ Gen }: GenProps<GenOrigin>) {
     });
 
     async function onAddRow() {
-        let selectedItem = await openModal(<PageDetailItemSelect />);
+        let selectedItem = await openModal(<ModalSelectDetailAtom />);
         if (selectedItem === undefined) return;
         // 新建一个detail
-        let detail = buildDetailFromSelectedItem(selectedItem);
+        let detail = buildDetailFromSelectedAtom(selectedItem);
         //let ret = 
         await openModal(<PageSheetDetail detail={detail} Gen={Gen} />);
         /*

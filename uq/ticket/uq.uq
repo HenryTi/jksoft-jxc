@@ -1,5 +1,5 @@
 -- UQ2 only support ID, IDX, IX
-UQ2 [jksoft]/[jksoft-mini-jxc-trial] version='0.31' author='jksoft';
+UQ2 [jksoft]/[jksoft-mini-jxc-trial] version='0.42' author='jksoft';
 
 DataType (
     Amount DEC(18, 4),
@@ -8,4 +8,5 @@ DataType (
     Value DEC(18,4),
     NO CHAR(30),
     PropName CHAR(50),
+    Phrase CHAR(200),
 );

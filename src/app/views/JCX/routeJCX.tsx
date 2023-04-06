@@ -1,19 +1,19 @@
 import { Route } from "react-router-dom";
-import { routeContact } from "./IDContact";
-import { routeProduct, } from "./IDProduct";
+import { routeContact } from "./AtomContact";
+import { routeProduct, } from "./AtomProduct";
 import { routePurchase } from "./SheetPurchase";
 import { routeSheetCenter } from "./SheetCenter";
 import { routeStoreIn } from "./SheetStoreIn";
 import { routeSale } from "./SheetSale";
-import { routeIDCenter } from "./IDCenter";
+import { routeAtomCenter } from "./AtomCenter";
 import { routeStoreOut } from "./SheetStoreOut";
 import { routeReportStorage } from "./ReportStorage";
 import { routeReportCenter } from "./ReportCenter";
-import { routePrice } from "./SettingPrice";
+import { routePrice } from "./AssignPrice";
 
 export const pathJXC = 'jxc';
 const routes = <>
-    {routeIDCenter}
+    {routeAtomCenter}
     {routeProduct}
     {routeContact}
 

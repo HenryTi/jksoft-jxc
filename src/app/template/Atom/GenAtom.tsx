@@ -1,10 +1,10 @@
 import { FormInput, FormRow } from "app/coms";
 import { QueryMore } from "app/tool";
-import { UqApp, useUqApp } from "app/UqApp";
+import { UqApp } from "app/UqApp";
 import { UqID, UqQuery } from "tonwa-uq";
-import { Item } from "uqs/UqDefault";
+import { Atom } from "uqs/UqDefault";
 import { GenInput } from "app/tool";
-import { BizItem } from "app/Biz";
+import { BizAtom } from "app/Biz";
 
 export interface IDViewRowProps {
     name: string;
@@ -12,16 +12,15 @@ export interface IDViewRowProps {
     readonly?: boolean;
 }
 
-export abstract class GenID extends GenInput {
-    abstract get itemName(): string;
-    get bizItem(): BizItem { return this.biz.items[this.itemName]; }
-    readonly query: UqQuery<any, any>;
-    readonly ID: UqID<any>;
-    get labelClassName(): string { return 'text-end' }
+export abstract class GenAtom extends GenInput {
+    abstract get atomName(): string;
+    get bizAtom(): BizAtom { return this.biz.atoms[this.atomName]; }
+    readonly Atom: UqID<any>;
+    // get labelClassName(): string { return 'text-end' }
 
     // IDList
-    readonly searchItems: QueryMore;
-    readonly ViewItemID: (value: any) => JSX.Element;
+    searchAtoms: QueryMore;
+    readonly ViewItemAtom: (value: any) => JSX.Element;
     readonly listTop?: JSX.Element;
 
     readonly actSave: (no: string, data: any) => Promise<any>;
@@ -43,27 +42,17 @@ export abstract class GenID extends GenInput {
     get exLabel(): string { return '名称' }
     // IDNew
     async buildNew(): Promise<{ no: string; formRows: FormRow[] }> {
-        let retNo = await this.uq.IDNO({ ID: this.ID });
+        let retNo = await this.uq.IDNO({ ID: this.Atom });
         return {
             no: retNo,
             formRows: [
                 this.rowNO(retNo),
                 { name: 'ex', label: this.exLabel, type: 'text', options: { maxLength: 50 } },
-                ...Array.from(this.bizItem.props, ([, v]) => ({ name: v.name, label: v.caption ?? v.name, type: 'text' })),
+                ...Array.from(this.bizAtom.props, ([, v]) => ({ name: v.name, label: v.caption ?? v.name, type: 'text' })),
                 { type: 'submit' },
             ],
         }
     }
-    /*
-    get formRows(): FormRow[] {
-        return [
-            this.rowNO,
-            { name: 'ex', label: this.exLabel, type: 'text', options: { maxLength: 50 } },
-            ...Array.from(this.bizItem.props, ([, v]) => ({ name: v.name, label: v.caption ?? v.name, type: 'text' })),
-            { type: 'submit' },
-        ]
-    }
-    */
 
     // IDView
     get viewRows(): IDViewRowProps[] {
@@ -71,46 +60,46 @@ export abstract class GenID extends GenInput {
             { name: 'id', label: 'id', readonly: true },
             { name: 'no', label: this.NOLabel, readonly: true },
             { name: 'ex', label: this.exLabel },
-            ...Array.from(this.bizItem.props, ([, v]) => ({ name: v.name, label: v.caption }))
+            ...Array.from(this.bizAtom.props, ([, v]) => ({ name: v.name, label: v.caption }))
         ];
     }
 
     get caption() {
-        let { name, caption } = this.bizItem;
+        let { name, caption } = this.bizAtom;
         return caption ?? name;
     }
 
     get phrase() {
-        let { name, type } = this.bizItem;
+        let { name, type } = this.bizAtom;
         return `${type}.${name}`;
     }
 
     constructor(uqApp: UqApp) {
         super(uqApp);
-        this.ID = uqApp.uq.Item;
+        this.Atom = uqApp.uq.Atom;
 
         let uq = this.uq;
-        this.searchItems = async (param: any, pageStart: any, pageSize: number) => {
-            let newParam = { ...param, item: this.phrase };
-            let query = this.query ?? uq.SearchItem;
+        this.searchAtoms = async (param: any, pageStart: any, pageSize: number) => {
+            let newParam = { ...param, atom: this.phrase };
+            let query = uq.SearchAtom;
             let { $page } = await query.page(newParam, pageStart, pageSize);
             return $page;
         }
 
         this.actSave = async (no: string, data: any) => {
             const { ex } = data;
-            let ret = await uq.SaveItem.submit({ item: this.phrase, no, ex });
+            let ret = await uq.SaveAtom.submit({ atom: this.phrase, no, ex });
             return ret;
         }
 
         this.autoLoadOnOpen = true;
         this.listTop = null; // <ListTop />;
 
-        this.ViewItemID = ViewItemID;
+        this.ViewItemAtom = ViewItemID;
     }
 }
 
-export function ViewItemID({ value: { no, ex } }: { value: Item }) {
+export function ViewItemID({ value: { no, ex } }: { value: Atom }) {
     return <div className="d-block">
         <div><b>{ex}</b></div>
         <div className='small text-muted'>{no}</div>

@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Apr 02 2023 21:25:17 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Wed Apr 05 2023 19:58:15 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,17 +23,18 @@ export interface IX {
 
 export enum EnumID {
 	$phrase = '$phrase',
-	Subject = 'subject',
 	History = 'history',
-	UserUnit = 'userunit',
-	UnitPhrase = 'unitphrase',
-	BindItem = 'binditem',
-	BindSheet = 'bindsheet',
-	Item = 'item',
+	UserSite = 'usersite',
+	SitePhrase = 'sitephrase',
+	BindAtom = 'bindatom',
+	BindPhraseTo = 'bindphraseto',
+	Atom = 'atom',
 	Sheet = 'sheet',
 	Detail = 'detail',
+	Subject = 'subject',
 	User = 'user',
-	Unit = 'unit',
+	Site = 'site',
+	Group = 'group',
 	MeasureUnitName = 'measureunitname',
 	MeasureUnit = 'measureunit',
 	UnitItem = 'unititem',
@@ -160,24 +161,6 @@ export interface Result$getUnitTime {
 	ret: Return$getUnitTimeRet[];
 }
 
-export interface ParamBookSheet {
-	id: number;
-}
-export interface ResultBookSheet {
-}
-
-export interface ParamBookSheetStoreIn {
-	id: number;
-}
-export interface ResultBookSheetStoreIn {
-}
-
-export interface ParamBookSheetStoreOut {
-	id: number;
-}
-export interface ResultBookSheetStoreOut {
-}
-
 export interface ParamMyUnits {
 }
 export interface ReturnMyUnitsRet {
@@ -187,26 +170,26 @@ export interface ResultMyUnits {
 	ret: ReturnMyUnitsRet[];
 }
 
-export interface ParamSaveItem {
-	item: string;
+export interface ParamSaveAtom {
+	atom: string;
 	no: string;
 	ex: string;
 }
-export interface ReturnSaveItemRet {
+export interface ReturnSaveAtomRet {
 	id: number;
 }
-export interface ResultSaveItem {
-	ret: ReturnSaveItemRet[];
+export interface ResultSaveAtom {
+	ret: ReturnSaveAtomRet[];
 }
 
-export interface ParamSaveSetting {
+export interface ParamSaveAssign {
 	phrase: string;
 	id: number;
 	int: number;
 	dec: number;
 	str: string;
 }
-export interface ResultSaveSetting {
+export interface ResultSaveAssign {
 }
 
 export interface ParamSaveProp {
@@ -239,6 +222,7 @@ export interface ParamSaveDetail {
 	base: number;
 	id: number;
 	item: number;
+	origin: number;
 	value: number;
 	v1: number;
 	v2: number;
@@ -276,53 +260,117 @@ export interface ResultGetMyDrafts {
 	$page: ReturnGetMyDrafts$page[];
 }
 
-export interface ParamSearchItem {
-	item: string;
+export interface ParamSearchAtom {
+	atom: string;
 	key: string;
 }
-export interface ReturnSearchItem$page {
+export interface ReturnSearchAtom$page {
 	id: number;
 	no: string;
 	ex: string;
 }
-export interface ResultSearchItem {
-	$page: ReturnSearchItem$page[];
+export interface ResultSearchAtom {
+	$page: ReturnSearchAtom$page[];
 }
 
-export interface ParamSearchItemSettings {
-	item: string;
+export interface ParamSearchAtomProps {
+	atom: string;
 	key: string;
 	names: string;
 }
-export interface ReturnSearchItemSettings$page {
+export interface ReturnSearchAtomProps$page {
 	id: number;
 	no: string;
 	ex: string;
 }
-export interface ReturnSearchItemSettingsProps {
+export interface ReturnSearchAtomPropsBuds {
 	id: number;
-	prop: number;
-	propName: string;
+	bud: number;
+	phrase: string;
 	value: string;
 }
-export interface ResultSearchItemSettings {
-	$page: ReturnSearchItemSettings$page[];
-	props: ReturnSearchItemSettingsProps[];
+export interface ResultSearchAtomProps {
+	$page: ReturnSearchAtomProps$page[];
+	buds: ReturnSearchAtomPropsBuds[];
 }
 
-export enum SubjectType {
-	Storage = 201
+export interface ParamSearchAtomAssigns {
+	atom: string;
+	key: string;
+	names: string;
+}
+export interface ReturnSearchAtomAssigns$page {
+	id: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnSearchAtomAssignsBuds {
+	id: number;
+	bud: number;
+	phrase: string;
+	value: string;
+}
+export interface ResultSearchAtomAssigns {
+	$page: ReturnSearchAtomAssigns$page[];
+	buds: ReturnSearchAtomAssignsBuds[];
 }
 
-export interface Subject extends ID {
+export interface ParamGetPendSheet {
+	sheet: string;
+}
+export interface ReturnGetPendSheet$page {
+	id: number;
+	base: number;
+	no: string;
 	item: number;
-	type: number;
+	origin: number;
+	operator: number;
+	value: number;
+	v1: number;
+	v2: number;
+	v3: number;
+}
+export interface ResultGetPendSheet {
+	$page: ReturnGetPendSheet$page[];
 }
 
-export interface SubjectInActs extends ID {
-	ID?: UqID<any>;
-	item: number | ID;
-	type: number | ID;
+export interface ParamGetSheet {
+	id: number;
+	assigns: string;
+}
+export interface ReturnGetSheetMain {
+	id: number;
+	base: number;
+	no: string;
+	item: number;
+	origin: number;
+	operator: number;
+	value: number;
+	v1: number;
+	v2: number;
+	v3: number;
+}
+export interface ReturnGetSheetDetails {
+	id: number;
+	base: number;
+	item: number;
+	origin: number;
+	value: number;
+	v1: number;
+	v2: number;
+	v3: number;
+}
+export interface ReturnGetSheetAssigns {
+	id: number;
+	assign: number;
+	phrase: string;
+	int: number;
+	dec: number;
+}
+export interface ResultGetSheet {
+	main: ReturnGetSheetMain[];
+	details: ReturnGetSheetDetails[];
+	assigns: ReturnGetSheetAssigns[];
 }
 
 export interface History extends ID {
@@ -341,148 +389,61 @@ export interface HistoryInActs extends ID {
 export interface IxProp extends IX {
 }
 
-export interface UserUnit extends ID {
+export interface UserSite extends ID {
 	user: number;
-	unit: number;
+	site: number;
 }
 
-export interface UserUnitInActs extends ID {
+export interface UserSiteInActs extends ID {
 	ID?: UqID<any>;
 	user: number | ID;
-	unit: number | ID;
+	site: number | ID;
 }
 
-export interface UnitPhrase extends ID {
-	unit: number;
+export interface SitePhrase extends ID {
+	site: number;
 	phrase: number;
 }
 
-export interface UnitPhraseInActs extends ID {
+export interface SitePhraseInActs extends ID {
 	ID?: UqID<any>;
-	unit: number | ID;
+	site: number | ID;
 	phrase: number | ID;
 }
 
-export interface BindItem extends ID {
+export interface BindAtom extends ID {
 	base: number;
-	item: number;
+	atom: number;
 }
 
-export interface BindItemInActs extends ID {
+export interface BindAtomInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
-	item: number | ID;
+	atom: number | ID;
 }
 
-export interface BindSheet extends ID {
+export interface BindPhraseTo extends ID {
 	base: number;
-	sheet: number;
+	to: number;
 }
 
-export interface BindSheetInActs extends ID {
+export interface BindPhraseToInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
-	sheet: number | ID;
+	to: number | ID;
 }
 
-export interface ParamGetDetails {
-	id: number;
-}
-export interface ReturnGetDetailsRet {
-	id: number;
-	base: number;
-	item: number;
-	origin: number;
-	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
-}
-export interface ResultGetDetails {
-	ret: ReturnGetDetailsRet[];
-}
-
-export interface ParamGetDetailOrigin {
-	id: number;
-}
-export interface ReturnGetDetailOriginRet {
-	id: number;
-	base: number;
-	item: number;
-	origin: number;
-	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
-	originSheet: number;
-	originItem: number;
-	originValue: number;
-	originV1: number;
-	originV2: number;
-	originV3: number;
-	done: number;
-}
-export interface ResultGetDetailOrigin {
-	ret: ReturnGetDetailOriginRet[];
-}
-
-export interface ParamSearchProductForSale {
-	key: string;
-}
-export interface ReturnSearchProductForSale$page {
-	id: number;
-	no: string;
-	ex: string;
-	v1: number;
-}
-export interface ResultSearchProductForSale {
-	$page: ReturnSearchProductForSale$page[];
-}
-
-export interface ParamSearchSheetReady {
-	sheet: string;
-	state: string;
-	key: string;
-}
-export interface ReturnSearchSheetReady$page {
-	id: number;
-	base: number;
-	no: string;
-	item: number;
-	origin: number;
-	operator: number;
-	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
-}
-export interface ResultSearchSheetReady {
-	$page: ReturnSearchSheetReady$page[];
-}
-
-export const ItemType = {
-	Product: "product",
-	Contact: "contact"
-}
-
-export interface Item extends ID {
+export interface Atom extends ID {
 	base: number;
 	no: string;
 	ex: string;
 }
 
-export interface ItemInActs extends ID {
+export interface AtomInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
 	no: string;
 	ex: string;
-}
-
-export const SheetType = {
-	Purchase: "purchase",
-	Sale: "sale",
-	StoreIn: "storein",
-	StoreOut: "storeout"
 }
 
 export interface Sheet extends ID {
@@ -510,11 +471,6 @@ export interface SheetInActs extends ID {
 	v3: number;
 }
 
-export const FlowState = {
-	Start: "$start",
-	Ready: "ready"
-}
-
 export interface Detail extends ID {
 	base: number;
 	item: number;
@@ -536,6 +492,17 @@ export interface DetailInActs extends ID {
 	v3: number;
 }
 
+export interface Subject extends ID {
+	base: number;
+	atom: number;
+}
+
+export interface SubjectInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	atom: number | ID;
+}
+
 export interface User extends ID {
 	tonwaUser: number;
 }
@@ -545,18 +512,31 @@ export interface UserInActs extends ID {
 	tonwaUser: number;
 }
 
-export interface Unit extends ID {
+export interface Site extends ID {
 	no: string;
-	caption: string;
+	ex: string;
 }
 
-export const Unit = {
+export const Site = {
 }
 
-export interface UnitInActs extends ID {
+export interface SiteInActs extends ID {
 	ID?: UqID<any>;
 	no: string;
-	caption: string;
+	ex: string;
+}
+
+export interface Group extends ID {
+	base: number;
+	no: string;
+	ex: string;
+}
+
+export interface GroupInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	no: string;
+	ex: string;
 }
 
 export enum MeasureUnitType {
@@ -609,9 +589,10 @@ export interface UnitItemInActs extends ID {
 
 export interface ParamReportStorage {
 	key: string;
+	subject: string;
 }
 export interface ReturnReportStorage$page {
-	item: number;
+	atom: number;
 	value: number;
 	init: number;
 }
@@ -620,7 +601,8 @@ export interface ResultReportStorage {
 }
 
 export interface ParamHistoryStorage {
-	item: number;
+	atomId: number;
+	subject: string;
 }
 export interface ReturnHistoryStorage$page {
 	id: number;
@@ -635,18 +617,19 @@ export interface ResultHistoryStorage {
 
 export interface ParamActs {
 	$phrase?: $phraseInActs[];
-	subject?: SubjectInActs[];
 	history?: HistoryInActs[];
 	ixProp?: IxProp[];
-	userUnit?: UserUnitInActs[];
-	unitPhrase?: UnitPhraseInActs[];
-	bindItem?: BindItemInActs[];
-	bindSheet?: BindSheetInActs[];
-	item?: ItemInActs[];
+	userSite?: UserSiteInActs[];
+	sitePhrase?: SitePhraseInActs[];
+	bindAtom?: BindAtomInActs[];
+	bindPhraseTo?: BindPhraseToInActs[];
+	atom?: AtomInActs[];
 	sheet?: SheetInActs[];
 	detail?: DetailInActs[];
+	subject?: SubjectInActs[];
 	user?: UserInActs[];
-	unit?: UnitInActs[];
+	site?: SiteInActs[];
+	group?: GroupInActs[];
 	measureUnitName?: MeasureUnitNameInActs[];
 	measureUnit?: MeasureUnitInActs[];
 	unitItem?: UnitItemInActs[];
@@ -669,35 +652,32 @@ export interface UqExt extends Uq {
 	$poked: UqQuery<Param$poked, Result$poked>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
-	BookSheet: UqAction<ParamBookSheet, ResultBookSheet>;
-	BookSheetStoreIn: UqAction<ParamBookSheetStoreIn, ResultBookSheetStoreIn>;
-	BookSheetStoreOut: UqAction<ParamBookSheetStoreOut, ResultBookSheetStoreOut>;
 	MyUnits: UqQuery<ParamMyUnits, ResultMyUnits>;
-	SaveItem: UqAction<ParamSaveItem, ResultSaveItem>;
-	SaveSetting: UqAction<ParamSaveSetting, ResultSaveSetting>;
+	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
+	SaveAssign: UqAction<ParamSaveAssign, ResultSaveAssign>;
 	SaveProp: UqAction<ParamSaveProp, ResultSaveProp>;
 	SaveSheet: UqAction<ParamSaveSheet, ResultSaveSheet>;
 	SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
 	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
 	GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
-	SearchItem: UqQuery<ParamSearchItem, ResultSearchItem>;
-	SearchItemSettings: UqQuery<ParamSearchItemSettings, ResultSearchItemSettings>;
-	Subject: UqID<any>;
+	SearchAtom: UqQuery<ParamSearchAtom, ResultSearchAtom>;
+	SearchAtomProps: UqQuery<ParamSearchAtomProps, ResultSearchAtomProps>;
+	SearchAtomAssigns: UqQuery<ParamSearchAtomAssigns, ResultSearchAtomAssigns>;
+	GetPendSheet: UqQuery<ParamGetPendSheet, ResultGetPendSheet>;
+	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	History: UqID<any>;
 	IxProp: UqIX<any>;
-	UserUnit: UqID<any>;
-	UnitPhrase: UqID<any>;
-	BindItem: UqID<any>;
-	BindSheet: UqID<any>;
-	GetDetails: UqQuery<ParamGetDetails, ResultGetDetails>;
-	GetDetailOrigin: UqQuery<ParamGetDetailOrigin, ResultGetDetailOrigin>;
-	SearchProductForSale: UqQuery<ParamSearchProductForSale, ResultSearchProductForSale>;
-	SearchSheetReady: UqQuery<ParamSearchSheetReady, ResultSearchSheetReady>;
-	Item: UqID<any>;
+	UserSite: UqID<any>;
+	SitePhrase: UqID<any>;
+	BindAtom: UqID<any>;
+	BindPhraseTo: UqID<any>;
+	Atom: UqID<any>;
 	Sheet: UqID<any>;
 	Detail: UqID<any>;
+	Subject: UqID<any>;
 	User: UqID<any>;
-	Unit: UqID<any>;
+	Site: UqID<any>;
+	Group: UqID<any>;
 	MeasureUnitName: UqID<any>;
 	MeasureUnit: UqID<any>;
 	UnitItem: UqID<any>;
@@ -1024,45 +1004,6 @@ export const uqSchema={
             }
         ]
     },
-    "booksheet": {
-        "name": "BookSheet",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id"
-            }
-        ],
-        "returns": [] as any
-    },
-    "booksheetstorein": {
-        "name": "BookSheetStoreIn",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id"
-            }
-        ],
-        "returns": [] as any
-    },
-    "booksheetstoreout": {
-        "name": "BookSheetStoreOut",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id"
-            }
-        ],
-        "returns": [] as any
-    },
     "myunits": {
         "name": "MyUnits",
         "type": "query",
@@ -1081,14 +1022,14 @@ export const uqSchema={
             }
         ]
     },
-    "saveitem": {
-        "name": "SaveItem",
+    "saveatom": {
+        "name": "SaveAtom",
         "type": "action",
         "private": false,
         "sys": true,
         "fields": [
             {
-                "name": "item",
+                "name": "atom",
                 "type": "char",
                 "size": 100
             },
@@ -1115,8 +1056,8 @@ export const uqSchema={
             }
         ]
     },
-    "savesetting": {
-        "name": "SaveSetting",
+    "saveassign": {
+        "name": "SaveAssign",
         "type": "action",
         "private": false,
         "sys": true,
@@ -1257,6 +1198,10 @@ export const uqSchema={
                 "type": "id"
             },
             {
+                "name": "origin",
+                "type": "id"
+            },
+            {
                 "name": "value",
                 "type": "dec",
                 "scale": 4,
@@ -1376,16 +1321,16 @@ export const uqSchema={
             }
         ]
     },
-    "searchitem": {
-        "name": "SearchItem",
+    "searchatom": {
+        "name": "SearchAtom",
         "type": "query",
         "private": false,
         "sys": true,
         "fields": [
             {
-                "name": "item",
+                "name": "atom",
                 "type": "char",
-                "size": 100
+                "size": 200
             },
             {
                 "name": "key",
@@ -1416,16 +1361,16 @@ export const uqSchema={
             }
         ]
     },
-    "searchitemsettings": {
-        "name": "SearchItemSettings",
+    "searchatomprops": {
+        "name": "SearchAtomProps",
         "type": "query",
         "private": false,
         "sys": true,
         "fields": [
             {
-                "name": "item",
+                "name": "atom",
                 "type": "char",
-                "size": 100
+                "size": 200
             },
             {
                 "name": "key",
@@ -1460,18 +1405,18 @@ export const uqSchema={
                 "order": "desc"
             },
             {
-                "name": "props",
+                "name": "buds",
                 "fields": [
                     {
                         "name": "id",
                         "type": "id"
                     },
                     {
-                        "name": "prop",
+                        "name": "bud",
                         "type": "id"
                     },
                     {
-                        "name": "propName",
+                        "name": "phrase",
                         "type": "char",
                         "size": 50
                     },
@@ -1484,403 +1429,26 @@ export const uqSchema={
             }
         ]
     },
-    "subjecttype": {
-        "name": "SubjectType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "Storage": 201
-        }
-    },
-    "subject": {
-        "name": "Subject",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "item",
-                "type": "id"
-            },
-            {
-                "name": "type",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "item",
-                "type": "id"
-            },
-            {
-                "name": "type",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "history": {
-        "name": "History",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "subject",
-                "type": "id"
-            },
-            {
-                "name": "value",
-                "type": "dec",
-                "scale": 4,
-                "precision": 18
-            },
-            {
-                "name": "ref",
-                "type": "id"
-            }
-        ],
-        "keys": [] as any,
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "ixprop": {
-        "name": "IxProp",
-        "type": "ix",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "ix",
-                "type": "id"
-            },
-            {
-                "name": "xi",
-                "type": "id"
-            }
-        ],
-        "ixx": false,
-        "hasSort": false,
-        "xiType": 0
-    },
-    "userunit": {
-        "name": "UserUnit",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "user",
-                "type": "id"
-            },
-            {
-                "name": "unit",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "user",
-                "type": "id"
-            },
-            {
-                "name": "unit",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "unitphrase": {
-        "name": "UnitPhrase",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "unit",
-                "type": "id"
-            },
-            {
-                "name": "phrase",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "unit",
-                "type": "id"
-            },
-            {
-                "name": "phrase",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "binditem": {
-        "name": "BindItem",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "item",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "item",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "bindsheet": {
-        "name": "BindSheet",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "sheet",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "sheet",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "getdetails": {
-        "name": "GetDetails",
+    "searchatomassigns": {
+        "name": "SearchAtomAssigns",
         "type": "query",
         "private": false,
         "sys": true,
         "fields": [
             {
-                "name": "id",
-                "type": "id"
-            }
-        ],
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id",
-                        "null": false
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "item",
-                        "type": "id"
-                    },
-                    {
-                        "name": "origin",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v1",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v2",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v3",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    }
-                ]
-            }
-        ]
-    },
-    "getdetailorigin": {
-        "name": "GetDetailOrigin",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id"
-            }
-        ],
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id",
-                        "null": false
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "item",
-                        "type": "id"
-                    },
-                    {
-                        "name": "origin",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v1",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v2",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v3",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "originSheet",
-                        "type": "id"
-                    },
-                    {
-                        "name": "originItem",
-                        "type": "id"
-                    },
-                    {
-                        "name": "originValue",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "originV1",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "originV2",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "originV3",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "done",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    }
-                ]
-            }
-        ]
-    },
-    "searchproductforsale": {
-        "name": "SearchProductForSale",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
+                "name": "atom",
+                "type": "char",
+                "size": 200
+            },
             {
                 "name": "key",
                 "type": "char",
                 "size": 50
+            },
+            {
+                "name": "names",
+                "type": "char",
+                "size": 300
             }
         ],
         "returns": [
@@ -1900,20 +1468,37 @@ export const uqSchema={
                         "name": "ex",
                         "type": "char",
                         "size": 50
-                    },
-                    {
-                        "name": "v1",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
                     }
                 ],
                 "order": "desc"
+            },
+            {
+                "name": "buds",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "value",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
             }
         ]
     },
-    "searchsheetready": {
-        "name": "SearchSheetReady",
+    "getpendsheet": {
+        "name": "GetPendSheet",
         "type": "query",
         "private": false,
         "sys": true,
@@ -1921,17 +1506,7 @@ export const uqSchema={
             {
                 "name": "sheet",
                 "type": "char",
-                "size": 50
-            },
-            {
-                "name": "state",
-                "type": "char",
-                "size": 50
-            },
-            {
-                "name": "key",
-                "type": "char",
-                "size": 50
+                "size": 200
             }
         ],
         "returns": [
@@ -1993,19 +1568,342 @@ export const uqSchema={
             }
         ]
     },
-    "itemtype": {
-        "name": "ItemType",
-        "type": "const",
+    "getsheet": {
+        "name": "GetSheet",
+        "type": "query",
         "private": false,
         "sys": true,
-        "fields": [] as any,
-        "values": {
-            "Product": "product",
-            "Contact": "contact"
-        }
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "assigns",
+                "type": "char",
+                "size": 200
+            }
+        ],
+        "returns": [
+            {
+                "name": "main",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "operator",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v1",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v2",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v3",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    }
+                ]
+            },
+            {
+                "name": "details",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v1",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v2",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v3",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    }
+                ]
+            },
+            {
+                "name": "assigns",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "assign",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "int",
+                        "type": "bigint"
+                    },
+                    {
+                        "name": "dec",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    }
+                ]
+            }
+        ]
     },
-    "item": {
-        "name": "Item",
+    "history": {
+        "name": "History",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "subject",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 4,
+                "precision": 18
+            },
+            {
+                "name": "ref",
+                "type": "id"
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "ixprop": {
+        "name": "IxProp",
+        "type": "ix",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "ix",
+                "type": "id"
+            },
+            {
+                "name": "xi",
+                "type": "id"
+            }
+        ],
+        "ixx": false,
+        "hasSort": false,
+        "xiType": 0
+    },
+    "usersite": {
+        "name": "UserSite",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "user",
+                "type": "id"
+            },
+            {
+                "name": "site",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "user",
+                "type": "id"
+            },
+            {
+                "name": "site",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "sitephrase": {
+        "name": "SitePhrase",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "site",
+                "type": "id"
+            },
+            {
+                "name": "phrase",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "site",
+                "type": "id"
+            },
+            {
+                "name": "phrase",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "bindatom": {
+        "name": "BindAtom",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "atom",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "atom",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "bindphraseto": {
+        "name": "BindPhraseTo",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "to",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "to",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "atom": {
+        "name": "Atom",
         "type": "id",
         "private": false,
         "sys": true,
@@ -2044,19 +1942,6 @@ export const uqSchema={
         "global": false,
         "idType": 3,
         "isMinute": false
-    },
-    "sheettype": {
-        "name": "SheetType",
-        "type": "const",
-        "private": false,
-        "sys": true,
-        "fields": [] as any,
-        "values": {
-            "Purchase": "purchase",
-            "Sale": "sale",
-            "StoreIn": "storein",
-            "StoreOut": "storeout"
-        }
     },
     "sheet": {
         "name": "Sheet",
@@ -2130,17 +2015,6 @@ export const uqSchema={
         "idType": 3,
         "isMinute": true
     },
-    "flowstate": {
-        "name": "FlowState",
-        "type": "const",
-        "private": false,
-        "sys": true,
-        "fields": [] as any,
-        "values": {
-            "Start": "$start",
-            "Ready": "ready"
-        }
-    },
     "detail": {
         "name": "Detail",
         "type": "id",
@@ -2194,6 +2068,40 @@ export const uqSchema={
         "idType": 3,
         "isMinute": true
     },
+    "subject": {
+        "name": "Subject",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "atom",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "atom",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
     "user": {
         "name": "User",
         "type": "id",
@@ -2220,8 +2128,8 @@ export const uqSchema={
         "idType": 3,
         "isMinute": false
     },
-    "unit": {
-        "name": "Unit",
+    "site": {
+        "name": "Site",
         "type": "id",
         "private": false,
         "sys": true,
@@ -2237,13 +2145,54 @@ export const uqSchema={
                 "size": 20
             },
             {
-                "name": "caption",
+                "name": "ex",
                 "type": "char",
                 "size": 100
             }
         ],
         "values": {},
         "keys": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "group": {
+        "name": "Group",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 100
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
             {
                 "name": "no",
                 "type": "char",
@@ -2401,6 +2350,11 @@ export const uqSchema={
                 "name": "key",
                 "type": "char",
                 "size": 50
+            },
+            {
+                "name": "subject",
+                "type": "char",
+                "size": 200
             }
         ],
         "returns": [
@@ -2408,7 +2362,7 @@ export const uqSchema={
                 "name": "$page",
                 "fields": [
                     {
-                        "name": "item",
+                        "name": "atom",
                         "type": "id"
                     },
                     {
@@ -2435,8 +2389,13 @@ export const uqSchema={
         "sys": true,
         "fields": [
             {
-                "name": "item",
+                "name": "atomId",
                 "type": "id"
+            },
+            {
+                "name": "subject",
+                "type": "char",
+                "size": 200
             }
         ],
         "returns": [
@@ -2467,17 +2426,17 @@ export const uqSchema={
             "name": "$user",
             "type": "$user",
             "props": [] as any,
-            "settings": [] as any
+            "assigns": [] as any
         },
         "$unit": {
             "name": "$unit",
             "type": "$unit",
             "props": [] as any,
-            "settings": [] as any
+            "assigns": [] as any
         },
         "b": {
             "name": "b",
-            "type": "item",
+            "type": "atom",
             "props": [
                 {
                     "name": "a",
@@ -2493,7 +2452,7 @@ export const uqSchema={
                     "type": "char"
                 }
             ],
-            "settings": [
+            "assigns": [
                 {
                     "name": "流水",
                     "type": "char",
@@ -2507,7 +2466,7 @@ export const uqSchema={
             "name": "c",
             "type": "subject",
             "props": [] as any,
-            "settings": [
+            "assigns": [
                 {
                     "name": "流水",
                     "type": "char",
@@ -2518,7 +2477,7 @@ export const uqSchema={
         },
         "contact": {
             "name": "contact",
-            "type": "item",
+            "type": "atom",
             "caption": "往来单位",
             "props": [
                 {
@@ -2598,34 +2557,34 @@ export const uqSchema={
                     ]
                 }
             ],
-            "settings": [] as any,
+            "assigns": [] as any,
             "states": [
                 {
                     "name": "可用",
-                    "type": "itemstate"
+                    "type": "atomstate"
                 },
                 {
                     "name": "禁用",
-                    "type": "itemstate"
+                    "type": "atomstate"
                 },
                 {
                     "name": "经理级别可见",
-                    "type": "itemstate"
+                    "type": "atomstate"
                 }
             ]
         },
         "product": {
             "name": "product",
-            "type": "item",
+            "type": "atom",
             "caption": "产品",
             "props": [
                 {
                     "name": "厂家",
                     "type": "ID",
-                    "item": "contact"
+                    "atom": "contact"
                 }
             ],
-            "settings": [
+            "assigns": [
                 {
                     "name": "retailprice",
                     "type": "dec",
@@ -2636,45 +2595,59 @@ export const uqSchema={
         },
         "batch": {
             "name": "batch",
-            "type": "item",
+            "type": "atom",
             "props": [
                 {
                     "name": "效期",
                     "type": "date"
                 }
             ],
-            "settings": [] as any,
+            "assigns": [] as any,
             "states": [] as any
+        },
+        "customergroup": {
+            "name": "customergroup",
+            "type": "group",
+            "caption": "客户分组",
+            "props": [] as any,
+            "assigns": [] as any
+        },
+        "vendorgroup": {
+            "name": "vendorgroup",
+            "type": "group",
+            "caption": "供应商分组",
+            "props": [] as any,
+            "assigns": [] as any
         },
         "销售员": {
             "name": "销售员",
             "type": "permit",
             "props": [] as any,
-            "settings": [] as any
+            "assigns": [] as any
         },
         "入库员": {
             "name": "入库员",
             "type": "permit",
             "props": [] as any,
-            "settings": [] as any
+            "assigns": [] as any
         },
         "检验员": {
             "name": "检验员",
             "type": "permit",
             "props": [] as any,
-            "settings": [] as any
+            "assigns": [] as any
         },
         "经理": {
             "name": "经理",
             "type": "role",
             "props": [] as any,
-            "settings": [] as any
+            "assigns": [] as any
         },
         "销售部经理": {
             "name": "销售部经理",
             "type": "role",
             "props": [] as any,
-            "settings": [] as any
+            "assigns": [] as any
         },
         "公司规程": {
             "name": "公司规程",
@@ -2686,32 +2659,41 @@ export const uqSchema={
                     "caption": "公司名称"
                 }
             ],
-            "settings": [] as any
+            "assigns": [] as any
         },
         "purchase": {
             "name": "purchase",
             "type": "sheet",
             "caption": "采购单",
             "props": [] as any,
-            "settings": [] as any,
+            "assigns": [] as any,
             "details": [
                 {
-                    "name": "$detail",
+                    "name": "detail",
                     "props": [] as any,
-                    "settings": [] as any
+                    "assigns": [
+                        {
+                            "name": "done",
+                            "type": "dec"
+                        }
+                    ]
                 }
             ],
             "states": [
                 {
-                    "name": "s1",
-                    "props": [] as any,
-                    "settings": [] as any,
-                    "acts": [] as any
-                },
-                {
                     "name": "$start",
                     "props": [] as any,
-                    "settings": [] as any,
+                    "assigns": [] as any,
+                    "acts": [
+                        {
+                            "name": "$act"
+                        }
+                    ]
+                },
+                {
+                    "name": "s1",
+                    "props": [] as any,
+                    "assigns": [] as any,
                     "acts": [] as any
                 }
             ]
@@ -2721,20 +2703,24 @@ export const uqSchema={
             "type": "sheet",
             "caption": "销售单",
             "props": [] as any,
-            "settings": [] as any,
+            "assigns": [] as any,
             "details": [
                 {
-                    "name": "$detail",
+                    "name": "detail",
                     "props": [] as any,
-                    "settings": [] as any
+                    "assigns": [] as any
                 }
             ],
             "states": [
                 {
                     "name": "$start",
                     "props": [] as any,
-                    "settings": [] as any,
-                    "acts": [] as any
+                    "assigns": [] as any,
+                    "acts": [
+                        {
+                            "name": "$act"
+                        }
+                    ]
                 }
             ]
         },
@@ -2743,20 +2729,24 @@ export const uqSchema={
             "type": "sheet",
             "caption": "入库单",
             "props": [] as any,
-            "settings": [] as any,
+            "assigns": [] as any,
             "details": [
                 {
-                    "name": "$detail",
+                    "name": "detail",
                     "props": [] as any,
-                    "settings": [] as any
+                    "assigns": [] as any
                 }
             ],
             "states": [
                 {
                     "name": "$start",
                     "props": [] as any,
-                    "settings": [] as any,
-                    "acts": [] as any
+                    "assigns": [] as any,
+                    "acts": [
+                        {
+                            "name": "$act"
+                        }
+                    ]
                 }
             ]
         },
@@ -2765,20 +2755,24 @@ export const uqSchema={
             "type": "sheet",
             "caption": "出库单",
             "props": [] as any,
-            "settings": [] as any,
+            "assigns": [] as any,
             "details": [
                 {
-                    "name": "$detail",
+                    "name": "detail",
                     "props": [] as any,
-                    "settings": [] as any
+                    "assigns": [] as any
                 }
             ],
             "states": [
                 {
                     "name": "$start",
                     "props": [] as any,
-                    "settings": [] as any,
-                    "acts": [] as any
+                    "assigns": [] as any,
+                    "acts": [
+                        {
+                            "name": "$act"
+                        }
+                    ]
                 }
             ]
         },
@@ -2819,7 +2813,7 @@ export const uqSchema={
                     ]
                 }
             ],
-            "settings": [
+            "assigns": [
                 {
                     "name": "流水",
                     "type": "char",
@@ -2829,24 +2823,7 @@ export const uqSchema={
             ],
             "details": [
                 {
-                    "name": "da",
-                    "caption": "显示detail a",
-                    "props": [] as any,
-                    "settings": [] as any
-                },
-                {
-                    "name": "db",
-                    "caption": "显示detail b",
-                    "props": [
-                        {
-                            "name": "b",
-                            "type": "char"
-                        }
-                    ],
-                    "settings": [] as any
-                },
-                {
-                    "name": "$detail",
+                    "name": "detail",
                     "props": [
                         {
                             "name": "a",
@@ -2857,14 +2834,24 @@ export const uqSchema={
                             "type": "int"
                         }
                     ],
-                    "settings": [] as any
+                    "assigns": [] as any
                 }
             ],
             "states": [
                 {
+                    "name": "$start",
+                    "props": [] as any,
+                    "assigns": [] as any,
+                    "acts": [
+                        {
+                            "name": "$act"
+                        }
+                    ]
+                },
+                {
                     "name": "s0",
                     "props": [] as any,
-                    "settings": [
+                    "assigns": [
                         {
                             "name": "next",
                             "type": "char",
@@ -2883,7 +2870,7 @@ export const uqSchema={
                     "name": "s1",
                     "caption": "状态s1",
                     "props": [] as any,
-                    "settings": [] as any,
+                    "assigns": [] as any,
                     "acts": [
                         {
                             "name": "$act"
@@ -2894,20 +2881,21 @@ export const uqSchema={
                     "name": "s2",
                     "caption": "状态s2",
                     "props": [] as any,
-                    "settings": [] as any,
+                    "assigns": [] as any,
                     "acts": [
                         {
                             "name": "procstoreout2"
                         }
                     ]
-                },
-                {
-                    "name": "$start",
-                    "props": [] as any,
-                    "settings": [] as any,
-                    "acts": [] as any
                 }
             ]
+        },
+        "storage": {
+            "name": "storage",
+            "type": "subject",
+            "caption": "库存",
+            "props": [] as any,
+            "assigns": [] as any
         }
     }
 }

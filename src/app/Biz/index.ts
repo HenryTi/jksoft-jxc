@@ -1,5 +1,6 @@
 export * from './Biz';
-export { EntityItem as BizItem } from './EntityItem';
+export { EntityAtom as BizAtom } from './EntityAtom';
 export { EntitySheet as BizSheet } from './EntitySheet';
-export { EntitySetting as BizSetting } from './EntitySetting';
-export { BizProp, BizSetting as BizPropSetting } from './BizProp';
+export { EntitySetting } from './EntitySetting';
+export { BizProp, BizAssign } from './BizAtom';
+export * from './OpEntity';

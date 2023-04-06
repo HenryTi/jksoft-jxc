@@ -1,31 +1,39 @@
 QUERY ReportStorage (
     key CHAR(50),
+    subject CHAR(200),
 )
 PAGE (
-    item ID ASC,
+    atom ID ASC,
     value VALUE,
     init VALUE,
 ) {
-    PAGE SELECT a.id as item, a.value, a.init
+    VAR phraseId ID = PhraseId(subject);
+    PAGE SELECT a.id as atom, a.value, a.init
         FROM Balance as a
-            JOIN Item as b ON a.id=b.id
-        WHERE a.id > $pageStart AND SEARCH(b.ex, b.no ON key)
+            JOIN Subject as b ON b.id=a.id
+            JOIN SitePhrase as c ON c.id=b.base
+            JOIN Atom as d ON d.id=b.atom
+        WHERE c.phrase=phraseId
+            AND d.id > $pageStart
+            AND SEARCH(d.ex, d.no ON key)
         ORDER BY a.id ASC
         LIMIT $pageSize;
 };
 
 QUERY HistoryStorage (
-    item ID,
+    atomId ID,
+    subject CHAR(200),
 )
 PAGE (
     id ID DESC,
     value VALUE,
     ref ID,
 ) {
-    VAR subject ID = ID(Subject new KEY type=SubjectType.Storage, item=item);
+    VAR phraseId ID = PhraseId(subject);
+    VAR subjectId ID = ID(Subject KEY base=phraseId, atom=atomId);
     PAGE SELECT a.id, a.value, a.ref
         FROM History as a
-        WHERE a.id < $pageStart AND a.subject=subject
+        WHERE a.id < $pageStart AND a.subject=subjectId
         ORDER BY a.id DESC
         LIMIT $pageSize;
 };

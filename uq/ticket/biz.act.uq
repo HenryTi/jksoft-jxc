@@ -4,8 +4,8 @@ FUNC PhraseId ver 0.1 (
 RETURNS ID {
     VAR phraseId ID;
     SET phraseId = (SELECT id FROM $phrase WHERE name=phrase);
-    VAR unitPhrase ID = ID(UnitPhrase New KEY unit=$unit, phrase=phraseId);
-    return unitPhrase;
+    VAR SitePhrase ID = ID(SitePhrase New KEY site=$site, phrase=phraseId);
+    return SitePhrase;
 };
 
 FUNC Phrase ver 0.1 (
@@ -14,16 +14,42 @@ FUNC Phrase ver 0.1 (
 RETURNS CHAR(200) {
     VAR phrase CHAR(200) = (SELECT a.name 
         FROM $Phrase as a 
-            JOIN UnitPhrase as b ON b.phrase=a.id AND b.unit=$unit 
+            JOIN SitePhrase as b ON b.phrase=a.id AND b.site=$site 
         WHERE b.id=phraseId
+    );
+    return phrase;
+};
+
+FUNC SheetPhrase (
+    sheetId ID,
+)
+RETURNS CHAR(200) {
+    VAR phrase CHAR(200) = (SELECT c.name 
+        FROM Sheet as a
+            JOIN SitePhrase as b ON b.id=a.base
+            JOIN $Phrase as c ON c.id=b.phrase
+        WHERE a.id=sheetId
+    );
+    return phrase;
+};
+
+FUNC AtomPhrase (
+    atomId ID,
+)
+RETURNS CHAR(200) {
+    VAR phrase CHAR(200) = (SELECT c.name 
+        FROM Atom as a
+            JOIN SitePhrase as b ON b.id=a.base
+            JOIN $Phrase as c ON c.id=b.phrase
+        WHERE a.id=atomId
     );
     return phrase;
 };
 
 FUNC Me()
 RETURNS ID {
-    VAR me ID = ID(UserUnit New KEY user=$user, unit=$unit);
-    return me; -- $user unit
+    VAR me ID = ID(UserSite New KEY user=$user, site=$site);
+    return me; -- $user site
 };
 
 Biz Query MyUnits ver 0.3 (
@@ -31,27 +57,27 @@ Biz Query MyUnits ver 0.3 (
 RETURNS ret (
     id ID,
 ) {
-    INTO ret SELECT a.unit as id
-        FROM UserUnit as a
+    INTO ret SELECT a.site as id
+        FROM UserSite as a
         WHERE a.user=$user;
 };
 
-Biz ACT SaveItem(
-    item CHAR(100),
+Biz ACT SaveAtom (
+    atom CHAR(100),
     no NO,
     ex CHAR(200),
 )
 RETURNS ret (
     id ID,
 ) {
-    VAR base ID = PhraseId(item);
+    VAR base ID = PhraseId(atom);
 
     -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
     VAR id ID = 0;
-    SET id = ID(Item KEY base=base, no=no);
+    SET id = ID(Atom KEY base=base, no=no);
     IF id IS NULL {
-        SET id = ID(Item new KEY base=base,no=no);
-        WITH Item as a ID=id SET a.ex=ex;
+        SET id = ID(Atom new KEY base=base,no=no);
+        WITH Atom as a ID=id SET a.ex=ex;
     }
     ELSE {
         SET id=-id;
@@ -59,7 +85,7 @@ RETURNS ret (
     INTO ret SELECT id;
 }
 
-Biz ACT SaveSetting(
+Biz ACT SaveAssign(
     phrase CHAR(200),
     id ID,
     int BIGINT,
@@ -68,7 +94,7 @@ Biz ACT SaveSetting(
 ) {
     VAR phraseId ID = PhraseId(phrase);
     IF phraseId IS NOT NULL {
-        WITH IxSettingValue IX=id XI=phraseId
+        WITH IxAssignValue IX=id XI=phraseId
             SET int=int, dec=dec, str=str;
     }
 };
@@ -117,6 +143,7 @@ Biz ACT SaveDetail (
     base ID,
     id ID,
     item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位, 也可以指向源单明细
+    origin ID,
     value VALUE,
     v1 VALUE,
     v2 VALUE,
@@ -132,10 +159,10 @@ RETURNS ret (
     }
     IF id IS NULL {
         SET id = ID(Detail New);
-        WITH Detail ID=id SET base=base, item=item, value=value, v1=v1, v2=v2, v3=v3;
+        WITH Detail ID=id SET base=base, item=item, origin=origin, value=value, v1=v1, v2=v2, v3=v3;
     }
     ELSE {
-        WITH Detail ID=id SET item=item, value=value, v1=v1, v2=v2, v3=v3;
+        WITH Detail ID=id SET item=item, origin=origin, value=value, v1=v1, v2=v2, v3=v3;
     }
     INTO ret SELECT id;
 };
@@ -163,8 +190,8 @@ PAGE (
         LIMIT $pageSize;
 };
 
-Biz Query SearchItem (
-    item CHAR(100),
+Biz Query SearchAtom (
+    atom Phrase,
     key CHAR(50),
 )
 PAGE (
@@ -172,17 +199,17 @@ PAGE (
     no CHAR(50),
     ex CHAR(50),
 ) {
-    VAR base ID = PhraseId(item);
+    VAR base ID = PhraseId(atom);
 
     PAGE SELECT a.id, a.no, a.ex
-        FROM Item as a
+        FROM Atom as a
         WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
         ORDER BY a.id desc
         LIMIT $pageSize;
 };
 
-Biz Query SearchItemSettings (
-    item CHAR(100),
+Biz Query SearchAtomProps (
+    atom Phrase,
     key CHAR(50),
     names CHAR(300),
 )
@@ -191,25 +218,113 @@ PAGE (
     no CHAR(50),
     ex CHAR(50),
 )
-RETURNS props (
+RETURNS buds (
     id ID,
-    prop ID,
-    propName CHAR(50),
+    bud ID,
+    phrase CHAR(50),
     value CHAR(200),
 ) {
-    VAR base ID = PhraseId(item);
+    VAR base ID = PhraseId(atom);
 
     PAGE SELECT a.id, a.no, a.ex
-        FROM Item as a
+        FROM Atom as a
         WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
         ORDER BY a.id desc
         LIMIT $pageSize;
 
-    INTO props SELECT a.id, d.id as prop
-        , d.name as propName
+    INTO buds SELECT a.id, d.id as bud
+        , d.name as phrase
         , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
         FROM $page as a 
-            JOIN IxSettingValue as b ON b.ix=a.id
-            JOIN $Phrase as d ON d.id=b.xi
+            JOIN IxPropValue as b ON b.ix=a.id
+            JOIN SitePhrase as c ON c.id=b.xi
+            JOIN $Phrase as d ON d.id=c.phrase
         WHERE LOCATE(d.name, names)>0;
+};
+
+Biz Query SearchAtomAssigns (
+    atom Phrase,
+    key CHAR(50),
+    names CHAR(300),
+)
+PAGE (
+    id ID desc,
+    no CHAR(50),
+    ex CHAR(50),
+)
+RETURNS buds (
+    id ID,
+    bud ID,
+    phrase Phrase,
+    value CHAR(200),
+) {
+    VAR base ID = PhraseId(atom);
+
+    PAGE SELECT a.id, a.no, a.ex
+        FROM Atom as a
+        WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
+        ORDER BY a.id desc
+        LIMIT $pageSize;
+
+    INTO buds SELECT a.id, d.id as bud
+        , d.name as phrase
+        , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
+        FROM $page as a 
+            JOIN IxAssignValue as b ON b.ix=a.id
+            JOIN SitePhrase as c ON c.id=b.xi
+            JOIN $Phrase as d ON d.id=c.phrase
+        WHERE LOCATE(d.name, names)>0;
+};
+
+Biz Query GetPendSheet (
+    sheet Phrase, 
+)
+PAGE (
+    * SHEET ASC,
+) {
+    VAR startId ID = PhraseId(concat(sheet, '.$start'));
+    PAGE SELECT * b
+        FROM IxStateSheet as a
+            JOIN Sheet as b ON b.id=a.xi
+            JOIN BindPhraseTo as c ON c.id=a.ix
+            JOIN UserSite as d ON d.site=c.to
+        WHERE 1=1
+            AND b.id>$pageStart
+            AND c.base=startId 
+            AND d.user=$user
+            AND c.to=$site                                  -- 暂时所有site用户都可以看见，以后指定
+        ORDER BY b.id ASC
+        LIMIT $pageSize;
+};
+
+Biz Query GetSheet (
+    id ID,
+    assigns CHAR(200),  -- \t separated phrases of the assigns
+)
+RETURNS main (
+    * SHEET,
+)
+RETURNS details (
+    * Detail,
+)
+RETURNS assigns (
+    id ID,              -- detail id
+    assign ID,
+    phrase Phrase,
+    int BigINT,
+    dec VALUE,
+) {
+    INTO main SELECT * a
+        FROM Sheet as a
+        WHERE a.id=id;
+    INTO details SELECT * b
+        FROM Detail as b
+        WHERE b.base=id;
+    INTO assigns SELECT a.id, b.xi as assign, d.name as phrase, b.int, b.dec
+        FROM Detail as a
+            JOIN IxAssignValue as b ON b.ix=a.id
+            JOIN SitePhrase as c ON c.id=b.xi
+            JOIN $Phrase as d ON d.id=c.phrase
+        WHERE a.base=id 
+            AND (assigns IS NULL OR LOCATE(d.name, assigns)>0);
 };

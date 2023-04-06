@@ -1,0 +1,5 @@
+Biz Group CustomerGroup '客户分组' {
+};
+
+Biz Group VendorGroup '供应商分组' {
+};

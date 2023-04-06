@@ -1,10 +1,10 @@
 import { UqApp, useUqApp } from "app/UqApp";
-import { ReturnGetDetailOriginRet } from "uqs/UqDefault";
 import { ChangeEvent, FocusEvent, useRef, useState } from "react";
 import { ViceTitle } from "app/coms";
 import { FA, List, LMR } from "tonwa-com";
 import { GenDerive } from "app/template";
 import { GenProps } from "app/tool";
+import { Detail } from "uqs/UqDefault";
 
 export function ViewEditRow({ row, Gen }: { row: any; } & GenProps<GenDerive>) {
     const uqApp = useUqApp();
@@ -12,9 +12,9 @@ export function ViewEditRow({ row, Gen }: { row: any; } & GenProps<GenDerive>) {
     const { uq, editing } = gen;
     const { sheet } = row;
     const [details, setDetails] = useState<any[]>(row.details);
-    function ViewItemDetail({ value: detail }: { value: ReturnGetDetailOriginRet & { id: number; $changedValue: number; value: number } }) {
+    function ViewItemDetail({ value: detail }: { value: Detail & { id: number; $changedValue: number; originValue: number; done: number; } }) {
         let inp = useRef(undefined as HTMLInputElement);
-        let { id, item: origin, originValue, value, done } = detail;
+        let { id, origin, item, value, originValue, done } = detail;
         let [disabled, setDisabled] = useState(false);
         done = done ?? 0;
         let operatableValue = originValue - done;
@@ -27,7 +27,13 @@ export function ViewEditRow({ row, Gen }: { row: any; } & GenProps<GenDerive>) {
                 setDisabled(true);
                 let sheetDerive = editing.getSheet();
                 if ((newValue === undefined || newValue === 0) && id !== undefined) id = -id;
-                let newDetail = { id, sheet: sheetDerive.id, origin, value: newValue };
+                let newDetail = {
+                    id,
+                    sheet: sheetDerive.id,
+                    item,
+                    origin,
+                    value: newValue,
+                };
                 let retId = await editing.setDetail(newDetail);
                 if (id === undefined) detail.id = retId;
                 setDisabled(false);
