@@ -18,6 +18,7 @@ export function ViewEditRow({ row, Gen }: { row: any; } & GenProps<GenDerive>) {
         let [disabled, setDisabled] = useState(false);
         done = done ?? 0;
         let operatableValue = originValue - done;
+        if (operatableValue <= 0) return null;
         async function changeValue(newValue: number) {
             if (newValue !== undefined) {
                 if (newValue < 0) newValue = 0;

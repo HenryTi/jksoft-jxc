@@ -14,6 +14,11 @@ export interface IDViewRowProps {
 
 export abstract class GenAtom extends GenInput {
     abstract get atomName(): string;
+    get path() { return this.atomName; }
+    get pathNew() { return `${this.path}-new` }
+    get pathEdit() { return `${this.path}-edit` }
+    get pathView() { return `${this.path}-view` }
+    get pathList() { return `${this.path}-list` }
     get bizAtom(): BizAtom { return this.biz.atoms[this.atomName]; }
     readonly Atom: UqID<any>;
     // get labelClassName(): string { return 'text-end' }
@@ -60,7 +65,6 @@ export abstract class GenAtom extends GenInput {
             { name: 'id', label: 'id', readonly: true },
             { name: 'no', label: this.NOLabel, readonly: true },
             { name: 'ex', label: this.exLabel },
-            ...Array.from(this.bizAtom.props, ([, v]) => ({ name: v.name, label: v.caption }))
         ];
     }
 

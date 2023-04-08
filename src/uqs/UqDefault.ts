@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Apr 05 2023 19:58:15 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Fri Apr 07 2023 22:46:39 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,18 +23,20 @@ export interface IX {
 
 export enum EnumID {
 	$phrase = '$phrase',
-	History = 'history',
 	UserSite = 'usersite',
 	SitePhrase = 'sitephrase',
 	BindAtom = 'bindatom',
 	BindPhraseTo = 'bindphraseto',
+	History = 'history',
+	Tie = 'tie',
+	Formula = 'formula',
 	Atom = 'atom',
 	Sheet = 'sheet',
 	Detail = 'detail',
 	Subject = 'subject',
 	User = 'user',
 	Site = 'site',
-	Group = 'group',
+	Tree = 'tree',
 	MeasureUnitName = 'measureunitname',
 	MeasureUnit = 'measureunit',
 	UnitItem = 'unititem',
@@ -359,6 +361,7 @@ export interface ReturnGetSheetDetails {
 	v1: number;
 	v2: number;
 	v3: number;
+	done: number;
 }
 export interface ReturnGetSheetAssigns {
 	id: number;
@@ -373,17 +376,27 @@ export interface ResultGetSheet {
 	assigns: ReturnGetSheetAssigns[];
 }
 
-export interface History extends ID {
-	subject: number;
-	value: number;
-	ref: number;
+export interface ParamGetAtom {
+	id: number;
+}
+export interface ReturnGetAtomMain {
+	id: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnGetAtomBuds {
+	bud: number;
+	phrase: string;
+	value: string;
+}
+export interface ResultGetAtom {
+	main: ReturnGetAtomMain[];
+	buds: ReturnGetAtomBuds[];
 }
 
-export interface HistoryInActs extends ID {
-	ID?: UqID<any>;
-	subject: number | ID;
-	value: number;
-	ref: number | ID;
+export interface ParamA {
+}
+export interface ResultA {
 }
 
 export interface IxProp extends IX {
@@ -431,6 +444,45 @@ export interface BindPhraseToInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
 	to: number | ID;
+}
+
+export interface History extends ID {
+	subject: number;
+	value: number;
+	ref: number;
+}
+
+export interface HistoryInActs extends ID {
+	ID?: UqID<any>;
+	subject: number | ID;
+	value: number;
+	ref: number | ID;
+}
+
+export interface Tie extends ID {
+	base: number;
+	atom: number;
+}
+
+export interface TieInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	atom: number | ID;
+}
+
+export interface Formula extends ID {
+	from: number;
+	tiePhrase: number;
+	to: number;
+	radio: number;
+}
+
+export interface FormulaInActs extends ID {
+	ID?: UqID<any>;
+	from: number | ID;
+	tiePhrase: number | ID;
+	to: number | ID;
+	radio: number;
 }
 
 export interface Atom extends ID {
@@ -526,13 +578,13 @@ export interface SiteInActs extends ID {
 	ex: string;
 }
 
-export interface Group extends ID {
+export interface Tree extends ID {
 	base: number;
 	no: string;
 	ex: string;
 }
 
-export interface GroupInActs extends ID {
+export interface TreeInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
 	no: string;
@@ -617,19 +669,21 @@ export interface ResultHistoryStorage {
 
 export interface ParamActs {
 	$phrase?: $phraseInActs[];
-	history?: HistoryInActs[];
 	ixProp?: IxProp[];
 	userSite?: UserSiteInActs[];
 	sitePhrase?: SitePhraseInActs[];
 	bindAtom?: BindAtomInActs[];
 	bindPhraseTo?: BindPhraseToInActs[];
+	history?: HistoryInActs[];
+	tie?: TieInActs[];
+	formula?: FormulaInActs[];
 	atom?: AtomInActs[];
 	sheet?: SheetInActs[];
 	detail?: DetailInActs[];
 	subject?: SubjectInActs[];
 	user?: UserInActs[];
 	site?: SiteInActs[];
-	group?: GroupInActs[];
+	tree?: TreeInActs[];
 	measureUnitName?: MeasureUnitNameInActs[];
 	measureUnit?: MeasureUnitInActs[];
 	unitItem?: UnitItemInActs[];
@@ -665,19 +719,23 @@ export interface UqExt extends Uq {
 	SearchAtomAssigns: UqQuery<ParamSearchAtomAssigns, ResultSearchAtomAssigns>;
 	GetPendSheet: UqQuery<ParamGetPendSheet, ResultGetPendSheet>;
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
-	History: UqID<any>;
+	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
+	A: UqAction<ParamA, ResultA>;
 	IxProp: UqIX<any>;
 	UserSite: UqID<any>;
 	SitePhrase: UqID<any>;
 	BindAtom: UqID<any>;
 	BindPhraseTo: UqID<any>;
+	History: UqID<any>;
+	Tie: UqID<any>;
+	Formula: UqID<any>;
 	Atom: UqID<any>;
 	Sheet: UqID<any>;
 	Detail: UqID<any>;
 	Subject: UqID<any>;
 	User: UqID<any>;
 	Site: UqID<any>;
-	Group: UqID<any>;
+	Tree: UqID<any>;
 	MeasureUnitName: UqID<any>;
 	MeasureUnit: UqID<any>;
 	UnitItem: UqID<any>;
@@ -1683,6 +1741,12 @@ export const uqSchema={
                         "type": "dec",
                         "scale": 4,
                         "precision": 18
+                    },
+                    {
+                        "name": "done",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
                     }
                 ]
             },
@@ -1716,36 +1780,65 @@ export const uqSchema={
             }
         ]
     },
-    "history": {
-        "name": "History",
-        "type": "id",
+    "getatom": {
+        "name": "GetAtom",
+        "type": "query",
         "private": false,
         "sys": true,
         "fields": [
             {
                 "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "subject",
-                "type": "id"
-            },
-            {
-                "name": "value",
-                "type": "dec",
-                "scale": 4,
-                "precision": 18
-            },
-            {
-                "name": "ref",
                 "type": "id"
             }
         ],
-        "keys": [] as any,
-        "global": false,
-        "idType": 3,
-        "isMinute": true
+        "returns": [
+            {
+                "name": "main",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 50
+                    }
+                ]
+            },
+            {
+                "name": "buds",
+                "fields": [
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "value",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            }
+        ]
+    },
+    "a": {
+        "name": "a",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "returns": [] as any
     },
     "ixprop": {
         "name": "IxProp",
@@ -1891,6 +1984,119 @@ export const uqSchema={
         "keys": [
             {
                 "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "to",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "history": {
+        "name": "History",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "subject",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 4,
+                "precision": 18
+            },
+            {
+                "name": "ref",
+                "type": "id"
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "tie": {
+        "name": "Tie",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "atom",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "atom",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "formula": {
+        "name": "Formula",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "from",
+                "type": "id"
+            },
+            {
+                "name": "tiePhrase",
+                "type": "id"
+            },
+            {
+                "name": "to",
+                "type": "id"
+            },
+            {
+                "name": "radio",
+                "type": "dec",
+                "scale": 4,
+                "precision": 18
+            }
+        ],
+        "keys": [
+            {
+                "name": "from",
+                "type": "id"
+            },
+            {
+                "name": "tiePhrase",
                 "type": "id"
             },
             {
@@ -2162,8 +2368,8 @@ export const uqSchema={
         "idType": 3,
         "isMinute": false
     },
-    "group": {
-        "name": "Group",
+    "tree": {
+        "name": "Tree",
         "type": "id",
         "private": false,
         "sys": true,
@@ -2424,15 +2630,11 @@ export const uqSchema={
     "$biz": {
         "$user": {
             "name": "$user",
-            "type": "$user",
-            "props": [] as any,
-            "assigns": [] as any
+            "type": "$user"
         },
         "$unit": {
             "name": "$unit",
-            "type": "$unit",
-            "props": [] as any,
-            "assigns": [] as any
+            "type": "$unit"
         },
         "b": {
             "name": "b",
@@ -2452,20 +2654,6 @@ export const uqSchema={
                     "type": "char"
                 }
             ],
-            "assigns": [
-                {
-                    "name": "流水",
-                    "type": "char",
-                    "caption": "下一步",
-                    "value": "s2"
-                }
-            ],
-            "states": [] as any
-        },
-        "c": {
-            "name": "c",
-            "type": "subject",
-            "props": [] as any,
             "assigns": [
                 {
                     "name": "流水",
@@ -2557,7 +2745,6 @@ export const uqSchema={
                     ]
                 }
             ],
-            "assigns": [] as any,
             "states": [
                 {
                     "name": "可用",
@@ -2590,8 +2777,7 @@ export const uqSchema={
                     "type": "dec",
                     "caption": "零售价"
                 }
-            ],
-            "states": [] as any
+            ]
         },
         "batch": {
             "name": "batch",
@@ -2601,53 +2787,50 @@ export const uqSchema={
                     "name": "效期",
                     "type": "date"
                 }
-            ],
-            "assigns": [] as any,
-            "states": [] as any
+            ]
         },
-        "customergroup": {
-            "name": "customergroup",
-            "type": "group",
-            "caption": "客户分组",
-            "props": [] as any,
-            "assigns": [] as any
+        "concactproduct": {
+            "name": "concactproduct",
+            "type": "tie"
         },
-        "vendorgroup": {
-            "name": "vendorgroup",
-            "type": "group",
-            "caption": "供应商分组",
-            "props": [] as any,
-            "assigns": [] as any
+        "departmentmember": {
+            "name": "departmentmember",
+            "type": "tie",
+            "caption": "部门",
+            "props": [
+                {
+                    "name": "director",
+                    "type": "int"
+                },
+                {
+                    "name": "senior",
+                    "type": "int"
+                },
+                {
+                    "name": "junior",
+                    "type": "int"
+                }
+            ]
         },
         "销售员": {
             "name": "销售员",
-            "type": "permit",
-            "props": [] as any,
-            "assigns": [] as any
+            "type": "permit"
         },
         "入库员": {
             "name": "入库员",
-            "type": "permit",
-            "props": [] as any,
-            "assigns": [] as any
+            "type": "permit"
         },
         "检验员": {
             "name": "检验员",
-            "type": "permit",
-            "props": [] as any,
-            "assigns": [] as any
+            "type": "permit"
         },
         "经理": {
             "name": "经理",
-            "type": "role",
-            "props": [] as any,
-            "assigns": [] as any
+            "type": "role"
         },
         "销售部经理": {
             "name": "销售部经理",
-            "type": "role",
-            "props": [] as any,
-            "assigns": [] as any
+            "type": "role"
         },
         "公司规程": {
             "name": "公司规程",
@@ -2658,19 +2841,15 @@ export const uqSchema={
                     "type": "char",
                     "caption": "公司名称"
                 }
-            ],
-            "assigns": [] as any
+            ]
         },
         "purchase": {
             "name": "purchase",
             "type": "sheet",
             "caption": "采购单",
-            "props": [] as any,
-            "assigns": [] as any,
             "details": [
                 {
                     "name": "detail",
-                    "props": [] as any,
                     "assigns": [
                         {
                             "name": "done",
@@ -2682,8 +2861,6 @@ export const uqSchema={
             "states": [
                 {
                     "name": "$start",
-                    "props": [] as any,
-                    "assigns": [] as any,
                     "acts": [
                         {
                             "name": "$act"
@@ -2692,8 +2869,6 @@ export const uqSchema={
                 },
                 {
                     "name": "s1",
-                    "props": [] as any,
-                    "assigns": [] as any,
                     "acts": [] as any
                 }
             ]
@@ -2702,20 +2877,14 @@ export const uqSchema={
             "name": "sale",
             "type": "sheet",
             "caption": "销售单",
-            "props": [] as any,
-            "assigns": [] as any,
             "details": [
                 {
-                    "name": "detail",
-                    "props": [] as any,
-                    "assigns": [] as any
+                    "name": "detail"
                 }
             ],
             "states": [
                 {
                     "name": "$start",
-                    "props": [] as any,
-                    "assigns": [] as any,
                     "acts": [
                         {
                             "name": "$act"
@@ -2728,20 +2897,14 @@ export const uqSchema={
             "name": "storein",
             "type": "sheet",
             "caption": "入库单",
-            "props": [] as any,
-            "assigns": [] as any,
             "details": [
                 {
-                    "name": "detail",
-                    "props": [] as any,
-                    "assigns": [] as any
+                    "name": "detail"
                 }
             ],
             "states": [
                 {
                     "name": "$start",
-                    "props": [] as any,
-                    "assigns": [] as any,
                     "acts": [
                         {
                             "name": "$act"
@@ -2754,20 +2917,14 @@ export const uqSchema={
             "name": "storeout",
             "type": "sheet",
             "caption": "出库单",
-            "props": [] as any,
-            "assigns": [] as any,
             "details": [
                 {
-                    "name": "detail",
-                    "props": [] as any,
-                    "assigns": [] as any
+                    "name": "detail"
                 }
             ],
             "states": [
                 {
                     "name": "$start",
-                    "props": [] as any,
-                    "assigns": [] as any,
                     "acts": [
                         {
                             "name": "$act"
@@ -2833,15 +2990,12 @@ export const uqSchema={
                             "name": "b",
                             "type": "int"
                         }
-                    ],
-                    "assigns": [] as any
+                    ]
                 }
             ],
             "states": [
                 {
                     "name": "$start",
-                    "props": [] as any,
-                    "assigns": [] as any,
                     "acts": [
                         {
                             "name": "$act"
@@ -2850,7 +3004,6 @@ export const uqSchema={
                 },
                 {
                     "name": "s0",
-                    "props": [] as any,
                     "assigns": [
                         {
                             "name": "next",
@@ -2869,8 +3022,6 @@ export const uqSchema={
                 {
                     "name": "s1",
                     "caption": "状态s1",
-                    "props": [] as any,
-                    "assigns": [] as any,
                     "acts": [
                         {
                             "name": "$act"
@@ -2880,8 +3031,6 @@ export const uqSchema={
                 {
                     "name": "s2",
                     "caption": "状态s2",
-                    "props": [] as any,
-                    "assigns": [] as any,
                     "acts": [
                         {
                             "name": "procstoreout2"
@@ -2893,9 +3042,29 @@ export const uqSchema={
         "storage": {
             "name": "storage",
             "type": "subject",
-            "caption": "库存",
-            "props": [] as any,
-            "assigns": [] as any
+            "caption": "库存"
+        },
+        "c": {
+            "name": "c",
+            "type": "subject",
+            "assigns": [
+                {
+                    "name": "流水",
+                    "type": "char",
+                    "caption": "下一步",
+                    "value": "s2"
+                }
+            ]
+        },
+        "customertree": {
+            "name": "customertree",
+            "type": "tree",
+            "caption": "客户分组"
+        },
+        "vendortree": {
+            "name": "vendortree",
+            "type": "tree",
+            "caption": "供应商分组"
         }
     }
 }

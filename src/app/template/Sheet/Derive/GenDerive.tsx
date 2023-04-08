@@ -17,11 +17,12 @@ export abstract class GenDerive extends GenSheet {
     readonly editing: EditingDerive;
 
     detailFromOrigin(originDetail: any): any {
-        let { id, item, value } = originDetail;
+        let { id, item, value, done } = originDetail;
         return {
             origin: id,
             item,
             originValue: value,
+            done,
         }
     }
 

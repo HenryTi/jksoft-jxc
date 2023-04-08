@@ -9,6 +9,10 @@ interface SheetGroup {
     sheets: any[];
 }
 
+interface DetailDone extends Detail {
+    done: number;
+}
+
 export class EditingDerive extends Editing {
     declare protected gen: GenDerive;
     readonly atomRows: PrimitiveAtom<{ sheet: Sheet; details: Detail[] }[]>;
@@ -32,8 +36,8 @@ export class EditingDerive extends Editing {
         let { uq } = this.gen;
         let { main: [sheet], details } = await uq.GetSheet.query({ id: sheetId, assigns: undefined });
         setAtomValue(this.atomSheet, sheet);
-        const groupColl: { [origin: number]: { sheet: Sheet; details: Detail[]; } } = {};
-        let rows: { sheet: Sheet, details: Detail[] }[] = [];
+        const groupColl: { [origin: number]: { sheet: Sheet; details: DetailDone[]; } } = {};
+        let rows: { sheet: Sheet, details: DetailDone[] }[] = [];
         for (let detail of details) {
             let { origin } = detail;
             let group = groupColl[origin];

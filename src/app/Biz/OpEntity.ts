@@ -39,14 +39,14 @@ export abstract class OpEntity<A extends BizAtom> {
         let coll: { [id: number]: any } = {};
         for (let row of ret) {
             coll[row.id] = row;
-            (row as any).atoms = {};
+            (row as any).buds = {};
         }
         let bizAtomes = this.getBizAtoms();
         for (let row of buds) {
             let { id, phrase } = row;
             let bizAtom = bizAtomes.get(phrase);
             let entity = coll[id];
-            entity.atoms[bizAtom.name] = row.value;
+            entity.buds[bizAtom.name] = row.value;
         }
         return ret;
     }

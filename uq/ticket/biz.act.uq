@@ -306,6 +306,7 @@ RETURNS main (
 )
 RETURNS details (
     * Detail,
+    done VALUE,
 )
 RETURNS assigns (
     id ID,              -- detail id
@@ -317,9 +318,10 @@ RETURNS assigns (
     INTO main SELECT * a
         FROM Sheet as a
         WHERE a.id=id;
-    INTO details SELECT * b
-        FROM Detail as b
-        WHERE b.base=id;
+    INTO details SELECT * a, IFNULL(b.value, 0) as done
+        FROM Detail as a
+            LEFT JOIN Done as b ON b.id=a.id
+        WHERE a.base=id;
     INTO assigns SELECT a.id, b.xi as assign, d.name as phrase, b.int, b.dec
         FROM Detail as a
             JOIN IxAssignValue as b ON b.ix=a.id
@@ -327,4 +329,30 @@ RETURNS assigns (
             JOIN $Phrase as d ON d.id=c.phrase
         WHERE a.base=id 
             AND (assigns IS NULL OR LOCATE(d.name, assigns)>0);
+};
+
+Biz Query GetAtom (
+    id ID,
+)
+RETURNS main (
+    id ID,
+    no CHAR(50),
+    ex CHAR(50),
+)
+RETURNS buds (
+    bud ID,
+    phrase CHAR(50),
+    value CHAR(200),
+) {
+    INTO main SELECT a.id, a.no, a.ex
+        FROM Atom as a
+        WHERE a.id=id;
+
+    INTO buds SELECT a.xi as bud
+        , c.name as phrase
+        , IFNULL(a.dec, IFNULL(a.int, a.str)) as value
+        FROM IxPropValue as a
+            JOIN SitePhrase as b ON b.id=a.xi
+            JOIN $Phrase as c ON c.id=b.phrase
+        WHERE a.ix=id;
 };

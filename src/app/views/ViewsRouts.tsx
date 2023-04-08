@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Page, PageTabsLayout, PageSpinner } from 'tonwa-app';
 import { pathMe, routeMe, TabMe } from './Me';
-import { pathJXC, routeJCX, TabJXC } from './JCX';
+import { pathJXC, routeJCX, TabJXC } from './JXC';
 import { pathSetup, routeSetup, TabSetup } from 'app/setup';
 import { useUqApp } from 'app/UqApp';
 import { getAtomValue } from 'tonwa-com';
@@ -36,7 +36,7 @@ export function ViewsRoutes() {
                     <Route path={pathMe + '/*'} element={<TabMe />} />
                 </Route>
                 {routeMe}
-                {routeJCX}
+                {routeJCX(uqApp)}
                 {routeSetup}
                 <Route path="/test" element={<Page header="Test">test</Page>} />
                 <Route path="/login/*" element={<AppLogin />} />

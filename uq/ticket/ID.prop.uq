@@ -77,3 +77,44 @@ ID BindPhraseTo (
     KEY base ID,            -- (main + type) => owner, or type in main
     KEY to ID,            -- item id easy to load values
 );
+
+
+IDX Balance (
+    id,                     -- biz subject
+    init VALUE DEFAULT 0,
+    value Value,
+);
+
+ID History (
+    id MINUTE,
+    subject ID,         -- 科目
+    value Value,
+    ref ID,             -- 相关凭证
+    INDEX subject_id(subject, id) UNIQUE,
+);
+
+-- relation
+ID Tie (
+    id,
+    KEY base ID,                -- site phrase id
+    KEY atom ID,                -- atom id
+);
+
+IX IxTie (
+    ix,                         -- atom pin
+    xi,                         -- other atom
+);
+
+IX IxTieValue (
+    ix,                         -- ID Tie
+    xi,                         -- ID Tie, base = Tie phrase + Prop phrase
+    value BIGINT,               -- 可以是小数
+);
+
+ID Formula (
+    id,
+    KEY from ID,            -- from subject
+    KEY tiePhrase ID,
+    KEY to ID,              -- to subject
+    radio VALUE,            -- 换算率
+);

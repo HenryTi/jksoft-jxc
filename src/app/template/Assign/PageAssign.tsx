@@ -11,9 +11,9 @@ export function PageAssign<P extends GenAssign>({ Gen }: GenProps<P>) {
     const { openModal } = useModal();
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
-    const { caption, searchAtoms: searchAtoms, atomName: atomName } = gen;
-    function ViewItem({ value }: { value: ReturnSearchAtomAssignsBuds & { atoms: { [atom: string]: any } }; }) {
-        let { atoms } = value;
+    const { caption, searchAtoms, atomName: atomName } = gen;
+    function ViewItem({ value }: { value: ReturnSearchAtomAssignsBuds & { buds: { [bud: string]: any } }; }) {
+        let { buds } = value;
         let { bizAssigns } = gen;
         return <div className="px-3 py-2">
             <div>{JSON.stringify(value)}</div>
@@ -21,7 +21,7 @@ export function PageAssign<P extends GenAssign>({ Gen }: GenProps<P>) {
                 {
                     bizAssigns.map((v, index) => {
                         let { caption, name } = v;
-                        let value = atoms[name];
+                        let value = buds[name];
                         return <React.Fragment key={index}>
                             <span className="me-2">{caption ?? name}:</span>
                             {
@@ -36,10 +36,10 @@ export function PageAssign<P extends GenAssign>({ Gen }: GenProps<P>) {
             </div>
         </div>;
     }
-    async function onItemClick(value: ReturnSearchAtomAssigns$page & { atoms: { [atom: string]: any } }) {
+    async function onItemClick(value: ReturnSearchAtomAssigns$page & { buds: { [atom: string]: any } }) {
         let ret = await openModal(<PageAssignEdit Gen={Gen} value={value} />);
         if (ret === undefined) return;
-        value.atoms = ret;
+        value.buds = ret;
     }
     return <PageQueryMore header={caption}
         query={searchAtoms}

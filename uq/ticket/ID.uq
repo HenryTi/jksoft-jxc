@@ -52,11 +52,16 @@ ID Site ver 0.2 (
 VALUES
 ('$$$');
 
-ID Group (
+ID Tree (
     id,
     KEY base ID,            -- site@phrase, or base group
     KEY no,
     ex CHAR(100),
+);
+
+IDX Done (
+    id,
+    value VALUE,
 );
 
 ENUM MeasureUnitType (

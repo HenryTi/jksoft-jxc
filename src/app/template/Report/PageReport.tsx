@@ -8,14 +8,14 @@ import { GenReport } from "./GenReport";
 export function PageReport({ Gen, children }: GenProps<GenReport> & { children?: ReactNode }) {
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
-    const { caption, QueryReport: ReportQuery, sortField, ViewItem, onItemClick } = gen;
+    const { caption, searchSubjectAtom, sortField, ViewItem, onItemClick } = gen;
     const navigate = useNavigate();
     gen.navigate = navigate;
     let param = {};
     return <PageQueryMore
         header={caption}
         param={param}
-        query={ReportQuery}
+        query={searchSubjectAtom}
         sortField={sortField}
         ViewItem={ViewItem}
         onItemClick={onItemClick}>

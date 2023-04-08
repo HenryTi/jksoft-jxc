@@ -1,4 +1,4 @@
-import { BizAssign, OpAtomAssigns as OpAtomAssigns } from "app/Biz";
+import { BizAssign, OpAtomAssigns } from "app/Biz";
 import { Gen } from "app/tool";
 
 export abstract class GenAssign extends Gen {

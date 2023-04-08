@@ -8,18 +8,18 @@ import { ReturnSearchAtomAssigns$page } from "uqs/UqDefault";
 import { ChangeEvent, useState } from "react";
 import { BizAssign } from "app/Biz";
 
-export function PageAssignEdit({ value: assignValue, Gen }: GenProps<GenAssign> & { value: ReturnSearchAtomAssigns$page & { atoms: { [assign: string]: any } }; }) {
+export function PageAssignEdit({ value: assignValue, Gen }: GenProps<GenAssign> & { value: ReturnSearchAtomAssigns$page & { buds: { [assign: string]: any } }; }) {
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
     const { caption, bizAssigns } = gen;
-    const { id, atoms } = assignValue;
+    const { id, buds } = assignValue;
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [changed, setChanged] = useState(false);
     const { closeModal } = useModal();
 
     function buildRow(bizAssign: BizAssign): FormRow {
         let { caption, name } = bizAssign;
-        return { name, label: caption ?? name, type: 'number', options: { value: atoms[name], } };
+        return { name, label: caption ?? name, type: 'number', options: { value: buds[name], } };
     }
     async function onSubmit(data: any) {
         let bizAssign = bizAssigns[0];
@@ -33,7 +33,7 @@ export function PageAssignEdit({ value: assignValue, Gen }: GenProps<GenAssign> 
             setChanged(false);
             return;
         }
-        if (n !== atoms[name]) {
+        if (n !== buds[name]) {
             setChanged(true);
         }
     }

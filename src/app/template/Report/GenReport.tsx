@@ -1,15 +1,38 @@
 import { UqQuery } from "tonwa-uq";
-import { GentWithPath } from "app/tool";
+import { GentWithPath, QueryMore } from "app/tool";
+import { EntitySubject } from "app/Biz";
 
 export abstract class GenReport extends GentWithPath {
-    abstract get QueryReport(): UqQuery<any, any>;
+    abstract get subjectName(): string;
+    get bizSubject(): EntitySubject { return this.biz.subjects[this.subjectName]; }
+
+    protected abstract get QueryReport(): UqQuery<any, any>;
+    protected abstract get QueryHistory(): UqQuery<any, any>;
+
     abstract get sortField(): string;
     abstract get ViewItem(): (props: { value: any }) => JSX.Element;
     abstract get onItemClick(): (item: any) => Promise<void>;
 
     abstract get captionHistory(): string;
-    abstract get QueryHistory(): UqQuery<any, any>;
     abstract get ViewItemHistory(): (props: { value: any }) => JSX.Element;
     abstract get historySortField(): string;
     abstract get onHistoryClick(): (item: any) => Promise<void>;
+
+    searchSubjectAtom: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
+        let nParam = {
+            key: param?.key,
+            subject: this.bizSubject.phrase,
+        }
+        const { $page } = await this.QueryReport.page(nParam, pageStart, pageSize);
+        return $page;
+    }
+
+    subjectHistory: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
+        let nParam = {
+            atomId: param.atomId,
+            subject: this.bizSubject.phrase,
+        }
+        const { $page } = await this.QueryHistory.page(nParam, pageStart, pageSize);
+        return $page;
+    }
 }

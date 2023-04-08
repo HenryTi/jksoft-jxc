@@ -2,10 +2,11 @@ import { UqApp } from 'app/UqApp';
 import { UqExt, uqSchema } from 'uqs/UqDefault';
 import { Entity } from './Entity';
 import { EntityAtom } from './EntityAtom';
-import { EntityGroup } from './EntityGroup';
+import { EntityTree } from './EntityTree';
 import { EntitySetting } from './EntitySetting';
 import { EntitySheet } from './EntitySheet';
 import { EntitySubject } from './EntitySubject';
+import { EntityTie } from './EntityTie';
 
 export class Biz {
     readonly uq: UqExt;
@@ -15,7 +16,7 @@ export class Biz {
     readonly permits: { [name: string]: EntityPermit } = {}
     readonly roles: { [name: string]: EntityRole } = {}
     readonly subjects: { [name: string]: EntitySubject } = {}
-    readonly groups: { [name: string]: EntityGroup } = {}
+    readonly trees: { [name: string]: EntityTree } = {}
 
     constructor(uqApp: UqApp) {
         this.uq = uqApp.uq;
@@ -30,7 +31,8 @@ export class Biz {
             permit: this.buildPermit,
             role: this.buildRole,
             subject: this.buildSubject,
-            group: this.buildGroup,
+            tree: this.buildTree,
+            tie: this.buildTie,
         }
         let { $biz } = uqSchema;
         let arr: [Entity, any][] = [];
@@ -82,9 +84,14 @@ export class Biz {
         return this.subjects[bizEntity.name] = bizEntity;
     }
 
-    private buildGroup = (name: string, type: string): Entity => {
-        let bizEntity = new EntityGroup(this, name, type);
-        return this.groups[bizEntity.name] = bizEntity;
+    private buildTree = (name: string, type: string): Entity => {
+        let bizEntity = new EntityTree(this, name, type);
+        return this.trees[bizEntity.name] = bizEntity;
+    }
+
+    private buildTie = (name: string, type: string): Entity => {
+        let bizEntity = new EntityTie(this, name, type);
+        return this.trees[bizEntity.name] = bizEntity;
     }
 }
 

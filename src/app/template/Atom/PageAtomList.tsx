@@ -1,21 +1,23 @@
 import { GenProps, useGen } from '../../tool';
 import { PageQueryMore } from '../../coms';
 import { GenAtom } from './GenAtom';
+import { Link } from 'react-router-dom';
 
 export function PageAtomList({ Gen }: GenProps<GenAtom>) {
-    const { caption, ViewItemAtom: ViewItemID, searchAtoms: searchItems, listTop, phrase } = useGen(Gen);
-
+    const { caption, ViewItemAtom, searchAtoms, listTop, phrase, pathView } = useGen(Gen);
     let searchParam = {
         item: phrase,
         key: undefined as string,
     };
     function ViewItem({ value }: { value: any }) {
-        return <div className="px-3 py-2">
-            <ViewItemID value={value} />
-        </div>;
+        return <Link to={`../${pathView}/${value.id}`}>
+            <div className="px-3 py-2">
+                <ViewItemAtom value={value} />
+            </div>
+        </Link>;
     }
     return <PageQueryMore header={`${caption}列表`}
-        query={searchItems}
+        query={searchAtoms}
         param={searchParam}
         sortField="id"
         ViewItem={ViewItem}

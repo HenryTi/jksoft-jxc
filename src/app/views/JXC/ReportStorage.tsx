@@ -14,6 +14,7 @@ const pathStorageDetail = 'storage-detail';
 const pathStorageSheet = 'storage-sheet';
 
 export class GenStorage extends GenReport {
+    readonly subjectName = 'storage';
     readonly caption = '库存报表';
     readonly path = pathStorage;
     readonly sortField: string;
@@ -49,7 +50,7 @@ export class GenStorage extends GenReport {
     }
 
     readonly onItemClick = async (item: any): Promise<void> => {
-        this.navigate(`../${pathStorageHistory}/${item.product}`);
+        this.navigate(`../${pathStorageHistory}/${item.atom}`);
     }
 
     readonly DetailRef = ({ value }: { value: any }) => {
@@ -99,9 +100,10 @@ function PageDetail() {
         </div>
     }
     function DetailTemplate({ value }: { value: any }) {
+        let sheet = value.base;
         return <div>
-            <Link to={`../${pathStorageSheet}/${value.sheet}`}>
-                <div className="px-3 my-3">整单：{value.sheet}</div>
+            <Link to={`../${pathStorageSheet}/${sheet}`}>
+                <div className="px-3 my-3">整单：{sheet}</div>
             </Link>
             <div className="px-3 my-3"><ViewDetail value={value} /></div>
         </div>;
@@ -116,37 +118,29 @@ function PageSheet() {
     const uq = uqApp.uqs.UqDefault;
     const { id } = useParams();
     const [sheetMain, setSheetMain] = useState(undefined);
-    const [sheetJoins, setSheetJoins] = useState<[string, any[]][]>(undefined);
+    const [sheetDetails, setSheetDetails] = useState<any[]>(undefined);
     useEffectOnce(() => {
         (async function () {
-            let { ID, main, joins } = await uq.idJoins(Number(id));
-            setSheetMain(main);
-            setSheetJoins(joins);
+            let { main: [retSheetMain], details: retDetails } = await uq.GetSheet.query({ id: Number(id), assigns: undefined });
+            setSheetMain(retSheetMain);
+            setSheetDetails(retDetails);
         })();
     });
+    function ViewItem({ value }: { value: any }) {
+        return <div className="px-3 my-2">
+            {JSON.stringify(value)}
+        </div>;
+    }
     let content: any;
-    if (!sheetMain || !sheetJoins) {
+    if (!sheetMain || !sheetDetails) {
         content = <PageSpinner />;
     }
     else {
-        let [sheetType, main] = sheetMain;
-        let viewJoins = sheetJoins.map(v => {
-            let [detailType, details] = v;
-            function ViewItem({ value }: { value: any }) {
-                return <div className="px-3 my-2">
-                    {JSON.stringify(value)}
-                </div>;
-            }
-            return <React.Fragment key={detailType}>
-                <Sep />
-                <List items={details} ViewItem={ViewItem} />
-                <Sep />
-            </React.Fragment>;
-        });
-        let Dir = dirMap[sheetType as EnumID];
         content = <>
-            <div className="px-3 my-2"><Dir value={main} /></div>
-            {viewJoins}
+            <div className="px-3 my-2">
+                main: {JSON.stringify(sheetMain)}
+            </div>
+            <List items={sheetDetails} ViewItem={ViewItem} />
         </>;
     }
 

@@ -5,10 +5,6 @@ Biz Atom b ver 0.5 {
     Assign 流水 '下一步' char = 's2';
 };
 
-Biz Subject c Balance History {
-    Assign 流水 '下一步' char = 's2';
-}
-
 Biz Atom Contact '往来单位' {
     prop a '联系人' int ;
     prop b '类型' radio (big '大' = 1, 中 = 2, small '小' = 3,);
@@ -28,4 +24,13 @@ Biz Atom Product '产品' {
 Biz Atom Batch {
     base Product;
     prop 效期 date;
+};
+
+Biz Tie ConcactProduct {
+};
+
+Biz Tie DepartmentMember '部门' {
+    Prop Director;
+    Prop Senior;
+    Prop Junior;
 };

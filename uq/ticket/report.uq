@@ -8,13 +8,12 @@ PAGE (
     init VALUE,
 ) {
     VAR phraseId ID = PhraseId(subject);
-    PAGE SELECT a.id as atom, a.value, a.init
+    PAGE SELECT b.atom as atom, a.value, a.init
         FROM Balance as a
             JOIN Subject as b ON b.id=a.id
-            JOIN SitePhrase as c ON c.id=b.base
             JOIN Atom as d ON d.id=b.atom
-        WHERE c.phrase=phraseId
-            AND d.id > $pageStart
+        WHERE b.base=phraseId
+            AND b.atom > $pageStart
             AND SEARCH(d.ex, d.no ON key)
         ORDER BY a.id ASC
         LIMIT $pageSize;

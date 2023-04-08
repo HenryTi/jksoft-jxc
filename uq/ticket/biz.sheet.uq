@@ -16,6 +16,11 @@ Biz SHEET Purchase '采购单' {
     }
 }
 
+biz act a () {
+    TABLE originSheets(id ID);    
+    into originSheets select 1 as id;
+}
+
 Biz SHEET Sale '销售单' {
     detail;
     ACT (sheetId ID) {
@@ -23,33 +28,51 @@ Biz SHEET Sale '销售单' {
     }
 }
 
+PROC MayDeletePend(originDetail ID) {
+    TABLE originSheets(KEY id ID) NO DROP;
+    IF originDetail IS NOT NULL {
+        INTO IGNORE originSheets SELECT base as id from Detail WHERE id=originDetail;
+    }
+    ELSE {
+        FOR (VAR id ID OF SELECT id FROM originSheets) {
+            VAR s VALUE = (SELECT SUM(case when a.value-b.value<0 then 0 else a.value-b.value end) 
+                FROM Detail as a JOIN Done as b ON b.id=a.id WHERE a.base=id);
+            IF s=0 {
+                WITH IxStateSheet XI=id DEL;
+            }
+        }
+    }
+};
+
 Biz SHEET StoreIn ver 0.8 '入库单' {
     detail;
     ACT (sheetId ID) {
-        VAR donePhraseId ID = PhraseId(Concat(SheetPhrase(sheetId), '.detail.done'));
         FOR detailId in detail {
-            VAR item ID, value VALUE, v1 VALUE, v2 VALUE;
-            SET item=a.item, value=a.value, v1=a.v1, v2=a.v2
+            VAR item ID, value VALUE, v1 VALUE, v2 VALUE, origin ID;
+            SET item=a.item, value=a.value, v1=a.v1, v2=a.v2, origin=a.origin
                 FROM Detail as a
                 WHERE a.id=detailId;
             Biz Subject storage of item += value ref detailId;
-            WITH IxAssignValue IX=detailId XI=donePhraseId SET dec=value;
+            WITH Done ID=origin SET value+=value;
+            PROC MayDeletePend(origin);
         }
+        PROC MayDeletePend(null);
     }
 }
 
 Biz SHEET StoreOut '出库单' {
     detail;
     ACT (sheetId ID) {
-        VAR donePhraseId ID = PhraseId(Concat(SheetPhrase(sheetId), '.detail.done'));
         FOR detailId in detail {
-            VAR item ID, value VALUE, v1 VALUE, v2 VALUE;
-            SET item=a.item, value=a.value, v1=a.v1, v2=a.v2
+            VAR item ID, value VALUE, v1 VALUE, v2 VALUE, origin ID;
+            SET item=a.item, value=a.value, v1=a.v1, v2=a.v2, origin=a.origin
                 FROM Detail as a
                 WHERE a.id=detailId;
             Biz Subject storage -= value ref detailId;
-            WITH IxAssignValue IX=detailId XI=donePhraseId SET dec=value;
+            WITH Done ID=origin SET value+=value;
+            PROC MayDeletePend(origin);
         }
+        PROC MayDeletePend(null);
     }
 }
 
