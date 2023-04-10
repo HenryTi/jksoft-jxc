@@ -7,6 +7,7 @@ import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
 //import { SeedUnit } from './tool';
 import { UqExt } from 'uqs/UqDefault';
+import { GenAtom } from './template';
 
 const appConfig: AppConfig = {
     version: '0.1.0',
@@ -97,6 +98,14 @@ export class UqApp extends UqAppBase<UQs> {
     setUnit(unit: number) {
         this.unit = unit;
         this.uqDefault = undefined;
+    }
+
+    readonly genAtoms: { [name: string]: GenAtom } = {}
+    protected onObjectBuilt(object: any) {
+        let { bizEntityType, bizEntityName } = object;
+        if (bizEntityType === 'atom') {
+            this.genAtoms[bizEntityName] = object;
+        }
     }
 }
 

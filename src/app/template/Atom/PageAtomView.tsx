@@ -1,15 +1,17 @@
-import { PageMoreCacheData } from "app/coms";
-import { useUqApp } from "app/UqApp";
+import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { LabelRowEdit, Page } from "tonwa-app";
+import { Page } from "tonwa-app";
 import { Sep } from "tonwa-com";
+import { useUqApp } from "app/UqApp";
 import { GenProps } from "app/tool";
-import { GenAtom, IDViewRowProps } from "./GenAtom";
+import { GenAtom } from "./GenAtom";
+import { ViewPropEx, ViewPropMain } from "./ViewProp";
 
 export function PageAtomView({ Gen }: GenProps<GenAtom>) {
     const uqApp = useUqApp();
-    const { caption, viewRows, Atom, bizAtom } = uqApp.objectOf(Gen);
+    const gen = uqApp.objectOf(Gen);
+    const { caption, viewRows, bizAtom } = gen;
     const { id: idString } = useParams();
     const id = Number(idString);
     const { UqDefault } = uqApp.uqs;
@@ -27,50 +29,21 @@ export function PageAtomView({ Gen }: GenProps<GenAtom>) {
         refetchOnWindowFocus: false,
         cacheTime: 0,
     });
-    function RowMain({ label, name, readonly }: IDViewRowProps) {
-        let value = (main as any)[name];
-        console.log(`prop value ${name}`, value);
-        async function onValueChanged(value: string | number) {
-            await UqDefault.ActIDProp(Atom, id, name, value);
-            let data = uqApp.pageCache.getData<PageMoreCacheData>();
-            if (data) {
-                let item = data.getItem<{ id: number }>(v => v.id === id) as any;
-                if (item) item[name] = value;
-            }
-        }
-        return <>
-            <LabelRowEdit label={label} value={value} readonly={readonly} onValueChanged={onValueChanged} />
-            <Sep />
-        </>
-    }
-
-    function RowProp({ label, name, readonly }: IDViewRowProps) {
-        async function onValueChanged(value: string | number) {
-            await UqDefault.ActIDProp(Atom, id, name, value);
-            let data = uqApp.pageCache.getData<PageMoreCacheData>();
-            if (data) {
-                let item = data.getItem<{ id: number }>(v => v.id === id) as any;
-                if (item) item[name] = value;
-            }
-        }
-        let value = props[name]?.value;
-        return <>
-            <LabelRowEdit label={label} value={value} readonly={readonly} onValueChanged={onValueChanged} />
-            <Sep />
-        </>
-    }
-
     return <Page header={caption}>
-        {viewRows.map((v, index) => <RowMain key={index} {...v} />)}
+        {
+            viewRows.map((v, index) => <React.Fragment key={index}>
+                <ViewPropMain key={index} {...v} id={id} gen={gen} value={main[v.name]} />
+                <Sep />
+            </React.Fragment>)
+        }
         {
             Array.from(bizAtom.props, ([, v]) => {
-                let { name, caption } = v;
-                return {
-                    name,
-                    label: caption ?? name
-                }
-            }).map((v, index) => {
-                return <RowProp key={index} {...v} />;
+                let { name, phrase, caption } = v;
+                let prop = props[phrase];
+                return <React.Fragment key={name}>
+                    <ViewPropEx id={id} gen={gen} name={name} label={caption ?? name} bizBud={v} value={prop?.value} />
+                    <Sep />
+                </React.Fragment>;
             })
         }
     </Page>;

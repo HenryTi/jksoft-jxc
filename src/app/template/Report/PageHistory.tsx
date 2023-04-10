@@ -8,10 +8,13 @@ export function PageHistory({ Gen }: GenProps<GenReport>) {
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
     const navigate = useNavigate();
-    gen.navigate = navigate;
-    const { subjectHistory, ViewItemHistory, captionHistory, historySortField, onHistoryClick } = gen;
+    //gen.navigate = navigate;
+    const { subjectHistory, ViewItemHistory, captionHistory, historySortField } = gen;
     const { id: paramId } = useParams();
     const param = { atomId: Number(paramId) };
+    async function onHistoryClick(item: any) {
+        navigate(`../${gen.pathStorageHistory}/${item.id}`);
+    }
     return <PageQueryMore
         header={captionHistory}
         param={param}

@@ -2,7 +2,7 @@ import { UqExt } from "uqs/UqDefault";
 import { Biz } from "./Biz";
 
 export class BizBase {
-    protected readonly biz: Biz;
+    readonly biz: Biz;
     readonly uq: UqExt;
     readonly name: string;
     readonly type: string;

@@ -1,5 +1,3 @@
-import { NavigateFunction } from "react-router-dom";
-import { UqID } from "tonwa-uq";
 import { UqApp, useUqApp } from "../UqApp";
 import { Biz } from "../Biz";
 
@@ -12,7 +10,6 @@ export abstract class Gen {
         this.uqApp = uqApp;
         this.biz = uqApp.objectOf(Biz);
     }
-    abstract get caption(): string;
 }
 
 export function useGen<P>(Gen: new (uqApp: UqApp) => P) {
@@ -24,11 +21,8 @@ export interface GenProps<T extends Gen> {
     Gen: new (uqApp: UqApp) => T;
 }
 
-export abstract class GentWithPath extends Gen {
-    abstract get path(): string;
-    navigate: NavigateFunction;
-}
-
-export abstract class GenInput extends GentWithPath {
-    abstract get Atom(): UqID<any>;
+export abstract class GenBizEntity extends Gen {
+    abstract get bizEntityType(): string;
+    abstract get bizEntityName(): string;
+    abstract get caption(): string;
 }

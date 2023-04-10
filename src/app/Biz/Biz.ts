@@ -9,6 +9,7 @@ import { EntitySubject } from './EntitySubject';
 import { EntityTie } from './EntityTie';
 
 export class Biz {
+    readonly uqApp: UqApp;
     readonly uq: UqExt;
     readonly sheets: { [name: string]: EntitySheet } = {}
     readonly atoms: { [name: string]: EntityAtom } = {}
@@ -19,6 +20,7 @@ export class Biz {
     readonly trees: { [name: string]: EntityTree } = {}
 
     constructor(uqApp: UqApp) {
+        this.uqApp = uqApp;
         this.uq = uqApp.uq;
         this.buildEntities();
     }
@@ -49,6 +51,7 @@ export class Biz {
         }
         for (let [bizEntity, schema] of arr) {
             bizEntity.fromSchema(schema);
+            bizEntity.scan();
         }
     }
 

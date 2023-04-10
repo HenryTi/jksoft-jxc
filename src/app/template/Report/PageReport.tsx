@@ -8,9 +8,12 @@ import { GenReport } from "./GenReport";
 export function PageReport({ Gen, children }: GenProps<GenReport> & { children?: ReactNode }) {
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
-    const { caption, searchSubjectAtom, sortField, ViewItem, onItemClick } = gen;
+    const { caption, searchSubjectAtom, sortField, ViewItem, pathStorageHistory } = gen;
     const navigate = useNavigate();
-    gen.navigate = navigate;
+    //gen.navigate = navigate;
+    async function onItemClick(item: any): Promise<void> {
+        navigate(`../${pathStorageHistory}/${item.atom}`);
+    }
     let param = {};
     return <PageQueryMore
         header={caption}

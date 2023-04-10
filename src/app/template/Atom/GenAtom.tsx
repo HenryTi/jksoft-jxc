@@ -1,25 +1,31 @@
 import { FormInput, FormRow } from "app/coms";
-import { QueryMore } from "app/tool";
+import { Gen, GenBizEntity, QueryMore } from "app/tool";
 import { UqApp } from "app/UqApp";
 import { UqID, UqQuery } from "tonwa-uq";
 import { Atom } from "uqs/UqDefault";
-import { GenInput } from "app/tool";
 import { BizAtom } from "app/Biz";
 
-export interface IDViewRowProps {
+export interface ViewPropRowProps {
     name: string;
     label: string;
     readonly?: boolean;
 }
 
-export abstract class GenAtom extends GenInput {
-    abstract get atomName(): string;
-    get path() { return this.atomName; }
+export interface ViewPropProps extends ViewPropRowProps {
+    id: number;
+    value: string | number;
+    gen: GenAtom;
+    ValueTemplate?: (props: { value: any; }) => JSX.Element;
+}
+
+export abstract class GenAtom extends GenBizEntity {
+    readonly bizEntityType = 'atom';
+    get path() { return this.bizEntityName; }
     get pathNew() { return `${this.path}-new` }
     get pathEdit() { return `${this.path}-edit` }
     get pathView() { return `${this.path}-view` }
     get pathList() { return `${this.path}-list` }
-    get bizAtom(): BizAtom { return this.biz.atoms[this.atomName]; }
+    get bizAtom(): BizAtom { return this.biz.atoms[this.bizEntityName]; }
     readonly Atom: UqID<any>;
     // get labelClassName(): string { return 'text-end' }
 
@@ -60,11 +66,11 @@ export abstract class GenAtom extends GenInput {
     }
 
     // IDView
-    get viewRows(): IDViewRowProps[] {
+    get viewRows(): ViewPropRowProps[] {
         return [
-            { name: 'id', label: 'id', readonly: true },
-            { name: 'no', label: this.NOLabel, readonly: true },
-            { name: 'ex', label: this.exLabel },
+            { name: 'id', label: 'id', readonly: true, },
+            { name: 'no', label: this.NOLabel, readonly: true, },
+            { name: 'ex', label: this.exLabel, },
         ];
     }
 
@@ -100,6 +106,32 @@ export abstract class GenAtom extends GenInput {
         this.listTop = null; // <ListTop />;
 
         this.ViewItemAtom = ViewItemID;
+    }
+
+    async savePropMain(id: number, name: string, value: string | number) {
+        await this.uq.ActIDProp(this.uq.Atom, id, name, value);
+    }
+
+    async savePropEx(id: number, name: string, value: string | number) {
+        let { bizAtom } = this;
+        let { props } = bizAtom;
+        let bizProp = props.get(name);
+        let int: number, dec: number, str: string;
+        switch (bizProp.budType.type) {
+            default:
+            case 'int': int = value as number; break;
+            case 'dec': dec = value as number; break;
+            case 'str': str = value as string; break;
+        }
+        await this.uq.SaveProp.submit({
+            id,
+            phrase: name,
+            int, dec, str
+        });
+    }
+
+    get SelectPage(): JSX.Element {
+        return null;
     }
 }
 

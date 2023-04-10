@@ -215,8 +215,12 @@ export abstract class UqAppBase<UQS = any> {
         if (ret === undefined) {
             ret = new constructor(this as any);
             this.objects.set(constructor, ret);
+            this.onObjectBuilt(ret);
         }
         return ret;
+    }
+
+    protected onObjectBuilt(object: any) {
     }
 }
 
@@ -232,6 +236,7 @@ class LocalStorageDb extends LocalDb {
     }
 }
 
+export type OpenModal = <T = any>(element: JSX.Element, onClosed?: (result: any) => void) => Promise<T>;
 export const ModalContext = React.createContext(undefined);
 export function useModal() {
     const uqApp = useUqAppBase();

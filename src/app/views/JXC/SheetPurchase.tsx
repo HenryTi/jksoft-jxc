@@ -10,7 +10,7 @@ import { GenContact } from "./AtomContact";
 const pathPurchaseEdit = 'purchase-edit';
 
 export class GenPurchase extends GenOrigin {
-    readonly sheetName = 'purchase';
+    readonly bizEntityName = 'purchase';
     readonly path = pathPurchaseEdit;
 
     readonly QuerySearchItem: QueryMore;
@@ -47,7 +47,7 @@ function PageSheetDetail({ detail, Gen }: (GenProps<GenPurchase> & { detail: Det
 }
 
 class GenDetailPurchase extends GenDetail {
-    get caption(): string { return '明细'; }
+    readonly bizEntityName = undefined as string;
     get path(): string { return undefined; }
     get itemCaption(): string { return '产品'; }
     get ViewItemTemplate(): ({ value }: { value: any; }) => JSX.Element {

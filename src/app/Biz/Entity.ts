@@ -1,4 +1,4 @@
-import { BizProp, BizAssign } from "./BizAtom";
+import { BizProp, BizAssign } from "./BizBud";
 import { BizBase } from "./BizBase";
 
 export class Entity extends BizBase {
@@ -19,6 +19,9 @@ export class Entity extends BizBase {
         for (let prop of props) {
             let { name, type } = prop;
             let bizProp = new BizProp(this.biz, name, type, this);
+            let { budType } = bizProp;
+            if (budType === undefined) debugger;
+            budType.fromSchema(prop);
             this.props.set(bizProp.phrase, bizProp);
         }
     }
@@ -27,7 +30,17 @@ export class Entity extends BizBase {
         for (let assign of assigns) {
             let { name, type } = assign;
             let bizAssign = new BizAssign(this.biz, name, type, this);
+            bizAssign.budType.fromSchema(assign);
             this.assigns.set(bizAssign.phrase, bizAssign);
+        }
+    }
+
+    scan() {
+        for (let [, bud] of this.props) {
+            bud.scan();
+        }
+        for (let [, bud] of this.assigns) {
+            bud.scan();
         }
     }
 }

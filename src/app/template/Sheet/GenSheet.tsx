@@ -1,13 +1,13 @@
 import { UqApp } from "app/UqApp";
-import { UqAction, UqID, UqQuery } from "tonwa-uq";
-import { Detail, Sheet } from "uqs/UqDefault";
-import { GenInput, GenProps } from "app/tool";
+import { Sheet } from "uqs/UqDefault";
+import { GenBizEntity, GenProps } from "app/tool";
 import { Editing } from "./Editing";
 import { BizSheet } from "app/Biz";
 
-export abstract class GenSheet extends GenInput {
-    abstract get sheetName(): string;
-    get bizSheet(): BizSheet { return this.biz.sheets[this.sheetName] }
+export abstract class GenSheet extends GenBizEntity {
+    readonly bizEntityType = 'sheet';
+    abstract get path(): string;
+    get bizSheet(): BizSheet { return this.biz.sheets[this.bizEntityName] }
     get caption() {
         let { name, caption } = this.bizSheet;
         return caption ?? name;
@@ -18,7 +18,7 @@ export abstract class GenSheet extends GenInput {
     }
     abstract get targetCaption(): string;
 
-    readonly Atom: UqID<Sheet>;
+    // readonly Atom: UqID<Sheet>;
 
     abstract get ModalSheetStart(): (props: GenProps<GenSheet>) => JSX.Element;
     abstract get ViewItemEditRow(): (props: { row: any; Gen: new (uqApp: UqApp) => GenSheet }) => JSX.Element;
@@ -30,7 +30,7 @@ export abstract class GenSheet extends GenInput {
     constructor(uqApp: UqApp) {
         super(uqApp);
         let uq = this.uq;
-        this.Atom = uq.Sheet;
+        // this.Atom = uq.Sheet;
     }
 
     // 单据列表项显示

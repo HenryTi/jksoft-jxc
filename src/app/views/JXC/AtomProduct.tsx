@@ -5,7 +5,7 @@ import { Atom, uqSchema } from "uqs/UqDefault";
 import { UqApp } from "app/UqApp";
 
 export class GenProduct extends GenAtom {
-    readonly atomName = uqSchema.$biz.product.name;
+    readonly bizEntityName = uqSchema.$biz.product.name;
     get exLabel(): string { return '描述' }
 }
 

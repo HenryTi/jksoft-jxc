@@ -1049,11 +1049,11 @@ export class UqMan {
     }
     private async apiID(param: ParamID, resultType: EnumResultType): Promise<any> {
         let { IDX } = param;
-        //this.checkParam(null, IDX, null, id, null, page);
-        let ret = await this.apiPost('id', resultType, {
+        let nParam = {
             ...param,
             IDX: this.IDXToString(IDX),
-        });
+        }
+        let ret = await this.apiPost('id', resultType, nParam);
         return ret;
     }
 

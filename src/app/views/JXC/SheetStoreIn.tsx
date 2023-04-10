@@ -9,7 +9,7 @@ import { Sheet } from "uqs/UqDefault";
 const pathStoreIn = 'store-in';
 
 export class GenStoreIn extends GenDerive {
-    readonly sheetName = 'storein';
+    readonly bizEntityName = 'storein';
     readonly path = pathStoreIn;
     readonly ViewTarget: (props: { sheet: Sheet }) => JSX.Element;
     readonly ViewTargetBand: (props: { sheet: Sheet }) => JSX.Element;

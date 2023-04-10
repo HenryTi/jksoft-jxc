@@ -11,7 +11,7 @@ import { GenContact } from "./AtomContact";
 const pathSaleEdit = 'sale-edit';
 
 export class GenSale extends GenOrigin {
-    readonly sheetName = 'sale';
+    readonly bizEntityName = 'sale';
     readonly path = pathSaleEdit;
 
     readonly QuerySearchItem: QueryMore;

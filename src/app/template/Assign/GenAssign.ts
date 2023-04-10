@@ -18,7 +18,7 @@ export abstract class GenAssign extends Gen {
     };
 
     get bizAssigns(): BizAssign[] {
-        return this.opAtomAssigns.bizAtoms;
+        return this.opAtomAssigns.bizEntities;
     }
 
     saveAssign(bizAssign: BizAssign, id: number, value: any) {

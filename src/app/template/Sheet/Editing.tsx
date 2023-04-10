@@ -44,8 +44,8 @@ export abstract class Editing {
     abstract load(sheet: number): Promise<void>;
 
     async newSheet(item: number) {
-        let { uq, Atom, phrase } = this.gen;
-        let no = await uq.IDNO({ ID: Atom });
+        let { uq, /*Atom, */phrase } = this.gen;
+        let no = await uq.IDNO({ ID: uq.Sheet });
         let sheet = { no, item: item, phrase } as any;
         setAtomValue(this.atomSheet, sheet);
         return sheet;

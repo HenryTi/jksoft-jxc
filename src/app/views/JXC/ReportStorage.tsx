@@ -14,9 +14,11 @@ const pathStorageDetail = 'storage-detail';
 const pathStorageSheet = 'storage-sheet';
 
 export class GenStorage extends GenReport {
-    readonly subjectName = 'storage';
+    readonly bizEntityName = 'storage';
+    readonly bizEntityType = 'subject';
     readonly caption = '库存报表';
     readonly path = pathStorage;
+    readonly pathStorageHistory = pathStorageHistory;
     readonly sortField: string;
     readonly QueryReport: UqQuery<any, any>;
     readonly QueryHistory: UqQuery<any, any>;
@@ -49,10 +51,6 @@ export class GenStorage extends GenReport {
         </LMR>;
     }
 
-    readonly onItemClick = async (item: any): Promise<void> => {
-        this.navigate(`../${pathStorageHistory}/${item.atom}`);
-    }
-
     readonly DetailRef = ({ value }: { value: any }) => {
         return <>
             <IDView uq={this.uq} id={value.sheet} Template={this.SheetRef} />
@@ -75,10 +73,6 @@ export class GenStorage extends GenReport {
                 <FA name="angle-right" className="text-muted" />
             </div>
         </LMR>
-    }
-
-    readonly onHistoryClick = async (item: any) => {
-        this.navigate(`../${pathStorageDetail}/${item.ref}`);
     }
 }
 

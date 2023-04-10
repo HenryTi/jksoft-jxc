@@ -13,6 +13,7 @@ const fieldPrice = 'v1';
 const fieldAmount = 'v2';
 
 export abstract class GenDetail extends Gen {
+    readonly caption = '明细';
     buildFormRows(detial: Detail): FormRow[] {
         let { value, v1: price, v2: amount } = detial;
         return [

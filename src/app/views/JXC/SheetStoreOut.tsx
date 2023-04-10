@@ -10,7 +10,7 @@ import { GenSale } from "./SheetSale";
 const pathStoreOut = 'store-out';
 
 export class GenStoreOut extends GenDerive {
-    readonly sheetName = 'storeout';
+    readonly bizEntityName = 'storeout';
     readonly path = pathStoreOut;
     readonly ViewTarget: (props: { sheet: Sheet }) => JSX.Element;
     readonly ViewTargetBand: (props: { sheet: Sheet }) => JSX.Element;
