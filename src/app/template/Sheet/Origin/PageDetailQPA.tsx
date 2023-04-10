@@ -14,6 +14,7 @@ const fieldAmount = 'v2';
 
 export abstract class GenDetail extends Gen {
     readonly caption = '明细';
+    readonly bizEntityName = undefined as string;
     buildFormRows(detial: Detail): FormRow[] {
         let { value, v1: price, v2: amount } = detial;
         return [

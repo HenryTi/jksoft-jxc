@@ -35,8 +35,8 @@ export class GenSale extends GenOrigin {
     }
 
     readonly buildDetailFromSelectedAtom = (selectedItem: any): any => {
-        let { id, atoms } = selectedItem;
-        let detail = { item: id, v1: Number(atoms.retailprice), };
+        let { id, buds } = selectedItem;
+        let detail = { item: id, v1: Number(buds.retailprice), };
         return detail;
     }
 }
@@ -50,7 +50,6 @@ function PageSheetDetail({ detail, Gen }: (GenProps<GenSale> & { detail: Detail 
 }
 
 class GenDetailSale extends GenDetail {
-    get caption(): string { return '明细'; }
     get path(): string { return undefined; }
     get itemCaption(): string { return '产品'; }
     get ViewItemTemplate(): ({ value }: { value: any; }) => JSX.Element {

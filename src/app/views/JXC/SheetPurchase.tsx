@@ -47,7 +47,6 @@ function PageSheetDetail({ detail, Gen }: (GenProps<GenPurchase> & { detail: Det
 }
 
 class GenDetailPurchase extends GenDetail {
-    readonly bizEntityName = undefined as string;
     get path(): string { return undefined; }
     get itemCaption(): string { return '产品'; }
     get ViewItemTemplate(): ({ value }: { value: any; }) => JSX.Element {

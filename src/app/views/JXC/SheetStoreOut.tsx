@@ -3,8 +3,7 @@ import { PageDeriveEdit, GenSheet, GenDerive } from "app/template/Sheet";
 import { UqApp } from "app/UqApp";
 import { Route } from "react-router-dom";
 import { UserView } from "tonwa-app";
-import { UqAction, UqQuery } from "tonwa-uq";
-import { Sheet, uqSchema } from "uqs/UqDefault";
+import { Sheet } from "uqs/UqDefault";
 import { GenSale } from "./SheetSale";
 
 const pathStoreOut = 'store-out';
