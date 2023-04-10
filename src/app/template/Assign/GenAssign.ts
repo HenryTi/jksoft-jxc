@@ -1,13 +1,10 @@
-import { BizAssign, OpAtomAssigns } from "app/Biz";
-import { Gen } from "app/tool";
+import { BizAssign, BizAtom, OpAtomAssigns } from "app/Biz";
+import { GenBizEntity } from "app/tool";
 
-export abstract class GenAssign extends Gen {
-    abstract get atomName(): string;
+export abstract class GenAssign extends GenBizEntity {
+    readonly bizEntityType = 'atom';
+    get bizAtom(): BizAtom { return this.biz.atoms[this.bizEntityName]; }
     protected abstract get phrases(): string[];
-
-    get bizAtom() {
-        return this.biz.atoms[this.atomName];
-    }
 
     private _opAtomAssigns: OpAtomAssigns;
     get opAtomAssigns() {
@@ -18,7 +15,7 @@ export abstract class GenAssign extends Gen {
     };
 
     get bizAssigns(): BizAssign[] {
-        return this.opAtomAssigns.bizEntities;
+        return this.opAtomAssigns.bizBuds;
     }
 
     saveAssign(bizAssign: BizAssign, id: number, value: any) {

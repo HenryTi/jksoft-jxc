@@ -2,22 +2,22 @@ import { BizProp, BizAssign, BizBud } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom } from "./EntityAtom";
 
-export abstract class OpEntity<A extends Entity> {
-    readonly entity: Entity;
-    readonly bizBuds: BizBud[];
-    constructor(entity: Entity, budNames: string[]) {
+export abstract class OpEntity<A extends Entity, T extends BizBud> {
+    readonly entity: A;
+    readonly bizBuds: T[];
+    constructor(entity: A, budNames: string[]) {
         this.entity = entity;
         this.bizBuds = this.bizBudsFromPhrases(budNames);
     }
 
-    protected abstract getBizBuds(): Map<string, BizBud>;
+    protected abstract getBizBuds(): Map<string, T>;
 
-    private bizBudsFromPhrases(budNames: string[]): BizBud[] {
+    private bizBudsFromPhrases(budNames: string[]): T[] {
         if (budNames === undefined) return;
         let atoms = this.getBizBuds();
         return budNames.map(v => this.bizBudFromName(atoms, v));
     }
-    private bizBudFromName = (atoms: Map<string, BizBud>, name: string) => {
+    private bizBudFromName = (atoms: Map<string, T>, name: string) => {
         for (let [, value] of atoms) {
             if (value.name === name) return value;
         }
@@ -52,13 +52,13 @@ export abstract class OpEntity<A extends Entity> {
         return ret;
     }
 
-    async save(bizAtom: A, id: number, atomValue: any) {
-        let phrase = `${this.entity.phrase}.${bizAtom.name}`;
+    async save(bizBud: T, id: number, budValue: any) {
+        let phrase = `${this.entity.phrase}.${bizBud.name}`;
         let int: number, dec: number, str: string;
-        switch (bizAtom.type) {
-            case 'int': int = atomValue; break;
-            case 'dec': dec = atomValue; break;
-            case 'char': str = atomValue; break;
+        switch (bizBud.budType.type) {
+            case 'int': int = budValue; break;
+            case 'dec': dec = budValue; break;
+            case 'char': str = budValue; break;
         }
         let param = {
             phrase, id, int, dec, str
@@ -67,7 +67,7 @@ export abstract class OpEntity<A extends Entity> {
     }
 }
 
-export class OpAtomProps extends OpEntity<EntityAtom> {
+export class OpAtomProps extends OpEntity<EntityAtom, BizProp> {
     protected getBizBuds(): Map<string, BizProp> { return this.entity.props; }
     protected SearchEntityBuds(param: any, pageStart: any, pageSize: number): Promise<{ $page: any[]; buds: any[] }> {
         return this.entity.uq.SearchAtomProps.page(param, pageStart, pageSize);
@@ -79,7 +79,7 @@ export class OpAtomProps extends OpEntity<EntityAtom> {
     }
 }
 
-export class OpAtomAssigns extends OpEntity<EntityAtom> {
+export class OpAtomAssigns extends OpEntity<EntityAtom, BizAssign> {
     protected getBizBuds(): Map<string, BizAssign> { return this.entity.assigns; }
     protected SearchEntityBuds(param: any, pageStart: any, pageSize: number): Promise<{ $page: any[]; buds: any[] }> {
         return this.entity.uq.SearchAtomAssigns.page(param, pageStart, pageSize);

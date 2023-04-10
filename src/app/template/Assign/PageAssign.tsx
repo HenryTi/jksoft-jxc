@@ -11,7 +11,7 @@ export function PageAssign<P extends GenAssign>({ Gen }: GenProps<P>) {
     const { openModal } = useModal();
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
-    const { caption, searchAtoms, atomName: atomName } = gen;
+    const { caption, searchAtoms, bizEntityName } = gen;
     function ViewItem({ value }: { value: ReturnSearchAtomAssignsBuds & { buds: { [bud: string]: any } }; }) {
         let { buds } = value;
         let { bizAssigns } = gen;
@@ -51,6 +51,6 @@ export function PageAssign<P extends GenAssign>({ Gen }: GenProps<P>) {
         onItemClick={onItemClick}
     >
         <div className="p-3 tonwa-bg-gray-3">{caption}</div>
-        <div className="p-3 tonwa-bg-gray-2">{atomName} {caption}</div>
+        <div className="p-3 tonwa-bg-gray-2">{bizEntityName} {caption}</div>
     </PageQueryMore>;
 }

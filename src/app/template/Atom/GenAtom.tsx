@@ -86,7 +86,7 @@ export abstract class GenAtom extends GenBizEntity {
 
     constructor(uqApp: UqApp) {
         super(uqApp);
-        this.Atom = uqApp.uq.Atom;
+        this.Atom = this.uq.Atom;
 
         let uq = this.uq;
         this.searchAtoms = async (param: any, pageStart: any, pageSize: number) => {

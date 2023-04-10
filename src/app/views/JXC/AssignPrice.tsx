@@ -5,7 +5,7 @@ import { Route } from "react-router-dom";
 export const pathPrice = 'price';
 
 export class GenPrice extends GenAssign {
-    readonly atomName = 'product';
+    readonly bizEntityName = 'product';
     protected readonly phrases = ['retailprice'];
     get caption() { return '零售价设置'; };
 }
