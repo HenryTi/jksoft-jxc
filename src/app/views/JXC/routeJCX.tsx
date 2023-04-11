@@ -10,6 +10,7 @@ import { routeStoreOut } from "./SheetStoreOut";
 import { routeReportStorage } from "./ReportStorage";
 import { routeReportCenter } from "./ReportCenter";
 import { routePrice } from "./AssignPrice";
+import { routeSheetView } from './SheetView';
 import { UqApp } from "app/UqApp";
 
 export const pathJXC = 'jxc';
@@ -27,6 +28,7 @@ export function routeJCX(uqApp: UqApp) {
 
         {routeReportCenter}
         {routeReportStorage}
+        {routeSheetView(uqApp)}
 
         {routePrice}
     </>;

@@ -3,6 +3,7 @@ import { useUqApp } from "app/UqApp";
 import { useNavigate, useParams } from "react-router-dom";
 import { GenProps } from "app/tool";
 import { GenReport } from "./GenReport";
+import { pathDetailView } from "app/views/JXC/SheetView";
 
 export function PageHistory({ Gen }: GenProps<GenReport>) {
     const uqApp = useUqApp();
@@ -13,7 +14,7 @@ export function PageHistory({ Gen }: GenProps<GenReport>) {
     const { id: paramId } = useParams();
     const param = { atomId: Number(paramId) };
     async function onHistoryClick(item: any) {
-        navigate(`../${gen.pathStorageDetail}/${item.ref}`);
+        navigate(`../${pathDetailView}/${item.ref}`);
     }
     return <PageQueryMore
         header={captionHistory}
