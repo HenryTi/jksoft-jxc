@@ -3,17 +3,19 @@ import { atom, PrimitiveAtom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Sheet } from "uqs/UqDefault";
 import { GenSheet } from "./GenSheet";
+import { Gen } from "app/tool";
 
 // export interface SheetBase { id?: number; base?: number; no?: string; item?: number; }
 // export interface DetailBase { id?: number; base?: number; item?: number; value: number; }
 
-export abstract class Editing {
+export abstract class GenEditing extends Gen {
     protected gen: GenSheet;
     readonly atomSheet: PrimitiveAtom<Sheet>;
     readonly atomSubmitable: PrimitiveAtom<boolean>;
     readonly atomIsMine: PrimitiveAtom<boolean>;
 
     constructor(gen: GenSheet) {
+        super(gen.uqApp);
         this.gen = gen;
         this.atomSheet = atom(undefined as Sheet);
         this.atomSubmitable = atom(false) as any;

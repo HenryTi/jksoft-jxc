@@ -9,14 +9,16 @@ import { OpAtomAssigns } from "app/Biz";
 
 interface PageAtomSelectProps<G extends GenAtom> extends GenProps<G> {
     ViewItem?: ({ value }: { value: any }) => JSX.Element;
-    assigns?: string[]
+    assigns?: string[];
+    loadOnOpen?: boolean;
 }
 
-export function PageAtomSelect<G extends GenAtom>({ Gen, ViewItem, assigns }: PageAtomSelectProps<G>) {
+export function PageAtomSelect<G extends GenAtom>({ Gen, ViewItem, assigns, loadOnOpen }: PageAtomSelectProps<G>) {
     const { closeModal } = useModal();
     const uqApp = useUqApp();
-    const { caption, placeholder, bizAtom, autoLoadOnOpen } = uqApp.objectOf(Gen);
-    const [searchParam, setSearchParam] = useState(autoLoadOnOpen === true ? { key: undefined as string } : undefined);
+    const gen = uqApp.objectOf(Gen);
+    const { caption, placeholder, bizAtom } = gen.genAtomSelect;
+    const [searchParam, setSearchParam] = useState(loadOnOpen === false ? undefined : { key: undefined as string });
     const searchBox = <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder={placeholder} />;
     async function onSearch(key: string) {
         setSearchParam({
@@ -32,14 +34,14 @@ export function PageAtomSelect<G extends GenAtom>({ Gen, ViewItem, assigns }: Pa
         return ret;
     }
 
+    // pageSize={8}
+    // pageMoreSize={2}
     return <PageQueryMore header={`选择${caption}`}
         query={searchAtoms}
         param={searchParam}
         sortField="id"
         ViewItem={ViewItem}
         onItemClick={onItemClick}
-        pageSize={8}
-        pageMoreSize={2}
     >
         {searchBox}
     </PageQueryMore>;

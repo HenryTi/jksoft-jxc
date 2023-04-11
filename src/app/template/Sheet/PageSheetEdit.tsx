@@ -19,7 +19,7 @@ export function PageSheetEdit({ Gen, onEditRow, onAddRow }: PageSheetEditProps) 
     const uqApp = useUqApp();
     const navigate = useNavigate();
     const gen = uqApp.objectOf(Gen);
-    const { editing, caption
+    const { genEditing: editing, caption
         , ViewItemEditRow, ViewTargetBand
     } = gen;
     const sheet = useAtomValue(editing.atomSheet);

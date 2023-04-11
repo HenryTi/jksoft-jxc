@@ -10,7 +10,7 @@ export function PageDeriveEdit({ Gen }: GenProps<GenDerive>) {
     const sheet: any = {};
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
-    const { editing, ModalSheetStart } = gen;
+    const { genEditing: editing, ModalSheetStart } = gen;
     const { openModal } = useModal();
     const navigate = useNavigate();
     const { id: paramId } = useParams();

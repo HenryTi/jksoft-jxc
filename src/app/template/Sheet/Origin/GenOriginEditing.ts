@@ -1,10 +1,10 @@
 import { atom, PrimitiveAtom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Detail, Sheet } from "uqs/UqDefault";
-import { Editing } from "../Editing";
+import { GenEditing } from "../GenEditing";
 import { GenOrigin } from "./GenOrigin";
 
-export class EditingOrigin extends Editing {
+export class GenOriginEditing extends GenEditing {
     readonly atomDetails: PrimitiveAtom<Detail[]>;
 
     constructor(gen: GenOrigin) {

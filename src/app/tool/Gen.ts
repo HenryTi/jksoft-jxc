@@ -12,7 +12,7 @@ export abstract class Gen {
     }
 }
 
-export function useGen<P>(Gen: new (uqApp: UqApp) => P) {
+export function useGen<P extends Gen>(Gen: new (uqApp: UqApp) => P) {
     let uqApp = useUqApp();
     return uqApp.objectOf(Gen);
 }

@@ -7,11 +7,8 @@ import { ModalSelectProduct } from "./AtomProduct";
 import { QueryMore } from "app/tool";
 import { GenContact } from "./AtomContact";
 
-const pathPurchaseEdit = 'purchase-edit';
-
 export class GenPurchase extends GenOrigin {
     readonly bizEntityName = 'purchase';
-    readonly path = pathPurchaseEdit;
 
     readonly QuerySearchItem: QueryMore;
 
@@ -54,7 +51,10 @@ class GenDetailPurchase extends GenDetail {
     }
 }
 
-export const routePurchase = <>
-    <Route path={`${pathPurchaseEdit}/:id`} element={<PagePurchaseEdit />} />
-    <Route path={pathPurchaseEdit} element={<PagePurchaseEdit />} />
-</>;
+export function routePurchase(uqApp: UqApp) {
+    let { path } = uqApp.objectOf(GenPurchase);
+    return <>
+        <Route path={`${path}/:id`} element={<PagePurchaseEdit />} />
+        <Route path={path} element={<PagePurchaseEdit />} />
+    </>;
+}

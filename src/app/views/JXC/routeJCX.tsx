@@ -20,10 +20,10 @@ export function routeJCX(uqApp: UqApp) {
         {routeContact(uqApp)}
 
         {routeSheetCenter}
-        {routePurchase}
-        {routeStoreIn}
-        {routeSale}
-        {routeStoreOut}
+        {routePurchase(uqApp)}
+        {routeStoreIn(uqApp)}
+        {routeSale(uqApp)}
+        {routeStoreOut(uqApp)}
 
         {routeReportCenter}
         {routeReportStorage}

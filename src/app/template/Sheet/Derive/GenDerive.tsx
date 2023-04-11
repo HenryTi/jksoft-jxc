@@ -1,10 +1,9 @@
-import { UqID, UqQuery } from "tonwa-uq";
 import { GenProps } from "app/tool";
 import { UqApp } from "app/UqApp";
 import { GenSheet } from "../GenSheet";
 import { PageDeriveSelect } from "./PageDeriveSelect";
 import { ViewEditRow } from "./ViewEditRow";
-import { EditingDerive } from "./EditingDerive";
+import { GenEditingDerive } from "./GenDeriveEditing";
 
 export abstract class GenDerive extends GenSheet {
     readonly origin: GenSheet;
@@ -14,7 +13,7 @@ export abstract class GenDerive extends GenSheet {
 
     readonly ViewItemSource: ({ id }: { id: number; }) => JSX.Element;
     readonly sourceSearchPlaceholder: string;
-    readonly editing: EditingDerive;
+    readonly genEditing: GenEditingDerive;
 
     detailFromOrigin(originDetail: any): any {
         let { id, item, value, done } = originDetail;
@@ -32,9 +31,10 @@ export abstract class GenDerive extends GenSheet {
         this.origin = this.getOriginSheetGen();
         this.ModalSheetStart = PageDeriveSelect as any;
         this.ViewItemEditRow = ViewEditRow as any;
-        this.editing = new EditingDerive(this);
+        this.genEditing = new this.GenEditingDerive(this);
     }
 
+    protected get GenEditingDerive(): new (genDerive: GenDerive) => GenEditingDerive { return GenEditingDerive; }
     protected abstract getOriginSheetGen(): GenSheet;
 
     buildDetailFromSelectedAtom = (selectedItem: any): any => {

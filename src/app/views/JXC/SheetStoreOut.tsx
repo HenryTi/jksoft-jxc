@@ -6,11 +6,8 @@ import { UserView } from "tonwa-app";
 import { Sheet } from "uqs/UqDefault";
 import { GenSale } from "./SheetSale";
 
-const pathStoreOut = 'store-out';
-
 export class GenStoreOut extends GenDerive {
     readonly bizEntityName = 'storeout';
-    readonly path = pathStoreOut;
     readonly ViewTarget: (props: { sheet: Sheet }) => JSX.Element;
     readonly ViewTargetBand: (props: { sheet: Sheet }) => JSX.Element;
 
@@ -35,7 +32,10 @@ function PageStoreOutEdit() {
     return <PageDeriveEdit Gen={GenStoreOut} />;
 }
 
-export const routeStoreOut = <>
-    <Route path={pathStoreOut} element={<PageStoreOutEdit />} />
-    <Route path={`${pathStoreOut}/:id`} element={<PageStoreOutEdit />} />
-</>;
+export function routeStoreOut(uqApp: UqApp) {
+    let { path } = uqApp.objectOf(GenStoreOut);
+    return <>
+        <Route path={path} element={<PageStoreOutEdit />} />
+        <Route path={`${path}/:id`} element={<PageStoreOutEdit />} />
+    </>;
+}

@@ -10,7 +10,7 @@ export function PageOriginNew({ Gen }: GenProps<GenOrigin>) {
     const uqApp = useUqApp();
     const { closeModal } = useModal();
     const gen = uqApp.objectOf(Gen);
-    const { editing, caption, QuerySearchItem, targetCaption } = gen;
+    const { genEditing: editing, caption, QuerySearchItem, targetCaption } = gen;
     const [searchParam, setSearchParam] = useState<{ key: string; }>(undefined);
     async function onSearch(key: string) {
         setSearchParam({
@@ -29,14 +29,14 @@ export function PageOriginNew({ Gen }: GenProps<GenOrigin>) {
         let sheet = await editing.newSheet(item.id);
         closeModal(sheet);
     }
+    // pageSize={4}
+    // pageMoreSize={1}
     return <PageQueryMore header={`新建${caption}`}
         query={query}
         param={searchParam}
         sortField="id"
         ViewItem={ItemView}
         onItemClick={onItemClick}
-        pageSize={4}
-        pageMoreSize={1}
     >
         <div className="m-3">
             选择{targetCaption}

@@ -9,7 +9,7 @@ import { Detail } from "uqs/UqDefault";
 export function ViewEditRow({ row, Gen }: { row: any; } & GenProps<GenDerive>) {
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
-    const { uq, editing } = gen;
+    const { uq, genEditing: editing } = gen;
     const { sheet } = row;
     const [details, setDetails] = useState<any[]>(row.details);
     function ViewItemDetail({ value: detail }: { value: Detail & { id: number; $changedValue: number; originValue: number; done: number; } }) {

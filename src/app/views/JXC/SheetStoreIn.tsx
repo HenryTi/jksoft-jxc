@@ -6,11 +6,8 @@ import { UserView } from "tonwa-app";
 import { GenPurchase } from "./SheetPurchase";
 import { Sheet } from "uqs/UqDefault";
 
-const pathStoreIn = 'store-in';
-
 export class GenStoreIn extends GenDerive {
     readonly bizEntityName = 'storein';
-    readonly path = pathStoreIn;
     readonly ViewTarget: (props: { sheet: Sheet }) => JSX.Element;
     readonly ViewTargetBand: (props: { sheet: Sheet }) => JSX.Element;
 
@@ -35,7 +32,10 @@ function PageStoreInEdit() {
     return <PageDeriveEdit Gen={GenStoreIn} />;
 }
 
-export const routeStoreIn = <>
-    <Route path={pathStoreIn} element={<PageStoreInEdit />} />
-    <Route path={`${pathStoreIn}/:id`} element={<PageStoreInEdit />} />
-</>;
+export function routeStoreIn(uqApp: UqApp) {
+    let { path } = uqApp.objectOf(GenStoreIn);
+    return <>
+        <Route path={path} element={<PageStoreInEdit />} />
+        <Route path={`${path}/:id`} element={<PageStoreInEdit />} />
+    </>;
+}

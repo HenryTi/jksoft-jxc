@@ -1,5 +1,5 @@
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { Editing } from "../Editing";
+import { GenEditing } from "../GenEditing";
 import { atom, PrimitiveAtom } from "jotai";
 import { GenDerive } from "./GenDerive";
 import { Detail, Sheet } from "uqs/UqDefault";
@@ -13,7 +13,7 @@ interface DetailDone extends Detail {
     done: number;
 }
 
-export class EditingDerive extends Editing {
+export class GenEditingDerive extends GenEditing {
     declare protected gen: GenDerive;
     readonly atomRows: PrimitiveAtom<{ sheet: Sheet; details: Detail[] }[]>;
 

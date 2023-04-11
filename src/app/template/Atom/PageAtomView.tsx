@@ -11,7 +11,8 @@ import { ViewPropEx, ViewPropMain } from "./ViewProp";
 export function PageAtomView({ Gen }: GenProps<GenAtom>) {
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
-    const { caption, viewRows, bizAtom } = gen;
+    const { genAtomView } = gen;
+    const { caption, viewRows, bizAtom } = genAtomView;
     const { id: idString } = useParams();
     const id = Number(idString);
     const { UqDefault } = uqApp.uqs;

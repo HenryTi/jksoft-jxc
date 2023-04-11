@@ -8,11 +8,8 @@ import { ViewItemID } from "app/template";
 import { QueryMore } from "app/tool";
 import { GenContact } from "./AtomContact";
 
-const pathSaleEdit = 'sale-edit';
-
 export class GenSale extends GenOrigin {
     readonly bizEntityName = 'sale';
-    readonly path = pathSaleEdit;
 
     readonly QuerySearchItem: QueryMore;
 
@@ -58,7 +55,10 @@ class GenDetailSale extends GenDetail {
     get priceDisabled() { return true; }
 }
 
-export const routeSale = <>
-    <Route path={`${pathSaleEdit}/:id`} element={<PageSaleEdit />} />
-    <Route path={pathSaleEdit} element={<PageSaleEdit />} />
-</>;
+export function routeSale(uqApp: UqApp) {
+    let { path } = uqApp.objectOf(GenSale);
+    return <>
+        <Route path={`${path}/:id`} element={<PageSaleEdit />} />
+        <Route path={path} element={<PageSaleEdit />} />
+    </>;
+}

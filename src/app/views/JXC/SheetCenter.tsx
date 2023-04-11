@@ -50,12 +50,12 @@ export function PageSheetCenter() {
         if (items.length === 0) return null;
         return <ViceTitle>录入中的单据</ViceTitle>;
     }
+    // pageSize={15}
+    // pageMoreSize={5}
     return <PageQueryMore header={'单据中心'}
         param={{}}
         sortField={'id'}
         query={query}
-        pageSize={15}
-        pageMoreSize={5}
         ViewItem={ViewItem}
         Top={Top}
     >

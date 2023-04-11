@@ -60,7 +60,7 @@ Biz SHEET StoreIn ver 0.8 '入库单' {
     }
 }
 
-Biz SHEET StoreOut '出库单' {
+Biz SHEET StoreOut ver 0.2 '出库单' {
     detail;
     ACT (sheetId ID) {
         FOR detailId in detail {
@@ -68,7 +68,7 @@ Biz SHEET StoreOut '出库单' {
             SET item=a.item, value=a.value, v1=a.v1, v2=a.v2, origin=a.origin
                 FROM Detail as a
                 WHERE a.id=detailId;
-            Biz Subject storage -= value ref detailId;
+            Biz Subject storage of item -= value ref detailId;
             WITH Done ID=origin SET value+=value;
             PROC MayDeletePend(origin);
         }

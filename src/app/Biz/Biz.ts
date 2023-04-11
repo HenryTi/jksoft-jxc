@@ -25,6 +25,8 @@ export class Biz {
         this.buildEntities();
     }
 
+    init() { }
+
     private buildEntities() {
         const builders: { [type: string]: (name: string, type: string) => Entity } = {
             sheet: this.buildSheet,

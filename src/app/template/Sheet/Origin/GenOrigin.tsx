@@ -1,10 +1,10 @@
 import { UqApp } from "app/UqApp";
 import { GenProps } from "app/tool";
 import { GenSheet } from "../GenSheet";
-import { EditingOrigin } from "./EditingOrigin";
+import { GenOriginEditing } from "./GenOriginEditing";
 import { PageOriginNew } from "./PageOriginNew";
 import { QueryMore } from "app/tool";
-import { Atom, Detail, Sheet } from "uqs/UqDefault";
+import { Detail, Sheet } from "uqs/UqDefault";
 import { FA, LMR } from "tonwa-com";
 import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
@@ -22,14 +22,14 @@ export abstract class GenOrigin extends GenSheet {
     readonly ViewTargetBand: (props: { sheet: Sheet; }) => JSX.Element;
 
     readonly ModalSheetStart: (props: GenProps<GenSheet>) => JSX.Element;
-    declare readonly editing: EditingOrigin;
+    readonly genEditing: GenOriginEditing;
 
     constructor(uqApp: UqApp) {
         super(uqApp);
 
         let uq = this.uq;
         this.ModalSheetStart = PageOriginNew as any;
-        this.editing = new EditingOrigin(this);
+        this.genEditing = new this.GenOriginEditing(this);
 
         this.ViewItemEditRow = function ({ row }: { row: Detail }) {
             let { item, value, v1: price, v2: amount } = row;
@@ -62,4 +62,6 @@ export abstract class GenOrigin extends GenSheet {
             </Band>;
         }
     }
+
+    get GenOriginEditing(): new (genOrigin: GenOrigin) => GenOriginEditing { return GenOriginEditing; }
 }

@@ -1,12 +1,12 @@
 import { UqApp } from "app/UqApp";
 import { Sheet } from "uqs/UqDefault";
 import { GenBizEntity, GenProps } from "app/tool";
-import { Editing } from "./Editing";
+import { GenEditing } from "./GenEditing";
 import { BizSheet } from "app/Biz";
 
 export abstract class GenSheet extends GenBizEntity {
     readonly bizEntityType = 'sheet';
-    abstract get path(): string;
+    get path() { return this.bizEntityName; }
     get bizSheet(): BizSheet { return this.biz.sheets[this.bizEntityName] }
     get caption() {
         let { name, caption } = this.bizSheet;
@@ -25,7 +25,7 @@ export abstract class GenSheet extends GenBizEntity {
     abstract get ViewTarget(): (props: { sheet: Sheet; }) => JSX.Element;
     abstract get ViewTargetBand(): (props: { sheet: Sheet; }) => JSX.Element;
     abstract buildDetailFromSelectedAtom: (selectedItem: any) => any;
-    abstract get editing(): Editing;
+    abstract get genEditing(): GenEditing;
 
     constructor(uqApp: UqApp) {
         super(uqApp);

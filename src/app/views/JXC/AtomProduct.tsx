@@ -1,12 +1,16 @@
 import { Route } from "react-router-dom";
 import { LMR } from "tonwa-com";
-import { PageAtomList, PageAtomNew, PageAtomView, GenAtom, PageAtomSelect } from "app/template/Atom";
+import { PageAtomList, PageAtomNew, PageAtomView, GenAtom, PageAtomSelect, GenAtomNew } from "app/template/Atom";
 import { Atom, uqSchema } from "uqs/UqDefault";
 import { UqApp } from "app/UqApp";
 
 export class GenProduct extends GenAtom {
     readonly bizEntityName = uqSchema.$biz.product.name;
+    get GenAtomNew() { return GenProductNew; }
     get exLabel(): string { return '描述' }
+}
+
+class GenProductNew extends GenAtomNew {
 }
 
 function ViewItemProduct({ value }: { value: Atom; }) {
@@ -46,10 +50,10 @@ export function ModalSelectProductRetailPrice() {
 }
 
 export function routeProduct(uqApp: UqApp) {
-    let gen = uqApp.objectOf(GenProduct);
+    let { genAtomNew, genAtomList, genAtomView } = uqApp.objectOf(GenProduct);
     return <>
-        <Route path={gen.pathNew} element={<PageAtomNew Gen={GenProduct} />} />
-        <Route path={gen.pathList} element={<PageAtomList Gen={GenProduct} />} />
-        <Route path={`${gen.pathView}/:id`} element={<PageAtomView Gen={GenProduct} />} />
+        <Route path={genAtomNew.path} element={<PageAtomNew Gen={GenProduct} />} />
+        <Route path={genAtomList.path} element={<PageAtomList Gen={GenProduct} />} />
+        <Route path={`${genAtomView.path}/:id`} element={<PageAtomView Gen={GenProduct} />} />
     </>;
 };

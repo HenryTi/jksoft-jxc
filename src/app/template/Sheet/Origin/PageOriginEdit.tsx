@@ -12,7 +12,7 @@ export function PageOriginEdit({ Gen }: GenProps<GenOrigin>) {
     const uqApp = useUqApp();
     const navigate = useNavigate();
     const gen = uqApp.objectOf(Gen);
-    const { editing
+    const { genEditing: editing
         , ModalSheetStart, ModalSelectDetailAtom, PageSheetDetail
         , buildDetailFromSelectedAtom
     } = gen;

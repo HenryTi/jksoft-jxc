@@ -1,21 +1,25 @@
 import { UqApp } from "app/UqApp";
-import { PageAtomList, PageAtomNew, PageAtomView, GenAtom, PageAtomSelect } from "app/template/Atom";
+import { PageAtomList, PageAtomNew, PageAtomView, GenAtom, PageAtomSelect, GenAtomNew } from "app/template/Atom";
 import { Route } from "react-router-dom";
 import { uqSchema } from "uqs/UqDefault";
 
 export class GenContact extends GenAtom {
     readonly bizEntityName = uqSchema.$biz.contact.name;
+    get GenAtomNew(): new (genAtom: GenAtom) => GenAtomNew { return GenContactNew; }
 
     get SelectPage(): JSX.Element {
         return <PageAtomSelect Gen={GenContact} />;
     }
 }
 
+class GenContactNew extends GenAtomNew {
+}
+
 export function routeContact(uqApp: UqApp) {
-    let gen = uqApp.objectOf(GenContact);
+    let { genAtomNew, genAtomList, genAtomView } = uqApp.objectOf(GenContact);
     return <>
-        <Route path={gen.pathNew} element={<PageAtomNew Gen={GenContact} />} />
-        <Route path={gen.pathList} element={<PageAtomList Gen={GenContact} />} />
-        <Route path={`${gen.pathView}/:id`} element={<PageAtomView Gen={GenContact} />} />
+        <Route path={genAtomNew.path} element={<PageAtomNew Gen={GenContact} />} />
+        <Route path={genAtomList.path} element={<PageAtomList Gen={GenContact} />} />
+        <Route path={`${genAtomView.path}/:id`} element={<PageAtomView Gen={GenContact} />} />
     </>;
 };

@@ -41,13 +41,13 @@ export function PageAssign<P extends GenAssign>({ Gen }: GenProps<P>) {
         if (ret === undefined) return;
         value.buds = ret;
     }
+    // pageSize={20}
+    // pageMoreSize={5}
     return <PageQueryMore header={caption}
         query={searchAtoms}
         param={{}}
         sortField="id"
         ViewItem={ViewItem}
-        pageSize={4}
-        pageMoreSize={1}
         onItemClick={onItemClick}
     >
         <div className="p-3 tonwa-bg-gray-3">{caption}</div>

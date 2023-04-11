@@ -9,18 +9,17 @@ import { GenProps } from "app/tool";
 
 export function PageAtomNew({ Gen }: GenProps<GenAtom>) {
     const uqApp = useUqApp();
-    const gen = uqApp.objectOf(Gen);
-    const { caption, actSave } = gen;
+    const { genAtomNew, genAtomView } = uqApp.objectOf(Gen);
+    const { caption, actSave } = genAtomNew;
     const navigate = useNavigate();
     const { data: { no, formRows } } = useQuery('PageAtomNew', async () => {
-        let ret = await gen.buildNew();
+        let ret = await genAtomNew.buildNew();
         return ret;
     }, { cacheTime: 100, refetchOnWindowFocus: false });
     const { register, handleSubmit, formState: { errors }, } = useForm({ mode: 'onBlur' });
     async function onSubmit(data: any) {
         let ret = await actSave(no, data);
-        alert(JSON.stringify(ret));
-        navigate(-1);
+        navigate(`../${genAtomView.path}/${ret.id}`, { replace: true });
     }
 
     return <Page header={`新建${caption}`}>

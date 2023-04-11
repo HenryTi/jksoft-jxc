@@ -15,7 +15,7 @@ export function PageDeriveSelect({ Gen }: GenProps<GenDerive>) {
     const uqApp = useUqApp();
     const { closeModal } = useModal();
     const gen = uqApp.objectOf(Gen);
-    const { editing, loadPend } = gen;
+    const { genEditing: editing, loadPend } = gen;
     const uq = uqApp.uqs.UqDefault;
     const [items, setItems] = useState(null as SheetGroup[]);
     async function onSelected(item: any) {

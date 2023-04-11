@@ -112,7 +112,7 @@ export function PageDetailQPA({ detail, Gen, GenSheet }: Props) {
         let { quantity } = data;
         if (Number.isNaN(quantity) === false) {
             let value = { ...detail }; //, sheet: sheet.id };
-            await genSheet.editing.setDetail(value);
+            await genSheet.genEditing.setDetail(value);
         }
         closeModal({ ...data, amount, price });
     }

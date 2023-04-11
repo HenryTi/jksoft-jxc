@@ -17,19 +17,20 @@ export function PageAtomCenter() {
     return <Page header="档案中心">
         <Sep sep={3} />
         {genAtoms.map((v, index) => {
+            const { genAtomNew, genAtomList, caption } = v;
             return <React.Fragment key={index}>
-                <Link to={`../${v.pathNew}`}>
+                <Link to={`../${genAtomNew.path}`}>
                     <LMR className="px-3 py-2 border-bottom align-items-center">
                         <FA name="chevron-circle-right" className="me-2 text-secondary" />
-                        新建{v.caption}
+                        新建{caption}
                         <span>
                             {10}
                             <FA name="angle-right" className="ms-2" />
                         </span>
                     </LMR>
                 </Link>
-                <Link to={`../${v.pathList}`} className="px-3 py-2 border-bottom align-items-center">
-                    {v.caption}列表
+                <Link to={`../${genAtomList.path}`} className="px-3 py-2 border-bottom align-items-center">
+                    {caption}列表
                 </Link>
                 <Sep sep={3} />
             </React.Fragment>;
