@@ -13,7 +13,7 @@ export function PageHistory({ Gen }: GenProps<GenReport>) {
     const { id: paramId } = useParams();
     const param = { atomId: Number(paramId) };
     async function onHistoryClick(item: any) {
-        navigate(`../${gen.pathStorageHistory}/${item.id}`);
+        navigate(`../${gen.pathStorageDetail}/${item.ref}`);
     }
     return <PageQueryMore
         header={captionHistory}

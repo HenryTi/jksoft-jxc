@@ -17,6 +17,8 @@ export abstract class GenReport extends GenBizEntity {
     // abstract get onHistoryClick(): (item: any) => Promise<void>;
 
     abstract get pathStorageHistory(): string;
+    abstract get pathStorageDetail(): string;
+    abstract get pathStorageSheet(): string;
 
     searchSubjectAtom: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
         let nParam = {

@@ -19,6 +19,8 @@ export class GenStorage extends GenReport {
     readonly caption = '库存报表';
     readonly path = pathStorage;
     readonly pathStorageHistory = pathStorageHistory;
+    readonly pathStorageDetail = pathStorageDetail;
+    readonly pathStorageSheet = pathStorageSheet;
     readonly sortField: string;
     readonly QueryReport: UqQuery<any, any>;
     readonly QueryHistory: UqQuery<any, any>;
