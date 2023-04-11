@@ -1,6 +1,11 @@
 Biz SHEET Purchase '采购单' {
     detail {
+        prop a int;
+        prop b dec;
+        prop c str;
         Assign done DEC;
+    };
+    detail d1 {
     };
 
     ACT (sheetId ID) {
@@ -9,8 +14,6 @@ Biz SHEET Purchase '采购单' {
         -- 挂StoreIn的待处理队列，可以是主表，也可以是detail
         Biz Pend sheetId ON StoreIn; -- FOR receiver;
         -- Biz State s1 FOR receiver;                     -- 转状态
-        -- Biz Subject c += 1 ref 5;
-        -- Biz Subject c += 2 ref 3;
     };
     STATE s1 {
     }
@@ -71,6 +74,14 @@ Biz SHEET StoreOut ver 0.2 '出库单' {
             Biz Subject storage of item -= value ref detailId;
             WITH Done ID=origin SET value+=value;
             PROC MayDeletePend(origin);
+            /*
+            IF value>公司规程.库存上限 {
+
+            }
+            ELSEIF value<公司规程.库存下限 {
+
+            }
+            */
         }
         PROC MayDeletePend(null);
     }

@@ -1,4 +1,6 @@
 
 Biz Setting 公司规程 {
     Prop name '公司名称' char;
+    Prop 库存上限 dec;
+    Assign 库存下限 dec;
 };
