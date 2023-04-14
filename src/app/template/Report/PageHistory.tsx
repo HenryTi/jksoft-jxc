@@ -1,18 +1,18 @@
 import { PageQueryMore } from "app/coms";
 import { useUqApp } from "app/UqApp";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { GenProps } from "app/tool";
 import { GenReport } from "./GenReport";
-import { pathDetailView } from "app/views/JXC/SheetView";
 
 export function PageHistory({ Gen }: GenProps<GenReport>) {
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
     const navigate = useNavigate();
-    //gen.navigate = navigate;
-    const { subjectHistory, ViewItemHistory, captionHistory, historySortField } = gen;
-    const { id: paramId } = useParams();
-    const param = { atomId: Number(paramId) };
+    const { subjectHistory, ViewItemHistory, captionHistory, historySortField, pathDetailView, ViewItem } = gen;
+    const { id } = useParams();
+    const atomId = Number(id);
+    const param = { atomId };
+    const location = useLocation();
     async function onHistoryClick(item: any) {
         navigate(`../${pathDetailView}/${item.ref}`);
     }
@@ -23,5 +23,8 @@ export function PageHistory({ Gen }: GenProps<GenReport>) {
         ViewItem={ViewItemHistory}
         sortField={historySortField}
         onItemClick={onHistoryClick}>
+        <div className="border-bottom tonwa-bg-gray-2 py-2 mb-2">
+            <ViewItem value={location.state} clickable={false} />
+        </div>
     </PageQueryMore>;
 }

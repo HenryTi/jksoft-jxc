@@ -2,10 +2,8 @@ Biz SHEET Purchase '采购单' {
     detail {
         prop a int;
         prop b dec;
-        prop c str;
+        prop c char;
         Assign done DEC;
-    };
-    detail d1 {
     };
 
     ACT (sheetId ID) {

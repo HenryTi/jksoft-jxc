@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri Apr 07 2023 22:46:39 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Thu Apr 13 2023 22:19:05 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,11 +44,13 @@ export enum EnumID {
 
 export interface $phrase extends ID {
 	name: string;
+	caption: string;
 }
 
 export interface $phraseInActs extends ID {
 	ID?: UqID<any>;
 	name: string;
+	caption: string;
 }
 
 export interface Param$role_My {
@@ -209,9 +211,6 @@ export interface ParamSaveSheet {
 	no: string;
 	item: number;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
 }
 export interface ReturnSaveSheetRet {
 	id: number;
@@ -250,12 +249,8 @@ export interface ReturnGetMyDrafts$page {
 	base: number;
 	no: string;
 	item: number;
-	origin: number;
 	operator: number;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
 	phrase: string;
 }
 export interface ResultGetMyDrafts {
@@ -325,12 +320,8 @@ export interface ReturnGetPendSheet$page {
 	base: number;
 	no: string;
 	item: number;
-	origin: number;
 	operator: number;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
 }
 export interface ResultGetPendSheet {
 	$page: ReturnGetPendSheet$page[];
@@ -345,12 +336,8 @@ export interface ReturnGetSheetMain {
 	base: number;
 	no: string;
 	item: number;
-	origin: number;
 	operator: number;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
 }
 export interface ReturnGetSheetDetails {
 	id: number;
@@ -502,12 +489,8 @@ export interface Sheet extends ID {
 	base: number;
 	no: string;
 	item: number;
-	origin: number;
 	operator: number;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
 }
 
 export interface SheetInActs extends ID {
@@ -515,12 +498,8 @@ export interface SheetInActs extends ID {
 	base: number | ID;
 	no: string;
 	item: number | ID;
-	origin: number | ID;
 	operator: number | ID;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
 }
 
 export interface Detail extends ID {
@@ -660,6 +639,9 @@ export interface ReturnHistoryStorage$page {
 	id: number;
 	value: number;
 	ref: number;
+	sheetNo: string;
+	sheetName: string;
+	sheetCaption: string;
 }
 export interface ResultHistoryStorage {
 	$page: ReturnHistoryStorage$page[];
@@ -754,6 +736,11 @@ export const uqSchema={
                 "name": "name",
                 "type": "char",
                 "size": 200
+            },
+            {
+                "name": "caption",
+                "type": "char",
+                "size": 100
             }
         ],
         "keys": [] as any,
@@ -1205,24 +1192,6 @@ export const uqSchema={
                 "type": "dec",
                 "scale": 4,
                 "precision": 18
-            },
-            {
-                "name": "v1",
-                "type": "dec",
-                "scale": 4,
-                "precision": 18
-            },
-            {
-                "name": "v2",
-                "type": "dec",
-                "scale": 4,
-                "precision": 18
-            },
-            {
-                "name": "v3",
-                "type": "dec",
-                "scale": 4,
-                "precision": 18
             }
         ],
         "returns": [
@@ -1338,33 +1307,11 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "origin",
-                        "type": "id"
-                    },
-                    {
                         "name": "operator",
                         "type": "id"
                     },
                     {
                         "name": "value",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v1",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v2",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v3",
                         "type": "dec",
                         "scale": 4,
                         "precision": 18
@@ -1590,33 +1537,11 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "origin",
-                        "type": "id"
-                    },
-                    {
                         "name": "operator",
                         "type": "id"
                     },
                     {
                         "name": "value",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v1",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v2",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v3",
                         "type": "dec",
                         "scale": 4,
                         "precision": 18
@@ -1665,33 +1590,11 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "origin",
-                        "type": "id"
-                    },
-                    {
                         "name": "operator",
                         "type": "id"
                     },
                     {
                         "name": "value",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v1",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v2",
-                        "type": "dec",
-                        "scale": 4,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v3",
                         "type": "dec",
                         "scale": 4,
                         "precision": 18
@@ -2174,33 +2077,11 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "origin",
-                "type": "id"
-            },
-            {
                 "name": "operator",
                 "type": "id"
             },
             {
                 "name": "value",
-                "type": "dec",
-                "scale": 4,
-                "precision": 18
-            },
-            {
-                "name": "v1",
-                "type": "dec",
-                "scale": 4,
-                "precision": 18
-            },
-            {
-                "name": "v2",
-                "type": "dec",
-                "scale": 4,
-                "precision": 18
-            },
-            {
-                "name": "v3",
                 "type": "dec",
                 "scale": 4,
                 "precision": 18
@@ -2621,6 +2502,21 @@ export const uqSchema={
                     {
                         "name": "ref",
                         "type": "id"
+                    },
+                    {
+                        "name": "sheetNo",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "sheetName",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "sheetCaption",
+                        "type": "char",
+                        "size": 100
                     }
                 ],
                 "order": "desc"
@@ -2832,14 +2728,45 @@ export const uqSchema={
             "name": "销售部经理",
             "type": "role"
         },
-        "公司规程": {
-            "name": "公司规程",
+        "accountsetting": {
+            "name": "accountsetting",
             "type": "subject",
             "props": [
                 {
                     "name": "name",
                     "type": "char",
-                    "caption": "公司名称"
+                    "caption": "单位名称"
+                },
+                {
+                    "name": "库存上限",
+                    "type": "dec"
+                }
+            ],
+            "assigns": [
+                {
+                    "name": "库存下限",
+                    "type": "dec"
+                }
+            ]
+        },
+        "personsetting": {
+            "name": "personsetting",
+            "type": "subject",
+            "props": [
+                {
+                    "name": "name",
+                    "type": "char",
+                    "caption": "名字"
+                },
+                {
+                    "name": "工时上限",
+                    "type": "int"
+                }
+            ],
+            "assigns": [
+                {
+                    "name": "工时下限",
+                    "type": "int"
                 }
             ]
         },
@@ -2850,6 +2777,20 @@ export const uqSchema={
             "details": [
                 {
                     "name": "detail",
+                    "props": [
+                        {
+                            "name": "a",
+                            "type": "int"
+                        },
+                        {
+                            "name": "b",
+                            "type": "dec"
+                        },
+                        {
+                            "name": "c",
+                            "type": "char"
+                        }
+                    ],
                     "assigns": [
                         {
                             "name": "done",

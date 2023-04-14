@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Link, Route, useParams } from "react-router-dom";
 import { IDView, Page, PageSpinner } from "tonwa-app";
 import { List, useEffectOnce } from "tonwa-com";
-import { EnumID, Sheet } from "uqs/UqDefault";
 
 export const pathSheetView = 'sheet';
 export const pathDetailView = 'sheet-detail';
@@ -67,21 +66,7 @@ function PageSheetView() {
     </Page>
 }
 
-export function DetailRef({ value }: { value: any }) {
-    let uqApp = useUqApp();
-    let { uq } = uqApp;
-    return <>
-        <IDView uq={uq} id={value.sheet} Template={SheetRef} />
-        &nbsp;
-        <small>{value.id}</small>
-    </>;
-}
-
-export function SheetRef({ value }: { value: any }) {
-    const { $entity, no } = value;
-    let Template = dirMap[$entity as EnumID];
-    return <Template value={value} />;
-}
+/*
 
 function DirStoreIn({ value }: { value: Sheet; }) {
     return <>
@@ -98,7 +83,7 @@ function DirStoreOut({ value }: { value: Sheet; }) {
         <small className="text-muted">{value.id}</small> &nbsp;
     </>;
 }
-
+/*
 enum SheetType {
     StoreIn,
     StoreOut,
@@ -108,7 +93,8 @@ const dirMap: { [sheet: string]: (props: { value: any; }) => JSX.Element } = {
     [SheetType.StoreIn]: DirStoreIn,
     [SheetType.StoreOut]: DirStoreOut,
 }
-
+*/
+/*
 function DetailStoreIn({ value }: { value: Sheet; }) {
     return <>入库单 Detail {value.no}</>
 }
@@ -121,7 +107,8 @@ const detailMap: { [entity in SheetType]?: (props: { value: any; }) => JSX.Eleme
     [SheetType.StoreIn]: DetailStoreIn,
     [SheetType.StoreOut]: DetailStoreOut,
 }
-
+*/
+/*
 function SheetStoreIn({ value }: { value: Sheet; }) {
     return <>入库单 Sheet {value.no}</>
 }
@@ -134,7 +121,7 @@ const sheetMap: { [entity in SheetType]?: (props: { value: any; }) => JSX.Elemen
     [SheetType.StoreIn]: SheetStoreIn,
     [SheetType.StoreOut]: SheetStoreOut,
 }
-
+*/
 export function routeSheetView(uqApp: UqApp) {
     return <>
         <Route path={`${pathDetailView}/:id`} element={<PageDetailView />} />

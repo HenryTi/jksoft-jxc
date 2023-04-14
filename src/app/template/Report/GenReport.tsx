@@ -2,10 +2,9 @@ import { UqQuery } from "tonwa-uq";
 import { GenBizEntity, QueryMore } from "app/tool";
 import { EntitySubject } from "app/Biz";
 import { UqApp } from "app/UqApp";
-import { Atom, ReturnReportStorage$page } from "uqs/UqDefault";
+import { Atom, ReturnHistoryStorage$page, ReturnReportStorage$page } from "uqs/UqDefault";
 import { EasyTime, FA, LMR, dateFromMinuteId } from "tonwa-com";
 import { IDView } from "tonwa-app";
-import { DetailRef } from "app/views/JXC/SheetView";
 
 export abstract class GenReport extends GenBizEntity {
     get bizSubject(): EntitySubject { return this.biz.subjects[this.bizEntityName]; }
@@ -17,6 +16,7 @@ export abstract class GenReport extends GenBizEntity {
 
     abstract get captionHistory(): string;
     abstract get pathStorageHistory(): string;
+    abstract get pathDetailView(): string;
 
     constructor(uqApp: UqApp) {
         super(uqApp);
@@ -45,7 +45,7 @@ export abstract class GenReport extends GenBizEntity {
         return $page;
     }
 
-    readonly ViewItem = ({ value: row }: { value: ReturnReportStorage$page; }): JSX.Element => {
+    readonly ViewItem = ({ value: row, clickable }: { value: ReturnReportStorage$page; clickable?: boolean; }): JSX.Element => {
         const { atom, value, init } = row;
         function ViewProduct({ value: { ex, no } }: { value: Atom }) {
             return <div>
@@ -53,24 +53,28 @@ export abstract class GenReport extends GenBizEntity {
                 <div><b>{ex}</b></div>
             </div>
         }
+        let icon = clickable === false ? '' : 'angle-right';
         return <LMR className="px-3 py-2 align-items-center">
             <IDView uq={this.uq} id={atom} Template={ViewProduct} />
             <div className="d-flex align-items-center">
                 <div className="me-4 fs-5">{(value + init).toFixed(0)}</div>
-                <FA name="angle-right" className="text-muted" />
+                <FA name={icon} className="text-muted" fixWidth={true} />
             </div>
         </LMR>;
     }
 
-    readonly ViewItemHistory = ({ value: row }: { value: any }): JSX.Element => {
-        const { id, value, ref } = row;
+    readonly ViewItemHistory = ({ value: row }: { value: ReturnHistoryStorage$page }): JSX.Element => {
+        const { id, value, ref, sheetNo, sheetName, sheetCaption } = row;
         return <LMR className="px-3 py-2">
             <div className="w-8c me-3 small text-muted"><EasyTime date={dateFromMinuteId(id)} /></div>
-            <div><IDView uq={this.uq} id={ref} Template={DetailRef} /></div>
+            <div>
+                {sheetCaption ?? sheetName} {sheetNo} - {ref}
+            </div>
             <div className="d-flex align-items-center">
                 <div className="me-4 fs-5">{(value).toFixed(0)}</div>
-                <FA name="angle-right" className="text-muted" />
+                <FA name="angle-right" className="text-muted" fixWidth={true} />
             </div>
-        </LMR>
+        </LMR>;
+        //<IDView uq={this.uq} id={ref} Template={DetailRef} />
     }
 }

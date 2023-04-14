@@ -6,17 +6,15 @@ ID Atom (
     ex CHAR(200),
 );
 
+-- 可以有单明细单据。也要分主子表。如果把子表放主表，就是两套体系。程序会麻烦
 ID Sheet (
     id MINUTE,
     KEY base ID,            -- sitePhrase
     KEY no,
     item ID,
-    origin ID,              -- 源单
+    -- origin ID,           -- 源单，应该在明细上体现，主单不需要。
     operator ID,            -- employee Item
     value VALUE,
-    v1 VALUE,
-    v2 VALUE,
-    v3 VALUE,
 );
 
 -- 所有单据的明细，单值

@@ -10,9 +10,8 @@ export function PageReport({ Gen, children }: GenProps<GenReport> & { children?:
     const gen = uqApp.objectOf(Gen);
     const { caption, searchSubjectAtom, sortField, ViewItem, pathStorageHistory } = gen;
     const navigate = useNavigate();
-    //gen.navigate = navigate;
     async function onItemClick(item: any): Promise<void> {
-        navigate(`../${pathStorageHistory}/${item.atom}`);
+        navigate(`../${pathStorageHistory}/${item.atom}`, { state: item });
     }
     let param = {};
     return <PageQueryMore

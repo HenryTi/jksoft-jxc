@@ -119,9 +119,6 @@ Biz ACT SaveSheet (
     item ID,
     -- operator ID,            -- employee Item
     value VALUE,
-    v1 VALUE,
-    v2 VALUE,
-    v3 VALUE,
 )
 RETURNS ret (
     id ID,
@@ -131,8 +128,7 @@ RETURNS ret (
 
     VAR sheetId ID;
     WITH Sheet as a ID to sheetId Key(base, no) 
-        SET a.item=item, a.operator=me
-            , a.value=value, a.v1=v1, a.v2=v2, a.v3=v3;
+        SET a.item=item, a.operator=me, a.value=value;
 
     WITH IxMyDraft IX=me XI=sheetId;
 

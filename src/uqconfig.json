@@ -20,9 +20,16 @@
             "alias": "Ticket"
         }
     ],
-    "a": {
-        "dev": "jksoft",
-        "name": "ticket",
-        "alias": "Ticket"
-    }
+    "uqs1": [
+        {
+            "dev": "jksoft",
+            "name": "ticket",
+            "alias": "Ticket"
+        },
+        {
+            "dev": "bz",
+            "name": "jxc",
+            "alias": "Jxc"
+        }
+    ]
 }

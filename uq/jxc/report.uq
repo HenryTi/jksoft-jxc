@@ -27,11 +27,18 @@ PAGE (
     id ID DESC,
     value VALUE,
     ref ID,
+    sheetNo NO,
+    sheetName CHAR(200),
+    sheetCaption CHAR(100),
 ) {
     VAR phraseId ID = PhraseId(subject);
     VAR subjectId ID = ID(Subject KEY base=phraseId, atom=atomId);
-    PAGE SELECT a.id, a.value, a.ref
+    PAGE SELECT a.id, a.value, a.ref, c.no as sheetNo, e.name as sheetName, e.caption as sheetCaption
         FROM History as a
+            LEFT JOIN Detail as b ON b.id=a.ref
+            LEFT JOIN Sheet as c ON c.id=b.base 
+            LEFT JOIN SitePhrase as d ON d.id=c.base
+            LEFT JOIN $Phrase as e ON e.id=d.phrase
         WHERE a.id < $pageStart AND a.subject=subjectId
         ORDER BY a.id DESC
         LIMIT $pageSize;
