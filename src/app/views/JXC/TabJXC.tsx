@@ -1,17 +1,15 @@
 import { Link } from "react-router-dom";
 import { Page } from "tonwa-app";
-import { pathAtomCenter } from "./AtomCenter";
-import { pathReportCenter } from "./ReportCenter";
+import { pathAtomCenter } from "./Atom/AtomCenter";
+import { pathReportCenter } from "./Report/ReportCenter";
 import { pathPrice } from "./AssignPrice";
-import { pathSheetCenter } from "./SheetCenter";
+import { pathSheetCenterOld } from "./SheetOld/SheetCenterOld";
+import { pathSheetCenter } from "./Sheet";
 
-interface Cmd {
-    to: string;
-    caption: string;
-}
 export function TabJXC() {
     const arr: { label: string; path: string; }[] = [
         { label: '单据中心', path: pathSheetCenter },
+        { label: '单据中心-旧', path: pathSheetCenterOld },
         { label: '档案中心', path: pathAtomCenter },
         { label: '报表中心', path: pathReportCenter },
         { label: '设置价格', path: pathPrice },

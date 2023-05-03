@@ -8,7 +8,7 @@ interface Props<T> {
 }
 
 export function IDView<T>({ id, uq, Template }: Props<T>) {
-    const [value, setValue] = useState(undefined);
+    const [value, setValue] = useState(uq.idCache<any>(id));
     useEffect(() => {
         (async function () {
             if (id === undefined || id === null) return;

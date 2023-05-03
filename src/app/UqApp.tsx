@@ -8,6 +8,7 @@ import { appEnv } from './appEnv';
 //import { SeedUnit } from './tool';
 import { UqExt } from 'uqs/UqDefault';
 import { GenAtom } from './template';
+import { GenSheet } from './template/Sheet';
 
 const appConfig: AppConfig = {
     version: '0.1.0',
@@ -101,10 +102,18 @@ export class UqApp extends UqAppBase<UQs> {
     }
 
     readonly genAtoms: { [name: string]: GenAtom } = {}
+    readonly genSheets: { [name: string]: GenSheet } = {}
     protected onObjectBuilt(object: any) {
         let { bizEntityType, bizEntityName } = object;
-        if (bizEntityType === 'atom') {
-            this.genAtoms[bizEntityName] = object;
+        switch (bizEntityType) {
+            case 'atom':
+                this.genAtoms[bizEntityName] = object;
+                this.genAtoms[(object as GenAtom).phrase] = object;
+                break;
+            case 'sheet':
+                this.genSheets[bizEntityName] = object;
+                this.genSheets[(object as GenSheet).phrase] = object;
+                break;
         }
     }
 }

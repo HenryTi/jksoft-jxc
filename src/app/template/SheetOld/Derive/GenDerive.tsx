@@ -1,15 +1,15 @@
 import { GenProps } from "app/tool";
 import { UqApp } from "app/UqApp";
-import { GenSheet } from "../GenSheet";
+import { GenSheetOld } from "../GenSheetOld";
 import { PageDeriveSelect } from "./PageDeriveSelect";
 import { ViewEditRow } from "./ViewEditRow";
 import { GenEditingDerive } from "./GenDeriveEditing";
 
-export abstract class GenDerive extends GenSheet {
-    readonly origin: GenSheet;
+export abstract class GenDerive extends GenSheetOld {
+    readonly origin: GenSheetOld;
 
-    readonly ModalSheetStart: (props: GenProps<GenSheet>) => JSX.Element;
-    readonly ViewItemEditRow: (props: { row: any, Gen: new (uqApp: UqApp) => GenSheet }) => JSX.Element;
+    readonly ModalSheetStart: (props: GenProps<GenSheetOld>) => JSX.Element;
+    readonly ViewItemEditRow: (props: { row: any, Gen: new (uqApp: UqApp) => GenSheetOld }) => JSX.Element;
 
     readonly ViewItemSource: ({ id }: { id: number; }) => JSX.Element;
     readonly sourceSearchPlaceholder: string;
@@ -35,7 +35,7 @@ export abstract class GenDerive extends GenSheet {
     }
 
     protected get GenEditingDerive(): new (genDerive: GenDerive) => GenEditingDerive { return GenEditingDerive; }
-    protected abstract getOriginSheetGen(): GenSheet;
+    protected abstract getOriginSheetGen(): GenSheetOld;
 
     buildDetailFromSelectedAtom = (selectedItem: any): any => {
         return undefined;

@@ -7,3 +7,4 @@ export * from './OpEntity';
 export * from './EntitySubject';
 export * from './EntityTree';
 export * from './EntityTie';
+export * from './Entity';

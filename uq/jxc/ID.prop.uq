@@ -49,6 +49,7 @@ ID SitePhrase (
     KEY phrase ID,          --- phrase id
 );
 
+-- Atom 也可以有状态，比如：上线，权限，禁用
 IX IxStateAtom (
     ix,                     -- SitePhrase(site, $phrase(item.state))
     xi,                     -- item id
@@ -63,12 +64,6 @@ IX IxMyDraft (
 IX IxStateSheet (
     ix,                     -- SitePhrase(unit, $phrase(sheet.State))
     xi INDEX,               -- sheet id
-);
-
-ID BindAtom (
-    id,
-    KEY base ID,            -- (main + type) => owner, or type in main
-    KEY atom ID,            -- item id easy to load values
 );
 
 -- 发送到单据状态，需要base = SheetStatePhrase @ receiver;
@@ -110,6 +105,14 @@ IX IxTieValue (
     xi,                         -- ID Tie, base = Tie phrase + Prop phrase
     value BIGINT,               -- 可以是小数
 );
+
+IX IxPendPropValue (
+    ix,
+    xi,
+    int BIGINT,
+    dec VALUE,
+    str CHAR(100),
+)
 
 ID Formula (
     id,

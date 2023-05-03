@@ -4,7 +4,7 @@ import { useEffectOnce } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { GenProps } from "app/tool";
 import { GenOrigin } from "./GenOrigin";
-import { PageSheetEdit } from "../PageSheetEdit";
+import { PageSheetEditOld } from "../PageSheetEditOld";
 import { useNavigate, useParams } from "react-router-dom";
 import { Sheet } from "uqs/UqDefault";
 
@@ -39,33 +39,8 @@ export function PageOriginEdit({ Gen }: GenProps<GenOrigin>) {
     async function onAddRow() {
         let selectedItem = await openModal(<ModalSelectDetailAtom />);
         if (selectedItem === undefined) return;
-        // 新建一个detail
         let detail = buildDetailFromSelectedAtom(selectedItem);
-        //let ret = 
         await openModal(<PageSheetDetail detail={detail} Gen={Gen} />);
-        /*
-        if (!ret) {
-            closeModal();
-            return;
-        }
-        let { quantity } = ret;
-        if (Number.isNaN(quantity) === true) {
-            closeModal();
-            return;
-        }
-        let value = { ...detail, ...ret }; //, sheet: sheet.id };
-        // let id = 
-        await editing.setDetail(value);
-        */
-        // value.id = id;
-        /*
-        let id = await uq.ActID({
-            ID: IDDetail,
-            value,
-        });
-        value.id = id;
-        editing.addDetail(value);
-        */
         onAddRow();
     }
 
@@ -78,5 +53,5 @@ export function PageOriginEdit({ Gen }: GenProps<GenOrigin>) {
             detail.id = retId;
         }
     }
-    return <PageSheetEdit Gen={Gen} onAddRow={onAddRow} onEditRow={onEditRow} sheet={sheet} />;
+    return <PageSheetEditOld Gen={Gen} onAddRow={onAddRow} onEditRow={onEditRow} sheet={sheet} />;
 }

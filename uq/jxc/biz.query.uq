@@ -1,0 +1,82 @@
+
+Biz Query GetPendSheetFromNo (
+    pend Phrase, 
+    key CHAR(100),              -- sheet no
+)
+PAGE (
+    * SHEET ASC,
+    sheet Phrase,
+) {
+    PAGE SELECT DISTINCT * c, Phrase(c.base) as sheet
+        FROM Pend as a
+            JOIN Detail as b ON b.id=a.detail
+            JOIN Sheet as c ON c.id=b.base
+        WHERE 1=1 AND a.base=PhraseId(pend)
+            AND c.id>$pageStart
+            AND SEARCH(c.no ON key)
+        ORDER BY c.id ASC
+        LIMIT $pageSize;
+};
+
+Biz Query GetPendSheetFromTarget (
+    pend Phrase, 
+    key CHAR(100),              -- target no or ex
+)
+PAGE (
+    * SHEET ASC,
+    sheet Phrase,
+) {
+    PAGE SELECT DISTINCT * c, Phrase(c.base) as sheet
+        FROM Pend as a
+            JOIN Detail as b ON b.id=a.detail
+            JOIN Sheet as c ON c.id=b.base
+            JOIN Atom as d ON d.id=c.target
+        WHERE 1=1 AND a.base=PhraseId(pend)
+            AND c.id>$pageStart
+            AND SEARCH(d.no, d.ex ON key)
+        ORDER BY c.id ASC
+        LIMIT $pageSize;
+};
+
+Biz Query GetPendDetailFromItem (
+    pend Phrase,
+    key CHAR(100),               -- item no or ex
+)
+PAGE (
+    * DETAIL ASC,
+    pend ID,
+    pendValue VALUE,
+    sheet Phrase,
+    no NO,
+) {
+    PAGE SELECT * b, a.id as pend, a.value as pendValue, Phrase(c.base) as sheet, c.no
+        FROM Pend as a
+            JOIN Detail as b ON b.id=a.detail
+            JOIN Sheet as c ON c.id=b.base
+            JOIN Atom as d ON d.id=b.item
+        WHERE 1=1 AND a.base=PhraseId(pend)
+            AND b.id>$pageStart
+            AND SEARCH(d.no, d.ex ON key)
+        ORDER BY b.id ASC
+        LIMIT $pageSize;
+};
+
+Biz Query GetPendDetailFromSheetId (
+    pend Phrase,
+    sheetId ID,               -- origin sheet id
+)
+RETURNS ret (
+    * DETAIL,
+    pend ID,
+    pendValue VALUE,
+    sheet Phrase,
+    no NO,
+) {
+    INTO ret SELECT * b, a.id as pend, a.value as pendValue, Phrase(c.base) as sheet, c.no
+        FROM Pend as a
+            JOIN Detail as b ON b.id=a.detail
+            JOIN Sheet as c ON c.id=b.base
+        WHERE 1=1 AND a.base=PhraseId(pend)
+            AND b.base=sheetId
+        ORDER BY b.id ASC;
+};

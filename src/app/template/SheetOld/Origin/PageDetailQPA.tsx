@@ -12,7 +12,7 @@ const fieldQuantity = 'value';
 const fieldPrice = 'v1';
 const fieldAmount = 'v2';
 
-export abstract class GenDetail extends Gen {
+export abstract class GenDetailOld extends Gen {
     readonly caption = '明细';
     readonly bizEntityName = undefined as string;
     buildFormRows(detial: Detail): FormRow[] {
@@ -36,7 +36,6 @@ export abstract class GenDetail extends Gen {
         return { name: fieldAmount, label: '金额', type: 'number', options: { value, disabled: this.amountDisabled } };
     }
 
-    abstract get itemCaption(): string
     ViewItemTop = ({ item }: { item: number }): JSX.Element => {
         return <div className="container">
             <Band label={this.itemCaption}>
@@ -44,10 +43,11 @@ export abstract class GenDetail extends Gen {
             </Band>
         </div>
     }
+    abstract get itemCaption(): string
     abstract get ViewItemTemplate(): ({ value }: { value: any }) => JSX.Element;
 }
 
-interface Props extends GenProps<GenDetail> {
+interface Props extends GenProps<GenDetailOld> {
     detail: Detail;
     GenSheet: new (uqApp: UqApp) => GenOrigin;
 }

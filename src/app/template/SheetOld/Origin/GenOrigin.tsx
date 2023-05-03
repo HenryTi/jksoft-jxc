@@ -1,6 +1,6 @@
 import { UqApp } from "app/UqApp";
 import { GenProps } from "app/tool";
-import { GenSheet } from "../GenSheet";
+import { GenSheetOld } from "../GenSheetOld";
 import { GenOriginEditing } from "./GenOriginEditing";
 import { PageOriginNew } from "./PageOriginNew";
 import { QueryMore } from "app/tool";
@@ -10,10 +10,10 @@ import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
 import { ViewItemID } from "app/template/Atom";
 
-export abstract class GenOrigin extends GenSheet {
+export abstract class GenOrigin extends GenSheetOld {
     abstract QuerySearchItem: QueryMore;
     abstract ModalSelectDetailAtom: () => JSX.Element;
-    abstract get PageSheetDetail(): <T extends GenSheet>(props: (GenProps<T> & { detail: Detail; })) => JSX.Element;
+    abstract get PageSheetDetail(): <T extends GenSheetOld>(props: (GenProps<T> & { detail: Detail; })) => JSX.Element;
     abstract PageSheetEdit: () => JSX.Element;
 
     readonly ViewNO: (props: { no: string }) => JSX.Element;
@@ -21,7 +21,7 @@ export abstract class GenOrigin extends GenSheet {
     readonly ViewTarget: (props: { sheet: Sheet; }) => JSX.Element;
     readonly ViewTargetBand: (props: { sheet: Sheet; }) => JSX.Element;
 
-    readonly ModalSheetStart: (props: GenProps<GenSheet>) => JSX.Element;
+    readonly ModalSheetStart: (props: GenProps<GenSheetOld>) => JSX.Element;
     readonly genEditing: GenOriginEditing;
 
     constructor(uqApp: UqApp) {

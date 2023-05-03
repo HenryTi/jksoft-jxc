@@ -1,33 +1,64 @@
 import { Band } from "app/coms";
 import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
-import { ButtonAsync, List, LMR, Sep } from "tonwa-com";
-import { Sheet } from "uqs/UqDefault";
+import { ButtonAsync, List, LMR, Sep, setAtomValue, useEffectOnce } from "tonwa-com";
+import { GenSheetAct } from "./GenSheetAct";
 import { GenProps } from "app/tool";
-import { GenSheet } from "./GenSheet";
+import { Sheet } from "uqs/UqDefault";
 
-interface PageSheetEditProps extends GenProps<GenSheet> {
-    sheet: Sheet;
-    onAddRow: () => Promise<void>;
-    onEditRow: (detail: any) => Promise<void>;
-}
-
-export function PageSheetEdit({ Gen, onEditRow, onAddRow }: PageSheetEditProps) {
+export function PageSheetAct({ Gen }: GenProps<GenSheetAct>) {
     const uqApp = useUqApp();
     const navigate = useNavigate();
     const gen = uqApp.objectOf(Gen);
-    const { genEditing: editing, caption
-        , ViewItemEditRow, ViewTargetBand
-    } = gen;
-    const sheet = useAtomValue(editing.atomSheet);
-    const rows = useAtomValue(editing.atomRows);
-    const submitable = useAtomValue(editing.atomSubmitable);
-    const isMine = useAtomValue(editing.atomIsMine);
+    const { caption, genSheet, genDetail, genStart } = gen;
+    const { genMain } = genSheet;
+    const { current: genEditing } = useRef(gen.createEditing());
+    const { onEditRow, onAddRow } = genEditing;
+    const { ViewTargetBand } = genMain;
+    const sheet = useAtomValue(genEditing.atomSheet);
+    const rows = useAtomValue(genEditing.atomDetails);
+    const submitable = useAtomValue(genEditing.atomSubmitable);
+    const isMine = useAtomValue(genEditing.atomIsMine);
     const [visible, setVisible] = useState(true);
     const { openModal, closeModal } = useModal();
+    const { id: paramId } = useParams();
+
+    useEffectOnce(() => {
+        (async function () {
+            genEditing.reset();
+            let sheetId = Number(paramId);
+            if (Number.isNaN(sheetId) === false) {
+                await genEditing.load(sheetId);
+                return;
+            }
+            if (genStart === undefined) {
+                // 直接开单
+                setAtomValue(genEditing.atomSheet, {} as Sheet);
+                setAtomValue(genEditing.atomDetails, []);
+            }
+            else {
+                let ret = await genStart.start();
+                if (ret === undefined) {
+                    navigate(-1);
+                    return;
+                }
+                let { sheet, editingDetails } = ret;
+                if (editingDetails.length === 0) {
+                    navigate(-1);
+                    return;
+                }
+                setAtomValue(genEditing.atomSheet, sheet);
+                setAtomValue(genEditing.atomDetails, editingDetails);
+                genEditing.refreshSubmitable();
+                await genEditing.saveSheet()
+                await Promise.all(editingDetails.map(v => genEditing.saveEditingDetail(v)));
+            }
+        })();
+    });
+
     if (sheet === undefined || rows === undefined) {
         return <Page header={caption}>
             <PageSpinner />
@@ -50,11 +81,11 @@ export function PageSheetEdit({ Gen, onEditRow, onAddRow }: PageSheetEditProps) 
         let message = `${caption} ${sheet.no} 真的要作废吗？`;
         let ret = await openModal(<PageConfirm header="确认" message={message} yes="单据作废" no="不作废" />);
         if (ret === true) {
-            await editing.discard();
+            await genEditing.discard();
             navigate(-1);
         }
     }
-    const button = <LMR className="px-3 py-2">
+    const vButtons = <LMR className="my-3 px-3 py-2">
         {btnSubmit}
         {visible === true && <>
             <button className={cnAdd} onClick={onAddRow}>增加明细</button>
@@ -63,7 +94,7 @@ export function PageSheetEdit({ Gen, onEditRow, onAddRow }: PageSheetEditProps) 
     </LMR>;
     async function onSubmit() {
         setVisible(false);
-        await editing.bookSheet(undefined);
+        await genEditing.bookAct();
         setVisible(true);
         function addDetailOnOk() {
             closeModal();
@@ -81,18 +112,18 @@ export function PageSheetEdit({ Gen, onEditRow, onAddRow }: PageSheetEditProps) 
         navigate(-1);
     }
     function ViewItemOfList({ value }: { value: any }) {
-        return <ViewItemEditRow row={value} Gen={Gen} />;
+        return <genDetail.ViewDetail editingDetail={value} genEditing={genEditing} />;
     }
     return <Page header={caption}>
-        <div className="py-2 tonwa-bg-gray-3 container">
+        <div className="pt-3 tonwa-bg-gray-3 container">
             <Band label={'编号'}>
                 {sheet.no}
             </Band>
             <ViewTargetBand sheet={sheet as any} />
         </div>
-        {rows.length > 6 ? <>{button}<Sep /></> : <Sep />}
+        {rows.length > 6 ? <>{vButtons}<Sep /></> : <Sep />}
         <List items={rows} ViewItem={ViewItemOfList} none={<None />} onItemClick={onEditRow} />
         <Sep />
-        {button}
+        {vButtons}
     </Page>;
 }

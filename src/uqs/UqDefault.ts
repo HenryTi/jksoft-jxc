@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Apr 13 2023 22:19:05 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue May 02 2023 22:51:32 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,7 +25,6 @@ export enum EnumID {
 	$phrase = '$phrase',
 	UserSite = 'usersite',
 	SitePhrase = 'sitephrase',
-	BindAtom = 'bindatom',
 	BindPhraseTo = 'bindphraseto',
 	History = 'history',
 	Tie = 'tie',
@@ -33,6 +32,7 @@ export enum EnumID {
 	Atom = 'atom',
 	Sheet = 'sheet',
 	Detail = 'detail',
+	Pend = 'pend',
 	Subject = 'subject',
 	User = 'user',
 	Site = 'site',
@@ -209,7 +209,7 @@ export interface ResultSaveProp {
 export interface ParamSaveSheet {
 	sheet: string;
 	no: string;
-	item: number;
+	target: number;
 	value: number;
 }
 export interface ReturnSaveSheetRet {
@@ -223,11 +223,13 @@ export interface ParamSaveDetail {
 	base: number;
 	id: number;
 	item: number;
+	target: number;
 	origin: number;
 	value: number;
 	v1: number;
 	v2: number;
 	v3: number;
+	pend: number;
 }
 export interface ReturnSaveDetailRet {
 	id: number;
@@ -248,7 +250,7 @@ export interface ReturnGetMyDrafts$page {
 	id: number;
 	base: number;
 	no: string;
-	item: number;
+	target: number;
 	operator: number;
 	value: number;
 	phrase: string;
@@ -319,7 +321,7 @@ export interface ReturnGetPendSheet$page {
 	id: number;
 	base: number;
 	no: string;
-	item: number;
+	target: number;
 	operator: number;
 	value: number;
 }
@@ -335,7 +337,7 @@ export interface ReturnGetSheetMain {
 	id: number;
 	base: number;
 	no: string;
-	item: number;
+	target: number;
 	operator: number;
 	value: number;
 }
@@ -343,6 +345,23 @@ export interface ReturnGetSheetDetails {
 	id: number;
 	base: number;
 	item: number;
+	target: number;
+	origin: number;
+	value: number;
+	v1: number;
+	v2: number;
+	v3: number;
+	done: number;
+	pend: number;
+	pendValue: number;
+	sheet: string;
+	no: string;
+}
+export interface ReturnGetSheetOrigins {
+	id: number;
+	base: number;
+	item: number;
+	target: number;
 	origin: number;
 	value: number;
 	v1: number;
@@ -360,6 +379,7 @@ export interface ReturnGetSheetAssigns {
 export interface ResultGetSheet {
 	main: ReturnGetSheetMain[];
 	details: ReturnGetSheetDetails[];
+	origins: ReturnGetSheetOrigins[];
 	assigns: ReturnGetSheetAssigns[];
 }
 
@@ -379,6 +399,86 @@ export interface ReturnGetAtomBuds {
 export interface ResultGetAtom {
 	main: ReturnGetAtomMain[];
 	buds: ReturnGetAtomBuds[];
+}
+
+export interface ParamGetPendSheetFromNo {
+	pend: string;
+	key: string;
+}
+export interface ReturnGetPendSheetFromNo$page {
+	id: number;
+	base: number;
+	no: string;
+	target: number;
+	operator: number;
+	value: number;
+	sheet: string;
+}
+export interface ResultGetPendSheetFromNo {
+	$page: ReturnGetPendSheetFromNo$page[];
+}
+
+export interface ParamGetPendSheetFromTarget {
+	pend: string;
+	key: string;
+}
+export interface ReturnGetPendSheetFromTarget$page {
+	id: number;
+	base: number;
+	no: string;
+	target: number;
+	operator: number;
+	value: number;
+	sheet: string;
+}
+export interface ResultGetPendSheetFromTarget {
+	$page: ReturnGetPendSheetFromTarget$page[];
+}
+
+export interface ParamGetPendDetailFromItem {
+	pend: string;
+	key: string;
+}
+export interface ReturnGetPendDetailFromItem$page {
+	id: number;
+	base: number;
+	item: number;
+	target: number;
+	origin: number;
+	value: number;
+	v1: number;
+	v2: number;
+	v3: number;
+	pend: number;
+	pendValue: number;
+	sheet: string;
+	no: string;
+}
+export interface ResultGetPendDetailFromItem {
+	$page: ReturnGetPendDetailFromItem$page[];
+}
+
+export interface ParamGetPendDetailFromSheetId {
+	pend: string;
+	sheetId: number;
+}
+export interface ReturnGetPendDetailFromSheetIdRet {
+	id: number;
+	base: number;
+	item: number;
+	target: number;
+	origin: number;
+	value: number;
+	v1: number;
+	v2: number;
+	v3: number;
+	pend: number;
+	pendValue: number;
+	sheet: string;
+	no: string;
+}
+export interface ResultGetPendDetailFromSheetId {
+	ret: ReturnGetPendDetailFromSheetIdRet[];
 }
 
 export interface ParamA {
@@ -409,17 +509,6 @@ export interface SitePhraseInActs extends ID {
 	ID?: UqID<any>;
 	site: number | ID;
 	phrase: number | ID;
-}
-
-export interface BindAtom extends ID {
-	base: number;
-	atom: number;
-}
-
-export interface BindAtomInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-	atom: number | ID;
 }
 
 export interface BindPhraseTo extends ID {
@@ -488,7 +577,7 @@ export interface AtomInActs extends ID {
 export interface Sheet extends ID {
 	base: number;
 	no: string;
-	item: number;
+	target: number;
 	operator: number;
 	value: number;
 }
@@ -497,7 +586,7 @@ export interface SheetInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
 	no: string;
-	item: number | ID;
+	target: number | ID;
 	operator: number | ID;
 	value: number;
 }
@@ -505,6 +594,7 @@ export interface SheetInActs extends ID {
 export interface Detail extends ID {
 	base: number;
 	item: number;
+	target: number;
 	origin: number;
 	value: number;
 	v1: number;
@@ -516,11 +606,25 @@ export interface DetailInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
 	item: number | ID;
+	target: number | ID;
 	origin: number | ID;
 	value: number;
 	v1: number;
 	v2: number;
 	v3: number;
+}
+
+export interface Pend extends ID {
+	base: number;
+	detail: number;
+	value: number;
+}
+
+export interface PendInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	detail: number | ID;
+	value: number;
 }
 
 export interface Subject extends ID {
@@ -654,7 +758,6 @@ export interface ParamActs {
 	ixProp?: IxProp[];
 	userSite?: UserSiteInActs[];
 	sitePhrase?: SitePhraseInActs[];
-	bindAtom?: BindAtomInActs[];
 	bindPhraseTo?: BindPhraseToInActs[];
 	history?: HistoryInActs[];
 	tie?: TieInActs[];
@@ -662,6 +765,7 @@ export interface ParamActs {
 	atom?: AtomInActs[];
 	sheet?: SheetInActs[];
 	detail?: DetailInActs[];
+	pend?: PendInActs[];
 	subject?: SubjectInActs[];
 	user?: UserInActs[];
 	site?: SiteInActs[];
@@ -702,11 +806,14 @@ export interface UqExt extends Uq {
 	GetPendSheet: UqQuery<ParamGetPendSheet, ResultGetPendSheet>;
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
+	GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
+	GetPendSheetFromTarget: UqQuery<ParamGetPendSheetFromTarget, ResultGetPendSheetFromTarget>;
+	GetPendDetailFromItem: UqQuery<ParamGetPendDetailFromItem, ResultGetPendDetailFromItem>;
+	GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
 	A: UqAction<ParamA, ResultA>;
 	IxProp: UqIX<any>;
 	UserSite: UqID<any>;
 	SitePhrase: UqID<any>;
-	BindAtom: UqID<any>;
 	BindPhraseTo: UqID<any>;
 	History: UqID<any>;
 	Tie: UqID<any>;
@@ -714,6 +821,7 @@ export interface UqExt extends Uq {
 	Atom: UqID<any>;
 	Sheet: UqID<any>;
 	Detail: UqID<any>;
+	Pend: UqID<any>;
 	Subject: UqID<any>;
 	User: UqID<any>;
 	Site: UqID<any>;
@@ -1184,7 +1292,7 @@ export const uqSchema={
                 "size": 30
             },
             {
-                "name": "item",
+                "name": "target",
                 "type": "id"
             },
             {
@@ -1225,6 +1333,10 @@ export const uqSchema={
                 "type": "id"
             },
             {
+                "name": "target",
+                "type": "id"
+            },
+            {
                 "name": "origin",
                 "type": "id"
             },
@@ -1251,6 +1363,10 @@ export const uqSchema={
                 "type": "dec",
                 "scale": 4,
                 "precision": 18
+            },
+            {
+                "name": "pend",
+                "type": "id"
             }
         ],
         "returns": [
@@ -1303,7 +1419,7 @@ export const uqSchema={
                         "size": 20
                     },
                     {
-                        "name": "item",
+                        "name": "target",
                         "type": "id"
                     },
                     {
@@ -1533,7 +1649,7 @@ export const uqSchema={
                         "size": 20
                     },
                     {
-                        "name": "item",
+                        "name": "target",
                         "type": "id"
                     },
                     {
@@ -1586,7 +1702,7 @@ export const uqSchema={
                         "size": 20
                     },
                     {
-                        "name": "item",
+                        "name": "target",
                         "type": "id"
                     },
                     {
@@ -1615,6 +1731,86 @@ export const uqSchema={
                     },
                     {
                         "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "target",
+                        "type": "id"
+                    },
+                    {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v1",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v2",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v3",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "done",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "pend",
+                        "type": "id"
+                    },
+                    {
+                        "name": "pendValue",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    }
+                ]
+            },
+            {
+                "name": "origins",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "target",
                         "type": "id"
                     },
                     {
@@ -1735,6 +1931,304 @@ export const uqSchema={
             }
         ]
     },
+    "getpendsheetfromno": {
+        "name": "GetPendSheetFromNo",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "pend",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "key",
+                "type": "char",
+                "size": 100
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "target",
+                        "type": "id"
+                    },
+                    {
+                        "name": "operator",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "char",
+                        "size": 200
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "getpendsheetfromtarget": {
+        "name": "GetPendSheetFromTarget",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "pend",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "key",
+                "type": "char",
+                "size": 100
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "target",
+                        "type": "id"
+                    },
+                    {
+                        "name": "operator",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "char",
+                        "size": 200
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "getpenddetailfromitem": {
+        "name": "GetPendDetailFromItem",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "pend",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "key",
+                "type": "char",
+                "size": 100
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "target",
+                        "type": "id"
+                    },
+                    {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v1",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v2",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v3",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "pend",
+                        "type": "id"
+                    },
+                    {
+                        "name": "pendValue",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "getpenddetailfromsheetid": {
+        "name": "GetPendDetailFromSheetId",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "pend",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "sheetId",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "target",
+                        "type": "id"
+                    },
+                    {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v1",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v2",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "v3",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "pend",
+                        "type": "id"
+                    },
+                    {
+                        "name": "pendValue",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    }
+                ]
+            }
+        ]
+    },
     "a": {
         "name": "a",
         "type": "action",
@@ -1823,40 +2317,6 @@ export const uqSchema={
             },
             {
                 "name": "phrase",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "bindatom": {
-        "name": "BindAtom",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "atom",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "atom",
                 "type": "id"
             }
         ],
@@ -2073,7 +2533,7 @@ export const uqSchema={
                 "size": 20
             },
             {
-                "name": "item",
+                "name": "target",
                 "type": "id"
             },
             {
@@ -2122,6 +2582,10 @@ export const uqSchema={
                 "type": "id"
             },
             {
+                "name": "target",
+                "type": "id"
+            },
+            {
                 "name": "origin",
                 "type": "id"
             },
@@ -2145,6 +2609,37 @@ export const uqSchema={
             },
             {
                 "name": "v3",
+                "type": "dec",
+                "scale": 4,
+                "precision": 18
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "pend": {
+        "name": "Pend",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "detail",
+                "type": "id"
+            },
+            {
+                "name": "value",
                 "type": "dec",
                 "scale": 4,
                 "precision": 18
@@ -2770,6 +3265,49 @@ export const uqSchema={
                 }
             ]
         },
+        "mainsale": {
+            "name": "mainsale",
+            "type": "main",
+            "props": [
+                {
+                    "name": "a",
+                    "type": "int"
+                }
+            ]
+        },
+        "detailsale": {
+            "name": "detailsale",
+            "type": "detail",
+            "main": "mainsale"
+        },
+        "detailcheck": {
+            "name": "detailcheck",
+            "type": "detail",
+            "main": "mainsale"
+        },
+        "pendcheck": {
+            "name": "pendcheck",
+            "type": "pend",
+            "detail": "detailcheck"
+        },
+        "storein1": {
+            "name": "storein1",
+            "type": "sheet",
+            "main": "mainstorein",
+            "acts": [
+                {
+                    "name": "a",
+                    "type": "detailAct",
+                    "fromPend": "pendstorein",
+                    "detail": "d2"
+                }
+            ]
+        },
+        "d2": {
+            "name": "d2",
+            "type": "detail",
+            "main": "mainsale"
+        },
         "purchase": {
             "name": "purchase",
             "type": "sheet",
@@ -2977,6 +3515,57 @@ export const uqSchema={
                             "name": "procstoreout2"
                         }
                     ]
+                }
+            ]
+        },
+        "mainpurchase": {
+            "name": "mainpurchase",
+            "type": "main"
+        },
+        "detailpurchase": {
+            "name": "detailpurchase",
+            "type": "detail",
+            "main": "mainpurchase"
+        },
+        "sheetpurchase": {
+            "name": "sheetpurchase",
+            "type": "sheet",
+            "caption": "采购单",
+            "main": "mainpurchase",
+            "acts": [
+                {
+                    "name": "$",
+                    "type": "detailAct",
+                    "detail": "detailpurchase"
+                }
+            ]
+        },
+        "mainstorein": {
+            "name": "mainstorein",
+            "type": "main"
+        },
+        "detailstorein": {
+            "name": "detailstorein",
+            "type": "detail",
+            "main": "mainstorein"
+        },
+        "pendstorein": {
+            "name": "pendstorein",
+            "type": "pend",
+            "caption": "待入库",
+            "detail": "detailstorein"
+        },
+        "sheetstorein": {
+            "name": "sheetstorein",
+            "type": "sheet",
+            "caption": "入库单",
+            "main": "mainpurchase",
+            "acts": [
+                {
+                    "name": "$",
+                    "type": "detailAct",
+                    "fromPend": "pendstorein",
+                    "detail": "detailstorein"
                 }
             ]
         },

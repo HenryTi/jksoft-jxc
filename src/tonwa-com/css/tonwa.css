@@ -6,6 +6,14 @@
     cursor: default;
 }
 
+.fs-larger {
+    font-size: larger;
+}
+
+.fs-smaller {
+    font-size: smaller;
+}
+
 .font-1-5c {
     font-size: 1.5rem;
 }

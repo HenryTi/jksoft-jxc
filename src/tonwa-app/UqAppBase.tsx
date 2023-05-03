@@ -240,6 +240,10 @@ export type OpenModal = <T = any>(element: JSX.Element, onClosed?: (result: any)
 export const ModalContext = React.createContext(undefined);
 export function useModal() {
     const uqApp = useUqAppBase();
+    return uqAppModal(uqApp);
+}
+
+export function uqAppModal(uqApp: UqAppBase): { openModal: OpenModal; closeModal: (result?: any) => void } {
     const { modal } = uqApp;
     const { stack: modalStackAtom } = modal;
     async function openModal<T = any>(element: JSX.Element, onClosed?: (result: any) => void): Promise<T> {
@@ -265,6 +269,7 @@ export function useModal() {
     }
     return { openModal, closeModal }
 }
+
 
 export const UqAppContext = React.createContext(undefined);
 export function useUqAppBase() {

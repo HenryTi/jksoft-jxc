@@ -2,19 +2,19 @@ import { PageMoreCacheData } from "app/coms";
 import { atom, PrimitiveAtom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Sheet } from "uqs/UqDefault";
-import { GenSheet } from "./GenSheet";
+import { GenSheetOld } from "./GenSheetOld";
 import { Gen } from "app/tool";
 
 // export interface SheetBase { id?: number; base?: number; no?: string; item?: number; }
 // export interface DetailBase { id?: number; base?: number; item?: number; value: number; }
 
-export abstract class GenEditing extends Gen {
-    protected gen: GenSheet;
+export abstract class GenEditingOld extends Gen {
+    protected gen: GenSheetOld;
     readonly atomSheet: PrimitiveAtom<Sheet>;
     readonly atomSubmitable: PrimitiveAtom<boolean>;
     readonly atomIsMine: PrimitiveAtom<boolean>;
 
-    constructor(gen: GenSheet) {
+    constructor(gen: GenSheetOld) {
         super(gen.uqApp);
         this.gen = gen;
         this.atomSheet = atom(undefined as Sheet);

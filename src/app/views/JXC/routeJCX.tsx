@@ -1,17 +1,12 @@
 import { Route } from "react-router-dom";
-import { routeContact } from "./AtomContact";
-import { routeProduct } from "./AtomProduct";
-import { routePurchase } from "./SheetPurchase";
-import { routeSheetCenter } from "./SheetCenter";
-import { routeStoreIn } from "./SheetStoreIn";
-import { routeSale } from "./SheetSale";
-import { routeAtomCenter } from "./AtomCenter";
-import { routeStoreOut } from "./SheetStoreOut";
-import { routeReportStorage } from "./ReportStorage";
-import { routeReportCenter } from "./ReportCenter";
+import { routeContact, routeProduct } from "./Atom";
+import { routeSheetCenterOld, routePurchase, routeStoreIn, routeSale, routeStoreOut } from "./SheetOld";
+import { routeAtomCenter } from "./Atom";
+import { routeReportCenter, routeReportStorage } from "./Report";
 import { routePrice } from "./AssignPrice";
 import { routeSheetView } from './SheetView';
 import { UqApp } from "app/UqApp";
+import { routeSheet } from "./Sheet";
 
 export const pathJXC = 'jxc';
 export function routeJCX(uqApp: UqApp) {
@@ -20,7 +15,9 @@ export function routeJCX(uqApp: UqApp) {
         {routeProduct(uqApp)}
         {routeContact(uqApp)}
 
-        {routeSheetCenter}
+        {routeSheet(uqApp)}
+
+        {routeSheetCenterOld}
         {routePurchase(uqApp)}
         {routeStoreIn(uqApp)}
         {routeSale(uqApp)}

@@ -1,0 +1,72 @@
+Biz Main MainSale {
+    Prop a INT;
+};
+
+Biz Detail DetailSale {
+    Main MainSale;
+};
+
+ACT a() {
+    VAR value1 VALUE = value, item1 ID = item FROM Detail=1; -- ID
+    var a int = 1;
+    VAR value VALUE = value, item ID = item FROM Detail WHERE id=1; -- ID
+}
+
+/*
+Biz Detail DetailStoreIn {
+    Main MainSale;
+
+    ACT c (detail ID) {
+        VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
+        Biz Subject storage of item += value ref detail;
+    };
+};
+*/
+
+Biz Detail DetailCheck {
+    Main MainSale;
+};
+/*
+Biz Pend PendStoreIn '待入库' {
+    Detail DetailStoreIn;
+}
+*/
+Biz Pend PendCheck {
+    Detail DetailCheck;
+}
+
+Biz Sheet StoreIn1 {
+    Main MainStoreIn;
+    Detail D2 ACT a;
+    -- Detail DetailStoreIn; -- ACT c;
+};
+
+Biz Detail D2 ver 0.5 {
+    Main MainSale;
+
+    -- 保存时，先写detail，然后提交的时候，执行里面的代码
+    -- detail可以重复。From不可以重复
+    -- 不同的操作人员，有取不同的Pend的权限
+    -- 调用Act时，Detail内容已经保存。给定 detail，可以获取main。
+    -- 给定pend id，自然可以有pend对应的detail
+    ACT a (detail ID)
+    FROM PendStoreIn
+    {
+        VAR pend ID = pend FROM DetailPend=detail;
+        VAR value VALUE = value, pendDetail ID = detail FROM Pend=pend;
+        VAR item ID = item FROM Detail=pendDetail;
+        VAR a int;
+        set a = 2;
+        VAR x VALUE=value FROM Done=item; -- IDX
+        Biz Subject storage of item += value ref detail;
+        VAR pendId ID;
+        Biz Pend PendCheck ID to pendId Detail=detail SET Value=value;
+        Biz Pend PendStoreIn ID=pendId DEL;
+        Biz Pend PendStoreIn ID=pendId GoTo PendCheck;
+    };
+
+    ACT b (detail ID) {
+        VAR value VALUE, item ID; -- = value OF Detail @ detail; -- ID
+        Biz Subject storage of item += value ref detail;
+    };
+};

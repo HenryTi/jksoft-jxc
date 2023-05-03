@@ -11,17 +11,18 @@ ID Sheet (
     id MINUTE,
     KEY base ID,            -- sitePhrase
     KEY no,
-    item ID,
-    -- origin ID,           -- 源单，应该在明细上体现，主单不需要。
+    target ID,              -- 操作对象
     operator ID,            -- employee Item
     value VALUE,
+    -- item ID,                -- target，需要去掉
 );
 
 -- 所有单据的明细，单值
 ID Detail (
     id MINUTE,
     base ID,                -- SheetPurchase or SheetSale
-    item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位, 也可以指向源单明细
+    item ID,                -- 计量对象。比如：商品不同包装或者批次
+    target ID,              -- 操作对象。比如：客户，仓库，等
     origin ID,              -- 源单
     value VALUE,
     v1 VALUE,
@@ -30,10 +31,30 @@ ID Detail (
     INDEX base_id(base, id) UNIQUE,
 );
 
+ID Pend (
+    id MINUTE,
+    base ID,            -- sitePhrase
+    detail ID,
+    value VALUE,
+    INDEX base_id(base, id) UNIQUE,
+    INDEX base_detail_id(base, detail, id) UNIQUE,
+);
+
+-- 从哪个pend来，处理完成后，删除了。
+IDX DetailPend (
+    id,                 -- detail id
+    pend ID,
+);
+
+IDX SheetRed (
+    id,
+    red TINYINT DEFAULT 1,  -- 红冲单挂这里，挂主表
+);
+
 ID Subject (
     id,
-    KEY base ID,            -- sitePhrase
-    KEY atom ID,            -- atom id or 0 for all
+    KEY base ID,        -- sitePhrase
+    KEY atom ID,        -- atom id or 0 for all
 );
 
 ID User (
@@ -60,6 +81,12 @@ ID Tree (
 IDX Done (
     id,
     value VALUE,
+);
+
+-- 各种中间状态。单据记账时，出现错误，在存储过程之间传递数据
+IDX Temp (
+    id,
+    value BIGINT,
 );
 
 ENUM MeasureUnitType (

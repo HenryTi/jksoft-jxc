@@ -3,7 +3,7 @@ import { useUqApp } from "app/UqApp";
 import { useNavigate, useParams } from "react-router-dom";
 import { useModal } from "tonwa-app";
 import { useEffectOnce } from "tonwa-com";
-import { PageSheetEdit } from "../PageSheetEdit";
+import { PageSheetEditOld } from "../PageSheetEditOld";
 import { GenDerive } from "./GenDerive";
 
 export function PageDeriveEdit({ Gen }: GenProps<GenDerive>) {
@@ -36,5 +36,5 @@ export function PageDeriveEdit({ Gen }: GenProps<GenDerive>) {
     }
     async function onEditRow(row: any) {
     }
-    return <PageSheetEdit Gen={Gen} sheet={sheet} onEditRow={onEditRow} onAddRow={onAddRow} />;
+    return <PageSheetEditOld Gen={Gen} sheet={sheet} onEditRow={onEditRow} onAddRow={onAddRow} />;
 }

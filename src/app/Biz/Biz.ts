@@ -4,7 +4,7 @@ import { Entity } from './Entity';
 import { EntityAtom } from './EntityAtom';
 import { EntityTree } from './EntityTree';
 import { EntitySetting } from './EntitySetting';
-import { EntitySheet } from './EntitySheet';
+import { EntityDetail, EntityMain, EntityPend, EntitySheet } from './EntitySheet';
 import { EntitySubject } from './EntitySubject';
 import { EntityTie } from './EntityTie';
 
@@ -12,6 +12,9 @@ export class Biz {
     readonly uqApp: UqApp;
     readonly uq: UqExt;
     readonly sheets: { [name: string]: EntitySheet } = {}
+    readonly mains: { [name: string]: EntityMain } = {}
+    readonly details: { [name: string]: EntityDetail } = {}
+    readonly pends: { [name: string]: EntityPend } = {}
     readonly atoms: { [name: string]: EntityAtom } = {}
     readonly settings: { [name: string]: EntitySetting } = {}
     readonly permits: { [name: string]: EntityPermit } = {}
@@ -30,6 +33,9 @@ export class Biz {
     private buildEntities() {
         const builders: { [type: string]: (name: string, type: string) => Entity } = {
             sheet: this.buildSheet,
+            main: this.buildMain,
+            detail: this.buildDetail,
+            pend: this.buildPend,
             atom: this.buildAtom,
             setting: this.buildSetting,
             permit: this.buildPermit,
@@ -60,6 +66,21 @@ export class Biz {
     private buildSheet = (name: string, type: string): Entity => {
         let bizEntity = new EntitySheet(this, name, type);
         return this.sheets[bizEntity.name] = bizEntity;
+    }
+
+    private buildMain = (name: string, type: string): Entity => {
+        let bizEntity = new EntityMain(this, name, type);
+        return this.mains[bizEntity.name] = bizEntity;
+    }
+
+    private buildDetail = (name: string, type: string): Entity => {
+        let bizEntity = new EntityDetail(this, name, type);
+        return this.details[bizEntity.name] = bizEntity;
+    }
+
+    private buildPend = (name: string, type: string): Entity => {
+        let bizEntity = new EntityPend(this, name, type);
+        return this.pends[bizEntity.name] = bizEntity;
     }
 
     private buildAtom = (name: string, type: string): Entity => {

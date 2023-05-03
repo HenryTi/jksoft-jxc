@@ -1,7 +1,7 @@
 import { Link, Route } from "react-router-dom";
 import { IDView } from "tonwa-app";
 import { PageQueryMore, ViceTitle } from "app/coms";
-import { GenSheet, ViewItemID } from "app/template";
+import { GenSheetOld, ViewItemID } from "app/template";
 import { UqApp, useUqApp } from "app/UqApp";
 import { GenPurchase } from "./SheetPurchase";
 import { GenSale } from "./SheetSale";
@@ -9,17 +9,17 @@ import { GenStoreOut } from "./SheetStoreOut";
 import { GenStoreIn } from "./SheetStoreIn";
 import { Sheet } from "uqs/UqDefault";
 
-export const pathSheetCenter = 'sheet-center';
-const GenArr: (new (uqApp: UqApp) => GenSheet)[] = [
+export const pathSheetCenterOld = 'sheet-center-old';
+const GenArr: (new (uqApp: UqApp) => GenSheetOld)[] = [
     GenPurchase,
     GenStoreIn,
     GenSale,
     GenStoreOut,
 ];
-export function PageSheetCenter() {
+export function PageSheetCenterOld() {
     const uqApp = useUqApp();
     const { uq } = uqApp;
-    const genColl: { [entity: string]: GenSheet } = {};
+    const genColl: { [entity: string]: GenSheetOld } = {};
     const genArr = GenArr.map(v => {
         const gen = uqApp.objectOf(v);
         const { phrase: typePhrase } = gen;
@@ -31,7 +31,7 @@ export function PageSheetCenter() {
         return ret.$page;
     }
     function ViewItem({ value }: { value: Sheet & { phrase: string; } }) {
-        const { id, no, phrase, item, operator } = value;
+        const { id, no, phrase, target, operator } = value;
         let gen = genColl[phrase];
         if (gen === undefined) debugger;
         let { caption, path } = gen;
@@ -41,7 +41,7 @@ export function PageSheetCenter() {
                     <div>{caption}</div>
                     <div className="small text-muted">{no}</div>
                 </div>
-                <IDView id={item} uq={uq} Template={ViewItemID} />
+                <IDView id={target} uq={uq} Template={ViewItemID} />
             </div>
         </Link>;
     }
@@ -73,4 +73,4 @@ export function PageSheetCenter() {
     </PageQueryMore>;
 }
 
-export const routeSheetCenter = <Route path={pathSheetCenter} element={<PageSheetCenter />} />;
+export const routeSheetCenterOld = <Route path={pathSheetCenterOld} element={<PageSheetCenterOld />} />;

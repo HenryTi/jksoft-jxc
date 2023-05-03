@@ -5,6 +5,8 @@ interface ItemProps<T> {
     value: T;
 }
 
+let uniqueRowId = 1;
+
 export interface ListPropsWithoutItems<T> {
     className?: string;
     itemKey?: string | ((item: T) => string | number);
@@ -43,7 +45,7 @@ export function List<T>(props: ListProps<T>) {
     }
 
     ItemView = ItemView ?? DefaultViewItem;
-    let renderItem: (item: T, index: number) => JSX.Element;
+    let renderItem: (item: T, index: number, key: string) => JSX.Element;
     function onCheckChange(item: T, evt: ChangeEvent<HTMLInputElement>): void {
         onItemSelect(item, evt.currentTarget.checked);
     }
@@ -58,7 +60,7 @@ export function List<T>(props: ListProps<T>) {
     }
     if (onItemSelect) {
         if (onItemNav) {
-            renderItem = v => (
+            renderItem = (v, index, key) => (
                 <div className="d-flex">
                     <label className="ps-3 pe-2 align-self-stretch d-flex align-items-center">
                         <input type="checkbox" className="form-check-input"
@@ -71,14 +73,14 @@ export function List<T>(props: ListProps<T>) {
             );
         }
         else {
-            renderItem = v => (
-                <label className="d-flex">
-                    <input type="checkbox" className="form-check-input mx-3 align-self-center"
+            renderItem = (v, index, key) => (
+                <div className="form-check mx-3">
+                    <input type="checkbox" className=" mt-2 form-check-input" id={key}
                         onChange={evt => onCheckChange(v, evt)} />
-                    <div className="flex-grow-1">
+                    <label className="form-check-label" htmlFor={key}>
                         <ItemView value={v} />
-                    </div>
-                </label>
+                    </label>
+                </div>
             );
         }
     }
@@ -114,7 +116,7 @@ export function List<T>(props: ListProps<T>) {
     return <ul className={'m-0 p-0 ' + className}>{items.map((v, index) => {
         let key = funcKey(v, index);
         return <React.Fragment key={key}>
-            {renderItem(v, index)}
+            {renderItem(v, index, key as string)}
             {index < len - 1 && sep}
         </React.Fragment>;
     })}</ul>;

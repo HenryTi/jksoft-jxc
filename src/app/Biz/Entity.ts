@@ -10,9 +10,13 @@ export class Entity extends BizBase {
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
+            case 'main': this.fromMain(val); break;
             case 'props': this.fromProps(val); break;
             case 'assigns': this.fromAssigns(val); break;
         }
+    }
+
+    protected fromMain(val: any) {
     }
 
     protected fromProps(props: any[]) {

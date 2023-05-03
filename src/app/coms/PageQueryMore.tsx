@@ -15,7 +15,9 @@ interface PageQueryMoreProps<P, R> extends PageProps {
     pageMoreSize?: number;
     ViewItem?: ({ value }: { value: any; }) => JSX.Element;
     onItemClick?: (item: any) => Promise<void>;
+    onItemSelect?: (item: any, isSelected: boolean) => Promise<void>;
     Top?: (props: { items: any[] }) => JSX.Element; // 根据内容显示Top
+    Bottom?: (props: { items: any[] }) => JSX.Element; // 根据内容显示Bottom
 }
 
 export class PageMoreCacheData {
@@ -56,8 +58,8 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
 
 function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst: boolean; isModal: boolean }) {
     let { query, param, sortField, pageStart: pageStartParam, pageSize, pageMoreSize
-        , ViewItem: ItemView, onItemClick, children
-        , isPopFirst, isModal, Top } = props;
+        , ViewItem: ItemView, onItemClick, onItemSelect, children
+        , isPopFirst, isModal, Top, Bottom } = props;
     const [items, setItems] = useState<R[]>(undefined);
     const [loading, setLoading] = useState(false);
     const refValue = useRef({
@@ -184,13 +186,15 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
     }
     let top: any;
     if (Top) top = <Top items={items} />;
+    let bottom: any;
+    if (Bottom) bottom = <Bottom items={items} />;
     return <Page {...props} onScrollBottom={onScrollBottom}>
         <div id="$$top" />
         {children}
         {top}
         {
             items && items.length > 0 && <>
-                <List items={items} ViewItem={ItemView} onItemClick={onItemClick} />
+                <List items={items} ViewItem={ItemView} onItemClick={onItemClick} onItemSelect={onItemSelect} />
                 <Sep />
             </>
         }
@@ -199,6 +203,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
             <div id="$$bottom" />
         </div>
         }
+        {bottom}
     </Page>;
 }
 

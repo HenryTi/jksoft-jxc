@@ -116,7 +116,7 @@ Biz ACT SaveProp(
 Biz ACT SaveSheet (
     sheet CHAR(100),
     no NO,
-    item ID,
+    target ID,
     -- operator ID,            -- employee Item
     value VALUE,
 )
@@ -128,7 +128,7 @@ RETURNS ret (
 
     VAR sheetId ID;
     WITH Sheet as a ID to sheetId Key(base, no) 
-        SET a.item=item, a.operator=me, a.value=value;
+        SET a.target=target, a.operator=me, a.value=value;
 
     WITH IxMyDraft IX=me XI=sheetId;
 
@@ -138,12 +138,14 @@ RETURNS ret (
 Biz ACT SaveDetail (
     base ID,
     id ID,
-    item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位, 也可以指向源单明细
+    item ID,                -- 计量对象。比如：商品不同包装或者批次
+    target ID,              -- 操作对象。比如：客户，仓库，等
     origin ID,
     value VALUE,
     v1 VALUE,
     v2 VALUE,
     v3 VALUE,
+    pend ID,
 ) 
 RETURNS ret (
     id ID,
@@ -155,10 +157,13 @@ RETURNS ret (
     }
     IF id IS NULL {
         SET id = ID(Detail New);
-        WITH Detail ID=id SET base=base, item=item, origin=origin, value=value, v1=v1, v2=v2, v3=v3;
+        WITH Detail ID=id SET base=base, item=item, target=target, origin=origin, value=value, v1=v1, v2=v2, v3=v3;
     }
     ELSE {
-        WITH Detail ID=id SET item=item, origin=origin, value=value, v1=v1, v2=v2, v3=v3;
+        WITH Detail ID=id SET item=item, target=target, origin=origin, value=value, v1=v1, v2=v2, v3=v3;
+    }
+    IF pend IS NOT NULL {
+        WITH DetailPend ID=id SET pend=pend;
     }
     INTO ret SELECT id;
 };
@@ -303,6 +308,14 @@ RETURNS main (
 RETURNS details (
     * Detail,
     done VALUE,
+    pend ID,
+    pendValue VALUE,
+    sheet PHRASE,
+    no NO,
+)
+RETURNS origins (
+    * Detail,
+    done VALUE,
 )
 RETURNS assigns (
     id ID,              -- detail id
@@ -314,10 +327,17 @@ RETURNS assigns (
     INTO main SELECT * a
         FROM Sheet as a
         WHERE a.id=id;
-    INTO details SELECT * a, IFNULL(b.value, 0) as done
+    INTO details SELECT * a, IFNULL(b.value, 0) as done, c.pend, d.value as pendValue, PHRASE(e.base) as sheet, e.no
         FROM Detail as a
             LEFT JOIN Done as b ON b.id=a.id
+            LEFT JOIN DetailPend as c ON c.id=a.id
+            LEFT JOIN Pend as d ON d.id=c.pend
+            LEFT JOIN Sheet as e ON e.id=a.base
         WHERE a.base=id;
+    INTO origins SELECT DISTINCT * b, IFNULL(c.value, 0) as done
+        FROM (SELECT DISTINCT origin FROM details) as a
+            JOIN DETAIL as b ON b.id=a.origin
+            LEFT JOIN Done as c ON c.id=b.id;
     INTO assigns SELECT a.id, b.xi as assign, d.name as phrase, b.int, b.dec
         FROM Detail as a
             JOIN IxAssignValue as b ON b.ix=a.id

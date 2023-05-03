@@ -2,11 +2,10 @@ import { Route } from "react-router-dom";
 import { GenProps } from "app/tool";
 import { UqApp } from "app/UqApp";
 import { Detail } from "uqs/UqDefault";
-import { PageOriginEdit, GenSheet, GenOrigin, GenDetail, PageDetailQPA } from "../../template/Sheet";
-import { ModalSelectProductRetailPrice } from "./AtomProduct";
+import { PageOriginEdit, GenSheetOld, GenOrigin, GenDetailOld, PageDetailQPA } from "../../../template/SheetOld";
+import { ModalSelectProductRetailPrice, GenContact } from "../Atom";
 import { ViewItemID } from "app/template";
 import { QueryMore } from "app/tool";
-import { GenContact } from "./AtomContact";
 
 export class GenSale extends GenOrigin {
     readonly bizEntityName = 'sale';
@@ -15,7 +14,7 @@ export class GenSale extends GenOrigin {
 
     readonly ModalSelectDetailAtom: () => JSX.Element;
     readonly PageSheetEdit: () => JSX.Element;
-    readonly PageSheetDetail: (props: GenProps<GenSheet> & { detail: Detail; }) => JSX.Element;
+    readonly PageSheetDetail: (props: GenProps<GenSheetOld> & { detail: Detail; }) => JSX.Element;
     readonly ViewItemSource: ({ id }: { id: number; }) => JSX.Element;
     readonly sourceSearchPlaceholder: string;
 
@@ -46,7 +45,7 @@ function PageSheetDetail({ detail, Gen }: (GenProps<GenSale> & { detail: Detail 
     return <PageDetailQPA detail={detail} GenSheet={Gen as any} Gen={GenDetailSale} />;
 }
 
-class GenDetailSale extends GenDetail {
+class GenDetailSale extends GenDetailOld {
     get path(): string { return undefined; }
     get itemCaption(): string { return '产品'; }
     get ViewItemTemplate(): ({ value }: { value: any; }) => JSX.Element {

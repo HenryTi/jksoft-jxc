@@ -257,6 +257,7 @@ export interface Uq {
     idCache<T = any>(id: number): T;
     IDValue<T>(type: string, value: string): T;
     Biz(id: number, act: string): Promise<void>;
+    BizSheetAct(id: number, detail: string, act: string): Promise<any[]>;
     Acts(param: any): Promise<any>;
     ActIX<T>(param: ParamActIX<T>): Promise<number[]>;
     ActIXSort(param: ParamActIXSort): Promise<void>;
@@ -781,6 +782,10 @@ export class UqMan {
 
     protected Biz = async (id: number, act: string): Promise<void> => {
         await this.uqApi.bizSheet(id, act);
+    }
+    protected BizSheetAct = async (id: number, detail: string, act: string): Promise<any[]> => {
+        let ret = await this.uqApi.bizSheetAct(id, detail, act);
+        return ret;
     }
     protected Acts = async (param: any): Promise<any> => {
         //let apiParam = this.ActsApiParam(param);

@@ -38,6 +38,10 @@ export class UqApi extends ApiBase {
     async bizSheet(id: number, act: string): Promise<void> {
         await this.post('biz', { id, act });
     }
+    async bizSheetAct(id: number, detail: string, act: string): Promise<any[]> {
+        let ret = await this.post('biz-sheet-act', { id, detail, act });
+        return ret;
+    }
     async getAdmins(): Promise<any[]> {
         let ret = await this.get('get-admins');
         return ret;

@@ -1,13 +1,13 @@
 import { Band } from "app/coms";
-import { PageDeriveEdit, GenSheet, GenDerive } from "app/template/Sheet";
+import { PageDeriveEdit, GenSheetOld, GenDerive } from "app/template/SheetOld";
 import { UqApp } from "app/UqApp";
 import { Route } from "react-router-dom";
 import { UserView } from "tonwa-app";
-import { GenPurchase } from "./SheetPurchase";
 import { Sheet } from "uqs/UqDefault";
+import { GenSale } from "./SheetSale";
 
-export class GenStoreIn extends GenDerive {
-    readonly bizEntityName = 'storein';
+export class GenStoreOut extends GenDerive {
+    readonly bizEntityName = 'storeout';
     readonly ViewTarget: (props: { sheet: Sheet }) => JSX.Element;
     readonly ViewTargetBand: (props: { sheet: Sheet }) => JSX.Element;
 
@@ -25,17 +25,17 @@ export class GenStoreIn extends GenDerive {
             </Band>;
         }
     }
-    protected getOriginSheetGen(): GenSheet { return this.uqApp.objectOf(GenPurchase) as any; }
+    protected getOriginSheetGen(): GenSheetOld { return this.uqApp.objectOf(GenSale) as any; }
 }
 
-function PageStoreInEdit() {
-    return <PageDeriveEdit Gen={GenStoreIn} />;
+function PageStoreOutEdit() {
+    return <PageDeriveEdit Gen={GenStoreOut} />;
 }
 
-export function routeStoreIn(uqApp: UqApp) {
-    let { path } = uqApp.objectOf(GenStoreIn);
+export function routeStoreOut(uqApp: UqApp) {
+    let { path } = uqApp.objectOf(GenStoreOut);
     return <>
-        <Route path={path} element={<PageStoreInEdit />} />
-        <Route path={`${path}/:id`} element={<PageStoreInEdit />} />
+        <Route path={path} element={<PageStoreOutEdit />} />
+        <Route path={`${path}/:id`} element={<PageStoreOutEdit />} />
     </>;
 }

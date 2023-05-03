@@ -1,5 +1,5 @@
 import { UqApp, useUqApp } from "../UqApp";
-import { Biz } from "../Biz";
+import { Biz, Entity } from "../Biz";
 
 export abstract class Gen {
     readonly uqApp: UqApp;
@@ -21,8 +21,16 @@ export interface GenProps<T extends Gen> {
     Gen: new (uqApp: UqApp) => T;
 }
 
-export abstract class GenBizEntity extends Gen {
+export abstract class GenBizEntity<E extends Entity> extends Gen {
     abstract get bizEntityType(): string;
     abstract get bizEntityName(): string;
-    abstract get caption(): string;
+    abstract get entity(): E;
+    get caption() {
+        let { name, caption } = this.entity;
+        return caption ?? name;
+    }
+    get phrase() {
+        let { name, type } = this.entity;
+        return `${type}.${name}`;
+    }
 }

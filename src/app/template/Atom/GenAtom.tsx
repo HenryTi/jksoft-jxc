@@ -18,7 +18,7 @@ export interface ViewPropProps extends ViewPropRowProps {
     ValueTemplate?: (props: { value: any; }) => JSX.Element;
 }
 
-export abstract class GenAtom extends GenBizEntity {
+export abstract class GenAtom extends GenBizEntity<BizAtom> {
     readonly bizEntityType = 'atom';
     readonly Atom: UqID<any>;
     readonly genAtomNew: GenAtomNew;
@@ -44,7 +44,7 @@ export abstract class GenAtom extends GenBizEntity {
     protected get GenAtomSelect(): new (genAtom: GenAtom) => GenAtomSelect { return GenAtomSelect; }
 
     get path() { return this.bizEntityName; }
-    get bizAtom(): BizAtom { return this.biz.atoms[this.bizEntityName]; }
+    get entity(): BizAtom { return this.biz.atoms[this.bizEntityName]; }
 
     readonly searchAtoms: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
         let newParam = { ...param, atom: this.phrase };
@@ -94,12 +94,12 @@ export abstract class GenAtom extends GenBizEntity {
     */
     // IDView
     get caption() {
-        let { name, caption } = this.bizAtom;
+        let { name, caption } = this.entity;
         return caption ?? name;
     }
 
     get phrase() {
-        let { name, type } = this.bizAtom;
+        let { name, type } = this.entity;
         return `${type}.${name}`;
     }
 
@@ -108,8 +108,8 @@ export abstract class GenAtom extends GenBizEntity {
     }
 
     async savePropEx(id: number, name: string, value: string | number) {
-        let { bizAtom } = this;
-        let { props } = bizAtom;
+        let { entity } = this;
+        let { props } = entity;
         let bizProp = props.get(name);
         let int: number, dec: number, str: string;
         switch (bizProp.budType.type) {
@@ -137,7 +137,7 @@ abstract class GenAtomEx extends Gen {
         this.genAtom = genAtom;
     }
     abstract get path(): string;
-    get bizAtom() { return this.genAtom.bizAtom; }
+    get bizAtom() { return this.genAtom.entity; }
     get caption() { return this.genAtom.caption; }
     get exLabel() { return this.genAtom.exLabel; }
     get NOLabel() { return this.genAtom.NOLabel; }
