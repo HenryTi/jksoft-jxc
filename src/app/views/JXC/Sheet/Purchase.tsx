@@ -23,18 +23,17 @@ export class GenSheetPurchase extends GenSheet {
 
 class GenMainPurchase extends GenMain {
     readonly bizEntityName = 'mainpurchase';
-    readonly QuerySearchItem: QueryMore;
     readonly targetCaption = '往来单位';
-    readonly ViewTarget: (props: { sheet: Sheet; }) => JSX.Element;
-    readonly ViewTargetBand: (props: { sheet: Sheet; }) => JSX.Element;
-
-    constructor(uqApp: UqApp) {
-        super(uqApp);
-        this.QuerySearchItem = uqApp.objectOf(GenContact).searchAtoms;
-        this.ViewTarget = ({ sheet }: { sheet: Sheet }) => {
+    get QuerySearchItem(): QueryMore {
+        return this.uqApp.objectOf(GenContact).searchAtoms;
+    }
+    get ViewTarget(): (props: { sheet: Sheet; }) => JSX.Element {
+        return ({ sheet }: { sheet: Sheet }) => {
             return <IDView id={sheet.target} uq={this.uq} Template={ViewItemID} />;
         }
-        this.ViewTargetBand = ({ sheet }: { sheet: Sheet }) => {
+    }
+    get ViewTargetBand(): ({ sheet }: { sheet: Sheet }) => JSX.Element {
+        return ({ sheet }: { sheet: Sheet }) => {
             return <Band label={this.targetCaption}>
                 <this.ViewTarget sheet={sheet} />
             </Band>;
@@ -44,6 +43,11 @@ class GenMainPurchase extends GenMain {
 
 class GenStartPurchase extends GenStart {
     override async start(): Promise<{ sheet: Sheet, editingDetails: EditingDetail[] }> {
+        let target = await this.genSheetAct.genSheet.genMain.selectTarget();
+        let no = await this.uq.IDNO({ ID: this.uq.Sheet });
+        let main = { no, target } as Sheet;
+        return { sheet: main, editingDetails: [] };
+        /*
         let { openModal, closeModal } = uqAppModal(this.uqApp);
         const Modal = () => {
             const { genSheet, caption } = this.genSheetAct;
@@ -83,6 +87,7 @@ class GenStartPurchase extends GenStart {
         }
         let ret = await openModal(<Modal />);
         return ret;
+        */
     }
 }
 

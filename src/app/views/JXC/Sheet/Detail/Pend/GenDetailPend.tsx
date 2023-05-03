@@ -1,12 +1,10 @@
-import { useForm } from "react-hook-form";
-import { Band, FormRow, FormRowsView } from "app/coms";
+import { Band, FormRow, InputNumber } from "app/coms";
 import { ViewItemID } from "app/template";
 import { GenDetail, EditingDetail, GenEditing } from "app/template/Sheet";
-import { IDView, Page, uqAppModal, useModal } from "tonwa-app";
+import { IDView } from "tonwa-app";
 import { Atom, Detail } from "uqs/UqDefault";
-import { ChangeEvent, useState } from "react";
-import { ModalSelectProduct } from "../../../Atom";
 import { useUqApp } from "app/UqApp";
+import { getAtomValue } from "tonwa-com";
 
 const fieldQuantity = 'value';
 const fieldPrice = 'v1';
@@ -44,11 +42,15 @@ export abstract class GenDetailPend extends GenDetail {
         return { name: fieldAmount, label: '金额', type: 'number', options: { value, disabled: this.amountDisabled } };
     }
 
-    async addRow(): Promise<EditingDetail> {
-        const { openModal } = uqAppModal(this.uqApp);
-        let productAtom = await openModal(<ModalSelectProduct />);
-        let detail = this.editingDetailFromAtom(productAtom);
-        return await openModal(<this.PageDetail header={'新增明细'} detail={detail} />);
+    override async addRow(genEditing: GenEditing): Promise<EditingDetail[]> {
+        let { genPend } = genEditing.genSheetAct;
+        if (genPend === undefined) {
+            alert('genPend can not be undefined');
+            return;
+        }
+        let editingDetails = getAtomValue(genEditing.atomDetails);
+        let selected = await genPend.select(editingDetails);
+        return selected;
     }
 
     protected editingDetailFromAtom(atom: Atom): Detail {
@@ -56,77 +58,10 @@ export abstract class GenDetailPend extends GenDetail {
         return detail;
     }
 
-    async editRow(detail: EditingDetail): Promise<void> {
-        //const { openModal } = uqAppModal(this.uqApp);
-        //return await openModal(<this.PageDetail header="修改明细" detail={detail} />);
+    override async editRow(genEditing: GenEditing, detail: EditingDetail): Promise<void> {
     }
 
     readonly ViewDetail = ViewDetailPend;
-
-    protected PageDetail = ({ header, detail }: { header?: string; detail?: Detail; }): JSX.Element => {
-        detail = detail ?? {} as Detail;
-        const { value, v1: price, v2: amount, item } = detail;
-        const { closeModal } = useModal();
-        const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
-        const [hasValue, setHasValue] = useState(value != undefined);
-        function onChange(evt: ChangeEvent<HTMLInputElement>) {
-            const { value, name } = evt.target;
-            if (value.trim().length === 0) {
-                (detail as any)[name] = undefined;
-            }
-            else {
-                let v = Number(value);
-                (detail as any)[name] = Number.isNaN(v) === true ? undefined : v;
-            }
-            switch (name) {
-                case fieldQuantity: onQuantityChange(detail.value); break;
-                case fieldPrice: onPriceChange(detail.v1); break;
-            }
-            const { v1: price, v2: amount, value: quantity } = detail;
-            let hv = amount !== undefined && price !== undefined && quantity !== undefined;
-            setHasValue(hv);
-        }
-        function setAmountValue(quantity: number, price: number) {
-            if (quantity === undefined || price === undefined) {
-                detail.v2 = undefined;
-                setValue(fieldAmount, '');
-            }
-            let amount = quantity * price;
-            detail.v2 = amount;
-            setValue(fieldAmount, amount.toFixed(4));
-        }
-        function onQuantityChange(value: number) {
-            detail.value = value;
-            let p = getValues(fieldPrice) ?? price;
-            if (!p) return;
-            setAmountValue(value, p);
-        }
-        function onPriceChange(value: number) {
-            detail.v1 = value;
-            let q = getValues(fieldQuantity) ?? value;
-            if (!q) return;
-            setAmountValue(q, value);
-        }
-        const options = { onChange, valueAsNumber: true };
-        const formRows = this.buildFormRows(detail);
-        formRows.forEach(v => (v as any).options = { ...(v as any).options, ...options });
-        formRows.push({ type: 'submit', label: '提交', options: { disabled: hasValue === false } });
-
-        async function onSubmit(data: any) {
-            // closeModal(data);
-            // amount 字段disabled。setValue('amount'), 改变了input显示，但是取值没有改变。
-            // 只能用下面变通
-            closeModal(detail);
-        }
-        const { caption, ViewItemTop } = this;
-        return <Page header={header ?? caption}>
-            <div className="mt-3"></div>
-            <ViewItemTop item={item} />
-            <form className="container" onSubmit={handleSubmit(onSubmit)}>
-                <FormRowsView rows={formRows} register={register} errors={errors} />
-            </form>
-        </Page>;
-    }
 }
 
 function ViewDetailPend({ editingDetail, genEditing }: { editingDetail: EditingDetail; genEditing: GenEditing; }): JSX.Element {
@@ -138,23 +73,12 @@ function ViewDetailPend({ editingDetail, genEditing }: { editingDetail: EditingD
     const row = rows[0];
     const { value } = row;
     (row as any).$saveValue = value;
-    const onFocus = (evt: React.FocusEvent<HTMLInputElement>) => {
-        evt.currentTarget.select();
-    }
-    const onChange = async (evt: React.ChangeEvent<HTMLInputElement>) => {
-        /*
-        let n = Number(evt.currentTarget.value);
-        row.value = Number.isNaN(n) === true ? undefined : n;
-        await genEditing.saveEditingDetail(editingDetail);
-        */
-    }
-    const onBlur = async (evt: React.FocusEvent<HTMLInputElement>) => {
-        let n = Number(evt.currentTarget.value);
+
+    const onInputed = async (valueInputed: number) => {
         let { $saveValue } = row as any;
-        if (Number.isNaN(n) === true) n = undefined;
-        if (n !== $saveValue) {
-            row.value = n;
-            await genEditing.saveEditingDetail(editingDetail);
+        if (valueInputed !== $saveValue) {
+            row.value = valueInputed;
+            await genEditing.saveEditingDetails([editingDetail]);
         }
     }
     return <div className="px-3 py-2 d-flex align-items-center">
@@ -165,12 +89,7 @@ function ViewDetailPend({ editingDetail, genEditing }: { editingDetail: EditingD
             <small>数量:</small> <b>{originValue}</b>
         </div>
         <div>
-            <input type="text"
-                className="form-control w-8c text-end"
-                defaultValue={value ?? pendValue}
-                onFocus={onFocus}
-                onChange={onChange}
-                onBlur={onBlur} />
+            <InputNumber onInputed={onInputed} defaultValue={value ?? pendValue} min={0} max={pendValue} />
         </div>
     </div>;
 }

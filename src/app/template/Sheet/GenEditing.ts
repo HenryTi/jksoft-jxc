@@ -6,14 +6,14 @@ import { PageMoreCacheData } from "app/coms";
 import { EditingDetail } from "./EditingDetail";
 
 export class GenEditing {
-    protected gen: GenSheetAct;
+    readonly genSheetAct: GenSheetAct;
     readonly atomSheet: PrimitiveAtom<Sheet>;
     readonly atomSubmitable: PrimitiveAtom<boolean>;
     readonly atomIsMine: PrimitiveAtom<boolean>;
     readonly atomDetails: PrimitiveAtom<EditingDetail[]>;
 
-    constructor(gen: GenSheetAct) {
-        this.gen = gen;
+    constructor(genSheetAct: GenSheetAct) {
+        this.genSheetAct = genSheetAct;
         this.atomSheet = atom(undefined as Sheet);
         this.atomSubmitable = atom(false) as any;
         this.atomIsMine = atom(false) as any;
@@ -21,16 +21,16 @@ export class GenEditing {
     }
 
     readonly onAddRow = async () => {
-        const { genDetail } = this.gen;
-        let editingDetail = await genDetail.addRow();
+        const { genDetail } = this.genSheetAct;
+        let editingDetail = await genDetail.addRow(this);
         // 如果第一次生成明细，则保存主表
         await this.saveSheet();
-        await this.saveEditingDetail(editingDetail);
+        await this.saveEditingDetails(editingDetail);
     }
 
     readonly onEditRow = async (detail: EditingDetail) => {
-        const { genDetail } = this.gen;
-        await genDetail.editRow(detail);
+        const { genDetail } = this.genSheetAct;
+        await genDetail.editRow(this, detail);
     }
 
     reset() {
@@ -41,7 +41,7 @@ export class GenEditing {
     }
 
     async load(id: number) {
-        let { uq } = this.gen;
+        let { uq } = this.genSheetAct;
         let { main: [sheet], details, origins, assigns } = await uq.GetSheet.query({ id, assigns: undefined });
         let originColl: { [id: number]: Detail & { done: number; } } = {};
         for (let origin of origins) {
@@ -49,11 +49,11 @@ export class GenEditing {
             originColl[id] = origin;
         }
         let editingDetails: EditingDetail[] = details.map(v => {
-            let { origin: originId, pend, pendValue, sheet, no } = v;
+            let { origin: originId, pendFrom, pendValue, sheet, no } = v;
             let origin = originColl[originId];
             return {
                 origin,
-                pend,
+                pendFrom,
                 pendValue,
                 sheet,
                 no,
@@ -103,7 +103,7 @@ export class GenEditing {
     }
 
     async newSheet(target: number): Promise<Sheet> {
-        let { uq, genSheet } = this.gen;
+        let { uq, genSheet } = this.genSheetAct;
         let { phrase } = genSheet;
         let no = await uq.IDNO({ ID: uq.Sheet });
         let sheet = { no, item: target, phrase } as any;
@@ -133,19 +133,19 @@ export class GenEditing {
 
     async bookSheet(act: string) {
         let sheet = getAtomValue(this.atomSheet);
-        await this.gen.uq.Biz(sheet.id, act);
+        await this.genSheetAct.uq.Biz(sheet.id, act);
         this.removeSheetFromCache();
     }
 
     async bookAct() {
         let sheet = getAtomValue(this.atomSheet);
-        let { genDetail, act } = this.gen;
-        await this.gen.uq.BizSheetAct(sheet.id, genDetail.bizEntityName, act);
+        let { genDetail, act } = this.genSheetAct;
+        await this.genSheetAct.uq.BizSheetAct(sheet.id, genDetail.bizEntityName, act);
         this.removeSheetFromCache();
     }
 
     async discard() {
-        let { uq } = this.gen;
+        let { uq } = this.genSheetAct;
         let sheet = getAtomValue(this.atomSheet);
         await uq.RemoveDraft.submit({ id: sheet.id });
         this.removeSheetFromCache();
@@ -154,7 +154,7 @@ export class GenEditing {
     async saveSheet() {
         const isMine = getAtomValue(this.atomIsMine);
         if (isMine === true) return;
-        let { uqApp, uq, genSheet } = this.gen;
+        let { uqApp, uq, genSheet } = this.genSheetAct;
         let { phrase } = genSheet;
         const sheet = getAtomValue(this.atomSheet);
         let ret = await uq.SaveSheet.submit({
@@ -176,11 +176,13 @@ export class GenEditing {
 
     // 第一次生成detail时，生成sheet id
     // detail.id === undefine? 则新增，否则修改
-    async saveEditingDetail(editingDetail: EditingDetail): Promise<void> {
-        let { uq } = this.gen;
+    async saveEditingDetails(editingDetails: EditingDetail[]): Promise<void> {
+        let { uq } = this.genSheetAct;
         let sheet = getAtomValue(this.atomSheet);
         let { id: sheetId, target } = sheet;
-        let { origin, pend, rows } = editingDetail;
+        await Promise.all(editingDetails.map(v => this.saveEditingDetail(sheetId, target, v)));
+        /*
+        let { pendFrom, rows } = editingDetail;
         for (let row of rows) {
             row.base = sheetId;
             row.target = target;
@@ -190,7 +192,7 @@ export class GenEditing {
                 ...row as any,
                 base: sheetId,
                 target,
-                pend
+                pendFrom,
             })
         ));
         let len = rows.length;
@@ -202,11 +204,38 @@ export class GenEditing {
             }
         }
         this.updateDetailAtom(editingDetail);
+        */
         this.refreshSubmitable();
     }
 
+    private async saveEditingDetail(sheetId: number, target: number, editingDetail: EditingDetail): Promise<void> {
+        let { uq } = this.genSheetAct;
+        let { pendFrom, rows } = editingDetail;
+        for (let row of rows) {
+            row.base = sheetId;
+            row.target = target;
+        }
+        let rets = await Promise.all(rows.map(
+            row => uq.SaveDetail.submit({
+                ...row as any,
+                base: sheetId,
+                target,
+                pendFrom,
+            })
+        ));
+        let len = rows.length;
+        for (let i = 0; i < len; i++) {
+            let ret = rets[i];
+            let rowId = ret.id as number;
+            if (rowId > 0) {
+                rows[i].id = rowId;
+            }
+        }
+        this.updateDetailAtom(editingDetail);
+    }
+
     private removeSheetFromCache() {
-        let { uqApp } = this.gen;
+        let { uqApp } = this.genSheetAct;
         let sheet = getAtomValue(this.atomSheet);
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (data) {

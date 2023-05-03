@@ -52,7 +52,7 @@ Biz Detail D2 ver 0.5 {
     ACT a (detail ID)
     FROM PendStoreIn
     {
-        VAR pend ID = pend FROM DetailPend=detail;
+        VAR pend ID = pendFrom FROM DetailPend=detail;
         VAR value VALUE = value, pendDetail ID = detail FROM Pend=pend;
         VAR item ID = item FROM Detail=pendDetail;
         VAR a int;

@@ -145,7 +145,7 @@ Biz ACT SaveDetail (
     v1 VALUE,
     v2 VALUE,
     v3 VALUE,
-    pend ID,
+    pendFrom ID,
 ) 
 RETURNS ret (
     id ID,
@@ -162,8 +162,8 @@ RETURNS ret (
     ELSE {
         WITH Detail ID=id SET item=item, target=target, origin=origin, value=value, v1=v1, v2=v2, v3=v3;
     }
-    IF pend IS NOT NULL {
-        WITH DetailPend ID=id SET pend=pend;
+    IF pendFrom IS NOT NULL {
+        WITH DetailPend as a ID=id SET a.pendFrom=pendFrom;
     }
     INTO ret SELECT id;
 };
@@ -308,7 +308,7 @@ RETURNS main (
 RETURNS details (
     * Detail,
     done VALUE,
-    pend ID,
+    pendFrom ID,
     pendValue VALUE,
     sheet PHRASE,
     no NO,
@@ -327,11 +327,11 @@ RETURNS assigns (
     INTO main SELECT * a
         FROM Sheet as a
         WHERE a.id=id;
-    INTO details SELECT * a, IFNULL(b.value, 0) as done, c.pend, d.value as pendValue, PHRASE(e.base) as sheet, e.no
+    INTO details SELECT * a, IFNULL(b.value, 0) as done, c.pendFrom, d.value as pendValue, PHRASE(e.base) as sheet, e.no
         FROM Detail as a
             LEFT JOIN Done as b ON b.id=a.id
             LEFT JOIN DetailPend as c ON c.id=a.id
-            LEFT JOIN Pend as d ON d.id=c.pend
+            LEFT JOIN Pend as d ON d.id=c.pendFrom
             LEFT JOIN Sheet as e ON e.id=a.base
         WHERE a.base=id;
     INTO origins SELECT DISTINCT * b, IFNULL(c.value, 0) as done

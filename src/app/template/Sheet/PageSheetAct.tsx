@@ -52,9 +52,8 @@ export function PageSheetAct({ Gen }: GenProps<GenSheetAct>) {
                 }
                 setAtomValue(genEditing.atomSheet, sheet);
                 setAtomValue(genEditing.atomDetails, editingDetails);
-                genEditing.refreshSubmitable();
                 await genEditing.saveSheet()
-                await Promise.all(editingDetails.map(v => genEditing.saveEditingDetail(v)));
+                await genEditing.saveEditingDetails(editingDetails);
             }
         })();
     });

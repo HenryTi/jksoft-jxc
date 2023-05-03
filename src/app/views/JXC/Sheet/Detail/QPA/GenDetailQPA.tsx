@@ -45,12 +45,12 @@ export abstract class GenDetailQPA extends GenDetail {
         return { name: fieldAmount, label: '金额', type: 'number', options: { value, disabled: this.amountDisabled } };
     }
 
-    async addRow(): Promise<EditingDetail> {
+    async addRow(genEditing: GenEditing): Promise<EditingDetail[]> {
         const { openModal } = uqAppModal(this.uqApp);
         let productAtom = await openModal(<ModalSelectProduct />);
         let editingDetail = this.editingDetailFromAtom(productAtom);
         let ret = await openModal(<this.PageDetail header={'新增明细'} editingDetail={editingDetail} />);
-        return ret;
+        return [ret];
     }
 
     protected editingDetailFromAtom(atom: Atom): EditingDetail {
@@ -63,7 +63,7 @@ export abstract class GenDetailQPA extends GenDetail {
         return editingDetail;
     }
 
-    async editRow(detail: EditingDetail): Promise<void> {
+    async editRow(genEditing: GenEditing, detail: EditingDetail): Promise<void> {
         const { openModal } = uqAppModal(this.uqApp);
         let ret = await openModal(<this.PageDetail header="修改明细" editingDetail={detail} />);
     }

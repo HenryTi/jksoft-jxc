@@ -2,7 +2,7 @@ import { Detail } from "uqs/UqDefault";
 
 export interface EditingDetail {
     origin: Detail;
-    pend: number;
+    pendFrom: number;
     pendValue: number;
     sheet: string;          // sheet phrase,
     no: string;             // origin sheet no

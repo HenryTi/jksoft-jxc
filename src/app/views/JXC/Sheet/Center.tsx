@@ -4,7 +4,7 @@ import { GenSheetAct } from "app/template/Sheet";
 import { Link, Route } from "react-router-dom";
 import { Sheet } from "uqs/UqDefault";
 import { GenPurchaseAct } from "./Purchase";
-import { GenStoreInAct } from "./StoreIn";
+import { GenStoreInAct, GenStoreInMultiStorage } from "./StoreIn";
 import { routeSheetPurchase } from "./Purchase";
 import { routeSheetStoreIn } from "./StoreIn";
 import { IDView } from "tonwa-app";
@@ -14,6 +14,7 @@ import { ViewItemID } from "app/template";
 const GenArr: (new (uqApp: UqApp) => GenSheetAct)[] = [
     GenPurchaseAct,
     GenStoreInAct,
+    GenStoreInMultiStorage,
 ];
 
 function PageCenter() {

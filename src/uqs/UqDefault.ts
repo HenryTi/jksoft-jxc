@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue May 02 2023 22:51:32 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Wed May 03 2023 08:43:48 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -229,7 +229,7 @@ export interface ParamSaveDetail {
 	v1: number;
 	v2: number;
 	v3: number;
-	pend: number;
+	pendFrom: number;
 }
 export interface ReturnSaveDetailRet {
 	id: number;
@@ -352,7 +352,7 @@ export interface ReturnGetSheetDetails {
 	v2: number;
 	v3: number;
 	done: number;
-	pend: number;
+	pendFrom: number;
 	pendValue: number;
 	sheet: string;
 	no: string;
@@ -1365,7 +1365,7 @@ export const uqSchema={
                 "precision": 18
             },
             {
-                "name": "pend",
+                "name": "pendFrom",
                 "type": "id"
             }
         ],
@@ -1772,7 +1772,7 @@ export const uqSchema={
                         "precision": 18
                     },
                     {
-                        "name": "pend",
+                        "name": "pendFrom",
                         "type": "id"
                     },
                     {

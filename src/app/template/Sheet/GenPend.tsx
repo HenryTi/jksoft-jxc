@@ -8,6 +8,7 @@ import { MutedSmall, SearchBox } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
 import { Detail, Sheet } from "uqs/UqDefault";
 import { ViewItemID } from "../Atom";
+import { EditingDetail } from "./EditingDetail";
 
 export interface PendItem extends Detail {
     pend: number;
@@ -29,7 +30,25 @@ export abstract class GenPend extends GenBizEntity<EntityPend> {
     get autoLoad(): boolean { return true; }
     get caption(): string { return '选择待处理' }
     get placeholderOfSearch(): string { return '待处理单据号' }
-    abstract selectPend(): Promise<PendItem[]>;
+    protected abstract internalSelect(editingDetails: EditingDetail[]): Promise<PendItem[]>;
+    async select(editingDetails: EditingDetail[]): Promise<EditingDetail[]> {
+        let ret = await this.internalSelect(editingDetails);
+        if (ret === undefined) return undefined;
+        let retEditingDetails: EditingDetail[] = ret.map(v => {
+            let { item, pend, pendValue, sheet, no, id } = v;
+            return {
+                origin: v as Detail,
+                pendFrom: pend,
+                pendValue,
+                sheet,
+                no,
+                rows: [
+                    { item, value: pendValue, origin: id } as Detail
+                ],
+            }
+        });
+        return retEditingDetails;
+    }
 }
 
 export abstract class GenPendSheet extends GenPend {
@@ -67,7 +86,7 @@ export abstract class GenPendSheet extends GenPend {
         let sheet = await openModal(<ModalSelectSheet />);
         return sheet;
     }
-    async selectPend(): Promise<PendItem[]> {
+    protected override async internalSelect(editingDetails: EditingDetail[]): Promise<PendItem[]> {
         let sheet = await this.selectSheet();
         let ret = await this.querySelectPendFromSheetId.query({ pend: this.entity.phrase, sheetId: sheet.id });
         return ret.ret;
@@ -87,7 +106,7 @@ export class GenPendFromTarget extends GenPendSheet {
 }
 
 export class GenPendFromItem extends GenPend {
-    async selectPend(): Promise<PendItem[]> {
+    protected override async internalSelect(editingDetails: EditingDetail[]): Promise<PendItem[]> {
         let { openModal, closeModal } = uqAppModal(this.uqApp);
         let selectedItems: PendItem[] = [];
         let selectedColl: { [pendId: number]: PendItem } = {};
@@ -116,14 +135,23 @@ export class GenPendFromItem extends GenPend {
                 let { $page } = await this.uq.GetPendDetailFromItem.page(param, pageStart, pageSize);
                 return $page;
             }
+            const coll: { [pend: number]: EditingDetail; } = {};
+            if (editingDetails) {
+                for (let ed of editingDetails) {
+                    coll[ed.pendFrom] = ed;
+                }
+            }
             const ViewPendRow = ({ value: pendItem }: { value: PendItem }) => {
                 const { pend, item, sheet, no, value, pendValue } = pendItem;
                 const htmlId = String(pend);
+                let ed = coll[pend];
+                let selected = ed !== undefined;
                 return <div className="form-check mx-3 my-2">
                     <input type="checkbox" className="form-check-input me-3"
                         id={htmlId}
+                        disabled={selected}
                         onChange={evt => onItemSelect(pendItem, evt.currentTarget.checked)}
-                        defaultChecked={selectedColl[pend] !== undefined}
+                        defaultChecked={selected || selectedColl[pend] !== undefined}
                     />
                     <label className="form-check-label d-flex" htmlFor={htmlId}>
                         <div className="me-3"><IDView uq={this.uq} id={item} Template={ViewItemID} /></div>

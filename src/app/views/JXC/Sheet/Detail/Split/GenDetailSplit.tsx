@@ -5,9 +5,8 @@ import { GenDetail, EditingDetail, GenEditing } from "app/template/Sheet";
 import { IDView, Page, uqAppModal, useModal } from "tonwa-app";
 import { Atom, Detail } from "uqs/UqDefault";
 import { ChangeEvent, useState } from "react";
-import { ModalSelectProduct } from "../../../Atom";
 import { useUqApp } from "app/UqApp";
-import { FA } from "tonwa-com";
+import { FA, getAtomValue } from "tonwa-com";
 
 const fieldQuantity = 'value';
 const fieldPrice = 'v1';
@@ -45,11 +44,15 @@ export abstract class GenDetailSplit extends GenDetail {
         return { name: fieldAmount, label: '金额', type: 'number', options: { value, disabled: this.amountDisabled } };
     }
 
-    async addRow(): Promise<EditingDetail> {
-        const { openModal } = uqAppModal(this.uqApp);
-        let productAtom = await openModal(<ModalSelectProduct />);
-        let detail = this.editingDetailFromAtom(productAtom);
-        return await openModal(<this.PageDetail header={'新增明细'} detail={detail} />);
+    async addRow(genEditing: GenEditing): Promise<EditingDetail[]> {
+        let { genPend } = genEditing.genSheetAct;
+        if (genPend === undefined) {
+            alert('genPend can not be undefined');
+            return;
+        }
+        let editingDetails = getAtomValue(genEditing.atomDetails);
+        let selected = await genPend.select(editingDetails);
+        return selected;
     }
 
     protected editingDetailFromAtom(atom: Atom): Detail {
@@ -57,9 +60,9 @@ export abstract class GenDetailSplit extends GenDetail {
         return detail;
     }
 
-    async editRow(detail: EditingDetail): Promise<void> {
-        //const { openModal } = uqAppModal(this.uqApp);
-        //return await openModal(<this.PageDetail header="修改明细" detail={detail} />);
+    async editRow(genEditing: GenEditing, detail: EditingDetail): Promise<void> {
+        const { openModal } = uqAppModal(this.uqApp);
+        let ret = await openModal(<this.PageDetail header="多行" />);
     }
 
     readonly ViewDetail = ViewDetailSplit;
@@ -136,15 +139,22 @@ function ViewDetailSplit({ editingDetail, genEditing }: { editingDetail: Editing
     const { rows } = editingDetail;
     const { origin } = editingDetail;
     const { item, value, v1: price, v2: amount } = origin;
-    return <div className="px-3 py-2 d-flex align-items-center">
-        <IDView uq={uq} id={item} Template={ViewItemID} />
-        <div className="text-end align-items-end flex-grow-1 me-5">
-            <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount?.toFixed(4)}</span>
-            <br />
-            <small>数量:</small> <b>{value}</b>
+    return <div>
+        <div className="d-flex align-items-center tonwa-bg-gray-2 px-3 py-2">
+            <IDView uq={uq} id={item} Template={ViewItemID} />
+            <div className="text-end align-items-end flex-grow-1">
+                <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount?.toFixed(4)}</span>
+                <br />
+                <small>数量:</small> <b>{value}</b>
+            </div>
         </div>
-        <div>
-            <FA name="plus" />
+        <div className="container">
+            <div className="row">
+                <div className="text-muted text-small text-end col-2 py-2">分行明细</div>
+                <div className="text-end py-2 px-3 col">
+                    <FA name="plus" />
+                </div>
+            </div>
         </div>
     </div>;
 }

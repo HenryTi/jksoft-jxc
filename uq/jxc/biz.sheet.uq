@@ -19,23 +19,23 @@ Biz Sheet SheetPurchase '采购单' {
 Biz Main MainStoreIn {
 }
 
-Biz Detail DetailStoreIn ver 0.3 {
+Biz Detail DetailStoreIn ver 0.1 {
     Main MainStoreIn;
     ACT (detail ID) 
     From PendStoreIn {
-        VAR pend ID = pend FROM DetailPend=detail;
+        VAR pend ID = pendFrom FROM DetailPend=detail;
         VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
         VAR pendValue VALUE = value, pendDetail ID = detail FROM Pend=pend;
         IF pendValue - value = 0 {
             Biz Pend PendStoreIn ID=pend DEL;
-            WITH DetailPend as a ID=detail DEL WHERE a.pend=pend;
+            WITH DetailPend as a ID=detail DEL WHERE a.pendFrom=pend;
         }
         ELSE {
             Biz Pend PendStoreIn ID=pend SET value-=value;
         }
         Biz Subject storage of item += value ref detail;
         -- detail写账报错，错误号1
-        WITH Temp ID=detail SET value=1;
+        -- WITH Temp ID=detail SET value=1;
     };
 }
 
