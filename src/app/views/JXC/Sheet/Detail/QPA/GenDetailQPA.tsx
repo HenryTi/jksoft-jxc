@@ -1,13 +1,14 @@
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { ViewItemID } from "app/template";
-import { EditingDetail, GenDetail, GenEditing } from "app/template/Sheet";
+import { EditingRow, GenDetail, GenEditing, SheetRow } from "app/template/Sheet";
 import { IDView, Page, uqAppModal, useModal } from "tonwa-app";
 import { Atom, Detail } from "uqs/UqDefault";
 import { ChangeEvent, useState } from "react";
 import { ModalSelectProduct } from "../../../Atom";
 import { useUqApp } from "app/UqApp";
 import { FA, LMR } from "tonwa-com";
+import { useAtomValue } from "jotai";
 
 const fieldQuantity = 'value';
 const fieldPrice = 'v1';
@@ -45,82 +46,92 @@ export abstract class GenDetailQPA extends GenDetail {
         return { name: fieldAmount, label: '金额', type: 'number', options: { value, disabled: this.amountDisabled } };
     }
 
-    async addRow(genEditing: GenEditing): Promise<EditingDetail[]> {
+    readonly selectItem = async (header?: string): Promise<Atom> => {
         const { openModal } = uqAppModal(this.uqApp);
-        let productAtom = await openModal(<ModalSelectProduct />);
-        let editingDetail = this.editingDetailFromAtom(productAtom);
-        let ret = await openModal(<this.PageDetail header={'新增明细'} editingDetail={editingDetail} />);
+        let ret = await openModal(<ModalSelectProduct />);
+        return ret;
+    }
+
+    readonly selectTarget: (header?: string) => Promise<Atom> = undefined;
+
+    readonly addRow = async (genEditing: GenEditing): Promise<SheetRow[]> => {
+        let productAtom = await this.selectItem();
+        let editingRow = this.editingRowFromAtom(productAtom);
+        const { openModal } = uqAppModal(this.uqApp);
+        let ret = await openModal(<this.PageDetail header={'新增明细'} editingRow={editingRow} />);
         return [ret];
     }
 
-    protected editingDetailFromAtom(atom: Atom): EditingDetail {
+    protected editingRowFromAtom(atom: Atom): EditingRow {
         let row: Detail = {
             item: atom.id,
         } as Detail;
-        let editingDetail = {
-            rows: [row],
-        } as EditingDetail;
-        return editingDetail;
+        let editingRow = new EditingRow(undefined, [row]);
+        return editingRow;
     }
 
-    async editRow(genEditing: GenEditing, detail: EditingDetail): Promise<void> {
+    readonly editRow = async (genEditing: GenEditing, editingRow: EditingRow): Promise<void> => {
         const { openModal } = uqAppModal(this.uqApp);
-        let ret = await openModal(<this.PageDetail header="修改明细" editingDetail={detail} />);
+        let ret = await openModal(<this.PageDetail header="修改明细" editingRow={editingRow} />);
     }
 
-    readonly ViewDetail = ViewDetailQPA;
+    readonly ViewRow = ViewDetailQPA;
 
-    protected PageDetail = ({ header, editingDetail }: { header?: string; editingDetail?: EditingDetail; }): JSX.Element => {
-        editingDetail = editingDetail ?? {} as EditingDetail;
-        let { rows } = editingDetail;
-        if (rows === undefined) {
-            rows = editingDetail.rows = [{} as Detail];
+    protected PageDetail = ({ header, editingRow }: { header?: string; editingRow?: EditingRow; }): JSX.Element => {
+        editingRow = editingRow ?? new EditingRow(undefined, undefined);
+        const { atomDetails } = editingRow;
+        let details = useAtomValue(atomDetails);
+        let detail: Detail;
+        if (details === undefined) {
+            detail = {} as Detail;
         }
-        let row = rows[0];
-        const { value, v1: price, v2: amount, item } = row;
+        else {
+            detail = details[0];
+        }
+        const { value, v1: price, v2: amount, item } = detail;
         const { closeModal } = useModal();
         const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
         const [hasValue, setHasValue] = useState(value != undefined);
         function onChange(evt: ChangeEvent<HTMLInputElement>) {
             const { value, name } = evt.target;
             if (value.trim().length === 0) {
-                (row as any)[name] = undefined;
+                (detail as any)[name] = undefined;
             }
             else {
                 let v = Number(value);
-                (row as any)[name] = Number.isNaN(v) === true ? undefined : v;
+                (detail as any)[name] = Number.isNaN(v) === true ? undefined : v;
             }
             switch (name) {
-                case fieldQuantity: onQuantityChange(row.value); break;
-                case fieldPrice: onPriceChange(row.v1); break;
+                case fieldQuantity: onQuantityChange(detail.value); break;
+                case fieldPrice: onPriceChange(detail.v1); break;
             }
-            const { v1: price, v2: amount, value: quantity } = row;
+            const { v1: price, v2: amount, value: quantity } = detail;
             let hv = amount !== undefined && price !== undefined && quantity !== undefined;
             setHasValue(hv);
         }
         function setAmountValue(quantity: number, price: number) {
             if (quantity === undefined || price === undefined) {
-                row.v2 = undefined;
+                detail.v2 = undefined;
                 setValue(fieldAmount, '');
             }
             let amount = quantity * price;
-            row.v2 = amount;
+            detail.v2 = amount;
             setValue(fieldAmount, amount.toFixed(4));
         }
         function onQuantityChange(value: number) {
-            row.value = value;
+            detail.value = value;
             let p = getValues(fieldPrice) ?? price;
             if (!p) return;
             setAmountValue(value, p);
         }
         function onPriceChange(value: number) {
-            row.v1 = value;
+            detail.v1 = value;
             let q = getValues(fieldQuantity) ?? value;
             if (!q) return;
             setAmountValue(q, value);
         }
         const options = { onChange, valueAsNumber: true };
-        const formRows = this.buildFormRows(row);
+        const formRows = this.buildFormRows(detail);
         formRows.forEach(v => (v as any).options = { ...(v as any).options, ...options });
         formRows.push({ type: 'submit', label: '提交', options: { disabled: hasValue === false } });
 
@@ -128,7 +139,11 @@ export abstract class GenDetailQPA extends GenDetail {
             // closeModal(data);
             // amount 字段disabled。setValue('amount'), 改变了input显示，但是取值没有改变。
             // 只能用下面变通
-            closeModal(editingDetail);
+            let ret: SheetRow = {
+                origin: undefined,
+                details,
+            }
+            closeModal(ret);
         }
         const { caption, ViewItemTop } = this;
         return <Page header={header ?? caption}>
@@ -141,16 +156,17 @@ export abstract class GenDetailQPA extends GenDetail {
     }
 }
 
-function ViewDetailQPA({ editingDetail }: { editingDetail: EditingDetail; genEditing: GenEditing; }): JSX.Element {
+function ViewDetailQPA({ editingRow }: { editingRow: EditingRow; genEditing: GenEditing; }): JSX.Element {
     const uqApp = useUqApp();
     const { uq } = uqApp;
-    const { rows } = editingDetail;
-    if (rows === undefined || rows.length === 0) {
+    const { atomDetails } = editingRow;
+    const details = useAtomValue(atomDetails);
+    if (details === undefined || details.length === 0) {
         return <div>
-            ViewDetailQPA editingDetail rows === undefined || rows.length = 0;
+            ViewDetailQPA editingRow rows === undefined || rows.length = 0;
         </div>
     }
-    const { item, value, v1: price, v2: amount } = rows[0];
+    const { item, value, v1: price, v2: amount } = details[0];
     return <LMR className="px-3 py-2">
         <IDView uq={uq} id={item} Template={ViewItemID} />
         <div className="align-self-end text-end d-flex align-items-end">

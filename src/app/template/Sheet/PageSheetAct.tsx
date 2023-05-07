@@ -1,60 +1,39 @@
 import { Band } from "app/coms";
 import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
-import { ButtonAsync, List, LMR, Sep, setAtomValue, useEffectOnce } from "tonwa-com";
+import { ButtonAsync, List, LMR, Sep, useEffectOnce } from "tonwa-com";
 import { GenSheetAct } from "./GenSheetAct";
 import { GenProps } from "app/tool";
-import { Sheet } from "uqs/UqDefault";
 
 export function PageSheetAct({ Gen }: GenProps<GenSheetAct>) {
     const uqApp = useUqApp();
     const navigate = useNavigate();
-    const gen = uqApp.objectOf(Gen);
-    const { caption, genSheet, genDetail, genStart } = gen;
-    const { genMain } = genSheet;
-    const { current: genEditing } = useRef(gen.createEditing());
+    const genSheetAct = uqApp.objectOf(Gen);
+    const { caption, genMain, ViewRow } = genSheetAct;
+    const { current: genEditing } = useRef(genSheetAct.createEditing());
     const { onEditRow, onAddRow } = genEditing;
     const { ViewTargetBand } = genMain;
     const sheet = useAtomValue(genEditing.atomSheet);
-    const rows = useAtomValue(genEditing.atomDetails);
+    const rows = useAtomValue(genEditing.atomRows);
     const submitable = useAtomValue(genEditing.atomSubmitable);
-    const isMine = useAtomValue(genEditing.atomIsMine);
+    const isMine = useAtomValue(genEditing.atomIsMainSaved);
     const [visible, setVisible] = useState(true);
     const { openModal, closeModal } = useModal();
     const { id: paramId } = useParams();
 
     useEffectOnce(() => {
         (async function () {
-            genEditing.reset();
             let sheetId = Number(paramId);
-            if (Number.isNaN(sheetId) === false) {
-                await genEditing.load(sheetId);
-                return;
+            if (Number.isNaN(sheetId) === true) {
+                sheetId = undefined;
             }
-            if (genStart === undefined) {
-                // 直接开单
-                setAtomValue(genEditing.atomSheet, {} as Sheet);
-                setAtomValue(genEditing.atomDetails, []);
-            }
-            else {
-                let ret = await genStart.start();
-                if (ret === undefined) {
-                    navigate(-1);
-                    return;
-                }
-                let { sheet, editingDetails } = ret;
-                if (editingDetails.length === 0) {
-                    navigate(-1);
-                    return;
-                }
-                setAtomValue(genEditing.atomSheet, sheet);
-                setAtomValue(genEditing.atomDetails, editingDetails);
-                await genEditing.saveSheet()
-                await genEditing.saveEditingDetails(editingDetails);
-            }
+            if (await genSheetAct.start(genEditing, sheetId) === false) {
+                // 如无开单，直接退回
+                navigate(-1);
+            };
         })();
     });
 
@@ -111,14 +90,18 @@ export function PageSheetAct({ Gen }: GenProps<GenSheetAct>) {
         navigate(-1);
     }
     function ViewItemOfList({ value }: { value: any }) {
-        return <genDetail.ViewDetail editingDetail={value} genEditing={genEditing} />;
+        return <ViewRow editingRow={value} genEditing={genEditing} />;
+    }
+    let viewTargetBand: JSX.Element;
+    if (ViewTargetBand !== undefined) {
+        viewTargetBand = <ViewTargetBand sheet={sheet} />;
     }
     return <Page header={caption}>
         <div className="pt-3 tonwa-bg-gray-3 container">
             <Band label={'编号'}>
                 {sheet.no}
             </Band>
-            <ViewTargetBand sheet={sheet as any} />
+            {viewTargetBand}
         </div>
         {rows.length > 6 ? <>{vButtons}<Sep /></> : <Sep />}
         <List items={rows} ViewItem={ViewItemOfList} none={<None />} onItemClick={onEditRow} />

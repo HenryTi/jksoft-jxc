@@ -1,7 +1,8 @@
 import { UqApp } from "app/UqApp";
 import { PageAtomList, PageAtomNew, PageAtomView, GenAtom, PageAtomSelect, GenAtomNew } from "app/template/Atom";
 import { Route } from "react-router-dom";
-import { uqSchema } from "uqs/UqDefault";
+import { LMR } from "tonwa-com";
+import { Atom, uqSchema } from "uqs/UqDefault";
 
 export class GenContact extends GenAtom {
     readonly bizEntityName = uqSchema.$biz.contact.name;
@@ -13,6 +14,20 @@ export class GenContact extends GenAtom {
 }
 
 class GenContactNew extends GenAtomNew {
+}
+
+function ViewItemContact({ value }: { value: Atom; }) {
+    let { no, ex } = value;
+    return <LMR className="d-block px-3 py-2">
+        <div>
+            <div className='small text-muted'>{no}</div>
+            <div><b>{ex}</b></div>
+        </div>
+    </LMR>
+}
+
+export function ModalSelectContact() {
+    return <PageAtomSelect Gen={GenContact} ViewItem={ViewItemContact} />;
 }
 
 export function routeContact(uqApp: UqApp) {

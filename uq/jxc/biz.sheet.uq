@@ -47,3 +47,8 @@ Biz Sheet SheetStoreIn '入库单' {
     Main MainPurchase;
     Detail DetailStoreIn;
 }
+
+Biz Sheet SheetStoreInMultiStorage '入库单-分仓' {
+    Main MainPurchase;
+    Detail DetailStoreIn;
+}

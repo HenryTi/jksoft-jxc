@@ -8,14 +8,8 @@ import { MutedSmall, SearchBox } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
 import { Detail, Sheet } from "uqs/UqDefault";
 import { ViewItemID } from "../Atom";
-import { EditingDetail } from "./EditingDetail";
+import { EditingRow, OriginDetail, SheetRow } from "./Model";
 
-export interface PendItem extends Detail {
-    pend: number;
-    pendValue: number;
-    sheet: string;          // sheet phrase
-    no: string;             // sheet no
-}
 export abstract class GenPend extends GenBizEntity<EntityPend> {
     readonly bizEntityType = 'pend';
     readonly bizEntityName: string;
@@ -30,24 +24,21 @@ export abstract class GenPend extends GenBizEntity<EntityPend> {
     get autoLoad(): boolean { return true; }
     get caption(): string { return '选择待处理' }
     get placeholderOfSearch(): string { return '待处理单据号' }
-    protected abstract internalSelect(editingDetails: EditingDetail[]): Promise<PendItem[]>;
-    async select(editingDetails: EditingDetail[]): Promise<EditingDetail[]> {
-        let ret = await this.internalSelect(editingDetails);
+    protected abstract internalSelect(editingRows: EditingRow[]): Promise<OriginDetail[]>;
+    protected pendItemToEditingRow(originDetail: OriginDetail): SheetRow {
+        let { item, pend, pendValue, sheet, no, id } = originDetail;
+        return {
+            origin: originDetail,
+            details: [
+                { item, value: pendValue, origin: id } as Detail
+            ]
+        };
+    }
+    async select(editingRows: EditingRow[]): Promise<SheetRow[]> {
+        let ret = await this.internalSelect(editingRows);
         if (ret === undefined) return undefined;
-        let retEditingDetails: EditingDetail[] = ret.map(v => {
-            let { item, pend, pendValue, sheet, no, id } = v;
-            return {
-                origin: v as Detail,
-                pendFrom: pend,
-                pendValue,
-                sheet,
-                no,
-                rows: [
-                    { item, value: pendValue, origin: id } as Detail
-                ],
-            }
-        });
-        return retEditingDetails;
+        let retEditingRows: SheetRow[] = ret.map(v => this.pendItemToEditingRow(v));
+        return retEditingRows;
     }
 }
 
@@ -86,7 +77,7 @@ export abstract class GenPendSheet extends GenPend {
         let sheet = await openModal(<ModalSelectSheet />);
         return sheet;
     }
-    protected override async internalSelect(editingDetails: EditingDetail[]): Promise<PendItem[]> {
+    protected override async internalSelect(editingRows: EditingRow[]): Promise<OriginDetail[]> {
         let sheet = await this.selectSheet();
         let ret = await this.querySelectPendFromSheetId.query({ pend: this.entity.phrase, sheetId: sheet.id });
         return ret.ret;
@@ -106,10 +97,10 @@ export class GenPendFromTarget extends GenPendSheet {
 }
 
 export class GenPendFromItem extends GenPend {
-    protected override async internalSelect(editingDetails: EditingDetail[]): Promise<PendItem[]> {
+    protected override async internalSelect(editingRows: EditingRow[]): Promise<OriginDetail[]> {
         let { openModal, closeModal } = uqAppModal(this.uqApp);
-        let selectedItems: PendItem[] = [];
-        let selectedColl: { [pendId: number]: PendItem } = {};
+        let selectedItems: OriginDetail[] = [];
+        let selectedColl: { [pendId: number]: OriginDetail } = {};
         let defaultSearchParam = { pend: this.entity.phrase, key: undefined as string };
         const ModalSelectPend = () => {
             const [searchParam, setSearchParam] = useState<{ pend: string; key: string; }>(defaultSearchParam);
@@ -117,7 +108,7 @@ export class GenPendFromItem extends GenPend {
             const onSearch = async (key: string) => {
                 setSearchParam({ ...defaultSearchParam, key });
             }
-            const onItemSelect = async (item: PendItem, isSelected: boolean) => {
+            const onItemSelect = async (item: OriginDetail, isSelected: boolean) => {
                 // closeModal(item);
                 let { pend } = item;
                 if (isSelected === true) {
@@ -135,13 +126,13 @@ export class GenPendFromItem extends GenPend {
                 let { $page } = await this.uq.GetPendDetailFromItem.page(param, pageStart, pageSize);
                 return $page;
             }
-            const coll: { [pend: number]: EditingDetail; } = {};
-            if (editingDetails) {
-                for (let ed of editingDetails) {
-                    coll[ed.pendFrom] = ed;
+            const coll: { [pend: number]: EditingRow; } = {};
+            if (editingRows) {
+                for (let ed of editingRows) {
+                    coll[ed.origin.pend] = ed;
                 }
             }
-            const ViewPendRow = ({ value: pendItem }: { value: PendItem }) => {
+            const ViewPendRow = ({ value: pendItem }: { value: OriginDetail }) => {
                 const { pend, item, sheet, no, value, pendValue } = pendItem;
                 const htmlId = String(pend);
                 let ed = coll[pend];

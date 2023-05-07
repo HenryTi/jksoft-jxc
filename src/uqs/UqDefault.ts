@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed May 03 2023 08:43:48 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Thu May 04 2023 18:18:48 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -3559,6 +3559,20 @@ export const uqSchema={
             "name": "sheetstorein",
             "type": "sheet",
             "caption": "入库单",
+            "main": "mainpurchase",
+            "acts": [
+                {
+                    "name": "$",
+                    "type": "detailAct",
+                    "fromPend": "pendstorein",
+                    "detail": "detailstorein"
+                }
+            ]
+        },
+        "sheetstoreinmultistorage": {
+            "name": "sheetstoreinmultistorage",
+            "type": "sheet",
+            "caption": "入库单-分仓",
             "main": "mainpurchase",
             "acts": [
                 {

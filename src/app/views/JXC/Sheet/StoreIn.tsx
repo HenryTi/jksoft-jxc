@@ -1,12 +1,12 @@
 import { UqApp } from "app/UqApp";
-import { EditingDetail, GenDetail, GenSheet, GenSheetAct, PageSheetAct } from "app/template/Sheet";
+import { EditingRow, GenDetail, GenSheet, GenSheetAct, PageSheetAct, OriginDetail, SheetRow } from "app/template/Sheet";
 import { QueryMore } from "app/tool";
-import { GenContact } from "../Atom";
-import { Sheet } from "uqs/UqDefault";
-import { IDView } from "tonwa-app";
+import { GenContact, ModalSelectContact } from "../Atom";
+import { Atom, Sheet } from "uqs/UqDefault";
+import { IDView, uqAppModal } from "tonwa-app";
 import { ViewItemID } from "app/template";
 import { Route } from "react-router-dom";
-import { GenMain, GenStart } from "app/template/Sheet";
+import { GenMain } from "app/template/Sheet";
 import { GenPendFromItem } from "app/template/Sheet/GenPend";
 import { GenDetailPend, GenDetailSplit } from "./Detail";
 import { Band } from "app/coms";
@@ -22,31 +22,19 @@ class GenMainStoreIn extends GenMain {
     get QuerySearchItem(): QueryMore {
         return this.uqApp.objectOf(GenContact).searchAtoms;
     }
-    get ViewTarget(): (props: { sheet: Sheet; }) => JSX.Element {
-        return ({ sheet }: { sheet: Sheet }) => {
-            return <IDView id={sheet.target} uq={this.uq} Template={ViewItemID} />;
-        }
+    readonly ViewTarget = ({ sheet }: { sheet: Sheet; }): JSX.Element => {
+        return <IDView id={sheet.target} uq={this.uq} Template={ViewItemID} />;
     }
-    get ViewTargetBand(): (props: { sheet: Sheet; }) => JSX.Element {
-        return ({ sheet }: { sheet: Sheet }) => {
-            return <Band label={this.targetCaption}>
-                <this.ViewTarget sheet={sheet} />
-            </Band>;
-        }
+    readonly ViewTargetBand = ({ sheet }: { sheet: Sheet; }): JSX.Element => {
+        return <Band label={this.targetCaption}>
+            <this.ViewTarget sheet={sheet} />
+        </Band>;
     }
-}
-
-class GenStartStoreIn extends GenStart {
-    override async start(): Promise<{ sheet: Sheet, editingDetails: EditingDetail[]; }> {
-        let editingDetails = await this.genSheetAct.genPend.select(undefined);
-        if (editingDetails === undefined) {
-            return undefined;
-        }
-
-        let target = await this.genSheetAct.genSheet.genMain.selectTarget('选择仓库');
-        let no = await this.uq.IDNO({ ID: this.uq.Sheet });
-        let sheet: Sheet = { no, target } as Sheet;
-        return { sheet, editingDetails };
+    readonly selectTarget = async (header?: string): Promise<Atom> => {
+        const { openModal } = uqAppModal(this.uqApp);
+        // 这里实际应该选择仓库。以后再改
+        let ret = await openModal<Atom>(<ModalSelectContact />);
+        return ret;
     }
 }
 
@@ -64,8 +52,22 @@ export class GenStoreInAct extends GenSheetAct {
     get path() { return this.genSheet.path; }
     protected GenSheet(): new (uqApp: UqApp) => GenSheet { return GenSheetStoreIn; }
     protected get GenDetail(): (new (uqApp: UqApp) => GenDetail) { return GenDetailStoreIn; }
-    protected get GenStart() { return GenStartStoreIn; }
     protected get GenPend() { return GetPendStroeIn; }
+
+    protected override async loadStart(): Promise<{ sheet: Sheet, sheetRows: SheetRow[]; }> {
+        let sheetRows = await this.genPend.select(undefined);
+        if (sheetRows === undefined) {
+            return undefined;
+        }
+        let target: number;
+        let { selectTarget } = this.genMain;
+        if (selectTarget !== undefined) {
+            let targetAtom = await selectTarget('选择仓库');
+            target = targetAtom.id;
+        }
+        let sheet = await this.newSheet(target);
+        return { sheet, sheetRows };
+    }
 }
 
 function PageStoreIn() {
@@ -74,24 +76,55 @@ function PageStoreIn() {
 
 class GenDetailStoreInMultiStorage extends GenDetailSplit {
     readonly bizEntityName = 'detailstorein';
+    readonly selectTarget = async (header?: string): Promise<Atom> => {
+        const { openModal } = uqAppModal(this.uqApp);
+        const ret = await openModal(<ModalSelectContact />);
+        return ret;
+    }
 }
 
-export class GenStoreInMultiStorage extends GenSheetAct {
-    get caption() { return this.genSheet.caption + '-多仓'; }
-    get path() { return this.genSheet.path + '-multi'; }
-    protected GenSheet(): new (uqApp: UqApp) => GenSheet { return GenSheetStoreIn; }
+export class GenSheetStoreInMultiStorage extends GenSheet {
+    readonly bizEntityName = 'sheetstoreinmultistorage';
+    protected GenMain(): new (uqApp: UqApp) => GenMain { return GenMainStoreInMultiStorage; }
+}
+
+class GenMainStoreInMultiStorage extends GenMainStoreIn {
+    readonly selectTarget = undefined as (header?: string) => Promise<Atom>;
+    readonly ViewTargetBand = undefined as (props: { sheet: Sheet; }) => JSX.Element;
+}
+
+class GetPendStroeInMultiStorage extends GetPendStroeIn {
+    protected pendItemToEditingRow(originDetail: OriginDetail): SheetRow {
+        return {
+            origin: originDetail,
+            details: []
+        };
+    }
+}
+
+export class GenStoreInMultiStorageAct extends GenSheetAct {
+    get caption() { return this.genSheet.caption; }
+    get path() { return this.genSheet.path; }
+    protected GenSheet(): new (uqApp: UqApp) => GenSheet { return GenSheetStoreInMultiStorage; }
     protected get GenDetail(): (new (uqApp: UqApp) => GenDetail) { return GenDetailStoreInMultiStorage; }
-    protected get GenStart() { return GenStartStoreIn; }
-    protected get GenPend() { return GetPendStroeIn; }
+    protected get GenPend() { return GetPendStroeInMultiStorage; }
+    protected override async loadStart(): Promise<{ sheet: Sheet, sheetRows: SheetRow[]; }> {
+        let sheetRows = await this.genPend.select(undefined);
+        if (sheetRows === undefined) {
+            return undefined;
+        }
+        let sheet = await this.newSheet(undefined);
+        return { sheet, sheetRows };
+    }
 }
 
 function PageStoreInMultiStorage() {
-    return <PageSheetAct Gen={GenStoreInMultiStorage} />;
+    return <PageSheetAct Gen={GenStoreInMultiStorageAct} />;
 }
 
 export function routeSheetStoreIn(uqApp: UqApp) {
     let { path } = uqApp.objectOf(GenSheetStoreIn);
-    let { path: pathMultiStorage } = uqApp.objectOf(GenStoreInMultiStorage);
+    let { path: pathMultiStorage } = uqApp.objectOf(GenStoreInMultiStorageAct);
     return <>
         <Route path={`${path}/:id`} element={<PageStoreIn />} />
         <Route path={path} element={<PageStoreIn />} />

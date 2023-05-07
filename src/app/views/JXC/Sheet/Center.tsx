@@ -4,7 +4,7 @@ import { GenSheetAct } from "app/template/Sheet";
 import { Link, Route } from "react-router-dom";
 import { Sheet } from "uqs/UqDefault";
 import { GenPurchaseAct } from "./Purchase";
-import { GenStoreInAct, GenStoreInMultiStorage } from "./StoreIn";
+import { GenStoreInAct, GenStoreInMultiStorageAct } from "./StoreIn";
 import { routeSheetPurchase } from "./Purchase";
 import { routeSheetStoreIn } from "./StoreIn";
 import { IDView } from "tonwa-app";
@@ -14,7 +14,7 @@ import { ViewItemID } from "app/template";
 const GenArr: (new (uqApp: UqApp) => GenSheetAct)[] = [
     GenPurchaseAct,
     GenStoreInAct,
-    GenStoreInMultiStorage,
+    GenStoreInMultiStorageAct,
 ];
 
 function PageCenter() {
@@ -23,7 +23,7 @@ function PageCenter() {
     const genColl: { [entity: string]: GenSheetAct } = {};
     const genArr = GenArr.map(v => {
         const gen = uqApp.objectOf(v);
-        const { phrase } = gen.genSheet;
+        const { phrase } = gen;
         genColl[phrase] = gen;
         return gen;
     });
@@ -35,8 +35,14 @@ function PageCenter() {
     function ViewItem({ value }: { value: Sheet & { phrase: string; } }) {
         const { id, no, phrase, target, operator } = value;
         let gen = genColl[phrase];
-        if (gen === undefined) debugger;
-        let { caption, path } = gen;
+        let caption: string, path: string;
+        if (gen === undefined) {
+            debugger;
+        }
+        else {
+            caption = gen.caption;
+            path = gen.path;
+        }
         return <Link to={`../${path}/${id}`}>
             <div className="px-3 py-2 d-flex">
                 <div className="w-10c me-3">

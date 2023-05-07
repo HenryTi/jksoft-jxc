@@ -1,43 +1,57 @@
-import { atom, PrimitiveAtom } from "jotai";
+import { Atom, atom, PrimitiveAtom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Detail, Sheet } from "uqs/UqDefault";
 import { GenSheetAct } from "./GenSheetAct";
 import { PageMoreCacheData } from "app/coms";
-import { EditingDetail } from "./EditingDetail";
+import { EditingRow, OriginDetail, SheetRow } from "./Model";
+
+interface DetailWithOrigin {
+    detail: Detail;
+    origin: OriginDetail;
+}
 
 export class GenEditing {
     readonly genSheetAct: GenSheetAct;
     readonly atomSheet: PrimitiveAtom<Sheet>;
-    readonly atomSubmitable: PrimitiveAtom<boolean>;
-    readonly atomIsMine: PrimitiveAtom<boolean>;
-    readonly atomDetails: PrimitiveAtom<EditingDetail[]>;
+    readonly atomIsMainSaved: PrimitiveAtom<boolean>;
+    readonly atomRows: PrimitiveAtom<EditingRow[]>;
+    readonly atomSubmitable: Atom<boolean>;
 
     constructor(genSheetAct: GenSheetAct) {
         this.genSheetAct = genSheetAct;
         this.atomSheet = atom(undefined as Sheet);
-        this.atomSubmitable = atom(false) as any;
-        this.atomIsMine = atom(false) as any;
-        this.atomDetails = atom(undefined as EditingDetail[]);
+        this.atomIsMainSaved = atom(false) as any;
+        this.atomRows = atom(undefined as EditingRow[]);
+        this.atomSubmitable = atom(get => {
+            let rows = get(this.atomRows);
+            if (rows === undefined) return false;
+            let submitable: boolean = false;
+            for (let editingRow of rows) {
+                let { error, atomDetails } = editingRow;
+                if (error !== undefined) {
+                    submitable = false;
+                    break;
+                }
+                let rows = get(atomDetails);
+                for (let row of rows) {
+                    let { value } = row;
+                    if (value === undefined) continue;
+                    if (value === 0) continue;
+                    submitable = true;
+                    break;
+                }
+                if (submitable === true) break;
+            }
+            return submitable;
+        });;
     }
 
     readonly onAddRow = async () => {
-        const { genDetail } = this.genSheetAct;
-        let editingDetail = await genDetail.addRow(this);
-        // 如果第一次生成明细，则保存主表
-        await this.saveSheet();
-        await this.saveEditingDetails(editingDetail);
+        await this.genSheetAct.addRow(this);
     }
 
-    readonly onEditRow = async (detail: EditingDetail) => {
-        const { genDetail } = this.genSheetAct;
-        await genDetail.editRow(this, detail);
-    }
-
-    reset() {
-        setAtomValue(this.atomSheet, undefined);
-        setAtomValue(this.atomSubmitable, false);
-        setAtomValue(this.atomIsMine, false);
-        setAtomValue(this.atomDetails, undefined);
+    readonly onEditRow = async (editingRow: EditingRow): Promise<void> => {
+        await this.genSheetAct.editRow(this, editingRow);
     }
 
     async load(id: number) {
@@ -48,87 +62,175 @@ export class GenEditing {
             let { id } = origin;
             originColl[id] = origin;
         }
-        let editingDetails: EditingDetail[] = details.map(v => {
+        let editingRows: EditingRow[] = details.map(v => {
             let { origin: originId, pendFrom, pendValue, sheet, no } = v;
             let origin = originColl[originId];
-            return {
-                origin,
-                pendFrom,
-                pendValue,
-                sheet,
-                no,
-                rows: [v as Detail]
-            } as EditingDetail;
+            let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue, sheet, no };
+            return new EditingRow(originDetail, [v as Detail]);
         });
         setAtomValue(this.atomSheet, sheet);
-        setAtomValue(this.atomDetails, editingDetails);
-        setAtomValue(this.atomIsMine, true);
-        this.refreshSubmitable();
+        setAtomValue(this.atomRows, editingRows);
+        setAtomValue(this.atomIsMainSaved, true);
     }
 
     setSheet(sheet: Sheet) {
         setAtomValue(this.atomSheet, sheet);
     }
 
-    private buildNewDetails(details: EditingDetail[], detail: EditingDetail): any[] {
-        let index = this.findDetail(details, detail);
-        if (index >= 0) {
-            details[index] = detail;
-            return [...details];
-        }
-        else {
-            return [...details, detail];
+    async updateRow(editingRow: EditingRow, details: Detail[]) {
+        let dirtyDetails: DetailWithOrigin[] = [];
+        this.dirtyDetails(dirtyDetails, editingRow, details);
+        if (dirtyDetails.length > 0) {
+            await this.saveDetails(dirtyDetails);
+            setAtomValue(editingRow.atomDetails, details);
         }
     }
 
-    private findDetail(details: EditingDetail[], detail: EditingDetail): number {
-        let len = details.length;
-        for (let i = 0; i < len; i++) {
-            let d = details[i];
-            let { rows: dRows } = d;
-            let { rows } = detail;
-            for (let row of rows) {
-                let { id } = row;
-                let index = dRows.findIndex(v => v.id === id);
-                if (index >= 0) return i;
+    async addRows(sheetRows: SheetRow[]) {
+        let dirtyDetails: DetailWithOrigin[] = []
+        for (let row of sheetRows) {
+            dirtyDetails.push(...row.details.map(v => ({ detail: v, origin: row.origin })));
+        }
+        if (dirtyDetails.length > 0) {
+            await this.saveSheet();
+            await this.saveDetails(dirtyDetails);
+        }
+        let rows = getAtomValue(this.atomRows);
+        if (rows === undefined) rows = [];
+        rows.push(...sheetRows.map(v => {
+            let { origin, details } = v;
+            return new EditingRow(origin, details);
+        }));
+        setAtomValue(this.atomRows, rows);
+    }
+
+    private dirtyDetails(dirtyDetails: DetailWithOrigin[], editingRow: EditingRow, details: Detail[]) {
+        let orgDetails = getAtomValue(editingRow.atomDetails);
+        for (let detail of details) {
+            let { origin } = editingRow;
+            let { id } = detail;
+            if (id !== undefined) {
+                let d = orgDetails.find(v => v.id === id);
+                if (d !== undefined) {
+                    if (this.compareDetail(d, detail) === true) continue;
+                }
+            }
+            dirtyDetails.push({ detail, origin });
+        }
+    }
+
+    private compareDetail(d1: Detail, d2: Detail): boolean {
+        if (d1.base !== d2.base) return false
+        if (d1.item !== d2.item) return false;
+        if (d1.target !== d2.target) return false;
+        if (d1.origin !== d2.origin) return false;
+        if (d1.value !== d2.value) return false;
+        if (d1.v1 !== d2.v1) return false;
+        if (d1.v2 !== d2.v2) return false;
+        if (d1.v3 !== d2.v3) return false;
+        return true;
+    }
+
+    private async saveDetail(sheet: Sheet, detailWithOrigin: DetailWithOrigin): Promise<void> {
+        let { uq } = this.genSheetAct;
+        let { id: sheetId, target } = sheet;
+        let { detail, origin } = detailWithOrigin;
+        let pendFrom = origin?.pend;
+        let result = await uq.SaveDetail.submit({
+            ...detail as any,
+            base: sheetId,
+            target,
+            pendFrom,
+        });
+        let id = result.ret?.id;
+        detail.id = id;
+    }
+
+    private async saveDetails(details: DetailWithOrigin[]) {
+        let sheet = getAtomValue(this.atomSheet);
+        await Promise.all(details.map(v => this.saveDetail(sheet, v)));
+    }
+    /*
+        // 第一次生成detail时，生成sheet id
+        // detail.id === undefine? 则新增，否则修改
+        async saveEditingRows(sheetRows: SheetRow[]): Promise<void> {
+            let sheet = getAtomValue(this.atomSheet);
+            let { id: sheetId, target } = sheet;
+            await Promise.all(sheetRows.map(v => this.saveEditingRow(sheetId, target, v)));
+        }
+    
+        private async saveEditingRow(sheetId: number, target: number, sheetRow: SheetRow): Promise<void> {
+            let { uq } = this.genSheetAct;
+            let { origin: { pend: pendFrom }, details } = sheetRow;
+            for (let row of details) {
+                row.base = sheetId;
+                row.target = target;
+            }
+            let rets = await Promise.all(details.map(
+                detail => uq.SaveDetail.submit({
+                    ...detail as any,
+                    base: sheetId,
+                    target,
+                    pendFrom,
+                })
+            ));
+            let len = details.length;
+            for (let i = 0; i < len; i++) {
+                let ret = rets[i];
+                let rowId = ret.id as number;
+                if (rowId > 0) {
+                    details[i].id = rowId;
+                }
             }
         }
-        return -1;
-    }
+    */
 
-    protected updateDetailAtom(editDetail: EditingDetail): void {
-        let details = getAtomValue(this.atomDetails);
-        let newDetails = this.buildNewDetails(details, editDetail);
-        setAtomValue(this.atomDetails, newDetails);
-    }
 
+    /*
+        private buildNewDetails(details: EditingRow[], detail: EditingRow): any[] {
+            let index = this.findDetail(details, detail);
+            if (index >= 0) {
+                details[index] = detail;
+                return [...details];
+            }
+            else {
+                return [...details, detail];
+            }
+        }
+    
+        private findDetail(details: EditingRow[], detail: EditingRow): number {
+            let len = details.length;
+            for (let i = 0; i < len; i++) {
+                let d = details[i];
+                let { atomDetails: atomRowsD } = d;
+                let dRows = getAtomValue(atomRowsD);
+                let { atomDetails: atomRows } = detail;
+                let rows = getAtomValue(atomRows);
+                for (let row of rows) {
+                    let { id } = row;
+                    let index = dRows.findIndex(v => v.id === id);
+                    if (index >= 0) return i;
+                }
+            }
+            return -1;
+        }
+    
+        updateDetailAtom(editDetail: EditingRow): void {
+            let details = getAtomValue(this.atomRows);
+            if (details === undefined) details = [];
+            let newDetails = this.buildNewDetails(details, editDetail);
+            setAtomValue(this.atomRows, newDetails);
+        }
+    */
     async newSheet(target: number): Promise<Sheet> {
-        let { uq, genSheet } = this.genSheetAct;
-        let { phrase } = genSheet;
-        let no = await uq.IDNO({ ID: uq.Sheet });
-        let sheet = { no, item: target, phrase } as any;
+        // let { uq, genSheet } = this.genSheetAct;
+        // let { phrase } = genSheet;
+        // let no = await uq.IDNO({ ID: uq.Sheet });
+        // let sheet = { no, item: target, phrase } as any;
+        let sheet = await this.genSheetAct.newSheet(target);
         setAtomValue(this.atomSheet, sheet);
-        setAtomValue(this.atomDetails, []);
+        setAtomValue(this.atomRows, []);
         return sheet;
-    }
-
-    refreshSubmitable() {
-        let details = getAtomValue(this.atomDetails);
-        let submitable: boolean = false;
-        let exitLoop: boolean = false;
-        for (let editingDetail of details) {
-            if (exitLoop === true) break;
-            let { rows } = editingDetail;
-            for (let row of rows) {
-                let { value } = row;
-                if (value === undefined) continue;
-                if (value === 0) continue;
-                submitable = true;
-                exitLoop = true;
-                break;
-            }
-        }
-        setAtomValue(this.atomSubmitable, submitable);
     }
 
     async bookSheet(act: string) {
@@ -139,8 +241,7 @@ export class GenEditing {
 
     async bookAct() {
         let sheet = getAtomValue(this.atomSheet);
-        let { genDetail, act } = this.genSheetAct;
-        await this.genSheetAct.uq.BizSheetAct(sheet.id, genDetail.bizEntityName, act);
+        await this.genSheetAct.book(sheet.id);
         this.removeSheetFromCache();
     }
 
@@ -151,19 +252,16 @@ export class GenEditing {
         this.removeSheetFromCache();
     }
 
-    async saveSheet() {
-        const isMine = getAtomValue(this.atomIsMine);
-        if (isMine === true) return;
-        let { uqApp, uq, genSheet } = this.genSheetAct;
-        let { phrase } = genSheet;
+    // 只有第一个明细保存的时候，才会保存主表。
+    private async saveSheet() {
+        const isMainSaved = getAtomValue(this.atomIsMainSaved);
+        if (isMainSaved === true) return;
+        let { uqApp, phrase } = this.genSheetAct;
         const sheet = getAtomValue(this.atomSheet);
-        let ret = await uq.SaveSheet.submit({
-            ...sheet,
-            sheet: phrase,
-        });
-        let { id } = ret;
+        let id = await this.genSheetAct.saveSheet(sheet);
         sheet.id = id;
         setAtomValue(this.atomSheet, sheet);
+        this.removeSheetFromCache();
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (data) {
             data.addItem({
@@ -171,67 +269,7 @@ export class GenEditing {
                 phrase
             });
         }
-        setAtomValue(this.atomIsMine, true);
-    }
-
-    // 第一次生成detail时，生成sheet id
-    // detail.id === undefine? 则新增，否则修改
-    async saveEditingDetails(editingDetails: EditingDetail[]): Promise<void> {
-        let { uq } = this.genSheetAct;
-        let sheet = getAtomValue(this.atomSheet);
-        let { id: sheetId, target } = sheet;
-        await Promise.all(editingDetails.map(v => this.saveEditingDetail(sheetId, target, v)));
-        /*
-        let { pendFrom, rows } = editingDetail;
-        for (let row of rows) {
-            row.base = sheetId;
-            row.target = target;
-        }
-        let rets = await Promise.all(rows.map(
-            row => uq.SaveDetail.submit({
-                ...row as any,
-                base: sheetId,
-                target,
-                pendFrom,
-            })
-        ));
-        let len = rows.length;
-        for (let i = 0; i < len; i++) {
-            let ret = rets[i];
-            let rowId = ret.id as number;
-            if (rowId > 0) {
-                rows[i].id = rowId;
-            }
-        }
-        this.updateDetailAtom(editingDetail);
-        */
-        this.refreshSubmitable();
-    }
-
-    private async saveEditingDetail(sheetId: number, target: number, editingDetail: EditingDetail): Promise<void> {
-        let { uq } = this.genSheetAct;
-        let { pendFrom, rows } = editingDetail;
-        for (let row of rows) {
-            row.base = sheetId;
-            row.target = target;
-        }
-        let rets = await Promise.all(rows.map(
-            row => uq.SaveDetail.submit({
-                ...row as any,
-                base: sheetId,
-                target,
-                pendFrom,
-            })
-        ));
-        let len = rows.length;
-        for (let i = 0; i < len; i++) {
-            let ret = rets[i];
-            let rowId = ret.id as number;
-            if (rowId > 0) {
-                rows[i].id = rowId;
-            }
-        }
-        this.updateDetailAtom(editingDetail);
+        setAtomValue(this.atomIsMainSaved, true);
     }
 
     private removeSheetFromCache() {

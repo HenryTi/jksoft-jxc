@@ -5,8 +5,6 @@ interface ItemProps<T> {
     value: T;
 }
 
-let uniqueRowId = 1;
-
 export interface ListPropsWithoutItems<T> {
     className?: string;
     itemKey?: string | ((item: T) => string | number);
@@ -40,8 +38,10 @@ export function List<T>(props: ListProps<T>) {
     }
     let len = items.length;
     if (len === 0) {
-        if (none) return none;
-        return <div className="mx-3 my-2 text-muted">-</div>;
+        if (none === undefined) {
+            none = <div className="mx-3 my-2 text-muted">-</div>;
+        }
+        return none;
     }
 
     ItemView = ItemView ?? DefaultViewItem;

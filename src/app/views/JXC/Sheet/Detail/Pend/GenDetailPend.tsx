@@ -1,10 +1,11 @@
 import { Band, FormRow, InputNumber } from "app/coms";
 import { ViewItemID } from "app/template";
-import { GenDetail, EditingDetail, GenEditing } from "app/template/Sheet";
+import { EditingRow, GenDetail, GenEditing, SheetRow } from "app/template/Sheet";
 import { IDView } from "tonwa-app";
 import { Atom, Detail } from "uqs/UqDefault";
 import { useUqApp } from "app/UqApp";
 import { getAtomValue } from "tonwa-com";
+import { useAtomValue } from "jotai";
 
 const fieldQuantity = 'value';
 const fieldPrice = 'v1';
@@ -42,35 +43,38 @@ export abstract class GenDetailPend extends GenDetail {
         return { name: fieldAmount, label: '金额', type: 'number', options: { value, disabled: this.amountDisabled } };
     }
 
-    override async addRow(genEditing: GenEditing): Promise<EditingDetail[]> {
+    readonly selectItem: (header?: string) => Promise<Atom> = undefined;
+    readonly selectTarget: (header?: string) => Promise<Atom> = undefined;
+
+    readonly addRow = async (genEditing: GenEditing): Promise<SheetRow[]> => {
         let { genPend } = genEditing.genSheetAct;
         if (genPend === undefined) {
             alert('genPend can not be undefined');
             return;
         }
-        let editingDetails = getAtomValue(genEditing.atomDetails);
-        let selected = await genPend.select(editingDetails);
+        let editingRows = getAtomValue(genEditing.atomRows);
+        let selected = await genPend.select(editingRows);
         return selected;
     }
 
-    protected editingDetailFromAtom(atom: Atom): Detail {
+    protected editingRowFromAtom(atom: Atom): Detail {
         let detail = { item: atom.id } as Detail;
         return detail;
     }
 
-    override async editRow(genEditing: GenEditing, detail: EditingDetail): Promise<void> {
-    }
+    readonly editRow: (genEditing: GenEditing, editingRow: EditingRow) => Promise<void> = undefined;
 
-    readonly ViewDetail = ViewDetailPend;
+    readonly ViewRow = ViewDetailPend;
 }
 
-function ViewDetailPend({ editingDetail, genEditing }: { editingDetail: EditingDetail; genEditing: GenEditing; }): JSX.Element {
+function ViewDetailPend({ editingRow, genEditing }: { editingRow: EditingRow; genEditing: GenEditing; }): JSX.Element {
     const uqApp = useUqApp();
     const { uq } = uqApp;
-    const { rows } = editingDetail;
-    const { origin, pendValue } = editingDetail;
-    const { item, value: originValue, v1: price, v2: amount } = origin;
-    const row = rows[0];
+    const { atomDetails } = editingRow;
+    const details = useAtomValue(atomDetails);
+    const { origin } = editingRow;
+    const { item, value: originValue, v1: price, v2: amount, pendValue } = origin;
+    const row = details[0];
     const { value } = row;
     (row as any).$saveValue = value;
 
@@ -78,7 +82,8 @@ function ViewDetailPend({ editingDetail, genEditing }: { editingDetail: EditingD
         let { $saveValue } = row as any;
         if (valueInputed !== $saveValue) {
             row.value = valueInputed;
-            await genEditing.saveEditingDetails([editingDetail]);
+            //await genEditing.saveEditingRows([editingRow]);
+            await genEditing.updateRow(editingRow, [{} as Detail])
         }
     }
     return <div className="px-3 py-2 d-flex align-items-center">

@@ -1,14 +1,12 @@
 import { UqApp } from "app/UqApp";
-import { GenSheet, GenSheetAct, GenMain, GenStart, PageSheetAct, EditingDetail } from "app/template/Sheet";
+import { GenSheet, GenSheetAct, GenMain, PageSheetAct, EditingRow, SheetRow } from "app/template/Sheet";
 import { QueryMore } from "app/tool";
-import { GenContact } from "../Atom";
-import { Detail, Sheet } from "uqs/UqDefault";
-import { Band, PageQueryMore } from "app/coms";
+import { GenContact, ModalSelectContact } from "../Atom";
+import { Atom, Detail, Sheet } from "uqs/UqDefault";
+import { Band } from "app/coms";
 import { IDView, uqAppModal } from "tonwa-app";
 import { ViewItemID } from "app/template";
-import { FA, LMR, SearchBox } from "tonwa-com";
 import { Route } from "react-router-dom";
-import { useState } from "react";
 import { GenDetailQPA } from "./Detail";
 
 export class GenSheetPurchase extends GenSheet {
@@ -39,55 +37,10 @@ class GenMainPurchase extends GenMain {
             </Band>;
         }
     }
-}
-
-class GenStartPurchase extends GenStart {
-    override async start(): Promise<{ sheet: Sheet, editingDetails: EditingDetail[] }> {
-        let target = await this.genSheetAct.genSheet.genMain.selectTarget();
-        let no = await this.uq.IDNO({ ID: this.uq.Sheet });
-        let main = { no, target } as Sheet;
-        return { sheet: main, editingDetails: [] };
-        /*
-        let { openModal, closeModal } = uqAppModal(this.uqApp);
-        const Modal = () => {
-            const { genSheet, caption } = this.genSheetAct;
-            const { genMain } = genSheet;
-            const { targetCaption, QuerySearchItem } = genMain;
-            const [searchParam, setSearchParam] = useState<{ key: string; }>(undefined);
-            async function onSearch(key: string) {
-                setSearchParam({
-                    key,
-                });
-            }
-            function ItemView({ value }: { value: any }) {
-                return <LMR className="px-3 py-2 align-items-center">
-                    <FA name="angle-right" className="me-3" />
-                    <span>{JSON.stringify(value)}</span>
-                    <span />
-                </LMR>;
-            }
-            const query = QuerySearchItem;
-            const onItemClick = async (item: any) => {
-                let no = await this.uq.IDNO({ ID: this.uq.Sheet });
-                let main = { no, target: item.id };
-                closeModal({ sheet: main, editingDetails: [] });
-            }
-            return <PageQueryMore header={`新建${caption}`}
-                query={query}
-                param={searchParam}
-                sortField="id"
-                ViewItem={ItemView}
-                onItemClick={onItemClick}
-            >
-                <div className="m-3">
-                    选择{targetCaption}
-                </div>
-                <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder={targetCaption} />
-            </PageQueryMore>;
-        }
-        let ret = await openModal(<Modal />);
+    readonly selectTarget = async (header?: string): Promise<Atom> => {
+        const { openModal } = uqAppModal(this.uqApp);
+        let ret = await openModal<Atom>(<ModalSelectContact />);
         return ret;
-        */
     }
 }
 
@@ -106,7 +59,13 @@ export class GenPurchaseAct extends GenSheetAct {
             return <div></div >;
         }
     }
-    protected get GenStart() { return GenStartPurchase; }
+    protected async loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
+        let targetAtom = await this.genMain.selectTarget();
+        let no = await this.uq.IDNO({ ID: this.uq.Sheet });
+        let main = { no, target: targetAtom.id } as Sheet;
+        return { sheet: main, sheetRows: [] };
+    }
+
 }
 
 function PagePurchaseEdit() {
