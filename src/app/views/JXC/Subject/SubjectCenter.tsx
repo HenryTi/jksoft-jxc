@@ -1,13 +1,13 @@
 import { useUqApp } from "app/UqApp";
 import { Link, Route } from "react-router-dom";
 import { Page } from "tonwa-app";
-import { GenStorage } from "./ReportStorage";
+import { GenSubjectStorage } from "./SubjectStorage";
 
 export const pathReportCenter = 'report';
 
-function PageReportCenter() {
+function PageSubjectCenter() {
     const uqApp = useUqApp();
-    const gens = [GenStorage].map(v => uqApp.objectOf(v));
+    const gens = [GenSubjectStorage].map(v => uqApp.objectOf(v));
     return <Page header="报表中心">
         {gens.map((v, index) => {
             const { path, caption } = v;
@@ -18,4 +18,4 @@ function PageReportCenter() {
     </Page>;
 }
 
-export const routeReportCenter = <Route path={pathReportCenter} element={<PageReportCenter />} />;
+export const routeSubjectCenter = <Route path={pathReportCenter} element={<PageSubjectCenter />} />;

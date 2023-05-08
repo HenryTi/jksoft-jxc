@@ -42,7 +42,7 @@ export abstract class GenDerive extends GenSheetOld {
     }
 
     loadPend = async (param: any, pageStart: any, pageSize: number) => {
-        let { $page } = await this.uq.GetPendSheet.page({ sheet: this.bizSheet.phrase }, pageStart, pageSize);
+        let { $page } = await this.uq.GetPendSheet.page({ sheet: this.entity.phrase }, pageStart, pageSize);
         return $page;
     }
 }

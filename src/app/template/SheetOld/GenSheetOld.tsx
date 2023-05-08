@@ -2,12 +2,12 @@ import { UqApp } from "app/UqApp";
 import { Sheet } from "uqs/UqDefault";
 import { GenBizEntity, GenProps } from "app/tool";
 import { GenEditingOld } from "./GenEditingOld";
-import { BizSheet } from "app/Biz";
+import { EntitySheet } from "app/Biz";
 
-export abstract class GenSheetOld extends GenBizEntity<BizSheet> {
+export abstract class GenSheetOld extends GenBizEntity<EntitySheet> {
     readonly bizEntityType = 'sheet';
     get path() { return this.bizEntityName; }
-    get entity(): BizSheet { return this.biz.sheets[this.bizEntityName] }
+    get entity(): EntitySheet { return this.biz.sheets[this.bizEntityName] }
     abstract get targetCaption(): string;
 
     // readonly Atom: UqID<Sheet>;

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { pathAtomCenter } from "./Atom/AtomCenter";
-import { pathReportCenter } from "./Report/ReportCenter";
+import { pathReportCenter } from "./Subject/SubjectCenter";
 import { pathPrice } from "./AssignPrice";
 import { pathSheetCenterOld } from "./SheetOld/SheetCenterOld";
 import { pathSheetCenter } from "./Sheet";

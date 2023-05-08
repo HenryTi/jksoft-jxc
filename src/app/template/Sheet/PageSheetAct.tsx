@@ -12,10 +12,10 @@ export function PageSheetAct({ Gen }: GenProps<GenSheetAct>) {
     const uqApp = useUqApp();
     const navigate = useNavigate();
     const genSheetAct = uqApp.objectOf(Gen);
-    const { caption, genMain, ViewRow } = genSheetAct;
+    const { caption, /*genMain, */ViewRow, ViewTargetBand } = genSheetAct;
     const { current: genEditing } = useRef(genSheetAct.createEditing());
     const { onEditRow, onAddRow } = genEditing;
-    const { ViewTargetBand } = genMain;
+    // const { ViewTargetBand } = genMain;
     const sheet = useAtomValue(genEditing.atomSheet);
     const rows = useAtomValue(genEditing.atomRows);
     const submitable = useAtomValue(genEditing.atomSubmitable);

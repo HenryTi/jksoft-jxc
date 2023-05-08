@@ -69,18 +69,17 @@ export abstract class GenDetailSplit extends GenDetail {
         const { item, value, v1: price, v2: amount } = origin;
         const details = useAtomValue(editingRow.atomDetails);
         const onAddRow = async () => {
-            debugger;
             let targetAtom = await this.selectTarget();
             if (targetAtom === undefined) {
                 alert('GenDetail.selectTarget not defined');
                 return;
             }
-            let sheet = getAtomValue(genEditing.atomSheet);
+            // let sheet = getAtomValue(genEditing.atomSheet);
             let rowsSum = 0;
             for (let detail of details) { rowsSum += detail.value; }
             let detail: Detail = {
                 id: undefined,
-                base: sheet.id,
+                base: undefined, // sheet.id,
                 target: targetAtom.id,
                 item,
                 value: value - rowsSum,

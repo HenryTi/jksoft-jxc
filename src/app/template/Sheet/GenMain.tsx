@@ -10,3 +10,10 @@ export abstract class GenMain extends GenBizEntity<EntityMain> {
     abstract get ViewTarget(): (props: { sheet: Sheet; }) => JSX.Element;
     abstract get selectTarget(): (header?: string) => Promise<Atom>;
 }
+
+export abstract class GenMainNoTarget extends GenMain {
+    readonly targetCaption = undefined as string;
+    readonly ViewTargetBand = undefined as (props: { sheet: Sheet; }) => JSX.Element;
+    readonly ViewTarget = undefined as (props: { sheet: Sheet; }) => JSX.Element;
+    readonly selectTarget = undefined as (header?: string) => Promise<Atom>;
+}

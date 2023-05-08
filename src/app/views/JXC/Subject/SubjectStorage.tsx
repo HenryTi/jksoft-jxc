@@ -1,15 +1,13 @@
-import { PageReport, GenReport, PageHistory } from "app/template";
+import { PageReport, GenSubject, PageHistory } from "app/template";
 import { Route } from "react-router-dom";
 import { pathDetailView } from "../SheetView";
 
 const pathStorage = 'storage';
 const pathStorageHistory = 'storage-history';
 
-export class GenStorage extends GenReport {
+export class GenSubjectStorage extends GenSubject {
     readonly bizEntityName = 'storage';
     readonly bizEntityType = 'subject';
-    readonly phrase = undefined as string;
-    readonly caption = '库存报表';
     readonly captionHistory = '库存流水';
     readonly path = pathStorage;
     readonly pathStorageHistory = pathStorageHistory;
@@ -17,6 +15,6 @@ export class GenStorage extends GenReport {
 }
 
 export const routeReportStorage = <>
-    <Route path={pathStorage} element={<PageReport Gen={GenStorage}></PageReport>} />
-    <Route path={`${pathStorageHistory}/:id`} element={<PageHistory Gen={GenStorage} />} />
+    <Route path={pathStorage} element={<PageReport Gen={GenSubjectStorage}></PageReport>} />
+    <Route path={`${pathStorageHistory}/:id`} element={<PageHistory Gen={GenSubjectStorage} />} />
 </>;

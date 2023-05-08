@@ -1,4 +1,4 @@
 export * from './PageReport';
-export * from './GenReport';
+export * from './GenSubject';
 export * from './PageHistory';
 export * from './PageReport';

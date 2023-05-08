@@ -2,9 +2,9 @@ import { PageQueryMore } from "app/coms";
 import { useUqApp } from "app/UqApp";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { GenProps } from "app/tool";
-import { GenReport } from "./GenReport";
+import { GenSubject } from "./GenSubject";
 
-export function PageHistory({ Gen }: GenProps<GenReport>) {
+export function PageHistory({ Gen }: GenProps<GenSubject>) {
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
     const navigate = useNavigate();

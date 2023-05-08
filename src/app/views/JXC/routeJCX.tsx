@@ -2,7 +2,7 @@ import { Route } from "react-router-dom";
 import { routeContact, routeProduct } from "./Atom";
 import { routeSheetCenterOld, routePurchase, routeStoreIn, routeSale, routeStoreOut } from "./SheetOld";
 import { routeAtomCenter } from "./Atom";
-import { routeReportCenter, routeReportStorage } from "./Report";
+import { routeSubjectCenter, routeReportStorage } from "./Subject";
 import { routePrice } from "./AssignPrice";
 import { routeSheetView } from './SheetView';
 import { UqApp } from "app/UqApp";
@@ -23,7 +23,7 @@ export function routeJCX(uqApp: UqApp) {
         {routeSale(uqApp)}
         {routeStoreOut(uqApp)}
 
-        {routeReportCenter}
+        {routeSubjectCenter}
         {routeReportStorage}
         {routeSheetView(uqApp)}
 

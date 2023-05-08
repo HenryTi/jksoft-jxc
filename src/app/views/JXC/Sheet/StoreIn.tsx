@@ -1,5 +1,5 @@
 import { UqApp } from "app/UqApp";
-import { EditingRow, GenDetail, GenSheet, GenSheetAct, PageSheetAct, OriginDetail, SheetRow } from "app/template/Sheet";
+import { EditingRow, GenDetail, GenSheet, GenSheetAct, PageSheetAct, OriginDetail, SheetRow, GenMainNoTarget, GenSheetNoTarget } from "app/template/Sheet";
 import { QueryMore } from "app/tool";
 import { GenContact, ModalSelectContact } from "../Atom";
 import { Atom, Sheet } from "uqs/UqDefault";
@@ -13,15 +13,9 @@ import { Band } from "app/coms";
 
 export class GenSheetStoreIn extends GenSheet {
     readonly bizEntityName = 'sheetstorein';
-    protected GenMain(): new (uqApp: UqApp) => GenMain { return GenMainStoreIn; }
-}
-
-class GenMainStoreIn extends GenMain {
-    readonly bizEntityName = 'mainstorein';
+    //protected GenMain(): new (uqApp: UqApp) => GenMain { return GenMainStoreIn; }
+    readonly bizMain = 'mainstorein';
     readonly targetCaption = '仓库';
-    get QuerySearchItem(): QueryMore {
-        return this.uqApp.objectOf(GenContact).searchAtoms;
-    }
     readonly ViewTarget = ({ sheet }: { sheet: Sheet; }): JSX.Element => {
         return <IDView id={sheet.target} uq={this.uq} Template={ViewItemID} />;
     }
@@ -37,6 +31,26 @@ class GenMainStoreIn extends GenMain {
         return ret;
     }
 }
+/*
+class GenMainStoreIn extends GenMain {
+    readonly bizEntityName = 'mainstorein';
+    readonly targetCaption = '仓库';
+    readonly ViewTarget = ({ sheet }: { sheet: Sheet; }): JSX.Element => {
+        return <IDView id={sheet.target} uq={this.uq} Template={ViewItemID} />;
+    }
+    readonly ViewTargetBand = ({ sheet }: { sheet: Sheet; }): JSX.Element => {
+        return <Band label={this.targetCaption}>
+            <this.ViewTarget sheet={sheet} />
+        </Band>;
+    }
+    readonly selectTarget = async (header?: string): Promise<Atom> => {
+        const { openModal } = uqAppModal(this.uqApp);
+        // 这里实际应该选择仓库。以后再改
+        let ret = await openModal<Atom>(<ModalSelectContact />);
+        return ret;
+    }
+}
+*/
 
 class GenDetailStoreIn extends GenDetailPend {
     readonly bizEntityName = 'detailstorein';
@@ -48,19 +62,16 @@ class GetPendStroeIn extends GenPendFromItem {
 }
 
 export class GenStoreInAct extends GenSheetAct {
-    get caption() { return this.genSheet.caption; }
-    get path() { return this.genSheet.path; }
     protected GenSheet(): new (uqApp: UqApp) => GenSheet { return GenSheetStoreIn; }
     protected get GenDetail(): (new (uqApp: UqApp) => GenDetail) { return GenDetailStoreIn; }
     protected get GenPend() { return GetPendStroeIn; }
-
     protected override async loadStart(): Promise<{ sheet: Sheet, sheetRows: SheetRow[]; }> {
         let sheetRows = await this.genPend.select(undefined);
         if (sheetRows === undefined) {
             return undefined;
         }
         let target: number;
-        let { selectTarget } = this.genMain;
+        let { selectTarget } = this.genSheet;
         if (selectTarget !== undefined) {
             let targetAtom = await selectTarget('选择仓库');
             target = targetAtom.id;
@@ -83,16 +94,16 @@ class GenDetailStoreInMultiStorage extends GenDetailSplit {
     }
 }
 
-export class GenSheetStoreInMultiStorage extends GenSheet {
+export class GenSheetStoreInMultiStorage extends GenSheetNoTarget {
     readonly bizEntityName = 'sheetstoreinmultistorage';
-    protected GenMain(): new (uqApp: UqApp) => GenMain { return GenMainStoreInMultiStorage; }
+    readonly bizMain = 'mainstorein';
+    // protected GenMain(): new (uqApp: UqApp) => GenMain { return GenMainStoreInMultiStorage; }
 }
-
-class GenMainStoreInMultiStorage extends GenMainStoreIn {
-    readonly selectTarget = undefined as (header?: string) => Promise<Atom>;
-    readonly ViewTargetBand = undefined as (props: { sheet: Sheet; }) => JSX.Element;
+/*
+class GenMainStoreInMultiStorage extends GenMainNoTarget {
+    readonly bizEntityName = 'mainstorein';
 }
-
+*/
 class GetPendStroeInMultiStorage extends GetPendStroeIn {
     protected pendItemToEditingRow(originDetail: OriginDetail): SheetRow {
         return {

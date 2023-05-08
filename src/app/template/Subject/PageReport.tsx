@@ -3,9 +3,9 @@ import { useUqApp } from "app/UqApp";
 import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { GenProps } from "app/tool";
-import { GenReport } from "./GenReport";
+import { GenSubject } from "./GenSubject";
 
-export function PageReport({ Gen, children }: GenProps<GenReport> & { children?: ReactNode }) {
+export function PageReport({ Gen, children }: GenProps<GenSubject> & { children?: ReactNode }) {
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
     const { caption, searchSubjectAtom, sortField, ViewItem, pathStorageHistory } = gen;

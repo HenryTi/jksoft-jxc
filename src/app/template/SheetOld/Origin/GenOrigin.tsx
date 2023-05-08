@@ -53,7 +53,7 @@ export abstract class GenOrigin extends GenSheetOld {
         }
 
         this.ViewTarget = function ({ sheet }: { sheet: Sheet }) {
-            return <IDView id={sheet.item} uq={uq} Template={ViewItemID} />;
+            return <IDView id={sheet.target} uq={uq} Template={ViewItemID} />;
         }
 
         this.ViewTargetBand = ({ sheet }: { sheet: Sheet }) => {

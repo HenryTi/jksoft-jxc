@@ -3,7 +3,7 @@ import { Gen, GenBizEntity, QueryMore } from "app/tool";
 import { UqApp } from "app/UqApp";
 import { UqID, UqQuery } from "tonwa-uq";
 import { Atom } from "uqs/UqDefault";
-import { BizAtom } from "app/Biz";
+import { EntityAtom } from "app/Biz";
 
 export interface ViewPropRowProps {
     name: string;
@@ -18,7 +18,7 @@ export interface ViewPropProps extends ViewPropRowProps {
     ValueTemplate?: (props: { value: any; }) => JSX.Element;
 }
 
-export abstract class GenAtom extends GenBizEntity<BizAtom> {
+export abstract class GenAtom extends GenBizEntity<EntityAtom> {
     readonly bizEntityType = 'atom';
     readonly Atom: UqID<any>;
     readonly genAtomNew: GenAtomNew;
@@ -44,7 +44,7 @@ export abstract class GenAtom extends GenBizEntity<BizAtom> {
     protected get GenAtomSelect(): new (genAtom: GenAtom) => GenAtomSelect { return GenAtomSelect; }
 
     get path() { return this.bizEntityName; }
-    get entity(): BizAtom { return this.biz.atoms[this.bizEntityName]; }
+    get entity(): EntityAtom { return this.biz.atoms[this.bizEntityName]; }
 
     readonly searchAtoms: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
         let newParam = { ...param, atom: this.phrase };

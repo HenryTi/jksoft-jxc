@@ -1,4 +1,4 @@
-import { BizAtom } from ".";
+import { EntityAtom } from ".";
 import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
@@ -20,7 +20,7 @@ export class BudString extends BudType {
 export class BudAtom extends BudType {
     type = 'atom';
     private atom: string;
-    bizAtom: BizAtom;
+    bizAtom: EntityAtom;
     fromSchema(schema: any) {
         this.atom = schema.atom;
     }

@@ -6,8 +6,8 @@ import { Atom, ReturnHistoryStorage$page, ReturnReportStorage$page } from "uqs/U
 import { EasyTime, FA, LMR, dateFromMinuteId } from "tonwa-com";
 import { IDView } from "tonwa-app";
 
-export abstract class GenReport extends GenBizEntity {
-    get bizSubject(): EntitySubject { return this.biz.subjects[this.bizEntityName]; }
+export abstract class GenSubject extends GenBizEntity<EntitySubject> {
+    get entity(): EntitySubject { return this.biz.subjects[this.bizEntityName]; }
 
     readonly QueryReport: UqQuery<any, any>;
     readonly QueryHistory: UqQuery<any, any>;
@@ -30,7 +30,7 @@ export abstract class GenReport extends GenBizEntity {
     searchSubjectAtom: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
         let nParam = {
             key: param?.key,
-            subject: this.bizSubject.phrase,
+            subject: this.entity.phrase,
         }
         const { $page } = await this.QueryReport.page(nParam, pageStart, pageSize);
         return $page;
@@ -39,7 +39,7 @@ export abstract class GenReport extends GenBizEntity {
     subjectHistory: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
         let nParam = {
             atomId: param.atomId,
-            subject: this.bizSubject.phrase,
+            subject: this.entity.phrase,
         }
         const { $page } = await this.QueryHistory.page(nParam, pageStart, pageSize);
         return $page;
