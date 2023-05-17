@@ -1,5 +1,5 @@
 import { Route } from "react-router-dom";
-import { routeContact, routeProduct } from "./Atom";
+import { routeContact, routeGoods } from "./Atom";
 import { routeSheetCenterOld, routePurchase, routeStoreIn, routeSale, routeStoreOut } from "./SheetOld";
 import { routeAtomCenter } from "./Atom";
 import { routeSubjectCenter, routeReportStorage } from "./Subject";
@@ -12,7 +12,7 @@ export const pathJXC = 'jxc';
 export function routeJCX(uqApp: UqApp) {
     const routes = <>
         {routeAtomCenter}
-        {routeProduct(uqApp)}
+        {routeGoods(uqApp)}
         {routeContact(uqApp)}
 
         {routeSheet(uqApp)}

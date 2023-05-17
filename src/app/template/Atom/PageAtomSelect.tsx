@@ -17,7 +17,7 @@ export function PageAtomSelect<G extends GenAtom>({ Gen, ViewItem, assigns, load
     const { closeModal } = useModal();
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
-    const { caption, placeholder, bizAtom } = gen.genAtomSelect;
+    const { caption, placeholder, entity: bizAtom } = gen.genAtomSelect;
     const [searchParam, setSearchParam] = useState(loadOnOpen === false ? undefined : { key: undefined as string });
     const searchBox = <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder={placeholder} />;
     async function onSearch(key: string) {

@@ -8,7 +8,7 @@ export class GenContact extends GenAtom {
     readonly bizEntityName = uqSchema.$biz.contact.name;
     get GenAtomNew(): new (genAtom: GenAtom) => GenAtomNew { return GenContactNew; }
 
-    get SelectPage(): JSX.Element {
+    get PageSelect(): JSX.Element {
         return <PageAtomSelect Gen={GenContact} />;
     }
 }

@@ -3,7 +3,7 @@ import { GenProps } from "app/tool";
 import { UqApp } from "app/UqApp";
 import { Detail } from "uqs/UqDefault";
 import { PageOriginEdit, GenSheetOld, GenOrigin, PageDetailQPA, GenDetailOld, ViewItemID } from "../../../template";
-import { GenContact, ModalSelectProduct } from "../Atom";
+import { GenContact, ModalSelectGoods } from "../Atom";
 import { QueryMore } from "app/tool";
 
 export class GenPurchase extends GenOrigin {
@@ -23,7 +23,7 @@ export class GenPurchase extends GenOrigin {
         super(uqApp);
         this.QuerySearchItem = uqApp.objectOf(GenContact).searchAtoms;
 
-        this.ModalSelectDetailAtom = ModalSelectProduct;
+        this.ModalSelectDetailAtom = ModalSelectGoods;
         this.PageSheetEdit = PagePurchaseEdit;
         this.PageSheetDetail = PageSheetDetail as any;
     }
@@ -44,7 +44,7 @@ function PageSheetDetail({ detail, Gen }: (GenProps<GenPurchase> & { detail: Det
 
 class GenDetailPurchase extends GenDetailOld {
     get path(): string { return undefined; }
-    get itemCaption(): string { return '产品'; }
+    get itemCaption(): string { return '商品'; }
     get ViewItemTemplate(): ({ value }: { value: any; }) => JSX.Element {
         return ViewItemID;
     }

@@ -43,7 +43,7 @@ export function ViewPropEx(veiwProps: ViewPropProps & { bizBud: BizBud; }) {
     const { id, name } = veiwProps;
     const { gen, bizBud } = veiwProps;
     async function saveProp(newValue: string | number) {
-        await gen.savePropEx(id, bizBud.phrase, newValue);
+        await gen.savePropEx(id, bizBud, newValue);
     }
     let { pickValue, ValueTemplate } = pickValueFromBudType(bizBud, openModal);
     return <ViewProp {...veiwProps} saveProp={saveProp} pickValue={pickValue} ValueTemplate={ValueTemplate} />
@@ -66,7 +66,7 @@ function pickValueForBudAtom(budType: BudAtom, openModal: OpenModal): BudValue {
     let gen = bizAtom.biz.uqApp.genAtoms[bizAtom.name];
     return {
         pickValue: async function (props: PickProps) {
-            let ret = await openModal(gen.SelectPage);
+            let ret = await openModal(gen.PageSelect);
             return ret?.id;
         },
         ValueTemplate: function ({ value }: { value: any }) {

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { FA, LMR, Sep } from "tonwa-com";
 import { GenContact } from "./AtomContact";
-import { GenProduct } from "./AtomProduct";
+import { GenGoods } from "./AtomGoods";
 import { UqApp, useUqApp } from "app/UqApp";
 import { GenAtom } from "app/template";
 import React from "react";
@@ -12,7 +12,7 @@ export const pathAtomCenter = 'atom-center';
 
 export function PageAtomCenter() {
     let uqApp = useUqApp();
-    let arr: (new (uqApp: UqApp) => GenAtom)[] = [GenProduct, GenContact];
+    let arr: (new (uqApp: UqApp) => GenAtom)[] = [GenGoods, GenContact];
     let genAtoms: GenAtom[] = arr.map(v => uqApp.objectOf(v));
     return <Page header="档案中心">
         <Sep sep={3} />

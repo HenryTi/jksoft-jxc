@@ -11,6 +11,17 @@ Biz Detail DetailPurchase ver 0.1 {
     };
 }
 
+Biz Detail DetailPurchaseMedicine ver 0.1 {
+    Main MainPurchase;
+    Item Medicine;
+    ACT (detail ID) {
+        VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
+        -- Biz Subject storage of item += value ref detail;
+        Biz Pend PendStoreIn Detail=detail SET Value=value;
+        -- err = 0 or null, 则ok，继续
+    };
+}
+
 Biz Sheet SheetPurchase '采购单' {
     Main MainPurchase;
     Detail DetailPurchase;

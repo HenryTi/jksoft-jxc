@@ -1,3 +1,3 @@
 export * from './AtomCenter';
 export * from './AtomContact';
-export * from './AtomProduct';
+export * from './AtomGoods';

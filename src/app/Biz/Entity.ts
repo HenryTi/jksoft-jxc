@@ -3,7 +3,8 @@ import { BizBase } from "./BizBase";
 
 export class Entity extends BizBase {
     get phrase() { return `${this.type}.${this.name}`; }
-
+    readonly selfProps: Map<string, BizProp> = new Map();
+    readonly selfAssigns: Map<string, BizAssign> = new Map();
     readonly props: Map<string, BizProp> = new Map();
     readonly assigns: Map<string, BizAssign> = new Map();
 
@@ -22,29 +23,43 @@ export class Entity extends BizBase {
     protected fromProps(props: any[]) {
         for (let prop of props) {
             let { name, type } = prop;
-            let bizProp = new BizProp(this.biz, name, type, this);
-            let { budType } = bizProp;
+            let bizBud = new BizProp(this.biz, name, type, this);
+            let { budType } = bizBud;
             if (budType === undefined) debugger;
             budType.fromSchema(prop);
-            this.props.set(bizProp.phrase, bizProp);
+            bizBud.fromSchema(prop);
+            this.selfProps.set(bizBud.phrase, bizBud);
         }
     }
 
     protected fromAssigns(assigns: any[]) {
         for (let assign of assigns) {
             let { name, type } = assign;
-            let bizAssign = new BizAssign(this.biz, name, type, this);
-            bizAssign.budType.fromSchema(assign);
-            this.assigns.set(bizAssign.phrase, bizAssign);
+            let bizBud = new BizAssign(this.biz, name, type, this);
+            let { budType } = bizBud;
+            if (budType === undefined) debugger;
+            budType.fromSchema(assign);
+            bizBud.fromSchema(assign);
+            this.selfAssigns.set(bizBud.phrase, bizBud);
+        }
+    }
+
+    protected buildBuds() {
+        for (let [, bud] of this.selfProps) {
+            this.props.set(bud.name, bud);
+        }
+        for (let [, bud] of this.selfAssigns) {
+            this.assigns.set(bud.name, bud);
         }
     }
 
     scan() {
-        for (let [, bud] of this.props) {
+        for (let [, bud] of this.selfProps) {
             bud.scan();
         }
-        for (let [, bud] of this.assigns) {
+        for (let [, bud] of this.selfAssigns) {
             bud.scan();
         }
+        this.buildBuds();
     }
 }

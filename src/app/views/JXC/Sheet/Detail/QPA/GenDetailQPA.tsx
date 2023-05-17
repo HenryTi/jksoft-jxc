@@ -5,7 +5,7 @@ import { EditingRow, GenDetail, GenEditing, SheetRow } from "app/template/Sheet"
 import { IDView, Page, uqAppModal, useModal } from "tonwa-app";
 import { Atom, Detail } from "uqs/UqDefault";
 import { ChangeEvent, useState } from "react";
-import { ModalSelectProduct } from "../../../Atom";
+import { ModalSelectGoods } from "../../../Atom";
 import { useUqApp } from "app/UqApp";
 import { FA, LMR } from "tonwa-com";
 import { useAtomValue } from "jotai";
@@ -15,7 +15,7 @@ const fieldPrice = 'v1';
 const fieldAmount = 'v2';
 
 export abstract class GenDetailQPA extends GenDetail {
-    get itemCaption(): string { return '产品' }
+    get itemCaption(): string { return '商品' }
     get ViewItemTemplate(): ({ value }: { value: any }) => JSX.Element { return ViewItemID; }
     ViewItemTop = ({ item }: { item: number }): JSX.Element => {
         return <div className="container">
@@ -48,7 +48,7 @@ export abstract class GenDetailQPA extends GenDetail {
 
     readonly selectItem = async (header?: string): Promise<Atom> => {
         const { openModal } = uqAppModal(this.uqApp);
-        let ret = await openModal(<ModalSelectProduct />);
+        let ret = await openModal(<ModalSelectGoods />);
         return ret;
     }
 

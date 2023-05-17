@@ -3,7 +3,9 @@ import { Gen, GenBizEntity, QueryMore } from "app/tool";
 import { UqApp } from "app/UqApp";
 import { UqID, UqQuery } from "tonwa-uq";
 import { Atom } from "uqs/UqDefault";
-import { EntityAtom } from "app/Biz";
+import { BizBud, EntityAtom } from "app/Biz";
+import { uqAppModal } from "tonwa-app";
+import { PageAtomSelectType } from "./PageAtomSelectType";
 
 export interface ViewPropRowProps {
     name: string;
@@ -47,7 +49,7 @@ export abstract class GenAtom extends GenBizEntity<EntityAtom> {
     get entity(): EntityAtom { return this.biz.atoms[this.bizEntityName]; }
 
     readonly searchAtoms: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
-        let newParam = { ...param, atom: this.phrase };
+        let newParam = { atom: this.phrase, ...param };
         let query = this.uq.SearchAtom;
         let { $page } = await query.page(newParam, pageStart, pageSize);
         return $page;
@@ -55,43 +57,9 @@ export abstract class GenAtom extends GenBizEntity<EntityAtom> {
 
     readonly ViewItemAtom: (value: any) => JSX.Element = ViewItemID;
 
-    // IDList
-    /*
-        readonly ViewItemAtom: (value: any) => JSX.Element;
-        readonly listTop?: JSX.Element;
-    */
-    //    readonly actSave: (no: string, data: any) => Promise<any>;
-
-    // IDSelect
-
-    /*
-    rowNO(no: string): FormInput {
-        return {
-            name: 'no',
-            label: this.NOLabel,
-            type: 'text',
-            options: { maxLength: 20, disabled: true, value: no }
-        }
-    };
-    */
-
     get NOLabel(): string { return '编号' }
     get exLabel(): string { return '名称' }
-    /*
-        // IDNew
-        async buildNew(): Promise<{ no: string; formRows: FormRow[] }> {
-            let retNo = await this.uq.IDNO({ ID: this.Atom });
-            return {
-                no: retNo,
-                formRows: [
-                    this.rowNO(retNo),
-                    { name: 'ex', label: this.exLabel, type: 'text', options: { maxLength: 50 } },
-                    ...Array.from(this.bizAtom.props, ([, v]) => ({ name: v.name, label: v.caption ?? v.name, type: 'text' })),
-                    { type: 'submit' },
-                ],
-            }
-        }
-    */
+
     // IDView
     get caption() {
         let { name, caption } = this.entity;
@@ -103,16 +71,20 @@ export abstract class GenAtom extends GenBizEntity<EntityAtom> {
         return `${type}.${name}`;
     }
 
+    getEntityAtom(phrase: string): EntityAtom {
+        return this.biz.atoms[phrase];
+    }
+
     async savePropMain(id: number, name: string, value: string | number) {
         await this.uq.ActIDProp(this.uq.Atom, id, name, value);
     }
 
-    async savePropEx(id: number, name: string, value: string | number) {
-        let { entity } = this;
-        let { props } = entity;
-        let bizProp = props.get(name);
+    async savePropEx(id: number, bizBud: BizBud, value: string | number) {
+        // let { entity } = this;
+        // let { props } = entity;
+        // let bizProp = props.get(name);
         let int: number, dec: number, str: string;
-        switch (bizProp.budType.type) {
+        switch (bizBud.budType.type) {
             default:
             case 'int': int = value as number; break;
             case 'dec': dec = value as number; break;
@@ -120,24 +92,45 @@ export abstract class GenAtom extends GenBizEntity<EntityAtom> {
         }
         await this.uq.SaveProp.submit({
             id,
-            phrase: name,
+            phrase: bizBud.phrase,
             int, dec, str
         });
     }
 
-    get SelectPage(): JSX.Element {
+    get PageSelect(): JSX.Element {
         return null;
+    }
+
+    protected getPageSelectType(entityAtom: EntityAtom): JSX.Element {
+        return <PageAtomSelectType gen={this} entityAtom={entityAtom} />;
+    }
+
+    async selectLeafAtom(entityAtom: EntityAtom): Promise<EntityAtom> {
+        if (entityAtom === undefined) entityAtom = this.entity;
+        const { openModal } = uqAppModal(this.uqApp);
+        const { children } = entityAtom;
+        switch (children.length) {
+            case 0: return entityAtom;
+            case 1: return children[0];
+            default:
+                let page = this.getPageSelectType(entityAtom);
+                if (!page) return entityAtom;
+                let ea = await openModal<EntityAtom>(page);
+                if (ea === undefined) return undefined;
+                let ret = await this.selectLeafAtom(ea);
+                return ret;
+        }
     }
 }
 
 abstract class GenAtomEx extends Gen {
-    protected readonly genAtom: GenAtom;
+    readonly genAtom: GenAtom;
     constructor(genAtom: GenAtom) {
         super(genAtom.uqApp);
         this.genAtom = genAtom;
     }
     abstract get path(): string;
-    get bizAtom() { return this.genAtom.entity; }
+    get entity() { return this.genAtom.entity; }
     get caption() { return this.genAtom.caption; }
     get exLabel() { return this.genAtom.exLabel; }
     get NOLabel() { return this.genAtom.NOLabel; }
@@ -146,9 +139,9 @@ abstract class GenAtomEx extends Gen {
 
 export class GenAtomNew extends GenAtomEx {
     get path() { return `${this.genAtom.path}-new`; }
-    readonly actSave = async (no: string, data: any) => {
+    readonly actSave = async (entityAtom: EntityAtom, no: string, data: any) => {
         const { ex } = data;
-        let ret = await this.uq.SaveAtom.submit({ atom: this.phrase, no, ex });
+        let ret = await this.uq.SaveAtom.submit({ atom: entityAtom.phrase, no, ex });
         return ret;
     }
 
@@ -167,7 +160,6 @@ export class GenAtomNew extends GenAtomEx {
                 { type: 'submit', label: '下一步' },
             ],
         };
-        // ...Array.from(this.bizAtom.props, ([, v]) => ({ name: v.name, label: v.caption ?? v.name, type: 'text' })),
     }
 }
 

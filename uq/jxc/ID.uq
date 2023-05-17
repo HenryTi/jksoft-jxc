@@ -1,12 +1,12 @@
 -- independant, searchable
 ID Atom (
     id,
-    KEY base ID,            -- eg, sitePhrase
+    KEY base ID,            -- sitePhrase
     KEY no,
     ex CHAR(200),
 );
 
--- 可以有单明细单据。也要分主子表。如果把子表放主表，就是两套体系。程序会麻烦
+-- 单据主表。单明细单据，也有主表
 ID Sheet (
     id MINUTE,
     KEY base ID,            -- sitePhrase
@@ -14,7 +14,6 @@ ID Sheet (
     target ID,              -- 操作对象
     operator ID,            -- employee Item
     value VALUE,
-    -- item ID,                -- target，需要去掉
 );
 
 -- 所有单据的明细，单值
@@ -22,7 +21,7 @@ ID Detail (
     id MINUTE,
     base ID,                -- SheetPurchase or SheetSale
     item ID,                -- 计量对象。比如：商品不同包装或者批次
-    target ID,              -- 操作对象。比如：客户，仓库，等
+    target ID,              -- 操作对象。比如：客户，仓库，等 意义上等同于Sheet主表target
     origin ID,              -- 源单
     value VALUE,
     v1 VALUE,
@@ -89,31 +88,21 @@ IDX Temp (
     value BIGINT,
 );
 
-ENUM MeasureUnitType (
-    count = 1,              -- 个数
-    length = 2,             -- 长度
-    area = 3,               -- 面积
-    volume = 4,             -- 体积
-    weight = 5,             -- 重量
-    time = 6,               -- 时间
-);
--- 大量可以预先定义
-ID MeasureUnitName (
-    id,
-    KEY name CHAR(50),
-    alias CHAR(50),
-    type ENUM MeasureUnitType,
-);
-ID MeasureUnit (
-    id,
-    KEY unitBase ID MeasureUnit,
-    KEY quantity DEC(9,4) DEFAULT 1,
-    unitName ID MeasureUnitName,
-    type ENUM MeasureUnitType DEFAULT MeasureUnitType.count,
+-- 批次，颜色尺码，等等小批. 也可以无小批
+-- 日期用从1970-1-1开始的天数来表达，是整数
+IDX Spec (
+    id,                     -- Spec Atom id
+    base ID,                -- base Atom
+    key1 ID,                -- Key id
+    key2 ID,                -- Key id
+    key3 ID,                -- Key id
+    key4 ID,                -- Key id
+    INDEX base_i(base) UNIQUE,
 );
 
-ID UnitItem (
+-- 可以是key，也可以是prop
+ID SpecProp (
     id,
-    KEY item ID,            -- product or batch, or else
-    key unit ID,            -- measureUnitName or measureUnit, or else
+    KEY base ID,            -- sitePhrase
+    KEY name CHAR(50),
 );

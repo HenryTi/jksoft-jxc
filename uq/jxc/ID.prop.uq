@@ -73,7 +73,6 @@ ID BindPhraseTo (
     KEY to ID,            -- item id easy to load values
 );
 
-
 IDX Balance (
     id,                     -- biz subject
     init VALUE DEFAULT 0,

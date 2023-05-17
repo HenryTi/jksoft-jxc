@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu May 04 2023 18:18:48 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue May 16 2023 22:49:17 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,6 +23,9 @@ export interface IX {
 
 export enum EnumID {
 	$phrase = '$phrase',
+	Metric = 'metric',
+	MetricItem = 'metricitem',
+	SpecMetric = 'specmetric',
 	UserSite = 'usersite',
 	SitePhrase = 'sitephrase',
 	BindPhraseTo = 'bindphraseto',
@@ -37,9 +40,7 @@ export enum EnumID {
 	User = 'user',
 	Site = 'site',
 	Tree = 'tree',
-	MeasureUnitName = 'measureunitname',
-	MeasureUnit = 'measureunit',
-	UnitItem = 'unititem',
+	SpecProp = 'specprop',
 }
 
 export interface $phrase extends ID {
@@ -388,6 +389,7 @@ export interface ParamGetAtom {
 }
 export interface ReturnGetAtomMain {
 	id: number;
+	phrase: string;
 	no: string;
 	ex: string;
 }
@@ -399,6 +401,166 @@ export interface ReturnGetAtomBuds {
 export interface ResultGetAtom {
 	main: ReturnGetAtomMain[];
 	buds: ReturnGetAtomBuds[];
+}
+
+export enum MetricType {
+	count = 1,
+	length = 2,
+	area = 3,
+	volume = 4,
+	weight = 5,
+	time = 6,
+	currency = 7
+}
+
+export const CurrencyName = {
+	cny: "cny",
+	usd: "usd",
+	jpy: "jpy"
+}
+
+export interface Metric extends ID {
+	base: number;
+	no: string;
+	ex: string;
+	type: any;
+	template: number;
+}
+
+export const Metric = {
+}
+
+export interface MetricInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	no: string;
+	ex: string;
+	type: any;
+	template: number | ID;
+}
+
+export interface MetricItem extends ID {
+	base: number;
+	no: string;
+	ex: string;
+	div: number;
+	value: number;
+	template: number;
+}
+
+export const MetricItem = {
+}
+
+export interface MetricItemInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	no: string;
+	ex: string;
+	div: number | ID;
+	value: number;
+	template: number | ID;
+}
+
+export interface SpecMetric extends ID {
+	spec: number;
+	metricItem: number;
+}
+
+export interface SpecMetricInActs extends ID {
+	ID?: UqID<any>;
+	spec: number | ID;
+	metricItem: number | ID;
+}
+
+export interface ParamSaveMetric {
+	id: number;
+	no: string;
+	ex: string;
+	type: any;
+	template: number;
+}
+export interface ReturnSaveMetricRet {
+	id: number;
+}
+export interface ResultSaveMetric {
+	ret: ReturnSaveMetricRet[];
+}
+
+export interface ParamSaveMetricItem {
+	atom: number;
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+	div: number;
+	value: number;
+	template: number;
+	metricType: any;
+	metricTemplate: number;
+}
+export interface ReturnSaveMetricItemRet {
+	id: number;
+	metric: number;
+}
+export interface ResultSaveMetricItem {
+	ret: ReturnSaveMetricItemRet[];
+}
+
+export interface ParamGetAtomMetric {
+	id: number;
+}
+export interface ReturnGetAtomMetricRet {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+	type: any;
+	template: number;
+}
+export interface ReturnGetAtomMetricItems {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+	div: number;
+	value: number;
+	template: number;
+}
+export interface ResultGetAtomMetric {
+	ret: ReturnGetAtomMetricRet[];
+	items: ReturnGetAtomMetricItems[];
+}
+
+export interface ParamSearchMetricTemplate {
+	key: string;
+	metricType: any;
+}
+export interface ReturnSearchMetricTemplate$page {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+	type: any;
+	template: number;
+}
+export interface ResultSearchMetricTemplate {
+	$page: ReturnSearchMetricTemplate$page[];
+}
+
+export interface ParamGetMetricItems {
+	id: number;
+}
+export interface ReturnGetMetricItemsRet {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+	div: number;
+	value: number;
+	template: number;
+}
+export interface ResultGetMetricItems {
+	ret: ReturnGetMetricItemsRet[];
 }
 
 export interface ParamGetPendSheetFromNo {
@@ -479,11 +641,6 @@ export interface ReturnGetPendDetailFromSheetIdRet {
 }
 export interface ResultGetPendDetailFromSheetId {
 	ret: ReturnGetPendDetailFromSheetIdRet[];
-}
-
-export interface ParamA {
-}
-export interface ResultA {
 }
 
 export interface IxProp extends IX {
@@ -674,52 +831,15 @@ export interface TreeInActs extends ID {
 	ex: string;
 }
 
-export enum MeasureUnitType {
-	count = 1,
-	length = 2,
-	area = 3,
-	volume = 4,
-	weight = 5,
-	time = 6
-}
-
-export interface MeasureUnitName extends ID {
+export interface SpecProp extends ID {
+	base: number;
 	name: string;
-	alias: string;
-	type: any;
 }
 
-export interface MeasureUnitNameInActs extends ID {
+export interface SpecPropInActs extends ID {
 	ID?: UqID<any>;
+	base: number | ID;
 	name: string;
-	alias: string;
-	type: any;
-}
-
-export interface MeasureUnit extends ID {
-	unitBase: number;
-	quantity: number;
-	unitName: number;
-	type: any;
-}
-
-export interface MeasureUnitInActs extends ID {
-	ID?: UqID<any>;
-	unitBase: number | ID;
-	quantity: number;
-	unitName: number | ID;
-	type: any;
-}
-
-export interface UnitItem extends ID {
-	item: number;
-	unit: number;
-}
-
-export interface UnitItemInActs extends ID {
-	ID?: UqID<any>;
-	item: number | ID;
-	unit: number | ID;
 }
 
 export interface ParamReportStorage {
@@ -755,6 +875,9 @@ export interface ResultHistoryStorage {
 
 export interface ParamActs {
 	$phrase?: $phraseInActs[];
+	metric?: MetricInActs[];
+	metricItem?: MetricItemInActs[];
+	specMetric?: SpecMetricInActs[];
 	ixProp?: IxProp[];
 	userSite?: UserSiteInActs[];
 	sitePhrase?: SitePhraseInActs[];
@@ -770,9 +893,7 @@ export interface ParamActs {
 	user?: UserInActs[];
 	site?: SiteInActs[];
 	tree?: TreeInActs[];
-	measureUnitName?: MeasureUnitNameInActs[];
-	measureUnit?: MeasureUnitInActs[];
-	unitItem?: UnitItemInActs[];
+	specProp?: SpecPropInActs[];
 }
 
 
@@ -806,11 +927,18 @@ export interface UqExt extends Uq {
 	GetPendSheet: UqQuery<ParamGetPendSheet, ResultGetPendSheet>;
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
+	Metric: UqID<any>;
+	MetricItem: UqID<any>;
+	SpecMetric: UqID<any>;
+	SaveMetric: UqAction<ParamSaveMetric, ResultSaveMetric>;
+	SaveMetricItem: UqAction<ParamSaveMetricItem, ResultSaveMetricItem>;
+	GetAtomMetric: UqQuery<ParamGetAtomMetric, ResultGetAtomMetric>;
+	SearchMetricTemplate: UqQuery<ParamSearchMetricTemplate, ResultSearchMetricTemplate>;
+	GetMetricItems: UqQuery<ParamGetMetricItems, ResultGetMetricItems>;
 	GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
 	GetPendSheetFromTarget: UqQuery<ParamGetPendSheetFromTarget, ResultGetPendSheetFromTarget>;
 	GetPendDetailFromItem: UqQuery<ParamGetPendDetailFromItem, ResultGetPendDetailFromItem>;
 	GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
-	A: UqAction<ParamA, ResultA>;
 	IxProp: UqIX<any>;
 	UserSite: UqID<any>;
 	SitePhrase: UqID<any>;
@@ -826,9 +954,7 @@ export interface UqExt extends Uq {
 	User: UqID<any>;
 	Site: UqID<any>;
 	Tree: UqID<any>;
-	MeasureUnitName: UqID<any>;
-	MeasureUnit: UqID<any>;
-	UnitItem: UqID<any>;
+	SpecProp: UqID<any>;
 	ReportStorage: UqQuery<ParamReportStorage, ResultReportStorage>;
 	HistoryStorage: UqQuery<ParamHistoryStorage, ResultHistoryStorage>;
 }
@@ -1899,6 +2025,11 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
                         "name": "no",
                         "type": "char",
                         "size": 50
@@ -1926,6 +2057,487 @@ export const uqSchema={
                         "name": "value",
                         "type": "char",
                         "size": 200
+                    }
+                ]
+            }
+        ]
+    },
+    "metrictype": {
+        "name": "MetricType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "count": 1,
+            "length": 2,
+            "area": 3,
+            "volume": 4,
+            "weight": 5,
+            "time": 6,
+            "currency": 7
+        }
+    },
+    "currencyname": {
+        "name": "CurrencyName",
+        "type": "const",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "values": {
+            "cny": "cny",
+            "usd": "usd",
+            "jpy": "jpy"
+        }
+    },
+    "metric": {
+        "name": "Metric",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "type",
+                "type": "enum"
+            },
+            {
+                "name": "template",
+                "type": "id"
+            }
+        ],
+        "values": {},
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "metricitem": {
+        "name": "MetricItem",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id",
+                "ID": "metric",
+                "tuid": "metric"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "div",
+                "type": "id",
+                "ID": "metric",
+                "tuid": "metric"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 4,
+                "precision": 9
+            },
+            {
+                "name": "template",
+                "type": "id"
+            }
+        ],
+        "values": {},
+        "keys": [
+            {
+                "name": "base",
+                "type": "id",
+                "ID": "metric",
+                "tuid": "metric"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "specmetric": {
+        "name": "SpecMetric",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "spec",
+                "type": "id"
+            },
+            {
+                "name": "metricItem",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "spec",
+                "type": "id"
+            },
+            {
+                "name": "metricItem",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "savemetric": {
+        "name": "SaveMetric",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "type",
+                "type": "enum"
+            },
+            {
+                "name": "template",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "savemetricitem": {
+        "name": "SaveMetricItem",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "atom",
+                "type": "id"
+            },
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "div",
+                "type": "id",
+                "ID": "metric",
+                "tuid": "metric"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 4,
+                "precision": 9
+            },
+            {
+                "name": "template",
+                "type": "id"
+            },
+            {
+                "name": "metricType",
+                "type": "enum"
+            },
+            {
+                "name": "metricTemplate",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "metric",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "getatommetric": {
+        "name": "GetAtomMetric",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "type",
+                        "type": "enum"
+                    },
+                    {
+                        "name": "template",
+                        "type": "id"
+                    }
+                ]
+            },
+            {
+                "name": "items",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id",
+                        "ID": "metric",
+                        "tuid": "metric"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "div",
+                        "type": "id",
+                        "ID": "metric",
+                        "tuid": "metric"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 9
+                    },
+                    {
+                        "name": "template",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "searchmetrictemplate": {
+        "name": "SearchMetricTemplate",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "key",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "metricType",
+                "type": "enum"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "type",
+                        "type": "enum"
+                    },
+                    {
+                        "name": "template",
+                        "type": "id"
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "getmetricitems": {
+        "name": "GetMetricItems",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "ID": "metric",
+                "tuid": "metric"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id",
+                        "ID": "metric",
+                        "tuid": "metric"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "div",
+                        "type": "id",
+                        "ID": "metric",
+                        "tuid": "metric"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 9
+                    },
+                    {
+                        "name": "template",
+                        "type": "id"
                     }
                 ]
             }
@@ -2228,14 +2840,6 @@ export const uqSchema={
                 ]
             }
         ]
-    },
-    "a": {
-        "name": "a",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [] as any,
-        "returns": [] as any
     },
     "ixprop": {
         "name": "IxProp",
@@ -2785,22 +3389,8 @@ export const uqSchema={
         "idType": 3,
         "isMinute": false
     },
-    "measureunittype": {
-        "name": "MeasureUnitType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "count": 1,
-            "length": 2,
-            "area": 3,
-            "volume": 4,
-            "weight": 5,
-            "time": 6
-        }
-    },
-    "measureunitname": {
-        "name": "MeasureUnitName",
+    "specprop": {
+        "name": "SpecProp",
         "type": "id",
         "private": false,
         "sys": true,
@@ -2811,111 +3401,24 @@ export const uqSchema={
                 "null": false
             },
             {
-                "name": "name",
-                "type": "char",
-                "size": 50
+                "name": "base",
+                "type": "id"
             },
-            {
-                "name": "alias",
-                "type": "char",
-                "size": 50
-            },
-            {
-                "name": "type",
-                "type": "enum"
-            }
-        ],
-        "keys": [
             {
                 "name": "name",
                 "type": "char",
                 "size": 50
             }
         ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "measureunit": {
-        "name": "MeasureUnit",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "unitBase",
-                "type": "id",
-                "ID": "measureunit",
-                "tuid": "measureunit"
-            },
-            {
-                "name": "quantity",
-                "type": "dec",
-                "scale": 4,
-                "precision": 9
-            },
-            {
-                "name": "unitName",
-                "type": "id",
-                "ID": "measureunitname",
-                "tuid": "measureunitname"
-            },
-            {
-                "name": "type",
-                "type": "enum"
-            }
-        ],
         "keys": [
             {
-                "name": "unitBase",
-                "type": "id",
-                "ID": "measureunit",
-                "tuid": "measureunit"
-            },
-            {
-                "name": "quantity",
-                "type": "dec",
-                "scale": 4,
-                "precision": 9
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "unititem": {
-        "name": "UnitItem",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "item",
+                "name": "base",
                 "type": "id"
             },
             {
-                "name": "unit",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "item",
-                "type": "id"
-            },
-            {
-                "name": "unit",
-                "type": "id"
+                "name": "name",
+                "type": "char",
+                "size": 50
             }
         ],
         "global": false,
@@ -3151,10 +3654,10 @@ export const uqSchema={
                 }
             ]
         },
-        "product": {
-            "name": "product",
+        "goods": {
+            "name": "goods",
             "type": "atom",
-            "caption": "产品",
+            "caption": "商品",
             "props": [
                 {
                     "name": "厂家",
@@ -3168,17 +3671,90 @@ export const uqSchema={
                     "type": "dec",
                     "caption": "零售价"
                 }
-            ]
+            ],
+            "metric": "*"
         },
-        "batch": {
-            "name": "batch",
+        "toy": {
+            "name": "toy",
             "type": "atom",
+            "caption": "玩具",
+            "base": "goods",
+            "metric": "count"
+        },
+        "batchvalid": {
+            "name": "batchvalid",
+            "type": "spec",
             "props": [
                 {
                     "name": "效期",
                     "type": "date"
                 }
+            ],
+            "keys": [
+                {
+                    "name": "no",
+                    "type": "char",
+                    "caption": "批次"
+                }
             ]
+        },
+        "medicine": {
+            "name": "medicine",
+            "type": "atom",
+            "caption": "药品",
+            "props": [
+                {
+                    "name": "specification",
+                    "type": "char",
+                    "caption": "规格"
+                }
+            ],
+            "base": "goods",
+            "spec": "batchvalid",
+            "metric": "count"
+        },
+        "medicinechinese": {
+            "name": "medicinechinese",
+            "type": "atom",
+            "caption": "中药",
+            "props": [
+                {
+                    "name": "approvalchin",
+                    "type": "char",
+                    "caption": "中药批号"
+                }
+            ],
+            "base": "medicine"
+        },
+        "medicaldevice": {
+            "name": "medicaldevice",
+            "type": "atom",
+            "caption": "医疗器械",
+            "base": "goods",
+            "metric": "count"
+        },
+        "specshoe": {
+            "name": "specshoe",
+            "type": "spec",
+            "keys": [
+                {
+                    "name": "size",
+                    "type": "char",
+                    "caption": "尺码"
+                },
+                {
+                    "name": "color",
+                    "type": "char",
+                    "caption": "颜色"
+                }
+            ]
+        },
+        "shoe": {
+            "name": "shoe",
+            "type": "atom",
+            "caption": "鞋",
+            "base": "goods",
+            "spec": "specshoe"
         },
         "concactproduct": {
             "name": "concactproduct",
@@ -3225,7 +3801,7 @@ export const uqSchema={
         },
         "accountsetting": {
             "name": "accountsetting",
-            "type": "subject",
+            "type": "setting",
             "props": [
                 {
                     "name": "name",
@@ -3246,7 +3822,7 @@ export const uqSchema={
         },
         "personsetting": {
             "name": "personsetting",
-            "type": "subject",
+            "type": "setting",
             "props": [
                 {
                     "name": "name",

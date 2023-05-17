@@ -4,4 +4,3 @@ Biz Subject storage '库存' History Balance {
 Biz Subject c Balance History {
     Assign 流水 '下一步' char = 's2';
 }
-

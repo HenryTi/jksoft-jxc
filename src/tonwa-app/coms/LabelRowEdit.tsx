@@ -1,5 +1,4 @@
-import { useMemo, ChangeEvent, useState, useRef } from "react";
-import { atom, useAtom, useAtomValue } from "jotai";
+import { useState, useRef } from "react";
 import { ButtonAsync, FA, LabelRow, LabelRowPropsBase } from "tonwa-com";
 import { useModal } from "../UqAppBase";
 import { Page } from "./page";
@@ -22,7 +21,6 @@ export interface EditProps {
 export function LabelRowEdit(props: LabelRowPropsBase & EditProps) {
     let { label, value: initValue, readonly, pickValue, onValueChanged, ValueTemplate } = props;
     const { openModal, closeModal } = useModal();
-    // const atomValue = useMemo(() => atom(initValue), [initValue]);
     const [value, setValue] = useState(initValue);
     if (pickValue === undefined) {
         pickValue = async (pickProps) => {

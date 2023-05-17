@@ -2,21 +2,24 @@ import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { Page } from "tonwa-app";
-import { Sep } from "tonwa-com";
+import { LabelRow, Sep } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { GenProps } from "app/tool";
 import { GenAtom } from "./GenAtom";
 import { ViewPropEx, ViewPropMain } from "./ViewProp";
+import { EntityAtom } from "app/Biz";
+import { ViewMetric } from "../Metric";
 
 export function PageAtomView({ Gen }: GenProps<GenAtom>) {
     const uqApp = useUqApp();
     const gen = uqApp.objectOf(Gen);
-    const { genAtomView } = gen;
-    const { caption, viewRows, bizAtom } = genAtomView;
+    const { genAtomView, entity } = gen;
+    const { viewRows } = genAtomView;
+    const { metric } = entity;
     const { id: idString } = useParams();
     const id = Number(idString);
     const { UqDefault } = uqApp.uqs;
-    const { data: { main, props } } = useQuery('PageProductView', async () => {
+    const { data: { main, props, bizAtom } } = useQuery('PageProductView', async () => {
         if (idString === undefined) {
             return { main: {} as any, props: {} as any };
         }
@@ -25,12 +28,18 @@ export function PageAtomView({ Gen }: GenProps<GenAtom>) {
         for (let bud of buds) {
             props[bud.phrase] = bud;
         }
-        return { main, props }
+        let { phrase } = main;
+        let bizAtom: EntityAtom = gen.getEntityAtom(phrase);
+        return { main, props, bizAtom }
     }, {
         refetchOnWindowFocus: false,
         cacheTime: 0,
     });
-    return <Page header={caption}>
+    let viewMetric: any;
+    if (metric !== undefined) {
+        viewMetric = <ViewMetric id={id} metric={metric} className="mt-3" />;
+    }
+    return <Page header={bizAtom.caption}>
         {
             viewRows.map((v, index) => <React.Fragment key={index}>
                 <ViewPropMain key={index} {...v} id={id} gen={gen} value={main[v.name]} />
@@ -47,5 +56,6 @@ export function PageAtomView({ Gen }: GenProps<GenAtom>) {
                 </React.Fragment>;
             })
         }
+        {viewMetric}
     </Page>;
 }

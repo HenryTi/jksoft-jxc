@@ -1,7 +1,7 @@
 import { UqApp } from 'app/UqApp';
 import { UqExt, uqSchema } from 'uqs/UqDefault';
 import { Entity } from './Entity';
-import { EntityAtom } from './EntityAtom';
+import { EntityAtom, EntitySpec } from './EntityAtom';
 import { EntityTree } from './EntityTree';
 import { EntitySetting } from './EntitySetting';
 import { EntityDetail, EntityMain, EntityPend, EntitySheet } from './EntitySheet';
@@ -16,6 +16,7 @@ export class Biz {
     readonly details: { [name: string]: EntityDetail } = {}
     readonly pends: { [name: string]: EntityPend } = {}
     readonly atoms: { [name: string]: EntityAtom } = {}
+    readonly specs: { [name: string]: EntitySpec } = {}
     readonly settings: { [name: string]: EntitySetting } = {}
     readonly permits: { [name: string]: EntityPermit } = {}
     readonly roles: { [name: string]: EntityRole } = {}
@@ -37,6 +38,7 @@ export class Biz {
             detail: this.buildDetail,
             pend: this.buildPend,
             atom: this.buildAtom,
+            spec: this.buildSpec,
             setting: this.buildSetting,
             permit: this.buildPermit,
             role: this.buildRole,
@@ -59,6 +61,8 @@ export class Biz {
         }
         for (let [bizEntity, schema] of arr) {
             bizEntity.fromSchema(schema);
+        }
+        for (let [bizEntity] of arr) {
             bizEntity.scan();
         }
     }
@@ -85,7 +89,13 @@ export class Biz {
 
     private buildAtom = (name: string, type: string): Entity => {
         let bizEntity = new EntityAtom(this, name, type);
+        this.atoms[bizEntity.phrase] = bizEntity;
         return this.atoms[bizEntity.name] = bizEntity;
+    }
+
+    private buildSpec = (name: string, type: string): Entity => {
+        let bizEntity = new EntitySpec(this, name, type);
+        return this.specs[bizEntity.name] = bizEntity;
     }
 
     private buildSetting = (name: string, type: string): Entity => {

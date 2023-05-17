@@ -6,31 +6,10 @@ Biz Detail DetailSale {
     Main MainSale;
 };
 
-ACT a() {
-    VAR value1 VALUE = value, item1 ID = item FROM Detail=1; -- ID
-    var a int = 1;
-    VAR value VALUE = value, item ID = item FROM Detail WHERE id=1; -- ID
-}
-
-/*
-Biz Detail DetailStoreIn {
-    Main MainSale;
-
-    ACT c (detail ID) {
-        VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
-        Biz Subject storage of item += value ref detail;
-    };
-};
-*/
-
 Biz Detail DetailCheck {
     Main MainSale;
 };
-/*
-Biz Pend PendStoreIn '待入库' {
-    Detail DetailStoreIn;
-}
-*/
+
 Biz Pend PendCheck {
     Detail DetailCheck;
 }

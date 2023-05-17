@@ -1,8 +1,11 @@
 import { UqApp, useUqApp } from "app/UqApp";
+import { Band } from "app/coms";
+import { ViewItemID } from "app/template";
 import { useState } from "react";
 import { Link, Route, useParams } from "react-router-dom";
 import { IDView, Page, PageSpinner } from "tonwa-app";
-import { List, useEffectOnce } from "tonwa-com";
+import { LMR, List, useEffectOnce } from "tonwa-com";
+import { Detail, Sheet } from "uqs/UqDefault";
 
 export const pathSheetView = 'sheet';
 export const pathDetailView = 'sheet-detail';
@@ -11,18 +14,20 @@ function PageDetailView() {
     const uqApp = useUqApp();
     const uq = uqApp.uqs.UqDefault;
     const { id } = useParams();
-    function ViewDetail({ value }: { value: any }) {
-        return <div>
-            Detail: {JSON.stringify(value)}
-        </div>
+    function ViewDetail({ value: row }: { value: Detail }) {
+        let { item, value } = row;
+        return <LMR className="px-3 py-2">
+            <IDView uq={uq} id={item} Template={ViewItemID} />
+            <div>{value}</div>
+        </LMR>
     }
     function DetailTemplate({ value }: { value: any }) {
         let sheet = value.base;
         return <div>
             <Link to={`../${pathSheetView}/${sheet}`}>
-                <div className="px-3 my-3">整单：{sheet}</div>
+                <div className="px-3 py-3 tonwa-bg-gray-3">整单：{sheet}</div>
             </Link>
-            <div className="px-3 my-3"><ViewDetail value={value} /></div>
+            <div className=""><ViewDetail value={value} /></div>
         </div>;
     }
     return <Page header="单据明细">
@@ -34,7 +39,7 @@ function PageSheetView() {
     const uqApp = useUqApp();
     const uq = uqApp.uqs.UqDefault;
     const { id } = useParams();
-    const [sheetMain, setSheetMain] = useState(undefined);
+    const [sheetMain, setSheetMain] = useState<Sheet>(undefined);
     const [sheetDetails, setSheetDetails] = useState<any[]>(undefined);
     useEffectOnce(() => {
         (async function () {
@@ -43,21 +48,29 @@ function PageSheetView() {
             setSheetDetails(retDetails);
         })();
     });
-    function ViewItem({ value }: { value: any }) {
-        return <div className="px-3 my-2">
-            {JSON.stringify(value)}
-        </div>;
+    function ViewDetail({ value: row }: { value: Detail }) {
+        let { item, value } = row;
+        return <LMR className="px-3 py-2">
+            <IDView uq={uq} id={item} Template={ViewItemID} />
+            <div>{value}</div>
+        </LMR>
     }
     let content: any;
     if (!sheetMain || !sheetDetails) {
         content = <PageSpinner />;
     }
     else {
+        let { no, target } = sheetMain;
         content = <>
-            <div className="px-3 my-2">
-                main: {JSON.stringify(sheetMain)}
+            <div className="pt-3 tonwa-bg-gray-3 container">
+                <Band label={'编号'}>
+                    {no}
+                </Band>
+                <Band label={'对象'}>
+                    <IDView uq={uq} id={target} Template={ViewItemID} />
+                </Band>
             </div>
-            <List items={sheetDetails} ViewItem={ViewItem} />
+            <List items={sheetDetails} ViewItem={ViewDetail} />
         </>;
     }
 
@@ -66,62 +79,6 @@ function PageSheetView() {
     </Page>
 }
 
-/*
-
-function DirStoreIn({ value }: { value: Sheet; }) {
-    return <>
-        <span className="text-danger">入库单</span> &nbsp;
-        <b>{value.no}</b> &nbsp;
-        <small className="text-muted">{value.id}</small> &nbsp;
-    </>;
-}
-
-function DirStoreOut({ value }: { value: Sheet; }) {
-    return <>
-        <span className="text-success">出库单</span> &nbsp;
-        <b>{value.no}</b> &nbsp;
-        <small className="text-muted">{value.id}</small> &nbsp;
-    </>;
-}
-/*
-enum SheetType {
-    StoreIn,
-    StoreOut,
-}
-
-const dirMap: { [sheet: string]: (props: { value: any; }) => JSX.Element } = {
-    [SheetType.StoreIn]: DirStoreIn,
-    [SheetType.StoreOut]: DirStoreOut,
-}
-*/
-/*
-function DetailStoreIn({ value }: { value: Sheet; }) {
-    return <>入库单 Detail {value.no}</>
-}
-
-function DetailStoreOut({ value }: { value: Sheet; }) {
-    return <>出库单 Detail {value.no}</>
-}
-
-const detailMap: { [entity in SheetType]?: (props: { value: any; }) => JSX.Element } = {
-    [SheetType.StoreIn]: DetailStoreIn,
-    [SheetType.StoreOut]: DetailStoreOut,
-}
-*/
-/*
-function SheetStoreIn({ value }: { value: Sheet; }) {
-    return <>入库单 Sheet {value.no}</>
-}
-
-function SheetStoreOut({ value }: { value: Sheet; }) {
-    return <>出库单 Sheet {value.no}</>
-}
-
-const sheetMap: { [entity in SheetType]?: (props: { value: any; }) => JSX.Element } = {
-    [SheetType.StoreIn]: SheetStoreIn,
-    [SheetType.StoreOut]: SheetStoreOut,
-}
-*/
 export function routeSheetView(uqApp: UqApp) {
     return <>
         <Route path={`${pathDetailView}/:id`} element={<PageDetailView />} />

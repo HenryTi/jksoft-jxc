@@ -17,6 +17,7 @@ export interface BandInputProps {
         [x: string]: any;
     }>>;
     defaultValue?: string;
+    right?: string | JSX.Element;
 }
 
 function registerOptions(type: HTMLInputTypeAttribute, options: RegisterOptions): RegisterOptions {
@@ -28,13 +29,20 @@ function registerOptions(type: HTMLInputTypeAttribute, options: RegisterOptions)
 }
 
 export function BandInput(props: BandInputProps) {
-    const { label, inputProps, errors, type, defaultValue, labelClassName } = props;
+    const { label, inputProps, errors, type, defaultValue, labelClassName, right } = props;
     const { name } = inputProps;
     let error = errors[name];
     let cnInput = 'form-control ';
     if (error) cnInput += 'is-invalid';
+    let vInput = <input {...inputProps} className={cnInput} type={type} defaultValue={defaultValue} />;
+    if (right !== undefined && !error) {
+        vInput = <div className="input-group">
+            {vInput}
+            <span className="input-group-text">{right}</span>
+        </div>
+    }
     return <Band label={label} labelClassName={labelClassName}>
-        <input {...inputProps} className={cnInput} type={type} defaultValue={defaultValue} />
+        {vInput}
         {error && <div className="invalid-feedback mt-1">
             {error.message?.toString()}
         </div>}
@@ -42,7 +50,7 @@ export function BandInput(props: BandInputProps) {
 }
 
 export function Band({ label, labelClassName, children }: BandProps) {
-    labelClassName = labelClassName ?? 'form-label col-md-2 col-3 text-end';
+    labelClassName = labelClassName ?? 'form-label col-sm-2 col-3 text-end';
     return <div className={'mb-3 row'}>
         <label className={labelClassName}>{label}</label>
         <div className={'col'} >
@@ -70,6 +78,7 @@ export function BandInputs({ inputs: checks, register, label }: BandInputsProps)
 
 interface FormLabel {
     label?: string;
+    right?: string | JSX.Element;
 }
 
 interface FormLabelName extends FormLabel {
@@ -206,13 +215,14 @@ function FormRowView({ row, register, errors, labelClassName }: FormRowViewProps
         </Band>
     }
 
-    const { name, type, options, readOnly } = row as FormInput;
+    const { name, type, options, readOnly, right } = row as FormInput;
     switch (type) {
         default:
             let newOptions = registerOptions(type, options);
             return <BandInput label={label} type={type} errors={errors}
                 labelClassName={labelClassName}
-                inputProps={register(name, newOptions)} defaultValue={options?.value} />;
+                inputProps={register(name, newOptions)} defaultValue={options?.value}
+                right={right} />;
         case 'submit':
             return <Band>
                 <input type="submit" disabled={options?.disabled} readOnly={readOnly} className="btn btn-primary" value={label ?? '提交'} />

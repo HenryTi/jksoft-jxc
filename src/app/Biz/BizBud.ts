@@ -28,7 +28,14 @@ export class BudAtom extends BudType {
         this.bizAtom = biz.atoms[this.atom];
     }
 }
-export class BudRadio extends BudType {
+abstract class BudTypeWithItems extends BudType {
+    items: any[] = [];
+    override fromSchema(schema: any) {
+        super.fromSchema(schema);
+        this.items = schema.items;
+    }
+}
+export class BudRadio extends BudTypeWithItems {
     type = 'radio';
 }
 export class BudCheck extends BudType {
@@ -44,6 +51,7 @@ export class BudDateTime extends BudType {
 export abstract class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budType: BudType;
+    defaultValue: any;
     constructor(biz: Biz, name: string, type: string, entity: Entity) {
         super(biz, name, 'bud');
         this.entity = entity;
@@ -71,6 +79,18 @@ export abstract class BizBud extends BizBase {
 
     scan() {
         this.budType.scan(this.biz);
+    }
+
+    protected fromSwitch(i: string, val: any) {
+        switch (i) {
+            default:
+                super.fromSwitch(i, val);
+                break;
+            case 'items':
+            case 'atom':
+                break;
+            case 'value': this.defaultValue = val; break;
+        }
     }
 }
 

@@ -11,6 +11,7 @@ export function uqsProxy(uqsMan: UQsMan) {
     }
     const { uqMans } = uqsMan;
     const len = uqMans.length;
+    console.log('uqMans', uqMans);
     for (let i = 0; i < len; i++) {
         const uqMan = uqMans[i];
         let uq = new Uq(uqMan);

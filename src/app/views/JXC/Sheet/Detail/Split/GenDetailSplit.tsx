@@ -11,7 +11,7 @@ const fieldPrice = 'v1';
 const fieldAmount = 'v2';
 
 export abstract class GenDetailSplit extends GenDetail {
-    get itemCaption(): string { return '产品' }
+    get itemCaption(): string { return '商品' }
     get ViewItemTemplate(): ({ value }: { value: any }) => JSX.Element { return ViewItemID; }
     ViewItemTop = ({ item }: { item: number }): JSX.Element => {
         return <div className="container">

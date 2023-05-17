@@ -18,6 +18,7 @@ interface PageQueryMoreProps<P, R> extends PageProps {
     onItemSelect?: (item: any, isSelected: boolean) => Promise<void>;
     Top?: (props: { items: any[] }) => JSX.Element; // 根据内容显示Top
     Bottom?: (props: { items: any[] }) => JSX.Element; // 根据内容显示Bottom
+    none?: JSX.Element;
 }
 
 export class PageMoreCacheData {
@@ -59,7 +60,7 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
 function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst: boolean; isModal: boolean }) {
     let { query, param, sortField, pageStart: pageStartParam, pageSize, pageMoreSize
         , ViewItem: ItemView, onItemClick, onItemSelect, children
-        , isPopFirst, isModal, Top, Bottom } = props;
+        , isPopFirst, isModal, Top, Bottom, none } = props;
     const [items, setItems] = useState<R[]>(undefined);
     const [loading, setLoading] = useState(false);
     const refValue = useRef({
@@ -188,21 +189,31 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
     if (Top) top = <Top items={items} />;
     let bottom: any;
     if (Bottom) bottom = <Bottom items={items} />;
+
+    let content: any;
+    if (loading === true && items !== undefined) {
+        content = <div>
+            <Spinner className="m-3 text-info" />
+            <div id="$$bottom" />
+        </div>;
+    }
+    else if (items) {
+        if (items.length > 0) {
+            content = <>
+                <List items={items} ViewItem={ItemView} onItemClick={onItemClick} onItemSelect={onItemSelect} />
+                <Sep />
+            </>;
+        }
+        else {
+            content = none ?? <div className="m-3">-</div>;
+        }
+    }
+
     return <Page {...props} onScrollBottom={onScrollBottom}>
         <div id="$$top" />
         {children}
         {top}
-        {
-            items && items.length > 0 && <>
-                <List items={items} ViewItem={ItemView} onItemClick={onItemClick} onItemSelect={onItemSelect} />
-                <Sep />
-            </>
-        }
-        {loading && items !== undefined && <div>
-            <Spinner className="m-3 text-info" />
-            <div id="$$bottom" />
-        </div>
-        }
+        {content}
         {bottom}
     </Page>;
 }

@@ -6,7 +6,7 @@ import { PageNextProps } from "./types";
 
 enum EnumPicker {
     往来单位,
-    产品,
+    商品,
 };
 
 interface PickerItem {
@@ -17,10 +17,10 @@ interface PickerItem {
 
 const arrTypes = [
     EnumPicker.往来单位,
-    EnumPicker.产品,
+    EnumPicker.商品,
 ];
 const pickers: { [type in EnumPicker]: PickerItem } = {
-    [EnumPicker.产品]: { Picker: PickerProduct, caption: '好产品' },
+    [EnumPicker.商品]: { Picker: PickerProduct, caption: '好商品' },
     [EnumPicker.往来单位]: { Picker: PickerContact, },
 };
 (function () {
@@ -28,7 +28,7 @@ const pickers: { [type in EnumPicker]: PickerItem } = {
 })();
 
 function PickerProduct() {
-    return <Page header="产品">
+    return <Page header="商品">
         PickerProduct
     </Page>
 }

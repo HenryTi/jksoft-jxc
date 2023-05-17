@@ -352,6 +352,7 @@ Biz Query GetAtom (
 )
 RETURNS main (
     id ID,
+    phrase Phrase,
     no CHAR(50),
     ex CHAR(50),
 )
@@ -360,7 +361,7 @@ RETURNS buds (
     phrase CHAR(50),
     value CHAR(200),
 ) {
-    INTO main SELECT a.id, a.no, a.ex
+    INTO main SELECT a.id, PHRASE(a.base) as phrase, a.no, a.ex
         FROM Atom as a
         WHERE a.id=id;
 

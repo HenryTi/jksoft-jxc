@@ -75,6 +75,5 @@ export abstract class GenSubject extends GenBizEntity<EntitySubject> {
                 <FA name="angle-right" className="text-muted" fixWidth={true} />
             </div>
         </LMR>;
-        //<IDView uq={this.uq} id={ref} Template={DetailRef} />
     }
 }
