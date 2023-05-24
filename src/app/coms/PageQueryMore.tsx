@@ -64,6 +64,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
     const [items, setItems] = useState<R[]>(undefined);
     const [loading, setLoading] = useState(false);
     const refValue = useRef({
+        param: { ...param },
         pageStart: pageStartParam,
         isPopFirst,
         querying: false,
@@ -71,6 +72,9 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         allLoaded: false,
     });
     const { current } = refValue;
+    if (shallowEqual(current.param, param) === false) {
+        current.allLoaded = false;
+    }
     pageSize = pageSize ?? 20;
     pageMoreSize = pageMoreSize ?? 5;
     const uqApp = useUqApp();
@@ -242,4 +246,21 @@ async function buildValueParam(param: any) {
         }
     }
     return ret;
+}
+
+function shallowEqual(object1: any, object2: any): boolean {
+    const keys1 = Object.keys(object1);
+    const keys2 = Object.keys(object2);
+
+    if (keys1.length !== keys2.length) {
+        return false;
+    }
+
+    for (let key of keys1) {
+        if (object1[key] !== object2[key]) {
+            return false;
+        }
+    }
+
+    return true;
 }

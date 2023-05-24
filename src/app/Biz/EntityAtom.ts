@@ -20,6 +20,18 @@ export class EntitySpec extends Entity {
             this.keys.set(bizProp.phrase, bizProp);
         }
     }
+
+    getValues(specValue: any): string {
+        if (!specValue) return '';
+        let ret: string[] = [];
+        for (let [, value] of this.keys) {
+            ret.push(specValue[value.name] ?? '');
+        }
+        for (let [, value] of this.props) {
+            ret.push(specValue[value.name] ?? '');
+        }
+        return ret.join(String.fromCharCode(12));
+    }
 }
 
 export class EntityAtom extends Entity {
@@ -54,7 +66,6 @@ export class EntityAtom extends Entity {
     }
 
     protected fromStates(states: any[]) {
-
     }
 
     protected fromBase(baseName: any) {
@@ -64,6 +75,16 @@ export class EntityAtom extends Entity {
 
     protected fromSpec(spec: any) {
         this.spec = this.biz.specs[spec];
+    }
+
+    scan() {
+        super.scan();
+        let spec: EntitySpec;
+        for (let p: EntityAtom = this; p !== undefined; p = p.base) {
+            spec = p.spec;
+            if (spec !== undefined) break;
+        }
+        this.spec = spec;
     }
 }
 

@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue May 16 2023 22:49:17 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue May 23 2023 16:52:21 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,7 +25,8 @@ export enum EnumID {
 	$phrase = '$phrase',
 	Metric = 'metric',
 	MetricItem = 'metricitem',
-	SpecMetric = 'specmetric',
+	AtomMetric = 'atommetric',
+	AtomMetricSpec = 'atommetricspec',
 	UserSite = 'usersite',
 	SitePhrase = 'sitephrase',
 	BindPhraseTo = 'bindphraseto',
@@ -40,18 +41,21 @@ export enum EnumID {
 	User = 'user',
 	Site = 'site',
 	Tree = 'tree',
-	SpecProp = 'specprop',
 }
 
 export interface $phrase extends ID {
 	name: string;
 	caption: string;
+	base: number;
+	valid: number;
 }
 
 export interface $phraseInActs extends ID {
 	ID?: UqID<any>;
 	name: string;
 	caption: string;
+	base: number;
+	valid: number;
 }
 
 export interface Param$role_My {
@@ -207,6 +211,18 @@ export interface ParamSaveProp {
 export interface ResultSaveProp {
 }
 
+export interface ParamSaveSpec {
+	spec: string;
+	atom: number;
+	values: string;
+}
+export interface ReturnSaveSpecRet {
+	id: number;
+}
+export interface ResultSaveSpec {
+	ret: ReturnSaveSpecRet[];
+}
+
 export interface ParamSaveSheet {
 	sheet: string;
 	no: string;
@@ -268,6 +284,7 @@ export interface ReturnSearchAtom$page {
 	id: number;
 	no: string;
 	ex: string;
+	phrase: string;
 }
 export interface ResultSearchAtom {
 	$page: ReturnSearchAtom$page[];
@@ -282,6 +299,7 @@ export interface ReturnSearchAtomProps$page {
 	id: number;
 	no: string;
 	ex: string;
+	phrase: string;
 }
 export interface ReturnSearchAtomPropsBuds {
 	id: number;
@@ -303,6 +321,7 @@ export interface ReturnSearchAtomAssigns$page {
 	id: number;
 	no: string;
 	ex: string;
+	phrase: string;
 }
 export interface ReturnSearchAtomAssignsBuds {
 	id: number;
@@ -357,6 +376,16 @@ export interface ReturnGetSheetDetails {
 	pendValue: number;
 	sheet: string;
 	no: string;
+	atom: string;
+	atomId: number;
+	atomNo: string;
+	atomEx: string;
+	atomMetric: number;
+	metric: number;
+	metricNo: string;
+	metricEx: string;
+	spec: number;
+	specValues: string;
 }
 export interface ReturnGetSheetOrigins {
 	id: number;
@@ -461,15 +490,26 @@ export interface MetricItemInActs extends ID {
 	template: number | ID;
 }
 
-export interface SpecMetric extends ID {
-	spec: number;
+export interface AtomMetric extends ID {
+	atom: number;
 	metricItem: number;
 }
 
-export interface SpecMetricInActs extends ID {
+export interface AtomMetricInActs extends ID {
 	ID?: UqID<any>;
-	spec: number | ID;
+	atom: number | ID;
 	metricItem: number | ID;
+}
+
+export interface AtomMetricSpec extends ID {
+	atomMetric: number;
+	spec: number;
+}
+
+export interface AtomMetricSpecInActs extends ID {
+	ID?: UqID<any>;
+	atomMetric: number | ID;
+	spec: number | ID;
 }
 
 export interface ParamSaveMetric {
@@ -501,9 +541,32 @@ export interface ParamSaveMetricItem {
 export interface ReturnSaveMetricItemRet {
 	id: number;
 	metric: number;
+	atomMetric: number;
 }
 export interface ResultSaveMetricItem {
 	ret: ReturnSaveMetricItemRet[];
+}
+
+export interface ParamSaveAtomMetric {
+	atom: number;
+	metricItem: number;
+}
+export interface ReturnSaveAtomMetricRet {
+	id: number;
+}
+export interface ResultSaveAtomMetric {
+	ret: ReturnSaveAtomMetricRet[];
+}
+
+export interface ParamSaveAtomMetricSpec {
+	atomMetric: number;
+	spec: number;
+}
+export interface ReturnSaveAtomMetricSpecRet {
+	id: number;
+}
+export interface ResultSaveAtomMetricSpec {
+	ret: ReturnSaveAtomMetricSpecRet[];
 }
 
 export interface ParamGetAtomMetric {
@@ -831,17 +894,6 @@ export interface TreeInActs extends ID {
 	ex: string;
 }
 
-export interface SpecProp extends ID {
-	base: number;
-	name: string;
-}
-
-export interface SpecPropInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-	name: string;
-}
-
 export interface ParamReportStorage {
 	key: string;
 	subject: string;
@@ -877,7 +929,8 @@ export interface ParamActs {
 	$phrase?: $phraseInActs[];
 	metric?: MetricInActs[];
 	metricItem?: MetricItemInActs[];
-	specMetric?: SpecMetricInActs[];
+	atomMetric?: AtomMetricInActs[];
+	atomMetricSpec?: AtomMetricSpecInActs[];
 	ixProp?: IxProp[];
 	userSite?: UserSiteInActs[];
 	sitePhrase?: SitePhraseInActs[];
@@ -893,7 +946,6 @@ export interface ParamActs {
 	user?: UserInActs[];
 	site?: SiteInActs[];
 	tree?: TreeInActs[];
-	specProp?: SpecPropInActs[];
 }
 
 
@@ -917,6 +969,7 @@ export interface UqExt extends Uq {
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
 	SaveAssign: UqAction<ParamSaveAssign, ResultSaveAssign>;
 	SaveProp: UqAction<ParamSaveProp, ResultSaveProp>;
+	SaveSpec: UqAction<ParamSaveSpec, ResultSaveSpec>;
 	SaveSheet: UqAction<ParamSaveSheet, ResultSaveSheet>;
 	SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
 	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
@@ -929,9 +982,12 @@ export interface UqExt extends Uq {
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
 	Metric: UqID<any>;
 	MetricItem: UqID<any>;
-	SpecMetric: UqID<any>;
+	AtomMetric: UqID<any>;
+	AtomMetricSpec: UqID<any>;
 	SaveMetric: UqAction<ParamSaveMetric, ResultSaveMetric>;
 	SaveMetricItem: UqAction<ParamSaveMetricItem, ResultSaveMetricItem>;
+	SaveAtomMetric: UqAction<ParamSaveAtomMetric, ResultSaveAtomMetric>;
+	SaveAtomMetricSpec: UqAction<ParamSaveAtomMetricSpec, ResultSaveAtomMetricSpec>;
 	GetAtomMetric: UqQuery<ParamGetAtomMetric, ResultGetAtomMetric>;
 	SearchMetricTemplate: UqQuery<ParamSearchMetricTemplate, ResultSearchMetricTemplate>;
 	GetMetricItems: UqQuery<ParamGetMetricItems, ResultGetMetricItems>;
@@ -954,7 +1010,6 @@ export interface UqExt extends Uq {
 	User: UqID<any>;
 	Site: UqID<any>;
 	Tree: UqID<any>;
-	SpecProp: UqID<any>;
 	ReportStorage: UqQuery<ParamReportStorage, ResultReportStorage>;
 	HistoryStorage: UqQuery<ParamHistoryStorage, ResultHistoryStorage>;
 }
@@ -975,6 +1030,14 @@ export const uqSchema={
                 "name": "caption",
                 "type": "char",
                 "size": 100
+            },
+            {
+                "name": "base",
+                "type": "bigint"
+            },
+            {
+                "name": "valid",
+                "type": "tinyint"
             }
         ],
         "keys": [] as any,
@@ -1401,6 +1464,39 @@ export const uqSchema={
         ],
         "returns": [] as any
     },
+    "savespec": {
+        "name": "SaveSpec",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "spec",
+                "type": "char",
+                "size": 100
+            },
+            {
+                "name": "atom",
+                "type": "id"
+            },
+            {
+                "name": "values",
+                "type": "char",
+                "size": 300
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
     "savesheet": {
         "name": "SaveSheet",
         "type": "action",
@@ -1602,6 +1698,11 @@ export const uqSchema={
                         "name": "ex",
                         "type": "char",
                         "size": 50
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
                     }
                 ],
                 "order": "desc"
@@ -1647,6 +1748,11 @@ export const uqSchema={
                         "name": "ex",
                         "type": "char",
                         "size": 50
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
                     }
                 ],
                 "order": "desc"
@@ -1715,6 +1821,11 @@ export const uqSchema={
                         "name": "ex",
                         "type": "char",
                         "size": 50
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
                     }
                 ],
                 "order": "desc"
@@ -1916,6 +2027,52 @@ export const uqSchema={
                         "name": "no",
                         "type": "char",
                         "size": 30
+                    },
+                    {
+                        "name": "atom",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "atomId",
+                        "type": "id"
+                    },
+                    {
+                        "name": "atomNo",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "atomEx",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "atomMetric",
+                        "type": "id"
+                    },
+                    {
+                        "name": "metric",
+                        "type": "id"
+                    },
+                    {
+                        "name": "metricNo",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "metricEx",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "spec",
+                        "type": "id"
+                    },
+                    {
+                        "name": "specValues",
+                        "type": "char",
+                        "size": 200
                     }
                 ]
             },
@@ -2201,8 +2358,8 @@ export const uqSchema={
         "idType": 3,
         "isMinute": false
     },
-    "specmetric": {
-        "name": "SpecMetric",
+    "atommetric": {
+        "name": "AtomMetric",
         "type": "id",
         "private": false,
         "sys": true,
@@ -2213,21 +2370,67 @@ export const uqSchema={
                 "null": false
             },
             {
-                "name": "spec",
-                "type": "id"
+                "name": "atom",
+                "type": "id",
+                "ID": "atom",
+                "tuid": "atom"
             },
             {
                 "name": "metricItem",
+                "type": "id",
+                "ID": "metricitem",
+                "tuid": "metricitem"
+            }
+        ],
+        "keys": [
+            {
+                "name": "atom",
+                "type": "id",
+                "ID": "atom",
+                "tuid": "atom"
+            },
+            {
+                "name": "metricItem",
+                "type": "id",
+                "ID": "metricitem",
+                "tuid": "metricitem"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "atommetricspec": {
+        "name": "AtomMetricSpec",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "atomMetric",
+                "type": "id",
+                "ID": "atommetric",
+                "tuid": "atommetric"
+            },
+            {
+                "name": "spec",
                 "type": "id"
             }
         ],
         "keys": [
             {
-                "name": "spec",
-                "type": "id"
+                "name": "atomMetric",
+                "type": "id",
+                "ID": "atommetric",
+                "tuid": "atommetric"
             },
             {
-                "name": "metricItem",
+                "name": "spec",
                 "type": "id"
             }
         ],
@@ -2340,6 +2543,68 @@ export const uqSchema={
                     {
                         "name": "metric",
                         "type": "id"
+                    },
+                    {
+                        "name": "atomMetric",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "saveatommetric": {
+        "name": "SaveAtomMetric",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "atom",
+                "type": "id"
+            },
+            {
+                "name": "metricItem",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "ID": "atommetric",
+                        "tuid": "atommetric"
+                    }
+                ]
+            }
+        ]
+    },
+    "saveatommetricspec": {
+        "name": "SaveAtomMetricSpec",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "atomMetric",
+                "type": "id"
+            },
+            {
+                "name": "spec",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "ID": "atommetricspec",
+                        "tuid": "atommetricspec"
                     }
                 ]
             }
@@ -3389,42 +3654,6 @@ export const uqSchema={
         "idType": 3,
         "isMinute": false
     },
-    "specprop": {
-        "name": "SpecProp",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "name",
-                "type": "char",
-                "size": 50
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "name",
-                "type": "char",
-                "size": 50
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
     "reportstorage": {
         "name": "ReportStorage",
         "type": "query",
@@ -3684,6 +3913,7 @@ export const uqSchema={
         "batchvalid": {
             "name": "batchvalid",
             "type": "spec",
+            "caption": "批次",
             "props": [
                 {
                     "name": "效期",
@@ -3695,6 +3925,22 @@ export const uqSchema={
                     "name": "no",
                     "type": "char",
                     "caption": "批次"
+                }
+            ]
+        },
+        "batchvalid1": {
+            "name": "batchvalid1",
+            "type": "spec",
+            "caption": "批次生成日期",
+            "keys": [
+                {
+                    "name": "no",
+                    "type": "char",
+                    "caption": "批次"
+                },
+                {
+                    "name": "效期",
+                    "type": "date"
                 }
             ]
         },
@@ -3726,6 +3972,20 @@ export const uqSchema={
             ],
             "base": "medicine"
         },
+        "specialmedicinechinese": {
+            "name": "specialmedicinechinese",
+            "type": "atom",
+            "caption": "中药饮品",
+            "props": [
+                {
+                    "name": "approvalchin",
+                    "type": "char",
+                    "caption": "中药批号"
+                }
+            ],
+            "base": "medicine",
+            "spec": "batchvalid1"
+        },
         "medicaldevice": {
             "name": "medicaldevice",
             "type": "atom",
@@ -3736,6 +3996,7 @@ export const uqSchema={
         "specshoe": {
             "name": "specshoe",
             "type": "spec",
+            "caption": "型号",
             "keys": [
                 {
                     "name": "size",
@@ -4100,6 +4361,11 @@ export const uqSchema={
         },
         "detailpurchase": {
             "name": "detailpurchase",
+            "type": "detail",
+            "main": "mainpurchase"
+        },
+        "detailpurchasemedicine": {
+            "name": "detailpurchasemedicine",
             "type": "detail",
             "main": "mainpurchase"
         },

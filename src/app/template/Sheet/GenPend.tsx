@@ -8,7 +8,7 @@ import { MutedSmall, SearchBox } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
 import { Detail, Sheet } from "uqs/UqDefault";
 import { ViewItemID } from "../Atom";
-import { EditingRow, OriginDetail, SheetRow } from "./Model";
+import { EditingRow, OriginDetail, SheetRow } from "../../tool";
 
 export abstract class GenPend extends GenBizEntity<EntityPend> {
     readonly bizEntityType = 'pend';

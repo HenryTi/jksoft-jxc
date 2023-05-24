@@ -15,7 +15,7 @@ Biz Atom Contact '往来单位' {
     state 经理级别可见;          -- 可以跟可用同时存在，也可以不同时
 };
 
-Biz Atom Goods '商品' {
+Biz Atom Goods ver 0.3 '商品' {
     Metric;
     Prop 厂家 ID Contact;
     Assign retailPrice '零售价' dec;
@@ -25,9 +25,14 @@ Biz Atom Toy '玩具' extends Goods {
     Metric count;
 };
 
-Biz Spec BatchValid {
+Biz Spec BatchValid '批次' {
     KEY no '批次' CHAR;
     prop 效期 date;
+}
+
+Biz Spec BatchValid1 '批次生成日期' {
+    KEY no '批次' CHAR;
+    KEY 效期 date;
 }
 
 Biz Atom Medicine '药品' extends Goods {
@@ -40,11 +45,16 @@ Biz Atom MedicineChinese '中药' extends Medicine {
     Prop ApprovalChin '中药批号' CHAR;
 };
 
+Biz Atom SpecialMedicineChinese '中药饮品' extends Medicine {
+    Spec BatchValid1;
+    Prop ApprovalChin '中药批号' CHAR;
+};
+
 Biz Atom MedicalDevice '医疗器械' extends Goods {
     Metric count;
 };
 
-Biz Spec SpecShoe {
+Biz Spec SpecShoe ver 1.6 '型号' {
     KEY size '尺码' CHAR;              -- size id 尺码
     KEY color '颜色' CHAR;             -- color id 花色
 }

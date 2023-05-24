@@ -1,4 +1,4 @@
-import { UqApp } from "app/UqApp";
+import { UqApp, useUqApp } from "app/UqApp";
 import { PageAtomList, PageAtomNew, PageAtomView, GenAtom, PageAtomSelect, GenAtomNew } from "app/template/Atom";
 import { Route } from "react-router-dom";
 import { LMR } from "tonwa-com";
@@ -9,8 +9,10 @@ export class GenContact extends GenAtom {
     get GenAtomNew(): new (genAtom: GenAtom) => GenAtomNew { return GenContactNew; }
 
     get PageSelect(): JSX.Element {
-        return <PageAtomSelect Gen={GenContact} />;
+        return <PageAtomSelect genAtom={this} />;
     }
+
+    readonly ViewItemAtom = ViewItemContact;
 }
 
 class GenContactNew extends GenAtomNew {
@@ -27,7 +29,9 @@ function ViewItemContact({ value }: { value: Atom; }) {
 }
 
 export function ModalSelectContact() {
-    return <PageAtomSelect Gen={GenContact} ViewItem={ViewItemContact} />;
+    let uqApp = useUqApp();
+    let genAtom = uqApp.objectOf(GenContact);
+    return <PageAtomSelect genAtom={genAtom} />;
 }
 
 export function routeContact(uqApp: UqApp) {

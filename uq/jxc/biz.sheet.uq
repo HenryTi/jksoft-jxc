@@ -13,7 +13,7 @@ Biz Detail DetailPurchase ver 0.1 {
 
 Biz Detail DetailPurchaseMedicine ver 0.1 {
     Main MainPurchase;
-    Item Medicine;
+    Item Medicine;          -- 某类Atom
     ACT (detail ID) {
         VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
         -- Biz Subject storage of item += value ref detail;

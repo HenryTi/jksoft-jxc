@@ -1,19 +1,17 @@
 import { UqApp } from "app/UqApp";
-import { EditingRow, GenDetail, GenSheet, GenSheetAct, PageSheetAct, OriginDetail, SheetRow, GenMainNoTarget, GenSheetNoTarget } from "app/template/Sheet";
-import { QueryMore } from "app/tool";
-import { GenContact, ModalSelectContact } from "../Atom";
+import { GenDetail, GenSheet, GenSheetAct, PageSheetAct, GenSheetNoTarget } from "app/template/Sheet";
+import { OriginDetail, SheetRow } from "app/tool";
+import { ModalSelectContact } from "../Atom";
 import { Atom, Sheet } from "uqs/UqDefault";
 import { IDView, uqAppModal } from "tonwa-app";
 import { ViewItemID } from "app/template";
 import { Route } from "react-router-dom";
-import { GenMain } from "app/template/Sheet";
 import { GenPendFromItem } from "app/template/Sheet/GenPend";
 import { GenDetailPend, GenDetailSplit } from "./Detail";
 import { Band } from "app/coms";
 
 export class GenSheetStoreIn extends GenSheet {
     readonly bizEntityName = 'sheetstorein';
-    //protected GenMain(): new (uqApp: UqApp) => GenMain { return GenMainStoreIn; }
     readonly bizMain = 'mainstorein';
     readonly targetCaption = '仓库';
     readonly ViewTarget = ({ sheet }: { sheet: Sheet; }): JSX.Element => {
@@ -31,26 +29,6 @@ export class GenSheetStoreIn extends GenSheet {
         return ret;
     }
 }
-/*
-class GenMainStoreIn extends GenMain {
-    readonly bizEntityName = 'mainstorein';
-    readonly targetCaption = '仓库';
-    readonly ViewTarget = ({ sheet }: { sheet: Sheet; }): JSX.Element => {
-        return <IDView id={sheet.target} uq={this.uq} Template={ViewItemID} />;
-    }
-    readonly ViewTargetBand = ({ sheet }: { sheet: Sheet; }): JSX.Element => {
-        return <Band label={this.targetCaption}>
-            <this.ViewTarget sheet={sheet} />
-        </Band>;
-    }
-    readonly selectTarget = async (header?: string): Promise<Atom> => {
-        const { openModal } = uqAppModal(this.uqApp);
-        // 这里实际应该选择仓库。以后再改
-        let ret = await openModal<Atom>(<ModalSelectContact />);
-        return ret;
-    }
-}
-*/
 
 class GenDetailStoreIn extends GenDetailPend {
     readonly bizEntityName = 'detailstorein';
@@ -87,7 +65,7 @@ function PageStoreIn() {
 
 class GenDetailStoreInMultiStorage extends GenDetailSplit {
     readonly bizEntityName = 'detailstorein';
-    readonly selectTarget = async (header?: string): Promise<Atom> => {
+    override async selectTarget(header?: string): Promise<Atom> {
         const { openModal } = uqAppModal(this.uqApp);
         const ret = await openModal(<ModalSelectContact />);
         return ret;
@@ -97,13 +75,8 @@ class GenDetailStoreInMultiStorage extends GenDetailSplit {
 export class GenSheetStoreInMultiStorage extends GenSheetNoTarget {
     readonly bizEntityName = 'sheetstoreinmultistorage';
     readonly bizMain = 'mainstorein';
-    // protected GenMain(): new (uqApp: UqApp) => GenMain { return GenMainStoreInMultiStorage; }
 }
-/*
-class GenMainStoreInMultiStorage extends GenMainNoTarget {
-    readonly bizEntityName = 'mainstorein';
-}
-*/
+
 class GetPendStroeInMultiStorage extends GetPendStroeIn {
     protected pendItemToEditingRow(originDetail: OriginDetail): SheetRow {
         return {

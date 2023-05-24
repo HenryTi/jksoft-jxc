@@ -64,20 +64,21 @@ VALUES
 (0, ID(Metric new KEY base=0, no=CurrencyName.jpy)),
 ;
 
-IDX AtomMetric (
+IDX DxAtomMetric (
     id,                         -- Atom
     metricItem ID MetricItem,   -- Atom选定Metric后，会自动生成一个基础MetricItem项。这里记录基础item
 );
 
-IX IxAtomMetricItem (
-    i Atom,
-    x MetricItem,
+ID AtomMetric (
+    id,
+    KEY atom ID Atom,
+    KEY metricItem ID MetricItem,
 );
 
-ID SpecMetric (
+ID AtomMetricSpec (
     id,
-    KEY spec ID,            -- spec atom
-    KEY metricItem ID,      -- metricItem
+    KEY atomMetric ID AtomMetric,   -- atom and metricItem
+    KEY spec ID,                    -- spec, 0 when no spec
 );
 
 ACT SaveMetric (
@@ -122,8 +123,10 @@ ACT SaveMetricItem (
 RETURNS ret (
     id ID,
     metric ID,
+    atomMetric ID,
 ) {
     VAR needSaveAtomMetric TINYINT;
+    VAR atomMetric ID;
     IF base IS NULL {
         SET needSaveAtomMetric=1;
         WITH Metric as a ID to base KEY($site, no) SET a.ex=ex, a.type=metricType, a.template=metricTemplate;
@@ -139,13 +142,35 @@ RETURNS ret (
         WITH MetricItem as a ID TO id KEY(base, no) SET a.ex=ex, a.div=div, a.value=value, a.template=template;
     }
     IF atom IS NOT NULL {
-        WITH IxAtomMetricItem I=atom X=id;
+        WITH AtomMetric ID to atomMetric Key(atom, id as metricItem);
         IF needSaveAtomMetric=1 {
-            WITH AtomMetric ID=atom SET metricItem=id;
+            WITH DxAtomMetric ID=atom SET metricItem=id;
         }
     }
 
-    INTO ret SELECT id, base as metric;
+    INTO ret SELECT id, base as metric, atomMetric;
+}
+
+ACT SaveAtomMetric (
+    atom ID,
+    metricItem ID,
+)
+RETURNS ret (
+    id ID AtomMetric,
+) {
+    VAR id ID = ID(AtomMetric new KEY atom=atom, metricItem=metricItem);
+    INTO ret SELECT id;
+}
+
+ACT SaveAtomMetricSpec (
+    atomMetric ID,
+    spec ID,
+)
+RETURNS ret (
+    id ID AtomMetricSpec,
+) {
+    VAR id ID = ID(AtomMetricSpec new KEY atomMetric=atomMetric, spec=spec);
+    INTO ret SELECT id;
 }
 
 QUERY GetAtomMetric (
@@ -158,15 +183,15 @@ RETURNS items (
     * MetricItem,
 ) {
     INTO ret SELECT * a
-        FROM AtomMetric as t
+        FROM DxAtomMetric as t
             JOIN MetricItem as b ON b.id=t.metricItem
             JOIN Metric as a ON a.id=b.base
         WHERE t.id=id;
     INTO items SELECT * b
-        FROM IxAtomMetricItem as t 
-            JOIN MetricItem as b ON b.id=t.x
+        FROM AtomMetric as t 
+            JOIN MetricItem as b ON b.id=t.metricItem
             JOIN Metric as a ON a.id=b.base
-        WHERE t.i=id;
+        WHERE t.atom=id;
 };
 
 QUERY SearchMetricTemplate (

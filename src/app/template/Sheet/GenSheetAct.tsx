@@ -6,8 +6,7 @@ import { GenDetail } from "./GenDetail";
 import { GenPend } from "./GenPend";
 import { Atom, Detail, Sheet } from "uqs/UqDefault";
 import { setAtomValue } from "tonwa-com";
-import { EditingRow, OriginDetail, SheetRow } from "./Model";
-import { GenMain } from "./GenMain";
+import { EditingRow, OriginDetail, SheetRow } from "../../tool";
 
 export abstract class GenSheetAct extends Gen {
     protected abstract GenSheet(): new (uqApp: UqApp) => GenSheet;
@@ -17,13 +16,11 @@ export abstract class GenSheetAct extends Gen {
 
     protected readonly genSheet: GenSheet;
     readonly genPend: GenPend;
-    //get genMain(): GenMain { return this.genSheet.genMain; }
     get phrase(): string { return this.genSheet.phrase; }
     get targetCaption(): string { return this.genSheet.targetCaption; }
     get ViewTargetBand(): (props: { sheet: Sheet; }) => JSX.Element { return this.genSheet.ViewTargetBand; }
     get ViewTarget(): (props: { sheet: Sheet; }) => JSX.Element { return this.genSheet.ViewTarget; }
     get selectTarget(): (header?: string) => Promise<Atom> { return this.genSheet.selectTarget; }
-
 
     constructor(uqApp: UqApp) {
         super(uqApp);
@@ -41,7 +38,7 @@ export abstract class GenSheetAct extends Gen {
 
     protected get GenPend(): new (uqApp: UqApp, pendName: string) => GenPend { return undefined; }
     protected abstract get GenDetail(): new (uqApp: UqApp) => GenDetail;
-    private genDetail: GenDetail;
+    genDetail: GenDetail;
     private buildGenDetail(): GenDetail {
         return this.genDetail = new this.GenDetail(this.uqApp);
     }

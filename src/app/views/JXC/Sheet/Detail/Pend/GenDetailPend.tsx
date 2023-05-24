@@ -1,17 +1,19 @@
 import { Band, FormRow, InputNumber } from "app/coms";
-import { ViewItemID } from "app/template";
-import { EditingRow, GenDetail, GenEditing, SheetRow } from "app/template/Sheet";
+import { GenAtomSpec, ViewItemID } from "app/template";
+import { GenDetail, GenEditing } from "app/template/Sheet";
+import { EditingRow, SheetRow } from 'app/tool';
 import { IDView } from "tonwa-app";
 import { Atom, Detail } from "uqs/UqDefault";
-import { useUqApp } from "app/UqApp";
+import { UqApp, useUqApp } from "app/UqApp";
 import { getAtomValue } from "tonwa-com";
 import { useAtomValue } from "jotai";
+import { GenDetailGoods } from "../GenDetailGoods";
 
 const fieldQuantity = 'value';
 const fieldPrice = 'v1';
 const fieldAmount = 'v2';
 
-export abstract class GenDetailPend extends GenDetail {
+export abstract class GenDetailPend extends GenDetailGoods {
     get itemCaption(): string { return '商品' }
     get ViewItemTemplate(): ({ value }: { value: any }) => JSX.Element { return ViewItemID; }
     ViewItemTop = ({ item }: { item: number }): JSX.Element => {
@@ -42,9 +44,6 @@ export abstract class GenDetailPend extends GenDetail {
     buildAmountRow(value: number, disabled: boolean = false): FormRow {
         return { name: fieldAmount, label: '金额', type: 'number', options: { value, disabled: this.amountDisabled } };
     }
-
-    readonly selectItem: (header?: string) => Promise<Atom> = undefined;
-    readonly selectTarget: (header?: string) => Promise<Atom> = undefined;
 
     readonly addRow = async (genEditing: GenEditing): Promise<SheetRow[]> => {
         let { genPend } = genEditing.genSheetAct;

@@ -113,6 +113,20 @@ Biz ACT SaveProp(
     }
 };
 
+Biz Act SaveSpec ver 0.1 (
+    spec CHAR(100),
+    atom ID,
+    values CHAR(300),
+)
+RETURNS ret (
+    id ID,
+) {
+    VAR id ID;
+    SET id = specid(spec, atom, values);
+    INTO ret SELECT id;
+    VAR a CHAR(300) = specvalue(id);
+}
+
 Biz ACT SaveSheet (
     sheet CHAR(100),
     no NO,
@@ -199,17 +213,20 @@ PAGE (
     id ID desc,
     no CHAR(50),
     ex CHAR(50),
+    phrase PHRASE,
 ) {
     VAR base ID = PhraseId(atom);
 
-    PAGE SELECT a.id, a.no, a.ex
+    PAGE SELECT a.id, a.no, a.ex, d.name as phrase
         FROM Atom as a
+            JOIN SitePhrase as b ON b.id=a.base
+            JOIN $phrase as d ON d.id=b.phrase
         WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
         ORDER BY a.id desc
         LIMIT $pageSize;
 };
 
-Biz Query SearchAtomProps (
+Biz Query SearchAtomProps ver 0.2 (
     atom Phrase,
     key CHAR(50),
     names CHAR(300),
@@ -218,6 +235,7 @@ PAGE (
     id ID desc,
     no CHAR(50),
     ex CHAR(50),
+    phrase Phrase,
 )
 RETURNS buds (
     id ID,
@@ -225,11 +243,21 @@ RETURNS buds (
     phrase CHAR(50),
     value CHAR(200),
 ) {
-    VAR base ID = PhraseId(atom);
-
-    PAGE SELECT a.id, a.no, a.ex
+    PAGE WITH RECURSIVE pPhrase AS (
+        SELECT r.id, r.base
+        FROM $phrase as r
+        WHERE r.name=atom AND r.valid=1
+        UNION
+        SELECT a.id, a.base
+        FROM $phrase as a JOIN pPhrase AS b
+            ON b.id=a.base
+    )
+    SELECT a.id, a.no, a.ex, d.name as phrase
         FROM Atom as a
-        WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
+            JOIN SitePhrase as b ON b.id=a.base
+            JOIN pPhrase as c ON c.id=b.phrase
+            JOIN $phrase as d ON d.id=b.phrase
+        WHERE a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
         ORDER BY a.id desc
         LIMIT $pageSize;
 
@@ -243,7 +271,7 @@ RETURNS buds (
         WHERE LOCATE(d.name, names)>0;
 };
 
-Biz Query SearchAtomAssigns (
+Biz Query SearchAtomAssigns ver 0.3 (
     atom Phrase,
     key CHAR(50),
     names CHAR(300),
@@ -252,6 +280,7 @@ PAGE (
     id ID desc,
     no CHAR(50),
     ex CHAR(50),
+    phrase Phrase,
 )
 RETURNS buds (
     id ID,
@@ -259,11 +288,21 @@ RETURNS buds (
     phrase Phrase,
     value CHAR(200),
 ) {
-    VAR base ID = PhraseId(atom);
-
-    PAGE SELECT a.id, a.no, a.ex
+    PAGE WITH RECURSIVE pPhrase AS (
+        SELECT r.id, r.base
+        FROM $phrase as r
+        WHERE r.name=atom AND r.valid=1
+        UNION
+        SELECT a.id, a.base
+        FROM $phrase as a JOIN pPhrase AS b
+            ON b.id=a.base
+    )
+    SELECT a.id, a.no, a.ex, d.name as phrase
         FROM Atom as a
-        WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
+            JOIN SitePhrase as b ON b.id=a.base
+            JOIN pPhrase as c ON c.id=b.phrase
+            JOIN $phrase as d ON d.id=b.phrase
+        WHERE a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
         ORDER BY a.id desc
         LIMIT $pageSize;
 
@@ -312,6 +351,16 @@ RETURNS details (
     pendValue VALUE,
     sheet PHRASE,
     no NO,
+    atom PHRASE,
+    atomId ID,
+    atomNo NO,
+    atomEx CHAR(200),
+    atomMetric ID,
+    metric ID,
+    metricNo NO,
+    metricEx CHAR(50),
+    spec ID,
+    specValues CHAR(200),
 )
 RETURNS origins (
     * Detail,
@@ -327,12 +376,21 @@ RETURNS assigns (
     INTO main SELECT * a
         FROM Sheet as a
         WHERE a.id=id;
-    INTO details SELECT * a, IFNULL(b.value, 0) as done, c.pendFrom, d.value as pendValue, PHRASE(e.base) as sheet, e.no
+    INTO details SELECT * a
+        , IFNULL(b.value, 0) as done, c.pendFrom, d.value as pendValue
+        , PHRASE(e.base) as sheet, e.no
+        , PHRASE(h.base) as atom, h.id as atomId, h.no as atomNo, h.ex as atomEx
+        , f.atomMetric, g.metricItem as metric, i.no as metricNo, i.ex as metricEx
+        , f.spec, SPECVALUE(f.spec) as specValues
         FROM Detail as a
             LEFT JOIN Done as b ON b.id=a.id
             LEFT JOIN DetailPend as c ON c.id=a.id
             LEFT JOIN Pend as d ON d.id=c.pendFrom
             LEFT JOIN Sheet as e ON e.id=a.base
+            LEFT JOIN AtomMetricSpec as f ON f.id=a.item
+            LEFT JOIN AtomMetric as g ON g.id=f.atomMetric
+            LEFT JOIN Atom as h ON h.id=g.atom
+            LEFT JOIN MetricItem as i ON i.id=g.metricItem
         WHERE a.base=id;
     INTO origins SELECT DISTINCT * b, IFNULL(c.value, 0) as done
         FROM (SELECT DISTINCT origin FROM details) as a

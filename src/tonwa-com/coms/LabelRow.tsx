@@ -63,7 +63,7 @@ export function LabelRow({ className, labelSize, labelAlign, labelClassName, Lab
     LabelContainer = LabelContainer ?? DefaultLabelContainer;
     MidContainer = MidContainer ?? DefaultMidContainer;
     RightContainer = RightContainer ?? DefaultRightContainer;
-    let midArr: any[] = arr.slice(1, len - 1);
+    let midArr: any[] = arr.slice(1, len - 1 + 1);
     let right: any;
     if (len > 2) {
         right = <>

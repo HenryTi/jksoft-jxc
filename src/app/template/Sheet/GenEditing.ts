@@ -3,12 +3,7 @@ import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Detail, Sheet } from "uqs/UqDefault";
 import { GenSheetAct } from "./GenSheetAct";
 import { PageMoreCacheData } from "app/coms";
-import { EditingRow, OriginDetail, SheetRow } from "./Model";
-
-interface DetailWithOrigin {
-    detail: Detail;
-    origin: OriginDetail;
-}
+import { AtomMetricSpec, DetailAtomSpec, DetailWithOrigin, EditingRow, OriginDetail, SheetRow } from "../../tool";
 
 export class GenEditing {
     readonly genSheetAct: GenSheetAct;
@@ -65,8 +60,8 @@ export class GenEditing {
         let editingRows: EditingRow[] = details.map(v => {
             let { origin: originId, pendFrom, pendValue, sheet, no } = v;
             let origin = originColl[originId];
-            let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue, sheet, no };
-            return new EditingRow(originDetail, [v as Detail]);
+            let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue, sheet, no, };
+            return new EditingRow(originDetail, [v as DetailAtomSpec]);
         });
         setAtomValue(this.atomSheet, sheet);
         setAtomValue(this.atomRows, editingRows);
@@ -134,6 +129,11 @@ export class GenEditing {
         let { uq } = this.genSheetAct;
         let { id: sheetId, target } = sheet;
         let { detail, origin } = detailWithOrigin;
+        let { item, atomMetricSpec } = detail;
+        if (item === undefined) {
+            item = await this.saveAtomMetricSpec(atomMetricSpec);
+            detail.item = item;
+        }
         let pendFrom = origin?.pend;
         let result = await uq.SaveDetail.submit({
             ...detail as any,
@@ -145,83 +145,29 @@ export class GenEditing {
         detail.id = id;
     }
 
+    private async saveAtomMetricSpec(atomMetricSpec: AtomMetricSpec): Promise<number> {
+        let { uq } = this.genSheetAct;
+        let { atom, atomMetric, spec } = atomMetricSpec;
+        let specId = 0;
+        if (spec !== undefined) {
+            specId = spec.id;
+            if (specId === undefined) {
+                specId = await this.genSheetAct.genDetail.saveSpec(atom, spec);
+            }
+        }
+        let ret = await uq.SaveAtomMetricSpec.submit({
+            atomMetric,
+            spec: specId,
+        });
+        return ret.id;
+    }
+
     private async saveDetails(details: DetailWithOrigin[]) {
         await this.saveSheet();
         let sheet = getAtomValue(this.atomSheet);
         await Promise.all(details.map(v => this.saveDetail(sheet, v)));
     }
-    /*
-        // 第一次生成detail时，生成sheet id
-        // detail.id === undefine? 则新增，否则修改
-        async saveEditingRows(sheetRows: SheetRow[]): Promise<void> {
-            let sheet = getAtomValue(this.atomSheet);
-            let { id: sheetId, target } = sheet;
-            await Promise.all(sheetRows.map(v => this.saveEditingRow(sheetId, target, v)));
-        }
-    
-        private async saveEditingRow(sheetId: number, target: number, sheetRow: SheetRow): Promise<void> {
-            let { uq } = this.genSheetAct;
-            let { origin: { pend: pendFrom }, details } = sheetRow;
-            for (let row of details) {
-                row.base = sheetId;
-                row.target = target;
-            }
-            let rets = await Promise.all(details.map(
-                detail => uq.SaveDetail.submit({
-                    ...detail as any,
-                    base: sheetId,
-                    target,
-                    pendFrom,
-                })
-            ));
-            let len = details.length;
-            for (let i = 0; i < len; i++) {
-                let ret = rets[i];
-                let rowId = ret.id as number;
-                if (rowId > 0) {
-                    details[i].id = rowId;
-                }
-            }
-        }
-    */
 
-
-    /*
-        private buildNewDetails(details: EditingRow[], detail: EditingRow): any[] {
-            let index = this.findDetail(details, detail);
-            if (index >= 0) {
-                details[index] = detail;
-                return [...details];
-            }
-            else {
-                return [...details, detail];
-            }
-        }
-    
-        private findDetail(details: EditingRow[], detail: EditingRow): number {
-            let len = details.length;
-            for (let i = 0; i < len; i++) {
-                let d = details[i];
-                let { atomDetails: atomRowsD } = d;
-                let dRows = getAtomValue(atomRowsD);
-                let { atomDetails: atomRows } = detail;
-                let rows = getAtomValue(atomRows);
-                for (let row of rows) {
-                    let { id } = row;
-                    let index = dRows.findIndex(v => v.id === id);
-                    if (index >= 0) return i;
-                }
-            }
-            return -1;
-        }
-    
-        updateDetailAtom(editDetail: EditingRow): void {
-            let details = getAtomValue(this.atomRows);
-            if (details === undefined) details = [];
-            let newDetails = this.buildNewDetails(details, editDetail);
-            setAtomValue(this.atomRows, newDetails);
-        }
-    */
     async bookSheet(act: string) {
         let sheet = getAtomValue(this.atomSheet);
         await this.genSheetAct.uq.Biz(sheet.id, act);

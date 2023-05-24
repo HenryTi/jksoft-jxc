@@ -111,6 +111,7 @@ export interface FormSelect extends FormLabelName {
 
 export interface FormSubmit extends FormLabel {
     type: 'submit';
+    className?: string;
 }
 
 export type FormRow = FormInput | FormBand | FormSubmit | FormRadios | FormSelect;
@@ -225,7 +226,10 @@ function FormRowView({ row, register, errors, labelClassName }: FormRowViewProps
                 right={right} />;
         case 'submit':
             return <Band>
-                <input type="submit" disabled={options?.disabled} readOnly={readOnly} className="btn btn-primary" value={label ?? '提交'} />
+                <input type="submit" disabled={options?.disabled}
+                    readOnly={readOnly}
+                    className={(row as FormSubmit).className ?? 'btn btn-primary'}
+                    value={label ?? '提交'} />
             </Band>;
     }
 }

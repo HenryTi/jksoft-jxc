@@ -21,6 +21,9 @@ export function IDView<T>({ id, uq, Template }: Props<T>) {
     }, [id]);
     if (id === undefined || id === null) return null;
     if (value === undefined) return null;
+    if (value === null) {
+        return <div>id {id} is invalid</div>;
+    }
     if (Template) {
         return <Template value={value} />;
     }

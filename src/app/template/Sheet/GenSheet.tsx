@@ -1,7 +1,5 @@
-//import { UqApp } from "app/UqApp";
 import { GenBizEntity } from "app/tool";
 import { EntitySheet } from "app/Biz/EntitySheet";
-//import { GenMain } from "./GenMain";
 import { Atom, Sheet } from "uqs/UqDefault";
 
 export abstract class GenSheet extends GenBizEntity<EntitySheet> {
@@ -23,16 +21,6 @@ export abstract class GenSheet extends GenBizEntity<EntitySheet> {
     abstract get ViewTargetBand(): (props: { sheet: Sheet; }) => JSX.Element;
     abstract get ViewTarget(): (props: { sheet: Sheet; }) => JSX.Element;
     abstract get selectTarget(): (header?: string) => Promise<Atom>;
-
-    /*
-    protected abstract GenMain(): new (uqApp: UqApp) => GenMain;
-    readonly genMain: GenMain;
-
-    constructor(uqApp: UqApp) {
-        super(uqApp);
-        this.genMain = uqApp.objectOf(this.GenMain());
-    }
-    */
 }
 
 export abstract class GenSheetNoTarget extends GenSheet {

@@ -1,8 +1,8 @@
 import { UqApp } from "app/UqApp";
-import { GenSheet, GenSheetAct, GenMain, PageSheetAct, EditingRow, SheetRow } from "app/template/Sheet";
-import { QueryMore } from "app/tool";
-import { GenContact, ModalSelectContact } from "../Atom";
-import { Atom, Detail, Sheet } from "uqs/UqDefault";
+import { GenSheet, GenSheetAct, PageSheetAct } from "app/template/Sheet";
+import { SheetRow } from "app/tool";
+import { ModalSelectContact } from "../Atom";
+import { Atom, Sheet } from "uqs/UqDefault";
 import { Band } from "app/coms";
 import { IDView, uqAppModal } from "tonwa-app";
 import { ViewItemID } from "app/template";
@@ -12,7 +12,6 @@ import { GenDetailQPA } from "./Detail";
 export class GenSheetPurchase extends GenSheet {
     readonly bizEntityName = 'sheetpurchase';
     readonly bizMain = 'mainpurchase';
-    // protected GenMain(): new (uqApp: UqApp) => GenMain { return GenMainPurchase; }
     readonly targetCaption = '往来单位';
     get ViewTarget(): (props: { sheet: Sheet; }) => JSX.Element {
         return ({ sheet }: { sheet: Sheet }) => {
@@ -32,30 +31,6 @@ export class GenSheetPurchase extends GenSheet {
         return ret;
     }
 }
-
-/*
-class GenMainPurchase extends GenMain {
-    readonly bizEntityName = 'mainpurchase';
-    readonly targetCaption = '往来单位';
-    get ViewTarget(): (props: { sheet: Sheet; }) => JSX.Element {
-        return ({ sheet }: { sheet: Sheet }) => {
-            return <IDView id={sheet.target} uq={this.uq} Template={ViewItemID} />;
-        }
-    }
-    get ViewTargetBand(): ({ sheet }: { sheet: Sheet }) => JSX.Element {
-        return ({ sheet }: { sheet: Sheet }) => {
-            return <Band label={this.targetCaption}>
-                <this.ViewTarget sheet={sheet} />
-            </Band>;
-        }
-    }
-    readonly selectTarget = async (header?: string): Promise<Atom> => {
-        const { openModal } = uqAppModal(this.uqApp);
-        let ret = await openModal<Atom>(<ModalSelectContact />);
-        return ret;
-    }
-}
-*/
 
 class GenDetailPurchase extends GenDetailQPA {
     readonly bizEntityName = 'detailpurchase';

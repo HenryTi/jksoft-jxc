@@ -87,22 +87,3 @@ IDX Temp (
     id,
     value BIGINT,
 );
-
--- 批次，颜色尺码，等等小批. 也可以无小批
--- 日期用从1970-1-1开始的天数来表达，是整数
-IDX Spec (
-    id,                     -- Spec Atom id
-    base ID,                -- base Atom
-    key1 ID,                -- Key id
-    key2 ID,                -- Key id
-    key3 ID,                -- Key id
-    key4 ID,                -- Key id
-    INDEX base_i(base) UNIQUE,
-);
-
--- 可以是key，也可以是prop
-ID SpecProp (
-    id,
-    KEY base ID,            -- sitePhrase
-    KEY name CHAR(50),
-);
