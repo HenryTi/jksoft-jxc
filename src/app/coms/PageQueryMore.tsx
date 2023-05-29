@@ -19,6 +19,7 @@ interface PageQueryMoreProps<P, R> extends PageProps {
     Top?: (props: { items: any[] }) => JSX.Element; // 根据内容显示Top
     Bottom?: (props: { items: any[] }) => JSX.Element; // 根据内容显示Bottom
     none?: JSX.Element;
+    itemKey?: ((item: any) => string | number);
 }
 
 export class PageMoreCacheData {
@@ -60,7 +61,7 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
 function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst: boolean; isModal: boolean }) {
     let { query, param, sortField, pageStart: pageStartParam, pageSize, pageMoreSize
         , ViewItem: ItemView, onItemClick, onItemSelect, children
-        , isPopFirst, isModal, Top, Bottom, none } = props;
+        , isPopFirst, isModal, Top, Bottom, none, itemKey } = props;
     const [items, setItems] = useState<R[]>(undefined);
     const [loading, setLoading] = useState(false);
     const refValue = useRef({
@@ -204,7 +205,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
     else if (items) {
         if (items.length > 0) {
             content = <>
-                <List items={items} ViewItem={ItemView} onItemClick={onItemClick} onItemSelect={onItemSelect} />
+                <List items={items} ViewItem={ItemView} onItemClick={onItemClick} onItemSelect={onItemSelect} itemKey={itemKey} />
                 <Sep />
             </>;
         }

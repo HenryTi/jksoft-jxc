@@ -3,8 +3,9 @@ import { EntitySheet } from "app/Biz/EntitySheet";
 import { Atom, Sheet } from "uqs/UqDefault";
 
 export abstract class GenSheet extends GenBizEntity<EntitySheet> {
-    readonly bizEntityType = 'sheet';
+    // readonly bizEntityType = 'sheet';
     get path() { return this.bizEntityName; }
+    /*
     get entity(): EntitySheet {
         let ret = this.biz.sheets[this.bizEntityName];
         if (ret === undefined) {
@@ -15,7 +16,7 @@ export abstract class GenSheet extends GenBizEntity<EntitySheet> {
         }
         return ret;
     }
-
+    */
     abstract get bizMain(): string;
     abstract get targetCaption(): string;
     abstract get ViewTargetBand(): (props: { sheet: Sheet; }) => JSX.Element;

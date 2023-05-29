@@ -105,14 +105,6 @@ IX IxTieValue (
     value BIGINT,               -- 可以是小数
 );
 
-IX IxPendPropValue (
-    ix,
-    xi,
-    int BIGINT,
-    dec VALUE,
-    str CHAR(100),
-)
-
 ID Formula (
     id,
     KEY from ID,            -- from subject

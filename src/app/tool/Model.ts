@@ -23,11 +23,11 @@ export interface AtomMetricSpec {
     spec?: Spec;           // keys
 }
 
-export interface DetailAtomSpec extends Detail {
-    atomMetricSpec?: AtomMetricSpec;
-}
+//export interface DetailAtomSpec extends Detail {
+// atomMetricSpec?: AtomMetricSpec;
+//}
 
-export interface OriginDetail extends DetailAtomSpec {
+export interface OriginDetail extends Detail {
     pend: number;
     pendValue: number;
     sheet: string;          // sheet phrase
@@ -36,15 +36,15 @@ export interface OriginDetail extends DetailAtomSpec {
 
 export interface SheetRow {
     origin: OriginDetail;
-    details: DetailAtomSpec[];
+    details: Detail[];
 }
 
 export class EditingRow {
     origin: OriginDetail;
-    readonly atomDetails = atom<DetailAtomSpec[]>([]);         // 新产生的明细内容。不分解明细的话，就只有一行
+    readonly atomDetails = atom<Detail[]>([]);         // 新产生的明细内容。不分解明细的话，就只有一行
     error?: string;
 
-    constructor(origin: OriginDetail, details: DetailAtomSpec[]) {
+    constructor(origin: OriginDetail, details: Detail[]) {
         this.origin = origin;
         setAtomValue(this.atomDetails, details ?? []);
     }
@@ -55,6 +55,6 @@ export interface AtomPhrase extends Atom {
 }
 
 export interface DetailWithOrigin {
-    detail: DetailAtomSpec;
+    detail: Detail;
     origin: OriginDetail;
 }

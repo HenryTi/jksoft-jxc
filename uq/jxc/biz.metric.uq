@@ -69,16 +69,16 @@ IDX DxAtomMetric (
     metricItem ID MetricItem,   -- Atom选定Metric后，会自动生成一个基础MetricItem项。这里记录基础item
 );
 
-ID AtomMetric (
+ID AtomMetric ver 0.4 (
     id,
-    KEY atom ID Atom,
-    KEY metricItem ID MetricItem,
+    KEY atom ID Atom *,
+    KEY metricItem ID MetricItem *,
 );
 
-ID AtomMetricSpec (
+ID AtomMetricSpec ver 0.4 (
     id,
-    KEY atomMetric ID AtomMetric,   -- atom and metricItem
-    KEY spec ID,                    -- spec, 0 when no spec
+    KEY atomMetric ID AtomMetric *,   -- atom and metricItem
+    KEY spec ID *,                    -- spec, 0 when no spec
 );
 
 ACT SaveMetric (

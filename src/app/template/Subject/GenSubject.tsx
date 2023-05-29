@@ -7,7 +7,7 @@ import { EasyTime, FA, LMR, dateFromMinuteId } from "tonwa-com";
 import { IDView } from "tonwa-app";
 
 export abstract class GenSubject extends GenBizEntity<EntitySubject> {
-    get entity(): EntitySubject { return this.biz.subjects[this.bizEntityName]; }
+    // get entity(): EntitySubject { return this.biz.subjects[this.bizEntityName]; }
 
     readonly QueryReport: UqQuery<any, any>;
     readonly QueryHistory: UqQuery<any, any>;
@@ -46,7 +46,7 @@ export abstract class GenSubject extends GenBizEntity<EntitySubject> {
     }
 
     readonly ViewItem = ({ value: row, clickable }: { value: ReturnReportStorage$page; clickable?: boolean; }): JSX.Element => {
-        const { atom, value, init } = row;
+        const { obj, value, init } = row;
         function ViewProduct({ value: { ex, no } }: { value: Atom }) {
             return <div>
                 <small className="text-muted">{no}</small>
@@ -55,7 +55,7 @@ export abstract class GenSubject extends GenBizEntity<EntitySubject> {
         }
         let icon = clickable === false ? '' : 'angle-right';
         return <LMR className="px-3 py-2 align-items-center">
-            <IDView uq={this.uq} id={atom} Template={ViewProduct} />
+            <IDView uq={this.uq} id={obj} Template={ViewProduct} />
             <div className="d-flex align-items-center">
                 <div className="me-4 fs-5">{(value + init).toFixed(0)}</div>
                 <FA name={icon} className="text-muted" fixWidth={true} />

@@ -3,24 +3,70 @@ QUERY ReportStorage (
     subject CHAR(200),
 )
 PAGE (
-    atom ID ASC,
+    obj ID ASC,
     value VALUE,
     init VALUE,
 ) {
     VAR phraseId ID = PhraseId(subject);
-    PAGE SELECT b.atom as atom, a.value, a.init
+    PAGE SELECT b.obj, a.value, a.init
         FROM Balance as a
             JOIN Subject as b ON b.id=a.id
-            JOIN Atom as d ON d.id=b.atom
+            JOIN Atom as d on d.id=b.obj
         WHERE b.base=phraseId
-            AND b.atom > $pageStart
+            AND b.obj > $pageStart
+            AND SEARCH(d.ex, d.no ON key)
+        ORDER BY a.id ASC
+        LIMIT $pageSize;
+};
+
+
+QUERY ReportStorageAtom (
+    key CHAR(50),
+    subject CHAR(200),
+)
+PAGE (
+    obj ID ASC,
+    value VALUE,
+    init VALUE,
+) {
+    VAR phraseId ID = PhraseId(subject);
+    PAGE SELECT b.obj, a.value, a.init
+        FROM Balance as a
+            JOIN Subject as b ON b.id=a.id
+            JOIN AtomMetric as c ON c.id=b.obj
+            JOIN Atom as d on d.id=c.atom
+        WHERE b.base=phraseId
+            AND b.obj > $pageStart
+            AND SEARCH(d.ex, d.no ON key)
+        ORDER BY a.id ASC
+        LIMIT $pageSize;
+};
+
+QUERY ReportStorageSpec (
+    key CHAR(50),
+    subject CHAR(200),
+)
+PAGE (
+    obj ID ASC,
+    value VALUE,
+    init VALUE,
+) {
+    VAR phraseId ID = PhraseId(subject);
+    PAGE SELECT b.obj, a.value, a.init
+        FROM Balance as a
+            JOIN Subject as b ON b.id=a.id
+            JOIN AtomMetricSpec as c ON c.id=b.obj
+            JOIN AtomMetric as c1 ON c1.id=c.atomMetric
+            JOIN Atom as d ON d.id=c1.atom
+        WHERE b.base=phraseId
+            AND b.obj > $pageStart
             AND SEARCH(d.ex, d.no ON key)
         ORDER BY a.id ASC
         LIMIT $pageSize;
 };
 
 QUERY HistoryStorage (
-    atomId ID,
+    objId ID,
     subject CHAR(200),
 )
 PAGE (
@@ -32,7 +78,7 @@ PAGE (
     sheetCaption CHAR(100),
 ) {
     VAR phraseId ID = PhraseId(subject);
-    VAR subjectId ID = ID(Subject KEY base=phraseId, atom=atomId);
+    VAR subjectId ID = ID(Subject KEY base=phraseId, obj=objId);
     PAGE SELECT a.id, a.value, a.ref, c.no as sheetNo, e.name as sheetName, e.caption as sheetCaption
         FROM History as a
             LEFT JOIN Detail as b ON b.id=a.ref

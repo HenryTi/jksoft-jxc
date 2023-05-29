@@ -3,9 +3,9 @@ import { BizBase } from "./BizBase";
 
 export class Entity extends BizBase {
     get phrase() { return `${this.type}.${this.name}`; }
-    readonly selfProps: Map<string, BizProp> = new Map();
+    readonly selfProps: Map<string, BizProp> = new Map();       // 本 Atom 定义的
     readonly selfAssigns: Map<string, BizAssign> = new Map();
-    readonly props: Map<string, BizProp> = new Map();
+    readonly props: Map<string, BizProp> = new Map();           // 包括全部继承来的
     readonly assigns: Map<string, BizAssign> = new Map();
 
     protected override fromSwitch(i: string, val: any) {
@@ -24,7 +24,7 @@ export class Entity extends BizBase {
         for (let prop of props) {
             let { name, type } = prop;
             let bizBud = new BizProp(this.biz, name, type, this);
-            let { budType } = bizBud;
+            let { budDataType: budType } = bizBud;
             if (budType === undefined) debugger;
             budType.fromSchema(prop);
             bizBud.fromSchema(prop);
@@ -36,7 +36,7 @@ export class Entity extends BizBase {
         for (let assign of assigns) {
             let { name, type } = assign;
             let bizBud = new BizAssign(this.biz, name, type, this);
-            let { budType } = bizBud;
+            let { budDataType: budType } = bizBud;
             if (budType === undefined) debugger;
             budType.fromSchema(assign);
             bizBud.fromSchema(assign);
@@ -46,10 +46,14 @@ export class Entity extends BizBase {
 
     protected buildBuds() {
         for (let [, bud] of this.selfProps) {
-            this.props.set(bud.name, bud);
+            let { name, phrase } = bud;
+            this.props.set(name, bud);
+            this.props.set(phrase, bud);
         }
         for (let [, bud] of this.selfAssigns) {
-            this.assigns.set(bud.name, bud);
+            let { name, phrase } = bud;
+            this.assigns.set(name, bud);
+            this.assigns.set(phrase, bud);
         }
     }
 

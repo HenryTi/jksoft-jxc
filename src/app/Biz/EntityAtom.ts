@@ -14,7 +14,7 @@ export class EntitySpec extends Entity {
         for (let key of keys) {
             let { name, type } = key;
             let bizProp = new BizProp(this.biz, name, type, this);
-            let { budType } = bizProp;
+            let { budDataType: budType } = bizProp;
             if (budType === undefined) debugger;
             budType.fromSchema(key);
             this.keys.set(bizProp.phrase, bizProp);
@@ -30,7 +30,21 @@ export class EntitySpec extends Entity {
         for (let [, value] of this.props) {
             ret.push(specValue[value.name] ?? '');
         }
-        return ret.join(String.fromCharCode(12));
+        let s = ret.join(String.fromCharCode(12));
+        return s;
+    }
+
+    fromValues(values: string): any {
+        let ret: { [key: string]: any } = {};
+        let parts = values.split(String.fromCharCode(12));
+        let i = 0;
+        for (let [, value] of this.keys) {
+            ret[value.name] = parts[i++];
+        }
+        for (let [, value] of this.props) {
+            ret[value.name] = parts[i++];
+        }
+        return ret;
     }
 }
 
@@ -45,12 +59,17 @@ export class EntityAtom extends Entity {
         for (let p: EntityAtom = this; p !== undefined; p = p.base) {
             verticals.unshift(p);
         }
+        let { props, assigns } = this;
         for (let p of verticals) {
             for (let [, bud] of p.selfProps) {
-                this.props.set(bud.name, bud);
+                let { name, phrase } = bud;
+                props.set(name, bud);
+                props.set(phrase, bud);
             }
             for (let [, bud] of p.selfAssigns) {
-                this.assigns.set(bud.name, bud);
+                let { name, phrase } = bud;
+                assigns.set(name, bud);
+                assigns.set(phrase, bud);
             }
         }
     }
@@ -69,12 +88,13 @@ export class EntityAtom extends Entity {
     }
 
     protected fromBase(baseName: any) {
-        let base = this.base = this.biz.atoms[baseName];
+        let base = this.base = this.biz.entities[baseName] as EntityAtom;// this.biz.atoms[baseName];
         base.children.push(this);
     }
 
     protected fromSpec(spec: any) {
-        this.spec = this.biz.specs[spec];
+        //this.spec = this.biz.specs[spec];
+        this.spec = this.biz.entities[spec] as EntitySpec;
     }
 
     scan() {

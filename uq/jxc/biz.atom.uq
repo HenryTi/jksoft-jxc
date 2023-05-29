@@ -15,7 +15,7 @@ Biz Atom Contact '往来单位' {
     state 经理级别可见;          -- 可以跟可用同时存在，也可以不同时
 };
 
-Biz Atom Goods ver 0.3 '商品' {
+Biz Atom Goods ver 0.1 '商品' {
     Metric;
     Prop 厂家 ID Contact;
     Assign retailPrice '零售价' dec;
@@ -25,7 +25,7 @@ Biz Atom Toy '玩具' extends Goods {
     Metric count;
 };
 
-Biz Spec BatchValid '批次' {
+Biz Spec BatchValid ver 0.1 '批次' {
     KEY no '批次' CHAR;
     prop 效期 date;
 }

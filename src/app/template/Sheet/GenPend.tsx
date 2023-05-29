@@ -3,17 +3,18 @@ import { UqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { GenBizEntity } from "app/tool";
 import { useState } from "react";
-import { IDView, uqAppModal } from "tonwa-app";
+import { uqAppModal } from "tonwa-app";
 import { MutedSmall, SearchBox } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
 import { Detail, Sheet } from "uqs/UqDefault";
-import { ViewItemID } from "../Atom";
 import { EditingRow, OriginDetail, SheetRow } from "../../tool";
+import { ViewAMSAtomSpec, ViewAMSMetric } from "app/views/JXC/Sheet/ViewAMS";
+import { GenGoods } from "app/views/JXC/Atom";
 
 export abstract class GenPend extends GenBizEntity<EntityPend> {
-    readonly bizEntityType = 'pend';
+    // readonly bizEntityType = 'pend';
     readonly bizEntityName: string;
-    get entity(): EntityPend { return this.biz.pends[this.bizEntityName] }
+    // get entity(): EntityPend { return this.biz.pends[this.bizEntityName] }
 
     constructor(uqApp: UqApp, pendName: string) {
         super(uqApp);
@@ -99,6 +100,7 @@ export class GenPendFromTarget extends GenPendSheet {
 export class GenPendFromItem extends GenPend {
     protected override async internalSelect(editingRows: EditingRow[]): Promise<OriginDetail[]> {
         let { openModal, closeModal } = uqAppModal(this.uqApp);
+        const genGoods = this.uqApp.objectOf(GenGoods);
         let selectedItems: OriginDetail[] = [];
         let selectedColl: { [pendId: number]: OriginDetail } = {};
         let defaultSearchParam = { pend: this.entity.phrase, key: undefined as string };
@@ -132,28 +134,36 @@ export class GenPendFromItem extends GenPend {
                     coll[ed.origin.pend] = ed;
                 }
             }
+            const cnCol = ' col ';
             const ViewPendRow = ({ value: pendItem }: { value: OriginDetail }) => {
                 const { pend, item, sheet, no, value, pendValue } = pendItem;
                 const htmlId = String(pend);
                 let ed = coll[pend];
                 let selected = ed !== undefined;
-                return <div className="form-check mx-3 my-2">
+                // <IDView uq={this.uq} id={item} Template={ViewItemID} />
+                // <IDView uq={this.uq} id={item} Template={Template} />
+                return <div className="form-check mx-3 my-2 d-flex">
                     <input type="checkbox" className="form-check-input me-3"
                         id={htmlId}
                         disabled={selected}
                         onChange={evt => onItemSelect(pendItem, evt.currentTarget.checked)}
                         defaultChecked={selected || selectedColl[pend] !== undefined}
                     />
-                    <label className="form-check-label d-flex" htmlFor={htmlId}>
-                        <div className="me-3"><IDView uq={this.uq} id={item} Template={ViewItemID} /></div>
-                        <div className="text-break me-3">
-                            <MutedSmall>{this.uqApp.genSheets[sheet].caption}编号</MutedSmall> {no}
-                        </div>
-                        <div>
-                            <MutedSmall>数量</MutedSmall> {value}
-                        </div>
-                        <div className="flex-grow-1 text-end">
-                            <MutedSmall>待处理量</MutedSmall> {pendValue}
+                    <label className="form-check-label container flex-grow-1" htmlFor={htmlId}>
+                        <div className="row">
+                            <ViewAMSAtomSpec genGoods={genGoods} id={item} className={cnCol} />
+                            <div className={cnCol}>
+                                <div className="text-break me-3">
+                                    <MutedSmall>{this.uqApp.genSheets[sheet].caption}编号</MutedSmall> {no}
+                                </div>
+                                <div>
+                                    <MutedSmall>在单</MutedSmall> {value}
+                                    <ViewAMSMetric genGoods={genGoods} id={item} />
+                                </div>
+                            </div>
+                            <div className={cnCol + " flex-grow-1 text-end "}>
+                                <MutedSmall>待处理</MutedSmall> {pendValue}<ViewAMSMetric genGoods={genGoods} id={item} />
+                            </div>
                         </div>
                     </label>
                 </div>;
@@ -168,13 +178,16 @@ export class GenPendFromItem extends GenPend {
                     <button className="btn btn-primary" onClick={onNext} disabled={!nextVisible}>下一步</button>
                 </div>;
             }
-            // onItemSelect={onItemSelect}
+            const itemKey = (item: any) => {
+                return item.id;
+            }
             return <PageQueryMore header={this.caption}
                 query={queryMore}
                 param={searchParam}
                 sortField="id"
                 ViewItem={ViewPendRow}
                 Bottom={Buttom}
+                itemKey={itemKey}
             >
                 <SearchBox className="p-3" placeholder={this.placeholderOfSearch} onSearch={onSearch} />
             </PageQueryMore>;

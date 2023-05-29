@@ -18,7 +18,7 @@ export function PageSheetAct({ Gen }: GenProps<GenSheetAct>) {
     const sheet = useAtomValue(genEditing.atomSheet);
     const rows = useAtomValue(genEditing.atomRows);
     const submitable = useAtomValue(genEditing.atomSubmitable);
-    const isMine = useAtomValue(genEditing.atomIsMainSaved);
+    // const isMine = useAtomValue(genEditing.atomIsMainSaved);
     const [visible, setVisible] = useState(true);
     const { openModal, closeModal } = useModal();
     const { id: paramId } = useParams();
@@ -66,7 +66,7 @@ export function PageSheetAct({ Gen }: GenProps<GenSheetAct>) {
         {btnSubmit}
         {visible === true && <>
             <button className={cnAdd} onClick={onAddRow}>增加明细</button>
-            {isMine === true && <button className={'btn btn-outline-primary'} onClick={onRemoveSheet}>作废</button>}
+            {sheet.id !== undefined && <button className={'btn btn-outline-primary'} onClick={onRemoveSheet}>作废</button>}
         </>}
     </LMR>;
     async function onSubmit() {

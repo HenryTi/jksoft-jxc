@@ -44,7 +44,12 @@ Biz Detail DetailStoreIn ver 0.1 {
         ELSE {
             Biz Pend PendStoreIn ID=pend SET value-=value;
         }
-        Biz Subject storage of item += value ref detail;
+        Biz Subject storage of item += value ref detail; -- item = AtomMetricSpec
+        VAR atomMetric ID=a.atomMetric, spec ID=a.spec FROM AtomMetricSpec as a WHERE a.id=item;
+        IF spec>0 {
+            -- 不含批号的某种商品库存
+            Biz Subject storage of atomMetric += value ref detail; -- item = AtomMetric
+        }
         -- detail写账报错，错误号1
         -- WITH Temp ID=detail SET value=1;
     };

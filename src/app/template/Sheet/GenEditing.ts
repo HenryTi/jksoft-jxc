@@ -3,19 +3,17 @@ import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Detail, Sheet } from "uqs/UqDefault";
 import { GenSheetAct } from "./GenSheetAct";
 import { PageMoreCacheData } from "app/coms";
-import { AtomMetricSpec, DetailAtomSpec, DetailWithOrigin, EditingRow, OriginDetail, SheetRow } from "../../tool";
+import { AtomMetricSpec, DetailWithOrigin, EditingRow, OriginDetail, SheetRow } from "../../tool";
 
 export class GenEditing {
     readonly genSheetAct: GenSheetAct;
     readonly atomSheet: PrimitiveAtom<Sheet>;
-    readonly atomIsMainSaved: PrimitiveAtom<boolean>;
     readonly atomRows: PrimitiveAtom<EditingRow[]>;
     readonly atomSubmitable: Atom<boolean>;
 
     constructor(genSheetAct: GenSheetAct) {
         this.genSheetAct = genSheetAct;
         this.atomSheet = atom(undefined as Sheet);
-        this.atomIsMainSaved = atom(false) as any;
         this.atomRows = atom(undefined as EditingRow[]);
         this.atomSubmitable = atom(get => {
             let rows = get(this.atomRows);
@@ -61,11 +59,10 @@ export class GenEditing {
             let { origin: originId, pendFrom, pendValue, sheet, no } = v;
             let origin = originColl[originId];
             let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue, sheet, no, };
-            return new EditingRow(originDetail, [v as DetailAtomSpec]);
+            return new EditingRow(originDetail, [v as Detail]);
         });
         setAtomValue(this.atomSheet, sheet);
         setAtomValue(this.atomRows, editingRows);
-        setAtomValue(this.atomIsMainSaved, true);
     }
 
     setSheet(sheet: Sheet) {
@@ -81,7 +78,7 @@ export class GenEditing {
         }
     }
 
-    async addRows(sheetRows: SheetRow[]) {
+    async saveRows(sheetRows: SheetRow[]) {
         let dirtyDetails: DetailWithOrigin[] = []
         for (let row of sheetRows) {
             dirtyDetails.push(...row.details.map(v => ({ detail: v, origin: row.origin })));
@@ -89,6 +86,9 @@ export class GenEditing {
         if (dirtyDetails.length > 0) {
             await this.saveDetails(dirtyDetails);
         }
+    }
+
+    addRows(sheetRows: SheetRow[]) {
         let rows = getAtomValue(this.atomRows);
         if (rows === undefined) rows = [];
         let newRows = sheetRows.map(v => {
@@ -129,11 +129,6 @@ export class GenEditing {
         let { uq } = this.genSheetAct;
         let { id: sheetId, target } = sheet;
         let { detail, origin } = detailWithOrigin;
-        let { item, atomMetricSpec } = detail;
-        if (item === undefined) {
-            item = await this.saveAtomMetricSpec(atomMetricSpec);
-            detail.item = item;
-        }
         let pendFrom = origin?.pend;
         let result = await uq.SaveDetail.submit({
             ...detail as any,
@@ -141,13 +136,17 @@ export class GenEditing {
             target,
             pendFrom,
         });
-        let id = result.ret?.id;
+        let id = result.id;
         detail.id = id;
     }
 
-    private async saveAtomMetricSpec(atomMetricSpec: AtomMetricSpec): Promise<number> {
+    async saveAtomMetricSpec(atomMetricSpec: AtomMetricSpec): Promise<number> {
         let { uq } = this.genSheetAct;
-        let { atom, atomMetric, spec } = atomMetricSpec;
+        let { atom, atomMetric, spec, metricItem } = atomMetricSpec;
+        if (atomMetric === undefined) {
+            let ret = await uq.SaveAtomMetric.submit({ atom: atom.id, metricItem: metricItem.id });
+            atomMetric = atomMetricSpec.atomMetric = ret.id;
+        }
         let specId = 0;
         if (spec !== undefined) {
             specId = spec.id;
@@ -175,9 +174,30 @@ export class GenEditing {
     }
 
     async bookAct() {
-        let sheet = getAtomValue(this.atomSheet);
+        let sheet = await this.saveSheet(); // getAtomValue(this.atomSheet);
+        await this.confirmSaveAllDetails();
         await this.genSheetAct.book(sheet.id);
         this.removeSheetFromCache();
+    }
+
+    private async confirmSaveRow(editingRow: EditingRow) {
+        let dirtyDetails: DetailWithOrigin[] = [];
+        let { origin, atomDetails } = editingRow;
+        let details = getAtomValue(atomDetails);
+        for (let detail of details) {
+            if (detail.id === undefined) {
+                dirtyDetails.push({ origin, detail });
+            }
+        }
+        if (dirtyDetails.length === 0) return;
+        await this.saveDetails(dirtyDetails);
+    }
+    private async confirmSaveAllDetails() {
+        let editingRows = getAtomValue(this.atomRows);
+        let len = editingRows.length;
+        for (let i = 0; i < len; i += 100) {
+            await Promise.all(editingRows.slice(i, 100).map(v => this.confirmSaveRow(v)));
+        }
     }
 
     async discard() {
@@ -190,10 +210,7 @@ export class GenEditing {
     // 只有第一个明细保存的时候，才会保存主表。
     private async saveSheet(): Promise<Sheet> {
         const sheet = getAtomValue(this.atomSheet);
-        const isMainSaved = getAtomValue(this.atomIsMainSaved);
-        if (isMainSaved === true) {
-            return sheet;
-        }
+        if (sheet.id !== undefined) return sheet;
         let { uqApp, phrase } = this.genSheetAct;
         let id = await this.genSheetAct.saveSheet(sheet);
         sheet.id = id;
@@ -206,7 +223,6 @@ export class GenEditing {
                 phrase
             });
         }
-        setAtomValue(this.atomIsMainSaved, true);
         return sheet;
     }
 

@@ -53,7 +53,7 @@ IDX SheetRed (
 ID Subject (
     id,
     KEY base ID,        -- sitePhrase
-    KEY atom ID,        -- atom id or 0 for all
+    KEY obj ID,        -- obj: atom id, atomMetric id, atomMetricSpec id, or 0 for all
 );
 
 ID User (

@@ -1,20 +1,16 @@
-import { PageAssign, GenAssign } from "app/template";
-import { GenProps } from "app/tool";
+import { useUqApp } from "app/UqApp";
+import { PageAssign, GenBuds, GenAMSBudsSearch, GenAtom } from "app/template";
 import { Route } from "react-router-dom";
+import { GenGoods } from "./Atom";
 
 export const pathPrice = 'price';
 
-export class GenPrice extends GenAssign {
-    readonly bizEntityName = 'product';
-    protected readonly phrases = ['retailprice'];
-    get caption() { return '零售价设置'; };
-}
-
-export function PagePrice(props: GenProps<GenPrice>) {
-    const { Gen } = props;
-    return <PageAssign Gen={Gen} />
+export function PagePrice() {
+    return <PageAssign Gen={GenGoods} caption={'零售价设置'}
+        entity="Price" budNames={['Retail']} />
+    //genBuds={genBuds} genBudsSearch={genBudsSearch} />
 }
 
 export const routePrice = <>
-    <Route path={pathPrice} element={<PagePrice Gen={GenPrice} />} />
+    <Route path={pathPrice} element={<PagePrice />} />
 </>;

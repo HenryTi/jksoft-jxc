@@ -54,7 +54,7 @@ interface BudValue {
     ValueTemplate: (props: { value: any }) => JSX.Element;
 }
 function pickValueFromBudType(bizBud: BizBud, openModal: OpenModal): BudValue {
-    let { budType } = bizBud;
+    let { budDataType: budType } = bizBud;
     switch (budType.type) {
         default: return {} as BudValue;
         case 'atom': return pickValueForBudAtom(budType as BudAtom, openModal);

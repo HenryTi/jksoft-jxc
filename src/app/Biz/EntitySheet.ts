@@ -7,7 +7,7 @@ export class EntityDetail extends Entity {
     main: EntityMain;
 
     protected fromMain(main: any) {
-        this.main = this.biz.mains[main];
+        this.main = this.biz.entities[main] as EntityMain;
     }
 }
 
@@ -21,7 +21,7 @@ export class EntityPend extends Entity {
     }
 
     protected fromDetail(detail: any) {
-        this.detail = this.biz.details[detail];
+        this.detail = this.biz.entities[detail] as EntityDetail;
     }
 }
 
@@ -45,7 +45,7 @@ export class EntitySheet extends Entity {
     }
 
     protected fromMain(main: any) {
-        this.main = this.biz.mains[main];
+        this.main = this.biz.entities[main] as EntityMain;
     }
 
     protected fromDetails(details: any[]) {
@@ -61,8 +61,8 @@ export class EntitySheet extends Entity {
             const { name, fromPend, detail } = act;
             this.detailActs.push({
                 actName: name,
-                detail: this.biz.details[detail],
-                fromPend: this.biz.pends[fromPend],
+                detail: this.biz.entities[detail] as EntityDetail,
+                fromPend: this.biz.entities[fromPend] as EntityPend,
             });
         }
     }

@@ -85,8 +85,9 @@ RETURNS ret (
     INTO ret SELECT id;
 }
 
-Biz ACT SaveAssign(
+Biz ACT SaveBud(
     phrase CHAR(200),
+    budType ENUM BudType,
     id ID,
     int BIGINT,
     dec VALUE,
@@ -94,22 +95,14 @@ Biz ACT SaveAssign(
 ) {
     VAR phraseId ID = PhraseId(phrase);
     IF phraseId IS NOT NULL {
-        WITH IxAssignValue IX=id XI=phraseId
-            SET int=int, dec=dec, str=str;
-    }
-};
-
-Biz ACT SaveProp(
-    phrase CHAR(200),
-    id ID,
-    int BIGINT,
-    dec VALUE,
-    str CHAR(100),
-) {
-    VAR phraseId ID = PhraseId(phrase);
-    IF phraseId IS NOT NULL {
-        WITH IxPropValue IX=id XI=phraseId
-            SET int=int, dec=dec, str=str;
+        IF budType=BudType.assign {
+            WITH IxAssignValue IX=id XI=phraseId
+                SET int=int, dec=dec, str=str;
+        }
+        ELSEIF budType=BudType.prop {
+            WITH IxPropValue IX=id XI=phraseId
+                SET int=int, dec=dec, str=str;
+        }
     }
 };
 
@@ -226,10 +219,15 @@ PAGE (
         LIMIT $pageSize;
 };
 
-Biz Query SearchAtomProps ver 0.2 (
-    atom Phrase,
+ENUM BudType (
+    prop = 1,
+    assign = 2,
+);
+Biz Query SearchAtomBuds ver 0.2 (
+    phrase Phrase,
     key CHAR(50),
     names CHAR(300),
+    budType ENUM BudType,
 )
 PAGE (
     id ID desc,
@@ -246,7 +244,7 @@ RETURNS buds (
     PAGE WITH RECURSIVE pPhrase AS (
         SELECT r.id, r.base
         FROM $phrase as r
-        WHERE r.name=atom AND r.valid=1
+        WHERE r.name=phrase AND r.valid=1
         UNION
         SELECT a.id, a.base
         FROM $phrase as a JOIN pPhrase AS b
@@ -261,20 +259,33 @@ RETURNS buds (
         ORDER BY a.id desc
         LIMIT $pageSize;
 
-    INTO buds SELECT a.id, d.id as bud
-        , d.name as phrase
-        , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
-        FROM $page as a 
-            JOIN IxPropValue as b ON b.ix=a.id
-            JOIN SitePhrase as c ON c.id=b.xi
-            JOIN $Phrase as d ON d.id=c.phrase
-        WHERE LOCATE(d.name, names)>0;
+    IF budType=BudType.prop { 
+        INTO buds SELECT a.id, d.id as bud
+            , d.name as phrase
+            , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
+            FROM $page as a 
+                JOIN IxPropValue as b ON b.ix=a.id
+                JOIN SitePhrase as c ON c.id=b.xi
+                JOIN $Phrase as d ON d.id=c.phrase
+            WHERE LOCATE(d.name, names)>0;
+    }
+    ELSEIF budType=BudType.assign {
+        INTO buds SELECT a.id, d.id as bud
+            , d.name as phrase
+            , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
+            FROM $page as a 
+                JOIN IxAssignValue as b ON b.ix=a.id
+                JOIN SitePhrase as c ON c.id=b.xi
+                JOIN $Phrase as d ON d.id=c.phrase
+            WHERE LOCATE(d.name, names)>0;
+    }
 };
 
-Biz Query SearchAtomAssigns ver 0.3 (
-    atom Phrase,
+Biz Query SearchAtomMetricBuds ver 0.2 (
+    phrase Phrase,
     key CHAR(50),
     names CHAR(300),
+    budType ENUM BudType,
 )
 PAGE (
     id ID desc,
@@ -282,16 +293,21 @@ PAGE (
     ex CHAR(50),
     phrase Phrase,
 )
+RETURNS meds (
+    id ID,
+    main ID,
+    detail ID,
+)
 RETURNS buds (
     id ID,
     bud ID,
-    phrase Phrase,
+    phrase CHAR(50),
     value CHAR(200),
 ) {
     PAGE WITH RECURSIVE pPhrase AS (
         SELECT r.id, r.base
         FROM $phrase as r
-        WHERE r.name=atom AND r.valid=1
+        WHERE r.name=phrase AND r.valid=1
         UNION
         SELECT a.id, a.base
         FROM $phrase as a JOIN pPhrase AS b
@@ -306,14 +322,30 @@ RETURNS buds (
         ORDER BY a.id desc
         LIMIT $pageSize;
 
-    INTO buds SELECT a.id, d.id as bud
-        , d.name as phrase
-        , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
+    INTO meds SELECT b.id, b.atom as main, b.metricItem as detail
         FROM $page as a 
-            JOIN IxAssignValue as b ON b.ix=a.id
-            JOIN SitePhrase as c ON c.id=b.xi
-            JOIN $Phrase as d ON d.id=c.phrase
-        WHERE LOCATE(d.name, names)>0;
+            JOIN AtomMetric as b ON b.atom=a.id;
+
+    IF budType=BudType.prop { 
+        INTO buds SELECT a.id, d.id as bud
+            , d.name as phrase
+            , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
+            FROM meds as a 
+                JOIN IxPropValue as b ON b.ix=a.id
+                JOIN SitePhrase as c ON c.id=b.xi
+                JOIN $Phrase as d ON d.id=c.phrase
+            WHERE LOCATE(d.name, names)>0;
+    }
+    ELSEIF budType=BudType.assign {
+        INTO buds SELECT a.id, d.id as bud
+            , d.name as phrase
+            , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
+            FROM meds as a 
+                JOIN IxAssignValue as b ON b.ix=a.id
+                JOIN SitePhrase as c ON c.id=b.xi
+                JOIN $Phrase as d ON d.id=c.phrase
+            WHERE LOCATE(d.name, names)>0;
+    }
 };
 
 Biz Query GetPendSheet (
@@ -351,16 +383,6 @@ RETURNS details (
     pendValue VALUE,
     sheet PHRASE,
     no NO,
-    atom PHRASE,
-    atomId ID,
-    atomNo NO,
-    atomEx CHAR(200),
-    atomMetric ID,
-    metric ID,
-    metricNo NO,
-    metricEx CHAR(50),
-    spec ID,
-    specValues CHAR(200),
 )
 RETURNS origins (
     * Detail,
@@ -379,18 +401,11 @@ RETURNS assigns (
     INTO details SELECT * a
         , IFNULL(b.value, 0) as done, c.pendFrom, d.value as pendValue
         , PHRASE(e.base) as sheet, e.no
-        , PHRASE(h.base) as atom, h.id as atomId, h.no as atomNo, h.ex as atomEx
-        , f.atomMetric, g.metricItem as metric, i.no as metricNo, i.ex as metricEx
-        , f.spec, SPECVALUE(f.spec) as specValues
         FROM Detail as a
             LEFT JOIN Done as b ON b.id=a.id
             LEFT JOIN DetailPend as c ON c.id=a.id
             LEFT JOIN Pend as d ON d.id=c.pendFrom
             LEFT JOIN Sheet as e ON e.id=a.base
-            LEFT JOIN AtomMetricSpec as f ON f.id=a.item
-            LEFT JOIN AtomMetric as g ON g.id=f.atomMetric
-            LEFT JOIN Atom as h ON h.id=g.atom
-            LEFT JOIN MetricItem as i ON i.id=g.metricItem
         WHERE a.base=id;
     INTO origins SELECT DISTINCT * b, IFNULL(c.value, 0) as done
         FROM (SELECT DISTINCT origin FROM details) as a

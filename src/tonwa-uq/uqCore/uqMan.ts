@@ -1068,6 +1068,7 @@ export class UqMan {
         let ret = this.cache[id];
         return ret;
     }
+    // 返回可能是数组
     protected idObj = async (id: number) => {
         let obj = this.cache[id];
         if (obj === undefined) {
@@ -1077,8 +1078,19 @@ export class UqMan {
                 this.cachePromise[id] = promise;
             }
             let ret = await promise;
-            obj = ret?.[0];
-            this.cache[id] = (obj === undefined) ? null : obj;
+            if (ret !== undefined) {
+                obj = ret[0];
+                this.cache[id] = (obj === undefined) ? null : obj;
+                let len = ret.length;
+                for (let i = 1; i < len; i++) {
+                    let objEx = ret[i];
+                    let { id: idEx } = objEx === undefined ? null : objEx;
+                    this.cache[idEx] = objEx;
+                }
+            }
+            else {
+                this.cache[id] = null;
+            }
             delete this.cachePromise[id];
         }
         return obj;

@@ -1,6 +1,6 @@
 import { GenBizEntity, Spec } from "app/tool";
 import { GenAtom } from "../Atom";
-import { EntitySpec } from "app/Biz/EntityAtom";
+import { EntityAtom, EntitySpec } from "app/Biz/EntityAtom";
 import { UqApp } from "app/UqApp";
 
 export interface PropsSpecEdit<T extends Spec> {
@@ -12,8 +12,13 @@ export interface PropsSpecEdit<T extends Spec> {
 }
 
 export abstract class GenSpec extends GenBizEntity<EntitySpec> {
-    readonly bizEntityType = 'spec';
-    get entity(): EntitySpec { return this.biz.specs[this.bizEntityName]; }
+    // readonly bizEntityType = 'spec';
+    /*
+    get entity(): EntitySpec { 
+        //return this.biz.specs[this.bizEntityName]; 
+        return this.biz.entities[this.bizEntityName] as EntitySpec;
+    }
+    */
     Edit({ className }: PropsSpecEdit<any>): JSX.Element {
         return <div className={className}>
             Edit
@@ -37,8 +42,8 @@ export abstract class GenAtomSpec extends GenAtom {
     protected abstract buildSpecs(): void;
 
     genAtom(atomName: string): GenAtom {
-        let atom = this.biz.atoms[atomName];
-        if (atom === undefined) {
+        let atom = this.biz.entities[atomName];
+        if (atom === undefined || atom.type !== 'atom') {
             let err = `'${atomName}' is not ATOM`;
             console.error(err);
             throw new Error(err);
@@ -47,21 +52,15 @@ export abstract class GenAtomSpec extends GenAtom {
     }
 
     genSpecFromAtom(atomName: string): GenSpec {
-        let atom = this.biz.atoms[atomName];
-        if (atom === undefined) {
+        if (atomName === undefined) return;
+        let atom = this.biz.entities[atomName] as EntityAtom;
+        if (atom === undefined || atom.type !== 'atom') {
             let err = `'${atomName}' is not ATOM`;
             console.error(err);
             throw new Error(err);
         }
         let { spec } = atom;
         if (spec === undefined) return undefined;
-        /*
-        {
-            let err = `'${atomName}' does not have SPEC`;
-            console.error(err);
-            throw new Error(err);
-        }
-        */
         let genSpec = this.genSpecs[spec.phrase];
         return genSpec;
     }

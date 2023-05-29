@@ -6,8 +6,8 @@ import { AtomMetricSpec, EditingRow, SheetRow } from "../../tool";
 import { GenAtomSpec } from "../AtomSpec";
 
 export abstract class GenDetail extends GenBizEntity<EntityDetail> {
-    readonly bizEntityType = 'detail';
-    get entity(): EntityDetail { return this.biz.details[this.bizEntityName] }
+    // readonly bizEntityType = 'detail';
+    // get entity(): EntityDetail { return this.biz.details[this.bizEntityName] }
     abstract get genAtomSpec(): GenAtomSpec;
     abstract get addRow(): (genEditing: GenEditing) => Promise<SheetRow[]>;
     abstract get editRow(): (genEditing: GenEditing, editingRow: EditingRow) => Promise<void>;

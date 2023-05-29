@@ -4,14 +4,12 @@ import { GenDetail, GenEditing } from "app/template/Sheet";
 import { EditingRow, SheetRow } from 'app/tool';
 import { IDView } from "tonwa-app";
 import { Atom, Detail } from "uqs/UqDefault";
-import { UqApp, useUqApp } from "app/UqApp";
+import { useUqApp } from "app/UqApp";
 import { getAtomValue } from "tonwa-com";
 import { useAtomValue } from "jotai";
 import { GenDetailGoods } from "../GenDetailGoods";
-
-const fieldQuantity = 'value';
-const fieldPrice = 'v1';
-const fieldAmount = 'v2';
+import { ViewAMSAtomSpec } from "../../ViewAMS";
+import { GenGoods } from "app/views/JXC/Atom";
 
 export abstract class GenDetailPend extends GenDetailGoods {
     get itemCaption(): string { return '商品' }
@@ -23,7 +21,7 @@ export abstract class GenDetailPend extends GenDetailGoods {
             </Band>
         </div>
     }
-
+    /*
     buildFormRows(detial: Detail): FormRow[] {
         let { value, v1: price, v2: amount } = detial;
         return [
@@ -44,6 +42,7 @@ export abstract class GenDetailPend extends GenDetailGoods {
     buildAmountRow(value: number, disabled: boolean = false): FormRow {
         return { name: fieldAmount, label: '金额', type: 'number', options: { value, disabled: this.amountDisabled } };
     }
+    */
 
     readonly addRow = async (genEditing: GenEditing): Promise<SheetRow[]> => {
         let { genPend } = genEditing.genSheetAct;
@@ -62,13 +61,15 @@ export abstract class GenDetailPend extends GenDetailGoods {
     }
 
     readonly editRow: (genEditing: GenEditing, editingRow: EditingRow) => Promise<void> = undefined;
-
     readonly ViewRow = ViewDetailPend;
 }
 
+//const cnCol4 = ' col-4 py-2 ';
+const cnCol = ' col py-2 ';
 function ViewDetailPend({ editingRow, genEditing }: { editingRow: EditingRow; genEditing: GenEditing; }): JSX.Element {
     const uqApp = useUqApp();
-    const { uq } = uqApp;
+    const genGoods = uqApp.objectOf(GenGoods);
+    // const { uq } = uqApp;
     const { atomDetails } = editingRow;
     const details = useAtomValue(atomDetails);
     const { origin } = editingRow;
@@ -81,19 +82,20 @@ function ViewDetailPend({ editingRow, genEditing }: { editingRow: EditingRow; ge
         let { $saveValue } = row as any;
         if (valueInputed !== $saveValue) {
             row.value = valueInputed;
-            //await genEditing.saveEditingRows([editingRow]);
-            await genEditing.updateRow(editingRow, [{} as Detail])
+            await genEditing.updateRow(editingRow, [row])
         }
     }
-    return <div className="px-3 py-2 d-flex align-items-center">
-        <IDView uq={uq} id={item} Template={ViewItemID} />
-        <div className="text-end align-items-end flex-grow-1 me-5">
-            <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount?.toFixed(4)}</span>
-            <br />
-            <small>数量:</small> <b>{originValue}</b>
-        </div>
-        <div>
-            <InputNumber onInputed={onInputed} defaultValue={value ?? pendValue} min={0} max={pendValue} />
+    return <div className="container">
+        <div className="row">
+            <ViewAMSAtomSpec id={item} genGoods={genGoods} className={cnCol} />
+            <div className={" text-end " + cnCol}>
+                <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount?.toFixed(4)}</span>
+                <br />
+                <small>数量:</small> <b>{originValue}</b>
+            </div>
+            <div className={cnCol + ' d-flex justify-content-end '}>
+                <InputNumber onInputed={onInputed} defaultValue={value ?? pendValue} min={0} max={pendValue} />
+            </div>
         </div>
     </div>;
 }

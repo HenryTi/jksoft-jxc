@@ -22,9 +22,15 @@ export interface GenProps<T extends Gen> {
 }
 
 export abstract class GenBizEntity<E extends Entity> extends Gen {
-    abstract get bizEntityType(): string;
+    // abstract get bizEntityType(): string;
     abstract get bizEntityName(): string;
-    abstract get entity(): E;
+    get entity(): E {
+        let ret = this.biz.entities[this.bizEntityName] as E;
+        if (ret === undefined) {
+            throw new Error(`${this.bizEntityName} is not a valid BIZ ENTITY`);
+        }
+        return ret;
+    }
     get caption() {
         let { name, caption } = this.entity;
         return caption ?? name;

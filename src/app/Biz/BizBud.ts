@@ -1,23 +1,24 @@
+import { BudType } from "uqs/UqDefault";
 import { EntityAtom } from ".";
 import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
 
-export abstract class BudType {
+export abstract class BudDataType {
     type: string;
     fromSchema(schema: any) { }
     scan(biz: Biz) { }
 }
-export class BudInt extends BudType {
+export class BudInt extends BudDataType {
     type = 'int';
 }
-export class BudDec extends BudType {
+export class BudDec extends BudDataType {
     type = 'dec';
 }
-export class BudString extends BudType {
+export class BudString extends BudDataType {
     type = 'str';
 }
-export class BudAtom extends BudType {
+export class BudAtom extends BudDataType {
     type = 'atom';
     private atom: string;
     bizAtom: EntityAtom;
@@ -25,10 +26,11 @@ export class BudAtom extends BudType {
         this.atom = schema.atom;
     }
     override scan(biz: Biz) {
-        this.bizAtom = biz.atoms[this.atom];
+        // this.bizAtom = biz.atoms[this.atom];
+        this.bizAtom = biz.entities[this.atom] as EntityAtom;
     }
 }
-abstract class BudTypeWithItems extends BudType {
+abstract class BudTypeWithItems extends BudDataType {
     items: any[] = [];
     override fromSchema(schema: any) {
         super.fromSchema(schema);
@@ -38,39 +40,40 @@ abstract class BudTypeWithItems extends BudType {
 export class BudRadio extends BudTypeWithItems {
     type = 'radio';
 }
-export class BudCheck extends BudType {
+export class BudCheck extends BudDataType {
     type = 'check';
 }
-export class BudDate extends BudType {
+export class BudDate extends BudDataType {
     type = 'date';
 }
-export class BudDateTime extends BudType {
+export class BudDateTime extends BudDataType {
     type = 'datetime';
 }
 
 export abstract class BizBud extends BizBase {
     readonly entity: Entity;
-    readonly budType: BudType;
+    readonly budDataType: BudDataType;
+    abstract get budType(): BudType;
     defaultValue: any;
-    constructor(biz: Biz, name: string, type: string, entity: Entity) {
+    constructor(biz: Biz, name: string, dataType: string, entity: Entity) {
         super(biz, name, 'bud');
         this.entity = entity;
-        let budType: BudType;
-        switch (type) {
-            case 'int': budType = new BudInt(); break;
-            case 'dec': budType = new BudDec(); break;
+        let budDataType: BudDataType;
+        switch (dataType) {
+            case 'int': budDataType = new BudInt(); break;
+            case 'dec': budDataType = new BudDec(); break;
             case 'char':
             case 'str':
-                budType = new BudString(); break;
+                budDataType = new BudString(); break;
             case 'atom':
             case 'ID':
-                budType = new BudAtom(); break;
-            case 'radio': budType = new BudRadio(); break;
-            case 'check': budType = new BudCheck(); break;
-            case 'date': budType = new BudDate(); break;
-            case 'datetime': budType = new BudDateTime(); break;
+                budDataType = new BudAtom(); break;
+            case 'radio': budDataType = new BudRadio(); break;
+            case 'check': budDataType = new BudCheck(); break;
+            case 'date': budDataType = new BudDate(); break;
+            case 'datetime': budDataType = new BudDateTime(); break;
         }
-        this.budType = budType;
+        this.budDataType = budDataType;
     }
 
     get phrase(): string {
@@ -78,7 +81,7 @@ export abstract class BizBud extends BizBase {
     }
 
     scan() {
-        this.budType.scan(this.biz);
+        this.budDataType.scan(this.biz);
     }
 
     protected fromSwitch(i: string, val: any) {
@@ -95,7 +98,9 @@ export abstract class BizBud extends BizBase {
 }
 
 export class BizProp extends BizBud {
+    readonly budType = BudType.prop;
 }
 
 export class BizAssign extends BizBud {
+    readonly budType = BudType.assign;
 }

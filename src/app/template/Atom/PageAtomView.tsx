@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { Page } from "tonwa-app";
-import { LabelRow, Sep } from "tonwa-com";
+import { Sep } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { GenProps } from "app/tool";
 import { GenAtom } from "./GenAtom";

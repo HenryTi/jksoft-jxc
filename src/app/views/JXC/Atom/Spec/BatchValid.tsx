@@ -27,8 +27,8 @@ export class GenBatchValid extends GenSpec {
         let { className, value } = props;
         let { no, 效期 } = value;
         return <div className={className}>
-            <small className="text-muted">批号</small> {no}
-            <small className="text-muted">效期</small> <EasyDate date={效期} />
+            <div><small className="text-muted">批号</small> {no}</div>
+            <div><small className="text-muted">效期</small> <EasyDate date={效期} /></div>
         </div>
     }
 }

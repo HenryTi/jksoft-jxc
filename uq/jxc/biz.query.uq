@@ -53,10 +53,12 @@ PAGE (
         FROM Pend as a
             JOIN Detail as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base
-            JOIN Atom as d ON d.id=b.item
+            JOIN AtomMetricSpec as d ON d.id=b.item
+            JOIN AtomMetric as e ON e.id=d.atomMetric
+            JOIN Atom as f ON f.id=e.atom
         WHERE 1=1 AND a.base=PhraseId(pend)
             AND b.id>$pageStart
-            AND SEARCH(d.no, d.ex ON key)
+            AND SEARCH(f.no, f.ex ON key)
         ORDER BY b.id ASC
         LIMIT $pageSize;
 };

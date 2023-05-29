@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue May 23 2023 16:52:21 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sun May 28 2023 19:21:16 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -191,24 +191,15 @@ export interface ResultSaveAtom {
 	ret: ReturnSaveAtomRet[];
 }
 
-export interface ParamSaveAssign {
+export interface ParamSaveBud {
 	phrase: string;
+	budType: any;
 	id: number;
 	int: number;
 	dec: number;
 	str: string;
 }
-export interface ResultSaveAssign {
-}
-
-export interface ParamSaveProp {
-	phrase: string;
-	id: number;
-	int: number;
-	dec: number;
-	str: string;
-}
-export interface ResultSaveProp {
+export interface ResultSaveBud {
 }
 
 export interface ParamSaveSpec {
@@ -290,48 +281,61 @@ export interface ResultSearchAtom {
 	$page: ReturnSearchAtom$page[];
 }
 
-export interface ParamSearchAtomProps {
-	atom: string;
-	key: string;
-	names: string;
-}
-export interface ReturnSearchAtomProps$page {
-	id: number;
-	no: string;
-	ex: string;
-	phrase: string;
-}
-export interface ReturnSearchAtomPropsBuds {
-	id: number;
-	bud: number;
-	phrase: string;
-	value: string;
-}
-export interface ResultSearchAtomProps {
-	$page: ReturnSearchAtomProps$page[];
-	buds: ReturnSearchAtomPropsBuds[];
+export enum BudType {
+	prop = 1,
+	assign = 2
 }
 
-export interface ParamSearchAtomAssigns {
-	atom: string;
+export interface ParamSearchAtomBuds {
+	phrase: string;
 	key: string;
 	names: string;
+	budType: any;
 }
-export interface ReturnSearchAtomAssigns$page {
+export interface ReturnSearchAtomBuds$page {
 	id: number;
 	no: string;
 	ex: string;
 	phrase: string;
 }
-export interface ReturnSearchAtomAssignsBuds {
+export interface ReturnSearchAtomBudsBuds {
 	id: number;
 	bud: number;
 	phrase: string;
 	value: string;
 }
-export interface ResultSearchAtomAssigns {
-	$page: ReturnSearchAtomAssigns$page[];
-	buds: ReturnSearchAtomAssignsBuds[];
+export interface ResultSearchAtomBuds {
+	$page: ReturnSearchAtomBuds$page[];
+	buds: ReturnSearchAtomBudsBuds[];
+}
+
+export interface ParamSearchAtomMetricBuds {
+	phrase: string;
+	key: string;
+	names: string;
+	budType: any;
+}
+export interface ReturnSearchAtomMetricBuds$page {
+	id: number;
+	no: string;
+	ex: string;
+	phrase: string;
+}
+export interface ReturnSearchAtomMetricBudsMeds {
+	id: number;
+	main: number;
+	detail: number;
+}
+export interface ReturnSearchAtomMetricBudsBuds {
+	id: number;
+	bud: number;
+	phrase: string;
+	value: string;
+}
+export interface ResultSearchAtomMetricBuds {
+	$page: ReturnSearchAtomMetricBuds$page[];
+	meds: ReturnSearchAtomMetricBudsMeds[];
+	buds: ReturnSearchAtomMetricBudsBuds[];
 }
 
 export interface ParamGetPendSheet {
@@ -376,16 +380,6 @@ export interface ReturnGetSheetDetails {
 	pendValue: number;
 	sheet: string;
 	no: string;
-	atom: string;
-	atomId: number;
-	atomNo: string;
-	atomEx: string;
-	atomMetric: number;
-	metric: number;
-	metricNo: string;
-	metricEx: string;
-	spec: number;
-	specValues: string;
 }
 export interface ReturnGetSheetOrigins {
 	id: number;
@@ -849,13 +843,13 @@ export interface PendInActs extends ID {
 
 export interface Subject extends ID {
 	base: number;
-	atom: number;
+	obj: number;
 }
 
 export interface SubjectInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
-	atom: number | ID;
+	obj: number | ID;
 }
 
 export interface User extends ID {
@@ -899,7 +893,7 @@ export interface ParamReportStorage {
 	subject: string;
 }
 export interface ReturnReportStorage$page {
-	atom: number;
+	obj: number;
 	value: number;
 	init: number;
 }
@@ -907,8 +901,34 @@ export interface ResultReportStorage {
 	$page: ReturnReportStorage$page[];
 }
 
+export interface ParamReportStorageAtom {
+	key: string;
+	subject: string;
+}
+export interface ReturnReportStorageAtom$page {
+	obj: number;
+	value: number;
+	init: number;
+}
+export interface ResultReportStorageAtom {
+	$page: ReturnReportStorageAtom$page[];
+}
+
+export interface ParamReportStorageSpec {
+	key: string;
+	subject: string;
+}
+export interface ReturnReportStorageSpec$page {
+	obj: number;
+	value: number;
+	init: number;
+}
+export interface ResultReportStorageSpec {
+	$page: ReturnReportStorageSpec$page[];
+}
+
 export interface ParamHistoryStorage {
-	atomId: number;
+	objId: number;
 	subject: string;
 }
 export interface ReturnHistoryStorage$page {
@@ -967,16 +987,15 @@ export interface UqExt extends Uq {
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
 	MyUnits: UqQuery<ParamMyUnits, ResultMyUnits>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
-	SaveAssign: UqAction<ParamSaveAssign, ResultSaveAssign>;
-	SaveProp: UqAction<ParamSaveProp, ResultSaveProp>;
+	SaveBud: UqAction<ParamSaveBud, ResultSaveBud>;
 	SaveSpec: UqAction<ParamSaveSpec, ResultSaveSpec>;
 	SaveSheet: UqAction<ParamSaveSheet, ResultSaveSheet>;
 	SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
 	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
 	GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
 	SearchAtom: UqQuery<ParamSearchAtom, ResultSearchAtom>;
-	SearchAtomProps: UqQuery<ParamSearchAtomProps, ResultSearchAtomProps>;
-	SearchAtomAssigns: UqQuery<ParamSearchAtomAssigns, ResultSearchAtomAssigns>;
+	SearchAtomBuds: UqQuery<ParamSearchAtomBuds, ResultSearchAtomBuds>;
+	SearchAtomMetricBuds: UqQuery<ParamSearchAtomMetricBuds, ResultSearchAtomMetricBuds>;
 	GetPendSheet: UqQuery<ParamGetPendSheet, ResultGetPendSheet>;
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
@@ -1011,6 +1030,8 @@ export interface UqExt extends Uq {
 	Site: UqID<any>;
 	Tree: UqID<any>;
 	ReportStorage: UqQuery<ParamReportStorage, ResultReportStorage>;
+	ReportStorageAtom: UqQuery<ParamReportStorageAtom, ResultReportStorageAtom>;
+	ReportStorageSpec: UqQuery<ParamReportStorageSpec, ResultReportStorageSpec>;
 	HistoryStorage: UqQuery<ParamHistoryStorage, ResultHistoryStorage>;
 }
 
@@ -1398,8 +1419,8 @@ export const uqSchema={
             }
         ]
     },
-    "saveassign": {
-        "name": "SaveAssign",
+    "savebud": {
+        "name": "SaveBud",
         "type": "action",
         "private": false,
         "sys": true,
@@ -1410,37 +1431,8 @@ export const uqSchema={
                 "size": 200
             },
             {
-                "name": "id",
-                "type": "id"
-            },
-            {
-                "name": "int",
-                "type": "bigint"
-            },
-            {
-                "name": "dec",
-                "type": "dec",
-                "scale": 4,
-                "precision": 18
-            },
-            {
-                "name": "str",
-                "type": "char",
-                "size": 100
-            }
-        ],
-        "returns": [] as any
-    },
-    "saveprop": {
-        "name": "SaveProp",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "phrase",
-                "type": "char",
-                "size": 200
+                "name": "budType",
+                "type": "enum"
             },
             {
                 "name": "id",
@@ -1709,14 +1701,24 @@ export const uqSchema={
             }
         ]
     },
-    "searchatomprops": {
-        "name": "SearchAtomProps",
+    "budtype": {
+        "name": "BudType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "prop": 1,
+            "assign": 2
+        }
+    },
+    "searchatombuds": {
+        "name": "SearchAtomBuds",
         "type": "query",
         "private": false,
         "sys": true,
         "fields": [
             {
-                "name": "atom",
+                "name": "phrase",
                 "type": "char",
                 "size": 200
             },
@@ -1729,6 +1731,10 @@ export const uqSchema={
                 "name": "names",
                 "type": "char",
                 "size": 300
+            },
+            {
+                "name": "budType",
+                "type": "enum"
             }
         ],
         "returns": [
@@ -1782,14 +1788,14 @@ export const uqSchema={
             }
         ]
     },
-    "searchatomassigns": {
-        "name": "SearchAtomAssigns",
+    "searchatommetricbuds": {
+        "name": "SearchAtomMetricBuds",
         "type": "query",
         "private": false,
         "sys": true,
         "fields": [
             {
-                "name": "atom",
+                "name": "phrase",
                 "type": "char",
                 "size": 200
             },
@@ -1802,6 +1808,10 @@ export const uqSchema={
                 "name": "names",
                 "type": "char",
                 "size": 300
+            },
+            {
+                "name": "budType",
+                "type": "enum"
             }
         ],
         "returns": [
@@ -1831,6 +1841,23 @@ export const uqSchema={
                 "order": "desc"
             },
             {
+                "name": "meds",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "main",
+                        "type": "id"
+                    },
+                    {
+                        "name": "detail",
+                        "type": "id"
+                    }
+                ]
+            },
+            {
                 "name": "buds",
                 "fields": [
                     {
@@ -1844,7 +1871,7 @@ export const uqSchema={
                     {
                         "name": "phrase",
                         "type": "char",
-                        "size": 200
+                        "size": 50
                     },
                     {
                         "name": "value",
@@ -2027,52 +2054,6 @@ export const uqSchema={
                         "name": "no",
                         "type": "char",
                         "size": 30
-                    },
-                    {
-                        "name": "atom",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "atomId",
-                        "type": "id"
-                    },
-                    {
-                        "name": "atomNo",
-                        "type": "char",
-                        "size": 30
-                    },
-                    {
-                        "name": "atomEx",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "atomMetric",
-                        "type": "id"
-                    },
-                    {
-                        "name": "metric",
-                        "type": "id"
-                    },
-                    {
-                        "name": "metricNo",
-                        "type": "char",
-                        "size": 30
-                    },
-                    {
-                        "name": "metricEx",
-                        "type": "char",
-                        "size": 50
-                    },
-                    {
-                        "name": "spec",
-                        "type": "id"
-                    },
-                    {
-                        "name": "specValues",
-                        "type": "char",
-                        "size": 200
                     }
                 ]
             },
@@ -2398,7 +2379,11 @@ export const uqSchema={
         ],
         "global": false,
         "idType": 3,
-        "isMinute": false
+        "isMinute": false,
+        "stars": [
+            "atom",
+            "metricItem"
+        ]
     },
     "atommetricspec": {
         "name": "AtomMetricSpec",
@@ -2436,7 +2421,11 @@ export const uqSchema={
         ],
         "global": false,
         "idType": 3,
-        "isMinute": false
+        "isMinute": false,
+        "stars": [
+            "atomMetric",
+            "spec"
+        ]
     },
     "savemetric": {
         "name": "SaveMetric",
@@ -3535,7 +3524,7 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "atom",
+                "name": "obj",
                 "type": "id"
             }
         ],
@@ -3545,7 +3534,7 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "atom",
+                "name": "obj",
                 "type": "id"
             }
         ],
@@ -3676,7 +3665,91 @@ export const uqSchema={
                 "name": "$page",
                 "fields": [
                     {
-                        "name": "atom",
+                        "name": "obj",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "init",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "reportstorageatom": {
+        "name": "ReportStorageAtom",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "key",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "subject",
+                "type": "char",
+                "size": 200
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "obj",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "init",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "reportstoragespec": {
+        "name": "ReportStorageSpec",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "key",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "subject",
+                "type": "char",
+                "size": 200
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "obj",
                         "type": "id"
                     },
                     {
@@ -3703,7 +3776,7 @@ export const uqSchema={
         "sys": true,
         "fields": [
             {
-                "name": "atomId",
+                "name": "objId",
                 "type": "id"
             },
             {
@@ -4099,6 +4172,16 @@ export const uqSchema={
                 {
                     "name": "工时下限",
                     "type": "int"
+                }
+            ]
+        },
+        "price": {
+            "name": "price",
+            "type": "setting",
+            "assigns": [
+                {
+                    "name": "retail",
+                    "type": "dec"
                 }
             ]
         },

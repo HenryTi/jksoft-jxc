@@ -86,26 +86,8 @@ function renderDate(vDate: Date | number, withTime: boolean, always: boolean = f
         return resFuncs.time_ymd(year, month, _date);
     })();
 
-    let hm = hour + ((minute < 10 ? ':0' : ':') + minute);
-
-    /*
-    if (tick < -24*3600*1000) {
-        if (year === nowYear)
-            return tt('md')(month, _date) + ' ' + hm;
-        else
-            return tt('ymd')(year, month, _date) + ' ' + hm;
-    }
-    if (always === true || tick < 24*3600*1000) {
-        return _date!==nDate? 
-            tt(tick < 0? 'tomorrow' : 'yesterday') + ' ' + hm 
-            : withTime===true? hm : tt('today');
-    }
-    if (year === nowYear) {
-        return tt('md')(month, _date);
-    }
-    return tt('ymd')(year, month, _date);
-    */
-    if (appendTime === true || always === true) {
+    if (withTime === true && (appendTime === true || always === true)) {
+        let hm = hour + ((minute < 10 ? ':0' : ':') + minute);
         return dPart + ' ' + hm;
     }
     return dPart;

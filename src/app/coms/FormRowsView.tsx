@@ -9,7 +9,7 @@ export interface BandProps {
 }
 
 export interface BandInputProps {
-    label?: string;
+    label?: string | JSX.Element;
     labelClassName?: string;
     type: HTMLInputTypeAttribute,
     inputProps: UseFormRegisterReturn,
@@ -77,7 +77,7 @@ export function BandInputs({ inputs: checks, register, label }: BandInputsProps)
 }
 
 interface FormLabel {
-    label?: string;
+    label?: string | JSX.Element;
     right?: string | JSX.Element;
 }
 
@@ -110,6 +110,7 @@ export interface FormSelect extends FormLabelName {
 }
 
 export interface FormSubmit extends FormLabel {
+    label?: string;
     type: 'submit';
     className?: string;
 }
@@ -229,7 +230,7 @@ function FormRowView({ row, register, errors, labelClassName }: FormRowViewProps
                 <input type="submit" disabled={options?.disabled}
                     readOnly={readOnly}
                     className={(row as FormSubmit).className ?? 'btn btn-primary'}
-                    value={label ?? '提交'} />
+                    value={(label as string) ?? '提交'} />
             </Band>;
     }
 }

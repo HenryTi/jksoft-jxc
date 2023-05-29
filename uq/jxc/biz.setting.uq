@@ -10,3 +10,7 @@ Biz Setting PersonSetting {
     Prop 工时上限 int;
     Assign 工时下限 int;
 };
+
+Biz Setting Price {
+    Assign Retail DEC;
+};

@@ -24,20 +24,26 @@ export class GenGoods extends GenAtomSpec {
             this.genSpecs[phrase] = g;
         });
     }
-    readonly ViewItemAtom = ViewItemGoods; // : (value: any) => JSX.Element;
+    readonly ViewItemAtom = ViewAtomGoods; // : (value: any) => JSX.Element;
 }
 
 class GenGoodsNew extends GenAtomNew {
 }
 
-function ViewItemGoods({ value }: { value: Atom; }) {
+export function ViewAtomGoods({ value }: { value: Atom; }) {
     let { no, ex } = value;
+    /*
     return <LMR className="d-block px-3 py-2">
         <div>
             <div className='small text-muted'>{no}</div>
             <div><b>{ex}</b></div>
         </div>
     </LMR>
+    */
+    return <div>
+        <div className='small text-muted'>{no}</div>
+        <div><b>{ex}</b></div>
+    </div>;
 }
 
 export function ModalSelectGoods() {
@@ -46,21 +52,6 @@ export function ModalSelectGoods() {
     return <PageAtomSelect genAtom={genAtom} />;
 }
 
-/*
-function ViewItemGoodsSpec({ value }: { value: Atom; }) {
-    let { no, ex } = value;
-    return <LMR className="d-block px-3 py-2">
-        <div>
-            <div className='small text-muted'>{no}</div>
-            <div><b>{ex}</b></div>
-        </div>
-    </LMR>
-}
-
-export function ModalSelectGoodsSpec() {
-    return <PageSelectAtomSpec Gen={GenGoods} ViewItem={ViewItemGoods} />;
-}
-*/
 export async function selectGoodsMetricSpec(uqApp: UqApp, genAtomSpec: GenAtomSpec): Promise<AtomMetricSpec> {
     let ret = await selectAtomMetricSpec(uqApp, genAtomSpec);
     return ret;

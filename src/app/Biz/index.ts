@@ -3,7 +3,7 @@ export { EntityAtom } from './EntityAtom';
 export { EntitySheet } from './EntitySheet';
 export { EntitySetting } from './EntitySetting';
 export * from './BizBud';
-export * from './OpEntity';
+export * from './OpBuds';
 export * from './EntitySubject';
 export * from './EntityTree';
 export * from './EntityTie';

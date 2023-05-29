@@ -1,5 +1,5 @@
 import { UqApp } from "app/UqApp";
-import { Gen } from "app/tool";
+import { AtomMetricSpec, Gen } from "app/tool";
 import { GenSheet } from "./GenSheet";
 import { GenEditing } from "./GenEditing";
 import { GenDetail } from "./GenDetail";
@@ -55,13 +55,14 @@ export abstract class GenSheetAct extends Gen {
             return false;
         }
 
-        await this.setEditing(genEditing, ret);
+        this.setEditing(genEditing, ret);
         return true;
     }
 
-    private async setEditing(genEditing: GenEditing, { sheet, sheetRows }: { sheet: Sheet; sheetRows: SheetRow[]; }) {
+    private setEditing(genEditing: GenEditing, { sheet, sheetRows }: { sheet: Sheet; sheetRows: SheetRow[]; }) {
+        genEditing.addRows(sheetRows);
         setAtomValue(genEditing.atomSheet, sheet);
-        await genEditing.addRows(sheetRows);
+        // setAtomValue(genEditing.atomIsMainSaved, sheetRows.length > 0);
     }
 
     protected async loadSheet(sheetId: number): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
@@ -75,7 +76,36 @@ export abstract class GenSheetAct extends Gen {
             let { origin: originId, pendFrom, pendValue, sheet, no } = v;
             let origin = originColl[originId];
             let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue, sheet, no };
-            return { origin: originDetail, details: [v as Detail] };
+            let detail: Detail = { ...v };
+            //let genSpec = this.genDetail.genAtomSpec.genSpecFromAtom(atom);
+            //if (genSpec !== undefined) {
+            //let spec = genSpec.entity.fromValues(specValues);
+            //spec.id = specId;
+            /*
+            let atomMetricSpec: AtomMetricSpec = {
+                atom: {
+                    base: undefined,
+                    id: atomId,
+                    no: atomNo,
+                    ex: atomEx,
+                    phrase: atom,
+                },
+                atomMetric,
+                metricItem: {
+                    id: metric,
+                    no: metricNo,
+                    ex: metricEx,
+                    base: undefined,
+                    div: undefined,
+                    value: undefined,
+                    template: undefined,
+                },
+                //spec,
+            };
+            */
+            // detail.atomMetricSpec = atomMetricSpec;
+            //}
+            return { origin: originDetail, details: [detail] };
         });
         return { sheet, sheetRows };
     }
@@ -97,7 +127,8 @@ export abstract class GenSheetAct extends Gen {
         if (sheetRows === undefined) return;
         // 如果第一次生成明细，则保存主表
         // await genEditing.saveSheet();
-        await genEditing.addRows(sheetRows);
+        await genEditing.saveRows(sheetRows);
+        genEditing.addRows(sheetRows);
     }
 
     async editRow(genEditing: GenEditing, editingRow: EditingRow) {
@@ -107,7 +138,6 @@ export abstract class GenSheetAct extends Gen {
     }
 
     async newSheet(target: number): Promise<Sheet> {
-        // let { phrase } = this.genSheet;
         let no = await this.uq.IDNO({ ID: this.uq.Sheet });
         let sheet: Sheet = {
             no,
