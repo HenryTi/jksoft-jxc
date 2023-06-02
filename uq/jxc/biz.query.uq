@@ -7,11 +7,11 @@ PAGE (
     * SHEET ASC,
     sheet Phrase,
 ) {
-    PAGE SELECT DISTINCT * c, Phrase(c.base) as sheet
+    PAGE SELECT DISTINCT * c, PhraseOfSiteId(c.base) as sheet
         FROM Pend as a
             JOIN Detail as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base
-        WHERE 1=1 AND a.base=PhraseId(pend)
+        WHERE 1=1 AND a.base=SitePhraseId(pend)
             AND c.id>$pageStart
             AND SEARCH(c.no ON key)
         ORDER BY c.id ASC
@@ -26,12 +26,12 @@ PAGE (
     * SHEET ASC,
     sheet Phrase,
 ) {
-    PAGE SELECT DISTINCT * c, Phrase(c.base) as sheet
+    PAGE SELECT DISTINCT * c, PhraseOfSiteId(c.base) as sheet
         FROM Pend as a
             JOIN Detail as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base
             JOIN Atom as d ON d.id=c.target
-        WHERE 1=1 AND a.base=PhraseId(pend)
+        WHERE 1=1 AND a.base=SitePhraseId(pend)
             AND c.id>$pageStart
             AND SEARCH(d.no, d.ex ON key)
         ORDER BY c.id ASC
@@ -49,14 +49,14 @@ PAGE (
     sheet Phrase,
     no NO,
 ) {
-    PAGE SELECT * b, a.id as pend, a.value as pendValue, Phrase(c.base) as sheet, c.no
+    PAGE SELECT * b, a.id as pend, a.value as pendValue, PhraseOfSiteId(c.base) as sheet, c.no
         FROM Pend as a
             JOIN Detail as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base
             JOIN AtomMetricSpec as d ON d.id=b.item
             JOIN AtomMetric as e ON e.id=d.atomMetric
             JOIN Atom as f ON f.id=e.atom
-        WHERE 1=1 AND a.base=PhraseId(pend)
+        WHERE 1=1 AND a.base=SitePhraseId(pend)
             AND b.id>$pageStart
             AND SEARCH(f.no, f.ex ON key)
         ORDER BY b.id ASC
@@ -74,11 +74,11 @@ RETURNS ret (
     sheet Phrase,
     no NO,
 ) {
-    INTO ret SELECT * b, a.id as pend, a.value as pendValue, Phrase(c.base) as sheet, c.no
+    INTO ret SELECT * b, a.id as pend, a.value as pendValue, PhraseOfSiteId(c.base) as sheet, c.no
         FROM Pend as a
             JOIN Detail as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base
-        WHERE 1=1 AND a.base=PhraseId(pend)
+        WHERE 1=1 AND a.base=SitePhraseId(pend)
             AND b.base=sheetId
         ORDER BY b.id ASC;
 };

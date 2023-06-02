@@ -12,9 +12,8 @@ import { ViewAMSAtomSpec, ViewAMSMetric } from "app/views/JXC/Sheet/ViewAMS";
 import { GenGoods } from "app/views/JXC/Atom";
 
 export abstract class GenPend extends GenBizEntity<EntityPend> {
-    // readonly bizEntityType = 'pend';
+    readonly bizEntityType = 'pend';
     readonly bizEntityName: string;
-    // get entity(): EntityPend { return this.biz.pends[this.bizEntityName] }
 
     constructor(uqApp: UqApp, pendName: string) {
         super(uqApp);

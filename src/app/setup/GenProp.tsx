@@ -31,11 +31,11 @@ export class GenProp extends Gen {
     }
 
     async loadIDProps(IDName: string): Promise<{ id: number, items: { id: number; }[] }[]> {
-        let { IxProp } = this.uq;
+        let { IxBud } = this.uq;
         let propTypeId = await this.loadIDPropId(IDName);
         let [props, propItems] = await Promise.all([
-            this.uq.IX({ IX: IxProp, ix: propTypeId }),
-            this.uq.IX({ IX: IxProp, IX1: IxProp, ix: propTypeId }),
+            this.uq.IX({ IX: IxBud, ix: propTypeId }),
+            this.uq.IX({ IX: IxBud, IX1: IxBud, ix: propTypeId }),
         ]);
 
         let ret: { id: number, items: { id: number }[] }[] = [];

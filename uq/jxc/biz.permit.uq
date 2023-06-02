@@ -1,19 +1,29 @@
 
-Biz Permit 销售员 {
+Biz Permit 销售 {
     Permit 入库;
     Permit 发货;
     Permit 检验;
 }
-Biz Permit 入库员 {
-    Permit 入库;
-    Permit 发货;
+Biz Permit 入库 {
+    Permit 上架;
+    Permit 收货;
 }
-Biz Permit 检验员;
+Biz Permit 检验 {
+    Permit 初检;
+    Permit 复检;
+};
 
 Biz Role 经理 {
-    With 销售员(检验);
+    With 销售(检验);
     Role 销售部经理;
 };
 Biz Role 销售部经理 {
-    With 入库员;
+    With 入库;
 }
+
+-- Admit：针对UnitPermit
+-- Admit可以在Act和Query的入口处，也可以建ix表。UnitPermit/Contact=某个角色可以访问的客户。
+-- IX: I=UnitUser(Id with phrase permit)生成Id / PermitItem(phrase id)
+-- 设置参数和关系的时候，调用SaveIx(i, x), i=用json描述，user, unit一起来生成。x=用json描述，一起生成。
+-- IxBud: MainId / BudId - value
+-- 如果要写History，则生成subject id，然后写history

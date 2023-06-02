@@ -1,57 +1,3 @@
-FUNC PhraseId ver 0.1 (
-    phrase CHAR(100)
-) 
-RETURNS ID {
-    VAR phraseId ID;
-    SET phraseId = (SELECT id FROM $phrase WHERE name=phrase);
-    VAR SitePhrase ID = ID(SitePhrase New KEY site=$site, phrase=phraseId);
-    return SitePhrase;
-};
-
-FUNC Phrase ver 0.1 (
-    phraseId ID
-) 
-RETURNS CHAR(200) {
-    VAR phrase CHAR(200) = (SELECT a.name 
-        FROM $Phrase as a 
-            JOIN SitePhrase as b ON b.phrase=a.id AND b.site=$site 
-        WHERE b.id=phraseId
-    );
-    return phrase;
-};
-
-FUNC SheetPhrase (
-    sheetId ID,
-)
-RETURNS CHAR(200) {
-    VAR phrase CHAR(200) = (SELECT c.name 
-        FROM Sheet as a
-            JOIN SitePhrase as b ON b.id=a.base
-            JOIN $Phrase as c ON c.id=b.phrase
-        WHERE a.id=sheetId
-    );
-    return phrase;
-};
-
-FUNC AtomPhrase (
-    atomId ID,
-)
-RETURNS CHAR(200) {
-    VAR phrase CHAR(200) = (SELECT c.name 
-        FROM Atom as a
-            JOIN SitePhrase as b ON b.id=a.base
-            JOIN $Phrase as c ON c.id=b.phrase
-        WHERE a.id=atomId
-    );
-    return phrase;
-};
-
-FUNC Me()
-RETURNS ID {
-    VAR me ID = ID(UserSite New KEY user=$user, site=$site);
-    return me; -- $user site
-};
-
 Biz Query MyUnits ver 0.3 (
 )
 RETURNS ret (
@@ -70,7 +16,7 @@ Biz ACT SaveAtom (
 RETURNS ret (
     id ID,
 ) {
-    VAR base ID = PhraseId(atom);
+    VAR base ID = SitePhraseId(atom);
 
     -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
     VAR id ID = 0;
@@ -87,7 +33,6 @@ RETURNS ret (
 
 Biz ACT SaveBud(
     phrase CHAR(200),
-    budType ENUM BudType,
     id ID,
     int BIGINT,
     dec VALUE,
@@ -95,14 +40,7 @@ Biz ACT SaveBud(
 ) {
     VAR phraseId ID = PhraseId(phrase);
     IF phraseId IS NOT NULL {
-        IF budType=BudType.assign {
-            WITH IxAssignValue IX=id XI=phraseId
-                SET int=int, dec=dec, str=str;
-        }
-        ELSEIF budType=BudType.prop {
-            WITH IxPropValue IX=id XI=phraseId
-                SET int=int, dec=dec, str=str;
-        }
+        WITH IxBudValue as a IX=id XI=phraseId SET a.int=int, a.dec=dec, a.str=str;
     }
 };
 
@@ -130,7 +68,7 @@ Biz ACT SaveSheet (
 RETURNS ret (
     id ID,
 ) {
-    VAR base ID = PhraseId(sheet);
+    VAR base ID = SitePhraseId(sheet);
     VAR me ID = Me();
 
     VAR sheetId ID;
@@ -190,7 +128,7 @@ PAGE (
 ) {
     VAR me ID = Me();
     -- 获取我正在录入的单据
-    PAGE SELECT * b, phrase(b.base) as phrase
+    PAGE SELECT * b, PhraseOfSiteId(b.base) as phrase
         FROM IxMyDraft as a
             JOIN Sheet as b ON a.xi=b.id
         WHERE b.id<$pageStart AND a.ix=me
@@ -208,7 +146,7 @@ PAGE (
     ex CHAR(50),
     phrase PHRASE,
 ) {
-    VAR base ID = PhraseId(atom);
+    VAR base ID = SitePhraseId(atom);
 
     PAGE SELECT a.id, a.no, a.ex, d.name as phrase
         FROM Atom as a
@@ -219,21 +157,21 @@ PAGE (
         LIMIT $pageSize;
 };
 
-ENUM BudType (
-    prop = 1,
-    assign = 2,
-);
 Biz Query SearchAtomBuds ver 0.2 (
     phrase Phrase,
     key CHAR(50),
     names CHAR(300),
-    budType ENUM BudType,
 )
 PAGE (
     id ID desc,
     no CHAR(50),
     ex CHAR(50),
     phrase Phrase,
+)
+RETURNS meds (
+    id ID,
+    main ID,
+    detail ID,
 )
 RETURNS buds (
     id ID,
@@ -259,33 +197,25 @@ RETURNS buds (
         ORDER BY a.id desc
         LIMIT $pageSize;
 
-    IF budType=BudType.prop { 
-        INTO buds SELECT a.id, d.id as bud
-            , d.name as phrase
-            , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
-            FROM $page as a 
-                JOIN IxPropValue as b ON b.ix=a.id
-                JOIN SitePhrase as c ON c.id=b.xi
-                JOIN $Phrase as d ON d.id=c.phrase
-            WHERE LOCATE(d.name, names)>0;
-    }
-    ELSEIF budType=BudType.assign {
-        INTO buds SELECT a.id, d.id as bud
-            , d.name as phrase
-            , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
-            FROM $page as a 
-                JOIN IxAssignValue as b ON b.ix=a.id
-                JOIN SitePhrase as c ON c.id=b.xi
-                JOIN $Phrase as d ON d.id=c.phrase
-            WHERE LOCATE(d.name, names)>0;
-    }
+    INTO meds SELECT b.id, b.id as main, b.id as detail
+        FROM $page as b;
+--            JOIN AtomMetric as b ON b.atom=a.id;
+
+    INTO buds SELECT a.id, d.id as bud
+        , d.name as phrase
+        , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
+        FROM $page as a 
+            JOIN IxBudValue as b ON b.i=a.id
+            -- JOIN SitePhrase as c ON c.id=b.xi
+            JOIN $Phrase as d ON d.id=b.x -- phrase
+        WHERE LOCATE(d.name, names)>0;
 };
 
 Biz Query SearchAtomMetricBuds ver 0.2 (
     phrase Phrase,
     key CHAR(50),
     names CHAR(300),
-    budType ENUM BudType,
+    -- budType ENUM BudType,
 )
 PAGE (
     id ID desc,
@@ -326,26 +256,14 @@ RETURNS buds (
         FROM $page as a 
             JOIN AtomMetric as b ON b.atom=a.id;
 
-    IF budType=BudType.prop { 
-        INTO buds SELECT a.id, d.id as bud
-            , d.name as phrase
-            , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
-            FROM meds as a 
-                JOIN IxPropValue as b ON b.ix=a.id
-                JOIN SitePhrase as c ON c.id=b.xi
-                JOIN $Phrase as d ON d.id=c.phrase
-            WHERE LOCATE(d.name, names)>0;
-    }
-    ELSEIF budType=BudType.assign {
-        INTO buds SELECT a.id, d.id as bud
-            , d.name as phrase
-            , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
-            FROM meds as a 
-                JOIN IxAssignValue as b ON b.ix=a.id
-                JOIN SitePhrase as c ON c.id=b.xi
-                JOIN $Phrase as d ON d.id=c.phrase
-            WHERE LOCATE(d.name, names)>0;
-    }
+    INTO buds SELECT a.id, d.id as bud
+        , d.name as phrase
+        , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
+        FROM meds as a 
+            JOIN IxBudValue as b ON b.i=a.id
+            -- JOIN SitePhrase as c ON c.id=b.xi
+            JOIN $Phrase as d ON d.id=b.x -- c.phrase
+        WHERE LOCATE(d.name, names)>0;
 };
 
 Biz Query GetPendSheet (
@@ -354,7 +272,7 @@ Biz Query GetPendSheet (
 PAGE (
     * SHEET ASC,
 ) {
-    VAR startId ID = PhraseId(concat(sheet, '.$start'));
+    VAR startId ID = SitePhraseId(concat(sheet, '.$start'));
     PAGE SELECT * b
         FROM IxStateSheet as a
             JOIN Sheet as b ON b.id=a.xi
@@ -371,7 +289,7 @@ PAGE (
 
 Biz Query GetSheet (
     id ID,
-    assigns CHAR(200),  -- \t separated phrases of the assigns
+    buds CHAR(200),  -- \t separated phrases of the assigns
 )
 RETURNS main (
     * SHEET,
@@ -388,9 +306,9 @@ RETURNS origins (
     * Detail,
     done VALUE,
 )
-RETURNS assigns (
+RETURNS buds (
     id ID,              -- detail id
-    assign ID,
+    bud ID,
     phrase Phrase,
     int BigINT,
     dec VALUE,
@@ -400,7 +318,7 @@ RETURNS assigns (
         WHERE a.id=id;
     INTO details SELECT * a
         , IFNULL(b.value, 0) as done, c.pendFrom, d.value as pendValue
-        , PHRASE(e.base) as sheet, e.no
+        , PhraseOfSiteId(e.base) as sheet, e.no
         FROM Detail as a
             LEFT JOIN Done as b ON b.id=a.id
             LEFT JOIN DetailPend as c ON c.id=a.id
@@ -411,13 +329,13 @@ RETURNS assigns (
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN DETAIL as b ON b.id=a.origin
             LEFT JOIN Done as c ON c.id=b.id;
-    INTO assigns SELECT a.id, b.xi as assign, d.name as phrase, b.int, b.dec
+    INTO buds SELECT a.id, b.x as bud, d.name as phrase, b.int, b.dec
         FROM Detail as a
-            JOIN IxAssignValue as b ON b.ix=a.id
-            JOIN SitePhrase as c ON c.id=b.xi
-            JOIN $Phrase as d ON d.id=c.phrase
+            JOIN IxBudValue as b ON b.i=a.id
+            -- JOIN SitePhrase as c ON c.id=b.xi
+            JOIN $Phrase as d ON d.id=b.x -- c.phrase
         WHERE a.base=id 
-            AND (assigns IS NULL OR LOCATE(d.name, assigns)>0);
+            AND (buds IS NULL OR LOCATE(d.name, buds)>0);
 };
 
 Biz Query GetAtom (
@@ -434,15 +352,17 @@ RETURNS buds (
     phrase CHAR(50),
     value CHAR(200),
 ) {
-    INTO main SELECT a.id, PHRASE(a.base) as phrase, a.no, a.ex
+    INTO main SELECT a.id, PhraseOfSiteId(a.base) as phrase, a.no, a.ex
         FROM Atom as a
         WHERE a.id=id;
 
-    INTO buds SELECT a.xi as bud
-        , c.name as phrase
+    INTO buds SELECT a.x as bud
+        , e.name as phrase
         , IFNULL(a.dec, IFNULL(a.int, a.str)) as value
-        FROM IxPropValue as a
-            JOIN SitePhrase as b ON b.id=a.xi
-            JOIN $Phrase as c ON c.id=b.phrase
-        WHERE a.ix=id;
+        FROM IxBudValue as a
+            JOIN Atom as b ON b.id=a.i
+            JOIN SitePhrase as c ON c.id=b.base
+            JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
+            JOIN $Phrase as e ON e.id=a.x
+        WHERE a.i=id and d.type=EnumBizType.prop;
 };

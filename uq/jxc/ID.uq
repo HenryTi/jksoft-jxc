@@ -87,3 +87,13 @@ IDX Temp (
     id,
     value BIGINT,
 );
+
+ENUM EnumBizType (
+    atom = 1,
+    sheet = 2,
+    key = 11,
+    prop = 12,
+    assign = 13,
+    permit = 14,
+    with = 15,
+);

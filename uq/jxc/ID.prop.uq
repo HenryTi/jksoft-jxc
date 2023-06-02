@@ -1,9 +1,42 @@
--- 实现排序和分组
+-- 实现IX排序和分组
 IDX Seq (
     id,
     seq TEXT,               -- id序列，tab分隔，ln分行。排序和分组
 );
 
+IX *IxBud (
+    i,
+    x,
+);
+
+IX IxBudValue (
+    i,
+    x,
+    int INT,
+    dec DEC(20,6),
+    str CHAR(100),
+);
+/*
+IX IxBudDec (
+    i,
+    x,
+    value DEC(20,6),
+);
+
+IX IxBudStr (
+    i,
+    x,
+    value CHAR(100),
+);
+*/
+-- 从id基于phrase分裂生长的id。比如特定权限id。仅限经理可以见的客户。ID(unit@permit.经理)/contact
+-- IxBud可以表达权限。i=id的权限bud，
+ID Bud (
+    id,
+    base ID,            -- 任何的id，包含unit
+    phrase ID,          -- 任意定义的phrase，无unit
+);
+/*
 -- ix=IDType，特定ID有多少属性
 -- ix=Prop，特定属性，有多少可选项
 -- ix=ID value, 可选项有否
@@ -35,7 +68,7 @@ IX IxAssignValue (
     dec VALUE,
     str CHAR(100),
 );
-
+*/
 ID UserSite (
     id,
     KEY user ID,
@@ -112,3 +145,78 @@ ID Formula (
     KEY to ID,              -- to subject
     radio VALUE,            -- 换算率
 );
+
+FUNC SitePhraseId ver 0.1 (
+    phrase CHAR(100)
+) 
+RETURNS ID {
+    VAR phraseId ID;
+    SET phraseId = (SELECT id FROM $phrase WHERE name=phrase);
+    VAR SitePhrase ID = ID(SitePhrase New KEY site=$site, phrase=phraseId);
+    return SitePhrase;
+};
+
+FUNC PhraseOfSiteId ver 0.1 (
+    phraseId ID
+) 
+RETURNS CHAR(200) {
+    VAR phrase CHAR(200) = (SELECT a.name 
+        FROM $Phrase as a 
+            JOIN SitePhrase as b ON b.phrase=a.id AND b.site=$site 
+        WHERE b.id=phraseId
+    );
+    return phrase;
+};
+
+FUNC PhraseId ver 0.1 (
+    phrase CHAR(100)
+) 
+RETURNS ID {
+    VAR phraseId ID;
+    SET phraseId = (SELECT id FROM $phrase WHERE name=phrase);
+    return phraseId;
+};
+
+FUNC PhraseOfId ver 0.1 (
+    phraseId ID
+) 
+RETURNS CHAR(200) {
+    VAR phrase CHAR(200) = (SELECT a.name 
+        FROM $Phrase as a 
+        WHERE a.id=phraseId
+    );
+    return phrase;
+};
+
+FUNC SheetPhrase (
+    sheetId ID,
+)
+RETURNS CHAR(200) {
+    VAR phrase CHAR(200) = (SELECT c.name 
+        FROM Sheet as a
+            JOIN SitePhrase as b ON b.id=a.base
+            JOIN $Phrase as c ON c.id=b.phrase
+        WHERE a.id=sheetId
+    );
+    return phrase;
+};
+
+FUNC AtomPhrase (
+    atomId ID,
+)
+RETURNS CHAR(200) {
+    VAR phrase CHAR(200) = (SELECT c.name 
+        FROM Atom as a
+            JOIN SitePhrase as b ON b.id=a.base
+            JOIN $Phrase as c ON c.id=b.phrase
+        WHERE a.id=atomId
+    );
+    return phrase;
+};
+
+FUNC Me()
+RETURNS ID {
+    VAR me ID = ID(UserSite New KEY user=$user, site=$site);
+    return me; -- $user site
+};
+

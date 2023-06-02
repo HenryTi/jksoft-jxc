@@ -1,6 +1,6 @@
-//=== UqApp builder created on Sun May 28 2023 19:21:16 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Fri Jun 02 2023 09:19:10 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
+import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 
@@ -27,6 +27,7 @@ export enum EnumID {
 	MetricItem = 'metricitem',
 	AtomMetric = 'atommetric',
 	AtomMetricSpec = 'atommetricspec',
+	Bud = 'bud',
 	UserSite = 'usersite',
 	SitePhrase = 'sitephrase',
 	BindPhraseTo = 'bindphraseto',
@@ -48,6 +49,8 @@ export interface $phrase extends ID {
 	caption: string;
 	base: number;
 	valid: number;
+	owner: number;
+	type: number;
 }
 
 export interface $phraseInActs extends ID {
@@ -56,6 +59,12 @@ export interface $phraseInActs extends ID {
 	caption: string;
 	base: number;
 	valid: number;
+	owner: number;
+	type: number;
+}
+
+export interface $ixphrase extends IX {
+	type: number;
 }
 
 export interface Param$role_My {
@@ -193,7 +202,6 @@ export interface ResultSaveAtom {
 
 export interface ParamSaveBud {
 	phrase: string;
-	budType: any;
 	id: number;
 	int: number;
 	dec: number;
@@ -281,22 +289,21 @@ export interface ResultSearchAtom {
 	$page: ReturnSearchAtom$page[];
 }
 
-export enum BudType {
-	prop = 1,
-	assign = 2
-}
-
 export interface ParamSearchAtomBuds {
 	phrase: string;
 	key: string;
 	names: string;
-	budType: any;
 }
 export interface ReturnSearchAtomBuds$page {
 	id: number;
 	no: string;
 	ex: string;
 	phrase: string;
+}
+export interface ReturnSearchAtomBudsMeds {
+	id: number;
+	main: number;
+	detail: number;
 }
 export interface ReturnSearchAtomBudsBuds {
 	id: number;
@@ -306,6 +313,7 @@ export interface ReturnSearchAtomBudsBuds {
 }
 export interface ResultSearchAtomBuds {
 	$page: ReturnSearchAtomBuds$page[];
+	meds: ReturnSearchAtomBudsMeds[];
 	buds: ReturnSearchAtomBudsBuds[];
 }
 
@@ -313,7 +321,6 @@ export interface ParamSearchAtomMetricBuds {
 	phrase: string;
 	key: string;
 	names: string;
-	budType: any;
 }
 export interface ReturnSearchAtomMetricBuds$page {
 	id: number;
@@ -355,7 +362,7 @@ export interface ResultGetPendSheet {
 
 export interface ParamGetSheet {
 	id: number;
-	assigns: string;
+	buds: string;
 }
 export interface ReturnGetSheetMain {
 	id: number;
@@ -393,9 +400,9 @@ export interface ReturnGetSheetOrigins {
 	v3: number;
 	done: number;
 }
-export interface ReturnGetSheetAssigns {
+export interface ReturnGetSheetBuds {
 	id: number;
-	assign: number;
+	bud: number;
 	phrase: string;
 	int: number;
 	dec: number;
@@ -404,7 +411,7 @@ export interface ResultGetSheet {
 	main: ReturnGetSheetMain[];
 	details: ReturnGetSheetDetails[];
 	origins: ReturnGetSheetOrigins[];
-	assigns: ReturnGetSheetAssigns[];
+	buds: ReturnGetSheetBuds[];
 }
 
 export interface ParamGetAtom {
@@ -700,7 +707,20 @@ export interface ResultGetPendDetailFromSheetId {
 	ret: ReturnGetPendDetailFromSheetIdRet[];
 }
 
-export interface IxProp extends IX {
+export interface IxBud extends IX {
+	i: number;
+	x: number;
+}
+
+export interface Bud extends ID {
+	base: number;
+	phrase: number;
+}
+
+export interface BudInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	phrase: number | ID;
 }
 
 export interface UserSite extends ID {
@@ -888,6 +908,16 @@ export interface TreeInActs extends ID {
 	ex: string;
 }
 
+export enum EnumBizType {
+	atom = 1,
+	sheet = 2,
+	key = 11,
+	prop = 12,
+	assign = 13,
+	permit = 14,
+	with = 15
+}
+
 export interface ParamReportStorage {
 	key: string;
 	subject: string;
@@ -947,11 +977,13 @@ export interface ResultHistoryStorage {
 
 export interface ParamActs {
 	$phrase?: $phraseInActs[];
+	$ixphrase?: $ixphrase[];
 	metric?: MetricInActs[];
 	metricItem?: MetricItemInActs[];
 	atomMetric?: AtomMetricInActs[];
 	atomMetricSpec?: AtomMetricSpecInActs[];
-	ixProp?: IxProp[];
+	ixBud?: IxBud[];
+	bud?: BudInActs[];
 	userSite?: UserSiteInActs[];
 	sitePhrase?: SitePhraseInActs[];
 	bindPhraseTo?: BindPhraseToInActs[];
@@ -975,6 +1007,7 @@ export interface UqExt extends Uq {
     Role: { [key: string]: string[] };
 
 	$phrase: UqID<any>;
+	$ixphrase: UqIX<any>;
 	$role_My: UqQuery<Param$role_My, Result$role_My>;
 	$role_Unit_Users: UqQuery<Param$role_Unit_Users, Result$role_Unit_Users>;
 	$role_Unit_Add_Admin: UqAction<Param$role_Unit_Add_Admin, Result$role_Unit_Add_Admin>;
@@ -1014,7 +1047,8 @@ export interface UqExt extends Uq {
 	GetPendSheetFromTarget: UqQuery<ParamGetPendSheetFromTarget, ResultGetPendSheetFromTarget>;
 	GetPendDetailFromItem: UqQuery<ParamGetPendDetailFromItem, ResultGetPendDetailFromItem>;
 	GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
-	IxProp: UqIX<any>;
+	IxBud: UqIX<any>;
+	Bud: UqID<any>;
 	UserSite: UqID<any>;
 	SitePhrase: UqID<any>;
 	BindPhraseTo: UqID<any>;
@@ -1059,11 +1093,33 @@ export const uqSchema={
             {
                 "name": "valid",
                 "type": "tinyint"
+            },
+            {
+                "name": "owner",
+                "type": "bigint"
+            },
+            {
+                "name": "type",
+                "type": "tinyint"
             }
         ],
         "keys": [] as any,
         "global": false,
         "isMinute": false
+    },
+    "$ixphrase": {
+        "name": "$ixphrase",
+        "type": "ix",
+        "private": false,
+        "fields": [
+            {
+                "name": "type",
+                "type": "tinyint",
+                "null": false
+            }
+        ],
+        "ixx": false,
+        "hasSort": false
     },
     "$role_my": {
         "name": "$role_my",
@@ -1431,10 +1487,6 @@ export const uqSchema={
                 "size": 200
             },
             {
-                "name": "budType",
-                "type": "enum"
-            },
-            {
                 "name": "id",
                 "type": "id"
             },
@@ -1701,16 +1753,6 @@ export const uqSchema={
             }
         ]
     },
-    "budtype": {
-        "name": "BudType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "prop": 1,
-            "assign": 2
-        }
-    },
     "searchatombuds": {
         "name": "SearchAtomBuds",
         "type": "query",
@@ -1731,10 +1773,6 @@ export const uqSchema={
                 "name": "names",
                 "type": "char",
                 "size": 300
-            },
-            {
-                "name": "budType",
-                "type": "enum"
             }
         ],
         "returns": [
@@ -1762,6 +1800,23 @@ export const uqSchema={
                     }
                 ],
                 "order": "desc"
+            },
+            {
+                "name": "meds",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "main",
+                        "type": "id"
+                    },
+                    {
+                        "name": "detail",
+                        "type": "id"
+                    }
+                ]
             },
             {
                 "name": "buds",
@@ -1808,10 +1863,6 @@ export const uqSchema={
                 "name": "names",
                 "type": "char",
                 "size": 300
-            },
-            {
-                "name": "budType",
-                "type": "enum"
             }
         ],
         "returns": [
@@ -1942,7 +1993,7 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "assigns",
+                "name": "buds",
                 "type": "char",
                 "size": 200
             }
@@ -2114,14 +2165,14 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "assigns",
+                "name": "buds",
                 "fields": [
                     {
                         "name": "id",
                         "type": "id"
                     },
                     {
-                        "name": "assign",
+                        "name": "bud",
                         "type": "id"
                     },
                     {
@@ -3095,24 +3146,49 @@ export const uqSchema={
             }
         ]
     },
-    "ixprop": {
-        "name": "IxProp",
+    "ixbud": {
+        "name": "IxBud",
         "type": "ix",
         "private": false,
         "sys": true,
         "fields": [
             {
-                "name": "ix",
+                "name": "i",
                 "type": "id"
             },
             {
-                "name": "xi",
+                "name": "x",
                 "type": "id"
             }
         ],
         "ixx": false,
         "hasSort": false,
         "xiType": 0
+    },
+    "bud": {
+        "name": "Bud",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "phrase",
+                "type": "id"
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": false
     },
     "usersite": {
         "name": "UserSite",
@@ -3643,6 +3719,21 @@ export const uqSchema={
         "idType": 3,
         "isMinute": false
     },
+    "enumbiztype": {
+        "name": "EnumBizType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "atom": 1,
+            "sheet": 2,
+            "key": 11,
+            "prop": 12,
+            "assign": 13,
+            "permit": 14,
+            "with": 15
+        }
+    },
     "reportstorage": {
         "name": "ReportStorage",
         "type": "query",
@@ -3838,22 +3929,22 @@ export const uqSchema={
             "props": [
                 {
                     "name": "a",
-                    "type": "int"
+                    "type": "prop"
                 },
                 {
                     "name": "b",
-                    "type": "char",
+                    "type": "prop",
                     "value": 1
                 },
                 {
                     "name": "c",
-                    "type": "char"
+                    "type": "prop"
                 }
             ],
             "assigns": [
                 {
                     "name": "流水",
-                    "type": "char",
+                    "type": "assign",
                     "caption": "下一步",
                     "value": "s2"
                 }
@@ -3866,12 +3957,12 @@ export const uqSchema={
             "props": [
                 {
                     "name": "a",
-                    "type": "int",
+                    "type": "prop",
                     "caption": "联系人"
                 },
                 {
                     "name": "b",
-                    "type": "radio",
+                    "type": "prop",
                     "caption": "类型",
                     "items": [
                         [
@@ -3893,7 +3984,7 @@ export const uqSchema={
                 },
                 {
                     "name": "c",
-                    "type": "radio",
+                    "type": "prop",
                     "caption": "可信度",
                     "items": [
                         [
@@ -3915,7 +4006,7 @@ export const uqSchema={
                 },
                 {
                     "name": "d",
-                    "type": "check",
+                    "type": "prop",
                     "caption": "产品种类",
                     "items": [
                         [
@@ -3963,14 +4054,14 @@ export const uqSchema={
             "props": [
                 {
                     "name": "厂家",
-                    "type": "ID",
+                    "type": "prop",
                     "atom": "contact"
                 }
             ],
             "assigns": [
                 {
                     "name": "retailprice",
-                    "type": "dec",
+                    "type": "assign",
                     "caption": "零售价"
                 }
             ],
@@ -3990,13 +4081,13 @@ export const uqSchema={
             "props": [
                 {
                     "name": "效期",
-                    "type": "date"
+                    "type": "prop"
                 }
             ],
             "keys": [
                 {
                     "name": "no",
-                    "type": "char",
+                    "type": "key",
                     "caption": "批次"
                 }
             ]
@@ -4008,12 +4099,12 @@ export const uqSchema={
             "keys": [
                 {
                     "name": "no",
-                    "type": "char",
+                    "type": "key",
                     "caption": "批次"
                 },
                 {
                     "name": "效期",
-                    "type": "date"
+                    "type": "key"
                 }
             ]
         },
@@ -4024,7 +4115,7 @@ export const uqSchema={
             "props": [
                 {
                     "name": "specification",
-                    "type": "char",
+                    "type": "prop",
                     "caption": "规格"
                 }
             ],
@@ -4039,7 +4130,7 @@ export const uqSchema={
             "props": [
                 {
                     "name": "approvalchin",
-                    "type": "char",
+                    "type": "prop",
                     "caption": "中药批号"
                 }
             ],
@@ -4052,7 +4143,7 @@ export const uqSchema={
             "props": [
                 {
                     "name": "approvalchin",
-                    "type": "char",
+                    "type": "prop",
                     "caption": "中药批号"
                 }
             ],
@@ -4073,12 +4164,12 @@ export const uqSchema={
             "keys": [
                 {
                     "name": "size",
-                    "type": "char",
+                    "type": "key",
                     "caption": "尺码"
                 },
                 {
                     "name": "color",
-                    "type": "char",
+                    "type": "key",
                     "caption": "颜色"
                 }
             ]
@@ -4101,28 +4192,28 @@ export const uqSchema={
             "props": [
                 {
                     "name": "director",
-                    "type": "int"
+                    "type": "prop"
                 },
                 {
                     "name": "senior",
-                    "type": "int"
+                    "type": "prop"
                 },
                 {
                     "name": "junior",
-                    "type": "int"
+                    "type": "prop"
                 }
             ]
         },
-        "销售员": {
-            "name": "销售员",
+        "销售": {
+            "name": "销售",
             "type": "permit"
         },
-        "入库员": {
-            "name": "入库员",
+        "入库": {
+            "name": "入库",
             "type": "permit"
         },
-        "检验员": {
-            "name": "检验员",
+        "检验": {
+            "name": "检验",
             "type": "permit"
         },
         "经理": {
@@ -4139,18 +4230,18 @@ export const uqSchema={
             "props": [
                 {
                     "name": "name",
-                    "type": "char",
+                    "type": "prop",
                     "caption": "单位名称"
                 },
                 {
                     "name": "库存上限",
-                    "type": "dec"
+                    "type": "prop"
                 }
             ],
             "assigns": [
                 {
                     "name": "库存下限",
-                    "type": "dec"
+                    "type": "assign"
                 }
             ]
         },
@@ -4160,18 +4251,18 @@ export const uqSchema={
             "props": [
                 {
                     "name": "name",
-                    "type": "char",
+                    "type": "prop",
                     "caption": "名字"
                 },
                 {
                     "name": "工时上限",
-                    "type": "int"
+                    "type": "prop"
                 }
             ],
             "assigns": [
                 {
                     "name": "工时下限",
-                    "type": "int"
+                    "type": "assign"
                 }
             ]
         },
@@ -4181,24 +4272,9 @@ export const uqSchema={
             "assigns": [
                 {
                     "name": "retail",
-                    "type": "dec"
+                    "type": "assign"
                 }
             ]
-        },
-        "mainsale": {
-            "name": "mainsale",
-            "type": "main",
-            "props": [
-                {
-                    "name": "a",
-                    "type": "int"
-                }
-            ]
-        },
-        "detailsale": {
-            "name": "detailsale",
-            "type": "detail",
-            "main": "mainsale"
         },
         "detailcheck": {
             "name": "detailcheck",
@@ -4238,21 +4314,21 @@ export const uqSchema={
                     "props": [
                         {
                             "name": "a",
-                            "type": "int"
+                            "type": "prop"
                         },
                         {
                             "name": "b",
-                            "type": "dec"
+                            "type": "prop"
                         },
                         {
                             "name": "c",
-                            "type": "char"
+                            "type": "prop"
                         }
                     ],
                     "assigns": [
                         {
                             "name": "done",
-                            "type": "dec"
+                            "type": "assign"
                         }
                     ]
                 }
@@ -4338,17 +4414,17 @@ export const uqSchema={
             "props": [
                 {
                     "name": "a",
-                    "type": "int",
+                    "type": "prop",
                     "caption": "显示a"
                 },
                 {
                     "name": "b",
-                    "type": "int",
+                    "type": "prop",
                     "caption": "显示b"
                 },
                 {
                     "name": "c",
-                    "type": "radio",
+                    "type": "prop",
                     "caption": "类型",
                     "items": [
                         [
@@ -4372,7 +4448,7 @@ export const uqSchema={
             "assigns": [
                 {
                     "name": "流水",
-                    "type": "char",
+                    "type": "assign",
                     "caption": "下一步",
                     "value": "s2"
                 }
@@ -4383,11 +4459,11 @@ export const uqSchema={
                     "props": [
                         {
                             "name": "a",
-                            "type": "int"
+                            "type": "prop"
                         },
                         {
                             "name": "b",
-                            "type": "int"
+                            "type": "prop"
                         }
                     ]
                 }
@@ -4406,7 +4482,7 @@ export const uqSchema={
                     "assigns": [
                         {
                             "name": "next",
-                            "type": "char",
+                            "type": "assign",
                             "caption": "下一步",
                             "value": "s2"
                         }
@@ -4484,7 +4560,7 @@ export const uqSchema={
             "name": "sheetstorein",
             "type": "sheet",
             "caption": "入库单",
-            "main": "mainpurchase",
+            "main": "mainstorein",
             "acts": [
                 {
                     "name": "$",
@@ -4498,13 +4574,64 @@ export const uqSchema={
             "name": "sheetstoreinmultistorage",
             "type": "sheet",
             "caption": "入库单-分仓",
-            "main": "mainpurchase",
+            "main": "mainstorein",
             "acts": [
                 {
                     "name": "$",
                     "type": "detailAct",
                     "fromPend": "pendstorein",
                     "detail": "detailstorein"
+                }
+            ]
+        },
+        "mainsale": {
+            "name": "mainsale",
+            "type": "main"
+        },
+        "sheetsale": {
+            "name": "sheetsale",
+            "type": "sheet",
+            "caption": "销售单",
+            "main": "mainsale",
+            "acts": [
+                {
+                    "name": "$",
+                    "type": "detailAct",
+                    "detail": "detailsale"
+                }
+            ]
+        },
+        "detailsale": {
+            "name": "detailsale",
+            "type": "detail",
+            "main": "mainsale"
+        },
+        "mainstoreout": {
+            "name": "mainstoreout",
+            "type": "main"
+        },
+        "detailstoreout": {
+            "name": "detailstoreout",
+            "type": "detail",
+            "main": "mainstoreout"
+        },
+        "pendstoreout": {
+            "name": "pendstoreout",
+            "type": "pend",
+            "caption": "待出库",
+            "detail": "detailstorein"
+        },
+        "sheetstoreout": {
+            "name": "sheetstoreout",
+            "type": "sheet",
+            "caption": "出库单",
+            "main": "mainstoreout",
+            "acts": [
+                {
+                    "name": "$",
+                    "type": "detailAct",
+                    "fromPend": "pendstoreout",
+                    "detail": "detailstoreout"
                 }
             ]
         },
@@ -4519,7 +4646,7 @@ export const uqSchema={
             "assigns": [
                 {
                     "name": "流水",
-                    "type": "char",
+                    "type": "assign",
                     "caption": "下一步",
                     "value": "s2"
                 }

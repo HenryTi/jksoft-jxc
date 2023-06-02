@@ -54,7 +54,7 @@ Biz Atom MedicalDevice '医疗器械' extends Goods {
     Metric count;
 };
 
-Biz Spec SpecShoe ver 1.6 '型号' {
+Biz Spec SpecShoe ver 1.7 '型号' {
     KEY size '尺码' CHAR;              -- size id 尺码
     KEY color '颜色' CHAR;             -- color id 花色
 }

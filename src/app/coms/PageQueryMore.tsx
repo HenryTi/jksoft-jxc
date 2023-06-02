@@ -250,6 +250,13 @@ async function buildValueParam(param: any) {
 }
 
 function shallowEqual(object1: any, object2: any): boolean {
+    if (object1 === undefined) {
+        if (object2 === undefined) return true;
+        else return false;
+    }
+    else if (object2 === undefined) {
+        return false;
+    }
     const keys1 = Object.keys(object1);
     const keys2 = Object.keys(object2);
 

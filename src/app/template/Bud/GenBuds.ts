@@ -67,7 +67,6 @@ export abstract class GenBudsSearch extends Gen {
         let { entity, opBuds, bizBuds } = this.genBuds;
         const searchParam = {
             phrase: this.entityAtom,
-            budType: opBuds.budType,
             names: bizBuds?.map(v => v.phrase).join('\t'),
             ...param
         }
@@ -108,13 +107,13 @@ export abstract class GenBudsSearch extends Gen {
         return rowMeds;
     }
 }
-/*
+
 export class GenAtomBudsSearch extends GenBudsSearch {
     protected SearchEntityBuds(param: any, pageStart: any, pageSize: number): Promise<{ $page: any[]; meds: any[]; buds: any[] }> {
         return this.uq.SearchAtomBuds.page(param, pageStart, pageSize);
     }
 }
-*/
+
 export class GenAMSBudsSearch extends GenBudsSearch {
     protected async SearchEntityBuds(param: any, pageStart: any, pageSize: number): Promise<{ $page: any[]; meds: any[]; buds: any[] }> {
         let ret = await this.uq.SearchAtomMetricBuds.page(param, pageStart, pageSize);

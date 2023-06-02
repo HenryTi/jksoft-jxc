@@ -12,13 +12,7 @@ export interface PropsSpecEdit<T extends Spec> {
 }
 
 export abstract class GenSpec extends GenBizEntity<EntitySpec> {
-    // readonly bizEntityType = 'spec';
-    /*
-    get entity(): EntitySpec { 
-        //return this.biz.specs[this.bizEntityName]; 
-        return this.biz.entities[this.bizEntityName] as EntitySpec;
-    }
-    */
+    readonly bizEntityType = 'spec';
     Edit({ className }: PropsSpecEdit<any>): JSX.Element {
         return <div className={className}>
             Edit

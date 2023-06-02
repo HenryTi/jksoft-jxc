@@ -9,12 +9,15 @@ import { routeSheetPurchase } from "./Purchase";
 import { routeSheetStoreIn } from "./StoreIn";
 import { IDView } from "tonwa-app";
 import { ViewItemID } from "app/template";
-
+import { GenSaleAct, routeSheetSale } from "./Sale";
+import { GenStoreOutAct, routeSheetStoreOut } from "./StoreOut";
 
 const GenArr: (new (uqApp: UqApp) => GenSheetAct)[] = [
     GenPurchaseAct,
     GenStoreInAct,
     GenStoreInMultiStorageAct,
+    GenSaleAct,
+    GenStoreOutAct,
 ];
 
 function PageCenter() {
@@ -87,5 +90,7 @@ export function routeSheet(uqApp: UqApp) {
         <Route path={pathSheetCenter} element={<PageCenter />} />
         {routeSheetPurchase(uqApp)}
         {routeSheetStoreIn(uqApp)}
+        {routeSheetSale(uqApp)}
+        {routeSheetStoreOut(uqApp)}
     </>;
 }

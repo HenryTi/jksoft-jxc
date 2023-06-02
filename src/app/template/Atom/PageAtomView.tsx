@@ -19,7 +19,7 @@ export function PageAtomView({ Gen }: GenProps<GenAtom>) {
     const { id: idString } = useParams();
     const id = Number(idString);
     const { UqDefault } = uqApp.uqs;
-    const { data: { main, props, bizAtom } } = useQuery('PageProductView', async () => {
+    const { data: { main, props, entityAtom } } = useQuery('PageProductView', async () => {
         if (idString === undefined) {
             return { main: {} as any, props: {} as any };
         }
@@ -29,8 +29,8 @@ export function PageAtomView({ Gen }: GenProps<GenAtom>) {
             props[bud.phrase] = bud;
         }
         let { phrase } = main;
-        let bizAtom: EntityAtom = gen.getEntityAtom(phrase);
-        return { main, props, bizAtom }
+        let entityAtom = gen.getEntityAtom(phrase);
+        return { main, props, entityAtom }
     }, {
         refetchOnWindowFocus: false,
         cacheTime: 0,
@@ -39,7 +39,8 @@ export function PageAtomView({ Gen }: GenProps<GenAtom>) {
     if (metric !== undefined) {
         viewMetric = <ViewMetric id={id} metric={metric} className="mt-3" />;
     }
-    return <Page header={bizAtom.caption}>
+    let { caption, props: atomProps } = entityAtom;
+    return <Page header={caption}>
         {
             viewRows.map((v, index) => <React.Fragment key={index}>
                 <ViewPropMain key={index} {...v} id={id} gen={gen} value={main[v.name]} />
@@ -47,7 +48,7 @@ export function PageAtomView({ Gen }: GenProps<GenAtom>) {
             </React.Fragment>)
         }
         {
-            Array.from(bizAtom.props, ([, v]) => {
+            atomProps.map(v => {
                 let { name, phrase, caption } = v;
                 let prop = props[phrase];
                 return <React.Fragment key={name}>

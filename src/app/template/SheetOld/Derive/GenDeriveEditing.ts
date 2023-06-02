@@ -34,7 +34,7 @@ export class GenEditingDerive extends GenEditingOld {
 
     async load(sheetId: number) {
         let { uq } = this.gen;
-        let { main: [sheet], details } = await uq.GetSheet.query({ id: sheetId, assigns: undefined });
+        let { main: [sheet], details } = await uq.GetSheet.query({ id: sheetId, buds: undefined });
         setAtomValue(this.atomSheet, sheet);
         const groupColl: { [origin: number]: { sheet: Sheet; details: DetailDone[]; } } = {};
         let rows: { sheet: Sheet, details: DetailDone[] }[] = [];
@@ -58,8 +58,8 @@ export class GenEditingDerive extends GenEditingOld {
 
     async loadOrigin(origin: number) {
         let { uq, uqApp } = this.gen;
-        const assigns = ['done'];
-        let { main: [sheet], details } = await uq.GetSheet.query({ id: origin, assigns: assigns.join('\t') });
+        const buds = ['done'];
+        let { main: [sheet], details } = await uq.GetSheet.query({ id: origin, buds: buds.join('\t') });
         let sheetDerive: Sheet = getAtomValue(this.atomSheet);
         if (sheetDerive === undefined) {
             // let user = getAtomValue(uqApp.user);

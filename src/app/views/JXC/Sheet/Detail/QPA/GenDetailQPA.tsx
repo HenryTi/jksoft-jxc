@@ -9,7 +9,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { useUqApp } from "app/UqApp";
 import { FA } from "tonwa-com";
 import { useAtomValue } from "jotai";
-import { GenGoods, selectGoodsMetricSpec as selectGoodsMetricSpec } from "app/views/JXC/Atom";
+import { GenGoods, selectGoodsMetricSpec } from "app/views/JXC/Atom";
 import { GenDetailGoods } from "../GenDetailGoods";
 import { ViewAMSAtom, ViewAMSAtomSpec, ViewAMSMetric, ViewAMSSpec } from "../../ViewAMS";
 
@@ -43,12 +43,13 @@ export abstract class GenDetailQPA extends GenDetailGoods {
     }
 
     protected override async selectAtomSpecMetric(header?: string): Promise<AtomMetricSpec> {
-        let ret = await selectGoodsMetricSpec(this.uqApp, this.genAtomSpec);
+        let ret = await selectGoodsMetricSpec(this.genAtomSpec);
         return ret;
     }
 
     readonly addRow = async (genEditing: GenEditing): Promise<SheetRow[]> => {
         let atomMetricSpec = await this.selectAtomSpecMetric();
+        if (atomMetricSpec === undefined) return;
         let item = await genEditing.saveAtomMetricSpec(atomMetricSpec);
         let editingRow = this.editingRowFromAtom(item/*atomMetricSpec*/);
         if (editingRow === undefined) return;

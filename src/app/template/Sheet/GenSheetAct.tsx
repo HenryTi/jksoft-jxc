@@ -66,7 +66,7 @@ export abstract class GenSheetAct extends Gen {
     }
 
     protected async loadSheet(sheetId: number): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
-        let { main: [sheet], details, origins, assigns } = await this.uq.GetSheet.query({ id: sheetId, assigns: undefined });
+        let { main: [sheet], details, origins, buds } = await this.uq.GetSheet.query({ id: sheetId, buds: undefined });
         let originColl: { [id: number]: Detail & { done: number; } } = {};
         for (let origin of origins) {
             let { id } = origin;

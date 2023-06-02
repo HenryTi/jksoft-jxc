@@ -1,8 +1,8 @@
 import { FormInput, FormRow } from "app/coms";
 import { Gen, GenBizEntity, QueryMore } from "app/tool";
 import { UqApp } from "app/UqApp";
-import { UqID, UqQuery } from "tonwa-uq";
-import { Atom, BudType } from "uqs/UqDefault";
+import { UqID } from "tonwa-uq";
+import { Atom } from "uqs/UqDefault";
 import { BizBud, EntityAtom } from "app/Biz";
 import { uqAppModal } from "tonwa-app";
 import { PageAtomSelectType } from "./PageAtomSelectType";
@@ -21,7 +21,7 @@ export interface ViewPropProps extends ViewPropRowProps {
 }
 
 export abstract class GenAtom extends GenBizEntity<EntityAtom> {
-    // readonly bizEntityType = 'atom';
+    readonly bizEntityType = 'atom';
     readonly Atom: UqID<any>;
     readonly genAtomNew: GenAtomNew;
     readonly genAtomEdit: GenAtomEdit;
@@ -99,7 +99,6 @@ export abstract class GenAtom extends GenBizEntity<EntityAtom> {
         await this.uq.SaveBud.submit({
             id,
             phrase: bizBud.phrase,
-            budType: BudType.prop,
             int, dec, str
         });
     }

@@ -1,3 +1,4 @@
+/*
 Biz Main MainSale {
     Prop a INT;
 };
@@ -5,7 +6,7 @@ Biz Main MainSale {
 Biz Detail DetailSale {
     Main MainSale;
 };
-
+*/
 Biz Detail DetailCheck {
     Main MainSale;
 };

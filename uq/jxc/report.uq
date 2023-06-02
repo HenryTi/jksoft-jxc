@@ -7,7 +7,7 @@ PAGE (
     value VALUE,
     init VALUE,
 ) {
-    VAR phraseId ID = PhraseId(subject);
+    VAR phraseId ID = SitePhraseId(subject);
     PAGE SELECT b.obj, a.value, a.init
         FROM Balance as a
             JOIN Subject as b ON b.id=a.id
@@ -29,7 +29,7 @@ PAGE (
     value VALUE,
     init VALUE,
 ) {
-    VAR phraseId ID = PhraseId(subject);
+    VAR phraseId ID = SitePhraseId(subject);
     PAGE SELECT b.obj, a.value, a.init
         FROM Balance as a
             JOIN Subject as b ON b.id=a.id
@@ -51,7 +51,7 @@ PAGE (
     value VALUE,
     init VALUE,
 ) {
-    VAR phraseId ID = PhraseId(subject);
+    VAR phraseId ID = SitePhraseId(subject);
     PAGE SELECT b.obj, a.value, a.init
         FROM Balance as a
             JOIN Subject as b ON b.id=a.id
@@ -77,7 +77,7 @@ PAGE (
     sheetName CHAR(200),
     sheetCaption CHAR(100),
 ) {
-    VAR phraseId ID = PhraseId(subject);
+    VAR phraseId ID = SitePhraseId(subject);
     VAR subjectId ID = ID(Subject KEY base=phraseId, obj=objId);
     PAGE SELECT a.id, a.value, a.ref, c.no as sheetNo, e.name as sheetName, e.caption as sheetCaption
         FROM History as a

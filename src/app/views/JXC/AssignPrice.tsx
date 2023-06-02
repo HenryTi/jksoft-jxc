@@ -7,7 +7,7 @@ export const pathPrice = 'price';
 
 export function PagePrice() {
     return <PageAssign Gen={GenGoods} caption={'零售价设置'}
-        entity="Price" budNames={['Retail']} />
+        entitySetting="Price" budNames={['Retail']} />
     //genBuds={genBuds} genBudsSearch={genBudsSearch} />
 }
 

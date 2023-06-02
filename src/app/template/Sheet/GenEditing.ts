@@ -49,7 +49,7 @@ export class GenEditing {
 
     async load(id: number) {
         let { uq } = this.genSheetAct;
-        let { main: [sheet], details, origins, assigns } = await uq.GetSheet.query({ id, assigns: undefined });
+        let { main: [sheet], details, origins, buds } = await uq.GetSheet.query({ id, buds: undefined });
         let originColl: { [id: number]: Detail & { done: number; } } = {};
         for (let origin of origins) {
             let { id } = origin;

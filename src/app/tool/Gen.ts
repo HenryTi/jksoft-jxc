@@ -22,7 +22,7 @@ export interface GenProps<T extends Gen> {
 }
 
 export abstract class GenBizEntity<E extends Entity> extends Gen {
-    // abstract get bizEntityType(): string;
+    abstract get bizEntityType(): string;
     abstract get bizEntityName(): string;
     get entity(): E {
         let ret = this.biz.entities[this.bizEntityName] as E;

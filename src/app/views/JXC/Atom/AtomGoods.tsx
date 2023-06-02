@@ -6,7 +6,7 @@ import { UqApp, useUqApp } from "app/UqApp";
 import { GenAtomSpec, GenSpec } from "app/template";
 import { GenBatchValid, GenSpecShoe } from "./Spec";
 import { AtomMetricSpec } from "app/tool";
-import { selectAtomSpecMetric as selectAtomMetricSpec } from "app/template/AtomSpec/selectAtomSpecMetric";
+import { selectAtomMetricSpec } from "app/template/AtomSpec";
 
 const GenSpecArr: (new (uqApp: UqApp) => GenSpec)[] = [
     GenBatchValid,
@@ -52,8 +52,8 @@ export function ModalSelectGoods() {
     return <PageAtomSelect genAtom={genAtom} />;
 }
 
-export async function selectGoodsMetricSpec(uqApp: UqApp, genAtomSpec: GenAtomSpec): Promise<AtomMetricSpec> {
-    let ret = await selectAtomMetricSpec(uqApp, genAtomSpec);
+export async function selectGoodsMetricSpec(genAtomSpec: GenAtomSpec): Promise<AtomMetricSpec> {
+    let ret = await selectAtomMetricSpec(genAtomSpec);
     return ret;
 }
 

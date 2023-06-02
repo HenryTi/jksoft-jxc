@@ -38,6 +38,10 @@ export function ViewPropMain(props: ViewPropProps) {
     return <ViewProp {...props} saveProp={saveProp} />
 }
 
+interface BudValue {
+    pickValue: (props: PickProps) => Promise<string | number>;
+    ValueTemplate: (props: { value: any }) => JSX.Element;
+}
 export function ViewPropEx(veiwProps: ViewPropProps & { bizBud: BizBud; }) {
     const { openModal } = useModal();
     const { id, name } = veiwProps;
@@ -49,15 +53,11 @@ export function ViewPropEx(veiwProps: ViewPropProps & { bizBud: BizBud; }) {
     return <ViewProp {...veiwProps} saveProp={saveProp} pickValue={pickValue} ValueTemplate={ValueTemplate} />
 }
 
-interface BudValue {
-    pickValue: (props: PickProps) => Promise<string | number>;
-    ValueTemplate: (props: { value: any }) => JSX.Element;
-}
 function pickValueFromBudType(bizBud: BizBud, openModal: OpenModal): BudValue {
-    let { budDataType: budType } = bizBud;
-    switch (budType.type) {
+    let { budDataType } = bizBud;
+    switch (budDataType.type) {
         default: return {} as BudValue;
-        case 'atom': return pickValueForBudAtom(budType as BudAtom, openModal);
+        case 'atom': return pickValueForBudAtom(budDataType as BudAtom, openModal);
     }
 }
 

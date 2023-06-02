@@ -5,7 +5,7 @@ import { GenEditingOld } from "./GenEditingOld";
 import { EntitySheet } from "app/Biz";
 
 export abstract class GenSheetOld extends GenBizEntity<EntitySheet> {
-    // readonly bizEntityType = 'sheet';
+    readonly bizEntityType = 'sheet';
     get path() { return this.bizEntityName; }
     //get entity(): EntitySheet { return this.biz.sheets[this.bizEntityName] }
     abstract get targetCaption(): string;

@@ -7,6 +7,7 @@ import { EasyTime, FA, LMR, dateFromMinuteId } from "tonwa-com";
 import { IDView } from "tonwa-app";
 
 export abstract class GenSubject extends GenBizEntity<EntitySubject> {
+    readonly bizEntityType: 'subject';
     // get entity(): EntitySubject { return this.biz.subjects[this.bizEntityName]; }
 
     readonly QueryReport: UqQuery<any, any>;

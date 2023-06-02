@@ -16,7 +16,7 @@ interface PageAssignProps extends GenProps<GenAtom> {
     caption: string;
     //genBuds: GenBuds;
     //genBudsSearch: GenBudsSearch;
-    entity: string;
+    entitySetting: string;
     budNames: string[];
 }
 
@@ -92,11 +92,11 @@ interface PropsAssignSub {
     caption: string;
     //genBuds: GenBuds;
     //genBudsSearch: GenBudsSearch;
-    entity: string;
+    entitySetting: string;
     budNames: string[];
 }
 
-function PageAssignContent({ caption, entityAtom, entity: entityName, budNames }: PropsAssignSub) {
+function PageAssignContent({ caption, entityAtom, entitySetting: entityName, budNames }: PropsAssignSub) {
     let uqApp = useUqApp();
     const genBuds = new GenBuds(uqApp, entityName, budNames);
     const genBudsSearch = new GenAMSBudsSearch(genBuds, entityAtom.phrase);

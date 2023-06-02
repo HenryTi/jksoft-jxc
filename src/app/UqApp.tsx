@@ -9,6 +9,7 @@ import { appEnv } from './appEnv';
 import { UqExt } from 'uqs/UqDefault';
 import { GenAtom } from './template';
 import { GenSheet } from './template/Sheet';
+import { Gen, GenBizEntity } from './tool';
 
 const appConfig: AppConfig = {
     version: '0.1.0',
@@ -103,16 +104,16 @@ export class UqApp extends UqAppBase<UQs> {
 
     readonly genAtoms: { [name: string]: GenAtom } = {}
     readonly genSheets: { [name: string]: GenSheet } = {}
-    protected onObjectBuilt(object: any) {
-        let { bizEntityType, bizEntityName } = object;
+    protected override onObjectBuilt(object: GenBizEntity<any>) {
+        let { bizEntityType, bizEntityName, phrase } = object;
         switch (bizEntityType) {
             case 'atom':
-                this.genAtoms[bizEntityName] = object;
-                this.genAtoms[(object as GenAtom).phrase] = object;
+                this.genAtoms[bizEntityName] = object as GenAtom;
+                this.genAtoms[phrase] = object as GenAtom;
                 break;
             case 'sheet':
-                this.genSheets[bizEntityName] = object;
-                this.genSheets[(object as GenSheet).phrase] = object;
+                this.genSheets[bizEntityName] = object as GenSheet;
+                this.genSheets[phrase] = object as GenSheet;
                 break;
         }
     }

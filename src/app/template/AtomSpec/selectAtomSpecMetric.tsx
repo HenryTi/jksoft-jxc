@@ -2,14 +2,14 @@ import { AtomMetricSpec, Spec, SpecShoe } from "app/tool";
 import { Page, uqAppModal } from "tonwa-app";
 import { GenAtomSpec } from "./GenAtomSpec";
 import { MetricItem } from "uqs/UqDefault";
-import { UqApp } from "app/UqApp";
 import { PageAtomSelect } from "../Atom/PageAtomSelect";
 import { FA, LMR, List, Sep } from "tonwa-com";
 
 const cnGap = " px-3 py-2 ";
 const cnBtn = " btn btn-outline-primary ";
 
-export async function selectAtomSpecMetric(uqApp: UqApp, genAtomSpec: GenAtomSpec): Promise<AtomMetricSpec> {
+export async function selectAtomMetricSpec(genAtomSpec: GenAtomSpec): Promise<AtomMetricSpec> {
+    let { uqApp } = genAtomSpec;
     let spec: Spec;
     let metricItem: MetricItem;
     const { openModal, closeModal } = uqAppModal(uqApp);

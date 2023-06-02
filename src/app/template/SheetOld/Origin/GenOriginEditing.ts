@@ -21,7 +21,7 @@ export class GenOriginEditing extends GenEditingOld {
 
     async load(id: number) {
         let { uq } = this.gen;
-        let { main: [sheet], details } = await uq.GetSheet.query({ id, assigns: undefined });
+        let { main: [sheet], details } = await uq.GetSheet.query({ id, buds: undefined });
         setAtomValue(this.atomSheet, sheet);
         setAtomValue(this.atomRows, details);
         setAtomValue(this.atomIsMine, true);

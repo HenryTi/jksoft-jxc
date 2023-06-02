@@ -1,4 +1,3 @@
-import { BudType } from "uqs/UqDefault";
 import { EntityAtom } from ".";
 import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
@@ -53,7 +52,6 @@ export class BudDateTime extends BudDataType {
 export abstract class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budDataType: BudDataType;
-    abstract get budType(): BudType;
     defaultValue: any;
     constructor(biz: Biz, name: string, dataType: string, entity: Entity) {
         super(biz, name, 'bud');
@@ -98,9 +96,9 @@ export abstract class BizBud extends BizBase {
 }
 
 export class BizProp extends BizBud {
-    readonly budType = BudType.prop;
+    // readonly budType = BudType.prop;
 }
 
 export class BizAssign extends BizBud {
-    readonly budType = BudType.assign;
+    // readonly budType = BudType.assign;
 }

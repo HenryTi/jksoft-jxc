@@ -3,10 +3,12 @@ import { BizBase } from "./BizBase";
 
 export class Entity extends BizBase {
     get phrase() { return `${this.type}.${this.name}`; }
-    readonly selfProps: Map<string, BizProp> = new Map();       // 本 Atom 定义的
-    readonly selfAssigns: Map<string, BizAssign> = new Map();
-    readonly props: Map<string, BizProp> = new Map();           // 包括全部继承来的
-    readonly assigns: Map<string, BizAssign> = new Map();
+    readonly selfProps: BizProp[] = [];       // 本 Atom 定义的
+    readonly propColl: { [key: string]: BizProp; } = {};           // 包括全部继承来的
+    readonly props: BizProp[] = [];
+    readonly assignColl: { [key: string]: BizAssign; } = {};
+    readonly selfAssigns: BizAssign[] = [];
+    readonly assigns: BizAssign[] = [];
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -28,7 +30,7 @@ export class Entity extends BizBase {
             if (budType === undefined) debugger;
             budType.fromSchema(prop);
             bizBud.fromSchema(prop);
-            this.selfProps.set(bizBud.phrase, bizBud);
+            this.selfProps.push(bizBud);
         }
     }
 
@@ -40,28 +42,30 @@ export class Entity extends BizBase {
             if (budType === undefined) debugger;
             budType.fromSchema(assign);
             bizBud.fromSchema(assign);
-            this.selfAssigns.set(bizBud.phrase, bizBud);
+            this.selfAssigns.push(bizBud);
         }
     }
 
     protected buildBuds() {
-        for (let [, bud] of this.selfProps) {
+        for (let bud of this.selfProps) {
             let { name, phrase } = bud;
-            this.props.set(name, bud);
-            this.props.set(phrase, bud);
+            this.propColl[name] = bud;
+            this.propColl[phrase] = bud;
+            this.props.push(bud);
         }
-        for (let [, bud] of this.selfAssigns) {
+        for (let bud of this.selfAssigns) {
             let { name, phrase } = bud;
-            this.assigns.set(name, bud);
-            this.assigns.set(phrase, bud);
+            this.assignColl[name] = bud;
+            this.assignColl[phrase] = bud;
+            this.assigns.push(bud);
         }
     }
 
     scan() {
-        for (let [, bud] of this.selfProps) {
+        for (let bud of this.selfProps) {
             bud.scan();
         }
-        for (let [, bud] of this.selfAssigns) {
+        for (let bud of this.selfAssigns) {
             bud.scan();
         }
         this.buildBuds();

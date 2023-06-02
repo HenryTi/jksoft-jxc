@@ -60,11 +60,66 @@ Biz Pend PendStoreIn '待入库' {
 }
 
 Biz Sheet SheetStoreIn '入库单' {
-    Main MainPurchase;
+    Main MainStoreIn;
     Detail DetailStoreIn;
 }
 
 Biz Sheet SheetStoreInMultiStorage '入库单-分仓' {
-    Main MainPurchase;
+    Main MainStoreIn;
     Detail DetailStoreIn;
+}
+
+Biz Main MainSale {
+}
+
+Biz Sheet SheetSale '销售单' {
+    Main MainSale;
+    Detail DetailSale;
+}
+
+Biz Detail DetailSale ver 0.1 {
+    Main MainSale;
+    ACT (detail ID) {
+        VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
+        -- Biz Subject storage of item += value ref detail;
+        Biz Pend PendStoreOut Detail=detail SET Value=value;
+        -- err = 0 or null, 则ok，继续
+    };
+}
+
+Biz Main MainStoreOut {
+}
+
+Biz Detail DetailStoreOut ver 0.1 {
+    Main MainStoreOut;
+    ACT (detail ID) 
+    From PendStoreOut {
+        VAR pend ID = pendFrom FROM DetailPend=detail;
+        VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
+        VAR pendValue VALUE = value, pendDetail ID = detail FROM Pend=pend;
+        IF pendValue - value = 0 {
+            Biz Pend PendStoreOut ID=pend DEL;
+            WITH DetailPend as a ID=detail DEL WHERE a.pendFrom=pend;
+        }
+        ELSE {
+            Biz Pend PendStoreOut ID=pend SET value-=value;
+        }
+        Biz Subject storage of item += value ref detail; -- item = AtomMetricSpec
+        VAR atomMetric ID=a.atomMetric, spec ID=a.spec FROM AtomMetricSpec as a WHERE a.id=item;
+        IF spec>0 {
+            -- 不含批号的某种商品库存
+            Biz Subject storage of atomMetric -= value ref detail; -- item = AtomMetric
+        }
+        -- detail写账报错，错误号1
+        -- WITH Temp ID=detail SET value=1;
+    };
+}
+
+Biz Pend PendStoreOut '待出库' {
+    Detail DetailStoreIn;
+}
+
+Biz Sheet SheetStoreOut '出库单' {
+    Main MainStoreOut;
+    Detail DetailStoreOut;
 }
