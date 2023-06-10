@@ -25,7 +25,6 @@ export class BudAtom extends BudDataType {
         this.atom = schema.atom;
     }
     override scan(biz: Biz) {
-        // this.bizAtom = biz.atoms[this.atom];
         this.bizAtom = biz.entities[this.atom] as EntityAtom;
     }
 }

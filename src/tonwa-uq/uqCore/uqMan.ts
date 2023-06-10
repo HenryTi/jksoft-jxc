@@ -332,6 +332,7 @@ export class UqMan {
 
     constructor(net: Net, uqData: UqData, uqSchema: any) {
         this.net = net;
+        this.unit = 0;
         let { id, uqOwner, uqName, newVersion } = uqData;
         this.newVersion = newVersion;
         this.uqOwner = uqOwner;

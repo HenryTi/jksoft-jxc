@@ -16,9 +16,7 @@ export function ViewsRoutes() {
         { to: '/' + pathMe, caption: '我的', icon: 'user' },
     ]} />;
 
-    let { user, unit } = uqApp;
-    let u = getAtomValue(user);
-    if (u !== undefined && unit === 0) {
+    if (uqApp.siteLogined !== true) {
         homeLayout = <div>
             <div className='m-3'>
                 没有授权。请联系管理员

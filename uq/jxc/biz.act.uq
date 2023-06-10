@@ -1,12 +1,15 @@
-Biz Query MyUnits ver 0.3 (
+/*
+uq_build里面自带的 $role_my 获取更多的信息
+Biz Query MySites ver 0.4 (
 )
 RETURNS ret (
     id ID,
 ) {
     INTO ret SELECT a.site as id
-        FROM UserSite as a
+        FROM $UserSite as a
         WHERE a.user=$user;
 };
+*/
 
 Biz ACT SaveAtom (
     atom CHAR(100),
@@ -75,7 +78,7 @@ RETURNS ret (
     WITH Sheet as a ID to sheetId Key(base, no) 
         SET a.target=target, a.operator=me, a.value=value;
 
-    WITH IxMyDraft IX=me XI=sheetId;
+    WITH IxMy I=me X=sheetId;
 
     INTO ret SELECT sheetId as id;
 };
@@ -91,12 +94,16 @@ Biz ACT SaveDetail (
     v2 VALUE,
     v3 VALUE,
     pendFrom ID,
+    arr props (
+        prop PHRASE,
+        propValue VALUE,
+    ),
 ) 
 RETURNS ret (
     id ID,
 ) {
     VAR me ID = Me();
-    IF base IS NULL OR NOT EXISTS(SELECT xi FROM IxMyDraft WHERE ix=me AND xi=base) {
+    IF base IS NULL OR NOT EXISTS(SELECT x FROM IxMy WHERE i=me AND x=base) {
         -- 如果base sheet没有在我的draft里面，不能写入明细。这是安全保证
         RETURN;
     }
@@ -117,7 +124,7 @@ Biz ACT RemoveDraft (
     id ID,
 ) {
     VAR me ID = Me();
-    WITH IxMyDraft IX=me XI=id DEL;
+    WITH IxMy I=me X=id DEL;
 };
 
 Biz QUERY GetMyDrafts ver 0.1 (
@@ -129,9 +136,9 @@ PAGE (
     VAR me ID = Me();
     -- 获取我正在录入的单据
     PAGE SELECT * b, PhraseOfSiteId(b.base) as phrase
-        FROM IxMyDraft as a
-            JOIN Sheet as b ON a.xi=b.id
-        WHERE b.id<$pageStart AND a.ix=me
+        FROM IxMy as a
+            JOIN Sheet as b ON a.x=b.id
+        WHERE b.id<$pageStart AND a.i=me
         ORDER BY b.id DESC
         LIMIT $pageSize;
 };
@@ -264,27 +271,6 @@ RETURNS buds (
             -- JOIN SitePhrase as c ON c.id=b.xi
             JOIN $Phrase as d ON d.id=b.x -- c.phrase
         WHERE LOCATE(d.name, names)>0;
-};
-
-Biz Query GetPendSheet (
-    sheet Phrase, 
-)
-PAGE (
-    * SHEET ASC,
-) {
-    VAR startId ID = SitePhraseId(concat(sheet, '.$start'));
-    PAGE SELECT * b
-        FROM IxStateSheet as a
-            JOIN Sheet as b ON b.id=a.xi
-            JOIN BindPhraseTo as c ON c.id=a.ix
-            JOIN UserSite as d ON d.site=c.to
-        WHERE 1=1
-            AND b.id>$pageStart
-            AND c.base=startId 
-            AND d.user=$user
-            AND c.to=$site                                  -- 暂时所有site用户都可以看见，以后指定
-        ORDER BY b.id ASC
-        LIMIT $pageSize;
 };
 
 Biz Query GetSheet (

@@ -3,13 +3,11 @@ import { Page } from "tonwa-app";
 import { pathAtomCenter } from "./Atom/AtomCenter";
 import { pathReportCenter } from "./Subject/SubjectCenter";
 import { pathPrice } from "./AssignPrice";
-import { pathSheetCenterOld } from "./SheetOld/SheetCenterOld";
 import { pathSheetCenter } from "./Sheet";
 
 export function TabJXC() {
     const arr: { label: string; path: string; }[] = [
         { label: '单据中心', path: pathSheetCenter },
-        { label: '单据中心-旧', path: pathSheetCenterOld },
         { label: '档案中心', path: pathAtomCenter },
         { label: '报表中心', path: pathReportCenter },
         { label: '设置价格', path: pathPrice },

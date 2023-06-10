@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { getAtomValue, setAtomValue } from 'tonwa-com';
 import { AppConfig, UqAppBase, UqAppContext } from "tonwa-app";
-import { UqConfig, UqQuery } from 'tonwa-uq';
+import { UqConfig, UqQuery, UqUnit, UserUnit } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
@@ -75,31 +75,37 @@ export class UqApp extends UqAppBase<UQs> {
         return;
     }
 
+    uq: UqExt;
+    // 1. 可以支持多个site
+    // 2. $user存放当前默认的site
+    // 3. 第一次登录，允许用户选择site
+    // 4. 对于多site的处理，还需要再设计
     protected override async loadOnLogined(): Promise<void> {
-        // this.setUnit(99);
-        let { ret } = await this.uq.MyUnits.query({});
+        this.uq = this.uqs.UqDefault;
+        await this.loginSite();
+        /*
+        let { ret } = await this.uq.MySites.query({});
         if (ret.length > 0) {
-            let { id: unit } = ret[0];
-            this.setUnit(unit);
+            // 找到第一个非0的site，做为默认的site
+            for (let { id: site } of ret) {
+                if (site === 0) continue;
+                await this.loginSite(site);
+                break;
+            }
         }
+        */
     }
 
-    private uqDefault: any;
-    unit: number = 0;
-    get uq() {
-        let ret: UqExt;
-        if (this.uqDefault === undefined) {
-            this.uqDefault = ret = this.uqs.UqDefault;
-            (ret.$ as any).$_uqMan.unit = this.unit;
-        }
-        else {
-            ret = this.uqDefault;
-        }
-        return ret;
+    async loginSite() {
+        let { $_uqMan } = (this.uq.$ as any);
+        this.uqUnit = new UqUnit($_uqMan);
+        //let user = getAtomValue(this.user);
+        await this.uqUnit.login(/*user.id, site*/);
+        $_uqMan.unit = this.uqUnit.userUnit?.unitId;
     }
-    setUnit(unit: number) {
-        this.unit = unit;
-        this.uqDefault = undefined;
+
+    get siteLogined(): boolean {
+        return this.uqUnit?.userUnit !== undefined;
     }
 
     readonly genAtoms: { [name: string]: GenAtom } = {}
@@ -123,11 +129,3 @@ const uqConfigs = uqConfigsFromJson(uqconfigJson);
 export function createUqApp() {
     return new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
 }
-// export const uqApp = new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
-/*
-export function ViewUqApp() {
-    return <ViewUqAppBase uqApp={uqApp}>
-        <ViewsRoutes />
-    </ViewUqAppBase>
-}
-*/

@@ -1,6 +1,8 @@
-Biz Subject storage '库存' History Balance {
+Biz Subject storage '库存' {
+    assign goodsInit DEC;
+    assign goodsBalance DEC History;
 };
 
-Biz Subject c Balance History {
+Biz Subject c {
     Assign 流水 '下一步' char = 's2';
 }

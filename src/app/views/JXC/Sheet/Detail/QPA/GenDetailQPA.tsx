@@ -48,19 +48,38 @@ export abstract class GenDetailQPA extends GenDetailGoods {
     }
 
     readonly addRow = async (genEditing: GenEditing): Promise<SheetRow[]> => {
+        const genGoods = this.uqApp.objectOf(GenGoods);
+        const { openModal, closeModal } = uqAppModal(this.uqApp);
         let atomMetricSpec = await this.selectAtomSpecMetric();
         if (atomMetricSpec === undefined) return;
+        let { atom, metricItem } = atomMetricSpec;
+        if (!metricItem.id) {
+            await openModal(<Page header="提示">
+                <div className="px-3">
+                    <div className="my-3">
+                        <genGoods.ViewItemAtom value={atom} />
+                    </div>
+                    <div className="my-3 text-danger">
+                        <FA name="times-circle" /> 无计量单位
+                    </div>
+                    <div className="my-3">
+                        <button className="btn btn-outline-primary" onClick={closeModal}>
+                            返回
+                        </button>
+                    </div>
+                </div>
+            </Page>);
+            return;
+        }
         let item = await genEditing.saveAtomMetricSpec(atomMetricSpec);
-        let editingRow = this.editingRowFromAtom(item/*atomMetricSpec*/);
+        let editingRow = this.editingRowFromAtom(item);
         if (editingRow === undefined) return;
-        const { openModal } = uqAppModal(this.uqApp);
         let ret = await openModal(<this.PageDetail header={'新增明细'} editingRow={editingRow} />);
         if (ret === undefined) return [];
         return [ret];
     }
 
     private editingRowFromAtom(item: number/*atomMetricSpec: AtomMetricSpec*/): EditingRow {
-        // if (atomMetricSpec === undefined) return;
         if (item === undefined) return;
         let row: Detail = {
             item //: undefined,
@@ -73,6 +92,7 @@ export abstract class GenDetailQPA extends GenDetailGoods {
     readonly editRow = async (genEditing: GenEditing, editingRow: EditingRow): Promise<void> => {
         const { openModal } = uqAppModal(this.uqApp);
         let ret = await openModal<SheetRow>(<this.PageDetail header="修改明细" editingRow={editingRow} />);
+        if (ret === undefined) return;
         await genEditing.updateRow(editingRow, ret.details);
     }
 
@@ -148,39 +168,11 @@ export abstract class GenDetailQPA extends GenDetailGoods {
                 <Band label={this.itemCaption}>
                     <ViewAMSAtom id={item} genGoods={genGoods} />
                 </Band>
+                <Band label="单位">
+                    <ViewAMSMetric id={item} genGoods={genGoods} />
+                </Band>
             </div>
-            // <IDView uq={this.uq} id={atomMetricSpec?.atom?.id} Template={this.ViewItemTemplate} />
         }
-        //const ViewSpec = () => {
-        /*
-        let vContent: any;
-        if (atomMetricSpec === undefined) {
-            return <div className="container">
-                <Band label={'批次 xxx '}>
-                    <IDView uq={this.uq} id={item} Template={this.ViewItemTemplate} />
-                </Band>
-            </div>;
-        }
-        else {
-            let { atom, spec } = atomMetricSpec;
-            const genSpec = this.genAtomSpec.genSpecFromAtom(atom.phrase);
-            if (genSpec === undefined) return null;
-            if (spec !== undefined) {
-                vContent = <genSpec.View value={spec} />;
-            }
-            return <div className="container">
-                <Band label={genSpec.caption}>
-                    {vContent}
-                </Band>
-            </div>;
-        }
-        */
-        //    return <div className="container">
-        //        <Band label={genSpec.caption}>
-        //            {vContent}
-        //        </Band>
-        //    </div>;
-        //}
         return <Page header={header ?? caption}>
             <div className="mt-3"></div>
             <ViewItemTop />
@@ -203,48 +195,7 @@ function ViewDetailQPA({ editingRow }: { editingRow: EditingRow; genEditing: Gen
         </div>
     }
     const { item, value, v1: price, v2: amount/*, atomMetricSpec*/ } = details[0];
-    //let vAtom: any;
     const genGoods = uqApp.objectOf(GenGoods);
-    //if (atomMetricSpec !== undefined) {
-    //let { atom, spec, metricItem } = atomMetricSpec;
-    // const genAtom = genGoods.genAtom(atom.phrase);
-    // const genSpec = genGoods.genSpecFromAtom(atom.phrase);
-    // let vMetric = <ViewAMSMetric id={item} genGoods={genGoods} />; //metricItem.ex;
-    // let vSpec: any;
-    // if (genSpec !== undefined) {
-    //    vSpec = <genSpec.View value={spec} />;
-    //}
-    /*
-    vAtom = <>
-        <div className={cnCol}>
-            <ViewItemID value={atom} />
-        </div>
-        <div className={cnCol}>
-            {vSpec}
-        </div>
-        <ViewAMSAtom id={item} uq={uq} genGoods={genGoods} />
-        <ViewAMSMetric id={item} uq={uq} genGoods={genGoods} />
-        <ViewAMSSpec id={item} uq={uq} genGoods={genGoods} />
-    </>;
-    */
-    /*
-    vAtom = <>
-        <div className={cnCol}>
-            <ViewAMSAtom id={item} genGoods={genGoods} />
-        </div>
-        <div className={cnCol}>
-            <ViewAMSSpec id={item} genGoods={genGoods} />
-        </div>
-    </>;
-    */
-    //}
-    /*
-    else {
-        vAtom = <div className={cnCol}>
-            <IDView uq={uq} id={item} Template={ViewItemID} />
-        </div>;
-    }
-    */
     return <div className="container">
         <div className="row">
             <ViewAMSAtomSpec id={item} genGoods={genGoods} className={cnCol} />

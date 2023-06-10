@@ -86,9 +86,11 @@ export abstract class UqAppBase<UQS = any> {
     abstract get pathLogin(): string;
 
     protected get defaultUqRoleNames(): { [lang: string]: any } { return undefined }
+
     loginUnit(userUnit: UserUnit) {
         this.uqUnit.loginUnit(userUnit);
     }
+
     logoutUnit() {
         this.uqUnit.logoutUnit();
     }

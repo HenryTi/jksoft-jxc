@@ -41,6 +41,7 @@ export class GenPurchaseAct extends GenSheetAct {
     protected get GenDetail() { return GenDetailPurchase; }
     protected async loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let targetAtom = await this.genSheet.selectTarget();
+        if (targetAtom === undefined) return;
         let no = await this.uq.IDNO({ ID: this.uq.Sheet });
         let main = { no, target: targetAtom.id } as Sheet;
         return { sheet: main, sheetRows: [] };

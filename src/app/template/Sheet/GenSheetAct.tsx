@@ -77,34 +77,6 @@ export abstract class GenSheetAct extends Gen {
             let origin = originColl[originId];
             let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue, sheet, no };
             let detail: Detail = { ...v };
-            //let genSpec = this.genDetail.genAtomSpec.genSpecFromAtom(atom);
-            //if (genSpec !== undefined) {
-            //let spec = genSpec.entity.fromValues(specValues);
-            //spec.id = specId;
-            /*
-            let atomMetricSpec: AtomMetricSpec = {
-                atom: {
-                    base: undefined,
-                    id: atomId,
-                    no: atomNo,
-                    ex: atomEx,
-                    phrase: atom,
-                },
-                atomMetric,
-                metricItem: {
-                    id: metric,
-                    no: metricNo,
-                    ex: metricEx,
-                    base: undefined,
-                    div: undefined,
-                    value: undefined,
-                    template: undefined,
-                },
-                //spec,
-            };
-            */
-            // detail.atomMetricSpec = atomMetricSpec;
-            //}
             return { origin: originDetail, details: [detail] };
         });
         return { sheet, sheetRows };
@@ -125,8 +97,6 @@ export abstract class GenSheetAct extends Gen {
     async addRow(genEditing: GenEditing) {
         let sheetRows = await this.genDetail.addRow(genEditing);
         if (sheetRows === undefined) return;
-        // 如果第一次生成明细，则保存主表
-        // await genEditing.saveSheet();
         await genEditing.saveRows(sheetRows);
         genEditing.addRows(sheetRows);
     }

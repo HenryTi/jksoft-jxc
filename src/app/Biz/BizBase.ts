@@ -32,6 +32,8 @@ export class BizBase {
                 throw Error(`unknown ${i}`);
             case 'name': break;
             case 'type': break;
+            case 'dataType': break;
+            case 'history': break;
             case 'caption':
                 this.caption = val;
                 break;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ButtonAsync, MutedSmall, SearchBox, wait } from "tonwa-com";
 import { FA } from "tonwa-com";
 import { User } from "tonwa-uq";
-import { useUqAppBase } from "../UqAppBase";
+import { useModal, useUqAppBase } from "../UqAppBase";
 import { Image } from "./Image";
 import { Page } from "./page";
 
@@ -11,11 +11,8 @@ interface Props {
     top?: string | JSX.Element;
 }
 export function SelectUser({ header, top }: Props) {
-    return <Page>
-        select user
-    </Page>
-    /*
     let app = useUqAppBase();
+    const { closeModal } = useModal();
     let [user, setUser] = useState<User>(null);
     let onSearch = async (key: string) => {
         let retUser = await app.userApi.userFromName(key);
@@ -23,6 +20,9 @@ export function SelectUser({ header, top }: Props) {
     }
     header = header ?? 'Select user';
     let cnBorder = "border rounded-3 bg-white p-5 mx-auto w-min-20c";
+    async function onClick() {
+        closeModal(user);
+    }
     let vContent: any;
     if (user === null) {
         vContent = null;
@@ -41,7 +41,7 @@ export function SelectUser({ header, top }: Props) {
                 </div>
             </div>
             <div className="text-center mt-5">
-                <ButtonAsync className="btn btn-primary" onClick={() => { nav.returnCall(user); return wait(10000); }}>
+                <ButtonAsync className="btn btn-primary" onClick={onClick}>
                     OK
                 </ButtonAsync>
             </div>
@@ -60,5 +60,4 @@ export function SelectUser({ header, top }: Props) {
             {vContent}
         </div>
     </Page>;
-*/
 }

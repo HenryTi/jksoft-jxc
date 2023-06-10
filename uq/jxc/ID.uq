@@ -49,13 +49,7 @@ IDX SheetRed (
     id,
     red TINYINT DEFAULT 1,  -- 红冲单挂这里，挂主表
 );
-
-ID Subject (
-    id,
-    KEY base ID,        -- sitePhrase
-    KEY obj ID,        -- obj: atom id, atomMetric id, atomMetricSpec id, or 0 for all
-);
-
+/*
 ID User (
     id,
     KEY tonwaUser INT,
@@ -76,7 +70,7 @@ ID Tree (
     KEY no,
     ex CHAR(100),
 );
-
+*/
 IDX Done (
     id,
     value VALUE,

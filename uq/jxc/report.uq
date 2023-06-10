@@ -7,15 +7,13 @@ PAGE (
     value VALUE,
     init VALUE,
 ) {
-    VAR phraseId ID = SitePhraseId(subject);
-    PAGE SELECT b.obj, a.value, a.init
-        FROM Balance as a
-            JOIN Subject as b ON b.id=a.id
-            JOIN Atom as d on d.id=b.obj
-        WHERE b.base=phraseId
-            AND b.obj > $pageStart
+    VAR phraseId ID = PhraseId(subject);
+    PAGE SELECT d.id as obj, IFNULL(a.dec, a.int) as value, 0 as init
+        FROM IxBudValue as a
+            JOIN Atom as d on d.id=a.i and a.x=phraseId
+        WHERE d.id > $pageStart
             AND SEARCH(d.ex, d.no ON key)
-        ORDER BY a.id ASC
+        ORDER BY d.id ASC
         LIMIT $pageSize;
 };
 
@@ -29,16 +27,14 @@ PAGE (
     value VALUE,
     init VALUE,
 ) {
-    VAR phraseId ID = SitePhraseId(subject);
-    PAGE SELECT b.obj, a.value, a.init
-        FROM Balance as a
-            JOIN Subject as b ON b.id=a.id
-            JOIN AtomMetric as c ON c.id=b.obj
+    VAR phraseId ID = PhraseId(subject);
+    PAGE SELECT c.id as obj, IFNULL(a.dec, a.int) as value, 0 as init
+        FROM IxBudValue as a
+            JOIN AtomMetric as c ON c.id=a.i and a.x=phraseId
             JOIN Atom as d on d.id=c.atom
-        WHERE b.base=phraseId
-            AND b.obj > $pageStart
+        WHERE c.id > $pageStart
             AND SEARCH(d.ex, d.no ON key)
-        ORDER BY a.id ASC
+        ORDER BY c.id ASC
         LIMIT $pageSize;
 };
 
@@ -51,17 +47,15 @@ PAGE (
     value VALUE,
     init VALUE,
 ) {
-    VAR phraseId ID = SitePhraseId(subject);
-    PAGE SELECT b.obj, a.value, a.init
-        FROM Balance as a
-            JOIN Subject as b ON b.id=a.id
-            JOIN AtomMetricSpec as c ON c.id=b.obj
+    VAR phraseId ID = PhraseId(subject);
+    PAGE SELECT c.id as obj, IFNULL(a.dec, a.int) as value, 0 as init
+        FROM IxBudValue as a
+            JOIN AtomMetricSpec as c ON c.id=a.i and a.x=phraseId
             JOIN AtomMetric as c1 ON c1.id=c.atomMetric
             JOIN Atom as d ON d.id=c1.atom
-        WHERE b.base=phraseId
-            AND b.obj > $pageStart
+        WHERE c.id > $pageStart
             AND SEARCH(d.ex, d.no ON key)
-        ORDER BY a.id ASC
+        ORDER BY c.id ASC
         LIMIT $pageSize;
 };
 
@@ -77,15 +71,15 @@ PAGE (
     sheetName CHAR(200),
     sheetCaption CHAR(100),
 ) {
-    VAR phraseId ID = SitePhraseId(subject);
-    VAR subjectId ID = ID(Subject KEY base=phraseId, obj=objId);
+    VAR phraseId ID = PhraseId(subject);
+    VAR budId ID = ID(Bud KEY base=objId, phrase=phraseId);
     PAGE SELECT a.id, a.value, a.ref, c.no as sheetNo, e.name as sheetName, e.caption as sheetCaption
         FROM History as a
             LEFT JOIN Detail as b ON b.id=a.ref
             LEFT JOIN Sheet as c ON c.id=b.base 
             LEFT JOIN SitePhrase as d ON d.id=c.base
             LEFT JOIN $Phrase as e ON e.id=d.phrase
-        WHERE a.id < $pageStart AND a.subject=subjectId
+        WHERE a.id < $pageStart AND a.subject=budId
         ORDER BY a.id DESC
         LIMIT $pageSize;
 };

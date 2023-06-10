@@ -1,17 +1,20 @@
 import { useUqApp } from "app/UqApp";
-import { useAtom } from "jotai/react";
+import { useAtom, useAtomValue } from "jotai/react";
 import { Link } from "react-router-dom";
 import { FA, LMR, Sep, useT } from "tonwa-com";
-import { Image, Page } from "tonwa-app";
+import { Image, Page, useModal } from "tonwa-app";
 import { appT, ResApp } from "../../res";
 import { pathEditMe } from "./routeMe";
+import { PageRoleAdmin } from "app/Role/PageRoleAdmin";
+import { EnumSysRole } from "tonwa-uq";
 
 const pathAbout = 'about';
 
 export function TabMe() {
     const t = useT(appT);
     const uqApp = useUqApp();
-    const [user] = useAtom(uqApp.user);
+    const { openModal } = useModal();
+    const user = useAtomValue(uqApp.user);
 
     function MeInfo() {
         if (!user) return null;
@@ -27,7 +30,17 @@ export function TabMe() {
             </LMR>
         </Link>;
     }
+    function RoleAdmin() {
+        async function onAdminChanged() {
 
+        }
+        function onRoleAdmin() {
+            openModal(<PageRoleAdmin admin={EnumSysRole.owner} onAdminChanged={onAdminChanged} viewTop={<></>} />)
+        }
+        return <div className="p-3 cursor-pointer" onClick={onRoleAdmin}>
+            角色管理
+        </div>;
+    }
     function AboutLink() {
         return <Link to={pathAbout}>
             <LMR className="w-100 py-3 px-3 align-items-center">
@@ -40,6 +53,8 @@ export function TabMe() {
     const pageMe = <Page header={t(ResApp.me)} back="none">
         <div>
             <MeInfo />
+            <Sep />
+            <RoleAdmin />
             <Sep />
             <AboutLink />
             <Sep />

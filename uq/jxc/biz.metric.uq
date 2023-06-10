@@ -55,7 +55,7 @@ VALUES
 
 -- site 自己的计量单位模板
 IX SiteMetric ver 0.1 (
-    ix Site,
+    ix,
     xi Metric,
 ) +(ix, xi)
 VALUES

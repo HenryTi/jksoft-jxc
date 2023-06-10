@@ -3,6 +3,7 @@ import { GenGoods } from "../Atom";
 import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
 import { Spec } from "app/tool";
+import { FA } from "tonwa-com";
 
 export function ViewAMSAtom({ genGoods, id }: { genGoods: GenGoods; id: number; }) {
     let { uq } = genGoods;
@@ -24,6 +25,9 @@ export function ViewAMSMetric({ genGoods, id }: { genGoods: GenGoods; id: number
         function TemplateAtomMetric({ value: { metricItem } }: { value: AtomMetric; }) {
             function TemplateMetricItem({ value }: { value: MetricItem }) {
                 return <>{value.ex}</>;
+            }
+            if (!metricItem) {
+                return <span className="text-danger"><FA name="times-circle" /> 无计量单位</span>;
             }
             return <IDView id={metricItem} uq={uq} Template={TemplateMetricItem} />;
         }

@@ -24,11 +24,11 @@ export class Entity extends BizBase {
 
     protected fromProps(props: any[]) {
         for (let prop of props) {
-            let { name, type } = prop;
-            let bizBud = new BizProp(this.biz, name, type, this);
-            let { budDataType: budType } = bizBud;
-            if (budType === undefined) debugger;
-            budType.fromSchema(prop);
+            let { name, dataType } = prop;
+            let bizBud = new BizProp(this.biz, name, dataType, this);
+            let { budDataType } = bizBud;
+            if (budDataType === undefined) debugger;
+            budDataType.fromSchema(prop);
             bizBud.fromSchema(prop);
             this.selfProps.push(bizBud);
         }
@@ -36,11 +36,11 @@ export class Entity extends BizBase {
 
     protected fromAssigns(assigns: any[]) {
         for (let assign of assigns) {
-            let { name, type } = assign;
-            let bizBud = new BizAssign(this.biz, name, type, this);
-            let { budDataType: budType } = bizBud;
-            if (budType === undefined) debugger;
-            budType.fromSchema(assign);
+            let { name, dataType } = assign;
+            let bizBud = new BizAssign(this.biz, name, dataType, this);
+            let { budDataType } = bizBud;
+            if (budDataType === undefined) debugger;
+            budDataType.fromSchema(assign);
             bizBud.fromSchema(assign);
             this.selfAssigns.push(bizBud);
         }

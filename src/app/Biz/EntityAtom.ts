@@ -13,11 +13,11 @@ export class EntitySpec extends Entity {
 
     protected fromKeys(keys: any[]) {
         for (let key of keys) {
-            let { name, type } = key;
-            let bizProp = new BizProp(this.biz, name, type, this);
-            let { budDataType: budType } = bizProp;
-            if (budType === undefined) debugger;
-            budType.fromSchema(key);
+            let { name, dataType } = key;
+            let bizProp = new BizProp(this.biz, name, dataType, this);
+            let { budDataType } = bizProp;
+            if (budDataType === undefined) debugger;
+            budDataType.fromSchema(key);
             this.keyColl[bizProp.phrase] = bizProp;
             this.keys.push(bizProp);
         }
@@ -92,12 +92,11 @@ export class EntityAtom extends Entity {
     }
 
     protected fromBase(baseName: any) {
-        let base = this.base = this.biz.entities[baseName] as EntityAtom;// this.biz.atoms[baseName];
+        let base = this.base = this.biz.entities[baseName] as EntityAtom;
         base.children.push(this);
     }
 
     protected fromSpec(spec: any) {
-        //this.spec = this.biz.specs[spec];
         this.spec = this.biz.entities[spec] as EntitySpec;
     }
 
