@@ -2,7 +2,7 @@ import { EnumSysRole } from "tonwa-uq";
 import { ViewOwner } from "./owner";
 import { roleT } from "./res";
 import { ViewRoles } from "./roles";
-import { UnitRoleStore } from "./UnitRoleStore";
+import { SiteRole } from "./SiteRole";
 import { Page, PageSpinner } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { ViewAdmin } from "./admin";
@@ -18,7 +18,7 @@ interface Props {
 
 export function PageRoleAdmin({ admin, onAdminChanged, viewTop }: Props) {
     const uqApp = useUqApp();
-    const store = uqApp.objectOf(UnitRoleStore);
+    const store = uqApp.objectOf(SiteRole);
     let { users } = useAtomValue(store.unitRoles);
     useEffectOnce(() => {
         store.init();

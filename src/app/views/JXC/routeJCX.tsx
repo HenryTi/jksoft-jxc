@@ -6,6 +6,7 @@ import { routePrice } from "./AssignPrice";
 import { routeSheetView } from './SheetView';
 import { UqApp } from "app/UqApp";
 import { routeSheet } from "./Sheet";
+import { routePermits } from "./Permits";
 
 export const pathJXC = 'jxc';
 export function routeJCX(uqApp: UqApp) {
@@ -21,6 +22,7 @@ export function routeJCX(uqApp: UqApp) {
         {routeSheetView(uqApp)}
 
         {routePrice}
+        {routePermits}
     </>;
     return <>
         <Route path={`${pathJXC}/*`}>

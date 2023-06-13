@@ -14,8 +14,6 @@ import { useAtomValue } from "jotai";
 
 interface PageAssignProps extends GenProps<GenAtom> {
     caption: string;
-    //genBuds: GenBuds;
-    //genBudsSearch: GenBudsSearch;
     entitySetting: string;
     budNames: string[];
 }
@@ -33,38 +31,9 @@ export function PageAssign(props: PageAssignProps) {
         default:
             return <PageTypes {...props} entityAtom={entityAtom} gen={gen} />;
     }
-    return <PageAssignContent {...props} entityAtom={entityAtom} />;
+    return <PageAssignContent {...props} entityAtom={entityAtom} gen={gen} />;
 }
-/*
-function PageList({ entityAtom, gen }: { entityAtom: EntityAtom; gen: GenAtom; }) {
-    let { genAtomList, genAtomView, searchAtoms, ViewItemAtom } = gen;
-    let { listTop } = genAtomList;
-    let { caption } = entityAtom;
-    let searchParam = {
-        atom: entityAtom.phrase,
-        key: undefined as string,
-    };
-    function ViewItem({ value }: { value: any }) {
-        return <Link to={`../${genAtomView.path}/${value.id}`}>
-            <div className="px-3 py-2">
-                <ViewItemAtom value={value} />
-            </div>
-        </Link>;
-    }
-    // pageSize={20}
-    // pageMoreSize={1}
-    const none = <div className='m-3 small text-muted'>[无{caption}]</div>;
-    return <PageQueryMore header={`${caption}列表`}
-        query={searchAtoms}
-        param={searchParam}
-        sortField="id"
-        ViewItem={ViewItem}
-        none={none}
-    >
-        {listTop}
-    </PageQueryMore>;
-}
-*/
+
 function PageTypes(props: { entityAtom: EntityAtom; gen: GenAtom; } & PropsAssignSub) {
     let { entityAtom, gen } = props;
     const { openModal } = useModal();
@@ -90,23 +59,19 @@ function PageTypes(props: { entityAtom: EntityAtom; gen: GenAtom; } & PropsAssig
 interface PropsAssignSub {
     entityAtom: EntityAtom;
     caption: string;
-    //genBuds: GenBuds;
-    //genBudsSearch: GenBudsSearch;
     entitySetting: string;
     budNames: string[];
+    gen: GenAtom;
 }
 
-function PageAssignContent({ caption, entityAtom, entitySetting: entityName, budNames }: PropsAssignSub) {
+function PageAssignContent({ caption, entityAtom, entitySetting: entityName, budNames, gen }: PropsAssignSub) {
     let uqApp = useUqApp();
     const genBuds = new GenBuds(uqApp, entityName, budNames);
+    genBuds.noMedsMessage = gen.noMedsMessage;
     const genBudsSearch = new GenAMSBudsSearch(genBuds, entityAtom.phrase);
-    // { caption, genBuds, genBudsSearch }: PageAssignProps
     const { openModal } = useModal();
     const { entity, bizBuds, uq } = genBuds;
-    // let genAtomBudsSearch = new GenAtomBudsSearch(genBuds);
-    const { name: bizEntityName } = entity;
     function ViewItem({ value }: { value: RowMed; }) {
-        // let { buds } = value;
         let { atom, meds } = value;
         function ViewValue({ value }: { value: number; }) {
             return value !== undefined ?
@@ -120,7 +85,6 @@ function PageAssignContent({ caption, entityAtom, entitySetting: entityName, bud
             </div>;
         }
         function ViewMed({ value }: { value: Med; }) {
-            // let { values } = value;
             let values = useAtomValue(value.atomValues);
             return <div className="ms-5 ps-3 py-2 d-flex">
                 <IDView id={value.detail} Template={ViewMetric} uq={uq} />
@@ -131,9 +95,12 @@ function PageAssignContent({ caption, entityAtom, entitySetting: entityName, bud
                 </div>
             </div>;
         }
+        const none = <div className="text-danger ps-5 py-3">
+            {gen.noMedsMessage}
+        </div>;
         return <div>
             <div className="px-3 py-2 tonwa-bg-gray-2"><ViewAtomGoods value={atom} /></div>
-            <List items={meds} ViewItem={ViewMed} />
+            <List items={meds} ViewItem={ViewMed} none={none} />
         </div>;
     }
     async function onItemClick(value: RowMed) {

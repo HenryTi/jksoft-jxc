@@ -92,7 +92,7 @@ RETURNS CHAR(200) {
     );
     return phrase;
 };
-
+/*
 FUNC PhraseId ver 0.1 (
     phrase CHAR(100)
 ) 
@@ -112,7 +112,7 @@ RETURNS CHAR(200) {
     );
     return phrase;
 };
-
+*/
 FUNC SheetPhrase (
     sheetId ID,
 )

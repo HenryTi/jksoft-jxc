@@ -1,6 +1,8 @@
+import { WritableAtom, atom } from "jotai";
 import { Action } from "./action";
 import { Query } from "./query";
 import { UqMan } from "./uqMan";
+import { getAtomValue, setAtomValue } from "tonwa-com";
 
 export interface UserUnit<T = any> {
     id: number;
@@ -13,7 +15,8 @@ export interface UserUnit<T = any> {
     name: string;
     nick: string;
     icon: string;
-    roles: string[];
+    rolesAtom: WritableAtom<string[], any, any>;
+    permits: { [permit: string]: boolean };
     entity: string;
     addBy: number;
 }
@@ -33,9 +36,8 @@ export enum EnumSysRole {
 export class UqUnit {
     private readonly uqMan: UqMan;
     private mySitesColl: { [unit: number]: UserUnit };
-    private userUnit0: UserUnit;        // the root uq unit = 0;
-    #isLogined: boolean;
-    MySites: UserUnit[];
+    userUnit0: UserUnit;        // the root uq unit = 0;
+    mySites: UserUnit[];
     userUnit: UserUnit;         // current unit;
 
     constructor(uqMan: UqMan) {
@@ -43,15 +45,6 @@ export class UqUnit {
     }
 
     async login() {
-        /*
-        let userUnit: UserUnit = {
-            id: 0,
-            user,
-            unit: site,
-        } as UserUnit;
-        ?
-        this.loginUnit(userUnit);
-        */
         await this.loadMyRoles();
     }
 
@@ -60,14 +53,15 @@ export class UqUnit {
     }
 
     logoutUnit() {
-        this.userUnit = this.userUnit0;
+        this.userUnit = undefined; // this.userUnit0;
     }
 
     hasRole(role: string[] | string) {
         if (this.userUnit === undefined) return false;
-        let { roles, isAdmin } = this.userUnit;
+        let { rolesAtom, isAdmin } = this.userUnit;
         if (isAdmin === true) return true;
-        if (roles === undefined) return false;
+        if (rolesAtom === undefined) return false;
+        let roles = getAtomValue(rolesAtom);
         if (Array.isArray(role) === true) {
             let arr = role as string[];
             for (let item of arr) {
@@ -95,57 +89,78 @@ export class UqUnit {
         await this.loadMyRoles();
     }
 
+    async setSite(site: number): Promise<void> {
+        let act: Action = this.uqMan.entities['$setsite'] as any;
+        await act.submit({ site });
+        await this.reloadMyRoles();
+    }
+
     private async loadMyRoles(): Promise<void> {
         if (this.mySitesColl !== undefined) return;
-        this.MySites = [];
+        this.mySites = [];
         this.mySitesColl = {};
         let query: Query = this.uqMan.entities['$role_my'] as any;
-        let { admins, roles, unitProps } = await query.query({});
+        let results = await query.query({});
+        let { sites, roles, permits } = results;
         const getMySite = (site: number) => {
             let mySite = this.mySitesColl[site];
             if (mySite === undefined) {
                 mySite = {
                     unit: site,
+                    rolesAtom: atom<UserUnit[]>([]) as any,
+                    permits: {},
                 } as UserUnit;
                 this.mySitesColl[site] = mySite;
-                this.MySites.push(mySite);
+                if (site !== 0) {
+                    this.mySites.push(mySite);
+                }
+                else {
+                    this.userUnit0 = mySite;
+                }
             }
             return mySite;
         }
-        for (let adminRow of admins) {
-            let { id, site, admin, entity, assigned } = adminRow;
-            let myUnit = getMySite(site);
-            myUnit.id = id;
-            myUnit.unitId = site;
-            myUnit.isAdmin = ((admin & 1) === 1);
-            myUnit.isOwner = ((admin & 2) === 2);
-            myUnit.entity = entity;
-            myUnit.assigned = assigned;
-            if (this.userUnit === undefined) {
-                if (site !== 0) {
-                    this.userUnit = myUnit;
-                }
+        let userUnitDef: UserUnit;
+        for (let siteRow of sites) {
+            let { id, site, admin, entity, assigned, def } = siteRow;
+            let mySite = getMySite(site);
+            mySite.id = id;
+            mySite.unitId = site;
+            mySite.isAdmin = ((admin & 1) === 1);
+            mySite.isOwner = ((admin & 2) === 2);
+            mySite.entity = entity;
+            mySite.assigned = assigned;
+            if (userUnitDef === undefined && mySite !== this.userUnit0) {
+                userUnitDef = mySite;
             }
-            if (site === 0) {
-                this.userUnit0 = myUnit;
+            if (def === 1) {
+                userUnitDef = mySite;
+            }
+        }
+        this.userUnit = userUnitDef;
+        if (userUnitDef !== undefined) {
+            let i = this.mySites.findIndex(v => v === userUnitDef);
+            if (i >= 0) {
+                this.mySites.splice(i, 1);
+                this.mySites.unshift(userUnitDef);
             }
         }
         for (let roleRow of roles) {
             let { site, role } = roleRow;
             let mySite = getMySite(site);
-            let roles = mySite.roles;
+            let { rolesAtom } = mySite;
+            let roles = getAtomValue(rolesAtom);
             if (roles === undefined) {
-                mySite.roles = roles = [];
+                roles = [];
             }
             roles.push(role);
+            setAtomValue(rolesAtom, roles);
+            mySite.permits[role] = true;
         }
-        if (unitProps) {
-            for (let propsRow of unitProps) {
-                let { unit, props } = propsRow;
-                let mySite = getMySite(unit);
-                let ID = this.uqMan.getID(mySite.entity);
-                mySite.unit = ID.valueFromString(props);
-            }
+        for (let permitRow of permits) {
+            let { site, permit } = permitRow;
+            let mySite = getMySite(site);
+            mySite.permits[permit] = true;
         }
     }
 
@@ -159,21 +174,14 @@ export class UqUnit {
         let { users: userRows, roles: roleRows } = result;
         let users: UserUnit[] = [];
         for (let userRow of userRows) {
-            let { user, admin } = userRow;
-            coll[user] = userRow;
-            let isAdmin = userRow.isAdmin = ((admin & 1) === 1);
-            let isOwner = userRow.isOwner = ((admin & 2) === 2);
-            /*
-            if (user === me) {
-                if (isOwner === true) meOwner = true;
-                else if (isAdmin === true) meAdmin = true;
-            }
-            else {
-            */
-            if (isOwner === true) owners.push(userRow);
-            else if (isAdmin === true) admins.push(userRow);
-            else users.push(userRow);
-            //}
+            let userUnit: UserUnit = { ...userRow, rolesAtom: atom([]), permits: {} };
+            let { id, admin } = userRow;
+            coll[id] = userUnit;
+            let isAdmin = userUnit.isAdmin = ((admin & 1) === 1);
+            let isOwner = userUnit.isOwner = ((admin & 2) === 2);
+            if (isOwner === true) owners.push(userUnit);
+            else if (isAdmin === true) admins.push(userUnit);
+            else users.push(userUnit);
         }
 
         let rolesColl: { [role: string]: UserUnit[] } = {};
@@ -182,11 +190,11 @@ export class UqUnit {
             let { user, role } = roleRow;
             let userUnit = coll[user];
             if (userUnit !== undefined) {
-                let { roles: roleArr } = userUnit;
-                if (roleArr === undefined) {
-                    userUnit.roles = roleArr = [];
-                }
+                let { rolesAtom } = userUnit;
+                let roleArr = getAtomValue(rolesAtom);
+                if (roleArr === undefined) roleArr = [];
                 roleArr.push(role);
+                setAtomValue(rolesAtom, roleArr);
             }
             let roleUsers = rolesColl[role];
             if (roleUsers === undefined) {
@@ -219,13 +227,25 @@ export class UqUnit {
         return await this.uqMan.syncUser(user);
     }
 
-    async setUserRole(user: number, action: 'add' | 'del' | 'clear', role: string) {
+    async setUserRole(user: number, role: string, on: boolean) {
+        let action: 'add' | 'del' | 'clear' = on === true ? 'add' : 'del';
         let act: Action = this.uqMan.entities['$role_site_user_role'] as any;
         await act.submit({
             site: this.userUnit.unitId,
             user,
             action,
             role
+        });
+    }
+
+    async clearUserRole(user: number) {
+        let action = 'clear';
+        let act: Action = this.uqMan.entities['$role_site_user_role'] as any;
+        await act.submit({
+            site: this.userUnit.unitId,
+            user,
+            action,
+            undefined,
         });
     }
 

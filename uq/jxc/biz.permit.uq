@@ -1,5 +1,10 @@
+Biz Permit A菜单 {
+    Item i1;
+    item i2;
+    item i4;
+};
 
-Biz Permit 销售 {
+Biz Permit 销售1 {
     Item 入库;
     Item 发货;
     Item 检验;
@@ -14,12 +19,15 @@ Biz Permit 检验 {
     Permit 入库;
 };
 
-Biz Role 经理 ver 0.7 {
-    Permit 销售(检验);
+Biz Role 经理 ver 0.11 {
+    Permit 销售1(检验);
     Role 销售部经理;
 };
 Biz Role 销售部经理 {
     Permit 入库;
+}
+Biz Role 检验员 {
+    Permit 检验;
 }
 
 -- Admit：针对UnitPermit
@@ -28,3 +36,8 @@ Biz Role 销售部经理 {
 -- 设置参数和关系的时候，调用SaveIx(i, x), i=用json描述，user, unit一起来生成。x=用json描述，一起生成。
 -- IxBud: MainId / BudId - value
 -- 如果要写History，则生成subject id，然后写history
+
+IX IxAtomRole (
+    i,
+    x,
+);

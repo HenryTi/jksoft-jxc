@@ -46,12 +46,8 @@ export abstract class GenAtom extends GenBizEntity<EntityAtom> {
     protected get GenAtomSelect(): new (genAtom: GenAtom) => GenAtomSelect { return GenAtomSelect; }
 
     get path() { return this.bizEntityName; }
-    /*
-    get entity(): EntityAtom { 
-        // return this.biz.atoms[this.bizEntityName]; 
-        return this.biz.entities[this.bizEntityName] as EntityAtom;
-    }
-    */
+
+    get noMedsMessage(): string { return 'no meds' }
 
     readonly searchAtoms: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
         let newParam = { atom: this.phrase, ...param };

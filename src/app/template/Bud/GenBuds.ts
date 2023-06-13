@@ -37,6 +37,8 @@ export class GenBuds extends Gen {
         }
         await Promise.all(promises);
     }
+
+    noMedsMessage = 'no meds';
 }
 
 export interface Med {

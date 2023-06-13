@@ -4,7 +4,7 @@ import { atom } from "jotai";
 import { setAtomValue } from "tonwa-com";
 import { UqApp } from "app/UqApp";
 
-export class UnitRoleStore extends Gen {
+export class SiteRole extends Gen {
     readonly uqUnit: UqUnit;
     readonly unitRoles = atom({} as UnitRoles);
 
@@ -31,15 +31,15 @@ export class UnitRoleStore extends Gen {
         await this.init();
     }
 
-    onAdminAdded = async (userId: number) => {
+    onAdminAdded = async (userId: number, assigned: string) => {
         let admin: EnumSysRole = EnumSysRole.admin;
-        await this.uqUnit.addAdmin(userId, admin, undefined);
+        await this.uqUnit.addAdmin(userId, admin, assigned);
         this.reloadAdmin();
     }
 
-    onOwnerAdded = async (userId: number) => {
+    onOwnerAdded = async (userId: number, assigned: string) => {
         let admin: EnumSysRole = EnumSysRole.owner | EnumSysRole.admin;
-        await this.uqUnit.addAdmin(userId, admin, undefined);
+        await this.uqUnit.addAdmin(userId, admin, assigned);
         this.reloadAdmin();
     }
 
@@ -51,5 +51,14 @@ export class UnitRoleStore extends Gen {
     delAdmin = async (userId: number, admin: EnumSysRole) => {
         await this.uqUnit.delAdmin(userId, admin);
         this.reloadAdmin();
+
+    }
+
+    setUserRole = async (userId: number, role: string, on: boolean) => {
+        await this.uqUnit.setUserRole(userId, role, on);
+    }
+
+    clearUserRole = async (userId: number) => {
+        await this.uqUnit.clearUserRole(userId);
     }
 }

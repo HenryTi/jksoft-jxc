@@ -2,6 +2,7 @@ export * from './FA';
 export * from './LMR';
 export * from './Spinner';
 export * from './ButtonAsync';
+export * from './CheckAsync';
 export * from './MutedSmall';
 export * from './Sep';
 export * from './SearchBox';

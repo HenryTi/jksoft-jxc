@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri Jun 09 2023 16:41:47 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Mon Jun 12 2023 23:10:50 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -62,25 +62,26 @@ export interface $ixphrase extends IX {
 
 export interface Param$role_My {
 }
-export interface Return$role_MyAdmins {
+export interface Return$role_MySites {
 	id: number;
 	site: number;
 	admin: number;
 	entity: string;
 	assigned: string;
+	def: number;
 }
 export interface Return$role_MyRoles {
 	site: number;
 	role: string;
 }
-export interface Return$role_MySiteProps {
+export interface Return$role_MyPermits {
 	site: number;
-	props: string;
+	permit: string;
 }
 export interface Result$role_My {
-	admins: Return$role_MyAdmins[];
+	sites: Return$role_MySites[];
 	roles: Return$role_MyRoles[];
-	siteProps: Return$role_MySiteProps[];
+	permits: Return$role_MyPermits[];
 }
 
 export interface Param$role_Site_Users {
@@ -143,6 +144,23 @@ export interface Param$role_Site_Quit_Owner {
 	site: number;
 }
 export interface Result$role_Site_Quit_Owner {
+}
+
+export interface Param$sites {
+}
+export interface Return$sites$page {
+	id: number;
+	no: string;
+	ex: string;
+}
+export interface Result$sites {
+	$page: Return$sites$page[];
+}
+
+export interface Param$setSite {
+	site: number;
+}
+export interface Result$setSite {
 }
 
 export interface Param$poked {
@@ -902,6 +920,8 @@ export interface UqExt extends Uq {
 	$role_Site_Add_User: UqAction<Param$role_Site_Add_User, Result$role_Site_Add_User>;
 	$role_Site_User_Role: UqAction<Param$role_Site_User_Role, Result$role_Site_User_Role>;
 	$role_Site_Quit_Owner: UqAction<Param$role_Site_Quit_Owner, Result$role_Site_Quit_Owner>;
+	$sites: UqQuery<Param$sites, Result$sites>;
+	$setSite: UqAction<Param$setSite, Result$setSite>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
@@ -1007,7 +1027,7 @@ export const uqSchema={
         "fields": [] as any,
         "returns": [
             {
-                "name": "admins",
+                "name": "sites",
                 "fields": [
                     {
                         "name": "id",
@@ -1030,6 +1050,10 @@ export const uqSchema={
                         "name": "assigned",
                         "type": "char",
                         "size": 100
+                    },
+                    {
+                        "name": "def",
+                        "type": "tinyint"
                     }
                 ]
             },
@@ -1048,15 +1072,16 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "siteProps",
+                "name": "permits",
                 "fields": [
                     {
                         "name": "site",
                         "type": "id"
                     },
                     {
-                        "name": "props",
-                        "type": "text"
+                        "name": "permit",
+                        "type": "char",
+                        "size": 100
                     }
                 ]
             }
@@ -1236,6 +1261,48 @@ export const uqSchema={
             {
                 "name": "site",
                 "type": "bigint"
+            }
+        ],
+        "returns": [] as any
+    },
+    "$sites": {
+        "name": "$sites",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 100
+                    }
+                ],
+                "order": "desc"
+            }
+        ]
+    },
+    "$setsite": {
+        "name": "$setSite",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "site",
+                "type": "id"
             }
         ],
         "returns": [] as any
@@ -3827,17 +3894,45 @@ export const uqSchema={
                 }
             ]
         },
-        "销售": {
-            "name": "销售",
-            "type": "permit"
+        "a菜单": {
+            "name": "a菜单",
+            "type": "permit",
+            "items": [
+                "permit.a菜单.i1",
+                "permit.a菜单.i2",
+                "permit.a菜单.i4"
+            ],
+            "permits": [] as any
+        },
+        "销售1": {
+            "name": "销售1",
+            "type": "permit",
+            "items": [
+                "permit.销售1.入库",
+                "permit.销售1.发货",
+                "permit.销售1.检验"
+            ],
+            "permits": [] as any
         },
         "入库": {
             "name": "入库",
-            "type": "permit"
+            "type": "permit",
+            "items": [
+                "permit.入库.上架",
+                "permit.入库.收货"
+            ],
+            "permits": [] as any
         },
         "检验": {
             "name": "检验",
-            "type": "permit"
+            "type": "permit",
+            "items": [
+                "permit.检验.初检",
+                "permit.检验.复检"
+            ],
+            "permits": [
+                "permit.入库"
+            ]
         },
         "经理": {
             "name": "经理",
@@ -3845,6 +3940,10 @@ export const uqSchema={
         },
         "销售部经理": {
             "name": "销售部经理",
+            "type": "role"
+        },
+        "检验员": {
+            "name": "检验员",
             "type": "role"
         },
         "accountsetting": {

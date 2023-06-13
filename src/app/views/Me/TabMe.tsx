@@ -1,12 +1,13 @@
 import { useUqApp } from "app/UqApp";
-import { useAtom, useAtomValue } from "jotai/react";
+import { useAtomValue } from "jotai/react";
 import { Link } from "react-router-dom";
 import { FA, LMR, Sep, useT } from "tonwa-com";
-import { Image, Page, useModal } from "tonwa-app";
+import { IDView, Image, Page, useModal } from "tonwa-app";
 import { appT, ResApp } from "../../res";
 import { pathEditMe } from "./routeMe";
-import { PageRoleAdmin } from "app/Role/PageRoleAdmin";
+import { PageRoleAdmin, PageSitesAdmin } from "app/Site";
 import { EnumSysRole } from "tonwa-uq";
+import { Permit } from "app/Site";
 
 const pathAbout = 'about';
 
@@ -14,7 +15,8 @@ export function TabMe() {
     const t = useT(appT);
     const uqApp = useUqApp();
     const { openModal } = useModal();
-    const user = useAtomValue(uqApp.user);
+    const { uq, user: atomUser, uqUnit } = uqApp;
+    const user = useAtomValue(atomUser);
 
     function MeInfo() {
         if (!user) return null;
@@ -30,6 +32,13 @@ export function TabMe() {
             </LMR>
         </Link>;
     }
+    function Cmd({ onClick, content }: { onClick: () => void, content: any }) {
+        return <LMR className="p-3 cursor-pointer align-items-center" onClick={onClick}>
+            <FA name="cog" fixWidth={true} className="me-3 text-primary" size="lg" />
+            {content}
+            <FA name="angle-right" />
+        </LMR>;
+    }
     function RoleAdmin() {
         async function onAdminChanged() {
 
@@ -37,10 +46,60 @@ export function TabMe() {
         function onRoleAdmin() {
             openModal(<PageRoleAdmin admin={EnumSysRole.owner} onAdminChanged={onAdminChanged} viewTop={<></>} />)
         }
-        return <div className="p-3 cursor-pointer" onClick={onRoleAdmin}>
-            角色管理
-        </div>;
+        return <Permit>
+            <Cmd onClick={onRoleAdmin} content="角色管理" />
+            <Sep />
+        </Permit>;
     }
+    function SitesAdmin() {
+        let { userUnit0 } = uqUnit;
+        if (userUnit0 === undefined) return null;
+        function onSitesAdmin() {
+            openModal(<PageSitesAdmin />);
+        }
+        return <>
+            <Cmd onClick={onSitesAdmin} content="机构管理" />
+            <Sep />
+        </>;
+    }
+    function SelectSite() {
+        let { mySites, userUnit } = uqUnit;
+        function ViewSite({ value }: { value: any; }) {
+            let { ex, no } = value;
+            return <>{ex ?? '默认机构'} <small className="text-muted">{no}</small></>;
+        }
+        return <>
+            {mySites.map((v, index) => {
+                let { unitId } = v;
+                let isCurrent = (userUnit?.unitId === unitId);
+                let cn = '', icon: string, iconColor: string, color: string;
+                if (isCurrent === true) {
+                    icon = 'check-circle-o';
+                    color = '';
+                    iconColor = ' text-success ';
+                }
+                else {
+                    cn = ' cursor-pointer ';
+                    icon = 'angle-right';
+                    color = ' text-primary ';
+                    iconColor = '';
+                }
+                async function onSiteSelect() {
+                    if (isCurrent === true) return;
+                    await uqApp.uqUnit.setSite(unitId);
+                    document.location.reload();
+                }
+                return <>
+                    <div className={'p-3 ' + cn + color} onClick={onSiteSelect}>
+                        <FA name={icon} fixWidth={true} className={' me-3 ' + iconColor} size="lg" />
+                        <IDView uq={uq} id={unitId} Template={ViewSite} />
+                    </div>
+                    <Sep />
+                </>
+            })}
+        </>
+    }
+
     function AboutLink() {
         return <Link to={pathAbout}>
             <LMR className="w-100 py-3 px-3 align-items-center">
@@ -54,17 +113,15 @@ export function TabMe() {
         <div>
             <MeInfo />
             <Sep />
+            <SelectSite />
             <RoleAdmin />
-            <Sep />
+            <SitesAdmin />
             <AboutLink />
             <Sep />
         </div>
     </Page>;
     return pageMe;
 }
-
-
-
 
 function userSpan(name: string, nick: string): JSX.Element {
     return nick ?

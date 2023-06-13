@@ -31,15 +31,8 @@ export function SelectUser({ header, top }: Props) {
         vContent = <div className={cnBorder}><FA name="info-o" className="me-3 text-info" /> No user</div>;
     }
     else {
-        let { name, nick, icon } = user;
         vContent = <div className={cnBorder}>
-            <div className="d-flex">
-                <Image src={icon} className="me-4 w-2-5c h-2-5c" />
-                <div>
-                    <div><MutedSmall>Name:</MutedSmall> &nbsp; {name}</div>
-                    <div><MutedSmall>Nick:</MutedSmall> &nbsp; {nick}</div>
-                </div>
-            </div>
+            <ViewUser user={user} />
             <div className="text-center mt-5">
                 <ButtonAsync className="btn btn-primary" onClick={onClick}>
                     OK
@@ -60,4 +53,15 @@ export function SelectUser({ header, top }: Props) {
             {vContent}
         </div>
     </Page>;
+}
+
+export function ViewUser({ user }: { user: User; }) {
+    let { name, nick, icon } = user;
+    return <div className="d-flex">
+        <Image src={icon} className="me-4 w-2-5c h-2-5c" />
+        <div>
+            <div><MutedSmall>Name:</MutedSmall> &nbsp; {name}</div>
+            <div><MutedSmall>Nick:</MutedSmall> &nbsp; {nick}</div>
+        </div>
+    </div>;
 }

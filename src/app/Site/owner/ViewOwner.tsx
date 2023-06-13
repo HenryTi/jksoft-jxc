@@ -3,7 +3,7 @@ import { propertyOf, UserUnit } from "tonwa-uq";
 import { ButtonAddUser } from "../ButtonAddUser";
 import { Me } from "../Me";
 import { roleT } from "../res";
-import { UnitRoleStore } from "../UnitRoleStore";
+import { SiteRole } from "../SiteRole";
 import { ViewUser } from "../ViewUser";
 import { ListEdit, ListEditContext, None, Page, useModal, useUqAppBase } from "tonwa-app";
 import { useAtomValue } from "jotai";
@@ -13,7 +13,7 @@ export function ViewOwner() {
     let uqApp = useUqAppBase();
     let { openModal, closeModal } = useModal();
     let user = useAtomValue(uqApp.user);
-    let store = uqApp.objectOf(UnitRoleStore);
+    let store = uqApp.objectOf(SiteRole);
     let { onOwnerAdded } = store;
     let unitRoles = useAtomValue(store.unitRoles);
     let { owners } = unitRoles;

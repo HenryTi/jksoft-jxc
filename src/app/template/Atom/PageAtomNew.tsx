@@ -23,7 +23,7 @@ export function PageAtomNew({ Gen }: GenProps<GenAtom>) {
     });
 
     if (entity === undefined) {
-        return <Page header="新建商品">
+        return <Page header="新建">
             <div className="m-3">
                 暂时没有内容，随后处理
             </div>

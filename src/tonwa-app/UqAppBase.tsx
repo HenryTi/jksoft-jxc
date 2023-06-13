@@ -144,6 +144,8 @@ export abstract class UqAppBase<UQS = any> {
         this.localData.saveToLocalStorage();
     }
 
+    protected onLoadUQs() { }
+
     initErrors: string[];
 
     async init(): Promise<void> {
@@ -157,12 +159,9 @@ export abstract class UqAppBase<UQS = any> {
             this.uqs = uqsProxy(uqsMan) as UQS;
 
             if (this.uqs) {
-                // this.uq = this.defaultUq;
-                // this.buildRoleNames();
+                this.onLoadUQs();
             }
-            // let user = this.localData.user.get();
             let user = getAtomValue(this.user);
-            // console.log('logined');
             if (!user) {
                 let guest: Guest = this.localData.guest.get();
                 if (guest === undefined) {

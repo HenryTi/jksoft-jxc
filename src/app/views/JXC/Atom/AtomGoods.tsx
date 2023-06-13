@@ -25,6 +25,8 @@ export class GenGoods extends GenAtomSpec {
         });
     }
     readonly ViewItemAtom = ViewAtomGoods; // : (value: any) => JSX.Element;
+
+    get noMedsMessage(): string { return '没有计量单位' }
 }
 
 class GenGoodsNew extends GenAtomNew {

@@ -7,24 +7,14 @@ import { EntitySetting } from './EntitySetting';
 import { EntityDetail, EntityMain, EntityPend, EntitySheet } from './EntitySheet';
 import { EntitySubject } from './EntitySubject';
 import { EntityTie } from './EntityTie';
+import { EntityPermit, EntityRole } from './EntityPermit';
 
 export class Biz {
     readonly uqApp: UqApp;
     readonly uq: UqExt;
     readonly entities: { [name: string]: Entity } = {};
-    /*
-    readonly sheets: { [name: string]: EntitySheet } = {}
-    readonly mains: { [name: string]: EntityMain } = {}
-    readonly details: { [name: string]: EntityDetail } = {}
-    readonly pends: { [name: string]: EntityPend } = {}
-    readonly atoms: { [name: string]: EntityAtom } = {}
-    readonly specs: { [name: string]: EntitySpec } = {}
-    readonly settings: { [name: string]: EntitySetting } = {}
-    readonly permits: { [name: string]: EntityPermit } = {}
-    readonly roles: { [name: string]: EntityRole } = {}
-    readonly subjects: { [name: string]: EntitySubject } = {}
-    readonly trees: { [name: string]: EntityTree } = {}
-    */
+    readonly roles: EntityRole[] = [];
+    readonly permits: EntityPermit[] = [];
 
     constructor(uqApp: UqApp) {
         this.uqApp = uqApp;
@@ -72,83 +62,64 @@ export class Biz {
 
     private buildSheet = (name: string, type: string): Entity => {
         let bizEntity = new EntitySheet(this, name, type);
-        //return this.sheets[bizEntity.name] = bizEntity;
         return this.entities[bizEntity.name] = bizEntity;
     }
 
     private buildMain = (name: string, type: string): Entity => {
         let bizEntity = new EntityMain(this, name, type);
-        //return this.mains[bizEntity.name] = bizEntity;
         return this.entities[bizEntity.name] = bizEntity;
     }
 
     private buildDetail = (name: string, type: string): Entity => {
         let bizEntity = new EntityDetail(this, name, type);
-        // return this.details[bizEntity.name] = bizEntity;
         return this.entities[bizEntity.name] = bizEntity;
     }
 
     private buildPend = (name: string, type: string): Entity => {
         let bizEntity = new EntityPend(this, name, type);
-        //return this.pends[bizEntity.name] = bizEntity;
         return this.entities[bizEntity.name] = bizEntity;
     }
 
     private buildAtom = (name: string, type: string): Entity => {
         let bizEntity = new EntityAtom(this, name, type);
-        // this.atoms[bizEntity.phrase] = bizEntity;
-        //return this.atoms[bizEntity.name] = bizEntity;
         this.entities[bizEntity.phrase] = bizEntity;
         return this.entities[bizEntity.name] = bizEntity;
     }
 
     private buildSpec = (name: string, type: string): Entity => {
         let bizEntity = new EntitySpec(this, name, type);
-        // return this.specs[bizEntity.name] = bizEntity;
         return this.entities[bizEntity.name] = bizEntity;
     }
 
     private buildSetting = (name: string, type: string): Entity => {
         let bizEntity = new EntitySetting(this, name, type);
-        // return this.settings[bizEntity.name] = bizEntity;
         return this.entities[bizEntity.name] = bizEntity;
     }
 
     private buildPermit = (name: string, type: string): Entity => {
         let bizEntity = new EntityPermit(this, name, type);
-        // return this.permits[bizEntity.name] = bizEntity;
+        this.permits.push(bizEntity);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
     private buildRole = (name: string, type: string): Entity => {
         let bizEntity = new EntityRole(this, name, type);
-        //return this.roles[bizEntity.name] = bizEntity;
+        this.roles.push(bizEntity);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
     private buildSubject = (name: string, type: string): Entity => {
         let bizEntity = new EntitySubject(this, name, type);
-        //return this.subjects[bizEntity.name] = bizEntity;
         return this.entities[bizEntity.name] = bizEntity;
     }
 
     private buildTree = (name: string, type: string): Entity => {
         let bizEntity = new EntityTree(this, name, type);
-        //return this.trees[bizEntity.name] = bizEntity;
         return this.entities[bizEntity.name] = bizEntity;
     }
 
     private buildTie = (name: string, type: string): Entity => {
         let bizEntity = new EntityTie(this, name, type);
-        // return this.trees[bizEntity.name] = bizEntity;
         return this.entities[bizEntity.name] = bizEntity;
     }
-}
-
-export class EntityPermit extends Entity {
-
-}
-
-export class EntityRole extends Entity {
-
 }

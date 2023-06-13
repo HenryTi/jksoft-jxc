@@ -5,9 +5,10 @@ Biz Query MySites ver 0.4 (
 RETURNS ret (
     id ID,
 ) {
+    ASSERT ROLE ('Permit.检验', 'Permit.入库.上架');
     INTO ret SELECT a.site as id
         FROM $UserSite as a
-        WHERE a.user=$user;
+        WHERE a.user=$user and a.site=SitePhraseId(ROLE(Permit.入库.上架));
 };
 */
 
@@ -200,7 +201,8 @@ RETURNS buds (
             JOIN SitePhrase as b ON b.id=a.base
             JOIN pPhrase as c ON c.id=b.phrase
             JOIN $phrase as d ON d.id=b.phrase
-        WHERE a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
+        WHERE a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key) 
+            AND b.site=$site
         ORDER BY a.id desc
         LIMIT $pageSize;
 
@@ -256,6 +258,7 @@ RETURNS buds (
             JOIN pPhrase as c ON c.id=b.phrase
             JOIN $phrase as d ON d.id=b.phrase
         WHERE a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
+            AND b.site=$site
         ORDER BY a.id desc
         LIMIT $pageSize;
 

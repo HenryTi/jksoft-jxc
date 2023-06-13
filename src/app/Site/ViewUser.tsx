@@ -1,22 +1,20 @@
 import { useState } from "react";
 import { useAtomValue } from "jotai";
-import { Band, BandString, FA, Form, LMR, MutedSmall, stringFormat, Submit } from "tonwa-com";
+import { Band, BandString, CheckAsync, FA, Form, LMR, MutedSmall, setAtomValue, stringFormat, Submit, wait } from "tonwa-com";
 import { EnumSysRole, UserUnit } from "tonwa-uq";
 import { roleT } from "./res";
-import { UnitRoleStore } from "./UnitRoleStore";
+import { SiteRole } from "./SiteRole";
 import { Image, Page, PageConfirm, useModal, useUqAppBase } from "tonwa-app";
+import { Biz } from "app/Biz";
 
 interface Props {
     userUnit: UserUnit;
-    // onAssignChanged: (assigned: string) => Promise<void>;
-    // pageHeader: string;
-    // onAdminChanged: OnAdminChanged;
 }
 
 export function ViewUser({ userUnit: userUnitInit }: Props) {
     let uqApp = useUqAppBase();
     let { openModal, closeModal } = useModal();
-    let store = uqApp.objectOf(UnitRoleStore);
+    let store = uqApp.objectOf(SiteRole);
     let { uqUnit } = store;
     let [userUnit, setUserUnit] = useState(userUnitInit);
     let { name, icon, nick, assigned } = userUnit;
@@ -54,20 +52,28 @@ export function ViewUser({ userUnit: userUnitInit }: Props) {
                 closeModal();
                 return;
             }
-            function ButtonRemove({ admin }: { admin: EnumSysRole; }) {
+            function ButtonRemove() {
+                let admin: EnumSysRole;
                 let caption: string;
-                //let adminFlag: 1 | 2;
-                if (admin === EnumSysRole.owner) {
-                    caption = tOwner;
-                    // adminFlag = 2;
+                if (isOwner === true) {
+                    if (addBy === user.id) {
+                        admin = EnumSysRole.owner;
+                        caption = tOwner;
+                    }
+                    else {
+                        return null;
+                    }
+                }
+                else if (isAdmin === true) {
+                    admin = EnumSysRole.admin;
+                    caption = tAdmin;
                 }
                 else {
-                    caption = tAdmin;
-                    //adminFlag = 1;
+                    return null;
                 }
                 async function onRemove() {
                     let message = stringFormat(roleT('userReallyDelete'), caption, userUnit.name);
-                    let ret = await openModal(<PageConfirm header="确认" message={message} yes="单据作废" no="不作废" />);
+                    let ret = await openModal(<PageConfirm header="确认" message={message} yes="删除" no="不删除" />);
                     if (ret === true) {
                         await store.delAdmin(userId, admin);
                         closeModal();
@@ -78,26 +84,55 @@ export function ViewUser({ userUnit: userUnitInit }: Props) {
                     {btnCaption}
                 </button>;
             }
-            let btnRemove: any;
-            if (isOwner === true) {
-                if (addBy === user.id) {
-                    btnRemove = <ButtonRemove admin={EnumSysRole.owner} />;
-                }
+            function Roles() {
+                if (isOwner === true || isAdmin === true) return null;
+                const cnLabel = ' my-2 me-4 w-min-6c ';
+                const cnInput = ' form-check-input ';
+                const cnInputGap = ' me-2 ';
+                let biz = uqApp.objectOf(Biz);
+                let { rolesAtom } = userUnitInit;
+                let roles = useAtomValue(rolesAtom);
+                return <Band label={'角色'}>
+                    {biz.roles.map((v, index) => {
+                        let { name, caption, phrase } = v;
+                        let defaultChecked = roles?.findIndex(r => r === phrase) >= 0;
+                        async function onCheckChanged(name: string, checked: boolean) {
+                            await store.setUserRole(userId, phrase, checked);
+                            if (checked === true) {
+                                roles.push(phrase);
+                            }
+                            else {
+                                let index = roles.findIndex(v => v === phrase);
+                                if (index >= 0) roles.splice(index, 1);
+                            }
+                            setAtomValue(rolesAtom, [...roles]);
+                        }
+                        return <CheckAsync key={index}
+                            onCheckChanged={onCheckChanged}
+                            labelClassName={cnLabel} inputClassName={cnInput} gapClassName={cnInputGap}
+                            defaultChecked={defaultChecked} name={name}
+                        >
+                            {caption ?? name}
+                        </CheckAsync>;
+                    })}
+                </Band>;
             }
-            else if (isAdmin === true) {
-                btnRemove = <ButtonRemove admin={EnumSysRole.admin} />;
-            }
-
             return <Page header={pageHeader}>
-                <LMR className="mb-3 p-3 border-bottom tonwa-bg-gray-1">
-                    <div>{vAssignedUser}</div>
-                    <span>{btnRemove}</span>
-                </LMR>
-                <Form values={userUnit} className="m-3">
+                <Form values={userUnit} className="mx-3">
+                    <Band>
+                        <LMR className="p-3 tonwa-bg-gray-2">
+                            <div>{vAssignedUser}</div>
+                            <ButtonRemove />
+                        </LMR>
+                    </Band>
                     <BandString name="assigned" label={roleT('assigned')} />
-                    <Band contentContainerClassName="text-center my-3">
+                    <Band contentContainerClassName=" my-3">
                         <Submit onSubmit={onSubmit}><div className='mx-5'>{roleT('save')}</div></Submit>
                     </Band>
+
+                    <div className="mt-5 mb-3">
+                        <Roles />
+                    </div>
                 </Form>
             </Page>;
         }
