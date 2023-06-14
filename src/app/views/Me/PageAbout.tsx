@@ -25,7 +25,7 @@ export function PageAbout() {
                 <li>前台代码跟服务器代码协同。</li>
             </ul>
             <div className="mt-5 text-center">
-                <small className="text-muted mr-2">by</small>
+                <small className="text-muted me-2">by</small>
                 同花
             </div>
         </div>

@@ -39,12 +39,42 @@ export class GenEditing {
         });;
     }
 
+    async start(sheetId: number): Promise<boolean> {
+        if (sheetId !== undefined) {
+            let ret = await this.genSheetAct.loadSheet(sheetId);
+            this.setEditing(ret);
+            return true;
+        }
+
+        let ret = await this.genSheetAct.loadStart();
+        if (ret === undefined) {
+            return false;
+        }
+
+        this.setEditing(ret);
+        return true;
+    }
+
+    private setEditing({ sheet, sheetRows }: { sheet: Sheet; sheetRows: SheetRow[]; }) {
+        this.addRows(sheetRows);
+        setAtomValue(this.atomSheet, sheet);
+    }
+
     readonly onAddRow = async () => {
-        await this.genSheetAct.addRow(this);
+        // await this.genSheetAct.addRow(this);
+        // ?
+        let sheetRows = await this.genSheetAct.genDetail.addRow(this);
+        if (sheetRows === undefined) return;
+        await this.saveRows(sheetRows);
+        this.addRows(sheetRows);
+
     }
 
     readonly onEditRow = async (editingRow: EditingRow): Promise<void> => {
-        await this.genSheetAct.editRow(this, editingRow);
+        //await this.genSheetAct.editRow(this, editingRow);
+        let { editRow } = this.genSheetAct.genDetail;
+        if (editRow === undefined) return;
+        await editRow(this, editingRow as any);
     }
 
     async load(id: number) {

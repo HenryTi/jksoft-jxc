@@ -1,12 +1,10 @@
 import { UqApp } from "app/UqApp";
-import { AtomMetricSpec, Gen } from "app/tool";
+import { Gen } from "app/tool";
 import { GenSheet } from "./GenSheet";
-import { GenEditing } from "./GenEditing";
 import { GenDetail } from "./GenDetail";
 import { GenPend } from "./GenPend";
 import { Atom, Detail, Sheet } from "uqs/UqDefault";
-import { setAtomValue } from "tonwa-com";
-import { EditingRow, OriginDetail, SheetRow } from "../../tool";
+import { OriginDetail, SheetRow } from "../../tool";
 
 export abstract class GenSheetAct extends Gen {
     protected abstract GenSheet(): new (uqApp: UqApp) => GenSheet;
@@ -32,9 +30,11 @@ export abstract class GenSheetAct extends Gen {
             this.genPend = new GenPend(uqApp, fromPend.name);
         }
     }
+    /*
     createEditing(): GenEditing {
         return new GenEditing(this);
     }
+    */
 
     protected get GenPend(): new (uqApp: UqApp, pendName: string) => GenPend { return undefined; }
     protected abstract get GenDetail(): new (uqApp: UqApp) => GenDetail;
@@ -42,7 +42,7 @@ export abstract class GenSheetAct extends Gen {
     private buildGenDetail(): GenDetail {
         return this.genDetail = new this.GenDetail(this.uqApp);
     }
-
+    /*
     async start(genEditing: GenEditing, sheetId: number): Promise<boolean> {
         if (sheetId !== undefined) {
             let ret = await this.loadSheet(sheetId);
@@ -62,10 +62,9 @@ export abstract class GenSheetAct extends Gen {
     private setEditing(genEditing: GenEditing, { sheet, sheetRows }: { sheet: Sheet; sheetRows: SheetRow[]; }) {
         genEditing.addRows(sheetRows);
         setAtomValue(genEditing.atomSheet, sheet);
-        // setAtomValue(genEditing.atomIsMainSaved, sheetRows.length > 0);
     }
-
-    protected async loadSheet(sheetId: number): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
+    */
+    async loadSheet(sheetId: number): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let { main: [sheet], details, origins, buds } = await this.uq.GetSheet.query({ id: sheetId, buds: undefined });
         let originColl: { [id: number]: Detail & { done: number; } } = {};
         for (let origin of origins) {
@@ -82,7 +81,7 @@ export abstract class GenSheetAct extends Gen {
         return { sheet, sheetRows };
     }
 
-    protected async loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
+    async loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         return { sheet: {} as Sheet, sheetRows: [] };
     }
 
@@ -93,19 +92,21 @@ export abstract class GenSheetAct extends Gen {
     async book(sheetId: number) {
         await this.uq.BizSheetAct(sheetId, this.genDetail.bizEntityName, this.act);
     }
-
+    /*
     async addRow(genEditing: GenEditing) {
         let sheetRows = await this.genDetail.addRow(genEditing);
         if (sheetRows === undefined) return;
         await genEditing.saveRows(sheetRows);
         genEditing.addRows(sheetRows);
     }
-
+    */
+    /*
     async editRow(genEditing: GenEditing, editingRow: EditingRow) {
         let { editRow } = this.genDetail;
         if (editRow === undefined) return;
         await editRow(genEditing, editingRow as any);
     }
+    */
 
     async newSheet(target: number): Promise<Sheet> {
         let no = await this.uq.IDNO({ ID: this.uq.Sheet });

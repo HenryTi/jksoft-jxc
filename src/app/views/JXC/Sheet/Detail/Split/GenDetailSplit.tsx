@@ -1,6 +1,6 @@
 import { Band, FormRow, InputNumber } from "app/coms";
 import { ViewItemID } from "app/template";
-import { GenDetail, GenEditing } from "app/template/Sheet";
+import { GenEditing } from "app/template/Sheet";
 import { EditingRow, SheetRow } from "app/tool";
 import { IDView } from "tonwa-app";
 import { Atom, Detail } from "uqs/UqDefault";

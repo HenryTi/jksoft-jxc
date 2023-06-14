@@ -7,13 +7,14 @@ import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { ButtonAsync, List, LMR, Sep, useEffectOnce } from "tonwa-com";
 import { GenSheetAct } from "./GenSheetAct";
 import { GenProps } from "app/tool";
+import { GenEditing } from "./GenEditing";
 
 export function PageSheetAct({ Gen }: GenProps<GenSheetAct>) {
     const uqApp = useUqApp();
     const navigate = useNavigate();
     const genSheetAct = uqApp.objectOf(Gen);
     const { caption, ViewRow, ViewTargetBand } = genSheetAct;
-    const { current: genEditing } = useRef(genSheetAct.createEditing());
+    const { current: genEditing } = useRef(new GenEditing(genSheetAct));
     const { onEditRow, onAddRow } = genEditing;
     const sheet = useAtomValue(genEditing.atomSheet);
     const rows = useAtomValue(genEditing.atomRows);
@@ -29,7 +30,7 @@ export function PageSheetAct({ Gen }: GenProps<GenSheetAct>) {
             if (Number.isNaN(sheetId) === true) {
                 sheetId = undefined;
             }
-            if (await genSheetAct.start(genEditing, sheetId) === false) {
+            if (await genEditing.start(sheetId) === false) {
                 // 如无开单，直接退回
                 navigate(-1);
             };
