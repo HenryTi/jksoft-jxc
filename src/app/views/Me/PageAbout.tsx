@@ -13,18 +13,16 @@ export function PageAbout() {
                 <i className="text-danger position-absolute top-0 start-0 fa fa-fire fa-2x"
                     style={{ left: '2rem', top: '0.5rem' }} />
                 <b className="text-danger h5 mb-0">
-                    <span className="text-primary">鱼</span>
-                    <b className="mx-1">米</b>
-                    <span className="text-success">乡</span>
+                    <span className="text-primary">同</span>
+                    <b className="mx-1">花</b>
                 </b>
                 <br />
-                <small className="text-info">私享投资圈</small>
+                <small className="text-info">企业管理系统开发平台</small>
             </div>
             <ul>
-                <li>跟家人和好友一起分享投资思考。</li>
-                <li>世界级投资大师年化收益率11%。</li>
-                <li>全球最大的成长经济体GDP增长率高于5%。</li>
-                <li>以10%为基础，期待<b className="text-danger mx-1">15%以上</b>的高水平。</li>
+                <li>面向企业业务的UQ数据库编程语言。</li>
+                <li>自适应网页编程。</li>
+                <li>前台代码跟服务器代码协同。</li>
             </ul>
             <div className="mt-5 text-center">
                 <small className="text-muted mr-2">by</small>

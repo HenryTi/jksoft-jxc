@@ -8,6 +8,7 @@ import { pathEditMe } from "./routeMe";
 import { PageRoleAdmin, PageSitesAdmin } from "app/Site";
 import { EnumSysRole } from "tonwa-uq";
 import { Permit } from "app/Site";
+import React from "react";
 
 const pathAbout = 'about';
 
@@ -89,13 +90,13 @@ export function TabMe() {
                     await uqApp.uqUnit.setSite(unitId);
                     document.location.reload();
                 }
-                return <>
+                return <React.Fragment key={index}>
                     <div className={'p-3 ' + cn + color} onClick={onSiteSelect}>
                         <FA name={icon} fixWidth={true} className={' me-3 ' + iconColor} size="lg" />
                         <IDView uq={uq} id={unitId} Template={ViewSite} />
                     </div>
                     <Sep />
-                </>
+                </React.Fragment>
             })}
         </>
     }
