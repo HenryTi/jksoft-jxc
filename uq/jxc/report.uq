@@ -77,7 +77,7 @@ PAGE (
         FROM History as a
             LEFT JOIN Detail as b ON b.id=a.ref
             LEFT JOIN Sheet as c ON c.id=b.base 
-            LEFT JOIN SitePhrase as d ON d.id=c.base
+            LEFT JOIN Bud as d ON d.id=c.base
             LEFT JOIN $Phrase as e ON e.id=d.phrase
         WHERE a.id < $pageStart AND a.subject=budId
         ORDER BY a.id DESC

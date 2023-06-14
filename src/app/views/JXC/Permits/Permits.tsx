@@ -1,5 +1,5 @@
 import { Biz } from "app/Biz";
-import { EntityPermit, EntityRole } from "app/Biz/EntityPermit";
+import { EntityPermit, EntityRole, PermitItem } from "app/Biz/EntityPermit";
 import { Permit } from "app/Site";
 import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai";
@@ -30,10 +30,10 @@ function PagePermits() {
     }
     function ButtonPermit({ permit, caption }: { permit: string; caption: string }) {
         function onClick() {
-            alert('click ' + caption);
+            alert(`${caption}: ${permit}`);
         }
         return <Permit permit={permit}>
-            <button className="btn btn-outline-primary" onClick={onClick}>{caption} 按钮</button>
+            <button className="btn btn-outline-primary" onClick={onClick}>{caption}: {permit}</button>
         </Permit>;
     }
     function ViewRole({ value }: { value: EntityRole; }) {
@@ -50,22 +50,23 @@ function PagePermits() {
     }
     function ViewPermit({ value }: { value: EntityPermit; }) {
         let { phrase, name, caption, items, permits } = value;
-        function ViewItem({ value, caption }: { value: string; caption?: string; }) {
+        function ViewItem({ phrase, caption }: { phrase: string; caption: string; }) {
             return <div className="ps-5 py-2">
                 <div>
                     <Check phrase={phrase} />
-                    {caption && <b>{caption}</b>} {value}
+                    {caption} {phrase}
                 </div>
                 <div className="ps-4 py-1">
-                    <ButtonPermit permit={phrase} caption={caption ?? name} />
+                    <ButtonPermit permit={phrase} caption={caption} />
                 </div>
             </div>
         }
-        function ViewPermitItem({ value }: { value: string; }) {
-            return <ViewItem value={value} />
+        function ViewPermitItem({ value: { phrase, caption, name } }: { value: PermitItem; }) {
+
+            return <ViewItem phrase={phrase} caption={caption ?? name} />
         }
-        function ViewImportPermit({ value }: { value: string; }) {
-            return <ViewItem value={value} caption="许可" />
+        function ViewImportPermit({ value: { phrase, caption, name } }: { value: EntityPermit; }) {
+            return <ViewItem phrase={phrase} caption={'许可: ' + (caption ?? name)} />
         }
         return <div className="px-3 py-2 text-success">
             许可 {phrase} {name}  {caption}

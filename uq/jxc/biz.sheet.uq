@@ -108,7 +108,7 @@ Biz Detail DetailStoreOut ver 0.1 {
         VAR atomMetric ID=a.atomMetric, spec ID=a.spec FROM AtomMetricSpec as a WHERE a.id=item;
         IF spec>0 {
             -- 不含批号的某种商品库存
-            Biz Bud storage.goodsInit of atomMetric -= value; -- ref detail; -- item = AtomMetric
+            Biz Bud storage.goodsBalance of atomMetric -= value; -- ref detail; -- item = AtomMetric
         }
         -- detail写账报错，错误号1
         -- WITH Temp ID=detail SET value=1;

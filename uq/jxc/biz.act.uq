@@ -158,7 +158,7 @@ PAGE (
 
     PAGE SELECT a.id, a.no, a.ex, d.name as phrase
         FROM Atom as a
-            JOIN SitePhrase as b ON b.id=a.base
+            JOIN Bud as b ON b.id=a.base
             JOIN $phrase as d ON d.id=b.phrase
         WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
         ORDER BY a.id desc
@@ -198,11 +198,11 @@ RETURNS buds (
     )
     SELECT a.id, a.no, a.ex, d.name as phrase
         FROM Atom as a
-            JOIN SitePhrase as b ON b.id=a.base
+            JOIN Bud as b ON b.id=a.base
             JOIN pPhrase as c ON c.id=b.phrase
             JOIN $phrase as d ON d.id=b.phrase
         WHERE a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key) 
-            AND b.site=$site
+            AND b.base=$site
         ORDER BY a.id desc
         LIMIT $pageSize;
 
@@ -254,11 +254,11 @@ RETURNS buds (
     )
     SELECT a.id, a.no, a.ex, d.name as phrase
         FROM Atom as a
-            JOIN SitePhrase as b ON b.id=a.base
+            JOIN Bud as b ON b.id=a.base
             JOIN pPhrase as c ON c.id=b.phrase
             JOIN $phrase as d ON d.id=b.phrase
         WHERE a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
-            AND b.site=$site
+            AND b.base=$site
         ORDER BY a.id desc
         LIMIT $pageSize;
 
@@ -350,7 +350,7 @@ RETURNS buds (
         , IFNULL(a.dec, IFNULL(a.int, a.str)) as value
         FROM IxBudValue as a
             JOIN Atom as b ON b.id=a.i
-            JOIN SitePhrase as c ON c.id=b.base
+            JOIN Bud as c ON c.id=b.base
             JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
             JOIN $Phrase as e ON e.id=a.x
         WHERE a.i=id and d.type=EnumBizType.prop;

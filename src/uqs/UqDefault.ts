@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Jun 12 2023 23:10:50 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue Jun 13 2023 11:27:56 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1282,7 +1282,7 @@ export const uqSchema={
                     {
                         "name": "no",
                         "type": "char",
-                        "size": 30
+                        "size": 50
                     },
                     {
                         "name": "ex",
@@ -3870,7 +3870,8 @@ export const uqSchema={
         },
         "concactproduct": {
             "name": "concactproduct",
-            "type": "tie"
+            "type": "tie",
+            "caption": "ConcactProduct"
         },
         "departmentmember": {
             "name": "departmentmember",
@@ -3897,10 +3898,20 @@ export const uqSchema={
         "a菜单": {
             "name": "a菜单",
             "type": "permit",
+            "caption": "A菜单",
             "items": [
-                "permit.a菜单.i1",
-                "permit.a菜单.i2",
-                "permit.a菜单.i4"
+                {
+                    "phrase": "permit.a菜单.i1",
+                    "name": "i1"
+                },
+                {
+                    "phrase": "permit.a菜单.i2",
+                    "name": "i2"
+                },
+                {
+                    "phrase": "permit.a菜单.i4",
+                    "name": "i4"
+                }
             ],
             "permits": [] as any
         },
@@ -3908,9 +3919,18 @@ export const uqSchema={
             "name": "销售1",
             "type": "permit",
             "items": [
-                "permit.销售1.入库",
-                "permit.销售1.发货",
-                "permit.销售1.检验"
+                {
+                    "phrase": "permit.销售1.入库",
+                    "name": "入库"
+                },
+                {
+                    "phrase": "permit.销售1.发货",
+                    "name": "发货"
+                },
+                {
+                    "phrase": "permit.销售1.检验",
+                    "name": "检验"
+                }
             ],
             "permits": [] as any
         },
@@ -3918,8 +3938,14 @@ export const uqSchema={
             "name": "入库",
             "type": "permit",
             "items": [
-                "permit.入库.上架",
-                "permit.入库.收货"
+                {
+                    "phrase": "permit.入库.上架",
+                    "name": "上架"
+                },
+                {
+                    "phrase": "permit.入库.收货",
+                    "name": "收货"
+                }
             ],
             "permits": [] as any
         },
@@ -3927,11 +3953,17 @@ export const uqSchema={
             "name": "检验",
             "type": "permit",
             "items": [
-                "permit.检验.初检",
-                "permit.检验.复检"
+                {
+                    "phrase": "permit.检验.初检",
+                    "name": "初检"
+                },
+                {
+                    "phrase": "permit.检验.复检",
+                    "name": "复检"
+                }
             ],
             "permits": [
-                "permit.入库"
+                "入库"
             ]
         },
         "经理": {
@@ -3949,6 +3981,7 @@ export const uqSchema={
         "accountsetting": {
             "name": "accountsetting",
             "type": "setting",
+            "caption": "AccountSetting",
             "props": [
                 {
                     "name": "name",
@@ -3973,6 +4006,7 @@ export const uqSchema={
         "personsetting": {
             "name": "personsetting",
             "type": "setting",
+            "caption": "PersonSetting",
             "props": [
                 {
                     "name": "name",
@@ -3997,6 +4031,7 @@ export const uqSchema={
         "price": {
             "name": "price",
             "type": "setting",
+            "caption": "Price",
             "assigns": [
                 {
                     "name": "retail",
@@ -4007,16 +4042,19 @@ export const uqSchema={
         },
         "mainpurchase": {
             "name": "mainpurchase",
-            "type": "main"
+            "type": "main",
+            "caption": "MainPurchase"
         },
         "detailpurchase": {
             "name": "detailpurchase",
             "type": "detail",
+            "caption": "DetailPurchase",
             "main": "mainpurchase"
         },
         "detailpurchasemedicine": {
             "name": "detailpurchasemedicine",
             "type": "detail",
+            "caption": "DetailPurchaseMedicine",
             "main": "mainpurchase"
         },
         "sheetpurchase": {
@@ -4034,11 +4072,13 @@ export const uqSchema={
         },
         "mainstorein": {
             "name": "mainstorein",
-            "type": "main"
+            "type": "main",
+            "caption": "MainStoreIn"
         },
         "detailstorein": {
             "name": "detailstorein",
             "type": "detail",
+            "caption": "DetailStoreIn",
             "main": "mainstorein"
         },
         "pendstorein": {
@@ -4077,7 +4117,8 @@ export const uqSchema={
         },
         "mainsale": {
             "name": "mainsale",
-            "type": "main"
+            "type": "main",
+            "caption": "MainSale"
         },
         "sheetsale": {
             "name": "sheetsale",
@@ -4095,15 +4136,18 @@ export const uqSchema={
         "detailsale": {
             "name": "detailsale",
             "type": "detail",
+            "caption": "DetailSale",
             "main": "mainsale"
         },
         "mainstoreout": {
             "name": "mainstoreout",
-            "type": "main"
+            "type": "main",
+            "caption": "MainStoreOut"
         },
         "detailstoreout": {
             "name": "detailstoreout",
             "type": "detail",
+            "caption": "DetailStoreOut",
             "main": "mainstoreout"
         },
         "pendstoreout": {

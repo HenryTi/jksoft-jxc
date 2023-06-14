@@ -19,7 +19,7 @@ Biz Permit 检验 {
     Permit 入库;
 };
 
-Biz Role 经理 ver 0.11 {
+Biz Role 经理 ver 0.14 {
     Permit 销售1(检验);
     Role 销售部经理;
 };

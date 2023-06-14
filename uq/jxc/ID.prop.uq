@@ -31,13 +31,13 @@ ID UserSite (
     KEY site ID,
     INDEX site(site, user) UNIQUE,
 );
-*/
+
 ID SitePhrase (
     id,
     KEY site ID,            --- site
     KEY phrase ID,          --- phrase id
 );
-
+*/
 IX IxMy ver 0.1 (
     i,                     -- UserSite
     x INDEX,
@@ -77,8 +77,8 @@ FUNC SitePhraseId ver 0.1 (
 RETURNS ID {
     VAR phraseId ID;
     SET phraseId = (SELECT id FROM $phrase WHERE name=phrase);
-    VAR SitePhrase ID = ID(SitePhrase New KEY site=$site, phrase=phraseId);
-    return SitePhrase;
+    VAR siteBud ID = ID(Bud New KEY base=$site, phrase=phraseId);
+    return siteBud;
 };
 
 FUNC PhraseOfSiteId ver 0.1 (
@@ -87,39 +87,19 @@ FUNC PhraseOfSiteId ver 0.1 (
 RETURNS CHAR(200) {
     VAR phrase CHAR(200) = (SELECT a.name 
         FROM $Phrase as a 
-            JOIN SitePhrase as b ON b.phrase=a.id AND b.site=$site 
+            JOIN Bud as b ON b.phrase=a.id AND b.base=$site 
         WHERE b.id=phraseId
     );
     return phrase;
 };
-/*
-FUNC PhraseId ver 0.1 (
-    phrase CHAR(100)
-) 
-RETURNS ID {
-    VAR phraseId ID;
-    SET phraseId = (SELECT id FROM $phrase WHERE name=phrase);
-    return phraseId;
-};
 
-FUNC PhraseOfId ver 0.1 (
-    phraseId ID
-) 
-RETURNS CHAR(200) {
-    VAR phrase CHAR(200) = (SELECT a.name 
-        FROM $Phrase as a 
-        WHERE a.id=phraseId
-    );
-    return phrase;
-};
-*/
 FUNC SheetPhrase (
     sheetId ID,
 )
 RETURNS CHAR(200) {
     VAR phrase CHAR(200) = (SELECT c.name 
         FROM Sheet as a
-            JOIN SitePhrase as b ON b.id=a.base
+            JOIN Bud as b ON b.id=a.base
             JOIN $Phrase as c ON c.id=b.phrase
         WHERE a.id=sheetId
     );
@@ -132,7 +112,7 @@ FUNC AtomPhrase (
 RETURNS CHAR(200) {
     VAR phrase CHAR(200) = (SELECT c.name 
         FROM Atom as a
-            JOIN SitePhrase as b ON b.id=a.base
+            JOIN Bud as b ON b.id=a.base
             JOIN $Phrase as c ON c.id=b.phrase
         WHERE a.id=atomId
     );
