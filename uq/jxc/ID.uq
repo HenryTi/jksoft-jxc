@@ -70,12 +70,12 @@ ID Tree (
     KEY no,
     ex CHAR(100),
 );
-
+*/
 IDX Done (
     id,
     value VALUE,
 );
-*/
+
 
 -- 各种中间状态。单据记账时，出现错误，在存储过程之间传递数据
 IDX Temp (

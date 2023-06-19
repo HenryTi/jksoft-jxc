@@ -1,8 +1,9 @@
-import { BizBud, Entity, OpBuds } from "app/Biz";
+import { BizBud, Entity } from "app/Biz";
 import { UqApp } from "app/UqApp";
 import { Gen } from "app/tool";
 import { Atom, WritableAtom, atom } from "jotai";
 import { Atom as UqAtom } from "uqs/UqDefault";
+import { OpBuds } from "./OpBuds";
 
 export class GenBuds extends Gen {
     readonly entity: Entity;

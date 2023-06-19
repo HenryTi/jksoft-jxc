@@ -10,6 +10,7 @@ interface Props<T> {
 export function IDView<T>({ id, uq, Template }: Props<T>) {
     const [value, setValue] = useState(uq.idCache<any>(id));
     useEffect(() => {
+        if (value !== undefined) return;
         (async function () {
             if (id === undefined || id === null) return;
             let obj = uq.idCache<any>(id);

@@ -694,7 +694,7 @@ export class UqMan {
                 }
             }
             let { arr, tuid } = f;
-            let t = this.getTuid(ownerField._tuid.tuid.name);
+            let t = this.getTuid(ownerField._tuid?.tuid.name);
             if (t === undefined) continue;
             let div = t.div(arr || tuid);
             f._tuid = div && div.buildTuidDivBox(ownerField);

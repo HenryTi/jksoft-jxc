@@ -1,5 +1,5 @@
-import { BizBud } from "./BizBud";
-import { Entity } from "./Entity";
+import { BizBud } from "../../Biz/BizBud";
+import { Entity } from "../../Biz/Entity";
 // import { EntityAtom } from "./EntityAtom";
 
 export class OpBuds {

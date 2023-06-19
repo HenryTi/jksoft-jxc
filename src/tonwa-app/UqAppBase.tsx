@@ -41,7 +41,6 @@ export abstract class UqAppBase<UQS = any> {
     private readonly uqConfigs: UqConfig[];
     private readonly uqsSchema: { [uq: string]: any; };
     private localData: LocalData;
-    private roleNames: { [key: string]: RoleName };
     readonly net: Net;
     readonly userApi: UserApi;
     readonly version: string;    // version in appConfig;
@@ -86,6 +85,12 @@ export abstract class UqAppBase<UQS = any> {
     abstract get pathLogin(): string;
 
     protected get defaultUqRoleNames(): { [lang: string]: any } { return undefined }
+
+    protected setSite(site: number) {
+        for (let uqMan of this.uqsMan.uqMans) {
+            let a = uqMan;
+        }
+    }
 
     loginUnit(userUnit: UserUnit) {
         this.uqUnit.loginUnit(userUnit);
@@ -136,7 +141,6 @@ export abstract class UqAppBase<UQS = any> {
         let newUser = { ...user };
         (newUser as any)[propName] = value;
         setAtomValue(this.user, newUser);
-        //(this.state.user as any)[propName] = value;
         this.localData.user.set(newUser);
     }
 
