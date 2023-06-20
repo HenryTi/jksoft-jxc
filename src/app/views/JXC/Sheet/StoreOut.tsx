@@ -43,7 +43,7 @@ export class GenStoreOutAct extends GenSheetAct {
     protected GenSheet(): new (uqApp: UqApp) => GenSheet { return GenSheetStoreOut; }
     protected get GenDetail(): (new (uqApp: UqApp) => GenDetail) { return GenDetailStoreOut; }
     protected get GenPend() { return GetPendStroeIn; }
-    protected override async loadStart(): Promise<{ sheet: Sheet, sheetRows: SheetRow[]; }> {
+    override async loadStart(): Promise<{ sheet: Sheet, sheetRows: SheetRow[]; }> {
         let sheetRows = await this.genPend.select(undefined);
         if (sheetRows === undefined) {
             return undefined;
@@ -92,7 +92,7 @@ export class GenStoreOutMultiStorageAct extends GenSheetAct {
     protected GenSheet(): new (uqApp: UqApp) => GenSheet { return GenSheetStoreOutMultiStorage; }
     protected get GenDetail(): (new (uqApp: UqApp) => GenDetail) { return GenDetailStoreOutMultiStorage; }
     protected get GenPend() { return GetPendStroeInMultiStorage; }
-    protected override async loadStart(): Promise<{ sheet: Sheet, sheetRows: SheetRow[]; }> {
+    override async loadStart(): Promise<{ sheet: Sheet, sheetRows: SheetRow[]; }> {
         let sheetRows = await this.genPend.select(undefined);
         if (sheetRows === undefined) {
             return undefined;

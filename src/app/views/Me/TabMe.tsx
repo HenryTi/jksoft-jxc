@@ -47,7 +47,7 @@ export function TabMe() {
         function onRoleAdmin() {
             openModal(<PageRoleAdmin admin={EnumSysRole.owner} onAdminChanged={onAdminChanged} viewTop={<></>} />)
         }
-        return <Permit>
+        return <Permit permit={[]}>
             <Cmd onClick={onRoleAdmin} content="角色管理" />
             <Sep />
         </Permit>;

@@ -104,7 +104,8 @@ Biz Detail DetailStoreOut ver 0.1 {
         ELSE {
             Biz Pend PendStoreOut ID=pend SET value-=value;
         }
-        Biz Bud storage.goodsBalance of item += value ref detail; -- item = AtomMetricSpec
+
+        Biz Bud storage.goodsBalance of item -= value ref detail; -- item = AtomMetricSpec
         VAR atomMetric ID=a.atomMetric, spec ID=a.spec FROM AtomMetricSpec as a WHERE a.id=item;
         IF spec>0 {
             -- 不含批号的某种商品库存

@@ -5,7 +5,7 @@ Biz Query MySites ver 0.4 (
 RETURNS ret (
     id ID,
 ) {
-    ASSERT ROLE ('Permit.检验', 'Permit.入库.上架');
+    ASSERT ROLE (Role.经理, 'Permit.检验', 'Permit.入库', 'Permit.入库.上架');
     INTO ret SELECT a.site as id
         FROM $UserSite as a
         WHERE a.user=$user and a.site=SitePhraseId(ROLE(Permit.入库.上架));
