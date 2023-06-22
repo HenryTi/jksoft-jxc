@@ -30,11 +30,6 @@ export abstract class GenSheetAct extends Gen {
             this.genPend = new GenPend(uqApp, fromPend.name);
         }
     }
-    /*
-    createEditing(): GenEditing {
-        return new GenEditing(this);
-    }
-    */
 
     protected get GenPend(): new (uqApp: UqApp, pendName: string) => GenPend { return undefined; }
     protected abstract get GenDetail(): new (uqApp: UqApp) => GenDetail;
@@ -42,28 +37,7 @@ export abstract class GenSheetAct extends Gen {
     private buildGenDetail(): GenDetail {
         return this.genDetail = new this.GenDetail(this.uqApp);
     }
-    /*
-    async start(genEditing: GenEditing, sheetId: number): Promise<boolean> {
-        if (sheetId !== undefined) {
-            let ret = await this.loadSheet(sheetId);
-            this.setEditing(genEditing, ret);
-            return true;
-        }
 
-        let ret = await this.loadStart();
-        if (ret === undefined) {
-            return false;
-        }
-
-        this.setEditing(genEditing, ret);
-        return true;
-    }
-
-    private setEditing(genEditing: GenEditing, { sheet, sheetRows }: { sheet: Sheet; sheetRows: SheetRow[]; }) {
-        genEditing.addRows(sheetRows);
-        setAtomValue(genEditing.atomSheet, sheet);
-    }
-    */
     async loadSheet(sheetId: number): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let { main: [sheet], details, origins, buds } = await this.uq.GetSheet.query({ id: sheetId, buds: undefined });
         let originColl: { [id: number]: Detail & { done: number; } } = {};
@@ -92,21 +66,6 @@ export abstract class GenSheetAct extends Gen {
     async book(sheetId: number) {
         await this.uq.BizSheetAct(sheetId, this.genDetail.bizEntityName, this.act);
     }
-    /*
-    async addRow(genEditing: GenEditing) {
-        let sheetRows = await this.genDetail.addRow(genEditing);
-        if (sheetRows === undefined) return;
-        await genEditing.saveRows(sheetRows);
-        genEditing.addRows(sheetRows);
-    }
-    */
-    /*
-    async editRow(genEditing: GenEditing, editingRow: EditingRow) {
-        let { editRow } = this.genDetail;
-        if (editRow === undefined) return;
-        await editRow(genEditing, editingRow as any);
-    }
-    */
 
     async newSheet(target: number): Promise<Sheet> {
         let no = await this.uq.IDNO({ ID: this.uq.Sheet });

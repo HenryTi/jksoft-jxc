@@ -69,7 +69,7 @@ export class ListEditContext<T> {
 export function ListEdit<T>(props: Props<T>) {
     let { context } = props;
     let items = useAtomValue(context.atomItems);
-    return <List {...props} items={items as any} />;
+    return <List {...props} items={items as any} itemKey="user" />;
 }
 
 export function useListEdit<T>(items: T[], keyCompare: (item1: T, item2: T) => boolean) {

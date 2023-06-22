@@ -2,11 +2,11 @@ import { useUqApp } from "app/UqApp";
 
 export function Permit({ permit, children }: { permit?: string | string[]; children: React.ReactNode; }) {
     let uqApp = useUqApp();
-    let { uqUnit } = uqApp;
+    let { uqSites: uqUnit } = uqApp;
     if (uqUnit === undefined) return null;
-    let { userUnit } = uqUnit;
-    if (userUnit === undefined) return null;
-    let { permits, isAdmin } = userUnit;
+    let { userSite } = uqUnit;
+    if (userSite === undefined) return null;
+    let { permits, isAdmin } = userSite;
     let show = isAdmin;
     if (permit !== undefined) {
         if (typeof permit === 'string') {

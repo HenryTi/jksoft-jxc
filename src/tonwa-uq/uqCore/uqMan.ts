@@ -1069,6 +1069,9 @@ export class UqMan {
         let ret = this.cache[id];
         return ret;
     }
+    idCacheDel(id: number) {
+        delete this.cache[id];
+    }
     // 返回可能是数组
     protected idObj = async (id: number) => {
         let obj = this.cache[id];

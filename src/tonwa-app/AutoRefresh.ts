@@ -41,7 +41,7 @@ export class AutoRefresh {
             if (this.tick < gaps[this.gapIndex]) return;
             this.tick = 0;
             if (this.gapIndex < gaps.length - 1) ++this.gapIndex;
-            let { uqUnit } = this.uqApp;
+            let { uqSites: uqUnit } = this.uqApp;
             if (uqUnit) {
                 let poked = await uqUnit.Poked();
                 if (poked === true) return;

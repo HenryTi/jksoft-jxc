@@ -6,7 +6,7 @@ import { Page, PageSpinner, useModal } from "tonwa-app";
 import { List, useEffectOnce } from "tonwa-com";
 import { Query, UqMan } from "tonwa-uq";
 
-export function PageSitesAdmin() {
+export function PageSites() {
     const uqApp = useUqApp();
     const { openModal, closeModal } = useModal();
     const right = <button className="btn btn-sm btn-success me-1" onClick={onAdd}>新增</button>;

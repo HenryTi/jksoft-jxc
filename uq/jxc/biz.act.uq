@@ -1,4 +1,15 @@
 /*
+ACT # SetUser(
+    id ID,
+    name CHAR(100),
+    nick CHAR(100),
+    icon CHAR(200),
+) {
+    WITH $User as a KEY(id) SET a.name=name, a.nick=nick, a.icon=icon;
+    WITH $usersite KEY(0 as site, 1 as user) DEL;
+}
+*/
+/*
 uq_build里面自带的 $role_my 获取更多的信息
 Biz Query MySites ver 0.4 (
 )

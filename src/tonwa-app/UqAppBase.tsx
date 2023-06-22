@@ -5,7 +5,7 @@ import jwtDecode from 'jwt-decode';
 import { Spinner, getAtomValue, setAtomValue, useEffectOnce } from 'tonwa-com';
 import {
     Guest, LocalDb, NetProps, UqConfig, User, UserApi
-    , createUQsMan, Net, UqUnit, UserUnit, UQsMan
+    , createUQsMan, Net, UqSites, UserSite, UQsMan
 } from 'tonwa-uq';
 import { uqsProxy } from './uq';
 import { AutoRefresh } from './AutoRefresh';
@@ -55,7 +55,7 @@ export abstract class UqAppBase<UQS = any> {
     uqsMan: UQsMan;
     guest: number;
     uqs: UQS;
-    uqUnit: UqUnit;
+    uqSites: UqSites;
 
     constructor(appConfig: AppConfig, uqConfigs: UqConfig[], uqsSchema: { [uq: string]: any; }, appEnv: AppEnv) {
         window.history.scrollRestoration = 'manual';
@@ -92,21 +92,20 @@ export abstract class UqAppBase<UQS = any> {
         }
     }
 
-    loginUnit(userUnit: UserUnit) {
-        this.uqUnit.loginUnit(userUnit);
+    loginUnit(userSite: UserSite) {
+        this.uqSites.loginUnit(userSite);
     }
 
     logoutUnit() {
-        this.uqUnit.logoutUnit();
+        this.uqSites.logoutUnit();
     }
     closeAllModal() {
         setAtomValue(this.modal.stack, []);
     }
     onCloseModal: () => void;
-    get userUnit() { return this.uqUnit.userUnit; }
     hasRole(role: string[] | string): boolean {
-        if (this.uqUnit === undefined) return false;
-        return this.uqUnit.hasRole(role);
+        if (this.uqSites === undefined) return false;
+        return this.uqSites.hasRole(role);
     }
 
     async logined(user: User) {
@@ -122,7 +121,7 @@ export abstract class UqAppBase<UQS = any> {
         }
         else {
             this.net.clearCenterToken();
-            this.uqUnit = undefined;
+            this.uqSites = undefined;
             this.localData.user.remove();
             setAtomValue(this.user, undefined);
             document.cookie = '';
@@ -195,24 +194,6 @@ export abstract class UqAppBase<UQS = any> {
     protected loadOnLogined(): Promise<void> {
         return;
     }
-
-    /*
-    private buildRoleNames() {
-        if (this.uq === undefined) return;
-        let defaultUqRoleNames = this.defaultUqRoleNames;
-        if (defaultUqRoleNames !== undefined) {
-            this.roleNames = defaultUqRoleNames[env.lang];
-            if (this.roleNames === undefined) {
-                this.roleNames = defaultUqRoleNames['$'];
-            }
-        }
-        if (this.roleNames === undefined) this.roleNames = {};
-    }
-
-    roleName(role: string): RoleName {
-        return this.roleNames[role];
-    }
-    */
 
     private readonly objects = new Map<new (uqApp: any) => any, any>();
     objectOf<T, A extends UqAppBase>(constructor: new (uqApp: A) => T) {

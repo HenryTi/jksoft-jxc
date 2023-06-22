@@ -39,7 +39,7 @@ class GenDetailSale extends GenDetailQPA {
 export class GenSaleAct extends GenSheetAct {
     protected GenSheet(): new (uqApp: UqApp) => GenSheet { return GenSheetSale; }
     protected get GenDetail() { return GenDetailSale; }
-    protected async loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
+    async loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let targetAtom = await this.genSheet.selectTarget();
         let no = await this.uq.IDNO({ ID: this.uq.Sheet });
         let main = { no, target: targetAtom.id } as Sheet;

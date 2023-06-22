@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { getAtomValue, setAtomValue } from 'tonwa-com';
 import { AppConfig, UqAppBase, UqAppContext } from "tonwa-app";
-import { UqConfig, UqQuery, UqUnit } from 'tonwa-uq';
+import { UqConfig, UqQuery, UqSites } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
@@ -87,12 +87,12 @@ export class UqApp extends UqAppBase<UQs> {
     atomSiteLogined = atom(false);
     async loginSite() {
         let { $_uqMan } = (this.uq.$ as any);
-        this.uqUnit = new UqUnit($_uqMan);
-        await this.uqUnit.login();
-        let { userUnit } = this.uqUnit;
+        this.uqSites = new UqSites($_uqMan);
+        await this.uqSites.login();
+        let { userSite } = this.uqSites;
         let siteLogined: boolean;
-        if (userUnit !== undefined) {
-            $_uqMan.unit = userUnit.unitId;
+        if (userSite !== undefined) {
+            $_uqMan.unit = userSite.siteId;
             siteLogined = true;
         }
         else {

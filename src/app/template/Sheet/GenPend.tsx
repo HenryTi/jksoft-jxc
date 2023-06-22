@@ -139,8 +139,6 @@ export class GenPendFromItem extends GenPend {
                 const htmlId = String(pend);
                 let ed = coll[pend];
                 let selected = ed !== undefined;
-                // <IDView uq={this.uq} id={item} Template={ViewItemID} />
-                // <IDView uq={this.uq} id={item} Template={Template} />
                 return <div className="form-check mx-3 my-2 d-flex">
                     <input type="checkbox" className="form-check-input me-3"
                         id={htmlId}

@@ -7,7 +7,6 @@ import { useUqApp } from "app/UqApp";
 import { GenProps } from "app/tool";
 import { GenAtom } from "./GenAtom";
 import { ViewPropEx, ViewPropMain } from "./ViewProp";
-import { EntityAtom } from "app/Biz";
 import { ViewMetric } from "../Metric";
 
 export function PageAtomView({ Gen }: GenProps<GenAtom>) {

@@ -14,8 +14,8 @@ function PagePermits() {
     const user = useAtomValue(uqApp.user);
     const biz = uqApp.objectOf(Biz);
     const { roles, permits } = biz;
-    const { uqUnit: { userUnit } } = uqApp;
-    const permitColl = userUnit.permits;
+    const { uqSites: { userSite } } = uqApp;
+    const permitColl = userSite.permits;
     function Check({ phrase }: { phrase: string; }) {
         let cn: string, icon: string;
         if (permitColl[phrase] === true) {

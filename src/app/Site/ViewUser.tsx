@@ -1,23 +1,22 @@
 import { useState } from "react";
 import { useAtomValue } from "jotai";
 import { Band, BandString, CheckAsync, FA, Form, LMR, MutedSmall, setAtomValue, stringFormat, Submit, wait } from "tonwa-com";
-import { EnumSysRole, UserUnit } from "tonwa-uq";
+import { EnumSysRole, UserSite } from "tonwa-uq";
 import { roleT } from "./res";
-import { SiteRole } from "./SiteRole";
+import { GenSiteRole } from "./GenSiteRole";
 import { Image, Page, PageConfirm, useModal, useUqAppBase } from "tonwa-app";
 import { Biz } from "app/Biz";
 
 interface Props {
-    userUnit: UserUnit;
+    userSite: UserSite;
+    siteRole: GenSiteRole;
 }
 
-export function ViewUser({ userUnit: userUnitInit }: Props) {
+export function ViewUser({ siteRole, userSite: userSiteInit }: Props) {
     let uqApp = useUqAppBase();
     let { openModal, closeModal } = useModal();
-    let store = uqApp.objectOf(SiteRole);
-    let { uqUnit } = store;
-    let [userUnit, setUserUnit] = useState(userUnitInit);
-    let { name, icon, nick, assigned } = userUnit;
+    let [userSite, setUserSite] = useState(userSiteInit);
+    let { name, icon, nick, assigned } = userSite;
     let tUser = roleT('user');
     let tAdmin = roleT('admin');
     let tOwner = roleT('owner');
@@ -40,15 +39,15 @@ export function ViewUser({ userUnit: userUnitInit }: Props) {
     function onEdit() {
         function PageEdit() {
             let user = useAtomValue(uqApp.user);
-            let { user: userId, isOwner, isAdmin, addBy } = userUnit;
+            let { user: userId, isOwner, isAdmin, addBy } = userSite;
             let pageHeader: string;
             if (isOwner === true) pageHeader = tOwner;
             else if (isAdmin === true) pageHeader = tAdmin;
             else pageHeader = tUser;
             async function onSubmit(data: any): Promise<[name: string, err: string][] | string[] | string | void> {
                 let { assigned } = data;
-                await uqUnit.addUser(userId, assigned);
-                setUserUnit({ ...userUnit, assigned });
+                await siteRole.addUser(userId, assigned);
+                setUserSite({ ...userSite, assigned });
                 closeModal();
                 return;
             }
@@ -69,13 +68,14 @@ export function ViewUser({ userUnit: userUnitInit }: Props) {
                     caption = tAdmin;
                 }
                 else {
-                    return null;
+                    admin = EnumSysRole.user;
+                    caption = tUser;
                 }
                 async function onRemove() {
-                    let message = stringFormat(roleT('userReallyDelete'), caption, userUnit.name);
+                    let message = stringFormat(roleT('userReallyDelete'), caption, userSite.name);
                     let ret = await openModal(<PageConfirm header="确认" message={message} yes="删除" no="不删除" />);
                     if (ret === true) {
-                        await store.delAdmin(userId, admin);
+                        await siteRole.delAdmin(userId, admin);
                         closeModal();
                     }
                 }
@@ -90,14 +90,14 @@ export function ViewUser({ userUnit: userUnitInit }: Props) {
                 const cnInput = ' form-check-input ';
                 const cnInputGap = ' me-2 ';
                 let biz = uqApp.objectOf(Biz);
-                let { rolesAtom } = userUnitInit;
+                let { rolesAtom } = userSiteInit;
                 let roles = useAtomValue(rolesAtom);
                 return <Band label={'角色'}>
                     {biz.roles.map((v, index) => {
                         let { name, caption, phrase } = v;
                         let defaultChecked = roles?.findIndex(r => r === phrase) >= 0;
                         async function onCheckChanged(name: string, checked: boolean) {
-                            await store.setUserRole(userId, phrase, checked);
+                            await siteRole.setUserRole(userId, phrase, checked);
                             if (checked === true) {
                                 roles.push(phrase);
                             }
@@ -118,7 +118,7 @@ export function ViewUser({ userUnit: userUnitInit }: Props) {
                 </Band>;
             }
             return <Page header={pageHeader}>
-                <Form values={userUnit} className="mx-3">
+                <Form values={userSite} className="mx-3">
                     <Band>
                         <LMR className="p-3 tonwa-bg-gray-2">
                             <div>{vAssignedUser}</div>

@@ -2,21 +2,22 @@ import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai/react";
 import { Link } from "react-router-dom";
 import { FA, LMR, Sep, useT } from "tonwa-com";
-import { IDView, Image, Page, useModal } from "tonwa-app";
+import { IDView, Image, Page, PageLoader, PageSpinner, useModal } from "tonwa-app";
 import { appT, ResApp } from "../../res";
 import { pathEditMe } from "./routeMe";
-import { PageRoleAdmin, PageSitesAdmin } from "app/Site";
+import { PageRoleAdmin, PageSys } from "app/Site";
 import { EnumSysRole } from "tonwa-uq";
 import { Permit } from "app/Site";
 import React from "react";
+import { GenSiteRole } from "app/Site/GenSiteRole";
 
 const pathAbout = 'about';
 
 export function TabMe() {
     const t = useT(appT);
     const uqApp = useUqApp();
-    const { openModal } = useModal();
-    const { uq, user: atomUser, uqUnit } = uqApp;
+    const { openModal, closeModal } = useModal();
+    const { uq, user: atomUser, uqSites } = uqApp;
     const user = useAtomValue(atomUser);
 
     function MeInfo() {
@@ -33,9 +34,9 @@ export function TabMe() {
             </LMR>
         </Link>;
     }
-    function Cmd({ onClick, content }: { onClick: () => void, content: any }) {
+    function Cmd({ onClick, content, icon, iconColor }: { onClick: () => void; content: any; icon?: string; iconColor?: string }) {
         return <LMR className="p-3 cursor-pointer align-items-center" onClick={onClick}>
-            <FA name="cog" fixWidth={true} className="me-3 text-primary" size="lg" />
+            <FA name={icon ?? 'cog'} fixWidth={true} className={' me-3 ' + (iconColor ?? ' text-primary ')} size="lg" />
             {content}
             <FA name="angle-right" />
         </LMR>;
@@ -44,35 +45,49 @@ export function TabMe() {
         async function onAdminChanged() {
 
         }
-        function onRoleAdmin() {
-            openModal(<PageRoleAdmin admin={EnumSysRole.owner} onAdminChanged={onAdminChanged} viewTop={<></>} />)
+        async function onRoleAdmin() {
+            let siteRole = new GenSiteRole(uqApp, uqSites, uqSites.userSite);
+            openModal(<PageSpinner />);
+            await siteRole.init();
+            closeModal();
+            openModal(
+                <PageRoleAdmin
+                    admin={EnumSysRole.owner}
+                    onAdminChanged={onAdminChanged} viewTop={<></>}
+                    siteRole={siteRole}
+                />
+            );
         }
         return <Permit permit={[]}>
             <Cmd onClick={onRoleAdmin} content="角色管理" />
             <Sep />
         </Permit>;
     }
-    function SitesAdmin() {
-        let { userUnit0 } = uqUnit;
-        if (userUnit0 === undefined) return null;
-        function onSitesAdmin() {
-            openModal(<PageSitesAdmin />);
+    function SysAdmin() {
+        let { userSite0 } = uqSites;
+        if (userSite0 === undefined) return null;
+        async function onSitesAdmin() {
+            let siteRole = new GenSiteRole(uqApp, uqSites, userSite0);
+            openModal(<PageSpinner />);
+            await siteRole.init();
+            closeModal();
+            openModal(<PageSys siteRole={siteRole} />);
         }
         return <>
-            <Cmd onClick={onSitesAdmin} content="机构管理" />
+            <Cmd onClick={onSitesAdmin} content="系统管理" icon="database" iconColor="text-warning" />
             <Sep />
         </>;
     }
     function SelectSite() {
-        let { mySites, userUnit } = uqUnit;
+        let { mySites, userSite } = uqSites;
         function ViewSite({ value }: { value: any; }) {
             let { ex, no } = value;
             return <>{ex ?? '默认机构'} <small className="text-muted">{no}</small></>;
         }
         return <>
             {mySites.map((v, index) => {
-                let { unitId } = v;
-                let isCurrent = (userUnit?.unitId === unitId);
+                let { siteId: unitId } = v;
+                let isCurrent = (userSite?.siteId === unitId);
                 let cn = '', icon: string, iconColor: string, color: string;
                 if (isCurrent === true) {
                     icon = 'check-circle-o';
@@ -87,7 +102,7 @@ export function TabMe() {
                 }
                 async function onSiteSelect() {
                     if (isCurrent === true) return;
-                    await uqApp.uqUnit.setSite(unitId);
+                    await uqApp.uqSites.setSite(unitId);
                     document.location.reload();
                 }
                 return <React.Fragment key={index}>
@@ -114,9 +129,9 @@ export function TabMe() {
         <div>
             <MeInfo />
             <Sep />
-            <SelectSite />
+            <SysAdmin />
             <RoleAdmin />
-            <SitesAdmin />
+            <SelectSite />
             <AboutLink />
             <Sep />
         </div>

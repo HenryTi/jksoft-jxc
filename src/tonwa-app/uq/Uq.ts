@@ -58,38 +58,4 @@ export class Uq {
         this.$_uqMan.clearLocalEntites();
         throw err;
     }
-    /*
-        protected IDRender = (id: number, render?: (value: any) => JSX.Element): JSX.Element => {
-            if (id === undefined || id === null) return null;
-            return React.createElement(observer(() => {
-                let ret = this.$_uqMan.idCache.getValue(id);
-                if (ret === undefined) {
-                    return React.createElement('span', { props: { className: 'text-muted' }, children: ['id=' + id] });
-                }
-                let { $type } = ret as any;
-                if (!$type) return this.renderIDUnknownType(id);
-                let IDType = this.$_uqMan.ids[$type];
-                if (!IDType) return this.renderIDUnknownType(id);
-                return (render ?? (IDType as any).render)(ret);
-            }));
-        }
-    
-        protected IDV = <T extends object>(id: number): T => {
-            let ret = this.$_uqMan.idCache.getValue(id);
-            return ret as T;
-        }
-    
-        private renderIDUnknownType(id: number) {
-            return React.createElement('span', { props: { className: 'text-muted' }, children: [`id=${id} type undefined`] });
-        }
-    
-        protected IDLocalV = <T extends object>(id: number): T => {
-            return this.IDV(-id);
-        }
-    
-        protected IDLocalRender = (id: number, render?: (value: any) => JSX.Element): JSX.Element => {
-            if (id === undefined || id === null) return null;
-            return this.IDRender(-id, render);
-        }
-    */
 }

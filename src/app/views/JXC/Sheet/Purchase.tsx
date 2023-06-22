@@ -46,7 +46,6 @@ export class GenPurchaseAct extends GenSheetAct {
         let main = { no, target: targetAtom.id } as Sheet;
         return { sheet: main, sheetRows: [] };
     }
-
 }
 
 function PagePurchaseEdit() {

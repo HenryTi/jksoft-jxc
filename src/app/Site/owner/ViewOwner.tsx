@@ -1,31 +1,31 @@
 import { FA, LMR } from "tonwa-com";
-import { propertyOf, UserUnit } from "tonwa-uq";
+import { propertyOf, UserSite } from "tonwa-uq";
 import { ButtonAddUser } from "../ButtonAddUser";
 import { Me } from "../Me";
 import { roleT } from "../res";
-import { SiteRole } from "../SiteRole";
+import { GenSiteRole } from "../GenSiteRole";
 import { ViewUser } from "../ViewUser";
 import { ListEdit, ListEditContext, None, Page, useModal, useUqAppBase } from "tonwa-app";
 import { useAtomValue } from "jotai";
 import { consts } from "../consts";
 
-export function ViewOwner() {
+export function ViewOwner({ siteRole }: { siteRole: GenSiteRole; }) {
     let uqApp = useUqAppBase();
     let { openModal, closeModal } = useModal();
     let user = useAtomValue(uqApp.user);
-    let store = uqApp.objectOf(SiteRole);
-    let { onOwnerAdded } = store;
-    let unitRoles = useAtomValue(store.unitRoles);
+    // let store = uqApp.objectOf(SiteRole);
+    let { onOwnerAdded } = siteRole;
+    let unitRoles = useAtomValue(siteRole.unitRoles);
     let { owners } = unitRoles;
 
-    let listEditContext = new ListEditContext<UserUnit>(owners, propertyOf<UserUnit>('unit'));
+    let listEditContext = new ListEditContext<UserSite>(owners, propertyOf<UserSite>('unit'));
     let tOwner = roleT('owner');
 
-    function ViewItem({ value }: { value: UserUnit }) {
+    function ViewItem({ value }: { value: UserSite }) {
         function iQuitOwner() {
             function PageIQuitOwner() {
                 async function confirmQuit() {
-                    await store.quitOwner();
+                    await siteRole.quitOwner();
                     closeModal();
                     closeModal();
                 }
@@ -58,7 +58,7 @@ export function ViewOwner() {
             return <Me right={vIQuitOwner} />;
         }
         return <div className="px-3 py-2">
-            <ViewUser userUnit={value} />
+            <ViewUser userSite={value} siteRole={siteRole} />
         </div>;
 
     }

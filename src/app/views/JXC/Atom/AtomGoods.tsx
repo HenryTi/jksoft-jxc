@@ -34,14 +34,6 @@ class GenGoodsNew extends GenAtomNew {
 
 export function ViewAtomGoods({ value }: { value: Atom; }) {
     let { no, ex } = value;
-    /*
-    return <LMR className="d-block px-3 py-2">
-        <div>
-            <div className='small text-muted'>{no}</div>
-            <div><b>{ex}</b></div>
-        </div>
-    </LMR>
-    */
     return <div>
         <div className='small text-muted'>{no}</div>
         <div><b>{ex}</b></div>

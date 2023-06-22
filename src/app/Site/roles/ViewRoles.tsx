@@ -1,48 +1,27 @@
 import { ReactNode } from "react";
 import { FA, LMR, setAtomValue } from "tonwa-com";
-import { UserUnit } from "tonwa-uq";
-//import { ListEdit, ListEditContext } from "../../ListEdit";
+import { UserSite } from "tonwa-uq";
 import { ButtonAddUser } from "../ButtonAddUser";
 import { roleT } from "../res";
-import { SiteRole } from "../SiteRole";
+import { GenSiteRole } from "../GenSiteRole";
 import { ViewUser } from "../ViewUser";
 import { ListEdit, ListEditContext, None, useUqAppBase } from "tonwa-app";
-import { useAtomValue } from "jotai";
+import { atom, useAtomValue } from "jotai";
 import { consts } from "../consts";
 
-export function ViewRoles(/*{ roleItems, users }: { roleItems: string[], users: UserUnit[] }*/) {
+export function ViewRoles({ siteRole }: { siteRole: GenSiteRole; }) {
     let uqApp = useUqAppBase();
-    let store = uqApp.objectOf(SiteRole);
-    let unitRoles = useAtomValue(store.unitRoles);
-    // let roleItems: string[] = [];
+    let unitRoles = useAtomValue(siteRole.unitRoles);
     let { users } = unitRoles;
 
     let listEditContext = new ListEditContext(users, (item1, item2) => item1.user === item2.user);
 
-    function ViewItem({ value }: { value: UserUnit }) {
+    function ViewItem({ value }: { value: UserSite }) {
         let { rolesAtom, isAdmin, isOwner, user } = value;
         let uqAppUser = useAtomValue(uqApp.user);
         let roles = useAtomValue(rolesAtom);
         if (user === uqAppUser.id) return null;
-        /*
-        function RoleCheck({ caption, roleItem }: { caption: string; roleItem: string; }) {
-            async function onCheckChange(evt: React.ChangeEvent<HTMLInputElement>) {
-                await uqApp.uqUnit.setUserRole(
-                    value.user,
-                    roleItem,
-                    evt.currentTarget.checked,
-                );
-            }
-            let defaultChecked = roles?.findIndex(v => v === roleItem) >= 0;
-            return <label className="me-5">
-                <input type="checkbox" className="form-check-input"
-                    onChange={onCheckChange}
-                    defaultChecked={defaultChecked} />
-                <span>{caption}</span>
-            </label>;
-        }
-        */
-        let bizRoles = store.biz.roles;
+        let bizRoles = siteRole.biz.roles;
         function Checked({ children }: { children: ReactNode; }) {
             return <label className="me-5">
                 <input type="checkbox" className="form-check-input" checked={true} disabled={true} />
@@ -71,28 +50,35 @@ export function ViewRoles(/*{ roleItems, users }: { roleItems: string[], users: 
                     })}</>
             )
         }</div>;
-        // roleItems.map(v => (<RoleCheck key={v} caption={v} roleItem={v} />))
         return <div className="px-3 py-2">
-            <ViewUser userUnit={value} />
+            <ViewUser userSite={value} siteRole={siteRole} />
             {vRoles}
         </div >;
     }
     async function onUserAdded(user: number, assigned: string) {
-        let retUser = await uqApp.uqUnit.addUser(user, assigned);
+        // user is tonwa id, -use
+        let retUser = await siteRole.addUser(-user, assigned);
+        if (retUser === undefined) {
+            console.error('uqUnit.addUser error', user, assigned);
+        }
         let { items, atomItems } = listEditContext;
         let index = items.findIndex(v => v.user === user);
         if (index >= 0) {
             items.splice(index, 1);
         }
-        setAtomValue(atomItems,
-            [{
-                ...retUser,
-                id: 0,
-                user,
-                unit: 0,
-                admin: 0
-            } as any, ...items]
-        );
+        let unitUser = {
+            ...retUser,
+            id: 0,
+            user: retUser.id,
+            unit: 0,
+            admin: 0,
+            rolesAtom: atom([]),
+        };
+        if (assigned !== undefined) {
+            unitUser.assigned = assigned;
+        }
+        items = [unitUser, ...items];
+        setAtomValue(atomItems, items);
     }
     return <>
         <div className={consts.cnCard}>
