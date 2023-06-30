@@ -3,7 +3,7 @@ import { PageQueryMore } from '../../coms';
 import { List } from 'tonwa-com';
 import { EntityAtom } from 'app/Biz';
 import { Page } from 'tonwa-app';
-import { GenBizAtom, OptionsUseBizAtom, useBizAtom } from './useBizAtom';
+import { UseBizAtomReturn, OptionsUseBizAtom, useBizAtom } from './useBizAtom';
 
 interface OptionsList {
     ViewItemAtom: (props: { value: any; }) => JSX.Element;
@@ -12,21 +12,21 @@ interface OptionsList {
 
 export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     const { top } = options;
-    const gen = useBizAtom(options);
-    const { entity } = gen;
+    const useBizAtomReturn = useBizAtom(options);
+    const { entity } = useBizAtomReturn;
     const { atom: atomName } = useParams();
-    let entityAtom = gen.getEntityAtom(atomName) ?? entity;
+    let entityAtom = useBizAtomReturn.getEntityAtom(atomName) ?? entity;
     const { children } = entityAtom;
     switch (children.length) {
         case 0: break;
         case 1: entityAtom = children[0]; break;
         default:
-            return <PageTypes entityAtom={entityAtom} gen={gen} />;
+            return <PageTypes entityAtom={entityAtom} gen={useBizAtomReturn} />;
     }
-    return <PageList entityAtom={entityAtom} gen={gen} top={top} {...options} />;
+    return <PageList entityAtom={entityAtom} gen={useBizAtomReturn} top={top} {...options} />;
 }
 
-function PageList({ entityAtom, gen, top, ViewItemAtom }: OptionsList & { entityAtom: EntityAtom; gen: GenBizAtom; }) {
+function PageList({ entityAtom, gen, top, ViewItemAtom }: OptionsList & { entityAtom: EntityAtom; gen: UseBizAtomReturn; }) {
     let { pathView, searchAtoms } = gen;
     let caption = entityAtom.caption ?? entityAtom.name;
     let searchParam = {
@@ -54,7 +54,7 @@ function PageList({ entityAtom, gen, top, ViewItemAtom }: OptionsList & { entity
     </PageQueryMore>;
 }
 
-function PageTypes({ entityAtom, gen }: { entityAtom: EntityAtom; gen: GenBizAtom; }) {
+function PageTypes({ entityAtom, gen }: { entityAtom: EntityAtom; gen: UseBizAtomReturn; }) {
     const { pathList } = gen;
     let caption = entityAtom.caption ?? entityAtom.name;
     const { children } = entityAtom;

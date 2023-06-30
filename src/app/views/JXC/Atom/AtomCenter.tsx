@@ -2,24 +2,22 @@ import { Route } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { FA, LMR, Sep } from "tonwa-com";
-import { GenContact } from "./AtomContact";
-import { GenGoods } from "./AtomGoods";
-import { UqApp, useUqApp } from "app/UqApp";
-import { GenAtom } from "app/template";
+import { gContact } from "./AtomContact";
+import { gGoods } from "./AtomGoods";
 import React from "react";
+import { GAtom } from "app/tool";
+import { pathAtomList, pathAtomNew } from "app/hooks";
 
 export const pathAtomCenter = 'atom-center';
 
 export function PageAtomCenter() {
-    let uqApp = useUqApp();
-    let arr: (new (uqApp: UqApp) => GenAtom)[] = [GenGoods, GenContact];
-    let genAtoms: GenAtom[] = arr.map(v => uqApp.objectOf(v));
+    let arr: GAtom[] = [gGoods, gContact];
     return <Page header="档案中心">
         <Sep sep={3} />
-        {genAtoms.map((v, index) => {
-            const { genAtomNew, genAtomList, caption } = v;
+        {arr.map((v, index) => {
+            const { name, caption } = v;
             return <React.Fragment key={index}>
-                <Link to={`../${genAtomNew.path}`}>
+                <Link to={`../${pathAtomNew(name)}`}>
                     <LMR className="px-3 py-2 border-bottom align-items-center">
                         <FA name="chevron-circle-right" className="me-2 text-secondary" />
                         新建{caption}
@@ -29,7 +27,7 @@ export function PageAtomCenter() {
                         </span>
                     </LMR>
                 </Link>
-                <Link to={`../${genAtomList.path}`} className="px-3 py-2 border-bottom align-items-center">
+                <Link to={`../${pathAtomList(name)}`} className="px-3 py-2 border-bottom align-items-center">
                     {caption}列表
                 </Link>
                 <Sep sep={3} />

@@ -1,1 +1,1 @@
-export * from './GenDetailPend';
+export * from './useDetailPend';

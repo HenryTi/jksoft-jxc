@@ -5,7 +5,7 @@ import { Atom, Detail } from "uqs/UqDefault";
 import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai";
 import { ViewAMSAtomSpec } from "../../ViewAMS";
-import { GenGoodsHook, ViewAtomGoods } from "app/views/JXC/Atom";
+import { ViewAtomGoods } from "app/views/JXC/Atom";
 import { OptionsUseSheetDetail, UseSheetDetailReturn } from "app/hooks";
 
 export interface OptionsUseDetailPend extends OptionsUseSheetDetail {

@@ -3,24 +3,10 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { Sep } from "tonwa-com";
-import { useUqApp } from "app/UqApp";
 import { OptionsUseBizAtom, ViewPropRowProps, useBizAtom } from "./useBizAtom";
 import { ViewPropEx, ViewPropMain } from "./ViewProp";
 import { ViewMetric } from "../Metric";
 
-/*
-interface ViewPropRowProps {
-    name: string;
-    label: string;
-    readonly?: boolean;
-}
-
-interface ViewPropProps extends ViewPropRowProps {
-    id: number;
-    value: string | number;
-    ValueTemplate?: (props: { value: any; }) => JSX.Element;
-}
-*/
 export function useBizAtomView(options: OptionsUseBizAtom) {
     const { NOLabel, exLabel } = options;
     const gen = useBizAtom(options)

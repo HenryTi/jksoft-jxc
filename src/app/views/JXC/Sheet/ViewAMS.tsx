@@ -1,11 +1,10 @@
 import { Atom, AtomMetric, AtomMetricSpec, MetricItem } from "uqs/UqDefault";
-import { ViewAtomGoods, ViewSpec } from "../Atom";
+import { ViewAtomGoods } from "../Atom";
 import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
 import { Spec } from "app/tool";
 import { FA } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
-import { GenSpec } from "app/hooks";
 
 export function ViewAMSAtom({ id }: { id: number; }) {
     const { uq } = useUqApp();

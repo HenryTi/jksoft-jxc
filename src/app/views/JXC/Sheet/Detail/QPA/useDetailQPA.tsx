@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { ViewItemID } from "app/template";
 import { Editing, OptionsUseSheetDetail, selectAtomMetricSpec as selectAtomMetricSpecHook } from "app/hooks";
 import { AtomMetricSpec, AtomPhrase, EditingRow, SheetRow } from "app/tool";
 import { Page, uqAppModal, useModal } from "tonwa-app";
@@ -9,9 +8,10 @@ import { ChangeEvent, useRef, useState } from "react";
 import { useUqApp } from "app/UqApp";
 import { FA } from "tonwa-com";
 import { useAtomValue } from "jotai";
-import { GenGoodsHook, ViewAtomGoods } from "app/views/JXC/Atom";
+import { ViewAtomGoods } from "app/views/JXC/Atom";
 import { ViewAMSAtom, ViewAMSAtomSpec, ViewAMSMetric, ViewAMSSpec } from "../../ViewAMS";
 import { UseSheetDetailReturn } from "app/hooks";
+import { ViewItemID } from "../../../ViewItemID";
 
 const fieldQuantity = 'value';
 const fieldPrice = 'v1';

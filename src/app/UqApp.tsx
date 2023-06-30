@@ -6,8 +6,6 @@ import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
 import { UqExt } from 'uqs/UqDefault';
-import { GenAtom } from './template';
-import { GenSheet } from './template/Sheet';
 import { GAtom, GSheet, GSpec, GenBizEntity } from './tool';
 import { atom } from 'jotai';
 import { Biz, EntityAtom } from './Biz';
@@ -106,8 +104,6 @@ export class UqApp extends UqAppBase<UQs> {
     readonly gAtoms: { [name: string]: GAtom } = {};
     readonly gSpecs: { [name: string]: GSpec } = {};
     readonly gSheets: { [name: string]: GSheet } = {};
-    readonly genAtoms: { [name: string]: GenAtom } = {}
-    readonly genSheets: { [name: string]: GenSheet } = {}
 
     // atom: name or phrase
     specFromAtom(atom: string): GSpec {
@@ -121,20 +117,6 @@ export class UqApp extends UqAppBase<UQs> {
     spec(spec: string): GSpec {
         let gSpec = this.gSpecs[spec];
         return gSpec;
-    }
-
-    protected override onObjectBuilt(object: GenBizEntity<any>) {
-        let { bizEntityType, bizEntityName, phrase } = object;
-        switch (bizEntityType) {
-            case 'atom':
-                this.genAtoms[bizEntityName] = object as GenAtom;
-                this.genAtoms[phrase] = object as GenAtom;
-                break;
-            case 'sheet':
-                this.genSheets[bizEntityName] = object as GenSheet;
-                this.genSheets[phrase] = object as GenSheet;
-                break;
-        }
     }
 }
 

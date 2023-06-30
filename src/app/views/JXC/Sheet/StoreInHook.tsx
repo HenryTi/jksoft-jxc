@@ -1,5 +1,5 @@
-import { UqApp, useUqApp } from "app/UqApp";
-import { GSheet, OriginDetail, SheetRow } from "app/tool";
+import { useUqApp } from "app/UqApp";
+import { GSheet, SheetRow } from "app/tool";
 import { ModalSelectContact, ViewItemContact } from "../Atom";
 import { Atom, EnumSheet, Sheet } from "uqs/UqDefault";
 import { IDView, uqAppModal } from "tonwa-app";

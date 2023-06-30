@@ -17,6 +17,7 @@ import { gStoreOut } from "./Sheet/StoreOut";
 import { PageSheetCenter } from "./Sheet";
 import { gSpecBatchValid, gSpecSheo } from "./Atom/Spec";
 import { EntityAtom, EntitySpec } from "app/Biz/EntityAtom";
+import { pathAtomList, pathAtomNew } from "app/hooks";
 
 export const pathJXC = 'jxc';
 export const pathSheetCenter = 'sheet-center';
@@ -85,9 +86,9 @@ function routeAtom(uqApp: UqApp, gAtom: GAtom) {
     uqApp.gAtoms[name] = ga;
     uqApp.gAtoms[entity.phrase] = ga;
     return <React.Fragment key={name}>
-        <Route path={`${name}-new`} element={pageNew} />
-        <Route path={`${name}-list`} element={pageList} />
-        <Route path={`${name}-list/:atom`} element={pageList} />
+        <Route path={pathAtomNew(name)} element={pageNew} />
+        <Route path={`${pathAtomList(name)}`} element={pageList} />
+        <Route path={`${pathAtomList(name)}/:atom`} element={pageList} />
         <Route path={`${name}-view/:id`} element={pageView} />
         <Route path={`${name}/:id`} element={pageView} />
     </React.Fragment>;

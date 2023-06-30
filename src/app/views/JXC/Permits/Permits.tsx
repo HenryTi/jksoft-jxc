@@ -1,4 +1,3 @@
-import { Biz } from "app/Biz";
 import { EntityPermit, EntityRole, PermitItem } from "app/Biz/EntityPermit";
 import { Permit } from "app/Site";
 import { useUqApp } from "app/UqApp";

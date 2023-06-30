@@ -1,11 +1,11 @@
 import { UqApp, useUqApp } from "app/UqApp";
 import { Band } from "app/coms";
-import { ViewItemID } from "app/template";
 import { useState } from "react";
 import { Link, Route, useParams } from "react-router-dom";
 import { IDView, Page, PageSpinner } from "tonwa-app";
 import { LMR, List, useEffectOnce } from "tonwa-com";
 import { Detail, Sheet } from "uqs/UqDefault";
+import { ViewItemID } from "./ViewItemID";
 
 export const pathSheetView = 'sheet';
 export const pathDetailView = 'sheet-detail';

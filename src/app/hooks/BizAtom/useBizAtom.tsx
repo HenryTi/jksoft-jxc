@@ -1,11 +1,16 @@
-import { FormInput, FormRow } from "app/coms";
-import { Gen, GenBizEntity, QueryMore } from "app/tool";
+import { QueryMore } from "app/tool";
 import { UqApp, useUqApp } from "app/UqApp";
-import { UqID } from "tonwa-uq";
-import { Atom, ReturnSearchAtom$page } from "uqs/UqDefault";
 import { Biz, BizBud, EntityAtom } from "app/Biz";
 import { uqAppModal } from "tonwa-app";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
+
+export function pathAtomNew(atomName: string) {
+    return `{atomName}-new`;
+}
+
+export function pathAtomList(atomName: string) {
+    return `{atomName}-list`;
+}
 
 export interface ViewPropRowProps {
     name: string;
@@ -27,7 +32,7 @@ export interface OptionsUseBizAtom {
     exLabel?: string;
 }
 
-export interface GenBizAtom {
+export interface UseBizAtomReturn {
     uqApp: UqApp;
     biz: Biz;
     entity: EntityAtom;
@@ -41,7 +46,7 @@ export interface GenBizAtom {
     selectLeafAtom: (entityAtom: EntityAtom) => Promise<EntityAtom>;
 }
 
-export function useBizAtom(options: OptionsUseBizAtom): GenBizAtom {
+export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
     const { atomName: atomPhrase } = options;
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;

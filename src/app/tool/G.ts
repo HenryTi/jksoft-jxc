@@ -12,6 +12,7 @@ export interface OptionsAtomSelect {
 
 export interface GAtom {
     name: EnumAtom;
+    caption?: string;
     entity?: EntityAtom;
     pageNew: JSX.Element;
     pageEdit: JSX.Element;

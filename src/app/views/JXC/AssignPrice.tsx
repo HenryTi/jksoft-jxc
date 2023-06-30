@@ -1,4 +1,4 @@
-import { PageAssign, GenBuds, GenAMSBudsSearch, GenAtom } from "app/template";
+import { PageAssign } from "app/template";
 import { Route } from "react-router-dom";
 import { GenGoods } from "./Atom";
 

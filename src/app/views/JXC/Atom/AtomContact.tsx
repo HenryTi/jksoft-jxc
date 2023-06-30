@@ -1,23 +1,7 @@
-import { UqApp, useUqApp } from "app/UqApp";
-import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView, selectAtom } from "app/hooks";
-import { PageAtomList, PageAtomNew, PageAtomView, GenAtom, PageAtomSelect, GenAtomNew } from "app/template/Atom";
-import { GAtom, OptionsAtomSelect } from "app/tool";
-import { Route } from "react-router-dom";
+import { useUqApp } from "app/UqApp";
+import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
+import { GAtom } from "app/tool";
 import { Atom, EnumAtom, uqSchema } from "uqs/UqDefault";
-
-export class GenContact extends GenAtom {
-    readonly bizEntityName = uqSchema.$biz.contact.name;
-    get GenAtomNew(): new (genAtom: GenAtom) => GenAtomNew { return GenContactNew; }
-
-    get PageSelect(): JSX.Element {
-        return <PageAtomSelect genAtom={this} />;
-    }
-
-    readonly ViewItemAtom = ViewItemContact;
-}
-
-class GenContactNew extends GenAtomNew {
-}
 
 export function ViewItemContact({ value }: { value: Atom; }) {
     let { no, ex } = value;
@@ -32,15 +16,6 @@ export function ModalSelectContact() {
     let genAtom = uqApp.objectOf(GenContact);
     return <PageAtomSelect genAtom={genAtom} />;
 }
-
-export function routeContact(uqApp: UqApp) {
-    let { genAtomNew, genAtomList, genAtomView } = uqApp.objectOf(GenContact);
-    return <>
-        <Route path={genAtomNew.path} element={<PageAtomNew Gen={GenContact} />} />
-        <Route path={genAtomList.path} element={<PageAtomList Gen={GenContact} />} />
-        <Route path={`${genAtomView.path}/:id`} element={<PageAtomView Gen={GenContact} />} />
-    </>;
-};
 
 const BizContact: OptionsUseBizAtom = {
     atomName: EnumAtom.Contact,

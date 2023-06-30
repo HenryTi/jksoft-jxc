@@ -1,57 +1,9 @@
-import { Route } from "react-router-dom";
 import { LMR } from "tonwa-com";
-import { PageAtomList, PageAtomNew, PageAtomView, GenAtom, PageAtomSelect, GenAtomNew } from "app/template/Atom";
-import { Atom, EnumAtom, uqSchema } from "uqs/UqDefault";
-import { UqApp, useUqApp } from "app/UqApp";
-import { GenAtomSpec, GenSpec } from "app/template";
-import { GenAtomSpec as GenAtomSpecHook } from "app/hooks";
-import { GenBatchValid, GenSpecShoe } from "./Spec";
+import { Atom, EnumAtom } from "uqs/UqDefault";
+import { useUqApp } from "app/UqApp";
+import { GenAtomSpec } from "app/template";
 import { AtomMetricSpec, GAtom, OptionsAtomSelect } from "app/tool";
-import { selectAtomMetricSpec } from "app/template/AtomSpec";
 import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView, selectAtom } from "app/hooks";
-
-const GenSpecArr: (new (uqApp: UqApp) => GenSpec)[] = [
-    GenBatchValid,
-    GenSpecShoe,
-];
-export class GenGoods extends GenAtomSpec {
-    readonly bizEntityName = uqSchema.$biz.goods.name;
-    get GenAtomNew() { return GenGoodsNew; }
-    get exLabel(): string { return '描述' }
-    protected override buildSpecs(): void {
-        GenSpecArr.forEach(v => {
-            let g = new v(this.uqApp);
-            let { bizEntityName, phrase } = g;
-            this.genSpecs[bizEntityName] = g;
-            this.genSpecs[phrase] = g;
-        });
-    }
-    readonly ViewItemAtom = ViewAtomGoods; // : (value: any) => JSX.Element;
-
-    get noMedsMessage(): string { return '没有计量单位' }
-}
-
-class GenGoodsNew extends GenAtomNew {
-}
-
-export class GenGoodsHook extends GenAtomSpecHook {
-    readonly bizEntityName = uqSchema.$biz.goods.name;
-    readonly atomName = this.bizEntityName;
-    get GenAtomNew() { return GenGoodsNew; }
-    get exLabel(): string { return '描述' }
-    protected override buildSpecs(): void {
-        GenSpecArr.forEach(v => {
-            let g = new v(this.uqApp);
-            let { bizEntityName, phrase } = g;
-            this.genSpecs[bizEntityName] = g;
-            this.genSpecs[phrase] = g;
-        });
-    }
-    readonly ViewItemAtom = ViewAtomGoods; // : (value: any) => JSX.Element;
-
-    get noMedsMessage(): string { return '没有计量单位' }
-}
-
 
 export function ViewAtomGoods({ value }: { value: Atom; }) {
     let { no, ex } = value;
@@ -95,16 +47,6 @@ export function ModalSelectGoodsRetailPrice() {
         assigns={['retailprice']} />;
 }
 
-export function routeGoods(uqApp: UqApp) {
-    let { genAtomNew, genAtomList, genAtomView } = uqApp.objectOf(GenGoods);
-    return <>
-        <Route path={genAtomNew.path} element={<PageAtomNew Gen={GenGoods} />} />
-        <Route path={genAtomList.path} element={<PageAtomList Gen={GenGoods} />} />
-        <Route path={`${genAtomList.path}/:atom`} element={<PageAtomList Gen={GenGoods} />} />
-        <Route path={`${genAtomView.path}/:id`} element={<PageAtomView Gen={GenGoods} />} />
-    </>;
-};
-
 const BizContact: OptionsUseBizAtom = {
     atomName: EnumAtom.Goods,
     NOLabel: undefined,
@@ -138,9 +80,3 @@ export const gGoods: GAtom = {
     pageView: <PageView />,
     ViewItem: ViewAtomGoods,
 }
-/*
-pageNew: <PageAtomNew Gen={GenGoods} />,
-pageEdit: <PageAtomNew Gen={GenGoods} />,
-pageList: <PageAtomList Gen={GenGoods} />,
-pageView: <PageAtomView Gen={GenGoods} />,
-*/
