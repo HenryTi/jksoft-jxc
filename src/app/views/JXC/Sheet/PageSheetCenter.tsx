@@ -1,0 +1,149 @@
+import { UqApp, useUqApp } from "app/UqApp";
+import { PageQueryMore, ViceTitle } from "app/coms";
+import { GenSheetAct } from "app/template/Sheet";
+import { Link, Route } from "react-router-dom";
+import { Sheet } from "uqs/UqDefault";
+import { gPurchase } from "./Purchase";
+import { GenStoreInAct, GenStoreInMultiStorageAct } from "./StoreIn";
+//import { routeSheetPurchase } from "./Purchase";
+// import { routeSheetStoreIn } from "./StoreIn";
+import { IDView } from "tonwa-app";
+import { ViewItemID } from "app/template";
+// import { GenSaleAct, routeSheetSale } from "./Sale";
+import { GenStoreOutAct, gStoreOut, routeSheetStoreOut } from "./StoreOut";
+import { GSheet } from "app/tool";
+import { Biz, EntitySheet } from "app/Biz";
+import { gSale } from "./Sale";
+import { gStoreInM } from "./StoreInMHook";
+import { gStoreIn } from "./StoreInHook";
+
+const GenArr: (new (uqApp: UqApp) => GenSheetAct)[] = [
+    // GenPurchaseAct,
+    GenStoreInAct,
+    GenStoreInMultiStorageAct,
+    //GenSaleAct,
+    GenStoreOutAct,
+];
+
+const gSheets: GSheet[][] = [
+    [
+        gPurchase,
+        gStoreIn,
+        gStoreInM,
+    ],
+    [
+        gSale,
+        gStoreOut,
+    ],
+];
+
+export function PageSheetCenter() {
+    const uqApp = useUqApp();
+    const { uq, biz } = uqApp;
+    const gCollName: { [name: string]: GSheet } = {};
+    const gCollPhrase: { [name: string]: GSheet } = {};
+    for (let gSheetArr of gSheets) {
+        for (let gSheet of gSheetArr) {
+            const { sheet: name } = gSheet;
+            let entity = biz.entities[name] as EntitySheet;
+            gCollName[name] = gSheet;
+            gCollPhrase[entity.phrase] = gSheet;
+        }
+    }
+
+    const genColl: { [entity: string]: GenSheetAct } = {};
+    const genArr = GenArr.map(v => {
+        const gen = uqApp.objectOf(v);
+        const { phrase } = gen;
+        genColl[phrase] = gen;
+        return gen;
+    });
+
+    async function query(param: any, pageStart: any, pageSize: number): Promise<any[]> {
+        let ret = await uq.GetMyDrafts.page(param, pageStart, pageSize);
+        return ret.$page;
+    }
+    function ViewItem({ value }: { value: Sheet & { phrase: string; } }) {
+        const { id, no, phrase, target, operator } = value;
+        let g = gCollPhrase[phrase];
+        if (g !== undefined) {
+            const { sheet: name, caption } = g;
+            let entity = biz.entities[name] as EntitySheet;
+            return <LinkSheet path={name} caption={caption ?? entity.caption} />;
+        }
+
+        let gen = genColl[phrase];
+        let caption: string, path: string;
+        if (gen === undefined) {
+            debugger;
+        }
+        else {
+            caption = gen.caption;
+            path = gen.path;
+        }
+        function LinkSheet({ path, caption }: { path: string; caption: string; }) {
+            return <Link to={`../${path}/${id}`}>
+                <div className="px-3 py-2 d-flex">
+                    <div className="w-10c me-3">
+                        <div>{caption}</div>
+                        <div className="small text-muted">{no}</div>
+                    </div>
+                    <IDView id={target} uq={uq} Template={ViewItemID} />
+                </div>
+            </Link>;
+        }
+        return <LinkSheet path={path} caption={caption} />;
+    }
+    function Top({ items }: { items: any[] }) {
+        if (!items) return null;
+        if (items.length === 0) return null;
+        return <ViceTitle>录入中的单据</ViceTitle>;
+    }
+    return <PageQueryMore header="单据中心"
+        param={{}}
+        sortField={'id'}
+        query={query}
+        ViewItem={ViewItem}
+        Top={Top}
+    >
+        {
+            gSheets.map((arr, index) => {
+                return <div key={index} className="px-3 py-2 border-bottom d-flex flex-wrap p-2">
+                    {
+                        arr.map((v, index) => {
+                            let { caption, sheet: name } = v;
+                            return <Link key={index}
+                                to={`../${name}`}
+                                className="px-3 px-2 btn btn-outline-primary m-2"
+                            >
+                                {caption}
+                            </Link>
+                        })
+                    }
+                </div>
+            })
+        }
+        <div className="px-3 py-2 border-bottom d-flex flex-wrap p-2">
+            {genArr.map((v, index) => {
+                let { caption, path } = v;
+                return <Link key={index}
+                    to={`../${path}`}
+                    className="px-3 px-2 btn btn-outline-primary m-2"
+                >
+                    {caption}
+                </Link>
+            })
+            }
+        </div>
+    </PageQueryMore>;
+}
+
+// export const pathSheetCenter = 'sheet-center';
+
+//{routeSheetPurchase(uqApp)}
+// {routeSheetSale(uqApp)}
+// {routeSheetStoreIn(uqApp)}
+// {routeSheetStoreOut(uqApp)}
+// export function routeSheetCenter(uqApp: UqApp) {
+//    return <Route path={pathSheetCenter} element={<PageCenter />} />
+// }

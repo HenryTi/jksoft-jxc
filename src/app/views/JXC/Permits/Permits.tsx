@@ -12,7 +12,7 @@ export const pathPermits = 'permits';
 function PagePermits() {
     const uqApp = useUqApp();
     const user = useAtomValue(uqApp.user);
-    const biz = uqApp.objectOf(Biz);
+    const { biz } = uqApp;
     const { roles, permits } = biz;
     const { uqSites: { userSite } } = uqApp;
     const permitColl = userSite.permits;

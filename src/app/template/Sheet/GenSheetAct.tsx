@@ -5,6 +5,7 @@ import { GenDetail } from "./GenDetail";
 import { GenPend } from "./GenPend";
 import { Atom, Detail, Sheet } from "uqs/UqDefault";
 import { OriginDetail, SheetRow } from "../../tool";
+import { GenEditing } from "./GenEditing";
 
 export abstract class GenSheetAct extends Gen {
     protected abstract GenSheet(): new (uqApp: UqApp) => GenSheet;
@@ -30,6 +31,8 @@ export abstract class GenSheetAct extends Gen {
             this.genPend = new GenPend(uqApp, fromPend.name);
         }
     }
+
+    newEditing(): GenEditing { return new GenEditing(this); }
 
     protected get GenPend(): new (uqApp: UqApp, pendName: string) => GenPend { return undefined; }
     protected abstract get GenDetail(): new (uqApp: UqApp) => GenDetail;
@@ -59,7 +62,7 @@ export abstract class GenSheetAct extends Gen {
         return { sheet: {} as Sheet, sheetRows: [] };
     }
 
-    get ViewRow() {
+    get ViewDetailRow() {
         return this.genDetail.ViewRow;
     }
 

@@ -5,5 +5,8 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 // https://vitejs.dev/config/
 export default defineConfig({
     base: '/jksoft-jxc',
-    plugins: [react(), tsconfigPaths()],
+    plugins: [
+        react(),
+        tsconfigPaths(),
+    ],
 })

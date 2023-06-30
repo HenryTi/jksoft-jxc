@@ -3,18 +3,20 @@ import { propertyOf, UserSite } from "tonwa-uq";
 import { ButtonAddUser } from "../ButtonAddUser";
 import { Me } from "../Me";
 import { roleT } from "../res";
-import { GenSiteRole } from "../GenSiteRole";
+import { UseSiteRoleReturn } from "../useSiteRole";
 import { ViewUser } from "../ViewUser";
-import { ListEdit, ListEditContext, None, useUqAppBase } from "tonwa-app";
+import { ListEdit, ListEditContext, None } from "tonwa-app";
 import { useAtomValue } from "jotai";
 import { consts } from "../consts";
+import { useUqApp } from "app/UqApp";
 
-export function ViewAdmin({ siteRole }: { siteRole: GenSiteRole; }) {
+export function ViewAdmin({ siteRole }: { siteRole: UseSiteRoleReturn; }) {
+    const uqApp = useUqApp();
     let { onAdminAdded } = siteRole;
-    let user = useAtomValue(siteRole.uqApp.user);
+    let user = useAtomValue(uqApp.user);
     let unitRoles = useAtomValue(siteRole.unitRoles);
     let { admins } = unitRoles;
-    let listEditContext = new ListEditContext<UserSite>(admins, propertyOf<UserSite>('unit'));
+    let listEditContext = new ListEditContext<UserSite>(admins, propertyOf<UserSite>('site'));
     let tAdmin = roleT('admin');
     function ViewItem({ value }: { value: UserSite }) {
         if (value.user === user.id) return <Me />;

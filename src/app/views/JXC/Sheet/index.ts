@@ -1,1 +1,1 @@
-export { pathSheetCenter, routeSheet } from './Center';
+export { PageSheetCenter } from './PageSheetCenter';

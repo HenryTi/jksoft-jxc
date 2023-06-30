@@ -3,17 +3,19 @@ import { useAtomValue } from "jotai";
 import { Band, BandString, CheckAsync, FA, Form, LMR, MutedSmall, setAtomValue, stringFormat, Submit, wait } from "tonwa-com";
 import { EnumSysRole, UserSite } from "tonwa-uq";
 import { roleT } from "./res";
-import { GenSiteRole } from "./GenSiteRole";
-import { Image, Page, PageConfirm, useModal, useUqAppBase } from "tonwa-app";
-import { Biz } from "app/Biz";
+// import { GenSiteRole } from "./useSiteRole";
+import { Image, Page, PageConfirm, useModal } from "tonwa-app";
+// import { Biz } from "app/Biz";
+import { useUqApp } from "app/UqApp";
+import { UseSiteRoleReturn } from "./useSiteRole";
 
 interface Props {
     userSite: UserSite;
-    siteRole: GenSiteRole;
+    siteRole: UseSiteRoleReturn;
 }
 
 export function ViewUser({ siteRole, userSite: userSiteInit }: Props) {
-    let uqApp = useUqAppBase();
+    let uqApp = useUqApp();
     let { openModal, closeModal } = useModal();
     let [userSite, setUserSite] = useState(userSiteInit);
     let { name, icon, nick, assigned } = userSite;
@@ -89,7 +91,7 @@ export function ViewUser({ siteRole, userSite: userSiteInit }: Props) {
                 const cnLabel = ' my-2 me-4 w-min-6c ';
                 const cnInput = ' form-check-input ';
                 const cnInputGap = ' me-2 ';
-                let biz = uqApp.objectOf(Biz);
+                let { biz } = uqApp;
                 let { rolesAtom } = userSiteInit;
                 let roles = useAtomValue(rolesAtom);
                 return <Band label={'角色'}>

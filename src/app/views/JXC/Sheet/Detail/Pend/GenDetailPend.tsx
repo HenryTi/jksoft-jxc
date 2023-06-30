@@ -9,7 +9,6 @@ import { getAtomValue } from "tonwa-com";
 import { useAtomValue } from "jotai";
 import { GenDetailGoods } from "../GenDetailGoods";
 import { ViewAMSAtomSpec } from "../../ViewAMS";
-import { GenGoods } from "app/views/JXC/Atom";
 
 export abstract class GenDetailPend extends GenDetailGoods {
     get itemCaption(): string { return '商品' }
@@ -67,9 +66,6 @@ export abstract class GenDetailPend extends GenDetailGoods {
 //const cnCol4 = ' col-4 py-2 ';
 const cnCol = ' col py-2 ';
 function ViewDetailPend({ editingRow, genEditing }: { editingRow: EditingRow; genEditing: GenEditing; }): JSX.Element {
-    const uqApp = useUqApp();
-    const genGoods = uqApp.objectOf(GenGoods);
-    // const { uq } = uqApp;
     const { atomDetails } = editingRow;
     const details = useAtomValue(atomDetails);
     const { origin } = editingRow;
@@ -87,7 +83,7 @@ function ViewDetailPend({ editingRow, genEditing }: { editingRow: EditingRow; ge
     }
     return <div className="container">
         <div className="row">
-            <ViewAMSAtomSpec id={item} genGoods={genGoods} className={cnCol} />
+            <ViewAMSAtomSpec id={item} className={cnCol} />
             <div className={" text-end " + cnCol}>
                 <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount?.toFixed(4)}</span>
                 <br />

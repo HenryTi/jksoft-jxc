@@ -1,8 +1,8 @@
-import { UqApp } from "app/UqApp";
+import { UqApp, useUqApp } from "app/UqApp";
 import { GenDetail, GenSheet, GenSheetAct, PageSheetAct, GenSheetNoTarget } from "app/template/Sheet";
-import { OriginDetail, SheetRow } from "app/tool";
-import { ModalSelectContact } from "../Atom";
-import { Atom, Sheet } from "uqs/UqDefault";
+import { GSheet, OriginDetail, SheetRow } from "app/tool";
+import { ModalSelectContact, ViewItemContact } from "../Atom";
+import { Atom, EnumSheet, Sheet } from "uqs/UqDefault";
 import { IDView, uqAppModal } from "tonwa-app";
 import { ViewItemID } from "app/template";
 import { Route } from "react-router-dom";
@@ -116,3 +116,15 @@ export function routeSheetStoreIn(uqApp: UqApp) {
         <Route path={pathMultiStorage} element={<PageStoreInMultiStorage />} />
     </>;
 }
+/*
+const sheetMulti = EnumSheet.SheetStoreIn;
+const captionMulti = '入库单分单';
+function PageStoreInMultiStorageG() {
+    return <div></div>;
+}
+export const gStoreInMulti: GSheet = {
+    sheet: sheetMulti,
+    caption: captionMulti,
+    pageEdit: <PageStoreInMultiStorageG />,
+}
+*/

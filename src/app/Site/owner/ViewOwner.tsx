@@ -3,13 +3,13 @@ import { propertyOf, UserSite } from "tonwa-uq";
 import { ButtonAddUser } from "../ButtonAddUser";
 import { Me } from "../Me";
 import { roleT } from "../res";
-import { GenSiteRole } from "../GenSiteRole";
+import { UseSiteRoleReturn } from "../useSiteRole";
 import { ViewUser } from "../ViewUser";
 import { ListEdit, ListEditContext, None, Page, useModal, useUqAppBase } from "tonwa-app";
 import { useAtomValue } from "jotai";
 import { consts } from "../consts";
 
-export function ViewOwner({ siteRole }: { siteRole: GenSiteRole; }) {
+export function ViewOwner({ siteRole }: { siteRole: UseSiteRoleReturn; }) {
     let uqApp = useUqAppBase();
     let { openModal, closeModal } = useModal();
     let user = useAtomValue(uqApp.user);
@@ -18,7 +18,7 @@ export function ViewOwner({ siteRole }: { siteRole: GenSiteRole; }) {
     let unitRoles = useAtomValue(siteRole.unitRoles);
     let { owners } = unitRoles;
 
-    let listEditContext = new ListEditContext<UserSite>(owners, propertyOf<UserSite>('unit'));
+    let listEditContext = new ListEditContext<UserSite>(owners, propertyOf<UserSite>('site'));
     let tOwner = roleT('owner');
 
     function ViewItem({ value }: { value: UserSite }) {

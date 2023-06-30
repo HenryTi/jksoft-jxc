@@ -9,7 +9,6 @@ import { PageRoleAdmin, PageSys } from "app/Site";
 import { EnumSysRole } from "tonwa-uq";
 import { Permit } from "app/Site";
 import React from "react";
-import { GenSiteRole } from "app/Site/GenSiteRole";
 
 const pathAbout = 'about';
 
@@ -46,15 +45,16 @@ export function TabMe() {
 
         }
         async function onRoleAdmin() {
-            let siteRole = new GenSiteRole(uqApp, uqSites, uqSites.userSite);
-            openModal(<PageSpinner />);
-            await siteRole.init();
-            closeModal();
+            //let siteRole = new GenSiteRole(uqApp, uqSites, uqSites.userSite);
+            // openModal(<PageSpinner />);
+            //await siteRole.init();
+            // closeModal();
             openModal(
                 <PageRoleAdmin
                     admin={EnumSysRole.owner}
-                    onAdminChanged={onAdminChanged} viewTop={<></>}
-                    siteRole={siteRole}
+                    // onAdminChanged={onAdminChanged}
+                    viewTop={<></>}
+                // siteRole={siteRole}
                 />
             );
         }
@@ -67,11 +67,13 @@ export function TabMe() {
         let { userSite0 } = uqSites;
         if (userSite0 === undefined) return null;
         async function onSitesAdmin() {
-            let siteRole = new GenSiteRole(uqApp, uqSites, userSite0);
-            openModal(<PageSpinner />);
-            await siteRole.init();
-            closeModal();
-            openModal(<PageSys siteRole={siteRole} />);
+            // let siteRole = new GenSiteRole(uqApp, uqSites, userSite0);
+            // openModal(<PageSpinner />);
+            // await siteRole.init();
+            // closeModal();
+            openModal(<PageSys
+            // siteRole={siteRole} 
+            />);
         }
         return <>
             <Cmd onClick={onSitesAdmin} content="系统管理" icon="database" iconColor="text-warning" />

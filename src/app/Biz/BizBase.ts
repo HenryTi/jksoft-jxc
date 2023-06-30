@@ -31,6 +31,7 @@ export class BizBase {
                 debugger;
                 throw Error(`unknown ${i}`);
             case 'name': break;
+            case 'jName': break;
             case 'type': break;
             case 'dataType': break;
             case 'history': break;

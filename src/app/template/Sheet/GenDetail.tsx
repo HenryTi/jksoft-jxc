@@ -20,7 +20,7 @@ export abstract class GenDetail extends GenBizEntity<EntityDetail> {
 
     async saveSpec(atom: AtomPhrase, spec: any): Promise<number> {
         let genSpec = this.genAtomSpec.genSpecFromAtom(atom.phrase);
-        let values = genSpec.entity.getValues(spec);
+        let values = genSpec.entity.getSpecValues(spec);
         let ret = await this.uq.SaveSpec.submit({
             spec: genSpec.bizEntityName,
             atom: atom.id,

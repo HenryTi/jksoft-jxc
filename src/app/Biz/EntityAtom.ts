@@ -23,7 +23,7 @@ export class EntitySpec extends Entity {
         }
     }
 
-    getValues(specValue: any): string {
+    getSpecValues(specValue: any): string {
         if (!specValue) return '';
         let ret: string[] = [];
         for (let bud of this.keys) {
@@ -36,7 +36,7 @@ export class EntitySpec extends Entity {
         return s;
     }
 
-    fromValues(values: string): any {
+    fromSpecValues(values: string): any {
         let ret: { [key: string]: any } = {};
         let parts = values.split(String.fromCharCode(12));
         let i = 0;

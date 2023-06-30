@@ -1,12 +1,20 @@
-import { Gen } from "../tool";
+import { useUqApp } from "app/UqApp";
 // import { Prop, PropDataType } from "uqs/UqDefault";
 
-export class GenProp extends Gen {
-    readonly caption = '属性';
-    readonly IDPropIds: { [IDName: string]: number } = {};
+export interface UsePropReturn {
+    loadIDPropId: (IDName: string) => Promise<number>;
+    loadIDProps: (IDName: string) => Promise<{ id: number, items: { id: number; }[] }[]>;
+    setRadioItem: (propId: number, item: { id: number, name: string, caption: string }) => Promise<void>;
+}
 
-    async loadIDPropId(IDName: string): Promise<number> {
-        let propId = this.IDPropIds[IDName];
+export function useProp(): UsePropReturn {
+    const uqApp = useUqApp();
+    const { uq } = uqApp;
+    let caption = '属性';
+    let IDPropIds: { [IDName: string]: number } = {};
+
+    async function loadIDPropId(IDName: string): Promise<number> {
+        let propId = IDPropIds[IDName];
         if (propId !== undefined) return propId;
         /*
         let { Prop } = this.uq;
@@ -21,7 +29,7 @@ export class GenProp extends Gen {
         */
     }
 
-    async saveIxIDProp(IDName: string, data: any/*Prop*/) {
+    async function saveIxIDProp(IDName: string, data: any/*Prop*/) {
         /*
         let id = await this.loadIDPropId(IDName);
         let { Prop, IxProp } = this.uq;
@@ -30,12 +38,12 @@ export class GenProp extends Gen {
         */
     }
 
-    async loadIDProps(IDName: string): Promise<{ id: number, items: { id: number; }[] }[]> {
-        let { IxBud } = this.uq;
-        let propTypeId = await this.loadIDPropId(IDName);
+    async function loadIDProps(IDName: string): Promise<{ id: number, items: { id: number; }[] }[]> {
+        let { IxBud } = uq;
+        let propTypeId = await loadIDPropId(IDName);
         let [props, propItems] = await Promise.all([
-            this.uq.IX({ IX: IxBud, ix: propTypeId }),
-            this.uq.IX({ IX: IxBud, IX1: IxBud, ix: propTypeId }),
+            uq.IX({ IX: IxBud, ix: propTypeId }),
+            uq.IX({ IX: IxBud, IX1: IxBud, ix: propTypeId }),
         ]);
 
         let ret: { id: number, items: { id: number }[] }[] = [];
@@ -51,7 +59,7 @@ export class GenProp extends Gen {
         return ret;
     }
 
-    async setRadioItem(propId: number, item: { id: number, name: string, caption: string }) {
+    async function setRadioItem(propId: number, item: { id: number, name: string, caption: string }) {
         /*
         let { Prop, IxProp } = this.uq;
         let [ret] = await this.uq.ActIX({
@@ -65,4 +73,10 @@ export class GenProp extends Gen {
         return ret;
         */
     }
+
+    return {
+        loadIDPropId,
+        loadIDProps,
+        setRadioItem,
+    };
 }

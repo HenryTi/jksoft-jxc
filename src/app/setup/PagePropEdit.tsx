@@ -4,12 +4,13 @@ import { IDView, Page, useModal } from "tonwa-app";
 import { ButtonSubmit, FA, List, LMR, Sep, useEffectOnce } from "tonwa-com";
 import { Band } from "app/coms";
 import { ChangeEvent, useState } from "react";
-import { useGen } from "../tool";
 import { arrType, collPropDataType, TypeItem } from "./types";
-import { GenProp } from "./GenProp";
+import { useProp } from "./useProp";
+import { useUqApp } from "app/UqApp";
 
 export function PagePropEdit() {
-    const gen = useGen(GenProp);
+    const { uq } = useUqApp();
+    const gen = useProp();
     const { openModal } = useModal();
     const { prop } = useParams();
     const [arr, setArr] = useState<any[]>(undefined);
@@ -66,7 +67,7 @@ export function PagePropEdit() {
                 </div>
             </div>;
         }
-        return <IDView uq={gen.uq} id={id} Template={ViewProp} />;
+        return <IDView uq={uq} id={id} Template={ViewProp} />;
     }
     async function onAdd() {
         let ret = await openModal(<PagePropNew IDName={prop} />);
@@ -90,12 +91,10 @@ export function PagePropEdit() {
 }
 
 function PagePropNew({ IDName }: { IDName: string; }) {
-    const gen = useGen(GenProp);
-    const { openModal, closeModal } = useModal();
     const { register, handleSubmit, getValues } = useForm();
     const [type, setType] = useState<TypeItem>(undefined);
     const [submitable, setSubmitable] = useState(false);
-    const [submiting, setSubmiting] = useState(false);
+    const [submiting] = useState(false);
     async function onSubmit(data: any) {
         /*
         setSubmiting(true);

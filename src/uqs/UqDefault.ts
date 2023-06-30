@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Jun 13 2023 11:27:56 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Fri Jun 23 2023 16:08:27 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,7 +28,6 @@ export enum EnumID {
 	AtomMetric = 'atommetric',
 	AtomMetricSpec = 'atommetricspec',
 	Bud = 'bud',
-	SitePhrase = 'sitephrase',
 	History = 'history',
 	Formula = 'formula',
 	Atom = 'atom',
@@ -161,6 +160,17 @@ export interface Param$setSite {
 	site: number;
 }
 export interface Result$setSite {
+}
+
+export enum EnumBizType {
+	atom = 1,
+	sheet = 2,
+	key = 11,
+	prop = 12,
+	assign = 13,
+	permit = 14,
+	with = 15,
+	role = 16
 }
 
 export interface Param$poked {
@@ -715,17 +725,6 @@ export interface BudInActs extends ID {
 	phrase: number | ID;
 }
 
-export interface SitePhrase extends ID {
-	site: number;
-	phrase: number;
-}
-
-export interface SitePhraseInActs extends ID {
-	ID?: UqID<any>;
-	site: number | ID;
-	phrase: number | ID;
-}
-
 export interface History extends ID {
 	subject: number;
 	value: number;
@@ -820,16 +819,6 @@ export interface PendInActs extends ID {
 	value: number;
 }
 
-export enum EnumBizType {
-	atom = 1,
-	sheet = 2,
-	key = 11,
-	prop = 12,
-	assign = 13,
-	permit = 14,
-	with = 15
-}
-
 export interface ParamReportStorage {
 	key: string;
 	subject: string;
@@ -896,7 +885,6 @@ export interface ParamActs {
 	atomMetricSpec?: AtomMetricSpecInActs[];
 	ixBud?: IxBud[];
 	bud?: BudInActs[];
-	sitePhrase?: SitePhraseInActs[];
 	history?: HistoryInActs[];
 	formula?: FormulaInActs[];
 	atom?: AtomInActs[];
@@ -954,7 +942,6 @@ export interface UqExt extends Uq {
 	GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
 	IxBud: UqIX<any>;
 	Bud: UqID<any>;
-	SitePhrase: UqID<any>;
 	History: UqID<any>;
 	Formula: UqID<any>;
 	Atom: UqID<any>;
@@ -1306,6 +1293,22 @@ export const uqSchema={
             }
         ],
         "returns": [] as any
+    },
+    "enumbiztype": {
+        "name": "EnumBizType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "atom": 1,
+            "sheet": 2,
+            "key": 11,
+            "prop": 12,
+            "assign": 13,
+            "permit": 14,
+            "with": 15,
+            "role": 16
+        }
     },
     "$poked": {
         "name": "$poked",
@@ -3095,40 +3098,6 @@ export const uqSchema={
         "idType": 3,
         "isMinute": false
     },
-    "sitephrase": {
-        "name": "SitePhrase",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "site",
-                "type": "id"
-            },
-            {
-                "name": "phrase",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "site",
-                "type": "id"
-            },
-            {
-                "name": "phrase",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
     "history": {
         "name": "History",
         "type": "id",
@@ -3387,21 +3356,6 @@ export const uqSchema={
         "idType": 3,
         "isMinute": true
     },
-    "enumbiztype": {
-        "name": "EnumBizType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "atom": 1,
-            "sheet": 2,
-            "key": 11,
-            "prop": 12,
-            "assign": 13,
-            "permit": 14,
-            "with": 15
-        }
-    },
     "reportstorage": {
         "name": "ReportStorage",
         "type": "query",
@@ -3624,6 +3578,7 @@ export const uqSchema={
         },
         "contact": {
             "name": "contact",
+            "jName": "Contact",
             "type": "atom",
             "caption": "往来单位",
             "props": [
@@ -3725,6 +3680,7 @@ export const uqSchema={
         },
         "goods": {
             "name": "goods",
+            "jName": "Goods",
             "type": "atom",
             "caption": "商品",
             "props": [
@@ -3747,6 +3703,7 @@ export const uqSchema={
         },
         "toy": {
             "name": "toy",
+            "jName": "Toy",
             "type": "atom",
             "caption": "玩具",
             "base": "goods",
@@ -3754,6 +3711,7 @@ export const uqSchema={
         },
         "batchvalid": {
             "name": "batchvalid",
+            "jName": "BatchValid",
             "type": "spec",
             "caption": "批次",
             "props": [
@@ -3774,6 +3732,7 @@ export const uqSchema={
         },
         "batchvalid1": {
             "name": "batchvalid1",
+            "jName": "BatchValid1",
             "type": "spec",
             "caption": "批次生成日期",
             "keys": [
@@ -3792,6 +3751,7 @@ export const uqSchema={
         },
         "medicine": {
             "name": "medicine",
+            "jName": "Medicine",
             "type": "atom",
             "caption": "药品",
             "props": [
@@ -3808,6 +3768,7 @@ export const uqSchema={
         },
         "medicinechinese": {
             "name": "medicinechinese",
+            "jName": "MedicineChinese",
             "type": "atom",
             "caption": "中药",
             "props": [
@@ -3822,6 +3783,7 @@ export const uqSchema={
         },
         "specialmedicinechinese": {
             "name": "specialmedicinechinese",
+            "jName": "SpecialMedicineChinese",
             "type": "atom",
             "caption": "中药饮品",
             "props": [
@@ -3837,6 +3799,7 @@ export const uqSchema={
         },
         "medicaldevice": {
             "name": "medicaldevice",
+            "jName": "MedicalDevice",
             "type": "atom",
             "caption": "医疗器械",
             "base": "goods",
@@ -3844,6 +3807,7 @@ export const uqSchema={
         },
         "specshoe": {
             "name": "specshoe",
+            "jName": "SpecShoe",
             "type": "spec",
             "caption": "型号",
             "keys": [
@@ -3863,6 +3827,7 @@ export const uqSchema={
         },
         "shoe": {
             "name": "shoe",
+            "jName": "Shoe",
             "type": "atom",
             "caption": "鞋",
             "base": "goods",
@@ -3870,11 +3835,13 @@ export const uqSchema={
         },
         "concactproduct": {
             "name": "concactproduct",
+            "jName": "ConcactProduct",
             "type": "tie",
             "caption": "ConcactProduct"
         },
         "departmentmember": {
             "name": "departmentmember",
+            "jName": "DepartmentMember",
             "type": "tie",
             "caption": "部门",
             "props": [
@@ -3897,6 +3864,7 @@ export const uqSchema={
         },
         "a菜单": {
             "name": "a菜单",
+            "jName": "A菜单",
             "type": "permit",
             "caption": "A菜单",
             "items": [
@@ -3980,6 +3948,7 @@ export const uqSchema={
         },
         "accountsetting": {
             "name": "accountsetting",
+            "jName": "AccountSetting",
             "type": "setting",
             "caption": "AccountSetting",
             "props": [
@@ -4005,6 +3974,7 @@ export const uqSchema={
         },
         "personsetting": {
             "name": "personsetting",
+            "jName": "PersonSetting",
             "type": "setting",
             "caption": "PersonSetting",
             "props": [
@@ -4030,6 +4000,7 @@ export const uqSchema={
         },
         "price": {
             "name": "price",
+            "jName": "Price",
             "type": "setting",
             "caption": "Price",
             "assigns": [
@@ -4042,23 +4013,27 @@ export const uqSchema={
         },
         "mainpurchase": {
             "name": "mainpurchase",
+            "jName": "MainPurchase",
             "type": "main",
             "caption": "MainPurchase"
         },
         "detailpurchase": {
             "name": "detailpurchase",
+            "jName": "DetailPurchase",
             "type": "detail",
             "caption": "DetailPurchase",
             "main": "mainpurchase"
         },
         "detailpurchasemedicine": {
             "name": "detailpurchasemedicine",
+            "jName": "DetailPurchaseMedicine",
             "type": "detail",
             "caption": "DetailPurchaseMedicine",
             "main": "mainpurchase"
         },
         "sheetpurchase": {
             "name": "sheetpurchase",
+            "jName": "SheetPurchase",
             "type": "sheet",
             "caption": "采购单",
             "main": "mainpurchase",
@@ -4072,23 +4047,27 @@ export const uqSchema={
         },
         "mainstorein": {
             "name": "mainstorein",
+            "jName": "MainStoreIn",
             "type": "main",
             "caption": "MainStoreIn"
         },
         "detailstorein": {
             "name": "detailstorein",
+            "jName": "DetailStoreIn",
             "type": "detail",
             "caption": "DetailStoreIn",
             "main": "mainstorein"
         },
         "pendstorein": {
             "name": "pendstorein",
+            "jName": "PendStoreIn",
             "type": "pend",
             "caption": "待入库",
             "detail": "detailstorein"
         },
         "sheetstorein": {
             "name": "sheetstorein",
+            "jName": "SheetStoreIn",
             "type": "sheet",
             "caption": "入库单",
             "main": "mainstorein",
@@ -4103,6 +4082,7 @@ export const uqSchema={
         },
         "sheetstoreinmultistorage": {
             "name": "sheetstoreinmultistorage",
+            "jName": "SheetStoreInMultiStorage",
             "type": "sheet",
             "caption": "入库单-分仓",
             "main": "mainstorein",
@@ -4117,11 +4097,13 @@ export const uqSchema={
         },
         "mainsale": {
             "name": "mainsale",
+            "jName": "MainSale",
             "type": "main",
             "caption": "MainSale"
         },
         "sheetsale": {
             "name": "sheetsale",
+            "jName": "SheetSale",
             "type": "sheet",
             "caption": "销售单",
             "main": "mainsale",
@@ -4135,29 +4117,34 @@ export const uqSchema={
         },
         "detailsale": {
             "name": "detailsale",
+            "jName": "DetailSale",
             "type": "detail",
             "caption": "DetailSale",
             "main": "mainsale"
         },
         "mainstoreout": {
             "name": "mainstoreout",
+            "jName": "MainStoreOut",
             "type": "main",
             "caption": "MainStoreOut"
         },
         "detailstoreout": {
             "name": "detailstoreout",
+            "jName": "DetailStoreOut",
             "type": "detail",
             "caption": "DetailStoreOut",
             "main": "mainstoreout"
         },
         "pendstoreout": {
             "name": "pendstoreout",
+            "jName": "PendStoreOut",
             "type": "pend",
             "caption": "待出库",
             "detail": "detailstorein"
         },
         "sheetstoreout": {
             "name": "sheetstoreout",
+            "jName": "SheetStoreOut",
             "type": "sheet",
             "caption": "出库单",
             "main": "mainstoreout",
@@ -4203,13 +4190,35 @@ export const uqSchema={
         },
         "customertree": {
             "name": "customertree",
+            "jName": "CustomerTree",
             "type": "tree",
             "caption": "客户分组"
         },
         "vendortree": {
             "name": "vendortree",
+            "jName": "VendorTree",
             "type": "tree",
             "caption": "供应商分组"
         }
     }
+}
+
+export enum EnumAtom {
+	b = 'b',
+	Contact = 'contact',
+	Goods = 'goods',
+	Toy = 'toy',
+	Medicine = 'medicine',
+	MedicineChinese = 'medicinechinese',
+	SpecialMedicineChinese = 'specialmedicinechinese',
+	MedicalDevice = 'medicaldevice',
+	Shoe = 'shoe',
+}
+
+export enum EnumSheet {
+	SheetPurchase = 'sheetpurchase',
+	SheetStoreIn = 'sheetstorein',
+	SheetStoreInMultiStorage = 'sheetstoreinmultistorage',
+	SheetSale = 'sheetsale',
+	SheetStoreOut = 'sheetstoreout',
 }

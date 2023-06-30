@@ -8,7 +8,7 @@ export abstract class Gen {
 
     constructor(uqApp: UqApp) {
         this.uqApp = uqApp;
-        this.biz = uqApp.objectOf(Biz);
+        this.biz = uqApp.biz;
     }
 }
 

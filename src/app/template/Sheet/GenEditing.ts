@@ -4,15 +4,18 @@ import { Detail, Sheet } from "uqs/UqDefault";
 import { GenSheetAct } from "./GenSheetAct";
 import { PageMoreCacheData } from "app/coms";
 import { AtomMetricSpec, DetailWithOrigin, EditingRow, OriginDetail, SheetRow } from "../../tool";
+import { GenDetail } from "./GenDetail";
 
 export class GenEditing {
     readonly genSheetAct: GenSheetAct;
     readonly atomSheet: PrimitiveAtom<Sheet>;
     readonly atomRows: PrimitiveAtom<EditingRow[]>;
     readonly atomSubmitable: Atom<boolean>;
+    private readonly genDetail: GenDetail;
 
     constructor(genSheetAct: GenSheetAct) {
         this.genSheetAct = genSheetAct;
+        this.genDetail = genSheetAct.genDetail;
         this.atomSheet = atom(undefined as Sheet);
         this.atomRows = atom(undefined as EditingRow[]);
         this.atomSubmitable = atom(get => {
@@ -61,9 +64,7 @@ export class GenEditing {
     }
 
     readonly onAddRow = async () => {
-        // await this.genSheetAct.addRow(this);
-        // ?
-        let sheetRows = await this.genSheetAct.genDetail.addRow(this);
+        let sheetRows = await this.genDetail.addRow(this);
         if (sheetRows === undefined) return;
         await this.saveRows(sheetRows);
         this.addRows(sheetRows);
@@ -71,8 +72,7 @@ export class GenEditing {
     }
 
     readonly onEditRow = async (editingRow: EditingRow): Promise<void> => {
-        //await this.genSheetAct.editRow(this, editingRow);
-        let { editRow } = this.genSheetAct.genDetail;
+        let { editRow } = this.genDetail;
         if (editRow === undefined) return;
         await editRow(this, editingRow as any);
     }
@@ -181,7 +181,7 @@ export class GenEditing {
         if (spec !== undefined) {
             specId = spec.id;
             if (specId === undefined) {
-                specId = await this.genSheetAct.genDetail.saveSpec(atom, spec);
+                specId = await this.genDetail.saveSpec(atom, spec);
             }
         }
         let ret = await uq.SaveAtomMetricSpec.submit({

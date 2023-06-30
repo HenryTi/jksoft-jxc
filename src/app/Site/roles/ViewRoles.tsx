@@ -3,14 +3,16 @@ import { FA, LMR, setAtomValue } from "tonwa-com";
 import { UserSite } from "tonwa-uq";
 import { ButtonAddUser } from "../ButtonAddUser";
 import { roleT } from "../res";
-import { GenSiteRole } from "../GenSiteRole";
 import { ViewUser } from "../ViewUser";
-import { ListEdit, ListEditContext, None, useUqAppBase } from "tonwa-app";
+import { ListEdit, ListEditContext, None } from "tonwa-app";
 import { atom, useAtomValue } from "jotai";
 import { consts } from "../consts";
+import { UseSiteRoleReturn } from "../useSiteRole";
+import { useUqApp } from "app/UqApp";
 
-export function ViewRoles({ siteRole }: { siteRole: GenSiteRole; }) {
-    let uqApp = useUqAppBase();
+export function ViewRoles({ siteRole }: { siteRole: UseSiteRoleReturn; }) {
+    let uqApp = useUqApp();
+    const { biz } = uqApp;
     let unitRoles = useAtomValue(siteRole.unitRoles);
     let { users } = unitRoles;
 
@@ -21,7 +23,7 @@ export function ViewRoles({ siteRole }: { siteRole: GenSiteRole; }) {
         let uqAppUser = useAtomValue(uqApp.user);
         let roles = useAtomValue(rolesAtom);
         if (user === uqAppUser.id) return null;
-        let bizRoles = siteRole.biz.roles;
+        let bizRoles = biz.roles;
         function Checked({ children }: { children: ReactNode; }) {
             return <label className="me-5">
                 <input type="checkbox" className="form-check-input" checked={true} disabled={true} />

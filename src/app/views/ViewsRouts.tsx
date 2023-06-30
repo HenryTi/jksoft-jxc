@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Page, PageTabsLayout, PageSpinner } from 'tonwa-app';
 import { pathMe, routeMe, TabMe } from './Me';

@@ -1,8 +1,9 @@
 import { UqApp, useUqApp } from "app/UqApp";
+import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView, selectAtom } from "app/hooks";
 import { PageAtomList, PageAtomNew, PageAtomView, GenAtom, PageAtomSelect, GenAtomNew } from "app/template/Atom";
+import { GAtom, OptionsAtomSelect } from "app/tool";
 import { Route } from "react-router-dom";
-import { LMR } from "tonwa-com";
-import { Atom, uqSchema } from "uqs/UqDefault";
+import { Atom, EnumAtom, uqSchema } from "uqs/UqDefault";
 
 export class GenContact extends GenAtom {
     readonly bizEntityName = uqSchema.$biz.contact.name;
@@ -18,7 +19,7 @@ export class GenContact extends GenAtom {
 class GenContactNew extends GenAtomNew {
 }
 
-function ViewItemContact({ value }: { value: Atom; }) {
+export function ViewItemContact({ value }: { value: Atom; }) {
     let { no, ex } = value;
     return <div>
         <div className='small text-muted'>{no}</div>
@@ -40,3 +41,45 @@ export function routeContact(uqApp: UqApp) {
         <Route path={`${genAtomView.path}/:id`} element={<PageAtomView Gen={GenContact} />} />
     </>;
 };
+
+const BizContact: OptionsUseBizAtom = {
+    atomName: EnumAtom.Contact,
+    NOLabel: undefined,
+    exLabel: undefined,
+}
+
+function PageNew() {
+    let ret = useBizAtomNew(BizContact);
+    return ret;
+}
+
+function PageView() {
+    let ret = useBizAtomView(BizContact);
+    return ret;
+}
+
+function PageList() {
+    let options = Object.assign({}, BizContact, {
+        ViewItemAtom: ViewItemContact,
+        top: undefined,
+    })
+    let ret = useBizAtomList(options);
+    return ret;
+}
+
+// <PageAtomNew Gen={GenContact} />
+// <PageAtomView Gen={GenContact} />
+export const gContact: GAtom = {
+    name: EnumAtom.Contact,
+    pageNew: <PageNew />,
+    pageEdit: <PageView />,
+    pageList: <PageList />,
+    pageView: <PageView />,
+    ViewItem: ViewItemContact,
+    /*
+    select: async function (uqApp: UqApp, options: OptionsAtomSelect) {
+        let ret = await selectAtom(uqApp, EnumAtom.Contact, options);
+        return ret;
+    }
+    */
+}

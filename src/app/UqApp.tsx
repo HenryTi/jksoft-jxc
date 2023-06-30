@@ -8,8 +8,9 @@ import { appEnv } from './appEnv';
 import { UqExt } from 'uqs/UqDefault';
 import { GenAtom } from './template';
 import { GenSheet } from './template/Sheet';
-import { Gen, GenBizEntity } from './tool';
+import { GAtom, GSheet, GSpec, GenBizEntity } from './tool';
 import { atom } from 'jotai';
+import { Biz, EntityAtom } from './Biz';
 
 const appConfig: AppConfig = {
     version: '0.1.0',
@@ -72,8 +73,10 @@ export class UqApp extends UqAppBase<UQs> {
     }
 
     uq: UqExt;
+    biz: Biz;
     protected onLoadUQs() {
         this.uq = this.uqs.UqDefault;
+        this.biz = new Biz(this);
     }
 
     // 1. 可以支持多个site
@@ -100,9 +103,26 @@ export class UqApp extends UqAppBase<UQs> {
         }
         setAtomValue(this.atomSiteLogined, siteLogined);
     }
-
+    readonly gAtoms: { [name: string]: GAtom } = {};
+    readonly gSpecs: { [name: string]: GSpec } = {};
+    readonly gSheets: { [name: string]: GSheet } = {};
     readonly genAtoms: { [name: string]: GenAtom } = {}
     readonly genSheets: { [name: string]: GenSheet } = {}
+
+    // atom: name or phrase
+    specFromAtom(atom: string): GSpec {
+        let entity = this.biz.entities[atom] as EntityAtom;
+        if (entity === undefined) return;
+        let { spec: entitySpec } = entity;
+        let gSpec = this.gSpecs[entitySpec.name];
+        return gSpec;
+    }
+
+    spec(spec: string): GSpec {
+        let gSpec = this.gSpecs[spec];
+        return gSpec;
+    }
+
     protected override onObjectBuilt(object: GenBizEntity<any>) {
         let { bizEntityType, bizEntityName, phrase } = object;
         switch (bizEntityType) {
@@ -119,6 +139,7 @@ export class UqApp extends UqAppBase<UQs> {
 }
 
 const uqConfigs = uqConfigsFromJson(uqconfigJson);
+
 export function createUqApp() {
     return new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
 }

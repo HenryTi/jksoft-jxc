@@ -1,14 +1,19 @@
-import { UqApp } from "app/UqApp";
-import { GenDetail, GenSheet, GenSheetAct, PageSheetAct, GenSheetNoTarget } from "app/template/Sheet";
-import { OriginDetail, SheetRow } from "app/tool";
-import { ModalSelectContact } from "../Atom";
-import { Atom, Sheet } from "uqs/UqDefault";
+import { UqApp, useUqApp } from "app/UqApp";
+import { GenDetail, GenSheet, GenSheetAct as GenSheetActOld, PageSheetAct, GenSheetNoTarget } from "app/template/Sheet";
+import { usePendFromItem, useSheetAct } from "app/hooks";
+import { GSheet, OriginDetail, SheetRow } from "app/tool";
+import { ModalSelectContact, ViewItemContact } from "../Atom";
+import { Atom, EnumSheet, Sheet } from "uqs/UqDefault";
 import { IDView, uqAppModal } from "tonwa-app";
 import { ViewItemID } from "app/template";
 import { Route } from "react-router-dom";
 import { GenPendFromItem } from "app/template/Sheet/GenPend";
 import { GenDetailPend, GenDetailSplit } from "./Detail";
 import { Band } from "app/coms";
+import { EntitySheet } from "app/Biz";
+import { useRef } from "react";
+import { useDetailPend } from "./Detail/Pend/useDetailPend";
+import { ViewPendRow } from "./ViewPendRow";
 
 export class GenSheetStoreOut extends GenSheet {
     readonly bizEntityName = 'sheetstoreout';
@@ -39,7 +44,7 @@ class GetPendStroeIn extends GenPendFromItem {
     get placeholderOfSearch(): string { return '待入库商品编号名称' }
 }
 
-export class GenStoreOutAct extends GenSheetAct {
+export class GenStoreOutAct extends GenSheetActOld {
     protected GenSheet(): new (uqApp: UqApp) => GenSheet { return GenSheetStoreOut; }
     protected get GenDetail(): (new (uqApp: UqApp) => GenDetail) { return GenDetailStoreOut; }
     protected get GenPend() { return GetPendStroeIn; }
@@ -86,7 +91,7 @@ class GetPendStroeInMultiStorage extends GetPendStroeIn {
     }
 }
 
-export class GenStoreOutMultiStorageAct extends GenSheetAct {
+export class GenStoreOutMultiStorageAct extends GenSheetActOld {
     get caption() { return this.genSheet.caption; }
     get path() { return this.genSheet.path; }
     protected GenSheet(): new (uqApp: UqApp) => GenSheet { return GenSheetStoreOutMultiStorage; }
@@ -115,4 +120,81 @@ export function routeSheetStoreOut(uqApp: UqApp) {
     </>;
     // <Route path={`${pathMultiStorage}/:id`} element={<PageStoreOutMultiStorage />} />
     // <Route path={pathMultiStorage} element={<PageStoreOutMultiStorage />} />
+}
+
+const sheet = EnumSheet.SheetStoreOut;
+const caption = '出库单';
+const targetCaption = '往来单位';
+function PageStoreOutG() {
+    const uqApp = useUqApp();
+    const { uq, biz } = uqApp;
+    const act = '$';
+    const detail = 'detailstoreout';
+    const entity = biz.entities[sheet] as EntitySheet;
+    const { fromPend } = entity.getAct(detail, act);
+    const selectPend = usePendFromItem({
+        pendName: fromPend.name,
+        ViewPendRow,
+        caption: '选择待入库',
+        placeholderOfSearch: '待入库商品编号名称',
+    });
+    function ViewTargetBand({ sheet }: { sheet: Sheet; }) {
+        return <Band label={targetCaption}>
+            <ViewTarget sheet={sheet} />
+        </Band>;
+    }
+    function ViewTarget({ sheet }: { sheet: Sheet; }) {
+        return <IDView id={sheet.target} uq={uq} Template={ViewItemContact} />;
+    }
+    async function selectTarget() {
+        const { openModal } = uqAppModal(uqApp);
+        let ret = await openModal<Atom>(<ModalSelectContact />);
+        return ret;
+    }
+    async function loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
+        let sheetRows = await selectPend(undefined);
+        if (sheetRows === undefined) {
+            return undefined;
+        }
+        let target: number;
+        if (selectTarget !== undefined) {
+            let targetAtom = await selectTarget(/*'选择仓库'*/);
+            target = targetAtom.id;
+        }
+        let no = await uq.IDNO({ ID: uq.Sheet });
+        let sheet: Sheet = {
+            no,
+            target,
+            // phrase, 
+            base: undefined,
+            operator: undefined,
+            value: undefined
+        };
+        return { sheet, sheetRows };
+        /*
+        let targetAtom = await selectTarget();
+        if (targetAtom === undefined) return;
+        let no = await uq.IDNO({ ID: uq.Sheet });
+        let main = { no, target: targetAtom.id } as Sheet;
+        return { sheet: main, sheetRows: [] };
+        */
+    }
+    const useDetailReturn = useDetailPend({ detail, selectPend });
+    const ret = useSheetAct({
+        sheet,
+        caption,
+        targetCaption,
+        ViewTargetBand,
+        ViewTarget,
+        selectTarget,
+        loadStart,
+        act,
+        useDetailReturn,
+    });
+    return ret;
+}
+export const gStoreOut: GSheet = {
+    sheet,
+    caption,
+    pageEdit: <PageStoreOutG />,
 }

@@ -9,7 +9,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { useUqApp } from "app/UqApp";
 import { FA } from "tonwa-com";
 import { useAtomValue } from "jotai";
-import { GenGoods, selectGoodsMetricSpec } from "app/views/JXC/Atom";
+import { ViewAtomGoods, selectGoodsMetricSpec } from "app/views/JXC/Atom";
 import { GenDetailGoods } from "../GenDetailGoods";
 import { ViewAMSAtom, ViewAMSAtomSpec, ViewAMSMetric, ViewAMSSpec } from "../../ViewAMS";
 
@@ -47,8 +47,7 @@ export abstract class GenDetailQPA extends GenDetailGoods {
         return ret;
     }
 
-    readonly addRow = async (genEditing: GenEditing): Promise<SheetRow[]> => {
-        const genGoods = this.uqApp.objectOf(GenGoods);
+    readonly addRow = async (): Promise<SheetRow[]> => {
         const { openModal, closeModal } = uqAppModal(this.uqApp);
         let atomMetricSpec = await this.selectAtomSpecMetric();
         if (atomMetricSpec === undefined) return;
@@ -57,7 +56,7 @@ export abstract class GenDetailQPA extends GenDetailGoods {
             await openModal(<Page header="提示">
                 <div className="px-3">
                     <div className="my-3">
-                        <genGoods.ViewItemAtom value={atom} />
+                        <ViewAtomGoods value={atom} />
                     </div>
                     <div className="my-3 text-danger">
                         <FA name="times-circle" /> 无计量单位
@@ -71,7 +70,7 @@ export abstract class GenDetailQPA extends GenDetailGoods {
             </Page>);
             return;
         }
-        let item = await genEditing.saveAtomMetricSpec(atomMetricSpec);
+        let item = await this.saveAtomMetricSpec(atomMetricSpec);
         let editingRow = this.editingRowFromAtom(item);
         if (editingRow === undefined) return;
         let ret = await openModal(<this.PageDetail header={'新增明细'} editingRow={editingRow} />);
@@ -79,6 +78,37 @@ export abstract class GenDetailQPA extends GenDetailGoods {
         return [ret];
     }
 
+    private async saveAtomMetricSpec(atomMetricSpec: AtomMetricSpec): Promise<number> {
+        let { atom, atomMetric, spec, metricItem } = atomMetricSpec;
+        if (atomMetric === undefined) {
+            let ret = await this.uq.SaveAtomMetric.submit({ atom: atom.id, metricItem: metricItem.id });
+            atomMetric = atomMetricSpec.atomMetric = ret.id;
+        }
+        let specId = 0;
+        if (spec !== undefined) {
+            specId = spec.id;
+            if (specId === undefined) {
+                specId = await this.saveSpec(atom, spec);
+            }
+        }
+        let ret = await this.uq.SaveAtomMetricSpec.submit({
+            atomMetric,
+            spec: specId,
+        });
+        return ret.id;
+    }
+    /*
+    private async saveSpec(atomId: number, atomPhrase: string, spec: any): Promise<number> {
+        let genSpec = this.genAtomSpec.genSpecFromAtom(atomPhrase);
+        let values = genSpec.entity.getValues(spec);
+        let ret = await this.uq.SaveSpec.submit({
+            spec: genSpec.bizEntityName,
+            atom: atomId,
+            values
+        });
+        return ret.id;
+    }
+    */
     private editingRowFromAtom(item: number/*atomMetricSpec: AtomMetricSpec*/): EditingRow {
         if (item === undefined) return;
         let row: Detail = {
@@ -99,7 +129,6 @@ export abstract class GenDetailQPA extends GenDetailGoods {
     readonly ViewRow = ViewDetailQPA;
 
     protected PageDetail = ({ header, editingRow }: { header?: string; editingRow?: EditingRow; }): JSX.Element => {
-        const genGoods = this.uqApp.objectOf(GenGoods);
         editingRow = editingRow ?? new EditingRow(undefined, undefined);
         const { atomDetails } = editingRow;
         let details = useAtomValue(atomDetails);
@@ -166,17 +195,17 @@ export abstract class GenDetailQPA extends GenDetailGoods {
         const ViewItemTop = (): JSX.Element => {
             return <div className="container">
                 <Band label={this.itemCaption}>
-                    <ViewAMSAtom id={item} genGoods={genGoods} />
+                    <ViewAMSAtom id={item} />
                 </Band>
                 <Band label="单位">
-                    <ViewAMSMetric id={item} genGoods={genGoods} />
+                    <ViewAMSMetric id={item} />
                 </Band>
             </div>
         }
         return <Page header={header ?? caption}>
             <div className="mt-3"></div>
             <ViewItemTop />
-            <ViewAMSSpec genGoods={genGoods} id={item} hasLabel={true} />
+            <ViewAMSSpec id={item} hasLabel={true} />
             <form className="container" onSubmit={handleSubmit(onSubmit)}>
                 <FormRowsView rows={formRows} register={register} errors={errors} />
             </form>
@@ -195,15 +224,14 @@ function ViewDetailQPA({ editingRow }: { editingRow: EditingRow; genEditing: Gen
         </div>
     }
     const { item, value, v1: price, v2: amount/*, atomMetricSpec*/ } = details[0];
-    const genGoods = uqApp.objectOf(GenGoods);
     return <div className="container">
         <div className="row">
-            <ViewAMSAtomSpec id={item} genGoods={genGoods} className={cnCol} />
+            <ViewAMSAtomSpec id={item} className={cnCol} />
             <div className={cnCol + ' d-flex justify-content-end align-items-end'}>
                 <div className="text-end">
                     <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount?.toFixed(4)}</span>
                     <br />
-                    <small>数量:</small> <b>{value}</b> <span><ViewAMSMetric id={item} genGoods={genGoods} /></span>
+                    <small>数量:</small> <b>{value}</b> <span><ViewAMSMetric id={item} /></span>
                 </div>
                 <FA name="pencil-square-o" className="ms-3 text-info" />
             </div>

@@ -2,16 +2,16 @@ import { useForm } from "react-hook-form";
 import { ChangeEvent, useState } from "react";
 import { IDView, Page, useModal } from "tonwa-app";
 import { ButtonAsync, ButtonSubmit, FA, List, LMR } from "tonwa-com";
-// import { PropDataType } from "uqs/UqDefault";
 import { Band } from "app/coms";
-import { useGen } from "../tool";
 import { NextRight, NextTop } from "./NextTop";
 import { PageNextProps, RadioItem } from "./types";
-import { GenProp } from "./GenProp";
+import { useProp } from "./useProp";
+import { useUqApp } from "app/UqApp";
 
 export function PageRadio(props: PageNextProps) {
+    const { uq } = useUqApp();
     const { openModal } = useModal();
-    const gen = useGen(GenProp);
+    const gen = useProp();
     let { id: propId, type } = props;
     let header = undefined as string; // type === PropDataType.radio ? '单选' : '多选';
     let [items, setItems] = useState(props.items ?? []);
@@ -27,7 +27,7 @@ export function PageRadio(props: PageNextProps) {
     function ViewItem({ value }: { value: RadioItem; }) {
         let { id, name, caption } = value;
         if (name === undefined) {
-            return <IDView uq={gen.uq} id={id} Template={ViewRadio} />;
+            return <IDView uq={uq} id={id} Template={ViewRadio} />;
         }
         return <ViewRadio value={value} />;
     }
@@ -59,7 +59,7 @@ export function PageRadio(props: PageNextProps) {
 }
 
 function PageEditItem({ id, name, caption }: { id: number; name: string; caption?: string; }) {
-    const gen = useGen(GenProp);
+    const gen = useProp();
     const { openModal, closeModal } = useModal();
     const [submitable, setSubmitable] = useState(name !== undefined);
     const [submiting, setSubmiting] = useState(false);

@@ -99,7 +99,6 @@ export class GenPendFromTarget extends GenPendSheet {
 export class GenPendFromItem extends GenPend {
     protected override async internalSelect(editingRows: EditingRow[]): Promise<OriginDetail[]> {
         let { openModal, closeModal } = uqAppModal(this.uqApp);
-        const genGoods = this.uqApp.objectOf(GenGoods);
         let selectedItems: OriginDetail[] = [];
         let selectedColl: { [pendId: number]: OriginDetail } = {};
         let defaultSearchParam = { pend: this.entity.phrase, key: undefined as string };
@@ -148,18 +147,18 @@ export class GenPendFromItem extends GenPend {
                     />
                     <label className="form-check-label container flex-grow-1" htmlFor={htmlId}>
                         <div className="row">
-                            <ViewAMSAtomSpec genGoods={genGoods} id={item} className={cnCol} />
+                            <ViewAMSAtomSpec id={item} className={cnCol} />
                             <div className={cnCol}>
                                 <div className="text-break me-3">
                                     <MutedSmall>{this.uqApp.genSheets[sheet].caption}编号</MutedSmall> {no}
                                 </div>
                                 <div>
                                     <MutedSmall>在单</MutedSmall> {value}
-                                    <ViewAMSMetric genGoods={genGoods} id={item} />
+                                    <ViewAMSMetric id={item} />
                                 </div>
                             </div>
                             <div className={cnCol + " flex-grow-1 text-end "}>
-                                <MutedSmall>待处理</MutedSmall> {pendValue}<ViewAMSMetric genGoods={genGoods} id={item} />
+                                <MutedSmall>待处理</MutedSmall> {pendValue}<ViewAMSMetric id={item} />
                             </div>
                         </div>
                     </label>
