@@ -6,7 +6,7 @@ import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
 import { UqExt } from 'uqs/UqDefault';
-import { GAtom, GSheet, GSpec, GenBizEntity } from './tool';
+import { GAtom, GSheet, GSpec } from './tool';
 import { atom } from 'jotai';
 import { Biz, EntityAtom } from './Biz';
 

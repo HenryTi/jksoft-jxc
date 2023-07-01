@@ -1,11 +1,11 @@
 import { useUqApp } from "app/UqApp";
 import { GSheet, SheetRow } from "app/tool";
-import { ModalSelectContact, ViewItemContact } from "../Atom";
-import { Atom, EnumSheet, Sheet } from "uqs/UqDefault";
+import { ViewItemContact } from "../Atom";
+import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
 import { Band } from "app/coms";
-import { IDView, uqAppModal } from "tonwa-app";
+import { IDView } from "tonwa-app";
 import { useDetailQPA } from "./Detail";
-import { useSheetAct } from "app/hooks";
+import { selectAtom, useSheetAct } from "app/hooks";
 
 const sheet = EnumSheet.SheetSale;
 const caption = '销售单';
@@ -23,9 +23,7 @@ function PageSaleEdit() {
         return <IDView id={sheet.target} uq={uq} Template={ViewItemContact} />;
     }
     async function selectTarget() {
-        const { openModal } = uqAppModal(uqApp);
-        let ret = await openModal<Atom>(<ModalSelectContact />);
-        return ret;
+        return await selectAtom(uqApp, EnumAtom.Contact);
     }
     async function loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let targetAtom = await selectTarget();

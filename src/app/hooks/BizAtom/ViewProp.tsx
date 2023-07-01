@@ -4,6 +4,8 @@ import { useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
 import { BizBud, BudAtom } from "app/Biz";
 import { useState } from "react";
+import { selectAtom } from "./PageAtomSelect";
+import { EnumAtom } from "uqs/UqDefault";
 
 interface OpProps {
     saveProp: (newValue: string | number) => Promise<void>;
@@ -62,18 +64,21 @@ function pickValueFromBudType(bizBud: BizBud, openModal: OpenModal): BudValue {
 
 function pickValueForBudAtom(budType: BudAtom, openModal: OpenModal): BudValue {
     let { bizAtom } = budType;
-    let gen = bizAtom.biz.uqApp.genAtoms[bizAtom.name];
+    let { biz, name: atomName } = bizAtom;
+    let { uqApp } = biz;
+    let { uq } = uqApp;
+    let gAtom = uqApp.gAtoms[bizAtom.name];
     return {
         pickValue: async function (props: PickProps) {
-            let ret = await openModal(gen.PageSelect);
+            let ret = await selectAtom(uqApp, atomName as EnumAtom);
             return ret?.id;
         },
         ValueTemplate: function ({ value }: { value: any }) {
             if (value === null || value === undefined) {
                 return <span className="text-black-50">/</span>;
             }
-            return <IDView uq={gen.uq} id={Number(value)}
-                Template={gen.ViewItemAtom} />
+            return <IDView uq={uq} id={Number(value)}
+                Template={gAtom.ViewItem} />
         }
     }
 }

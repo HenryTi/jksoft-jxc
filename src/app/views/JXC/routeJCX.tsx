@@ -77,10 +77,11 @@ function buildSpecs(uqApp: UqApp) {
 }
 
 function routeAtom(uqApp: UqApp, gAtom: GAtom) {
-    const { name, pageNew, pageList, pageView } = gAtom;
+    const { name, caption, pageNew, pageList, pageView } = gAtom;
     const entity = uqApp.biz.entities[name] as EntityAtom;
     const ga = {
         ...gAtom,
+        caption: caption ?? entity.caption,
         entity,
     }
     uqApp.gAtoms[name] = ga;

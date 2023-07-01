@@ -3,7 +3,8 @@ import { Spec } from "./Model";
 import { EntityAtom } from "app/Biz";
 import { EntitySpec } from "app/Biz/EntityAtom";
 
-export interface OptionsAtomSelect {
+export interface PropsAtomSelect {
+    atomName: string;
     assigns?: string[];
     loadOnOpen?: boolean;
     caption?: string;

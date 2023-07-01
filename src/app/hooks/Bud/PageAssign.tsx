@@ -4,34 +4,30 @@ import { MetricItem } from "uqs/UqDefault";
 import { PageAssignEdit } from "./PageAssignEdit";
 import { GenAMSBudsSearch, GenBuds, GenBudsSearch, Med, RowMed } from "./GenBuds";
 import { List, getAtomValue, setAtomValue } from "tonwa-com";
-// import { ViewAtomGoods } from "app/views/JXC/Atom";
-// import { GenProps, useGen } from "app/tool";
-// import { GenAtom } from "../Atom";
-import { Link, useParams } from "react-router-dom";
-import { Entity, EntityAtom } from "app/Biz";
+import { EntityAtom } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai";
 
 interface PageAssignProps {
     caption: string;
-    entity: EntityAtom;
+    atomName: string;
     entitySetting: string;
     budNames: string[];
     noMedsMessage: string;
 }
 
 export function PageAssign(props: PageAssignProps) {
-    let { entity } = props;
-    const { atom: atomName } = useParams();
-    // let entityAtom = gen.getEntityAtom(atomName) ?? entity;
-    const { children } = entity as EntityAtom;
+    const { atomName } = props;
+    const uqApp = useUqApp();
+    let entityAtom = uqApp.biz.entities[atomName] as EntityAtom;
+    const { children } = entityAtom;
     switch (children.length) {
         case 0: break;
-        case 1: entity = children[0]; break;
+        case 1: entityAtom = children[0]; break;
         default:
-            return <PageTypes {...props} entityAtom={entity} />;
+            return <PageTypes {...props} entityAtom={entityAtom} />;
     }
-    return <PageAssignContent {...props} entityAtom={entity} />;
+    return <PageAssignContent {...props} entityAtom={entityAtom} />;
 }
 
 function PageTypes(props: { entityAtom: EntityAtom; } & PropsAssignSub) {

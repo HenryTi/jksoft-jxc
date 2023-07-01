@@ -1,4 +1,4 @@
-import { PageReport, GenSubject, PageHistory } from "app/template";
+import { PageReport, GenSubject, PageHistory } from "app/hooks";
 import { Route } from "react-router-dom";
 import { pathDetailView } from "../SheetView";
 

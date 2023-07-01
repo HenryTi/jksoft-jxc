@@ -28,7 +28,7 @@ export function useSheetAct(options: OptionsSheetAct) {
     const { uq, biz } = uqApp
     const { sheet: sheetName, caption: sheetCaption, ViewTargetBand, loadStart, act, useDetailReturn } = options;
     const navigate = useNavigate();
-    const { current: genEditing } = useRef(useSheetEditing(sheetName, act, useDetailReturn));
+    // const { current: genEditing } = useRef(useSheetEditing(sheetName, act, useDetailReturn));
     // const { onEditRow, onAddRow, atomRows, atomSheet, atomSubmitable } = genEditing;
     const { current: { atomSheet, atomRows, atomSubmitable } } = useRef((function () {
         const atomSheet = atom(undefined as Sheet);
@@ -87,8 +87,8 @@ export function useSheetAct(options: OptionsSheetAct) {
 
     async function startSheet(sheetId: number): Promise<boolean> {
         if (sheetId !== undefined) {
-            let ret = await genEditing.loadSheet(sheetId);
-            genEditing.setEditing(ret);
+            let ret = await loadSheet(sheetId);
+            setEditing(ret);
             return true;
         }
 
@@ -97,7 +97,7 @@ export function useSheetAct(options: OptionsSheetAct) {
             return false;
         }
 
-        genEditing.setEditing(ret);
+        setEditing(ret);
         return true;
     }
 
@@ -117,7 +117,7 @@ export function useSheetAct(options: OptionsSheetAct) {
         let message = `${caption} ${sheet.no} 真的要作废吗？`;
         let ret = await openModal(<PageConfirm header="确认" message={message} yes="单据作废" no="不作废" />);
         if (ret === true) {
-            await genEditing.discard();
+            await discard();
             navigate(-1);
         }
     }
@@ -132,7 +132,7 @@ export function useSheetAct(options: OptionsSheetAct) {
     async function onSubmit() {
         setVisible(false);
         // await genEditing.bookAct();
-        await genEditing.bookAct();
+        await bookAct();
         setVisible(true);
         function addDetailOnOk() {
             closeModal();
@@ -150,7 +150,7 @@ export function useSheetAct(options: OptionsSheetAct) {
         navigate(-1);
     }
     function ViewItemOfList({ value }: { value: any }) {
-        const { ViewRow } = genEditing;
+        // const { ViewRow } = genEditing;
         return <ViewRow editingRow={value} />;
     }
     let viewTargetBand: JSX.Element;

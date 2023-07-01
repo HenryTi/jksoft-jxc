@@ -33,7 +33,7 @@ export function TabJXC() {
     </Page>;
 
     async function onFunc() {
-        let ret = await selectAtom(uqApp, EnumAtom.Contact, undefined);
+        let ret = await selectAtom(uqApp, EnumAtom.Contact);
         alert(JSON.stringify(ret));
     }
 }

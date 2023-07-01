@@ -7,14 +7,19 @@ import { gGoods } from "./AtomGoods";
 import React from "react";
 import { GAtom } from "app/tool";
 import { pathAtomList, pathAtomNew } from "app/hooks";
+import { useUqApp } from "app/UqApp";
 
 export const pathAtomCenter = 'atom-center';
 
 export function PageAtomCenter() {
+    const uqApp = useUqApp();
     let arr: GAtom[] = [gGoods, gContact];
+    let gAtoms = arr.map(v => {
+        return uqApp.gAtoms[v.name];
+    });
     return <Page header="档案中心">
         <Sep sep={3} />
-        {arr.map((v, index) => {
+        {gAtoms.map((v, index) => {
             const { name, caption } = v;
             return <React.Fragment key={index}>
                 <Link to={`../${pathAtomNew(name)}`}>

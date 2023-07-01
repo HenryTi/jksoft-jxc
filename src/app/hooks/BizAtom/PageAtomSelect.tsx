@@ -4,29 +4,27 @@ import { PageQueryMore } from "app/coms";
 import { uqAppModal, useModal } from "tonwa-app";
 import { GenAtomBudsSearch, GenBuds, RowMed } from "../Bud";
 import { UqApp, useUqApp } from "app/UqApp";
-import { OptionsAtomSelect } from "app/tool";
-import { Biz, EntityAtom } from "app/Biz";
-import { Atom } from "uqs/UqDefault";
+import { AtomPhrase, PropsAtomSelect } from "app/tool";
+import { EntityAtom } from "app/Biz";
+import { EnumAtom } from "uqs/UqDefault";
 
-export async function selectAtom(uqApp: UqApp, atom: string | EntityAtom, options: OptionsAtomSelect) {
+export async function selectAtom(uqApp: UqApp, atomName: EnumAtom, assigns?: string[]) {
     const { openModal } = uqAppModal(uqApp);
-    options = options ?? {};
-    let ret = await openModal<Atom>(<PageAtomSelect {...options} atom={atom} />);
+    let ret = await openModal<AtomPhrase>(<PageAtomSelect atomName={atomName} assigns={assigns} />);
     return ret;
 }
 
-export function PageAtomSelect(options: OptionsAtomSelect & { atom: string | EntityAtom; }) {
-    const { assigns, loadOnOpen, caption, placeholder, atom } = options;
+export function PageAtomSelect(props: PropsAtomSelect) {
+    const { assigns, loadOnOpen, caption, placeholder, atomName } = props;
     const uqApp = useUqApp();
     const { biz } = uqApp;
     const { closeModal } = useModal();
 
-    let entityAtom: EntityAtom;
-    if (typeof atom === 'string') {
-        entityAtom = biz.entities[atom] as EntityAtom;
-    }
-    else {
-        entityAtom = atom;
+    let entityAtom: EntityAtom = biz.entities[atomName] as EntityAtom;
+    if (entityAtom === undefined) {
+        debugger;
+        let err = (atomName === undefined ? 'no atomName' : `${atomName} not defined`) + ' in PageAtomSelect';
+        throw new Error(err);
     }
     const ViewItemAtom = uqApp.gAtoms[entityAtom.name]?.ViewItem; //useBizAtomViewItem(entityAtom)
     // const { caption, placeholder, entity } = genAtom.genAtomSelect;

@@ -1,20 +1,20 @@
 import { AtomMetricSpec, Spec, SpecShoe } from "app/tool";
 import { Page, uqAppModal } from "tonwa-app";
-import { MetricItem } from "uqs/UqDefault";
-import { PageAtomSelect } from "../BizAtom";
+import { EnumAtom, MetricItem } from "uqs/UqDefault";
+import { selectAtom } from "../BizAtom";
 import { FA, LMR, List, Sep } from "tonwa-com";
 import { UqApp } from "app/UqApp";
 
 const cnGap = " px-3 py-2 ";
 const cnBtn = " btn btn-outline-primary ";
 
-export async function selectAtomMetricSpec(uqApp: UqApp, atomName: string): Promise<AtomMetricSpec> {
+export async function selectAtomMetricSpec(uqApp: UqApp, atomName: EnumAtom): Promise<AtomMetricSpec> {
     // let { uqApp, atomName } = genAtomSpec;
     let spec: Spec;
     let metricItem: MetricItem;
     const { openModal, closeModal } = uqAppModal(uqApp);
 
-    let atom = await openModal(<PageAtomSelect atom={atomName} />);
+    let atom = await selectAtom(uqApp, atomName);
     if (atom === undefined) return;
 
     function ViewAtom() {
@@ -75,6 +75,7 @@ export async function selectAtomMetricSpec(uqApp: UqApp, atomName: string): Prom
     }
 
     let gSpec = uqApp.specFromAtom(atom.phrase);
+    if (gSpec === undefined) debugger;
 
     function PageSelectSpec() {
         let specEditing = {};

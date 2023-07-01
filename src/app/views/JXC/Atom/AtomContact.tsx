@@ -1,7 +1,6 @@
-import { useUqApp } from "app/UqApp";
 import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
 import { GAtom } from "app/tool";
-import { Atom, EnumAtom, uqSchema } from "uqs/UqDefault";
+import { Atom, EnumAtom } from "uqs/UqDefault";
 
 export function ViewItemContact({ value }: { value: Atom; }) {
     let { no, ex } = value;
@@ -11,30 +10,24 @@ export function ViewItemContact({ value }: { value: Atom; }) {
     </div>;
 }
 
-export function ModalSelectContact() {
-    let uqApp = useUqApp();
-    let genAtom = uqApp.objectOf(GenContact);
-    return <PageAtomSelect genAtom={genAtom} />;
-}
-
-const BizContact: OptionsUseBizAtom = {
+const optionsContact: OptionsUseBizAtom = {
     atomName: EnumAtom.Contact,
     NOLabel: undefined,
     exLabel: undefined,
 }
 
 function PageNew() {
-    let ret = useBizAtomNew(BizContact);
+    let ret = useBizAtomNew(optionsContact);
     return ret;
 }
 
 function PageView() {
-    let ret = useBizAtomView(BizContact);
+    let ret = useBizAtomView(optionsContact);
     return ret;
 }
 
 function PageList() {
-    let options = Object.assign({}, BizContact, {
+    let options = Object.assign({}, optionsContact, {
         ViewItemAtom: ViewItemContact,
         top: undefined,
     })
@@ -42,8 +35,6 @@ function PageList() {
     return ret;
 }
 
-// <PageAtomNew Gen={GenContact} />
-// <PageAtomView Gen={GenContact} />
 export const gContact: GAtom = {
     name: EnumAtom.Contact,
     pageNew: <PageNew />,
@@ -51,10 +42,4 @@ export const gContact: GAtom = {
     pageList: <PageList />,
     pageView: <PageView />,
     ViewItem: ViewItemContact,
-    /*
-    select: async function (uqApp: UqApp, options: OptionsAtomSelect) {
-        let ret = await selectAtom(uqApp, EnumAtom.Contact, options);
-        return ret;
-    }
-    */
 }

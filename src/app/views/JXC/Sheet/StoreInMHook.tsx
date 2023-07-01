@@ -1,12 +1,11 @@
-import { UqApp, useUqApp } from "app/UqApp";
-import { GSheet, OriginDetail, SheetRow } from "app/tool";
-import { ModalSelectContact, ViewItemContact } from "../Atom";
-import { Atom, EnumSheet, Sheet } from "uqs/UqDefault";
-import { IDView, uqAppModal } from "tonwa-app";
+import { useUqApp } from "app/UqApp";
+import { GSheet, SheetRow } from "app/tool";
+import { ViewItemContact } from "../Atom";
+import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
+import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
-import { useDetailPend } from "./Detail/Pend/useDetailPend";
-import { useSheetAct, usePendFromItem } from "app/hooks";
-import { useRef } from "react";
+import { useDetailPend } from "./Detail";
+import { useSheetAct, usePendFromItem, selectAtom } from "app/hooks";
 import { EntitySheet } from "app/Biz";
 import { ViewPendRow } from "./ViewPendRow";
 
@@ -35,9 +34,7 @@ function PageStoreInG() {
         return <IDView id={sheet.target} uq={uq} Template={ViewItemContact} />;
     }
     async function selectTarget() {
-        const { openModal } = uqAppModal(uqApp);
-        let ret = await openModal<Atom>(<ModalSelectContact />);
-        return ret;
+        return await selectAtom(uqApp, EnumAtom.Contact);
     }
     async function loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let sheetRows = await selectPend(undefined);
