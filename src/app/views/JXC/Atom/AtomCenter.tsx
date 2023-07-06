@@ -21,21 +21,23 @@ export function PageAtomCenter() {
         <Sep sep={3} />
         {gAtoms.map((v, index) => {
             const { name, caption } = v;
+            /*
+            <Link to={`../${pathAtomNew(name)}`}>
+                <LMR className="px-3 py-2 border-bottom align-items-center">
+                    <FA name="chevron-circle-right" className="me-2 text-secondary" />
+                    新建{caption}
+                    <span>
+                        {10}
+                        <FA name="angle-right" className="ms-2" />
+                    </span>
+                </LMR>
+            </Link>
+            */
             return <React.Fragment key={index}>
-                <Link to={`../${pathAtomNew(name)}`}>
-                    <LMR className="px-3 py-2 border-bottom align-items-center">
-                        <FA name="chevron-circle-right" className="me-2 text-secondary" />
-                        新建{caption}
-                        <span>
-                            {10}
-                            <FA name="angle-right" className="ms-2" />
-                        </span>
-                    </LMR>
-                </Link>
                 <Link to={`../${pathAtomList(name)}`} className="px-3 py-2 border-bottom align-items-center">
                     {caption}列表
                 </Link>
-                <Sep sep={3} />
+                <Sep />
             </React.Fragment>;
         })}
     </Page>;

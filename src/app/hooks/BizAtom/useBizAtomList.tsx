@@ -1,9 +1,9 @@
 import { Link, useParams } from 'react-router-dom';
 import { PageQueryMore } from '../../coms';
-import { List } from 'tonwa-com';
+import { FA, List } from 'tonwa-com';
 import { EntityAtom } from 'app/Biz';
 import { Page } from 'tonwa-app';
-import { OptionsUseBizAtom, useBizAtom } from './useBizAtom';
+import { OptionsUseBizAtom, pathAtomNew, useBizAtom } from './useBizAtom';
 
 interface OptionsList {
     ViewItemAtom: (props: { value: any; }) => JSX.Element;
@@ -23,6 +23,9 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
         default:
             return <PageTypes />;
     }
+    const right = <Link className="btn btn-sm btn-success me-2" to={`../${pathAtomNew(entityAtom.name)}`}>
+        <FA name="plus" />
+    </Link>;
     return <PageList />;
 
     function PageTypes() {
@@ -61,7 +64,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
         // pageSize={20}
         // pageMoreSize={1}
         const none = <div className='m-3 small text-muted'>[无{caption}]</div>;
-        return <PageQueryMore header={`${caption}列表`}
+        return <PageQueryMore header={`${caption}列表`} right={right}
             query={searchAtoms}
             param={searchParam}
             sortField="id"

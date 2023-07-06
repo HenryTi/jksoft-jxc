@@ -5,11 +5,11 @@ import { uqAppModal } from "tonwa-app";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 
 export function pathAtomNew(atomName: string) {
-    return `{atomName}-new`;
+    return `${atomName}-new`;
 }
 
 export function pathAtomList(atomName: string) {
-    return `{atomName}-list`;
+    return `${atomName}-list`;
 }
 
 export interface ViewPropRowProps {
