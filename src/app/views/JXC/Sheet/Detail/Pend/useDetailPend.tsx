@@ -6,7 +6,7 @@ import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai";
 import { ViewAMSAtomSpec } from "../../ViewAMS";
 import { ViewAtomGoods } from "app/views/JXC/Atom";
-import { OptionsUseSheetDetail, UseSheetDetailReturn } from "app/hooks";
+import { OptionsUseSheetDetail, UpdateRow, UseSheetDetailReturn } from "app/hooks";
 
 export interface OptionsUseDetailPend extends OptionsUseSheetDetail {
     selectPend: (editingRows: EditingRow[]) => Promise<SheetRow[]>;
@@ -63,7 +63,7 @@ export function useDetailPend(options: OptionsUseDetailPend): UseSheetDetailRetu
     }
     //const cnCol4 = ' col-4 py-2 ';
     const cnCol = ' col py-2 ';
-    function ViewDetailPend({ editingRow, updateRow }: { editingRow: EditingRow; updateRow: (editingRow: EditingRow, details: Detail[]) => Promise<void>; }): JSX.Element {
+    function ViewDetailPend({ editingRow, updateRow }: { editingRow: EditingRow; updateRow: UpdateRow; }): JSX.Element {
         const uqApp = useUqApp();
         // const { uq } = uqApp;
         const { atomDetails } = editingRow;

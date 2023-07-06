@@ -5,8 +5,10 @@ import { EnumAtom } from "uqs/UqDefault";
 export const pathPrice = 'price';
 
 function PagePrice() {
-    return <PageAssign atomName={EnumAtom.Goods} caption={'零售价设置'}
-        entitySetting="Price" budNames={['Retail']}
+    return <PageAssign
+        atom={EnumAtom.Goods}
+        caption={'零售价设置'}
+        budNames={['Price.retail']}
         noMedsMessage="noMedsMessage" />
 }
 

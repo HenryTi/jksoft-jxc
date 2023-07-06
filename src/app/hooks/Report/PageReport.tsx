@@ -1,17 +1,20 @@
 import { PageQueryMore } from "app/coms";
-import { useUqApp } from "app/UqApp";
 import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { GenProps } from "app/tool";
-import { GenSubject } from "./GenSubject";
+import { pathSubjectHistory, useSubject } from "./useSubject";
+import { EnumSubject } from "uqs/UqDefault";
 
-export function PageReport({ Gen, children }: GenProps<GenSubject> & { children?: ReactNode }) {
-    const uqApp = useUqApp();
-    const gen = uqApp.objectOf(Gen);
-    const { caption, searchSubjectAtom, sortField, ViewItem, pathStorageHistory } = gen;
+export function PageReport({ subject, children, caption, sortField }: {
+    subject: EnumSubject;
+    caption: string;
+    sortField: string;
+    children?: ReactNode;
+}) {
+    const gen = useSubject({ subject });
+    const { searchSubjectAtom, ViewItem } = gen;
     const navigate = useNavigate();
     async function onItemClick(item: any): Promise<void> {
-        navigate(`../${pathStorageHistory}/${item.atom}`, { state: item });
+        navigate(`../${pathSubjectHistory(subject)}/${item.atom}`, { state: item });
     }
     let param = {};
     return <PageQueryMore

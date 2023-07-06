@@ -4,7 +4,7 @@ import { ViewItemContact } from "../Atom";
 import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
 import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
-import { selectAtom, usePendFromItem, useSheetAct } from "app/hooks";
+import { selectAtom, usePendFromItem, PageSheetAct } from "app/hooks";
 import { EntitySheet } from "app/Biz";
 import { ViewPendRow } from "./ViewPendRow";
 import { useDetailPend } from "./Detail/Pend/useDetailPend";
@@ -12,7 +12,7 @@ import { useDetailPend } from "./Detail/Pend/useDetailPend";
 const sheet = EnumSheet.SheetStoreIn;
 const caption = '入库单';
 const targetCaption = '往来单位';
-function PageStoreInG() {
+function PageStoreIn() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const act = '$';
@@ -65,7 +65,7 @@ function PageStoreInG() {
         */
     }
     const useDetailReturn = useDetailPend({ detail, selectPend });
-    const ret = useSheetAct({
+    return <PageSheetAct {...{
         sheet,
         caption,
         targetCaption,
@@ -75,11 +75,10 @@ function PageStoreInG() {
         loadStart,
         act,
         useDetailReturn,
-    });
-    return ret;
+    }} />;
 }
 export const gStoreIn: GSheet = {
     sheet,
     caption,
-    pageEdit: <PageStoreInG />,
+    pageEdit: <PageStoreIn />,
 }

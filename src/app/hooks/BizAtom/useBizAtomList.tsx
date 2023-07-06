@@ -3,7 +3,7 @@ import { PageQueryMore } from '../../coms';
 import { List } from 'tonwa-com';
 import { EntityAtom } from 'app/Biz';
 import { Page } from 'tonwa-app';
-import { UseBizAtomReturn, OptionsUseBizAtom, useBizAtom } from './useBizAtom';
+import { OptionsUseBizAtom, useBizAtom } from './useBizAtom';
 
 interface OptionsList {
     ViewItemAtom: (props: { value: any; }) => JSX.Element;
@@ -13,7 +13,7 @@ interface OptionsList {
 export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     const { top } = options;
     const useBizAtomReturn = useBizAtom(options);
-    const { entity } = useBizAtomReturn;
+    const { entity, pathList, pathView, searchAtoms } = useBizAtomReturn;
     const { atom: atomName } = useParams();
     let entityAtom = useBizAtomReturn.getEntityAtom(atomName) ?? entity;
     const { children } = entityAtom;
@@ -21,55 +21,54 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
         case 0: break;
         case 1: entityAtom = children[0]; break;
         default:
-            return <PageTypes entityAtom={entityAtom} gen={useBizAtomReturn} />;
+            return <PageTypes />;
     }
-    return <PageList entityAtom={entityAtom} gen={useBizAtomReturn} top={top} {...options} />;
-}
+    return <PageList />;
 
-function PageList({ entityAtom, gen, top, ViewItemAtom }: OptionsList & { entityAtom: EntityAtom; gen: UseBizAtomReturn; }) {
-    let { pathView, searchAtoms } = gen;
-    let caption = entityAtom.caption ?? entityAtom.name;
-    let searchParam = {
-        atom: entityAtom.phrase,
-        key: undefined as string,
-    };
-    function ViewItem({ value }: { value: any }) {
-        return <Link to={`../${pathView}/${value.id}`}>
-            <div className="px-3 py-2">
-                <ViewItemAtom value={value} />
-            </div>
-        </Link>;
+    function PageTypes() {
+        let caption = entityAtom.caption ?? entityAtom.name;
+        const { children } = entityAtom;
+        function ViewItem({ value }: { value: EntityAtom; }) {
+            const { name, caption } = value;
+            return <Link to={`../${pathList}/${name}`}>
+                <div className="px-3 py-2">
+                    {caption}
+                </div>
+            </Link>;
+        }
+        function onItemClick(item: EntityAtom) {
+            // closeModal(item);
+        }
+        return <Page header={`${caption}列表 - 大类`}>
+            <List items={children} ViewItem={ViewItem} onItemClick={onItemClick} />
+        </Page>
     }
-    // pageSize={20}
-    // pageMoreSize={1}
-    const none = <div className='m-3 small text-muted'>[无{caption}]</div>;
-    return <PageQueryMore header={`${caption}列表`}
-        query={searchAtoms}
-        param={searchParam}
-        sortField="id"
-        ViewItem={ViewItem}
-        none={none}
-    >
-        {top}
-    </PageQueryMore>;
-}
 
-function PageTypes({ entityAtom, gen }: { entityAtom: EntityAtom; gen: UseBizAtomReturn; }) {
-    const { pathList } = gen;
-    let caption = entityAtom.caption ?? entityAtom.name;
-    const { children } = entityAtom;
-    function ViewItem({ value }: { value: EntityAtom; }) {
-        const { name, caption } = value;
-        return <Link to={`../${pathList}/${name}`}>
-            <div className="px-3 py-2">
-                {caption}
-            </div>
-        </Link>;
+    function PageList() {
+        const { ViewItemAtom } = options;
+        let caption = entityAtom.caption ?? entityAtom.name;
+        let searchParam = {
+            atom: entityAtom.phrase,
+            key: undefined as string,
+        };
+        function ViewItem({ value }: { value: any }) {
+            return <Link to={`../${pathView}/${value.id}`}>
+                <div className="px-3 py-2">
+                    <ViewItemAtom value={value} />
+                </div>
+            </Link>;
+        }
+        // pageSize={20}
+        // pageMoreSize={1}
+        const none = <div className='m-3 small text-muted'>[无{caption}]</div>;
+        return <PageQueryMore header={`${caption}列表`}
+            query={searchAtoms}
+            param={searchParam}
+            sortField="id"
+            ViewItem={ViewItem}
+            none={none}
+        >
+            {top}
+        </PageQueryMore>;
     }
-    function onItemClick(item: EntityAtom) {
-        // closeModal(item);
-    }
-    return <Page header={`${caption}列表 - 大类`}>
-        <List items={children} ViewItem={ViewItem} onItemClick={onItemClick} />
-    </Page>
 }

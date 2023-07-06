@@ -1,9 +1,10 @@
-import { Gen } from "app/tool";
+import { useUqApp } from "app/UqApp";
 import { ParamSaveMetricItem } from "uqs/UqDefault";
 
-export class GenMetric extends Gen {
-    async getAtomMetric(id: number) {
-        let results = await this.uq.GetAtomMetric.query({ id });
+export function useMetric() {
+    const { uq } = useUqApp();
+    async function getAtomMetric(id: number) {
+        let results = await uq.GetAtomMetric.query({ id });
         let { items } = results;
         for (let item of items) {
             let { div } = item;
@@ -15,13 +16,17 @@ export class GenMetric extends Gen {
         return results;
     }
 
-    async saveMetricItem(param: ParamSaveMetricItem): Promise<{ id: number; metric: number; }> {
-        let result = await this.uq.SaveMetricItem.submitReturns(param);
+    async function saveMetricItem(param: ParamSaveMetricItem): Promise<{ id: number; metric: number; }> {
+        let result = await uq.SaveMetricItem.submitReturns(param);
         if (result === undefined) return undefined;
         let { ret } = result;
         if (ret === undefined) return undefined;
         if (ret.length === 0) return undefined;
         let r = ret[0];
         return r;
+    }
+    return {
+        getAtomMetric,
+        saveMetricItem,
     }
 }

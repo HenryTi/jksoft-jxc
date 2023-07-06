@@ -8,7 +8,7 @@ import { gStoreOut } from "./StoreOut";
 import { GSheet } from "app/tool";
 import { EntitySheet } from "app/Biz";
 import { gSale } from "./Sale";
-import { gStoreInM } from "./StoreInMHook";
+import { gStoreInSplit } from "./StoreInSplitHook";
 import { gStoreIn } from "./StoreInHook";
 import { ViewItemID } from "../ViewItemID";
 
@@ -16,7 +16,7 @@ const gSheets: GSheet[][] = [
     [
         gPurchase,
         gStoreIn,
-        gStoreInM,
+        gStoreInSplit,
     ],
     [
         gSale,

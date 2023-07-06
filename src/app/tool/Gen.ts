@@ -1,6 +1,6 @@
 import { UqApp, useUqApp } from "../UqApp";
 import { Biz, Entity } from "../Biz";
-
+/*
 export abstract class Gen {
     readonly uqApp: UqApp;
     readonly biz: Biz;
@@ -40,3 +40,4 @@ export abstract class GenBizEntity<E extends Entity> extends Gen {
         return `${type}.${name}`;
     }
 }
+*/

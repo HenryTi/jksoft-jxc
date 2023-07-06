@@ -4,10 +4,10 @@ import { Detail, EnumSheet, Sheet, UqExt } from "uqs/UqDefault";
 import { PageMoreCacheData } from "app/coms";
 import { AtomMetricSpec, DetailWithOrigin, EditingRow, OriginDetail, SheetRow } from "../../tool";
 import { UseSheetDetailReturn } from "./useSheetDetail";
-import { UqApp, useUqApp } from "app/UqApp";
+import { useUqApp } from "app/UqApp";
 import { EntitySheet } from "app/Biz";
-
-export interface Editing {
+/*
+export interface ReturnUseEditing {
     act: string;
     ViewRow: ({ editingRow }: { editingRow: EditingRow; }) => JSX.Element;
     onAddRow: () => Promise<void>;
@@ -23,7 +23,7 @@ export interface Editing {
     saveAtomMetricSpec: (atomMetricSpec: AtomMetricSpec) => Promise<number>;
 }
 
-export function useSheetEditing(sheet: EnumSheet, act: string, useSheetDetailReturn: UseSheetDetailReturn): Editing {
+export function useSheetEditing(sheet: EnumSheet, act: string, useSheetDetailReturn: UseSheetDetailReturn): ReturnUseEditing {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp
     const entitySheet = biz.entities[sheet] as EntitySheet;
@@ -85,7 +85,7 @@ export function useSheetEditing(sheet: EnumSheet, act: string, useSheetDetailRet
     }
 
     async function load(id: number) {
-        let { main: [sheet], details, origins, buds } = await uq.GetSheet.query({ id, buds: undefined });
+        let { main: [sheet], details, origins, buds } = await uq.GetSheet.query({ id, budNames: undefined });
         let originColl: { [id: number]: Detail & { done: number; } } = {};
         for (let origin of origins) {
             let { id } = origin;
@@ -102,7 +102,7 @@ export function useSheetEditing(sheet: EnumSheet, act: string, useSheetDetailRet
     }
 
     async function loadSheet(sheetId: number): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
-        let { main: [sheet], details, origins, buds } = await uq.GetSheet.query({ id: sheetId, buds: undefined });
+        let { main: [sheet], details, origins, buds } = await uq.GetSheet.query({ id: sheetId, budNames: undefined });
         let originColl: { [id: number]: Detail & { done: number; } } = {};
         for (let origin of origins) {
             let { id } = origin;
@@ -235,18 +235,7 @@ export function useSheetEditing(sheet: EnumSheet, act: string, useSheetDetailRet
         await uq.Biz(sheet.id, act);
         removeSheetFromCache();
     }
-    /*
-        async bookAct() {
-            let sheet = await this.saveSheet(); // getAtomValue(this.atomSheet);
-            await this.confirmSaveAllDetails();
-            // await this.genSheetAct.book(sheet.id, this.detail);
-            await this.uq.BizSheetAct(sheet.id
-                , this.detail
-                // , this.genDetail.bizEntityName
-                , this.act);
-            this.removeSheetFromCache();
-        }
-    */
+
     async function confirmSaveRow(editingRow: EditingRow) {
         let dirtyDetails: DetailWithOrigin[] = [];
         let { origin, atomDetails } = editingRow;
@@ -345,3 +334,4 @@ export function useSheetEditing(sheet: EnumSheet, act: string, useSheetDetailRet
     };
     return ret;
 }
+*/

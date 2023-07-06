@@ -2,22 +2,22 @@ import React from "react";
 import { Route } from "react-router-dom";
 import { gContact, gGoods } from "./Atom";
 import { routeAtomCenter } from "./Atom";
-import { routeSubjectCenter, routeReportStorage } from "./Subject";
+import { gSubjectStorage, routeSubjectCenter } from "./Subject";
 import { routePrice } from "./AssignPrice";
 import { routeSheetView } from './SheetView';
-import { UqApp, useUqApp } from "app/UqApp";
+import { UqApp } from "app/UqApp";
 // import { routeSheetCenter } from "./Sheet";
 import { routePermits } from "./Permits";
-import { GAtom, GSheet, GSpec } from "app/tool";
+import { GAtom, GSheet, GSpec, GSubject } from "app/tool";
 import { gPurchase } from "./Sheet/Purchase";
 import { gSale } from "./Sheet/Sale";
 import { gStoreIn } from "./Sheet/StoreInHook";
-import { gStoreInM } from "./Sheet/StoreInMHook";
+import { gStoreInSplit } from "./Sheet/StoreInSplitHook";
 import { gStoreOut } from "./Sheet/StoreOut";
 import { PageSheetCenter } from "./Sheet";
 import { gSpecBatchValid, gSpecSheo } from "./Atom/Spec";
 import { EntityAtom, EntitySpec } from "app/Biz/EntityAtom";
-import { pathAtomList, pathAtomNew } from "app/hooks";
+import { pathAtomList, pathAtomNew, pathSubjectHistory } from "app/hooks";
 
 export const pathJXC = 'jxc';
 export const pathSheetCenter = 'sheet-center';
@@ -34,13 +34,13 @@ export function routeJCX(uqApp: UqApp) {
         {routeSheet(uqApp, gPurchase)}
         {routeSheet(uqApp, gSale)}
         {routeSheet(uqApp, gStoreIn)}
-        {routeSheet(uqApp, gStoreInM)}
+        {routeSheet(uqApp, gStoreInSplit)}
         {routeSheet(uqApp, gStoreOut)}
 
         <Route path={pathSheetCenter} element={<PageSheetCenter />} />
 
         {routeSubjectCenter}
-        {routeReportStorage}
+        {routeSubject(uqApp, gSubjectStorage)}
         {routeSheetView(uqApp)}
 
         {routePrice}
@@ -102,5 +102,13 @@ function routeSheet(uqApp: UqApp, gSheet: GSheet) {
     return <React.Fragment key={name}>
         <Route path={`${name}/:id`} element={pageEdit} />
         <Route path={name} element={pageEdit} />
+    </React.Fragment>;
+}
+
+function routeSubject(uqApp: UqApp, gSubject: GSubject) {
+    const { name, Report, History } = gSubject;
+    return <React.Fragment key={name}>
+        <Route path={name} element={Report} />
+        <Route path={`${pathSubjectHistory(name)}/:id`} element={History} />
     </React.Fragment>;
 }

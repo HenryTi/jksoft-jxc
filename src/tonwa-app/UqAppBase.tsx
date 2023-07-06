@@ -195,6 +195,7 @@ export abstract class UqAppBase<UQS = any> {
         return;
     }
 
+    /*
     private readonly objects = new Map<new (uqApp: any) => any, any>();
     objectOf<T, A extends UqAppBase>(constructor: new (uqApp: A) => T) {
         let ret = this.objects.get(constructor) as T;
@@ -208,6 +209,7 @@ export abstract class UqAppBase<UQS = any> {
 
     protected onObjectBuilt(object: any) {
     }
+    */
 }
 
 class LocalStorageDb extends LocalDb {

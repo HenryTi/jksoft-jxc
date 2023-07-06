@@ -1,20 +1,30 @@
-import { PageReport, GenSubject, PageHistory } from "app/hooks";
-import { Route } from "react-router-dom";
+import { PageReport, PageHistory } from "app/hooks";
 import { pathDetailView } from "../SheetView";
+import { GSubject } from "app/tool";
+import { EnumSubject } from "uqs/UqDefault";
 
-const pathStorage = 'storage';
-const pathStorageHistory = 'storage-history';
+const subject = EnumSubject.storage;
 
-export class GenSubjectStorage extends GenSubject {
-    readonly bizEntityName = 'storage';
-    // readonly bizEntityType = 'subject';
-    readonly captionHistory = '库存流水';
-    readonly path = pathStorage;
-    readonly pathStorageHistory = pathStorageHistory;
-    readonly pathDetailView = pathDetailView;
+const props = {
+    subject,
+    caption: '库存',
+    captionHistory: '库存流水',
+    pathDetailView,
+    sortField: 'atom',
+    historySortField: 'id',
 }
 
-export const routeReportStorage = <>
-    <Route path={pathStorage} element={<PageReport Gen={GenSubjectStorage}></PageReport>} />
-    <Route path={`${pathStorageHistory}/:id`} element={<PageHistory Gen={GenSubjectStorage} />} />
-</>;
+function PageReportStorage() {
+    return <PageReport {...props} />;
+}
+
+function PageHistoryStorage() {
+    return <PageHistory {...props} />;
+}
+
+export const gSubjectStorage: GSubject = {
+    name: subject,
+    caption: props.caption,
+    Report: <PageReportStorage />,
+    History: <PageHistoryStorage />,
+};

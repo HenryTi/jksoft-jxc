@@ -4,14 +4,13 @@ import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { ButtonAsync, getAtomValue, List, LMR, Sep, setAtomValue, useEffectOnce } from "tonwa-com";
-import { useSheetEditing } from "./useEditing";
 import { Atom, Detail, EnumSheet, Sheet } from "uqs/UqDefault";
-import { AtomMetricSpec, DetailWithOrigin, EditingRow, OriginDetail, SheetRow } from "app/tool";
+import { DetailWithOrigin, EditingRow, OriginDetail, SheetRow } from "app/tool";
 import { UseSheetDetailReturn } from "./useSheetDetail";
 import { useUqApp } from "app/UqApp";
 import { EntitySheet } from "app/Biz";
 
-export interface OptionsSheetAct {
+export interface PropsSheetAct {
     sheet: EnumSheet;
     act: string;
     caption?: string;
@@ -23,10 +22,11 @@ export interface OptionsSheetAct {
     useDetailReturn: UseSheetDetailReturn;
 }
 
-export function useSheetAct(options: OptionsSheetAct) {
+export function useSheetAct(options: PropsSheetAct) {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp
     const { sheet: sheetName, caption: sheetCaption, ViewTargetBand, loadStart, act, useDetailReturn } = options;
+    const { editRow } = useDetailReturn;
     const navigate = useNavigate();
     // const { current: genEditing } = useRef(useSheetEditing(sheetName, act, useDetailReturn));
     // const { onEditRow, onAddRow, atomRows, atomSheet, atomSubmitable } = genEditing;
@@ -80,9 +80,11 @@ export function useSheetAct(options: OptionsSheetAct) {
     });
 
     if (sheet === undefined || rows === undefined) {
-        return <Page header={caption}>
-            <PageSpinner />
-        </Page>
+        return {
+            page: <Page header={caption}>
+                <PageSpinner />
+            </Page>
+        };
     }
 
     async function startSheet(sheetId: number): Promise<boolean> {
@@ -179,19 +181,21 @@ export function useSheetAct(options: OptionsSheetAct) {
         return r;
     }
 
-    async function detailEditRow(editingRow: EditingRow) {
-        debugger;
-    }
-
     async function onEditRow(editingRow: EditingRow): Promise<void> {
         // let { editRow } = this.genDetail;
         // if (editRow === undefined) return;
         // await editRow(this, editingRow as any);
-        await detailEditRow(editingRow);
+        // await detailEditRow(editingRow);
+        if (editRow === undefined) {
+            debugger;
+            // alert('onEditRow editRow in useDetailReturn not defined');
+            return;
+        }
+        await editRow(editingRow, updateRow);
     }
 
     async function load(id: number) {
-        let { main: [sheet], details, origins, buds } = await uq.GetSheet.query({ id, buds: undefined });
+        let { main: [sheet], details, origins, buds } = await uq.GetSheet.query({ id, budNames: undefined });
         let originColl: { [id: number]: Detail & { done: number; } } = {};
         for (let origin of origins) {
             let { id } = origin;
@@ -208,7 +212,7 @@ export function useSheetAct(options: OptionsSheetAct) {
     }
 
     async function loadSheet(sheetId: number): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
-        let { main: [sheet], details, origins, buds } = await uq.GetSheet.query({ id: sheetId, buds: undefined });
+        let { main: [sheet], details, origins, buds } = await uq.GetSheet.query({ id: sheetId, budNames: undefined });
         let originColl: { [id: number]: Detail & { done: number; } } = {};
         for (let origin of origins) {
             let { id } = origin;
@@ -367,7 +371,6 @@ export function useSheetAct(options: OptionsSheetAct) {
         return sheet;
     }
 
-
     // return: id
     async function saveSheetToDb(sheet: Sheet): Promise<number> {
         let { phrase } = entitySheet;
@@ -402,16 +405,40 @@ export function useSheetAct(options: OptionsSheetAct) {
         return useDetailReturn.ViewRow({ editingRow, updateRow });
     }
 
-    return <Page header={caption}>
-        <div className="pt-3 tonwa-bg-gray-3 container">
-            <Band label={'编号'}>
-                {sheet.no}
-            </Band>
-            {viewTargetBand}
-        </div>
+    const top = <div className="pt-3 tonwa-bg-gray-3 container">
+        <Band label={'编号'}>
+            {sheet.no}
+        </Band>
+        {viewTargetBand}
+    </div>;
+
+    const body = <>
         {rows.length > 6 ? <>{vButtons}<Sep /></> : <Sep />}
-        <List items={rows} ViewItem={ViewItemOfList} none={<None />} onItemClick={onEditRow} />
+        <List items={rows} ViewItem={ViewItemOfList} none={< None />} onItemClick={editRow === undefined ? undefined : onEditRow} />
         <Sep />
         {vButtons}
+    </>;
+    const bottom = <></>;
+
+    return {
+        caption,
+        viewTargetBand,
+        rows,
+        vButtons,
+        ViewItemOfList,
+        viewNone: <None />,
+        onEditRow,
+        top,
+        body,
+        bottom,
+    };
+}
+
+export function PageSheetAct(props: PropsSheetAct) {
+    let { caption, top, body, bottom } = useSheetAct(props);
+    return <Page header={caption}>
+        {top}
+        {body}
+        {bottom}
     </Page>;
 }

@@ -1,4 +1,4 @@
-import { Atom, EnumAtom, EnumSheet } from "uqs/UqDefault";
+import { Atom, EnumAtom, EnumSheet, EnumSubject } from "uqs/UqDefault";
 import { Spec } from "./Model";
 import { EntityAtom } from "app/Biz";
 import { EntitySpec } from "app/Biz/EntityAtom";
@@ -43,4 +43,11 @@ export interface PropsSpecEdit<T extends Spec> {
     submitCaption?: string;
     submitClassName?: string;
     onSubmit?: (spec: T) => Promise<void>;
+}
+
+export interface GSubject {
+    name: EnumSubject;
+    caption?: string;
+    Report: JSX.Element;
+    History: JSX.Element;
 }

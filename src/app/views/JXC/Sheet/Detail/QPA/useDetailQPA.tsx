@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { Editing, OptionsUseSheetDetail, selectAtomMetricSpec as selectAtomMetricSpecHook } from "app/hooks";
+import { OptionsUseSheetDetail, UpdateRow, selectAtomMetricSpec as selectAtomMetricSpecHook } from "app/hooks";
 import { AtomMetricSpec, AtomPhrase, EditingRow, SheetRow } from "app/tool";
 import { Page, uqAppModal, useModal } from "tonwa-app";
 import { Detail, EnumAtom } from "uqs/UqDefault";
@@ -127,11 +127,11 @@ export function useDetailQPA({ detail }: OptionsUseDetailQPA): UseSheetDetailRet
         return editingRow;
     }
 
-    async function editRow(genEditing: Editing, editingRow: EditingRow): Promise<void> {
+    async function editRow(editingRow: EditingRow, updateRow: UpdateRow): Promise<void> {
         const { openModal } = uqAppModal(uqApp);
         let ret = await openModal<SheetRow>(<PageDetail header="修改明细" editingRow={editingRow} />);
         if (ret === undefined) return;
-        await genEditing.updateRow(editingRow, ret.details);
+        await updateRow(editingRow, ret.details);
     }
 
     function PageDetail({ header, editingRow }: { header?: string; editingRow?: EditingRow; }): JSX.Element {
@@ -219,8 +219,7 @@ export function useDetailQPA({ detail }: OptionsUseDetailQPA): UseSheetDetailRet
 
 
     const cnCol = ' col py-2 ';
-    function ViewDetailQPA({ editingRow }: { editingRow: EditingRow; }): JSX.Element {
-        const uqApp = useUqApp();
+    function ViewDetailQPA({ editingRow }: { editingRow: EditingRow; updateRow: UpdateRow; }): JSX.Element {
         const { atomDetails } = editingRow;
         const details = useAtomValue(atomDetails);
         if (details === undefined || details.length === 0) {
@@ -250,6 +249,5 @@ export function useDetailQPA({ detail }: OptionsUseDetailQPA): UseSheetDetailRet
         ViewRow: ViewDetailQPA,
         addRow,
         editRow,
-        // genAtomSpec,
     }
 }

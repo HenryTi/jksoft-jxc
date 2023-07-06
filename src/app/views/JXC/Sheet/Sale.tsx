@@ -5,7 +5,7 @@ import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
 import { Band } from "app/coms";
 import { IDView } from "tonwa-app";
 import { useDetailQPA } from "./Detail";
-import { selectAtom, useSheetAct } from "app/hooks";
+import { selectAtom, PageSheetAct } from "app/hooks";
 
 const sheet = EnumSheet.SheetSale;
 const caption = '销售单';
@@ -35,7 +35,7 @@ function PageSaleEdit() {
     const act = '$';
     const detail = 'detailsale';
     const useDetailReturn = useDetailQPA({ detail });
-    const ret = useSheetAct({
+    return <PageSheetAct {...{
         sheet,
         caption,
         targetCaption,
@@ -45,8 +45,7 @@ function PageSaleEdit() {
         loadStart,
         act,
         useDetailReturn,
-    });
-    return ret;
+    }} />;
 }
 
 export const gSale: GSheet = {

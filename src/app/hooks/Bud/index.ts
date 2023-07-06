@@ -1,2 +1,2 @@
-export * from './GenBuds';
+export * from './useBuds';
 export * from './PageAssign';

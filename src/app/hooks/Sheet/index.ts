@@ -1,6 +1,4 @@
-// export * from './GenSheet';
-// export * from './GenSheetAct';
-export * from './useEditing';
+export * from './useSheetEditing';
 export * from './usePend';
 export * from './useSheetAct';
 export * from './useSheetDetail';

@@ -1,7 +1,7 @@
 import { GSheet, SheetRow } from "app/tool";
 import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
 import { useDetailQPA } from "./Detail";
-import { selectAtom, useSheetAct } from "app/hooks";
+import { selectAtom, PageSheetAct } from "app/hooks";
 import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
 import { useUqApp } from "app/UqApp";
@@ -34,7 +34,7 @@ function PagePurchaseEdit() {
     }
     const detail = 'detailpurchase';
     const useDetailReturn = useDetailQPA({ detail });
-    const ret = useSheetAct({
+    return <PageSheetAct {...{
         sheet,
         act: '$',
         caption,
@@ -44,8 +44,7 @@ function PagePurchaseEdit() {
         selectTarget,
         loadStart,
         useDetailReturn,
-    });
-    return ret;
+    }} />;
 }
 
 export const gPurchase: GSheet = {

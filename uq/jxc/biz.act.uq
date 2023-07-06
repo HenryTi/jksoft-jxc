@@ -179,7 +179,7 @@ PAGE (
 Biz Query SearchAtomBuds ver 0.2 (
     phrase Phrase,
     key CHAR(50),
-    names CHAR(300),
+    budNames CHAR(300),
 )
 PAGE (
     id ID desc,
@@ -219,23 +219,20 @@ RETURNS buds (
 
     INTO meds SELECT b.id, b.id as main, b.id as detail
         FROM $page as b;
---            JOIN AtomMetric as b ON b.atom=a.id;
 
     INTO buds SELECT a.id, d.id as bud
         , d.name as phrase
         , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
         FROM $page as a 
             JOIN IxBudValue as b ON b.i=a.id
-            -- JOIN SitePhrase as c ON c.id=b.xi
             JOIN $Phrase as d ON d.id=b.x -- phrase
-        WHERE LOCATE(d.name, names)>0;
+        WHERE LOCATE(d.name, budNames)>0;
 };
 
 Biz Query SearchAtomMetricBuds ver 0.2 (
     phrase Phrase,
     key CHAR(50),
-    names CHAR(300),
-    -- budType ENUM BudType,
+    budNames CHAR(300),
 )
 PAGE (
     id ID desc,
@@ -282,14 +279,13 @@ RETURNS buds (
         , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
         FROM meds as a 
             JOIN IxBudValue as b ON b.i=a.id
-            -- JOIN SitePhrase as c ON c.id=b.xi
             JOIN $Phrase as d ON d.id=b.x -- c.phrase
-        WHERE LOCATE(d.name, names)>0;
+        WHERE LOCATE(d.name, budNames)>0;
 };
 
 Biz Query GetSheet (
     id ID,
-    buds CHAR(200),  -- \t separated phrases of the assigns
+    budNames CHAR(200),  -- \t separated phrases of the assigns
 )
 RETURNS main (
     * SHEET,
@@ -332,14 +328,14 @@ RETURNS buds (
     INTO buds SELECT a.id, b.x as bud, d.name as phrase, b.int, b.dec
         FROM Detail as a
             JOIN IxBudValue as b ON b.i=a.id
-            -- JOIN SitePhrase as c ON c.id=b.xi
             JOIN $Phrase as d ON d.id=b.x -- c.phrase
         WHERE a.base=id 
-            AND (buds IS NULL OR LOCATE(d.name, buds)>0);
+            AND (budNames IS NULL OR LOCATE(d.name, budNames)>0);
 };
 
 Biz Query GetAtom (
     id ID,
+    budNames CHAR(300),
 )
 RETURNS main (
     id ID,
@@ -365,4 +361,11 @@ RETURNS buds (
             JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
             JOIN $Phrase as e ON e.id=a.x
         WHERE a.i=id and d.type=EnumBizType.prop;
+
+    INTO buds SELECT b.x as bud, d.name as phrase, IFNULL(b.dec, IFNULL(b.int, b.str)) as value
+        FROM Detail as a
+            JOIN IxBudValue as b ON b.i=a.id
+            JOIN $Phrase as d ON d.id=b.x -- c.phrase
+        WHERE a.base=id 
+            AND (budNames IS NULL OR LOCATE(d.name, budNames)>0);
 };

@@ -1,14 +1,12 @@
 import { UqApp, useUqApp } from "app/UqApp";
-import { useQuery } from "react-query";
 import { useModal } from "tonwa-app";
 import { FA, LabelRow, List, Sep, useEffectOnce } from "tonwa-com";
-import { Metric, MetricItem, MetricType, ReturnGetAtomMetricItems } from "uqs/UqDefault";
+import { Metric, MetricItem, MetricType } from "uqs/UqDefault";
 import { PageAdd } from "./PageAdd";
-import { GenMetric } from "./GenMetric";
+import { useMetric } from "./useMetric";
 import { useRef, useState } from "react";
 
 export interface ViewMetricProps {
-    GenMetric?: new (uqApp: UqApp) => GenMetric;
     id: number;
     metric: string;
     className?: string;
@@ -18,9 +16,9 @@ interface MetricItemEdit extends MetricItem {
     $div: MetricItem;
 }
 
-export function ViewMetric({ GenMetric: Gen, id, metric: metricName, className }: ViewMetricProps) {
+export function ViewMetric({ id, metric: metricName, className }: ViewMetricProps) {
     const uqApp = useUqApp();
-    const genMetric = uqApp.objectOf(Gen ?? GenMetric);
+    const genMetric = useMetric();
     const { openModal } = useModal();
     const ref = useRef<{ metric: Metric; div: MetricItem; }>();
     const [metricItems, setMetricItems] = useState<MetricItemEdit[]>([]);

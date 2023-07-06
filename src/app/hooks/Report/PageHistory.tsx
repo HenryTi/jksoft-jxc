@@ -1,14 +1,18 @@
 import { PageQueryMore } from "app/coms";
-import { useUqApp } from "app/UqApp";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { GenProps } from "app/tool";
-import { GenSubject } from "./GenSubject";
+import { useSubject } from "./useSubject";
+import { EnumSubject } from "uqs/UqDefault";
 
-export function PageHistory({ Gen }: GenProps<GenSubject>) {
-    const uqApp = useUqApp();
-    const gen = uqApp.objectOf(Gen);
+export function PageHistory({ subject, captionHistory, pathDetailView, historySortField }: {
+    subject: EnumSubject;
+    captionHistory: string;
+    pathDetailView: string;
+    sortField: string;
+    historySortField: string;
+}) {
+    const gen = useSubject({ subject, });
     const navigate = useNavigate();
-    const { subjectHistory, ViewItemHistory, captionHistory, historySortField, pathDetailView, ViewItem } = gen;
+    const { subjectHistory, ViewItemHistory, ViewItem } = gen;
     const { id } = useParams();
     const atomId = Number(id);
     const param = { atomId };

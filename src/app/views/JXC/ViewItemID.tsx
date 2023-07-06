@@ -1,5 +1,7 @@
 export function ViewItemID({ value }: { value: any; }) {
+    let { no, ex } = value;
     return <div>
-        {JSON.stringify(value)}
+        <div className='small text-muted'>{no}</div>
+        <div><b>{ex}</b></div>
     </div>;
 }

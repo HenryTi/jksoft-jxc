@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri Jun 23 2023 16:08:27 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sun Jul 02 2023 11:31:29 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -309,7 +309,7 @@ export interface ResultSearchAtom {
 export interface ParamSearchAtomBuds {
 	phrase: string;
 	key: string;
-	names: string;
+	budNames: string;
 }
 export interface ReturnSearchAtomBuds$page {
 	id: number;
@@ -337,7 +337,7 @@ export interface ResultSearchAtomBuds {
 export interface ParamSearchAtomMetricBuds {
 	phrase: string;
 	key: string;
-	names: string;
+	budNames: string;
 }
 export interface ReturnSearchAtomMetricBuds$page {
 	id: number;
@@ -364,7 +364,7 @@ export interface ResultSearchAtomMetricBuds {
 
 export interface ParamGetSheet {
 	id: number;
-	buds: string;
+	budNames: string;
 }
 export interface ReturnGetSheetMain {
 	id: number;
@@ -418,6 +418,7 @@ export interface ResultGetSheet {
 
 export interface ParamGetAtom {
 	id: number;
+	budNames: string;
 }
 export interface ReturnGetAtomMain {
 	id: number;
@@ -1718,7 +1719,7 @@ export const uqSchema={
                 "size": 50
             },
             {
-                "name": "names",
+                "name": "budNames",
                 "type": "char",
                 "size": 300
             }
@@ -1808,7 +1809,7 @@ export const uqSchema={
                 "size": 50
             },
             {
-                "name": "names",
+                "name": "budNames",
                 "type": "char",
                 "size": 300
             }
@@ -1892,7 +1893,7 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "buds",
+                "name": "budNames",
                 "type": "char",
                 "size": 200
             }
@@ -2102,6 +2103,11 @@ export const uqSchema={
             {
                 "name": "id",
                 "type": "id"
+            },
+            {
+                "name": "budNames",
+                "type": "char",
+                "size": 300
             }
         ],
         "returns": [
@@ -4221,4 +4227,23 @@ export enum EnumSheet {
 	SheetStoreInMultiStorage = 'sheetstoreinmultistorage',
 	SheetSale = 'sheetsale',
 	SheetStoreOut = 'sheetstoreout',
+}
+
+export enum EnumDetail {
+	DetailPurchase = 'detailpurchase',
+	DetailPurchaseMedicine = 'detailpurchasemedicine',
+	DetailStoreIn = 'detailstorein',
+	DetailSale = 'detailsale',
+	DetailStoreOut = 'detailstoreout',
+}
+
+export enum EnumSubject {
+	storage = 'storage',
+	c = 'c',
+}
+
+export enum EnumSetting {
+	AccountSetting = 'accountsetting',
+	PersonSetting = 'personsetting',
+	Price = 'price',
 }

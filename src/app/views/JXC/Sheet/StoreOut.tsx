@@ -1,5 +1,5 @@
 import { useUqApp } from "app/UqApp";
-import { selectAtom, usePendFromItem, useSheetAct } from "app/hooks";
+import { PageSheetAct, selectAtom, usePendFromItem } from "app/hooks";
 import { GSheet, SheetRow } from "app/tool";
 import { ViewItemContact } from "../Atom";
 import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
@@ -12,7 +12,7 @@ import { ViewPendRow } from "./ViewPendRow";
 const sheet = EnumSheet.SheetStoreOut;
 const caption = '出库单';
 const targetCaption = '往来单位';
-function PageStoreOutG() {
+function PageStoreOut() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const act = '$';
@@ -56,16 +56,9 @@ function PageStoreOutG() {
             value: undefined
         };
         return { sheet, sheetRows };
-        /*
-        let targetAtom = await selectTarget();
-        if (targetAtom === undefined) return;
-        let no = await uq.IDNO({ ID: uq.Sheet });
-        let main = { no, target: targetAtom.id } as Sheet;
-        return { sheet: main, sheetRows: [] };
-        */
     }
     const useDetailReturn = useDetailPend({ detail, selectPend });
-    const ret = useSheetAct({
+    return <PageSheetAct {...{
         sheet,
         caption,
         targetCaption,
@@ -75,11 +68,10 @@ function PageStoreOutG() {
         loadStart,
         act,
         useDetailReturn,
-    });
-    return ret;
+    }} />;
 }
 export const gStoreOut: GSheet = {
     sheet,
     caption,
-    pageEdit: <PageStoreOutG />,
+    pageEdit: <PageStoreOut />,
 }

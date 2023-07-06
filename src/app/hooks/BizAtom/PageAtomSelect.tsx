@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { uqAppModal, useModal } from "tonwa-app";
-import { GenAtomBudsSearch, GenBuds, RowMed } from "../Bud";
+import { RowMed, useAtomBudsSearch, useBuds } from "../Bud";
 import { UqApp, useUqApp } from "app/UqApp";
 import { AtomPhrase, PropsAtomSelect } from "app/tool";
 import { EntityAtom } from "app/Biz";
@@ -38,9 +38,8 @@ export function PageAtomSelect(props: PropsAtomSelect) {
     async function onItemClick(selectedItem: RowMed) {
         closeModal(selectedItem.atom);
     }
+    let genBudsSearch = useAtomBudsSearch({ entity: atomName, budNames: assigns, });
     async function searchAtoms(param: any, pageStart: any, pageSize: number) {
-        let genBuds = new GenBuds(uqApp, entityAtom, assigns);
-        let genBudsSearch = new GenAtomBudsSearch(genBuds, genBuds.entity.phrase);
         let ret = await genBudsSearch.search(param, pageStart, pageSize);
         return ret;
     }
