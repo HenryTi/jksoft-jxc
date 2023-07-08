@@ -3,19 +3,20 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSubject } from "./useSubject";
 import { EnumSubject } from "uqs/UqDefault";
 
-export function PageHistory({ subject, captionHistory, pathDetailView, historySortField }: {
+export function PageHistory({ subject, bud, captionHistory, pathDetailView, historySortField }: {
     subject: EnumSubject;
+    bud: string;
     captionHistory: string;
     pathDetailView: string;
     sortField: string;
     historySortField: string;
 }) {
-    const gen = useSubject({ subject, });
+    const gen = useSubject({ subject, bud });
     const navigate = useNavigate();
     const { subjectHistory, ViewItemHistory, ViewItem } = gen;
     const { id } = useParams();
-    const atomId = Number(id);
-    const param = { atomId };
+    const objId = Number(id);
+    const param = { objId };
     const location = useLocation();
     async function onHistoryClick(item: any) {
         navigate(`../${pathDetailView}/${item.ref}`);

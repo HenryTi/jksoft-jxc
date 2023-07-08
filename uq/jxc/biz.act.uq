@@ -55,7 +55,15 @@ Biz ACT SaveBud(
 ) {
     VAR phraseId ID = PhraseId(phrase);
     IF phraseId IS NOT NULL {
-        WITH IxBudValue as a IX=id XI=phraseId SET a.int=int, a.dec=dec, a.str=str;
+        IF int IS NOT NULL {
+            WITH IxBudInt as a IX=id XI=phraseId SET a.value=int;
+        }
+        IF dec IS NOT NULL {
+            WITH IxBudDec as a IX=id XI=phraseId SET a.value=dec;
+        }
+        IF str IS NOT NULL {
+            WITH IxBudStr as a IX=id XI=phraseId SET a.value=str;
+        }
     }
 };
 
@@ -192,7 +200,19 @@ RETURNS meds (
     main ID,
     detail ID,
 )
-RETURNS buds (
+RETURNS budsInt (
+    id ID,
+    bud ID,
+    phrase CHAR(50),
+    value INT,
+)
+RETURNS budsDec (
+    id ID,
+    bud ID,
+    phrase CHAR(50),
+    value VALUE,
+)
+RETURNS budsStr (
     id ID,
     bud ID,
     phrase CHAR(50),
@@ -220,11 +240,27 @@ RETURNS buds (
     INTO meds SELECT b.id, b.id as main, b.id as detail
         FROM $page as b;
 
-    INTO buds SELECT a.id, d.id as bud
+    INTO budsInt SELECT a.id, d.id as bud
         , d.name as phrase
-        , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
+        , b.value
         FROM $page as a 
-            JOIN IxBudValue as b ON b.i=a.id
+            JOIN IxBudInt as b ON b.i=a.id
+            JOIN $Phrase as d ON d.id=b.x -- phrase
+        WHERE LOCATE(d.name, budNames)>0;
+
+    INTO budsDec SELECT a.id, d.id as bud
+        , d.name as phrase
+        , b.value
+        FROM $page as a 
+            JOIN IxBudDec as b ON b.i=a.id
+            JOIN $Phrase as d ON d.id=b.x -- phrase
+        WHERE LOCATE(d.name, budNames)>0;
+
+    INTO budsStr SELECT a.id, d.id as bud
+        , d.name as phrase
+        , b.value
+        FROM $page as a 
+            JOIN IxBudStr as b ON b.i=a.id
             JOIN $Phrase as d ON d.id=b.x -- phrase
         WHERE LOCATE(d.name, budNames)>0;
 };
@@ -245,7 +281,19 @@ RETURNS meds (
     main ID,
     detail ID,
 )
-RETURNS buds (
+RETURNS budsInt (
+    id ID,
+    bud ID,
+    phrase CHAR(50),
+    value INT,
+)
+RETURNS budsDec (
+    id ID,
+    bud ID,
+    phrase CHAR(50),
+    value VALUE,
+)
+RETURNS budsStr (
     id ID,
     bud ID,
     phrase CHAR(50),
@@ -274,11 +322,25 @@ RETURNS buds (
         FROM $page as a 
             JOIN AtomMetric as b ON b.atom=a.id;
 
-    INTO buds SELECT a.id, d.id as bud
+    INTO budsInt SELECT a.id, d.id as bud
         , d.name as phrase
-        , IFNULL(b.dec, IFNULL(b.int, b.str)) as value
+        , b.value
         FROM meds as a 
-            JOIN IxBudValue as b ON b.i=a.id
+            JOIN IxBudInt as b ON b.i=a.id
+            JOIN $Phrase as d ON d.id=b.x -- c.phrase
+        WHERE LOCATE(d.name, budNames)>0;
+    INTO budsDec SELECT a.id, d.id as bud
+        , d.name as phrase
+        , b.value
+        FROM meds as a 
+            JOIN IxBudDec as b ON b.i=a.id
+            JOIN $Phrase as d ON d.id=b.x -- c.phrase
+        WHERE LOCATE(d.name, budNames)>0;
+    INTO budsStr SELECT a.id, d.id as bud
+        , d.name as phrase
+        , b.value
+        FROM meds as a 
+            JOIN IxBudStr as b ON b.i=a.id
             JOIN $Phrase as d ON d.id=b.x -- c.phrase
         WHERE LOCATE(d.name, budNames)>0;
 };
@@ -306,8 +368,7 @@ RETURNS buds (
     id ID,              -- detail id
     bud ID,
     phrase Phrase,
-    int BigINT,
-    dec VALUE,
+    value VALUE,
 ) {
     INTO main SELECT * a
         FROM Sheet as a
@@ -325,9 +386,9 @@ RETURNS buds (
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN DETAIL as b ON b.id=a.origin
             LEFT JOIN Done as c ON c.id=b.id;
-    INTO buds SELECT a.id, b.x as bud, d.name as phrase, b.int, b.dec
+    INTO buds SELECT a.id, b.x as bud, d.name as phrase, b.value
         FROM Detail as a
-            JOIN IxBudValue as b ON b.i=a.id
+            JOIN IxBudDec as b ON b.i=a.id
             JOIN $Phrase as d ON d.id=b.x -- c.phrase
         WHERE a.base=id 
             AND (budNames IS NULL OR LOCATE(d.name, budNames)>0);
@@ -343,7 +404,17 @@ RETURNS main (
     no CHAR(50),
     ex CHAR(50),
 )
-RETURNS buds (
+RETURNS budsInt (
+    bud ID,
+    phrase CHAR(50),
+    value INT,
+)
+RETURNS budsDec (
+    bud ID,
+    phrase CHAR(50),
+    value VALUE,
+)
+RETURNS budsStr (
     bud ID,
     phrase CHAR(50),
     value CHAR(200),
@@ -352,20 +423,41 @@ RETURNS buds (
         FROM Atom as a
         WHERE a.id=id;
 
-    INTO buds SELECT a.x as bud
+    INTO budsInt SELECT a.x as bud
         , e.name as phrase
-        , IFNULL(a.dec, IFNULL(a.int, a.str)) as value
-        FROM IxBudValue as a
+        , a.value
+        FROM IxBudInt as a
             JOIN Atom as b ON b.id=a.i
             JOIN Bud as c ON c.id=b.base
             JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
             JOIN $Phrase as e ON e.id=a.x
         WHERE a.i=id and d.type=EnumBizType.prop;
-
+    INTO budsDec SELECT a.x as bud
+        , e.name as phrase
+        , a.value
+        FROM IxBudDec as a
+            JOIN Atom as b ON b.id=a.i
+            JOIN Bud as c ON c.id=b.base
+            JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
+            JOIN $Phrase as e ON e.id=a.x
+        WHERE a.i=id and d.type=EnumBizType.prop;
+    INTO budsStr SELECT a.x as bud
+        , e.name as phrase
+        , a.value
+        FROM IxBudStr as a
+            JOIN Atom as b ON b.id=a.i
+            JOIN Bud as c ON c.id=b.base
+            JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
+            JOIN $Phrase as e ON e.id=a.x
+        WHERE a.i=id and d.type=EnumBizType.prop;
+        
+    /*
+    -- 为什么要取detail？
     INTO buds SELECT b.x as bud, d.name as phrase, IFNULL(b.dec, IFNULL(b.int, b.str)) as value
         FROM Detail as a
-            JOIN IxBudValue as b ON b.i=a.id
-            JOIN $Phrase as d ON d.id=b.x -- c.phrase
+            JOIN IxBud-Value as b ON b.i=a.id
+            JOIN $Phrase as d ON d.id=b.x
         WHERE a.base=id 
             AND (budNames IS NULL OR LOCATE(d.name, budNames)>0);
+    */
 };

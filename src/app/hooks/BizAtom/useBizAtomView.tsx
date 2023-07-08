@@ -14,18 +14,25 @@ export function useBizAtomView(options: OptionsUseBizAtom) {
     const { id: idString } = useParams();
     const id = Number(idString);
     const { UqDefault } = uqApp.uqs;
-    const { data: { main, props, entityAtom } } = useQuery('PageProductView', async () => {
+    const { data: { main, props, propsStr, entityAtom } } = useQuery('PageProductView', async () => {
         if (idString === undefined) {
             return { main: {} as any, props: {} as any };
         }
-        let { main: [main], buds } = await UqDefault.GetAtom.query({ id });
-        let props: { [prop: string]: { bud: number; phrase: string; value: string; } } = {};
-        for (let bud of buds) {
+        let { main: [main], budsInt, budsDec, budsStr } = await UqDefault.GetAtom.query({ id, budNames: undefined });
+        let props: { [prop: string]: { bud: number; phrase: string; value: number; } } = {};
+        for (let bud of budsInt) {
             props[bud.phrase] = bud;
+        }
+        for (let bud of budsDec) {
+            props[bud.phrase] = bud;
+        }
+        let propsStr: { [prop: string]: { bud: number; phrase: string; value: string; } } = {};
+        for (let bud of budsStr) {
+            propsStr[bud.phrase] = bud;
         }
         let { phrase } = main;
         let entityAtom = biz.entities[phrase];
-        return { main, props, entityAtom }
+        return { main, props, propsStr, entityAtom }
     }, {
         refetchOnWindowFocus: false,
         cacheTime: 0,
@@ -50,7 +57,7 @@ export function useBizAtomView(options: OptionsUseBizAtom) {
         {
             atomProps.map(v => {
                 let { name, phrase, caption } = v;
-                let prop = props[phrase];
+                let prop = props[phrase] ?? propsStr[phrase];
                 return <React.Fragment key={name}>
                     <ViewPropEx id={id} name={name} label={caption ?? name} bizBud={v} value={prop?.value} savePropMain={savePropMain} savePropEx={savePropEx} />
                     <Sep />
@@ -60,9 +67,3 @@ export function useBizAtomView(options: OptionsUseBizAtom) {
         {viewMetric}
     </Page>;
 }
-/*
-export function PageAtomView(props: GenProps<GenAtom>) {
-    let view = useBizAtomView(props);
-    return view;
-}
-*/

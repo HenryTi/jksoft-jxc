@@ -109,7 +109,7 @@ export interface RowMed {
 function useBudsSearch(options: OptionsUseBuds, QuerySearchBuds: UqQuery<any, any>) {
     const { entity, bizBuds, noMedsMessage, saveBuds, getBizBud } = useBuds(options);
 
-    function SearchEntityBuds(param: any, pageStart: any, pageSize: number): Promise<{ $page: any[]; meds: any[]; buds: any[] }> {
+    function SearchEntityBuds(param: any, pageStart: any, pageSize: number): Promise<{ $page: any[]; meds: any[]; budsInt: any[]; budsDec: any[]; budsStr: any[]; }> {
         return QuerySearchBuds.page(param, pageStart, pageSize);
     }
 
@@ -121,7 +121,7 @@ function useBudsSearch(options: OptionsUseBuds, QuerySearchBuds: UqQuery<any, an
         }
         let rowMeds: RowMed[] = [];
         let result = await SearchEntityBuds(searchParam, pageStart, pageSize);
-        let { $page, meds, buds } = result;
+        let { $page, meds, budsInt, budsDec, budsStr } = result;
         let rowMedColl: { [id: number]: RowMed } = {};
         let medColl: { [id: number]: Med } = {};
         for (let row of $page) {
@@ -137,7 +137,7 @@ function useBudsSearch(options: OptionsUseBuds, QuerySearchBuds: UqQuery<any, an
         }
 
         let bizBudColl: { [phrase: string]: number; } = {};
-        for (let row of buds) {
+        function budRow(row: any) {
             let { id, phrase } = row;
             let index = bizBudColl[phrase];
             if (index === undefined) {
@@ -148,6 +148,9 @@ function useBudsSearch(options: OptionsUseBuds, QuerySearchBuds: UqQuery<any, an
             let med = medColl[id];
             med.values[index] = row.value;
         }
+        for (let row of budsInt) budRow(row);
+        for (let row of budsDec) budRow(row);
+        for (let row of budsStr) budRow(row);
         for (let rowMed of rowMeds) {
             for (let med of rowMed.meds) {
                 med.atomValues = atom(med.values);

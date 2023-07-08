@@ -7,6 +7,7 @@ const subject = EnumSubject.storage;
 
 const props = {
     subject,
+    bud: 'goodsBalance',
     caption: '库存',
     captionHistory: '库存流水',
     pathDetailView,

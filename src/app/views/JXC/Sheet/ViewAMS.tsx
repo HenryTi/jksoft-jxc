@@ -45,11 +45,9 @@ export function ViewAMSSpec({ id, hasLabel }: { id: number; hasLabel?: boolean; 
         function TemplateAtomMetric({ value: { atom } }: { value: AtomMetric; }) {
             function TemplateAtom({ value }: { value: Atom; }) {
                 let { $phrase } = value as any;
-                // let genSpec: GenSpec = genGoods.genSpecFromAtom($phrase);
                 const gSpec = uqApp.specFromAtom($phrase);
                 function TemplateSpec({ value }: { value: Spec; }) {
                     return <gSpec.View value={value} />;
-                    // return <genSpec.View value={value} />;
                 }
                 let content = <IDView id={spec} uq={uq} Template={TemplateSpec} />;
                 if (hasLabel === true) {

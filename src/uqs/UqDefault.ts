@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Jul 02 2023 11:31:29 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Thu Jul 06 2023 23:03:42 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -322,7 +322,19 @@ export interface ReturnSearchAtomBudsMeds {
 	main: number;
 	detail: number;
 }
-export interface ReturnSearchAtomBudsBuds {
+export interface ReturnSearchAtomBudsBudsInt {
+	id: number;
+	bud: number;
+	phrase: string;
+	value: number;
+}
+export interface ReturnSearchAtomBudsBudsDec {
+	id: number;
+	bud: number;
+	phrase: string;
+	value: number;
+}
+export interface ReturnSearchAtomBudsBudsStr {
 	id: number;
 	bud: number;
 	phrase: string;
@@ -331,7 +343,9 @@ export interface ReturnSearchAtomBudsBuds {
 export interface ResultSearchAtomBuds {
 	$page: ReturnSearchAtomBuds$page[];
 	meds: ReturnSearchAtomBudsMeds[];
-	buds: ReturnSearchAtomBudsBuds[];
+	budsInt: ReturnSearchAtomBudsBudsInt[];
+	budsDec: ReturnSearchAtomBudsBudsDec[];
+	budsStr: ReturnSearchAtomBudsBudsStr[];
 }
 
 export interface ParamSearchAtomMetricBuds {
@@ -350,7 +364,19 @@ export interface ReturnSearchAtomMetricBudsMeds {
 	main: number;
 	detail: number;
 }
-export interface ReturnSearchAtomMetricBudsBuds {
+export interface ReturnSearchAtomMetricBudsBudsInt {
+	id: number;
+	bud: number;
+	phrase: string;
+	value: number;
+}
+export interface ReturnSearchAtomMetricBudsBudsDec {
+	id: number;
+	bud: number;
+	phrase: string;
+	value: number;
+}
+export interface ReturnSearchAtomMetricBudsBudsStr {
 	id: number;
 	bud: number;
 	phrase: string;
@@ -359,7 +385,9 @@ export interface ReturnSearchAtomMetricBudsBuds {
 export interface ResultSearchAtomMetricBuds {
 	$page: ReturnSearchAtomMetricBuds$page[];
 	meds: ReturnSearchAtomMetricBudsMeds[];
-	buds: ReturnSearchAtomMetricBudsBuds[];
+	budsInt: ReturnSearchAtomMetricBudsBudsInt[];
+	budsDec: ReturnSearchAtomMetricBudsBudsDec[];
+	budsStr: ReturnSearchAtomMetricBudsBudsStr[];
 }
 
 export interface ParamGetSheet {
@@ -406,8 +434,7 @@ export interface ReturnGetSheetBuds {
 	id: number;
 	bud: number;
 	phrase: string;
-	int: number;
-	dec: number;
+	value: number;
 }
 export interface ResultGetSheet {
 	main: ReturnGetSheetMain[];
@@ -426,14 +453,26 @@ export interface ReturnGetAtomMain {
 	no: string;
 	ex: string;
 }
-export interface ReturnGetAtomBuds {
+export interface ReturnGetAtomBudsInt {
+	bud: number;
+	phrase: string;
+	value: number;
+}
+export interface ReturnGetAtomBudsDec {
+	bud: number;
+	phrase: string;
+	value: number;
+}
+export interface ReturnGetAtomBudsStr {
 	bud: number;
 	phrase: string;
 	value: string;
 }
 export interface ResultGetAtom {
 	main: ReturnGetAtomMain[];
-	buds: ReturnGetAtomBuds[];
+	budsInt: ReturnGetAtomBudsInt[];
+	budsDec: ReturnGetAtomBudsDec[];
+	budsStr: ReturnGetAtomBudsStr[];
 }
 
 export enum MetricType {
@@ -825,7 +864,10 @@ export interface ParamReportStorage {
 	subject: string;
 }
 export interface ReturnReportStorage$page {
-	obj: number;
+	atom: number;
+	metricItem: number;
+	spec: number;
+	id: number;
 	value: number;
 	init: number;
 }
@@ -1428,7 +1470,7 @@ export const uqSchema={
             {
                 "name": "dec",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             },
             {
@@ -1495,7 +1537,7 @@ export const uqSchema={
             {
                 "name": "value",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             }
         ],
@@ -1540,25 +1582,25 @@ export const uqSchema={
             {
                 "name": "value",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             },
             {
                 "name": "v1",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             },
             {
                 "name": "v2",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             },
             {
                 "name": "v3",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             },
             {
@@ -1578,7 +1620,7 @@ export const uqSchema={
                     {
                         "name": "propValue",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     }
                 ]
@@ -1644,7 +1686,7 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
@@ -1768,7 +1810,53 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "buds",
+                "name": "budsInt",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "value",
+                        "type": "int"
+                    }
+                ]
+            },
+            {
+                "name": "budsDec",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            },
+            {
+                "name": "budsStr",
                 "fields": [
                     {
                         "name": "id",
@@ -1858,7 +1946,53 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "buds",
+                "name": "budsInt",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "value",
+                        "type": "int"
+                    }
+                ]
+            },
+            {
+                "name": "budsDec",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            },
+            {
+                "name": "budsStr",
                 "fields": [
                     {
                         "name": "id",
@@ -1927,7 +2061,7 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     }
                 ]
@@ -1959,31 +2093,31 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "v1",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "v2",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "v3",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "done",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
@@ -1993,7 +2127,7 @@ export const uqSchema={
                     {
                         "name": "pendValue",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
@@ -2035,31 +2169,31 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "v1",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "v2",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "v3",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "done",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     }
                 ]
@@ -2081,13 +2215,9 @@ export const uqSchema={
                         "size": 200
                     },
                     {
-                        "name": "int",
-                        "type": "bigint"
-                    },
-                    {
-                        "name": "dec",
+                        "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     }
                 ]
@@ -2136,7 +2266,45 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "buds",
+                "name": "budsInt",
+                "fields": [
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "value",
+                        "type": "int"
+                    }
+                ]
+            },
+            {
+                "name": "budsDec",
+                "fields": [
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            },
+            {
+                "name": "budsStr",
                 "fields": [
                     {
                         "name": "bud",
@@ -2799,7 +2967,7 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
@@ -2858,7 +3026,7 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
@@ -2916,25 +3084,25 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "v1",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "v2",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "v3",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
@@ -2944,7 +3112,7 @@ export const uqSchema={
                     {
                         "name": "pendValue",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
@@ -3006,25 +3174,25 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "v1",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "v2",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "v3",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
@@ -3034,7 +3202,7 @@ export const uqSchema={
                     {
                         "name": "pendValue",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
@@ -3122,7 +3290,7 @@ export const uqSchema={
             {
                 "name": "value",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             },
             {
@@ -3161,7 +3329,7 @@ export const uqSchema={
             {
                 "name": "radio",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             }
         ],
@@ -3255,7 +3423,7 @@ export const uqSchema={
             {
                 "name": "value",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             }
         ],
@@ -3304,25 +3472,25 @@ export const uqSchema={
             {
                 "name": "value",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             },
             {
                 "name": "v1",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             },
             {
                 "name": "v2",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             },
             {
                 "name": "v3",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             }
         ],
@@ -3353,7 +3521,7 @@ export const uqSchema={
             {
                 "name": "value",
                 "type": "dec",
-                "scale": 4,
+                "scale": 6,
                 "precision": 18
             }
         ],
@@ -3384,19 +3552,31 @@ export const uqSchema={
                 "name": "$page",
                 "fields": [
                     {
-                        "name": "obj",
+                        "name": "atom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "metricItem",
+                        "type": "id"
+                    },
+                    {
+                        "name": "spec",
+                        "type": "id"
+                    },
+                    {
+                        "name": "id",
                         "type": "id"
                     },
                     {
                         "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "init",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     }
                 ],
@@ -3432,13 +3612,13 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "init",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     }
                 ],
@@ -3474,13 +3654,13 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
                         "name": "init",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     }
                 ],
@@ -3515,7 +3695,7 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "dec",
-                        "scale": 4,
+                        "scale": 6,
                         "precision": 18
                     },
                     {
@@ -3952,71 +4132,6 @@ export const uqSchema={
             "name": "检验员",
             "type": "role"
         },
-        "accountsetting": {
-            "name": "accountsetting",
-            "jName": "AccountSetting",
-            "type": "setting",
-            "caption": "AccountSetting",
-            "props": [
-                {
-                    "name": "name",
-                    "type": "prop",
-                    "caption": "单位名称",
-                    "dataType": "char"
-                },
-                {
-                    "name": "库存上限",
-                    "type": "prop",
-                    "dataType": "dec"
-                }
-            ],
-            "assigns": [
-                {
-                    "name": "库存下限",
-                    "type": "assign",
-                    "dataType": "dec"
-                }
-            ]
-        },
-        "personsetting": {
-            "name": "personsetting",
-            "jName": "PersonSetting",
-            "type": "setting",
-            "caption": "PersonSetting",
-            "props": [
-                {
-                    "name": "name",
-                    "type": "prop",
-                    "caption": "名字",
-                    "dataType": "char"
-                },
-                {
-                    "name": "工时上限",
-                    "type": "prop",
-                    "dataType": "int"
-                }
-            ],
-            "assigns": [
-                {
-                    "name": "工时下限",
-                    "type": "assign",
-                    "dataType": "int"
-                }
-            ]
-        },
-        "price": {
-            "name": "price",
-            "jName": "Price",
-            "type": "setting",
-            "caption": "Price",
-            "assigns": [
-                {
-                    "name": "retail",
-                    "type": "assign",
-                    "dataType": "dec"
-                }
-            ]
-        },
         "mainpurchase": {
             "name": "mainpurchase",
             "jName": "MainPurchase",
@@ -4194,6 +4309,71 @@ export const uqSchema={
                 }
             ]
         },
+        "accountsetting": {
+            "name": "accountsetting",
+            "jName": "AccountSetting",
+            "type": "subject",
+            "caption": "AccountSetting",
+            "props": [
+                {
+                    "name": "name",
+                    "type": "prop",
+                    "caption": "单位名称",
+                    "dataType": "char"
+                },
+                {
+                    "name": "库存上限",
+                    "type": "prop",
+                    "dataType": "dec"
+                }
+            ],
+            "assigns": [
+                {
+                    "name": "库存下限",
+                    "type": "assign",
+                    "dataType": "dec"
+                }
+            ]
+        },
+        "personsetting": {
+            "name": "personsetting",
+            "jName": "PersonSetting",
+            "type": "subject",
+            "caption": "PersonSetting",
+            "props": [
+                {
+                    "name": "name",
+                    "type": "prop",
+                    "caption": "名字",
+                    "dataType": "char"
+                },
+                {
+                    "name": "工时上限",
+                    "type": "prop",
+                    "dataType": "int"
+                }
+            ],
+            "assigns": [
+                {
+                    "name": "工时下限",
+                    "type": "assign",
+                    "dataType": "int"
+                }
+            ]
+        },
+        "price": {
+            "name": "price",
+            "jName": "Price",
+            "type": "subject",
+            "caption": "Price",
+            "assigns": [
+                {
+                    "name": "retail",
+                    "type": "assign",
+                    "dataType": "dec"
+                }
+            ]
+        },
         "customertree": {
             "name": "customertree",
             "jName": "CustomerTree",
@@ -4240,9 +4420,6 @@ export enum EnumDetail {
 export enum EnumSubject {
 	storage = 'storage',
 	c = 'c',
-}
-
-export enum EnumSetting {
 	AccountSetting = 'accountsetting',
 	PersonSetting = 'personsetting',
 	Price = 'price',

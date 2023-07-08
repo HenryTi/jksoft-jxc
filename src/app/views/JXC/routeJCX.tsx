@@ -84,8 +84,7 @@ function routeAtom(uqApp: UqApp, gAtom: GAtom) {
         caption: caption ?? entity.caption,
         entity,
     }
-    uqApp.gAtoms[name] = ga;
-    uqApp.gAtoms[entity.phrase] = ga;
+    addGAtoms(uqApp, entity, ga);
     return <React.Fragment key={name}>
         <Route path={pathAtomNew(name)} element={pageNew} />
         <Route path={`${pathAtomList(name)}`} element={pageList} />
@@ -93,6 +92,15 @@ function routeAtom(uqApp: UqApp, gAtom: GAtom) {
         <Route path={`${name}-view/:id`} element={pageView} />
         <Route path={`${name}/:id`} element={pageView} />
     </React.Fragment>;
+}
+
+function addGAtoms(uqApp: UqApp, entity: EntityAtom, gAtom: GAtom) {
+    const { phrase, children } = entity;
+    uqApp.gAtoms[gAtom.name] = gAtom;
+    uqApp.gAtoms[phrase] = gAtom;
+    for (let ea of children) {
+        addGAtoms(uqApp, ea, gAtom);
+    }
 }
 
 function routeSheet(uqApp: UqApp, gSheet: GSheet) {

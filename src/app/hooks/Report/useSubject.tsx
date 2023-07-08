@@ -2,12 +2,13 @@ import { UqQuery } from "tonwa-uq";
 import { QueryMore } from "app/tool";
 import { EntitySubject } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { Atom, EnumSubject, ReturnHistoryStorage$page, ReturnReportStorage$page } from "uqs/UqDefault";
+import { EnumSubject, ReturnHistoryStorage$page, ReturnReportStorage$page } from "uqs/UqDefault";
 import { EasyTime, FA, LMR, dateFromMinuteId } from "tonwa-com";
-import { IDView } from "tonwa-app";
+import { useBizAtomMetricSpec } from "app/views/JXC/Atom";
 
 export interface OptionsUseSubject {
     subject: EnumSubject;
+    bud: string;
 }
 
 export function pathSubjectHistory(subject: EnumSubject) {
@@ -22,7 +23,7 @@ export interface ReturnUseSubject {
 }
 
 export function useSubject(options: OptionsUseSubject): ReturnUseSubject {
-    const { subject: subjectName } = options;
+    const { subject: subjectName, bud: budName } = options;
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const entity: EntitySubject = biz.entities[subjectName] as EntitySubject;
@@ -32,7 +33,7 @@ export function useSubject(options: OptionsUseSubject): ReturnUseSubject {
     async function searchSubjectAtom(param: any, pageStart: any, pageSize: number) {
         let nParam = {
             key: param?.key,
-            subject: entity.phrase,
+            subject: `${entity.phrase}.${budName}`,
         }
         const { $page } = await QueryReport.page(nParam, pageStart, pageSize);
         return $page;
@@ -40,29 +41,27 @@ export function useSubject(options: OptionsUseSubject): ReturnUseSubject {
 
     async function subjectHistory(param: any, pageStart: any, pageSize: number) {
         let nParam = {
-            atomId: param.atomId,
-            subject: entity.phrase,
+            objId: param.objId,
+            subject: `${entity.phrase}.${budName}`,
         }
         const { $page } = await QueryHistory.page(nParam, pageStart, pageSize);
         return $page;
     }
 
     function ViewItem({ value: row, clickable }: { value: ReturnReportStorage$page; clickable?: boolean; }): JSX.Element {
-        const { obj, value, init } = row;
-        function ViewProduct({ value: { ex, no } }: { value: Atom }) {
-            return <div>
-                <small className="text-muted">{no}</small>
-                <div><b>{ex}</b></div>
-            </div>
-        }
+        const { id, metricItem, spec, value, init } = row;
+        const { viewAtom, viewMetricItem, viewSpec } = useBizAtomMetricSpec(id);
         let icon = clickable === false ? '' : 'angle-right';
-        return <LMR className="px-3 py-2 align-items-center">
-            <IDView uq={uq} id={obj} Template={ViewProduct} />
-            <div className="d-flex align-items-center">
-                <div className="me-4 fs-5">{(value + init).toFixed(0)}</div>
+        return <div className="d-flex py-2 ps-3">
+            <div className="row flex-grow-1">
+                <div className="col">{viewAtom}</div>
+                <div className="col">{viewSpec}</div>
+                <div className="col-2 fs-5 text-end">{(value + init).toFixed(0)} {viewMetricItem}</div>
+            </div>
+            <div className="text-end ms-3 me-1">
                 <FA name={icon} className="text-muted" fixWidth={true} />
             </div>
-        </LMR>;
+        </div>;
     }
 
     function ViewItemHistory({ value: row }: { value: ReturnHistoryStorage$page }): JSX.Element {

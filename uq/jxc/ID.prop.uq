@@ -9,12 +9,35 @@ IX *IxBud (
     x,
 );
 
+/*
 IX IxBudValue (
     i,
     x,
     int INT,
-    dec DEC(20,6),
+    dec VALUE,
     str CHAR(100),
+);
+*/
+-- 分开IxBudInt, IxBudDec和IxBudStr的原因：
+-- subject会有很大量，都是用IxBudDec。report针对IxBudDec。计分，可能是整数，也放到dec里面。
+-- IxBudInt更多用于标志
+-- IxBudStr用量相对较少
+IX IxBudInt (
+    i,
+    x,
+    value INT DEFAULT 0,
+);
+
+IX IxBudDec (
+    i,
+    x,
+    value VALUE DEFAULT 0,
+);
+
+IX IxBudStr (
+    i,
+    x,
+    value CHAR(100),
 );
 
 -- 从id基于phrase分裂生长的id。比如特定权限id。仅限经理可以见的客户。ID(unit@permit.经理)/contact
