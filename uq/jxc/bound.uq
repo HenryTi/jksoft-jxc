@@ -3,7 +3,7 @@
 -- 例如：
 -- 1. target：销售员，item：商品，subject：个人销售额
 -- 2. target：销售员，item：商品，subject：个人毛利润
-ID DataSource (
+ID SumSource (
     id MINUTE,
     target ID,              -- bound object subject 主语
     item ID,                -- bound object 宾语
