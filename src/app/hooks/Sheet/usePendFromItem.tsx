@@ -5,7 +5,7 @@ import { useState } from "react";
 import { uqAppModal } from "tonwa-app";
 import { SearchBox } from "tonwa-com";
 import { EditingRow, OriginDetail, SheetRow } from "../../tool";
-import { OptionsUsePend, useSelectPend } from "./usePend";
+import { OptionsUsePend, selectPend } from "./usePend";
 
 export interface PropsViewPendRow {
     value: OriginDetail;
@@ -22,7 +22,6 @@ export function usePendFromItem(options: OptionsUsePendFromItem) {
     let { pendName, ViewPendRow, autoLoad, caption, placeholderOfSearch } = options;
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
-    const selectPend = useSelectPend();
     if (caption === undefined) caption = '选择待处理';
     if (placeholderOfSearch === undefined) placeholderOfSearch = '待处理单据号';
     let entityPend = biz.entities[pendName] as EntityPend;

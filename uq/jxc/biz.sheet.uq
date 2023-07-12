@@ -90,7 +90,7 @@ Biz Detail DetailSale ver 0.1 {
 Biz Main MainStoreOut {
 }
 
-Biz Detail DetailStoreOut ver 0.1 {
+Biz Detail DetailStoreOut ver 0.2 {
     Main MainStoreOut;
     ACT (detail ID) 
     From PendStoreOut {

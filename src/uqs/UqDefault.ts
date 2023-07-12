@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Jul 06 2023 23:03:42 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Mon Jul 10 2023 10:59:18 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -412,7 +412,6 @@ export interface ReturnGetSheetDetails {
 	v1: number;
 	v2: number;
 	v3: number;
-	done: number;
 	pendFrom: number;
 	pendValue: number;
 	sheet: string;
@@ -428,7 +427,6 @@ export interface ReturnGetSheetOrigins {
 	v1: number;
 	v2: number;
 	v3: number;
-	done: number;
 }
 export interface ReturnGetSheetBuds {
 	id: number;
@@ -769,6 +767,7 @@ export interface History extends ID {
 	subject: number;
 	value: number;
 	ref: number;
+	op: number;
 }
 
 export interface HistoryInActs extends ID {
@@ -776,6 +775,7 @@ export interface HistoryInActs extends ID {
 	subject: number | ID;
 	value: number;
 	ref: number | ID;
+	op: number;
 }
 
 export interface Formula extends ID {
@@ -909,6 +909,7 @@ export interface ReturnHistoryStorage$page {
 	id: number;
 	value: number;
 	ref: number;
+	op: number;
 	sheetNo: string;
 	sheetName: string;
 	sheetCaption: string;
@@ -2115,12 +2116,6 @@ export const uqSchema={
                         "precision": 18
                     },
                     {
-                        "name": "done",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
                         "name": "pendFrom",
                         "type": "id"
                     },
@@ -2186,12 +2181,6 @@ export const uqSchema={
                     },
                     {
                         "name": "v3",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "done",
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
@@ -3296,6 +3285,10 @@ export const uqSchema={
             {
                 "name": "ref",
                 "type": "id"
+            },
+            {
+                "name": "op",
+                "type": "tinyint"
             }
         ],
         "keys": [] as any,
@@ -3701,6 +3694,10 @@ export const uqSchema={
                     {
                         "name": "ref",
                         "type": "id"
+                    },
+                    {
+                        "name": "op",
+                        "type": "tinyint"
                     },
                     {
                         "name": "sheetNo",

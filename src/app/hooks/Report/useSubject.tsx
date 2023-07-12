@@ -65,14 +65,21 @@ export function useSubject(options: OptionsUseSubject): ReturnUseSubject {
     }
 
     function ViewItemHistory({ value: row }: { value: ReturnHistoryStorage$page }): JSX.Element {
-        const { id, value, ref, sheetNo, sheetName, sheetCaption } = row;
+        const { id, value, ref, op, sheetNo, sheetName, sheetCaption } = row;
+        let opText: string;
+        switch (op) {
+            default:
+            case 1: opText = ''; break;
+            case -1: opText = '-'; break;
+            case 0: opText = '='; break;
+        }
         return <LMR className="px-3 py-2">
             <div className="w-8c me-3 small text-muted"><EasyTime date={dateFromMinuteId(id)} /></div>
             <div>
                 {sheetCaption ?? sheetName} {sheetNo} - {ref}
             </div>
             <div className="d-flex align-items-center">
-                <div className="me-4 fs-5">{(value).toFixed(0)}</div>
+                <div className="me-4 fs-5">{opText} {(value).toFixed(0)}</div>
                 <FA name="angle-right" className="text-muted" fixWidth={true} />
             </div>
         </LMR>;

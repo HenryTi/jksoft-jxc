@@ -19,7 +19,7 @@ RETURNS ret (
     ASSERT ROLE (Role.经理, 'Permit.检验', 'Permit.入库', 'Permit.入库.上架');
     INTO ret SELECT a.site as id
         FROM $UserSite as a
-        WHERE a.user=$user and a.site=SitePhraseId(ROLE(Permit.入库.上架));
+        WHERE a.user=$user and a.site=BudId(ROLE(Permit.入库.上架));
 };
 */
 
@@ -31,7 +31,7 @@ Biz ACT SaveAtom (
 RETURNS ret (
     id ID,
 ) {
-    VAR base ID = SitePhraseId(atom);
+    VAR base ID = BudId(atom);
 
     -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
     VAR id ID = 0;
@@ -91,7 +91,7 @@ Biz ACT SaveSheet (
 RETURNS ret (
     id ID,
 ) {
-    VAR base ID = SitePhraseId(sheet);
+    VAR base ID = BudId(sheet);
     VAR me ID = Me();
 
     VAR sheetId ID;
@@ -173,7 +173,7 @@ PAGE (
     ex CHAR(50),
     phrase PHRASE,
 ) {
-    VAR base ID = SitePhraseId(atom);
+    VAR base ID = BudId(atom);
 
     PAGE SELECT a.id, a.no, a.ex, d.name as phrase
         FROM Atom as a
@@ -354,7 +354,7 @@ RETURNS main (
 )
 RETURNS details (
     * Detail,
-    done VALUE,
+    -- done VALUE,
     pendFrom ID,
     pendValue VALUE,
     sheet PHRASE,
@@ -362,7 +362,7 @@ RETURNS details (
 )
 RETURNS origins (
     * Detail,
-    done VALUE,
+    -- done VALUE,
 )
 RETURNS buds (
     id ID,              -- detail id
@@ -374,18 +374,20 @@ RETURNS buds (
         FROM Sheet as a
         WHERE a.id=id;
     INTO details SELECT * a
-        , IFNULL(b.value, 0) as done, c.pendFrom, d.value as pendValue
+        -- , IFNULL(b.value, 0) as done
+        , c.pendFrom, d.value as pendValue
         , PhraseOfSiteId(e.base) as sheet, e.no
         FROM Detail as a
-            LEFT JOIN Done as b ON b.id=a.id
+            -- LEFT JOIN Done as b ON b.id=a.id
             LEFT JOIN DetailPend as c ON c.id=a.id
             LEFT JOIN Pend as d ON d.id=c.pendFrom
             LEFT JOIN Sheet as e ON e.id=a.base
         WHERE a.base=id;
-    INTO origins SELECT DISTINCT * b, IFNULL(c.value, 0) as done
+    INTO origins SELECT DISTINCT * b -- , IFNULL(c.value, 0) as done
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN DETAIL as b ON b.id=a.origin
-            LEFT JOIN Done as c ON c.id=b.id;
+            -- LEFT JOIN Done as c ON c.id=b.id
+    ;
     INTO buds SELECT a.id, b.x as bud, d.name as phrase, b.value
         FROM Detail as a
             JOIN IxBudDec as b ON b.i=a.id

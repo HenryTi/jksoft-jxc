@@ -64,7 +64,7 @@ export function useDetailPend(options: OptionsUseDetailPend): UseSheetDetailRetu
     //const cnCol4 = ' col-4 py-2 ';
     const cnCol = ' col py-2 ';
     function ViewDetailPend({ editingRow, updateRow }: { editingRow: EditingRow; updateRow: UpdateRow; }): JSX.Element {
-        const uqApp = useUqApp();
+        // const uqApp = useUqApp();
         // const { uq } = uqApp;
         const { atomDetails } = editingRow;
         const details = useAtomValue(atomDetails);

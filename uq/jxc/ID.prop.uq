@@ -9,15 +9,6 @@ IX *IxBud (
     x,
 );
 
-/*
-IX IxBudValue (
-    i,
-    x,
-    int INT,
-    dec VALUE,
-    str CHAR(100),
-);
-*/
 -- 分开IxBudInt, IxBudDec和IxBudStr的原因：
 -- subject会有很大量，都是用IxBudDec。report针对IxBudDec。计分，可能是整数，也放到dec里面。
 -- IxBudInt更多用于标志
@@ -47,54 +38,29 @@ ID Bud (
     KEY base ID,            -- 任何的id，包含site
     KEY phrase ID,          -- 任意定义的phrase，无site
 );
-/*
-ID UserSite (
-    id,
-    KEY user ID,
-    KEY site ID,
-    INDEX site(site, user) UNIQUE,
-);
 
-ID SitePhrase (
-    id,
-    KEY site ID,            --- site
-    KEY phrase ID,          --- phrase id
-);
-*/
 IX IxMy ver 0.1 (
     i,                     -- UserSite
     x INDEX,
 );
-/*
-IDX Balance (
-    id,
-    value VALUE,
-    init Value,
-);
 
-ID Subject (
-    id,
-    key base ID,
-    key obj ID,
-);
-*/
 ID History (
     id MINUTE,
     subject ID,         -- 科目 bud@(id, phrase)
     value Value,
     ref ID,             -- 相关凭证
+    op TINYINT,         -- 0: =, 1: +, -1: -
     INDEX subject_id(subject, id) UNIQUE,
 );
 
-ID Formula (
-    id,
-    KEY from ID,            -- from subject
-    KEY tiePhrase ID,
-    KEY to ID,              -- to subject
-    radio VALUE,            -- 换算率
+-- History 按日汇总，可以重新计算，如果调整了subject。
+IX DailyHistory (
+    i,
+    x date,
+    value VALUE,
 );
 
-FUNC SitePhraseId ver 0.1 (
+FUNC BudId ver 0.1 (
     phrase CHAR(100)
 ) 
 RETURNS ID {
@@ -112,32 +78,6 @@ RETURNS CHAR(200) {
         FROM $Phrase as a 
             JOIN Bud as b ON b.phrase=a.id AND b.base=$site 
         WHERE b.id=phraseId
-    );
-    return phrase;
-};
-
-FUNC SheetPhrase (
-    sheetId ID,
-)
-RETURNS CHAR(200) {
-    VAR phrase CHAR(200) = (SELECT c.name 
-        FROM Sheet as a
-            JOIN Bud as b ON b.id=a.base
-            JOIN $Phrase as c ON c.id=b.phrase
-        WHERE a.id=sheetId
-    );
-    return phrase;
-};
-
-FUNC AtomPhrase (
-    atomId ID,
-)
-RETURNS CHAR(200) {
-    VAR phrase CHAR(200) = (SELECT c.name 
-        FROM Atom as a
-            JOIN Bud as b ON b.id=a.base
-            JOIN $Phrase as c ON c.id=b.phrase
-        WHERE a.id=atomId
     );
     return phrase;
 };

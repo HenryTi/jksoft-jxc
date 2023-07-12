@@ -6,14 +6,8 @@ import { FA, LMR, List } from "tonwa-com";
 import { useAtomValue } from "jotai";
 import { OptionsUseSheetDetail, UseSheetDetailReturn } from "app/hooks";
 import { useUqApp } from "app/UqApp";
-import { ViewAtomGoods } from "../../../Atom";
+import { ViewAtomGoods, useBizAtomMetricSpec } from "../../../Atom";
 import { UsePendFromSheetReturn } from "app/hooks/Sheet";
-
-/*
-const fieldQuantity = 'value';
-const fieldPrice = 'v1';
-const fieldAmount = 'v2';
-*/
 
 export interface OptionsUseDetailSplit extends OptionsUseSheetDetail {
     selectTarget: () => Promise<Atom>;
@@ -23,44 +17,7 @@ export interface OptionsUseDetailSplit extends OptionsUseSheetDetail {
 export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailReturn {
     const { detail, selectTarget, selectPend } = options;
     const uqApp = useUqApp();
-    /*
-    const { uq } = uqApp;
-    const caption = '明细';
-    const itemCaption = '商品';
-
-    // function ViewItemTemplate(): ({ value }: { value: any }) => JSX.Element { return ViewAtomGoods; }
-    function ViewItemTop({ item }: { item: number }): JSX.Element {
-        return <div className="container">
-            <Band label={itemCaption}>
-                <IDView uq={uq} id={item} Template={ViewAtomGoods} />
-            </Band>
-        </div>
-    }
-
-    function buildFormRows(detial: Detail): FormRow[] {
-        let { value, v1: price, v2: amount } = detial;
-        return [
-            buildValueRow(value),
-            buildPriceRow(price),
-            buildAmountRow(amount),
-        ];
-    }
-
-    let valueDisabled: boolean = false;
-    function buildValueRow(value: number): FormRow {
-        return { name: fieldQuantity, label: '数量', type: 'number', options: { value, disabled: valueDisabled } };
-    }
-    let priceDisabled: boolean = false;
-    function buildPriceRow(value: number, disabled: boolean = false): FormRow {
-        return { name: fieldPrice, label: '单价', type: 'number', options: { value, disabled: priceDisabled } };
-    }
-    let amountDisabled: boolean = true;
-    function buildAmountRow(value: number, disabled: boolean = false): FormRow {
-        return { name: fieldAmount, label: '金额', type: 'number', options: { value, disabled: amountDisabled } };
-    }
-    */
     async function addRow(editingRows: EditingRow[]): Promise<SheetRow[]> {
-        // let { genPend } = genEditing.genSheetAct;
         if (selectPend === undefined) {
             alert('selectPend can not be undefined');
             return;
@@ -68,13 +25,6 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
         let selected = await selectPend(editingRows);
         return selected;
     }
-
-    function editingRowFromAtom(atom: Atom): Detail {
-        let detail = { item: atom.id } as Detail;
-        return detail;
-    }
-
-    // readonly editRow: (genEditing: GenEditing, editingRow: EditingRow) => Promise<void> = undefined;
 
     function ViewRow({ editingRow, updateRow }: { editingRow: EditingRow; updateRow: (editingRow: EditingRow, details: Detail[]) => Promise<void>; }): JSX.Element {
         const { uq } = uqApp;
@@ -87,7 +37,6 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
                 alert('GenDetail.selectTarget not defined');
                 return;
             }
-            // let sheet = getAtomValue(genEditing.atomSheet);
             let rowsSum = 0;
             for (let detail of details) { rowsSum += detail.value; }
             let detail: Detail = {
@@ -101,8 +50,6 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
                 v2: undefined,
                 v3: undefined,
             };
-            // setAtomValue(editingRow.atomDetails, newDetails);
-            // await genEditing.saveEditingRows([editingRow]);
             await updateRow(editingRow, [...details, detail]);
         }
         const ViewItem = ({ value: row }: { value: Detail }) => {
@@ -110,7 +57,7 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
             const onInputed = async (value: number) => {
                 row.value = value;
             }
-            return <LMR className="py-2 pe-3 ps-5">
+            return <LMR className="py-2 pe-5 ps-5">
                 <div className="">
                     <IDView uq={uq} id={target} Template={ViewAtomGoods} />
                 </div>
@@ -119,31 +66,32 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
                 </div>
             </LMR>
         }
-        return <div>
-            <div className="d-flex align-items-center tonwa-bg-gray-2 px-3 py-2">
-                <IDView uq={uq} id={item} Template={ViewAtomGoods} />
-                <div className="text-end align-items-end flex-grow-1">
-                    <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount?.toFixed(4)}</span>
-                    <br />
-                    <small>数量:</small> <b>{value}</b>
+
+        const { viewAtom, viewMetricItem, viewSpec } = useBizAtomMetricSpec(item);
+        return <div className="border rounded mx-2 my-3">
+            <div className="container">
+                <div className="row py-2 tonwa-bg-gray-2">
+                    <div className="col ps-3">{viewAtom}</div>
+                    <div className="col">{viewSpec}</div>
+                    <div className="col pe-3 text-end align-items-end">
+                        <span><small>单价:</small> {price?.toFixed(2)} <small>金额:</small> {amount?.toFixed(2)}</span>
+                        <br />
+                        <small>数量:</small> <span className="fs-5"><b>{value}</b> {viewMetricItem}</span>
+                    </div>
+                    <div className="col-1 text-end">
+                        <button className="btn btn-sm btn-outline-primary" onClick={onAddRow}><FA name="plus" /></button>
+                    </div>
                 </div>
+                <List items={details} ViewItem={ViewItem} none={null} />
             </div>
-            <LMR className="py-2 ps-5 pe-3 tonwa-bg-gray-1">
-                <div className="text-muted text-small">分行明细</div>
-                <div className="text-end">
-                    <button className="btn btn-sm btn-outline-primary" onClick={onAddRow}><FA name="plus" /></button>
-                </div>
-            </LMR>
-            <List items={details} ViewItem={ViewItem} none={null} />
         </div>;
     }
-    // const genAtomSpec = new GenGoodsHook(uqApp, 'Goods');
+
     return {
         detail,
         ViewItemTemplate: ViewAtomGoods,
         ViewRow,
         addRow,
         editRow: undefined,
-        // genAtomSpec,
     };
 }

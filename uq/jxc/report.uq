@@ -72,13 +72,14 @@ PAGE (
     id ID DESC,
     value VALUE,
     ref ID,
+    op TINYINT,
     sheetNo NO,
     sheetName CHAR(200),
     sheetCaption CHAR(100),
 ) {
     VAR phraseId ID = PhraseId(subject);
     VAR budId ID = ID(Bud KEY base=objId, phrase=phraseId);
-    PAGE SELECT a.id, a.value, a.ref, c.no as sheetNo, e.name as sheetName, e.caption as sheetCaption
+    PAGE SELECT a.id, a.value, a.ref, a.op, c.no as sheetNo, e.name as sheetName, e.caption as sheetCaption
         FROM History as a
             LEFT JOIN Detail as b ON b.id=a.ref
             LEFT JOIN Sheet as c ON c.id=b.base 

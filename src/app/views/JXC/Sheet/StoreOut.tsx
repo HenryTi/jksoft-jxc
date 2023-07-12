@@ -22,8 +22,8 @@ function PageStoreOut() {
     const selectPend = usePendFromItem({
         pendName: fromPend.name,
         ViewPendRow,
-        caption: '选择待入库',
-        placeholderOfSearch: '待入库商品编号名称',
+        caption: '选择待出库',
+        placeholderOfSearch: '待出库商品编号名称',
     });
     function ViewTargetBand({ sheet }: { sheet: Sheet; }) {
         return <Band label={targetCaption}>

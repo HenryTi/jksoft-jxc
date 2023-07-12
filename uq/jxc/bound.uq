@@ -1,0 +1,62 @@
+-- 后续的业绩计算的数据源。可以不断从这里重复计算
+-- 可以清楚汇总表，然后从这里开始，重新计算。
+-- 例如：
+-- 1. target：销售员，item：商品，subject：个人销售额
+-- 2. target：销售员，item：商品，subject：个人毛利润
+ID DataSource (
+    id MINUTE,
+    target ID,              -- bound object subject 主语
+    item ID,                -- bound object 宾语
+    subject ID,             -- 科目，比如，销售额，毛利润，积分点
+    value VALUE,
+    ref ID,                 -- 凭证
+);
+
+ENUM EnumDmy (day=1, month=2, year=3);
+ID SumFormula ver 0.3 (
+    id MINUTE,
+    KEY dmy ENUM EnumDmy,   -- 日，月，年
+    KEY subject ID,         -- subject of datasource 特定科目
+    KEY groupPhrase ID,     -- 如果对个人，则0
+    KEY sumSubject ID,      -- sum subject 比如：提成，毛利润，销售额，积分，组提成，教练提成
+    KEY id,                 -- subject-group组可以不断修改。用时间匹配，当前用最新的
+    ratio VALUE,
+);
+
+-- 分段计算。从小到大分段，如果SumFormula里面的ratio<0, 则从大到小分段
+IX IxSumFormulaPiecewise (
+    i,                      -- formula id
+    x,                      -- 分段值, 64位整型
+    radio VALUE,            -- 比例
+);
+
+-- 1. subject = 个人id @ subject 销售额
+-- 2. subject = 个人id @ subject 毛利润
+-- 3. subject = group @ subject 销售额
+IX IxDaily (
+    i,                      --- person subject, group subject
+    x Date,
+    value VALUE,
+);
+
+-- 月公式汇总，不是Daily按日汇总。daily按日汇总，直接select sum就好
+IX IxMonthly (
+    i,                      --- person subject, group subject
+    x Date,
+    value VALUE,
+);
+
+-- 年公式汇总
+IX IxYearly (
+    i,                      --- person subject, group subject
+    x Date,
+    value VALUE,
+);
+
+-- group下有多少人，每个人的角色
+-- group下有多少group，每个group的角色，暂时不考虑
+IX IxGroup (
+    i,                  -- group atom
+    x INDEX,            -- user in site, 建index，所属group
+    roleInGroup ID,     -- subject ID
+);

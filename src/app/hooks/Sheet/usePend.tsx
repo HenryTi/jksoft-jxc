@@ -15,23 +15,20 @@ export interface OptionsUsePend {
     autoLoad?: boolean;
 }
 
-export function useSelectPend() {
-    async function selectPend(editingRows: EditingRow[], internalSelect: (editingRows: EditingRow[]) => Promise<OriginDetail[]>): Promise<SheetRow[]> {
-        function pendItemToEditingRow(originDetail: OriginDetail): SheetRow {
-            let { item, pend, pendValue, sheet, no, id } = originDetail;
-            return {
-                origin: originDetail,
-                details: [
-                    { item, value: pendValue, origin: id } as Detail
-                ]
-            };
-        }
-        let ret = await internalSelect(editingRows);
-        if (ret === undefined) return undefined;
-        let retEditingRows: SheetRow[] = ret.map(v => pendItemToEditingRow(v));
-        return retEditingRows;
+export async function selectPend(editingRows: EditingRow[], internalSelect: (editingRows: EditingRow[]) => Promise<OriginDetail[]>): Promise<SheetRow[]> {
+    function pendItemToEditingRow(originDetail: OriginDetail): SheetRow {
+        let { item, pend, pendValue, sheet, no, id } = originDetail;
+        return {
+            origin: originDetail,
+            details: [
+                { item, value: pendValue, origin: id } as Detail
+            ]
+        };
     }
-    return selectPend;
+    let ret = await internalSelect(editingRows);
+    if (ret === undefined) return undefined;
+    let retEditingRows: SheetRow[] = ret.map(v => pendItemToEditingRow(v));
+    return retEditingRows;
 }
 
 export interface UsePendFromSheetReturn {
@@ -42,7 +39,6 @@ function usePendFromSheet(options: OptionsUsePend & { querySelectSheet: UqQuery<
     const { openModal, closeModal } = useModal();
     const { pendName, caption, placeholderOfSearch, querySelectSheet } = options;
     const entityPend = biz.entities[pendName] as EntityPend;
-    let selectPend = useSelectPend();
 
     async function selectSheet(): Promise<Sheet> {
         const ModalSelectSheet = () => {

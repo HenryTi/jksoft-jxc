@@ -75,6 +75,7 @@ function PageStoreIn() {
         loadStart,
         act,
         useDetailReturn,
+        sep: null,
     }} />;
 }
 export const gStoreInSplit: GSheet = {

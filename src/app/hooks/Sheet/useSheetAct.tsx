@@ -20,12 +20,13 @@ export interface PropsSheetAct {
     selectTarget: (header?: string) => Promise<Atom>;
     loadStart: () => Promise<{ sheet: Sheet; sheetRows: SheetRow[] }>;
     useDetailReturn: UseSheetDetailReturn;
+    sep?: any;
 }
 
 export function useSheetAct(options: PropsSheetAct) {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp
-    const { sheet: sheetName, caption: sheetCaption, ViewTargetBand, loadStart, act, useDetailReturn } = options;
+    const { sheet: sheetName, caption: sheetCaption, ViewTargetBand, loadStart, act, sep, useDetailReturn } = options;
     const { editRow } = useDetailReturn;
     const navigate = useNavigate();
     // const { current: genEditing } = useRef(useSheetEditing(sheetName, act, useDetailReturn));
@@ -193,7 +194,7 @@ export function useSheetAct(options: PropsSheetAct) {
         }
         await editRow(editingRow, updateRow);
     }
-
+    /*
     async function load(id: number) {
         let { main: [sheet], details, origins, buds } = await uq.GetSheet.query({ id, budNames: undefined });
         let originColl: { [id: number]: Detail & { done: number; } } = {};
@@ -210,10 +211,10 @@ export function useSheetAct(options: PropsSheetAct) {
         setAtomValue(atomSheet, sheet);
         setAtomValue(atomRows, editingRows);
     }
-
+    */
     async function loadSheet(sheetId: number): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let { main: [sheet], details, origins, buds } = await uq.GetSheet.query({ id: sheetId, budNames: undefined });
-        let originColl: { [id: number]: Detail & { done: number; } } = {};
+        let originColl: { [id: number]: Detail/* & { done: number; }*/ } = {};
         for (let origin of origins) {
             let { id } = origin;
             originColl[id] = origin;
@@ -221,17 +222,18 @@ export function useSheetAct(options: PropsSheetAct) {
         let sheetRows: SheetRow[] = details.map(v => {
             let { origin: originId, pendFrom, pendValue, sheet, no } = v;
             let origin = originColl[originId];
+            // let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue, sheet, no };
             let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue, sheet, no };
             let detail: Detail = { ...v };
             return { origin: originDetail, details: [detail] };
         });
         return { sheet, sheetRows };
     }
-
+    /*
     function setSheet(sheet: Sheet) {
         setAtomValue(atomSheet, sheet);
     }
-
+    */
     async function updateRow(editingRow: EditingRow, details: Detail[]) {
         let dirtyDetails: DetailWithOrigin[] = [];
         getDirtyDetails(dirtyDetails, editingRow, details);
@@ -414,7 +416,10 @@ export function useSheetAct(options: PropsSheetAct) {
 
     const body = <>
         {rows.length > 6 ? <>{vButtons}<Sep /></> : <Sep />}
-        <List items={rows} ViewItem={ViewItemOfList} none={< None />} onItemClick={editRow === undefined ? undefined : onEditRow} />
+        <List items={rows} ViewItem={ViewItemOfList}
+            none={< None />}
+            onItemClick={editRow === undefined ? undefined : onEditRow}
+            sep={sep} />
         <Sep />
         {vButtons}
     </>;

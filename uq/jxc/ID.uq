@@ -70,27 +70,16 @@ ID Tree (
     KEY no,
     ex CHAR(100),
 );
-*/
+
 IDX Done (
     id,
     value VALUE,
 );
-
+*/
 
 -- 各种中间状态。单据记账时，出现错误，在存储过程之间传递数据
+-- 这个需要仔细斟酌
 IDX Temp (
     id,
     value BIGINT,
 );
-/*
-ENUM EnumBizType (
-    atom = 1,
-    sheet = 2,
-    key = 11,
-    prop = 12,
-    assign = 13,
-    permit = 14,
-    with = 15,
-    role = 16,
-);
-*/
