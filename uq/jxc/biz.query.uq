@@ -7,7 +7,7 @@ PAGE (
     * SHEET ASC,
     sheet Phrase,
 ) {
-    PAGE SELECT DISTINCT * c, PhraseOfSiteId(c.base) as sheet
+    PAGE SELECT DISTINCT * c, BudPhrase(c.base) as sheet
         FROM Pend as a
             JOIN Detail as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base
@@ -26,7 +26,7 @@ PAGE (
     * SHEET ASC,
     sheet Phrase,
 ) {
-    PAGE SELECT DISTINCT * c, PhraseOfSiteId(c.base) as sheet
+    PAGE SELECT DISTINCT * c, BudPhrase(c.base) as sheet
         FROM Pend as a
             JOIN Detail as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base
@@ -49,7 +49,7 @@ PAGE (
     sheet Phrase,
     no NO,
 ) {
-    PAGE SELECT * b, a.id as pend, a.value as pendValue, PhraseOfSiteId(c.base) as sheet, c.no
+    PAGE SELECT * b, a.id as pend, a.value as pendValue, BudPhrase(c.base) as sheet, c.no
         FROM Pend as a
             JOIN Detail as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base
@@ -74,7 +74,7 @@ RETURNS ret (
     sheet Phrase,
     no NO,
 ) {
-    INTO ret SELECT * b, a.id as pend, a.value as pendValue, PhraseOfSiteId(c.base) as sheet, c.no
+    INTO ret SELECT * b, a.id as pend, a.value as pendValue, BudPhrase(c.base) as sheet, c.no
         FROM Pend as a
             JOIN Detail as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base

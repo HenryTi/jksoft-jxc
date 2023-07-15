@@ -22,3 +22,8 @@ Biz Subject PersonSetting {
 Biz Subject Price {
     Assign Retail DEC;
 };
+
+Biz Subject Sum {
+    Assign pSource INT;
+    Assign pSource1 INT;
+};

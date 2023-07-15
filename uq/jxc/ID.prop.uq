@@ -70,14 +70,14 @@ RETURNS ID {
     return siteBud;
 };
 
-FUNC PhraseOfSiteId ver 0.1 (
-    phraseId ID
+FUNC BudPhrase ver 0.1 (
+    budId ID
 ) 
 RETURNS CHAR(200) {
     VAR phrase CHAR(200) = (SELECT a.name 
         FROM $Phrase as a 
             JOIN Bud as b ON b.phrase=a.id AND b.base=$site 
-        WHERE b.id=phraseId
+        WHERE b.id=budId
     );
     return phrase;
 };

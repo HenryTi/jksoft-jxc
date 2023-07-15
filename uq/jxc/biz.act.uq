@@ -155,7 +155,7 @@ PAGE (
 ) {
     VAR me ID = Me();
     -- 获取我正在录入的单据
-    PAGE SELECT * b, PhraseOfSiteId(b.base) as phrase
+    PAGE SELECT * b, BudPhrase(b.base) as phrase
         FROM IxMy as a
             JOIN Sheet as b ON a.x=b.id
         WHERE b.id<$pageStart AND a.i=me
@@ -376,7 +376,7 @@ RETURNS buds (
     INTO details SELECT * a
         -- , IFNULL(b.value, 0) as done
         , c.pendFrom, d.value as pendValue
-        , PhraseOfSiteId(e.base) as sheet, e.no
+        , BudPhrase(e.base) as sheet, e.no
         FROM Detail as a
             -- LEFT JOIN Done as b ON b.id=a.id
             LEFT JOIN DetailPend as c ON c.id=a.id
@@ -421,7 +421,7 @@ RETURNS budsStr (
     phrase CHAR(50),
     value CHAR(200),
 ) {
-    INTO main SELECT a.id, PhraseOfSiteId(a.base) as phrase, a.no, a.ex
+    INTO main SELECT a.id, BudPhrase(a.base) as phrase, a.no, a.ex
         FROM Atom as a
         WHERE a.id=id;
 

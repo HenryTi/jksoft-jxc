@@ -5,58 +5,154 @@
 -- 2. target：销售员，item：商品，subject：个人毛利润
 ID SumSource (
     id MINUTE,
-    target ID,              -- bound object subject 主语
-    item ID,                -- bound object 宾语
+    bound ID,               -- 绑定对象
     subject ID,             -- 科目，比如，销售额，毛利润，积分点
     value VALUE,
+    target ID,              -- bound object subject 主语
+    item ID,                -- bound object 宾语
     ref ID,                 -- 凭证
 );
 
-ENUM EnumDmy (day=1, month=2, year=3);
+ENUM EnumPeriod (day=1, month=2, season=3, halfyear=4, year=5);
+ENUM EnumFormulaType ver 0.1 (
+    normal = 1,                     -- 普通单值公式
+    piecewiseAsc = 2,               -- 分段公式升序
+    piecewiseDesc = 3,              -- 分段公式降序
+    stop = 0,                       -- 不再运行。如果要停止一个formula，加这么一个新版本
+);
 ID SumFormula ver 0.3 (
     id MINUTE,
-    KEY dmy ENUM EnumDmy,   -- 日，月，年
-    KEY subject ID,         -- subject of datasource 特定科目
-    KEY groupPhrase ID,     -- 如果对个人，则0
-    KEY sumSubject ID,      -- sum subject 比如：提成，毛利润，销售额，积分，组提成，教练提成
-    KEY id,                 -- subject-group组可以不断修改。用时间匹配，当前用最新的
+    KEY period ENUM EnumPeriod,     -- 日，月，季度，年
+    KEY subject ID,                 -- subject of datasource 特定科目
+    KEY post ID,                    -- phrase, 个人的post，或者group phrase
+    KEY sumSubject ID,              -- sum subject 比如：提成，毛利润，销售额，积分，组提成，教练提成
+    KEY id,                         -- subject-group组可以不断修改。用时间匹配，当前用最新的
+    type ENUM EnumFormulaType DEFAULT EnumFormulaType.normal,
     ratio VALUE,
 );
 
 -- 分段计算。从小到大分段，如果SumFormula里面的ratio<0, 则从大到小分段
 IX IxSumFormulaPiecewise (
-    i,                      -- formula id
-    x,                      -- 分段值, 64位整型
-    radio VALUE,            -- 比例
+    i,                              -- formula id
+    x,                              -- 分段值, 64位整型
+    radio VALUE,                    -- 比例
+);
+
+-- 按月，季，年汇总，如果SumFormula里面有对应的，则先放到这里排队。
+-- 到月，季，年过去，则做公式计算，进入IxSumDate表
+ID SumPeriod (
+    id,
+    KEY sumSubject ID,              -- SumSubject
+    KEY date DATE,
+    period ENUM EnumPeriod,         -- 从 sumSubject 提取
+    INDEX period_id (period, id) UNIQUE,
+);
+
+ID SumSubject (
+    id,
+    KEY object ID,                  -- 对象，可以是person或者group
+    KEY subject ID,                 -- 科目
+    KEY post ID,                    -- phrase, 个人的post，或者group phrase
+    KEY period ENUM EnumPeriod,     -- 时间段
 );
 
 -- 1. subject = 个人id @ subject 销售额
 -- 2. subject = 个人id @ subject 毛利润
 -- 3. subject = group @ subject 销售额
-IX IxDaily (
-    i,                      --- person subject, group subject
+-- 如果汇总月度或年度，i不同。比如，月度销售额，年度销售额，根据月度年度总额，分段计算不同的奖励。
+IX IxSumDate (
+    i,                              --- SumSubject
     x Date,
     value VALUE,
 );
 
--- 月公式汇总，不是Daily按日汇总。daily按日汇总，直接select sum就好
-IX IxMonthly (
-    i,                      --- person subject, group subject
-    x Date,
-    value VALUE,
-);
-
--- 年公式汇总
-IX IxYearly (
-    i,                      --- person subject, group subject
-    x Date,
-    value VALUE,
+-- person的岗位
+IX IxPost (
+    i,                              -- person atom
+    x,                              -- post subject
 );
 
 -- group下有多少人，每个人的角色
 -- group下有多少group，每个group的角色，暂时不考虑
 IX IxGroup (
     i,                  -- group atom
-    x INDEX,            -- user in site, 建index，所属group
+    x INDEX,            -- person atom or group atom, 建index，所属group
     roleInGroup ID,     -- subject ID
 );
+
+PROC CalcSource ver 0.1 () LOG Error {
+    VAR pSource BIGINT, stamp INT, pId BIGINT;
+    Biz Bud Sum.pSource of 0 to pSource;
+    IF pSource IS NULL {
+        SET pSource = 0;
+    }
+    SET stamp=unix_timestamp();
+    WHILE 1=1 {
+        TRANSACTION START;
+        SET pId =a.id
+            FROM SumSource as a 
+            WHERE a.id>pSource 
+            ORDER BY a.id ASC 
+            LIMIT 1;
+
+        IF pId IS NOT NULL {
+            PROC CalcOneSource(pId);
+            Biz Bud Sum.pSource of 0 = pId;
+        }
+        TRANSACTION COMMIT;
+        IF pId IS NULL {
+            Break;
+        }
+        SET pSource=pId;
+        IF unix_timestamp() - stamp > 2 {
+            SET stamp=unix_timestamp();
+            sleep 0.01;
+        }
+    }
+    LOG 'CalcSource end';
+};
+
+PROC CalcPeriod() LOG Error {
+    LOG 'CalcPeriod';
+};
+
+PROC CalcOneSource(sourceId ID) {
+    LOG CONCAT('CalcOnSource ', sourceId);
+    VAR bound ID = a.bound,         -- 绑定对象
+        subject ID = a.subject,     -- 科目，比如，销售额，毛利润，积分点
+        value VALUE = a.value,
+        target ID = a.target,       -- bound object subject 主语
+        item ID = a.item,           -- bound object 宾语
+        ref ID = a.ref              -- 凭证
+        FROM SumSource as a WHERE a.id=sourceId;
+    FOR (VAR post ID,               -- phrase, 个人的post，或者group phrase
+        sumSubject ID,              -- sum subject 比如：提成，毛利润，销售额，积分，组提成，教练提成
+        formulaType ENUM EnumFormulaType,
+        ratio VALUE
+        OF SELECT a.post, a.sumSubject, a.type as formulaType, a.ratio
+            FROM SumFormula as a 
+            WHERE a.period = EnumPeriod.day
+                AND a.subject=subject
+            ORDER BY a.id
+    ) {
+        VAR toValue VALUE = value*ratio;
+        IF exists(SELECT i FROM IxPost WHERE i=bound AND x=post) {
+            Proc SaveIxSumDate(bound, sourceId, sumSubject, toValue);
+            CONTINUE;
+        }
+        FOR (VAR groupId ID
+            OF SELECT a.i as groupId
+                FROM IxGroup as a
+                    JOIN Atom as b ON b.id=a.i
+                    JOIN Bud as c ON c.id=b.base
+                WHERE a.x=bound AND c.phrase=post
+                ORDER BY a.i)
+        {
+            Proc SaveIxSumDate(groupId, sourceId, sumSubject, toValue);
+        }
+    }
+};
+
+PROC SaveIxSumDate(toId ID, sourceId ID, sumSubject ID, toValue VALUE) {
+    
+}
