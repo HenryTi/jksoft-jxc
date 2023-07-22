@@ -3,7 +3,6 @@ import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { useEffect } from "react";
-import { suspensify } from "app/tool";
 
 export interface UseSiteRoleReturn {
     userSite: UserSite;
@@ -31,15 +30,6 @@ function useSiteRoleBase(userSite: UserSite): UseSiteRoleReturn {
     let unitRoles = atom({} as UnitRoles);
     let uqMan: UqMan = uqApp.uqSites.uqMan;
     let site: number = userSite.siteId;
-    // let userSite: UserSite = uqApp.uqSites.userSite;
-    /*
-    constructor(uqApp: UqApp, uqSites: UqSites, userSite: UserSite) {
-        super(uqApp);
-        this.uqMan = uqSites.uqMan;
-        this.userSite = userSite;
-        this.site = userSite.siteId;
-    }
-    */
     useEffect(() => {
         init();
     });

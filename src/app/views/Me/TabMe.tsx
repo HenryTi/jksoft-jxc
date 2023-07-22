@@ -2,13 +2,14 @@ import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai/react";
 import { Link } from "react-router-dom";
 import { FA, LMR, Sep, useT } from "tonwa-com";
-import { IDView, Image, Page, PageLoader, PageSpinner, useModal } from "tonwa-app";
+import { IDView, Image, Page, useModal } from "tonwa-app";
 import { appT, ResApp } from "../../res";
 import { pathEditMe } from "./routeMe";
 import { PageRoleAdmin, PageSys } from "app/Site";
 import { EnumSysRole } from "tonwa-uq";
 import { Permit } from "app/Site";
 import React from "react";
+import { pathAdmin } from "../Admin/PageAdmin";
 
 const pathAbout = 'about';
 
@@ -40,21 +41,22 @@ export function TabMe() {
             <FA name="angle-right" />
         </LMR>;
     }
+    // 管理员，设置
+    function Admin() {
+        return <Permit permit={[]}>
+            <Link to={`/${pathAdmin}`}><Cmd onClick={undefined} content="管理员" /></Link>
+            <Sep />
+        </Permit>;
+    }
     function RoleAdmin() {
         async function onAdminChanged() {
 
         }
         async function onRoleAdmin() {
-            //let siteRole = new GenSiteRole(uqApp, uqSites, uqSites.userSite);
-            // openModal(<PageSpinner />);
-            //await siteRole.init();
-            // closeModal();
             openModal(
                 <PageRoleAdmin
                     admin={EnumSysRole.owner}
-                    // onAdminChanged={onAdminChanged}
                     viewTop={<></>}
-                // siteRole={siteRole}
                 />
             );
         }
@@ -67,13 +69,7 @@ export function TabMe() {
         let { userSite0 } = uqSites;
         if (userSite0 === undefined) return null;
         async function onSitesAdmin() {
-            // let siteRole = new GenSiteRole(uqApp, uqSites, userSite0);
-            // openModal(<PageSpinner />);
-            // await siteRole.init();
-            // closeModal();
-            openModal(<PageSys
-            // siteRole={siteRole} 
-            />);
+            openModal(<PageSys />);
         }
         return <>
             <Cmd onClick={onSitesAdmin} content="系统管理" icon="database" iconColor="text-warning" />
@@ -131,6 +127,7 @@ export function TabMe() {
         <div>
             <MeInfo />
             <Sep />
+            <Admin />
             <SysAdmin />
             <RoleAdmin />
             <SelectSite />

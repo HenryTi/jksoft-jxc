@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Jul 10 2023 10:59:18 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Fri Jul 21 2023 16:39:28 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,7 +29,6 @@ export enum EnumID {
 	AtomMetricSpec = 'atommetricspec',
 	Bud = 'bud',
 	History = 'history',
-	Formula = 'formula',
 	Atom = 'atom',
 	Sheet = 'sheet',
 	Detail = 'detail',
@@ -747,6 +746,11 @@ export interface ResultGetPendDetailFromSheetId {
 	ret: ReturnGetPendDetailFromSheetIdRet[];
 }
 
+export enum SumFormulaType {
+	person = 1,
+	group = 2
+}
+
 export interface IxBud extends IX {
 	i: number;
 	x: number;
@@ -776,21 +780,6 @@ export interface HistoryInActs extends ID {
 	value: number;
 	ref: number | ID;
 	op: number;
-}
-
-export interface Formula extends ID {
-	from: number;
-	tiePhrase: number;
-	to: number;
-	radio: number;
-}
-
-export interface FormulaInActs extends ID {
-	ID?: UqID<any>;
-	from: number | ID;
-	tiePhrase: number | ID;
-	to: number | ID;
-	radio: number;
 }
 
 export interface Atom extends ID {
@@ -930,7 +919,6 @@ export interface ParamActs {
 	ixBud?: IxBud[];
 	bud?: BudInActs[];
 	history?: HistoryInActs[];
-	formula?: FormulaInActs[];
 	atom?: AtomInActs[];
 	sheet?: SheetInActs[];
 	detail?: DetailInActs[];
@@ -987,7 +975,6 @@ export interface UqExt extends Uq {
 	IxBud: UqIX<any>;
 	Bud: UqID<any>;
 	History: UqID<any>;
-	Formula: UqID<any>;
 	Atom: UqID<any>;
 	Sheet: UqID<any>;
 	Detail: UqID<any>;
@@ -3208,6 +3195,16 @@ export const uqSchema={
             }
         ]
     },
+    "sumformulatype": {
+        "name": "SumFormulaType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "person": 1,
+            "group": 2
+        }
+    },
     "ixbud": {
         "name": "IxBud",
         "type": "ix",
@@ -3295,54 +3292,6 @@ export const uqSchema={
         "global": false,
         "idType": 3,
         "isMinute": true
-    },
-    "formula": {
-        "name": "Formula",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "from",
-                "type": "id"
-            },
-            {
-                "name": "tiePhrase",
-                "type": "id"
-            },
-            {
-                "name": "to",
-                "type": "id"
-            },
-            {
-                "name": "radio",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            }
-        ],
-        "keys": [
-            {
-                "name": "from",
-                "type": "id"
-            },
-            {
-                "name": "tiePhrase",
-                "type": "id"
-            },
-            {
-                "name": "to",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
     },
     "atom": {
         "name": "Atom",
@@ -3860,6 +3809,18 @@ export const uqSchema={
                     "type": "atomstate"
                 }
             ]
+        },
+        "person": {
+            "name": "person",
+            "jName": "Person",
+            "type": "atom",
+            "caption": "人员"
+        },
+        "persongroup": {
+            "name": "persongroup",
+            "jName": "PersonGroup",
+            "type": "atom",
+            "caption": "小组"
         },
         "goods": {
             "name": "goods",
@@ -4382,6 +4343,43 @@ export const uqSchema={
             "jName": "VendorTree",
             "type": "tree",
             "caption": "供应商分组"
+        },
+        "sum": {
+            "name": "sum",
+            "jName": "Sum",
+            "type": "subject",
+            "caption": "Sum",
+            "props": [
+                {
+                    "name": "sales",
+                    "type": "prop",
+                    "caption": "销售员",
+                    "dataType": "char"
+                }
+            ],
+            "assigns": [
+                {
+                    "name": "psource",
+                    "type": "assign",
+                    "dataType": "int"
+                },
+                {
+                    "name": "psource1",
+                    "type": "assign",
+                    "dataType": "int"
+                },
+                {
+                    "name": "startsummonth",
+                    "type": "assign",
+                    "dataType": "int"
+                }
+            ]
+        },
+        "sumgroup": {
+            "name": "sumgroup",
+            "jName": "SumGroup",
+            "type": "atom",
+            "caption": "小组合计"
         }
     }
 }
@@ -4389,6 +4387,8 @@ export const uqSchema={
 export enum EnumAtom {
 	b = 'b',
 	Contact = 'contact',
+	Person = 'person',
+	PersonGroup = 'persongroup',
 	Goods = 'goods',
 	Toy = 'toy',
 	Medicine = 'medicine',
@@ -4396,6 +4396,7 @@ export enum EnumAtom {
 	SpecialMedicineChinese = 'specialmedicinechinese',
 	MedicalDevice = 'medicaldevice',
 	Shoe = 'shoe',
+	SumGroup = 'sumgroup',
 }
 
 export enum EnumSheet {
@@ -4420,4 +4421,5 @@ export enum EnumSubject {
 	AccountSetting = 'accountsetting',
 	PersonSetting = 'personsetting',
 	Price = 'price',
+	Sum = 'sum',
 }

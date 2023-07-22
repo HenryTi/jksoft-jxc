@@ -1,12 +1,13 @@
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Page, PageTabsLayout, PageSpinner } from 'tonwa-app';
 import { pathMe, routeMe, TabMe } from './Me';
 import { pathJXC, routeJCX, TabJXC } from './JXC';
-import { pathSetup, routeSetup, TabSetup } from 'app/setup';
+// import { adminTab, routeAdmin, routeAdminTab } from 'app/views/admin';
 import { useUqApp } from 'app/UqApp';
 import { AppLogin, AppRegister, routePrivacy } from 'app/brand';
 import { useAtomValue } from 'jotai';
+import { routeAdmin } from './Admin';
 
 export function ViewsRoutes() {
     let uqApp = useUqApp();
@@ -22,7 +23,7 @@ export function ViewsRoutes() {
         :
         <PageTabsLayout tabs={[
             { to: '/' + pathJXC, caption: '首页', icon: 'home' },
-            { to: '/' + pathSetup, caption: '设置', icon: 'wrench' },
+            // adminTab,
             { to: '/' + pathMe, caption: '我的', icon: 'user' },
         ]} />;
 
@@ -32,12 +33,11 @@ export function ViewsRoutes() {
                 <Route path="/" element={homeLayout}>
                     <Route index element={<TabJXC />} />
                     <Route path={pathJXC + '/*'} element={<TabJXC />} />
-                    <Route path={pathSetup + '/*'} element={<TabSetup />} />
                     <Route path={pathMe + '/*'} element={<TabMe />} />
                 </Route>
                 {routeMe}
                 {routeJCX(uqApp)}
-                {routeSetup}
+                {routeAdmin}
                 <Route path="/test" element={<Page header="Test">test</Page>} />
                 <Route path="/login/*" element={<AppLogin />} />
                 <Route path="/register" element={<AppRegister />} />

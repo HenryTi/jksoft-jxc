@@ -1,11 +1,11 @@
 import { useUqApp } from "app/UqApp";
 import { GSheet, SheetRow } from "app/tool";
-import { ViewItemContact } from "../Atom";
 import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
 import { Band } from "app/coms";
 import { IDView } from "tonwa-app";
 import { useDetailQPA } from "./Detail";
 import { selectAtom, PageSheetAct } from "app/hooks";
+import { ViewItemID } from "../ViewItemID";
 
 const sheet = EnumSheet.SheetSale;
 const caption = '销售单';
@@ -20,7 +20,7 @@ function PageSaleEdit() {
         </Band>;
     }
     function ViewTarget({ sheet }: { sheet: Sheet; }) {
-        return <IDView id={sheet.target} uq={uq} Template={ViewItemContact} />;
+        return <IDView id={sheet.target} uq={uq} Template={ViewItemID} />;
     }
     async function selectTarget() {
         return await selectAtom(uqApp, EnumAtom.Contact);

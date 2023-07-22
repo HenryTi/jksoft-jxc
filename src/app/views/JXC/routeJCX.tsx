@@ -1,6 +1,6 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import { gContact, gGoods } from "./Atom";
+import { gContact, gGoods, gPerson, gSumGroup } from "./Atom";
 import { routeAtomCenter } from "./Atom";
 import { gSubjectStorage, routeSubjectCenter } from "./Subject";
 import { routePrice } from "./AssignPrice";
@@ -22,13 +22,13 @@ import { pathAtomList, pathAtomNew, pathSubjectHistory } from "app/hooks";
 export const pathJXC = 'jxc';
 export const pathSheetCenter = 'sheet-center';
 export function routeJCX(uqApp: UqApp) {
-    // {routeGoods(uqApp)}
-    // {routeContact(uqApp)}
     buildSpecs(uqApp);
 
     const routes = <>
         {routeAtomCenter}
         {routeAtom(uqApp, gContact)}
+        {routeAtom(uqApp, gPerson)}
+        {routeAtom(uqApp, gSumGroup)}
         {routeAtom(uqApp, gGoods)}
 
         {routeSheet(uqApp, gPurchase)}

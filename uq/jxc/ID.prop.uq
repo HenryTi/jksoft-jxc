@@ -16,7 +16,7 @@ IX *IxBud (
 IX IxBudInt (
     i,
     x,
-    value INT DEFAULT 0,
+    value BIGINT DEFAULT 0,
 );
 
 IX IxBudDec (

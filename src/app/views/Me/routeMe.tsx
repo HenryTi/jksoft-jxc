@@ -7,27 +7,17 @@ import { PageEditMe } from "./PageEditMe";
 export const pathMe = 'me';
 export const pathEditMe = 'edit';
 
-const pathIndex = '';
 export const pathChangePassword = 'changePassword';
 export const pathLogout = 'logout';
 export const pathUserQuit = 'quit';
 const pathAbout = 'about';
-
-/*
-export const routeMe = <>
-    <Route path={pathEditMe} element={<OutletEditMe />} />
-    <Route path={pathAbout} element={<PageAbout />} />
-    <Route path={pathLogout} element={<AppLogout />} />
-    <Route path={pathUserQuit} element={<UserQuit />} />
-</>;
-*/
 
 export const routeMe = <Route path={pathMe + '/*'}>
     <Route path={pathEditMe + '/*'} element={<OutletEditMe />} />
     <Route path={pathAbout} element={<PageAbout />} />
 </Route>;
 
-export function OutletEditMe() {
+function OutletEditMe() {
     return <>
         <Routes>
             <Route path="*" element={<PageEditMe />} />

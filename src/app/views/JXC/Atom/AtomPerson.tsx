@@ -4,7 +4,7 @@ import { EnumAtom } from "uqs/UqDefault";
 import { ViewItemID } from "../ViewItemID";
 
 const options: OptionsUseBizAtom = {
-    atomName: EnumAtom.Contact,
+    atomName: EnumAtom.Person,
     NOLabel: undefined,
     exLabel: undefined,
 }
@@ -28,7 +28,7 @@ function PageList() {
     return ret;
 }
 
-export const gContact: GAtom = {
+export const gPerson: GAtom = {
     name: options.atomName,
     pageNew: <PageNew />,
     pageEdit: <PageView />,

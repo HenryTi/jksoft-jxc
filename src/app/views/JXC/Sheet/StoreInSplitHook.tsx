@@ -1,13 +1,13 @@
 import { useUqApp } from "app/UqApp";
 import { GSheet, SheetRow } from "app/tool";
-import { ViewItemContact } from "../Atom";
 import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
 import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
-import { useDetailPend, useDetailSplit } from "./Detail";
+import { useDetailSplit } from "./Detail";
 import { PageSheetAct, usePendFromItem, selectAtom } from "app/hooks";
 import { EntitySheet } from "app/Biz";
 import { ViewPendRow } from "./ViewPendRow";
+import { ViewItemID } from "../ViewItemID";
 
 const sheet = EnumSheet.SheetStoreInMultiStorage;
 const caption = '入库单-分仓';
@@ -31,7 +31,7 @@ function PageStoreIn() {
         </Band>;
     }
     function ViewTarget({ sheet }: { sheet: Sheet; }) {
-        return <IDView id={sheet.target} uq={uq} Template={ViewItemContact} />;
+        return <IDView id={sheet.target} uq={uq} Template={ViewItemID} />;
     }
     async function selectTarget() {
         return await selectAtom(uqApp, EnumAtom.Contact);

@@ -1,5 +1,4 @@
 import { useUqApp } from "app/UqApp";
-// import { Prop, PropDataType } from "uqs/UqDefault";
 
 export interface UsePropReturn {
     loadIDPropId: (IDName: string) => Promise<number>;

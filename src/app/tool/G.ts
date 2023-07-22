@@ -20,7 +20,6 @@ export interface GAtom {
     pageList: JSX.Element;
     pageView: JSX.Element;
     ViewItem: ({ value }: { value: Atom; }) => JSX.Element;
-    // select: (uqApp: UqApp, options: OptionsAtomSelect) => Promise<Atom>;
 }
 
 export interface GSpec<T extends Spec = any> {
