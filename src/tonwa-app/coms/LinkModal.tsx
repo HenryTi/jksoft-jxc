@@ -4,7 +4,7 @@ import { useModal } from "tonwa-app/UqAppBase";
 interface Props {
     tag?: string;
     className?: string;
-    modal: JSX.Element;
+    modal: JSX.Element | (() => Promise<JSX.Element>);
     children: React.ReactNode;
 }
 
@@ -14,17 +14,15 @@ export function LinkModal({ tag, className, modal, children }: Props) {
         tag = 'div';
         className = (className ?? '') + ' cursor-pointer';
     }
-    function onClick() {
-        openModal(modal);
+    async function onClick() {
+        if (React.isValidElement(modal) === false) {
+            modal = await (modal as (() => Promise<JSX.Element>))();
+        }
+        openModal(modal as JSX.Element);
     }
     return React.createElement(
         tag,
         { className, onClick },
         children
     );
-    /*
-    return <div className={(className ?? '') + 'cursor-pointer'} onClick={() => openModal(modal)}>
-        {children}
-    </div>;
-    */
 }

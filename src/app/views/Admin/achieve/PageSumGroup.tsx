@@ -1,11 +1,12 @@
 import { EntityAtom } from "app/Biz";
+import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { OptionsUseBizAtom, pathAtomNew, useBizAtom } from "app/hooks";
 import { ViewItemID } from "app/views/JXC/ViewItemID";
 import { Link, useParams } from "react-router-dom";
-import { Page } from "tonwa-app";
-import { FA, List } from "tonwa-com";
-import { EnumAtom } from "uqs/UqDefault";
+import { LinkModal, Page, useModal } from "tonwa-app";
+import { CheckAsync, FA, List } from "tonwa-com";
+import { Atom, EnumAtom } from "uqs/UqDefault";
 
 export const pathSumGroup = 'admin-sum-group';
 
@@ -30,11 +31,13 @@ export function PageSumGroup() {
             key: undefined as string,
         };
         function ViewItem({ value }: { value: any }) {
-            return <Link to={`../${pathView}/${value.id}`}>
-                <div className="px-3 py-2">
-                    <ViewItemID value={value} />
-                </div>
-            </Link>;
+            async function openOneGroup() {
+                return <PageOneGroup group={value} />
+            }
+            return <LinkModal modal={openOneGroup}><div className="px-3 py-2" >
+                <ViewItemID value={value} />
+            </div>
+            </LinkModal>;
         }
         // pageSize={20}
         // pageMoreSize={1}
@@ -48,4 +51,43 @@ export function PageSumGroup() {
         >
         </PageQueryMore>;
     }
+}
+
+function PageOneGroup({ group }: { group: Atom; }) {
+    const { uq } = useUqApp();
+    /*
+    const { openModal } = useModal();
+    function PageAddPerson() {
+        return <Page header="组员">
+
+        </Page>;
+    }
+    function onAddPerson() {
+        openModal(<PageAddPerson />);
+    }
+    const right = <button className="btn btn-sm btn-info me-2" onClick={onAddPerson}>
+        <FA name="plus" />
+    </button>;
+    */
+    const none = <div className='m-3 small text-muted'>[无]</div>;
+    function ViewItemPerson({ value }: { value: Atom & { selected: number; } }) {
+        async function onCheckChanged(name: string, checked: boolean) {
+            let act: number = checked === true ? 1 : -1;
+            await uq.SetSumGroupPerson.submit({ group: group.id, person: value.id, act, });
+        }
+        return <CheckAsync labelClassName="d-flex px-3 py-2" onCheckChanged={onCheckChanged} defaultChecked={value.selected === 1}>
+            <ViewItemID value={value} />
+        </CheckAsync>;
+    }
+    return <PageQueryMore header={`成员`}
+        query={uq.SearchGroupPersons}
+        param={{ group: group.id, key: undefined, }}
+        sortField="id"
+        ViewItem={ViewItemPerson}
+        none={none}
+    >
+        <div className="p-3 tonwa-bg-gray-2">
+            <ViewItemID value={group} />
+        </div>
+    </PageQueryMore>;
 }

@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri Jul 21 2023 16:39:28 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sat Jul 22 2023 23:18:52 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,6 +27,7 @@ export enum EnumID {
 	MetricItem = 'metricitem',
 	AtomMetric = 'atommetric',
 	AtomMetricSpec = 'atommetricspec',
+	SumFormula = 'sumformula',
 	Bud = 'bud',
 	History = 'history',
 	Atom = 'atom',
@@ -197,6 +198,17 @@ export interface Return$getUnitTimeRet {
 }
 export interface Result$getUnitTime {
 	ret: Return$getUnitTimeRet[];
+}
+
+export interface Param$AllPhrases {
+}
+export interface Return$AllPhrasesRet {
+	id: number;
+	name: string;
+	caption: string;
+}
+export interface Result$AllPhrases {
+	ret: Return$AllPhrasesRet[];
 }
 
 export interface ParamSaveAtom {
@@ -751,6 +763,69 @@ export enum SumFormulaType {
 	group = 2
 }
 
+export interface SumFormula extends ID {
+	formulaType: any;
+	subject: number;
+	post: number;
+	sumSubject: number;
+	caption: string;
+	start: any;
+	end: any;
+	ratio: number;
+}
+
+export interface SumFormulaInActs extends ID {
+	ID?: UqID<any>;
+	formulaType: any;
+	subject: number | ID;
+	post: number | ID;
+	sumSubject: number | ID;
+	caption: string;
+	start: any;
+	end: any;
+	ratio: number;
+}
+
+export interface ParamSearchGroupPersons {
+	group: number;
+	key: string;
+}
+export interface ReturnSearchGroupPersons$page {
+	id: number;
+	no: string;
+	ex: string;
+	phrase: string;
+	selected: number;
+}
+export interface ResultSearchGroupPersons {
+	$page: ReturnSearchGroupPersons$page[];
+}
+
+export interface ParamGetAllFormula {
+}
+export interface ReturnGetAllFormulaRet {
+	id: number;
+	formulaType: any;
+	subject: number;
+	post: number;
+	sumSubject: number;
+	caption: string;
+	start: any;
+	end: any;
+	ratio: number;
+}
+export interface ResultGetAllFormula {
+	ret: ReturnGetAllFormulaRet[];
+}
+
+export interface ParamSetSumGroupPerson {
+	group: number;
+	person: number;
+	act: number;
+}
+export interface ResultSetSumGroupPerson {
+}
+
 export interface IxBud extends IX {
 	i: number;
 	x: number;
@@ -916,6 +991,7 @@ export interface ParamActs {
 	metricItem?: MetricItemInActs[];
 	atomMetric?: AtomMetricInActs[];
 	atomMetricSpec?: AtomMetricSpecInActs[];
+	sumFormula?: SumFormulaInActs[];
 	ixBud?: IxBud[];
 	bud?: BudInActs[];
 	history?: HistoryInActs[];
@@ -945,6 +1021,7 @@ export interface UqExt extends Uq {
 	$poked: UqQuery<Param$poked, Result$poked>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
+	$AllPhrases: UqQuery<Param$AllPhrases, Result$AllPhrases>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
 	SaveBud: UqAction<ParamSaveBud, ResultSaveBud>;
 	SaveSpec: UqAction<ParamSaveSpec, ResultSaveSpec>;
@@ -972,6 +1049,10 @@ export interface UqExt extends Uq {
 	GetPendSheetFromTarget: UqQuery<ParamGetPendSheetFromTarget, ResultGetPendSheetFromTarget>;
 	GetPendDetailFromItem: UqQuery<ParamGetPendDetailFromItem, ResultGetPendDetailFromItem>;
 	GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
+	SumFormula: UqID<any>;
+	SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
+	GetAllFormula: UqQuery<ParamGetAllFormula, ResultGetAllFormula>;
+	SetSumGroupPerson: UqAction<ParamSetSumGroupPerson, ResultSetSumGroupPerson>;
 	IxBud: UqIX<any>;
 	Bud: UqID<any>;
 	History: UqID<any>;
@@ -1397,6 +1478,34 @@ export const uqSchema={
                     {
                         "name": "unitBizDate",
                         "type": "tinyint"
+                    }
+                ]
+            }
+        ]
+    },
+    "$allphrases": {
+        "name": "$AllPhrases",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "name",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
                     }
                 ]
             }
@@ -3204,6 +3313,198 @@ export const uqSchema={
             "person": 1,
             "group": 2
         }
+    },
+    "sumformula": {
+        "name": "SumFormula",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "formulaType",
+                "type": "enum"
+            },
+            {
+                "name": "subject",
+                "type": "id"
+            },
+            {
+                "name": "post",
+                "type": "id"
+            },
+            {
+                "name": "sumSubject",
+                "type": "id"
+            },
+            {
+                "name": "caption",
+                "type": "char",
+                "size": 100
+            },
+            {
+                "name": "start",
+                "type": "date"
+            },
+            {
+                "name": "end",
+                "type": "date"
+            },
+            {
+                "name": "ratio",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            }
+        ],
+        "keys": [
+            {
+                "name": "formulaType",
+                "type": "enum"
+            },
+            {
+                "name": "subject",
+                "type": "id"
+            },
+            {
+                "name": "post",
+                "type": "id"
+            },
+            {
+                "name": "sumSubject",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "searchgrouppersons": {
+        "name": "SearchGroupPersons",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "group",
+                "type": "id"
+            },
+            {
+                "name": "key",
+                "type": "char",
+                "size": 50
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "selected",
+                        "type": "tinyint"
+                    }
+                ],
+                "order": "desc"
+            }
+        ]
+    },
+    "getallformula": {
+        "name": "GetAllFormula",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "formulaType",
+                        "type": "enum"
+                    },
+                    {
+                        "name": "subject",
+                        "type": "id"
+                    },
+                    {
+                        "name": "post",
+                        "type": "id"
+                    },
+                    {
+                        "name": "sumSubject",
+                        "type": "id"
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    },
+                    {
+                        "name": "start",
+                        "type": "date"
+                    },
+                    {
+                        "name": "end",
+                        "type": "date"
+                    },
+                    {
+                        "name": "ratio",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            }
+        ]
+    },
+    "setsumgroupperson": {
+        "name": "SetSumGroupPerson",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "group",
+                "type": "id"
+            },
+            {
+                "name": "person",
+                "type": "id"
+            },
+            {
+                "name": "act",
+                "type": "tinyint"
+            }
+        ],
+        "returns": [] as any
     },
     "ixbud": {
         "name": "IxBud",

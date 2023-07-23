@@ -20,14 +20,14 @@ export function CheckAsync(props: Props) {
         await onCheckChanged(name, checked);
         setRunning(false);
     }
-    if (gapClassName === undefined) gapClassName = '';
+    if (gapClassName === undefined) gapClassName = ' me-3 ';
     let vRunning: any;
     if (running === true) {
         vRunning = <FA name="spinner" spin={true} className={gapClassName + ' text-info position-absolute '} />;
     }
     return <label className={(labelClassName ?? '') + ' d-inline-block position-relative '}>
         {vRunning}
-        <input type="checkbox" className={(inputClassName ?? '') + gapClassName}
+        <input type="checkbox" className={(inputClassName ?? ' form-check-input ') + gapClassName}
             name={name}
             disabled={running}
             defaultChecked={defaultChecked}

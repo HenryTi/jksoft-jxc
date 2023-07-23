@@ -17,13 +17,14 @@ ENUM SumFormulaType (
     person = 1,
     group = 2,
 )
-ID #SumFormula ver 0.3 (
+ID SumFormula ver 0.3 (
     id MINUTE,
     KEY formulaType ENUM SumFormulaType DEFAULT SumFormulaType.person,
     KEY subject ID,                 -- subject of datasource 特定科目
     KEY post ID,                    -- 个人的post phrase
     KEY sumSubject ID,              -- sum subject 比如：提成，毛利润，销售额，积分，组提成，教练提成
     KEY id,                         -- subject-post-sum组可以不断修改。用时间匹配，当前用最新的
+    caption CHAR(100),
     start DATE,                     -- 开始时间，null则当下开始
     end DATE,                       -- 结束时间，null则不结束
     ratio VALUE,
@@ -83,6 +84,56 @@ IX IxMySum (
     i,                  -- UserSite
     x,                  -- Person or SumGroup
 );
+
+QUERY SearchGroupPersons(
+    group ID,
+    key CHAR(50),
+)
+PAGE (
+    id ID desc,
+    no CHAR(50),
+    ex CHAR(50),
+    phrase PHRASE,
+    selected TINYINT,
+) {
+    VAR person PHRASE = 'atom.person';
+    VAR base ID = BudId(person);
+
+    PAGE SELECT a.id, a.no, a.ex, d.name as phrase
+        , case when exists(select x from IxSumGroup WHERE i=group AND x=a.id) then 1 else 0 end as selected
+        FROM Atom as a
+            JOIN Bud as b ON b.id=a.base
+            JOIN $phrase as d ON d.id=b.phrase
+        WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
+        ORDER BY a.id desc
+        LIMIT $pageSize;
+}
+
+QUERY GetAllFormula()
+RETURNS ret (
+    * SumFormula,
+) {
+    INTO ret 
+        SELECT * g
+        FROM (SELECT max(a.id) as id
+            FROM SumFormula as a
+            GROUP BY a.formulaType, a.subject, a.post, a.sumSubject) as f
+            JOIN SumFormula as g ON g.id=f.id;
+
+}
+
+ACT SetSumGroupPerson(
+    group ID,
+    person ID,
+    act TINYINT,        -- -1: remove, 1: add 
+) {
+    IF act=1 {
+        WITH IxSumGroup I=group X=person;
+    }
+    ELSEIF act=-1{
+        WITH IxSumGroup I=group X=person DEL;
+    }
+}
 
 -- Sum.pSource=-1: 则停止计算
 -- Sum.pSource=-2: 则彻底全部重新计算

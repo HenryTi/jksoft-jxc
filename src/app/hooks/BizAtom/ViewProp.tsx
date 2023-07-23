@@ -1,7 +1,7 @@
 import { IDView, LabelRowEdit, OpenModal, PickProps, useModal } from "tonwa-app";
 import { ViewPropProps } from "./useBizAtom";
 import { useUqApp } from "app/UqApp";
-import { PageMoreCacheData } from "app/coms";
+import { PageQueryCacheData } from "app/coms";
 import { BizBud, BudAtom } from "app/Biz";
 import { useState } from "react";
 import { selectAtom } from "./PageAtomSelect";
@@ -17,7 +17,7 @@ function ViewProp({ label, name, readonly, value: initValue, saveProp, id, pickV
     let [value, setValue] = useState(initValue);
     async function onValueChanged(value: string | number) {
         await saveProp(value);
-        let data = uqApp.pageCache.getData<PageMoreCacheData>();
+        let data = uqApp.pageCache.getData<PageQueryCacheData>();
         if (data) {
             let item = data.getItem<{ id: number }>(v => v.id === id) as any;
             if (item) item[name] = value;
