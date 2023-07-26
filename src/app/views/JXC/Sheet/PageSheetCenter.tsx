@@ -10,7 +10,7 @@ import { EntitySheet } from "app/Biz";
 import { gSale } from "./Sale";
 import { gStoreInSplit } from "./StoreInSplitHook";
 import { gStoreIn } from "./StoreInHook";
-import { ViewItemID } from "../ViewItemID";
+import { ViewItemID } from "../../ViewItemID";
 
 const gSheets: GSheet[][] = [
     [

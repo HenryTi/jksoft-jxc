@@ -64,7 +64,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
         // pageSize={20}
         // pageMoreSize={1}
         const none = <div className='m-3 small text-muted'>[无{caption}]</div>;
-        return <PageQueryMore header={`${caption}列表`} right={right}
+        return <PageQueryMore header={`${caption}`} right={right}
             query={searchAtoms}
             param={searchParam}
             sortField="id"

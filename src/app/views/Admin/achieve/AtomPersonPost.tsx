@@ -1,10 +1,10 @@
 import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
 import { GAtom } from "app/tool";
+import { ViewItemID } from "app/views/ViewItemID";
 import { EnumAtom } from "uqs/UqDefault";
-import { ViewItemID } from "../../ViewItemID";
 
 const options: OptionsUseBizAtom = {
-    atomName: EnumAtom.Person,
+    atomName: EnumAtom.SumPersonPost,
     NOLabel: undefined,
     exLabel: undefined,
 }
@@ -28,7 +28,7 @@ function PageList() {
     return ret;
 }
 
-export const gPerson: GAtom = {
+export const gPersonPost: GAtom = {
     name: options.atomName,
     pageNew: <PageNew />,
     pageEdit: <PageView />,

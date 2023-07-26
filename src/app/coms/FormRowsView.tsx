@@ -1,5 +1,10 @@
-import { HTMLInputTypeAttribute, ReactNode } from "react";
+import { useUqApp } from "app/UqApp";
+import { selectAtom } from "app/hooks";
+import { ViewItemID } from "app/views/ViewItemID";
+import { HTMLInputTypeAttribute, ReactNode, useState } from "react";
 import { UseFormRegisterReturn, FieldErrorsImpl, RegisterOptions, UseFormRegister } from "react-hook-form";
+import { IDView } from "tonwa-app";
+import { EnumAtom } from "uqs/UqDefault";
 
 export interface BandProps {
     label?: string | JSX.Element;
@@ -109,13 +114,18 @@ export interface FormSelect extends FormLabelName {
     options?: RegisterOptions,
 }
 
+export interface FormAtom extends FormLabelName {
+    default?: number;
+    atom: EnumAtom;
+}
+
 export interface FormSubmit extends FormLabel {
     label?: string;
     type: 'submit';
     className?: string;
 }
 
-export type FormRow = FormInput | FormBand | FormSubmit | FormRadios | FormSelect;
+export type FormRow = FormInput | FormBand | FormSubmit | FormRadios | FormSelect | FormAtom;
 
 interface FormProps {
     register: UseFormRegister<any>;
@@ -217,6 +227,11 @@ function FormRowView({ row, register, errors, labelClassName }: FormRowViewProps
         </Band>
     }
 
+    const { atom } = row as FormAtom;
+    if (atom !== undefined) {
+        return <ViewFormAtom row={row as FormAtom} label={label} />;
+    }
+
     const { name, type, options, readOnly, right } = row as FormInput;
     switch (type) {
         default:
@@ -233,4 +248,24 @@ function FormRowView({ row, register, errors, labelClassName }: FormRowViewProps
                     value={(label as string) ?? '提交'} />
             </Band>;
     }
+}
+
+function ViewFormAtom({ row, label }: { row: FormAtom; label: string | JSX.Element; }) {
+    const uqApp = useUqApp();
+    const { uq } = uqApp;
+    const { atom, default: defaultValue } = row;
+    const [id, setId] = useState<number>(defaultValue);
+    async function onSelectAtom() {
+        let ret = await selectAtom(uqApp, atom);
+        setId(ret.id);
+    }
+    function ViewItem({ value }: { value: any }) {
+        const { no, ex } = value;
+        return <>{ex} {no}</>;
+    }
+    return <Band label={label}>
+        <div className="cursor-pointer form-control" onClick={onSelectAtom}>
+            <IDView uq={uq} id={id} Template={ViewItem} />&nbsp;
+        </div>
+    </Band>
 }

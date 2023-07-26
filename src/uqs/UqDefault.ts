@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Jul 22 2023 23:18:52 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue Jul 25 2023 15:44:03 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -202,13 +202,22 @@ export interface Result$getUnitTime {
 
 export interface Param$AllPhrases {
 }
-export interface Return$AllPhrasesRet {
+export interface Return$AllPhrasesMain {
 	id: number;
 	name: string;
 	caption: string;
+	type: any;
+}
+export interface Return$AllPhrasesDetail {
+	id: number;
+	name: string;
+	caption: string;
+	owner: number;
+	type: any;
 }
 export interface Result$AllPhrases {
-	ret: Return$AllPhrasesRet[];
+	main: Return$AllPhrasesMain[];
+	detail: Return$AllPhrasesDetail[];
 }
 
 export interface ParamSaveAtom {
@@ -814,8 +823,16 @@ export interface ReturnGetAllFormulaRet {
 	end: any;
 	ratio: number;
 }
+export interface ReturnGetAllFormulaPhrases {
+	id: number;
+	name: string;
+	caption: string;
+	owner: number;
+	type: any;
+}
 export interface ResultGetAllFormula {
 	ret: ReturnGetAllFormulaRet[];
+	phrases: ReturnGetAllFormulaPhrases[];
 }
 
 export interface ParamSetSumGroupPerson {
@@ -1491,7 +1508,7 @@ export const uqSchema={
         "fields": [] as any,
         "returns": [
             {
-                "name": "ret",
+                "name": "main",
                 "fields": [
                     {
                         "name": "id",
@@ -1506,6 +1523,37 @@ export const uqSchema={
                         "name": "caption",
                         "type": "char",
                         "size": 100
+                    },
+                    {
+                        "name": "type",
+                        "type": "enum"
+                    }
+                ]
+            },
+            {
+                "name": "detail",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "name",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    },
+                    {
+                        "name": "owner",
+                        "type": "id"
+                    },
+                    {
+                        "name": "type",
+                        "type": "enum"
                     }
                 ]
             }
@@ -3482,6 +3530,33 @@ export const uqSchema={
                         "precision": 18
                     }
                 ]
+            },
+            {
+                "name": "phrases",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "name",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    },
+                    {
+                        "name": "owner",
+                        "type": "id"
+                    },
+                    {
+                        "name": "type",
+                        "type": "enum"
+                    }
+                ]
             }
         ]
     },
@@ -4650,14 +4725,6 @@ export const uqSchema={
             "jName": "Sum",
             "type": "subject",
             "caption": "Sum",
-            "props": [
-                {
-                    "name": "sales",
-                    "type": "prop",
-                    "caption": "销售员",
-                    "dataType": "char"
-                }
-            ],
             "assigns": [
                 {
                     "name": "psource",
@@ -4675,6 +4742,24 @@ export const uqSchema={
                     "dataType": "int"
                 }
             ]
+        },
+        "subject": {
+            "name": "subject",
+            "jName": "Subject",
+            "type": "atom",
+            "caption": "科目"
+        },
+        "sumpersonpost": {
+            "name": "sumpersonpost",
+            "jName": "SumPersonPost",
+            "type": "atom",
+            "caption": "岗位"
+        },
+        "sumgrouppost": {
+            "name": "sumgrouppost",
+            "jName": "SumGroupPost",
+            "type": "atom",
+            "caption": "职能组"
         },
         "sumgroup": {
             "name": "sumgroup",
@@ -4697,6 +4782,9 @@ export enum EnumAtom {
 	SpecialMedicineChinese = 'specialmedicinechinese',
 	MedicalDevice = 'medicaldevice',
 	Shoe = 'shoe',
+	Subject = 'subject',
+	SumPersonPost = 'sumpersonpost',
+	SumGroupPost = 'sumgrouppost',
 	SumGroup = 'sumgroup',
 }
 

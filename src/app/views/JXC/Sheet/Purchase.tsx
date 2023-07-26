@@ -5,7 +5,7 @@ import { selectAtom, PageSheetAct } from "app/hooks";
 import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
 import { useUqApp } from "app/UqApp";
-import { ViewItemID } from "../ViewItemID";
+import { ViewItemID } from "../../ViewItemID";
 
 const sheet = EnumSheet.SheetPurchase;
 const caption = '采购单';

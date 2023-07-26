@@ -8,6 +8,9 @@ export abstract class BudDataType {
     fromSchema(schema: any) { }
     scan(biz: Biz) { }
 }
+export class BudNone extends BudDataType {
+    type = 'none';
+}
 export class BudInt extends BudDataType {
     type = 'int';
 }
@@ -57,6 +60,7 @@ export abstract class BizBud extends BizBase {
         this.entity = entity;
         let budDataType: BudDataType;
         switch (dataType) {
+            case 'none': budDataType = new BudNone(); break;
             case 'int': budDataType = new BudInt(); break;
             case 'dec': budDataType = new BudDec(); break;
             case 'char':

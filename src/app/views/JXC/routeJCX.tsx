@@ -18,6 +18,7 @@ import { PageSheetCenter } from "./Sheet";
 import { gSpecBatchValid, gSpecSheo } from "./Atom/Spec";
 import { EntityAtom, EntitySpec } from "app/Biz/EntityAtom";
 import { pathAtomList, pathAtomNew, pathSubjectHistory } from "app/hooks";
+import { routeAtom } from "../routeAtom";
 
 export const pathJXC = 'jxc';
 export const pathSheetCenter = 'sheet-center';
@@ -73,33 +74,6 @@ function buildSpecs(uqApp: UqApp) {
         }
         uqApp.gSpecs[name] = gs;
         uqApp.gSpecs[entity.phrase] = gs;
-    }
-}
-
-function routeAtom(uqApp: UqApp, gAtom: GAtom) {
-    const { name, caption, pageNew, pageList, pageView } = gAtom;
-    const entity = uqApp.biz.entities[name] as EntityAtom;
-    const ga = {
-        ...gAtom,
-        caption: caption ?? entity.caption,
-        entity,
-    }
-    addGAtoms(uqApp, entity, ga);
-    return <React.Fragment key={name}>
-        <Route path={pathAtomNew(name)} element={pageNew} />
-        <Route path={`${pathAtomList(name)}`} element={pageList} />
-        <Route path={`${pathAtomList(name)}/:atom`} element={pageList} />
-        <Route path={`${name}-view/:id`} element={pageView} />
-        <Route path={`${name}/:id`} element={pageView} />
-    </React.Fragment>;
-}
-
-function addGAtoms(uqApp: UqApp, entity: EntityAtom, gAtom: GAtom) {
-    const { phrase, children } = entity;
-    uqApp.gAtoms[gAtom.name] = gAtom;
-    uqApp.gAtoms[phrase] = gAtom;
-    for (let ea of children) {
-        addGAtoms(uqApp, ea, gAtom);
     }
 }
 

@@ -37,7 +37,7 @@ export function ViewsRoutes() {
                 </Route>
                 {routeMe}
                 {routeJCX(uqApp)}
-                {routeAdmin}
+                {routeAdmin(uqApp)}
                 <Route path="/test" element={<Page header="Test">test</Page>} />
                 <Route path="/login/*" element={<AppLogin />} />
                 <Route path="/register" element={<AppRegister />} />

@@ -11,7 +11,7 @@ import { useAtomValue } from "jotai";
 import { ViewAtomGoods } from "app/views/JXC/Atom";
 import { ViewAMSAtom, ViewAMSAtomSpec, ViewAMSMetric, ViewAMSSpec } from "../../ViewAMS";
 import { UseSheetDetailReturn } from "app/hooks";
-import { ViewItemID } from "../../../ViewItemID";
+import { ViewItemID } from "../../../../ViewItemID";
 
 const fieldQuantity = 'value';
 const fieldPrice = 'v1';

@@ -7,7 +7,7 @@ import { useDetailSplit } from "./Detail";
 import { PageSheetAct, usePendFromItem, selectAtom } from "app/hooks";
 import { EntitySheet } from "app/Biz";
 import { ViewPendRow } from "./ViewPendRow";
-import { ViewItemID } from "../ViewItemID";
+import { ViewItemID } from "../../ViewItemID";
 
 const sheet = EnumSheet.SheetStoreInMultiStorage;
 const caption = '入库单-分仓';

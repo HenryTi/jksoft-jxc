@@ -42,7 +42,20 @@ Biz Subject Sum {
     Assign pSource INT;
     Assign pSource1 INT;
     Assign startSumMonth INT;       -- 月汇总的开始。之前的月汇总是预置的，之后的月汇总是计算的。
-    Prop sales '销售员' Char;
+};
+
+Biz Atom Subject '科目' UUID {
+    -- Prop saleAmount '销售额';
+    -- Prop grossProfit '有效额';
+};
+
+Biz Atom SumPersonPost '岗位' {
+    -- Prop sales '销售员';
+    -- Prop teamLeader '组长';
+};
+
+Biz Atom SumGroupPost '职能组' {
+    -- Prop salesGroup '销售小组';
 };
 
 -- 1. subject = 个人id @ subject 销售额
@@ -112,6 +125,13 @@ PAGE (
 QUERY GetAllFormula()
 RETURNS ret (
     * SumFormula,
+)
+RETURNS phrases (
+    id ID,
+    name CHAR(200),
+    caption CHAR(100),
+    owner ID,
+    type ENUM EnumBizType,
 ) {
     INTO ret 
         SELECT * g
@@ -119,7 +139,16 @@ RETURNS ret (
             FROM SumFormula as a
             GROUP BY a.formulaType, a.subject, a.post, a.sumSubject) as f
             JOIN SumFormula as g ON g.id=f.id;
-
+    FOR (VAR subject ID,            -- subject of datasource 特定科目
+        post ID,                    -- 个人的post phrase
+        sumSubject ID               -- sum subject 比如：提成，毛利润，销售额，积分，组提成，教练提成
+        OF SELECT a.subject, a.post, a.sumSubject
+            FROM ret as a ORDER BY a.id)
+    {
+        INTO phrases SELECT a.id, a.name, a.caption, a.owner, a.type FROM $phrase as a WHERE a.id=subject;
+        INTO phrases SELECT a.id, a.name, a.caption, a.owner, a.type FROM $phrase as a WHERE a.id=post;
+        INTO phrases SELECT a.id, a.name, a.caption, a.owner, a.type FROM $phrase as a WHERE a.id=sumSubject;
+    }
 }
 
 ACT SetSumGroupPerson(

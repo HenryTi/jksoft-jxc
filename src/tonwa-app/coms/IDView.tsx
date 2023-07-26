@@ -8,9 +8,9 @@ interface Props<T> {
 }
 
 export function IDView<T>({ id, uq, Template }: Props<T>) {
-    const [value, setValue] = useState(uq.idCache<any>(id));
+    const idValue = uq.idCache<any>(id);
+    const [value, setValue] = useState(idValue);
     useEffect(() => {
-        if (value !== undefined) return;
         (async function () {
             if (id === undefined || id === null) return;
             let obj = uq.idCache<any>(id);
@@ -19,7 +19,7 @@ export function IDView<T>({ id, uq, Template }: Props<T>) {
             }
             setValue(obj);
         })();
-    }, [id]);
+    }, [id, idValue]);
     if (id === undefined || id === null) return null;
     if (value === undefined) return null;
     if (value === null) {
