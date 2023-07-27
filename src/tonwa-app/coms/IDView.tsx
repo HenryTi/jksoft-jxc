@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Spinner } from "tonwa-com";
 import { Uq } from "tonwa-uq";
 
 interface Props<T> {
@@ -21,7 +22,9 @@ export function IDView<T>({ id, uq, Template }: Props<T>) {
         })();
     }, [id, idValue]);
     if (id === undefined || id === null) return null;
-    if (value === undefined) return null;
+    if (value === undefined) {
+        return <Spinner className="text-info spinner-border-sm" />;
+    }
     if (value === null) {
         return <div>id {id} is invalid</div>;
     }

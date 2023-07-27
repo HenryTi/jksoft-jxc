@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Jul 25 2023 15:44:03 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Wed Jul 26 2023 11:44:43 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -810,6 +810,24 @@ export interface ResultSearchGroupPersons {
 	$page: ReturnSearchGroupPersons$page[];
 }
 
+export interface ParamSaveSumFormula {
+	id: number;
+	formulaType: any;
+	subject: number;
+	post: number;
+	sumSubject: number;
+	caption: string;
+	start: any;
+	end: any;
+	ratio: number;
+}
+export interface ReturnSaveSumFormulaRet {
+	id: number;
+}
+export interface ResultSaveSumFormula {
+	ret: ReturnSaveSumFormulaRet[];
+}
+
 export interface ParamGetAllFormula {
 }
 export interface ReturnGetAllFormulaRet {
@@ -823,16 +841,8 @@ export interface ReturnGetAllFormulaRet {
 	end: any;
 	ratio: number;
 }
-export interface ReturnGetAllFormulaPhrases {
-	id: number;
-	name: string;
-	caption: string;
-	owner: number;
-	type: any;
-}
 export interface ResultGetAllFormula {
 	ret: ReturnGetAllFormulaRet[];
-	phrases: ReturnGetAllFormulaPhrases[];
 }
 
 export interface ParamSetSumGroupPerson {
@@ -1068,6 +1078,7 @@ export interface UqExt extends Uq {
 	GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
 	SumFormula: UqID<any>;
 	SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
+	SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
 	GetAllFormula: UqQuery<ParamGetAllFormula, ResultGetAllFormula>;
 	SetSumGroupPerson: UqAction<ParamSetSumGroupPerson, ResultSetSumGroupPerson>;
 	IxBud: UqIX<any>;
@@ -3479,6 +3490,64 @@ export const uqSchema={
             }
         ]
     },
+    "savesumformula": {
+        "name": "SaveSumFormula",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "formulaType",
+                "type": "enum"
+            },
+            {
+                "name": "subject",
+                "type": "id"
+            },
+            {
+                "name": "post",
+                "type": "id"
+            },
+            {
+                "name": "sumSubject",
+                "type": "id"
+            },
+            {
+                "name": "caption",
+                "type": "char",
+                "size": 100
+            },
+            {
+                "name": "start",
+                "type": "date"
+            },
+            {
+                "name": "end",
+                "type": "date"
+            },
+            {
+                "name": "ratio",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
     "getallformula": {
         "name": "GetAllFormula",
         "type": "query",
@@ -3528,33 +3597,6 @@ export const uqSchema={
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
-                    }
-                ]
-            },
-            {
-                "name": "phrases",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "name",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    },
-                    {
-                        "name": "owner",
-                        "type": "id"
-                    },
-                    {
-                        "name": "type",
-                        "type": "enum"
                     }
                 ]
             }

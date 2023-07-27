@@ -122,16 +122,30 @@ PAGE (
         LIMIT $pageSize;
 }
 
+ACT SaveSumFormula(
+    id ID,
+    formulaType ENUM SumFormulaType,
+    subject ID,                 -- subject of datasource 特定科目
+    post ID,                    -- 个人的post phrase
+    sumSubject ID,              -- sum subject 比如：提成，毛利润，销售额，积分，组提成，教练提成
+    caption CHAR(100),
+    start DATE,                     -- 开始时间，null则当下开始
+    end DATE,                       -- 结束时间，null则不结束
+    ratio VALUE,
+)
+RETURNS ret (
+    id ID,
+) {
+    IF id IS NULL {
+        SET id = ID(SumFormula New KEY formulaType=formulaType, subject=subject, post=post, sumSubject=sumSubject);
+    }
+    WITH SumFormula as a ID=id SET a.caption=caption, a.start=start, a.end=end, a.ratio=ratio;
+    INTO ret SELECT id;
+}
+
 QUERY GetAllFormula()
 RETURNS ret (
     * SumFormula,
-)
-RETURNS phrases (
-    id ID,
-    name CHAR(200),
-    caption CHAR(100),
-    owner ID,
-    type ENUM EnumBizType,
 ) {
     INTO ret 
         SELECT * g
@@ -139,16 +153,6 @@ RETURNS phrases (
             FROM SumFormula as a
             GROUP BY a.formulaType, a.subject, a.post, a.sumSubject) as f
             JOIN SumFormula as g ON g.id=f.id;
-    FOR (VAR subject ID,            -- subject of datasource 特定科目
-        post ID,                    -- 个人的post phrase
-        sumSubject ID               -- sum subject 比如：提成，毛利润，销售额，积分，组提成，教练提成
-        OF SELECT a.subject, a.post, a.sumSubject
-            FROM ret as a ORDER BY a.id)
-    {
-        INTO phrases SELECT a.id, a.name, a.caption, a.owner, a.type FROM $phrase as a WHERE a.id=subject;
-        INTO phrases SELECT a.id, a.name, a.caption, a.owner, a.type FROM $phrase as a WHERE a.id=post;
-        INTO phrases SELECT a.id, a.name, a.caption, a.owner, a.type FROM $phrase as a WHERE a.id=sumSubject;
-    }
 }
 
 ACT SetSumGroupPerson(

@@ -1,9 +1,13 @@
 import { useUqApp } from "app/UqApp";
 import { selectAtom } from "app/hooks";
-import { ViewItemID } from "app/views/ViewItemID";
 import { HTMLInputTypeAttribute, ReactNode, useState } from "react";
-import { UseFormRegisterReturn, FieldErrorsImpl, RegisterOptions, UseFormRegister } from "react-hook-form";
+import {
+    UseFormRegisterReturn, FieldErrorsImpl
+    , RegisterOptions, UseFormRegister
+    , FieldError, UseFormSetError, UseFormClearErrors, UseFormSetValue
+} from "react-hook-form";
 import { IDView } from "tonwa-app";
+import { FA } from "tonwa-com";
 import { EnumAtom } from "uqs/UqDefault";
 
 export interface BandProps {
@@ -117,6 +121,7 @@ export interface FormSelect extends FormLabelName {
 export interface FormAtom extends FormLabelName {
     default?: number;
     atom: EnumAtom;
+    options?: RegisterOptions;
 }
 
 export interface FormSubmit extends FormLabel {
@@ -129,9 +134,12 @@ export type FormRow = FormInput | FormBand | FormSubmit | FormRadios | FormSelec
 
 interface FormProps {
     register: UseFormRegister<any>;
+    setValue?: UseFormSetValue<any>;
     errors?: Partial<FieldErrorsImpl<{
         [x: string]: any;
     }>>;
+    setError?: UseFormSetError<any>;
+    clearErrors?: UseFormClearErrors<any>;
     labelClassName?: string;
 }
 
@@ -148,7 +156,7 @@ export function FormRowsView(props: FormRowsViewProps) {
     return <>{rows.map((row, index) => <FormRowView key={index} row={row} {...props} />)}</>
 }
 
-function FormRowView({ row, register, errors, labelClassName }: FormRowViewProps) {
+function FormRowView({ row, register, errors, labelClassName, clearErrors, setValue }: FormRowViewProps) {
     const { label, inputs } = row as FormBand;
     if (inputs !== undefined) {
         return <Band label={label} labelClassName={labelClassName}>{
@@ -229,7 +237,12 @@ function FormRowView({ row, register, errors, labelClassName }: FormRowViewProps
 
     const { atom } = row as FormAtom;
     if (atom !== undefined) {
-        return <ViewFormAtom row={row as FormAtom} label={label} />;
+        let { name, options } = row as FormAtom;
+        let error: FieldError = errors[name] as FieldError;
+        return <ViewFormAtom row={row as FormAtom} label={label} error={error}
+            inputProps={register(name, options)}
+            setValue={setValue}
+            clearErrors={clearErrors} />;
     }
 
     const { name, type, options, readOnly, right } = row as FormInput;
@@ -250,22 +263,56 @@ function FormRowView({ row, register, errors, labelClassName }: FormRowViewProps
     }
 }
 
-function ViewFormAtom({ row, label }: { row: FormAtom; label: string | JSX.Element; }) {
+function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue }: {
+    row: FormAtom; label: string | JSX.Element;
+    setValue: UseFormSetValue<any>;
+    error: FieldError;
+    // setError: UseFormSetError<any>;
+    clearErrors: UseFormClearErrors<any>;
+    inputProps: UseFormRegisterReturn,
+}) {
     const uqApp = useUqApp();
     const { uq } = uqApp;
-    const { atom, default: defaultValue } = row;
+    const { name, atom, default: defaultValue, readOnly } = row;
     const [id, setId] = useState<number>(defaultValue);
     async function onSelectAtom() {
+        if (readOnly === true) return;
+        clearErrors(name);
         let ret = await selectAtom(uqApp, atom);
-        setId(ret.id);
+        if (ret === undefined) return;
+        const { id } = ret;
+        setValue(name, id);
+        setId(id);
     }
-    function ViewItem({ value }: { value: any }) {
+    function ViewAtom({ value }: { value: any }) {
         const { no, ex } = value;
-        return <>{ex} {no}</>;
+        return <>{ex} &nbsp; <small className="text-muted">{no}</small></>;
+    }
+    let content: any;
+    if (id === undefined) {
+        let { placeHolder } = row;
+        if (!placeHolder) placeHolder = '点击选择';
+        content = <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>;
+    }
+    else {
+        content = <IDView uq={uq} id={id} Template={ViewAtom} />;
+    }
+    let cnInput = 'form-control ';
+    if (readOnly !== true) {
+        cnInput += ' cursor-pointer ';
+    }
+    let vError: any = undefined;
+    if (error) {
+        cnInput += 'is-invalid'
+        vError = <div className="invalid-feedback mt-1">
+            {error.message?.toString()}
+        </div>;
     }
     return <Band label={label}>
-        <div className="cursor-pointer form-control" onClick={onSelectAtom}>
-            <IDView uq={uq} id={id} Template={ViewItem} />&nbsp;
+        <div className={cnInput} onClick={onSelectAtom}>
+            {content} &nbsp;
+            <input name={name} type="hidden" {...inputProps} />
         </div>
+        {vError}
     </Band>
 }
