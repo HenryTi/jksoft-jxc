@@ -76,6 +76,11 @@ export abstract class BandContainerContext<P extends BandContainerProps> {
         return getAtomValue(atom);
     }
 
+    getAtom(name: string): WritableAtom<any, any, any> {
+        let atom = this.valueAtoms[name];
+        return atom;
+    }
+
     setValue(name: string, val: any) {
         let a = this.valueAtoms[name];
         if (!a) {

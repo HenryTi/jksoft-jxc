@@ -34,7 +34,7 @@ export function List<T>(props: ListProps<T>) {
     if (items === undefined) {
         if (showLoading === false) return null;
         if (loading) return loading;
-        return <Spinner className="mx-3 my-2 text-primary" />;
+        return <Spinner className="mx-3 my-2 text-primary spinner-border-sm" />;
     }
     let len = items.length;
     if (len === 0) {

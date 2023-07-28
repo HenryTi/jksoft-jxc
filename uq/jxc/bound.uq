@@ -17,7 +17,7 @@ ENUM SumFormulaType (
     person = 1,
     group = 2,
 )
-ID SumFormula ver 0.3 (
+ID SumFormula ver 0.4 (
     id MINUTE,
     KEY formulaType ENUM SumFormulaType DEFAULT SumFormulaType.person,
     KEY subject ID,                 -- subject of datasource 特定科目
@@ -28,6 +28,7 @@ ID SumFormula ver 0.3 (
     start DATE,                     -- 开始时间，null则当下开始
     end DATE,                       -- 结束时间，null则不结束
     ratio VALUE,
+    valid TINYINT DEFAULT 1,        -- 0=不起作用
 );
 
 ID #SubjectBoundPost (
@@ -143,6 +144,48 @@ RETURNS ret (
     INTO ret SELECT id;
 }
 
+ACT ChangeSumFormulaCaption (
+    id ID,
+    caption CHAR(100),
+) {
+    WITH SumFormula as a ID=id SET a.caption=caption;
+}
+
+ACT ChangeSumFormula(
+    id ID,
+    start DATE,                     -- 开始时间，null则当下开始
+    end DATE,                       -- 结束时间，null则不结束
+    ratio VALUE,                    -- if ratio is null, then invalid the formula
+)
+RETURNS ret (
+    id ID,
+) {
+    IF ratio IS NULL {
+        WITH SumFormula ID=id SET valid=0;
+        RETURN;
+    }
+
+    VAR formulaType ENUM SumFormulaType = a.formulaType,
+            subject ID = a.subject,
+            post ID = a.post,
+            sumSubject ID = a.sumSubject,
+            caption CHAR(100) = a.caption,
+            oldStart DATE = a.start,
+            oldEnd DATE = a.end,
+            oldRatio VALUE = a.ratio
+        FROM SumFormula as a 
+        WHERE a.id=id;
+    IF oldRatio<>ratio
+        OR ((oldStart IS NULL OR start IS NULL) AND oldStart<>start)
+        OR ((oldEnd IS NULL OR end IS NULL) AND oldEnd<>end)
+    {
+        VAR newId ID = ID(SumFormula create KEY formulaType=formulaType, subject=subject, post=post, sumSubject=sumSubject);
+        WITH SumFormula as a ID=newId
+            SET a.caption=caption, a.start=start, a.end=end, a.ratio=ratio;
+        INTO ret select newId as id;
+    }
+}
+
 QUERY GetAllFormula()
 RETURNS ret (
     * SumFormula,
@@ -151,6 +194,7 @@ RETURNS ret (
         SELECT * g
         FROM (SELECT max(a.id) as id
             FROM SumFormula as a
+            WHERE a.valid=1
             GROUP BY a.formulaType, a.subject, a.post, a.sumSubject) as f
             JOIN SumFormula as g ON g.id=f.id;
 }
@@ -216,7 +260,8 @@ PROC CalcOneSource(sourceId ID) {
         value VALUE = a.value,
         target ID = a.target,       -- bound object subject 主语
         item ID = a.item,           -- bound object 宾语
-        ref ID = a.ref              -- 凭证
+        ref ID = a.ref,             -- 凭证
+        date DATE = UMINUTEDATE(sourceId, (SELECT s.timeZone FROM $Site as s WHERE s.id=c.base))
         FROM SumSource as a 
             JOIN Atom as b ON b.id=a.bound
             JOIN Bud as c ON c.id=b.base
@@ -226,13 +271,19 @@ PROC CalcOneSource(sourceId ID) {
         ratio VALUE
         OF SELECT a.post, a.sumSubject, a.ratio
             FROM SumFormula as a 
-            WHERE a.formulaType=SumFormulaType.person AND a.subject=subject
+                JOIN (
+                    SELECT f.id
+                        FROM SumFormula as f
+                        WHERE f.formulaType=SumFormulaType.person AND f.subject=subject
+                            AND (a.start IS NULL OR a.start<=date)
+                            AND (a.end IS NULL OR a.end>date)
+                            AND a.valid=1
+                        GROUP BY f.post, f.sumSubject
+                ) as b ON b.id=a.id
             ORDER BY a.id
     ) {
         VAR toValue VALUE = value*ratio;
         VAR subjectBP ID SubjectBoundPost = ID(SubjectBoundPost new KEY bound=bound, post=post, subject=sumSubject);
-        VAR timeZone TINYINT = a.timeZone FROM $Site as a WHERE a.id=site;
-        VAR date DATE = UMINUTEDATE(sourceId, timeZone);
         WITH IxSumDate I=subjectBP X=date SET value+=toValue;
         WITH SumDayQueue KEY(date as date, subjectBP as subjectBoundPost);
     }
@@ -265,7 +316,15 @@ PROC CalcGroup() LOG Error {
             ratio VALUE
             OF SELECT a.post, a.sumSubject, a.ratio
                 FROM SumFormula as a 
-                WHERE a.formulaType=SumFormulaType.group AND a.subject=subject
+                    JOIN (
+                        SELECT f.id
+                            FROM SumFormula as f
+                            WHERE f.formulaType=SumFormulaType.group AND f.subject=subject
+                                AND (a.start IS NULL OR a.start<=date)
+                                AND (a.end IS NULL OR a.end>date)
+                                AND a.valid=1
+                            GROUP BY f.post, f.sumSubject
+                    ) as b ON b.id=a.id
                 ORDER BY a.id
         ) {
             LOG CONCAT('CalcGroup post = ', post, ' sumSubject=', sumSubject, ' ratio=', ratio);

@@ -13,7 +13,7 @@ export enum BandContentType {
 interface BandBaseProps {
     label?: string | JSX.Element;
     labelSize?: number;
-    toEdit?: string;
+    pageEdit?: JSX.Element;
     sep?: number | JSX.Element;
     contentType?: BandContentType;
     rightIcon?: JSX.Element;
@@ -124,7 +124,7 @@ function buildDetailChildren(children: React.ReactNode): [React.ReactNode[], boo
 function Value({ name, options }: { name: string; options?: OptionItem[]; }) {
     let bandContainer = useBandContainer();
     let { defaultNone } = bandContainer;
-    let val = bandContainer.getValue(name);
+    let val = useAtomValue(bandContainer.getAtom(name));
     if (options) {
         if (val) {
             let option = options.find(v => v.value === val);
@@ -137,7 +137,7 @@ function Value({ name, options }: { name: string; options?: OptionItem[]; }) {
 }
 
 export function Band(props: BandProps & { children: React.ReactNode; }) {
-    let { label, labelSize, children, BandTemplate, sep, contentType, toEdit, rightIcon, contentContainerClassName } = props;
+    let { label, labelSize, children, BandTemplate, sep, contentType, pageEdit, rightIcon, contentContainerClassName } = props;
     let content = children;
     let bandContainer = useBandContainer();
     labelSize = bandContainer.props.labelSize;
@@ -174,7 +174,7 @@ export function Band(props: BandProps & { children: React.ReactNode; }) {
         <BandTemplate label={label} labelSize={labelSize}
             errors={errors} memos={band.memos}
             content={content} sep={sep} contentType={contentType}
-            toEdit={toEdit} rightIcon={rightIcon}
+            pageEdit={pageEdit} rightIcon={rightIcon}
             contentContainerClassName={contentContainerClassName}>
             {children}
         </BandTemplate>

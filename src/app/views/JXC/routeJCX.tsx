@@ -6,9 +6,8 @@ import { gSubjectStorage, routeSubjectCenter } from "./Subject";
 import { routePrice } from "./AssignPrice";
 import { routeSheetView } from './SheetView';
 import { UqApp } from "app/UqApp";
-// import { routeSheetCenter } from "./Sheet";
 import { routePermits } from "./Permits";
-import { GAtom, GSheet, GSpec, GSubject } from "app/tool";
+import { GSheet, GSpec, GSubject } from "app/tool";
 import { gPurchase } from "./Sheet/Purchase";
 import { gSale } from "./Sheet/Sale";
 import { gStoreIn } from "./Sheet/StoreInHook";
@@ -16,9 +15,10 @@ import { gStoreInSplit } from "./Sheet/StoreInSplitHook";
 import { gStoreOut } from "./Sheet/StoreOut";
 import { PageSheetCenter } from "./Sheet";
 import { gSpecBatchValid, gSpecSheo } from "./Atom/Spec";
-import { EntityAtom, EntitySpec } from "app/Biz/EntityAtom";
-import { pathAtomList, pathAtomNew, pathSubjectHistory } from "app/hooks";
+import { EntitySpec } from "app/Biz/EntityAtom";
+import { pathSubjectHistory } from "app/hooks";
 import { routeAtom } from "../routeAtom";
+import { routeMy } from "./My";
 
 export const pathJXC = 'jxc';
 export const pathSheetCenter = 'sheet-center';
@@ -43,6 +43,8 @@ export function routeJCX(uqApp: UqApp) {
         {routeSubjectCenter}
         {routeSubject(uqApp, gSubjectStorage)}
         {routeSheetView(uqApp)}
+
+        {routeMy}
 
         {routePrice}
         {routePermits}

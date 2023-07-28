@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Jul 26 2023 11:44:43 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Thu Jul 27 2023 14:13:31 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -781,6 +781,7 @@ export interface SumFormula extends ID {
 	start: any;
 	end: any;
 	ratio: number;
+	valid: number;
 }
 
 export interface SumFormulaInActs extends ID {
@@ -793,6 +794,7 @@ export interface SumFormulaInActs extends ID {
 	start: any;
 	end: any;
 	ratio: number;
+	valid: number;
 }
 
 export interface ParamSearchGroupPersons {
@@ -828,6 +830,26 @@ export interface ResultSaveSumFormula {
 	ret: ReturnSaveSumFormulaRet[];
 }
 
+export interface ParamChangeSumFormulaCaption {
+	id: number;
+	caption: string;
+}
+export interface ResultChangeSumFormulaCaption {
+}
+
+export interface ParamChangeSumFormula {
+	id: number;
+	start: any;
+	end: any;
+	ratio: number;
+}
+export interface ReturnChangeSumFormulaRet {
+	id: number;
+}
+export interface ResultChangeSumFormula {
+	ret: ReturnChangeSumFormulaRet[];
+}
+
 export interface ParamGetAllFormula {
 }
 export interface ReturnGetAllFormulaRet {
@@ -840,6 +862,7 @@ export interface ReturnGetAllFormulaRet {
 	start: any;
 	end: any;
 	ratio: number;
+	valid: number;
 }
 export interface ResultGetAllFormula {
 	ret: ReturnGetAllFormulaRet[];
@@ -1079,6 +1102,8 @@ export interface UqExt extends Uq {
 	SumFormula: UqID<any>;
 	SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
 	SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
+	ChangeSumFormulaCaption: UqAction<ParamChangeSumFormulaCaption, ResultChangeSumFormulaCaption>;
+	ChangeSumFormula: UqAction<ParamChangeSumFormula, ResultChangeSumFormula>;
 	GetAllFormula: UqQuery<ParamGetAllFormula, ResultGetAllFormula>;
 	SetSumGroupPerson: UqAction<ParamSetSumGroupPerson, ResultSetSumGroupPerson>;
 	IxBud: UqIX<any>;
@@ -3418,6 +3443,10 @@ export const uqSchema={
                 "type": "dec",
                 "scale": 6,
                 "precision": 18
+            },
+            {
+                "name": "valid",
+                "type": "tinyint"
             }
         ],
         "keys": [
@@ -3548,6 +3577,61 @@ export const uqSchema={
             }
         ]
     },
+    "changesumformulacaption": {
+        "name": "ChangeSumFormulaCaption",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "caption",
+                "type": "char",
+                "size": 100
+            }
+        ],
+        "returns": [] as any
+    },
+    "changesumformula": {
+        "name": "ChangeSumFormula",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "start",
+                "type": "date"
+            },
+            {
+                "name": "end",
+                "type": "date"
+            },
+            {
+                "name": "ratio",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
     "getallformula": {
         "name": "GetAllFormula",
         "type": "query",
@@ -3597,6 +3681,10 @@ export const uqSchema={
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
+                    },
+                    {
+                        "name": "valid",
+                        "type": "tinyint"
                     }
                 ]
             }

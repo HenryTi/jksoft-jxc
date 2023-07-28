@@ -8,6 +8,7 @@ import { selectAtom } from "app/hooks";
 import { useUqApp } from "app/UqApp";
 import { EnumAtom } from "uqs/UqDefault";
 import { pathSheetCenter } from "./routeJCX";
+import { pathMy } from "./My";
 
 export function TabJXC() {
     const uqApp = useUqApp();
@@ -17,6 +18,7 @@ export function TabJXC() {
         { label: '报表中心', path: pathReportCenter },
         { label: '设置价格', path: pathPrice },
         { label: '权限演示', path: pathPermits },
+        { label: '我的', path: pathMy },
     ];
     const cn = ' px-3 py-2 border-bottom align-items-center ';
     return <Page header="测试" back="none">
