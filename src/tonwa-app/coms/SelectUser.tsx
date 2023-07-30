@@ -56,6 +56,7 @@ export function SelectUser({ header, top }: Props) {
 }
 
 export function ViewUser({ user }: { user: User; }) {
+    if (!user) return <div>user is empty</div>;
     let { name, nick, icon } = user;
     return <div className="d-flex">
         <Image src={icon} className="me-4 w-2-5c h-2-5c" />
@@ -63,5 +64,33 @@ export function ViewUser({ user }: { user: User; }) {
             <div><MutedSmall>Name:</MutedSmall> &nbsp; {name}</div>
             <div><MutedSmall>Nick:</MutedSmall> &nbsp; {nick}</div>
         </div>
+    </div>;
+}
+
+export function ViewUserAssigned({ user, assigned }: { user: User; assigned: string; }) {
+    if (!user) return <div>user is empty</div>;
+    let { name, nick, icon } = user;
+    let content: any;
+    if (assigned !== undefined) {
+        content = <>
+            <div><b>{assigned}</b></div>
+            <div><MutedSmall>Name:</MutedSmall> &nbsp; {name}</div>
+            <div><MutedSmall>Nick:</MutedSmall> &nbsp; {nick}</div>
+        </>;
+    }
+    else if (nick !== undefined) {
+        content = <>
+            <div><b>{nick}</b></div>
+            <div><MutedSmall>Name:</MutedSmall> &nbsp; {name}</div>
+        </>;
+    }
+    else {
+        content = <>
+            <div><b>{name}</b></div>
+        </>;
+    }
+    return <div className="d-flex">
+        <Image src={icon} className="me-4 w-2-5c h-2-5c" />
+        <div>{content}</div>
     </div>;
 }

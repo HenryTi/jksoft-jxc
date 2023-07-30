@@ -12,6 +12,7 @@ import { gPersonPost } from "./AtomPersonPost";
 import { gGroupPost } from "./AtomGroupPost";
 
 export const pathAchieve = 'admin-achieve';
+export const captionAchieve = '业绩设置';
 
 export function PageAchieve() {
     const uqApp = useUqApp();
@@ -20,7 +21,7 @@ export function PageAchieve() {
         { path: pathSumGroup, caption: '销售小组' },
     ];
     let gs: GAtom[] = [gSubject, gPersonPost, gGroupPost];
-    return <Page header="业绩设置">
+    return <Page header={captionAchieve}>
         <Sep sep={3} />
         {
             arr.map((v, index) => {

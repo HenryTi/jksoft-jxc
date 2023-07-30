@@ -8,6 +8,7 @@ import { gSubject } from "./achieve/AtomSubject";
 import { routeAtom } from "../routeAtom";
 import { gPersonPost } from "./achieve/AtomPersonPost";
 import { gGroupPost } from "./achieve/AtomGroupPost";
+import { routeUser } from "./user";
 
 export const pathProp = 'prop';
 export function routeAdmin(uqApp: UqApp) {
@@ -16,6 +17,7 @@ export function routeAdmin(uqApp: UqApp) {
         <Route path={`${pathProp}/:prop`} element={<PagePropEdit />} />
         <Route path={pathAdmin} element={<PageAdmin />} />
         {routeAchieve}
+        {routeUser}
         {routeAtom(uqApp, gSubject)}
         {routeAtom(uqApp, gPersonPost)}
         {routeAtom(uqApp, gGroupPost)}

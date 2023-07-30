@@ -1081,7 +1081,13 @@ export class UqMan {
                 promise = this.apiID(({ id, IDX: undefined }), EnumResultType.data);
                 this.cachePromise[id] = promise;
             }
-            let ret = await promise;
+            let ret: any;
+            try {
+                ret = await promise;
+            }
+            catch (err) {
+                console.error(err);
+            }
             if (ret !== undefined) {
                 obj = ret[0];
                 this.cache[id] = (obj === undefined) ? null : obj;

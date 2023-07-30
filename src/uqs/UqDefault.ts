@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Jul 27 2023 14:13:31 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sat Jul 29 2023 18:25:18 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -850,6 +850,48 @@ export interface ResultChangeSumFormula {
 	ret: ReturnChangeSumFormulaRet[];
 }
 
+export interface ParamUserSiteFromTonwaUser {
+	tonwaUser: number;
+}
+export interface ReturnUserSiteFromTonwaUserRet {
+	userSite: number;
+}
+export interface ResultUserSiteFromTonwaUser {
+	ret: ReturnUserSiteFromTonwaUserRet[];
+}
+
+export interface ParamChangeIxMySum {
+	userSite: number;
+	added: {
+		id: number;
+	}[];
+	removed: {
+		idDel: number;
+	}[];
+
+}
+export interface ResultChangeIxMySum {
+}
+
+export interface ParamGetIxMySum {
+	userSite: number;
+}
+export interface ReturnGetIxMySumUsers {
+	tonwaUser: number;
+	userSite: number;
+}
+export interface ReturnGetIxMySumAtoms {
+	userSite: number;
+	atom: number;
+	phrase: string;
+	no: string;
+	ex: string;
+}
+export interface ResultGetIxMySum {
+	users: ReturnGetIxMySumUsers[];
+	atoms: ReturnGetIxMySumAtoms[];
+}
+
 export interface ParamGetAllFormula {
 }
 export interface ReturnGetAllFormulaRet {
@@ -1104,6 +1146,9 @@ export interface UqExt extends Uq {
 	SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
 	ChangeSumFormulaCaption: UqAction<ParamChangeSumFormulaCaption, ResultChangeSumFormulaCaption>;
 	ChangeSumFormula: UqAction<ParamChangeSumFormula, ResultChangeSumFormula>;
+	UserSiteFromTonwaUser: UqAction<ParamUserSiteFromTonwaUser, ResultUserSiteFromTonwaUser>;
+	ChangeIxMySum: UqAction<ParamChangeIxMySum, ResultChangeIxMySum>;
+	GetIxMySum: UqQuery<ParamGetIxMySum, ResultGetIxMySum>;
 	GetAllFormula: UqQuery<ParamGetAllFormula, ResultGetAllFormula>;
 	SetSumGroupPerson: UqAction<ParamSetSumGroupPerson, ResultSetSumGroupPerson>;
 	IxBud: UqIX<any>;
@@ -3627,6 +3672,117 @@ export const uqSchema={
                     {
                         "name": "id",
                         "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "usersitefromtonwauser": {
+        "name": "UserSiteFromTonwaUser",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "tonwaUser",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "userSite",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "changeixmysum": {
+        "name": "ChangeIxMySum",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "userSite",
+                "type": "id"
+            }
+        ],
+        "arrs": [
+            {
+                "name": "added",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            },
+            {
+                "name": "removed",
+                "fields": [
+                    {
+                        "name": "idDel",
+                        "type": "id"
+                    }
+                ]
+            }
+        ],
+        "returns": [] as any
+    },
+    "getixmysum": {
+        "name": "GetIxMySum",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "userSite",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "users",
+                "fields": [
+                    {
+                        "name": "tonwaUser",
+                        "type": "id"
+                    },
+                    {
+                        "name": "userSite",
+                        "type": "id"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "userSite",
+                        "type": "id"
+                    },
+                    {
+                        "name": "atom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
                     }
                 ]
             }

@@ -186,6 +186,68 @@ RETURNS ret (
     }
 }
 
+ACT UserSiteFromTonwaUser(
+    tonwaUser ID,
+)
+RETURNS ret (
+    userSite ID,
+) {
+    VAR user ID = ID($User New KEY tonwaUser=tonwaUser);
+    VAR userSite ID = ID($UserSite New KEY user=user, site=$site);
+    INTO ret SELECT userSite;
+}
+
+ACT ChangeIxMySum (
+    userSite ID,
+    ARR added (
+        id ID,
+    ),
+    ARR removed (
+        idDel ID,
+    ),
+) {
+    FOR added {
+        WITH IxMySum I=userSite X=id;
+    }
+    FOR removed {
+        WITH IxMySum I=userSite X=idDel DEL;
+    }
+}
+
+QUERY GetIxMySum ver 0.1 (
+    userSite ID,
+)
+RETURNS users (
+    tonwaUser ID,
+    userSite ID,
+)
+RETURNS atoms (
+    userSite ID,
+    atom ID,
+    phrase PHRASE,
+    no NO,
+    ex CHAR(200),
+) {
+    INTO users SELECT z.tonwaUser, y.id as userSite
+        FROM (
+            SELECT a.i
+                FROM IxMySum as a
+                    JOIN $usersite as b ON b.id=a.i
+                WHERE b.site=$site
+                GROUP BY a.i
+            ) as x
+            JOIN $usersite as y ON y.id=x.i
+            JOIN $user as z ON z.id=y.user
+        WHERE (y.id=userSite OR userSite IS NULL);
+    INTO atoms SELECT a.userSite, d.id as atom, f.name as phrase, d.no, d.ex
+        FROM users as a
+            JOIN IxMySum as b ON b.i=a.userSite
+            JOIN Atom as d ON d.id=b.x
+            JOIN Bud as e ON e.id=d.base
+            JOIN $phrase as f ON f.id=e.phrase
+        ;
+}
+
 QUERY GetAllFormula()
 RETURNS ret (
     * SumFormula,

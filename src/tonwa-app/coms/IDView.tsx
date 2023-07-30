@@ -16,7 +16,12 @@ export function IDView<T>({ id, uq, Template }: Props<T>) {
             if (id === undefined || id === null) return;
             let obj = uq.idCache<any>(id);
             if (obj === undefined) {
-                obj = await uq.idObj(id);
+                try {
+                    obj = await uq.idObj(id);
+                }
+                catch (err) {
+                    console.error(err);
+                }
             }
             setValue(obj);
         })();

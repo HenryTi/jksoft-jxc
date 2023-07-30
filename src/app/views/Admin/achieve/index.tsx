@@ -3,7 +3,7 @@ import { PageAchieve, pathAchieve } from "./PageAchieve";
 import { PageSumGroup, pathSumGroup } from "./PageSumGroup";
 import { PageSumFormula, pathSumFormula } from "./PageSumFormula";
 
-export { pathAchieve } from './PageAchieve';
+export * from './PageAchieve';
 
 export const routeAchieve = <>
     <Route path={pathAchieve} element={<PageAchieve />} />

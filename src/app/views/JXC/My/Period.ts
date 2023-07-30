@@ -1,24 +1,24 @@
 import { Atom, Getter, WritableAtom, atom } from "jotai";
 import moment from "moment";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { env, getAtomValue, setAtomValue } from "tonwa-com";
 
 export enum EnumPeriod { day = 0, month = 1, week = 2, year = 3 }
-/*
-export interface ItemPeriodSum extends ReturnGetObjectItemPeriodSumRet {
-    id: number;
-    object: number;
-    post: Post;
-    item: Item;
-    value: number;
+
+const periodTypeKey = 'periodType';
+const periodTypeDefault = EnumPeriod.day;
+function loadPeriod() {
+    let pt = localStorage.getItem(periodTypeKey);
+    if (pt === null) return EnumPeriod.day;
+    let n = Number(pt);
+    if (Number.isNaN(n) === true) return periodTypeDefault;
+    if (n < EnumPeriod.day || n > EnumPeriod.year) return periodTypeDefault;
+    return n as EnumPeriod;
+}
+function savePeriod(periodType: EnumPeriod) {
+    localStorage.setItem(periodTypeKey, String(periodType));
 }
 
-export interface PostPeriodSum {
-    post: Post;
-    itemColl: { [item in keyof typeof Item]: ItemPeriodSum };
-    itemList: ItemPeriodSum[];
-}
-*/
 export abstract class Period {
     protected readonly timezone: number;
     protected readonly unitBizMonth: number;
@@ -122,12 +122,15 @@ class WeekPeriod extends Period {
     init(): void {
         let { to } = getAtomValue(this.state);
         this.type = EnumPeriod.week;
-        let day = to.getDay();
-        let diff = to.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
-        to.setDate(to.getDate() + 7);
+        let dayOfWeek = to.getDay();
+        let dayOfMonth = to.getDate();
+        let diff = dayOfMonth - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // adjust when day is sunday
+        let from = new Date(to.setDate(diff));
+        let toValue = new Date(to);
+        toValue.setDate(to.getDate() + 7);
         setAtomValue(this.state, {
-            from: new Date(to.setDate(diff)),
-            to,
+            from,
+            to: toValue,
         });
     }
     prev(): void {
@@ -284,10 +287,12 @@ function createPeriod(periodType: EnumPeriod, timezone: number, unitBizMonth: nu
     return period;
 }
 
-export function usePeriod(periodType: EnumPeriod, timezone: number, unitBizMonth: number, unitBizDate: number): [Period, (periodType: EnumPeriod) => void] {
+export function usePeriod(timezone: number, unitBizMonth: number, unitBizDate: number): [Period, (periodType: EnumPeriod) => void] {
+    let periodType: EnumPeriod = loadPeriod();
     const [period, setPeriod] = useState(createPeriod(periodType, timezone, unitBizDate, unitBizMonth));
     function setNewPeriod(newPeriodType: EnumPeriod) {
         setPeriod(createPeriod(newPeriodType, timezone, unitBizDate, unitBizMonth));
+        savePeriod(newPeriodType);
     }
     return [period, setNewPeriod];
 }
