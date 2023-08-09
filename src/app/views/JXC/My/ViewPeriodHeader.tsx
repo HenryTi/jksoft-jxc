@@ -1,6 +1,7 @@
 import { FA } from "tonwa-com";
-import { EnumPeriod, usePeriod } from "./Period";
+import { EnumPeriod, Period, usePeriod } from "./Period";
 import { useAtomValue } from "jotai";
+import { useEffect } from "react";
 
 const cnColPeriod = "col text-center border-start border-end";
 const cnPeriod = " py-2 px-3 ";
@@ -13,11 +14,7 @@ const periodList: [EnumPeriod, string][] = [
     // [EnumPeriod.year, '年', undefined],
 ];
 
-export function ViewPeriodHeader() {
-    let timezone: number = 8;
-    let unitBizMonth: number = 6;
-    let unitBizDate: number = 1;
-    const [period, setPeriod] = usePeriod(timezone, unitBizMonth, unitBizDate);
+export function ViewPeriodHeader({ period, setEnumPeriod }: { period: Period; setEnumPeriod: (enumPeriod: EnumPeriod) => void }) {
     let hasNext = useAtomValue(period.hasNext);
     let caption = useAtomValue(period.caption);
     function prev() {
@@ -33,7 +30,7 @@ export function ViewPeriodHeader() {
                     let [ep, title] = v;
                     let cn = cnPeriod + (ep === period.type ? cnTabCur : cnTab);
                     return <div key={title} className={cnColPeriod}
-                        onClick={() => setPeriod(ep)}>
+                        onClick={() => setEnumPeriod(ep)}>
                         <div className={cn}>{title}</div>
                     </div>;
                 })

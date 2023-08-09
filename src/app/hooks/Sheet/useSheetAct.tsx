@@ -1,4 +1,4 @@
-import { Band, PageQueryCacheData } from "app/coms";
+import { Band, PageMoreCacheData } from "app/coms";
 import { atom, useAtomValue } from "jotai";
 import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -363,7 +363,7 @@ export function useSheetAct(options: PropsSheetAct) {
         sheet.id = id;
         setAtomValue(atomSheet, { ...sheet });
         removeSheetFromCache();
-        let data = uqApp.pageCache.getPrevData<PageQueryCacheData>();
+        let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (data) {
             data.addItem({
                 ...sheet,
@@ -396,7 +396,7 @@ export function useSheetAct(options: PropsSheetAct) {
 
     function removeSheetFromCache() {
         let sheet = getAtomValue(atomSheet);
-        let data = uqApp.pageCache.getPrevData<PageQueryCacheData>();
+        let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (data) {
             let sheetId = sheet.id;
             data.removeItem<{ id: number; }>(v => v.id === sheetId) as any;

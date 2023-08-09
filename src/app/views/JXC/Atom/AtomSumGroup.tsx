@@ -10,13 +10,13 @@ const options: OptionsUseBizAtom = {
 }
 
 function PageNew() {
-    let ret = useBizAtomNew(options);
-    return ret;
+    let { page: Page } = useBizAtomNew(options);
+    return Page;
 }
 
 function PageView() {
-    let ret = useBizAtomView(options);
-    return ret;
+    let { page } = useBizAtomView(options);
+    return page;
 }
 
 function PageList() {
@@ -24,8 +24,8 @@ function PageList() {
         ViewItemAtom: ViewItemID,
         top: undefined,
     })
-    let ret = useBizAtomList(optionsList);
-    return ret;
+    let { page } = useBizAtomList(optionsList);
+    return page;
 }
 
 export const gSumGroup: GAtom = {

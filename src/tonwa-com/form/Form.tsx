@@ -1,6 +1,6 @@
 import { FormEvent, useRef } from 'react';
 import { VBandContainerContext, Band, BandContainerProps, BandFieldErrors, BandMemos, BandTemplateProps } from '../band';
-import { FormContext, VFormContext, useForm } from './FormContext';
+import { FormContext, VFormContext, useTForm } from './FormContext';
 import { BandFieldError } from '../band';
 import { Rule } from '../fields';
 import { useAtomValue } from 'jotai';
@@ -46,7 +46,7 @@ export function Form(props: FormProps) {
 }
 
 export function FormErrors() {
-    let form = useForm();
+    let form = useTForm();
     let { errors } = useAtomValue(form.errorResponse);
     if (!errors) return null;
     return <>
@@ -55,7 +55,7 @@ export function FormErrors() {
 }
 
 export function BandFormErrors() {
-    let form = useForm();
+    let form = useTForm();
     let { errors } = useAtomValue(form.errorResponse);
     if (!errors) return null;
     return <Band>

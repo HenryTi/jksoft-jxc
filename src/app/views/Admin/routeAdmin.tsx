@@ -9,6 +9,8 @@ import { routeAtom } from "../routeAtom";
 import { gPersonPost } from "./achieve/AtomPersonPost";
 import { gGroupPost } from "./achieve/AtomGroupPost";
 import { routeUser } from "./user";
+import { gUom, gUomI } from "./uom";
+// import { routeUomList } from "./uom";
 
 export const pathProp = 'prop';
 export function routeAdmin(uqApp: UqApp) {
@@ -21,7 +23,12 @@ export function routeAdmin(uqApp: UqApp) {
         {routeAtom(uqApp, gSubject)}
         {routeAtom(uqApp, gPersonPost)}
         {routeAtom(uqApp, gGroupPost)}
+        {routeAtom(uqApp, gUom)}
+        {routeAtom(uqApp, gUomI)}
     </>;
 }
+
+// {routeUomList}
+
 // export const routeAdminTab = <Route path={pathAdmin + '/*'} element={<TabAdmin />} />;
 // export const adminTab = { to: '/' + pathAdmin, caption: '管理员', icon: 'wrench' };

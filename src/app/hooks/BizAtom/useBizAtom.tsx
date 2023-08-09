@@ -1,7 +1,7 @@
 import { QueryMore } from "app/tool";
 import { UqApp, useUqApp } from "app/UqApp";
 import { Biz, BizBud, EntityAtom } from "app/Biz";
-import { uqAppModal } from "tonwa-app";
+import { PickProps, uqAppModal } from "tonwa-app";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { Atom, EnumAtom } from "uqs/UqDefault";
 
@@ -13,6 +13,18 @@ export function pathAtomList(atomName: string) {
     return `${atomName}-list`;
 }
 
+export function pathAtomView(atomName: string) {
+    return `${atomName}-view/:id`;
+}
+
+export function pathAtomEdit(atomName: string) {
+    return `${atomName}-edit/:id`;
+}
+
+export function pathAtom(atomName: string) {
+    return `${atomName}/:id`;
+}
+
 export interface ViewPropRowProps {
     name: string;
     label: string;
@@ -22,9 +34,10 @@ export interface ViewPropRowProps {
 export interface ViewPropProps extends ViewPropRowProps {
     id: number;
     value: string | number;
-    ValueTemplate?: (props: { value: any; }) => JSX.Element;
     savePropMain: (id: number, name: string, value: string | number) => Promise<void>;
     savePropEx: (id: number, bizBud: BizBud, value: string | number) => Promise<void>;
+    ValueTemplate?: (props: { value: any; }) => JSX.Element;
+    pickValue?: (props: PickProps) => Promise<string | number>;
 }
 
 export interface OptionsUseBizAtom {
@@ -37,9 +50,15 @@ export interface UseBizAtomReturn {
     uqApp: UqApp;
     biz: Biz;
     entity: EntityAtom;
-    metric: string;
+    uom: boolean;
     pathView: string;
     pathList: string;
+    getAtom(id: number): Promise<{
+        main: any;
+        props: { [prop: string]: { bud: number; phrase: string; value: number; } };
+        propsStr: { [prop: string]: { bud: number; phrase: string; value: string; } };
+        entityAtom: EntityAtom;
+    }>;
     getEntityAtom: (phrase: string) => EntityAtom;
     savePropMain: (id: number, name: string, value: string | number) => Promise<void>;
     savePropEx: (id: number, bizBud: BizBud, value: string | number) => Promise<void>;
@@ -59,6 +78,26 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
 
     function getEntityAtom(phrase: string): EntityAtom {
         return biz.entities[phrase] as EntityAtom;
+    }
+
+    async function getAtom(id: number) {
+        let { main: [main], budsInt, budsDec, budsStr } = await uq.GetAtom.query({ id });
+        let props: { [prop: string]: { bud: number; phrase: string; value: number; } } = {};
+        for (let bud of budsInt) {
+            props[bud.phrase] = bud;
+        }
+        for (let bud of budsDec) {
+            props[bud.phrase] = bud;
+        }
+        let propsStr: { [prop: string]: { bud: number; phrase: string; value: string; } } = {};
+        for (let bud of budsStr) {
+            propsStr[bud.phrase] = bud;
+        }
+        let { phrase } = main;
+        let entityAtom = biz.entities[phrase] as EntityAtom;
+        return {
+            main, props, propsStr, entityAtom
+        };
     }
 
     async function savePropMain(id: number, name: string, value: string | number) {
@@ -108,9 +147,10 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         uqApp,
         biz,
         entity,
-        metric: entity.metric,
+        uom: entity.uom,
         pathView,
         pathList,
+        getAtom,
         getEntityAtom,
         savePropMain,
         savePropEx,

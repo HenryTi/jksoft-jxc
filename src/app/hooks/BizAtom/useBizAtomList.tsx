@@ -21,12 +21,41 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
         case 0: break;
         case 1: entityAtom = children[0]; break;
         default:
-            return <PageTypes />;
+            return {
+                page: <PageTypes />,
+            };
     }
     const right = <Link className="btn btn-sm btn-success me-2" to={`../${pathAtomNew(entityAtom.name)}`}>
         <FA name="plus" />
     </Link>;
-    return <PageList />;
+    const { ViewItemAtom } = options;
+    let caption = entityAtom.caption ?? entityAtom.name;
+    let searchParam = {
+        atom: entityAtom.phrase,
+        key: undefined as string,
+    };
+    function ViewItem({ value }: { value: any }) {
+        return <Link to={`../${pathView}/${value.id}`}>
+            <div className="px-3 py-2">
+                <ViewItemAtom value={value} />
+            </div>
+        </Link>;
+    }
+    // pageSize={20}
+    // pageMoreSize={1}
+    const sortField = 'id';
+    const none = <div className='m-3 small text-muted'>[无{caption}]</div>;
+    return {
+        header: caption,
+        right,
+        query: searchAtoms,
+        param: searchParam,
+        sortField,
+        ViewItem,
+        none,
+        page: <PageList />,
+        top,
+    };
 
     function PageTypes() {
         let caption = entityAtom.caption ?? entityAtom.name;
@@ -48,26 +77,10 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     }
 
     function PageList() {
-        const { ViewItemAtom } = options;
-        let caption = entityAtom.caption ?? entityAtom.name;
-        let searchParam = {
-            atom: entityAtom.phrase,
-            key: undefined as string,
-        };
-        function ViewItem({ value }: { value: any }) {
-            return <Link to={`../${pathView}/${value.id}`}>
-                <div className="px-3 py-2">
-                    <ViewItemAtom value={value} />
-                </div>
-            </Link>;
-        }
-        // pageSize={20}
-        // pageMoreSize={1}
-        const none = <div className='m-3 small text-muted'>[无{caption}]</div>;
-        return <PageQueryMore header={`${caption}`} right={right}
+        return <PageQueryMore header={caption} right={right}
             query={searchAtoms}
             param={searchParam}
-            sortField="id"
+            sortField={sortField}
             ViewItem={ViewItem}
             none={none}
         >

@@ -3,7 +3,7 @@ import { useBandContainer } from '../band';
 import { ButtonAsync, FA } from '../coms';
 import { EnumString, resStrings } from '../res';
 import { checkRule, FieldItem } from '../fields';
-import { useForm } from './FormContext';
+import { useTForm } from './FormContext';
 import { atom, useAtom, useAtomValue } from 'jotai';
 
 export interface ButtonProps {
@@ -25,7 +25,7 @@ class SubmitItem implements FieldItem {
 //const submitProxy = proxy({ readOnly: false, disabled: false });
 
 export function Submit({ name, className, children, onSubmit, disabled }: ButtonProps & { onSubmit: (data: any) => Promise<[name: string, err: string][] | string[] | string | void>; }) {
-    let form = useForm();
+    let form = useTForm();
     let [errorResponse, setErrorResponse] = useAtom(form.errorResponse);
     let bandContainer = useBandContainer();
     let { fields, fieldStates } = bandContainer;
@@ -93,7 +93,7 @@ export function Submit({ name, className, children, onSubmit, disabled }: Button
 }
 
 export function Clear({ className, children }: ButtonProps) {
-    let form = useForm();
+    let form = useTForm();
     function onClick(evt: React.MouseEvent) {
         evt.preventDefault();
         form.clearValues();
@@ -104,7 +104,7 @@ export function Clear({ className, children }: ButtonProps) {
 }
 
 export function ClearErrorsButton({ className, children }: ButtonProps) {
-    let form = useForm();
+    let form = useTForm();
     let { hasError } = useAtomValue(form.errorResponse);
     function onClick(evt: React.MouseEvent) {
         evt.preventDefault();

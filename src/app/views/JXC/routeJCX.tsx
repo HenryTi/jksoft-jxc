@@ -19,6 +19,8 @@ import { EntitySpec } from "app/Biz/EntityAtom";
 import { pathSubjectHistory } from "app/hooks";
 import { routeAtom } from "../routeAtom";
 import { routeMy } from "./My";
+//import { gUom } from "../Admin/uom";
+//{routeAtom(uqApp, gUom)}
 
 export const pathJXC = 'jxc';
 export const pathSheetCenter = 'sheet-center';

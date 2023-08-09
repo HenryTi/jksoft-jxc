@@ -65,6 +65,6 @@ export class FormContext extends BandContainerContext<FormProps> {
 
 export const VFormContext = React.createContext<FormContext>(undefined);
 
-export function useForm() {
+export function useTForm() {
     return useContext(VFormContext);
 }

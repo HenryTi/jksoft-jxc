@@ -1,0 +1,220 @@
+-- UOM: Unit of Measure, 计量单位
+
+-- 基本单位
+BIZ ATOM Uom {
+    PROP discription CHAR;      -- 基本不需要描述。也可以：g=重量克
+    PROP type Radio UomType;
+    /* (
+        count '计数'            = 1,
+        length '长度'           = 2,
+        area '面积'             = 3,
+        volume '体积'           = 4,
+        weight '重量'           = 5,
+        time '时长'             = 6,
+        currency '货币'         = 7,
+    );
+    */
+};
+
+BIZ BudOptions UomType (
+    count '计数'            = 1,
+    length '长度'           = 2,
+    area '面积'             = 3,
+    volume '体积'           = 4,
+    weight '重量'           = 5,
+    time '时长'             = 6,
+    currency '货币'         = 7,
+);
+
+-- 计量单位
+-- 比如支是计量单位，一只含有几个毫升。毫升就是基本单位
+Biz ATOM UomI {
+    PROP discription CHAR;      -- 计量单位需要描述
+    PROP uom ATOM Uom;
+    PROP ratio DEC;
+};
+
+-- 换算单位
+-- 比如盒，还有10支，盒就是换算单位
+BIZ ATOM UomX {
+};
+
+-- UomY 层级间的关系
+IX IxUom (
+    i,                          -- UomI 计量单位
+    x,                          -- UomX 换算单位
+    ratio VALUE,                -- uomx = ratio * uomi;
+    prev ID,                    -- 上一层的UomX
+    prevRatio VALUE DEFAULT 1,  -- 跟上一层的比率
+    -- valid TINYINT DEFAULT 1,
+);
+
+ID AtomUom ver 0.4 (
+    id,
+    KEY atom ID Atom *,
+    KEY uom ID Atom *,          -- 给定UomI or UomX
+    visible TINYINT DEFAULT 1,
+);
+
+ID AtomSpec ver 0.4 (
+    id,
+    KEY atomUom ID AtomUom *,   -- atom and uom
+    KEY spec ID *,              -- spec, 0 when no spec
+);
+
+QUERY GetAtomUom(
+    id ID,
+)
+RETURNS uomI (
+    id ID,
+    no NO,
+    ex EX,
+)
+RETURNS uomX (
+    id ID,
+    no NO,
+    ex EX,
+    ratio VALUE,
+    prevEx EX,
+    prevRatio VALUE,
+    atomUom ID,
+) {
+    -- uomi ID;
+    VAR budUom ID = BudValueInt(id, PhraseId('atom.$.uom'));
+    INTO uomI SELECT a.id, a.no, a.ex
+        FROM Atom as a
+        WHERE a.id=budUom;
+    INTO uomX SELECT b.id, b.no, b.ex, a.ratio
+        , CASE WHEN c.visible=1 THEN c.id ELSE NULL END as atomUom
+        , d.ex as prevEx, a.prevRatio
+        FROM IxUom as a
+            JOIN Atom as b ON b.id=a.x
+            LEFT JOIN Atom as d ON d.id=a.prev
+            LEFT JOIN AtomUom as c ON c.atom=id AND c.uom=a.x
+        WHERE a.i=budUom
+        ORDER BY a.ratio;
+}
+
+ACT SaveUomX (
+    i ID,
+    no NO,
+    ex CHAR(100),
+    ratio VALUE,
+)
+RETURNS ret (
+    id ID,
+) {
+    VAR x ID;
+    VAR base ID = BudSiteId('atom.uomx');
+    WITH ATOM ID TO x KEY(base, no) SET ex=ex;
+    WITH IxUom i=i x=x SET ratio=ratio; -- , valid=1;
+
+    -- 修改层间的ratio
+    VAR prev ID = a.x, pRatio VALUE = a.ratio 
+        FROM IxUom as a 
+        WHERE a.i=i AND a.ratio<ratio -- AND a.valid=1
+        ORDER BY a.ratio ASC LIMIT 1;
+    IF prev IS NOT NULL {
+        WITH IxUom i=i x=x SET prev=prev, prevRatio=ratio/pRatio;
+    }
+    VAR next ID = a.x, nRatio VALUE = a.ratio
+        FROM IxUom as a 
+        WHERE a.i=i AND a.ratio>ratio -- AND a.valid=1
+        ORDER BY a.ratio ASC LIMIT 1;
+    IF next IS NOT NULL {
+        WITH IxUom i=i x=next SET prev=x, prevRatio=nRatio/ratio;
+    }
+
+    INTO ret SELECT x as id;
+}
+
+ACT DelUomX (
+    uomI ID,
+    uomX ID,
+) {
+    WITH IxUom i=uomI x=uomX DEL;
+}
+
+ACT SaveAtomUom ver 0.3 (
+    atom ID,
+    uom ID,
+)
+RETURNS ret (
+    id ID AtomUom,
+) {
+    VAR uomPhrase CHAR(200) = AtomPhrase(uom);
+    VAR id ID = ID(AtomUom new KEY atom=atom, uom=uom);
+    WITH AtomUom ID=id SET visible=1;
+    IF uomPhrase='atom.uomi' {
+        VAR phraseId ID = PhraseId('atom.$.uom');
+        WITH IxBudInt I=atom X=phraseId SET value=uom;
+    }
+    INTO ret SELECT id;
+}
+
+ACT HideAtomUomX (
+    id ID
+) {
+    WITH AtomUom ID=id SET visible=0;
+}
+
+ACT DeleteAtomUomI (
+    atom ID,
+    uomI ID,
+) {
+    FOR (VAR uom ID OF SELECT a.uom FROM AtomUom as a WHERE a.atom=atom) {
+        WITH AtomUom KEY(atom as atom, uom as uom) SET visible=0;
+    }
+    VAR phraseId ID = PhraseId('atom.$.uom');
+    WITH IxBudInt I=atom X=phraseId DEL;
+}
+
+ACT SaveAtomSpec (
+    atomUom ID,
+    spec ID,
+)
+RETURNS ret (
+    id ID AtomSpec,
+) {
+    VAR id ID = ID(AtomSpec new KEY atomUom=atomUom, spec=spec);
+    INTO ret SELECT id;
+}
+
+QUERY GetUomI (
+    id ID,              -- UomI
+)
+RETURNS UomI (
+    * ATOM,
+    discription CHAR(100),
+    ratio VALUE,
+    uom ID Atom,
+    uomNo NO,
+    uomEx CHAR(100),
+    uomDiscription CHAR(100),
+)
+RETURNS UomX (
+    * ATOM,
+    ratio VALUE,
+) {
+    VAR phraseDiscription ID = PhraseId('atom.uomi.discription');
+    VAR phraseRatio ID = PhraseId('atom.uomi.ratio');
+    VAR phraseUom ID = PhraseId('atom.uomi.uom');
+    VAR uom ID = BudValueInt(id, phraseUom);
+
+    INTO UomI SELECT * a
+        , BudValueStr(id, phraseDiscription) as discription
+        , BudValueDec(id, phraseRatio) as ratio
+        , c.id as uom
+        , c.no as uomNo
+        , c.ex as uomEx
+        , BudValueStr(c.id, phraseDiscription) as uomDiscription
+        FROM Atom as a
+            JOIN IxBudInt as b ON b.i=a.id AND b.x=phraseUom
+            JOIN Atom as c ON c.id=b.value
+        WHERE a.id=id;
+    INTO UomX SELECT * b, a.ratio
+        FROM IxUom as a
+            JOIN ATOM as b ON b.id=a.x
+        WHERE a.i=id
+        ORDER BY a.ratio ASC;
+};

@@ -32,9 +32,9 @@ ID Metric ver 0.3 (
     template ID,            -- 计量模板id
 ) +(base, no, type)
 VALUES 
-(0, CurrencyName.cny, MetricType.currency),
-(0, CurrencyName.usd, MetricType.currency),
-(0, CurrencyName.jpy, MetricType.currency),
+(phraseId('subject.moniker'), CurrencyName.cny, MetricType.currency),
+(phraseId('subject.moniker'), CurrencyName.usd, MetricType.currency),
+(phraseId('subject.moniker'), CurrencyName.jpy, MetricType.currency),
 ;
 
 -- 计量项，一个计量包含几个计量项
@@ -48,9 +48,9 @@ ID MetricItem ver 0.3 (
     template ID,                -- 计量项模板id
 ) + (base, no)
 VALUES
-(ID(Metric new KEY base=0, no=CurrencyName.cny), CurrencyName.cny),
-(ID(Metric new KEY base=0, no=CurrencyName.usd), CurrencyName.usd),
-(ID(Metric new KEY base=0, no=CurrencyName.jpy), CurrencyName.jpy),
+(ID(Metric new KEY base=phraseId('subject.moniker'), no=CurrencyName.cny), CurrencyName.cny),
+(ID(Metric new KEY base=phraseId('subject.moniker'), no=CurrencyName.usd), CurrencyName.usd),
+(ID(Metric new KEY base=phraseId('subject.moniker'), no=CurrencyName.jpy), CurrencyName.jpy),
 ;
 
 -- site 自己的计量单位模板
@@ -59,9 +59,9 @@ IX SiteMetric ver 0.1 (
     xi Metric,
 ) +(ix, xi)
 VALUES
-(0, ID(Metric new KEY base=0, no=CurrencyName.cny)),
-(0, ID(Metric new KEY base=0, no=CurrencyName.usd)),
-(0, ID(Metric new KEY base=0, no=CurrencyName.jpy)),
+(0, ID(Metric new KEY base=phraseId('subject.moniker'), no=CurrencyName.cny)),
+(0, ID(Metric new KEY base=phraseId('subject.moniker'), no=CurrencyName.usd)),
+(0, ID(Metric new KEY base=phraseId('subject.moniker'), no=CurrencyName.jpy)),
 ;
 
 IDX DxAtomMetric (

@@ -53,7 +53,7 @@ export class EntitySpec extends Entity {
 export class EntityAtom extends Entity {
     base: EntityAtom;
     spec: EntitySpec;
-    metric: string;
+    uom: boolean;
     readonly children: EntityAtom[] = [];
 
     protected override buildBuds() {
@@ -84,7 +84,7 @@ export class EntityAtom extends Entity {
             case 'states': this.fromStates(val); break;
             case 'base': this.fromBase(val); break;
             case 'spec': this.fromSpec(val); break;
-            case 'metric': this.metric = val; break;
+            case 'uom': this.uom = val; break;
         }
     }
 

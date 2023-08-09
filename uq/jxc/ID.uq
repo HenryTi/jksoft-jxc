@@ -49,6 +49,13 @@ IDX SheetRed (
     id,
     red TINYINT DEFAULT 1,  -- 红冲单挂这里，挂主表
 );
+
+-- 比如：valid Atom
+IX IxAtom (
+    i,                  -- bud of atom state
+    x,                  -- atom
+);
+
 /*
 ID User (
     id,

@@ -22,6 +22,9 @@ export function IDView<T>({ id, uq, Template }: Props<T>) {
                 catch (err) {
                     console.error(err);
                 }
+                finally {
+                    if (obj === undefined) obj = null;
+                }
             }
             setValue(obj);
         })();

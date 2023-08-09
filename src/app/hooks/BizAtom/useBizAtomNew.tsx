@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Page } from "tonwa-app";
+import { Page, useModal } from "tonwa-app";
 import { FormRow, FormRowsView } from "app/coms";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -7,6 +7,7 @@ import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { useEffectOnce } from "tonwa-com";
 import { EntityAtom } from "app/Biz";
 import { useState } from "react";
+import { Atom } from "uqs/UqDefault";
 
 interface OptionsNew {
 }
@@ -26,18 +27,49 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
     });
 
     if (entity === undefined) {
-        return <Page header="新建">
-            <div className="m-3">
-                暂时没有内容，随后处理
-            </div>
-        </Page>;
+        let viewNew = <div className="m-3">
+            暂时没有内容，随后处理
+        </div>;
+
+        return {
+            page: <Page header="新建">
+                {viewNew}
+            </Page>,
+            view: viewNew,
+        };
     }
-    return <PageNew />;
+    const { caption } = entity;
+    return {
+        page: <PageNew />,
+        view: <ViewNew />,
+        modal: <ModalNew />,
+    };
 
     function PageNew() {
-        const { caption } = entity;
-        const navigate = useNavigate();
+        return <Page header={`新建${caption}`}>
+            <ViewNew />
+        </Page>;
+    }
 
+    function ViewNew() {
+        const navigate = useNavigate();
+        function afterSubmit(atom: Atom) {
+            navigate(`../${pathView}/${atom.id}`, { replace: true });
+        }
+        return <ViewNewBase afterSubmit={afterSubmit} />;
+    }
+
+    function ModalNew() {
+        const { closeModal } = useModal();
+        function afterSubmit(atom: Atom) {
+            closeModal(atom);
+        }
+        return <Page header={`新建${caption}`}>
+            <ViewNewBase afterSubmit={afterSubmit} />
+        </Page>;
+    }
+
+    function ViewNewBase({ afterSubmit }: { afterSubmit: (atom: Atom) => void; }) {
         async function actSave(entityAtom: EntityAtom, no: string, data: any) {
             const { ex } = data;
             let ret = await uq.SaveAtom.submit({ atom: entityAtom.phrase, no, ex });
@@ -67,12 +99,10 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
         const { register, handleSubmit, formState: { errors }, } = useForm({ mode: 'onBlur' });
         async function onSubmit(data: any) {
             let ret = await actSave(entity, no, data);
-            navigate(`../${pathView}/${ret.id}`, { replace: true });
+            afterSubmit?.({ ...data, ...ret });
         }
-        return <Page header={`新建${caption}`}>
-            <form onSubmit={handleSubmit(onSubmit)} className="container my-3 pe-5">
-                <FormRowsView rows={formRows} {...{ register, errors }} />
-            </form>
-        </Page>;
+        return <form onSubmit={handleSubmit(onSubmit)} className="container my-3 pe-5">
+            <FormRowsView rows={formRows} {...{ register, errors }} />
+        </form>;
     }
 }

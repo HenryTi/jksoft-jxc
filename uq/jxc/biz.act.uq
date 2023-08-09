@@ -19,7 +19,7 @@ RETURNS ret (
     ASSERT ROLE (Role.经理, 'Permit.检验', 'Permit.入库', 'Permit.入库.上架');
     INTO ret SELECT a.site as id
         FROM $UserSite as a
-        WHERE a.user=$user and a.site=BudId(ROLE(Permit.入库.上架));
+        WHERE a.user=$user and a.site=BudSiteId(ROLE(Permit.入库.上架));
 };
 */
 
@@ -31,18 +31,16 @@ Biz ACT SaveAtom (
 RETURNS ret (
     id ID,
 ) {
-    VAR base ID = BudId(atom);
+    VAR base ID = BudSiteId(atom);
 
     -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
     VAR id ID = 0;
     SET id = ID(Atom KEY base=base, no=no);
     IF id IS NULL {
         SET id = ID(Atom new KEY base=base,no=no);
-        WITH Atom as a ID=id SET a.ex=ex;
     }
-    ELSE {
-        SET id=-id;
-    }
+    WITH Atom as a ID=id SET a.ex=ex;
+    WITH IxAtom i=base x=id;
     INTO ret SELECT id;
 }
 
@@ -66,6 +64,13 @@ Biz ACT SaveBud(
         }
     }
 };
+
+Biz Act DelAtom (
+    id ID,
+) {
+    VAR base ID = a.base FROM Atom as a WHERE a.id=id;
+    WITH IxAtom i=base x=id DEL;
+}
 
 Biz Act SaveSpec ver 0.1 (
     spec CHAR(100),
@@ -91,7 +96,7 @@ Biz ACT SaveSheet (
 RETURNS ret (
     id ID,
 ) {
-    VAR base ID = BudId(sheet);
+    VAR base ID = BudSiteId(sheet);
     VAR me ID = Me();
 
     VAR sheetId ID;
@@ -173,10 +178,11 @@ PAGE (
     ex CHAR(50),
     phrase PHRASE,
 ) {
-    VAR base ID = BudId(atom);
+    VAR base ID = BudSiteId(atom);
 
     PAGE SELECT a.id, a.no, a.ex, d.name as phrase
-        FROM Atom as a
+        FROM IxAtom as x 
+            JOIN Atom as a ON x.i=a.base AND a.id=x.x
             JOIN Bud as b ON b.id=a.base
             JOIN $phrase as d ON d.id=b.phrase
         WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
@@ -228,7 +234,8 @@ RETURNS budsStr (
             ON b.id=a.base
     )
     SELECT a.id, a.no, a.ex, d.name as phrase
-        FROM Atom as a
+        FROM IxAtom as x 
+            JOIN Atom as a ON x.i=a.base AND a.id=x.x
             JOIN Bud as b ON b.id=a.base
             JOIN pPhrase as c ON c.id=b.phrase
             JOIN $phrase as d ON d.id=b.phrase
@@ -309,7 +316,8 @@ RETURNS budsStr (
             ON b.id=a.base
     )
     SELECT a.id, a.no, a.ex, d.name as phrase
-        FROM Atom as a
+        FROM IxAtom as x 
+            JOIN Atom as a ON x.i=a.base AND a.id=x.x
             JOIN Bud as b ON b.id=a.base
             JOIN pPhrase as c ON c.id=b.phrase
             JOIN $phrase as d ON d.id=b.phrase
@@ -398,7 +406,6 @@ RETURNS buds (
 
 Biz Query GetAtom (
     id ID,
-    budNames CHAR(300),
 )
 RETURNS main (
     id ID,
@@ -409,7 +416,7 @@ RETURNS main (
 RETURNS budsInt (
     bud ID,
     phrase CHAR(50),
-    value INT,
+    value BIGINT,
 )
 RETURNS budsDec (
     bud ID,
@@ -431,27 +438,27 @@ RETURNS budsStr (
         FROM IxBudInt as a
             JOIN Atom as b ON b.id=a.i
             JOIN Bud as c ON c.id=b.base
-            JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
+            -- JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
             JOIN $Phrase as e ON e.id=a.x
-        WHERE a.i=id and d.type=EnumBizType.prop;
+        WHERE a.i=id and e.type=EnumBizType.prop;
     INTO budsDec SELECT a.x as bud
         , e.name as phrase
         , a.value
         FROM IxBudDec as a
             JOIN Atom as b ON b.id=a.i
             JOIN Bud as c ON c.id=b.base
-            JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
+            -- JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
             JOIN $Phrase as e ON e.id=a.x
-        WHERE a.i=id and d.type=EnumBizType.prop;
+        WHERE a.i=id and e.type=EnumBizType.prop;
     INTO budsStr SELECT a.x as bud
         , e.name as phrase
         , a.value
         FROM IxBudStr as a
             JOIN Atom as b ON b.id=a.i
             JOIN Bud as c ON c.id=b.base
-            JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
+            -- JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
             JOIN $Phrase as e ON e.id=a.x
-        WHERE a.i=id and d.type=EnumBizType.prop;
+        WHERE a.i=id and e.type=EnumBizType.prop;
         
     /*
     -- 为什么要取detail？

@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { IDView, Page, useModal } from "tonwa-app";
-import { ButtonSubmit, FA, List, LMR, Sep, useEffectOnce } from "tonwa-com";
+import { ButtonSubmitAsync, FA, List, LMR, Sep, useEffectOnce } from "tonwa-com";
 import { Band } from "app/coms";
 import { ChangeEvent, useState } from "react";
 import { arrType, collPropDataType, TypeItem } from "./types";
@@ -148,9 +148,9 @@ function PagePropNew({ IDName }: { IDName: string; }) {
                 {viewMemo}
             </Band>
             <Band>
-                <ButtonSubmit isSubmiting={submiting} className="btn btn-primary" disabled={!submitable}>
+                <ButtonSubmitAsync isSubmiting={submiting} className="btn btn-primary" disabled={!submitable}>
                     {contentSubmit}
-                </ButtonSubmit>
+                </ButtonSubmitAsync>
             </Band>
         </form>
     </Page>;

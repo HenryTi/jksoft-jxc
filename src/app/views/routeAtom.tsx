@@ -1,12 +1,12 @@
 import { EntityAtom } from "app/Biz";
 import { UqApp } from "app/UqApp";
-import { pathAtomList, pathAtomNew } from "app/hooks";
+import { pathAtom, pathAtomEdit, pathAtomList, pathAtomNew, pathAtomView } from "app/hooks";
 import { GAtom } from "app/tool";
 import React from "react";
 import { Route } from "react-router-dom";
 
 export function routeAtom(uqApp: UqApp, gAtom: GAtom) {
-    const { name, caption, pageNew, pageList, pageView } = gAtom;
+    const { name, caption, pageNew, pageList, pageView, pageEdit } = gAtom;
     const entity = uqApp.biz.entities[name] as EntityAtom;
     const ga = {
         ...gAtom,
@@ -18,8 +18,9 @@ export function routeAtom(uqApp: UqApp, gAtom: GAtom) {
         <Route path={pathAtomNew(name)} element={pageNew} />
         <Route path={`${pathAtomList(name)}`} element={pageList} />
         <Route path={`${pathAtomList(name)}/:atom`} element={pageList} />
-        <Route path={`${name}-view/:id`} element={pageView} />
-        <Route path={`${name}/:id`} element={pageView} />
+        <Route path={`${pathAtomEdit(name)}`} element={pageEdit} />
+        <Route path={`${pathAtomView(name)}`} element={pageView} />
+        <Route path={`${pathAtom(name)}`} element={pageView} />
     </React.Fragment>;
 }
 

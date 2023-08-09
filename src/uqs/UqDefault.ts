@@ -1,6 +1,6 @@
-//=== UqApp builder created on Sat Jul 29 2023 18:25:18 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue Aug 08 2023 23:07:58 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqID, UqIX, UqQuery, UqAction } from "tonwa-uq";
+import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 
@@ -27,6 +27,8 @@ export enum EnumID {
 	MetricItem = 'metricitem',
 	AtomMetric = 'atommetric',
 	AtomMetricSpec = 'atommetricspec',
+	AtomUom = 'atomuom',
+	AtomSpec = 'atomspec',
 	SumFormula = 'sumformula',
 	Bud = 'bud',
 	History = 'history',
@@ -52,10 +54,6 @@ export interface $phraseInActs extends ID {
 	base: number;
 	valid: number;
 	owner: number;
-	type: number;
-}
-
-export interface $ixphrase extends IX {
 	type: number;
 }
 
@@ -240,6 +238,12 @@ export interface ParamSaveBud {
 	str: string;
 }
 export interface ResultSaveBud {
+}
+
+export interface ParamDelAtom {
+	id: number;
+}
+export interface ResultDelAtom {
 }
 
 export interface ParamSaveSpec {
@@ -463,7 +467,6 @@ export interface ResultGetSheet {
 
 export interface ParamGetAtom {
 	id: number;
-	budNames: string;
 }
 export interface ReturnGetAtomMain {
 	id: number;
@@ -767,6 +770,134 @@ export interface ResultGetPendDetailFromSheetId {
 	ret: ReturnGetPendDetailFromSheetIdRet[];
 }
 
+export interface AtomUom extends ID {
+	atom: number;
+	uom: number;
+	visible: number;
+}
+
+export interface AtomUomInActs extends ID {
+	ID?: UqID<any>;
+	atom: number | ID;
+	uom: number | ID;
+	visible: number;
+}
+
+export interface AtomSpec extends ID {
+	atomUom: number;
+	spec: number;
+}
+
+export interface AtomSpecInActs extends ID {
+	ID?: UqID<any>;
+	atomUom: number | ID;
+	spec: number | ID;
+}
+
+export interface ParamGetAtomUom {
+	id: number;
+}
+export interface ReturnGetAtomUomUomI {
+	id: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnGetAtomUomUomX {
+	id: number;
+	no: string;
+	ex: string;
+	ratio: number;
+	prevEx: string;
+	prevRatio: number;
+	atomUom: number;
+}
+export interface ResultGetAtomUom {
+	uomI: ReturnGetAtomUomUomI[];
+	uomX: ReturnGetAtomUomUomX[];
+}
+
+export interface ParamSaveUomX {
+	i: number;
+	no: string;
+	ex: string;
+	ratio: number;
+}
+export interface ReturnSaveUomXRet {
+	id: number;
+}
+export interface ResultSaveUomX {
+	ret: ReturnSaveUomXRet[];
+}
+
+export interface ParamDelUomX {
+	uomI: number;
+	uomX: number;
+}
+export interface ResultDelUomX {
+}
+
+export interface ParamSaveAtomUom {
+	atom: number;
+	uom: number;
+}
+export interface ReturnSaveAtomUomRet {
+	id: number;
+}
+export interface ResultSaveAtomUom {
+	ret: ReturnSaveAtomUomRet[];
+}
+
+export interface ParamHideAtomUomX {
+	id: number;
+}
+export interface ResultHideAtomUomX {
+}
+
+export interface ParamDeleteAtomUomI {
+	atom: number;
+	uomI: number;
+}
+export interface ResultDeleteAtomUomI {
+}
+
+export interface ParamSaveAtomSpec {
+	atomUom: number;
+	spec: number;
+}
+export interface ReturnSaveAtomSpecRet {
+	id: number;
+}
+export interface ResultSaveAtomSpec {
+	ret: ReturnSaveAtomSpecRet[];
+}
+
+export interface ParamGetUomI {
+	id: number;
+}
+export interface ReturnGetUomIUomI {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+	discription: string;
+	ratio: number;
+	uom: number;
+	uomNo: string;
+	uomEx: string;
+	uomDiscription: string;
+}
+export interface ReturnGetUomIUomX {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+	ratio: number;
+}
+export interface ResultGetUomI {
+	UomI: ReturnGetUomIUomI[];
+	UomX: ReturnGetUomIUomX[];
+}
+
 export enum SumFormulaType {
 	person = 1,
 	group = 2
@@ -916,6 +1047,32 @@ export interface ParamSetSumGroupPerson {
 	act: number;
 }
 export interface ResultSetSumGroupPerson {
+}
+
+export interface ParamGetMySums {
+	start: any;
+	end: any;
+}
+export interface ReturnGetMySumsRet {
+	obj: number;
+	post: number;
+	subject: number;
+	value: number;
+}
+export interface ResultGetMySums {
+	ret: ReturnGetMySumsRet[];
+}
+
+export interface ParamGetMyBalance {
+}
+export interface ReturnGetMyBalanceRet {
+	obj: number;
+	post: number;
+	subject: number;
+	value: number;
+}
+export interface ResultGetMyBalance {
+	ret: ReturnGetMyBalanceRet[];
 }
 
 export interface IxBud extends IX {
@@ -1078,11 +1235,12 @@ export interface ResultHistoryStorage {
 
 export interface ParamActs {
 	$phrase?: $phraseInActs[];
-	$ixphrase?: $ixphrase[];
 	metric?: MetricInActs[];
 	metricItem?: MetricItemInActs[];
 	atomMetric?: AtomMetricInActs[];
 	atomMetricSpec?: AtomMetricSpecInActs[];
+	atomUom?: AtomUomInActs[];
+	atomSpec?: AtomSpecInActs[];
 	sumFormula?: SumFormulaInActs[];
 	ixBud?: IxBud[];
 	bud?: BudInActs[];
@@ -1100,7 +1258,6 @@ export interface UqExt extends Uq {
     Role: { [key: string]: string[] };
 
 	$phrase: UqID<any>;
-	$ixphrase: UqIX<any>;
 	$role_My: UqQuery<Param$role_My, Result$role_My>;
 	$role_Site_Users: UqQuery<Param$role_Site_Users, Result$role_Site_Users>;
 	$role_Site_Add_Admin: UqAction<Param$role_Site_Add_Admin, Result$role_Site_Add_Admin>;
@@ -1116,6 +1273,7 @@ export interface UqExt extends Uq {
 	$AllPhrases: UqQuery<Param$AllPhrases, Result$AllPhrases>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
 	SaveBud: UqAction<ParamSaveBud, ResultSaveBud>;
+	DelAtom: UqAction<ParamDelAtom, ResultDelAtom>;
 	SaveSpec: UqAction<ParamSaveSpec, ResultSaveSpec>;
 	SaveSheet: UqAction<ParamSaveSheet, ResultSaveSheet>;
 	SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
@@ -1141,6 +1299,16 @@ export interface UqExt extends Uq {
 	GetPendSheetFromTarget: UqQuery<ParamGetPendSheetFromTarget, ResultGetPendSheetFromTarget>;
 	GetPendDetailFromItem: UqQuery<ParamGetPendDetailFromItem, ResultGetPendDetailFromItem>;
 	GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
+	AtomUom: UqID<any>;
+	AtomSpec: UqID<any>;
+	GetAtomUom: UqQuery<ParamGetAtomUom, ResultGetAtomUom>;
+	SaveUomX: UqAction<ParamSaveUomX, ResultSaveUomX>;
+	DelUomX: UqAction<ParamDelUomX, ResultDelUomX>;
+	SaveAtomUom: UqAction<ParamSaveAtomUom, ResultSaveAtomUom>;
+	HideAtomUomX: UqAction<ParamHideAtomUomX, ResultHideAtomUomX>;
+	DeleteAtomUomI: UqAction<ParamDeleteAtomUomI, ResultDeleteAtomUomI>;
+	SaveAtomSpec: UqAction<ParamSaveAtomSpec, ResultSaveAtomSpec>;
+	GetUomI: UqQuery<ParamGetUomI, ResultGetUomI>;
 	SumFormula: UqID<any>;
 	SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
 	SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
@@ -1151,6 +1319,8 @@ export interface UqExt extends Uq {
 	GetIxMySum: UqQuery<ParamGetIxMySum, ResultGetIxMySum>;
 	GetAllFormula: UqQuery<ParamGetAllFormula, ResultGetAllFormula>;
 	SetSumGroupPerson: UqAction<ParamSetSumGroupPerson, ResultSetSumGroupPerson>;
+	GetMySums: UqQuery<ParamGetMySums, ResultGetMySums>;
+	GetMyBalance: UqQuery<ParamGetMyBalance, ResultGetMyBalance>;
 	IxBud: UqIX<any>;
 	Bud: UqID<any>;
 	History: UqID<any>;
@@ -1201,20 +1371,6 @@ export const uqSchema={
         "keys": [] as any,
         "global": false,
         "isMinute": false
-    },
-    "$ixphrase": {
-        "name": "$ixphrase",
-        "type": "ix",
-        "private": false,
-        "fields": [
-            {
-                "name": "type",
-                "type": "tinyint",
-                "null": false
-            }
-        ],
-        "ixx": false,
-        "hasSort": false
     },
     "$role_my": {
         "name": "$role_my",
@@ -1703,6 +1859,19 @@ export const uqSchema={
                 "name": "str",
                 "type": "char",
                 "size": 100
+            }
+        ],
+        "returns": [] as any
+    },
+    "delatom": {
+        "name": "DelAtom",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
             }
         ],
         "returns": [] as any
@@ -2447,11 +2616,6 @@ export const uqSchema={
             {
                 "name": "id",
                 "type": "id"
-            },
-            {
-                "name": "budNames",
-                "type": "char",
-                "size": 300
             }
         ],
         "returns": [
@@ -2493,7 +2657,7 @@ export const uqSchema={
                     },
                     {
                         "name": "value",
-                        "type": "int"
+                        "type": "bigint"
                     }
                 ]
             },
@@ -3433,6 +3597,415 @@ export const uqSchema={
             }
         ]
     },
+    "atomuom": {
+        "name": "AtomUom",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "atom",
+                "type": "id",
+                "ID": "atom",
+                "tuid": "atom"
+            },
+            {
+                "name": "uom",
+                "type": "id",
+                "ID": "atom",
+                "tuid": "atom"
+            },
+            {
+                "name": "visible",
+                "type": "tinyint"
+            }
+        ],
+        "keys": [
+            {
+                "name": "atom",
+                "type": "id",
+                "ID": "atom",
+                "tuid": "atom"
+            },
+            {
+                "name": "uom",
+                "type": "id",
+                "ID": "atom",
+                "tuid": "atom"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false,
+        "stars": [
+            "atom",
+            "uom"
+        ]
+    },
+    "atomspec": {
+        "name": "AtomSpec",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "atomUom",
+                "type": "id",
+                "ID": "atomuom",
+                "tuid": "atomuom"
+            },
+            {
+                "name": "spec",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "atomUom",
+                "type": "id",
+                "ID": "atomuom",
+                "tuid": "atomuom"
+            },
+            {
+                "name": "spec",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false,
+        "stars": [
+            "atomUom",
+            "spec"
+        ]
+    },
+    "getatomuom": {
+        "name": "GetAtomUom",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "uomI",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "uomX",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "ratio",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "prevEx",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "prevRatio",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "atomUom",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "saveuomx": {
+        "name": "SaveUomX",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 100
+            },
+            {
+                "name": "ratio",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "deluomx": {
+        "name": "DelUomX",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "uomI",
+                "type": "id"
+            },
+            {
+                "name": "uomX",
+                "type": "id"
+            }
+        ],
+        "returns": [] as any
+    },
+    "saveatomuom": {
+        "name": "SaveAtomUom",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "atom",
+                "type": "id"
+            },
+            {
+                "name": "uom",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "ID": "atomuom",
+                        "tuid": "atomuom"
+                    }
+                ]
+            }
+        ]
+    },
+    "hideatomuomx": {
+        "name": "HideAtomUomX",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [] as any
+    },
+    "deleteatomuomi": {
+        "name": "DeleteAtomUomI",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "atom",
+                "type": "id"
+            },
+            {
+                "name": "uomI",
+                "type": "id"
+            }
+        ],
+        "returns": [] as any
+    },
+    "saveatomspec": {
+        "name": "SaveAtomSpec",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "atomUom",
+                "type": "id"
+            },
+            {
+                "name": "spec",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "ID": "atomspec",
+                        "tuid": "atomspec"
+                    }
+                ]
+            }
+        ]
+    },
+    "getuomi": {
+        "name": "GetUomI",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "UomI",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "discription",
+                        "type": "char",
+                        "size": 100
+                    },
+                    {
+                        "name": "ratio",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "uom",
+                        "type": "id",
+                        "ID": "atom",
+                        "tuid": "atom"
+                    },
+                    {
+                        "name": "uomNo",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "uomEx",
+                        "type": "char",
+                        "size": 100
+                    },
+                    {
+                        "name": "uomDiscription",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            },
+            {
+                "name": "UomX",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "ratio",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            }
+        ]
+    },
     "sumformulatype": {
         "name": "SumFormulaType",
         "type": "enum",
@@ -3866,6 +4439,79 @@ export const uqSchema={
             }
         ],
         "returns": [] as any
+    },
+    "getmysums": {
+        "name": "GetMySums",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "start",
+                "type": "date"
+            },
+            {
+                "name": "end",
+                "type": "date"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "obj",
+                        "type": "id"
+                    },
+                    {
+                        "name": "post",
+                        "type": "id"
+                    },
+                    {
+                        "name": "subject",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            }
+        ]
+    },
+    "getmybalance": {
+        "name": "GetMyBalance",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "obj",
+                        "type": "id"
+                    },
+                    {
+                        "name": "post",
+                        "type": "id"
+                    },
+                    {
+                        "name": "subject",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            }
+        ]
     },
     "ixbud": {
         "name": "IxBud",
@@ -4339,6 +4985,17 @@ export const uqSchema={
             "name": "$unit",
             "type": "$unit"
         },
+        "$": {
+            "name": "$",
+            "type": "atom",
+            "props": [
+                {
+                    "name": "uom",
+                    "type": "prop",
+                    "dataType": "ID"
+                }
+            ]
+        },
         "b": {
             "name": "b",
             "type": "atom",
@@ -4493,7 +5150,7 @@ export const uqSchema={
                 {
                     "name": "厂家",
                     "type": "prop",
-                    "dataType": "ID",
+                    "dataType": "atom",
                     "atom": "contact"
                 }
             ],
@@ -4505,7 +5162,7 @@ export const uqSchema={
                     "dataType": "dec"
                 }
             ],
-            "metric": "*"
+            "uom": true
         },
         "toy": {
             "name": "toy",
@@ -4513,7 +5170,7 @@ export const uqSchema={
             "type": "atom",
             "caption": "玩具",
             "base": "goods",
-            "metric": "count"
+            "uom": true
         },
         "batchvalid": {
             "name": "batchvalid",
@@ -4570,7 +5227,7 @@ export const uqSchema={
             ],
             "base": "goods",
             "spec": "batchvalid",
-            "metric": "count"
+            "uom": true
         },
         "medicinechinese": {
             "name": "medicinechinese",
@@ -4585,7 +5242,8 @@ export const uqSchema={
                     "dataType": "char"
                 }
             ],
-            "base": "medicine"
+            "base": "medicine",
+            "uom": true
         },
         "specialmedicinechinese": {
             "name": "specialmedicinechinese",
@@ -4601,7 +5259,8 @@ export const uqSchema={
                 }
             ],
             "base": "medicine",
-            "spec": "batchvalid1"
+            "spec": "batchvalid1",
+            "uom": true
         },
         "medicaldevice": {
             "name": "medicaldevice",
@@ -4609,7 +5268,7 @@ export const uqSchema={
             "type": "atom",
             "caption": "医疗器械",
             "base": "goods",
-            "metric": "count"
+            "uom": true
         },
         "specshoe": {
             "name": "specshoe",
@@ -4637,7 +5296,8 @@ export const uqSchema={
             "type": "atom",
             "caption": "鞋",
             "base": "goods",
-            "spec": "specshoe"
+            "spec": "specshoe",
+            "uom": true
         },
         "concactproduct": {
             "name": "concactproduct",
@@ -5006,6 +5666,91 @@ export const uqSchema={
             "type": "tree",
             "caption": "供应商分组"
         },
+        "uom": {
+            "name": "uom",
+            "jName": "Uom",
+            "type": "atom",
+            "caption": "Uom",
+            "props": [
+                {
+                    "name": "discription",
+                    "type": "prop",
+                    "dataType": "char"
+                },
+                {
+                    "name": "type",
+                    "type": "prop",
+                    "dataType": "radio",
+                    "items": [
+                        [
+                            "count",
+                            "计数",
+                            1
+                        ],
+                        [
+                            "length",
+                            "长度",
+                            2
+                        ],
+                        [
+                            "area",
+                            "面积",
+                            3
+                        ],
+                        [
+                            "volume",
+                            "体积",
+                            4
+                        ],
+                        [
+                            "weight",
+                            "重量",
+                            5
+                        ],
+                        [
+                            "time",
+                            "时长",
+                            6
+                        ],
+                        [
+                            "currency",
+                            "货币",
+                            7
+                        ]
+                    ]
+                }
+            ]
+        },
+        "uomi": {
+            "name": "uomi",
+            "jName": "UomI",
+            "type": "atom",
+            "caption": "UomI",
+            "props": [
+                {
+                    "name": "discription",
+                    "type": "prop",
+                    "dataType": "char"
+                },
+                {
+                    "name": "uom",
+                    "type": "prop",
+                    "dataType": "atom",
+                    "atom": "uom"
+                },
+                {
+                    "name": "ratio",
+                    "type": "prop",
+                    "dataType": "dec"
+                }
+            ]
+        },
+        "uomx": {
+            "name": "uomx",
+            "jName": "UomX",
+            "type": "atom",
+            "caption": "UomX"
+        },
         "sum": {
             "name": "sum",
             "jName": "Sum",
@@ -5029,11 +5774,51 @@ export const uqSchema={
                 }
             ]
         },
+        "moniker": {
+            "name": "moniker",
+            "jName": "Moniker",
+            "type": "subject",
+            "caption": "Moniker",
+            "props": [
+                {
+                    "name": "currency",
+                    "type": "prop",
+                    "dataType": "none"
+                }
+            ]
+        },
         "subject": {
             "name": "subject",
             "jName": "Subject",
             "type": "atom",
-            "caption": "科目"
+            "caption": "科目",
+            "props": [
+                {
+                    "name": "metric1",
+                    "type": "prop",
+                    "dataType": "atom",
+                    "atom": "person"
+                },
+                {
+                    "name": "balance",
+                    "type": "prop",
+                    "caption": "结余",
+                    "dataType": "radio",
+                    "items": [
+                        [
+                            "none",
+                            "无",
+                            0
+                        ],
+                        [
+                            "yes",
+                            "有",
+                            1
+                        ]
+                    ]
+                }
+            ],
+            "uom": true
         },
         "sumpersonpost": {
             "name": "sumpersonpost",
@@ -5057,6 +5842,7 @@ export const uqSchema={
 }
 
 export enum EnumAtom {
+	$ = '$',
 	b = 'b',
 	Contact = 'contact',
 	Person = 'person',
@@ -5068,6 +5854,9 @@ export enum EnumAtom {
 	SpecialMedicineChinese = 'specialmedicinechinese',
 	MedicalDevice = 'medicaldevice',
 	Shoe = 'shoe',
+	Uom = 'uom',
+	UomI = 'uomi',
+	UomX = 'uomx',
 	Subject = 'subject',
 	SumPersonPost = 'sumpersonpost',
 	SumGroupPost = 'sumgrouppost',
@@ -5097,4 +5886,5 @@ export enum EnumSubject {
 	PersonSetting = 'personsetting',
 	Price = 'price',
 	Sum = 'sum',
+	Moniker = 'moniker',
 }

@@ -31,11 +31,16 @@ ID SumFormula ver 0.4 (
     valid TINYINT DEFAULT 1,        -- 0=不起作用
 );
 
-ID #SubjectBoundPost (
+ID #ObjPostSubject (
     id,
-    KEY bound ID,                   -- bound person
+    KEY obj ID,                     -- person or group
     KEY post ID,                    -- post phrase
     KEY subject ID,                 -- 科目
+);
+
+IDX ObjPostSubjectBalance (
+    id,
+    value VALUE,
 );
 
 -- 运算过程的参数
@@ -45,9 +50,19 @@ Biz Subject Sum {
     Assign startSumMonth INT;       -- 月汇总的开始。之前的月汇总是预置的，之后的月汇总是计算的。
 };
 
+Biz Subject Moniker {
+    Prop currency;
+};
+
 Biz Atom Subject '科目' UUID {
     -- Prop saleAmount '销售额';
     -- Prop grossProfit '有效额';
+    UOM;                            -- 带计量单位
+    Prop metric1 Atom Person;       -- Atom metric 
+    Prop balance '结余' Radio (
+        none '无' = 0,
+        yes '有' = 1,
+    );
 };
 
 Biz Atom SumPersonPost '岗位' {
@@ -64,7 +79,7 @@ Biz Atom SumGroupPost '职能组' {
 -- 3. subject = group @ subject 销售额
 -- 如果汇总月度或年度，i不同。比如，月度销售额，年度销售额，根据月度年度总额，分段计算不同的奖励。
 IX IxSumDate (
-    i,                              --- SubjectBoundPost
+    i,                              --- objPostSubject
     x Date,
     value VALUE,
 );
@@ -74,7 +89,7 @@ IX IxSumDate (
 ID #SumDayQueue (
     id MINUTE,
     KEY date Date,
-    KEY SubjectBoundPost ID SubjectBoundPost,
+    KEY objPostSubject ID ObjPostSubject,
 );
 
 Biz Atom SumGroup '小组合计' {
@@ -111,7 +126,7 @@ PAGE (
     selected TINYINT,
 ) {
     VAR person PHRASE = 'atom.person';
-    VAR base ID = BudId(person);
+    VAR base ID = BudSiteId(person);
 
     PAGE SELECT a.id, a.no, a.ex, d.name as phrase
         , case when exists(select x from IxSumGroup WHERE i=group AND x=a.id) then 1 else 0 end as selected
@@ -345,9 +360,9 @@ PROC CalcOneSource(sourceId ID) {
             ORDER BY a.id
     ) {
         VAR toValue VALUE = value*ratio;
-        VAR subjectBP ID SubjectBoundPost = ID(SubjectBoundPost new KEY bound=bound, post=post, subject=sumSubject);
+        VAR subjectBP ID ObjPostSubject = ID(ObjPostSubject new KEY obj=bound, post=post, subject=sumSubject);
         WITH IxSumDate I=subjectBP X=date SET value+=toValue;
-        WITH SumDayQueue KEY(date as date, subjectBP as subjectBoundPost);
+        WITH SumDayQueue KEY(date as date, subjectBP as objPostSubject);
     }
 };
 
@@ -356,23 +371,23 @@ PROC CalcGroup() LOG Error {
     VAR today DATE = uminutedate(uminute(), 8);
     LOG CONCAT('CalcGroup today = ', today);
     WHILE 1=1 {
-        VAR queueId ID = a.id, date DATE = a.date, subjectBoundPost ID = a.subjectBoundPost 
+        VAR queueId ID = a.id, date DATE = a.date, objPostSubject ID = a.objPostSubject 
             FROM SumDayQueue as a
             WHERE a.date<today
-            ORDER BY a.date, a.subjectBoundPost
+            ORDER BY a.date, a.objPostSubject
             LIMIT 1;
-        LOG CONCAT('CalcGroup date = ', ifnull(date, 'null'), ' subjectBoundPost=', subjectBoundPost);
+        LOG CONCAT('CalcGroup date = ', ifnull(date, 'null'), ' objPostSubject=', objPostSubject);
         IF date IS NULL {
             BREAK;
         }
         VAR site ID = c.base,
-            bound ID = a.bound,
+            obj ID = a.obj,
             subject ID = a.subject
-            FROM SubjectBoundPost as a 
-                JOIN Atom as b ON b.id=a.bound
+            FROM ObjPostSubject as a 
+                JOIN Atom as b ON b.id=a.obj
                 JOIN Bud as c ON c.id=b.base
-            WHERE a.id=subjectBoundPost;
-        VAR value VALUE = a.value FROM IxSumDate as a WHERE a.i=subjectBoundPost AND a.x=date;
+            WHERE a.id=ObjPostSubject;
+        VAR value VALUE = a.value FROM IxSumDate as a WHERE a.i=ObjPostSubject AND a.x=date;
         FOR (VAR post ID,               -- phrase, 个人的post，或者group phrase
             sumSubject ID,              -- sum subject 比如：提成，毛利润，销售额，积分，组提成，教练提成
             ratio VALUE
@@ -390,9 +405,9 @@ PROC CalcGroup() LOG Error {
                 ORDER BY a.id
         ) {
             LOG CONCAT('CalcGroup post = ', post, ' sumSubject=', sumSubject, ' ratio=', ratio);
-            VAR groupId VALUE = b.i FROM IxPost as a JOIN IxSumGroup as b ON b.i=a.i WHERE a.x=post AND b.x=bound;
+            VAR groupId VALUE = b.i FROM IxPost as a JOIN IxSumGroup as b ON b.i=a.i WHERE a.x=post AND b.x=obj;
             VAR toValue VALUE = value*ratio;
-            VAR subjectBP ID SubjectBoundPost = ID(SubjectBoundPost new KEY bound=groupId, post=post, subject=sumSubject);
+            VAR subjectBP ID ObjPostSubject = ID(ObjPostSubject new KEY obj=groupId, post=post, subject=sumSubject);
             VAR timeZone TINYINT = a.timeZone FROM $Site as a WHERE a.id=site;
             WITH IxSumDate I=subjectBP X=date SET value+=toValue;
         }
@@ -401,3 +416,41 @@ PROC CalcGroup() LOG Error {
     }
     LOG 'CalcGroup end';
 };
+
+Biz QUERY GetMySums ver 0.1 (
+    start DATE,
+    end DATE,
+)
+RETURNS ret (
+    obj ID,
+    post ID,
+    subject ID,
+    value VALUE,
+) {
+    VAR me ID = Me();
+    INTO ret SELECT b.obj, b.post, b.subject
+        , ifnull((
+            SELECT sum(m.value) 
+                FROM IxSumDate as m 
+                WHERE m.i=b.id AND m.x>=start AND m.x<end
+        ), 0) as value
+        FROM IxMySum as a
+            JOIN ObjPostSubject as b ON b.obj=a.x
+        WHERE a.i=me;
+}
+
+Biz QUERY GetMyBalance (
+)
+RETURNS ret (
+    obj ID,
+    post ID,
+    subject ID,
+    value VALUE,
+) {
+    VAR me ID = Me();
+    INTO ret SELECT b.obj, b.post, b.subject, c.value
+        FROM IxMySum as a
+            JOIN ObjPostSubject as b ON b.obj=a.x
+            JOIN ObjPostSubjectBalance as c ON c.id=b.id
+        WHERE a.i=me;
+}

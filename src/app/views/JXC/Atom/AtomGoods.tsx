@@ -10,29 +10,29 @@ export function ViewAtomGoods({ value }: { value: Atom; }) {
     </div>;
 }
 
-const optionsGoods: OptionsUseBizAtom = {
+const options: OptionsUseBizAtom = {
     atomName: EnumAtom.Goods,
     NOLabel: undefined,
     exLabel: undefined,
 }
 
 function PageNew() {
-    let ret = useBizAtomNew(optionsGoods);
-    return ret;
+    let { page: Page } = useBizAtomNew(options);
+    return Page;
 }
 
 function PageView() {
-    let ret = useBizAtomView(optionsGoods);
-    return ret;
+    let { page } = useBizAtomView(options);
+    return page;
 }
 
 function PageList() {
-    let options = Object.assign({}, optionsGoods, {
+    let optionsList = Object.assign({}, options, {
         ViewItemAtom: ViewAtomGoods,
         top: undefined,
     })
-    let ret = useBizAtomList(options);
-    return ret;
+    let { page } = useBizAtomList(optionsList);
+    return page;
 }
 
 export const gGoods: GAtom = {

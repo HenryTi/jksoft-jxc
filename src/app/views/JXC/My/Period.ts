@@ -7,7 +7,7 @@ export enum EnumPeriod { day = 0, month = 1, week = 2, year = 3 }
 
 const periodTypeKey = 'periodType';
 const periodTypeDefault = EnumPeriod.day;
-function loadPeriod() {
+export function loadPeriod() {
     let pt = localStorage.getItem(periodTypeKey);
     if (pt === null) return EnumPeriod.day;
     let n = Number(pt);
@@ -21,12 +21,14 @@ function savePeriod(periodType: EnumPeriod) {
 
 export abstract class Period {
     protected readonly timezone: number;
-    protected readonly unitBizMonth: number;
-    protected readonly unitBizDate: number;
-    constructor(timezone: number, unitBizMonth: number, unitBizDate: number) {
+    protected readonly siteBizMonth: number;
+    protected readonly siteBizDate: number;
+    protected readonly onChanged: (period: Period) => Promise<void>;
+    constructor(timezone: number, siteBizMonth: number, siteBizDate: number, onChanged: (period: Period) => Promise<void>) {
         this.timezone = timezone;
-        this.unitBizMonth = unitBizMonth;
-        this.unitBizDate = unitBizDate;
+        this.siteBizMonth = siteBizMonth;
+        this.siteBizDate = siteBizDate;
+        this.onChanged = onChanged;
         let date = this.newDate();
         this.state = atom({
             to: date,
@@ -39,7 +41,7 @@ export abstract class Period {
         });
         this.caption = atom((get) => this.getCaption(get));
         this.init();
-        this.canHasChild = true;
+        //this.canHasChild = true;
     }
     protected abstract getCaption(get: Getter): string;
     private newDate(): Date {
@@ -55,12 +57,12 @@ export abstract class Period {
     }, any, any>;
     readonly hasNext: Atom<boolean>;
     readonly caption: Atom<string>;
-
+    /*
     private canHasChild: boolean;
     private lysp: Period;
     get lastYearSamePeriod(): Period {
         if (this.canHasChild && !this.lysp) {
-            this.lysp = createPeriod(this.type, this.timezone, this.unitBizMonth, this.unitBizDate);
+            this.lysp = createPeriod(this.type, this.timezone, this.siteBizMonth, this.siteBizDate, undefined);
             let { from, to } = getAtomValue(this.lysp.state);
             setAtomValue(this.lysp.state, {
                 from: new Date(from.setFullYear(from.getFullYear() - 1)),
@@ -71,41 +73,53 @@ export abstract class Period {
         }
         return this.lysp;
     }
+    */
     getGrainSize(date: Date): string {
         return "";
     }
     abstract init(): void;
-    abstract prev(): void;
-    abstract next(): void;
+    protected abstract prevInternal(): void;
+    protected abstract nextInternal(): void;
+
+    prev(): void {
+        this.prevInternal();
+        //this.lastYearSamePeriod?.prevInternal();
+        this.onChanged?.(this);
+    }
+
+    next(): void {
+        this.nextInternal();
+        //this.lastYearSamePeriod?.nextInternal();
+        this.onChanged?.(this);
+    }
 }
 
 const weekday = '日一二三四五六';
 class DayPeriod extends Period {
     init(): void {
         this.type = EnumPeriod.day;
-        let { from, to } = getAtomValue(this.state);
-        to.setDate(from.getDate() + 1);
+        let { from: fromDate, to: toDate } = getAtomValue(this.state);
+        let from = new Date(fromDate);
+        let to = new Date(toDate);
+        to.setDate(fromDate.getDate() + 1);
         setAtomValue(this.state, {
             from,
             to,
-        })
+        });
     }
-    prev(): void {
+    protected override prevInternal(): void {
         let { from, to } = getAtomValue(this.state);
         setAtomValue(this.state, {
             to: new Date(to.setDate(to.getDate() - 1)),
             from: new Date(from.setDate(from.getDate() - 1)),
         });
-        this.lastYearSamePeriod?.prev();
     }
-    next(): void {
-        let { state } = this;
+    protected override nextInternal(): void {
         let { from, to } = getAtomValue(this.state);
         setAtomValue(this.state, {
             to: new Date(to.setDate(to.getDate() + 1)),
             from: new Date(from.setDate(from.getDate() + 1)),
         });
-        this.lastYearSamePeriod?.next();
     }
     protected getCaption(get: Getter): string {
         let { from } = get(this.state);
@@ -120,34 +134,33 @@ class DayPeriod extends Period {
 
 class WeekPeriod extends Period {
     init(): void {
-        let { to } = getAtomValue(this.state);
+        let { to: toDate } = getAtomValue(this.state);
         this.type = EnumPeriod.week;
-        let dayOfWeek = to.getDay();
-        let dayOfMonth = to.getDate();
+        let dayOfWeek = toDate.getDay();
+        let dayOfMonth = toDate.getDate();
         let diff = dayOfMonth - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // adjust when day is sunday
-        let from = new Date(to.setDate(diff));
-        let toValue = new Date(to);
-        toValue.setDate(to.getDate() + 7);
+        let to = new Date(toDate);
+        let from = new Date(toDate.setDate(diff));
+        // let toValue = new Date(to);
+        to.setDate(toDate.getDate() + 7);
         setAtomValue(this.state, {
             from,
-            to: toValue,
+            to,
         });
     }
-    prev(): void {
+    protected override prevInternal(): void {
         let { from, to } = getAtomValue(this.state);
         setAtomValue(this.state, {
             from: new Date(from.setDate(from.getDate() - 7)),
             to: new Date(to.setDate(to.getDate() - 7)),
         });
-        this.lastYearSamePeriod?.prev();
     }
-    next(): void {
+    protected override nextInternal(): void {
         let { from, to } = getAtomValue(this.state);
         setAtomValue(this.state, {
             from: new Date(from.setDate(from.getDate() + 7)),
             to: new Date(to.setDate(to.getDate() + 7)),
         });
-        this.lastYearSamePeriod?.next();
     }
     protected getCaption(get: Getter): string {
         let { from, to } = get(this.state);
@@ -155,10 +168,12 @@ class WeekPeriod extends Period {
         let yf = from.getFullYear();
         let mf = from.getMonth();
         let df = from.getDate();
-        let mt = to.getMonth();
-        let dt = to.getDate();
+        let toDate = new Date(to);
+        toDate.setDate(to.getDate() - 1);
+        let mt = toDate.getMonth();
+        let dt = toDate.getDate();
         return (yf === year ? '' : `${yf}年`) + `${mf + 1}月${df}日 - `
-            + (mt === mf ? '' : `${mt}月`) + `${dt}日`;
+            + (mt === mf ? '' : `${mt + 1}月`) + `${dt}日`;
     }
     getGrainSize(date: Date) {
         return moment(date).format("MM-DD");
@@ -167,37 +182,38 @@ class WeekPeriod extends Period {
 
 class MonthPeriod extends Period {
     init(): void {
-        let { from, to } = getAtomValue(this.state);
+        let { from: fromDate, to: toDate } = getAtomValue(this.state);
         this.type = EnumPeriod.month;
-        let year = to.getFullYear();
-        let month = to.getMonth();
-        let date = to.getDate();
-        if (date < this.unitBizDate) {
+        let year = toDate.getFullYear();
+        let month = toDate.getMonth();
+        let date = toDate.getDate();
+        if (date < this.siteBizDate) {
             month--;
             if (month < 0) { month = 11; year-- };
         }
-        let toValue: Date = new Date(from);
-        toValue.setMonth(to.getMonth() + 1);
+        let from = new Date(year, month, this.siteBizDate);
+        let to: Date = new Date(from);
+        to.setMonth(month + 1);
         setAtomValue(this.state, {
-            from: new Date(year, month, this.unitBizDate),
-            to: toValue,
+            from,
+            to,
         });
     }
-    prev(): void {
-        let { from, to } = getAtomValue(this.state);
+    protected override prevInternal(): void {
+        let { from: fromDate, to: toDate } = getAtomValue(this.state);
+        let from = new Date(fromDate.setMonth(fromDate.getMonth() - 1));
+        let to = new Date(toDate.setMonth(toDate.getMonth() - 1));
         setAtomValue(this.state, {
-            from: new Date(from.setMonth(from.getMonth() - 1)),
-            to: new Date(to.setMonth(to.getMonth() - 1)),
+            from,
+            to,
         });
-        this.lastYearSamePeriod?.prev();
     }
-    next(): void {
+    protected override nextInternal(): void {
         let { from, to } = getAtomValue(this.state);
         setAtomValue(this.state, {
             from: new Date(from.setMonth(from.getMonth() + 1)),
             to: new Date(to.setMonth(to.getMonth() + 1)),
         });
-        this.lastYearSamePeriod?.next();
     }
     protected getCaption(get: Getter): string {
         let { from, to } = get(this.state);
@@ -206,8 +222,8 @@ class MonthPeriod extends Period {
         let fm = from.getMonth();
         let tm = to.getMonth();
         let caption = `${thisYear === yf ? '' : yf + '年'}${fm + 1}月`;
-        if (this.unitBizDate > 1) {
-            caption += `${this.unitBizDate}日-${tm + 1}月${this.unitBizDate - 1}日`;
+        if (this.siteBizDate > 1) {
+            caption += `${this.siteBizDate}日-${tm + 1}月${this.siteBizDate - 1}日`;
         }
         return caption;
     }
@@ -223,42 +239,40 @@ class YearPeriod extends Period {
         let year = to.getFullYear();
         let month = to.getMonth();
         let date = to.getDate();
-        if (month < this.unitBizMonth) {
+        if (month < this.siteBizMonth) {
             year--;
-        } else if (date < this.unitBizDate) {
+        } else if (date < this.siteBizDate) {
             month++;
             if (month > 11) year++;
         }
-        month = this.unitBizMonth;
+        month = this.siteBizMonth;
         let toValue: Date = new Date(from);
         toValue.setFullYear(to.getFullYear() + 1);
         setAtomValue(this.state, {
-            from: new Date(year, month, this.unitBizDate),
+            from: new Date(year, month, this.siteBizDate),
             to: toValue,
         });
     }
-    prev(): void {
+    protected override prevInternal(): void {
         let { from, to } = getAtomValue(this.state);
         setAtomValue(this.state, {
             from: new Date(from.setFullYear(from.getFullYear() - 1)),
             to: new Date(to.setFullYear(to.getFullYear() - 1)),
         });
-        this.lastYearSamePeriod?.prev();
     }
-    next(): void {
+    protected override nextInternal(): void {
         let { from, to } = getAtomValue(this.state);
         setAtomValue(this.state, {
             from: new Date(from.setFullYear(from.getFullYear() + 1)),
             to: new Date(to.setFullYear(to.getFullYear() + 1)),
         });
-        this.lastYearSamePeriod?.next();
     }
     protected getCaption(get: Getter): string {
         let { from, to } = get(this.state);
         let fy = from.getFullYear();
         let ty = to.getFullYear();
         let caption: string;
-        switch (this.unitBizMonth) {
+        switch (this.siteBizMonth) {
             case 0:
                 caption = `${fy}年`;
                 break;
@@ -276,23 +290,25 @@ class YearPeriod extends Period {
     }
 }
 
-function createPeriod(periodType: EnumPeriod, timezone: number, unitBizMonth: number, unitBizDate: number): Period {
+function createPeriod(periodType: EnumPeriod, timezone: number, siteBizMonth: number, siteBizDate: number, onChanged: (period: Period) => Promise<void>): Period {
     let period: Period;
     switch (periodType) {
-        case EnumPeriod.day: period = new DayPeriod(timezone, unitBizMonth, unitBizDate); break;
-        case EnumPeriod.week: period = new WeekPeriod(timezone, unitBizMonth, unitBizDate); break;
-        case EnumPeriod.month: period = new MonthPeriod(timezone, unitBizMonth, unitBizDate); break;
-        case EnumPeriod.year: period = new YearPeriod(timezone, unitBizMonth, unitBizDate); break;
+        case EnumPeriod.day: period = new DayPeriod(timezone, siteBizMonth, siteBizDate, onChanged); break;
+        case EnumPeriod.week: period = new WeekPeriod(timezone, siteBizMonth, siteBizDate, onChanged); break;
+        case EnumPeriod.month: period = new MonthPeriod(timezone, siteBizMonth, siteBizDate, onChanged); break;
+        case EnumPeriod.year: period = new YearPeriod(timezone, siteBizMonth, siteBizDate, onChanged); break;
     }
     return period;
 }
 
-export function usePeriod(timezone: number, unitBizMonth: number, unitBizDate: number): [Period, (periodType: EnumPeriod) => void] {
+export function usePeriod(timezone: number, siteBizMonth: number, siteBizDate: number, onChanged: (period: Period) => Promise<void>): [Period, (periodType: EnumPeriod) => void] {
     let periodType: EnumPeriod = loadPeriod();
-    const [period, setPeriod] = useState(createPeriod(periodType, timezone, unitBizDate, unitBizMonth));
-    function setNewPeriod(newPeriodType: EnumPeriod) {
-        setPeriod(createPeriod(newPeriodType, timezone, unitBizDate, unitBizMonth));
+    const [period, setPeriod] = useState(createPeriod(periodType, timezone, siteBizDate, siteBizMonth, onChanged));
+    function setNewPeriod(newPeriodType: EnumPeriod): void {
+        let retPeriod = createPeriod(newPeriodType, timezone, siteBizDate, siteBizMonth, onChanged);
+        setPeriod(retPeriod);
         savePeriod(newPeriodType);
+        onChanged(retPeriod);
     }
     return [period, setNewPeriod];
 }

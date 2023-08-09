@@ -50,7 +50,7 @@ export abstract class UqAppBase<UQS = any> {
     readonly modal = {
         stack: atom([] as [JSX.Element, (value: any | PromiseLike<any>) => void, (result: any) => void][]),
     }
-    readonly pageCache = new PageCache();
+    readonly pageCache: PageCache;
 
     uqsMan: UQsMan;
     guest: number;

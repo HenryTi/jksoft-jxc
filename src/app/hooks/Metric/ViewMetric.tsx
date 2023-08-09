@@ -8,7 +8,6 @@ import { useRef, useState } from "react";
 
 export interface ViewMetricProps {
     id: number;
-    metric: string;
     className?: string;
 }
 
@@ -16,7 +15,7 @@ interface MetricItemEdit extends MetricItem {
     $div: MetricItem;
 }
 
-export function ViewMetric({ id, metric: metricName, className }: ViewMetricProps) {
+export function ViewMetric({ id, className }: ViewMetricProps) {
     const uqApp = useUqApp();
     const genMetric = useMetric();
     const { openModal } = useModal();
@@ -63,6 +62,7 @@ export function ViewMetric({ id, metric: metricName, className }: ViewMetricProp
             };
         }
         let ret = await openModal<MetricItemEdit>(<PageAdd no={retNo} div={ref.current.div} />);
+        if (ret === undefined) return;
         let { metric: savedMetric } = ref.current;
         let param = {
             ...ret,

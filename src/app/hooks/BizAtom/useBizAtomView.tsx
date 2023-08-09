@@ -1,24 +1,44 @@
-import React from "react";
-import { useQuery } from "react-query";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { Page } from "tonwa-app";
-import { Sep } from "tonwa-com";
+import { Page, PageSpinner } from "tonwa-app";
+import { Sep, Spinner, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, ViewPropRowProps, useBizAtom } from "./useBizAtom";
-import { ViewPropEx, ViewPropMain } from "./ViewProp";
-import { ViewMetric } from "../Metric";
+import { ViewAtomProp, ViewPropMain } from "./ViewAtomProp";
+import { EntityAtom } from "app/Biz";
+import { ViewUom } from "../Uom";
 
 export function useBizAtomView(options: OptionsUseBizAtom) {
-    const { NOLabel, exLabel } = options;
-    const gen = useBizAtom(options)
-    const { uqApp, biz, metric, savePropMain, savePropEx } = gen;
-    const { id: idString } = useParams();
-    const id = Number(idString);
-    const { UqDefault } = uqApp.uqs;
-    const { data: { main, props, propsStr, entityAtom } } = useQuery('PageProductView', async () => {
-        if (idString === undefined) {
+    const { id } = useParams();
+    return useBizAtomViewFromId({ ...options, id: Number(id) });
+}
+
+export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; }) {
+    const { NOLabel, exLabel, id } = options;
+    const { uom, getAtom, savePropMain, savePropEx } = useBizAtom(options)
+    const [state, setState] = useState<{
+        main: any,
+        props: { [prop: string]: { bud: number; phrase: string; value: number; } };
+        propsStr: { [prop: string]: { bud: number; phrase: string; value: string; } };
+        entityAtom: EntityAtom;
+    }>(undefined);
+    useEffectOnce(() => {
+        (async () => {
+            let ret = await getAtom(id);
+            setState(ret);
+        })();
+    });
+    if (state === undefined || state.entityAtom === undefined) return {
+        view: <Spinner />,
+        page: <PageSpinner />,
+    };
+    const { main, props, propsStr, entityAtom } = state;
+    /*
+    // useQuery在modal里面会引发错误
+    const { data: { main, props, propsStr, entityAtom } } = useQuery(['PageAtomView', id], async () => {
+        if (id === undefined) {
             return { main: {} as any, props: {} as any };
         }
-        let { main: [main], budsInt, budsDec, budsStr } = await UqDefault.GetAtom.query({ id, budNames: undefined });
+        let { main: [main], budsInt, budsDec, budsStr } = await UqDefault.GetAtom.query({ id });
         let props: { [prop: string]: { bud: number; phrase: string; value: number; } } = {};
         for (let bud of budsInt) {
             props[bud.phrase] = bud;
@@ -37,33 +57,48 @@ export function useBizAtomView(options: OptionsUseBizAtom) {
         refetchOnWindowFocus: false,
         cacheTime: 0,
     });
+    */
+    let { caption, props: atomProps } = entityAtom;
     const viewRows: ViewPropRowProps[] = [
         { name: 'id', label: 'id', readonly: true, },
         { name: 'no', label: NOLabel ?? 'NO', readonly: true, },
         { name: 'ex', label: exLabel ?? 'EX', },
     ];
-    let viewMetric: any;
-    if (metric !== undefined) {
-        viewMetric = <ViewMetric id={id} metric={metric} className="mt-3" />;
+    let viewUom: any;
+    if (uom === true) {
+        viewUom = <ViewUom id={id} className="mt-3" />;
     }
-    let { caption, props: atomProps } = entityAtom;
-    return <Page header={caption}>
-        {
-            viewRows.map((v, index) => <React.Fragment key={index}>
-                <ViewPropMain key={index} {...v} id={id} value={main[v.name]} savePropMain={savePropMain} savePropEx={savePropEx} />
-                <Sep />
-            </React.Fragment>)
-        }
-        {
-            atomProps.map(v => {
-                let { name, phrase, caption } = v;
-                let prop = props[phrase] ?? propsStr[phrase];
-                return <React.Fragment key={name}>
-                    <ViewPropEx id={id} name={name} label={caption ?? name} bizBud={v} value={prop?.value} savePropMain={savePropMain} savePropEx={savePropEx} />
+    return {
+        caption,
+        view: <View />,
+        page: <PageView />,
+        obj: main,
+    };
+
+    function View() {
+        return <>
+            {
+                viewRows.map((v, index) => <React.Fragment key={index}>
+                    <ViewPropMain key={index} {...v} id={id} value={main[v.name]} savePropMain={savePropMain} savePropEx={savePropEx} />
                     <Sep />
-                </React.Fragment>;
-            })
-        }
-        {viewMetric}
-    </Page>;
+                </React.Fragment>)
+            }
+            {
+                atomProps.map(v => {
+                    let { name, phrase, caption } = v;
+                    let prop = props[phrase] ?? propsStr[phrase];
+                    return <React.Fragment key={name}>
+                        <ViewAtomProp id={id} name={name} label={caption ?? name} bizBud={v} value={prop?.value} savePropMain={savePropMain} savePropEx={savePropEx} />
+                        <Sep />
+                    </React.Fragment>;
+                })
+            }
+            {viewUom}
+        </>;
+    }
+    function PageView() {
+        return <Page header={caption}>
+            <View />
+        </Page>;
+    }
 }

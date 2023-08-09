@@ -3,19 +3,21 @@ import { ButtonAsync, FA, LabelRow, LabelRowPropsBase } from "tonwa-com";
 import { useModal } from "../UqAppBase";
 import { Page } from "./page";
 
+export type OnValueChanged = (value: string | number) => Promise<void>;
+
 export interface PickProps {
     label: string | JSX.Element;
     value: string | number;
-    onValueChanged?: (value: string | number) => Promise<void> | void;
+    onValueChanged?: OnValueChanged;
 }
 
 export interface EditProps {
     label: string | JSX.Element;
     value: string | number;
     readonly?: boolean;         // default: false
-    onValueChanged?: (value: string | number) => Promise<void> | void;
+    onValueChanged?: OnValueChanged;
     pickValue?: (props: PickProps) => Promise<string | number>;
-    ValueTemplate?: (props: { value: string | number }) => JSX.Element;
+    ValueTemplate?: (props: { value: string | number; onValueChanged?: OnValueChanged; }) => JSX.Element;
 }
 
 export function LabelRowEdit(props: LabelRowPropsBase & EditProps) {
@@ -36,30 +38,24 @@ export function LabelRowEdit(props: LabelRowPropsBase & EditProps) {
         }
     }
     let right: any = <span className="p-3">&nbsp;</span>;
-    if (readonly !== true) {
-        right = <div onClick={onClick} className="cursor-pointer p-3"><FA name="pencil" className="text-info" /></div>;
+    if (pickValue !== null) {
+        if (readonly !== true) {
+            right = <div onClick={onClick} className="cursor-pointer p-3"><FA name="pencil" className="text-info" /></div>;
+        }
     }
     let viewValue = ValueTemplate === undefined ?
         <>{value}</>
         :
-        <ValueTemplate value={value} />;
+        <ValueTemplate value={value} onValueChanged={onValueChanged} />;
     return <LabelRow {...props}>
         {label}
-        <div className="ms-3">{viewValue}</div>
+        <div className="ms-3 position-relative">{viewValue}</div>
         {right}
     </LabelRow>;
 
     function OneModal() {
         const { closeModal } = useModal();
         const inp = useRef<HTMLInputElement>();
-        // const defaultValue = useAtomValue(atomValue);
-        // let value = defaultValue;
-        /*
-        function onChange(e: ChangeEvent) {
-            value = (e.target as HTMLInputElement).value;
-        }
-        onChange={onChange} 
-        */
         async function onSave() {
             closeModal(inp.current.value);
         }

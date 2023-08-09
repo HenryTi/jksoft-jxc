@@ -1,3 +1,4 @@
+import { ID } from "tonwa-uq";
 import { EntityAtom } from ".";
 import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
@@ -29,6 +30,19 @@ export class BudAtom extends BudDataType {
     }
     override scan(biz: Biz) {
         this.bizAtom = biz.entities[this.atom] as EntityAtom;
+    }
+}
+export class BudID extends BudDataType {
+    type = 'ID';
+    private IDName: string;
+    ID: ID;
+    fromSchema(schema: any) {
+        this.IDName = schema.ID;
+    }
+    override scan(biz: Biz) {
+        if (this.IDName !== undefined) {
+            this.ID = (biz.uqApp.uq as any)[this.IDName] as ID;
+        }
     }
 }
 abstract class BudTypeWithItems extends BudDataType {
@@ -67,8 +81,9 @@ export abstract class BizBud extends BizBase {
             case 'str':
                 budDataType = new BudString(); break;
             case 'atom':
-            case 'ID':
                 budDataType = new BudAtom(); break;
+            case 'ID':
+                budDataType = new BudID(); break;
             case 'radio': budDataType = new BudRadio(); break;
             case 'check': budDataType = new BudCheck(); break;
             case 'date': budDataType = new BudDate(); break;

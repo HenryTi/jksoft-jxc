@@ -3,6 +3,7 @@ import { Sep, Spinner } from "../coms";
 
 interface ItemProps<T> {
     value: T;
+    index?: number;
 }
 
 export interface ListPropsWithoutItems<T> {
@@ -67,7 +68,7 @@ export function List<T>(props: ListProps<T>) {
                             onChange={evt => onCheckChange(v, evt)} />
                     </label>
                     <div className="flex-grow-1 cursor-pointer" onClick={() => onItemNav(v)}>
-                        <ItemView value={v} />
+                        <ItemView value={v} index={index} />
                     </div>
                 </div>
             );
@@ -78,7 +79,7 @@ export function List<T>(props: ListProps<T>) {
                     <input type="checkbox" className=" mt-2 form-check-input" id={key}
                         onChange={evt => onCheckChange(v, evt)} />
                     <label className="form-check-label" htmlFor={key}>
-                        <ItemView value={v} />
+                        <ItemView value={v} index={index} />
                     </label>
                 </div>
             );
@@ -88,14 +89,14 @@ export function List<T>(props: ListProps<T>) {
         if (onItemNav) {
             className += ' tonwa-list-item'
         }
-        renderItem = v => {
+        renderItem = (v, index) => {
             let funcClick: any, cn: string;
             if (onItemNav) {
                 funcClick = () => onItemNav(v);
                 cn = 'tonwa-list-item cursor-pointer';
             }
             return <div onClick={funcClick} className={cn}>
-                <ItemView value={v} />
+                <ItemView value={v} index={index} />
             </div>
         };
     }

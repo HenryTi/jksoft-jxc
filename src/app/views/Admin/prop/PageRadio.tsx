@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { ChangeEvent, useState } from "react";
 import { IDView, Page, useModal } from "tonwa-app";
-import { ButtonAsync, ButtonSubmit, FA, List, LMR } from "tonwa-com";
+import { ButtonAsync, ButtonSubmitAsync, FA, List, LMR } from "tonwa-com";
 import { Band } from "app/coms";
 import { NextRight, NextTop } from "./NextTop";
 import { PageNextProps, RadioItem } from "./types";
@@ -82,9 +82,9 @@ function PageEditItem({ id, name, caption }: { id: number; name: string; caption
                 <input className="form-control" {...register('caption', { maxLength: 100, value: caption })} />
             </Band>
             <Band>
-                <ButtonSubmit isSubmiting={submiting} className="btn btn-primary" disabled={!submitable}>
+                <ButtonSubmitAsync isSubmiting={submiting} className="btn btn-primary" disabled={!submitable}>
                     提交
-                </ButtonSubmit>
+                </ButtonSubmitAsync>
             </Band>
         </form>
     </Page>;

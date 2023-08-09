@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { pathAchieve } from "./achieve";
 import { captionUser, pathUser } from "./user";
 import { captionAchieve } from "./achieve";
+import { captionUomList, pathUomList } from "./uom";
 
 export const pathAdmin = 'admin';
 export function PageAdmin() {
     const cmds = [
-        { label: captionAchieve, path: `/${pathAchieve}` },
-        { label: captionUser, path: `/${pathUser}` },
+        { label: captionAchieve, path: pathAchieve },
+        { label: captionUser, path: pathUser },
+        { label: captionUomList, path: pathUomList },
     ];
     return <Page header="管理员">
         {cmds.map((v, index) => {
