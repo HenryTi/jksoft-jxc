@@ -7,7 +7,7 @@ import { Band } from "app/coms";
 import { EntitySheet } from "app/Biz";
 import { useDetailPend } from "./Detail/Pend/useDetailPend";
 import { ViewPendRow } from "./ViewPendRow";
-import { ViewItemID } from "../../ViewItemID";
+import { ViewAtom } from "../../ViewAtom";
 
 const sheet = EnumSheet.SheetStoreOut;
 const caption = '出库单';
@@ -31,7 +31,7 @@ function PageStoreOut() {
         </Band>;
     }
     function ViewTarget({ sheet }: { sheet: Sheet; }) {
-        return <IDView id={sheet.target} uq={uq} Template={ViewItemID} />;
+        return <IDView id={sheet.target} uq={uq} Template={ViewAtom} />;
     }
     async function selectTarget() {
         return await selectAtom(uqApp, EnumAtom.Contact);

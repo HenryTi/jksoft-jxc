@@ -2,7 +2,7 @@ import { EntityAtom } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { OptionsUseBizAtom, pathAtomNew, useBizAtom } from "app/hooks";
-import { ViewItemID } from "app/views/ViewItemID";
+import { ViewAtom } from "app/views/ViewAtom";
 import { Link, useParams } from "react-router-dom";
 import { LinkModal, Page, useModal } from "tonwa-app";
 import { CheckAsync, FA, List } from "tonwa-com";
@@ -35,7 +35,7 @@ export function PageSumGroup() {
                 return <PageOneGroup group={value} />
             }
             return <LinkModal modal={openOneGroup}><div className="px-3 py-2" >
-                <ViewItemID value={value} />
+                <ViewAtom value={value} />
             </div>
             </LinkModal>;
         }
@@ -76,7 +76,7 @@ function PageOneGroup({ group }: { group: Atom; }) {
             await uq.SetSumGroupPerson.submit({ group: group.id, person: value.id, act, });
         }
         return <CheckAsync labelClassName="d-flex px-3 py-2" onCheckChanged={onCheckChanged} defaultChecked={value.selected === 1}>
-            <ViewItemID value={value} />
+            <ViewAtom value={value} />
         </CheckAsync>;
     }
     return <PageQueryMore header={`成员`}
@@ -87,7 +87,7 @@ function PageOneGroup({ group }: { group: Atom; }) {
         none={none}
     >
         <div className="p-3 tonwa-bg-gray-2">
-            <ViewItemID value={group} />
+            <ViewAtom value={group} />
         </div>
     </PageQueryMore>;
 }

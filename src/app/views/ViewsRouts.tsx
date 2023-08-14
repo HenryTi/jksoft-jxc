@@ -7,7 +7,8 @@ import { pathJXC, routeJCX, TabJXC } from './JXC';
 import { useUqApp } from 'app/UqApp';
 import { AppLogin, AppRegister, routePrivacy } from 'app/brand';
 import { useAtomValue } from 'jotai';
-import { routeAdmin } from './Admin';
+import { PageNoSite, routeAdmin } from './Admin';
+import { routeSiteAdmin } from './Admin/site';
 
 export function ViewsRoutes() {
     let uqApp = useUqApp();
@@ -15,11 +16,7 @@ export function ViewsRoutes() {
     let user = useAtomValue(atomUser);
     let siteLogined = useAtomValue(atomSiteLogined);
     let homeLayout: JSX.Element = (user !== undefined && siteLogined !== true) ?
-        <div>
-            <div className='m-3'>
-                没有授权。请联系管理员
-            </div>
-        </div>
+        <PageNoSite />
         :
         <PageTabsLayout tabs={[
             { to: '/' + pathJXC, caption: '首页', icon: 'home' },
@@ -38,6 +35,7 @@ export function ViewsRoutes() {
                 {routeMe}
                 {routeJCX(uqApp)}
                 {routeAdmin(uqApp)}
+                {routeSiteAdmin}
                 <Route path="/test" element={<Page header="Test">test</Page>} />
                 <Route path="/login/*" element={<AppLogin />} />
                 <Route path="/register" element={<AppRegister />} />

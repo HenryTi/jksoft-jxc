@@ -1,7 +1,7 @@
 import { Route, useNavigate, useParams } from "react-router-dom";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { ViewUomList } from "./ViewUomList";
-import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView, useBizAtomViewFromId } from "app/hooks";
+import { OptionsUseBizAtom, pathAtomList, useBizAtomList, useBizAtomNew, useBizAtomView, useBizAtomViewFromId } from "app/hooks";
 import { EnumAtom } from "uqs/UqDefault";
 import { ViewListHeader } from "./ViewListHeader";
 import { GAtom } from "app/tool";
@@ -55,12 +55,6 @@ function PageList() {
     >
         {top}
     </PageQueryMore>;
-    /*
-    return <Page header={captionUomList}>
-        <ViewUomList />
-        <ViewUomIList />
-    </Page>;
-    */
 }
 
 function PageNew() {
@@ -84,7 +78,6 @@ function ViewItemUomI({ value }: { value: any }) {
 }
 
 export const captionUomList = '计量单位';
-export const pathUomList = 'uomi-list';
 
 export const gUomI: GAtom = {
     name: options.atomName,

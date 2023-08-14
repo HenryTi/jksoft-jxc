@@ -4,7 +4,7 @@ import { EntitySubject } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { EnumSubject, ReturnHistoryStorage$page, ReturnReportStorage$page } from "uqs/UqDefault";
 import { EasyTime, FA, LMR, dateFromMinuteId } from "tonwa-com";
-import { useBizAtomMetricSpec } from "app/views/JXC/Atom";
+import { useBizAtomSpec } from "app/views/JXC/Atom";
 
 export interface OptionsUseSubject {
     subject: EnumSubject;
@@ -49,14 +49,14 @@ export function useSubject(options: OptionsUseSubject): ReturnUseSubject {
     }
 
     function ViewItem({ value: row, clickable }: { value: ReturnReportStorage$page; clickable?: boolean; }): JSX.Element {
-        const { id, metricItem, spec, value, init } = row;
-        const { viewAtom, viewMetricItem, viewSpec } = useBizAtomMetricSpec(id);
+        const { id, value, init } = row;
+        const { viewAtom, viewUom, viewSpec } = useBizAtomSpec(id);
         let icon = clickable === false ? '' : 'angle-right';
         return <div className="d-flex py-2 ps-3">
             <div className="row flex-grow-1">
                 <div className="col">{viewAtom}</div>
                 <div className="col">{viewSpec}</div>
-                <div className="col-2 fs-5 text-end">{(value + init).toFixed(0)} {viewMetricItem}</div>
+                <div className="col-2 fs-5 text-end">{(value + init).toFixed(0)} {viewUom}</div>
             </div>
             <div className="text-end ms-3 me-1">
                 <FA name={icon} className="text-muted" fixWidth={true} />

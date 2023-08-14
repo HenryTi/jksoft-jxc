@@ -49,9 +49,7 @@ export function useBuds({ entity: entityName, budNames, noMedsMessage }: Options
             if (entity === undefined) {
                 throw new Error('no Entity in bizBudOfEntity');
             }
-            let bud = entity.propColl[budName];
-            if (bud !== undefined) return bud;
-            bud = entity.assignColl[budName];
+            let bud = entity.buds[budName];
             if (bud !== undefined) return bud;
             throw new Error(`unknown Bud '${budName}' of Entity '${entity.phrase}'`);
         }
@@ -175,6 +173,6 @@ export function useAtomBudsSearch(options: OptionsUseBuds) {
 
 export function useAMSBudsSearch(options: OptionsUseBuds) {
     const { uq } = useUqApp();
-    let ret = useBudsSearch(options, uq.SearchAtomMetricBuds);
+    let ret = useBudsSearch(options, uq.SearchAtomUomBuds);
     return ret;
 }

@@ -1,28 +1,3 @@
-/*
-ACT # SetUser(
-    id ID,
-    name CHAR(100),
-    nick CHAR(100),
-    icon CHAR(200),
-) {
-    WITH $User as a KEY(id) SET a.name=name, a.nick=nick, a.icon=icon;
-    WITH $usersite KEY(0 as site, 1 as user) DEL;
-}
-*/
-/*
-uq_build里面自带的 $role_my 获取更多的信息
-Biz Query MySites ver 0.4 (
-)
-RETURNS ret (
-    id ID,
-) {
-    ASSERT ROLE (Role.经理, 'Permit.检验', 'Permit.入库', 'Permit.入库.上架');
-    INTO ret SELECT a.site as id
-        FROM $UserSite as a
-        WHERE a.user=$user and a.site=BudSiteId(ROLE(Permit.入库.上架));
-};
-*/
-
 Biz ACT SaveAtom (
     atom CHAR(100),
     no NO,
@@ -272,7 +247,7 @@ RETURNS budsStr (
         WHERE LOCATE(d.name, budNames)>0;
 };
 
-Biz Query SearchAtomMetricBuds ver 0.2 (
+Biz Query SearchAtomUomBuds ver 0.2 (
     phrase Phrase,
     key CHAR(50),
     budNames CHAR(300),
@@ -283,10 +258,10 @@ PAGE (
     ex CHAR(50),
     phrase Phrase,
 )
-RETURNS meds (
+RETURNS uoms (
     id ID,
-    main ID,
-    detail ID,
+    atom ID,
+    uom ID,
 )
 RETURNS budsInt (
     id ID,
@@ -326,28 +301,28 @@ RETURNS budsStr (
         ORDER BY a.id desc
         LIMIT $pageSize;
 
-    INTO meds SELECT b.id, b.atom as main, b.metricItem as detail
+    INTO uoms SELECT b.id, b.atom, b.uom
         FROM $page as a 
-            JOIN AtomMetric as b ON b.atom=a.id;
+            JOIN AtomUom as b ON b.atom=a.id;
 
     INTO budsInt SELECT a.id, d.id as bud
         , d.name as phrase
         , b.value
-        FROM meds as a 
+        FROM uoms as a 
             JOIN IxBudInt as b ON b.i=a.id
             JOIN $Phrase as d ON d.id=b.x -- c.phrase
         WHERE LOCATE(d.name, budNames)>0;
     INTO budsDec SELECT a.id, d.id as bud
         , d.name as phrase
         , b.value
-        FROM meds as a 
+        FROM uoms as a 
             JOIN IxBudDec as b ON b.i=a.id
             JOIN $Phrase as d ON d.id=b.x -- c.phrase
         WHERE LOCATE(d.name, budNames)>0;
     INTO budsStr SELECT a.id, d.id as bud
         , d.name as phrase
         , b.value
-        FROM meds as a 
+        FROM uoms as a 
             JOIN IxBudStr as b ON b.i=a.id
             JOIN $Phrase as d ON d.id=b.x -- c.phrase
         WHERE LOCATE(d.name, budNames)>0;
@@ -415,17 +390,17 @@ RETURNS main (
 )
 RETURNS budsInt (
     bud ID,
-    phrase CHAR(50),
+    phrase Phrase,
     value BIGINT,
 )
 RETURNS budsDec (
     bud ID,
-    phrase CHAR(50),
+    phrase Phrase,
     value VALUE,
 )
 RETURNS budsStr (
     bud ID,
-    phrase CHAR(50),
+    phrase Phrase,
     value CHAR(200),
 ) {
     INTO main SELECT a.id, BudPhrase(a.base) as phrase, a.no, a.ex
@@ -438,7 +413,6 @@ RETURNS budsStr (
         FROM IxBudInt as a
             JOIN Atom as b ON b.id=a.i
             JOIN Bud as c ON c.id=b.base
-            -- JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
             JOIN $Phrase as e ON e.id=a.x
         WHERE a.i=id and e.type=EnumBizType.prop;
     INTO budsDec SELECT a.x as bud
@@ -447,7 +421,6 @@ RETURNS budsStr (
         FROM IxBudDec as a
             JOIN Atom as b ON b.id=a.i
             JOIN Bud as c ON c.id=b.base
-            -- JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
             JOIN $Phrase as e ON e.id=a.x
         WHERE a.i=id and e.type=EnumBizType.prop;
     INTO budsStr SELECT a.x as bud
@@ -456,7 +429,6 @@ RETURNS budsStr (
         FROM IxBudStr as a
             JOIN Atom as b ON b.id=a.i
             JOIN Bud as c ON c.id=b.base
-            -- JOIN $IxPhrase as d ON d.i=c.phrase AND d.x=a.x
             JOIN $Phrase as e ON e.id=a.x
         WHERE a.i=id and e.type=EnumBizType.prop;
         

@@ -1,4 +1,4 @@
-
+/*
 -- 度量类型
 ENUM MetricType (
     count = 1,              -- 计数
@@ -219,3 +219,4 @@ RETURNS ret (
         FROM MetricItem as a
         WHERE a.base=id;
 }
+*/

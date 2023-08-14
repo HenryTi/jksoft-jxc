@@ -56,34 +56,6 @@ IX IxAtom (
     x,                  -- atom
 );
 
-/*
-ID User (
-    id,
-    KEY tonwaUser INT,
-);
-
-ID Site ver 0.2 (
-    id,
-    KEY no,
-    ex CHAR(100),
-)
-+ (no)
-VALUES
-('$$$');
-
-ID Tree (
-    id,
-    KEY base ID,            -- site@phrase, or base group
-    KEY no,
-    ex CHAR(100),
-);
-
-IDX Done (
-    id,
-    value VALUE,
-);
-*/
-
 -- 各种中间状态。单据记账时，出现错误，在存储过程之间传递数据
 -- 这个需要仔细斟酌
 IDX Temp (

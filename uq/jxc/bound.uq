@@ -47,18 +47,13 @@ IDX ObjPostSubjectBalance (
 Biz Subject Sum {
     Assign pSource INT;
     Assign pSource1 INT;
-    Assign startSumMonth INT;       -- 月汇总的开始。之前的月汇总是预置的，之后的月汇总是计算的。
-};
-
-Biz Subject Moniker {
-    Prop currency;
 };
 
 Biz Atom Subject '科目' UUID {
     -- Prop saleAmount '销售额';
     -- Prop grossProfit '有效额';
     UOM;                            -- 带计量单位
-    Prop metric1 Atom Person;       -- Atom metric 
+    Prop metric1 Atom Person;
     Prop balance '结余' Radio (
         none '无' = 0,
         yes '有' = 1,

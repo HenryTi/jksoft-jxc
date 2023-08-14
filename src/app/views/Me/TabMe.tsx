@@ -5,11 +5,12 @@ import { FA, LMR, Sep, useT } from "tonwa-com";
 import { IDView, Image, Page, useModal } from "tonwa-app";
 import { appT, ResApp } from "../../res";
 import { pathEditMe } from "./routeMe";
-import { PageRoleAdmin, PageSys } from "app/Site";
+import { PageSiteRole, PageSys, Permit, ViewSite, isPermitted } from "../Site";
 import { EnumSysRole } from "tonwa-uq";
-import { Permit } from "app/Site";
 import React from "react";
 import { pathAdmin } from "../Admin/PageAdmin";
+import { PageSiteInit } from "../Admin/site/siteInit";
+import { PageSiteAdmin, pathSiteAdmin } from "../Admin/site";
 
 const pathAbout = 'about';
 
@@ -41,30 +42,6 @@ export function TabMe() {
             <FA name="angle-right" />
         </LMR>;
     }
-    // 管理员，设置
-    function Admin() {
-        return <Permit permit={[]}>
-            <Link to={`/${pathAdmin}`}><Cmd onClick={undefined} content="管理员" /></Link>
-            <Sep />
-        </Permit>;
-    }
-    function RoleAdmin() {
-        async function onAdminChanged() {
-
-        }
-        async function onRoleAdmin() {
-            openModal(
-                <PageRoleAdmin
-                    admin={EnumSysRole.owner}
-                    viewTop={<></>}
-                />
-            );
-        }
-        return <Permit permit={[]}>
-            <Cmd onClick={onRoleAdmin} content="角色管理" />
-            <Sep />
-        </Permit>;
-    }
     function SysAdmin() {
         let { userSite0 } = uqSites;
         if (userSite0 === undefined) return null;
@@ -78,36 +55,49 @@ export function TabMe() {
     }
     function SelectSite() {
         let { mySites, userSite } = uqSites;
-        function ViewSite({ value }: { value: any; }) {
-            let { ex, no } = value;
-            return <>{ex ?? '默认机构'} <small className="text-muted">{no}</small></>;
-        }
         return <>
             {mySites.map((v, index) => {
-                let { siteId: unitId } = v;
-                let isCurrent = (userSite?.siteId === unitId);
-                let cn = '', icon: string, iconColor: string, color: string;
+                let { siteId } = v;
+                let isCurrent = (userSite?.siteId === siteId);
+                let icon: string, iconColor: string, color: string, onClick: () => void;
                 if (isCurrent === true) {
                     icon = 'check-circle-o';
                     color = '';
                     iconColor = ' text-success ';
                 }
                 else {
-                    cn = ' cursor-pointer ';
                     icon = 'angle-right';
                     color = ' text-primary ';
                     iconColor = '';
+                    onClick = onSiteSelect;
                 }
+                let content = <LMR className={'p-3 align-items-center ' + color} onClick={onClick}>
+                    <FA name={icon} fixWidth={true} className={' me-3 ' + iconColor} size="lg" />
+                    <IDView uq={uq} id={siteId} Template={ViewSite} />
+                    <Permit permit={[]}>
+                        <div>
+                            管理 <i className="bi-chevron-right" />
+                        </div>
+                    </Permit>
+                </LMR>;
                 async function onSiteSelect() {
                     if (isCurrent === true) return;
-                    await uqApp.uqSites.setSite(unitId);
+                    await uqApp.uqSites.setSite(siteId);
                     document.location.reload();
                 }
+                /*
+                function onSiteAdmin() {
+                    // nav
+                    openModal(<PageSiteAdmin site={siteId} />);
+                }
+                */
+                if (isPermitted(uqApp, []) === true) {
+                    content = <Link to={`/${pathSiteAdmin}/${siteId}`}>
+                        {content}
+                    </Link>
+                }
                 return <React.Fragment key={index}>
-                    <div className={'p-3 ' + cn + color} onClick={onSiteSelect}>
-                        <FA name={icon} fixWidth={true} className={' me-3 ' + iconColor} size="lg" />
-                        <IDView uq={uq} id={unitId} Template={ViewSite} />
-                    </div>
+                    {content}
                     <Sep />
                 </React.Fragment>
             })}
@@ -127,9 +117,7 @@ export function TabMe() {
         <div>
             <MeInfo />
             <Sep />
-            <Admin />
             <SysAdmin />
-            <RoleAdmin />
             <SelectSite />
             <AboutLink />
             <Sep />

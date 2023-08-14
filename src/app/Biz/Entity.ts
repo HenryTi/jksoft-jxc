@@ -1,12 +1,11 @@
-import { BizProp, BizAssign } from "./BizBud";
+import { BizProp, BizAssign, BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
 
 export class Entity extends BizBase {
     get phrase() { return `${this.type}.${this.name}`; }
     readonly selfProps: BizProp[] = [];       // 本 Atom 定义的
-    readonly propColl: { [key: string]: BizProp; } = {};           // 包括全部继承来的
+    readonly buds: { [key: string]: BizBud; } = {};           // 包括全部继承来的
     readonly props: BizProp[] = [];
-    readonly assignColl: { [key: string]: BizAssign; } = {};
     readonly selfAssigns: BizAssign[] = [];
     readonly assigns: BizAssign[] = [];
 
@@ -49,14 +48,14 @@ export class Entity extends BizBase {
     protected buildBuds() {
         for (let bud of this.selfProps) {
             let { name, phrase } = bud;
-            this.propColl[name] = bud;
-            this.propColl[phrase] = bud;
+            this.buds[name] = bud;
+            this.buds[phrase] = bud;
             this.props.push(bud);
         }
         for (let bud of this.selfAssigns) {
             let { name, phrase } = bud;
-            this.assignColl[name] = bud;
-            this.assignColl[phrase] = bud;
+            this.buds[name] = bud;
+            this.buds[phrase] = bud;
             this.assigns.push(bud);
         }
     }

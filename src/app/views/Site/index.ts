@@ -1,4 +1,5 @@
 export * from './Permit';
-export * from './PageRoleAdmin';
+export * from '../Admin/site/PageSiteRole';
 export * from './PageSelectSite';
 export * from './sys';
+export * from './ViewSite';

@@ -5,12 +5,13 @@ import jwtDecode from 'jwt-decode';
 import { Spinner, getAtomValue, setAtomValue, useEffectOnce } from 'tonwa-com';
 import {
     Guest, LocalDb, NetProps, UqConfig, User, UserApi
-    , createUQsMan, Net, UqSites, UserSite, UQsMan
+    , createUQsMan, Net, UqSites, UserSite, UQsMan, isPromise
 } from 'tonwa-uq';
 import { uqsProxy } from './uq';
 import { AutoRefresh } from './AutoRefresh';
 import { LocalData } from './tools';
 import { PageCache } from './PageCache';
+import { PageSpinner } from './coms';
 
 export interface AppConfig { //extends UqsConfig {
     center: string;
@@ -103,10 +104,6 @@ export abstract class UqAppBase<UQS = any> {
         setAtomValue(this.modal.stack, []);
     }
     onCloseModal: () => void;
-    hasRole(role: string[] | string): boolean {
-        if (this.uqSites === undefined) return false;
-        return this.uqSites.hasRole(role);
-    }
 
     async logined(user: User) {
         this.net.logoutApis();
@@ -224,7 +221,7 @@ class LocalStorageDb extends LocalDb {
     }
 }
 
-export type OpenModal = <T = any>(element: JSX.Element, onClosed?: (result: any) => void) => Promise<T>;
+export type OpenModal = <T = any>(element: JSX.Element | (() => Promise<JSX.Element>), onClosed?: (result: any) => void) => Promise<T>;
 export const ModalContext = React.createContext(undefined);
 export function useModal() {
     const uqApp = useUqAppBase();
@@ -234,16 +231,32 @@ export function useModal() {
 export function uqAppModal(uqApp: UqAppBase): { openModal: OpenModal; closeModal: (result?: any) => void } {
     const { modal } = uqApp;
     const { stack: modalStackAtom } = modal;
-    async function openModal<T = any>(element: JSX.Element, onClosed?: (result: any) => void): Promise<T> {
-        return new Promise<T>((resolve, reject) => {
-            if (React.isValidElement(element) !== true) {
+    async function openModal<T = any>(element: (JSX.Element | (() => Promise<JSX.Element>)), onClosed?: (result: any) => void): Promise<T> {
+        return new Promise<T>(async (resolve, reject) => {
+            let modalStack = getAtomValue(modalStackAtom);
+            let el: JSX.Element;
+            if (React.isValidElement(element) === true) {
+                el = element as JSX.Element;
+            }
+            else if (typeof element === 'function') {
+                let ret = element();
+                if (isPromise(ret) === true) {
+                    setAtomValue(modalStackAtom, [...modalStack, [<PageSpinner />, undefined, undefined]]);
+                    el = await ret;
+                    setAtomValue(modalStackAtom, [...modalStack]);
+                }
+                else {
+                    alert('is not a valid () => Promise<JSX.Element>');
+                    return;
+                }
+            }
+            else {
                 alert('is not valid element');
                 return;
             }
             let modal = <ModalContext.Provider value={true}>
-                {element}
+                {el}
             </ModalContext.Provider>;
-            let modalStack = getAtomValue(modalStackAtom);
             setAtomValue(modalStackAtom, [...modalStack, [modal, resolve, onClosed]]);
         })
     }

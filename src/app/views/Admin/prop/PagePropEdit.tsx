@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Route, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { IDView, Page, useModal } from "tonwa-app";
 import { ButtonSubmitAsync, FA, List, LMR, Sep, useEffectOnce } from "tonwa-com";
@@ -7,6 +7,7 @@ import { ChangeEvent, useState } from "react";
 import { arrType, collPropDataType, TypeItem } from "./types";
 import { useProp } from "./useProp";
 import { useUqApp } from "app/UqApp";
+import { PageProp } from "./PageProp";
 
 export function PagePropEdit() {
     const { uq } = useUqApp();
@@ -155,3 +156,9 @@ function PagePropNew({ IDName }: { IDName: string; }) {
         </form>
     </Page>;
 }
+
+const pathProp = 'prop';
+export const routeProp = <>
+    <Route path={pathProp} element={<PageProp />} />
+    <Route path={`${pathProp}/:prop`} element={<PagePropEdit />} />
+</>;

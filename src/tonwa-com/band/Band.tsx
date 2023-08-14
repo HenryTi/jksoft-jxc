@@ -14,6 +14,7 @@ interface BandBaseProps {
     label?: string | JSX.Element;
     labelSize?: number;
     pageEdit?: JSX.Element;
+    toEdit?: string;
     sep?: number | JSX.Element;
     contentType?: BandContentType;
     rightIcon?: JSX.Element;
@@ -137,7 +138,7 @@ function Value({ name, options }: { name: string; options?: OptionItem[]; }) {
 }
 
 export function Band(props: BandProps & { children: React.ReactNode; }) {
-    let { label, labelSize, children, BandTemplate, sep, contentType, pageEdit, rightIcon, contentContainerClassName } = props;
+    let { label, labelSize, children, BandTemplate, sep, contentType, pageEdit, toEdit, rightIcon, contentContainerClassName } = props;
     let content = children;
     let bandContainer = useBandContainer();
     labelSize = bandContainer.props.labelSize;
@@ -175,6 +176,7 @@ export function Band(props: BandProps & { children: React.ReactNode; }) {
             errors={errors} memos={band.memos}
             content={content} sep={sep} contentType={contentType}
             pageEdit={pageEdit} rightIcon={rightIcon}
+            toEdit={toEdit}
             contentContainerClassName={contentContainerClassName}>
             {children}
         </BandTemplate>

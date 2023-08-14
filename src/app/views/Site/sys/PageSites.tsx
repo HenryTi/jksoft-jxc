@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { Page, PageSpinner, useModal } from "tonwa-app";
 import { List, useEffectOnce } from "tonwa-com";
 import { Query, UqMan } from "tonwa-uq";
+import { ViewSite } from "../ViewSite";
 
 export function PageSites() {
     const uqApp = useUqApp();
@@ -21,15 +22,13 @@ export function PageSites() {
     if (list === undefined) {
         return <PageSpinner />;
     }
-    function ViewSite({ value }: { value: any }) {
-        let { id, no, ex } = value;
-        let content = ex ? <>{ex} <small className="text-muted">{no}</small></> : <span className="text-primary">默认机构</span>;
+    function ViewItemSite({ value }: { value: any }) {
         return <div className="px-3 py-2">
-            {content}
+            <ViewSite value={value} />
         </div>;
     }
     return <Page header="机构管理" right={right}>
-        <List items={list} ViewItem={ViewSite} />
+        <List items={list} ViewItem={ViewItemSite} />
     </Page>;
 
     function onAdd() {

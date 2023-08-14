@@ -1,16 +1,17 @@
 import { Page } from "tonwa-app";
-import { Link } from "react-router-dom";
+import { Link, Route } from "react-router-dom";
 import { pathAchieve } from "./achieve";
 import { captionUser, pathUser } from "./user";
 import { captionAchieve } from "./achieve";
-import { captionUomList, pathUomList } from "./uom";
+import { captionUomList, gUomI } from "./uom";
+import { pathAtomList } from "app/hooks";
 
 export const pathAdmin = 'admin';
-export function PageAdmin() {
+function PageAdmin() {
     const cmds = [
         { label: captionAchieve, path: pathAchieve },
         { label: captionUser, path: pathUser },
-        { label: captionUomList, path: pathUomList },
+        { label: captionUomList, path: pathAtomList(gUomI.name) },
     ];
     return <Page header="管理员">
         {cmds.map((v, index) => {
@@ -21,3 +22,7 @@ export function PageAdmin() {
         })}
     </Page>;
 }
+
+export const routePageAdmin = <>
+    <Route path={pathAdmin} element={<PageAdmin />} />
+</>;

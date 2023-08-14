@@ -2,12 +2,11 @@ import { Page, useModal } from "tonwa-app";
 import { Cmd } from "./Cmd";
 import { PageSites } from "./PageSites";
 import { Sep } from "tonwa-com";
-//import { GenSiteRole } from "../useSiteRole";
 import { ViewOwner } from "../owner";
 import { ViewAdmin } from "../admin";
 import { useSiteRole0 } from "../useSiteRole";
 
-export function PageSys(/*{ siteRole }: { siteRole: GenSiteRole; }*/) {
+export function PageSys() {
     const { openModal } = useModal();
     const siteRole = useSiteRole0();
     function onSites() {

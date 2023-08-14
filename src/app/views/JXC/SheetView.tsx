@@ -5,7 +5,7 @@ import { Link, Route, useParams } from "react-router-dom";
 import { IDView, Page, PageSpinner } from "tonwa-app";
 import { LMR, List, useEffectOnce } from "tonwa-com";
 import { Detail, Sheet } from "uqs/UqDefault";
-import { ViewItemID } from "../ViewItemID";
+import { ViewAtom } from "../ViewAtom";
 
 export const pathSheetView = 'sheet';
 export const pathDetailView = 'sheet-detail';
@@ -17,7 +17,7 @@ function PageDetailView() {
     function ViewDetail({ value: row }: { value: Detail }) {
         let { item, value } = row;
         return <LMR className="px-3 py-2">
-            <IDView uq={uq} id={item} Template={ViewItemID} />
+            <IDView uq={uq} id={item} Template={ViewAtom} />
             <div>{value}</div>
         </LMR>
     }
@@ -51,7 +51,7 @@ function PageSheetView() {
     function ViewDetail({ value: row }: { value: Detail }) {
         let { item, value } = row;
         return <LMR className="px-3 py-2">
-            <IDView uq={uq} id={item} Template={ViewItemID} />
+            <IDView uq={uq} id={item} Template={ViewAtom} />
             <div>{value}</div>
         </LMR>
     }
@@ -67,7 +67,7 @@ function PageSheetView() {
                     {no}
                 </Band>
                 <Band label={'对象'}>
-                    <IDView uq={uq} id={target} Template={ViewItemID} />
+                    <IDView uq={uq} id={target} Template={ViewAtom} />
                 </Band>
             </div>
             <List items={sheetDetails} ViewItem={ViewDetail} />

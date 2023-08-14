@@ -6,8 +6,9 @@ import { FA, LMR, List } from "tonwa-com";
 import { useAtomValue } from "jotai";
 import { OptionsUseSheetDetail, UseSheetDetailReturn } from "app/hooks";
 import { useUqApp } from "app/UqApp";
-import { ViewAtomGoods, useBizAtomMetricSpec } from "../../../Atom";
+import { useBizAtomSpec } from "../../../Atom";
 import { UsePendFromSheetReturn } from "app/hooks/Sheet";
+import { ViewAtom } from "app/views";
 
 export interface OptionsUseDetailSplit extends OptionsUseSheetDetail {
     selectTarget: () => Promise<Atom>;
@@ -59,7 +60,7 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
             }
             return <LMR className="py-2 pe-5 ps-5">
                 <div className="">
-                    <IDView uq={uq} id={target} Template={ViewAtomGoods} />
+                    <IDView uq={uq} id={target} Template={ViewAtom} />
                 </div>
                 <div>
                     <InputNumber onInputed={onInputed} defaultValue={value} />
@@ -67,7 +68,7 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
             </LMR>
         }
 
-        const { viewAtom, viewMetricItem, viewSpec } = useBizAtomMetricSpec(item);
+        const { viewAtom, viewUom, viewSpec } = useBizAtomSpec(item);
         return <div className="border rounded mx-2 my-3">
             <div className="container">
                 <div className="row py-2 tonwa-bg-gray-2">
@@ -76,7 +77,7 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
                     <div className="col pe-3 text-end align-items-end">
                         <span><small>单价:</small> {price?.toFixed(2)} <small>金额:</small> {amount?.toFixed(2)}</span>
                         <br />
-                        <small>数量:</small> <span className="fs-5"><b>{value}</b> {viewMetricItem}</span>
+                        <small>数量:</small> <span className="fs-5"><b>{value}</b> {viewUom}</span>
                     </div>
                     <div className="col-1 text-end">
                         <button className="btn btn-sm btn-outline-primary" onClick={onAddRow}><FA name="plus" /></button>
@@ -89,7 +90,7 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
 
     return {
         detail,
-        ViewItemTemplate: ViewAtomGoods,
+        ViewItemTemplate: ViewAtom,
         ViewRow,
         addRow,
         editRow: undefined,

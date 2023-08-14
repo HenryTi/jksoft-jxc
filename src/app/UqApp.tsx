@@ -109,8 +109,9 @@ export class UqApp extends UqAppBase<UQs> {
     specFromAtom(atom: string): GSpec {
         let entity = this.biz.entities[atom] as EntityAtom;
         if (entity === undefined) return;
-        let { spec: entitySpec } = entity;
-        let gSpec = this.gSpecs[entitySpec.name];
+        let { spec } = entity;
+        if (spec === undefined) return;
+        let gSpec = this.gSpecs[spec.name];
         return gSpec;
     }
 

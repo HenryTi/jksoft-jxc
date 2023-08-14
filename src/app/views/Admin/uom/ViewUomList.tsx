@@ -11,7 +11,7 @@ export function ViewUomList() {
     let budItems = budType.budDataType as BudRadio;
     function ViewBaseUnit({ value }: { value: any[] }) {
         const [name, caption] = value;
-        return <Link to={'uom'}>
+        return <Link to={'/uom'}>
             <div className="px-3 py-2">
                 {caption ?? name}
             </div>

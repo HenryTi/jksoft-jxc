@@ -1,48 +1,50 @@
-import { Atom, AtomMetric, AtomMetricSpec, MetricItem } from "uqs/UqDefault";
-import { ViewAtomGoods } from "../Atom";
+import { Atom, AtomSpec, AtomUom } from "uqs/UqDefault";
 import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
-import { Spec } from "app/tool";
 import { FA } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
+import { ViewAtom } from "app/views";
+import { Spec } from "app/tool";
 
-export function ViewAMSAtom({ id }: { id: number; }) {
+export function ViewAUSAtom({ id }: { id: number; }) {
     const { uq } = useUqApp();
-    function Template({ value: { atomMetric, spec } }: { value: AtomMetricSpec; }) {
-        function TemplateAtomMetric({ value: { atom, metricItem } }: { value: AtomMetric; }) {
+    function Template({ value }: { value: AtomSpec; }) {
+        const { atomUom, spec } = value;
+        function TemplateAtomUom({ value: { atom, uom } }: { value: AtomUom; }) {
             function TemplateAtom({ value }: { value: Atom }) {
-                return <ViewAtomGoods value={value} />;
+                return <ViewAtom value={value} />;
             }
             return <IDView id={atom} uq={uq} Template={TemplateAtom} />;
         }
-        return <IDView id={atomMetric} uq={uq} Template={TemplateAtomMetric} />;
+        return <IDView id={atomUom} uq={uq} Template={TemplateAtomUom} />;
     }
     return <IDView id={id} uq={uq} Template={Template} />;
 }
 
-export function ViewAMSMetric({ id }: { id: number; }) {
+// id: AtomSpec id
+export function ViewUom({ id }: { id: number; }) {
     const { uq } = useUqApp();
-    function Template({ value: { atomMetric } }: { value: AtomMetricSpec; }) {
-        function TemplateAtomMetric({ value: { metricItem } }: { value: AtomMetric; }) {
-            function TemplateMetricItem({ value }: { value: MetricItem }) {
+    function Template({ value: { atomUom } }: { value: AtomSpec; }) {
+        function TemplateAtomUom({ value: { uom } }: { value: AtomUom; }) {
+            function TemplateUom({ value }: { value: Atom }) {
                 return <>{value.ex}</>;
             }
-            if (!metricItem) {
+            if (!uom) {
                 return <span className="text-danger"><FA name="times-circle" /> 无计量单位</span>;
             }
-            return <IDView id={metricItem} uq={uq} Template={TemplateMetricItem} />;
+            return <IDView id={uom} uq={uq} Template={TemplateUom} />;
         }
-        return <IDView id={atomMetric} uq={uq} Template={TemplateAtomMetric} />;
+        return <IDView id={atomUom} uq={uq} Template={TemplateAtomUom} />;
     }
     return <IDView id={id} uq={uq} Template={Template} />;
 }
 
-export function ViewAMSSpec({ id, hasLabel }: { id: number; hasLabel?: boolean; }) {
+function useViewSpec(id: number, hasLabel: boolean) {
     const uqApp = useUqApp();
     const { uq } = uqApp;
-    function Template({ value: { atomMetric, spec } }: { value: AtomMetricSpec; }) {
-        if (spec === 0) return null;
-        function TemplateAtomMetric({ value: { atom } }: { value: AtomMetric; }) {
+    function Template({ value: { atomUom, spec } }: { value: AtomSpec; }) {
+        if (spec === undefined) return null;
+        function TemplateAtomUom({ value: { atom } }: { value: AtomUom; }) {
             function TemplateAtom({ value }: { value: Atom; }) {
                 let { $phrase } = value as any;
                 const gSpec = uqApp.specFromAtom($phrase);
@@ -61,18 +63,28 @@ export function ViewAMSSpec({ id, hasLabel }: { id: number; hasLabel?: boolean; 
             }
             return <IDView id={atom} uq={uq} Template={TemplateAtom} />;
         }
-        return <IDView id={atomMetric} uq={uq} Template={TemplateAtomMetric} />;
+        return <IDView id={atomUom} uq={uq} Template={TemplateAtomUom} />;
     }
     return <IDView id={id} uq={uq} Template={Template} />;
 }
 
-export function ViewAMSAtomSpec({ id, className }: { id: number; className?: string; }) {
+export function ViewSpec({ id }: { id: number; }) {
+    let ret = useViewSpec(id, false);
+    return ret;
+}
+
+export function ViewSpecWithLabel({ id }: { id: number; }) {
+    let ret = useViewSpec(id, true);
+    return ret;
+}
+
+export function ViewAtomSpec({ id, className }: { id: number; className?: string; }) {
     return <>
         <div className={className}>
-            <ViewAMSAtom id={id} />
+            <ViewAUSAtom id={id} />
         </div>
         <div className={className}>
-            <ViewAMSSpec id={id} />
+            <ViewSpec id={id} />
         </div>
     </>;
 }

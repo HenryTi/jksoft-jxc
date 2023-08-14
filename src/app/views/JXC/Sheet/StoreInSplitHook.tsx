@@ -7,7 +7,7 @@ import { useDetailSplit } from "./Detail";
 import { PageSheetAct, usePendFromItem, selectAtom } from "app/hooks";
 import { EntitySheet } from "app/Biz";
 import { ViewPendRow } from "./ViewPendRow";
-import { ViewItemID } from "../../ViewItemID";
+import { ViewAtom } from "../../ViewAtom";
 
 const sheet = EnumSheet.SheetStoreInMultiStorage;
 const caption = '入库单-分仓';
@@ -31,7 +31,7 @@ function PageStoreIn() {
         </Band>;
     }
     function ViewTarget({ sheet }: { sheet: Sheet; }) {
-        return <IDView id={sheet.target} uq={uq} Template={ViewItemID} />;
+        return <IDView id={sheet.target} uq={uq} Template={ViewAtom} />;
     }
     async function selectTarget() {
         return await selectAtom(uqApp, EnumAtom.Contact);

@@ -45,7 +45,7 @@ function DefaultBandTemplate(props: BandTemplateProps) {
     const { openModal } = useModal();
     let detailContext = useBandContainer() as DetailContext;
     let band = useBand();
-    let { label, labelSize, children, errors, memos, pageEdit, content, sep, contentType, rightIcon } = props;
+    let { label, labelSize, children, errors, memos, pageEdit, toEdit, content, sep, contentType, rightIcon } = props;
     labelSize = labelSize ?? 2;
     let labelContent = contentType === BandContentType.check ? null : <b>{label}</b>;
     let vLabel = <label className={`col-sm-${labelSize} col-form-label text-sm-end tonwa-bg-gray-1 border-end align-self-center py-3`}>
@@ -54,9 +54,13 @@ function DefaultBandTemplate(props: BandTemplateProps) {
     let cnContent = `col-sm-${12 - labelSize} d-flex pe-0 align-items-center`;
     function RightIcon({ icon, pageEdit }: { icon: JSX.Element; pageEdit: JSX.Element; }) {
         function onClick() {
-            openModal(pageEdit);
+            if (toEdit) {
+                alert(toEdit);
+            }
+            else {
+                openModal(pageEdit);
+            }
         }
-        // to={toEdit}
         return <div onClick={onClick}
             className="px-3 align-self-stretch d-flex align-items-center cursor-pointer"
         >

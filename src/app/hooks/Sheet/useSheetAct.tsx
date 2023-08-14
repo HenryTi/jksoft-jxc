@@ -168,7 +168,6 @@ export function useSheetAct(options: PropsSheetAct) {
     }
 
     async function onAddRow() {
-        // let sheetRows = await this.genDetail.addRow(this);
         let sheetRows = await detailAddRow();
         if (sheetRows === undefined) return;
         await saveRows(sheetRows);
@@ -408,7 +407,7 @@ export function useSheetAct(options: PropsSheetAct) {
     }
 
     const top = <div className="pt-3 tonwa-bg-gray-3 container">
-        <Band label={'编号'}>
+        <Band label={'单据编号'}>
             {sheet.no}
         </Band>
         {viewTargetBand}

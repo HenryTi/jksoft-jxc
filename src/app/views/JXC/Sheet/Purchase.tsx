@@ -5,7 +5,7 @@ import { selectAtom, PageSheetAct } from "app/hooks";
 import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
 import { useUqApp } from "app/UqApp";
-import { ViewItemID } from "../../ViewItemID";
+import { ViewAtom } from "../../ViewAtom";
 
 const sheet = EnumSheet.SheetPurchase;
 const caption = '采购单';
@@ -20,7 +20,7 @@ function PagePurchaseEdit() {
         </Band>;
     }
     function ViewTarget({ sheet }: { sheet: Sheet; }) {
-        return <IDView id={sheet.target} uq={uq} Template={ViewItemID} />;
+        return <IDView id={sheet.target} uq={uq} Template={ViewAtom} />;
     }
     async function selectTarget() {
         return await selectAtom(uqApp, EnumAtom.Contact);

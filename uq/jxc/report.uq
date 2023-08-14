@@ -4,21 +4,21 @@ QUERY ReportStorage (
 )
 PAGE (
     atom ID ASC,
-    metricItem ID,
+    uom ID,
     spec ID,
     id ID,
     value VALUE,
     init VALUE,
 ) {
     VAR phraseId ID = PhraseId(subject);
-    PAGE SELECT d.id as atom, c.metricItem, b.spec, a.i as id, a.value, 0 as init
+    PAGE SELECT d.id as atom, c.uom, b.spec, a.i as id, a.value, 0 as init
         FROM IxBudDec as a
-            JOIN AtomMetricSpec as b ON b.id=a.i
-            JOIN AtomMetric as c ON c.id=b.atomMetric
+            JOIN AtomSpec as b ON b.id=a.i
+            JOIN AtomUom as c ON c.id=b.atomUom
             JOIN Atom as d on d.id=c.atom
         WHERE a.x=phraseId AND d.id > $pageStart
             AND SEARCH(d.ex, d.no ON key)
-        ORDER BY d.id ASC, c.metricItem, b.spec
+        ORDER BY d.id ASC, c.uom, b.spec
         LIMIT $pageSize;
 };
 
@@ -35,7 +35,7 @@ PAGE (
     VAR phraseId ID = PhraseId(subject);
     PAGE SELECT c.id as obj, a.value, 0 as init
         FROM IxBudDec as a
-            JOIN AtomMetric as c ON c.id=a.i and a.x=phraseId
+            JOIN AtomUom as c ON c.id=a.i and a.x=phraseId
             JOIN Atom as d on d.id=c.atom
         WHERE c.id > $pageStart
             AND SEARCH(d.ex, d.no ON key)
@@ -55,8 +55,8 @@ PAGE (
     VAR phraseId ID = PhraseId(subject);
     PAGE SELECT c.id as obj, a.value, 0 as init
         FROM IxBudDec as a
-            JOIN AtomMetricSpec as c ON c.id=a.i and a.x=phraseId
-            JOIN AtomMetric as c1 ON c1.id=c.atomMetric
+            JOIN AtomSpec as c ON c.id=a.i and a.x=phraseId
+            JOIN AtomUom as c1 ON c1.id=c.atomUom
             JOIN Atom as d ON d.id=c1.atom
         WHERE c.id > $pageStart
             AND SEARCH(d.ex, d.no ON key)

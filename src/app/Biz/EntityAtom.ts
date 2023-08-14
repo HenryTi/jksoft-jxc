@@ -61,18 +61,18 @@ export class EntityAtom extends Entity {
         for (let p: EntityAtom = this; p !== undefined; p = p.base) {
             ancestors.unshift(p);
         }
-        let { propColl, assignColl, props, assigns } = this;
+        let { buds, props, assigns } = this;
         for (let p of ancestors) {
             for (let bud of p.selfProps) {
                 let { name, phrase } = bud;
-                propColl[name] = bud;
-                propColl[phrase] = bud;
+                buds[name] = bud;
+                buds[phrase] = bud;
                 props.push(bud);
             }
             for (let bud of p.selfAssigns) {
                 let { name, phrase } = bud;
-                assignColl[name] = bud;
-                assignColl[phrase] = bud;
+                buds[name] = bud;
+                buds[phrase] = bud;
                 assigns.push(bud);
             }
         }

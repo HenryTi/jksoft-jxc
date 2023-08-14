@@ -1,14 +1,14 @@
 import { useUqApp } from "app/UqApp";
 import { ButtonRightAdd } from "app/coms";
-import { ViewItemID } from "app/views/ViewItemID";
+import { ViewAtom } from "app/views/ViewAtom";
 import { ChangeEvent, useRef, useState } from "react";
-import { IDView, Page, SelectUser, UserView, ViewUser, ViewUserAssigned, useModal } from "tonwa-app";
+import { IDView, Page, SelectUser, ViewUserAssigned, useModal } from "tonwa-app";
 import { FA, LMR, List, useEffectOnce } from "tonwa-com";
-import { Uq, UqQuery, User } from "tonwa-uq";
+import { Uq, User } from "tonwa-uq";
 import { Atom } from "uqs/UqDefault";
 
 export const pathUser = 'admin-user';
-export const captionUser = '登录账户对照表';
+export const captionUser = '用户管理';
 
 interface Item {
     id: number;
@@ -122,7 +122,7 @@ function ListHeader({ caption, onEdit }: { caption: string; onEdit: () => Promis
 
 function ViewAtomItem({ value }: { value: any }) {
     return <div className="px-3 py-2 mx-3 my-2 border rounded-2 w-min-12c">
-        <ViewItemID value={value} />
+        <ViewAtom value={value} />
     </div>
 }
 
@@ -228,7 +228,7 @@ function PageSelectAtom({ atoms, selected: selectedList, onSelectChanged }: {
         }
         return <label className="d-flex p-3">
             <input type="checkbox" className="form-check-input me-3" defaultChecked={sel} onChange={onChange} />
-            <ViewItemID value={atom} />
+            <ViewAtom value={atom} />
         </label>;
     }
     function onClose() {

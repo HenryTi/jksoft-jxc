@@ -1,5 +1,5 @@
 import { EntityPermit, EntityRole, PermitItem } from "app/Biz/EntityPermit";
-import { Permit } from "app/Site";
+import { Permit } from "../../Site";
 import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai";
 import { Route } from "react-router-dom";

@@ -1,9 +1,10 @@
 import { atom } from "jotai";
 import { setAtomValue } from "tonwa-com";
-import { Atom, AtomMetric, Detail, MetricItem } from "uqs/UqDefault";
+import { Atom, Detail } from "uqs/UqDefault";
 
 export interface Spec {
     id?: number;
+    $phrase: string;
 }
 
 export interface SpecBatchValid extends Spec {
@@ -16,16 +17,29 @@ export interface SpecShoe extends Spec {
     color: string;
 }
 
-export interface AtomMetricSpec {
+export interface Uom {
+    id: number;
+    no: string;
+    ex: string;
+    atomUom: number;
+}
+
+export interface AtomPhrase extends Atom {
+    phrase: string;
+}
+
+export interface AtomSpec {
+    id?: number;
     atom?: AtomPhrase;
-    metricItem?: MetricItem;
-    atomMetric?: number;
+    uom?: Uom;
+    // atomUom?: number;
     spec?: Spec;           // keys
 }
 
-//export interface DetailAtomSpec extends Detail {
-// atomMetricSpec?: AtomMetricSpec;
-//}
+export interface AtomUom {
+    atom: number;
+    uom: number;
+}
 
 export interface OriginDetail extends Detail {
     pend: number;
@@ -48,10 +62,6 @@ export class EditingRow {
         this.origin = origin;
         setAtomValue(this.atomDetails, details ?? []);
     }
-}
-
-export interface AtomPhrase extends Atom {
-    phrase: string;
 }
 
 export interface DetailWithOrigin {

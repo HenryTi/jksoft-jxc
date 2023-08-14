@@ -1,13 +1,14 @@
 import { PageQueryMore } from "app/coms";
 import { IDView, Page, useModal } from "tonwa-app";
-import { EnumAtom, MetricItem } from "uqs/UqDefault";
+import { EnumAtom } from "uqs/UqDefault";
 import { PageAssignEdit } from "./PageAssignEdit";
 import { Med, RowMed, useAMSBudsSearch } from "./useBuds";
 import { List, getAtomValue, setAtomValue } from "tonwa-com";
 import { EntityAtom } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai";
-import { ViewAtomGoods } from "app/views/JXC/Atom";
+import { Uom } from "app/tool";
+import { ViewAtom } from "app/views";
 
 interface PageAssignProps {
     atom: EnumAtom;
@@ -62,7 +63,7 @@ export function PageAssign(props: PageAssignProps) {
                     :
                     <span className="text-muted small">(无)</span>
             }
-            function ViewMetric({ value }: { value: MetricItem; }) {
+            function ViewUom({ value }: { value: Uom; }) {
                 return <div className="w-6c">
                     {value.ex}
                 </div>;
@@ -70,7 +71,7 @@ export function PageAssign(props: PageAssignProps) {
             function ViewMed({ value }: { value: Med; }) {
                 let values = useAtomValue(value.atomValues);
                 return <div className="ms-5 ps-3 py-2 d-flex">
-                    <IDView id={value.detail} Template={ViewMetric} uq={uq} />
+                    <IDView id={value.detail} Template={ViewUom} uq={uq} />
                     <div className="d-flex">
                         {bizBuds.map((v, index) => {
                             return <div key={index}>{v.caption} <ViewValue value={values?.[index]} /></div>
@@ -82,7 +83,7 @@ export function PageAssign(props: PageAssignProps) {
                 {noMedsMessage}
             </div>;
             return <div>
-                <div className="px-3 py-2 tonwa-bg-gray-2"><ViewAtomGoods value={atom} /></div>
+                <div className="px-3 py-2 tonwa-bg-gray-2"><ViewAtom value={atom} /></div>
                 <List items={meds} ViewItem={ViewMed} none={none} />
             </div>;
         }

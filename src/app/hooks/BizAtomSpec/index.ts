@@ -1,1 +1,1 @@
-export * from './selectAtomSpecMetric';
+export * from './selectAtomSpec';

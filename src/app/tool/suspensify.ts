@@ -1,3 +1,8 @@
+export function useAsync<T>(fn: () => Promise<T>) {
+    let ret = suspensify(fn());
+    return ret.read() as T;
+}
+
 export function suspensify(promise: Promise<any>) {
     let status = "pending";
 

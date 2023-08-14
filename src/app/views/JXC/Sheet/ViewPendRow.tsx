@@ -1,4 +1,4 @@
-import { ViewAMSAtomSpec, ViewAMSMetric } from "./ViewAMS";
+import { ViewAtomSpec, ViewUom } from "./ViewAUS";
 import { MutedSmall } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { PropsViewPendRow } from "app/hooks";
@@ -20,18 +20,18 @@ export function ViewPendRow({ value: pendItem, onItemSelect, selectedColl, coll 
         />
         <label className="form-check-label container flex-grow-1" htmlFor={htmlId}>
             <div className="row">
-                <ViewAMSAtomSpec id={item} className={cnCol} />
+                <ViewAtomSpec id={item} className={cnCol} />
                 <div className={cnCol}>
                     <div className="text-break me-3">
                         <MutedSmall>{gSheet.caption ?? 'sheet caption'}编号</MutedSmall> {no}
                     </div>
                     <div>
                         <MutedSmall>在单</MutedSmall> {value}
-                        <ViewAMSMetric id={item} />
+                        <ViewUom id={item} />
                     </div>
                 </div>
                 <div className={cnCol + " flex-grow-1 text-end "}>
-                    <MutedSmall>待处理</MutedSmall> {pendValue}<ViewAMSMetric id={item} />
+                    <MutedSmall>待处理</MutedSmall> {pendValue}<ViewUom id={item} />
                 </div>
             </div>
         </label>

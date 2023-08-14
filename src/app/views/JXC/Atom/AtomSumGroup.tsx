@@ -1,7 +1,7 @@
 import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
 import { GAtom } from "app/tool";
 import { EnumAtom } from "uqs/UqDefault";
-import { ViewItemID } from "../../ViewItemID";
+import { ViewAtom } from "../../ViewAtom";
 
 const options: OptionsUseBizAtom = {
     atomName: EnumAtom.SumGroup,
@@ -21,7 +21,7 @@ function PageView() {
 
 function PageList() {
     let optionsList = Object.assign({}, options, {
-        ViewItemAtom: ViewItemID,
+        ViewItemAtom: ViewAtom,
         top: undefined,
     })
     let { page } = useBizAtomList(optionsList);
@@ -34,5 +34,5 @@ export const gSumGroup: GAtom = {
     pageEdit: <PageView />,
     pageList: <PageList />,
     pageView: <PageView />,
-    ViewItem: ViewItemID,
+    ViewItem: ViewAtom,
 }

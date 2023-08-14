@@ -1,14 +1,7 @@
 import { Atom, EnumAtom } from "uqs/UqDefault";
 import { GAtom } from "app/tool";
 import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
-
-export function ViewAtomGoods({ value }: { value: Atom; }) {
-    let { no, ex } = value;
-    return <div>
-        <div className='small text-muted'>{no}</div>
-        <div><b>{ex}</b></div>
-    </div>;
-}
+import { ViewAtom } from "app/views";
 
 const options: OptionsUseBizAtom = {
     atomName: EnumAtom.Goods,
@@ -28,7 +21,7 @@ function PageView() {
 
 function PageList() {
     let optionsList = Object.assign({}, options, {
-        ViewItemAtom: ViewAtomGoods,
+        ViewItemAtom: ViewAtom,
         top: undefined,
     })
     let { page } = useBizAtomList(optionsList);
@@ -41,5 +34,5 @@ export const gGoods: GAtom = {
     pageEdit: <PageView />,
     pageList: <PageList />,
     pageView: <PageView />,
-    ViewItem: ViewAtomGoods,
+    ViewItem: ViewAtom,
 }

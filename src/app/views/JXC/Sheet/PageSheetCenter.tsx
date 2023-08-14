@@ -10,7 +10,7 @@ import { EntitySheet } from "app/Biz";
 import { gSale } from "./Sale";
 import { gStoreInSplit } from "./StoreInSplitHook";
 import { gStoreIn } from "./StoreInHook";
-import { ViewItemID } from "../../ViewItemID";
+import { ViewAtom } from "../../ViewAtom";
 
 const gSheets: GSheet[][] = [
     [
@@ -52,7 +52,7 @@ export function PageSheetCenter() {
                         <div>{caption}</div>
                         <div className="small text-muted">{no}</div>
                     </div>
-                    <IDView id={target} uq={uq} Template={ViewItemID} />
+                    <IDView id={target} uq={uq} Template={ViewAtom} />
                 </div>
             </Link>;
         }
