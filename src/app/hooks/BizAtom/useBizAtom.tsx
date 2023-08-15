@@ -1,9 +1,9 @@
 import { QueryMore } from "app/tool";
 import { UqApp, useUqApp } from "app/UqApp";
 import { Biz, BizBud, EntityAtom } from "app/Biz";
-import { PickProps, uqAppModal } from "tonwa-app";
+import { uqAppModal } from "tonwa-app";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
-import { Atom, EnumAtom } from "uqs/UqDefault";
+import { EnumAtom } from "uqs/UqDefault";
 
 export function pathAtomNew(atomName: string) {
     return `${atomName}-new`;
@@ -23,21 +23,6 @@ export function pathAtomEdit(atomName: string) {
 
 export function pathAtom(atomName: string) {
     return `${atomName}/:id`;
-}
-
-export interface ViewPropRowProps {
-    name: string;
-    label: string;
-    readonly?: boolean;
-}
-
-export interface ViewPropProps extends ViewPropRowProps {
-    id: number;
-    value: string | number;
-    savePropMain: (id: number, name: string, value: string | number) => Promise<void>;
-    savePropEx: (id: number, bizBud: BizBud, value: string | number) => Promise<void>;
-    ValueTemplate?: (props: { value: any; }) => JSX.Element;
-    pickValue?: (props: PickProps) => Promise<string | number>;
 }
 
 export interface OptionsUseBizAtom {
@@ -60,8 +45,8 @@ export interface UseBizAtomReturn {
         entityAtom: EntityAtom;
     }>;
     getEntityAtom: (phrase: string) => EntityAtom;
-    savePropMain: (id: number, name: string, value: string | number) => Promise<void>;
-    savePropEx: (id: number, bizBud: BizBud, value: string | number) => Promise<void>;
+    saveField: (id: number, name: string, value: string | number) => Promise<void>;
+    saveBud: (id: number, bizBud: BizBud, value: string | number) => Promise<void>;
     searchAtoms: QueryMore;
     selectLeafAtom: (entityAtom: EntityAtom) => Promise<EntityAtom>;
 }
@@ -74,7 +59,6 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
     const phrase = entity.phrase;
     const pathView = entity.name;
     const pathList = entity.name + '-list';
-    // const phrase = `${entity.type}.${entity.name}`;
 
     function getEntityAtom(phrase: string): EntityAtom {
         return biz.entities[phrase] as EntityAtom;
@@ -100,14 +84,11 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         };
     }
 
-    async function savePropMain(id: number, name: string, value: string | number) {
+    async function saveField(id: number, name: string, value: string | number) {
         await uq.ActIDProp(uq.Atom, id, name, value);
     }
 
-    async function savePropEx(id: number, bizBud: BizBud, value: string | number) {
-        // let { entity } = this;
-        // let { props } = entity;
-        // let bizProp = props.get(name);
+    async function saveBud(id: number, bizBud: BizBud, value: string | number) {
         let int: number, dec: number, str: string;
         switch (bizBud.budDataType.type) {
             default:
@@ -152,8 +133,8 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         pathList,
         getAtom,
         getEntityAtom,
-        savePropMain,
-        savePropEx,
+        saveField,
+        saveBud,
         searchAtoms,
         selectLeafAtom,
     };

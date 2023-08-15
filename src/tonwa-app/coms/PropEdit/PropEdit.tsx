@@ -25,23 +25,9 @@ export function PropEdit(props: DetailProps) {
     return <VBandContainerContext.Provider value={detailContext}>
         {children}
     </VBandContainerContext.Provider>;
-    /*
-    function Main() {
-        return <VBandContainerContext.Provider value={detailContext}>
-            {children}
-        </VBandContainerContext.Provider>;
-    }
-    return <>
-        <Routes>
-            <Route index element={<Main />} />
-            <Route path={pathEditDetail} element={<ValueEditPage detail={detailContext} />} />
-        </Routes>
-    </>;
-    */
 }
 
 function DefaultBandTemplate(props: BandTemplateProps) {
-    // let detailContext = useOutletContext<DetailContext>();
     const { openModal } = useModal();
     let detailContext = useBandContainer() as DetailContext;
     let band = useBand();

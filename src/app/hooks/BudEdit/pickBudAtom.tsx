@@ -1,11 +1,12 @@
 import { IDView, OpenModal, PickProps } from "tonwa-app";
-import { UqApp } from "app/UqApp";
+import { UqApp, uqApp } from "app/UqApp";
 import { BudAtom } from "app/Biz";
-import { selectAtom } from "../PageAtomSelect";
+import { selectAtom } from "../BizAtom/PageAtomSelect";
 import { EnumAtom } from "uqs/UqDefault";
-import { EditBudValue } from "./EditBudValue";
+import { EditBudValue } from "./model";
+import { RegisterOptions } from "react-hook-form";
 
-export function pickValueForBudAtom(uqApp: UqApp, budAtom: BudAtom): EditBudValue {
+export function pickBudAtom(budAtom: BudAtom, options: RegisterOptions): EditBudValue {
     let { bizAtom } = budAtom;
     if (bizAtom === undefined) {
         return {

@@ -31,11 +31,22 @@ export interface BandInputProps {
 
 function registerOptions(type: HTMLInputTypeAttribute, label: string | JSX.Element, options: RegisterOptions): RegisterOptions {
     if (options !== undefined) {
+        let required: string;
         if (options.required === true) {
-            let required = '请输入';
+            required = '请输入';
             if (typeof label === 'string') required += label;
-            return { ...options, required, };
         }
+        let min: any;
+        const { min: vMin } = options;
+        if (vMin !== undefined) {
+            min = { value: vMin, message: `最小值${vMin}` };
+        }
+        let max: any;
+        const { max: vMax } = options;
+        if (vMax !== undefined) {
+            max = { value: vMax, message: `最大值${vMax}` };
+        }
+        return { ...options, required, min, max };
     }
     switch (type) {
         default: return options;

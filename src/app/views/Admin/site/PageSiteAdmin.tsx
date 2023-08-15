@@ -1,7 +1,7 @@
 import { useUqApp } from "app/UqApp";
 import { IDView, Page, useModal } from "tonwa-app";
-import { FA, LMR, Sep } from "tonwa-com";
-import { ModalSiteInit, PageSiteInit, captionSiteInit } from "./siteInit";
+import { LMR, Sep } from "tonwa-com";
+import { PageSiteInit, captionSiteInit } from "./siteInit";
 import { EnumSysRole } from "tonwa-uq";
 import { PageSiteRole } from "./PageSiteRole";
 import { Link, Route, useParams } from "react-router-dom";

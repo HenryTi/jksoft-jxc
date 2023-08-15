@@ -5,9 +5,10 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './index.css'
 import { ViewUqApp } from 'tonwa-app';
 import { ViewsRoutes } from 'app/views';
-import { createUqApp } from 'app';
+import { uqApp } from 'app';
+// import { createUqApp } from 'app';
 
-const uqApp = createUqApp();
+// const uqApp = createUqApp();
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <ViewUqApp uqApp={uqApp}>

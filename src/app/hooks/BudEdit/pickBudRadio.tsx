@@ -1,10 +1,9 @@
-import { UqApp } from "app/UqApp";
 import { BudRadio } from "app/Biz";
-import { EditBudValue } from "./EditBudValue";
+import { EditBudValue } from "./model";
 import { OnValueChanged } from "tonwa-app";
 import { RadioAsync } from "tonwa-com";
 
-export function pickValueForBudRadio(uqApp: UqApp, budName: string, budRadio: BudRadio): EditBudValue {
+export function pickBudRadio(budName: string, budRadio: BudRadio): EditBudValue {
     let { items } = budRadio;
     return {
         pickValue: null,
@@ -27,23 +26,6 @@ export function pickValueForBudRadio(uqApp: UqApp, budName: string, budRadio: Bu
                 (radios[0])[2] = true;
             }
             return <RadioAsync name={budName} items={radios} onValueChanged={onValueChanged} />;
-            /*
-            return <>
-                {items.map((v, index) => {
-                    let [name, caption, value] = v;
-                    async function onChange() {
-                        if (onValueChanged === undefined) return;
-                        await onValueChanged(value);
-                    }
-                    return <label key={index} className="me-4">
-                        <input className="form-check-input"
-                            onChange={onChange}
-                            type="radio" name={budName} value={value}
-                            defaultChecked={checked[index]} /> {caption ?? name}
-                    </label>
-                })}
-            </>
-            */
         }
     }
 }

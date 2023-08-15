@@ -123,6 +123,6 @@ export class UqApp extends UqAppBase<UQs> {
 
 const uqConfigs = uqConfigsFromJson(uqconfigJson);
 
-export function createUqApp() {
+export const uqApp = (function createUqApp() {
     return new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
-}
+})();

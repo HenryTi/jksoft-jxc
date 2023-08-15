@@ -52,9 +52,9 @@ export function PageAssign(props: PageAssignProps) {
     function PageAssignContent({ atomName }: { atomName: string; }) {
         const uqApp = useUqApp();
         const { uq } = uqApp;
-        const genBudsSearch = useAMSBudsSearch({ entity: atomName, budNames, noMedsMessage });
+        const AMSBudsSearch = useAMSBudsSearch({ entity: atomName, budNames, noMedsMessage });
         const { openModal } = useModal();
-        const { entity, bizBuds, saveBuds, search } = genBudsSearch;
+        const { entity, bizBuds, saveBuds, search } = AMSBudsSearch;
         function ViewItem({ value }: { value: RowMed; }) {
             let { atom, meds } = value;
             function ViewValue({ value }: { value: number; }) {

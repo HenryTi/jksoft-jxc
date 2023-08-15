@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useState } from 'react';
+import React, { ReactNode, Suspense, useContext, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { atom, useAtom } from 'jotai';
 import jwtDecode from 'jwt-decode';
@@ -221,7 +221,7 @@ class LocalStorageDb extends LocalDb {
     }
 }
 
-export type OpenModal = <T = any>(element: JSX.Element | (() => Promise<JSX.Element>), onClosed?: (result: any) => void) => Promise<T>;
+export type OpenModal = <T = any>(element: JSX.Element, onClosed?: (result: any) => void) => Promise<T>;
 export const ModalContext = React.createContext(undefined);
 export function useModal() {
     const uqApp = useUqAppBase();
@@ -231,31 +231,17 @@ export function useModal() {
 export function uqAppModal(uqApp: UqAppBase): { openModal: OpenModal; closeModal: (result?: any) => void } {
     const { modal } = uqApp;
     const { stack: modalStackAtom } = modal;
-    async function openModal<T = any>(element: (JSX.Element | (() => Promise<JSX.Element>)), onClosed?: (result: any) => void): Promise<T> {
+    async function openModal<T = any>(element: JSX.Element, onClosed?: (result: any) => void): Promise<T> {
         return new Promise<T>(async (resolve, reject) => {
             let modalStack = getAtomValue(modalStackAtom);
-            let el: JSX.Element;
-            if (React.isValidElement(element) === true) {
-                el = element as JSX.Element;
-            }
-            else if (typeof element === 'function') {
-                let ret = element();
-                if (isPromise(ret) === true) {
-                    setAtomValue(modalStackAtom, [...modalStack, [<PageSpinner />, undefined, undefined]]);
-                    el = await ret;
-                    setAtomValue(modalStackAtom, [...modalStack]);
-                }
-                else {
-                    alert('is not a valid () => Promise<JSX.Element>');
-                    return;
-                }
-            }
-            else {
+            if (React.isValidElement(element) !== true) {
                 alert('is not valid element');
                 return;
             }
             let modal = <ModalContext.Provider value={true}>
-                {el}
+                <Suspense fallback={<PageSpinner />}>
+                    {element}
+                </Suspense>
             </ModalContext.Provider>;
             setAtomValue(modalStackAtom, [...modalStack, [modal, resolve, onClosed]]);
         })

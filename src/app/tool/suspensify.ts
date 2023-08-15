@@ -1,15 +1,10 @@
-export function useAsync<T>(fn: () => Promise<T>) {
-    let ret = suspensify(fn());
-    return ret.read() as T;
-}
-
-export function suspensify(promise: Promise<any>) {
+export function suspensify<T>(promise: Promise<T>) {
     let status = "pending";
 
     // 1. Keep track of the Promise's state. The `status`
     //    variable will update as the Promise moves from
     //    pending to success or error.
-    let result: any;
+    let result: T;
     let suspender = promise.then(
         (res) => {
             // On success, update the status to "success"

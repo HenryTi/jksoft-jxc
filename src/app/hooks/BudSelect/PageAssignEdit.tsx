@@ -14,7 +14,7 @@ export function PageAssignEdit({ rowMed, entity, noMedsMessage }: { rowMed: RowM
     const { uq } = uqApp;
     const { caption } = entity;
     const { atom, meds } = rowMed;
-    const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
+    const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [changed, setChanged] = useState(false);
     const { closeModal } = useModal();
 
@@ -33,19 +33,7 @@ export function PageAssignEdit({ rowMed, entity, noMedsMessage }: { rowMed: RowM
     function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { value, name } = evt.target;
         let n = Number(value);
-        if (Number.isNaN(n) === true) {
-            setChanged(false);
-            return;
-        }
-        else {
-            setChanged(true);
-            return;
-        }
-        /*
-        if (n !== buds[name]) {
-            setChanged(true);
-        }
-        */
+        setChanged(Number.isNaN(n) !== true);
     }
     const options = { onChange, valueAsNumber: true };
     let formRows = meds.map(v => buildRow(v));

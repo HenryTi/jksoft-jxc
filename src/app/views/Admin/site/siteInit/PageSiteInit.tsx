@@ -1,84 +1,121 @@
-import { EntitySubject } from "app/Biz";
-import { useUqApp } from "app/UqApp";
-import { BI } from "app/coms";
-import { useAsyncPage } from "app/tool";
+import { BizBud, EntitySubject } from "app/Biz";
+import { uqApp, useUqApp } from "app/UqApp";
+import { useQuery } from "react-query";
 import { Route } from "react-router-dom";
-import { Page } from "tonwa-app";
-import { List, wait } from "tonwa-com";
+import { LabelRowEdit, Page } from "tonwa-app";
+import { List, Sep } from "tonwa-com";
+import { RegisterOptions, useForm } from "react-hook-form";
+import { pickValueFromBudType } from "app/hooks";
 
 export const pathSiteInit = 'site-init';
 export const captionSiteInit = '初始设置';
 
-interface InitItem {
-    budName: string;
-    value: number;
+interface InitValue {
+    bud: BizBud;
+    value: number | string;
+    options: RegisterOptions;
+    // atomValue?: WritableAtom<number | string, any, any>;
+    // pickValue: (props: PickProps) => Promise<string | number>;
+    // ValueTemplate: (props: { value: any; onValueChanged?: OnValueChanged; }) => JSX.Element;
 }
 
-const initItems = [
-    'currency',
-    'startsummonth',
-    'startfiscalmonth',
-    'startfiscalday',
-].map(v => 'subject.init.' + v);
+const prefix = 'subject.init.';
 
-const inits: InitItem[] = [
-    { budName: 'subject.init.currency', value: 0 },
-    { budName: 'subject.init.startsummonth', value: 0 },
-    { budName: 'subject.init.startfiscalmonth', value: 0 },
-    { budName: 'subject.init.startfiscalday', value: 0 },
+const budCurrency = 'currency';
+const budStartSumMonth = 'startsummonth';
+const budStartFiscalMonth = 'startfiscalmonth';
+const budStartFiscalDay = 'startfiscalday';
+
+const initBuds = [
+    budCurrency,
+    budStartSumMonth,
+    budStartFiscalMonth,
+    budStartFiscalDay,
 ];
 
-const cnCol = ' py-3 ';
+const budOptions: { [name: string]: RegisterOptions } = {
+    [budCurrency]: {
 
-export async function ModalSiteInit() {
-    await wait(1000);
-    return <PageSiteInit />;
-}
+    },
+    [budStartSumMonth]: {
+        min: 1,
+        max: 12,
+    },
+    [budStartFiscalMonth]: {
+        min: 1,
+        max: 12,
+    },
+    [budStartFiscalDay]: {
+        min: 1,
+        max: 28,
+    }
+};
 
-export function PageSiteInit() {
-    const { uq } = useUqApp();
-    let ret = useAsyncPage<any>((async () => {
-        let { budsInt, budsDec, budsStr } = await uq.GetInit.query({});
-        let ret: { [phrase: string]: number | string } = {};
-        [budsInt, budsDec, budsStr].forEach(v => {
-            for (let { phrase, value } of v) {
-                ret[phrase] = value;
-            }
-        });
-        return ret;
-    }), PageView);
+async function getInit() {
+    const { uq, biz } = uqApp;
+    let { budsInt, budsDec, budsStr } = await uq.GetInit.query({});
+    const subjectInit = biz.entities['init'] as EntitySubject;
+    const { buds } = subjectInit;
+    let coll: { [phrase: string]: string | number; } = {};
+    [budsInt, budsDec, budsStr].forEach(v => {
+        for (let { phrase, value } of v) {
+            coll[phrase] = value;
+        }
+    });
+
+    let ret: InitValue[] = initBuds.map(v => {
+        const name = prefix + v;
+        const options = budOptions[v];
+        const value = coll[name];
+        const bud = buds[name];
+        return {
+            bud,
+            value,
+            options,
+        }
+    });
     return ret;
 }
 
-function PageView({ result }: { result: { [phrase: string]: number | string }; }) {
-    const { biz } = useUqApp();
-    const subjectInit = biz.entities['init'] as EntitySubject;
-    const { buds } = subjectInit;
-    function ViewAssign({ value: { budName, value } }: { value: InitItem }) {
-        const bud = buds[budName];
-        if (bud === undefined) {
-            return <div key={budName}>unknown {budName}</div>;
-        }
-        const { name, caption } = bud;
-        return <div key={budName} className="row">
-            <div className={'col-6' + cnCol}>{caption ?? name}</div>
-            <div className={'col-3' + cnCol}>{value ?? '值'}</div>
-            <div className={'col-3 text-end' + cnCol}>
-                <BI name="chevron-right" />
-            </div>
-        </div>
-    }
-    function onItemClick(item: InitItem) {
-        const { budName, value } = item;
-        alert(budName);
-    }
-    let inits = initItems.map(v => ({ budName: v, value: 0 }))
+export function PageSiteInit() {
+    const { data } = useQuery([], getInit, { cacheTime: 0 });
+    const uqApp = useUqApp();
+    const { uq } = uqApp;
     return <Page header={captionSiteInit}>
-        <div>{JSON.stringify(result)}</div>
-        <div className="container">
-            <List items={inits} ViewItem={ViewAssign} onItemClick={onItemClick} />
-        </div>
+        <List items={data} ViewItem={ViewAssign} onItemClick={undefined} />
+        <Sep />
     </Page>;
+
+    function ViewAssign({ value: item }: { value: InitValue; }) {
+        const { bud, value, options } = item;
+        const { name, caption } = bud;
+        const { pickValue, ValueTemplate } = pickValueFromBudType(bud, options);
+        return <LabelRowEdit
+            label={caption ?? name}
+            value={value}
+            onValueChanged={onValueChanged}
+            pickValue={pickValue}
+            options={{ ...options, value }}
+            ValueTemplate={ValueTemplate} />
+        async function onValueChanged(value: string | number): Promise<void> {
+            let int: number;
+            let dec: number;
+            let str: string;
+            let site = uqApp.uqSites.userSite.siteId;
+            switch (bud.budDataType.type) {
+                case 'int': int = value as any; break;
+                case 'dec': dec = value as any; break;
+                case 'str': int = value as any; break;
+            }
+            await uq.SaveBud.submit({
+                phrase: bud.phrase,
+                id: site,
+                int,
+                dec,
+                str,
+            });
+        }
+    }
 }
 
 export const routeSiteInit = <>
