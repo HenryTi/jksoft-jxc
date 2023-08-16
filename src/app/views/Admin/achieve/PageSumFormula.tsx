@@ -6,6 +6,7 @@ import { IDView, Page, PropEdit, useModal } from "tonwa-app";
 import { BandCom, BandContainerContext, BandDecimal, BandString, ButtonAsync, FA, List, Sep } from "tonwa-com";
 import { EnumAtom, SumFormula, SumFormulaType } from "uqs/UqDefault";
 import React, { useState } from "react";
+import { UseQueryOptions } from "app/tool";
 
 export const pathSumFormula = 'admin-sum-formula';
 
@@ -64,7 +65,7 @@ export function PageSumFormula() {
             }
         }
         return [persons, groups]
-    });
+    }, UseQueryOptions);
 
     function viewArr(arr: [string, number][]) {
         return arr.map(([title, id], index) => {

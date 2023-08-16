@@ -22,8 +22,3 @@ export function routeAdmin(uqApp: UqApp) {
         {routeAtom(uqApp, gUomI)}
     </>;
 }
-
-// {routeUomList}
-
-// export const routeAdminTab = <Route path={pathAdmin + '/*'} element={<TabAdmin />} />;
-// export const adminTab = { to: '/' + pathAdmin, caption: '管理员', icon: 'wrench' };

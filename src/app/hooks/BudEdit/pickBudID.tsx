@@ -1,14 +1,14 @@
-import { IDView, PickProps } from "tonwa-app";
-import { UqApp, uqApp } from "app/UqApp";
+import { IDView, PickProps, UqAppBase } from "tonwa-app";
 import { BudID } from "app/Biz";
 import { EditBudValue } from "./model";
 import { RegisterOptions } from "react-hook-form";
+import { UqApp } from "app/UqApp";
 
-export function pickBudID(budID: BudID, options: RegisterOptions): EditBudValue {
+export function pickBudID(uqApp: UqApp, budID: BudID, options: RegisterOptions): EditBudValue {
     let { ID } = budID;
     if (ID === undefined) {
         return {
-            pickValue: async function (props: PickProps) {
+            pickValue: async function (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) {
                 alert('no ID defined');
                 return undefined;
             },
@@ -20,7 +20,7 @@ export function pickBudID(budID: BudID, options: RegisterOptions): EditBudValue 
     // let { name: IDName } = ID;
     let { uq } = uqApp;
     return {
-        pickValue: async function (props: PickProps) {
+        pickValue: async function (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) {
             alert('ID select');
             return undefined;
         },

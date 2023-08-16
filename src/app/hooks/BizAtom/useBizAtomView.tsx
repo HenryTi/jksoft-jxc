@@ -35,9 +35,9 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
     const { main, props, propsStr, entityAtom } = state;
     let { caption, props: atomProps } = entityAtom;
     const viewRows: ViewPropRowProps[] = [
-        { name: 'id', label: 'id', readonly: true, },
-        { name: 'no', label: NOLabel ?? 'NO', readonly: true, },
-        { name: 'ex', label: exLabel ?? 'EX', },
+        { name: 'id', label: 'id', readonly: true, type: 'number', },
+        { name: 'no', label: NOLabel ?? 'NO', readonly: true, type: 'string', },
+        { name: 'ex', label: exLabel ?? 'EX', type: 'string', },
     ];
     let viewUom: any;
     if (uom === true) {
@@ -63,7 +63,10 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
                     let { name, phrase, caption } = v;
                     let prop = props[phrase] ?? propsStr[phrase];
                     return <React.Fragment key={name}>
-                        <EditAtomBud id={id} name={name} label={caption ?? name} bizBud={v} value={prop?.value} saveField={saveField} saveBud={saveBud} />
+                        <EditAtomBud
+                            id={id} name={name} label={caption ?? name}
+                            type={v.budDataType.dataType}
+                            bizBud={v} value={prop?.value} saveField={saveField} saveBud={saveBud} />
                         <Sep />
                     </React.Fragment>;
                 })

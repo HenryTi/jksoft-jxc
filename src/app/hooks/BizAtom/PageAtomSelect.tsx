@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
-import { uqAppModal, useModal } from "tonwa-app";
+import { UqAppBase, uqAppModal, useModal } from "tonwa-app";
 import { RowMed, useAtomBudsSearch } from "../BudSelect";
 import { UqApp, useUqApp } from "app/UqApp";
 import { AtomPhrase, PropsAtomSelect } from "app/tool";
 import { EntityAtom } from "app/Biz";
 import { EnumAtom } from "uqs/UqDefault";
 
-export async function selectAtom(uqApp: UqApp, atomName: EnumAtom, assigns?: string[]) {
+export async function selectAtom(uqApp: UqAppBase, atomName: EnumAtom, assigns?: string[]) {
     const { openModal } = uqAppModal(uqApp);
     let ret = await openModal<AtomPhrase>(<PageAtomSelect atomName={atomName} assigns={assigns} />);
     return ret;

@@ -42,7 +42,7 @@ export function PageEditMe() {
                 <Right text="right"></Right>
             </LabelRow>
             <Sep />
-            <LabelRowEdit {...temp} label={"a"} value={1} />
+            <LabelRowEdit {...temp} label={"a"} value={1} type="number" />
             <Sep />
             <PropEdit className="container" values={user} onValuesChanged={onValuesChanged} labelSize={3} >
                 <BandString label="别名" name="nick" placeholder="好的别名更方便记忆" />

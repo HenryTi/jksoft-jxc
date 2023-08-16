@@ -5,24 +5,34 @@ import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
 
 export abstract class BudDataType {
-    type: string;
+    abstract get type(): string;
+    abstract get dataType(): 'string' | 'number';
     fromSchema(schema: any) { }
     scan(biz: Biz) { }
 }
-export class BudNone extends BudDataType {
-    type = 'none';
+
+abstract class BudDataNumber extends BudDataType {
+    readonly dataType = 'number';
 }
-export class BudInt extends BudDataType {
-    type = 'int';
+
+abstract class BudDataString extends BudDataType {
+    readonly dataType = 'string';
 }
-export class BudDec extends BudDataType {
-    type = 'dec';
+
+export class BudNone extends BudDataString {
+    readonly type = 'none';
 }
-export class BudString extends BudDataType {
-    type = 'str';
+export class BudInt extends BudDataNumber {
+    readonly type = 'int';
 }
-export class BudAtom extends BudDataType {
-    type = 'atom';
+export class BudDec extends BudDataNumber {
+    readonly type = 'dec';
+}
+export class BudString extends BudDataString {
+    readonly type = 'str';
+}
+export class BudAtom extends BudDataNumber {
+    readonly type = 'atom';
     private atom: string;
     bizAtom: EntityAtom;
     fromSchema(schema: any) {
@@ -32,8 +42,8 @@ export class BudAtom extends BudDataType {
         this.bizAtom = biz.entities[this.atom] as EntityAtom;
     }
 }
-export class BudID extends BudDataType {
-    type = 'ID';
+export class BudID extends BudDataNumber {
+    readonly type = 'ID';
     private IDName: string;
     ID: ID;
     fromSchema(schema: any) {
@@ -45,7 +55,7 @@ export class BudID extends BudDataType {
         }
     }
 }
-abstract class BudTypeWithItems extends BudDataType {
+abstract class BudTypeWithItems extends BudDataNumber {
     items: any[] = [];
     override fromSchema(schema: any) {
         super.fromSchema(schema);
@@ -53,15 +63,15 @@ abstract class BudTypeWithItems extends BudDataType {
     }
 }
 export class BudRadio extends BudTypeWithItems {
-    type = 'radio';
+    readonly type = 'radio';
 }
-export class BudCheck extends BudDataType {
-    type = 'check';
+export class BudCheck extends BudDataNumber {
+    readonly type = 'check';
 }
-export class BudDate extends BudDataType {
+export class BudDate extends BudDataNumber {
     type = 'date';
 }
-export class BudDateTime extends BudDataType {
+export class BudDateTime extends BudDataNumber {
     type = 'datetime';
 }
 

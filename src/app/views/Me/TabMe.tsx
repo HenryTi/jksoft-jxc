@@ -5,19 +5,16 @@ import { FA, LMR, Sep, useT } from "tonwa-com";
 import { IDView, Image, Page, useModal } from "tonwa-app";
 import { appT, ResApp } from "../../res";
 import { pathEditMe } from "./routeMe";
-import { PageSiteRole, PageSys, Permit, ViewSite, isPermitted } from "../Site";
-import { EnumSysRole } from "tonwa-uq";
+import { PageSys, Permit, ViewSite, isPermitted } from "../Site";
 import React from "react";
-import { pathAdmin } from "../Admin/PageAdmin";
-import { PageSiteInit } from "../Admin/site/siteInit";
-import { PageSiteAdmin, pathSiteAdmin } from "../Admin/site";
+import { pathSiteAdmin } from "../Admin/site";
 
 const pathAbout = 'about';
 
 export function TabMe() {
     const t = useT(appT);
     const uqApp = useUqApp();
-    const { openModal, closeModal } = useModal();
+    const { openModal } = useModal();
     const { uq, user: atomUser, uqSites } = uqApp;
     const user = useAtomValue(atomUser);
 

@@ -2,8 +2,9 @@ import { BudRadio } from "app/Biz";
 import { EditBudValue } from "./model";
 import { OnValueChanged } from "tonwa-app";
 import { RadioAsync } from "tonwa-com";
+import { UqApp } from "app/UqApp";
 
-export function pickBudRadio(budName: string, budRadio: BudRadio): EditBudValue {
+export function pickBudRadio(uqApp: UqApp, budName: string, budRadio: BudRadio): EditBudValue {
     let { items } = budRadio;
     return {
         pickValue: null,

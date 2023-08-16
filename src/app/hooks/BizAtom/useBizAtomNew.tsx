@@ -8,6 +8,7 @@ import { useEffectOnce } from "tonwa-com";
 import { EntityAtom } from "app/Biz";
 import { useState } from "react";
 import { Atom } from "uqs/UqDefault";
+import { UseQueryOptions } from "app/tool";
 
 interface OptionsNew {
 }
@@ -95,7 +96,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
         const { data: { no, formRows } } = useQuery('PageAtomNew', async () => {
             let ret = await buildNew();
             return ret;
-        }, { cacheTime: 100, refetchOnWindowFocus: false });
+        }, UseQueryOptions);
         const { register, handleSubmit, formState: { errors }, } = useForm({ mode: 'onBlur' });
         async function onSubmit(data: any) {
             let ret = await actSave(entity, no, data);

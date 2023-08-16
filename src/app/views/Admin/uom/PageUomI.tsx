@@ -2,9 +2,9 @@ import { Route, useNavigate, useParams } from "react-router-dom";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { ViewUomList } from "./ViewUomList";
 import { OptionsUseBizAtom, pathAtomList, useBizAtomList, useBizAtomNew, useBizAtomView, useBizAtomViewFromId } from "app/hooks";
-import { EnumAtom } from "uqs/UqDefault";
+import { Atom, EnumAtom } from "uqs/UqDefault";
 import { ViewListHeader } from "./ViewListHeader";
-import { GAtom } from "app/tool";
+import { GAtom, UseQueryOptions } from "app/tool";
 import { Band, ButtonRight, FormRow, FormRowsView, PageMoreCacheData, PageQueryMore } from "app/coms";
 import { FA, LMR, List, useEffectOnce } from "tonwa-com";
 import { useState } from "react";
@@ -71,9 +71,11 @@ function PageEdit() {
     </Page>;
 }
 
-function ViewItemUomI({ value }: { value: any }) {
+function ViewItemUomI({ value }: { value: Atom }) {
+    const { no, ex } = value;
     return <div>
-        {JSON.stringify(value)}
+        <span className="me-3">{ex}</span>
+        <small className="text-secondary">{no}</small>
     </div>
 }
 
@@ -125,7 +127,7 @@ function PageView() {
             uomI,
             uomxList,
         }
-    });
+    }, UseQueryOptions);
 
     async function onDel() {
         let message = '真的要删除这个计量单位吗？';

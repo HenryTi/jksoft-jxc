@@ -3,16 +3,10 @@ import ReactDOM from 'react-dom/client'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './index.css'
-import { ViewUqApp } from 'tonwa-app';
-import { ViewsRoutes } from 'app/views';
-import { uqApp } from 'app';
-// import { createUqApp } from 'app';
+import { ViewMain } from 'app';
 
-// const uqApp = createUqApp();
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
-        <ViewUqApp uqApp={uqApp}>
-            <ViewsRoutes />
-        </ViewUqApp>
+        <ViewMain />
     </React.StrictMode>,
 )

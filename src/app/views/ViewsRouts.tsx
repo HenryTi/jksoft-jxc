@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Page, PageTabsLayout, PageSpinner } from 'tonwa-app';
 import { pathMe, routeMe, TabMe } from './Me';
 import { pathJXC, routeJCX, TabJXC } from './JXC';
-// import { adminTab, routeAdmin, routeAdminTab } from 'app/views/admin';
 import { useUqApp } from 'app/UqApp';
 import { AppLogin, AppRegister, routePrivacy } from 'app/brand';
 import { useAtomValue } from 'jotai';

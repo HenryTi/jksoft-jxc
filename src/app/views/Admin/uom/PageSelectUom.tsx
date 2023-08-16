@@ -1,7 +1,7 @@
 import { BudRadio } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { Page, PageSpinner, useModal } from "tonwa-app";
-import { FA, List, Spinner, useEffectOnce } from "tonwa-com";
+import { Page, useModal } from "tonwa-app";
+import { FA, List, useEffectOnce } from "tonwa-com";
 import { Uom, UomType } from "./model";
 import { useState } from "react";
 
@@ -57,9 +57,6 @@ export function PageSelectUom() {
             setUomType(ret);
         })();
     });
-    function onSubmit() {
-        closeModal({ a: 1, b: 2 })
-    }
     function onSelected(item: Uom) {
         closeModal(item);
     }
@@ -93,8 +90,8 @@ function PageSelectType() {
         })();
     });
     let bizUom = biz.entities['uom'];
-    let budType = bizUom.propColl['type'];
-    let budItems = budType.budDataType as BudRadio;
+    let bud = bizUom.buds['type'];
+    let budItems = bud.budDataType as BudRadio;
     function ViewBaseUnit({ value }: { value: any[] }) {
         const [name, caption] = value;
         return <div className="px-3 py-2">

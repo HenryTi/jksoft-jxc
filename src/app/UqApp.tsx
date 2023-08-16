@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { getAtomValue, setAtomValue } from 'tonwa-com';
-import { AppConfig, UqAppBase, UqAppContext } from "tonwa-app";
+import { AppConfig, UqAppBase, UqAppContext, ViewUqApp } from "tonwa-app";
 import { UqConfig, UqQuery, UqSites } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
@@ -9,6 +9,7 @@ import { UqExt } from 'uqs/UqDefault';
 import { GAtom, GSheet, GSpec } from './tool';
 import { atom } from 'jotai';
 import { Biz, EntityAtom } from './Biz';
+import { ViewsRoutes } from './views';
 
 const appConfig: AppConfig = {
     version: '0.1.0',
@@ -123,6 +124,9 @@ export class UqApp extends UqAppBase<UQs> {
 
 const uqConfigs = uqConfigsFromJson(uqconfigJson);
 
-export const uqApp = (function createUqApp() {
-    return new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
-})();
+export function ViewMain() {
+    const uqApp = new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
+    return <ViewUqApp uqApp={uqApp}>
+        <ViewsRoutes />
+    </ViewUqApp>;
+}

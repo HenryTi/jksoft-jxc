@@ -1,11 +1,12 @@
 import { BizBud, EntitySubject } from "app/Biz";
-import { uqApp, useUqApp } from "app/UqApp";
+import { UqApp, useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
 import { Route } from "react-router-dom";
 import { LabelRowEdit, Page } from "tonwa-app";
 import { List, Sep } from "tonwa-com";
 import { RegisterOptions, useForm } from "react-hook-form";
-import { pickValueFromBudType } from "app/hooks";
+import { pickValueFromBud } from "app/hooks";
+import { UseQueryOptions } from "app/tool";
 
 export const pathSiteInit = 'site-init';
 export const captionSiteInit = '初始设置';
@@ -51,48 +52,52 @@ const budOptions: { [name: string]: RegisterOptions } = {
     }
 };
 
-async function getInit() {
-    const { uq, biz } = uqApp;
-    let { budsInt, budsDec, budsStr } = await uq.GetInit.query({});
-    const subjectInit = biz.entities['init'] as EntitySubject;
-    const { buds } = subjectInit;
-    let coll: { [phrase: string]: string | number; } = {};
-    [budsInt, budsDec, budsStr].forEach(v => {
-        for (let { phrase, value } of v) {
-            coll[phrase] = value;
-        }
-    });
-
-    let ret: InitValue[] = initBuds.map(v => {
-        const name = prefix + v;
-        const options = budOptions[v];
-        const value = coll[name];
-        const bud = buds[name];
-        return {
-            bud,
-            value,
-            options,
-        }
-    });
-    return ret;
-}
-
 export function PageSiteInit() {
-    const { data } = useQuery([], getInit, { cacheTime: 0 });
     const uqApp = useUqApp();
-    const { uq } = uqApp;
+    const { uq, biz } = uqApp;
+    const { data } = useQuery(
+        [],
+        getInit,
+        UseQueryOptions
+    );
     return <Page header={captionSiteInit}>
         <List items={data} ViewItem={ViewAssign} onItemClick={undefined} />
         <Sep />
     </Page>;
 
+    async function getInit() {
+        let { budsInt, budsDec, budsStr } = await uq.GetInit.query({});
+        const subjectInit = biz.entities['init'] as EntitySubject;
+        const { buds } = subjectInit;
+        let coll: { [phrase: string]: string | number; } = {};
+        [budsInt, budsDec, budsStr].forEach(v => {
+            for (let { phrase, value } of v) {
+                coll[phrase] = value;
+            }
+        });
+
+        let ret: InitValue[] = initBuds.map(v => {
+            const name = prefix + v;
+            const options = budOptions[v];
+            const value = coll[name];
+            const bud = buds[name];
+            return {
+                bud,
+                value,
+                options,
+            }
+        });
+        return ret;
+    }
+
     function ViewAssign({ value: item }: { value: InitValue; }) {
         const { bud, value, options } = item;
         const { name, caption } = bud;
-        const { pickValue, ValueTemplate } = pickValueFromBudType(bud, options);
+        const { pickValue, ValueTemplate } = pickValueFromBud(uqApp, bud, options);
         return <LabelRowEdit
             label={caption ?? name}
             value={value}
+            type={bud.budDataType.dataType}
             onValueChanged={onValueChanged}
             pickValue={pickValue}
             options={{ ...options, value }}
@@ -103,8 +108,10 @@ export function PageSiteInit() {
             let str: string;
             let site = uqApp.uqSites.userSite.siteId;
             switch (bud.budDataType.type) {
+                default:
                 case 'int': int = value as any; break;
                 case 'dec': dec = value as any; break;
+                case 'char':
                 case 'str': int = value as any; break;
             }
             await uq.SaveBud.submit({

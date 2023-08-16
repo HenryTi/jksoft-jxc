@@ -1,16 +1,16 @@
-import { IDView, OpenModal, PickProps } from "tonwa-app";
-import { UqApp, uqApp } from "app/UqApp";
+import { IDView, PickProps, UqAppBase } from "tonwa-app";
 import { BudAtom } from "app/Biz";
 import { selectAtom } from "../BizAtom/PageAtomSelect";
 import { EnumAtom } from "uqs/UqDefault";
 import { EditBudValue } from "./model";
 import { RegisterOptions } from "react-hook-form";
+import { UqApp } from "app/UqApp";
 
-export function pickBudAtom(budAtom: BudAtom, options: RegisterOptions): EditBudValue {
+export function pickBudAtom(uqApp: UqApp, budAtom: BudAtom, options: RegisterOptions): EditBudValue {
     let { bizAtom } = budAtom;
     if (bizAtom === undefined) {
         return {
-            pickValue: async function (props: PickProps) {
+            pickValue: async function (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) {
                 alert('no atom defined');
                 return undefined;
             },
@@ -23,7 +23,7 @@ export function pickBudAtom(budAtom: BudAtom, options: RegisterOptions): EditBud
     let { uq } = uqApp;
     let gAtom = uqApp.gAtoms[bizAtom.name];
     return {
-        pickValue: async function (props: PickProps) {
+        pickValue: async function (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) {
             let ret = await selectAtom(uqApp, atomName as EnumAtom);
             return ret?.id;
         },

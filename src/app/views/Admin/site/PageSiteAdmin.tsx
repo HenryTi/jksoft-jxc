@@ -27,7 +27,6 @@ export function PageSiteAdmin() {
         let { userSite0 } = uqSites;
         if (userSite0 === undefined) return null;
         async function onSitesAdmin() {
-            //openModal(ModalSiteInit);
             openModal(<PageSiteInit />);
         }
         return <>
@@ -58,7 +57,6 @@ export function PageSiteAdmin() {
         { label: captionUomList, path: pathAtomList(gUomI.name) },
     ];
     return <Page header={<IDView uq={uq} id={Number(site)} Template={ViewSite} />}>
-        <SiteInit />
         <SiteRoleAdmin />
         {cmds.map((v, index) => {
             const { label, path } = v;
@@ -66,6 +64,7 @@ export function PageSiteAdmin() {
                 <Cmd icon="caret-right-fill" content={label} iconColor="text-info" />
             </Link>
         })}
+        <SiteInit />
     </Page >;
 }
 

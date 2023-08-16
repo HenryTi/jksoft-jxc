@@ -1,9 +1,8 @@
 import { useState, useRef } from "react";
 import { ButtonAsync, FA, LabelRow, LabelRowPropsBase } from "tonwa-com";
-import { uqAppModal, useModal } from "../UqAppBase";
+import { UqAppBase, uqAppModal, useModal, useUqAppBase } from "../UqAppBase";
 import { Page } from "./page";
 import { RegisterOptions, useForm } from "react-hook-form";
-import { uqApp } from "app";
 import { FormRow, FormRowsView } from "app/coms";
 
 export type OnValueChanged = (value: string | number) => Promise<void>;
@@ -11,27 +10,30 @@ export type OnValueChanged = (value: string | number) => Promise<void>;
 export interface PickProps {
     label: string | JSX.Element;
     value: string | number;
+    type: 'string' | 'number';
     onValueChanged?: OnValueChanged;
 }
 
 export interface EditProps {
     label: string | JSX.Element;
     value: string | number;
+    type: 'string' | 'number';
     readonly?: boolean;         // default: false
     onValueChanged?: OnValueChanged;
     options?: RegisterOptions;
-    pickValue?: (props: PickProps, options: RegisterOptions) => Promise<string | number>;
+    pickValue?: (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) => Promise<string | number>;
     ValueTemplate?: (props: { value: string | number; onValueChanged?: OnValueChanged; }) => JSX.Element;
 }
 
 export function LabelRowEdit(props: LabelRowPropsBase & EditProps) {
-    let { label, value: initValue, readonly, pickValue: pickValueProp, options, onValueChanged, ValueTemplate } = props;
+    const uqApp = useUqAppBase();
+    let { label, value: initValue, type, readonly, pickValue: pickValueProp, options, onValueChanged, ValueTemplate } = props;
     const [value, setValue] = useState(initValue);
     if (pickValueProp === undefined) {
         pickValueProp = pickValue;
     }
     async function onClick() {
-        let ret = await pickValueProp({ label, value: initValue, }, options);
+        let ret = await pickValueProp(uqApp, { label, value: initValue, type, }, options);
         if (ret !== undefined) {
             setValue(ret);
             await onValueChanged?.(ret);
@@ -54,8 +56,8 @@ export function LabelRowEdit(props: LabelRowPropsBase & EditProps) {
     </LabelRow>;
 }
 
-export async function pickValue(pickProps: PickProps, options: RegisterOptions) {
-    const { label, value } = pickProps;
+export async function pickValue(uqApp: UqAppBase, pickProps: PickProps, options: RegisterOptions) {
+    const { label, value, type } = pickProps;
     const { openModal } = uqAppModal(uqApp);
     let ret = await openModal(<OneModal />); //, '修改' + label);
     return ret;
@@ -67,7 +69,7 @@ export async function pickValue(pickProps: PickProps, options: RegisterOptions) 
             closeModal(data['value']);
         }
         const formRows: FormRow[] = [
-            { name: 'value', label, type: 'number', options },
+            { name: 'value', label, type, options: { ...options, value }, },
             { type: 'submit', label: '提交', options: {} }
         ];
         return <Page header={label}>
