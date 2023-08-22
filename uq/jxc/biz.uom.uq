@@ -1,8 +1,8 @@
 -- UOM: Unit of Measure, 计量单位
 
 -- 基本单位
-BIZ ATOM Uom {
-    PROP discription CHAR;      -- 基本不需要描述。也可以：g=重量克
+BIZ ATOM Uom '基本单位' {
+    PROP discription '说明' CHAR;      -- 基本不需要描述。也可以：g=重量克
     PROP type Radio UomType;
     /* (
         count '计数'            = 1,
@@ -28,15 +28,15 @@ BIZ BudOptions UomType (
 
 -- 计量单位
 -- 比如支是计量单位，一只含有几个毫升。毫升就是基本单位
-Biz ATOM UomI {
-    PROP discription CHAR;      -- 计量单位需要描述
-    PROP uom ATOM Uom;
-    PROP ratio DEC;
+Biz ATOM UomI '计量单位' {
+    PROP discription '说明' CHAR;      -- 计量单位需要描述
+    PROP uom '基本单位' ATOM Uom;
+    PROP ratio '换算率' DEC;
 };
 
 -- 换算单位
 -- 比如盒，还有10支，盒就是换算单位
-BIZ ATOM UomX {
+BIZ ATOM UomX '换算单位' {
 };
 
 -- UomY 层级间的关系
@@ -209,8 +209,8 @@ RETURNS UomX (
         , c.ex as uomEx
         , BudValueStr(c.id, phraseDiscription) as uomDiscription
         FROM Atom as a
-            JOIN IxBudInt as b ON b.i=a.id AND b.x=phraseUom
-            JOIN Atom as c ON c.id=b.value
+            LEFT JOIN IxBudInt as b ON b.i=a.id AND b.x=phraseUom
+            LEFT JOIN Atom as c ON c.id=b.value
         WHERE a.id=id;
     INTO UomX SELECT * b, a.ratio
         FROM IxUom as a

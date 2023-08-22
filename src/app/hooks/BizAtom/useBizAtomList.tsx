@@ -29,7 +29,8 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
         <FA name="plus" />
     </Link>;
     const { ViewItemAtom } = options;
-    let caption = entityAtom.caption ?? entityAtom.name;
+    let { caption, name } = entityAtom;
+    caption = caption ?? name;
     let searchParam = {
         atom: entityAtom.phrase,
         key: undefined as string,

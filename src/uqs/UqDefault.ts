@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Aug 14 2023 21:55:19 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Wed Aug 16 2023 09:44:47 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -4950,11 +4950,12 @@ export const uqSchema={
             "name": "uom",
             "jName": "Uom",
             "type": "atom",
-            "caption": "Uom",
+            "caption": "基本单位",
             "props": [
                 {
                     "name": "discription",
                     "type": "prop",
+                    "caption": "说明",
                     "dataType": "char"
                 },
                 {
@@ -5005,22 +5006,25 @@ export const uqSchema={
             "name": "uomi",
             "jName": "UomI",
             "type": "atom",
-            "caption": "UomI",
+            "caption": "计量单位",
             "props": [
                 {
                     "name": "discription",
                     "type": "prop",
+                    "caption": "说明",
                     "dataType": "char"
                 },
                 {
                     "name": "uom",
                     "type": "prop",
+                    "caption": "基本单位",
                     "dataType": "atom",
                     "atom": "uom"
                 },
                 {
                     "name": "ratio",
                     "type": "prop",
+                    "caption": "换算率",
                     "dataType": "dec"
                 }
             ]
@@ -5029,7 +5033,7 @@ export const uqSchema={
             "name": "uomx",
             "jName": "UomX",
             "type": "atom",
-            "caption": "UomX"
+            "caption": "换算单位"
         },
         "sum": {
             "name": "sum",
