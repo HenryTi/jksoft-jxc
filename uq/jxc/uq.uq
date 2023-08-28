@@ -14,4 +14,5 @@ DataType (
     EX CHAR(200),
     PropName CHAR(50),
     Phrase CHAR(200),
+    BudStr CHAR(100),
 );

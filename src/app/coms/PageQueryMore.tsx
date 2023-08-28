@@ -206,7 +206,6 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         if (items.length > 0) {
             content = <>
                 <List items={items} ViewItem={ItemView} onItemClick={onItemClick} onItemSelect={onItemSelect} itemKey={itemKey} />
-                <Sep />
             </>;
         }
         else {

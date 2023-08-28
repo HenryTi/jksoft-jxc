@@ -3,15 +3,16 @@ import { Link, Route } from "react-router-dom";
 import { pathAchieve } from "./achieve";
 import { captionUser, pathUser } from "./user";
 import { captionAchieve } from "./achieve";
-import { captionUomList, gUomI } from "./uom";
-import { pathAtomList } from "app/hooks";
+import { gUomI } from "./uom";
+import { CaptionAtom, pathAtomList } from "app/hooks";
+import { EnumAtom } from "uqs/UqDefault";
 
 export const pathAdmin = 'admin';
 function PageAdmin() {
     const cmds = [
         { label: captionAchieve, path: pathAchieve },
         { label: captionUser, path: pathUser },
-        { label: captionUomList, path: pathAtomList(gUomI.name) },
+        { label: <CaptionAtom atom={EnumAtom.UomI} />, path: pathAtomList(gUomI.name) },
     ];
     return <Page header="管理员">
         {cmds.map((v, index) => {

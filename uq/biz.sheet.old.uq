@@ -17,10 +17,6 @@ Biz SheetOld Purchase '采购单' {
     }
 }
 
-/*
-Biz Detail DetailSale {
-};
-*/
 Biz SheetOld Sale '销售单' {
     detail;
     ACT (sheetId ID) {
@@ -44,18 +40,6 @@ PROC MayDeletePend(originDetail ID) {
     }
 };
 
-/*
-Biz Detail DetailStoreIn {
-    ACT (detailId ID) {
-        VAR item ID, value VALUE, v1 VALUE, v2 VALUE, origin ID;
-        SET item=a.item, value=a.value, v1=a.v1, v2=a.v2, origin=a.origin
-            FROM Detail as a
-            WHERE a.id=detailId;
-        Biz Subject storage of item += value ref detailId;
-        WITH Done ID=origin SET value+=value;
-    }
-};
-*/
 Biz SheetOld StoreIn ver 0.8 '入库单' {
     detail;
     ACT (sheetId ID) {

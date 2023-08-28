@@ -4,7 +4,7 @@ import { ParamSaveAtomUom } from "uqs/UqDefault";
 export function useAtomUom() {
     const { uq } = useUqApp();
     async function getAtomUom(id: number) {
-        let { uomI, uomX } = await uq.GetAtomUom.query({ id });
+        let { uomI, uomX } = await uq.GetAtomUomI.query({ id });
         return {
             uomI: uomI[0],
             uomX,

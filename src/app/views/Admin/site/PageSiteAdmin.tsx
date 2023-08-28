@@ -7,10 +7,11 @@ import { PageSiteRole } from "./PageSiteRole";
 import { Link, Route, useParams } from "react-router-dom";
 import { captionAchieve, pathAchieve } from "../achieve";
 import { captionUser, pathUser } from "../user";
-import { captionUomList, gUomI } from "../uom";
-import { pathAtomList } from "app/hooks";
+import { gUomI } from "../uom";
+import { CaptionAtom, pathAtomList } from "app/hooks";
 import { ViewSite } from "app/views/Site";
 import { BI } from "app/coms";
+import { EnumAtom } from "uqs/UqDefault";
 
 export function PageSiteAdmin() {
     const { uq, uqSites } = useUqApp();
@@ -54,7 +55,7 @@ export function PageSiteAdmin() {
     const cmds = [
         { label: captionAchieve, path: pathAchieve },
         { label: captionUser, path: pathUser },
-        { label: captionUomList, path: pathAtomList(gUomI.name) },
+        { label: <CaptionAtom atom={EnumAtom.UomI} />, path: pathAtomList(gUomI.name) },
     ];
     return <Page header={<IDView uq={uq} id={Number(site)} Template={ViewSite} />}>
         <SiteRoleAdmin />

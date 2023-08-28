@@ -28,7 +28,7 @@ IX IxBudDec (
 IX IxBudStr (
     i,
     x,
-    value CHAR(100),
+    value BudStr,
 );
 
 -- 从id基于phrase分裂生长的id。比如特定权限id。仅限经理可以见的客户。ID(unit@permit.经理)/contact
@@ -36,7 +36,7 @@ IX IxBudStr (
 ID Bud (
     id,
     KEY base ID,            -- 任何的id，包含site
-    KEY phrase ID,          -- 任意定义的phrase，无site
+    KEY ext ID,             -- 可以是任意定义的phrase，无site。也可以是任意的id
 );
 
 IX IxMy ver 0.1 (
@@ -66,7 +66,7 @@ FUNC BudSiteId ver 0.1 (
 RETURNS ID {
     VAR phraseId ID;
     SET phraseId = (SELECT id FROM $phrase WHERE name=phrase);
-    VAR siteBud ID = ID(Bud New KEY base=$site, phrase=phraseId);
+    VAR siteBud ID = ID(Bud New KEY base=$site, ext=phraseId);
     return siteBud;
 };
 
@@ -76,7 +76,7 @@ FUNC BudPhrase ver 0.3 (
 RETURNS CHAR(200) {
     VAR phrase CHAR(200) = (SELECT a.name 
         FROM $Phrase as a 
-            JOIN Bud as b ON b.phrase=a.id -- AND b.base=$site 
+            JOIN Bud as b ON b.ext=a.id -- AND b.base=$site 
         WHERE b.id=BudSiteId
         NO LOCK
     );
@@ -85,12 +85,12 @@ RETURNS CHAR(200) {
 
 FUNC BudId ver 0.1 (
     base ID,                -- any ID, if null then $site
-    phrase CHAR(100),
+    phrase Phrase,
 ) 
 RETURNS ID {
     VAR phraseId ID;
     SET phraseId = (SELECT id FROM $phrase WHERE name=phrase);
-    VAR budId ID = ID(Bud New KEY base=ifnull(base, $site), phrase=phraseId);
+    VAR budId ID = ID(Bud New KEY base=ifnull(base, $site), ext=phraseId);
     return budId;
 };
 
@@ -137,7 +137,7 @@ RETURNS CHAR(200) {
     VAR phrase CHAR(200) = (SELECT c.name 
         FROM Atom as a
             JOIN Bud as b ON b.id=a.base
-            JOIN $Phrase as c ON c.id=b.phrase
+            JOIN $Phrase as c ON c.id=b.ext
         WHERE a.id=atom
         NO LOCK
     );

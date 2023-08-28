@@ -114,13 +114,16 @@ export function List<T>(props: ListProps<T>) {
             funcKey = itemKey;
             break;
     }
-    return <ul className={'m-0 p-0 ' + className}>{items.map((v, index) => {
-        let key = funcKey(v, index);
-        return <React.Fragment key={key}>
-            {renderItem(v, index, key as string)}
-            {index < len - 1 && sep}
-        </React.Fragment>;
-    })}</ul>;
+    return <>
+        <ul className={'m-0 p-0 ' + className}>{items.map((v, index) => {
+            let key = funcKey(v, index);
+            return <React.Fragment key={key}>
+                {renderItem(v, index, key as string)}
+                {index < len - 1 && sep}
+            </React.Fragment>;
+        })}</ul>
+        {sep}
+    </>;
 }
 
 function DefaultViewItem<T>(itemProps: ItemProps<T>) {

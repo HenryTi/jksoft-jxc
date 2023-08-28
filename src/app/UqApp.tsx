@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { getAtomValue, setAtomValue } from 'tonwa-com';
 import { AppConfig, UqAppBase, UqAppContext, ViewUqApp } from "tonwa-app";
 import { UqConfig, UqQuery, UqSites } from 'tonwa-uq';
@@ -33,7 +33,8 @@ function uqConfigsFromJson(json: { devs: { [dev: string]: any }; uqs: any[]; }):
 }
 
 export function useUqApp() {
-    return useContext<UqApp>(UqAppContext);
+    let uqApp = useContext<UqApp>(UqAppContext);
+    return uqApp;
 }
 
 export interface Title {
@@ -48,6 +49,8 @@ export class UqApp extends UqAppBase<UQs> {
     unitTimezone: number;
     unitBizDate: number;
     unitBizMonth: number;
+    biz: Biz;
+    uq: UqExt;
 
     get pathLogin() { return '/login'; }
     // 数据服务器提醒客户端刷新，下面代码重新调入的数据
@@ -71,11 +74,9 @@ export class UqApp extends UqAppBase<UQs> {
         return;
     }
 
-    uq: UqExt;
-    biz: Biz;
     protected onLoadUQs() {
-        this.uq = this.uqs.UqDefault;
         this.biz = new Biz(this);
+        this.uq = this.uqs.UqDefault;
     }
 
     // 1. 可以支持多个site
@@ -125,8 +126,8 @@ export class UqApp extends UqAppBase<UQs> {
 const uqConfigs = uqConfigsFromJson(uqconfigJson);
 
 export function ViewMain() {
-    const uqApp = new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
-    return <ViewUqApp uqApp={uqApp}>
+    const createUqApp = () => new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
+    return <ViewUqApp createUqApp={createUqApp}>
         <ViewsRoutes />
     </ViewUqApp>;
 }

@@ -159,7 +159,7 @@ PAGE (
         FROM IxAtom as x 
             JOIN Atom as a ON x.i=a.base AND a.id=x.x
             JOIN Bud as b ON b.id=a.base
-            JOIN $phrase as d ON d.id=b.phrase
+            JOIN $phrase as d ON d.id=b.ext
         WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
         ORDER BY a.id desc
         LIMIT $pageSize;
@@ -212,8 +212,8 @@ RETURNS budsStr (
         FROM IxAtom as x 
             JOIN Atom as a ON x.i=a.base AND a.id=x.x
             JOIN Bud as b ON b.id=a.base
-            JOIN pPhrase as c ON c.id=b.phrase
-            JOIN $phrase as d ON d.id=b.phrase
+            JOIN pPhrase as c ON c.id=b.ext
+            JOIN $phrase as d ON d.id=b.ext
         WHERE a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key) 
             AND b.base=$site
         ORDER BY a.id desc
@@ -294,8 +294,8 @@ RETURNS budsStr (
         FROM IxAtom as x 
             JOIN Atom as a ON x.i=a.base AND a.id=x.x
             JOIN Bud as b ON b.id=a.base
-            JOIN pPhrase as c ON c.id=b.phrase
-            JOIN $phrase as d ON d.id=b.phrase
+            JOIN pPhrase as c ON c.id=b.ext
+            JOIN $phrase as d ON d.id=b.ext
         WHERE a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
             AND b.base=$site
         ORDER BY a.id desc

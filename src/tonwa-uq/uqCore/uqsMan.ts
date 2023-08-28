@@ -170,16 +170,11 @@ export class UQsMan {
         let fromName = from.owner + '/' + from.uq;
         let uq = this.collection[fromName];
         if (uq === undefined) {
-            //debugger;
-            //if (this.net.props.buildingUq !== true) {
-            //    console.error(`setInner(tuidImport: TuidImport): uq ${fromName} is not loaded`);
-            //}
             return;
         }
         let iName = tuidImport.name
         let tuid = uq.tuid(iName);
         if (tuid === undefined) {
-            //debugger;
             return `setInner(tuidImport: TuidImport): uq ${fromName} has no Tuid ${iName}`;
         }
         if (tuid.isImport === true) {

@@ -44,7 +44,7 @@ export async function selectAtomSpec(uqApp: UqApp, atomName: EnumAtom): Promise<
     }
 
     let { uq } = uqApp;
-    let { uomI, uomX: uomXs } = await uq.GetAtomUom.query({ id: atom.id });
+    let { uomI, uomX: uomXs } = await uq.GetAtomUomI.query({ id: atom.id });
     let { length: uomXsLength } = uomXs;
     if (uomXsLength === 0) {
         uom = {

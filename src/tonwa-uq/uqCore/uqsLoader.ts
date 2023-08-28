@@ -46,31 +46,6 @@ export class UQsLoader {
             }
         );
 
-        /*
-        let ret: UqData[] = this.loadLocal(uqs);
-        if (!ret) {
-            let centerAppApi = new CenterAppApi(this.net, 'tv/');
-            try {
-                ret = uqs.length === 0 ? [] : await centerAppApi.uqs(uqs);
-            }
-            catch (e) {
-                debugger;
-            }
-            if (ret.length < uqs.length) {
-                let err = `下列UQ：\n${uqs.map(v => `${v.owner}/${v.name}`).join('\n')}之一不存在`;
-                console.error(err);
-                throw Error(err);
-            }
-            //localStorage
-            this.net.setLocalDbItem(uqDataLocalStore, JSON.stringify(ret));
-        }
-        for (let i = 0; i < uqs.length; i++) {
-            let { ownerAlias, alias } = uqs[i];
-            ret[i].ownerAlias = ownerAlias;
-            ret[i].uqAlias = alias;
-        }
-        return ret;
-        */
         let ret = uqs.map(v => {
             let { name, alias, owner, ownerAlias } = v;
             let uqData: UqData;

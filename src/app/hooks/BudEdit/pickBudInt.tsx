@@ -1,7 +1,8 @@
 import { RegisterOptions } from "react-hook-form";
-import { PickProps, UqAppBase, pickValue } from "tonwa-app";
+import { UqAppBase } from "tonwa-app";
 import { BudInt } from "app/Biz";
 import { EditBudValue } from "./model";
+import { pickValue } from "./pickValue";
 
 export function pickBudInt(uqApp: UqAppBase, bud: BudInt, options: RegisterOptions): EditBudValue {
     return {

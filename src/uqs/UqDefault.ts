@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Aug 16 2023 09:44:47 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Mon Aug 28 2023 00:00:36 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -596,15 +596,42 @@ export interface AtomSpecInActs extends ID {
 	spec: number | ID;
 }
 
-export interface ParamGetAtomUom {
+export interface ParamSaveUomType {
+	id: number;
+	type: number;
+}
+export interface ResultSaveUomType {
+}
+
+export interface ParamSaveUomIUom {
+	id: number;
+	type: number;
+}
+export interface ResultSaveUomIUom {
+}
+
+export interface ParamGetUom {
 	id: number;
 }
-export interface ReturnGetAtomUomUomI {
+export interface ReturnGetUomUom {
+	id: number;
+	no: string;
+	ex: string;
+	discription: string;
+}
+export interface ResultGetUom {
+	uom: ReturnGetUomUom[];
+}
+
+export interface ParamGetAtomUomI {
+	id: number;
+}
+export interface ReturnGetAtomUomIUomI {
 	id: number;
 	no: string;
 	ex: string;
 }
-export interface ReturnGetAtomUomUomX {
+export interface ReturnGetAtomUomIUomX {
 	id: number;
 	no: string;
 	ex: string;
@@ -613,9 +640,9 @@ export interface ReturnGetAtomUomUomX {
 	prevRatio: number;
 	atomUom: number;
 }
-export interface ResultGetAtomUom {
-	uomI: ReturnGetAtomUomUomI[];
-	uomX: ReturnGetAtomUomUomX[];
+export interface ResultGetAtomUomI {
+	uomI: ReturnGetAtomUomIUomI[];
+	uomX: ReturnGetAtomUomIUomX[];
 }
 
 export interface ParamSaveUomX {
@@ -884,13 +911,13 @@ export interface IxBud extends IX {
 
 export interface Bud extends ID {
 	base: number;
-	phrase: number;
+	ext: number;
 }
 
 export interface BudInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
-	phrase: number | ID;
+	ext: number | ID;
 }
 
 export interface History extends ID {
@@ -1111,7 +1138,10 @@ export interface UqExt extends Uq {
 	GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
 	AtomUom: UqID<any>;
 	AtomSpec: UqID<any>;
-	GetAtomUom: UqQuery<ParamGetAtomUom, ResultGetAtomUom>;
+	SaveUomType: UqAction<ParamSaveUomType, ResultSaveUomType>;
+	SaveUomIUom: UqAction<ParamSaveUomIUom, ResultSaveUomIUom>;
+	GetUom: UqQuery<ParamGetUom, ResultGetUom>;
+	GetAtomUomI: UqQuery<ParamGetAtomUomI, ResultGetAtomUomI>;
 	SaveUomX: UqAction<ParamSaveUomX, ResultSaveUomX>;
 	DelUomX: UqAction<ParamDelUomX, ResultDelUomX>;
 	SaveAtomUom: UqAction<ParamSaveAtomUom, ResultSaveAtomUom>;
@@ -2903,8 +2933,80 @@ export const uqSchema={
             "spec"
         ]
     },
-    "getatomuom": {
-        "name": "GetAtomUom",
+    "saveuomtype": {
+        "name": "SaveUomType",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "type",
+                "type": "id"
+            }
+        ],
+        "returns": [] as any
+    },
+    "saveuomiuom": {
+        "name": "SaveUomIUom",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "type",
+                "type": "id"
+            }
+        ],
+        "returns": [] as any
+    },
+    "getuom": {
+        "name": "GetUom",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "uom",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "discription",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            }
+        ]
+    },
+    "getatomuomi": {
+        "name": "GetAtomUomI",
         "type": "query",
         "private": false,
         "sys": true,
@@ -3762,7 +3864,7 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "phrase",
+                "name": "ext",
                 "type": "id"
             }
         ],
@@ -3772,7 +3874,7 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "phrase",
+                "name": "ext",
                 "type": "id"
             }
         ],

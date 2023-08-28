@@ -11,13 +11,14 @@ import { pickBudRadio } from "./pickBudRadio";
 import { ViewPropProps } from "../model";
 import { pickBudString } from "./pickBudString";
 import { pickBudInt } from "./pickBudInt";
+import { pickValue } from "./pickValue";
 
 interface OpProps {
     saveProp: (newValue: string | number) => Promise<void>;
     pickValue?: (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) => Promise<string | number>;
 }
 
-function ViewBud({ label, name, readonly, type, value: initValue, saveProp, id, pickValue, ValueTemplate }: ViewPropProps & OpProps) {
+function ViewBud({ label, name, readonly, type, value: initValue, saveProp, id, pickValue: pickBudValue, ValueTemplate }: ViewPropProps & OpProps) {
     let uqApp = useUqApp();
     let [value, setValue] = useState(initValue);
     async function onValueChanged(value: string | number) {
@@ -32,7 +33,7 @@ function ViewBud({ label, name, readonly, type, value: initValue, saveProp, id, 
     return <LabelRowEdit label={label}
         value={value} readonly={readonly} type={type}
         onValueChanged={onValueChanged}
-        pickValue={pickValue}
+        pickValue={pickBudValue ?? pickValue}
         ValueTemplate={ValueTemplate} />
 }
 

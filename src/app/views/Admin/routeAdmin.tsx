@@ -8,6 +8,8 @@ import { gPersonPost } from "./achieve/AtomPersonPost";
 import { gGroupPost } from "./achieve/AtomGroupPost";
 import { routeUser } from "./user";
 import { gUom, gUomI } from "./uom";
+import { Route } from "react-router-dom";
+import { PageUomRoot } from "./uom/ViewUomList";
 
 export function routeAdmin(uqApp: UqApp) {
     return <>
@@ -20,5 +22,6 @@ export function routeAdmin(uqApp: UqApp) {
         {routeAtom(uqApp, gGroupPost)}
         {routeAtom(uqApp, gUom)}
         {routeAtom(uqApp, gUomI)}
+        <Route path={'/uom'} element={<PageUomRoot />} />
     </>;
 }

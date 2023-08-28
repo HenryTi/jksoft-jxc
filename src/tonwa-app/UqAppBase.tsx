@@ -1,4 +1,4 @@
-import React, { ReactNode, Suspense, useContext, useState } from 'react';
+import React, { ReactNode, Suspense, useMemo, useContext, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { atom, useAtom } from 'jotai';
 import jwtDecode from 'jwt-decode';
@@ -149,6 +149,7 @@ export abstract class UqAppBase<UQS = any> {
     initErrors: string[];
 
     async init(): Promise<void> {
+        if (this.uqsMan !== undefined) return;
         console.log('UqApp.load()');
         await this.net.init();
         console.log('await this.net.init()');
@@ -271,15 +272,16 @@ const queryClient = new QueryClient({
     },
 });
 
-export function ViewUqApp({ uqApp, children }: { uqApp: UqAppBase; children: ReactNode; }) {
+export function ViewUqApp({ createUqApp, children }: { createUqApp: () => UqAppBase; children: ReactNode; }) {
+    let uqApp = useMemo(createUqApp, []);
     const [modalStack] = useAtom(uqApp.modal.stack);
     let [appInited, setAppInited] = useState<boolean>(false);
-    useEffectOnce(() => {
+    useEffect(() => {
         (async function () {
             await uqApp.init();
             setAppInited(true);
         })();
-    });
+    }, [uqApp]);
     if (appInited === false) {
         return <div className="p-5 text-center">
             <Spinner className="text-info" />

@@ -1,11 +1,11 @@
-import { Route, useNavigate, useParams } from "react-router-dom";
+import { Link, Route, useNavigate, useParams } from "react-router-dom";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { ViewUomList } from "./ViewUomList";
 import { OptionsUseBizAtom, pathAtomList, useBizAtomList, useBizAtomNew, useBizAtomView, useBizAtomViewFromId } from "app/hooks";
 import { Atom, EnumAtom } from "uqs/UqDefault";
 import { ViewListHeader } from "./ViewListHeader";
 import { GAtom, UseQueryOptions } from "app/tool";
-import { Band, ButtonRight, FormRow, FormRowsView, PageMoreCacheData, PageQueryMore } from "app/coms";
+import { BI, Band, ButtonRight, FormRow, FormRowsView, PageMoreCacheData, PageQueryMore } from "app/coms";
 import { FA, LMR, List, useEffectOnce } from "tonwa-com";
 import { useState } from "react";
 import { Uom, UomI, UomX } from "./model";
@@ -20,6 +20,7 @@ const options: OptionsUseBizAtom = {
 }
 
 function PageList() {
+    const uqApp = useUqApp();
     let {
         header,
         right,
@@ -32,26 +33,34 @@ function PageList() {
         ...options,
         ViewItemAtom,
     });
-    const top = <>
-        <ViewUomList />
-        <ViewListHeader caption="计量单位" right={right} onAdd={onAdd} />
-    </>;
+    const { caption: uomCaption } = uqApp.biz.entities[EnumAtom.Uom];
+    const point = <BI name="chevron-right" className="text-secondary" />;
+    const top = <Link to="/uom">
+        <LMR className="px-3 py-2 border-bottom border-3 align-items-center cursor-pointer">
+            <BI name="archive-fill" className="w-2c me-4 text-primary" iconClassName="fs-4" />
+            <span className="text-black">{uomCaption}</span>
+            {point}
+        </LMR>
+    </Link>;
 
-    async function onAdd() {
+    function ViewItemAtom({ value }: { value: Atom; }) {
+        const { no, ex } = value;
+        return <LMR className="align-items-center">
+            <BI name="basket3" className="w-2c me-4 text-info" iconClassName="fs-4" />
+            <span>
+                <b className="me-3 text-black">{ex}</b>
+                <small className="text-secondary">{no}</small>
+            </span>
+            {point}
+        </LMR>
     }
-
-    function ViewItemAtom({ value }: { value: any; }) {
-        return <div>
-            {JSON.stringify(value)}
-        </div>
-    }
-    // right={right}
     return <PageQueryMore header={header}
         query={query}
         param={param}
         sortField={sortField}
         ViewItem={ViewItem}
         none={none}
+        right={right}
     >
         {top}
     </PageQueryMore>;
@@ -79,8 +88,6 @@ function ViewItemUomI({ value }: { value: Atom }) {
     </div>
 }
 
-export const captionUomList = '计量单位';
-
 export const gUomI: GAtom = {
     name: options.atomName,
     pageNew: <PageNew />,
@@ -91,13 +98,13 @@ export const gUomI: GAtom = {
 }
 
 function PageView() {
-    const caption = '计量单位';
     const navigate = useNavigate();
     const uqApp = useUqApp();
-    const { uq } = uqApp;
+    const { uq, biz } = uqApp;
     const { openModal } = useModal();
     const { id: idParam } = useParams();
     const idValue = Number(idParam);
+    const { caption } = biz.entities[options.atomName];
     const { data: { uomI, uomxList } } = useQuery(['GetUomI', idParam], async () => {
         let { UomI: retUomI, UomX: retUomX } = await uq.GetUomI.query({ id: idValue });
         let uomI: UomI;
@@ -181,9 +188,10 @@ function PageUomIView({ id }: { id: number; }) {
 }
 
 function UomXList({ uomI, uomxList: uomxListInit }: { uomI: UomI; uomxList: UomX[]; }) {
-    const { uq } = useUqApp();
+    const { uq, biz } = useUqApp();
     const { openModal, closeModal } = useModal();
     const [uomxList, setUomxList] = useState<UomX[]>(uomxListInit);
+    const { caption } = biz.entities[EnumAtom.UomX];
     async function onAdd() {
         const retNo = await uq.IDNO({ ID: uq.Atom });
         const uomX: UomX = {
@@ -241,7 +249,7 @@ function UomXList({ uomI, uomxList: uomxListInit }: { uomI: UomI; uomxList: UomX
             { type: 'submit' },
         ];
         async function onDel() {
-            let message = '真的要删除这个换算单位吗？';
+            let message = `真的要删除这个${caption}吗？`;
             let ret = await openModal(<PageConfirm header="确认" message={message} yes="删除" no="不删除" />);
             if (ret === true) {
                 await uq.DelUomX.submit({ uomI: uomI.id, uomX: id });
@@ -299,8 +307,12 @@ function UomXList({ uomI, uomxList: uomxListInit }: { uomI: UomI; uomxList: UomX
             </div>
         </LMR>;
     }
+    const none = <div className="p-3 text-secondary small">
+        <BI name="info-circle" className="me-1 text-info" />
+        无{caption}
+    </div>;
     return <div>
-        <ViewListHeader caption="换算单位" onAdd={onAdd} />
-        <List items={uomxList} ViewItem={ViewUomxRow} itemKey={v => v.ex} />
+        <ViewListHeader caption={caption} onAdd={onAdd} />
+        <List items={uomxList} ViewItem={ViewUomxRow} itemKey={v => v.ex} none={none} />
     </div>
 }

@@ -56,10 +56,16 @@ export class BudID extends BudDataNumber {
     }
 }
 abstract class BudTypeWithItems extends BudDataNumber {
-    items: any[] = [];
+    items: [string, string, string | number][] = [];
+    coll: { [value: string | number]: [string, string, string | number] } = {};
     override fromSchema(schema: any) {
         super.fromSchema(schema);
-        this.items = schema.items;
+        const { items } = schema;
+        this.items = items;
+        for (let item of items) {
+            const [, , value] = item;
+            this.coll[value] = item;
+        }
     }
 }
 export class BudRadio extends BudTypeWithItems {

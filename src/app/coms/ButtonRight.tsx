@@ -1,15 +1,16 @@
 import React from "react";
-import { FA } from "tonwa-com";
+import { BI } from "./bootstrap-icons";
 
 const cnDefault = 'btn btn-sm me-2 btn-';
 
 interface ButtonRightProps {
     className?: string;
     color?: string;
-    onClick: () => Promise<void>;
+    onClick?: () => Promise<void>;
+    tag?: string;
 }
 
-export function ButtonRight({ className, color, onClick, children }: ButtonRightProps & { children: React.ReactNode; }) {
+export function ButtonRight({ className, color, onClick, children, tag }: ButtonRightProps & { children: React.ReactNode; }) {
     let cn: string;
     if (color !== undefined) {
         cn = cnDefault + color;
@@ -20,11 +21,14 @@ export function ButtonRight({ className, color, onClick, children }: ButtonRight
     else {
         cn = className;
     }
-    return <button className={cn} onClick={onClick}>{children}</button>;
+    return React.createElement(tag ?? (onClick === undefined ? 'div' : 'button')
+        , { className: cn, onClick }
+        , children);
 }
 
 export function ButtonRightAdd(props: ButtonRightProps) {
     return <ButtonRight {...props}>
-        <FA name="plus" />
+        <BI name="plus-lg" compact={true} />
     </ButtonRight>
 }
+

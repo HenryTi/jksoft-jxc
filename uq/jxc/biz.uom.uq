@@ -4,17 +4,12 @@
 BIZ ATOM Uom '基本单位' {
     PROP discription '说明' CHAR;      -- 基本不需要描述。也可以：g=重量克
     PROP type Radio UomType;
-    /* (
-        count '计数'            = 1,
-        length '长度'           = 2,
-        area '面积'             = 3,
-        volume '体积'           = 4,
-        weight '重量'           = 5,
-        time '时长'             = 6,
-        currency '货币'         = 7,
-    );
-    */
 };
+
+IX IxUomType (
+    i,                  -- bud(bud(site, @uom.type), typeValue)
+    x,                  -- uom
+);
 
 BIZ BudOptions UomType (
     count '计数'            = 1,
@@ -30,7 +25,7 @@ BIZ BudOptions UomType (
 -- 比如支是计量单位，一只含有几个毫升。毫升就是基本单位
 Biz ATOM UomI '计量单位' {
     PROP discription '说明' CHAR;      -- 计量单位需要描述
-    PROP uom '基本单位' ATOM Uom;
+    PROP uom '基本单位' ATOM Uom INDEX;
     PROP ratio '换算率' DEC;
 };
 
@@ -46,7 +41,6 @@ IX IxUom (
     ratio VALUE,                -- uomx = ratio * uomi;
     prev ID,                    -- 上一层的UomX
     prevRatio VALUE DEFAULT 1,  -- 跟上一层的比率
-    -- valid TINYINT DEFAULT 1,
 );
 
 ID AtomUom ver 0.4 (
@@ -62,7 +56,44 @@ ID AtomSpec ver 0.4 (
     KEY spec ID *,              -- spec, 0 when no spec
 );
 
-QUERY GetAtomUom(
+ACT SaveUomType ver 0.1 (
+    id ID,          -- Uom
+    type ID,        -- UomType
+) {
+    Biz Bud Uom.type OF id = type;
+    VAR budSiteUomType ID = BudId($site, 'atom.uom.type');
+    VAR budSiteUomTypeValue ID = ID(Bud New KEY base=budSiteUomType, ext=type);
+    WITH IxUomType I=budSiteUomTypeValue X=id;
+};
+
+ACT SaveUomIUom ver 0.1 (
+    id ID,          -- Uom
+    type ID,        -- UomType
+) {
+    Biz Bud Uom.type OF id = type;
+};
+
+QUERY GetUom (
+    id ID,          -- UomType
+)
+RETURNS uom (
+    id ID,
+    no NO,
+    ex EX,
+    discription BudStr,
+) {
+    INTO uom SELECT b.id, b.no, b.ex
+        , c.value as discription
+        FROM IxUomType as a
+            JOIN Bud as a1 ON a1.id=a.i
+            JOIN Bud as a2 ON a2.id=a1.base AND a2.base=$site AND a2.ext=PhraseId('atom.uom.type')
+            JOIN Atom as b ON b.id=a.x
+            LEFT JOIN IxBudStr as c ON c.i=b.id AND c.x=PhraseId('atom.uom.discription')
+        WHERE a1.ext=id
+        ORDER BY b.id;
+}
+
+QUERY GetAtomUomI(
     id ID,
 )
 RETURNS uomI (

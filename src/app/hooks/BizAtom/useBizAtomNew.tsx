@@ -42,8 +42,9 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
     const { caption } = entity;
     return {
         page: <PageNew />,
-        view: <ViewNew />,
+        pageContent: <ViewNew />,
         modal: <ModalNew />,
+        modalContent: <ModalViewNew />,
     };
 
     function PageNew() {
@@ -60,13 +61,17 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
         return <ViewNewBase afterSubmit={afterSubmit} />;
     }
 
-    function ModalNew() {
+    function ModalViewNew() {
         const { closeModal } = useModal();
         function afterSubmit(atom: Atom) {
             closeModal(atom);
         }
+        return <ViewNewBase afterSubmit={afterSubmit} />
+    }
+
+    function ModalNew() {
         return <Page header={`新建${caption}`}>
-            <ViewNewBase afterSubmit={afterSubmit} />
+            <ModalViewNew />
         </Page>;
     }
 
@@ -100,7 +105,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
         const { register, handleSubmit, formState: { errors }, } = useForm({ mode: 'onBlur' });
         async function onSubmit(data: any) {
             let ret = await actSave(entity, no, data);
-            afterSubmit?.({ ...data, ...ret });
+            afterSubmit?.({ ...data, ...ret, no });
         }
         return <form onSubmit={handleSubmit(onSubmit)} className="container my-3 pe-5">
             <FormRowsView rows={formRows} {...{ register, errors }} />

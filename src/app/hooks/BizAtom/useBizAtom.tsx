@@ -13,16 +13,16 @@ export function pathAtomList(atomName: string) {
     return `${atomName}-list`;
 }
 
-export function pathAtomView(atomName: string) {
-    return `${atomName}-view/:id`;
+export function pathAtomView(atomName: string, id?: number) {
+    return `${atomName}-view/${id ?? ':id'}`;
 }
 
-export function pathAtomEdit(atomName: string) {
-    return `${atomName}-edit/:id`;
+export function pathAtomEdit(atomName: string, id?: number) {
+    return `${atomName}-edit/${id ?? ':id'}`;
 }
 
-export function pathAtom(atomName: string) {
-    return `${atomName}/:id`;
+export function pathAtom(atomName: string, id?: number) {
+    return `${atomName}/${id ?? ':id'}`;
 }
 
 export interface OptionsUseBizAtom {
