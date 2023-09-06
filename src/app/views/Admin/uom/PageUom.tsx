@@ -1,16 +1,16 @@
-import { BizBud, BudRadio } from "app/Biz";
+import { BudRadio } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { ButtonRightAdd } from "app/coms";
-import { OptionsUseBizAtom, pathAtomNew, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
+import { ButtonRightAdd, PageQueryMore } from "app/coms";
+import { CaptionAtom, OptionsUseBizAtom, useBizAtomList, useBizAtomNew } from "app/hooks";
 import { GAtom, UseQueryOptions } from "app/tool";
 import { ViewAtom } from "app/views/ViewAtom";
-import { atom, useAtom, useAtomValue } from "jotai";
-import { useMemo, useRef } from "react";
+import { atom, useAtomValue } from "jotai";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
-import { Page, useModal } from "tonwa-app";
-import { List, setAtomValue } from "tonwa-com";
+import { IDView, Page, useModal } from "tonwa-app";
+import { List, Sep, setAtomValue } from "tonwa-com";
 import { Atom, EnumAtom } from "uqs/UqDefault";
+import { ViewItemUomI } from "./PageUomI";
 
 const options: OptionsUseBizAtom = {
     atomName: EnumAtom.Uom,
@@ -34,7 +34,7 @@ function PageView() {
     const { coll } = budDataType as BudRadio;
     const [itemName, itemCaption] = coll[id];
     const { data } = useQuery(['EnumAtom.Uom', id], async () => {
-        let { uom } = await uq.GetUom.query({ id });
+        let { uom } = await uq.GetUomFromType.query({ id });
         console.log('EnumAtom.Uom', uom);
         let uomAtom = atom(uom);
         return uomAtom;
@@ -55,9 +55,11 @@ function PageView() {
             setAtomValue(data, [...uomList, ret]);
         }
         function ViewItem({ value }: { value: Partial<Atom>; }) {
-            return <div className="px-3 py-2">
-                <ViewAtom value={value as any} />
-            </div>;
+            return <Link to={pathUomIListOfUom(value.id)}>
+                <div className="px-3 py-2">
+                    <ViewAtom value={value as any} />
+                </div>
+            </Link>;
         }
         return <Page header={header} right={right}>
             <List items={uomList} ViewItem={ViewItem} />
@@ -66,15 +68,54 @@ function PageView() {
     return <Ret />;
 }
 
+export function pathUomIListOfUom(param: string | number) {
+    return '/uomi-list-of-uom/' + param;
+}
+export function PageUomIListOfUom() {
+    const { uq } = useUqApp();
+    const { id: idParam } = useParams();
+    const id = Number(idParam);
+    async function getUomIListOfUom(param: any, pageStart: any, pageSize: number): Promise<any[]> {
+        let query = uq.GetUomIListOfUom;
+        let ret = await query.page(param, pageStart, pageSize);
+        let { $page } = ret;
+        return $page;
+    };
+    let param = {
+        uom: id
+    };
+    function ViewItem({ value }: { value: any }) {
+        return <Link to={`/uomi/${value.id}`}>
+            <div className="px-3 py-2">
+                <ViewItemUomI value={value} />
+            </div>
+        </Link>
+    }
+    const right = <>R</>;
+    const top = <div>
+        <div className="m-3">
+            <IDView uq={uq} id={id} Template={ViewAtom} />
+        </div>
+        <Sep />
+    </div>;
+    return <PageQueryMore header={<CaptionAtom atom={EnumAtom.Uom} />}
+        query={getUomIListOfUom}
+        param={param}
+        sortField={'id'}
+        ViewItem={ViewItem}
+        right={right}
+    >
+        {top}
+    </PageQueryMore>;
+}
+
 function PageList() {
     let { page } = useBizAtomList({ ...options, ViewItemAtom: ViewItemUom });
     return page;
 }
 
 function ViewItemUom({ value }: { value: Atom; }) {
-    return <div>
-        {JSON.stringify(value)}
-    </div>
+    return <ViewAtom value={value} />;
 }
 
 export const gUom: GAtom = {

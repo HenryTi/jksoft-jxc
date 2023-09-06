@@ -12,23 +12,24 @@ export class Entity extends BizBase {
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
-            case 'main': this.fromMain(val); break;
             case 'props': this.fromProps(val); break;
             case 'assigns': this.fromAssigns(val); break;
         }
     }
 
-    protected fromMain(val: any) {
+    protected fromProp(prop: any) {
+        let { name, dataType } = prop;
+        let bizBud = new BizProp(this.biz, name, dataType, this);
+        let { budDataType } = bizBud;
+        if (budDataType === undefined) debugger;
+        budDataType.fromSchema(prop);
+        bizBud.fromSchema(prop);
+        return bizBud;
     }
 
     protected fromProps(props: any[]) {
         for (let prop of props) {
-            let { name, dataType } = prop;
-            let bizBud = new BizProp(this.biz, name, dataType, this);
-            let { budDataType } = bizBud;
-            if (budDataType === undefined) debugger;
-            budDataType.fromSchema(prop);
-            bizBud.fromSchema(prop);
+            let bizBud = this.fromProp(prop);
             this.selfProps.push(bizBud);
         }
     }

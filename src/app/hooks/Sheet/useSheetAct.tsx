@@ -13,9 +13,9 @@ import { EntitySheet } from "app/Biz";
 export interface PropsSheetAct {
     sheet: EnumSheet;
     act: string;
-    caption?: string;
-    targetCaption: string;
-    ViewTargetBand: (props: { sheet: Sheet; }) => JSX.Element;
+    // caption?: string;
+    // targetCaption: string;
+    // ViewTargetBand: (props: { sheet: Sheet; }) => JSX.Element;
     ViewTarget: (props: { sheet: Sheet; }) => JSX.Element;
     selectTarget: (header?: string) => Promise<Atom>;
     loadStart: () => Promise<{ sheet: Sheet; sheetRows: SheetRow[] }>;
@@ -26,7 +26,10 @@ export interface PropsSheetAct {
 export function useSheetAct(options: PropsSheetAct) {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp
-    const { sheet: sheetName, caption: sheetCaption, ViewTargetBand, loadStart, act, sep, useDetailReturn } = options;
+    const { sheet: sheetName,
+        // ViewTargetBand, 
+        ViewTarget,
+        loadStart, act, sep, useDetailReturn } = options;
     const { editRow } = useDetailReturn;
     const navigate = useNavigate();
     // const { current: genEditing } = useRef(useSheetEditing(sheetName, act, useDetailReturn));
@@ -65,7 +68,9 @@ export function useSheetAct(options: PropsSheetAct) {
     const [visible, setVisible] = useState(true);
     const { openModal, closeModal } = useModal();
     const { id: paramId } = useParams();
-    const caption = sheetCaption;
+
+    const { caption: sheetCaption, name, main } = entitySheet;
+    const caption = sheetCaption ?? name;
 
     useEffectOnce(() => {
         (async function () {
@@ -156,12 +161,20 @@ export function useSheetAct(options: PropsSheetAct) {
         // const { ViewRow } = genEditing;
         return <ViewRow editingRow={value} />;
     }
+
     let viewTargetBand: JSX.Element;
+    const { target } = main;
+    if (target !== undefined) {
+
+        viewTargetBand = <Band label={target.caption ?? target.name}>
+            <ViewTarget sheet={sheet} />
+        </Band>;
+    }
+    /*
     if (ViewTargetBand !== undefined) {
         viewTargetBand = <ViewTargetBand sheet={sheet} />;
     }
-
-
+    */
     function setEditing({ sheet, sheetRows }: { sheet: Sheet; sheetRows: SheetRow[]; }) {
         addRows(sheetRows);
         setAtomValue(atomSheet, sheet);
@@ -283,9 +296,8 @@ export function useSheetAct(options: PropsSheetAct) {
         if (d1.target !== d2.target) return false;
         if (d1.origin !== d2.origin) return false;
         if (d1.value !== d2.value) return false;
-        if (d1.v1 !== d2.v1) return false;
-        if (d1.v2 !== d2.v2) return false;
-        if (d1.v3 !== d2.v3) return false;
+        if (d1.price !== d2.price) return false;
+        if (d1.amount !== d2.amount) return false;
         return true;
     }
 
@@ -423,7 +435,6 @@ export function useSheetAct(options: PropsSheetAct) {
         {vButtons}
     </>;
     const bottom = <></>;
-
     return {
         caption,
         viewTargetBand,

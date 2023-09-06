@@ -1,8 +1,8 @@
-Biz Subject Init {
-    Assign currency '默认货币' ID;
-    Assign startSumMonth '汇总开始月' INT;      -- 月汇总的开始。之前的月汇总是预置的，之后的月汇总是计算的。
-    Assign startFiscalMonth '财年开始月' INT;   -- 财年开始月
-    Assign startFiscalDay '财年开始日' INT;     -- 财年开始日
+Biz Moniker Init {
+    currency '默认货币' ID;
+    startSumMonth '汇总开始月' INT;      -- 月汇总的开始。之前的月汇总是预置的，之后的月汇总是计算的。
+    startFiscalMonth '财年开始月' INT;   -- 财年开始月
+    startFiscalDay '财年开始日' INT;     -- 财年开始日
 };
 
 Biz Query GetInit (
@@ -23,7 +23,7 @@ RETURNS budsStr (
     phrase Phrase,
     value CHAR(200),
 ) {
-    VAR phrase PHRASE = 'subject.init.%';
+    VAR phrase PHRASE = 'moniker.init.%';
     INTO budsInt SELECT a.x as bud
         , e.name as phrase
         , a.value

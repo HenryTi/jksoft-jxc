@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { Spinner } from "tonwa-com";
+import { SpinnerSmall } from "tonwa-com";
 import { Uq } from "tonwa-uq";
 
 interface Props<T> {
     id: number;
     uq: Uq;
     Template?: (props: { value: T; }) => JSX.Element;
+    spinner?: JSX.Element;
 }
 
-export function IDView<T>({ id, uq, Template }: Props<T>) {
+export function IDView<T>({ id, uq, Template, spinner }: Props<T>) {
     const idValue = uq.idCache<any>(id);
     const [value, setValue] = useState(idValue);
     useEffect(() => {
@@ -29,13 +30,15 @@ export function IDView<T>({ id, uq, Template }: Props<T>) {
             setValue(obj);
         })();
     }, [id, idValue]);
-    if (id === undefined || id === null) return null;
-    if (value === undefined) {
-        return <Spinner className="text-info spinner-border-sm" />;
+    if (id === null) return null;
+    if (id === undefined || value === undefined) {
+        return spinner === undefined ? <SpinnerSmall /> : spinner;
     }
+    /*
     if (value === null) {
         return <div>id {id} is invalid</div>;
     }
+    */
     if (Template) {
         return <Template value={value} />;
     }

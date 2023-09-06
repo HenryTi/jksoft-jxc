@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Spinner } from "./Spinner";
+import { Spinner, SpinnerSmall } from "./Spinner";
 
 interface Props {
     name: string;
@@ -21,7 +21,7 @@ export function RadioAsync(props: Props) {
     let spinner: any;
     if (submiting === true) {
         spinner = <div className="position-absolute d-flex align-items-center" style={{ left: 0, top: 0, right: 0, bottom: 0 }}>
-            <Spinner className="text-info spinner-border-sm" />
+            <SpinnerSmall />
         </div>;
     }
     return <>

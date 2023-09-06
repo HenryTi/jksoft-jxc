@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { Sep, Spinner } from "../coms";
+import { Sep, Spinner, SpinnerSmall } from "../coms";
 
 interface ItemProps<T> {
     value: T;
@@ -35,7 +35,9 @@ export function List<T>(props: ListProps<T>) {
     if (items === undefined) {
         if (showLoading === false) return null;
         if (loading) return loading;
-        return <Spinner className="mx-3 my-2 text-primary spinner-border-sm" />;
+        return <div className="mx-3 my-2">
+            <SpinnerSmall />
+        </div>;
     }
     let len = items.length;
     if (len === 0) {

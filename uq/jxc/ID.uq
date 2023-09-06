@@ -24,9 +24,8 @@ ID Detail (
     target ID,              -- 操作对象。比如：客户，仓库，等 意义上等同于Sheet主表target
     origin ID,              -- 源单
     value VALUE,
-    v1 VALUE,
-    v2 VALUE,
-    v3 VALUE,
+    amount VALUE,
+    price VALUE,
     INDEX base_id(base, id) UNIQUE,
 );
 

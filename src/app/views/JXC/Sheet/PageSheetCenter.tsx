@@ -59,9 +59,8 @@ export function PageSheetCenter() {
         if (g === undefined) {
             return <div>error: phrase not defined</div>;
         }
-        const { sheet: name, caption } = g;
-        let entity = biz.entities[name] as EntitySheet;
-        return <LinkSheet path={name} caption={caption ?? entity.caption} />;
+        const { sheet, entitySheet } = g;
+        return <LinkSheet path={sheet} caption={entitySheet.caption ?? entitySheet.name} />;
     }
     function Top({ items }: { items: any[] }) {
         if (!items) return null;
@@ -80,12 +79,12 @@ export function PageSheetCenter() {
                 return <div key={index} className="px-3 py-2 border-bottom d-flex flex-wrap p-2">
                     {
                         arr.map((v, index) => {
-                            let { caption, sheet: name } = v;
+                            let { entitySheet, sheet: name } = v;
                             return <Link key={index}
                                 to={`../${name}`}
                                 className="px-3 px-2 btn btn-outline-primary m-2"
                             >
-                                {caption}
+                                {entitySheet.caption ?? entitySheet.name}
                             </Link>
                         })
                     }

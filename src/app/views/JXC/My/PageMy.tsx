@@ -4,9 +4,9 @@ import { ViewPeriodHeader } from "./ViewPeriodHeader";
 import { ViewBalances } from "./ViewBalances";
 import { useUqApp } from "app/UqApp";
 import { List, getAtomValue, useEffectOnce } from "tonwa-com";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { ReturnGetMyBalanceRet, ReturnGetMySumsRet } from "uqs/UqDefault";
-import { EnumPeriod, Period, usePeriod } from "./Period";
+import { Period, usePeriod } from "./Period";
 
 export const pathMy = 'my';
 

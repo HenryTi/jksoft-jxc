@@ -13,10 +13,20 @@ ID #SumSource (
     ref ID,                 -- 凭证
 );
 
+ID #Further (
+    id MINUTE,
+    formula ID,             -- 计算公式Phrase id，可以对应一个算法
+    detail ID,              -- 对应的明细id
+    value VALUE,
+    price PRICE,
+    amount Amount,
+);
+
 ENUM SumFormulaType (
     person = 1,
     group = 2,
-)
+);
+
 ID SumFormula ver 0.4 (
     id MINUTE,
     KEY formulaType ENUM SumFormulaType DEFAULT SumFormulaType.person,
@@ -44,16 +54,13 @@ IDX ObjPostSubjectBalance (
 );
 
 -- 运算过程的参数
-Biz Subject Sum {
-    Assign pSource INT;
-    Assign pSource1 INT;
+Biz Moniker Sum {
+    pSource INT;
+    pSource1 INT;
 };
 
 Biz Atom Subject '科目' UUID {
-    -- Prop saleAmount '销售额';
-    -- Prop grossProfit '有效额';
     UOM;                            -- 带计量单位
-    Prop metric1 Atom Person;
     Prop balance '结余' Radio (
         none '无' = 0,
         yes '有' = 1,
@@ -121,7 +128,7 @@ PAGE (
     selected TINYINT,
 ) {
     VAR person PHRASE = 'atom.person';
-    VAR base ID = BudSiteId(person);
+    VAR base ID = SiteBudId(person);
 
     PAGE SELECT a.id, a.no, a.ex, d.name as phrase
         , case when exists(select x from IxSumGroup WHERE i=group AND x=a.id) then 1 else 0 end as selected

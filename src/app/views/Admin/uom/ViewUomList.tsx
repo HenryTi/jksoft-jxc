@@ -2,7 +2,7 @@ import { LMR, List } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { BudRadio } from "app/Biz";
 import { Link } from "react-router-dom";
-import { pathAtomView } from "app/hooks";
+import { CaptionAtom, pathAtomView } from "app/hooks";
 import { EnumAtom } from "uqs/UqDefault";
 import { Page } from "tonwa-app";
 import { BI } from "app/coms";
@@ -27,10 +27,9 @@ export function ViewUomList() {
     </div>
 }
 
+export const pathUom = '/uom';
 export function PageUomRoot() {
-    const { biz } = useUqApp();
-    const { caption: uomCaption } = biz.entities[EnumAtom.Uom];
-    return <Page header={uomCaption}>
+    return <Page header={<CaptionAtom atom={EnumAtom.Uom} />}>
         <ViewUomList />
     </Page>
 }

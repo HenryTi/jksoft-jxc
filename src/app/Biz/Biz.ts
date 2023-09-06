@@ -32,10 +32,9 @@ export class Biz {
             pend: this.buildPend,
             atom: this.buildAtom,
             spec: this.buildSpec,
-            setting: this.buildSetting,
             permit: this.buildPermit,
             role: this.buildRole,
-            subject: this.buildSubject,
+            moniker: this.buildMoniker,
             tree: this.buildTree,
             tie: this.buildTie,
         }
@@ -108,7 +107,7 @@ export class Biz {
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildSubject = (name: string, type: string): Entity => {
+    private buildMoniker = (name: string, type: string): Entity => {
         let bizEntity = new EntitySubject(this, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }

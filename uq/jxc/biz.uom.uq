@@ -3,13 +3,14 @@
 -- 基本单位
 BIZ ATOM Uom '基本单位' {
     PROP discription '说明' CHAR;      -- 基本不需要描述。也可以：g=重量克
-    PROP type Radio UomType;
+    PROP type Radio UomType INDEX;
 };
-
+/*
 IX IxUomType (
     i,                  -- bud(bud(site, @uom.type), typeValue)
     x,                  -- uom
 );
+*/
 
 BIZ BudOptions UomType (
     count '计数'            = 1,
@@ -34,10 +35,10 @@ Biz ATOM UomI '计量单位' {
 BIZ ATOM UomX '换算单位' {
 };
 
--- UomY 层级间的关系
+-- UomX 层级间的关系
 IX IxUom (
     i,                          -- UomI 计量单位
-    x,                          -- UomX 换算单位
+    x INDEX,                    -- UomX 换算单位
     ratio VALUE,                -- uomx = ratio * uomi;
     prev ID,                    -- 上一层的UomX
     prevRatio VALUE DEFAULT 1,  -- 跟上一层的比率
@@ -61,9 +62,9 @@ ACT SaveUomType ver 0.1 (
     type ID,        -- UomType
 ) {
     Biz Bud Uom.type OF id = type;
-    VAR budSiteUomType ID = BudId($site, 'atom.uom.type');
-    VAR budSiteUomTypeValue ID = ID(Bud New KEY base=budSiteUomType, ext=type);
-    WITH IxUomType I=budSiteUomTypeValue X=id;
+    -- VAR budSiteUomType ID = BudId($site, 'atom.uom.type');
+    -- VAR budSiteUomTypeValue ID = ID(Bud New KEY base=budSiteUomType, ext=type);
+    -- WITH IxBud I=budSiteUomTypeValue X=id;
 };
 
 ACT SaveUomIUom ver 0.1 (
@@ -73,7 +74,7 @@ ACT SaveUomIUom ver 0.1 (
     Biz Bud Uom.type OF id = type;
 };
 
-QUERY GetUom (
+QUERY GetUomFromType (
     id ID,          -- UomType
 )
 RETURNS uom (
@@ -84,7 +85,7 @@ RETURNS uom (
 ) {
     INTO uom SELECT b.id, b.no, b.ex
         , c.value as discription
-        FROM IxUomType as a
+        FROM IxBud as a
             JOIN Bud as a1 ON a1.id=a.i
             JOIN Bud as a2 ON a2.id=a1.base AND a2.base=$site AND a2.ext=PhraseId('atom.uom.type')
             JOIN Atom as b ON b.id=a.x
@@ -92,6 +93,31 @@ RETURNS uom (
         WHERE a1.ext=id
         ORDER BY b.id;
 }
+
+Biz Query GetUomIListOfUom (
+    uom ID,                 -- uom
+)
+PAGE (
+    id ID desc,
+    no CHAR(50),
+    ex CHAR(50),
+    phrase PHRASE,
+) {
+    VAR phrase ID = PhraseId('atom.uomi.uom');
+    VAR bud ID = a.id
+        FROM Bud as a
+            JOIN Bud as b ON b.id=a.base AND b.base=$site AND b.ext=phrase
+        WHERE a.ext=uom;
+
+    PAGE SELECT a.id, a.no, a.ex, d.name as phrase
+        FROM IxBud as x 
+            JOIN Atom as a ON a.id=x.x
+            JOIN Bud as b ON b.id=a.base
+            JOIN $phrase as d ON d.id=b.ext
+        WHERE x.i=bud
+        ORDER BY x.x desc
+        LIMIT $pageSize;
+};
 
 QUERY GetAtomUomI(
     id ID,
@@ -127,7 +153,7 @@ RETURNS uomX (
 }
 
 ACT SaveUomX (
-    i ID,
+    i ID,               -- UomI
     no NO,
     ex CHAR(100),
     ratio VALUE,
@@ -136,7 +162,7 @@ RETURNS ret (
     id ID,
 ) {
     VAR x ID;
-    VAR base ID = BudSiteId('atom.uomx');
+    VAR base ID = SiteBudId('atom.uomx');
     WITH ATOM ID TO x KEY(base, no) SET ex=ex;
     WITH IxUom i=i x=x SET ratio=ratio; -- , valid=1;
 
@@ -173,13 +199,13 @@ ACT SaveAtomUom ver 0.3 (
 RETURNS ret (
     id ID AtomUom,
 ) {
-    VAR uomPhrase CHAR(200) = AtomPhrase(uom);
+    -- VAR uomPhrase CHAR(200) = AtomPhrase(uom);
     VAR id ID = ID(AtomUom new KEY atom=atom, uom=uom);
     WITH AtomUom ID=id SET visible=1;
-    IF uomPhrase='atom.uomi' {
+    -- IF uomPhrase='atom.uomi' {
         VAR phraseId ID = PhraseId('atom.$.uom');
         WITH IxBudInt I=atom X=phraseId SET value=uom;
-    }
+    -- }
     INTO ret SELECT id;
 }
 
@@ -212,7 +238,7 @@ RETURNS ret (
 }
 
 QUERY GetUomI (
-    id ID,              -- UomI
+    id ID,              -- UomI, or maybe UomX
 )
 RETURNS UomI (
     * ATOM,
@@ -227,10 +253,11 @@ RETURNS UomX (
     * ATOM,
     ratio VALUE,
 ) {
+    VAR uomI ID = IFNULL((SELECT a.i FROM IxUom as a WHERE a.x=id), id);
     VAR phraseDiscription ID = PhraseId('atom.uomi.discription');
     VAR phraseRatio ID = PhraseId('atom.uomi.ratio');
     VAR phraseUom ID = PhraseId('atom.uomi.uom');
-    VAR uom ID = BudValueInt(id, phraseUom);
+    -- VAR uom ID = BudValueInt(id, phraseUom);
 
     INTO UomI SELECT * a
         , BudValueStr(id, phraseDiscription) as discription
@@ -242,10 +269,10 @@ RETURNS UomX (
         FROM Atom as a
             LEFT JOIN IxBudInt as b ON b.i=a.id AND b.x=phraseUom
             LEFT JOIN Atom as c ON c.id=b.value
-        WHERE a.id=id;
+        WHERE a.id=uomI;
     INTO UomX SELECT * b, a.ratio
         FROM IxUom as a
             JOIN ATOM as b ON b.id=a.x
-        WHERE a.i=id
+        WHERE a.i=uomI
         ORDER BY a.ratio ASC;
 };

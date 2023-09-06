@@ -1,26 +1,25 @@
-import { Link, Route, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Page, PageConfirm, useModal } from "tonwa-app";
-import { ViewUomList } from "./ViewUomList";
-import { OptionsUseBizAtom, pathAtomList, useBizAtomList, useBizAtomNew, useBizAtomView, useBizAtomViewFromId } from "app/hooks";
+import { CaptionAtom, OptionsUseBizAtom, getAtomWithProps, useBizAtomList, useBizAtomNew, useBizAtomView, useBizAtomViewFromId } from "app/hooks";
 import { Atom, EnumAtom } from "uqs/UqDefault";
 import { ViewListHeader } from "./ViewListHeader";
 import { GAtom, UseQueryOptions } from "app/tool";
 import { BI, Band, ButtonRight, FormRow, FormRowsView, PageMoreCacheData, PageQueryMore } from "app/coms";
-import { FA, LMR, List, useEffectOnce } from "tonwa-com";
+import { FA, LMR, List, Spinner } from "tonwa-com";
 import { useState } from "react";
-import { Uom, UomI, UomX } from "./model";
+import { UomI, UomX } from "./model";
 import { useForm } from "react-hook-form";
 import { useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
+import { pathUom } from "./ViewUomList";
 
 const options: OptionsUseBizAtom = {
     atomName: EnumAtom.UomI,
-    NOLabel: undefined,
-    exLabel: undefined,
+    NOLabel: '编号',
+    exLabel: '名称',
 }
 
 function PageList() {
-    const uqApp = useUqApp();
     let {
         header,
         right,
@@ -31,29 +30,16 @@ function PageList() {
         none,
     } = useBizAtomList({
         ...options,
-        ViewItemAtom,
+        ViewItemAtom: ViewItemUomI,
     });
-    const { caption: uomCaption } = uqApp.biz.entities[EnumAtom.Uom];
-    const point = <BI name="chevron-right" className="text-secondary" />;
-    const top = <Link to="/uom">
+    const top = <Link to={pathUom}>
         <LMR className="px-3 py-2 border-bottom border-3 align-items-center cursor-pointer">
             <BI name="archive-fill" className="w-2c me-4 text-primary" iconClassName="fs-4" />
-            <span className="text-black">{uomCaption}</span>
+            <span className="text-black"><CaptionAtom atom={EnumAtom.Uom} /></span>
             {point}
         </LMR>
     </Link>;
 
-    function ViewItemAtom({ value }: { value: Atom; }) {
-        const { no, ex } = value;
-        return <LMR className="align-items-center">
-            <BI name="basket3" className="w-2c me-4 text-info" iconClassName="fs-4" />
-            <span>
-                <b className="me-3 text-black">{ex}</b>
-                <small className="text-secondary">{no}</small>
-            </span>
-            {point}
-        </LMR>
-    }
     return <PageQueryMore header={header}
         query={query}
         param={param}
@@ -64,6 +50,20 @@ function PageList() {
     >
         {top}
     </PageQueryMore>;
+}
+
+const point = <BI name="chevron-right" className="text-secondary" />;
+
+export function ViewItemUomI({ value }: { value: Atom; }) {
+    const { no, ex } = value;
+    return <LMR className="align-items-center">
+        <BI name="basket3" className="w-2c me-4 text-info" iconClassName="fs-4" />
+        <span>
+            <b className="me-3 text-black">{ex}</b>
+            <small className="text-secondary">{no}</small>
+        </span>
+        {point}
+    </LMR>
 }
 
 function PageNew() {
@@ -79,7 +79,7 @@ function PageEdit() {
         <div>UomXList</div>
     </Page>;
 }
-
+/*
 function ViewItemUomI({ value }: { value: Atom }) {
     const { no, ex } = value;
     return <div>
@@ -87,7 +87,7 @@ function ViewItemUomI({ value }: { value: Atom }) {
         <small className="text-secondary">{no}</small>
     </div>
 }
-
+*/
 export const gUomI: GAtom = {
     name: options.atomName,
     pageNew: <PageNew />,
@@ -162,18 +162,27 @@ function PageView() {
     </Page>;
 }
 
-function UomI({ uomI }: { uomI: UomI; }) {
+function UomI({ uomI: uomIInit }: { uomI: UomI; }) {
+    const { uq } = useUqApp();
     const { openModal } = useModal();
-    const { ex, discription, uom, ratio } = uomI;
-    function onEdit() {
-        openModal(<PageUomIView id={uomI.id} />);
+    const [uomI, setUomI] = useState(uomIInit);
+    async function onEdit() {
+        const { id } = uomI;
+        await openModal(<PageUomIView id={id} />);
+        setUomI(null);
+        let ret = await getAtomWithProps(uq, id);
+        setUomI(ret);
     }
+    if (uomI === null) {
+        return <Spinner className="m-3 text-info" />;
+    }
+    const { ex, discription, uom, ratio } = uomI;
     return <LMR className="ps-3">
         <div className="py-3">
             <div>{discription}</div>
             <div>
                 <b className="fs-larger me-3">{ex}</b>
-                <span>{ratio}{uom.ex}</span>
+                <span>{ratio}{uom?.ex}</span>
             </div>
         </div>
         <div className="p-3 cursor-pointer" onClick={onEdit}>

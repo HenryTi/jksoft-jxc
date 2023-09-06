@@ -9,8 +9,10 @@ export function ViewPendRow({ value: pendItem, onItemSelect, selectedColl, coll 
     const { pend, item, sheet, no, value, pendValue } = pendItem;
     const htmlId = String(pend);
     const gSheet = uqApp.gSheets[sheet];
+    const { entitySheet } = gSheet;
     let ed = coll[pend];
     let selected = ed !== undefined;
+
     return <div className="form-check mx-3 my-2 d-flex">
         <input type="checkbox" className="form-check-input me-3"
             id={htmlId}
@@ -23,7 +25,7 @@ export function ViewPendRow({ value: pendItem, onItemSelect, selectedColl, coll 
                 <ViewAtomSpec id={item} className={cnCol} />
                 <div className={cnCol}>
                     <div className="text-break me-3">
-                        <MutedSmall>{gSheet.caption ?? 'sheet caption'}编号</MutedSmall> {no}
+                        <MutedSmall>{entitySheet.caption ?? entitySheet.name}编号</MutedSmall> {no}
                     </div>
                     <div>
                         <MutedSmall>在单</MutedSmall> {value}

@@ -2,22 +2,22 @@ import { useUqApp } from "app/UqApp";
 import { GSheet, SheetRow } from "app/tool";
 import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
 import { IDView } from "tonwa-app";
-import { Band } from "app/coms";
 import { useDetailSplit } from "./Detail";
-import { PageSheetAct, usePendFromItem, selectAtom } from "app/hooks";
+import { PageSheetAct, usePendFromItem, useSelectAtom } from "app/hooks";
 import { EntitySheet } from "app/Biz";
 import { ViewPendRow } from "./ViewPendRow";
 import { ViewAtom } from "../../ViewAtom";
 
 const sheet = EnumSheet.SheetStoreInMultiStorage;
-const caption = '入库单-分仓';
-const targetCaption = '往来单位';
+// const caption = '入库单-分仓';
+// const targetCaption = '往来单位';
 function PageStoreIn() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const act = '$';
     const detail = 'detailstorein';
     const entity = biz.entities[sheet] as EntitySheet;
+    const selectAtom = useSelectAtom();
     const { fromPend } = entity.getAct(detail, act);
     const selectPend = usePendFromItem({
         pendName: fromPend.name,
@@ -25,16 +25,18 @@ function PageStoreIn() {
         caption: '选择待入库',
         placeholderOfSearch: '待入库商品编号名称',
     });
+    /*
     function ViewTargetBand({ sheet }: { sheet: Sheet; }) {
         return <Band label={targetCaption}>
             <ViewTarget sheet={sheet} />
         </Band>;
     }
+    */
     function ViewTarget({ sheet }: { sheet: Sheet; }) {
         return <IDView id={sheet.target} uq={uq} Template={ViewAtom} />;
     }
     async function selectTarget() {
-        return await selectAtom(uqApp, EnumAtom.Contact);
+        return await selectAtom(EnumAtom.Contact);
     }
     async function loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let sheetRows = await selectPend(undefined);
@@ -67,9 +69,9 @@ function PageStoreIn() {
     const useDetailReturn = useDetailSplit({ detail, selectTarget, selectPend });
     return <PageSheetAct {...{
         sheet,
-        caption,
-        targetCaption,
-        ViewTargetBand,
+        // caption,
+        // targetCaption,
+        // ViewTargetBand,
         ViewTarget,
         selectTarget,
         loadStart,
@@ -80,6 +82,6 @@ function PageStoreIn() {
 }
 export const gStoreInSplit: GSheet = {
     sheet,
-    caption,
+    // caption,
     pageEdit: <PageStoreIn />,
 }

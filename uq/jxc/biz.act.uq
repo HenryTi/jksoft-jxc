@@ -6,7 +6,7 @@ Biz ACT SaveAtom (
 RETURNS ret (
     id ID,
 ) {
-    VAR base ID = BudSiteId(atom);
+    VAR base ID = SiteBudId(atom);
 
     -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
     VAR id ID = 0;
@@ -19,7 +19,7 @@ RETURNS ret (
     INTO ret SELECT id;
 }
 
-Biz ACT SaveBud(
+Biz ACT SaveBud ver 0.1 (
     phrase CHAR(200),
     id ID,
     int BIGINT,
@@ -30,6 +30,13 @@ Biz ACT SaveBud(
     IF phraseId IS NOT NULL {
         IF int IS NOT NULL {
             WITH IxBudInt as a IX=id XI=phraseId SET a.value=int;
+            IF PhraseId(CONCAT(phrase, '.$index')) > 0 {
+                -- VAR budSiteUomType ID = BudId($site, 'atom.uom.type');
+                -- VAR budSiteUomTypeValue ID = ID(Bud New KEY base=budSiteUomType, ext=type);
+                VAR budPhraseId ID = BudId($site, phrase);
+                VAR budId ID = ID(Bud New Key base=budPhraseId, ext=int);
+                WITH IxBud I=budId X=id;
+            }
         }
         IF dec IS NOT NULL {
             WITH IxBudDec as a IX=id XI=phraseId SET a.value=dec;
@@ -71,7 +78,7 @@ Biz ACT SaveSheet (
 RETURNS ret (
     id ID,
 ) {
-    VAR base ID = BudSiteId(sheet);
+    VAR base ID = SiteBudId(sheet);
     VAR me ID = Me();
 
     VAR sheetId ID;
@@ -90,9 +97,8 @@ Biz ACT SaveDetail (
     target ID,              -- 操作对象。比如：客户，仓库，等
     origin ID,
     value VALUE,
-    v1 VALUE,
-    v2 VALUE,
-    v3 VALUE,
+    price VALUE,
+    amount VALUE,
     pendFrom ID,
     arr props (
         prop PHRASE,
@@ -109,10 +115,10 @@ RETURNS ret (
     }
     IF id IS NULL {
         SET id = ID(Detail New);
-        WITH Detail ID=id SET base=base, item=item, target=target, origin=origin, value=value, v1=v1, v2=v2, v3=v3;
+        WITH Detail ID=id SET base=base, item=item, target=target, origin=origin, value=value, price=price, amount=amount;
     }
     ELSE {
-        WITH Detail ID=id SET item=item, target=target, origin=origin, value=value, v1=v1, v2=v2, v3=v3;
+        WITH Detail ID=id SET item=item, target=target, origin=origin, value=value, price=price, amount=amount;
     }
     IF pendFrom IS NOT NULL {
         WITH DetailPend as a ID=id SET a.pendFrom=pendFrom;
@@ -153,7 +159,7 @@ PAGE (
     ex CHAR(50),
     phrase PHRASE,
 ) {
-    VAR base ID = BudSiteId(atom);
+    VAR base ID = SiteBudId(atom);
 
     PAGE SELECT a.id, a.no, a.ex, d.name as phrase
         FROM IxAtom as x 
@@ -357,11 +363,9 @@ RETURNS buds (
         FROM Sheet as a
         WHERE a.id=id;
     INTO details SELECT * a
-        -- , IFNULL(b.value, 0) as done
         , c.pendFrom, d.value as pendValue
         , BudPhrase(e.base) as sheet, e.no
         FROM Detail as a
-            -- LEFT JOIN Done as b ON b.id=a.id
             LEFT JOIN DetailPend as c ON c.id=a.id
             LEFT JOIN Pend as d ON d.id=c.pendFrom
             LEFT JOIN Sheet as e ON e.id=a.base
@@ -369,7 +373,6 @@ RETURNS buds (
     INTO origins SELECT DISTINCT * b -- , IFNULL(c.value, 0) as done
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN DETAIL as b ON b.id=a.origin
-            -- LEFT JOIN Done as c ON c.id=b.id
     ;
     INTO buds SELECT a.id, b.x as bud, d.name as phrase, b.value
         FROM Detail as a
@@ -415,6 +418,12 @@ RETURNS budsStr (
             JOIN Bud as c ON c.id=b.base
             JOIN $Phrase as e ON e.id=a.x
         WHERE a.i=id and e.type=EnumBizType.prop;
+    INTO budsInt SELECT a.x as bud
+        , e.name as phrase
+        , a.value
+        FROM IxBudInt as a
+            JOIN $Phrase as e ON e.id=a.x
+        WHERE a.i=id AND e.name = 'atom.$.uom';
     INTO budsDec SELECT a.x as bud
         , e.name as phrase
         , a.value

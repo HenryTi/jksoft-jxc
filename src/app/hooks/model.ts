@@ -2,14 +2,14 @@ import { BizBud } from "app/Biz";
 import { RegisterOptions } from "react-hook-form";
 import { PickProps, UqAppBase } from "tonwa-app";
 
-export interface ViewPropRowProps {
+export interface ViewBudRowProps {
     name: string;
     label: string;
     readonly?: boolean;
     type: 'string' | 'number';
 }
 
-export interface ViewPropProps extends ViewPropRowProps {
+export interface ViewBudProps extends ViewBudRowProps {
     id: number;
     value: string | number;
     saveField: (id: number, name: string, value: string | number) => Promise<void>;

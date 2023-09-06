@@ -26,7 +26,7 @@ export function useDetailPend(options: OptionsUseDetailPend): UseSheetDetailRetu
         const { atomDetails } = editingRow;
         const details = useAtomValue(atomDetails);
         const { origin } = editingRow;
-        const { item, value: originValue, v1: price, v2: amount, pendValue } = origin;
+        const { item, value: originValue, price: price, amount: amount, pendValue } = origin;
         const row = details[0];
         const { value } = row;
         (row as any).$saveValue = value;

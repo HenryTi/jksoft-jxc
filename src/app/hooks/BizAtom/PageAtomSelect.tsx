@@ -1,21 +1,24 @@
 import { useState } from "react";
 import { SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
-import { UqAppBase, uqAppModal, useModal } from "tonwa-app";
+import { useModal } from "tonwa-app";
 import { RowMed, useAtomBudsSearch } from "../BudSelect";
-import { UqApp, useUqApp } from "app/UqApp";
+import { useUqApp } from "app/UqApp";
 import { AtomPhrase, PropsAtomSelect } from "app/tool";
 import { EntityAtom } from "app/Biz";
 import { EnumAtom } from "uqs/UqDefault";
 
-export async function selectAtom(uqApp: UqAppBase, atomName: EnumAtom, assigns?: string[]) {
-    const { openModal } = uqAppModal(uqApp);
-    let ret = await openModal<AtomPhrase>(<PageAtomSelect atomName={atomName} assigns={assigns} />);
-    return ret;
+export function useSelectAtom() {
+    // const uqApp = useUqApp();
+    const { openModal } = useModal();
+    return async function (atomName: EnumAtom, buds?: string[]) {
+        let ret = await openModal<AtomPhrase>(<PageAtomSelect atomName={atomName} buds={buds} />);
+        return ret;
+    }
 }
 
-export function PageAtomSelect(props: PropsAtomSelect) {
-    const { assigns, loadOnOpen, caption, placeholder, atomName } = props;
+function PageAtomSelect(props: PropsAtomSelect) {
+    const { buds, loadOnOpen, caption, placeholder, atomName } = props;
     const uqApp = useUqApp();
     const { biz } = uqApp;
     const { closeModal } = useModal();
@@ -36,9 +39,10 @@ export function PageAtomSelect(props: PropsAtomSelect) {
         });
     }
     async function onItemClick(selectedItem: RowMed) {
-        closeModal(selectedItem.atom);
+        let ret = selectedItem.atom;
+        closeModal(ret);
     }
-    let atomBudsSearch = useAtomBudsSearch({ entity: atomName, budNames: assigns, });
+    let atomBudsSearch = useAtomBudsSearch({ entity: atomName, budNames: buds, });
     async function searchAtoms(param: any, pageStart: any, pageSize: number) {
         let ret = await atomBudsSearch.search(param, pageStart, pageSize);
         return ret;

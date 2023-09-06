@@ -30,7 +30,7 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
     function ViewRow({ editingRow, updateRow }: { editingRow: EditingRow; updateRow: (editingRow: EditingRow, details: Detail[]) => Promise<void>; }): JSX.Element {
         const { uq } = uqApp;
         const { origin } = editingRow;
-        const { item, value, v1: price, v2: amount } = origin;
+        const { item, value, price: price, amount: amount } = origin;
         const details = useAtomValue(editingRow.atomDetails);
         const onAddRow = async () => {
             let targetAtom = await selectTarget();
@@ -47,9 +47,8 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
                 item,
                 value: value - rowsSum,
                 origin: origin.id,
-                v1: undefined,
-                v2: undefined,
-                v3: undefined,
+                price: undefined,
+                amount: undefined,
             };
             await updateRow(editingRow, [...details, detail]);
         }

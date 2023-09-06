@@ -1,5 +1,5 @@
 import { useUqApp } from "app/UqApp";
-import { selectAtom } from "app/hooks";
+import { useSelectAtom } from "app/hooks";
 import { HTMLInputTypeAttribute, ReactNode, useState } from "react";
 import {
     UseFormRegisterReturn, FieldErrorsImpl
@@ -293,12 +293,13 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue }: 
 }) {
     const uqApp = useUqApp();
     const { uq } = uqApp;
+    const selectAtom = useSelectAtom();
     const { name, atom, default: defaultValue, readOnly } = row;
     const [id, setId] = useState<number>(defaultValue);
     async function onSelectAtom() {
         if (readOnly === true) return;
         clearErrors(name);
-        let ret = await selectAtom(uqApp, atom);
+        let ret = await selectAtom(atom);
         if (ret === undefined) return;
         const { id } = ret;
         setValue(name, id);

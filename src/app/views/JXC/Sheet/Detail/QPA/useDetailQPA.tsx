@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { OptionsUseSheetDetail, UpdateRow, selectAtomSpec as selectAtomSpecHook } from "app/hooks";
+import { OptionsUseSheetDetail, UpdateRow, useSelectAtomSpec } from "app/hooks";
 import { AtomSpec, AtomPhrase, EditingRow, SheetRow, Spec } from "app/tool";
 import { Page, uqAppModal, useModal } from "tonwa-app";
 import { Detail, EnumAtom } from "uqs/UqDefault";
@@ -13,8 +13,8 @@ import { UseSheetDetailReturn } from "app/hooks";
 import { ViewAtom } from "../../../../ViewAtom";
 
 const fieldQuantity = 'value';
-const fieldPrice = 'v1';
-const fieldAmount = 'v2';
+const fieldPrice = 'price';
+const fieldAmount = 'amount';
 
 export interface OptionsUseDetailQPA extends OptionsUseSheetDetail {
 }
@@ -22,9 +22,10 @@ export interface OptionsUseDetailQPA extends OptionsUseSheetDetail {
 export function useDetailQPA({ detail }: OptionsUseDetailQPA): UseSheetDetailReturn {
     const uqApp = useUqApp();
     const saveAtomSpec = useSaveAtomSpec();
+    const selectAtomSpec = useSelectAtomSpec();
     async function addRow(editingRows: EditingRow[]): Promise<SheetRow[]> {
         const { openModal, closeModal } = uqAppModal(uqApp);
-        let atomSpec = await selectAtomSpecHook(uqApp, EnumAtom.Goods);
+        let atomSpec = await selectAtomSpec(EnumAtom.Goods);
         if (atomSpec === undefined) return;
         let { atom, uom } = atomSpec;
         if (!uom.id) {
@@ -125,14 +126,14 @@ function PageDetail({ header, editingRow }: { header?: string; editingRow?: Edit
     let details = useAtomValue(atomDetails);
     let refDetail = useRef<Detail>(details === undefined ? {} as Detail : { ...details[0] });
     let detail = refDetail.current;
-    const { value, v1: price, v2: amount, item } = detail;
+    const { value, price: price, amount: amount, item } = detail;
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [hasValue, setHasValue] = useState(value != undefined);
     let valueDisabled: boolean = false;
 
     function buildFormRows(detial: Detail): FormRow[] {
-        let { value, v1: price, v2: amount } = detial;
+        let { value, price: price, amount: amount } = detial;
         return [
             buildValueRow(value),
             buildPriceRow(price),
@@ -163,19 +164,19 @@ function PageDetail({ header, editingRow }: { header?: string; editingRow?: Edit
         }
         switch (name) {
             case fieldQuantity: onQuantityChange(detail.value); break;
-            case fieldPrice: onPriceChange(detail.v1); break;
+            case fieldPrice: onPriceChange(detail.price); break;
         }
-        const { v1: price, v2: amount, value: quantity } = detail;
+        const { price: price, amount: amount, value: quantity } = detail;
         let hv = amount !== undefined && price !== undefined && quantity !== undefined;
         setHasValue(hv);
     }
     function setAmountValue(quantity: number, price: number) {
         if (quantity === undefined || price === undefined) {
-            detail.v2 = undefined;
+            detail.amount = undefined;
             setValue(fieldAmount, '');
         }
         let amount = quantity * price;
-        detail.v2 = amount;
+        detail.amount = amount;
         setValue(fieldAmount, amount.toFixed(4));
     }
     function onQuantityChange(value: number) {
@@ -185,7 +186,7 @@ function PageDetail({ header, editingRow }: { header?: string; editingRow?: Edit
         setAmountValue(value, p);
     }
     function onPriceChange(value: number) {
-        detail.v1 = value;
+        detail.price = value;
         let q = getValues(fieldQuantity) ?? value;
         if (!q) return;
         setAmountValue(q, value);
@@ -234,7 +235,7 @@ function ViewDetailQPA({ editingRow }: { editingRow: EditingRow; updateRow: Upda
             ViewDetailQPA editingRow rows === undefined || rows.length = 0;
         </div>
     }
-    const { item, value, v1: price, v2: amount } = details[0];
+    const { item, value, price: price, amount: amount } = details[0];
     return <div className="container">
         <div className="row">
             <ViewAtomSpec id={item} className={cnCol} />

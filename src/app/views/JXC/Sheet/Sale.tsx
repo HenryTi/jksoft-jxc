@@ -1,29 +1,31 @@
 import { useUqApp } from "app/UqApp";
 import { GSheet, SheetRow } from "app/tool";
 import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
-import { Band } from "app/coms";
 import { IDView } from "tonwa-app";
 import { useDetailQPA } from "./Detail";
-import { selectAtom, PageSheetAct } from "app/hooks";
+import { PageSheetAct, useSelectAtom } from "app/hooks";
 import { ViewAtom } from "../../ViewAtom";
 
 const sheet = EnumSheet.SheetSale;
-const caption = '销售单';
-const targetCaption = '往来单位';
+// const caption = '销售单';
+// const targetCaption = '往来单位';
 
 function PageSaleEdit() {
     const uqApp = useUqApp();
     const { uq } = uqApp;
+    const selectAtom = useSelectAtom();
+    /*
     function ViewTargetBand({ sheet }: { sheet: Sheet; }) {
         return <Band label={targetCaption}>
             <ViewTarget sheet={sheet} />
         </Band>;
     }
+    */
     function ViewTarget({ sheet }: { sheet: Sheet; }) {
         return <IDView id={sheet.target} uq={uq} Template={ViewAtom} />;
     }
     async function selectTarget() {
-        return await selectAtom(uqApp, EnumAtom.Contact);
+        return await selectAtom(EnumAtom.Contact);
     }
     async function loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let targetAtom = await selectTarget();
@@ -37,9 +39,9 @@ function PageSaleEdit() {
     const useDetailReturn = useDetailQPA({ detail });
     return <PageSheetAct {...{
         sheet,
-        caption,
-        targetCaption,
-        ViewTargetBand,
+        // caption,
+        // targetCaption,
+        // ViewTargetBand,
         ViewTarget,
         selectTarget,
         loadStart,
@@ -50,6 +52,6 @@ function PageSaleEdit() {
 
 export const gSale: GSheet = {
     sheet,
-    caption,
+    // caption,
     pageEdit: <PageSaleEdit />,
 }

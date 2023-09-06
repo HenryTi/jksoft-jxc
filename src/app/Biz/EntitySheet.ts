@@ -1,28 +1,79 @@
+import { BizBud, BizProp } from "./BizBud";
 import { Entity } from "./Entity";
 
 export class EntityMain extends Entity {
+    target: BizBud;
+
+    protected override fromSwitch(i: string, val: any) {
+        switch (i) {
+            default: super.fromSwitch(i, val); break;
+            case 'target': this.fromTarget(val); break;
+        }
+    }
+
+    private fromTarget(prop: any) {
+        this.target = this.fromProp(prop);
+    }
 }
 
 export class EntityDetail extends Entity {
     main: EntityMain;
+    item: BizBud;
+    pend: EntityPend;
+    value: BizBud;
+    price: BizBud;
+    amount: BizBud;
 
-    protected fromMain(main: any) {
+    protected override fromSwitch(i: string, val: any) {
+        switch (i) {
+            default: super.fromSwitch(i, val); break;
+            case 'main': this.fromMain(val); break;
+            case 'item': this.fromItem(val); break;
+            case 'pend': this.fromPend(val); break;
+            case 'value': this.fromValue(val); break;
+            case 'price': this.fromPrice(val); break;
+            case 'amount': this.fromAmount(val); break;
+        }
+    }
+
+    private fromMain(main: any) {
         this.main = this.biz.entities[main] as EntityMain;
+    }
+
+    private fromItem(prop: any) {
+        this.item = this.fromProp(prop);
+    }
+
+    private fromPend(pend: any) {
+        this.pend = this.biz.entities[pend] as EntityPend;
+    }
+
+    private fromValue(prop: any) {
+        this.value = this.fromProp(prop);
+    }
+
+    private fromPrice(prop: any) {
+        this.price = this.fromProp(prop);
+    }
+
+    private fromAmount(prop: any) {
+        this.amount = this.fromProp(prop);
     }
 }
 
 export class EntityPend extends Entity {
-    detail: EntityDetail;
+    // detail: EntityDetail;
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
-            case 'detail': this.fromDetail(val); break;
+            // case 'detail': this.fromDetail(val); break;
         }
     }
-
+    /*
     protected fromDetail(detail: any) {
-        this.detail = this.biz.entities[detail] as EntityDetail;
+        // this.detail = this.biz.entities[detail] as EntityDetail;
     }
+    */
 }
 
 export interface DetailAct {
@@ -44,7 +95,7 @@ export class EntitySheet extends Entity {
         }
     }
 
-    protected fromMain(main: any) {
+    private fromMain(main: any) {
         this.main = this.biz.entities[main] as EntityMain;
     }
 

@@ -9,3 +9,7 @@ export function Spinner({ size, className }: { size?: number; className?: string
         <span className="visually-hidden">Loading...</span>
     </div>;
 }
+
+export function SpinnerSmall() {
+    return <Spinner className="text-info spinner-border-sm" />;
+}

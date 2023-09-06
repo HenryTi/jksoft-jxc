@@ -5,25 +5,25 @@ import { PageMoreCacheData } from "app/coms";
 import { BizBud, BudAtom, BudID, BudInt, BudRadio, BudString } from "app/Biz";
 import { useState } from "react";
 import { EditBudValue } from "./model";
-import { pickBudAtom } from "./pickBudAtom";
-import { pickBudID } from "./pickBudID";
+import { usePickBudAtom } from "./pickBudAtom";
+import { usePickBudID } from "./pickBudID";
 import { pickBudRadio } from "./pickBudRadio";
-import { ViewPropProps } from "../model";
+import { ViewBudProps } from "../model";
 import { pickBudString } from "./pickBudString";
 import { pickBudInt } from "./pickBudInt";
 import { pickValue } from "./pickValue";
 
 interface OpProps {
-    saveProp: (newValue: string | number) => Promise<void>;
+    saveBud: (newValue: string | number) => Promise<void>;
     pickValue?: (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) => Promise<string | number>;
 }
 
-function ViewBud({ label, name, readonly, type, value: initValue, saveProp, id, pickValue: pickBudValue, ValueTemplate }: ViewPropProps & OpProps) {
+function ViewBud({ label, name, readonly, type, value: initValue, saveBud, id, pickValue: pickBudValue, ValueTemplate }: ViewBudProps & OpProps) {
     let uqApp = useUqApp();
     let [value, setValue] = useState(initValue);
     async function onValueChanged(value: string | number) {
-        await saveProp(value);
-        let data = uqApp.pageCache.getData<PageMoreCacheData>();
+        await saveBud(value);
+        let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (data) {
             let item = data.getItem<{ id: number }>(v => v.id === id) as any;
             if (item) item[name] = value;
@@ -37,37 +37,41 @@ function ViewBud({ label, name, readonly, type, value: initValue, saveProp, id, 
         ValueTemplate={ValueTemplate} />
 }
 
-export function EditAtomField(props: ViewPropProps) {
-    const { id, name, saveField: savePropMain } = props;
-    async function saveProp(newValue: string | number) {
-        await savePropMain(id, name, newValue);
+export function EditAtomField(props: ViewBudProps) {
+    const { id, name, saveField } = props;
+    async function saveBudFunc(newValue: string | number) {
+        await saveField(id, name, newValue);
     }
-    return <ViewBud {...props} saveProp={saveProp} />;
+    return <ViewBud {...props} saveBud={saveBudFunc} />;
 }
 
-export function EditAtomBud(veiwProps: ViewPropProps & { bizBud: BizBud; }) {
-    const uqApp = useUqApp();
-    let { id, pickValue, ValueTemplate, bizBud, saveBud: savePropEx } = veiwProps;
-    async function saveProp(newValue: string | number) {
-        await savePropEx(id, bizBud, newValue);
+export function EditAtomBud(veiwProps: ViewBudProps & { bizBud: BizBud; }) {
+    let { id, pickValue, ValueTemplate, bizBud, saveBud } = veiwProps;
+    const pickValueFromBud = usePickValueFromBud();
+    async function saveBudFunc(newValue: string | number) {
+        await saveBud(id, bizBud, newValue);
     }
     if (ValueTemplate === undefined) {
-        let { pickValue: sysPickValue, ValueTemplate: SysValueTemplate } = pickValueFromBud(uqApp, bizBud, undefined);
+        let { pickValue: sysPickValue, ValueTemplate: SysValueTemplate } = pickValueFromBud(bizBud, undefined);
         pickValue = sysPickValue;
         ValueTemplate = SysValueTemplate;
     }
-    return <ViewBud {...veiwProps} saveProp={saveProp} pickValue={pickValue} ValueTemplate={ValueTemplate} />
+    return <ViewBud {...veiwProps} saveBud={saveBudFunc} pickValue={pickValue} ValueTemplate={ValueTemplate} />
 }
 
-export function pickValueFromBud(uqApp: UqApp, bizBud: BizBud, options: RegisterOptions): EditBudValue {
-    let { name, budDataType } = bizBud;
-    switch (budDataType.type) {
-        default: return {} as EditBudValue;
-        case 'int': return pickBudInt(uqApp, budDataType as BudInt, options);
-        case 'str': return pickBudString(uqApp, budDataType as BudString, options);
-        case 'radio': return pickBudRadio(uqApp, name, budDataType as BudRadio);
-        case 'ID':
-        case 'id': return pickBudID(uqApp, budDataType as BudID, options);
-        case 'atom': return pickBudAtom(uqApp, budDataType as BudAtom, options);
+export function usePickValueFromBud() {
+    const pickBudID = usePickBudID();
+    const pickBudAtom = usePickBudAtom();
+    return function (bizBud: BizBud, options: RegisterOptions): EditBudValue {
+        let { name, budDataType } = bizBud;
+        switch (budDataType.type) {
+            default: return {} as EditBudValue;
+            case 'int': return pickBudInt(budDataType as BudInt, options);
+            case 'str': return pickBudString(budDataType as BudString, options);
+            case 'radio': return pickBudRadio(name, budDataType as BudRadio);
+            case 'ID':
+            case 'id': return pickBudID(budDataType as BudID, options);
+            case 'atom': return pickBudAtom(budDataType as BudAtom, options);
+        }
     }
 }

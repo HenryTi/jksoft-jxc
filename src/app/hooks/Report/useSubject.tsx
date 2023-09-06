@@ -2,17 +2,17 @@ import { UqQuery } from "tonwa-uq";
 import { QueryMore } from "app/tool";
 import { EntitySubject } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { EnumSubject, ReturnHistoryStorage$page, ReturnReportStorage$page } from "uqs/UqDefault";
+import { EnumMoniker, ReturnHistoryStorage$page, ReturnReportStorage$page } from "uqs/UqDefault";
 import { EasyTime, FA, LMR, dateFromMinuteId } from "tonwa-com";
 import { useBizAtomSpec } from "app/views/JXC/Atom";
 
 export interface OptionsUseSubject {
-    subject: EnumSubject;
+    moniker: EnumMoniker;
     bud: string;
 }
 
-export function pathSubjectHistory(subject: EnumSubject) {
-    return `${subject}-history`;
+export function pathSubjectHistory(moniker: EnumMoniker) {
+    return `${moniker}-history`;
 }
 
 export interface ReturnUseSubject {
@@ -23,7 +23,7 @@ export interface ReturnUseSubject {
 }
 
 export function useSubject(options: OptionsUseSubject): ReturnUseSubject {
-    const { subject: subjectName, bud: budName } = options;
+    const { moniker: subjectName, bud: budName } = options;
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const entity: EntitySubject = biz.entities[subjectName] as EntitySubject;
@@ -65,9 +65,9 @@ export function useSubject(options: OptionsUseSubject): ReturnUseSubject {
     }
 
     function ViewItemHistory({ value: row }: { value: ReturnHistoryStorage$page }): JSX.Element {
-        const { id, value, ref, op, sheetNo, sheetName, sheetCaption } = row;
+        const { id, value, ref, plusMinus, sheetNo, sheetName, sheetCaption } = row;
         let opText: string;
-        switch (op) {
+        switch (plusMinus) {
             default:
             case 1: opText = ''; break;
             case -1: opText = '-'; break;

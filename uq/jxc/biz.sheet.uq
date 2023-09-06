@@ -1,8 +1,14 @@
 Biz Main MainPurchase {
+    target '往来单位' ATOM Contact;
 }
 
 Biz Detail DetailPurchase ver 0.1 {
     Main MainPurchase;
+    Item '商品' ATOM Goods;       -- 某类Atom
+    Value '数量' DEC;
+    Amount '金额' DEC;
+    Price '单价' DEC;
+    
     ACT (detail ID) {
         VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
         -- Biz Subject storage of item += value ref detail;
@@ -11,9 +17,9 @@ Biz Detail DetailPurchase ver 0.1 {
     };
 }
 
-Biz Detail DetailPurchaseMedicine ver 0.1 {
+Biz Detail DetailPurchaseMedicine ver 0.1 '采购药品明细' {
     Main MainPurchase;
-    Item Medicine;          -- 某类Atom
+    Item '药品' ATOM Medicine;       -- 某类Atom
     ACT (detail ID) {
         VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
         -- Biz Subject storage of item += value ref detail;
@@ -32,18 +38,26 @@ Biz Main MainStoreIn {
 
 Biz Detail DetailStoreIn ver 0.1 {
     Main MainStoreIn;
+    Item '商品' ATOM Goods;         -- 某类Atom
+    Pend PendStoreIn;               -- 从某个待处理账来
     ACT (detail ID) 
-    From PendStoreIn {
+    -- From PendStoreIn 
+    {
+        /*
         VAR pend ID = pendFrom FROM DetailPend=detail;
-        VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
-        VAR pendValue VALUE = value, pendDetail ID = detail FROM Pend=pend;
+        VAR value VALUE = value, item ID = item FROM Detail(detail); -- ID
+        VAR pendValue VALUE = value, pendDetail ID = detail FROM Pend(pend);
         IF pendValue - value = 0 {
-            Biz Pend PendStoreIn ID=pend DEL;
+            -- Biz Pend PendStoreIn ID=pend DEL;
+            WITH Pend as a ID=pend DEL WHERE a.base=SiteBudId('pend.PendStoreIn');
             WITH DetailPend as a ID=detail DEL WHERE a.pendFrom=pend;
         }
         ELSE {
-            Biz Pend PendStoreIn ID=pend SET value-=value;
+            -- Biz Pend PendStoreIn ID=pend SET value-=value;
+            WITH Pend as a ID=pend SET a.value-=value WHERE a.base=SiteBudId('pend.PendStoreIn');
         }
+        */
+        VAR value VALUE = value, item ID = item FROM Detail(detail); -- ID
         Biz Bud storage.goodsBalance of item += value ref detail; 
         VAR atomUom ID=a.atomUom, spec ID=a.spec FROM AtomSpec as a WHERE a.id=item;
         IF spec>0 {
@@ -55,9 +69,7 @@ Biz Detail DetailStoreIn ver 0.1 {
     };
 }
 
-Biz Pend PendStoreIn '待入库' {
-    Detail DetailStoreIn;
-}
+Biz Pend PendStoreIn '待入库';
 
 Biz Sheet SheetStoreIn '入库单' {
     Main MainStoreIn;
@@ -79,6 +91,7 @@ Biz Sheet SheetSale '销售单' {
 
 Biz Detail DetailSale ver 0.1 {
     Main MainSale;
+    Item '商品' ATOM Goods;       -- 某类Atom
     ACT (detail ID) {
         VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
         -- Biz Subject storage of item += value ref detail;
@@ -92,8 +105,12 @@ Biz Main MainStoreOut {
 
 Biz Detail DetailStoreOut ver 0.2 {
     Main MainStoreOut;
+    Item '商品' ATOM Goods;       -- 某类Atom
+    Pend PendStoreOut;
     ACT (detail ID) 
-    From PendStoreOut {
+    -- From PendStoreOut 
+    {
+        /*
         VAR pend ID = pendFrom FROM DetailPend=detail;
         VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
         VAR pendValue VALUE = value, pendDetail ID = detail FROM Pend=pend;
@@ -104,21 +121,21 @@ Biz Detail DetailStoreOut ver 0.2 {
         ELSE {
             Biz Pend PendStoreOut ID=pend SET value-=value;
         }
-
+        */
+        VAR value VALUE = value, item ID = item FROM Detail(detail); -- ID
         Biz Bud storage.goodsBalance of item -= value ref detail;
-        VAR atomUom ID=a.atomUom, spec ID=a.spec FROM AtomSpec as a WHERE a.id=item;
+        VAR atomUom ID=atomUom, spec ID=spec FROM AtomSpec(item);
         IF spec>0 {
             -- 不含批号的某种商品库存
             Biz Bud storage.goodsBalance of atomUom -= value;
         }
+        Biz Further 
         -- detail写账报错，错误号1
         -- WITH Temp ID=detail SET value=1;
     };
 }
 
-Biz Pend PendStoreOut '待出库' {
-    Detail DetailStoreIn;
-}
+Biz Pend PendStoreOut '待出库';
 
 Biz Sheet SheetStoreOut '出库单' {
     Main MainStoreOut;

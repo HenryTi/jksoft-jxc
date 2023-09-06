@@ -46,21 +46,21 @@ IX IxMy ver 0.1 (
 
 ID History (
     id MINUTE,
-    subject ID,         -- 科目 bud@(id, phrase)
+    bud ID,                 -- 科目 bud@(id, phrase)
     value Value,
-    ref ID,             -- 相关凭证
-    op TINYINT,         -- 0: =, 1: +, -1: -
-    INDEX subject_id(subject, id) UNIQUE,
+    ref ID,                 -- 相关凭证
+    plusMinus TINYINT,         -- 0: =, 1: +, -1: -
+    INDEX subject_id(bud, id) UNIQUE,
 );
 
--- History 按日汇总，可以重新计算，如果调整了subject。
+-- History 按日汇总，可以重新计算，如果调整了bud。
 IX DailyHistory (
     i,
     x date,
     value VALUE,
 );
 
-FUNC BudSiteId ver 0.1 (
+FUNC SiteBudId ver 0.1 (
     phrase CHAR(100),
 ) 
 RETURNS ID {
@@ -71,13 +71,13 @@ RETURNS ID {
 };
 
 FUNC BudPhrase ver 0.3 (
-    BudSiteId ID
+    SiteBudId ID
 ) 
 RETURNS CHAR(200) {
     VAR phrase CHAR(200) = (SELECT a.name 
         FROM $Phrase as a 
             JOIN Bud as b ON b.ext=a.id -- AND b.base=$site 
-        WHERE b.id=BudSiteId
+        WHERE b.id=SiteBudId
         NO LOCK
     );
     return phrase;

@@ -4,7 +4,7 @@ import { pathAtomCenter } from "./Atom/AtomCenter";
 import { pathReportCenter } from "./Subject/SubjectCenter";
 import { pathPrice } from "./AssignPrice";
 import { pathPermits } from "./Permits";
-import { selectAtom } from "app/hooks";
+import { useSelectAtom } from "app/hooks";
 import { useUqApp } from "app/UqApp";
 import { EnumAtom } from "uqs/UqDefault";
 import { pathSheetCenter } from "./routeJCX";
@@ -12,6 +12,7 @@ import { pathMy } from "./My";
 
 export function TabJXC() {
     const uqApp = useUqApp();
+    const selectAtom = useSelectAtom();
     const arr: { label: string; path: string; }[] = [
         { label: '单据中心', path: pathSheetCenter },
         { label: '档案中心', path: pathAtomCenter },
@@ -35,7 +36,7 @@ export function TabJXC() {
     </Page>;
 
     async function onFunc() {
-        let ret = await selectAtom(uqApp, EnumAtom.Contact);
+        let ret = await selectAtom(EnumAtom.Contact);
         alert(JSON.stringify(ret));
     }
 }

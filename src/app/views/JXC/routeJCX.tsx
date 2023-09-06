@@ -19,6 +19,7 @@ import { EntitySpec } from "app/Biz/EntityAtom";
 import { pathSubjectHistory } from "app/hooks";
 import { routeAtom } from "../routeAtom";
 import { routeMy } from "./My";
+import { EntitySheet } from "app/Biz";
 //import { gUom } from "../Admin/uom";
 //{routeAtom(uqApp, gUom)}
 
@@ -83,6 +84,7 @@ function buildSpecs(uqApp: UqApp) {
 
 function routeSheet(uqApp: UqApp, gSheet: GSheet) {
     const { sheet: name, pageEdit } = gSheet;
+    gSheet.entitySheet = uqApp.biz.entities[name] as EntitySheet;
     uqApp.gSheets[name] = gSheet;
     uqApp.gSheets['sheet.' + name] = gSheet;
     return <React.Fragment key={name}>

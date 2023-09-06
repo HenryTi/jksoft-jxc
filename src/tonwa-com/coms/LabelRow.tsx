@@ -63,16 +63,21 @@ export function LabelRow({ className, labelSize, labelAlign, labelClassName, Lab
     LabelContainer = LabelContainer ?? DefaultLabelContainer;
     MidContainer = MidContainer ?? DefaultMidContainer;
     RightContainer = RightContainer ?? DefaultRightContainer;
-    let midArr: any[] = arr.slice(1, len - 1);
+    let midEnd: number;
     let right: any;
     if (len > 2) {
         right = <>
             <div className="flex-fill" />
             <RightContainer>{arr[len - 1]}</RightContainer>
         </>;
+        midEnd = len - 1;
     }
+    else {
+        midEnd = 2;
+    }
+    let midArr: any[] = arr.slice(1, midEnd);
     let cn = 'row mx-0 ' + (className ?? 'bg-white');
-    let content = <>
+    let content = <div className={cn}>
         <div className={`col-sm-${labelSize} d-flex ${vAlignClassName} ${cnLabelAlign} ${labelClassName}`}>
             <LabelContainer>{arr[0]}</LabelContainer>
         </div>
@@ -80,11 +85,11 @@ export function LabelRow({ className, labelSize, labelAlign, labelClassName, Lab
             <MidContainer>{midArr.map((v, index) => <React.Fragment key={index}>{v}</React.Fragment>)}</MidContainer>
             {right}
         </div>
-    </>;
+    </div>;
     if (to) {
-        return <Link className={cn} to={to}>{content}</Link>;
+        return <Link to={to}>{content}</Link>;
     }
     else {
-        return <div className={cn}>{content}</div>;
+        return content;
     }
 }

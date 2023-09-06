@@ -14,14 +14,20 @@ export function ViewsRoutes() {
     let { user: atomUser, atomSiteLogined } = uqApp;
     let user = useAtomValue(atomUser);
     let siteLogined = useAtomValue(atomSiteLogined);
-    let homeLayout: JSX.Element = (user !== undefined && siteLogined !== true) ?
-        <PageNoSite />
-        :
-        <PageTabsLayout tabs={[
+    let homeLayout: JSX.Element;
+    if (siteLogined !== true) {
+        homeLayout = <PageSpinner />;
+    }
+    else if (user === undefined) {
+        homeLayout = <PageNoSite />;
+    }
+    else {
+        homeLayout = <PageTabsLayout tabs={[
             { to: '/' + pathJXC, caption: '首页', icon: 'home' },
             // adminTab,
             { to: '/' + pathMe, caption: '我的', icon: 'user' },
         ]} />;
+    }
 
     return <Suspense fallback={<PageSpinner />}>
         <BrowserRouter basename='jksoft-jxc'>

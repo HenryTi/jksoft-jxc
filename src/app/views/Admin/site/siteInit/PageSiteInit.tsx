@@ -5,7 +5,7 @@ import { Route } from "react-router-dom";
 import { LabelRowEdit, Page } from "tonwa-app";
 import { List, Sep } from "tonwa-com";
 import { RegisterOptions, useForm } from "react-hook-form";
-import { pickValueFromBud } from "app/hooks";
+import { usePickValueFromBud } from "app/hooks";
 import { UseQueryOptions } from "app/tool";
 
 export const pathSiteInit = 'site-init';
@@ -20,7 +20,7 @@ interface InitValue {
     // ValueTemplate: (props: { value: any; onValueChanged?: OnValueChanged; }) => JSX.Element;
 }
 
-const prefix = 'subject.init.';
+const prefix = 'moniker.init.';
 
 const budCurrency = 'currency';
 const budStartSumMonth = 'startsummonth';
@@ -93,7 +93,8 @@ export function PageSiteInit() {
     function ViewAssign({ value: item }: { value: InitValue; }) {
         const { bud, value, options } = item;
         const { name, caption } = bud;
-        const { pickValue, ValueTemplate } = pickValueFromBud(uqApp, bud, options);
+        const pickValueFromBud = usePickValueFromBud();
+        const { pickValue, ValueTemplate } = pickValueFromBud(bud, options);
         return <LabelRowEdit
             label={caption ?? name}
             value={value}

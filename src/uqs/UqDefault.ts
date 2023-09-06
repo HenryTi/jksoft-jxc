@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Aug 28 2023 00:00:36 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue Sep 05 2023 20:15:07 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -41,6 +41,7 @@ export interface $phrase extends ID {
 	valid: number;
 	owner: number;
 	type: number;
+	index: number;
 }
 
 export interface $phraseInActs extends ID {
@@ -51,6 +52,7 @@ export interface $phraseInActs extends ID {
 	valid: number;
 	owner: number;
 	type: number;
+	index: number;
 }
 
 export interface Param$role_My {
@@ -274,9 +276,8 @@ export interface ParamSaveDetail {
 	target: number;
 	origin: number;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
+	price: number;
+	amount: number;
 	pendFrom: number;
 	props: {
 		prop: string;
@@ -429,9 +430,8 @@ export interface ReturnGetSheetDetails {
 	target: number;
 	origin: number;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
+	amount: number;
+	price: number;
 	pendFrom: number;
 	pendValue: number;
 	sheet: string;
@@ -444,9 +444,8 @@ export interface ReturnGetSheetOrigins {
 	target: number;
 	origin: number;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
+	amount: number;
+	price: number;
 }
 export interface ReturnGetSheetBuds {
 	id: number;
@@ -537,9 +536,8 @@ export interface ReturnGetPendDetailFromItem$page {
 	target: number;
 	origin: number;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
+	amount: number;
+	price: number;
 	pend: number;
 	pendValue: number;
 	sheet: string;
@@ -560,9 +558,8 @@ export interface ReturnGetPendDetailFromSheetIdRet {
 	target: number;
 	origin: number;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
+	amount: number;
+	price: number;
 	pend: number;
 	pendValue: number;
 	sheet: string;
@@ -610,17 +607,30 @@ export interface ParamSaveUomIUom {
 export interface ResultSaveUomIUom {
 }
 
-export interface ParamGetUom {
+export interface ParamGetUomFromType {
 	id: number;
 }
-export interface ReturnGetUomUom {
+export interface ReturnGetUomFromTypeUom {
 	id: number;
 	no: string;
 	ex: string;
 	discription: string;
 }
-export interface ResultGetUom {
-	uom: ReturnGetUomUom[];
+export interface ResultGetUomFromType {
+	uom: ReturnGetUomFromTypeUom[];
+}
+
+export interface ParamGetUomIListOfUom {
+	uom: number;
+}
+export interface ReturnGetUomIListOfUom$page {
+	id: number;
+	no: string;
+	ex: string;
+	phrase: string;
+}
+export interface ResultGetUomIListOfUom {
+	$page: ReturnGetUomIListOfUom$page[];
 }
 
 export interface ParamGetAtomUomI {
@@ -921,18 +931,18 @@ export interface BudInActs extends ID {
 }
 
 export interface History extends ID {
-	subject: number;
+	bud: number;
 	value: number;
 	ref: number;
-	op: number;
+	plusMinus: number;
 }
 
 export interface HistoryInActs extends ID {
 	ID?: UqID<any>;
-	subject: number | ID;
+	bud: number | ID;
 	value: number;
 	ref: number | ID;
-	op: number;
+	plusMinus: number;
 }
 
 export interface Atom extends ID {
@@ -971,9 +981,8 @@ export interface Detail extends ID {
 	target: number;
 	origin: number;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
+	amount: number;
+	price: number;
 }
 
 export interface DetailInActs extends ID {
@@ -983,9 +992,8 @@ export interface DetailInActs extends ID {
 	target: number | ID;
 	origin: number | ID;
 	value: number;
-	v1: number;
-	v2: number;
-	v3: number;
+	amount: number;
+	price: number;
 }
 
 export interface Pend extends ID {
@@ -1074,7 +1082,7 @@ export interface ReturnHistoryStorage$page {
 	id: number;
 	value: number;
 	ref: number;
-	op: number;
+	plusMinus: number;
 	sheetNo: string;
 	sheetName: string;
 	sheetCaption: string;
@@ -1140,7 +1148,8 @@ export interface UqExt extends Uq {
 	AtomSpec: UqID<any>;
 	SaveUomType: UqAction<ParamSaveUomType, ResultSaveUomType>;
 	SaveUomIUom: UqAction<ParamSaveUomIUom, ResultSaveUomIUom>;
-	GetUom: UqQuery<ParamGetUom, ResultGetUom>;
+	GetUomFromType: UqQuery<ParamGetUomFromType, ResultGetUomFromType>;
+	GetUomIListOfUom: UqQuery<ParamGetUomIListOfUom, ResultGetUomIListOfUom>;
 	GetAtomUomI: UqQuery<ParamGetAtomUomI, ResultGetAtomUomI>;
 	SaveUomX: UqAction<ParamSaveUomX, ResultSaveUomX>;
 	DelUomX: UqAction<ParamDelUomX, ResultDelUomX>;
@@ -1206,6 +1215,10 @@ export const uqSchema={
             },
             {
                 "name": "type",
+                "type": "tinyint"
+            },
+            {
+                "name": "index",
                 "type": "tinyint"
             }
         ],
@@ -1822,19 +1835,13 @@ export const uqSchema={
                 "precision": 18
             },
             {
-                "name": "v1",
+                "name": "price",
                 "type": "dec",
                 "scale": 6,
                 "precision": 18
             },
             {
-                "name": "v2",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            },
-            {
-                "name": "v3",
+                "name": "amount",
                 "type": "dec",
                 "scale": 6,
                 "precision": 18
@@ -2333,19 +2340,13 @@ export const uqSchema={
                         "precision": 18
                     },
                     {
-                        "name": "v1",
+                        "name": "amount",
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
                     },
                     {
-                        "name": "v2",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v3",
+                        "name": "price",
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
@@ -2403,19 +2404,13 @@ export const uqSchema={
                         "precision": 18
                     },
                     {
-                        "name": "v1",
+                        "name": "amount",
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
                     },
                     {
-                        "name": "v2",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v3",
+                        "name": "price",
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
@@ -2710,19 +2705,13 @@ export const uqSchema={
                         "precision": 18
                     },
                     {
-                        "name": "v1",
+                        "name": "amount",
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
                     },
                     {
-                        "name": "v2",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v3",
+                        "name": "price",
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
@@ -2800,19 +2789,13 @@ export const uqSchema={
                         "precision": 18
                     },
                     {
-                        "name": "v1",
+                        "name": "amount",
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
                     },
                     {
-                        "name": "v2",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "v3",
+                        "name": "price",
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
@@ -2967,8 +2950,8 @@ export const uqSchema={
         ],
         "returns": [] as any
     },
-    "getuom": {
-        "name": "GetUom",
+    "getuomfromtype": {
+        "name": "GetUomFromType",
         "type": "query",
         "private": false,
         "sys": true,
@@ -3002,6 +2985,45 @@ export const uqSchema={
                         "size": 100
                     }
                 ]
+            }
+        ]
+    },
+    "getuomilistofuom": {
+        "name": "GetUomIListOfUom",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "uom",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    }
+                ],
+                "order": "desc"
             }
         ]
     },
@@ -3894,7 +3916,7 @@ export const uqSchema={
                 "null": false
             },
             {
-                "name": "subject",
+                "name": "bud",
                 "type": "id"
             },
             {
@@ -3908,7 +3930,7 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "op",
+                "name": "plusMinus",
                 "type": "tinyint"
             }
         ],
@@ -4042,19 +4064,13 @@ export const uqSchema={
                 "precision": 18
             },
             {
-                "name": "v1",
+                "name": "amount",
                 "type": "dec",
                 "scale": 6,
                 "precision": 18
             },
             {
-                "name": "v2",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            },
-            {
-                "name": "v3",
+                "name": "price",
                 "type": "dec",
                 "scale": 6,
                 "precision": 18
@@ -4335,7 +4351,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "op",
+                        "name": "plusMinus",
                         "type": "tinyint"
                     },
                     {
@@ -4710,6 +4726,98 @@ export const uqSchema={
                 }
             ]
         },
+        "storage": {
+            "name": "storage",
+            "type": "moniker",
+            "caption": "库存",
+            "assigns": [
+                {
+                    "name": "goodsinit",
+                    "type": "assign",
+                    "dataType": "dec"
+                },
+                {
+                    "name": "goodsbalance",
+                    "type": "assign",
+                    "dataType": "dec",
+                    "history": true
+                }
+            ]
+        },
+        "c": {
+            "name": "c",
+            "type": "moniker",
+            "assigns": [
+                {
+                    "name": "流水",
+                    "type": "assign",
+                    "caption": "下一步",
+                    "dataType": "char",
+                    "value": "s2"
+                }
+            ]
+        },
+        "accountsetting": {
+            "name": "accountsetting",
+            "jName": "AccountSetting",
+            "type": "moniker",
+            "caption": "AccountSetting",
+            "assigns": [
+                {
+                    "name": "name",
+                    "type": "assign",
+                    "caption": "单位名称",
+                    "dataType": "char"
+                },
+                {
+                    "name": "库存上限",
+                    "type": "assign",
+                    "dataType": "dec"
+                },
+                {
+                    "name": "库存下限",
+                    "type": "assign",
+                    "dataType": "dec"
+                }
+            ]
+        },
+        "personsetting": {
+            "name": "personsetting",
+            "jName": "PersonSetting",
+            "type": "moniker",
+            "caption": "PersonSetting",
+            "assigns": [
+                {
+                    "name": "name",
+                    "type": "assign",
+                    "caption": "名字",
+                    "dataType": "char"
+                },
+                {
+                    "name": "工时上限",
+                    "type": "assign",
+                    "dataType": "int"
+                },
+                {
+                    "name": "工时下限",
+                    "type": "assign",
+                    "dataType": "int"
+                }
+            ]
+        },
+        "price": {
+            "name": "price",
+            "jName": "Price",
+            "type": "moniker",
+            "caption": "Price",
+            "assigns": [
+                {
+                    "name": "retail",
+                    "type": "assign",
+                    "dataType": "dec"
+                }
+            ]
+        },
         "a菜单": {
             "name": "a菜单",
             "jName": "A菜单",
@@ -4798,21 +4906,60 @@ export const uqSchema={
             "name": "mainpurchase",
             "jName": "MainPurchase",
             "type": "main",
-            "caption": "MainPurchase"
+            "caption": "MainPurchase",
+            "target": {
+                "name": "target",
+                "type": "target",
+                "caption": "往来单位",
+                "dataType": "atom",
+                "atom": "contact"
+            }
         },
         "detailpurchase": {
             "name": "detailpurchase",
             "jName": "DetailPurchase",
             "type": "detail",
             "caption": "DetailPurchase",
-            "main": "mainpurchase"
+            "main": "mainpurchase",
+            "item": {
+                "name": "item",
+                "type": "item",
+                "caption": "商品",
+                "dataType": "atom",
+                "atom": "goods"
+            },
+            "value": {
+                "name": "value",
+                "type": "value",
+                "caption": "数量",
+                "dataType": "dec"
+            },
+            "amount": {
+                "name": "amount",
+                "type": "amount",
+                "caption": "金额",
+                "dataType": "dec"
+            },
+            "price": {
+                "name": "price",
+                "type": "price",
+                "caption": "单价",
+                "dataType": "dec"
+            }
         },
         "detailpurchasemedicine": {
             "name": "detailpurchasemedicine",
             "jName": "DetailPurchaseMedicine",
             "type": "detail",
-            "caption": "DetailPurchaseMedicine",
-            "main": "mainpurchase"
+            "caption": "采购药品明细",
+            "main": "mainpurchase",
+            "item": {
+                "name": "item",
+                "type": "item",
+                "caption": "药品",
+                "dataType": "atom",
+                "atom": "medicine"
+            }
         },
         "sheetpurchase": {
             "name": "sheetpurchase",
@@ -4839,14 +4986,21 @@ export const uqSchema={
             "jName": "DetailStoreIn",
             "type": "detail",
             "caption": "DetailStoreIn",
-            "main": "mainstorein"
+            "main": "mainstorein",
+            "pend": "pendstorein",
+            "item": {
+                "name": "item",
+                "type": "item",
+                "caption": "商品",
+                "dataType": "atom",
+                "atom": "goods"
+            }
         },
         "pendstorein": {
             "name": "pendstorein",
             "jName": "PendStoreIn",
             "type": "pend",
-            "caption": "待入库",
-            "detail": "detailstorein"
+            "caption": "待入库"
         },
         "sheetstorein": {
             "name": "sheetstorein",
@@ -4903,7 +5057,14 @@ export const uqSchema={
             "jName": "DetailSale",
             "type": "detail",
             "caption": "DetailSale",
-            "main": "mainsale"
+            "main": "mainsale",
+            "item": {
+                "name": "item",
+                "type": "item",
+                "caption": "商品",
+                "dataType": "atom",
+                "atom": "goods"
+            }
         },
         "mainstoreout": {
             "name": "mainstoreout",
@@ -4916,14 +5077,20 @@ export const uqSchema={
             "jName": "DetailStoreOut",
             "type": "detail",
             "caption": "DetailStoreOut",
-            "main": "mainstoreout"
+            "main": "mainstoreout",
+            "item": {
+                "name": "item",
+                "type": "item",
+                "caption": "商品",
+                "dataType": "atom",
+                "atom": "goods"
+            }
         },
         "pendstoreout": {
             "name": "pendstoreout",
             "jName": "PendStoreOut",
             "type": "pend",
-            "caption": "待出库",
-            "detail": "detailstorein"
+            "caption": "待出库"
         },
         "sheetstoreout": {
             "name": "sheetstoreout",
@@ -4937,102 +5104,6 @@ export const uqSchema={
                     "type": "detailAct",
                     "fromPend": "pendstoreout",
                     "detail": "detailstoreout"
-                }
-            ]
-        },
-        "storage": {
-            "name": "storage",
-            "type": "subject",
-            "caption": "库存",
-            "assigns": [
-                {
-                    "name": "goodsinit",
-                    "type": "assign",
-                    "dataType": "dec"
-                },
-                {
-                    "name": "goodsbalance",
-                    "type": "assign",
-                    "dataType": "dec",
-                    "history": true
-                }
-            ]
-        },
-        "c": {
-            "name": "c",
-            "type": "subject",
-            "assigns": [
-                {
-                    "name": "流水",
-                    "type": "assign",
-                    "caption": "下一步",
-                    "dataType": "char",
-                    "value": "s2"
-                }
-            ]
-        },
-        "accountsetting": {
-            "name": "accountsetting",
-            "jName": "AccountSetting",
-            "type": "subject",
-            "caption": "AccountSetting",
-            "props": [
-                {
-                    "name": "name",
-                    "type": "prop",
-                    "caption": "单位名称",
-                    "dataType": "char"
-                },
-                {
-                    "name": "库存上限",
-                    "type": "prop",
-                    "dataType": "dec"
-                }
-            ],
-            "assigns": [
-                {
-                    "name": "库存下限",
-                    "type": "assign",
-                    "dataType": "dec"
-                }
-            ]
-        },
-        "personsetting": {
-            "name": "personsetting",
-            "jName": "PersonSetting",
-            "type": "subject",
-            "caption": "PersonSetting",
-            "props": [
-                {
-                    "name": "name",
-                    "type": "prop",
-                    "caption": "名字",
-                    "dataType": "char"
-                },
-                {
-                    "name": "工时上限",
-                    "type": "prop",
-                    "dataType": "int"
-                }
-            ],
-            "assigns": [
-                {
-                    "name": "工时下限",
-                    "type": "assign",
-                    "dataType": "int"
-                }
-            ]
-        },
-        "price": {
-            "name": "price",
-            "jName": "Price",
-            "type": "subject",
-            "caption": "Price",
-            "assigns": [
-                {
-                    "name": "retail",
-                    "type": "assign",
-                    "dataType": "dec"
                 }
             ]
         },
@@ -5140,7 +5211,7 @@ export const uqSchema={
         "sum": {
             "name": "sum",
             "jName": "Sum",
-            "type": "subject",
+            "type": "moniker",
             "caption": "Sum",
             "assigns": [
                 {
@@ -5161,12 +5232,6 @@ export const uqSchema={
             "type": "atom",
             "caption": "科目",
             "props": [
-                {
-                    "name": "metric1",
-                    "type": "prop",
-                    "dataType": "atom",
-                    "atom": "person"
-                },
                 {
                     "name": "balance",
                     "type": "prop",
@@ -5209,7 +5274,7 @@ export const uqSchema={
         "init": {
             "name": "init",
             "jName": "Init",
-            "type": "subject",
+            "type": "moniker",
             "caption": "Init",
             "assigns": [
                 {
@@ -5279,7 +5344,7 @@ export enum EnumDetail {
 	DetailStoreOut = 'detailstoreout',
 }
 
-export enum EnumSubject {
+export enum EnumMoniker {
 	storage = 'storage',
 	c = 'c',
 	AccountSetting = 'accountsetting',

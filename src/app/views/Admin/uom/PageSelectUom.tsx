@@ -98,7 +98,7 @@ function PageSelectType() {
             {caption ?? name}
         </div>;
     }
-    async function onSelectUom([name, caption, value]: [string, string, number]) {
+    async function onSelectUom([name, caption, value]: [string, string, string | number]) {
         closeModal({ name, caption, value });
     }
     return <Page header="选择类型">

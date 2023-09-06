@@ -5,8 +5,8 @@ import { Sep, Spinner, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { EditAtomBud, EditAtomField } from "../BudEdit";
 import { EntityAtom } from "app/Biz";
-import { ViewUom } from "../Uom";
-import { ViewPropRowProps } from "../model";
+import { LabelAtomUomEdit } from "../AtomUom";
+import { ViewBudRowProps } from "../model";
 
 export function useBizAtomView(options: OptionsUseBizAtom) {
     const { id } = useParams();
@@ -34,14 +34,14 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
     };
     const { main, props, propsStr, entityAtom } = state;
     let { caption, props: atomProps } = entityAtom;
-    const viewRows: ViewPropRowProps[] = [
+    const viewRows: ViewBudRowProps[] = [
         { name: 'id', label: 'id', readonly: true, type: 'number', },
-        { name: 'no', label: NOLabel ?? 'NO', readonly: true, type: 'string', },
-        { name: 'ex', label: exLabel ?? 'EX', type: 'string', },
+        { name: 'no', label: NOLabel ?? '编号', readonly: true, type: 'string', },
+        { name: 'ex', label: exLabel ?? '名称', type: 'string', },
     ];
     let viewUom: any;
     if (uom === true) {
-        viewUom = <ViewUom id={id} className="mt-3" />;
+        viewUom = <LabelAtomUomEdit atomId={id} uomId={state.props['atom.$.uom']?.value} />;
     }
     return {
         caption,

@@ -1,11 +1,11 @@
-import { Atom, EnumAtom, EnumSheet, EnumSubject } from "uqs/UqDefault";
+import { Atom, EnumAtom, EnumSheet, EnumMoniker } from "uqs/UqDefault";
 import { Spec } from "./Model";
-import { EntityAtom } from "app/Biz";
+import { EntityAtom, EntitySheet } from "app/Biz";
 import { EntitySpec } from "app/Biz/EntityAtom";
 
 export interface PropsAtomSelect {
     atomName: string;
-    assigns?: string[];
+    buds?: string[];
     loadOnOpen?: boolean;
     caption?: string;
     placeholder?: string;
@@ -32,7 +32,8 @@ export interface GSpec<T extends Spec = any> {
 
 export interface GSheet {
     sheet: EnumSheet;
-    caption?: string;
+    // caption?: string;
+    entitySheet?: EntitySheet;
     pageEdit: JSX.Element,
 }
 
@@ -45,7 +46,7 @@ export interface PropsSpecEdit<T extends Spec> {
 }
 
 export interface GSubject {
-    name: EnumSubject;
+    name: EnumMoniker;
     caption?: string;
     Report: JSX.Element;
     History: JSX.Element;

@@ -72,20 +72,20 @@ PAGE (
     id ID DESC,
     value VALUE,
     ref ID,
-    op TINYINT,
+    plusMinus TINYINT,
     sheetNo NO,
     sheetName CHAR(200),
     sheetCaption CHAR(100),
 ) {
     VAR phraseId ID = PhraseId(subject);
-    VAR BudSiteId ID = ID(Bud KEY base=objId, ext=phraseId);
-    PAGE SELECT a.id, a.value, a.ref, a.op, c.no as sheetNo, e.name as sheetName, e.caption as sheetCaption
+    VAR SiteBudId ID = ID(Bud KEY base=objId, ext=phraseId);
+    PAGE SELECT a.id, a.value, a.ref, a.plusMinus, c.no as sheetNo, e.name as sheetName, e.caption as sheetCaption
         FROM History as a
             LEFT JOIN Detail as b ON b.id=a.ref
             LEFT JOIN Sheet as c ON c.id=b.base 
             LEFT JOIN Bud as d ON d.id=c.base
             LEFT JOIN $Phrase as e ON e.id=d.ext
-        WHERE a.id < $pageStart AND a.subject=BudSiteId
+        WHERE a.id < $pageStart AND a.bud=SiteBudId
         ORDER BY a.id DESC
         LIMIT $pageSize;
 };
