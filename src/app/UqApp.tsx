@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import { getAtomValue, setAtomValue } from 'tonwa-com';
 import { AppConfig, UqAppBase, UqAppContext, ViewUqApp } from "tonwa-app";
-import { UqConfig, UqQuery, UqSites } from 'tonwa-uq';
+import { UqConfig, UqMan, UqQuery, UqSites } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
@@ -61,6 +61,10 @@ export class UqApp extends UqAppBase<UQs> {
         setAtomValue(this.refreshTime, d);
     }
 
+    get uqMan(): UqMan {
+        return (this.uq.$ as any).$_uqMan;
+    }
+
     private async loadUnitTime($getTimezone: UqQuery<any, any>) {
         let ret = await $getTimezone.query({});
         let tz = ret.ret[0];
@@ -89,13 +93,12 @@ export class UqApp extends UqAppBase<UQs> {
 
     atomSiteLogined = atom(false);
     async loginSite() {
-        let { $_uqMan } = (this.uq.$ as any);
-        this.uqSites = new UqSites($_uqMan);
+        this.uqSites = new UqSites(this.uqMan);
         await this.uqSites.login();
         let { userSite } = this.uqSites;
         let siteLogined: boolean;
         if (userSite !== undefined) {
-            $_uqMan.unit = userSite.siteId;
+            this.uqMan.unit = userSite.siteId;
             siteLogined = true;
         }
         else {

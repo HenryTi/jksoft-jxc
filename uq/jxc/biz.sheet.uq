@@ -129,7 +129,7 @@ Biz Detail DetailStoreOut ver 0.2 {
             -- 不含批号的某种商品库存
             Biz Bud storage.goodsBalance of atomUom -= value;
         }
-        Biz Further 
+        -- Biz Further 
         -- detail写账报错，错误号1
         -- WITH Temp ID=detail SET value=1;
     };

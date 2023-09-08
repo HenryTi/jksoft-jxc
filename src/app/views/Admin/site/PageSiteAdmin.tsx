@@ -12,8 +12,9 @@ import { CaptionAtom, pathAtomList } from "app/hooks";
 import { ViewSite } from "app/views/Site";
 import { BI } from "app/coms";
 import { EnumAtom } from "uqs/UqDefault";
+import { captionCompile, pathCompile } from "../compile";
 
-export function PageSiteAdmin() {
+function PageSiteAdmin() {
     const { uq, uqSites } = useUqApp();
     const { openModal } = useModal();
     const { site } = useParams();
@@ -56,6 +57,7 @@ export function PageSiteAdmin() {
         { label: captionAchieve, path: pathAchieve },
         { label: captionUser, path: pathUser },
         { label: <CaptionAtom atom={EnumAtom.UomI} />, path: pathAtomList(gUomI.name) },
+        { label: captionCompile, path: pathCompile },
     ];
     return <Page header={<IDView uq={uq} id={Number(site)} Template={ViewSite} />}>
         <SiteRoleAdmin />

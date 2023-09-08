@@ -95,6 +95,21 @@ export class UqApi extends ApiBase {
     async syncUser(user: number) {
         return await this.post('sync-user', { user });
     }
+
+    async hello(): Promise<object> {
+        let ret = await this.get('hello', {});
+        return ret;
+    }
+
+    async compileHello(): Promise<object> {
+        let ret = await this.get('compile/hello', {});
+        return ret;
+    }
+
+    async compileSource(source: string): Promise<object | string[]> {
+        let ret = await this.post('compile/source', { source });
+        return ret;
+    }
 }
 
 export abstract class CenterApiBase extends ApiBase {

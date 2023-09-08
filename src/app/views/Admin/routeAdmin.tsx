@@ -10,12 +10,14 @@ import { routeUser } from "./user";
 import { PageUomIListOfUom, gUom, gUomI, pathUomIListOfUom } from "./uom";
 import { Route } from "react-router-dom";
 import { PageUomRoot, pathUom } from "./uom/ViewUomList";
+import { routeCompile } from "./compile";
 
 export function routeAdmin(uqApp: UqApp) {
     return <>
         {routeProp}
         {routePageAdmin}
         {routeAchieve}
+        {routeCompile}
         {routeUser}
         {routeAtom(uqApp, gSubject)}
         {routeAtom(uqApp, gPersonPost)}

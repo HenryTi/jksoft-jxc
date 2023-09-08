@@ -1,0 +1,119 @@
+-- all biz code tables start with biz
+-- all biz objects store here
+/*
+ID #BizObject (
+    id,
+    KEY site ID,
+    KEY moniker ID Moniker,
+    type ENUM BizObjectType,
+    create TIMESTAMP DEFAULT current,
+    update TIMESTAMP DEFAULT onupdate,
+    INDEX site_type_moniker (site, type, moniker),
+);
+*/
+
+ENUM BizMonikerType (
+    atom = 11,
+    atomUom = 12,
+    sheet = 21,
+    sheetScalar = 22,           -- single detail sheet
+    sheetMain = 23,
+    sheetDetail = 24,
+    sheetPend = 25,
+
+    prop = 1001,
+);
+
+ID #BizMoniker (
+    id,
+    KEY site ID,                    -- owner site
+    KEY name Phrase,                -- really name, ~ seperated full name, include buds
+    caption CHAR(100),              -- 标题
+    type ENUM BizMonikerType,
+);
+
+-- props ownered by object
+IX BizIxObject (
+    i,
+    x,
+    prev,                       -- sorted x, the previous x
+);
+
+ENUM BizPropType (
+    int = 11,                   -- bigint
+    atom = 12,                  -- atom id
+    radio = 13,                 -- single radio ids
+    check = 14,                 -- multiple checks
+    dec = 21,                   -- dec(18.6)
+    str = 31,                   -- varchar(100)
+    formula = 101,              -- calculations for sheet detail
+    memo = 999,                 -- memo
+);
+IDX BizProp (
+    id,
+    type ENUM BizPropType,
+    obj ID,                     -- BizObject define
+    memo TEXT,                  -- memo
+);
+
+ACT SaveBizMoniker(
+    ARR monikers (
+        name Phrase,
+        caption CHAR(100),
+        baseName Phrase,
+        type ENUM BizMonikerType,
+    )
+) {
+    FOR monikers {
+        VAR monikerId ID;
+        WITH BizMoniker as a 
+            ID to monikerId 
+            KEY($site, name) 
+            SET a.caption=caption, a.type=type;
+    }
+  /*
+  SET `_$pname`='';
+  __loop_997: WHILE 1=1 DO
+    SET `_$name`=NULL;
+    SELECT `name`, `id` INTO `_$name`, `_$base`
+      FROM `jksoft_mini_jxc_trial`.`$phrase` AS b
+      WHERE 1=1 AND `name`>`_$pname`
+      ORDER BY `name` ASC
+      LIMIT 1 FOR UPDATE;
+    IF `_$name` IS NULL THEN
+      LEAVE __loop_997;
+    END IF;
+    SET `_$ownerId`=IFNULL((SELECT `id` 
+      FROM `jksoft_mini_jxc_trial`.`$phrase`
+      WHERE 1=1 AND `name`=SUBSTR(`_$name`, 1, CHAR_LENGTH(`_$name`)-CHAR_LENGTH(SUBSTRING_INDEX(`_$name`, '.', -1))-1) FOR UPDATE), 0);
+    UPDATE `jksoft_mini_jxc_trial`.`$phrase` 
+      SET `owner`=`_$ownerId`
+      WHERE `id`=`_$base`;
+    SET `_$pname`=`_$name`;
+  END WHILE; -- __loop_997
+  SET `_$pname`='';
+  __loop_998: WHILE 1=1 DO
+    SET `_$name`=NULL;
+    SELECT a.`name`, b.`id` INTO `_$name`, `_$base`
+      FROM `_ids$tbl` AS a
+        LEFT JOIN `jksoft_mini_jxc_trial`.`$phrase` AS b ON (a.`basename`=b.`name`)
+      WHERE 1=1 AND a.`name`>`_$pname`
+      ORDER BY a.`name` ASC
+      LIMIT 1 FOR UPDATE;
+    IF `_$name` IS NULL THEN
+      LEAVE __loop_998;
+    END IF;
+    IF `_$base` IS NULL THEN
+      SET `_$base`=0;
+    END IF;
+    UPDATE `jksoft_mini_jxc_trial`.`$phrase` 
+      SET `base`=`_$base`
+      WHERE `name`=`_$name`;
+    SET `_$pname`=`_$name`;
+  END WHILE; -- __loop_998
+  SELECT b.`id`, b.`name`
+    FROM `_ids$tbl` AS a
+      JOIN `jksoft_mini_jxc_trial`.`$phrase` AS b ON (a.`name`=b.`name`)
+    WHERE 1=1 AND b.`valid`>0 FOR UPDATE;
+    */
+};

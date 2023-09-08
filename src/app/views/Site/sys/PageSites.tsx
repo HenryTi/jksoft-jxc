@@ -14,7 +14,8 @@ export function PageSites() {
     const [list, setList] = useState<any[]>(undefined);
     useEffectOnce(() => {
         (async function () {
-            let query: Query = ((uqApp.uq.$ as any).$_uqMan as UqMan).entities['$sites'] as any;
+            const { uqMan } = uqApp;
+            let query: Query = uqMan.entities['$sites'] as any;
             let result = await query.page({}, undefined, 100);
             setList(result.$page);
         })();

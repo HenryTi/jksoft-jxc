@@ -40,7 +40,7 @@ IX IxUom (
     i,                          -- UomI 计量单位
     x INDEX,                    -- UomX 换算单位
     ratio VALUE,                -- uomx = ratio * uomi;
-    prev ID,                    -- 上一层的UomX
+    prevUomX ID,                -- 上一层的UomX
     prevRatio VALUE DEFAULT 1,  -- 跟上一层的比率
 );
 
@@ -146,7 +146,7 @@ RETURNS uomX (
         , d.ex as prevEx, a.prevRatio
         FROM IxUom as a
             JOIN Atom as b ON b.id=a.x
-            LEFT JOIN Atom as d ON d.id=a.prev
+            LEFT JOIN Atom as d ON d.id=a.prevUomX
             LEFT JOIN AtomUom as c ON c.atom=id AND c.uom=a.x
         WHERE a.i=budUom
         ORDER BY a.ratio;
@@ -167,19 +167,19 @@ RETURNS ret (
     WITH IxUom i=i x=x SET ratio=ratio; -- , valid=1;
 
     -- 修改层间的ratio
-    VAR prev ID = a.x, pRatio VALUE = a.ratio 
+    VAR prevUomX ID = a.x, pRatio VALUE = a.ratio 
         FROM IxUom as a 
         WHERE a.i=i AND a.ratio<ratio -- AND a.valid=1
         ORDER BY a.ratio ASC LIMIT 1;
-    IF prev IS NOT NULL {
-        WITH IxUom i=i x=x SET prev=prev, prevRatio=ratio/pRatio;
+    IF prevUomX IS NOT NULL {
+        WITH IxUom i=i x=x SET prevUomX=prevUomX, prevRatio=ratio/pRatio;
     }
     VAR next ID = a.x, nRatio VALUE = a.ratio
         FROM IxUom as a 
         WHERE a.i=i AND a.ratio>ratio -- AND a.valid=1
         ORDER BY a.ratio ASC LIMIT 1;
     IF next IS NOT NULL {
-        WITH IxUom i=i x=next SET prev=x, prevRatio=nRatio/ratio;
+        WITH IxUom i=i x=next SET prevUomX=x, prevRatio=nRatio/ratio;
     }
 
     INTO ret SELECT x as id;
