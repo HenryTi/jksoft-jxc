@@ -1,119 +1,121 @@
 -- all biz code tables start with biz
 -- all biz objects store here
-/*
-ID #BizObject (
-    id,
-    KEY site ID,
-    KEY moniker ID Moniker,
-    type ENUM BizObjectType,
-    create TIMESTAMP DEFAULT current,
-    update TIMESTAMP DEFAULT onupdate,
-    INDEX site_type_moniker (site, type, moniker),
-);
-*/
 
 ENUM BizMonikerType (
     atom = 11,
-    atomUom = 12,
-    sheet = 21,
-    sheetScalar = 22,           -- single detail sheet
-    sheetMain = 23,
-    sheetDetail = 24,
-    sheetPend = 25,
+    uom = 12,
+    spec = 13,
+    sheet = 101,
+    role = 201,
+    permit = 202,
 
-    prop = 1001,
+    with = 151,
+
+    key = 1001,
+    prop = 1011,
+    assign = 1021,
 );
 
 ID #BizMoniker (
     id,
-    KEY site ID,                    -- owner site
+    KEY base ID,                    -- site for object, or owner for bud
     KEY name Phrase,                -- really name, ~ seperated full name, include buds
     caption CHAR(100),              -- 标题
     type ENUM BizMonikerType,
+    memo CHAR(100),
+    valid TINYINT DEFAULT 1,
 );
 
--- props ownered by object
-IX BizIxObject (
-    i,
-    x,
-    prev,                       -- sorted x, the previous x
+IDX BizObject (
+    id,
+    source TEXT,
+    schema TEXT,
 );
 
-ENUM BizPropType (
+ENUM BudDataType (
+    none = 0,
     int = 11,                   -- bigint
     atom = 12,                  -- atom id
     radio = 13,                 -- single radio ids
     check = 14,                 -- multiple checks
+    ID = 19,
     dec = 21,                   -- dec(18.6)
-    str = 31,                   -- varchar(100)
-    formula = 101,              -- calculations for sheet detail
-    memo = 999,                 -- memo
+    char = 31,                  -- varchar(100)
+    str = 32,                   -- varchar(100)
+    date = 41,
 );
-IDX BizProp (
+IDX BizBud (
     id,
-    type ENUM BizPropType,
-    obj ID,                     -- BizObject define
-    memo TEXT,                  -- memo
+    type ENUM BudDataType,
+    obj ID,                     -- BizObject define of atom or options
 );
 
-ACT SaveBizMoniker(
-    ARR monikers (
-        name Phrase,
-        caption CHAR(100),
-        baseName Phrase,
-        type ENUM BizMonikerType,
-    )
+PROC SaveBizObject ver 0.2 (
+    name Phrase,
+    caption CHAR(100),
+    type ENUM BizMonikerType,
+    memo CHAR(100),
+    source TEXT,
+    schema TEXT,
+)
+RETURNS ret (
+    id ID,
 ) {
-    FOR monikers {
-        VAR monikerId ID;
-        WITH BizMoniker as a 
-            ID to monikerId 
-            KEY($site, name) 
-            SET a.caption=caption, a.type=type;
-    }
-  /*
-  SET `_$pname`='';
-  __loop_997: WHILE 1=1 DO
-    SET `_$name`=NULL;
-    SELECT `name`, `id` INTO `_$name`, `_$base`
-      FROM `jksoft_mini_jxc_trial`.`$phrase` AS b
-      WHERE 1=1 AND `name`>`_$pname`
-      ORDER BY `name` ASC
-      LIMIT 1 FOR UPDATE;
-    IF `_$name` IS NULL THEN
-      LEAVE __loop_997;
-    END IF;
-    SET `_$ownerId`=IFNULL((SELECT `id` 
-      FROM `jksoft_mini_jxc_trial`.`$phrase`
-      WHERE 1=1 AND `name`=SUBSTR(`_$name`, 1, CHAR_LENGTH(`_$name`)-CHAR_LENGTH(SUBSTRING_INDEX(`_$name`, '.', -1))-1) FOR UPDATE), 0);
-    UPDATE `jksoft_mini_jxc_trial`.`$phrase` 
-      SET `owner`=`_$ownerId`
-      WHERE `id`=`_$base`;
-    SET `_$pname`=`_$name`;
-  END WHILE; -- __loop_997
-  SET `_$pname`='';
-  __loop_998: WHILE 1=1 DO
-    SET `_$name`=NULL;
-    SELECT a.`name`, b.`id` INTO `_$name`, `_$base`
-      FROM `_ids$tbl` AS a
-        LEFT JOIN `jksoft_mini_jxc_trial`.`$phrase` AS b ON (a.`basename`=b.`name`)
-      WHERE 1=1 AND a.`name`>`_$pname`
-      ORDER BY a.`name` ASC
-      LIMIT 1 FOR UPDATE;
-    IF `_$name` IS NULL THEN
-      LEAVE __loop_998;
-    END IF;
-    IF `_$base` IS NULL THEN
-      SET `_$base`=0;
-    END IF;
-    UPDATE `jksoft_mini_jxc_trial`.`$phrase` 
-      SET `base`=`_$base`
-      WHERE `name`=`_$name`;
-    SET `_$pname`=`_$name`;
-  END WHILE; -- __loop_998
-  SELECT b.`id`, b.`name`
-    FROM `_ids$tbl` AS a
-      JOIN `jksoft_mini_jxc_trial`.`$phrase` AS b ON (a.`name`=b.`name`)
-    WHERE 1=1 AND b.`valid`>0 FOR UPDATE;
-    */
+    TRANS START;
+    VAR id ID;
+    WITH BizMoniker as a 
+        ID to id
+        KEY($site as base, name) 
+        SET a.caption=caption, a.type=type, a.memo=memo;
+    WITH BizObject as a ID=id SET a.source=source, a.schema=schema;
+    WITH BizMoniker as a KEY(id as base) SET a.valid=0;
+    INTO ret SELECT id;
+    TRANS COMMIT;
+}
+
+PROC SaveBizBud ver 0.2 (
+    base ID,
+    name Phrase,
+    caption CHAR(100),
+    type ENUM BizMonikerType,
+    memo CHAR(100),
+    dataType ENUM BudDataType,
+    objId ID,
+)
+RETURNS ret (
+    id ID,
+) {
+    TRANS START;
+    VAR id ID;
+    WITH BizMoniker as a 
+        ID to id
+        KEY(base, name) 
+        SET a.caption=caption, a.type=type, a.memo=memo, a.valid=1;
+    WITH BizBud as a ID=id 
+        SET a.type=dataType
+            , a.obj=objId;
+    INTO ret SELECT id;
+    TRANS COMMIT;
 };
+
+QUERY GetBizObjects() 
+RETURNS objs (
+    id ID,
+    phrase PHRASE,
+    source TEXT,
+)
+RETURNS buds (
+    id ID,
+    base ID,
+    phrase PHRASE,
+)
+{
+    INTO objs SELECT a.id, a.name as phrase, b.source
+        FROM BizMoniker as a 
+            LEFT JOIN BizObject as b ON b.id=a.id
+        WHERE a.base=$site AND a.valid=1;
+    INTO buds SELECT a.id, a.base, a.name as phrase 
+        FROM BizMoniker as a
+            JOIN objs as b ON b.id=a.base
+        WHERE a.valid=1;
+}

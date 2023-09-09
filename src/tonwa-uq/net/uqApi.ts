@@ -106,8 +106,12 @@ export class UqApi extends ApiBase {
         return ret;
     }
 
-    async compileSource(source: string): Promise<object | string[]> {
-        let ret = await this.post('compile/source', { source });
+    async compileOverride(source: string): Promise<any> {
+        let ret = await this.post('compile/override', { source });
+        return ret;
+    }
+    async compileAppend(source: string): Promise<any> {
+        let ret = await this.post('compile/append', { source });
         return ret;
     }
 }

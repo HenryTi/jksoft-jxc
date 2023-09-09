@@ -1,4 +1,4 @@
-Biz ACT SaveAtom (
+Biz ACT SaveAtom ver 0.1 (
     atom CHAR(100),
     no NO,
     ex CHAR(200),
