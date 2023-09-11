@@ -19,12 +19,12 @@ export function routeAdmin(uqApp: UqApp) {
         {routeAchieve}
         {routeCompile}
         {routeUser}
-        {routeAtom(uqApp, gSubject)}
-        {routeAtom(uqApp, gPersonPost)}
-        {routeAtom(uqApp, gGroupPost)}
-        {routeAtom(uqApp, gUom)}
-        {routeAtom(uqApp, gUomI)}
         <Route path={pathUom} element={<PageUomRoot />} />
         <Route path={pathUomIListOfUom(':id')} element={<PageUomIListOfUom />} />
     </>;
+    { routeAtom(uqApp, gPersonPost) }
+    { routeAtom(uqApp, gGroupPost) }
+    { routeAtom(uqApp, gUom) }
+    { routeAtom(uqApp, gUomI) }
+    { routeAtom(uqApp, gSubject) }
 }

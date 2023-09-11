@@ -127,14 +127,14 @@ PAGE (
     phrase PHRASE,
     selected TINYINT,
 ) {
-    VAR person PHRASE = 'atom.person';
+    VAR person PHRASE = 'person';
     VAR base ID = SiteBudId(person);
 
     PAGE SELECT a.id, a.no, a.ex, d.name as phrase
         , case when exists(select x from IxSumGroup WHERE i=group AND x=a.id) then 1 else 0 end as selected
         FROM Atom as a
             JOIN Bud as b ON b.id=a.base
-            JOIN $phrase as d ON d.id=b.ext
+            JOIN BizPhrase as d ON d.id=b.ext
         WHERE a.base=base AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
         ORDER BY a.id desc
         LIMIT $pageSize;
@@ -261,7 +261,7 @@ RETURNS atoms (
             JOIN IxMySum as b ON b.i=a.userSite
             JOIN Atom as d ON d.id=b.x
             JOIN Bud as e ON e.id=d.base
-            JOIN $phrase as f ON f.id=e.ext
+            JOIN BizPhrase as f ON f.id=e.ext
         ;
 }
 

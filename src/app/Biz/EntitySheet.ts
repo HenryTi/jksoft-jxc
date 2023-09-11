@@ -5,6 +5,9 @@ export class EntityMain extends Entity {
     target: BizBud;
 
     protected override fromSwitch(i: string, val: any) {
+        if (val === undefined) {
+            return;
+        }
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'target': this.fromTarget(val); break;
@@ -25,6 +28,9 @@ export class EntityDetail extends Entity {
     amount: BizBud;
 
     protected override fromSwitch(i: string, val: any) {
+        if (val === undefined) {
+            return;
+        }
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'main': this.fromMain(val); break;

@@ -84,7 +84,7 @@ PAGE (
             LEFT JOIN Detail as b ON b.id=a.ref
             LEFT JOIN Sheet as c ON c.id=b.base 
             LEFT JOIN Bud as d ON d.id=c.base
-            LEFT JOIN $Phrase as e ON e.id=d.ext
+            LEFT JOIN BizPhrase as e ON e.id=d.ext
         WHERE a.id < $pageStart AND a.bud=SiteBudId
         ORDER BY a.id DESC
         LIMIT $pageSize;

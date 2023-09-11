@@ -1,11 +1,12 @@
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
+import * as jsonpack from 'jsonpack';
 import { getAtomValue, setAtomValue } from 'tonwa-com';
 import { AppConfig, UqAppBase, UqAppContext, ViewUqApp } from "tonwa-app";
 import { UqConfig, UqMan, UqQuery, UqSites } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
-import { UqExt } from 'uqs/UqDefault';
+import { UqExt, uqSchema } from 'uqs/UqDefault';
 import { GAtom, GSheet, GSpec } from './tool';
 import { atom } from 'jotai';
 import { Biz, EntityAtom } from './Biz';
@@ -79,7 +80,6 @@ export class UqApp extends UqAppBase<UQs> {
     }
 
     protected onLoadUQs() {
-        this.biz = new Biz(this);
         this.uq = this.uqs.UqDefault;
     }
 
@@ -92,7 +92,9 @@ export class UqApp extends UqAppBase<UQs> {
     }
 
     atomSiteLogined = atom(false);
-    async loginSite() {
+    loginSite = async () => {
+        console.error('loginSite');
+        if (this.biz !== undefined) return this.biz;
         this.uqSites = new UqSites(this.uqMan);
         await this.uqSites.login();
         let { userSite } = this.uqSites;
@@ -100,12 +102,76 @@ export class UqApp extends UqAppBase<UQs> {
         if (userSite !== undefined) {
             this.uqMan.unit = userSite.siteId;
             siteLogined = true;
+            let { uqApi } = this.uqMan;
+            let { schemas, logs } = await uqApi.biz();
+            // this.biz = new Biz(this, uqSchema.$biz);
+            if (schemas === undefined) {
+                debugger;
+                console.error('uq-api compile saved bizobject error', logs);
+                return;
+            }
+            let bizSchema = jsonpack.unpack(schemas);
+            Object.assign(bizSchema, {
+                /*
+                "$user": {
+                    "name": "$user",
+                    "type": "$user"
+                },
+                "$unit": {
+                    "name": "$unit",
+                    "type": "$unit"
+                },
+                "$": {
+                    "name": "$",
+                    "type": "atom",
+                    "props": [
+                        {
+                            "name": "uom",
+                            "type": "prop",
+                            "dataType": "ID"
+                        }
+                    ]
+                },
+                */
+            });
+            this.biz = new Biz(this, bizSchema);
         }
         else {
             siteLogined = false;
         }
         setAtomValue(this.atomSiteLogined, siteLogined);
+        return this.biz;
     }
+    loadBiz = async () => {
+        let { uqApi } = this.uqMan;
+        let { schemas } = await uqApi.biz();
+        // this.biz = new Biz(this, uqSchema.$biz);
+        let bizSchema = jsonpack.unpack(schemas);
+        Object.assign(bizSchema, {
+            "$user": {
+                "name": "$user",
+                "type": "$user"
+            },
+            "$unit": {
+                "name": "$unit",
+                "type": "$unit"
+            },
+            "$": {
+                "name": "$",
+                "type": "atom",
+                "props": [
+                    {
+                        "name": "uom",
+                        "type": "prop",
+                        "dataType": "ID"
+                    }
+                ]
+            },
+        });
+        this.biz = new Biz(this, bizSchema);
+        return this.biz;
+    }
+
     readonly gAtoms: { [name: string]: GAtom } = {};
     readonly gSpecs: { [name: string]: GSpec } = {};
     readonly gSheets: { [name: string]: GSheet } = {};

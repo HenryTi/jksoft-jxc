@@ -7,8 +7,8 @@ import { pathPermits } from "./Permits";
 import { useSelectAtom } from "app/hooks";
 import { useUqApp } from "app/UqApp";
 import { EnumAtom } from "uqs/UqDefault";
-import { pathSheetCenter } from "./routeJCX";
 import { pathMy } from "./My";
+import { pathSheetCenter } from "./Sheet";
 
 export function TabJXC() {
     const uqApp = useUqApp();

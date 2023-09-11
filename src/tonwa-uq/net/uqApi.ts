@@ -114,6 +114,10 @@ export class UqApi extends ApiBase {
         let ret = await this.post('compile/append', { source });
         return ret;
     }
+    async biz(): Promise<any> {
+        let ret = await this.post('compile/biz', {});
+        return ret;
+    }
 }
 
 export abstract class CenterApiBase extends ApiBase {

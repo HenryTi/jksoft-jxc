@@ -3,7 +3,8 @@ import { EnumAtom } from "uqs/UqDefault";
 
 export function CaptionAtom({ atom }: { atom: EnumAtom; }) {
     const { biz } = useUqApp();
+    const entity = biz.entities[atom];
     return <>
-        {biz.entities[atom].caption}
+        {entity ? entity.caption : atom}
     </>;
 }

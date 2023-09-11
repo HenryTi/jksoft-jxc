@@ -1,7 +1,7 @@
 -- all biz code tables start with biz
 -- all biz objects store here
 
-ENUM BizMonikerType (
+ENUM BizPhraseType (
     atom = 11,
     uom = 12,
     spec = 13,
@@ -16,14 +16,21 @@ ENUM BizMonikerType (
     assign = 1021,
 );
 
-ID #BizMoniker (
+ID #BizPhrase (
     id,
     KEY base ID,                    -- site for object, or owner for bud
     KEY name Phrase,                -- really name, ~ seperated full name, include buds
     caption CHAR(100),              -- 标题
-    type ENUM BizMonikerType,
+    type ENUM BizPhraseType,
     memo CHAR(100),
     valid TINYINT DEFAULT 1,
+);
+
+-- obj x extended from obj i
+-- bud i owns bud x
+IX IxBizPhrase (
+    i,
+    x,
 );
 
 IDX BizObject (
@@ -53,7 +60,7 @@ IDX BizBud (
 PROC SaveBizObject ver 0.2 (
     name Phrase,
     caption CHAR(100),
-    type ENUM BizMonikerType,
+    type ENUM BizPhraseType,
     memo CHAR(100),
     source TEXT,
     schema TEXT,
@@ -63,12 +70,12 @@ RETURNS ret (
 ) {
     TRANS START;
     VAR id ID;
-    WITH BizMoniker as a 
+    WITH BizPhrase as a 
         ID to id
         KEY($site as base, name) 
         SET a.caption=caption, a.type=type, a.memo=memo;
     WITH BizObject as a ID=id SET a.source=source, a.schema=schema;
-    WITH BizMoniker as a KEY(id as base) SET a.valid=0;
+    WITH BizPhrase as a KEY(id as base) SET a.valid=0;
     INTO ret SELECT id;
     TRANS COMMIT;
 }
@@ -87,7 +94,7 @@ RETURNS ret (
 ) {
     TRANS START;
     VAR id ID;
-    WITH BizMoniker as a 
+    WITH BizPhrase as a 
         ID to id
         KEY(base, name) 
         SET a.caption=caption, a.type=type, a.memo=memo, a.valid=1;
@@ -96,6 +103,15 @@ RETURNS ret (
             , a.obj=objId;
     INTO ret SELECT id;
     TRANS COMMIT;
+};
+
+PROC SaveBizIX (
+    pairs JSON,            -- '[[i,x], [i,x], ]'
+) {
+    JSONTABLE tbl (i PHRASE PATH '$[0]', x PHRASE PATH '$[0]') FROM pairs PATH '$[*]';
+    FOR (VAR i PHRASE, x PHRASE OF SELECT a.i, a.x FROM tbl as a) {
+        WITH IxBizPhrase I=PhraseId(i) X=PhraseId(x);
+    }
 };
 
 QUERY GetBizObjects() 
@@ -111,11 +127,11 @@ RETURNS buds (
 )
 {
     INTO objs SELECT a.id, a.name as phrase, b.source
-        FROM BizMoniker as a 
+        FROM BizPhrase as a 
             LEFT JOIN BizObject as b ON b.id=a.id
         WHERE a.base=$site AND a.valid=1;
     INTO buds SELECT a.id, a.base, a.name as phrase 
-        FROM BizMoniker as a
+        FROM BizPhrase as a
             JOIN objs as b ON b.id=a.base
         WHERE a.valid=1;
 }

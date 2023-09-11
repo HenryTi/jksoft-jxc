@@ -51,8 +51,8 @@ export function PageUserAdmin() {
             let items: Item[];
             switch (phrase) {
                 default: debugger; break;
-                case 'atom.person': items = userItems.persons as any[]; break;
-                case 'atom.sumgroup': items = userItems.groups as any[]; break;
+                case 'person': items = userItems.persons as any[]; break;
+                case 'sumgroup': items = userItems.groups as any[]; break;
             }
             items.push({ id: atom, no, ex });
         }

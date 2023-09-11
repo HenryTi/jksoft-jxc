@@ -1,9 +1,11 @@
 import * as jsonpack from 'jsonpack';
 import { useUqApp } from "app/UqApp";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Route } from "react-router-dom";
-import { Page } from "tonwa-app";
-import { ButtonAsync, wait } from "tonwa-com";
+import { Page, useModal } from "tonwa-app";
+import { ButtonAsync, EasyDate, LMR, List, Sep, wait } from "tonwa-com";
+import codeTxt from '/uq-app/index.ts.txt';
+import { PageUpload } from './PageUpload';
 
 const biz = `
 ATOM B '试验' {
@@ -39,21 +41,27 @@ ATOM Y '试验y' {
 
 function PageCompile() {
     const uqApp = useUqApp();
+    const { openModal } = useModal();
     const [source, setSource] = useState<object>();
     async function test() {
         setSource({});
         let { uqApi } = uqApp.uqMan;
-
-        let { schemas, logs } = await uqApi.compileOverride(biz1);
-        // let ret = await uqApi.compileAppend(biz1);
-
+        const code = await (await fetch(codeTxt)).text();
+        let { schemas, logs } = await uqApi.compileOverride(code);
+        // let { schemas, logs } = await uqApi.compileOverride(biz);
+        // setText();
         setSource({
             logs,
             schemas: jsonpack.unpack(schemas),
         });
     }
-
+    function onUpload() {
+        openModal(<PageUpload />);
+    }
     return <Page header="Compile">
+        <div className="p-3">
+            <button className="btn btn-primary" onClick={onUpload}>上传代码</button>
+        </div>
         <div className="p-3">
             <pre>{JSON.stringify(source, null, 4)}</pre>
             <ButtonAsync className="btn btn-primary" onClick={test}>test</ButtonAsync>

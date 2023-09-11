@@ -28,10 +28,12 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
             setState(ret);
         })();
     });
-    if (state === undefined || state.entityAtom === undefined) return {
-        view: <Spinner />,
-        page: <PageSpinner />,
-    };
+    if (state === undefined || state.entityAtom === undefined) {
+        return {
+            view: <Spinner />,
+            page: <PageSpinner />,
+        };
+    }
     const { main, props, propsStr, entityAtom } = state;
     let { caption, props: atomProps } = entityAtom;
     const viewRows: ViewBudRowProps[] = [

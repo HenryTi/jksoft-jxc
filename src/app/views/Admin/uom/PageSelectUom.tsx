@@ -5,8 +5,8 @@ import { FA, List, useEffectOnce } from "tonwa-com";
 import { Uom, UomType } from "./model";
 import { useState } from "react";
 
-const PhraseDiscription = 'atom.uom.discription';
-const PhraseType = 'atom.uom.type';
+const PhraseDiscription = 'uom.discription';
+const PhraseType = 'uom.type';
 
 export function PageSelectUom() {
     const { uq } = useUqApp();
@@ -18,7 +18,7 @@ export function PageSelectUom() {
             let { $page, budsStr, budsInt } = await uq.SearchAtomBuds.page(
                 {
                     key: undefined,
-                    phrase: 'atom.uom',
+                    phrase: 'uom',
                     budNames: [PhraseDiscription, PhraseType].join('\t')
                 },
                 undefined, 10000

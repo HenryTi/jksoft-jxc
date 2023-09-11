@@ -62,7 +62,7 @@ ACT SaveUomType ver 0.1 (
     type ID,        -- UomType
 ) {
     Biz Bud Uom.type OF id = type;
-    -- VAR budSiteUomType ID = BudId($site, 'atom.uom.type');
+    -- VAR budSiteUomType ID = BudId($site, 'uom.type');
     -- VAR budSiteUomTypeValue ID = ID(Bud New KEY base=budSiteUomType, ext=type);
     -- WITH IxBud I=budSiteUomTypeValue X=id;
 };
@@ -87,9 +87,9 @@ RETURNS uom (
         , c.value as discription
         FROM IxBud as a
             JOIN Bud as a1 ON a1.id=a.i
-            JOIN Bud as a2 ON a2.id=a1.base AND a2.base=$site AND a2.ext=PhraseId('atom.uom.type')
+            JOIN Bud as a2 ON a2.id=a1.base AND a2.base=$site AND a2.ext=PhraseId('uom.type')
             JOIN Atom as b ON b.id=a.x
-            LEFT JOIN IxBudStr as c ON c.i=b.id AND c.x=PhraseId('atom.uom.discription')
+            LEFT JOIN IxBudStr as c ON c.i=b.id AND c.x=PhraseId('uom.discription')
         WHERE a1.ext=id
         ORDER BY b.id;
 }
@@ -103,7 +103,7 @@ PAGE (
     ex CHAR(50),
     phrase PHRASE,
 ) {
-    VAR phrase ID = PhraseId('atom.uomi.uom');
+    VAR phrase ID = PhraseId('uomi.uom');
     VAR bud ID = a.id
         FROM Bud as a
             JOIN Bud as b ON b.id=a.base AND b.base=$site AND b.ext=phrase
@@ -113,7 +113,7 @@ PAGE (
         FROM IxBud as x 
             JOIN Atom as a ON a.id=x.x
             JOIN Bud as b ON b.id=a.base
-            JOIN $phrase as d ON d.id=b.ext
+            JOIN BizPhrase as d ON d.id=b.ext
         WHERE x.i=bud
         ORDER BY x.x desc
         LIMIT $pageSize;
@@ -137,7 +137,7 @@ RETURNS uomX (
     atomUom ID,
 ) {
     -- uomi ID;
-    VAR budUom ID = BudValueInt(id, PhraseId('atom.$.uom'));
+    VAR budUom ID = BudValueInt(id, PhraseId('$.uom'));
     INTO uomI SELECT a.id, a.no, a.ex
         FROM Atom as a
         WHERE a.id=budUom;
@@ -162,7 +162,7 @@ RETURNS ret (
     id ID,
 ) {
     VAR x ID;
-    VAR base ID = SiteBudId('atom.uomx');
+    VAR base ID = SiteBudId('uomx');
     WITH ATOM ID TO x KEY(base, no) SET ex=ex;
     WITH IxUom i=i x=x SET ratio=ratio; -- , valid=1;
 
@@ -202,8 +202,8 @@ RETURNS ret (
     -- VAR uomPhrase CHAR(200) = AtomPhrase(uom);
     VAR id ID = ID(AtomUom new KEY atom=atom, uom=uom);
     WITH AtomUom ID=id SET visible=1;
-    -- IF uomPhrase='atom.uomi' {
-        VAR phraseId ID = PhraseId('atom.$.uom');
+    -- IF uomPhrase='uomi' {
+        VAR phraseId ID = PhraseId('$.uom');
         WITH IxBudInt I=atom X=phraseId SET value=uom;
     -- }
     INTO ret SELECT id;
@@ -222,7 +222,7 @@ ACT DeleteAtomUomI (
     FOR (VAR uom ID OF SELECT a.uom FROM AtomUom as a WHERE a.atom=atom) {
         WITH AtomUom KEY(atom as atom, uom as uom) SET visible=0;
     }
-    VAR phraseId ID = PhraseId('atom.$.uom');
+    VAR phraseId ID = PhraseId('$.uom');
     WITH IxBudInt I=atom X=phraseId DEL;
 }
 
@@ -254,9 +254,9 @@ RETURNS UomX (
     ratio VALUE,
 ) {
     VAR uomI ID = IFNULL((SELECT a.i FROM IxUom as a WHERE a.x=id), id);
-    VAR phraseDiscription ID = PhraseId('atom.uomi.discription');
-    VAR phraseRatio ID = PhraseId('atom.uomi.ratio');
-    VAR phraseUom ID = PhraseId('atom.uomi.uom');
+    VAR phraseDiscription ID = PhraseId('uomi.discription');
+    VAR phraseRatio ID = PhraseId('uomi.ratio');
+    VAR phraseUom ID = PhraseId('uomi.uom');
     -- VAR uom ID = BudValueInt(id, phraseUom);
 
     INTO UomI SELECT * a

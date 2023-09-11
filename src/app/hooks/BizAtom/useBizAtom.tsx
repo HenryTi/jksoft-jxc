@@ -4,25 +4,26 @@ import { Biz, BizBud, EntityAtom } from "app/Biz";
 import { uqAppModal } from "tonwa-app";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { EnumAtom, UqExt } from "uqs/UqDefault";
+import { useLocation, useParams } from "react-router-dom";
 
 export function pathAtomNew(atomName: string) {
-    return `${atomName}-new`;
+    return `atom/${atomName}/new`;
 }
 
 export function pathAtomList(atomName: string) {
-    return `${atomName}-list`;
+    return `atom/${atomName}/list`;
 }
 
 export function pathAtomView(atomName: string, id?: number) {
-    return `${atomName}-view/${id ?? ':id'}`;
+    return `atom/${atomName}/view/${id ?? ':id'}`;
 }
 
 export function pathAtomEdit(atomName: string, id?: number) {
-    return `${atomName}-edit/${id ?? ':id'}`;
+    return `atom/${atomName}/edit/${id ?? ':id'}`;
 }
 
 export function pathAtom(atomName: string, id?: number) {
-    return `${atomName}/${id ?? ':id'}`;
+    return `atom/${atomName}/${id ?? ':id'}`;
 }
 
 export interface OptionsUseBizAtom {
@@ -83,9 +84,12 @@ export async function getAtomWithProps(uq: UqExt, id: number): Promise<any> {
 }
 
 export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
-    const { atomName: atomPhrase } = options;
+    const a = useLocation();
+    const { atom: atomPhrase } = useParams();
+    // const { atomName: atomPhrase } = options;
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
+    // const biz = useBiz();
     const entity = biz.entities[atomPhrase] as EntityAtom;
     const phrase = entity.phrase;
     const pathView = entity.name;

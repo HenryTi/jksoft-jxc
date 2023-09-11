@@ -28,18 +28,18 @@ RETURNS budsStr (
         , e.name as phrase
         , a.value
         FROM IxBudInt as a
-            JOIN $Phrase as e ON e.id=a.x
+            JOIN BizPhrase as e ON e.id=a.x
         WHERE a.i=$site and e.name LIKE phrase;
     INTO budsDec SELECT a.x as bud
         , e.name as phrase
         , a.value
         FROM IxBudDec as a
-            JOIN $Phrase as e ON e.id=a.x
+            JOIN BizPhrase as e ON e.id=a.x
         WHERE a.i=$site and e.name LIKE phrase;
     INTO budsStr SELECT a.x as bud
         , e.name as phrase
         , a.value
         FROM IxBudStr as a
-            JOIN $Phrase as e ON e.id=a.x
+            JOIN BizPhrase as e ON e.id=a.x
         WHERE a.i=$site and e.name LIKE phrase;
 };

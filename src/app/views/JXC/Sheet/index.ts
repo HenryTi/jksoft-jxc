@@ -1,1 +1,1 @@
-export { PageSheetCenter } from './PageSheetCenter';
+export * from './SheetCenter';

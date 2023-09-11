@@ -65,7 +65,10 @@ FUNC SiteBudId ver 0.1 (
 ) 
 RETURNS ID {
     VAR phraseId ID;
-    SET phraseId = (SELECT id FROM $phrase WHERE name=phrase);
+    SET phraseId = (SELECT a.id 
+        FROM BizPhrase as a 
+            JOIN BizPhrase as b ON b.id=a.base
+        WHERE a.name=phrase and b.base=$site);
     VAR siteBud ID = ID(Bud New KEY base=$site, ext=phraseId);
     return siteBud;
 };
@@ -75,7 +78,7 @@ FUNC BudPhrase ver 0.3 (
 ) 
 RETURNS CHAR(200) {
     VAR phrase CHAR(200) = (SELECT a.name 
-        FROM $Phrase as a 
+        FROM BizPhrase as a 
             JOIN Bud as b ON b.ext=a.id -- AND b.base=$site 
         WHERE b.id=SiteBudId
         NO LOCK
@@ -89,7 +92,10 @@ FUNC BudId ver 0.1 (
 ) 
 RETURNS ID {
     VAR phraseId ID;
-    SET phraseId = (SELECT id FROM $phrase WHERE name=phrase);
+    SET phraseId = (SELECT a.id 
+        FROM BizPhrase as a 
+            JOIN BizPhrase as b ON b.id=a.base
+        WHERE a.name=phrase and b.base=$site);
     VAR budId ID = ID(Bud New KEY base=ifnull(base, $site), ext=phraseId);
     return budId;
 };
@@ -137,7 +143,7 @@ RETURNS CHAR(200) {
     VAR phrase CHAR(200) = (SELECT c.name 
         FROM Atom as a
             JOIN Bud as b ON b.id=a.base
-            JOIN $Phrase as c ON c.id=b.ext
+            JOIN BizPhrase as c ON c.id=b.ext
         WHERE a.id=atom
         NO LOCK
     );

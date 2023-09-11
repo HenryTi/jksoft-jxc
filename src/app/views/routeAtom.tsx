@@ -6,14 +6,7 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 export function routeAtom(uqApp: UqApp, gAtom: GAtom) {
-    const { name, caption, pageNew, pageList, pageView, pageEdit } = gAtom;
-    const entity = uqApp.biz.entities[name] as EntityAtom;
-    const ga = {
-        ...gAtom,
-        caption: caption ?? entity.caption,
-        entity,
-    }
-    addGAtoms(uqApp, entity, ga);
+    let { name, caption, pageNew, pageList, pageView, pageEdit } = gAtom;
     return <React.Fragment key={name}>
         <Route path={pathAtomNew(name)} element={pageNew} />
         <Route path={`${pathAtomList(name)}`} element={pageList} />
@@ -22,6 +15,7 @@ export function routeAtom(uqApp: UqApp, gAtom: GAtom) {
         <Route path={`${pathAtomView(name)}`} element={pageView} />
         <Route path={`${pathAtom(name)}`} element={pageView} />
     </React.Fragment>;
+    // }
 }
 
 function addGAtoms(uqApp: UqApp, entity: EntityAtom, gAtom: GAtom) {

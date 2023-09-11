@@ -1,0 +1,85 @@
+Biz Main MainPurchase {
+    target '往来单位' ATOM Contact;
+}
+
+Biz Detail DetailPurchase ver 0.1 {
+    Main MainPurchase;
+    Item '商品' ATOM Goods;       -- 某类Atom
+    Value '数量' DEC;
+    Amount '金额' DEC;
+    Price '单价' DEC;
+    
+    ACT (detail ID) {
+    };
+}
+
+Biz Detail DetailPurchaseMedicine ver 0.1 '采购药品明细' {
+    Main MainPurchase;
+    Item '药品' ATOM Medicine;       -- 某类Atom
+    ACT (detail ID) {
+    };
+}
+
+Biz Sheet SheetPurchase '采购单' {
+    Main MainPurchase;
+    Detail DetailPurchase;
+}
+
+Biz Main MainStoreIn {
+}
+
+Biz Detail DetailStoreIn ver 0.1 {
+    Main MainStoreIn;
+    Item '商品' ATOM Goods;         -- 某类Atom
+    Pend PendStoreIn;               -- 从某个待处理账来
+    ACT (detail ID) 
+    {
+    };
+}
+
+Biz Pend PendStoreIn '待入库';
+
+Biz Sheet SheetStoreIn '入库单' {
+    Main MainStoreIn;
+    Detail DetailStoreIn;
+}
+
+Biz Sheet SheetStoreInMultiStorage '入库单-分仓' {
+    Main MainStoreIn;
+    Detail DetailStoreIn;
+}
+
+Biz Main MainSale {
+}
+
+Biz Sheet SheetSale '销售单' {
+    Main MainSale;
+    Detail DetailSale;
+}
+
+Biz Detail DetailSale ver 0.1 {
+    Main MainSale;
+    Item '商品' ATOM Goods;       -- 某类Atom
+    ACT (detail ID) {
+    };
+}
+
+Biz Main MainStoreOut {
+}
+
+Biz Detail DetailStoreOut ver 0.2 {
+    Main MainStoreOut;
+    Item '商品' ATOM Goods;       -- 某类Atom
+    Pend PendStoreOut;
+    ACT (detail ID) 
+    -- From PendStoreOut 
+    {
+    };
+}
+
+Biz Pend PendStoreOut '待出库';
+
+Biz Sheet SheetStoreOut '出库单' {
+    Main MainStoreOut;
+    Detail DetailStoreOut;
+}

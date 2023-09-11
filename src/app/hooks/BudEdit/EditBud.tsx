@@ -33,7 +33,7 @@ function ViewBud({ label, name, readonly, type, value: initValue, saveBud, id, p
     return <LabelRowEdit label={label}
         value={value} readonly={readonly} type={type}
         onValueChanged={onValueChanged}
-        pickValue={pickBudValue ?? pickValue}
+        pickValue={pickBudValue === null ? null : pickBudValue ?? pickValue}
         ValueTemplate={ValueTemplate} />
 }
 

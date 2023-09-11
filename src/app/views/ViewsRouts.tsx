@@ -8,17 +8,26 @@ import { AppLogin, AppRegister, routePrivacy } from 'app/brand';
 import { useAtomValue } from 'jotai';
 import { PageNoSite, routeAdmin } from './Admin';
 import { routeSiteAdmin } from './Admin/site';
+import { useBiz } from 'app/hooks';
 
 export function ViewsRoutes() {
     let uqApp = useUqApp();
+    useBiz();
     let { user: atomUser, atomSiteLogined } = uqApp;
     let user = useAtomValue(atomUser);
     let siteLogined = useAtomValue(atomSiteLogined);
     let homeLayout: JSX.Element;
     if (siteLogined !== true) {
         homeLayout = <PageSpinner />;
+        return <Suspense fallback={<PageSpinner />}>
+            <BrowserRouter basename='jksoft-jxc'>
+                <Routes>
+                    <Route path="/" element={homeLayout} />
+                </Routes>
+            </BrowserRouter>
+        </Suspense>;
     }
-    else if (user === undefined) {
+    if (user === undefined) {
         homeLayout = <PageNoSite />;
     }
     else {

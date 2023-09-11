@@ -49,11 +49,13 @@ IDX SheetRed (
     red TINYINT DEFAULT 1,  -- 红冲单挂这里，挂主表
 );
 
+/*
 -- 比如：valid Atom
 IX IxAtom (
     i,                  -- bud of atom state
     x,                  -- atom
 );
+*/
 
 -- 各种中间状态。单据记账时，出现错误，在存储过程之间传递数据
 -- 这个需要仔细斟酌

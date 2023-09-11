@@ -16,15 +16,41 @@ export class Biz {
     readonly roles: EntityRole[] = [];
     readonly permits: EntityPermit[] = [];
 
-    constructor(uqApp: UqApp) {
+    constructor(uqApp: UqApp, bizSchema: any) {
         this.uqApp = uqApp;
         this.uq = uqApp.uq;
-        this.buildEntities();
+        this.buildEntities(bizSchema);
     }
 
     init() { }
 
-    private buildEntities() {
+    rootAtoms(): EntityAtom[] {
+        let ret: EntityAtom[] = [];
+        for (let i in this.entities) {
+            const entity = this.entities[i];
+            if (entity.type === 'atom') {
+                const entityAtom = entity as EntityAtom;
+                const { base } = entityAtom;
+                if (base !== undefined) continue;
+                ret.push(entityAtom);
+            }
+        }
+        return ret;
+    }
+
+    sheetEntities(): EntitySheet[] {
+        let ret: EntitySheet[] = [];
+        for (let i in this.entities) {
+            const entity = this.entities[i];
+            if (entity.type === 'sheet') {
+                const entitySheet = entity as EntitySheet;
+                ret.push(entitySheet);
+            }
+        }
+        return ret;
+    }
+
+    private buildEntities(bizSchema: any) {
         const builders: { [type: string]: (name: string, type: string) => Entity } = {
             sheet: this.buildSheet,
             main: this.buildMain,
@@ -38,7 +64,8 @@ export class Biz {
             tree: this.buildTree,
             tie: this.buildTie,
         }
-        let { $biz } = uqSchema;
+        // let { $biz } = uqSchema;
+        let $biz = bizSchema;
         let arr: [Entity, any][] = [];
         for (let i in $biz) {
             let schema = ($biz as any)[i];

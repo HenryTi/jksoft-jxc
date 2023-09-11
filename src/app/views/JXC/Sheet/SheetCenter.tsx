@@ -1,16 +1,20 @@
-import { useUqApp } from "app/UqApp";
-import { PageQueryMore, ViceTitle } from "app/coms";
-import { Link } from "react-router-dom";
-import { Sheet } from "uqs/UqDefault";
+import { UqApp, useUqApp } from "app/UqApp";
+import { BI, PageQueryMore, ViceTitle } from "app/coms";
+import { Link, Route } from "react-router-dom";
+import { EnumAtom, Sheet } from "uqs/UqDefault";
 import { gPurchase } from "./Purchase";
 import { IDView } from "tonwa-app";
 import { gStoreOut } from "./StoreOut";
-import { GSheet } from "app/tool";
+import { GSheet, SheetRow } from "app/tool";
 import { EntitySheet } from "app/Biz";
 import { gSale } from "./Sale";
 import { gStoreInSplit } from "./StoreInSplitHook";
 import { gStoreIn } from "./StoreInHook";
 import { ViewAtom } from "../../ViewAtom";
+import { List } from "tonwa-com";
+import { useDetailQPA } from "./Detail";
+import { PageSheetAct, useSelectAtom } from "app/hooks";
+import { PageEdit } from "./Sheet";
 
 const gSheets: GSheet[][] = [
     [
@@ -24,9 +28,10 @@ const gSheets: GSheet[][] = [
     ],
 ];
 
-export function PageSheetCenter() {
+function PageSheetCenter() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
+    const sheetEntities = biz.sheetEntities();
     const gCollName: { [name: string]: GSheet } = {};
     const gCollPhrase: { [name: string]: GSheet } = {};
     for (let gSheetArr of gSheets) {
@@ -67,6 +72,17 @@ export function PageSheetCenter() {
         if (items.length === 0) return null;
         return <ViceTitle>录入中的单据</ViceTitle>;
     }
+    function ViewSheetItem({ value }: { value: EntitySheet; }) {
+        let { caption, name } = value;
+        return <Link
+            to={`/sheet/${name}`}
+        >
+            <div className="px-3 py-2 align-items-center d-flex">
+                <BI name="card-list" className="fs-larger me-3 text-primary" />
+                <span className="text-body">{caption ?? name}</span>
+            </div>
+        </Link>
+    }
     return <PageQueryMore header="单据中心"
         param={{}}
         sortField={'id'}
@@ -74,24 +90,19 @@ export function PageSheetCenter() {
         ViewItem={ViewItem}
         Top={Top}
     >
-        {
-            gSheets.map((arr, index) => {
-                return <div key={index} className="px-3 py-2 border-bottom d-flex flex-wrap p-2">
-                    {
-                        arr.map((v, index) => {
-                            let { entitySheet, sheet: name } = v;
-                            return <Link key={index}
-                                to={`../${name}`}
-                                className="px-3 px-2 btn btn-outline-primary m-2"
-                            >
-                                {entitySheet.caption ?? entitySheet.name}
-                            </Link>
-                        })
-                    }
-                </div>
-            })
-        }
+        <List items={sheetEntities} ViewItem={ViewSheetItem} />
     </PageQueryMore>;
+}
+
+
+export const pathSheetCenter = 'sheet-center';
+// {routeAtom(uqApp, gAtom)}
+export function routeSheetCenter(uqApp: UqApp) {
+    return <>
+        <Route path={pathSheetCenter} element={<PageSheetCenter />} />
+        <Route path={'sheet/:sheet/:id'} element={<PageEdit />} />
+        <Route path={'sheet/:sheet'} element={<PageEdit />} />
+    </>;
 }
 
 // export const pathSheetCenter = 'sheet-center';

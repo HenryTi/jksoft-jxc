@@ -2,7 +2,7 @@ import { BizProp, BizAssign, BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
 
 export class Entity extends BizBase {
-    get phrase() { return `${this.type}.${this.name}`; }
+    get phrase() { return this.name; }
     readonly selfProps: BizProp[] = [];       // 本 Atom 定义的
     readonly buds: { [key: string]: BizBud; } = {};           // 包括全部继承来的
     readonly props: BizProp[] = [];
@@ -10,6 +10,9 @@ export class Entity extends BizBase {
     readonly assigns: BizAssign[] = [];
 
     protected override fromSwitch(i: string, val: any) {
+        if (val === undefined) {
+            return;
+        }
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'props': this.fromProps(val); break;
@@ -35,6 +38,10 @@ export class Entity extends BizBase {
     }
 
     protected fromAssigns(assigns: any[]) {
+        if (assigns === undefined) {
+            debugger;
+            return;
+        }
         for (let assign of assigns) {
             let { name, dataType } = assign;
             let bizBud = new BizAssign(this.biz, name, dataType, this);

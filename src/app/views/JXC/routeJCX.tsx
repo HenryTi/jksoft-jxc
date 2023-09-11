@@ -1,10 +1,5 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import { gContact, gGoods, gPerson, gSumGroup } from "./Atom";
-import { routeAtomCenter } from "./Atom";
-import { gSubjectStorage, routeSubjectCenter } from "./Subject";
-import { routePrice } from "./AssignPrice";
-import { routeSheetView } from './SheetView';
 import { UqApp } from "app/UqApp";
 import { routePermits } from "./Permits";
 import { GSheet, GSpec, GSubject } from "app/tool";
@@ -13,45 +8,43 @@ import { gSale } from "./Sheet/Sale";
 import { gStoreIn } from "./Sheet/StoreInHook";
 import { gStoreInSplit } from "./Sheet/StoreInSplitHook";
 import { gStoreOut } from "./Sheet/StoreOut";
-import { PageSheetCenter } from "./Sheet";
 import { gSpecBatchValid, gSpecSheo } from "./Atom/Spec";
 import { EntitySpec } from "app/Biz/EntityAtom";
 import { pathSubjectHistory } from "app/hooks";
 import { routeAtom } from "../routeAtom";
 import { routeMy } from "./My";
 import { EntitySheet } from "app/Biz";
-//import { gUom } from "../Admin/uom";
-//{routeAtom(uqApp, gUom)}
+
+import { routeAtomCenter } from "./Atom";
+import { routeSheetCenter } from "./Sheet";
 
 export const pathJXC = 'jxc';
-export const pathSheetCenter = 'sheet-center';
 export function routeJCX(uqApp: UqApp) {
-    buildSpecs(uqApp);
+    // buildSpecs(uqApp);
 
     const routes = <>
-        {routeAtomCenter}
-        {routeAtom(uqApp, gContact)}
-        {routeAtom(uqApp, gPerson)}
-        {routeAtom(uqApp, gSumGroup)}
-        {routeAtom(uqApp, gGoods)}
-
-        {routeSheet(uqApp, gPurchase)}
-        {routeSheet(uqApp, gSale)}
-        {routeSheet(uqApp, gStoreIn)}
-        {routeSheet(uqApp, gStoreInSplit)}
-        {routeSheet(uqApp, gStoreOut)}
-
-        <Route path={pathSheetCenter} element={<PageSheetCenter />} />
-
-        {routeSubjectCenter}
-        {routeSubject(uqApp, gSubjectStorage)}
-        {routeSheetView(uqApp)}
-
+        {routeAtomCenter(uqApp)}
+        {routeSheetCenter(uqApp)}
         {routeMy}
-
-        {routePrice}
-        {routePermits}
     </>;
+    /*
+    { routeAtom(uqApp, gContact) }
+    { routeAtom(uqApp, gPerson) }
+    { routeAtom(uqApp, gSumGroup) }
+    { routeAtom(uqApp, gGoods) }
+
+    {routeSheet(uqApp, gPurchase)}
+    {routeSheet(uqApp, gSale)}
+    {routeSheet(uqApp, gStoreIn)}
+    {routeSheet(uqApp, gStoreInSplit)}
+    {routeSheet(uqApp, gStoreOut)}
+    {routeSubjectCenter}
+    {routeSubject(uqApp, gSubjectStorage)}
+    {routeSheetView(uqApp)}
+
+    {routePrice}
+    {routePermits}
+    */
     return <>
         <Route path={`${pathJXC}/*`}>
             {routes}

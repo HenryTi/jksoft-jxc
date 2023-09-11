@@ -92,7 +92,9 @@ export class EntityAtom extends Entity {
     }
 
     protected fromBase(baseName: any) {
+        if (baseName === undefined) return;
         let base = this.base = this.biz.entities[baseName] as EntityAtom;
+        if (base === undefined) debugger;
         base.children.push(this);
     }
 
