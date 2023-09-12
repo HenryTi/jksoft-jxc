@@ -3,10 +3,10 @@ import { useParams } from "react-router-dom";
 import { Page, PageSpinner } from "tonwa-app";
 import { Sep, Spinner, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
-import { EditAtomBud, EditAtomField } from "../BudEdit";
+import { EditBud, EditAtomField } from "../BudEdit";
 import { EntityAtom } from "app/Biz";
 import { LabelAtomUomEdit } from "../AtomUom";
-import { ViewBudRowProps } from "../model";
+import { BudValue, ViewBudRowProps } from "../model";
 
 export function useBizAtomView(options: OptionsUseBizAtom) {
     const { id } = useParams();
@@ -18,8 +18,7 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
     const { uom, getAtom, saveField, saveBud } = useBizAtom(options)
     const [state, setState] = useState<{
         main: any,
-        props: { [prop: string]: { bud: number; phrase: string; value: number; } };
-        propsStr: { [prop: string]: { bud: number; phrase: string; value: string; } };
+        props: { [prop: string]: { bud: number; phrase: string; value: BudValue; } };
         entityAtom: EntityAtom;
     }>(undefined);
     useEffectOnce(() => {
@@ -34,7 +33,7 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
             page: <PageSpinner />,
         };
     }
-    const { main, props, propsStr, entityAtom } = state;
+    const { main, props, entityAtom } = state;
     let { caption, props: atomProps } = entityAtom;
     const viewRows: ViewBudRowProps[] = [
         { name: 'id', label: 'id', readonly: true, type: 'number', },
@@ -43,7 +42,7 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
     ];
     let viewUom: any;
     if (uom === true) {
-        viewUom = <LabelAtomUomEdit atomId={id} uomId={state.props['atom.$.uom']?.value} />;
+        viewUom = <LabelAtomUomEdit atomId={id} uomId={state.props['atom.$.uom']?.value as number} />;
     }
     return {
         caption,
@@ -63,12 +62,15 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
             {
                 atomProps.map(v => {
                     let { name, phrase, caption } = v;
-                    let prop = props[phrase] ?? propsStr[phrase];
+                    let prop = props[phrase];
                     return <React.Fragment key={name}>
-                        <EditAtomBud
-                            id={id} name={name} label={caption ?? name}
-                            type={v.budDataType.dataType}
-                            bizBud={v} value={prop?.value} saveField={saveField} saveBud={saveBud} />
+                        <EditBud
+                            id={id}
+                            // name={name} label={caption ?? name}
+                            // type={v.budDataType.dataType}
+                            bizBud={v} value={prop?.value as any}
+                        // saveField={saveField} saveBud={saveBud} 
+                        />
                         <Sep />
                     </React.Fragment>;
                 })

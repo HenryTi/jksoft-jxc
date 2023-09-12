@@ -23,7 +23,8 @@
         "baseUrl": "./src"
     },
     "include": [
-        "src"
+        "src",
+        "prop"
     ],
     "references": [
         {

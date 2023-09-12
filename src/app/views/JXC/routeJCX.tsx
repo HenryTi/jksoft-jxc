@@ -6,7 +6,6 @@ import { GSheet, GSpec, GSubject } from "app/tool";
 import { gPurchase } from "./Sheet/Purchase";
 import { gSale } from "./Sheet/Sale";
 import { gStoreIn } from "./Sheet/StoreInHook";
-import { gStoreInSplit } from "./Sheet/StoreInSplitHook";
 import { gStoreOut } from "./Sheet/StoreOut";
 import { gSpecBatchValid, gSpecSheo } from "./Atom/Spec";
 import { EntitySpec } from "app/Biz/EntityAtom";

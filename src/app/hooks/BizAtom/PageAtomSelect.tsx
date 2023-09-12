@@ -6,7 +6,7 @@ import { RowMed, useAtomBudsSearch } from "../BudSelect";
 import { useUqApp } from "app/UqApp";
 import { AtomPhrase, PropsAtomSelect } from "app/tool";
 import { EntityAtom } from "app/Biz";
-import { EnumAtom } from "uqs/UqDefault";
+import { Atom, EnumAtom } from "uqs/UqDefault";
 
 export function useSelectAtom() {
     // const uqApp = useUqApp();
@@ -29,7 +29,7 @@ function PageAtomSelect(props: PropsAtomSelect) {
         let err = (atomName === undefined ? 'no atomName' : `${atomName} not defined`) + ' in PageAtomSelect';
         throw new Error(err);
     }
-    const ViewItemAtom = uqApp.gAtoms[entityAtom.name]?.ViewItem; //useBizAtomViewItem(entityAtom)
+    // const ViewItemAtom = uqApp.gAtoms[entityAtom.name]?.ViewItem; //useBizAtomViewItem(entityAtom)
     // const { caption, placeholder, entity } = genAtom.genAtomSelect;
     const [searchParam, setSearchParam] = useState(loadOnOpen === false ? undefined : { key: undefined as string });
     const searchBox = <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder={placeholder ?? (entityAtom.caption + ' 编号或描述')} />;
@@ -49,11 +49,8 @@ function PageAtomSelect(props: PropsAtomSelect) {
     }
 
     function ViewItem({ value }: { value: RowMed }) {
-        if (ViewItemAtom === undefined) {
-            return <div className="px-3 py-2">BizAtom {entityAtom.name} is not defined</div>
-        }
         return <div className="px-3 py-2">
-            <ViewItemAtom value={value.atom} />
+            <ViewAtom value={value.atom} />
         </div>;
     }
     // pageSize={8}
@@ -67,4 +64,12 @@ function PageAtomSelect(props: PropsAtomSelect) {
     >
         {searchBox}
     </PageQueryMore>;
+}
+
+function ViewAtom({ value }: { value: Atom; }) {
+    let { no, ex } = value;
+    return <div>
+        <div><b>{ex}</b></div>
+        <div className='small text-secondary'>{no}</div>
+    </div>;
 }

@@ -1,4 +1,4 @@
-import { BizBud, BizProp } from "./BizBud";
+import { BizBud } from "./BizBud";
 import { Entity } from "./Entity";
 
 export class EntityMain extends Entity {

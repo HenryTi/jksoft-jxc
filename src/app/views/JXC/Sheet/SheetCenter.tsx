@@ -8,7 +8,7 @@ import { gStoreOut } from "./StoreOut";
 import { GSheet, SheetRow } from "app/tool";
 import { EntitySheet } from "app/Biz";
 import { gSale } from "./Sale";
-import { gStoreInSplit } from "./StoreInSplitHook";
+// import { gStoreInSplit } from "./StoreInSplitHook";
 import { gStoreIn } from "./StoreInHook";
 import { ViewAtom } from "../../ViewAtom";
 import { List } from "tonwa-com";
@@ -20,7 +20,7 @@ const gSheets: GSheet[][] = [
     [
         gPurchase,
         gStoreIn,
-        gStoreInSplit,
+        //        gStoreInSplit,
     ],
     [
         gSale,

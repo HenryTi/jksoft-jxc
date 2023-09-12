@@ -3,18 +3,18 @@ import { Spinner, SpinnerSmall } from "./Spinner";
 
 interface Props {
     name: string;
-    items: [caption: string, value: string | number, defaultCheck: boolean,][];
-    onValueChanged?: (value: string | number) => Promise<void>;
+    items: [item: string, caption: string, value: string | number, defaultCheck: boolean,][];
+    onCheckChanged?: (item: string) => Promise<void>;
 }
 
 export function RadioAsync(props: Props) {
-    let { name, items, onValueChanged: orgOnValueChanged } = props;
+    let { name, items, onCheckChanged } = props;
     let [submiting, setSubmiting] = useState(false);
 
-    async function onValueChanged(value: string | number) {
-        if (orgOnValueChanged === undefined) return;
+    async function onValueChanged(value: string) {
+        if (onCheckChanged === undefined) return;
         setSubmiting(true);
-        await orgOnValueChanged(value);
+        await onCheckChanged(value);
         setSubmiting(false);
     }
 
@@ -26,19 +26,19 @@ export function RadioAsync(props: Props) {
     }
     return <>
         {spinner}
-        <ViewRadios name={name} items={items} onValueChanged={onValueChanged} disabled={submiting} />
+        <ViewRadios name={name} items={items} onCheckChanged={onValueChanged} disabled={submiting} />
     </>;
 }
 
 function ViewRadios(props: Props & { disabled: boolean; }) {
-    let { name, items, onValueChanged, disabled } = props;
+    let { name, items, onCheckChanged, disabled } = props;
     let cn = 'me-4 ';
     if (disabled === true) cn += 'text-light invisible ';
     return <>
         {items.map((v, index) => {
-            let [caption, value, defaultCheck] = v;
+            let [item, caption, value, defaultCheck] = v;
             async function onChange() {
-                await onValueChanged(value);
+                await onCheckChanged(item);
             }
             return <label key={index} className={cn}>
                 <input className="form-check-input"

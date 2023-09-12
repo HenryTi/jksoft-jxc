@@ -1,26 +1,27 @@
 import { useState } from "react";
 import { FA, LabelRow, LabelRowPropsBase } from "tonwa-com";
 import { UqAppBase, useUqAppBase } from "../UqAppBase";
-import { RegisterOptions, useForm } from "react-hook-form";
+import { RegisterOptions } from "react-hook-form";
+import { BudValue } from "app/hooks/model";
 
-export type OnValueChanged = (value: string | number) => Promise<void>;
+export type OnValueChanged = (value: string | number, checked?: boolean) => Promise<void>;
 
 export interface PickProps {
     label: string | JSX.Element;
-    value: string | number;
-    type: 'string' | 'number';
+    value: BudValue;
+    type: string;
     onValueChanged?: OnValueChanged;
 }
 
 export interface EditProps {
     label: string | JSX.Element;
-    value: string | number;
-    type: 'string' | 'number';
+    value: BudValue;
+    type: string;
     readonly?: boolean;         // default: false
     onValueChanged?: OnValueChanged;
     options?: RegisterOptions;
     pickValue?: (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) => Promise<string | number>;
-    ValueTemplate?: (props: { value: string | number; onValueChanged?: OnValueChanged; }) => JSX.Element;
+    ValueTemplate?: (props: { value: BudValue; onValueChanged?: OnValueChanged; }) => JSX.Element;
 }
 
 export function LabelRowEdit(props: LabelRowPropsBase & EditProps) {

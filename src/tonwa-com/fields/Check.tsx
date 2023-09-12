@@ -1,4 +1,3 @@
-import { useAtomValue } from "jotai";
 import { ChangeEvent, useEffect, useRef } from "react";
 import { Band, BandContentType, BandProps, useBand, useBandContainer } from '../band';
 import { FieldProps, FieldItem } from './field';

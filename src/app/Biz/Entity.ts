@@ -1,13 +1,13 @@
-import { BizProp, BizAssign, BizBud } from "./BizBud";
+import { BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
 
 export class Entity extends BizBase {
     get phrase() { return this.name; }
-    readonly selfProps: BizProp[] = [];       // 本 Atom 定义的
+    readonly selfProps: BizBud[] = [];       // 本 Atom 定义的
     readonly buds: { [key: string]: BizBud; } = {};           // 包括全部继承来的
-    readonly props: BizProp[] = [];
-    readonly selfAssigns: BizAssign[] = [];
-    readonly assigns: BizAssign[] = [];
+    readonly props: BizBud[] = [];
+    readonly selfAssigns: BizBud[] = [];
+    readonly assigns: BizBud[] = [];
 
     protected override fromSwitch(i: string, val: any) {
         if (val === undefined) {
@@ -22,7 +22,7 @@ export class Entity extends BizBase {
 
     protected fromProp(prop: any) {
         let { name, dataType } = prop;
-        let bizBud = new BizProp(this.biz, name, dataType, this);
+        let bizBud = new BizBud(this.biz, name, dataType, this);
         let { budDataType } = bizBud;
         if (budDataType === undefined) debugger;
         budDataType.fromSchema(prop);
@@ -44,7 +44,7 @@ export class Entity extends BizBase {
         }
         for (let assign of assigns) {
             let { name, dataType } = assign;
-            let bizBud = new BizAssign(this.biz, name, dataType, this);
+            let bizBud = new BizBud(this.biz, name, dataType, this);
             let { budDataType } = bizBud;
             if (budDataType === undefined) debugger;
             budDataType.fromSchema(assign);

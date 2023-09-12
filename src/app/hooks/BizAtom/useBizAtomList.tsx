@@ -3,7 +3,7 @@ import { PageQueryMore } from '../../coms';
 import { FA, List } from 'tonwa-com';
 import { EntityAtom } from 'app/Biz';
 import { Page } from 'tonwa-app';
-import { OptionsUseBizAtom, pathAtomNew, pathAtomView, useBizAtom } from './useBizAtom';
+import { OptionsUseBizAtom, pathAtomList, pathAtomNew, pathAtomView, useBizAtom } from './useBizAtom';
 
 interface OptionsList {
     ViewItemAtom: (props: { value: any; }) => JSX.Element;
@@ -63,7 +63,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
         const { children } = entityAtom;
         function ViewItem({ value }: { value: EntityAtom; }) {
             const { name, caption } = value;
-            return <Link to={`../${pathList}/${name}`}>
+            return <Link to={`../${pathAtomList(name)}`}>
                 <div className="px-3 py-2">
                     {caption}
                 </div>

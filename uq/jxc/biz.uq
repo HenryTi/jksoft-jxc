@@ -8,12 +8,14 @@ ENUM BizPhraseType (
     sheet = 101,
     role = 201,
     permit = 202,
+    options = 301,
 
     with = 151,
 
     key = 1001,
     prop = 1011,
     assign = 1021,
+    optionsitem = 1031,
 );
 
 ID #BizPhrase (
@@ -84,7 +86,7 @@ PROC SaveBizBud ver 0.2 (
     base ID,
     name Phrase,
     caption CHAR(100),
-    type ENUM BizMonikerType,
+    type ENUM BizPhraseType,
     memo CHAR(100),
     dataType ENUM BudDataType,
     objId ID,
@@ -108,9 +110,9 @@ RETURNS ret (
 PROC SaveBizIX (
     pairs JSON,            -- '[[i,x], [i,x], ]'
 ) {
-    JSONTABLE tbl (i PHRASE PATH '$[0]', x PHRASE PATH '$[0]') FROM pairs PATH '$[*]';
+    JSONTABLE tbl (i PHRASE PATH '$[0]', x PHRASE PATH '$[1]') FROM pairs PATH '$[*]';
     FOR (VAR i PHRASE, x PHRASE OF SELECT a.i, a.x FROM tbl as a) {
-        WITH IxBizPhrase I=PhraseId(i) X=PhraseId(x);
+        WITH IxBizPhrase I=IFNULL(PhraseId(i), 0) X=PhraseId(x);
     }
 };
 

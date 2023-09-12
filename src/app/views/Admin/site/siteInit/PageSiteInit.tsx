@@ -1,11 +1,11 @@
 import { BizBud, EntitySubject } from "app/Biz";
-import { UqApp, useUqApp } from "app/UqApp";
+import { useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
 import { Route } from "react-router-dom";
-import { LabelRowEdit, Page } from "tonwa-app";
+import { Page } from "tonwa-app";
 import { List, Sep } from "tonwa-com";
-import { RegisterOptions, useForm } from "react-hook-form";
-import { usePickValueFromBud } from "app/hooks";
+import { RegisterOptions } from "react-hook-form";
+import { EditBud } from "app/hooks";
 import { UseQueryOptions } from "app/tool";
 
 export const pathSiteInit = 'site-init';
@@ -92,9 +92,17 @@ export function PageSiteInit() {
 
     function ViewAssign({ value: item }: { value: InitValue; }) {
         const { bud, value, options } = item;
-        const { name, caption } = bud;
-        const pickValueFromBud = usePickValueFromBud();
-        const { pickValue, ValueTemplate } = pickValueFromBud(bud, options);
+        // const { name, caption } = bud;
+        // const pickValueFromBud = usePickValueFromBud();
+        // const { pickValue, ValueTemplate } = pickValueFromBud(bud, options);
+        let site = uqApp.uqSites.userSite.siteId;
+        return <EditBud
+            id={site}
+            bizBud={bud}
+            value={value}
+            options={options}
+        />;
+        /*
         return <LabelRowEdit
             label={caption ?? name}
             value={value}
@@ -115,7 +123,7 @@ export function PageSiteInit() {
                 case 'char':
                 case 'str': int = value as any; break;
             }
-            await uq.SaveBud.submit({
+            await uq.SaveBudValue.submit({
                 phrase: bud.phrase,
                 id: site,
                 int,
@@ -123,6 +131,7 @@ export function PageSiteInit() {
                 str,
             });
         }
+        */
     }
 }
 

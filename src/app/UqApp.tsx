@@ -108,67 +108,40 @@ export class UqApp extends UqAppBase<UQs> {
             if (schemas === undefined) {
                 debugger;
                 console.error('uq-api compile saved bizobject error', logs);
-                return;
             }
-            let bizSchema = jsonpack.unpack(schemas);
-            Object.assign(bizSchema, {
-                /*
-                "$user": {
-                    "name": "$user",
-                    "type": "$user"
-                },
-                "$unit": {
-                    "name": "$unit",
-                    "type": "$unit"
-                },
-                "$": {
-                    "name": "$",
-                    "type": "atom",
-                    "props": [
-                        {
-                            "name": "uom",
-                            "type": "prop",
-                            "dataType": "ID"
-                        }
-                    ]
-                },
-                */
-            });
-            this.biz = new Biz(this, bizSchema);
+            else {
+                let bizSchema = jsonpack.unpack(schemas);
+                Object.assign(bizSchema, {
+                    /*
+                    "$user": {
+                        "name": "$user",
+                        "type": "$user"
+                    },
+                    "$unit": {
+                        "name": "$unit",
+                        "type": "$unit"
+                    },
+                    "$": {
+                        "name": "$",
+                        "type": "atom",
+                        "props": [
+                            {
+                                "name": "uom",
+                                "type": "prop",
+                                "dataType": "ID"
+                            }
+                        ]
+                    },
+                    */
+                });
+                console.log(bizSchema);
+                this.biz = new Biz(this, bizSchema);
+            }
         }
         else {
             siteLogined = false;
         }
         setAtomValue(this.atomSiteLogined, siteLogined);
-        return this.biz;
-    }
-    loadBiz = async () => {
-        let { uqApi } = this.uqMan;
-        let { schemas } = await uqApi.biz();
-        // this.biz = new Biz(this, uqSchema.$biz);
-        let bizSchema = jsonpack.unpack(schemas);
-        Object.assign(bizSchema, {
-            "$user": {
-                "name": "$user",
-                "type": "$user"
-            },
-            "$unit": {
-                "name": "$unit",
-                "type": "$unit"
-            },
-            "$": {
-                "name": "$",
-                "type": "atom",
-                "props": [
-                    {
-                        "name": "uom",
-                        "type": "prop",
-                        "dataType": "ID"
-                    }
-                ]
-            },
-        });
-        this.biz = new Biz(this, bizSchema);
         return this.biz;
     }
 

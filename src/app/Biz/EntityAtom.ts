@@ -1,9 +1,9 @@
-import { BizProp } from "./BizBud";
+import { BizBud } from "./BizBud";
 import { Entity } from "./Entity";
 
 export class EntitySpec extends Entity {
-    readonly keyColl: { [key: string]: BizProp; } = {};
-    readonly keys: BizProp[] = [];
+    readonly keyColl: { [key: string]: BizBud; } = {};
+    readonly keys: BizBud[] = [];
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
@@ -14,7 +14,7 @@ export class EntitySpec extends Entity {
     protected fromKeys(keys: any[]) {
         for (let key of keys) {
             let { name, dataType } = key;
-            let bizProp = new BizProp(this.biz, name, dataType, this);
+            let bizProp = new BizBud(this.biz, name, dataType, this);
             let { budDataType } = bizProp;
             if (budDataType === undefined) debugger;
             budDataType.fromSchema(key);

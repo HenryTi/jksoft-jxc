@@ -5,6 +5,7 @@ import { uqAppModal } from "tonwa-app";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { EnumAtom, UqExt } from "uqs/UqDefault";
 import { useLocation, useParams } from "react-router-dom";
+import { BudValue } from "../model";
 
 export function pathAtomNew(atomName: string) {
     return `atom/${atomName}/new`;
@@ -41,8 +42,8 @@ export interface UseBizAtomReturn {
     pathList: string;
     getAtom(id: number): Promise<{
         main: any;
-        props: { [prop: string]: { bud: number; phrase: string; value: number; } };
-        propsStr: { [prop: string]: { bud: number; phrase: string; value: string; } };
+        props: { [prop: string]: { bud: number; phrase: string; value: BudValue; } };
+        // propsStr: { [prop: string]: { bud: number; phrase: string; value: string; } };
         entityAtom: EntityAtom;
     }>;
     getEntityAtom: (phrase: string) => EntityAtom;
@@ -53,33 +54,47 @@ export interface UseBizAtomReturn {
 }
 
 async function getAtomBase(uq: UqExt, id: number) {
-    let { main: [main], budsInt, budsDec, budsStr } = await uq.GetAtom.query({ id });
-    let props: { [prop: string]: { bud: number; phrase: string; value: number; } } = {};
+    let { main: [main], budsInt, budsDec, budsStr, budsCheck } = await uq.GetAtom.query({ id });
+    let props: { [prop: string]: { bud: number; phrase: string; value: BudValue; } } = {};
     for (let bud of budsInt) {
         props[bud.phrase] = bud;
     }
     for (let bud of budsDec) {
         props[bud.phrase] = bud;
     }
-    let propsStr: { [prop: string]: { bud: number; phrase: string; value: string; } } = {};
+    // let propsStr: { [prop: string]: { bud: number; phrase: string; value: string; } } = {};
     for (let bud of budsStr) {
-        propsStr[bud.phrase] = bud;
+        props[bud.phrase] = bud;
+    }
+    // let propsChecks: { [prop: string]: { [item: string]: boolean } } = {};
+    for (let budCheck of budsCheck) {
+        const { bud, phrase, item } = budCheck;
+        let prop = props[phrase];
+        let check: { [item: string]: boolean; };
+        if (prop === undefined) {
+            check = {};
+            prop = props[phrase] = { bud, phrase, value: check };
+        }
+        else {
+            check = prop.value as { [item: string]: boolean; };
+        }
+        check[item] = true;
     }
     return {
-        main, props, propsStr
+        main, props
     };
 }
 
 export async function getAtomWithProps(uq: UqExt, id: number): Promise<any> {
-    let { main, props, propsStr } = await getAtomBase(uq, id);
+    let { main, props } = await getAtomBase(uq, id);
     let ret = { ...main };
-    function setProp({ bud, phrase, value }: { bud: number; phrase: string; value: string | number; }) {
+    function setProp({ bud, phrase, value }: { bud: number; phrase: string; value: BudValue; }) {
         let p = phrase.lastIndexOf('.');
         let name = phrase.substring(p + 1);
         (ret as any)[name] = value;
     }
     for (let i in props) setProp(props[i]);
-    for (let i in propsStr) setProp(propsStr[i]);
+    // for (let i in propsStr) setProp(propsStr[i]);
     return ret;
 }
 
@@ -122,7 +137,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
             case 'dec': dec = value as number; break;
             case 'str': str = value as string; break;
         }
-        await uq.SaveBud.submit({
+        await uq.SaveBudValue.submit({
             id,
             phrase,
             int, dec, str

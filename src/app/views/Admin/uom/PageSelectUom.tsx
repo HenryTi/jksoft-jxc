@@ -1,4 +1,4 @@
-import { BudRadio } from "app/Biz";
+import { BudRadio, OptionsItem } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { Page, useModal } from "tonwa-app";
 import { FA, List, useEffectOnce } from "tonwa-com";
@@ -92,16 +92,16 @@ function PageSelectType() {
     let bizUom = biz.entities['uom'];
     let bud = bizUom.buds['type'];
     let budItems = bud.budDataType as BudRadio;
-    function ViewBaseUnit({ value }: { value: any[] }) {
-        const [name, caption] = value;
+    function ViewBaseUnit({ value }: { value: OptionsItem; }) {
+        const { name, caption } = value;
         return <div className="px-3 py-2">
             {caption ?? name}
         </div>;
     }
-    async function onSelectUom([name, caption, value]: [string, string, string | number]) {
+    async function onSelectUom({ name, caption, value }: OptionsItem) {
         closeModal({ name, caption, value });
     }
     return <Page header="选择类型">
-        <List items={budItems.items} ViewItem={ViewBaseUnit} onItemClick={onSelectUom} />
+        <List items={budItems.options.items} ViewItem={ViewBaseUnit} onItemClick={onSelectUom} />
     </Page>;
 }

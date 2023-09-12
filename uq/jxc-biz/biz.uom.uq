@@ -12,7 +12,7 @@ IX IxUomType (
 );
 */
 
-BIZ BudOptions UomType (
+BIZ Options UomType (
     count '计数'            = 1,
     length '长度'           = 2,
     area '面积'             = 3,

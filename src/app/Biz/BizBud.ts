@@ -3,6 +3,7 @@ import { EntityAtom } from ".";
 import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
+import { EntityOptions } from './EntityOptions';
 
 export abstract class BudDataType {
     abstract get type(): string;
@@ -55,23 +56,21 @@ export class BudID extends BudDataNumber {
         }
     }
 }
-abstract class BudTypeWithItems extends BudDataNumber {
-    items: [string, string, string | number][] = [];
-    coll: { [value: string | number]: [string, string, string | number] } = {};
-    override fromSchema(schema: any) {
-        super.fromSchema(schema);
-        const { items } = schema;
-        this.items = items;
-        for (let item of items) {
-            const [, , value] = item;
-            this.coll[value] = item;
-        }
+abstract class BudOptions extends BudDataType {
+    private optionsName: string;
+    options: EntityOptions;
+    get dataType(): 'string' | 'number' { return; }
+    override scan(biz: Biz) {
+        this.options = biz.entities[this.optionsName] as EntityOptions;
+    }
+    fromSchema(schema: any) {
+        this.optionsName = schema.options;
     }
 }
-export class BudRadio extends BudTypeWithItems {
+export class BudRadio extends BudOptions {
     readonly type = 'radio';
 }
-export class BudCheck extends BudDataNumber {
+export class BudCheck extends BudOptions {
     readonly type = 'check';
 }
 export class BudDate extends BudDataNumber {
@@ -81,7 +80,7 @@ export class BudDateTime extends BudDataNumber {
     type = 'datetime';
 }
 
-export abstract class BizBud extends BizBase {
+export class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budDataType: BudDataType;
     defaultValue: any;
@@ -123,16 +122,9 @@ export abstract class BizBud extends BizBase {
                 break;
             case 'items':
             case 'atom':
+            case 'options':
                 break;
             case 'value': this.defaultValue = val; break;
         }
     }
-}
-
-export class BizProp extends BizBud {
-    // readonly budType = BudType.prop;
-}
-
-export class BizAssign extends BizBud {
-    // readonly budType = BudType.assign;
 }

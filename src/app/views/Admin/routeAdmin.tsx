@@ -1,4 +1,4 @@
-import { routeProp } from "./prop";
+import { routeProp } from "../../../../prop";
 import { routePageAdmin } from "./PageAdmin";
 import { routeAchieve } from "./achieve";
 import { UqApp } from "app/UqApp";

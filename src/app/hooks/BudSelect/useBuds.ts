@@ -75,7 +75,7 @@ export function useBuds({ entity: entityName, budNames, noMedsMessage }: Options
                 phrase, id, int, dec, str
             };
             let { entity } = bizBud;
-            let ret = await entity.uq.SaveBud.submit({ ...param });
+            let ret = await entity.uq.SaveBudValue.submit({ ...param });
             return ret;
         }
     }

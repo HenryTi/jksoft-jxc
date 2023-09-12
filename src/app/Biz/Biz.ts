@@ -8,6 +8,7 @@ import { EntityDetail, EntityMain, EntityPend, EntitySheet } from './EntitySheet
 import { EntitySubject } from './EntitySubject';
 import { EntityTie } from './EntityTie';
 import { EntityPermit, EntityRole } from './EntityPermit';
+import { EntityOptions } from './EntityOptions';
 
 export class Biz {
     readonly uqApp: UqApp;
@@ -58,6 +59,7 @@ export class Biz {
             pend: this.buildPend,
             atom: this.buildAtom,
             spec: this.buildSpec,
+            options: this.buildOptions,
             permit: this.buildPermit,
             role: this.buildRole,
             moniker: this.buildMoniker,
@@ -117,8 +119,8 @@ export class Biz {
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildSetting = (name: string, type: string): Entity => {
-        let bizEntity = new EntitySetting(this, name, type);
+    private buildOptions = (name: string, type: string): Entity => {
+        let bizEntity = new EntityOptions(this, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
