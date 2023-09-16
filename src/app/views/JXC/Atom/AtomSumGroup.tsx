@@ -1,7 +1,6 @@
-import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
+import { OptionsUseBizAtom, ViewAtom, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
 import { GAtom } from "app/tool";
 import { EnumAtom } from "uqs/UqDefault";
-import { ViewAtom } from "../../ViewAtom";
 
 const options: OptionsUseBizAtom = {
     atomName: EnumAtom.SumGroup,

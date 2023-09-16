@@ -36,7 +36,7 @@ export function PageAchieve() {
         }
         {
             gs.map((v, index) => {
-                const { name, caption } = uqApp.gAtoms[v.name];
+                const { name, caption } = uqApp.biz.entities[v.name];
                 return <React.Fragment key={index}>
                     <Link to={`../${pathAtomList(name)}`} className="px-3 py-2 border-bottom align-items-center">
                         {caption}

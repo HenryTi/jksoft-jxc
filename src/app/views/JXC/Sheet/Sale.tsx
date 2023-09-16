@@ -4,7 +4,7 @@ import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
 import { IDView } from "tonwa-app";
 import { useDetailQPA } from "./Detail";
 import { PageSheetAct, useSelectAtom } from "app/hooks";
-import { ViewAtom } from "../../ViewAtom";
+import { ViewAtom } from "app/hooks";
 
 const sheet = EnumSheet.SheetSale;
 // const caption = '销售单';

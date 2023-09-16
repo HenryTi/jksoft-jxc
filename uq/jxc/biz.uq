@@ -3,8 +3,6 @@
 
 ENUM BizPhraseType (
     atom = 11,
-    uom = 12,
-    spec = 13,
     sheet = 101,
     role = 201,
     permit = 202,
@@ -14,7 +12,7 @@ ENUM BizPhraseType (
 
     key = 1001,
     prop = 1011,
-    assign = 1021,
+--    assign = 1021,
     optionsitem = 1031,
 );
 
@@ -22,10 +20,45 @@ ID #BizPhrase (
     id,
     KEY base ID,                    -- site for object, or owner for bud
     KEY name Phrase,                -- really name, ~ seperated full name, include buds
-    caption CHAR(100),              -- 标题
     type ENUM BizPhraseType,
     memo CHAR(100),
-    valid TINYINT DEFAULT 1,
+);
+
+-- atom unique props
+IDX BizAtom (
+    id,
+    idFromKeyArr CHAR(200),        -- sql fragment to get id from key arr
+);
+
+ID #BizLang (
+    id small,
+    KEY lang CHAR(10),
+)
++ (id, lang)
+VALUES 
+(0, ''),
+(1, 'en'),
+(8, 'zh'),
+;
+
+ID #BizCulture (
+    id small,
+    KEY culture CHAR(10),
+)
++ (id, culture)
+VALUES 
+(0, ''),
+(18, 'cn'),
+(19, 'tw'),
+(78, 'ca'),
+(79, 'us'),
+;
+
+IX BizResource (
+    ixx,
+    i,                              -- id
+    x,                              -- lang/culture
+    res CHAR(100),
 );
 
 -- obj x extended from obj i
@@ -53,10 +86,15 @@ ENUM BudDataType (
     str = 32,                   -- varchar(100)
     date = 41,
 );
+
+ENUM BizBudFlag (
+    index = 1,                  -- 加index
+);
 IDX BizBud (
     id,
     type ENUM BudDataType,
     obj ID,                     -- BizObject define of atom or options
+    flag SMALLINT DEFAULT 0,
 );
 
 PROC SaveBizObject ver 0.2 (
@@ -66,6 +104,7 @@ PROC SaveBizObject ver 0.2 (
     memo CHAR(100),
     source TEXT,
     schema TEXT,
+    idFromKeyArr CHAR(200),
 )
 RETURNS ret (
     id ID,
@@ -75,12 +114,27 @@ RETURNS ret (
     WITH BizPhrase as a 
         ID to id
         KEY($site as base, name) 
-        SET a.caption=caption, a.type=type, a.memo=memo;
+        SET a.type=type, a.memo=memo;
+    WITH BizResource IXX=id I=0 X=0 SET res=caption;
     WITH BizObject as a ID=id SET a.source=source, a.schema=schema;
-    WITH BizPhrase as a KEY(id as base) SET a.valid=0;
+    WITH XBiz ID=id;
+    IF type=BizPhraseType.atom {
+        WITH BizAtom as a ID=id SET a.idFromKeyArr=idFromKeyArr;
+    }
+    -- 所有名下的属性置为无效，重新设置
+    -- WITH BizPhrase as a KEY(id as base) SET a.valid=0;
+    -- 这类的操作，以后可以优化成一个delete语句，而不用循环
+    FOR (VAR budId ID OF SELECT a.id as budId FROM BizPhrase as a WHERE a.base=id) {
+        WITH XBiz ID=budId DEL;
+    }
     INTO ret SELECT id;
     TRANS COMMIT;
 }
+
+-- Biz object on the X is valid
+IDX XBiz (
+    id,
+);
 
 PROC SaveBizBud ver 0.2 (
     base ID,
@@ -90,6 +144,7 @@ PROC SaveBizBud ver 0.2 (
     memo CHAR(100),
     dataType ENUM BudDataType,
     objId ID,
+    flag SMALLINT,
 )
 RETURNS ret (
     id ID,
@@ -99,10 +154,12 @@ RETURNS ret (
     WITH BizPhrase as a 
         ID to id
         KEY(base, name) 
-        SET a.caption=caption, a.type=type, a.memo=memo, a.valid=1;
+        SET a.type=type, a.memo=memo;
+    WITH BizResource IXX=id I=0 X=0 SET res=caption;
+    WITH XBiz ID=id;
     WITH BizBud as a ID=id 
         SET a.type=dataType
-            , a.obj=objId;
+            , a.obj=objId, a.flag=ifnull(flag, 0);
     INTO ret SELECT id;
     TRANS COMMIT;
 };
@@ -114,26 +171,50 @@ PROC SaveBizIX (
     FOR (VAR i PHRASE, x PHRASE OF SELECT a.i, a.x FROM tbl as a) {
         WITH IxBizPhrase I=IFNULL(PhraseId(i), 0) X=PhraseId(x);
     }
+    VAR sysId ID, sysBudId ID;
+    WITH BizPhrase ID to sysId KEY($site as base, '$' as name) SET type=0;
+    WITH XBiz ID=sysId;
+    WITH BizPhrase ID to sysBudId KEY(sysId as base, '$.uom' as name) SET type=BizPhraseType.prop;
+    WITH XBiz ID=sysBudId;
 };
 
-QUERY GetBizObjects() 
+QUERY GetBizObjects(
+    lang CHAR(10),
+    culture CHAR(10),
+)
 RETURNS objs (
     id ID,
     phrase PHRASE,
     source TEXT,
+    caption CHAR(100),
 )
 RETURNS buds (
     id ID,
     base ID,
     phrase PHRASE,
+    caption CHAR(100),
 )
 {
+    VAR langCode SMALLINT = IFNULL((SELECT a.id FROM BizLang as a WHERE a.lang=lang), 0);
+    VAR cultureCode SMALLINT = IFNULL((SELECT a.id FROM BizCulture as a WHERE a.culture=culture), 0);
     INTO objs SELECT a.id, a.name as phrase, b.source
+        , (SELECT r.res
+            FROM BizResource AS r
+            WHERE r.ixx=a.id AND (r.i=0 AND r.x=0 or r.i=langCode AND r.x=0 or r.i=langCode AND r.x=cultureCode)
+            ORDER BY r.i DESC, r.x desc
+            LIMIT 1) as caption
         FROM BizPhrase as a 
+            JOIN XBiz as a1 ON a1.id=a.id
             LEFT JOIN BizObject as b ON b.id=a.id
-        WHERE a.base=$site AND a.valid=1;
-    INTO buds SELECT a.id, a.base, a.name as phrase 
+        WHERE a.base=$site; -- AND a.valid=1;
+    INTO buds SELECT a.id, a.base, a.name as phrase
+        , (SELECT r.res
+            FROM BizResource AS r
+            WHERE r.ixx=a.id AND (r.i=0 AND r.x=0 or r.i=langCode AND r.x=0 or r.i=langCode AND r.x=cultureCode)
+            ORDER BY r.i DESC, r.x desc
+            LIMIT 1) as caption
         FROM BizPhrase as a
+            JOIN XBiz as a1 ON a1.id=a.id
             JOIN objs as b ON b.id=a.base
-        WHERE a.valid=1;
+        WHERE 1=1; -- AND a.valid=1;
 }

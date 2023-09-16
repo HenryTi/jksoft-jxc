@@ -23,8 +23,8 @@ export function ViewUomList() {
         </Link>;
     }
     return <div>
-        <List items={budItems.items} ViewItem={ViewBaseUnit} />
-    </div>
+    </div>;
+    // <List items={budItems.items} ViewItem={ViewBaseUnit} />
 }
 
 export const pathUom = '/uom';

@@ -1,10 +1,10 @@
 import { UqQuery } from "tonwa-uq";
 import { QueryMore } from "app/tool";
-import { EntitySubject } from "app/Biz";
+import { EntityMoniker } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { EnumMoniker, ReturnHistoryStorage$page, ReturnReportStorage$page } from "uqs/UqDefault";
 import { EasyTime, FA, LMR, dateFromMinuteId } from "tonwa-com";
-import { useBizAtomSpec } from "app/views/JXC/Atom";
+// import { useBizAtomSpec } from "app/views/JXC/Atom";
 
 export interface OptionsUseSubject {
     moniker: EnumMoniker;
@@ -26,7 +26,7 @@ export function useSubject(options: OptionsUseSubject): ReturnUseSubject {
     const { moniker: subjectName, bud: budName } = options;
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
-    const entity: EntitySubject = biz.entities[subjectName] as EntitySubject;
+    const entity: EntityMoniker = biz.entities[subjectName] as EntityMoniker;
     const QueryReport: UqQuery<any, any> = uq.ReportStorage;
     const QueryHistory: UqQuery<any, any> = uq.HistoryStorage;
 
@@ -50,8 +50,10 @@ export function useSubject(options: OptionsUseSubject): ReturnUseSubject {
 
     function ViewItem({ value: row, clickable }: { value: ReturnReportStorage$page; clickable?: boolean; }): JSX.Element {
         const { id, value, init } = row;
-        const { viewAtom, viewUom, viewSpec } = useBizAtomSpec(id);
+        // const { viewAtom, viewUom, viewSpec } = useBizAtomSpec(id);
         let icon = clickable === false ? '' : 'angle-right';
+        return <div></div>;
+        /*
         return <div className="d-flex py-2 ps-3">
             <div className="row flex-grow-1">
                 <div className="col">{viewAtom}</div>
@@ -62,10 +64,20 @@ export function useSubject(options: OptionsUseSubject): ReturnUseSubject {
                 <FA name={icon} className="text-muted" fixWidth={true} />
             </div>
         </div>;
+        */
     }
 
     function ViewItemHistory({ value: row }: { value: ReturnHistoryStorage$page }): JSX.Element {
-        const { id, value, ref, plusMinus, sheetNo, sheetName, sheetCaption } = row;
+        const { id, value, ref, plusMinus, sheetNo, sheetPhrase /*sheetName, sheetCaption*/ } = row;
+        let sheetCaption: string;
+        const entitySheet = biz.entities[sheetPhrase];
+        if (entitySheet === undefined) {
+            sheetCaption = sheetPhrase;
+        }
+        else {
+            const { caption, name } = entitySheet;
+            sheetCaption = caption ?? name;
+        }
         let opText: string;
         switch (plusMinus) {
             default:
@@ -76,7 +88,7 @@ export function useSubject(options: OptionsUseSubject): ReturnUseSubject {
         return <LMR className="px-3 py-2">
             <div className="w-8c me-3 small text-muted"><EasyTime date={dateFromMinuteId(id)} /></div>
             <div>
-                {sheetCaption ?? sheetName} {sheetNo} - {ref}
+                {sheetCaption} {sheetNo} - {ref}
             </div>
             <div className="d-flex align-items-center">
                 <div className="me-4 fs-5">{opText} {(value).toFixed(0)}</div>

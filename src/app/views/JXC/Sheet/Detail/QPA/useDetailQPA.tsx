@@ -10,7 +10,7 @@ import { FA } from "tonwa-com";
 import { useAtomValue } from "jotai";
 import { ViewAUSAtom, ViewAtomSpec, ViewUom, ViewSpec, ViewSpecWithLabel } from "../../ViewAUS";
 import { UseSheetDetailReturn } from "app/hooks";
-import { ViewAtom } from "../../../../ViewAtom";
+import { ViewAtom } from "app/hooks";
 
 const fieldQuantity = 'value';
 const fieldPrice = 'price';

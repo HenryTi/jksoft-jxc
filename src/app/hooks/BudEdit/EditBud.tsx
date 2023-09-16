@@ -8,7 +8,8 @@ import { EditBudRadio } from "./EditBudRadio";
 import { EditBudProps, ViewBudProps } from "../model";
 import { pickValue } from "./PagePickValue";
 import { EditBudCheck } from "./EditBudCheck";
-import { EditBudString, EditBudInt } from "./EditBudValue";
+import { EditBudString, EditBudInt, EditBudDec } from "./EditBudValue";
+import { EditBudIntOf } from "./EditBudIntOf";
 
 interface OpProps {
     saveBud: (newValue: string | number) => Promise<void>;
@@ -48,21 +49,10 @@ export function EditBud(editProps: EditBudProps) {
         default: return <>unkown bud type {bizBud.budDataType.type}</>;
         case 'int': return <EditBudInt {...editProps} />;
         case 'str': return <EditBudString {...editProps} />;
+        case 'dec': return <EditBudDec {...editProps} />;
         case 'radio': return <EditBudRadio {...editProps} />;
         case 'check': return <EditBudCheck{...editProps} />;
+        case 'intof': return <EditBudIntOf{...editProps} />;
         case 'atom': return <EditBudAtom {...editProps} />;
     }
-    /*
-    let { id, pickValue, ValueTemplate, saveBud } = veiwProps;
-    const pickValueFromBud = usePickValueFromBud();
-    async function saveBudFunc(newValue: string | number) {
-        await saveBud(id, bizBud, newValue);
-    }
-    if (ValueTemplate === undefined) {
-        let { pickValue: sysPickValue, ValueTemplate: SysValueTemplate } = pickValueFromBud(bizBud, undefined);
-        pickValue = sysPickValue;
-        ValueTemplate = SysValueTemplate;
-    }
-    return <ViewBud {...veiwProps} saveBud={saveBudFunc} pickValue={pickValue} ValueTemplate={ValueTemplate} />
-    */
 }

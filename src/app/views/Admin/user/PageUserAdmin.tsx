@@ -1,6 +1,6 @@
 import { useUqApp } from "app/UqApp";
 import { ButtonRightAdd } from "app/coms";
-import { ViewAtom } from "app/views/ViewAtom";
+import { ViewAtom } from "app/hooks";
 import { ChangeEvent, useRef, useState } from "react";
 import { IDView, Page, SelectUser, ViewUserAssigned, useModal } from "tonwa-app";
 import { FA, LMR, List, useEffectOnce } from "tonwa-com";

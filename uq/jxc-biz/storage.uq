@@ -1,0 +1,5 @@
+ATOM Storage '仓库' {
+    prop 面积 dec;
+    prop 容积 dec;
+    prop 地点 char;
+}

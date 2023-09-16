@@ -11,7 +11,7 @@ import { UqApp, useUqApp } from "app/UqApp";
 import { gPerson } from "./AtomPerson";
 import { gSumGroup } from "./AtomSumGroup";
 import { Entity, EntityAtom } from "app/Biz";
-import { ViewAtom } from "app/views/ViewAtom";
+import { ViewAtom } from "app/hooks";
 import { BI } from "app/coms";
 
 export const pathAtomCenter = 'atom-center';

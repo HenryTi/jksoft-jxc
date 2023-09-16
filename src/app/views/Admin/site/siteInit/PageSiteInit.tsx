@@ -1,4 +1,4 @@
-import { BizBud, EntitySubject } from "app/Biz";
+import { BizBud, EntityMoniker } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
 import { Route } from "react-router-dom";
@@ -6,21 +6,17 @@ import { Page } from "tonwa-app";
 import { List, Sep } from "tonwa-com";
 import { RegisterOptions } from "react-hook-form";
 import { EditBud } from "app/hooks";
-import { UseQueryOptions } from "app/tool";
+import { UseQueryOptions, readBuds } from "app/tool";
+import { BudValue } from "app/hooks/model";
 
 export const pathSiteInit = 'site-init';
 export const captionSiteInit = '初始设置';
 
 interface InitValue {
     bud: BizBud;
-    value: number | string;
+    value: { bud: number; phrase: string; value: BudValue; }
     options: RegisterOptions;
-    // atomValue?: WritableAtom<number | string, any, any>;
-    // pickValue: (props: PickProps) => Promise<string | number>;
-    // ValueTemplate: (props: { value: any; onValueChanged?: OnValueChanged; }) => JSX.Element;
 }
-
-const prefix = 'moniker.init.';
 
 const budCurrency = 'currency';
 const budStartSumMonth = 'startsummonth';
@@ -66,21 +62,16 @@ export function PageSiteInit() {
     </Page>;
 
     async function getInit() {
-        let { budsInt, budsDec, budsStr } = await uq.GetInit.query({});
-        const subjectInit = biz.entities['init'] as EntitySubject;
-        const { buds } = subjectInit;
-        let coll: { [phrase: string]: string | number; } = {};
-        [budsInt, budsDec, budsStr].forEach(v => {
-            for (let { phrase, value } of v) {
-                coll[phrase] = value;
-            }
-        });
+        let result = await uq.GetSiteSetting.query({});
+        const buds = readBuds(result);
+        const siteSetting = biz.entities['sitesetting'] as EntityMoniker;
+        const { buds: bizBuds } = siteSetting;
 
         let ret: InitValue[] = initBuds.map(v => {
-            const name = prefix + v;
-            const options = budOptions[v];
-            const value = coll[name];
-            const bud = buds[name];
+            const budPhrase = `${siteSetting.name}.${v}`;
+            const options = budOptions[budPhrase];
+            const value = buds[budPhrase];
+            const bud = bizBuds[budPhrase];
             return {
                 bud,
                 value,
@@ -91,47 +82,14 @@ export function PageSiteInit() {
     }
 
     function ViewAssign({ value: item }: { value: InitValue; }) {
-        const { bud, value, options } = item;
-        // const { name, caption } = bud;
-        // const pickValueFromBud = usePickValueFromBud();
-        // const { pickValue, ValueTemplate } = pickValueFromBud(bud, options);
-        let site = uqApp.uqSites.userSite.siteId;
+        const { value, options, bud } = item;
+        let site: number = undefined; // uqApp.uqSites.userSite.siteId;
         return <EditBud
             id={site}
             bizBud={bud}
-            value={value}
+            value={value?.value}
             options={options}
         />;
-        /*
-        return <LabelRowEdit
-            label={caption ?? name}
-            value={value}
-            type={bud.budDataType.dataType}
-            onValueChanged={onValueChanged}
-            pickValue={pickValue}
-            options={{ ...options, value }}
-            ValueTemplate={ValueTemplate} />
-        async function onValueChanged(value: string | number): Promise<void> {
-            let int: number;
-            let dec: number;
-            let str: string;
-            let site = uqApp.uqSites.userSite.siteId;
-            switch (bud.budDataType.type) {
-                default:
-                case 'int': int = value as any; break;
-                case 'dec': dec = value as any; break;
-                case 'char':
-                case 'str': int = value as any; break;
-            }
-            await uq.SaveBudValue.submit({
-                phrase: bud.phrase,
-                id: site,
-                int,
-                dec,
-                str,
-            });
-        }
-        */
     }
 }
 

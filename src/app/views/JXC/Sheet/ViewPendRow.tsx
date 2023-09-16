@@ -8,8 +8,7 @@ export function ViewPendRow({ value: pendItem, onItemSelect, selectedColl, coll 
     const uqApp = useUqApp();
     const { pend, item, sheet, no, value, pendValue } = pendItem;
     const htmlId = String(pend);
-    const gSheet = uqApp.gSheets[sheet];
-    const { entitySheet } = gSheet;
+    const entitySheet = uqApp.biz.entities[sheet];
     let ed = coll[pend];
     let selected = ed !== undefined;
 

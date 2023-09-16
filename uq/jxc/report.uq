@@ -22,7 +22,6 @@ PAGE (
         LIMIT $pageSize;
 };
 
-
 QUERY ReportStorageAtom (
     key CHAR(50),
     subject CHAR(200),
@@ -74,12 +73,11 @@ PAGE (
     ref ID,
     plusMinus TINYINT,
     sheetNo NO,
-    sheetName CHAR(200),
-    sheetCaption CHAR(100),
+    sheetPhrase Phrase,
 ) {
     VAR phraseId ID = PhraseId(subject);
     VAR SiteBudId ID = ID(Bud KEY base=objId, ext=phraseId);
-    PAGE SELECT a.id, a.value, a.ref, a.plusMinus, c.no as sheetNo, e.name as sheetName, e.caption as sheetCaption
+    PAGE SELECT a.id, a.value, a.ref, a.plusMinus, c.no as sheetNo, e.name as sheetPhrase
         FROM History as a
             LEFT JOIN Detail as b ON b.id=a.ref
             LEFT JOIN Sheet as c ON c.id=b.base 

@@ -7,7 +7,7 @@ import { Band } from "app/coms";
 import { EntitySheet } from "app/Biz";
 import { useDetailPend } from "./Detail/Pend/useDetailPend";
 import { ViewPendRow } from "./ViewPendRow";
-import { ViewAtom } from "../../ViewAtom";
+import { ViewAtom } from "app/hooks";
 
 const sheet = EnumSheet.SheetStoreOut;
 // const caption = '出库单';

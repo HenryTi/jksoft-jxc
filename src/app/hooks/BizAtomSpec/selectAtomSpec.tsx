@@ -1,4 +1,4 @@
-import { AtomSpec, Spec, Uom } from "app/tool";
+import { AtomSpec, AtomUomProps, Spec, Uom, readUoms } from "app/tool";
 import { Page, uqAppModal, useModal } from "tonwa-app";
 import { EnumAtom } from "uqs/UqDefault";
 import { FA, LMR, List, Sep } from "tonwa-com";
@@ -14,7 +14,7 @@ export function useSelectAtomSpec() {
     const selectAtom = useSelectAtom();
     return async function selectAtomSpec(atomName: EnumAtom): Promise<AtomSpec> {
         // let spec: Spec;
-        let uom: Uom;
+        let uom: AtomUomProps;
         let atom = await selectAtom(atomName);
         if (atom === undefined) return;
 
@@ -26,11 +26,11 @@ export function useSelectAtomSpec() {
         }
 
         function PageSelectUom() {
-            const onUomSelect = (uomParam: Uom) => {
-                uom = uomParam;
+            const onUomSelect = (uomParam: AtomUomProps) => {
+                uom = uomParam as any;
                 closeModal();
             }
-            function ViewItem({ value }: { value: Uom; }) {
+            function ViewItem({ value }: { value: AtomUomProps; }) {
                 let { ex } = value;
                 return <LMR className="px-3 py-2">
                     <div className="fw-bold">{ex}</div>
@@ -40,19 +40,21 @@ export function useSelectAtomSpec() {
             return <Page header="计量单位">
                 <ViewAtom />
                 <Sep sep={2} />
-                <List items={uomXs} onItemClick={onUomSelect} ViewItem={ViewItem} />
+                <List items={uoms} onItemClick={onUomSelect} ViewItem={ViewItem} />
                 <Sep sep={2} />
             </Page>;
         }
 
         let { uq } = uqApp;
-        let { uomI, uomX: uomXs } = await uq.GetAtomUomI.query({ id: atom.id });
-        let { length: uomXsLength } = uomXs;
-        if (uomXsLength === 0) {
+        let { uoms: uomsArr } = await uq.GetAtom.query({ id: atom.id });
+        let uoms = readUoms(uomsArr);
+        let { length: uomsLength } = uoms;
+        if (uomsLength === 0) {
             uom = {
-                id: 0,
-                no: undefined,
+                // id: 0,
+                // no: undefined,
                 ex: '单个',
+                uom: 0,
                 atomUom: 0,
                 // base: undefined,
                 // div: undefined,
@@ -60,8 +62,8 @@ export function useSelectAtomSpec() {
                 // template: undefined
             }
         }
-        else if (uomXsLength === 1) {
-            uom = uomXs[0];
+        else if (uomsLength === 1) {
+            uom = uoms[0];
         }
         else {
             await openModal<Uom>(<PageSelectUom />);
@@ -90,12 +92,13 @@ export function useSelectAtomSpec() {
             </Page>;
         }
 
+        let uomProps = { id: uom.uom, no: undefined, ex: uom.ex } as any;
         if (gSpec === undefined) {
-            return { atom, uom };
+            return { atom, uom: uomProps };
         }
         let spec = await openModal<Spec>(<PageSelectSpec />);
         if (spec === undefined) return;
-        const atomSpec: AtomSpec = { atom, spec, uom };
+        const atomSpec: AtomSpec = { atom, spec, uom: uomProps };
         return atomSpec;
     }
 }

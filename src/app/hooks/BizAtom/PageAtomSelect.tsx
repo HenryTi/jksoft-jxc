@@ -9,9 +9,8 @@ import { EntityAtom } from "app/Biz";
 import { Atom, EnumAtom } from "uqs/UqDefault";
 
 export function useSelectAtom() {
-    // const uqApp = useUqApp();
     const { openModal } = useModal();
-    return async function (atomName: EnumAtom, buds?: string[]) {
+    return async function (atomName: EnumAtom | string, buds?: string[]) {
         let ret = await openModal<AtomPhrase>(<PageAtomSelect atomName={atomName} buds={buds} />);
         return ret;
     }

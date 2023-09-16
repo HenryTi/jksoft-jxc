@@ -17,7 +17,6 @@ function EditBudValue(props: EditBudProps & { type: string; convertToBudValue: C
     const label = caption ?? name;
     async function onEditClick() {
         let ret = await openModal<number>(<PagePickValue label={label} value={value as number} type={type} options={options} />);
-        // saveValue to UQ
         let budValue = convertToBudValue(ret);
         await uq.SaveBudValue.submit({
             phrase: bizBud.phrase,
@@ -56,3 +55,13 @@ export function EditBudInt(props: EditBudProps) {
     return <EditBudValue {...props} type="number" convertToBudValue={convertToBudValue} />;
 }
 
+export function EditBudDec(props: EditBudProps) {
+    function convertToBudValue(value: any) {
+        return {
+            int: undefined as number,
+            dec: value,
+            str: undefined as string,
+        }
+    }
+    return <EditBudValue {...props} type="number" convertToBudValue={convertToBudValue} />;
+}

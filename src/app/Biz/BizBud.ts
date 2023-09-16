@@ -67,6 +67,9 @@ abstract class BudOptions extends BudDataType {
         this.optionsName = schema.options;
     }
 }
+export class BudIntOf extends BudOptions {
+    readonly type = 'intof';
+}
 export class BudRadio extends BudOptions {
     readonly type = 'radio';
 }
@@ -99,6 +102,7 @@ export class BizBud extends BizBase {
                 budDataType = new BudAtom(); break;
             case 'ID':
                 budDataType = new BudID(); break;
+            case 'intof': budDataType = new BudIntOf(); break;
             case 'radio': budDataType = new BudRadio(); break;
             case 'check': budDataType = new BudCheck(); break;
             case 'date': budDataType = new BudDate(); break;
@@ -106,11 +110,11 @@ export class BizBud extends BizBase {
         }
         this.budDataType = budDataType;
     }
-
+    /*
     get phrase(): string {
         return `${this.entity.phrase}.${this.name}`;
     }
-
+    */
     scan() {
         this.budDataType.scan(this.biz);
     }

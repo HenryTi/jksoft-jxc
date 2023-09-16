@@ -4,7 +4,7 @@ import { useDetailQPA } from "./Detail";
 import { PageSheetAct, useSelectAtom } from "app/hooks";
 import { IDView } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
-import { ViewAtom } from "../../ViewAtom";
+import { ViewAtom } from "app/hooks";
 
 const sheet = EnumSheet.SheetPurchase;
 //const targetCaption = '往来单位';

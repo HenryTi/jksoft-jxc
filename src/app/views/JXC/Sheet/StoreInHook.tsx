@@ -6,7 +6,7 @@ import { usePendFromItem, PageSheetAct, useSelectAtom } from "app/hooks";
 import { EntitySheet } from "app/Biz";
 import { ViewPendRow } from "./ViewPendRow";
 import { useDetailPend } from "./Detail/Pend/useDetailPend";
-import { ViewAtom } from "../../ViewAtom";
+import { ViewAtom } from "app/hooks";
 
 const sheet = EnumSheet.SheetStoreIn;
 // const caption = '入库单';

@@ -2,7 +2,7 @@ import { BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
 
 export class Entity extends BizBase {
-    get phrase() { return this.name; }
+    // get phrase() { return this.name; }
     readonly selfProps: BizBud[] = [];       // 本 Atom 定义的
     readonly buds: { [key: string]: BizBud; } = {};           // 包括全部继承来的
     readonly props: BizBud[] = [];

@@ -17,12 +17,3 @@ export function routeAtom(uqApp: UqApp, gAtom: GAtom) {
     </React.Fragment>;
     // }
 }
-
-function addGAtoms(uqApp: UqApp, entity: EntityAtom, gAtom: GAtom) {
-    const { phrase, children } = entity;
-    uqApp.gAtoms[gAtom.name] = gAtom;
-    uqApp.gAtoms[phrase] = gAtom;
-    for (let ea of children) {
-        addGAtoms(uqApp, ea, gAtom);
-    }
-}

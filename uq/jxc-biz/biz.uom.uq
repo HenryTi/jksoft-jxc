@@ -3,7 +3,7 @@
 -- 基本单位
 BIZ ATOM Uom '基本单位' {
     PROP discription '说明' CHAR;      -- 基本不需要描述。也可以：g=重量克
-    PROP type Radio UomType INDEX;
+    PROP type int of UomType INDEX;
 };
 /*
 IX IxUomType (

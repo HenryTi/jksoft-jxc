@@ -10,7 +10,7 @@ import { EntitySheet } from "app/Biz";
 import { gSale } from "./Sale";
 // import { gStoreInSplit } from "./StoreInSplitHook";
 import { gStoreIn } from "./StoreInHook";
-import { ViewAtom } from "../../ViewAtom";
+import { ViewAtom } from "app/hooks";
 import { List } from "tonwa-com";
 import { useDetailQPA } from "./Detail";
 import { PageSheetAct, useSelectAtom } from "app/hooks";

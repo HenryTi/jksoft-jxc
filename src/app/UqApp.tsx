@@ -6,8 +6,8 @@ import { UqConfig, UqMan, UqQuery, UqSites } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
-import { UqExt, uqSchema } from 'uqs/UqDefault';
-import { GAtom, GSheet, GSpec } from './tool';
+import { UqExt } from 'uqs/UqDefault';
+import { GSpec } from './tool';
 import { atom } from 'jotai';
 import { Biz, EntityAtom } from './Biz';
 import { ViewsRoutes } from './views';
@@ -94,7 +94,8 @@ export class UqApp extends UqAppBase<UQs> {
     atomSiteLogined = atom(false);
     loginSite = async () => {
         console.error('loginSite');
-        if (this.biz !== undefined) return this.biz;
+        if (this.uqSites !== undefined) return this.biz;
+        console.error('loginSite start loading');
         this.uqSites = new UqSites(this.uqMan);
         await this.uqSites.login();
         let { userSite } = this.uqSites;
@@ -111,30 +112,6 @@ export class UqApp extends UqAppBase<UQs> {
             }
             else {
                 let bizSchema = jsonpack.unpack(schemas);
-                Object.assign(bizSchema, {
-                    /*
-                    "$user": {
-                        "name": "$user",
-                        "type": "$user"
-                    },
-                    "$unit": {
-                        "name": "$unit",
-                        "type": "$unit"
-                    },
-                    "$": {
-                        "name": "$",
-                        "type": "atom",
-                        "props": [
-                            {
-                                "name": "uom",
-                                "type": "prop",
-                                "dataType": "ID"
-                            }
-                        ]
-                    },
-                    */
-                });
-                console.log(bizSchema);
                 this.biz = new Biz(this, bizSchema);
             }
         }
@@ -145,9 +122,7 @@ export class UqApp extends UqAppBase<UQs> {
         return this.biz;
     }
 
-    readonly gAtoms: { [name: string]: GAtom } = {};
     readonly gSpecs: { [name: string]: GSpec } = {};
-    readonly gSheets: { [name: string]: GSheet } = {};
 
     // atom: name or phrase
     specFromAtom(atom: string): GSpec {

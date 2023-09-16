@@ -7,6 +7,7 @@ import { EditBud, EditAtomField } from "../BudEdit";
 import { EntityAtom } from "app/Biz";
 import { LabelAtomUomEdit } from "../AtomUom";
 import { BudValue, ViewBudRowProps } from "../model";
+import { AtomUomProps } from "app/tool";
 
 export function useBizAtomView(options: OptionsUseBizAtom) {
     const { id } = useParams();
@@ -18,7 +19,8 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
     const { uom, getAtom, saveField, saveBud } = useBizAtom(options)
     const [state, setState] = useState<{
         main: any,
-        props: { [prop: string]: { bud: number; phrase: string; value: BudValue; } };
+        buds: { [prop: string]: { bud: number; phrase: string; value: BudValue; } };
+        uoms: AtomUomProps[];
         entityAtom: EntityAtom;
     }>(undefined);
     useEffectOnce(() => {
@@ -33,8 +35,8 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
             page: <PageSpinner />,
         };
     }
-    const { main, props, entityAtom } = state;
-    let { caption, props: atomProps } = entityAtom;
+    const { main, buds, entityAtom, uoms } = state;
+    let { name, caption, props: atomProps } = entityAtom;
     const viewRows: ViewBudRowProps[] = [
         { name: 'id', label: 'id', readonly: true, type: 'number', },
         { name: 'no', label: NOLabel ?? '编号', readonly: true, type: 'string', },
@@ -42,7 +44,7 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
     ];
     let viewUom: any;
     if (uom === true) {
-        viewUom = <LabelAtomUomEdit atomId={id} uomId={state.props['atom.$.uom']?.value as number} />;
+        viewUom = <LabelAtomUomEdit atomId={id} uoms={uoms} />;
     }
     return {
         caption,
@@ -59,10 +61,11 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
                     <Sep />
                 </React.Fragment>)
             }
+            {viewUom}
             {
                 atomProps.map(v => {
                     let { name, phrase, caption } = v;
-                    let prop = props[phrase];
+                    let prop = buds[phrase];
                     return <React.Fragment key={name}>
                         <EditBud
                             id={id}
@@ -75,11 +78,10 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
                     </React.Fragment>;
                 })
             }
-            {viewUom}
         </>;
     }
     function PageView() {
-        return <Page header={caption}>
+        return <Page header={caption ?? name}>
             <View />
         </Page>;
     }

@@ -2,7 +2,7 @@ import { EntityAtom } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { OptionsUseBizAtom, pathAtomNew, useBizAtom } from "app/hooks";
-import { ViewAtom } from "app/views/ViewAtom";
+import { ViewAtom } from "app/hooks";
 import { Link, useParams } from "react-router-dom";
 import { LinkModal, Page, useModal } from "tonwa-app";
 import { CheckAsync, FA, List } from "tonwa-com";

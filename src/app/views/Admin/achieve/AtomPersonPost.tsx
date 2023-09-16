@@ -1,6 +1,6 @@
 import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
 import { GAtom } from "app/tool";
-import { ViewAtom } from "app/views/ViewAtom";
+import { ViewAtom } from "app/hooks";
 import { EnumAtom } from "uqs/UqDefault";
 
 const options: OptionsUseBizAtom = {

@@ -3,9 +3,8 @@ import { LMR, List } from "tonwa-com";
 import { Page, PageSpinner, useModal } from "tonwa-app";
 import { Atom, EnumAtom } from "uqs/UqDefault";
 import { useRef } from "react";
-import { useSelectAtom } from "../BizAtom";
+import { ViewAtom, useSelectAtom } from "../BizAtom";
 import { BI, PageQueryMore } from "app/coms";
-import { ViewAtom } from "app/views";
 
 export function useSelectUomI() {
     const uqApp = useUqApp();
@@ -124,7 +123,8 @@ export function useSelectUomI() {
             if (uom === undefined) return;
             uomI = await selectUomI(uom);
             if (uomI === undefined) return;
-            uomId = uomI.id;
+            // uomId = uomI.id;
+            return uomI;
         }
         uomI = await selectUomX(uomId);
         if (uomI === null) {

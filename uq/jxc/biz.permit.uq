@@ -29,15 +29,3 @@ Biz Role 销售部经理 {
 Biz Role 检验员 {
     Permit 检验;
 }
-
--- Admit：针对UnitPermit
--- Admit可以在Act和Query的入口处，也可以建ix表。UnitPermit/Contact=某个角色可以访问的客户。
--- IX: I=UnitUser(Id with phrase permit)生成Id / PermitItem(phrase id)
--- 设置参数和关系的时候，调用SaveIx(i, x), i=用json描述，user, unit一起来生成。x=用json描述，一起生成。
--- IxBud: MainId / SiteBudId - value
--- 如果要写History，则生成subject id，然后写history
-
-IX IxAtomRole (
-    i,
-    x,
-);

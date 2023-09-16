@@ -57,9 +57,19 @@ Biz Spec BatchValid1 '批次生成日期' {
     KEY 效期 date;
 }
 
-Biz Atom Medicine '药品' extends Goods {
-    Spec BatchValid;
+Atom Medicine '药品' extends Goods {
+    -- Spec BatchValid;
     Prop specification '规格' CHAR;
+};
+
+-- Base: if no base, default to ($site, phrase)
+--      else, base=(base, phrase)
+-- Key: combine unique in base
+Atom SpecMedicine {
+    BASE Medicine;
+    KEY no '批号';
+    KEY validTo '效期' Date;
+    ex '批号显示caption';
 };
 
 Biz Atom MedicineChinese '中药' extends Medicine {

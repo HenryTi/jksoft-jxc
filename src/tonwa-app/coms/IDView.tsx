@@ -30,15 +30,10 @@ export function IDView<T>({ id, uq, Template, spinner }: Props<T>) {
             setValue(obj);
         })();
     }, [id, idValue]);
-    if (id === null) return null;
-    if (id === undefined || value === undefined) {
+    if (id === undefined || id === null) return null;
+    if (value === undefined) {
         return spinner === undefined ? <SpinnerSmall /> : spinner;
     }
-    /*
-    if (value === null) {
-        return <div>id {id} is invalid</div>;
-    }
-    */
     if (Template) {
         return <Template value={value} />;
     }

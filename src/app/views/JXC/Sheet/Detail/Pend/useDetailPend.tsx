@@ -3,7 +3,7 @@ import { EditingRow, SheetRow } from 'app/tool';
 import { useAtomValue } from "jotai";
 import { ViewAtomSpec } from "../../ViewAUS";
 import { OptionsUseSheetDetail, UpdateRow, UseSheetDetailReturn } from "app/hooks";
-import { ViewAtom } from "app/views";
+import { ViewAtom } from "app/hooks";
 
 export interface OptionsUseDetailPend extends OptionsUseSheetDetail {
     selectPend: (editingRows: EditingRow[]) => Promise<SheetRow[]>;

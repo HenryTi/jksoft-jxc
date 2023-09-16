@@ -3,7 +3,7 @@ import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
 import { FA } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
-import { ViewAtom } from "app/views";
+import { ViewAtom } from "app/hooks";
 import { Spec } from "app/tool";
 
 export function ViewAUSAtom({ id }: { id: number; }) {
@@ -49,12 +49,13 @@ function useViewSpec(id: number, hasLabel: boolean) {
                 let { $phrase } = value as any;
                 const gSpec = uqApp.specFromAtom($phrase);
                 function TemplateSpec({ value }: { value: Spec; }) {
+                    if (gSpec === undefined) return <>gSpec undefined</>
                     return <gSpec.View value={value} />;
                 }
                 let content = <IDView id={spec} uq={uq} Template={TemplateSpec} />;
                 if (hasLabel === true) {
                     return <div className="container">
-                        <Band label={gSpec.caption}>
+                        <Band label={gSpec?.caption}>
                             {content}
                         </Band>
                     </div>;

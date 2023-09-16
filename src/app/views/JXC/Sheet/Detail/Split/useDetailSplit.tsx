@@ -6,9 +6,9 @@ import { FA, LMR, List } from "tonwa-com";
 import { useAtomValue } from "jotai";
 import { OptionsUseSheetDetail, UseSheetDetailReturn } from "app/hooks";
 import { useUqApp } from "app/UqApp";
-import { useBizAtomSpec } from "../../../Atom";
+// import { useBizAtomSpec } from "../../../Atom";
 import { UsePendFromSheetReturn } from "app/hooks/Sheet";
-import { ViewAtom } from "app/views";
+import { ViewAtom } from "app/hooks";
 
 export interface OptionsUseDetailSplit extends OptionsUseSheetDetail {
     selectTarget: () => Promise<Atom>;
@@ -66,7 +66,7 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
                 </div>
             </LMR>
         }
-
+        /*
         const { viewAtom, viewUom, viewSpec } = useBizAtomSpec(item);
         return <div className="border rounded mx-2 my-3">
             <div className="container">
@@ -84,6 +84,10 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
                 </div>
                 <List items={details} ViewItem={ViewItem} none={null} />
             </div>
+        </div>;
+        */
+        return <div>
+            detail split
         </div>;
     }
 

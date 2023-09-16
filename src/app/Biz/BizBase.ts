@@ -6,6 +6,7 @@ export class BizBase {
     readonly uq: UqExt;
     readonly name: string;
     readonly type: string;
+    phrase: string;
     caption: string;
 
     constructor(biz: Biz, name: string, type: string) {
@@ -14,10 +15,11 @@ export class BizBase {
         this.name = name;
         this.type = type;
     }
-
+    /*
     get phrase() {
         return `${this.type}.${this.name}`;
     }
+    */
 
     fromSchema(schema: any) {
         for (let i in schema) {
@@ -35,6 +37,7 @@ export class BizBase {
             case 'type': break;
             case 'dataType': break;
             case 'history': break;
+            case 'phrase': this.phrase = val; break;
             case 'caption':
                 this.caption = val;
                 break;

@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Sep 11 2023 19:00:47 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Wed Sep 13 2023 17:11:48 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -495,12 +495,20 @@ export interface ReturnGetAtomBudsCheck {
 	phrase: string;
 	item: string;
 }
+export interface ReturnGetAtomUoms {
+	atomUom: number;
+	uom: number;
+	ex: string;
+	prevEx: string;
+	ratio: number;
+}
 export interface ResultGetAtom {
 	main: ReturnGetAtomMain[];
 	budsInt: ReturnGetAtomBudsInt[];
 	budsDec: ReturnGetAtomBudsDec[];
 	budsStr: ReturnGetAtomBudsStr[];
 	budsCheck: ReturnGetAtomBudsCheck[];
+	uoms: ReturnGetAtomUoms[];
 }
 
 export interface ParamGetPendSheetFromNo {
@@ -777,17 +785,25 @@ export enum BudDataType {
 	date = 41
 }
 
+export enum BizBudFlag {
+	index = 1
+}
+
 export interface ParamGetBizObjects {
+	lang: string;
+	culture: string;
 }
 export interface ReturnGetBizObjectsObjs {
 	id: number;
 	phrase: string;
 	source: string;
+	caption: string;
 }
 export interface ReturnGetBizObjectsBuds {
 	id: number;
 	base: number;
 	phrase: string;
+	caption: string;
 }
 export interface ResultGetBizObjects {
 	objs: ReturnGetBizObjectsObjs[];
@@ -1066,27 +1082,33 @@ export interface PendInActs extends ID {
 	value: number;
 }
 
-export interface ParamGetInit {
+export interface ParamGetSiteSetting {
 }
-export interface ReturnGetInitBudsInt {
+export interface ReturnGetSiteSettingBudsInt {
 	bud: number;
 	phrase: string;
 	value: number;
 }
-export interface ReturnGetInitBudsDec {
+export interface ReturnGetSiteSettingBudsDec {
 	bud: number;
 	phrase: string;
 	value: number;
 }
-export interface ReturnGetInitBudsStr {
+export interface ReturnGetSiteSettingBudsStr {
 	bud: number;
 	phrase: string;
 	value: string;
 }
-export interface ResultGetInit {
-	budsInt: ReturnGetInitBudsInt[];
-	budsDec: ReturnGetInitBudsDec[];
-	budsStr: ReturnGetInitBudsStr[];
+export interface ReturnGetSiteSettingBudsCheck {
+	bud: number;
+	phrase: string;
+	item: string;
+}
+export interface ResultGetSiteSetting {
+	budsInt: ReturnGetSiteSettingBudsInt[];
+	budsDec: ReturnGetSiteSettingBudsDec[];
+	budsStr: ReturnGetSiteSettingBudsStr[];
+	budsCheck: ReturnGetSiteSettingBudsCheck[];
 }
 
 export interface ParamReportStorage {
@@ -1141,8 +1163,7 @@ export interface ReturnHistoryStorage$page {
 	ref: number;
 	plusMinus: number;
 	sheetNo: string;
-	sheetName: string;
-	sheetCaption: string;
+	sheetPhrase: string;
 }
 export interface ResultHistoryStorage {
 	$page: ReturnHistoryStorage$page[];
@@ -1237,7 +1258,7 @@ export interface UqExt extends Uq {
 	Sheet: UqID<any>;
 	Detail: UqID<any>;
 	Pend: UqID<any>;
-	GetInit: UqQuery<ParamGetInit, ResultGetInit>;
+	GetSiteSetting: UqQuery<ParamGetSiteSetting, ResultGetSiteSetting>;
 	ReportStorage: UqQuery<ParamReportStorage, ResultReportStorage>;
 	ReportStorageAtom: UqQuery<ParamReportStorageAtom, ResultReportStorageAtom>;
 	ReportStorageSpec: UqQuery<ParamReportStorageSpec, ResultReportStorageSpec>;
@@ -2648,6 +2669,35 @@ export const uqSchema={
                         "size": 200
                     }
                 ]
+            },
+            {
+                "name": "uoms",
+                "fields": [
+                    {
+                        "name": "atomUom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "uom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "prevEx",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "ratio",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
             }
         ]
     },
@@ -3495,12 +3545,32 @@ export const uqSchema={
             "date": 41
         }
     },
+    "bizbudflag": {
+        "name": "BizBudFlag",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "index": 1
+        }
+    },
     "getbizobjects": {
         "name": "GetBizObjects",
         "type": "query",
         "private": false,
         "sys": true,
-        "fields": [] as any,
+        "fields": [
+            {
+                "name": "lang",
+                "type": "char",
+                "size": 10
+            },
+            {
+                "name": "culture",
+                "type": "char",
+                "size": 10
+            }
+        ],
         "returns": [
             {
                 "name": "objs",
@@ -3517,6 +3587,11 @@ export const uqSchema={
                     {
                         "name": "source",
                         "type": "text"
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
                     }
                 ]
             },
@@ -3535,6 +3610,11 @@ export const uqSchema={
                         "name": "phrase",
                         "type": "char",
                         "size": 200
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
                     }
                 ]
             }
@@ -4308,8 +4388,8 @@ export const uqSchema={
         "idType": 3,
         "isMinute": true
     },
-    "getinit": {
-        "name": "GetInit",
+    "getsitesetting": {
+        "name": "GetSiteSetting",
         "type": "query",
         "private": false,
         "sys": true,
@@ -4367,6 +4447,25 @@ export const uqSchema={
                     },
                     {
                         "name": "value",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "budsCheck",
+                "fields": [
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "item",
                         "type": "char",
                         "size": 200
                     }
@@ -4556,14 +4655,9 @@ export const uqSchema={
                         "size": 30
                     },
                     {
-                        "name": "sheetName",
+                        "name": "sheetPhrase",
                         "type": "char",
                         "size": 200
-                    },
-                    {
-                        "name": "sheetCaption",
-                        "type": "char",
-                        "size": 100
                     }
                 ],
                 "order": "desc"
@@ -5465,11 +5559,11 @@ export const uqSchema={
             "type": "atom",
             "caption": "小组合计"
         },
-        "init": {
-            "name": "init",
-            "jName": "Init",
+        "sitesetting": {
+            "name": "sitesetting",
+            "jName": "SiteSetting",
             "type": "moniker",
-            "caption": "Init",
+            "caption": "SiteSetting",
             "assigns": [
                 {
                     "name": "currency",
@@ -5545,5 +5639,5 @@ export enum EnumMoniker {
 	PersonSetting = 'personsetting',
 	Price = 'price',
 	Sum = 'sum',
-	Init = 'init',
+	SiteSetting = 'sitesetting',
 }

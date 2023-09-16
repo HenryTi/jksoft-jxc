@@ -5,12 +5,6 @@ BIZ ATOM Uom '基本单位' {
     PROP discription '说明' CHAR;      -- 基本不需要描述。也可以：g=重量克
     PROP type Radio UomType INDEX;
 };
-/*
-IX IxUomType (
-    i,                  -- bud(bud(site, @uom.type), typeValue)
-    x,                  -- uom
-);
-*/
 
 BIZ Options UomType (
     count '计数'            = 1,
@@ -38,7 +32,8 @@ BIZ ATOM UomX '换算单位' {
 -- UomX 层级间的关系
 IX IxUom (
     i,                          -- UomI 计量单位
-    x INDEX,                    -- UomX 换算单位
+    x,                          -- UomX 换算单位
+    prev,
     ratio VALUE,                -- uomx = ratio * uomi;
     prevUomX ID,                -- 上一层的UomX
     prevRatio VALUE DEFAULT 1,  -- 跟上一层的比率
@@ -55,6 +50,13 @@ ID AtomSpec ver 0.4 (
     id,
     KEY atomUom ID AtomUom *,   -- atom and uom
     KEY spec ID *,              -- spec, 0 when no spec
+);
+
+-- atom:atomUom
+IX IxAtom (
+    i,                          -- Atom
+    x,                          -- AtomUom or Atom Spec or may other extension
+    prev,                       -- prev=0排第一, prev=0排后面，按x asc排
 );
 
 ACT SaveUomType ver 0.1 (
@@ -104,16 +106,18 @@ PAGE (
     phrase PHRASE,
 ) {
     VAR phrase ID = PhraseId('uomi.uom');
+    VAR bud ID = ID(Bud Key base=phrase, ext=uom);
+    /*
     VAR bud ID = a.id
         FROM Bud as a
             JOIN Bud as b ON b.id=a.base AND b.base=$site AND b.ext=phrase
         WHERE a.ext=uom;
+    */
 
     PAGE SELECT a.id, a.no, a.ex, d.name as phrase
         FROM IxBud as x 
             JOIN Atom as a ON a.id=x.x
-            JOIN Bud as b ON b.id=a.base
-            JOIN BizPhrase as d ON d.id=b.ext
+            JOIN BizPhrase as d ON d.id=a.base
         WHERE x.i=bud
         ORDER BY x.x desc
         LIMIT $pageSize;
@@ -163,7 +167,7 @@ RETURNS ret (
 ) {
     VAR x ID;
     VAR base ID = SiteBudId('uomx');
-    WITH ATOM ID TO x KEY(base, no) SET ex=ex;
+    WITH ATOM ID TO x KEY(base) SET no=no, ex=ex;
     WITH IxUom i=i x=x SET ratio=ratio; -- , valid=1;
 
     -- 修改层间的ratio

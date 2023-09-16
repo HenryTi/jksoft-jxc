@@ -3,9 +3,8 @@ import { UqExt, uqSchema } from 'uqs/UqDefault';
 import { Entity } from './Entity';
 import { EntityAtom, EntitySpec } from './EntityAtom';
 import { EntityTree } from './EntityTree';
-import { EntitySetting } from './EntitySetting';
 import { EntityDetail, EntityMain, EntityPend, EntitySheet } from './EntitySheet';
-import { EntitySubject } from './EntitySubject';
+import { EntityMoniker } from './EntityMoniker';
 import { EntityTie } from './EntityTie';
 import { EntityPermit, EntityRole } from './EntityPermit';
 import { EntityOptions } from './EntityOptions';
@@ -137,7 +136,7 @@ export class Biz {
     }
 
     private buildMoniker = (name: string, type: string): Entity => {
-        let bizEntity = new EntitySubject(this, name, type);
+        let bizEntity = new EntityMoniker(this, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 

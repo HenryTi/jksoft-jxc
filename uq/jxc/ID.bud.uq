@@ -49,7 +49,7 @@ ID History (
     bud ID,                 -- 科目 bud@(id, phrase)
     value Value,
     ref ID,                 -- 相关凭证
-    plusMinus TINYINT,         -- 0: =, 1: +, -1: -
+    plusMinus TINYINT,      -- 0: =, 1: +, -1: -
     INDEX subject_id(bud, id) UNIQUE,
 );
 

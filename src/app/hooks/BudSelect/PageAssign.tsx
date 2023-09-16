@@ -8,7 +8,7 @@ import { EntityAtom } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai";
 import { Uom } from "app/tool";
-import { ViewAtom } from "app/views";
+import { ViewAtom } from "../BizAtom";
 
 interface PageAssignProps {
     atom: EnumAtom;

@@ -37,7 +37,7 @@ export interface LabelRowPropsBase {
 
     RightContainer?: ContainerType;
     to?: string;                        // url
-    vAlign?: 'start' | 'center' | 'end';
+    vAlign?: 'top' | 'center' | 'bottom';
 }
 export interface LabelRowProps extends LabelRowPropsBase {
     children: ReactNode;

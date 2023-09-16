@@ -1,7 +1,7 @@
 import { Atom, EnumAtom } from "uqs/UqDefault";
 import { GAtom } from "app/tool";
 import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
-import { ViewAtom } from "app/views";
+import { ViewAtom } from "app/hooks";
 
 const options: OptionsUseBizAtom = {
     atomName: EnumAtom.Goods,

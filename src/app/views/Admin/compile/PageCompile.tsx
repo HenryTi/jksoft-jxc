@@ -58,17 +58,13 @@ function PageCompile() {
     function onUpload() {
         openModal(<PageUpload />);
     }
-    return <Page header="Compile">
+    return <Page header={captionCompile}>
         <div className="p-3">
             <button className="btn btn-primary" onClick={onUpload}>上传代码</button>
-        </div>
-        <div className="p-3">
-            <pre>{JSON.stringify(source, null, 4)}</pre>
-            <ButtonAsync className="btn btn-primary" onClick={test}>test</ButtonAsync>
         </div>
     </Page>;
 }
 
 export const pathCompile = "compile";
-export const captionCompile = 'Compile';
+export const captionCompile = '业务设计';
 export const routeCompile = <Route path={`${pathCompile}`} element={<PageCompile />}></Route>;

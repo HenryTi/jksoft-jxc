@@ -7,7 +7,7 @@ import { ChangeEvent, useState } from "react";
 import { FA } from "tonwa-com";
 import { Entity } from "app/Biz";
 import { Uom } from "app/tool";
-import { ViewAtom } from "app/views";
+import { ViewAtom } from "../BizAtom";
 
 export function PageAssignEdit({ rowMed, entity, noMedsMessage }: { rowMed: RowMed; entity: Entity; noMedsMessage: string; }) {
     const uqApp = useUqApp();

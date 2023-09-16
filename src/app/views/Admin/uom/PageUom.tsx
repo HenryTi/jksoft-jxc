@@ -3,7 +3,7 @@ import { useUqApp } from "app/UqApp";
 import { ButtonRightAdd, PageQueryMore } from "app/coms";
 import { CaptionAtom, OptionsUseBizAtom, useBizAtomList, useBizAtomNew } from "app/hooks";
 import { GAtom, UseQueryOptions } from "app/tool";
-import { ViewAtom } from "app/views/ViewAtom";
+import { ViewAtom } from "app/hooks";
 import { atom, useAtomValue } from "jotai";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
@@ -31,8 +31,8 @@ function PageView() {
     const { budDataType } = buds['type'];
     const { id: idParam } = useParams();
     const id = Number(idParam);
-    const { coll } = budDataType as BudRadio;
-    const [itemName, itemCaption] = coll[id];
+    const { options: optionsItems } = budDataType as BudRadio;
+    const { name: itemName, caption: itemCaption } = optionsItems.items[id];
     const { data } = useQuery(['EnumAtom.Uom', id], async () => {
         let { uom } = await uq.GetUomFromType.query({ id });
         console.log('EnumAtom.Uom', uom);
