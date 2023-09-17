@@ -71,6 +71,7 @@ export function PageUpload() {
         if (logs.length > 0) {
             let text: string[] = [];
             (logs as string[]).forEach(v => {
+                if (v === null) return;
                 text.push(...v.split('\n'));
             });
             textAreaRef.current.textContent = text.join('\n');

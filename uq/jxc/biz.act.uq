@@ -1,12 +1,13 @@
 Biz ACT SaveAtom ver 0.2 (
     atom CHAR(100),
+    base BIGINT,                -- always null, to align with $site.SaveAtom
     no NO,
     ex CHAR(200),
 )
 RETURNS ret (
     id ID,
 ) {
-    VAR base ID = PhraseId(atom);
+    SET base = PhraseId(atom);
 
     -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
     VAR id ID = 0;
@@ -30,7 +31,7 @@ RETURNS ret (
     id ID,
 ) {
     VAR id ID;
-    
+
     INTO ret SELECT id;
 }
 

@@ -82,7 +82,7 @@ export class EntityAtom extends Entity {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'states': this.fromStates(val); break;
-            case 'base': this.fromBase(val); break;
+            case 'extends': this.fromExtends(val); break;
             case 'spec': this.fromSpec(val); break;
             case 'uom': this.uom = val; break;
         }
@@ -91,11 +91,11 @@ export class EntityAtom extends Entity {
     protected fromStates(states: any[]) {
     }
 
-    protected fromBase(baseName: any) {
-        if (baseName === undefined) return;
-        let base = this.base = this.biz.entities[baseName] as EntityAtom;
-        if (base === undefined) debugger;
-        base.children.push(this);
+    protected fromExtends(extendsName: any) {
+        if (extendsName === undefined) return;
+        let _extends = this.base = this.biz.entities[extendsName] as EntityAtom;
+        if (_extends === undefined) debugger;
+        _extends.children.push(this);
     }
 
     protected fromSpec(spec: any) {

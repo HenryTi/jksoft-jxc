@@ -24,12 +24,6 @@ ID #BizPhrase (
     memo CHAR(100),
 );
 
--- atom unique props
-IDX BizAtom (
-    id,
-    idFromKeyArr CHAR(200),        -- sql fragment to get id from key arr
-);
-
 ID #BizLang (
     id small,
     KEY lang CHAR(10),
@@ -104,7 +98,6 @@ PROC SaveBizObject ver 0.2 (
     memo CHAR(100),
     source TEXT,
     schema TEXT,
-    idFromKeyArr CHAR(200),
 )
 RETURNS ret (
     id ID,
@@ -118,9 +111,6 @@ RETURNS ret (
     WITH BizResource IXX=id I=0 X=0 SET res=caption;
     WITH BizObject as a ID=id SET a.source=source, a.schema=schema;
     WITH XBiz ID=id;
-    IF type=BizPhraseType.atom {
-        WITH BizAtom as a ID=id SET a.idFromKeyArr=idFromKeyArr;
-    }
     -- 所有名下的属性置为无效，重新设置
     -- WITH BizPhrase as a KEY(id as base) SET a.valid=0;
     -- 这类的操作，以后可以优化成一个delete语句，而不用循环
