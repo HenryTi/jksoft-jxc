@@ -10,6 +10,7 @@ import { pickValue } from "./PagePickValue";
 import { EditBudCheck } from "./EditBudCheck";
 import { EditBudString, EditBudInt, EditBudDec } from "./EditBudValue";
 import { EditBudIntOf } from "./EditBudIntOf";
+import { EnumBudType } from "app/Biz";
 
 interface OpProps {
     saveBud: (newValue: string | number) => Promise<void>;
@@ -45,14 +46,16 @@ export function EditAtomField(props: ViewBudProps) {
 
 export function EditBud(editProps: EditBudProps) {
     const { bizBud } = editProps;
-    switch (bizBud.budDataType.type) {
-        default: return <>unkown bud type {bizBud.budDataType.type}</>;
-        case 'int': return <EditBudInt {...editProps} />;
-        case 'str': return <EditBudString {...editProps} />;
-        case 'dec': return <EditBudDec {...editProps} />;
-        case 'radio': return <EditBudRadio {...editProps} />;
-        case 'check': return <EditBudCheck{...editProps} />;
-        case 'intof': return <EditBudIntOf{...editProps} />;
-        case 'atom': return <EditBudAtom {...editProps} />;
+    const { type } = bizBud.budDataType;
+    switch (type) {
+        default: return <>unknown bud type {type} {EnumBudType[type]} </>;
+        case EnumBudType.int: return <EditBudInt {...editProps} />;
+        case EnumBudType.char:
+        case EnumBudType.str: return <EditBudString {...editProps} />;
+        case EnumBudType.dec: return <EditBudDec {...editProps} />;
+        case EnumBudType.radio: return <EditBudRadio {...editProps} />;
+        case EnumBudType.check: return <EditBudCheck{...editProps} />;
+        case EnumBudType.intof: return <EditBudIntOf{...editProps} />;
+        case EnumBudType.atom: return <EditBudAtom {...editProps} />;
     }
 }

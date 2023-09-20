@@ -1,7 +1,7 @@
 import { UqApp } from 'app/UqApp';
-import { UqExt, uqSchema } from 'uqs/UqDefault';
+import { UqExt } from 'uqs/UqDefault';
 import { Entity } from './Entity';
-import { EntityAtom, EntitySpec } from './EntityAtom';
+import { EntityAtom, EntityBud, EntityPick, EntitySpec } from './EntityAtom';
 import { EntityTree } from './EntityTree';
 import { EntityDetail, EntityMain, EntityPend, EntitySheet } from './EntitySheet';
 import { EntityMoniker } from './EntityMoniker';
@@ -30,8 +30,8 @@ export class Biz {
             const entity = this.entities[i];
             if (entity.type === 'atom') {
                 const entityAtom = entity as EntityAtom;
-                const { base } = entityAtom;
-                if (base !== undefined) continue;
+                const { _extends } = entityAtom;
+                if (_extends !== undefined) continue;
                 ret.push(entityAtom);
             }
         }
@@ -58,6 +58,8 @@ export class Biz {
             pend: this.buildPend,
             atom: this.buildAtom,
             spec: this.buildSpec,
+            bud: this.buildBud,
+            pick: this.buildPick,
             options: this.buildOptions,
             permit: this.buildPermit,
             role: this.buildRole,
@@ -115,6 +117,16 @@ export class Biz {
 
     private buildSpec = (name: string, type: string): Entity => {
         let bizEntity = new EntitySpec(this, name, type);
+        return this.entities[bizEntity.name] = bizEntity;
+    }
+
+    private buildBud = (name: string, type: string): Entity => {
+        let bizEntity = new EntityBud(this, name, type);
+        return this.entities[bizEntity.name] = bizEntity;
+    }
+
+    private buildPick = (name: string, type: string): Entity => {
+        let bizEntity = new EntityPick(this, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 

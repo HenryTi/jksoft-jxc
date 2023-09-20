@@ -6,8 +6,8 @@ export class Entity extends BizBase {
     readonly selfProps: BizBud[] = [];       // 本 Atom 定义的
     readonly buds: { [key: string]: BizBud; } = {};           // 包括全部继承来的
     readonly props: BizBud[] = [];
-    readonly selfAssigns: BizBud[] = [];
-    readonly assigns: BizBud[] = [];
+    // readonly selfAssigns: BizBud[] = [];
+    // readonly assigns: BizBud[] = [];
 
     protected override fromSwitch(i: string, val: any) {
         if (val === undefined) {
@@ -16,7 +16,7 @@ export class Entity extends BizBase {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'props': this.fromProps(val); break;
-            case 'assigns': this.fromAssigns(val); break;
+            // case 'assigns': this.fromAssigns(val); break;
         }
     }
 
@@ -24,7 +24,10 @@ export class Entity extends BizBase {
         let { name, dataType } = prop;
         let bizBud = new BizBud(this.biz, name, dataType, this);
         let { budDataType } = bizBud;
-        if (budDataType === undefined) debugger;
+        if (budDataType === undefined) {
+            debugger;
+            return;
+        }
         budDataType.fromSchema(prop);
         bizBud.fromSchema(prop);
         return bizBud;
@@ -33,23 +36,8 @@ export class Entity extends BizBase {
     protected fromProps(props: any[]) {
         for (let prop of props) {
             let bizBud = this.fromProp(prop);
+            if (bizBud === undefined) continue;
             this.selfProps.push(bizBud);
-        }
-    }
-
-    protected fromAssigns(assigns: any[]) {
-        if (assigns === undefined) {
-            debugger;
-            return;
-        }
-        for (let assign of assigns) {
-            let { name, dataType } = assign;
-            let bizBud = new BizBud(this.biz, name, dataType, this);
-            let { budDataType } = bizBud;
-            if (budDataType === undefined) debugger;
-            budDataType.fromSchema(assign);
-            bizBud.fromSchema(assign);
-            this.selfAssigns.push(bizBud);
         }
     }
 
@@ -60,19 +48,10 @@ export class Entity extends BizBase {
             this.buds[phrase] = bud;
             this.props.push(bud);
         }
-        for (let bud of this.selfAssigns) {
-            let { name, phrase } = bud;
-            this.buds[name] = bud;
-            this.buds[phrase] = bud;
-            this.assigns.push(bud);
-        }
     }
 
     scan() {
         for (let bud of this.selfProps) {
-            bud.scan();
-        }
-        for (let bud of this.selfAssigns) {
             bud.scan();
         }
         this.buildBuds();

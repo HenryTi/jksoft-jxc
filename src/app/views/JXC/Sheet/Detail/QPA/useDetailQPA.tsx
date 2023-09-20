@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { OptionsUseSheetDetail, UpdateRow, useSelectAtomSpec } from "app/hooks";
+import { OptionsUseSheetDetail, UpdateRow, usePick, useSelectAtomSpec } from "app/hooks";
 import { AtomSpec, AtomPhrase, EditingRow, SheetRow, Spec } from "app/tool";
 import { Page, uqAppModal, useModal } from "tonwa-app";
 import { Detail, EnumAtom } from "uqs/UqDefault";
@@ -23,8 +23,11 @@ export function useDetailQPA({ detail }: OptionsUseDetailQPA): UseSheetDetailRet
     const uqApp = useUqApp();
     const saveAtomSpec = useSaveAtomSpec();
     const selectAtomSpec = useSelectAtomSpec();
+    const pick = usePick();
     async function addRow(editingRows: EditingRow[]): Promise<SheetRow[]> {
         const { openModal, closeModal } = uqAppModal(uqApp);
+        let pickValue = await pick('a');
+        alert(pickValue);
         let atomSpec = await selectAtomSpec(EnumAtom.Goods);
         if (atomSpec === undefined) return;
         let { atom, uom } = atomSpec;

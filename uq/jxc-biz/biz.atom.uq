@@ -46,7 +46,7 @@ Atom Goods ver 0.1 '商品' {
 
 Atom Toy '玩具' extends Goods {
 };
-
+/*
 Spec BatchValid ver 0.2 '批次' {
     KEY no '批次' CHAR;
     prop 效期 date;
@@ -56,7 +56,7 @@ Biz Spec BatchValid1 '批次生成日期' {
     KEY no '批次' CHAR;
     KEY 效期 date;
 }
-
+*/
 Atom Medicine '药品' extends Goods {
     -- Spec BatchValid;
     Prop specification '规格' CHAR;
@@ -65,33 +65,32 @@ Atom Medicine '药品' extends Goods {
 -- Base: if no base, default to ($site, phrase)
 --      else, base=(base, phrase)
 -- Key: combine unique in base
-Atom SpecMedicine {
+Spec SpecMedicine {
     BASE Medicine;
     KEY no '批号';
     KEY validTo '效期' Date;
-    ex '批号显示caption';
 };
 
-Biz Atom MedicineChinese '中药' extends Medicine {
+Atom MedicineChinese '中药' extends Medicine {
     Prop ApprovalChin '中药批号' CHAR;
 };
 
-Biz Atom SpecialMedicineChinese '中药饮品' extends Medicine {
-    Spec BatchValid1;
+Atom SpecialMedicineChinese '中药饮品' extends Medicine {
     Prop ApprovalChin '中药批号' CHAR;
 };
 
-Biz Atom MedicalDevice '医疗器械' extends Goods {
+Atom MedicalDevice '医疗器械' extends Goods {
 };
 
-Biz Spec SpecShoe ver 1.7 '型号' {
+-- 鞋
+Atom Shoe '鞋' extends Goods {
+};
+
+Spec SpecShoe ver 1.7 '型号' {
+    BASE Shoe;
     KEY size '尺码' CHAR;              -- size id 尺码
     KEY color '颜色' CHAR;             -- color id 花色
 }
--- 鞋
-Biz Atom Shoe '鞋' extends Goods {
-    Spec SpecShoe;
-};
 
 Biz Tie ConcactProduct {
 };

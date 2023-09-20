@@ -2,17 +2,29 @@
 -- all biz objects store here
 
 ENUM BizPhraseType (
+    any = 0,
     atom = 11,
+    spec = 12,
+    bud = 13,
+
     sheet = 101,
+    main = 102,
+    detail = 103,
+    pend = 104,
+    detailAct = 111,
+    with = 151,
+    pick = 161,
+
     role = 201,
     permit = 202,
     options = 301,
+    tree = 401,
+    tie = 501,
+    moniker = 901,
 
-    with = 151,
 
     key = 1001,
     prop = 1011,
---    assign = 1021,
     optionsitem = 1031,
 );
 
@@ -161,11 +173,6 @@ PROC SaveBizIX (
     FOR (VAR i PHRASE, x PHRASE OF SELECT a.i, a.x FROM tbl as a) {
         WITH IxBizPhrase I=IFNULL(PhraseId(i), 0) X=PhraseId(x);
     }
-    VAR sysId ID, sysBudId ID;
-    WITH BizPhrase ID to sysId KEY($site as base, '$' as name) SET type=0;
-    WITH XBiz ID=sysId;
-    WITH BizPhrase ID to sysBudId KEY(sysId as base, '$.uom' as name) SET type=BizPhraseType.prop;
-    WITH XBiz ID=sysBudId;
 };
 
 QUERY GetBizObjects(

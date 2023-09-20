@@ -5,9 +5,27 @@ import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
 import { EntityOptions } from './EntityOptions';
 
+export enum EnumBudType {
+    none = 0,
+    int = 11,                   // bigint
+    atom = 12,                  // atom id
+    radio = 13,                 // single radio ids
+    check = 14,                 // multiple checks
+    intof = 15,
+    ID = 19,
+
+    dec = 21,                   // dec(18.6)
+
+    char = 31,                  // varchar(100)
+    str = 32,                   // varchar(100)
+
+    date = 41,
+    datetime = 42,
+};
+
 export abstract class BudDataType {
-    abstract get type(): string;
-    abstract get dataType(): 'string' | 'number';
+    abstract get type(): EnumBudType;
+    abstract get dataType(): string;
     fromSchema(schema: any) { }
     scan(biz: Biz) { }
 }
@@ -21,19 +39,19 @@ abstract class BudDataString extends BudDataType {
 }
 
 export class BudNone extends BudDataString {
-    readonly type = 'none';
+    readonly type = EnumBudType.none;
 }
 export class BudInt extends BudDataNumber {
-    readonly type = 'int';
+    readonly type = EnumBudType.int;
 }
 export class BudDec extends BudDataNumber {
-    readonly type = 'dec';
+    readonly type = EnumBudType.dec;
 }
 export class BudString extends BudDataString {
-    readonly type = 'str';
+    readonly type = EnumBudType.str;
 }
 export class BudAtom extends BudDataNumber {
-    readonly type = 'atom';
+    readonly type = EnumBudType.atom;
     private atom: string;
     bizAtom: EntityAtom;
     fromSchema(schema: any) {
@@ -44,7 +62,7 @@ export class BudAtom extends BudDataNumber {
     }
 }
 export class BudID extends BudDataNumber {
-    readonly type = 'ID';
+    readonly type = EnumBudType.ID;
     private IDName: string;
     ID: ID;
     fromSchema(schema: any) {
@@ -68,45 +86,45 @@ abstract class BudOptions extends BudDataType {
     }
 }
 export class BudIntOf extends BudOptions {
-    readonly type = 'intof';
+    readonly type = EnumBudType.intof;
 }
 export class BudRadio extends BudOptions {
-    readonly type = 'radio';
+    readonly type = EnumBudType.radio;
 }
 export class BudCheck extends BudOptions {
-    readonly type = 'check';
+    readonly type = EnumBudType.check;
 }
 export class BudDate extends BudDataNumber {
-    type = 'date';
+    type = EnumBudType.date;
 }
 export class BudDateTime extends BudDataNumber {
-    type = 'datetime';
+    type = EnumBudType.datetime;
 }
 
 export class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budDataType: BudDataType;
     defaultValue: any;
-    constructor(biz: Biz, name: string, dataType: string, entity: Entity) {
+    constructor(biz: Biz, name: string, dataType: EnumBudType, entity: Entity) {
         super(biz, name, 'bud');
         this.entity = entity;
         let budDataType: BudDataType;
         switch (dataType) {
-            case 'none': budDataType = new BudNone(); break;
-            case 'int': budDataType = new BudInt(); break;
-            case 'dec': budDataType = new BudDec(); break;
-            case 'char':
-            case 'str':
+            case EnumBudType.none: budDataType = new BudNone(); break;
+            case EnumBudType.int: budDataType = new BudInt(); break;
+            case EnumBudType.dec: budDataType = new BudDec(); break;
+            case EnumBudType.char:
+            case EnumBudType.str:
                 budDataType = new BudString(); break;
-            case 'atom':
+            case EnumBudType.atom:
                 budDataType = new BudAtom(); break;
-            case 'ID':
+            case EnumBudType.ID:
                 budDataType = new BudID(); break;
-            case 'intof': budDataType = new BudIntOf(); break;
-            case 'radio': budDataType = new BudRadio(); break;
-            case 'check': budDataType = new BudCheck(); break;
-            case 'date': budDataType = new BudDate(); break;
-            case 'datetime': budDataType = new BudDateTime(); break;
+            case EnumBudType.intof: budDataType = new BudIntOf(); break;
+            case EnumBudType.radio: budDataType = new BudRadio(); break;
+            case EnumBudType.check: budDataType = new BudCheck(); break;
+            case EnumBudType.date: budDataType = new BudDate(); break;
+            case EnumBudType.datetime: budDataType = new BudDateTime(); break;
         }
         this.budDataType = budDataType;
     }

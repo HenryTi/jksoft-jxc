@@ -1,10 +1,16 @@
 -- independant, searchable
-ID Atom (
+ID Atom ver 0.1 (
     id,
     KEY base ID,            -- sitePhrase
     KEY id,
     no NO,
-    ex CHAR(200),
+    ex EX,
+);
+
+ID Spec (
+    id,
+    KEY base ID,
+    KEY id,
 );
 
 -- 单据主表。单明细单据，也有主表

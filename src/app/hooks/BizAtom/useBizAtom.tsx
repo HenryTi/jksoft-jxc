@@ -1,6 +1,6 @@
 import { AtomUomProps, QueryMore, readBuds, readUoms } from "app/tool";
 import { UqApp, useUqApp } from "app/UqApp";
-import { Biz, BizBud, EntityAtom } from "app/Biz";
+import { Biz, BizBud, EntityAtom, EnumBudType } from "app/Biz";
 import { uqAppModal } from "tonwa-app";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { EnumAtom, UqExt } from "uqs/UqDefault";
@@ -109,9 +109,9 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         const { budDataType, phrase } = bizBud;
         switch (budDataType.type) {
             default:
-            case 'int': int = value as number; break;
-            case 'dec': dec = value as number; break;
-            case 'str': str = value as string; break;
+            case EnumBudType.int: int = value as number; break;
+            case EnumBudType.dec: dec = value as number; break;
+            case EnumBudType.str: str = value as string; break;
         }
         await uq.SaveBudValue.submit({
             id,
@@ -131,7 +131,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         const { children } = entityAtom;
         switch (children.length) {
             case 0: return entityAtom;
-            case 1: return children[0];
+            case 1: return children[0] as EntityAtom;
             default:
                 let page = <PageBizAtomSelectType entityAtom={entityAtom} caption="选择类型" />;
                 if (!page) return entityAtom;
@@ -145,7 +145,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         uqApp,
         biz,
         entity,
-        uom: entity.uom,
+        uom: (entity as EntityAtom).uom,
         pathView,
         pathList,
         getAtom,

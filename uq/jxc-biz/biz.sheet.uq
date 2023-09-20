@@ -1,10 +1,17 @@
 Biz Main MainPurchase {
-    target '往来单位' ATOM Contact;
+    Target '往来单位' ATOM Contact;
 }
+
+Pick PurchaseItem '捡取商品' {
+    ATOM (Medicine, MedicineChinese);
+    Uom;
+    Spec SpecMedicine;
+    JOIN (Contact,ProductType);
+};
 
 Biz Detail DetailPurchase ver 0.1 {
     Main MainPurchase;
-    Item '商品' ATOM Goods;       -- 某类Atom
+    Item '商品' Pick PurchaseItem; -- ATOM Goods;       -- 某类Atom
     Value '数量' DEC;
     Amount '金额' DEC;
     Price '单价' DEC;
@@ -15,7 +22,7 @@ Biz Detail DetailPurchase ver 0.1 {
 
 Biz Detail DetailPurchaseMedicine ver 0.1 '采购药品明细' {
     Main MainPurchase;
-    Item '药品' ATOM Medicine;       -- 某类Atom
+    Item '药品' Pick Medicine;       -- 某类Atom
     ACT (detail ID) {
     };
 }
@@ -30,7 +37,7 @@ Biz Main MainStoreIn {
 
 Biz Detail DetailStoreIn ver 0.1 {
     Main MainStoreIn;
-    Item '商品' ATOM Goods;         -- 某类Atom
+    Item '商品' Pick Goods;         -- 某类Atom
     Pend PendStoreIn;               -- 从某个待处理账来
     ACT (detail ID) 
     {

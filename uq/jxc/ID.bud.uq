@@ -1,9 +1,3 @@
--- 实现IX排序和分组
-IDX Seq (
-    id,
-    seq TEXT,               -- id序列，tab分隔，ln分行。排序和分组
-);
-
 IX *IxBud (
     i,
     x,

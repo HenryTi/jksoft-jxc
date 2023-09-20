@@ -20,21 +20,20 @@ RETURNS ret (
     -- WITH IxAtom i=base x=id;
     INTO ret SELECT id;
 }
-
-Biz ACT SaveAtomEx (
+/*
+Biz ACT SaveAtom ver 0.5 (
     atom PHRASE,
     base ID,            -- if null, then $site
     keys TEXT,          -- starts with [, then [k0, k1, ...], else string
     ex EX,
 )
-RETURNS ret (
+RETURNS ret virtual (
     id ID,
 ) {
-    VAR id ID;
-
-    INTO ret SELECT id;
+    VAR phraseId ID = PhraseId(atom);
+    __UqSys saveAtom;
 }
-
+*/
 Biz ACT SaveBudValue ver 0.2 (
     phrase CHAR(200),
     id ID,
