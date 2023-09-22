@@ -1,0 +1,104 @@
+import { useForm } from "react-hook-form";
+import { EntitySpec } from "app/Biz/EntityAtom";
+import { Band, FormRow, FormRowsView } from "app/coms";
+import { useCallback } from "react";
+import { Page, useModal } from "tonwa-app";
+import { budFormRow } from "../Bud";
+import { useUqApp } from "app/UqApp";
+import { ParamSaveSpec } from "uqs/UqDefault";
+
+export interface PropsPickSpec {
+    base: number;
+    entitySpec: EntitySpec;
+    viewTop: any;
+    buttonCaption: string | JSX.Element;
+    buttonClassName: string;
+};
+
+export function usePickSpec() {
+    const { uq } = useUqApp();
+    const { openModal, closeModal } = useModal();
+    async function pickSpec(propsPickSpec: PropsPickSpec): Promise<{ retSpec: { id: number; }; retViewTop?: any; }> {
+        const { base, entitySpec, viewTop } = propsPickSpec;
+        const { ix } = entitySpec;
+        if (ix === true) {
+            let { ret } = await uq.GetSpecs.query({ base });
+            let retSpec: any;
+            switch (ret.length) {
+                default:
+                    return await openModal(<PagePickSelect />);
+                case 0: retSpec = { id: base }; break;
+                case 1: retSpec = ret[0]; break;
+            }
+            return {
+                retSpec,
+                retViewTop: viewTop,
+            }
+        }
+        else {
+            return await openModal(<PagePickSpec />);
+        }
+
+        function PagePickSpec() {
+            const { caption, name, keys, props } = entitySpec;
+            const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
+            const submitCaption = '提交';
+            const submitClassName: string = undefined;
+
+            let formRows: FormRow[] = [
+                ...keys.map(budFormRow),
+                ...(props ?? []).map(budFormRow),
+                { type: 'submit', label: submitCaption, options: {}, className: submitClassName }
+            ];
+            const onSubmitForm = async (data: any) => {
+                const keyValues: { [bud: string]: number | string } = {};
+                for (let key of keys) {
+                    const { name } = key;
+                    keyValues[name] = data[name];
+                }
+                const propValues: { [bud: string]: number | string } = {};
+                for (let prop of props) {
+                    const { name } = prop;
+                    propValues[name] = data[name];
+                }
+                const param: ParamSaveSpec = {
+                    spec: name,
+                    base,
+                    keys: JSON.stringify(keyValues),
+                    props: JSON.stringify(propValues),
+                };
+                let { ret } = await uq.SaveSpec.submit(param);
+                let retSpec = Object.assign({ id: ret[0].id }, data);
+                closeModal({
+                    retSpec,
+                    retViewTop: <div>
+                        {viewTop}
+                        <div>{JSON.stringify(retSpec)}</div>
+                    </div>
+                });
+            }
+            return <Page header={caption ?? name}>
+                <div className="pt-3 tonwa-bg-gray-2">
+                    <Band>
+                        <div className="mx-3">{viewTop}</div>
+                    </Band>
+                </div>
+                <div className="m-3">
+                    <form className="container" onSubmit={handleSubmit(onSubmitForm)}>
+                        <FormRowsView rows={formRows} register={register} errors={errors} />
+                    </form>
+                </div>
+            </Page>;
+        }
+
+        function PagePickSelect() {
+            function onClick() {
+                closeModal({ id: 100 });
+            }
+            return <Page header="选择">
+                <button className="btn btn-primary" onClick={onClick}>确定</button>
+            </Page>;
+        }
+    };
+    return useCallback(pickSpec, []);
+}

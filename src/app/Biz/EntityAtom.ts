@@ -1,8 +1,7 @@
 import { BizBud } from "./BizBud";
 import { Entity } from "./Entity";
-import { EntityOptions } from "./EntityOptions";
 
-abstract class EntityAtomID extends Entity {
+export abstract class EntityAtomID extends Entity {
     _extends: EntityAtomID;
     readonly children: EntityAtomID[] = [];
 
@@ -26,14 +25,6 @@ abstract class EntityAtomID extends Entity {
                 buds[phrase] = bud;
                 props.push(bud);
             }
-            /*
-            for (let bud of p.selfAssigns) {
-                let { name, phrase } = bud;
-                buds[name] = bud;
-                buds[phrase] = bud;
-                assigns.push(bud);
-            }
-            */
         }
     }
 
@@ -70,10 +61,13 @@ abstract class EntityAtomIDWithBase extends EntityAtomID {
 export class EntitySpec extends EntityAtomIDWithBase {
     readonly keyColl: { [key: string]: BizBud; } = {};
     readonly keys: BizBud[] = [];
+    ix: boolean;
+
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'keys': this.fromKeys(val); break;
+            case 'ix': this.ix = val; break;
         }
     }
 
@@ -87,8 +81,16 @@ export class EntitySpec extends EntityAtomIDWithBase {
                 continue;
             }
             budDataType.fromSchema(key);
+            bizProp.fromSchema(key);
             this.keyColl[bizProp.phrase] = bizProp;
             this.keys.push(bizProp);
+        }
+    }
+
+    scan() {
+        super.scan();
+        for (let bud of this.keys) {
+            bud.scan();
         }
     }
 
@@ -118,7 +120,7 @@ export class EntitySpec extends EntityAtomIDWithBase {
         return ret;
     }
 }
-
+/*
 export class EntityBud extends EntityAtomIDWithBase {
     join: EntityAtomID;
 
@@ -129,20 +131,19 @@ export class EntityBud extends EntityAtomIDWithBase {
         }
     }
 }
-
+*/
 export class EntityPick extends Entity {
     atoms: EntityAtom[];
-    uom: boolean;
-    spec: EntitySpec;
-    joins: (EntityAtomID | EntityOptions)[];
+    specs: EntitySpec[];
     protected override fromSwitch(i: string, val: any) {
         const { entities } = this.biz;
+        function fromArr(items: string[]) {
+            return items.map(v => entities[v] as any);
+        }
         switch (i) {
             default: super.fromSwitch(i, val); break;
-            case 'atoms': this.atoms = (val as string[]).map(v => entities[v] as any); break;
-            case 'uom': this.uom = val; break;
-            case 'spec': this.spec = entities[val] as EntitySpec; break;
-            case 'joins': this.joins = (val as string[]).map(v => entities[v] as any); break;
+            case 'atoms': this.atoms = fromArr(val); break;
+            case 'specs': this.specs = fromArr(val); break;
         }
     }
 }

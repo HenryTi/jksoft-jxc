@@ -1,7 +1,7 @@
 -- UOM: Unit of Measure, 计量单位
 
 -- 基本单位
-BIZ ATOM Uom '基本单位' {
+BIZ ATOM UomBase '基本单位' {
     PROP discription '说明' CHAR;      -- 基本不需要描述。也可以：g=重量克
     PROP type int of UomType INDEX;
 };
@@ -32,5 +32,5 @@ Biz ATOM UomI '计量单位' {
 
 -- 换算单位
 -- 比如盒，还有10支，盒就是换算单位
-BIZ ATOM UomX '换算单位' {
+BIZ ATOM Uom '换算单位' {
 };

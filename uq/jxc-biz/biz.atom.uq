@@ -46,29 +46,25 @@ Atom Goods ver 0.1 '商品' {
 
 Atom Toy '玩具' extends Goods {
 };
-/*
-Spec BatchValid ver 0.2 '批次' {
-    KEY no '批次' CHAR;
-    prop 效期 date;
-}
 
-Biz Spec BatchValid1 '批次生成日期' {
-    KEY no '批次' CHAR;
-    KEY 效期 date;
-}
-*/
 Atom Medicine '药品' extends Goods {
     -- Spec BatchValid;
     Prop specification '规格' CHAR;
 };
 
+Spec SpecUom {
+    IX BASE;
+    KEY uom ATOM UOM;
+};
+
 -- Base: if no base, default to ($site, phrase)
 --      else, base=(base, phrase)
 -- Key: combine unique in base
-Spec SpecMedicine {
+Spec SpecMedicine '药品批次' {
     BASE Medicine;
-    KEY no '批号';
+    KEY no '批号' Char;
     KEY validTo '效期' Date;
+    Prop permit '批文号' Char;
 };
 
 Atom MedicineChinese '中药' extends Medicine {

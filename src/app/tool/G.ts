@@ -1,4 +1,4 @@
-import { Atom, EnumAtom, EnumSheet, EnumMoniker } from "uqs/UqDefault";
+import { Atom, EnumAtom, EnumMoniker } from "uqs/UqDefault";
 import { Spec } from "./Model";
 import { EntityAtom, EntitySheet } from "app/Biz";
 import { EntitySpec } from "app/Biz/EntityAtom";
@@ -31,7 +31,7 @@ export interface GSpec<T extends Spec = any> {
 }
 
 export interface GSheet {
-    sheet: EnumSheet;
+    sheet: string;
     // caption?: string;
     entitySheet?: EntitySheet;
     pageEdit: JSX.Element,

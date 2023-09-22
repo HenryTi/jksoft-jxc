@@ -1,5 +1,6 @@
 import { BizBud } from "./BizBud";
 import { Entity } from "./Entity";
+import { EntityAtom, EntityPick } from "./EntityAtom";
 
 export class EntityMain extends Entity {
     target: BizBud;
@@ -19,9 +20,15 @@ export class EntityMain extends Entity {
     }
 }
 
+export interface Pickable {
+    caption: string;
+    atom: EntityAtom;
+    pick: EntityPick;
+}
+
 export class EntityDetail extends Entity {
     main: EntityMain;
-    item: BizBud;
+    item: Pickable;
     pend: EntityPend;
     value: BizBud;
     price: BizBud;
@@ -47,7 +54,15 @@ export class EntityDetail extends Entity {
     }
 
     private fromItem(prop: any) {
-        this.item = this.fromProp(prop);
+        const { entities } = this.biz;
+        const { caption, atom: atomName, pick: pickName } = prop;
+        const atom = atomName === undefined ? undefined : entities[atomName] as EntityAtom;
+        const pick = pickName === undefined ? undefined : entities[pickName] as EntityPick;
+        this.item = {
+            caption,
+            atom,
+            pick,
+        }
     }
 
     private fromPend(pend: any) {

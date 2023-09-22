@@ -1,5 +1,5 @@
 import { GSheet, SheetRow } from "app/tool";
-import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
+import { EnumAtom, Sheet } from "uqs/UqDefault";
 import { useDetailQPA } from "./Detail";
 import { PageSheetAct, useSelectAtom } from "app/hooks";
 import { IDView } from "tonwa-app";
@@ -31,7 +31,7 @@ export function PageEdit() {
     const detail = 'detailpurchase';
     const useDetailReturn = useDetailQPA({ detail });
     return <PageSheetAct {...{
-        sheet: sheet as EnumSheet,
+        sheet: sheet,
         act: '$',
         // caption,
         // targetCaption,

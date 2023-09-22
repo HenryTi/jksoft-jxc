@@ -4,14 +4,14 @@ import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { ButtonAsync, getAtomValue, List, LMR, Sep, setAtomValue, useEffectOnce } from "tonwa-com";
-import { Atom, Detail, EnumSheet, Sheet } from "uqs/UqDefault";
+import { Atom, Detail, Sheet } from "uqs/UqDefault";
 import { DetailWithOrigin, EditingRow, OriginDetail, SheetRow } from "app/tool";
 import { UseSheetDetailReturn } from "./useSheetDetail";
 import { useUqApp } from "app/UqApp";
 import { EntitySheet } from "app/Biz";
 
 export interface PropsSheetAct {
-    sheet: EnumSheet;
+    sheet: string;
     act: string;
     // caption?: string;
     // targetCaption: string;
@@ -400,7 +400,7 @@ export function useSheetAct(options: PropsSheetAct) {
         await confirmSaveAllDetails();
         // await this.genSheetAct.book(sheet.id, this.detail);
         await uq.BizSheetAct(sheet.id
-            , useDetailReturn.detail
+            , useDetailReturn.detail as any
             , act);
         removeSheetFromCache();
     }

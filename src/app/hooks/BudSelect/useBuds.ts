@@ -1,4 +1,4 @@
-import { BizBud, Entity } from "app/Biz";
+import { BizBud, Entity, EnumBudType } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { WritableAtom, atom } from "jotai";
 import { ParamSearchAtomBuds, Atom as UqAtom } from "uqs/UqDefault";
@@ -67,9 +67,9 @@ export function useBuds({ entity: entityName, budNames, noMedsMessage }: Options
             let { phrase } = bizBud;
             let int: number, dec: number, str: string;
             switch (bizBud.budDataType.type) {
-                case 'int': int = budValue; break;
-                case 'dec': dec = budValue; break;
-                case 'char': str = budValue; break;
+                case EnumBudType.int: int = budValue; break;
+                case EnumBudType.dec: dec = budValue; break;
+                case EnumBudType.char: str = budValue; break;
             }
             let param = {
                 phrase, id, int, dec, str

@@ -125,17 +125,69 @@ Biz Act DelAtom (
 
 Biz Act SaveSpec ver 0.1 (
     spec CHAR(100),
-    atom ID,
-    values CHAR(300),
+    base ID,
+    keys TEXT,              -- {"k1": v1, "k2": v2}
+    props TEXT,             -- {"p1": p1, "p2": p2}
 )
 RETURNS ret (
     id ID,
 ) {
     VAR id ID;
+    VAR sql CHAR(500);
+    VAR specPhraseId ID = PhraseId(spec);
+/*    
     SET id = specid(spec, atom, values);
     INTO ret SELECT id;
     VAR a CHAR(300) = specvalue(id);
+*/
+    SET sql=CONCAT('call `$site`.`', $site, '.', specPhraseId, '$s`(?,?,?,?,?);');
+    /*
+    SET @site=$site;
+    SET @user=$user;
+    SET @base=base;
+    SET @keys=keys;
+    SET @props=props;
+    */
+    ExecSql sql to id USING $site, $user, base, keys, props;
+    INTO ret SELECT id;
 }
+
+Biz Query GetSpec (
+    id ID,
+)
+RETURNS ret (
+    prop Phrase,
+    value CHAR(200),
+) {
+
+    WHILE 1=1 {
+        VAR base ID=b.base, phrase Phrase=c.name, type ENUM BizPhraseType=c.type 
+            FROM Spec as a 
+                JOIN Bud as b ON b.id=a.base 
+                JOIN BizPhrase as c ON c.id=b.ext
+            WHERE a.id=id;
+        IF type IS NULL {
+            BREAK;
+        }
+        INTO ret SELECT phrase as prop, id as value;
+        INTO ret SELECT b.name as prop, a.value
+            FROM IxBudInt as a 
+                JOIN BizPhrase as b on b.id=a.x
+            WHERE a.i=id;
+        INTO ret SELECT b.name as prop, a.value
+            FROM IxBudDec as a 
+                JOIN BizPhrase as b on b.id=a.x
+            WHERE a.i=id;
+        INTO ret SELECT b.name as prop, a.value
+            FROM IxBudStr as a 
+                JOIN BizPhrase as b on b.id=a.x
+            WHERE a.i=id;
+        IF type<>BizPhraseType.spec {
+            BREAK;
+        }
+        SET id=base;
+    }
+};
 
 Biz ACT SaveSheet (
     sheet CHAR(100),
@@ -183,7 +235,7 @@ RETURNS ret (
         RETURN;
     }
     IF id IS NULL {
-        SET id = ID(Detail New);
+        SET id = ID(Detail New KEY base=base);
         WITH Detail ID=id SET base=base, item=item, target=target, origin=origin, value=value, price=price, amount=amount;
     }
     ELSE {
@@ -559,3 +611,22 @@ RETURNS uoms (
             -- LEFT JOIN IxUom as d ON d.i=b.uom
         WHERE a.i=id;
 };
+
+Biz Query GetSpecs ver 0.1 (
+    base ID,
+)
+RETURNS ret (
+    id ID,
+    keys JSON,
+    props JSON,
+) {
+    INTO ret SELECT a.x as id,
+        (SELECT json_arrayagg(json_array(arr.name,arr.value)) FROM (
+            select ix.name, i.value from IxBudInt as i join bizphrase as ix on ix.id=i.x where i.i=a.x
+            union select dx.name, d.value from IxBudDec as d join bizphrase as dx on dx.id=d.x where d.i=a.x
+            union select sx.name, s.value from IxBudStr as s join bizphrase as sx on sx.id=s.x where s.i=a.x
+        ) as arr ) as keys,
+        null as props
+        FROM IxSpec as a
+        WHERE a.i=base;
+}

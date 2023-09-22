@@ -18,7 +18,7 @@ import { routeSheetCenter } from "./Sheet";
 
 export const pathJXC = 'jxc';
 export function routeJCX(uqApp: UqApp) {
-    console.error('routeJCX', pathJXC);
+    // console.error('routeJCX', pathJXC);
     // buildSpecs(uqApp);
 
     const routes = <>

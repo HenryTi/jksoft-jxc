@@ -11,6 +11,7 @@ import { useAtomValue } from "jotai";
 import { ViewAUSAtom, ViewAtomSpec, ViewUom, ViewSpec, ViewSpecWithLabel } from "../../ViewAUS";
 import { UseSheetDetailReturn } from "app/hooks";
 import { ViewAtom } from "app/hooks";
+import { EntityDetail } from "app/Biz/EntitySheet";
 
 const fieldQuantity = 'value';
 const fieldPrice = 'price';
@@ -19,16 +20,17 @@ const fieldAmount = 'amount';
 export interface OptionsUseDetailQPA extends OptionsUseSheetDetail {
 }
 
-export function useDetailQPA({ detail }: OptionsUseDetailQPA): UseSheetDetailReturn {
+export function useDetailQPA({ detail: detailName }: OptionsUseDetailQPA): UseSheetDetailReturn {
     const uqApp = useUqApp();
     const saveAtomSpec = useSaveAtomSpec();
     const selectAtomSpec = useSelectAtomSpec();
+    const { openModal, closeModal } = useModal();
     const pick = usePick();
+    const detail = uqApp.biz.entities[detailName] as EntityDetail;
     async function addRow(editingRows: EditingRow[]): Promise<SheetRow[]> {
-        const { openModal, closeModal } = uqAppModal(uqApp);
-        let pickValue = await pick('a');
-        alert(pickValue);
-        let atomSpec = await selectAtomSpec(EnumAtom.Goods);
+        let pickValue = await pick(detail.item);
+        alert(JSON.stringify(pickValue));
+        let atomSpec = await selectAtomSpec('goods' as EnumAtom);
         if (atomSpec === undefined) return;
         let { atom, uom } = atomSpec;
         if (!uom.id) {
@@ -115,7 +117,7 @@ function useSaveAtomSpec() {
             spec: gSpec.name,
             atom: atom.id,
             values
-        });
+        } as any);
         return ret.id;
     }
     return saveAtomSpec;

@@ -1,7 +1,7 @@
 import { useUqApp } from "app/UqApp";
 import { PageSheetAct, usePendFromItem, useSelectAtom } from "app/hooks";
 import { GSheet, SheetRow } from "app/tool";
-import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
+import { EnumAtom, Sheet } from "uqs/UqDefault";
 import { IDView } from "tonwa-app";
 import { Band } from "app/coms";
 import { EntitySheet } from "app/Biz";
@@ -9,7 +9,7 @@ import { useDetailPend } from "./Detail/Pend/useDetailPend";
 import { ViewPendRow } from "./ViewPendRow";
 import { ViewAtom } from "app/hooks";
 
-const sheet = EnumSheet.SheetStoreOut;
+const sheet = 'SheetStoreOut'.toLowerCase();
 // const caption = '出库单';
 // const targetCaption = '往来单位';
 function PageStoreOut() {
@@ -37,7 +37,7 @@ function PageStoreOut() {
         return <IDView id={sheet.target} uq={uq} Template={ViewAtom} />;
     }
     async function selectTarget() {
-        return await selectAtom(EnumAtom.Contact);
+        return await selectAtom('Contact'.toLowerCase() as EnumAtom);
     }
     async function loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let sheetRows = await selectPend(undefined);
@@ -57,7 +57,7 @@ function PageStoreOut() {
             base: undefined,
             operator: undefined,
             value: undefined
-        };
+        } as any;
         return { sheet, sheetRows };
     }
     const useDetailReturn = useDetailPend({ detail, selectPend });

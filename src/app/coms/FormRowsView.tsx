@@ -298,7 +298,7 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue }: 
     const [id, setId] = useState<number>(defaultValue);
     async function onSelectAtom() {
         if (readOnly === true) return;
-        clearErrors(name);
+        clearErrors?.(name);
         let ret = await selectAtom(atom);
         if (ret === undefined) return;
         const { id } = ret;

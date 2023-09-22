@@ -1,12 +1,12 @@
 import { GSheet, SheetRow } from "app/tool";
-import { EnumAtom, EnumSheet, Sheet } from "uqs/UqDefault";
+import { EnumAtom, Sheet } from "uqs/UqDefault";
 import { useDetailQPA } from "./Detail";
 import { PageSheetAct, useSelectAtom } from "app/hooks";
 import { IDView } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { ViewAtom } from "app/hooks";
 
-const sheet = EnumSheet.SheetPurchase;
+const sheet = 'SheetPurchase'.toLowerCase();
 //const targetCaption = '往来单位';
 
 function PagePurchaseEdit() {
@@ -25,7 +25,7 @@ function PagePurchaseEdit() {
         return <IDView id={sheet.target} uq={uq} Template={ViewAtom} />;
     }
     async function selectTarget() {
-        return await selectAtom(EnumAtom.Contact);
+        return await selectAtom('contact' as EnumAtom);
     }
     async function loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let targetAtom = await selectTarget();

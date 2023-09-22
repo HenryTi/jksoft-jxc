@@ -9,6 +9,7 @@ import { useUqApp } from "app/UqApp";
 // import { useBizAtomSpec } from "../../../Atom";
 import { UsePendFromSheetReturn } from "app/hooks/Sheet";
 import { ViewAtom } from "app/hooks";
+import { EntityDetail } from "app/Biz/EntitySheet";
 
 export interface OptionsUseDetailSplit extends OptionsUseSheetDetail {
     selectTarget: () => Promise<Atom>;
@@ -16,8 +17,9 @@ export interface OptionsUseDetailSplit extends OptionsUseSheetDetail {
 }
 
 export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailReturn {
-    const { detail, selectTarget, selectPend } = options;
+    const { detail: detailName, selectTarget, selectPend } = options;
     const uqApp = useUqApp();
+    const detail = uqApp.biz.entities[detailName] as EntityDetail;
     async function addRow(editingRows: EditingRow[]): Promise<SheetRow[]> {
         if (selectPend === undefined) {
             alert('selectPend can not be undefined');

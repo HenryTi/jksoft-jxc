@@ -64,23 +64,34 @@ export function PageUpload() {
             }
         });
     }
+    const errorMark = '=== x ---';
     async function onComplie() {
-        let { uqApi } = uqApp.uqMan;
+        const { uqMan, biz } = uqApp;
+        let { uqApi } = uqMan;
         let { schemas, logs } = await uqApi.compileOverride(textAreaRef.current.textContent);
         setFiles(undefined);
+        let hasError = false;
         if (logs.length > 0) {
             let text: string[] = [];
             (logs as string[]).forEach(v => {
                 if (v === null) return;
+                if (hasError === false) {
+                    if (v.indexOf(errorMark) >= 0) {
+                        hasError = true;
+                    }
+                }
                 text.push(...v.split('\n'));
             });
             textAreaRef.current.textContent = text.join('\n');
         }
-        else {
-            textAreaRef.current.textContent = JSON.stringify(
-                jsonpack.unpack(schemas)
-                , null, 4
-            );
+        let allSchemas: any;
+        if (hasError === false) {
+            allSchemas = jsonpack.unpack(schemas);
+            biz.buildEntities(allSchemas);
+        }
+        if (logs.length === 0) {
+            let str = JSON.stringify(allSchemas, null, 4);
+            textAreaRef.current.textContent = str;
         }
     }
     let btnUpload: any;

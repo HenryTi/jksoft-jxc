@@ -19,6 +19,7 @@ ID Sheet (
     KEY base ID,            -- sitePhrase
     KEY no,
     target ID,              -- 操作对象
+    targetSpec ID,          -- 细分对象
     operator ID,            -- employee Item
     value VALUE,
 );
@@ -26,14 +27,16 @@ ID Sheet (
 -- 所有单据的明细，单值
 ID Detail (
     id MINUTE,
-    base ID,                -- SheetPurchase or SheetSale
+    KEY base ID,                -- SheetPurchase or SheetSale
+    KEY id,
     item ID,                -- 计量对象。比如：商品不同包装或者批次
+    itemSpec ID,            -- 细分对象
     target ID,              -- 操作对象。比如：客户，仓库，等 意义上等同于Sheet主表target
     origin ID,              -- 源单
     value VALUE,
     amount VALUE,
     price VALUE,
-    INDEX base_id(base, id) UNIQUE,
+    -- INDEX base_id(base, id) UNIQUE,
 );
 
 ID Pend (
@@ -49,6 +52,12 @@ ID Pend (
 IDX DetailPend (
     id,                 -- detail id
     pendFrom ID,
+);
+
+IX IxSpec (
+    i,                      -- base
+    x,                      -- spec
+    prev,                   -- 排序
 );
 
 IDX SheetRed (

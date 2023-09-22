@@ -1,3 +1,4 @@
+/*
 Biz Main MainPurchase {
     target '往来单位' ATOM Contact;
 }
@@ -43,20 +44,6 @@ Biz Detail DetailStoreIn ver 0.1 {
     ACT (detail ID) 
     -- From PendStoreIn 
     {
-        /*
-        VAR pend ID = pendFrom FROM DetailPend=detail;
-        VAR value VALUE = value, item ID = item FROM Detail(detail); -- ID
-        VAR pendValue VALUE = value, pendDetail ID = detail FROM Pend(pend);
-        IF pendValue - value = 0 {
-            -- Biz Pend PendStoreIn ID=pend DEL;
-            WITH Pend as a ID=pend DEL WHERE a.base=SiteBudId('pend.PendStoreIn');
-            WITH DetailPend as a ID=detail DEL WHERE a.pendFrom=pend;
-        }
-        ELSE {
-            -- Biz Pend PendStoreIn ID=pend SET value-=value;
-            WITH Pend as a ID=pend SET a.value-=value WHERE a.base=SiteBudId('pend.PendStoreIn');
-        }
-        */
         VAR value VALUE = value, item ID = item FROM Detail(detail); -- ID
         Biz Bud storage.goodsBalance of item += value ref detail; 
         VAR atomUom ID=a.atomUom, spec ID=a.spec FROM AtomSpec as a WHERE a.id=item;
@@ -110,18 +97,6 @@ Biz Detail DetailStoreOut ver 0.2 {
     ACT (detail ID) 
     -- From PendStoreOut 
     {
-        /*
-        VAR pend ID = pendFrom FROM DetailPend=detail;
-        VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
-        VAR pendValue VALUE = value, pendDetail ID = detail FROM Pend=pend;
-        IF pendValue - value = 0 {
-            Biz Pend PendStoreOut ID=pend DEL;
-            WITH DetailPend as a ID=detail DEL WHERE a.pendFrom=pend;
-        }
-        ELSE {
-            Biz Pend PendStoreOut ID=pend SET value-=value;
-        }
-        */
         VAR value VALUE = value, item ID = item FROM Detail(detail); -- ID
         Biz Bud storage.goodsBalance of item -= value ref detail;
         VAR atomUom ID=atomUom, spec ID=spec FROM AtomSpec(item);
@@ -141,3 +116,4 @@ Biz Sheet SheetStoreOut '出库单' {
     Main MainStoreOut;
     Detail DetailStoreOut;
 }
+*/

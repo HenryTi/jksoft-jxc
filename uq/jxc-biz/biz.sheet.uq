@@ -3,15 +3,14 @@ Biz Main MainPurchase {
 }
 
 Pick PurchaseItem '捡取商品' {
-    ATOM (Medicine, MedicineChinese);
-    Uom;
+    ATOM (Goods, Medicine, MedicineChinese);
+    Spec SpecUom;             -- 每一级spec都可以跳过去
     Spec SpecMedicine;
-    JOIN (Contact,ProductType);
 };
 
 Biz Detail DetailPurchase ver 0.1 {
     Main MainPurchase;
-    Item '商品' Pick PurchaseItem; -- ATOM Goods;       -- 某类Atom
+    Item '商品Pick' Pick PurchaseItem; -- ATOM Goods;       -- 某类Atom
     Value '数量' DEC;
     Amount '金额' DEC;
     Price '单价' DEC;
@@ -27,7 +26,7 @@ Biz Detail DetailPurchaseMedicine ver 0.1 '采购药品明细' {
     };
 }
 
-Biz Sheet SheetPurchase '采购单' {
+Biz Sheet SheetPurchase '采购单 v5' {
     Main MainPurchase;
     Detail DetailPurchase;
 }
@@ -35,7 +34,7 @@ Biz Sheet SheetPurchase '采购单' {
 Biz Main MainStoreIn {
 }
 
-Biz Detail DetailStoreIn ver 0.1 {
+Biz Detail DetailStoreIn ver 0.2 {
     Main MainStoreIn;
     Item '商品' Pick Goods;         -- 某类Atom
     Pend PendStoreIn;               -- 从某个待处理账来

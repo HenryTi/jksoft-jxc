@@ -42,7 +42,6 @@ function PageSheetCenter() {
             gCollPhrase[entity.phrase] = gSheet;
         }
     }
-
     async function query(param: any, pageStart: any, pageSize: number): Promise<any[]> {
         let ret = await uq.GetMyDrafts.page(param, pageStart, pageSize);
         return ret.$page;
@@ -96,7 +95,6 @@ function PageSheetCenter() {
 
 
 export const pathSheetCenter = 'sheet-center';
-// {routeAtom(uqApp, gAtom)}
 export function routeSheetCenter(uqApp: UqApp) {
     return <>
         <Route path={pathSheetCenter} element={<PageSheetCenter />} />
@@ -104,13 +102,3 @@ export function routeSheetCenter(uqApp: UqApp) {
         <Route path={'sheet/:sheet'} element={<PageEdit />} />
     </>;
 }
-
-// export const pathSheetCenter = 'sheet-center';
-
-//{routeSheetPurchase(uqApp)}
-// {routeSheetSale(uqApp)}
-// {routeSheetStoreIn(uqApp)}
-// {routeSheetStoreOut(uqApp)}
-// export function routeSheetCenter(uqApp: UqApp) {
-//    return <Route path={pathSheetCenter} element={<PageCenter />} />
-// }

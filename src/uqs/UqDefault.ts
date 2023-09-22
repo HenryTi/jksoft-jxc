@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Sep 18 2023 16:05:16 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Thu Sep 21 2023 23:27:03 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,15 +23,15 @@ export interface IX {
 
 export enum EnumID {
 	$phrase = '$phrase',
-	Bud = 'bud',
-	History = 'history',
+	AtomUom = 'atomuom',
+	AtomSpec = 'atomspec',
 	Atom = 'atom',
 	Spec = 'spec',
 	Sheet = 'sheet',
 	Detail = 'detail',
 	Pend = 'pend',
-	AtomUom = 'atomuom',
-	AtomSpec = 'atomspec',
+	Bud = 'bud',
+	History = 'history',
 	SumFormula = 'sumformula',
 }
 
@@ -206,165 +206,10 @@ export interface Result$AllPhrases {
 	detail: Return$AllPhrasesDetail[];
 }
 
-export interface IxBud extends IX {
-	i: number;
-	x: number;
-}
-
-export interface Bud extends ID {
-	base: number;
-	ext: number;
-}
-
-export interface BudInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-	ext: number | ID;
-}
-
-export interface History extends ID {
-	bud: number;
-	value: number;
-	ref: number;
-	plusMinus: number;
-}
-
-export interface HistoryInActs extends ID {
-	ID?: UqID<any>;
-	bud: number | ID;
-	value: number;
-	ref: number | ID;
-	plusMinus: number;
-}
-
-export interface Atom extends ID {
-	base: number;
-	no?: string;
-	ex: string;
-}
-
-export interface AtomInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-	no?: string;
-	ex: string;
-}
-
-export interface Spec extends ID {
-	base: number;
-}
-
-export interface SpecInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-}
-
-export interface Sheet extends ID {
-	base: number;
-	no: string;
-	target: number;
-	operator: number;
-	value: number;
-}
-
-export interface SheetInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-	no: string;
-	target: number | ID;
-	operator: number | ID;
-	value: number;
-}
-
-export interface Detail extends ID {
-	base: number;
-	item: number;
-	target: number;
-	origin: number;
-	value: number;
-	amount: number;
-	price: number;
-}
-
-export interface DetailInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-	item: number | ID;
-	target: number | ID;
-	origin: number | ID;
-	value: number;
-	amount: number;
-	price: number;
-}
-
-export interface Pend extends ID {
-	base: number;
-	detail: number;
-	value: number;
-}
-
-export interface PendInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-	detail: number | ID;
-	value: number;
-}
-
-export enum BizPhraseType {
-	atom = 11,
-	sheet = 101,
-	role = 201,
-	permit = 202,
-	options = 301,
-	moniker = 901,
-	with = 151,
-	key = 1001,
-	prop = 1011,
-	optionsitem = 1031
-}
-
-export enum BudDataType {
-	none = 0,
-	int = 11,
-	atom = 12,
-	radio = 13,
-	check = 14,
-	ID = 19,
-	dec = 21,
-	char = 31,
-	str = 32,
-	date = 41
-}
-
-export enum BizBudFlag {
-	index = 1
-}
-
-export interface ParamGetBizObjects {
-	lang: string;
-	culture: string;
-}
-export interface ReturnGetBizObjectsObjs {
-	id: number;
-	phrase: string;
-	source: string;
-	caption: string;
-}
-export interface ReturnGetBizObjectsBuds {
-	id: number;
-	base: number;
-	phrase: string;
-	caption: string;
-}
-export interface ResultGetBizObjects {
-	objs: ReturnGetBizObjectsObjs[];
-	buds: ReturnGetBizObjectsBuds[];
-}
-
 export interface ParamSaveAtom {
 	atom: string;
 	base: number;
-	keys: string;
+	no: string;
 	ex: string;
 }
 export interface ReturnSaveAtomRet {
@@ -409,14 +254,26 @@ export interface ResultDelAtom {
 
 export interface ParamSaveSpec {
 	spec: string;
-	atom: number;
-	values: string;
+	base: number;
+	keys: string;
+	props: string;
 }
 export interface ReturnSaveSpecRet {
 	id: number;
 }
 export interface ResultSaveSpec {
 	ret: ReturnSaveSpecRet[];
+}
+
+export interface ParamGetSpec {
+	id: number;
+}
+export interface ReturnGetSpecRet {
+	prop: string;
+	value: string;
+}
+export interface ResultGetSpec {
+	ret: ReturnGetSpecRet[];
 }
 
 export interface ParamSaveSheet {
@@ -468,6 +325,7 @@ export interface ReturnGetMyDrafts$page {
 	base: number;
 	no: string;
 	target: number;
+	targetSpec: number;
 	operator: number;
 	value: number;
 	phrase: string;
@@ -583,6 +441,7 @@ export interface ReturnGetSheetMain {
 	base: number;
 	no: string;
 	target: number;
+	targetSpec: number;
 	operator: number;
 	value: number;
 }
@@ -590,6 +449,7 @@ export interface ReturnGetSheetDetails {
 	id: number;
 	base: number;
 	item: number;
+	itemSpec: number;
 	target: number;
 	origin: number;
 	value: number;
@@ -604,6 +464,7 @@ export interface ReturnGetSheetOrigins {
 	id: number;
 	base: number;
 	item: number;
+	itemSpec: number;
 	target: number;
 	origin: number;
 	value: number;
@@ -666,6 +527,18 @@ export interface ResultGetAtom {
 	budsStr: ReturnGetAtomBudsStr[];
 	budsCheck: ReturnGetAtomBudsCheck[];
 	uoms: ReturnGetAtomUoms[];
+}
+
+export interface ParamGetSpecs {
+	base: number;
+}
+export interface ReturnGetSpecsRet {
+	id: number;
+	keys: any;
+	props: any;
+}
+export interface ResultGetSpecs {
+	ret: ReturnGetSpecsRet[];
 }
 
 export interface AtomUom extends ID {
@@ -834,6 +707,175 @@ export interface ReturnGetUomIUomX {
 export interface ResultGetUomI {
 	UomI: ReturnGetUomIUomI[];
 	UomX: ReturnGetUomIUomX[];
+}
+
+export interface Atom extends ID {
+	base: number;
+	no?: string;
+	ex: string;
+}
+
+export interface AtomInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	no?: string;
+	ex: string;
+}
+
+export interface Spec extends ID {
+	base: number;
+}
+
+export interface SpecInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+}
+
+export interface Sheet extends ID {
+	base: number;
+	no: string;
+	target: number;
+	targetSpec: number;
+	operator: number;
+	value: number;
+}
+
+export interface SheetInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	no: string;
+	target: number | ID;
+	targetSpec: number | ID;
+	operator: number | ID;
+	value: number;
+}
+
+export interface Detail extends ID {
+	base: number;
+	item: number;
+	itemSpec: number;
+	target: number;
+	origin: number;
+	value: number;
+	amount: number;
+	price: number;
+}
+
+export interface DetailInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	item: number | ID;
+	itemSpec: number | ID;
+	target: number | ID;
+	origin: number | ID;
+	value: number;
+	amount: number;
+	price: number;
+}
+
+export interface Pend extends ID {
+	base: number;
+	detail: number;
+	value: number;
+}
+
+export interface PendInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	detail: number | ID;
+	value: number;
+}
+
+export enum BizPhraseType {
+	any = 0,
+	atom = 11,
+	spec = 12,
+	bud = 13,
+	sheet = 101,
+	main = 102,
+	detail = 103,
+	pend = 104,
+	detailAct = 111,
+	with = 151,
+	pick = 161,
+	role = 201,
+	permit = 202,
+	options = 301,
+	tree = 401,
+	tie = 501,
+	moniker = 901,
+	key = 1001,
+	prop = 1011,
+	optionsitem = 1031
+}
+
+export enum BudDataType {
+	none = 0,
+	int = 11,
+	atom = 12,
+	radio = 13,
+	check = 14,
+	ID = 19,
+	dec = 21,
+	char = 31,
+	str = 32,
+	date = 41
+}
+
+export enum BizBudFlag {
+	index = 1
+}
+
+export interface ParamGetBizObjects {
+	lang: string;
+	culture: string;
+}
+export interface ReturnGetBizObjectsObjs {
+	id: number;
+	phrase: string;
+	source: string;
+	caption: string;
+}
+export interface ReturnGetBizObjectsBuds {
+	id: number;
+	base: number;
+	phrase: string;
+	caption: string;
+}
+export interface ResultGetBizObjects {
+	objs: ReturnGetBizObjectsObjs[];
+	buds: ReturnGetBizObjectsBuds[];
+}
+
+export interface IxBud extends IX {
+	i: number;
+	x: number;
+}
+
+export interface Bud extends ID {
+	base: number;
+	ext: number;
+}
+
+export interface BudInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	ext: number | ID;
+}
+
+export interface History extends ID {
+	bud: number;
+	value: number;
+	ref: number;
+	plusMinus: number;
+}
+
+export interface HistoryInActs extends ID {
+	ID?: UqID<any>;
+	bud: number | ID;
+	value: number;
+	ref: number | ID;
+	plusMinus: number;
 }
 
 export enum SumFormulaType {
@@ -1109,6 +1151,7 @@ export interface ReturnGetPendSheetFromNo$page {
 	base: number;
 	no: string;
 	target: number;
+	targetSpec: number;
 	operator: number;
 	value: number;
 	sheet: string;
@@ -1126,6 +1169,7 @@ export interface ReturnGetPendSheetFromTarget$page {
 	base: number;
 	no: string;
 	target: number;
+	targetSpec: number;
 	operator: number;
 	value: number;
 	sheet: string;
@@ -1142,6 +1186,7 @@ export interface ReturnGetPendDetailFromItem$page {
 	id: number;
 	base: number;
 	item: number;
+	itemSpec: number;
 	target: number;
 	origin: number;
 	value: number;
@@ -1164,6 +1209,7 @@ export interface ReturnGetPendDetailFromSheetIdRet {
 	id: number;
 	base: number;
 	item: number;
+	itemSpec: number;
 	target: number;
 	origin: number;
 	value: number;
@@ -1182,16 +1228,16 @@ export interface ResultGetPendDetailFromSheetId {
 
 export interface ParamActs {
 	$phrase?: $phraseInActs[];
-	ixBud?: IxBud[];
-	bud?: BudInActs[];
-	history?: HistoryInActs[];
+	atomUom?: AtomUomInActs[];
+	atomSpec?: AtomSpecInActs[];
 	atom?: AtomInActs[];
 	spec?: SpecInActs[];
 	sheet?: SheetInActs[];
 	detail?: DetailInActs[];
 	pend?: PendInActs[];
-	atomUom?: AtomUomInActs[];
-	atomSpec?: AtomSpecInActs[];
+	ixBud?: IxBud[];
+	bud?: BudInActs[];
+	history?: HistoryInActs[];
 	sumFormula?: SumFormulaInActs[];
 }
 
@@ -1215,21 +1261,13 @@ export interface UqExt extends Uq {
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
 	$AllPhrases: UqQuery<Param$AllPhrases, Result$AllPhrases>;
-	IxBud: UqIX<any>;
-	Bud: UqID<any>;
-	History: UqID<any>;
-	Atom: UqID<any>;
-	Spec: UqID<any>;
-	Sheet: UqID<any>;
-	Detail: UqID<any>;
-	Pend: UqID<any>;
-	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
 	SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
 	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
 	SaveBudRadio: UqAction<ParamSaveBudRadio, ResultSaveBudRadio>;
 	DelAtom: UqAction<ParamDelAtom, ResultDelAtom>;
 	SaveSpec: UqAction<ParamSaveSpec, ResultSaveSpec>;
+	GetSpec: UqQuery<ParamGetSpec, ResultGetSpec>;
 	SaveSheet: UqAction<ParamSaveSheet, ResultSaveSheet>;
 	SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
 	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
@@ -1239,6 +1277,7 @@ export interface UqExt extends Uq {
 	SearchAtomUomBuds: UqQuery<ParamSearchAtomUomBuds, ResultSearchAtomUomBuds>;
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
+	GetSpecs: UqQuery<ParamGetSpecs, ResultGetSpecs>;
 	AtomUom: UqID<any>;
 	AtomSpec: UqID<any>;
 	SaveUomType: UqAction<ParamSaveUomType, ResultSaveUomType>;
@@ -1253,6 +1292,15 @@ export interface UqExt extends Uq {
 	DeleteAtomUomI: UqAction<ParamDeleteAtomUomI, ResultDeleteAtomUomI>;
 	SaveAtomSpec: UqAction<ParamSaveAtomSpec, ResultSaveAtomSpec>;
 	GetUomI: UqQuery<ParamGetUomI, ResultGetUomI>;
+	Atom: UqID<any>;
+	Spec: UqID<any>;
+	Sheet: UqID<any>;
+	Detail: UqID<any>;
+	Pend: UqID<any>;
+	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
+	IxBud: UqIX<any>;
+	Bud: UqID<any>;
+	History: UqID<any>;
 	SumFormula: UqID<any>;
 	SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
 	SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
@@ -1726,399 +1774,6 @@ export const uqSchema={
             }
         ]
     },
-    "ixbud": {
-        "name": "IxBud",
-        "type": "ix",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "i",
-                "type": "id"
-            },
-            {
-                "name": "x",
-                "type": "id"
-            }
-        ],
-        "ixx": false,
-        "hasSort": false,
-        "xType": 0
-    },
-    "bud": {
-        "name": "Bud",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "ext",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "ext",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "history": {
-        "name": "History",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "bud",
-                "type": "id"
-            },
-            {
-                "name": "value",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            },
-            {
-                "name": "ref",
-                "type": "id"
-            },
-            {
-                "name": "plusMinus",
-                "type": "tinyint"
-            }
-        ],
-        "keys": [] as any,
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "atom": {
-        "name": "Atom",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "no",
-                "type": "char",
-                "size": 30
-            },
-            {
-                "name": "ex",
-                "type": "char",
-                "size": 200
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "spec": {
-        "name": "Spec",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "sheet": {
-        "name": "Sheet",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "no",
-                "type": "char",
-                "size": 20
-            },
-            {
-                "name": "target",
-                "type": "id"
-            },
-            {
-                "name": "operator",
-                "type": "id"
-            },
-            {
-                "name": "value",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "no",
-                "type": "char",
-                "size": 20
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "detail": {
-        "name": "Detail",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "item",
-                "type": "id"
-            },
-            {
-                "name": "target",
-                "type": "id"
-            },
-            {
-                "name": "origin",
-                "type": "id"
-            },
-            {
-                "name": "value",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            },
-            {
-                "name": "amount",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            },
-            {
-                "name": "price",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            }
-        ],
-        "keys": [] as any,
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "pend": {
-        "name": "Pend",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "detail",
-                "type": "id"
-            },
-            {
-                "name": "value",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            }
-        ],
-        "keys": [] as any,
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "bizphrasetype": {
-        "name": "BizPhraseType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "atom": 11,
-            "sheet": 101,
-            "role": 201,
-            "permit": 202,
-            "options": 301,
-            "moniker": 901,
-            "with": 151,
-            "key": 1001,
-            "prop": 1011,
-            "optionsitem": 1031
-        }
-    },
-    "buddatatype": {
-        "name": "BudDataType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "none": 0,
-            "int": 11,
-            "atom": 12,
-            "radio": 13,
-            "check": 14,
-            "ID": 19,
-            "dec": 21,
-            "char": 31,
-            "str": 32,
-            "date": 41
-        }
-    },
-    "bizbudflag": {
-        "name": "BizBudFlag",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "index": 1
-        }
-    },
-    "getbizobjects": {
-        "name": "GetBizObjects",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "lang",
-                "type": "char",
-                "size": 10
-            },
-            {
-                "name": "culture",
-                "type": "char",
-                "size": 10
-            }
-        ],
-        "returns": [
-            {
-                "name": "objs",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "source",
-                        "type": "text"
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            },
-            {
-                "name": "buds",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            }
-        ]
-    },
     "saveatom": {
         "name": "SaveAtom",
         "type": "action",
@@ -2128,15 +1783,16 @@ export const uqSchema={
             {
                 "name": "atom",
                 "type": "char",
-                "size": 200
+                "size": 100
             },
             {
                 "name": "base",
-                "type": "id"
+                "type": "bigint"
             },
             {
-                "name": "keys",
-                "type": "text"
+                "name": "no",
+                "type": "char",
+                "size": 30
             },
             {
                 "name": "ex",
@@ -2264,13 +1920,16 @@ export const uqSchema={
                 "size": 100
             },
             {
-                "name": "atom",
+                "name": "base",
                 "type": "id"
             },
             {
-                "name": "values",
-                "type": "char",
-                "size": 300
+                "name": "keys",
+                "type": "text"
+            },
+            {
+                "name": "props",
+                "type": "text"
             }
         ],
         "returns": [
@@ -2280,6 +1939,35 @@ export const uqSchema={
                     {
                         "name": "id",
                         "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "getspec": {
+        "name": "GetSpec",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "prop",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "value",
+                        "type": "char",
+                        "size": 200
                     }
                 ]
             }
@@ -2442,6 +2130,10 @@ export const uqSchema={
                     },
                     {
                         "name": "target",
+                        "type": "id"
+                    },
+                    {
+                        "name": "targetSpec",
                         "type": "id"
                     },
                     {
@@ -2820,6 +2512,10 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "targetSpec",
+                        "type": "id"
+                    },
+                    {
                         "name": "operator",
                         "type": "id"
                     },
@@ -2845,6 +2541,10 @@ export const uqSchema={
                     },
                     {
                         "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "itemSpec",
                         "type": "id"
                     },
                     {
@@ -2909,6 +2609,10 @@ export const uqSchema={
                     },
                     {
                         "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "itemSpec",
                         "type": "id"
                     },
                     {
@@ -3103,6 +2807,37 @@ export const uqSchema={
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
+                    }
+                ]
+            }
+        ]
+    },
+    "getspecs": {
+        "name": "GetSpecs",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "keys",
+                        "type": "json"
+                    },
+                    {
+                        "name": "props",
+                        "type": "json"
                     }
                 ]
             }
@@ -3627,6 +3362,422 @@ export const uqSchema={
                 ]
             }
         ]
+    },
+    "atom": {
+        "name": "Atom",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 200
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "spec": {
+        "name": "Spec",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "sheet": {
+        "name": "Sheet",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "target",
+                "type": "id"
+            },
+            {
+                "name": "targetSpec",
+                "type": "id"
+            },
+            {
+                "name": "operator",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "detail": {
+        "name": "Detail",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "item",
+                "type": "id"
+            },
+            {
+                "name": "itemSpec",
+                "type": "id"
+            },
+            {
+                "name": "target",
+                "type": "id"
+            },
+            {
+                "name": "origin",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            },
+            {
+                "name": "amount",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            },
+            {
+                "name": "price",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "pend": {
+        "name": "Pend",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "detail",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "bizphrasetype": {
+        "name": "BizPhraseType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "any": 0,
+            "atom": 11,
+            "spec": 12,
+            "bud": 13,
+            "sheet": 101,
+            "main": 102,
+            "detail": 103,
+            "pend": 104,
+            "detailAct": 111,
+            "with": 151,
+            "pick": 161,
+            "role": 201,
+            "permit": 202,
+            "options": 301,
+            "tree": 401,
+            "tie": 501,
+            "moniker": 901,
+            "key": 1001,
+            "prop": 1011,
+            "optionsitem": 1031
+        }
+    },
+    "buddatatype": {
+        "name": "BudDataType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "none": 0,
+            "int": 11,
+            "atom": 12,
+            "radio": 13,
+            "check": 14,
+            "ID": 19,
+            "dec": 21,
+            "char": 31,
+            "str": 32,
+            "date": 41
+        }
+    },
+    "bizbudflag": {
+        "name": "BizBudFlag",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "index": 1
+        }
+    },
+    "getbizobjects": {
+        "name": "GetBizObjects",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "lang",
+                "type": "char",
+                "size": 10
+            },
+            {
+                "name": "culture",
+                "type": "char",
+                "size": 10
+            }
+        ],
+        "returns": [
+            {
+                "name": "objs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "source",
+                        "type": "text"
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            },
+            {
+                "name": "buds",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            }
+        ]
+    },
+    "ixbud": {
+        "name": "IxBud",
+        "type": "ix",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            }
+        ],
+        "ixx": false,
+        "hasSort": false,
+        "xType": 0
+    },
+    "bud": {
+        "name": "Bud",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "ext",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "ext",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "history": {
+        "name": "History",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "bud",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            },
+            {
+                "name": "ref",
+                "type": "id"
+            },
+            {
+                "name": "plusMinus",
+                "type": "tinyint"
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
     },
     "sumformulatype": {
         "name": "SumFormulaType",
@@ -4451,6 +4602,10 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "targetSpec",
+                        "type": "id"
+                    },
+                    {
                         "name": "operator",
                         "type": "id"
                     },
@@ -4510,6 +4665,10 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "targetSpec",
+                        "type": "id"
+                    },
+                    {
                         "name": "operator",
                         "type": "id"
                     },
@@ -4561,6 +4720,10 @@ export const uqSchema={
                     },
                     {
                         "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "itemSpec",
                         "type": "id"
                     },
                     {
@@ -4648,6 +4811,10 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "itemSpec",
+                        "type": "id"
+                    },
+                    {
                         "name": "target",
                         "type": "id"
                     },
@@ -4714,338 +4881,6 @@ export const uqSchema={
                     "name": "uom",
                     "type": "prop",
                     "dataType": "ID"
-                }
-            ]
-        },
-        "b": {
-            "name": "b",
-            "type": "atom",
-            "props": [
-                {
-                    "name": "a",
-                    "type": "prop",
-                    "dataType": "int"
-                },
-                {
-                    "name": "b",
-                    "type": "prop",
-                    "dataType": "char",
-                    "value": 1
-                },
-                {
-                    "name": "c",
-                    "type": "prop",
-                    "dataType": "char"
-                }
-            ],
-            "assigns": [
-                {
-                    "name": "流水",
-                    "type": "assign",
-                    "caption": "下一步",
-                    "dataType": "char",
-                    "value": "s2"
-                }
-            ]
-        },
-        "contact": {
-            "name": "contact",
-            "jName": "Contact",
-            "type": "atom",
-            "caption": "往来单位",
-            "props": [
-                {
-                    "name": "a",
-                    "type": "prop",
-                    "caption": "联系人",
-                    "dataType": "int"
-                },
-                {
-                    "name": "b",
-                    "type": "prop",
-                    "caption": "类型",
-                    "dataType": "radio",
-                    "items": [
-                        [
-                            "big",
-                            "大",
-                            1
-                        ],
-                        [
-                            "中",
-                            null,
-                            2
-                        ],
-                        [
-                            "small",
-                            "小",
-                            3
-                        ]
-                    ]
-                },
-                {
-                    "name": "c",
-                    "type": "prop",
-                    "caption": "可信度",
-                    "dataType": "radio",
-                    "items": [
-                        [
-                            "高",
-                            null,
-                            null
-                        ],
-                        [
-                            "中",
-                            null,
-                            null
-                        ],
-                        [
-                            "低",
-                            null,
-                            null
-                        ]
-                    ]
-                },
-                {
-                    "name": "d",
-                    "type": "prop",
-                    "caption": "产品种类",
-                    "dataType": "check",
-                    "items": [
-                        [
-                            "中药",
-                            null,
-                            null
-                        ],
-                        [
-                            "片剂",
-                            null,
-                            null
-                        ],
-                        [
-                            "水剂",
-                            null,
-                            null
-                        ],
-                        [
-                            "器械",
-                            null,
-                            null
-                        ]
-                    ]
-                }
-            ],
-            "states": [
-                {
-                    "name": "可用",
-                    "type": "atomstate"
-                },
-                {
-                    "name": "禁用",
-                    "type": "atomstate"
-                },
-                {
-                    "name": "经理级别可见",
-                    "type": "atomstate"
-                }
-            ]
-        },
-        "person": {
-            "name": "person",
-            "jName": "Person",
-            "type": "atom",
-            "caption": "人员"
-        },
-        "persongroup": {
-            "name": "persongroup",
-            "jName": "PersonGroup",
-            "type": "atom",
-            "caption": "小组"
-        },
-        "goods": {
-            "name": "goods",
-            "jName": "Goods",
-            "type": "atom",
-            "caption": "商品",
-            "props": [
-                {
-                    "name": "厂家",
-                    "type": "prop",
-                    "dataType": "atom",
-                    "atom": "contact"
-                }
-            ],
-            "assigns": [
-                {
-                    "name": "retailprice",
-                    "type": "assign",
-                    "caption": "零售价",
-                    "dataType": "dec"
-                }
-            ],
-            "uom": true
-        },
-        "toy": {
-            "name": "toy",
-            "jName": "Toy",
-            "type": "atom",
-            "caption": "玩具",
-            "base": "goods",
-            "uom": true
-        },
-        "batchvalid": {
-            "name": "batchvalid",
-            "jName": "BatchValid",
-            "type": "spec",
-            "caption": "批次",
-            "props": [
-                {
-                    "name": "效期",
-                    "type": "prop",
-                    "dataType": "date"
-                }
-            ],
-            "keys": [
-                {
-                    "name": "no",
-                    "type": "key",
-                    "caption": "批次",
-                    "dataType": "char"
-                }
-            ]
-        },
-        "batchvalid1": {
-            "name": "batchvalid1",
-            "jName": "BatchValid1",
-            "type": "spec",
-            "caption": "批次生成日期",
-            "keys": [
-                {
-                    "name": "no",
-                    "type": "key",
-                    "caption": "批次",
-                    "dataType": "char"
-                },
-                {
-                    "name": "效期",
-                    "type": "key",
-                    "dataType": "date"
-                }
-            ]
-        },
-        "medicine": {
-            "name": "medicine",
-            "jName": "Medicine",
-            "type": "atom",
-            "caption": "药品",
-            "props": [
-                {
-                    "name": "specification",
-                    "type": "prop",
-                    "caption": "规格",
-                    "dataType": "char"
-                }
-            ],
-            "base": "goods",
-            "spec": "batchvalid",
-            "uom": true
-        },
-        "medicinechinese": {
-            "name": "medicinechinese",
-            "jName": "MedicineChinese",
-            "type": "atom",
-            "caption": "中药",
-            "props": [
-                {
-                    "name": "approvalchin",
-                    "type": "prop",
-                    "caption": "中药批号",
-                    "dataType": "char"
-                }
-            ],
-            "base": "medicine",
-            "uom": true
-        },
-        "specialmedicinechinese": {
-            "name": "specialmedicinechinese",
-            "jName": "SpecialMedicineChinese",
-            "type": "atom",
-            "caption": "中药饮品",
-            "props": [
-                {
-                    "name": "approvalchin",
-                    "type": "prop",
-                    "caption": "中药批号",
-                    "dataType": "char"
-                }
-            ],
-            "base": "medicine",
-            "spec": "batchvalid1",
-            "uom": true
-        },
-        "medicaldevice": {
-            "name": "medicaldevice",
-            "jName": "MedicalDevice",
-            "type": "atom",
-            "caption": "医疗器械",
-            "base": "goods",
-            "uom": true
-        },
-        "specshoe": {
-            "name": "specshoe",
-            "jName": "SpecShoe",
-            "type": "spec",
-            "caption": "型号",
-            "keys": [
-                {
-                    "name": "size",
-                    "type": "key",
-                    "caption": "尺码",
-                    "dataType": "char"
-                },
-                {
-                    "name": "color",
-                    "type": "key",
-                    "caption": "颜色",
-                    "dataType": "char"
-                }
-            ]
-        },
-        "shoe": {
-            "name": "shoe",
-            "jName": "Shoe",
-            "type": "atom",
-            "caption": "鞋",
-            "base": "goods",
-            "spec": "specshoe",
-            "uom": true
-        },
-        "concactproduct": {
-            "name": "concactproduct",
-            "jName": "ConcactProduct",
-            "type": "tie",
-            "caption": "ConcactProduct"
-        },
-        "departmentmember": {
-            "name": "departmentmember",
-            "jName": "DepartmentMember",
-            "type": "tie",
-            "caption": "部门",
-            "props": [
-                {
-                    "name": "director",
-                    "type": "prop",
-                    "dataType": "int"
-                },
-                {
-                    "name": "senior",
-                    "type": "prop",
-                    "dataType": "int"
-                },
-                {
-                    "name": "junior",
-                    "type": "prop",
-                    "dataType": "int"
                 }
             ]
         },
@@ -5317,209 +5152,6 @@ export const uqSchema={
             "name": "检验员",
             "type": "role"
         },
-        "mainpurchase": {
-            "name": "mainpurchase",
-            "jName": "MainPurchase",
-            "type": "main",
-            "caption": "MainPurchase",
-            "target": {
-                "name": "target",
-                "type": "target",
-                "caption": "往来单位",
-                "dataType": "atom",
-                "atom": "contact"
-            }
-        },
-        "detailpurchase": {
-            "name": "detailpurchase",
-            "jName": "DetailPurchase",
-            "type": "detail",
-            "caption": "DetailPurchase",
-            "main": "mainpurchase",
-            "item": {
-                "name": "item",
-                "type": "item",
-                "caption": "商品",
-                "dataType": "atom",
-                "atom": "goods"
-            },
-            "value": {
-                "name": "value",
-                "type": "value",
-                "caption": "数量",
-                "dataType": "dec"
-            },
-            "amount": {
-                "name": "amount",
-                "type": "amount",
-                "caption": "金额",
-                "dataType": "dec"
-            },
-            "price": {
-                "name": "price",
-                "type": "price",
-                "caption": "单价",
-                "dataType": "dec"
-            }
-        },
-        "detailpurchasemedicine": {
-            "name": "detailpurchasemedicine",
-            "jName": "DetailPurchaseMedicine",
-            "type": "detail",
-            "caption": "采购药品明细",
-            "main": "mainpurchase",
-            "item": {
-                "name": "item",
-                "type": "item",
-                "caption": "药品",
-                "dataType": "atom",
-                "atom": "medicine"
-            }
-        },
-        "sheetpurchase": {
-            "name": "sheetpurchase",
-            "jName": "SheetPurchase",
-            "type": "sheet",
-            "caption": "采购单",
-            "main": "mainpurchase",
-            "acts": [
-                {
-                    "name": "$",
-                    "type": "detailAct",
-                    "detail": "detailpurchase"
-                }
-            ]
-        },
-        "mainstorein": {
-            "name": "mainstorein",
-            "jName": "MainStoreIn",
-            "type": "main",
-            "caption": "MainStoreIn"
-        },
-        "detailstorein": {
-            "name": "detailstorein",
-            "jName": "DetailStoreIn",
-            "type": "detail",
-            "caption": "DetailStoreIn",
-            "main": "mainstorein",
-            "pend": "pendstorein",
-            "item": {
-                "name": "item",
-                "type": "item",
-                "caption": "商品",
-                "dataType": "atom",
-                "atom": "goods"
-            }
-        },
-        "pendstorein": {
-            "name": "pendstorein",
-            "jName": "PendStoreIn",
-            "type": "pend",
-            "caption": "待入库"
-        },
-        "sheetstorein": {
-            "name": "sheetstorein",
-            "jName": "SheetStoreIn",
-            "type": "sheet",
-            "caption": "入库单",
-            "main": "mainstorein",
-            "acts": [
-                {
-                    "name": "$",
-                    "type": "detailAct",
-                    "detail": "detailstorein"
-                }
-            ]
-        },
-        "sheetstoreinmultistorage": {
-            "name": "sheetstoreinmultistorage",
-            "jName": "SheetStoreInMultiStorage",
-            "type": "sheet",
-            "caption": "入库单-分仓",
-            "main": "mainstorein",
-            "acts": [
-                {
-                    "name": "$",
-                    "type": "detailAct",
-                    "detail": "detailstorein"
-                }
-            ]
-        },
-        "mainsale": {
-            "name": "mainsale",
-            "jName": "MainSale",
-            "type": "main",
-            "caption": "MainSale"
-        },
-        "sheetsale": {
-            "name": "sheetsale",
-            "jName": "SheetSale",
-            "type": "sheet",
-            "caption": "销售单",
-            "main": "mainsale",
-            "acts": [
-                {
-                    "name": "$",
-                    "type": "detailAct",
-                    "detail": "detailsale"
-                }
-            ]
-        },
-        "detailsale": {
-            "name": "detailsale",
-            "jName": "DetailSale",
-            "type": "detail",
-            "caption": "DetailSale",
-            "main": "mainsale",
-            "item": {
-                "name": "item",
-                "type": "item",
-                "caption": "商品",
-                "dataType": "atom",
-                "atom": "goods"
-            }
-        },
-        "mainstoreout": {
-            "name": "mainstoreout",
-            "jName": "MainStoreOut",
-            "type": "main",
-            "caption": "MainStoreOut"
-        },
-        "detailstoreout": {
-            "name": "detailstoreout",
-            "jName": "DetailStoreOut",
-            "type": "detail",
-            "caption": "DetailStoreOut",
-            "main": "mainstoreout",
-            "pend": "pendstoreout",
-            "item": {
-                "name": "item",
-                "type": "item",
-                "caption": "商品",
-                "dataType": "atom",
-                "atom": "goods"
-            }
-        },
-        "pendstoreout": {
-            "name": "pendstoreout",
-            "jName": "PendStoreOut",
-            "type": "pend",
-            "caption": "待出库"
-        },
-        "sheetstoreout": {
-            "name": "sheetstoreout",
-            "jName": "SheetStoreOut",
-            "type": "sheet",
-            "caption": "出库单",
-            "main": "mainstoreout",
-            "acts": [
-                {
-                    "name": "$",
-                    "type": "detailAct",
-                    "detail": "detailstoreout"
-                }
-            ]
-        },
         "storage": {
             "name": "storage",
             "type": "moniker",
@@ -5629,17 +5261,6 @@ export const uqSchema={
 
 export enum EnumAtom {
 	$ = '$',
-	b = 'b',
-	Contact = 'contact',
-	Person = 'person',
-	PersonGroup = 'persongroup',
-	Goods = 'goods',
-	Toy = 'toy',
-	Medicine = 'medicine',
-	MedicineChinese = 'medicinechinese',
-	SpecialMedicineChinese = 'specialmedicinechinese',
-	MedicalDevice = 'medicaldevice',
-	Shoe = 'shoe',
 	Uom = 'uom',
 	UomI = 'uomi',
 	UomX = 'uomx',
@@ -5647,22 +5268,6 @@ export enum EnumAtom {
 	SumPersonPost = 'sumpersonpost',
 	SumGroupPost = 'sumgrouppost',
 	SumGroup = 'sumgroup',
-}
-
-export enum EnumSheet {
-	SheetPurchase = 'sheetpurchase',
-	SheetStoreIn = 'sheetstorein',
-	SheetStoreInMultiStorage = 'sheetstoreinmultistorage',
-	SheetSale = 'sheetsale',
-	SheetStoreOut = 'sheetstoreout',
-}
-
-export enum EnumDetail {
-	DetailPurchase = 'detailpurchase',
-	DetailPurchaseMedicine = 'detailpurchasemedicine',
-	DetailStoreIn = 'detailstorein',
-	DetailSale = 'detailsale',
-	DetailStoreOut = 'detailstoreout',
 }
 
 export enum EnumMoniker {

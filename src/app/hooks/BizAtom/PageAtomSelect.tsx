@@ -10,7 +10,7 @@ import { Atom, EnumAtom } from "uqs/UqDefault";
 
 export function useSelectAtom() {
     const { openModal } = useModal();
-    return async function (atomName: EnumAtom | string, buds?: string[]) {
+    return async function (atomName: EnumAtom | string, buds?: string[], viewTop?: any) {
         let ret = await openModal<AtomPhrase>(<PageAtomSelect atomName={atomName} buds={buds} />);
         return ret;
     }

@@ -1,7 +1,7 @@
 import { UqApp } from 'app/UqApp';
 import { UqExt } from 'uqs/UqDefault';
 import { Entity } from './Entity';
-import { EntityAtom, EntityBud, EntityPick, EntitySpec } from './EntityAtom';
+import { EntityAtom, EntityPick, EntitySpec } from './EntityAtom';
 import { EntityTree } from './EntityTree';
 import { EntityDetail, EntityMain, EntityPend, EntitySheet } from './EntitySheet';
 import { EntityMoniker } from './EntityMoniker';
@@ -12,9 +12,9 @@ import { EntityOptions } from './EntityOptions';
 export class Biz {
     readonly uqApp: UqApp;
     readonly uq: UqExt;
-    readonly entities: { [name: string]: Entity } = {};
     readonly roles: EntityRole[] = [];
     readonly permits: EntityPermit[] = [];
+    entities: { [name: string]: Entity } = {};
 
     constructor(uqApp: UqApp, bizSchema: any) {
         this.uqApp = uqApp;
@@ -50,7 +50,7 @@ export class Biz {
         return ret;
     }
 
-    private buildEntities(bizSchema: any) {
+    buildEntities(bizSchema: any) {
         const builders: { [type: string]: (name: string, type: string) => Entity } = {
             sheet: this.buildSheet,
             main: this.buildMain,
@@ -58,7 +58,6 @@ export class Biz {
             pend: this.buildPend,
             atom: this.buildAtom,
             spec: this.buildSpec,
-            bud: this.buildBud,
             pick: this.buildPick,
             options: this.buildOptions,
             permit: this.buildPermit,
@@ -67,7 +66,7 @@ export class Biz {
             tree: this.buildTree,
             tie: this.buildTie,
         }
-        // let { $biz } = uqSchema;
+        this.entities = {};
         let $biz = bizSchema;
         let arr: [Entity, any][] = [];
         for (let i in $biz) {
@@ -119,12 +118,12 @@ export class Biz {
         let bizEntity = new EntitySpec(this, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
-
-    private buildBud = (name: string, type: string): Entity => {
-        let bizEntity = new EntityBud(this, name, type);
-        return this.entities[bizEntity.name] = bizEntity;
-    }
-
+    /*
+        private buildBud = (name: string, type: string): Entity => {
+            let bizEntity = new EntityBud(this, name, type);
+            return this.entities[bizEntity.name] = bizEntity;
+        }
+    */
     private buildPick = (name: string, type: string): Entity => {
         let bizEntity = new EntityPick(this, name, type);
         return this.entities[bizEntity.name] = bizEntity;
