@@ -4,7 +4,8 @@ Biz Main MainPurchase {
 
 Pick PurchaseItem '捡取商品' {
     ATOM (Goods, Medicine, MedicineChinese);
-    Spec SpecUom;             -- 每一级spec都可以跳过去
+    -- 如果 atom.uom = true, 自动加上后面这一句。
+    -- Spec SpecUom;             -- 每一级spec都可以跳过去
     Spec SpecMedicine;
 };
 
@@ -28,7 +29,7 @@ Biz Detail DetailPurchaseMedicine ver 0.1 '采购药品明细' {
 
 Biz Sheet SheetPurchase '采购单 v5' {
     Main MainPurchase;
-    Detail DetailPurchase;
+    Detail DetailPurchase;      -- 第一detail是主，可以由pend，其它随后的只能手工输入
 }
 
 Biz Main MainStoreIn {
@@ -76,7 +77,7 @@ Biz Main MainStoreOut {
 Biz Detail DetailStoreOut ver 0.2 {
     Main MainStoreOut;
     Item '商品' ATOM Goods;       -- 某类Atom
-    Pend PendStoreOut;
+    Pend PendStoreOut; -- ON Sheet ON Target ON Item ON Row;
     ACT (detail ID) 
     -- From PendStoreOut 
     {

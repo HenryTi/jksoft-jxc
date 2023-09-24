@@ -8,6 +8,7 @@ import { EntityMoniker } from './EntityMoniker';
 import { EntityTie } from './EntityTie';
 import { EntityPermit, EntityRole } from './EntityPermit';
 import { EntityOptions } from './EntityOptions';
+import { from62 } from 'tonwa-com';
 
 export class Biz {
     readonly uqApp: UqApp;
@@ -36,6 +37,15 @@ export class Biz {
             }
         }
         return ret;
+    }
+
+    entityFrom62<T extends Entity>(base62: string): T {
+        let entityId = from62(base62);
+        for (let i in this.entities) {
+            let entity = this.entities[i];
+            if (entity.entityId === entityId) return entity as T;
+        }
+        return;
     }
 
     sheetEntities(): EntitySheet[] {

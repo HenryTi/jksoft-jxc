@@ -178,25 +178,26 @@ export function FormRowsView(props: FormRowsViewProps) {
 
 function FormRowView({ row, register, errors, labelClassName, clearErrors, setValue }: FormRowViewProps) {
     const { label, inputs } = row as FormBand;
-    if (inputs !== undefined) {
-        return <Band label={label} labelClassName={labelClassName}>{
-            inputs.map((v, index) => {
-                const { label, name, type, options, readOnly } = v;
-                if (type === 'checkbox') {
-                    return <label key={index} className="form-check-label me-3">
-                        <input className="form-check-input me-1"
-                            type="checkbox" readOnly={readOnly} {...register(name)} />
-                        {label ?? name}
-                    </label>;
-                }
-                else {
-                    let newOptions = registerOptions(type, label, options);
-                    <input className="form-check-input me-1" type={type} readOnly={readOnly} {...register(name, newOptions)} />
-                    { label ?? name }
-                }
-            })
-        }</Band>
-    }
+    if (register)
+        if (inputs !== undefined) {
+            return <Band label={label} labelClassName={labelClassName}>{
+                inputs.map((v, index) => {
+                    const { label, name, type, options, readOnly } = v;
+                    if (type === 'checkbox') {
+                        return <label key={index} className="form-check-label me-3">
+                            <input className="form-check-input me-1"
+                                type="checkbox" readOnly={readOnly} {...register(name)} />
+                            {label ?? name}
+                        </label>;
+                    }
+                    else {
+                        let newOptions = registerOptions(type, label, options);
+                        <input className="form-check-input me-1" type={type} readOnly={readOnly} {...register(name, newOptions)} />
+                        { label ?? name }
+                    }
+                })
+            }</Band>
+        }
 
     const { radios } = row as FormRadios;
     if (radios !== undefined) {
@@ -268,8 +269,10 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     const { name, type, options, readOnly, right } = row as FormInput;
     switch (type) {
         default:
+            const theLabel = options.required === true ?
+                <b className="text-primary">{label}</b> : label;
             let newOptions = registerOptions(type, label, options);
-            return <BandInput label={label} type={type} errors={errors}
+            return <BandInput label={theLabel} type={type} errors={errors}
                 labelClassName={labelClassName}
                 inputProps={register(name, newOptions)} defaultValue={options?.value}
                 right={right} />;

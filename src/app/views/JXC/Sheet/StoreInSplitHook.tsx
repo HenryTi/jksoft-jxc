@@ -68,7 +68,7 @@ function PageStoreIn() {
     }
     const useDetailReturn = useDetailSplit({ detail, selectTarget, selectPend });
     return <PageSheetAct {...{
-        sheet,
+        entitySheet: biz.entities[sheet] as EntitySheet,
         // caption,
         // targetCaption,
         // ViewTargetBand,

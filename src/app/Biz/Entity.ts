@@ -1,13 +1,27 @@
 import { BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
+import { EntityAtom, EntityPick } from "./EntityAtom";
+
+export interface Pickable {
+    caption: string;
+    atom: EntityAtom;
+    pick: EntityPick;
+}
+
+export function getPickableCaption(pickable: Pickable) {
+    let { caption, atom, pick } = pickable;
+    if (caption !== undefined) return caption;
+    if (atom !== undefined) {
+        return atom.caption ?? atom.name;
+    }
+    return pick.caption ?? pick.name;
+}
 
 export class Entity extends BizBase {
-    // get phrase() { return this.name; }
     readonly selfProps: BizBud[] = [];       // 本 Atom 定义的
     readonly buds: { [key: string]: BizBud; } = {};           // 包括全部继承来的
     readonly props: BizBud[] = [];
-    // readonly selfAssigns: BizBud[] = [];
-    // readonly assigns: BizBud[] = [];
+    entityId: number;
 
     protected override fromSwitch(i: string, val: any) {
         if (val === undefined) {
@@ -16,7 +30,7 @@ export class Entity extends BizBase {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'props': this.fromProps(val); break;
-            // case 'assigns': this.fromAssigns(val); break;
+            case 'entityId': this.entityId = val; break;
         }
     }
 
@@ -47,6 +61,18 @@ export class Entity extends BizBase {
             this.buds[name] = bud;
             this.buds[phrase] = bud;
             this.props.push(bud);
+        }
+    }
+
+    protected fromPickable(prop: any): Pickable {
+        const { entities } = this.biz;
+        const { caption, atom: atomName, pick: pickName } = prop;
+        const atom = atomName === undefined ? undefined : entities[atomName] as EntityAtom;
+        const pick = pickName === undefined ? undefined : entities[pickName] as EntityPick;
+        return {
+            caption,
+            atom,
+            pick,
         }
     }
 

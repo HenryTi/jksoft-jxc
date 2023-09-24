@@ -88,8 +88,10 @@ RETURNS ID {
     VAR phraseId ID;
     SET phraseId = (SELECT a.id 
         FROM BizPhrase as a 
-            JOIN BizPhrase as b ON b.id=a.base
-        WHERE a.name=phrase and b.base=$site);
+--            JOIN BizPhrase as b ON b.id=a.base
+        WHERE a.name=phrase
+--         and b.base=$site
+    );
     VAR budId ID = ID(Bud New KEY base=ifnull(base, $site), ext=phraseId);
     return budId;
 };

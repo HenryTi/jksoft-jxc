@@ -5,13 +5,14 @@ import { PageSheetAct, useSelectAtom } from "app/hooks";
 import { IDView } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { ViewAtom } from "app/hooks";
+import { EntitySheet } from "app/Biz";
 
 const sheet = 'SheetPurchase'.toLowerCase();
 //const targetCaption = '往来单位';
 
 function PagePurchaseEdit() {
     const uqApp = useUqApp();
-    const { uq } = uqApp;
+    const { uq, biz } = uqApp;
     const selectAtom = useSelectAtom();
     /*
     const targetCaption = sheet
@@ -37,7 +38,7 @@ function PagePurchaseEdit() {
     const detail = 'detailpurchase';
     const useDetailReturn = useDetailQPA({ detail });
     return <PageSheetAct {...{
-        sheet,
+        entitySheet: biz.entities[sheet] as EntitySheet,
         act: '$',
         // caption,
         // targetCaption,

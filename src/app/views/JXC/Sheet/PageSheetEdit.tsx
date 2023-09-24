@@ -1,25 +1,31 @@
 import { GSheet, SheetRow } from "app/tool";
-import { EnumAtom, Sheet } from "uqs/UqDefault";
+import { BizPhraseType, EnumAtom, Sheet } from "uqs/UqDefault";
 import { useDetailQPA } from "./Detail";
-import { PageSheetAct, useSelectAtom } from "app/hooks";
-import { IDView } from "tonwa-app";
+import { PageSheetAct, usePick, useSelectAtom } from "app/hooks";
+import { IDView, Page } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { ViewAtom } from "app/hooks";
 import { useParams } from "react-router-dom";
+import { EntitySheet } from "app/Biz";
 
-//const sheet = EnumSheet.SheetPurchase;
-//const targetCaption = '往来单位';
-
-export function PageEdit() {
+export function PageSheetEdit() {
     const uqApp = useUqApp();
-    const { uq } = uqApp;
+    const { uq, biz } = uqApp;
     const { sheet } = useParams();
-    const selectAtom = useSelectAtom();
+    // const selectAtom = useSelectAtom();
+    const entitySheet = biz.entityFrom62(sheet) as EntitySheet; // .entities[sheet] as EntitySheet;
+    const pick = usePick();
     function ViewTarget({ sheet }: { sheet: Sheet; }) {
         return <IDView id={sheet.target} uq={uq} Template={ViewAtom} />;
     }
     async function selectTarget() {
-        return await selectAtom('contact' as EnumAtom);
+        //return await selectAtom('contact' as EnumAtom);
+        let { main: entityMain } = entitySheet;
+        let retPick = await pick(entityMain.target);
+        if (retPick === undefined) return;
+        let { atom, spec } = retPick;
+        let { main } = await uq.GetAtom.query({ id: atom });
+        return main[0] as any;
     }
     async function loadStart(): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let targetAtom = await selectTarget();
@@ -30,8 +36,15 @@ export function PageEdit() {
     }
     const detail = 'detailpurchase';
     const useDetailReturn = useDetailQPA({ detail });
+    if (entitySheet === undefined || entitySheet.type !== 'sheet') {
+        return <Page header="unreachable">
+            <div className="m-3">
+                unreachable {sheet}
+            </div>
+        </Page>
+    }
     return <PageSheetAct {...{
-        sheet: sheet,
+        entitySheet,
         act: '$',
         // caption,
         // targetCaption,

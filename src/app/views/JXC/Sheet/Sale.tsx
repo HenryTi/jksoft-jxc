@@ -5,6 +5,7 @@ import { IDView } from "tonwa-app";
 import { useDetailQPA } from "./Detail";
 import { PageSheetAct, useSelectAtom } from "app/hooks";
 import { ViewAtom } from "app/hooks";
+import { EntitySheet } from "app/Biz";
 
 const sheet = 'SheetSale'.toLowerCase();
 // const caption = '销售单';
@@ -12,7 +13,7 @@ const sheet = 'SheetSale'.toLowerCase();
 
 function PageSaleEdit() {
     const uqApp = useUqApp();
-    const { uq } = uqApp;
+    const { uq, biz } = uqApp;
     const selectAtom = useSelectAtom();
     /*
     function ViewTargetBand({ sheet }: { sheet: Sheet; }) {
@@ -38,7 +39,7 @@ function PageSaleEdit() {
     const detail = 'detailsale';
     const useDetailReturn = useDetailQPA({ detail });
     return <PageSheetAct {...{
-        sheet,
+        entitySheet: biz.entities[sheet] as EntitySheet,
         // caption,
         // targetCaption,
         // ViewTargetBand,

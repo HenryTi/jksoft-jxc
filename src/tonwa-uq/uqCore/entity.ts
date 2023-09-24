@@ -263,6 +263,15 @@ export abstract class Entity {
         return ret.join('');
     }
 
+    packJson(data: any): string {
+        let ret: string | number[] = [];
+        let fields = this.fields;
+        if (fields !== undefined) {
+            for (let field of fields) ret.push(data[field.name]);
+        }
+        return JSON.stringify(ret);
+    }
+
     private escape(row: any, field: Field): any {
         let d = row[field.name];
         if (d === null) return '';

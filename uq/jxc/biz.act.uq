@@ -123,7 +123,7 @@ Biz Act DelAtom (
     -- WITH IxAtom i=base x=id DEL;
 }
 
-Biz Act SaveSpec ver 0.1 (
+Biz Ac SaveSpec ver 0.2 (
     spec CHAR(100),
     base ID,
     keys TEXT,              -- {"k1": v1, "k2": v2}
@@ -148,7 +148,8 @@ RETURNS ret (
     SET @keys=keys;
     SET @props=props;
     */
-    ExecSql sql to id USING $site, $user, base, keys, props;
+
+    ExecSql sql to id USING $site, $user, BudId(base, spec), keys, props;
     INTO ret SELECT id;
 }
 
@@ -187,6 +188,12 @@ RETURNS ret (
         }
         SET id=base;
     }
+    VAR atomPhrase Phrase = b.name
+        FROM Atom as a JOIN BizPhrase as b ON b.id=a.base
+        WHERE a.id=id;
+    INTO ret SELECT atomPhrase as prop, id as value;
+    INTO ret SELECT 'no' as prop, a.no as value FROM Atom as a WHERE a.id=id;
+    INTO ret SELECT 'ex' as prop, a.ex as value FROM Atom as a WHERE a.id=id;
 };
 
 Biz ACT SaveSheet (

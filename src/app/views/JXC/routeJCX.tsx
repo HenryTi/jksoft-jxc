@@ -1,17 +1,6 @@
-import React from "react";
 import { Route } from "react-router-dom";
 import { UqApp } from "app/UqApp";
-import { routePermits } from "./Permits";
-import { GSheet, GSpec, GSubject } from "app/tool";
-import { gPurchase } from "./Sheet/Purchase";
-import { gSale } from "./Sheet/Sale";
-import { gStoreIn } from "./Sheet/StoreInHook";
-import { gStoreOut } from "./Sheet/StoreOut";
-import { gSpecBatchValid, gSpecSheo } from "./Atom/Spec";
-import { EntitySpec } from "app/Biz/EntityAtom";
-import { pathSubjectHistory } from "app/hooks";
 import { routeMy } from "./My";
-import { EntitySheet } from "app/Biz";
 
 import { routeAtomCenter } from "./Atom";
 import { routeSheetCenter } from "./Sheet";

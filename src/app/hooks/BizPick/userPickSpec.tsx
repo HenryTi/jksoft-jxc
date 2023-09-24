@@ -36,7 +36,8 @@ export function usePickSpec() {
             }
         }
         else {
-            return await openModal(<PagePickSpec />);
+            let ret = await openModal(<PagePickSpec />);
+            return ret;
         }
 
         function PagePickSpec() {
@@ -46,8 +47,8 @@ export function usePickSpec() {
             const submitClassName: string = undefined;
 
             let formRows: FormRow[] = [
-                ...keys.map(budFormRow),
-                ...(props ?? []).map(budFormRow),
+                ...keys.map(v => budFormRow(v, true)),
+                ...(props ?? []).map(v => budFormRow(v)),
                 { type: 'submit', label: submitCaption, options: {}, className: submitClassName }
             ];
             const onSubmitForm = async (data: any) => {
@@ -67,8 +68,9 @@ export function usePickSpec() {
                     keys: JSON.stringify(keyValues),
                     props: JSON.stringify(propValues),
                 };
-                let { ret } = await uq.SaveSpec.submit(param);
-                let retSpec = Object.assign({ id: ret[0].id }, data);
+                let results = await uq.SaveSpec.submit(param);
+                const { id } = results;
+                let retSpec = Object.assign({ id }, data);
                 closeModal({
                     retSpec,
                     retViewTop: <div>

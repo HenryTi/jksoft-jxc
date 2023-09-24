@@ -8,10 +8,10 @@ import { Atom, Detail, Sheet } from "uqs/UqDefault";
 import { DetailWithOrigin, EditingRow, OriginDetail, SheetRow } from "app/tool";
 import { UseSheetDetailReturn } from "./useSheetDetail";
 import { useUqApp } from "app/UqApp";
-import { EntitySheet } from "app/Biz";
+import { EntitySheet, getPickableCaption } from "app/Biz";
 
 export interface PropsSheetAct {
-    sheet: string;
+    entitySheet: EntitySheet;
     act: string;
     // caption?: string;
     // targetCaption: string;
@@ -26,7 +26,7 @@ export interface PropsSheetAct {
 export function useSheetAct(options: PropsSheetAct) {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp
-    const { sheet: sheetName,
+    const { entitySheet,
         // ViewTargetBand, 
         ViewTarget,
         loadStart, act, sep, useDetailReturn } = options;
@@ -61,7 +61,7 @@ export function useSheetAct(options: PropsSheetAct) {
         });;
         return { atomSheet, atomRows, atomSubmitable }
     })());
-    const entitySheet = biz.entities[sheetName] as EntitySheet;
+    // const entitySheet = biz.entities[sheetName] as EntitySheet;
     const sheet = useAtomValue(atomSheet);
     const rows = useAtomValue(atomRows);
     const submitable = useAtomValue(atomSubmitable);
@@ -165,8 +165,7 @@ export function useSheetAct(options: PropsSheetAct) {
     let viewTargetBand: JSX.Element;
     const { target } = main;
     if (target !== undefined) {
-
-        viewTargetBand = <Band label={target.caption ?? target.name}>
+        viewTargetBand = <Band label={getPickableCaption(target)}>
             <ViewTarget sheet={sheet} />
         </Band>;
     }

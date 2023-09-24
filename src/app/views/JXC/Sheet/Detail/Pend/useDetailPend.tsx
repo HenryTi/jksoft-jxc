@@ -1,7 +1,7 @@
 import { InputNumber } from "app/coms";
 import { EditingRow, SheetRow } from 'app/tool';
 import { useAtomValue } from "jotai";
-import { ViewAtomSpec } from "../../ViewAUS";
+// import { ViewAtomSpec } from "../../ViewAUS";
 import { OptionsUseSheetDetail, UpdateRow, UseSheetDetailReturn } from "app/hooks";
 import { ViewAtom } from "app/hooks";
 
@@ -38,9 +38,9 @@ export function useDetailPend(options: OptionsUseDetailPend): UseSheetDetailRetu
                 await updateRow(editingRow, [row])
             }
         }
+        // <ViewAtomSpec id={item} className={cnCol} />
         return <div className="container">
             <div className="row">
-                <ViewAtomSpec id={item} className={cnCol} />
                 <div className={" text-end " + cnCol}>
                     <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount?.toFixed(4)}</span>
                     <br />
@@ -53,7 +53,7 @@ export function useDetailPend(options: OptionsUseDetailPend): UseSheetDetailRetu
         </div>;
     }
     return {
-        detail,
+        detail: detail as any,
         ViewItemTemplate: ViewAtom,
         ViewRow: ViewDetailPend,
         addRow,

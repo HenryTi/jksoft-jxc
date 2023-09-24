@@ -146,4 +146,17 @@ export class EntityPick extends Entity {
             case 'specs': this.specs = fromArr(val); break;
         }
     }
+
+    scan() {
+        super.scan();
+        // 如果前面 atom.uom = true, 后面自动加上 SpecUom。
+        let len = this.specs.length;
+        for (let i = 0; i < len; i++) {
+            let spec = this.specs[i];
+            if (spec.name === 'specuom') {
+                this.specs.splice(i, 1);
+                break;
+            }
+        }
+    }
 }

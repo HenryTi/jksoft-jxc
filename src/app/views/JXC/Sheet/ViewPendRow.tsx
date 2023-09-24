@@ -1,4 +1,4 @@
-import { ViewAtomSpec, ViewUom } from "./ViewAUS";
+// import { ViewAtomSpec, ViewUom } from "./ViewAUS";
 import { MutedSmall } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { PropsViewPendRow } from "app/hooks";
@@ -11,6 +11,17 @@ export function ViewPendRow({ value: pendItem, onItemSelect, selectedColl, coll 
     const entitySheet = uqApp.biz.entities[sheet];
     let ed = coll[pend];
     let selected = ed !== undefined;
+
+    function ViewAtomSpec({ id, className }: { id: number; className: string; }) {
+        return <div>
+            ViewAtomSpec {id} {className}
+        </div>
+    }
+    function ViewUom({ id }: { id: number; }) {
+        return <div>
+            ViewUom({id})
+        </div>
+    }
 
     return <div className="form-check mx-3 my-2 d-flex">
         <input type="checkbox" className="form-check-input me-3"

@@ -1,4 +1,4 @@
-import { UqExt } from "uqs/UqDefault";
+import { BizPhraseType, UqExt } from "uqs/UqDefault";
 import { Biz } from "./Biz";
 
 export class BizBase {
@@ -8,6 +8,7 @@ export class BizBase {
     readonly type: string;
     phrase: string;
     caption: string;
+    bizPhraseType: BizPhraseType;
 
     constructor(biz: Biz, name: string, type: string) {
         this.biz = biz;

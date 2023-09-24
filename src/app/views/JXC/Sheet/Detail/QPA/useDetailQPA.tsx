@@ -1,14 +1,14 @@
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { OptionsUseSheetDetail, UpdateRow, usePick, useSelectAtomSpec } from "app/hooks";
+import { OptionsUseSheetDetail, UpdateRow, ViewSpec, usePick, useSelectAtomSpec } from "app/hooks";
 import { AtomSpec, AtomPhrase, EditingRow, SheetRow, Spec } from "app/tool";
 import { Page, uqAppModal, useModal } from "tonwa-app";
 import { Detail, EnumAtom } from "uqs/UqDefault";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useUqApp } from "app/UqApp";
-import { FA } from "tonwa-com";
+import { FA, SpinnerSmall, to62 } from "tonwa-com";
 import { useAtomValue } from "jotai";
-import { ViewAUSAtom, ViewAtomSpec, ViewUom, ViewSpec, ViewSpecWithLabel } from "../../ViewAUS";
+// import { ViewAUSAtom, ViewAtomSpec, ViewUom, ViewSpec, ViewSpecWithLabel } from "../../ViewAUS";
 import { UseSheetDetailReturn } from "app/hooks";
 import { ViewAtom } from "app/hooks";
 import { EntityDetail } from "app/Biz/EntitySheet";
@@ -22,16 +22,18 @@ export interface OptionsUseDetailQPA extends OptionsUseSheetDetail {
 
 export function useDetailQPA({ detail: detailName }: OptionsUseDetailQPA): UseSheetDetailReturn {
     const uqApp = useUqApp();
-    const saveAtomSpec = useSaveAtomSpec();
-    const selectAtomSpec = useSelectAtomSpec();
+    // const saveAtomSpec = useSaveAtomSpec();
+    // const selectAtomSpec = useSelectAtomSpec();
     const { openModal, closeModal } = useModal();
     const pick = usePick();
-    const detail = uqApp.biz.entities[detailName] as EntityDetail;
+    const entityDetail = uqApp.biz.entities[detailName] as EntityDetail;
     async function addRow(editingRows: EditingRow[]): Promise<SheetRow[]> {
-        let pickValue = await pick(detail.item);
-        alert(JSON.stringify(pickValue));
-        let atomSpec = await selectAtomSpec('goods' as EnumAtom);
-        if (atomSpec === undefined) return;
+        let pickValue = await pick(entityDetail.item);
+        if (pickValue === undefined) return;
+        // alert(JSON.stringify(pickValue));
+        // let atomSpec = await selectAtomSpec('goods' as EnumAtom);
+        // if (atomSpec === undefined) return;
+        /*
         let { atom, uom } = atomSpec;
         if (!uom.id) {
             await openModal(<Page header="提示">
@@ -53,9 +55,12 @@ export function useDetailQPA({ detail: detailName }: OptionsUseDetailQPA): UseSh
         }
         let item = await saveAtomSpec(atomSpec);
         atomSpec.id = item;
+        */
+        const { spec } = pickValue;
+        let item = spec;
         let editingRow = editingRowFromAtom(item);
         if (editingRow === undefined) return;
-        let ret = await openModal(<PageDetail header={'新增明细'} editingRow={editingRow} />);
+        let ret = await openModal(<PageDetail header={'新增明细'} editingRow={editingRow} entityDetail={entityDetail} />);
         if (ret === undefined) return [];
         return [ret];
     }
@@ -71,13 +76,13 @@ export function useDetailQPA({ detail: detailName }: OptionsUseDetailQPA): UseSh
 
     async function editRow(editingRow: EditingRow, updateRow: UpdateRow): Promise<void> {
         const { openModal } = uqAppModal(uqApp);
-        let ret = await openModal<SheetRow>(<PageDetail header="修改明细" editingRow={editingRow} />);
+        let ret = await openModal<SheetRow>(<PageDetail header="修改明细" editingRow={editingRow} entityDetail={entityDetail} />);
         if (ret === undefined) return;
         await updateRow(editingRow, ret.details);
     }
 
     return {
-        detail,
+        detail: entityDetail,
         ViewItemTemplate: ViewAtom,
         ViewRow: ViewDetailQPA,
         addRow,
@@ -123,7 +128,11 @@ function useSaveAtomSpec() {
     return saveAtomSpec;
 }
 
-function PageDetail({ header, editingRow }: { header?: string; editingRow?: EditingRow; }): JSX.Element {
+function PageDetail({ header, editingRow, entityDetail }: {
+    header?: string;
+    editingRow?: EditingRow;
+    entityDetail: EntityDetail;
+}): JSX.Element {
     const caption = '明细';
     const itemCaption = '商品';
     editingRow = editingRow ?? new EditingRow(undefined, undefined);
@@ -211,20 +220,18 @@ function PageDetail({ header, editingRow }: { header?: string; editingRow?: Edit
         }
         closeModal(ret);
     }
-    const ViewItemTop = (): JSX.Element => {
-        return <div className="container">
-            <Band label={itemCaption}>
-                <ViewAUSAtom id={item} />
-            </Band>
-            <Band label="单位">
-                <ViewUom id={item} />
+
+    let { entityId } = entityDetail;
+    let base62 = to62(entityId);
+    return <Page header={header ?? caption}>
+        <div className="pt-3 tonwa-bg-gray-2 mb-3 container">
+            <div>entityId:{entityId} base62: {base62}</div>
+            <Band label="商品">
+                <div className="">
+                    <ViewSpec id={item} />
+                </div>
             </Band>
         </div>
-    }
-    return <Page header={header ?? caption}>
-        <div className="mt-3"></div>
-        <ViewItemTop />
-        <ViewSpecWithLabel id={item} />
         <form className="container" onSubmit={handleSubmit(onSubmit)}>
             <FormRowsView rows={formRows} register={register} errors={errors} />
         </form>
@@ -243,12 +250,12 @@ function ViewDetailQPA({ editingRow }: { editingRow: EditingRow; updateRow: Upda
     const { item, value, price: price, amount: amount } = details[0];
     return <div className="container">
         <div className="row">
-            <ViewAtomSpec id={item} className={cnCol} />
+            <ViewSpec id={item} />
             <div className={cnCol + ' d-flex justify-content-end align-items-end'}>
                 <div className="text-end">
                     <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount?.toFixed(4)}</span>
                     <br />
-                    <small>数量:</small> <b>{value}</b> <span><ViewUom id={item} /></span>
+                    <small>数量:</small> <b>{value}</b>
                 </div>
                 <FA name="pencil-square-o" className="ms-3 text-info" />
             </div>
