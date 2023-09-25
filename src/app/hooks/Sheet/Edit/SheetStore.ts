@@ -2,39 +2,20 @@ import { EntityAtom, EntitySheet, EntitySpec, EntityDetail, EntityMain, Biz } fr
 import { useUqApp } from "app/UqApp";
 import { PickFunc } from "../../BizPick";
 import { UseQueryOptions } from "app/tool";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { Atom, UqExt } from "uqs/UqDefault";
-import { Atom as JotaiAtom, atom } from "jotai";
-import { getAtomValue, setAtomValue } from "tonwa-com";
+import { UqExt } from "uqs/UqDefault";
+import { atom } from "jotai";
+import { from62, getAtomValue, setAtomValue } from "tonwa-com";
 
-let ___keyId = 0;
-function keyId() {
-    return ++___keyId;
-}
-
-interface SpecAtom {
-    entity: EntityAtom;
-    value: Atom;
-}
-interface SpecItem {
-    entity: EntitySpec;
-    id: number;
-    keys: (string | number)[];
-    props: (string | number)[];
-}
-
-interface SpecItems {
-    atom: SpecAtom;
-    specs: SpecItem[];
-}
 
 abstract class BaseObject {
+    private static __keyId = 0;
     readonly keyId: number;
     readonly sheetStore: SheetStore;
     constructor(sheetStore: SheetStore) {
-        this.keyId = keyId();
+        this.keyId = ++BaseObject.__keyId;
         this.sheetStore = sheetStore;
     }
 }
@@ -42,17 +23,55 @@ abstract class BaseObject {
 export class Main extends BaseObject {
     readonly entityMain: EntityMain;
     readonly _target = atom<number>(0);         // _ 开始，表示 atom
+    readonly _id = atom<number>(0);
+    get id() { return getAtomValue(this._id); }
+    no: string;
 
     constructor(sheetStore: SheetStore) {
         super(sheetStore);
         this.entityMain = sheetStore.entitySheet.main;
     }
 
+    async start(pick: PickFunc) {
+        let { id } = this;
+        if (id > 0) return;
+        await this.pickTarget(pick);
+        let target = getAtomValue(this._target);
+        if (target > 0) {
+            return await this.createNew();
+        }
+    }
+
     async pickTarget(pick: PickFunc) {
         const { target } = this.entityMain;
         if (target === undefined) return;
-        let { spec } = await pick(target);
+        let ret = await pick(target);
+        if (ret === undefined) return;
+        let { spec } = ret;
         setAtomValue(this._target, spec);
+    }
+
+    async createNew() {
+        const { uq, entitySheet } = this.sheetStore;
+        // let no = await uq.IDNO({ ID: uq.Sheet });
+        let target = getAtomValue(this._target);
+        let ret = await uq.SaveSheet.submit({
+            sheet: entitySheet.phrase,
+            no: undefined,
+            target,
+            value: undefined,
+        });
+        let { id, no } = ret;
+        setAtomValue(this._id, id);
+        this.no = no;
+        return Object.assign(ret, { target });
+    }
+
+    setValue(value: any) {
+        const { id, no, target } = value;
+        this.no = no;
+        setAtomValue(this._id, id);
+        setAtomValue(this._target, target);
     }
 }
 
@@ -68,60 +87,165 @@ abstract class DetailBase extends BaseObject {
 }
 
 export class DetailMain extends DetailBase {
-    readonly submitable = atom(get => {
-        return get(this.sections).length > 0;
-    });
-    readonly sections = atom<DetailSection[]>([]);
+    readonly _sections = atom<DetailSection[]>([]);
     origin: {
         main: Main;
         rows: DetailRow[];
     }
     pending: DetailRow[];
 
-    async addRow() {
-        let section = new DetailSection(this.sheetStore);
-        section.addRow('bbbb');
-        let sections = getAtomValue(this.sections);
-        setAtomValue(this.sections, [...sections, section]);
+    async addSection(section: DetailSection) {
+        let sections = getAtomValue(this._sections);
+        if (sections.findIndex(v => v === section) >= 0) {
+            sections = [...sections];
+        }
+        else {
+            sections = [...sections, section];
+        }
+        setAtomValue(this._sections, sections);
+    }
+
+    async delEmptySection(section: DetailSection) {
+        if (section.isEmpty === false) return;
+        let sections = getAtomValue(this._sections);
+        let index = sections.findIndex(v => v === section);
+        if (index >= 0) {
+            sections.splice(index, 1);
+            setAtomValue(this._sections, [...sections]);
+        }
+    }
+
+    setValue(details: any[]) {
+        let sections: DetailSection[] = [];
+        for (let d of details) {
+            let section = new DetailSection(this);
+            sections.push(section);
+            let row = new DetailRow(section);
+            section.addRow(row);
+            row.setValue(d);
+        }
+        setAtomValue(this._sections, sections);
     }
 }
 
 // 多余的Detail，只能手工输入
 export class DetailEx extends DetailBase {
-    readonly submitable = atom(get => true);
 }
 
 export class DetailRow extends BaseObject {
-    value: string;
+    readonly section: DetailSection;
+    id: number;
+    item: number;
+    target: number;
+    value: number;
+    price: number;
+    amount: number;
+    origin: number;
+    pendFrom: number;
+
+    constructor(section: DetailSection) {
+        super(section.sheetStore);
+        this.section = section;
+    }
+
+    private async save() {
+        const { uq, main } = this.sheetStore;
+        const { id } = await uq.SaveDetail.submit({
+            base: main.id,
+            id: this.id,
+            item: this.item,
+            target: this.target,
+            value: this.value,
+            price: this.price,
+            amount: this.amount,
+            origin: this.origin,
+            pendFrom: this.pendFrom,
+        });
+        this.id = id;
+    }
+
+    async addToSection() {
+        await this.save();
+        this.section.addRow(this);
+    }
+
+    async delFromSection() {
+        const { uq } = this.sheetStore;
+        await uq.DeleteDetail.submit({ id: this.id });
+        this.section.delRow(this);
+    }
+
+    async changed() {
+        await this.save();
+        this.section.rowChanged();
+    }
+
+    setValue(row: any) {
+        const { id, item, target, value, price, amount, origin, pendFrom } = row;
+        this.id = id;
+        this.item = item;
+        this.target = target;
+        this.value = value;
+        this.price = price;
+        this.amount = amount;
+        this.origin = origin;
+        this.pendFrom = pendFrom;
+    }
 }
 
 export class DetailSection extends BaseObject {
-    readonly rows = atom<DetailRow[]>([]);
+    readonly detail: DetailMain;
+    readonly _rows = atom<DetailRow[]>([]);
 
-    addRow(value: string) {
-        let rows = getAtomValue(this.rows);
-        let row = new DetailRow(this.sheetStore);;
-        row.value = value;
-        setAtomValue(this.rows, [...rows, row]);
+    constructor(detailMain: DetailMain) {
+        super(detailMain.sheetStore);
+        this.detail = detailMain;
+    }
+
+    get isEmpty() {
+        let rows = getAtomValue(this._rows);
+        return rows.length === 0;
+    }
+
+    addRow(row: DetailRow) {
+        let rows = getAtomValue(this._rows);
+        setAtomValue(this._rows, [...rows, row]);
+        this.detail.addSection(this)
+    }
+
+    delRow(row: DetailRow) {
+        let rows = getAtomValue(this._rows);
+        let index = rows.findIndex(v => v === row);
+        if (index >= 0) {
+            rows.splice(index, 1);
+            setAtomValue(this._rows, [...rows]);
+        }
+        this.detail.delEmptySection(this);
+    }
+
+    rowChanged() {
+        let rows = getAtomValue(this._rows);
+        setAtomValue(this._rows, [...rows]);
     }
 }
 
 export class SheetStore {
-    private readonly uq: UqExt;
-    private readonly biz: Biz;
+    readonly uq: UqExt;
+    readonly biz: Biz;
     readonly entitySheet: EntitySheet;
     readonly main: Main;
     readonly detail: DetailMain;
     readonly detailExs: DetailEx[] = [];
     readonly caption: string;
-    id: number;
 
     constructor(uq: UqExt, biz: Biz, entitySheet: EntitySheet, id: number) {
         this.uq = uq;
         this.biz = biz;
         this.entitySheet = entitySheet;
-        this.id = id;
         this.main = new Main(this);
+        if (id > 0) {
+            setAtomValue(this.main._id, id);
+        }
         const { details } = this.entitySheet;
         let len = details.length;
         if (len > 0) {
@@ -136,26 +260,41 @@ export class SheetStore {
     }
 
     async load() {
-        if (this.id === undefined) return;
+        let { id } = this.main;
+        if (id === undefined || id === 0) return;
+        let { main, details } = await this.uq.GetSheet.query({ id, budNames: undefined });
+        this.main.setValue(main[0]);
+        this.detail.setValue(details);
+    }
+
+    async discard() {
+        // 作废草稿单据
+        let { id } = this.main;
+        if (id >= 0) {
+            await this.uq.RemoveDraft.submit({ id });
+            return id;
+        }
     }
 
     async start() {
 
     }
-
-
 }
 
 export function useSheetStore() {
     const { uq, biz } = useUqApp();
     const { sheet: entityId62, id } = useParams();
     const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
-    const { current: sheetStore } = useRef(new SheetStore(
-        uq,
-        biz,
-        entitySheet,
-        id === undefined ? undefined : Number(id)
-    ));
-    useQuery([entityId62, id], async () => sheetStore.load(), UseQueryOptions);
-    return sheetStore;
+    const sheetId = from62(id);
+    const refSheetStore = useRef<SheetStore>();
+    if (refSheetStore.current === undefined) {
+        refSheetStore.current = new SheetStore(
+            uq,
+            biz,
+            entitySheet,
+            id === undefined ? undefined : sheetId
+        );
+    }
+    useQuery([entityId62, id], async () => refSheetStore.current.load(), UseQueryOptions);
+    return refSheetStore.current;
 }

@@ -205,21 +205,25 @@ Biz ACT SaveSheet (
 )
 RETURNS ret (
     id ID,
+    no NO,
 ) {
-    VAR base ID = SiteBudId(sheet);
+    VAR base ID = PhraseId(sheet);
     VAR me ID = Me();
 
+    IF no IS NULL {
+        SET no = NO(Sheet);
+    }
     VAR sheetId ID;
     WITH Sheet as a ID to sheetId Key(base, no) 
         SET a.target=target, a.operator=me, a.value=value;
 
     WITH IxMy I=me X=sheetId;
 
-    INTO ret SELECT sheetId as id;
+    INTO ret SELECT sheetId as id, no;
 };
 
 Biz ACT SaveDetail (
-    base ID,
+    base ID,                -- sheet id
     id ID,
     item ID,                -- 计量对象。比如：商品不同包装或者批次
     target ID,              -- 操作对象。比如：客户，仓库，等
@@ -228,10 +232,12 @@ Biz ACT SaveDetail (
     price VALUE,
     amount VALUE,
     pendFrom ID,
+    /* 暂时先不处理附加属性
     arr props (
         prop PHRASE,
         propValue VALUE,
     ),
+    */
 ) 
 RETURNS ret (
     id ID,
@@ -243,16 +249,32 @@ RETURNS ret (
     }
     IF id IS NULL {
         SET id = ID(Detail New KEY base=base);
-        WITH Detail ID=id SET base=base, item=item, target=target, origin=origin, value=value, price=price, amount=amount;
     }
-    ELSE {
-        WITH Detail ID=id SET item=item, target=target, origin=origin, value=value, price=price, amount=amount;
-    }
+    WITH Detail ID=id SET item=item
+        , target=target
+        , origin=origin
+        , value=value, price=price, amount=amount;
     IF pendFrom IS NOT NULL {
         WITH DetailPend as a ID=id SET a.pendFrom=pendFrom;
     }
     INTO ret SELECT id;
 };
+
+Biz AC DeleteDetail (
+    id ID,
+) {
+    VAR me ID = Me();
+    IF NOT EXISTS(
+        SELECT a.id
+            FROM Detail as a
+                JOIN IxMy as b ON b.x=a.base
+            WHERE b.i=me
+    ) {
+        -- 如果base sheet没有在我的draft里面，不能写入明细。这是安全保证
+        RETURN;
+    }
+    WITH Detail ID=id DEL;
+}
 
 Biz ACT RemoveDraft (
     id ID,
@@ -261,18 +283,19 @@ Biz ACT RemoveDraft (
     WITH IxMy I=me X=id DEL;
 };
 
-Biz QUERY GetMyDrafts ver 0.1 (
+Biz QUERY GetMyDrafts ver 0.2 (
 )
 PAGE (
     * Sheet DESC,
-    phrase CHAR(200),
+    phrase Phrase,
 ) {
     VAR me ID = Me();
     -- 获取我正在录入的单据
-    PAGE SELECT * b, BudPhrase(b.base) as phrase
+    PAGE SELECT * b, c.name as phrase
         FROM IxMy as a
             JOIN Sheet as b ON a.x=b.id
-        WHERE b.id<$pageStart AND a.i=me
+            JOIN BizPhrase as c ON c.id=b.base
+        WHERE b.id<$pageStart AND a.i=me AND c.base=$site
         ORDER BY b.id DESC
         LIMIT $pageSize;
 };
@@ -466,12 +489,13 @@ RETURNS budsStr (
         WHERE LOCATE(d.name, budNames)>0;
 };
 
-Biz Query GetSheet (
+Biz Query GetSheet ver 0.1 (
     id ID,
     budNames CHAR(200),  -- \t separated phrases of the assigns
 )
 RETURNS main (
     * SHEET,
+    phrase Phrase,
 )
 RETURNS details (
     * Detail,
@@ -491,7 +515,7 @@ RETURNS buds (
     phrase Phrase,
     value VALUE,
 ) {
-    INTO main SELECT * a
+    INTO main SELECT * a, b.name as phrase
         FROM Sheet as a
             JOIN BizPhrase as b ON b.id=a.base
         WHERE a.id=id AND b.base=$site;

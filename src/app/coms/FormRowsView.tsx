@@ -14,6 +14,7 @@ export interface BandProps {
     label?: string | JSX.Element;
     labelClassName?: string;
     labelSize?: number;
+    className?: string;
     children: ReactNode;
 }
 
@@ -78,9 +79,9 @@ export function BandInput(props: BandInputProps) {
     </Band>
 }
 
-export function Band({ label, labelClassName, children }: BandProps) {
+export function Band({ label, labelClassName, children, className }: BandProps) {
     labelClassName = labelClassName ?? 'form-label col-sm-2 col-3 text-end';
-    return <div className={label === null ? 'd-none' : 'mb-3 row'}>
+    return <div className={label === null ? 'd-none' : 'row ' + (className ?? 'mb-3')}>
         <label className={labelClassName}>{label}</label>
         <div className={'col'} >
             {children}

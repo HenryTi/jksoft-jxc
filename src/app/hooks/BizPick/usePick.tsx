@@ -10,7 +10,6 @@ export type PickFunc = (pickable: Pickable) => Promise<{ atom: number; spec: num
 
 export function usePick() {
     const { biz } = useUqApp();
-    const { openModal, closeModal } = useModal();
     const pickAtom = usePickAtom();
     const pickSpec = usePickSpec();
     async function pick(pickable: Pickable): Promise<{ atom: number; spec: number; }> {

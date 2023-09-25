@@ -29,7 +29,7 @@ ID Detail (
     KEY base ID,                -- SheetPurchase or SheetSale
     KEY id,
     item ID,                -- 计量对象。比如：商品不同包装或者批次
-    target ID,              -- 操作对象。比如：客户，仓库，等 意义上等同于Sheet主表target
+    target ID,              -- 操作对象。仓库=主表target。一货分仓，需要不同的target
     origin ID,              -- 源单
     value VALUE,
     amount VALUE,

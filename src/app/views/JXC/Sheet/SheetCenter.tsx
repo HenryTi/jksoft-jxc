@@ -1,17 +1,23 @@
 import { UqApp, useUqApp } from "app/UqApp";
-import { BI } from "app/coms";
+import { BI, PageQueryMore } from "app/coms";
 import { Link, Route } from "react-router-dom";
-import { Page } from "tonwa-app";
+import { IDView, Page } from "tonwa-app";
 import { EntitySheet } from "app/Biz";
-import { List, to62 } from "tonwa-com";
+import { FA, List, to62 } from "tonwa-com";
 import { PageSheetEdit } from "app/hooks";
+import { useCallback } from "react";
+import { Atom, Sheet } from "uqs/UqDefault";
 // import { PageSheetEdit } from "./PageSheetEdit";
 
 function PageSheetCenter() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const sheetEntities = biz.sheetEntities();
-    function ViewSheetItem({ value }: { value: EntitySheet; }) {
+    const query = useCallback(async (param: any, pageStart: any, pageSize: number) => {
+        let { $page } = await uq.GetMyDrafts.page({}, pageStart, pageSize);
+        return $page;
+    }, []);
+    function ViewSheetType({ value }: { value: EntitySheet; }) {
         let { caption, name, entityId } = value;
         return <Link
             to={`/sheet/${to62(entityId)}`}
@@ -22,9 +28,42 @@ function PageSheetCenter() {
             </div>
         </Link>
     }
-    return <Page header="单据中心">
-        <List items={sheetEntities} ViewItem={ViewSheetItem} />
-    </Page>;
+    function ViewSheetItem({ value }: { value: (Sheet & { phrase: string; }) }) {
+        const { id, no, phrase, target } = value;
+        let entitySheet = biz.entities[phrase];
+        let sheetCaption: string;
+        if (entitySheet === undefined) {
+            sheetCaption = phrase;
+        }
+        else {
+            const { caption, name } = entitySheet;
+            sheetCaption = caption ?? name;
+        }
+        function ViewTarget({ value }: { value: Atom; }) {
+            return <span>{value.ex}</span>;
+        }
+        return <Link to={`/sheet/${to62(entitySheet.entityId)}/${to62(id)}`}>
+            <div className="px-3 py-3">
+                <FA name="file" className="me-3 text-danger" />
+                <span className="d-inline-block w-min-8c">{sheetCaption}</span>
+                <span className="d-inline-block w-min-10c">{no}</span>
+                <span className="d-inline-block w-min-8c">
+                    <IDView uq={uq} id={target} Template={ViewTarget} />
+                </span>
+            </div>
+        </Link>;
+    }
+    return <PageQueryMore header="单据中心"
+        query={query}
+        param={{}}
+        sortField={'id'}
+        ViewItem={ViewSheetItem}
+        none={<div className="small text-secondary p-3">[无]</div>}
+    >
+        <List items={sheetEntities} ViewItem={ViewSheetType} />
+
+        <div className="tonwa-bg-gray-2 small text-secondary mt-4 px-3 pt-2 pb-1">单据草稿</div>
+    </PageQueryMore>;
 }
 
 

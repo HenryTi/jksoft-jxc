@@ -1,5 +1,5 @@
 
-Biz Query GetPendSheetFromNo (
+Biz Query GetPendSheetFromNo ver 0.1 (
     pend Phrase, 
     key CHAR(100),              -- sheet no
 )
@@ -18,7 +18,7 @@ PAGE (
         LIMIT $pageSize;
 };
 
-Biz Query GetPendSheetFromTarget (
+Biz Query GetPendSheetFromTarget ver 0.1 (
     pend Phrase, 
     key CHAR(100),              -- target no or ex
 )

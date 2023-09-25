@@ -54,20 +54,20 @@ IX DailyHistory (
     value VALUE,
 );
 
-FUNC SiteBudId ver 0.1 (
+FUNC SiteBudId ver 0.4 (
     phrase CHAR(100),
 ) 
 RETURNS ID {
     VAR phraseId ID;
     SET phraseId = (SELECT a.id 
         FROM BizPhrase as a 
-            JOIN BizPhrase as b ON b.id=a.base
-        WHERE a.name=phrase and b.base=$site);
+--            JOIN BizPhrase as b ON b.id=a.base
+        WHERE a.name=phrase and a.base=$site);
     VAR siteBud ID = ID(Bud New KEY base=$site, ext=phraseId);
     return siteBud;
 };
 
-FUNC BudPhrase ver 0.3 (
+FUNC BudPhrase ver 0.4 (
     SiteBudId ID
 ) 
 RETURNS CHAR(200) {
