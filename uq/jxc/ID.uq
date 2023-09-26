@@ -26,11 +26,11 @@ ID Sheet (
 -- 所有单据的明细，单值
 ID Detail (
     id MINUTE,
-    KEY base ID,                -- SheetPurchase or SheetSale
+    KEY base ID,            -- SheetPurchase or SheetSale
     KEY id,
-    item ID,                -- 计量对象。比如：商品不同包装或者批次
-    target ID,              -- 操作对象。仓库=主表target。一货分仓，需要不同的target
     origin ID,              -- 源单
+    item ID,                -- 计量对象。比如：商品不同包装或者批次
+    itemX ID,               -- 两层关系，一行可分 操作对象。
     value VALUE,
     amount VALUE,
     price VALUE,

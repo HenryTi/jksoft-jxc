@@ -1,5 +1,5 @@
 export * from './PageProps';
-export * from './Page';
+export { Page } from './Page';
 export * from './PageTabs';
 export * from './PageTabsLayout';
 export * from './PageSpinner';

@@ -3,11 +3,10 @@ import { BI, PageQueryMore } from "app/coms";
 import { Link, Route } from "react-router-dom";
 import { IDView, Page } from "tonwa-app";
 import { EntitySheet } from "app/Biz";
-import { FA, List, to62 } from "tonwa-com";
-import { PageSheetEdit } from "app/hooks";
+import { EasyTime, FA, List, to62 } from "tonwa-com";
+import { PageSheetEdit, ViewSheetTime } from "app/hooks";
 import { useCallback } from "react";
 import { Atom, Sheet } from "uqs/UqDefault";
-// import { PageSheetEdit } from "./PageSheetEdit";
 
 function PageSheetCenter() {
     const uqApp = useUqApp();
@@ -43,13 +42,15 @@ function PageSheetCenter() {
             return <span>{value.ex}</span>;
         }
         return <Link to={`/sheet/${to62(entitySheet.entityId)}/${to62(id)}`}>
-            <div className="px-3 py-3">
+            <div className="d-flex px-3 py-3">
                 <FA name="file" className="me-3 text-danger" />
                 <span className="d-inline-block w-min-8c">{sheetCaption}</span>
                 <span className="d-inline-block w-min-10c">{no}</span>
                 <span className="d-inline-block w-min-8c">
                     <IDView uq={uq} id={target} Template={ViewTarget} />
                 </span>
+                <div className="flex-grow-1" />
+                <ViewSheetTime id={id} />
             </div>
         </Link>;
     }

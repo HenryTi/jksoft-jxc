@@ -23,7 +23,7 @@ Biz Detail DetailPurchase ver 0.1 {
 Biz Detail DetailPurchaseMedicine ver 0.1 '采购药品明细' {
     Main MainPurchase;
     Item '药品' Pick Medicine;       -- 某类Atom
-    ACT (detail ID) {
+    ACT {
     };
 }
 
@@ -39,8 +39,7 @@ Biz Detail DetailStoreIn ver 0.2 {
     Main MainStoreIn;
     Item '商品' Pick Goods;         -- 某类Atom
     Pend PendStoreIn;               -- 从某个待处理账来
-    ACT (detail ID) 
-    {
+    ACT {
     };
 }
 
@@ -67,6 +66,7 @@ Biz Sheet SheetSale '销售单' {
 Biz Detail DetailSale ver 0.1 {
     Main MainSale;
     Item '商品' ATOM Goods;       -- 某类Atom
+    ItemX '客户' ATOM Contact;
     ACT (detail ID) {
     };
 }

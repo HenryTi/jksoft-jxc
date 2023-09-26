@@ -64,22 +64,15 @@ export function PageUpload() {
             }
         });
     }
-    const errorMark = '=== x ---';
     async function onComplie() {
         const { uqMan, biz } = uqApp;
         let { uqApi } = uqMan;
-        let { schemas, logs } = await uqApi.compileOverride(textAreaRef.current.textContent);
+        let { schemas, logs, hasError } = await uqApi.compileOverride(textAreaRef.current.textContent);
         setFiles(undefined);
-        let hasError = false;
         if (logs.length > 0) {
             let text: string[] = [];
             (logs as string[]).forEach(v => {
                 if (v === null) return;
-                if (hasError === false) {
-                    if (v.indexOf(errorMark) >= 0) {
-                        hasError = true;
-                    }
-                }
                 text.push(...v.split('\n'));
             });
             textAreaRef.current.textContent = text.join('\n');

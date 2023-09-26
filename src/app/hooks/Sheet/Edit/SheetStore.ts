@@ -10,12 +10,18 @@ import { atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
 
 
-abstract class BaseObject {
+abstract class KeyIdObject {
     private static __keyId = 0;
     readonly keyId: number;
+    constructor() {
+        this.keyId = ++KeyIdObject.__keyId;
+    }
+}
+
+abstract class BaseObject extends KeyIdObject {
     readonly sheetStore: SheetStore;
     constructor(sheetStore: SheetStore) {
-        this.keyId = ++BaseObject.__keyId;
+        super();
         this.sheetStore = sheetStore;
     }
 }
@@ -32,13 +38,14 @@ export class Main extends BaseObject {
         this.entityMain = sheetStore.entitySheet.main;
     }
 
+    // return: true: new sheet created
     async start(pick: PickFunc) {
         let { id } = this;
         if (id > 0) return;
         await this.pickTarget(pick);
         let target = getAtomValue(this._target);
         if (target > 0) {
-            return await this.createNew();
+            return await this.createIfNotExists();
         }
     }
 
@@ -51,14 +58,20 @@ export class Main extends BaseObject {
         setAtomValue(this._target, spec);
     }
 
-    async createNew() {
+    async createIfNotExists() {
+        let sheetId = getAtomValue(this._id);
+        let target = getAtomValue(this._target);
+        if (sheetId > 0) return {
+            id: sheetId,
+            no: this.no,
+            target,
+        };
         const { uq, entitySheet } = this.sheetStore;
         // let no = await uq.IDNO({ ID: uq.Sheet });
-        let target = getAtomValue(this._target);
         let ret = await uq.SaveSheet.submit({
-            sheet: entitySheet.phrase,
+            phrase: entitySheet.entityId,
             no: undefined,
-            target,
+            target: target === 0 ? undefined : target,
             value: undefined,
         });
         let { id, no } = ret;
@@ -136,7 +149,7 @@ export class DetailRow extends BaseObject {
     readonly section: DetailSection;
     id: number;
     item: number;
-    target: number;
+    itemX: number;
     value: number;
     price: number;
     amount: number;
@@ -150,11 +163,19 @@ export class DetailRow extends BaseObject {
 
     private async save() {
         const { uq, main } = this.sheetStore;
+        let sheet = await main.createIfNotExists();
+        if (sheet === undefined) {
+            debugger;
+            let err = '新建单据不成功';
+            console.error(err);
+            throw new Error(err);
+        }
         const { id } = await uq.SaveDetail.submit({
             base: main.id,
+            phrase: this.section.detail.entityDetail.entityId,
             id: this.id,
             item: this.item,
-            target: this.target,
+            itemX: this.itemX,
             value: this.value,
             price: this.price,
             amount: this.amount,
@@ -181,10 +202,10 @@ export class DetailRow extends BaseObject {
     }
 
     setValue(row: any) {
-        const { id, item, target, value, price, amount, origin, pendFrom } = row;
+        const { id, item, itemX, value, price, amount, origin, pendFrom } = row;
         this.id = id;
         this.item = item;
-        this.target = target;
+        this.itemX = itemX;
         this.value = value;
         this.price = price;
         this.amount = amount;
@@ -229,7 +250,7 @@ export class DetailSection extends BaseObject {
     }
 }
 
-export class SheetStore {
+export class SheetStore extends KeyIdObject {
     readonly uq: UqExt;
     readonly biz: Biz;
     readonly entitySheet: EntitySheet;
@@ -237,13 +258,16 @@ export class SheetStore {
     readonly detail: DetailMain;
     readonly detailExs: DetailEx[] = [];
     readonly caption: string;
+    readonly idOnUrl: number;
 
     constructor(uq: UqExt, biz: Biz, entitySheet: EntitySheet, id: number) {
+        super();
         this.uq = uq;
         this.biz = biz;
         this.entitySheet = entitySheet;
         this.main = new Main(this);
         if (id > 0) {
+            this.idOnUrl = id;
             setAtomValue(this.main._id, id);
         }
         const { details } = this.entitySheet;
@@ -262,7 +286,7 @@ export class SheetStore {
     async load() {
         let { id } = this.main;
         if (id === undefined || id === 0) return;
-        let { main, details } = await this.uq.GetSheet.query({ id, budNames: undefined });
+        let { main, details } = await this.uq.GetSheet.query({ id });
         this.main.setValue(main[0]);
         this.detail.setValue(details);
     }
@@ -275,9 +299,19 @@ export class SheetStore {
             return id;
         }
     }
-
-    async start() {
-
+    async start(pick: PickFunc) {
+        let ret = await this.main.start(pick);
+        if (ret !== undefined) return ret;
+        // await this.detail.inputSection();
+        /*
+        let target = getAtomValue(this.main._target);
+        if (target > 0) {
+            return await this.main.createNew();
+        }
+        else {
+            this.detail.
+        }
+        */
     }
 }
 

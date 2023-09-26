@@ -135,20 +135,7 @@ RETURNS ret (
     VAR id ID;
     VAR sql CHAR(500);
     VAR specPhraseId ID = PhraseId(spec);
-/*    
-    SET id = specid(spec, atom, values);
-    INTO ret SELECT id;
-    VAR a CHAR(300) = specvalue(id);
-*/
     SET sql=CONCAT('call `$site`.`', $site, '.', specPhraseId, '$s`(?,?,?,?,?);');
-    /*
-    SET @site=$site;
-    SET @user=$user;
-    SET @base=base;
-    SET @keys=keys;
-    SET @props=props;
-    */
-
     ExecSql sql to id USING $site, $user, BudId(base, spec), keys, props;
     INTO ret SELECT id;
 }
@@ -197,7 +184,7 @@ RETURNS ret (
 };
 
 Biz ACT SaveSheet (
-    sheet CHAR(100),
+    phrase ID,                 -- sheet phrase id --  CHAR(100),
     no NO,
     target ID,
     -- operator ID,            -- employee Item
@@ -207,14 +194,19 @@ RETURNS ret (
     id ID,
     no NO,
 ) {
-    VAR base ID = PhraseId(sheet);
+    -- VAR base ID = PhraseId(sheet);
+    -- 安全检查
+    IF NOT EXISTS (SELECT a.id FROM BizPhrase as a WHERE a.id=phrase AND a.base=$site) {
+        RETURN;
+    }
+
     VAR me ID = Me();
 
     IF no IS NULL {
         SET no = NO(Sheet);
     }
     VAR sheetId ID;
-    WITH Sheet as a ID to sheetId Key(base, no) 
+    WITH Sheet as a ID to sheetId Key(phrase, no) 
         SET a.target=target, a.operator=me, a.value=value;
 
     WITH IxMy I=me X=sheetId;
@@ -224,9 +216,10 @@ RETURNS ret (
 
 Biz ACT SaveDetail (
     base ID,                -- sheet id
+    phrase ID,              -- detail phrase id
     id ID,
     item ID,                -- 计量对象。比如：商品不同包装或者批次
-    target ID,              -- 操作对象。比如：客户，仓库，等
+    itemX ID,               -- 操作对象。比如：客户，仓库，等
     origin ID,
     value VALUE,
     price VALUE,
@@ -243,15 +236,22 @@ RETURNS ret (
     id ID,
 ) {
     VAR me ID = Me();
+    -- 安全判断
     IF base IS NULL OR NOT EXISTS(SELECT x FROM IxMy WHERE i=me AND x=base) {
-        -- 如果base sheet没有在我的draft里面，不能写入明细。这是安全保证
+        -- base sheet必须在我的draft里面
         RETURN;
     }
+    -- 安全判断
+    IF NOT EXISTS(SELECT a.id FROM BizPhrase as a WHERE a.id=phrase AND a.base=$site) {
+        -- phrase id 必须是 my site
+        RETURN;
+    }
+    SET base=ID(Bud New KEY base=base, ext=phrase);
     IF id IS NULL {
         SET id = ID(Detail New KEY base=base);
     }
     WITH Detail ID=id SET item=item
-        , target=target
+        , itemX=itemX
         , origin=origin
         , value=value, price=price, amount=amount;
     IF pendFrom IS NOT NULL {
@@ -275,6 +275,23 @@ Biz AC DeleteDetail (
     }
     WITH Detail ID=id DEL;
 }
+
+Biz AC SubmitSheet(
+    id ID,
+) {
+    VAR me ID = Me();
+    VAR phraseId ID = a.base
+        FROM Sheet as a 
+            JOIN IxMy as b ON b.x=a.id
+        WHERE b.i=me AND a.id=id;
+    IF phraseId IS NULL {
+        RETURN;
+    }
+    VAR sql CHAR(500) = CONCAT('call `$site`.`', $site, '.', phraseId, '`(?,?,?);');
+    ExecSql sql to id USING $site, $user, id;
+
+    WITH IxMy I=me X=id DEL;
+};
 
 Biz ACT RemoveDraft (
     id ID,
@@ -491,52 +508,58 @@ RETURNS budsStr (
 
 Biz Query GetSheet ver 0.1 (
     id ID,
-    budNames CHAR(200),  -- \t separated phrases of the assigns
+    -- budNames CHAR(200),  -- \t separated phrases of the assigns
 )
 RETURNS main (
     * SHEET,
-    phrase Phrase,
+    phrase ID,
 )
 RETURNS details (
     * Detail,
     -- done VALUE,
     pendFrom ID,
     pendValue VALUE,
-    sheet PHRASE,
-    no NO,
+    -- sheet ID,
+    -- no NO,
+    phrase ID,
 )
 RETURNS origins (
     * Detail,
     -- done VALUE,
 )
+/*
 RETURNS buds (
     id ID,              -- detail id
     bud ID,
     phrase Phrase,
     value VALUE,
-) {
-    INTO main SELECT * a, b.name as phrase
+) */
+{
+    INTO main SELECT * a, b.id as phrase
         FROM Sheet as a
             JOIN BizPhrase as b ON b.id=a.base
         WHERE a.id=id AND b.base=$site;
     INTO details SELECT * a
         , c.pendFrom, d.value as pendValue
-        , BudPhrase(e.base) as sheet, e.no
+        , b.ext as phrase
         FROM Detail as a
+            JOIN Bud as b ON b.id=a.base
             LEFT JOIN DetailPend as c ON c.id=a.id
             LEFT JOIN Pend as d ON d.id=c.pendFrom
-            LEFT JOIN Sheet as e ON e.id=a.base
-        WHERE a.base=id;
+            -- LEFT JOIN Sheet as e ON e.id=a.base
+        WHERE b.base=id;
     INTO origins SELECT DISTINCT * b -- , IFNULL(c.value, 0) as done
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN DETAIL as b ON b.id=a.origin
     ;
+    /*
     INTO buds SELECT a.id, b.x as bud, d.name as phrase, b.value
         FROM Detail as a
             JOIN IxBudDec as b ON b.i=a.id
             JOIN BizPhrase as d ON d.id=b.x -- c.phrase
         WHERE a.base=id 
             AND (budNames IS NULL OR LOCATE(d.name, budNames)>0);
+    */
 };
 
 Biz Query GetAtom (

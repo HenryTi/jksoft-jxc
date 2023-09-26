@@ -120,7 +120,9 @@ RETURNS ret (
         ID to id
         KEY($site as base, name) 
         SET a.type=type, a.memo=memo;
-    WITH BizResource IXX=id I=0 X=0 SET res=caption;
+    IF caption IS NOT NULL {
+        WITH BizResource IXX=id I=0 X=0 SET res=caption;
+    }
     WITH BizObject as a ID=id SET a.source=source, a.schema=schema;
     WITH XBiz ID=id;
     -- 所有名下的属性置为无效，重新设置

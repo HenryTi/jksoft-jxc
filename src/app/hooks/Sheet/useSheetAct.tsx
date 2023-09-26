@@ -224,17 +224,17 @@ export function useSheetAct(options: PropsSheetAct) {
     }
     */
     async function loadSheet(sheetId: number): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
-        let { main: [sheet], details, origins, buds } = await uq.GetSheet.query({ id: sheetId, budNames: undefined });
+        let { main: [sheet], details, origins } = await uq.GetSheet.query({ id: sheetId });
         let originColl: { [id: number]: Detail/* & { done: number; }*/ } = {};
         for (let origin of origins) {
             let { id } = origin;
             originColl[id] = origin;
         }
         let sheetRows: SheetRow[] = details.map(v => {
-            let { origin: originId, pendFrom, pendValue, sheet, no } = v;
+            let { origin: originId, pendFrom, pendValue } = v;
             let origin = originColl[originId];
             // let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue, sheet, no };
-            let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue, sheet, no };
+            let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue } as any;
             let detail: Detail = { ...v };
             return { origin: originDetail, details: [detail] };
         });
@@ -292,7 +292,7 @@ export function useSheetAct(options: PropsSheetAct) {
     function compareDetail(d1: Detail, d2: Detail): boolean {
         if (d1.base !== d2.base) return false
         if (d1.item !== d2.item) return false;
-        if (d1.target !== d2.target) return false;
+        if (d1.itemX !== d2.itemX) return false;
         if (d1.origin !== d2.origin) return false;
         if (d1.value !== d2.value) return false;
         if (d1.price !== d2.price) return false;
@@ -385,10 +385,10 @@ export function useSheetAct(options: PropsSheetAct) {
 
     // return: id
     async function saveSheetToDb(sheet: Sheet): Promise<number> {
-        let { phrase } = entitySheet;
+        let { entityId } = entitySheet;
         let ret = await uq.SaveSheet.submit({
             ...sheet,
-            sheet: phrase,
+            phrase: entityId,
         });
         let { id } = ret;
         return id;

@@ -12,7 +12,7 @@ import { useEffectOnce } from "tonwa-com";
 const scrollTimeGap = 100;
 const scrollEdgeGap = 30;
 
-function PageBase(props: PageProps) {
+export function PageBase(props: PageProps) {
     const uqApp = useUqAppBase();
     let { children, header, back, right, footer, onClosed } = props;
     const divRef = useRef<HTMLDivElement>();

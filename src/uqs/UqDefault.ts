@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Sep 24 2023 22:36:42 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Mon Sep 25 2023 20:27:15 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -277,7 +277,7 @@ export interface ResultGetSpec {
 }
 
 export interface ParamSaveSheet {
-	sheet: string;
+	phrase: number;
 	no: string;
 	target: number;
 	value: number;
@@ -292,9 +292,10 @@ export interface ResultSaveSheet {
 
 export interface ParamSaveDetail {
 	base: number;
+	phrase: number;
 	id: number;
 	item: number;
-	target: number;
+	itemX: number;
 	origin: number;
 	value: number;
 	price: number;
@@ -312,6 +313,16 @@ export interface ParamDeleteDetail {
 	id: number;
 }
 export interface ResultDeleteDetail {
+}
+
+export interface ParamSubmitSheet {
+	id: number;
+}
+export interface ReturnSubmitSheetRet {
+	yes: string;
+}
+export interface ResultSubmitSheet {
+	ret: ReturnSubmitSheetRet[];
 }
 
 export interface ParamRemoveDraft {
@@ -435,7 +446,6 @@ export interface ResultSearchAtomUomBuds {
 
 export interface ParamGetSheet {
 	id: number;
-	budNames: string;
 }
 export interface ReturnGetSheetMain {
 	id: number;
@@ -444,43 +454,35 @@ export interface ReturnGetSheetMain {
 	target: number;
 	operator: number;
 	value: number;
-	phrase: string;
+	phrase: number;
 }
 export interface ReturnGetSheetDetails {
 	id: number;
 	base: number;
-	item: number;
-	target: number;
 	origin: number;
+	item: number;
+	itemX: number;
 	value: number;
 	amount: number;
 	price: number;
 	pendFrom: number;
 	pendValue: number;
-	sheet: string;
-	no: string;
+	phrase: number;
 }
 export interface ReturnGetSheetOrigins {
 	id: number;
 	base: number;
-	item: number;
-	target: number;
 	origin: number;
+	item: number;
+	itemX: number;
 	value: number;
 	amount: number;
 	price: number;
-}
-export interface ReturnGetSheetBuds {
-	id: number;
-	bud: number;
-	phrase: string;
-	value: number;
 }
 export interface ResultGetSheet {
 	main: ReturnGetSheetMain[];
 	details: ReturnGetSheetDetails[];
 	origins: ReturnGetSheetOrigins[];
-	buds: ReturnGetSheetBuds[];
 }
 
 export interface ParamGetAtom {
@@ -540,6 +542,67 @@ export interface ResultGetSpecs {
 	ret: ReturnGetSpecsRet[];
 }
 
+export enum BizPhraseType {
+	any = 0,
+	atom = 11,
+	spec = 12,
+	bud = 13,
+	sheet = 101,
+	main = 102,
+	detail = 103,
+	pend = 104,
+	detailAct = 111,
+	with = 151,
+	pick = 161,
+	role = 201,
+	permit = 202,
+	options = 301,
+	tree = 401,
+	tie = 501,
+	moniker = 901,
+	key = 1001,
+	prop = 1011,
+	optionsitem = 1031
+}
+
+export enum BudDataType {
+	none = 0,
+	int = 11,
+	atom = 12,
+	radio = 13,
+	check = 14,
+	ID = 19,
+	dec = 21,
+	char = 31,
+	str = 32,
+	date = 41
+}
+
+export enum BizBudFlag {
+	index = 1
+}
+
+export interface ParamGetBizObjects {
+	lang: string;
+	culture: string;
+}
+export interface ReturnGetBizObjectsObjs {
+	id: number;
+	phrase: string;
+	source: string;
+	caption: string;
+}
+export interface ReturnGetBizObjectsBuds {
+	id: number;
+	base: number;
+	phrase: string;
+	caption: string;
+}
+export interface ResultGetBizObjects {
+	objs: ReturnGetBizObjectsObjs[];
+	buds: ReturnGetBizObjectsBuds[];
+}
+
 export interface Atom extends ID {
 	base: number;
 	no?: string;
@@ -581,9 +644,9 @@ export interface SheetInActs extends ID {
 
 export interface Detail extends ID {
 	base: number;
-	item: number;
-	target: number;
 	origin: number;
+	item: number;
+	itemX: number;
 	value: number;
 	amount: number;
 	price: number;
@@ -592,9 +655,9 @@ export interface Detail extends ID {
 export interface DetailInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
-	item: number | ID;
-	target: number | ID;
 	origin: number | ID;
+	item: number | ID;
+	itemX: number | ID;
 	value: number;
 	amount: number;
 	price: number;
@@ -685,9 +748,9 @@ export interface ParamGetPendDetailFromItem {
 export interface ReturnGetPendDetailFromItem$page {
 	id: number;
 	base: number;
-	item: number;
-	target: number;
 	origin: number;
+	item: number;
+	itemX: number;
 	value: number;
 	amount: number;
 	price: number;
@@ -707,9 +770,9 @@ export interface ParamGetPendDetailFromSheetId {
 export interface ReturnGetPendDetailFromSheetIdRet {
 	id: number;
 	base: number;
-	item: number;
-	target: number;
 	origin: number;
+	item: number;
+	itemX: number;
 	value: number;
 	amount: number;
 	price: number;
@@ -888,67 +951,6 @@ export interface ReturnGetUomIUomX {
 export interface ResultGetUomI {
 	UomI: ReturnGetUomIUomI[];
 	UomX: ReturnGetUomIUomX[];
-}
-
-export enum BizPhraseType {
-	any = 0,
-	atom = 11,
-	spec = 12,
-	bud = 13,
-	sheet = 101,
-	main = 102,
-	detail = 103,
-	pend = 104,
-	detailAct = 111,
-	with = 151,
-	pick = 161,
-	role = 201,
-	permit = 202,
-	options = 301,
-	tree = 401,
-	tie = 501,
-	moniker = 901,
-	key = 1001,
-	prop = 1011,
-	optionsitem = 1031
-}
-
-export enum BudDataType {
-	none = 0,
-	int = 11,
-	atom = 12,
-	radio = 13,
-	check = 14,
-	ID = 19,
-	dec = 21,
-	char = 31,
-	str = 32,
-	date = 41
-}
-
-export enum BizBudFlag {
-	index = 1
-}
-
-export interface ParamGetBizObjects {
-	lang: string;
-	culture: string;
-}
-export interface ReturnGetBizObjectsObjs {
-	id: number;
-	phrase: string;
-	source: string;
-	caption: string;
-}
-export interface ReturnGetBizObjectsBuds {
-	id: number;
-	base: number;
-	phrase: string;
-	caption: string;
-}
-export interface ResultGetBizObjects {
-	objs: ReturnGetBizObjectsObjs[];
-	buds: ReturnGetBizObjectsBuds[];
 }
 
 export enum SumFormulaType {
@@ -1262,6 +1264,7 @@ export interface UqExt extends Uq {
 	SaveSheet: UqAction<ParamSaveSheet, ResultSaveSheet>;
 	SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
 	DeleteDetail: UqAction<ParamDeleteDetail, ResultDeleteDetail>;
+	SubmitSheet: UqAction<ParamSubmitSheet, ResultSubmitSheet>;
 	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
 	GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
 	SearchAtom: UqQuery<ParamSearchAtom, ResultSearchAtom>;
@@ -1270,6 +1273,7 @@ export interface UqExt extends Uq {
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
 	GetSpecs: UqQuery<ParamGetSpecs, ResultGetSpecs>;
+	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
 	Atom: UqID<any>;
 	Spec: UqID<any>;
 	Sheet: UqID<any>;
@@ -1296,7 +1300,6 @@ export interface UqExt extends Uq {
 	DeleteAtomUomI: UqAction<ParamDeleteAtomUomI, ResultDeleteAtomUomI>;
 	SaveAtomSpec: UqAction<ParamSaveAtomSpec, ResultSaveAtomSpec>;
 	GetUomI: UqQuery<ParamGetUomI, ResultGetUomI>;
-	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
 	SumFormula: UqID<any>;
 	SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
 	SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
@@ -1973,9 +1976,8 @@ export const uqSchema={
         "sys": true,
         "fields": [
             {
-                "name": "sheet",
-                "type": "char",
-                "size": 100
+                "name": "phrase",
+                "type": "id"
             },
             {
                 "name": "no",
@@ -2021,6 +2023,10 @@ export const uqSchema={
                 "type": "id"
             },
             {
+                "name": "phrase",
+                "type": "id"
+            },
+            {
                 "name": "id",
                 "type": "id"
             },
@@ -2029,7 +2035,7 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "target",
+                "name": "itemX",
                 "type": "id"
             },
             {
@@ -2084,6 +2090,31 @@ export const uqSchema={
         ],
         "jsoned": true,
         "returns": [] as any
+    },
+    "submitsheet": {
+        "name": "SubmitSheet",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "yes",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            }
+        ]
     },
     "removedraft": {
         "name": "RemoveDraft",
@@ -2472,11 +2503,6 @@ export const uqSchema={
             {
                 "name": "id",
                 "type": "id"
-            },
-            {
-                "name": "budNames",
-                "type": "char",
-                "size": 200
             }
         ],
         "returns": [
@@ -2513,8 +2539,7 @@ export const uqSchema={
                     },
                     {
                         "name": "phrase",
-                        "type": "char",
-                        "size": 200
+                        "type": "id"
                     }
                 ]
             },
@@ -2531,15 +2556,15 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
                         "name": "item",
                         "type": "id"
                     },
                     {
-                        "name": "target",
-                        "type": "id"
-                    },
-                    {
-                        "name": "origin",
+                        "name": "itemX",
                         "type": "id"
                     },
                     {
@@ -2571,14 +2596,8 @@ export const uqSchema={
                         "precision": 18
                     },
                     {
-                        "name": "sheet",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "no",
-                        "type": "char",
-                        "size": 30
+                        "name": "phrase",
+                        "type": "id"
                     }
                 ]
             },
@@ -2595,15 +2614,15 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
                         "name": "item",
                         "type": "id"
                     },
                     {
-                        "name": "target",
-                        "type": "id"
-                    },
-                    {
-                        "name": "origin",
+                        "name": "itemX",
                         "type": "id"
                     },
                     {
@@ -2620,30 +2639,6 @@ export const uqSchema={
                     },
                     {
                         "name": "price",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    }
-                ]
-            },
-            {
-                "name": "buds",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "bud",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "value",
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
@@ -2826,6 +2821,127 @@ export const uqSchema={
             }
         ]
     },
+    "bizphrasetype": {
+        "name": "BizPhraseType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "any": 0,
+            "atom": 11,
+            "spec": 12,
+            "bud": 13,
+            "sheet": 101,
+            "main": 102,
+            "detail": 103,
+            "pend": 104,
+            "detailAct": 111,
+            "with": 151,
+            "pick": 161,
+            "role": 201,
+            "permit": 202,
+            "options": 301,
+            "tree": 401,
+            "tie": 501,
+            "moniker": 901,
+            "key": 1001,
+            "prop": 1011,
+            "optionsitem": 1031
+        }
+    },
+    "buddatatype": {
+        "name": "BudDataType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "none": 0,
+            "int": 11,
+            "atom": 12,
+            "radio": 13,
+            "check": 14,
+            "ID": 19,
+            "dec": 21,
+            "char": 31,
+            "str": 32,
+            "date": 41
+        }
+    },
+    "bizbudflag": {
+        "name": "BizBudFlag",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "index": 1
+        }
+    },
+    "getbizobjects": {
+        "name": "GetBizObjects",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "lang",
+                "type": "char",
+                "size": 10
+            },
+            {
+                "name": "culture",
+                "type": "char",
+                "size": 10
+            }
+        ],
+        "returns": [
+            {
+                "name": "objs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "source",
+                        "type": "text"
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            },
+            {
+                "name": "buds",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            }
+        ]
+    },
     "atom": {
         "name": "Atom",
         "type": "id",
@@ -2954,15 +3070,15 @@ export const uqSchema={
                 "type": "id"
             },
             {
+                "name": "origin",
+                "type": "id"
+            },
+            {
                 "name": "item",
                 "type": "id"
             },
             {
-                "name": "target",
-                "type": "id"
-            },
-            {
-                "name": "origin",
+                "name": "itemX",
                 "type": "id"
             },
             {
@@ -3262,15 +3378,15 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
                         "name": "item",
                         "type": "id"
                     },
                     {
-                        "name": "target",
-                        "type": "id"
-                    },
-                    {
-                        "name": "origin",
+                        "name": "itemX",
                         "type": "id"
                     },
                     {
@@ -3346,15 +3462,15 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
                         "name": "item",
                         "type": "id"
                     },
                     {
-                        "name": "target",
-                        "type": "id"
-                    },
-                    {
-                        "name": "origin",
+                        "name": "itemX",
                         "type": "id"
                     },
                     {
@@ -3914,127 +4030,6 @@ export const uqSchema={
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
-                    }
-                ]
-            }
-        ]
-    },
-    "bizphrasetype": {
-        "name": "BizPhraseType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "any": 0,
-            "atom": 11,
-            "spec": 12,
-            "bud": 13,
-            "sheet": 101,
-            "main": 102,
-            "detail": 103,
-            "pend": 104,
-            "detailAct": 111,
-            "with": 151,
-            "pick": 161,
-            "role": 201,
-            "permit": 202,
-            "options": 301,
-            "tree": 401,
-            "tie": 501,
-            "moniker": 901,
-            "key": 1001,
-            "prop": 1011,
-            "optionsitem": 1031
-        }
-    },
-    "buddatatype": {
-        "name": "BudDataType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "none": 0,
-            "int": 11,
-            "atom": 12,
-            "radio": 13,
-            "check": 14,
-            "ID": 19,
-            "dec": 21,
-            "char": 31,
-            "str": 32,
-            "date": 41
-        }
-    },
-    "bizbudflag": {
-        "name": "BizBudFlag",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "index": 1
-        }
-    },
-    "getbizobjects": {
-        "name": "GetBizObjects",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "lang",
-                "type": "char",
-                "size": 10
-            },
-            {
-                "name": "culture",
-                "type": "char",
-                "size": 10
-            }
-        ],
-        "returns": [
-            {
-                "name": "objs",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "source",
-                        "type": "text"
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            },
-            {
-                "name": "buds",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
                     }
                 ]
             }

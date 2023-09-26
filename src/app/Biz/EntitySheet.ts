@@ -23,6 +23,8 @@ export class EntityDetail extends Entity {
     main: EntityMain;
     item: Pickable;
     itemCaption: string;
+    itemX: Pickable;
+    itemXCaption: string;
     pend: EntityPend;
     value: BizBud;
     price: BizBud;
@@ -38,6 +40,10 @@ export class EntityDetail extends Entity {
             case 'item':
                 this.item = this.fromPickable(val);
                 this.itemCaption = getPickableCaption(this.item);
+                break;
+            case 'itemx':
+                this.itemX = this.fromPickable(val);
+                this.itemXCaption = getPickableCaption(this.itemX);
                 break;
             case 'pend': this.fromPend(val); break;
             case 'value': this.fromValue(val); break;
