@@ -9,14 +9,21 @@ Pick PurchaseItem '捡取商品' {
     Spec SpecMedicine;
 };
 
+Biz Tab D {
+    a DEC;
+}
+
 Biz Detail DetailPurchase ver 0.1 {
     Main MainPurchase;
     Item '商品Pick' Pick PurchaseItem; -- ATOM Goods;       -- 某类Atom
     Value '数量' DEC;
-    Amount '金额' DEC;
     Price '单价' DEC;
+    Amount '金额' DEC = 1*2; -- Value * Price;
     
-    ACT (detail ID) {
+    ACT {
+        -- Biz Pend += value;
+        Biz Pend PendStoreIn = value;
+        Biz Tab D.a of Item += value;
     };
 }
 
@@ -40,6 +47,7 @@ Biz Detail DetailStoreIn ver 0.2 {
     Item '商品' Pick Goods;         -- 某类Atom
     Pend PendStoreIn;               -- 从某个待处理账来
     ACT {
+        Biz Pend -= value;
     };
 }
 

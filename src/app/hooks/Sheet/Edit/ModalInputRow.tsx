@@ -5,6 +5,7 @@ import { Page, useModal } from "tonwa-app";
 import { ChangeEvent, useRef, useState } from "react";
 import { DetailRow } from "./SheetStore";
 import { ButtonAsync, FA } from "tonwa-com";
+import { BizBud } from "app/Biz";
 
 const fieldValue = 'value';
 const fieldPrice = 'price';
@@ -19,33 +20,43 @@ export function ModalInputRow({ row }: { row: DetailRow; }) {
     const { current: cur } = useRef({
         value, price, amount,
     });
-    /*
-    let newValue: number = value;
-    let newPrice: number = price;
-    let newAmount: number = amount;
-    */
 
-    function onClick() {
-        closeModal('xxx yyy');
-    }
     function buildFormRows(): FormRow[] {
+        const { entityDetail } = row.section.detail;
+        const { value: valueBud, price: priceBud, amount: amountBud } = entityDetail;
         return [
-            buildValueRow(value),
-            buildPriceRow(price),
-            buildAmountRow(amount),
+            buildValueRow(value, valueBud),
+            buildPriceRow(price, priceBud),
+            buildAmountRow(amount, amountBud),
         ];
     }
 
-    function buildValueRow(value: number): FormRow {
+    function buildValueRow(value: number, bud: BizBud): FormRow {
         return { name: fieldValue, label: '数量', type: 'number', options: { value, disabled: valueDisabled } };
     }
     let priceDisabled: boolean = false;
-    function buildPriceRow(value: number, disabled: boolean = false): FormRow {
-        return { name: fieldPrice, label: '单价', type: 'number', options: { value, disabled: priceDisabled } };
+    function buildPriceRow(value: number, bud: BizBud): FormRow {
+        return {
+            name: fieldPrice,
+            label: '单价',
+            type: 'number',
+            options: {
+                value: value ?? bud.defaultValue,
+                disabled: bud.defaultValue !== undefined, // priceDisabled 
+            }
+        };
     }
     let amountDisabled: boolean = true;
-    function buildAmountRow(value: number, disabled: boolean = false): FormRow {
-        return { name: fieldAmount, label: '金额', type: 'number', options: { value, disabled: amountDisabled } };
+    function buildAmountRow(value: number, bud: BizBud): FormRow {
+        return {
+            name: fieldAmount,
+            label: bud.caption ?? bud.name,
+            type: 'number',
+            options: {
+                value: value ?? bud.defaultValue,
+                disabled: bud.defaultValue !== undefined, // amountDisabled 
+            }
+        };
     }
 
     function onChange(evt: ChangeEvent<HTMLInputElement>) {

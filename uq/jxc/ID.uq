@@ -38,11 +38,10 @@ ID Detail (
 
 ID Pend (
     id MINUTE,
-    base ID,            -- sitePhrase
+    KEY base ID,            -- BizPhrase
+    KEY id,
     detail ID,
     value VALUE,
-    INDEX base_id(base, id) UNIQUE,
-    INDEX base_detail_id(base, detail, id) UNIQUE,
 );
 
 -- detail的pend来源。Pend处理完后，删除。

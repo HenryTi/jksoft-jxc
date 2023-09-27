@@ -1,7 +1,7 @@
 Atom Currency {
 };
 
-Biz Moniker SiteSetting {
+Biz Tab SiteSetting {
     currency '默认货币' ATOM Currency;
     startSumMonth '汇总开始月' INT;      -- 月汇总的开始。之前的月汇总是预置的，之后的月汇总是计算的。
     startFiscalMonth '财年开始月' INT;   -- 财年开始月

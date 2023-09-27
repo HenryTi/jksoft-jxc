@@ -132,11 +132,12 @@ Biz Ac SaveSpec ver 0.2 (
 RETURNS ret (
     id ID,
 ) {
+    VAR me ID = Me();
     VAR id ID;
     VAR sql CHAR(500);
     VAR specPhraseId ID = PhraseId(spec);
     SET sql=CONCAT('call `$site`.`', $site, '.', specPhraseId, '$s`(?,?,?,?,?);');
-    ExecSql sql to id USING $site, $user, BudId(base, spec), keys, props;
+    ExecSql sql to id USING $site, me, BudId(base, spec), keys, props;
     INTO ret SELECT id;
 }
 
@@ -288,7 +289,7 @@ Biz AC SubmitSheet(
         RETURN;
     }
     VAR sql CHAR(500) = CONCAT('call `$site`.`', $site, '.', phraseId, '`(?,?,?);');
-    ExecSql sql to id USING $site, $user, id;
+    ExecSql sql USING $site, me, id;
 
     WITH IxMy I=me X=id DEL;
 };

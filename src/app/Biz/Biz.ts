@@ -72,7 +72,8 @@ export class Biz {
             options: this.buildOptions,
             permit: this.buildPermit,
             role: this.buildRole,
-            moniker: this.buildMoniker,
+            tab: this.buildBud,
+            moniker: this.buildBud,
             tree: this.buildTree,
             tie: this.buildTie,
         }
@@ -156,7 +157,7 @@ export class Biz {
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildMoniker = (name: string, type: string): Entity => {
+    private buildBud = (name: string, type: string): Entity => {
         let bizEntity = new EntityMoniker(this, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
