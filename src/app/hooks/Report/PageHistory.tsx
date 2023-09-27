@@ -1,17 +1,17 @@
 import { PageQueryMore } from "app/coms";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSubject } from "./useSubject";
-import { EnumMoniker } from "uqs/UqDefault";
+// import { EnumTitle } from "uqs/UqDefault";
 
-export function PageHistory({ moniker, bud, captionHistory, pathDetailView, historySortField }: {
-    moniker: EnumMoniker;
+export function PageHistory({ title, bud, captionHistory, pathDetailView, historySortField }: {
+    title: string; // EnumTitle;
     bud: string;
     captionHistory: string;
     pathDetailView: string;
     sortField: string;
     historySortField: string;
 }) {
-    const gen = useSubject({ moniker, bud });
+    const gen = useSubject({ title: title, bud });
     const navigate = useNavigate();
     const { subjectHistory, ViewItemHistory, ViewItem } = gen;
     const { id } = useParams();

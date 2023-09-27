@@ -9,7 +9,7 @@ Pick PurchaseItem '捡取商品' {
     Spec SpecMedicine;
 };
 
-Biz Tab D {
+Biz Title D {
     a DEC;
 }
 
@@ -18,7 +18,7 @@ Biz Detail DetailPurchase ver 0.1 {
     Item '商品Pick' Pick PurchaseItem; -- ATOM Goods;       -- 某类Atom
     Value '数量' DEC;
     Price '单价' DEC;
-    Amount '金额' DEC = 1*2; -- Value * Price;
+    Amount '金额' DEC = Value * Price;
     
     ACT {
         -- Biz Pend += value;
@@ -40,12 +40,13 @@ Biz Sheet SheetPurchase '采购单 v5' {
 }
 
 Biz Main MainStoreIn {
+    Target '存货仓库' ATOM Storage;
 }
 
 Biz Detail DetailStoreIn ver 0.2 {
     Main MainStoreIn;
-    Item '商品' Pick Goods;         -- 某类Atom
-    Pend PendStoreIn;               -- 从某个待处理账来
+    Item '商品' Pick Goods;            -- 某类Atom
+    Pend PendStoreIn '待入库商品';      -- 从某个待处理账来
     ACT {
         Biz Pend -= value;
     };
@@ -73,8 +74,11 @@ Biz Sheet SheetSale '销售单' {
 
 Biz Detail DetailSale ver 0.1 {
     Main MainSale;
-    Item '商品' ATOM Goods;       -- 某类Atom
+    Item '商品Pick' Pick PurchaseItem; -- ATOM Goods;       -- 某类Atom
     ItemX '客户' ATOM Contact;
+    Value '数量' DEC;
+    Price '单价' DEC;
+    Amount '金额' DEC = Value * Price;
     ACT (detail ID) {
     };
 }

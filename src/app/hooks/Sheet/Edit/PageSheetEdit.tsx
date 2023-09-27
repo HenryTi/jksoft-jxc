@@ -138,7 +138,7 @@ function PageStore({ store }: { store: SheetStore; }) {
     }
 
     async function onAddRow() {
-        let ret = await inputSection();
+        let ret = await inputSection(undefined);
     }
     async function onRemoveSheet() {
         let message = `${caption} ${main.no} 真的要作废吗？`;
@@ -164,7 +164,7 @@ function PageStore({ store }: { store: SheetStore; }) {
     async function startInputDetail() {
         let ret = await start();
         if (ret === undefined) {
-            await inputSection();
+            await inputSection(undefined);
         }
     }
     if (id === 0) {

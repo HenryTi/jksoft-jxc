@@ -97,6 +97,7 @@ abstract class DetailBase extends BaseObject {
         this.caption = caption ?? entityDetail.caption;
     }
 
+    abstract addRowValues(rowValues: any): void;
 }
 
 export class DetailMain extends DetailBase {
@@ -107,15 +108,42 @@ export class DetailMain extends DetailBase {
     }
     pending: DetailRow[];
 
-    async addSection(section: DetailSection) {
-        let sections = getAtomValue(this._sections);
-        if (sections.findIndex(v => v === section) >= 0) {
-            sections = [...sections];
+    addRowValues(rowValues: any[]) {
+        const sections = getAtomValue(this._sections);
+        for (let rowValue of rowValues) {
+            this.addRowValue(sections, rowValue);
+        }
+        setAtomValue(this._sections, [...sections]);
+    }
+
+    private addRowValue(sections: DetailSection[], rowValue: any) {
+        const { item, itemX, value } = rowValue;
+        if (!item || !value) return;
+        let detailSection: DetailSection;
+        if (itemX) {
+            let index = sections.findIndex(v => v.item === item);
+            if (index < 0) {
+                detailSection = new DetailSection(this);
+                detailSection.item = item;
+                sections.push(detailSection);
+            }
+            else {
+                detailSection = sections[index];
+            }
         }
         else {
-            sections = [...sections, section];
+            detailSection = new DetailSection(this);
+            sections.push(detailSection);
         }
-        setAtomValue(this._sections, sections);
+        let detailRow = new DetailRow(detailSection);
+        detailRow.setValue(rowValue);
+        detailSection.addRow(detailRow);
+        return detailRow;
+    }
+
+    addSection(detailSection: DetailSection) {
+        const sections = getAtomValue(this._sections);
+        setAtomValue(this._sections, [...sections, detailSection]);
     }
 
     async delEmptySection(section: DetailSection) {
@@ -127,22 +155,13 @@ export class DetailMain extends DetailBase {
             setAtomValue(this._sections, [...sections]);
         }
     }
-
-    setValue(details: any[]) {
-        let sections: DetailSection[] = [];
-        for (let d of details) {
-            let section = new DetailSection(this);
-            sections.push(section);
-            let row = new DetailRow(section);
-            section.addRow(row);
-            row.setValue(d);
-        }
-        setAtomValue(this._sections, sections);
-    }
 }
 
 // 多余的Detail，只能手工输入
 export class DetailEx extends DetailBase {
+    addRowValues(rowValues: any) {
+        return;
+    }
 }
 
 export class DetailRow extends BaseObject {
@@ -217,6 +236,7 @@ export class DetailRow extends BaseObject {
 export class DetailSection extends BaseObject {
     readonly detail: DetailMain;
     readonly _rows = atom<DetailRow[]>([]);
+    item: number;           // item 作为key，来标明section
 
     constructor(detailMain: DetailMain) {
         super(detailMain.sheetStore);
@@ -231,7 +251,6 @@ export class DetailSection extends BaseObject {
     addRow(row: DetailRow) {
         let rows = getAtomValue(this._rows);
         setAtomValue(this._rows, [...rows, row]);
-        this.detail.addSection(this)
     }
 
     delRow(row: DetailRow) {
@@ -288,7 +307,7 @@ export class SheetStore extends KeyIdObject {
         if (id === undefined || id === 0) return;
         let { main, details } = await this.uq.GetSheet.query({ id });
         this.main.setValue(main[0]);
-        this.detail.setValue(details);
+        this.detail.addRowValues(details);
     }
 
     async discard() {

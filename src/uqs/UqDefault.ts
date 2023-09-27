@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Sep 25 2023 20:27:15 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Wed Sep 27 2023 19:35:43 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -206,6 +206,165 @@ export interface Result$AllPhrases {
 	detail: Return$AllPhrasesDetail[];
 }
 
+export interface ParamGetPend {
+	pend: number;
+	key: string;
+}
+export interface ReturnGetPend$page {
+	pend: number;
+	sheet: number;
+	no: string;
+	target: number;
+	detail: number;
+	item: number;
+	itemX: number;
+	value: number;
+	price: number;
+	amount: number;
+}
+export interface ResultGetPend {
+	$page: ReturnGetPend$page[];
+}
+
+export interface ParamGetPendSheetFromNo {
+	pend: string;
+	key: string;
+}
+export interface ReturnGetPendSheetFromNo$page {
+	id: number;
+	base: number;
+	no: string;
+	target: number;
+	operator: number;
+	value: number;
+	sheet: string;
+}
+export interface ResultGetPendSheetFromNo {
+	$page: ReturnGetPendSheetFromNo$page[];
+}
+
+export interface ParamGetPendSheetFromTarget {
+	pend: string;
+	key: string;
+}
+export interface ReturnGetPendSheetFromTarget$page {
+	id: number;
+	base: number;
+	no: string;
+	target: number;
+	operator: number;
+	value: number;
+	sheet: string;
+}
+export interface ResultGetPendSheetFromTarget {
+	$page: ReturnGetPendSheetFromTarget$page[];
+}
+
+export interface ParamGetPendDetailFromItem {
+	pend: string;
+	key: string;
+}
+export interface ReturnGetPendDetailFromItem$page {
+	id: number;
+	base: number;
+	origin: number;
+	item: number;
+	itemX: number;
+	value: number;
+	amount: number;
+	price: number;
+	pend: number;
+	pendValue: number;
+	sheet: string;
+	no: string;
+}
+export interface ResultGetPendDetailFromItem {
+	$page: ReturnGetPendDetailFromItem$page[];
+}
+
+export interface ParamGetPendDetailFromSheetId {
+	pend: string;
+	sheetId: number;
+}
+export interface ReturnGetPendDetailFromSheetIdRet {
+	id: number;
+	base: number;
+	origin: number;
+	item: number;
+	itemX: number;
+	value: number;
+	amount: number;
+	price: number;
+	pend: number;
+	pendValue: number;
+	sheet: string;
+	no: string;
+}
+export interface ResultGetPendDetailFromSheetId {
+	ret: ReturnGetPendDetailFromSheetIdRet[];
+}
+
+export enum BizPhraseType {
+	any = 0,
+	atom = 11,
+	spec = 12,
+	bud = 13,
+	sheet = 101,
+	main = 102,
+	detail = 103,
+	pend = 104,
+	detailAct = 111,
+	with = 151,
+	pick = 161,
+	role = 201,
+	permit = 202,
+	options = 301,
+	tree = 401,
+	tie = 501,
+	title = 901,
+	key = 1001,
+	prop = 1011,
+	optionsitem = 1031
+}
+
+export enum BudDataType {
+	none = 0,
+	int = 11,
+	atom = 12,
+	radio = 13,
+	check = 14,
+	ID = 19,
+	dec = 21,
+	char = 31,
+	str = 32,
+	date = 41
+}
+
+export enum BizBudFlag {
+	index = 1
+}
+
+export interface ParamGetBizObjects {
+	lang: string;
+	culture: string;
+}
+export interface ReturnGetBizObjectsObjs {
+	id: number;
+	phrase: string;
+	source: string;
+	caption: string;
+}
+export interface ReturnGetBizObjectsBuds {
+	id: number;
+	base: number;
+	phrase: string;
+	caption: string;
+}
+export interface ResultGetBizObjects {
+	objs: ReturnGetBizObjectsObjs[];
+	buds: ReturnGetBizObjectsBuds[];
+}
+
 export interface ParamSaveAtom {
 	atom: string;
 	base: number;
@@ -318,11 +477,7 @@ export interface ResultDeleteDetail {
 export interface ParamSubmitSheet {
 	id: number;
 }
-export interface ReturnSubmitSheetRet {
-	yes: string;
-}
 export interface ResultSubmitSheet {
-	ret: ReturnSubmitSheetRet[];
 }
 
 export interface ParamRemoveDraft {
@@ -542,67 +697,6 @@ export interface ResultGetSpecs {
 	ret: ReturnGetSpecsRet[];
 }
 
-export enum BizPhraseType {
-	any = 0,
-	atom = 11,
-	spec = 12,
-	bud = 13,
-	sheet = 101,
-	main = 102,
-	detail = 103,
-	pend = 104,
-	detailAct = 111,
-	with = 151,
-	pick = 161,
-	role = 201,
-	permit = 202,
-	options = 301,
-	tree = 401,
-	tie = 501,
-	moniker = 901,
-	key = 1001,
-	prop = 1011,
-	optionsitem = 1031
-}
-
-export enum BudDataType {
-	none = 0,
-	int = 11,
-	atom = 12,
-	radio = 13,
-	check = 14,
-	ID = 19,
-	dec = 21,
-	char = 31,
-	str = 32,
-	date = 41
-}
-
-export enum BizBudFlag {
-	index = 1
-}
-
-export interface ParamGetBizObjects {
-	lang: string;
-	culture: string;
-}
-export interface ReturnGetBizObjectsObjs {
-	id: number;
-	phrase: string;
-	source: string;
-	caption: string;
-}
-export interface ReturnGetBizObjectsBuds {
-	id: number;
-	base: number;
-	phrase: string;
-	caption: string;
-}
-export interface ResultGetBizObjects {
-	objs: ReturnGetBizObjectsObjs[];
-	buds: ReturnGetBizObjectsBuds[];
-}
-
 export interface Atom extends ID {
 	base: number;
 	no?: string;
@@ -705,84 +799,6 @@ export interface HistoryInActs extends ID {
 	value: number;
 	ref: number | ID;
 	plusMinus: number;
-}
-
-export interface ParamGetPendSheetFromNo {
-	pend: string;
-	key: string;
-}
-export interface ReturnGetPendSheetFromNo$page {
-	id: number;
-	base: number;
-	no: string;
-	target: number;
-	operator: number;
-	value: number;
-	sheet: string;
-}
-export interface ResultGetPendSheetFromNo {
-	$page: ReturnGetPendSheetFromNo$page[];
-}
-
-export interface ParamGetPendSheetFromTarget {
-	pend: string;
-	key: string;
-}
-export interface ReturnGetPendSheetFromTarget$page {
-	id: number;
-	base: number;
-	no: string;
-	target: number;
-	operator: number;
-	value: number;
-	sheet: string;
-}
-export interface ResultGetPendSheetFromTarget {
-	$page: ReturnGetPendSheetFromTarget$page[];
-}
-
-export interface ParamGetPendDetailFromItem {
-	pend: string;
-	key: string;
-}
-export interface ReturnGetPendDetailFromItem$page {
-	id: number;
-	base: number;
-	origin: number;
-	item: number;
-	itemX: number;
-	value: number;
-	amount: number;
-	price: number;
-	pend: number;
-	pendValue: number;
-	sheet: string;
-	no: string;
-}
-export interface ResultGetPendDetailFromItem {
-	$page: ReturnGetPendDetailFromItem$page[];
-}
-
-export interface ParamGetPendDetailFromSheetId {
-	pend: string;
-	sheetId: number;
-}
-export interface ReturnGetPendDetailFromSheetIdRet {
-	id: number;
-	base: number;
-	origin: number;
-	item: number;
-	itemX: number;
-	value: number;
-	amount: number;
-	price: number;
-	pend: number;
-	pendValue: number;
-	sheet: string;
-	no: string;
-}
-export interface ResultGetPendDetailFromSheetId {
-	ret: ReturnGetPendDetailFromSheetIdRet[];
 }
 
 export interface AtomUom extends ID {
@@ -1254,6 +1270,12 @@ export interface UqExt extends Uq {
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
 	$AllPhrases: UqQuery<Param$AllPhrases, Result$AllPhrases>;
+	GetPend: UqQuery<ParamGetPend, ResultGetPend>;
+	GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
+	GetPendSheetFromTarget: UqQuery<ParamGetPendSheetFromTarget, ResultGetPendSheetFromTarget>;
+	GetPendDetailFromItem: UqQuery<ParamGetPendDetailFromItem, ResultGetPendDetailFromItem>;
+	GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
+	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
 	SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
 	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
@@ -1273,7 +1295,6 @@ export interface UqExt extends Uq {
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
 	GetSpecs: UqQuery<ParamGetSpecs, ResultGetSpecs>;
-	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
 	Atom: UqID<any>;
 	Spec: UqID<any>;
 	Sheet: UqID<any>;
@@ -1282,10 +1303,6 @@ export interface UqExt extends Uq {
 	IxBud: UqIX<any>;
 	Bud: UqID<any>;
 	History: UqID<any>;
-	GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
-	GetPendSheetFromTarget: UqQuery<ParamGetPendSheetFromTarget, ResultGetPendSheetFromTarget>;
-	GetPendDetailFromItem: UqQuery<ParamGetPendDetailFromItem, ResultGetPendDetailFromItem>;
-	GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
 	AtomUom: UqID<any>;
 	AtomSpec: UqID<any>;
 	SaveUomType: UqAction<ParamSaveUomType, ResultSaveUomType>;
@@ -1769,6 +1786,485 @@ export const uqSchema={
             }
         ]
     },
+    "getpend": {
+        "name": "GetPend",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "pend",
+                "type": "id"
+            },
+            {
+                "name": "key",
+                "type": "char",
+                "size": 100
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "pend",
+                        "type": "id"
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "target",
+                        "type": "id"
+                    },
+                    {
+                        "name": "detail",
+                        "type": "id"
+                    },
+                    {
+                        "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "itemX",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "price",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "amount",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "getpendsheetfromno": {
+        "name": "GetPendSheetFromNo",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "pend",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "key",
+                "type": "char",
+                "size": 100
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "target",
+                        "type": "id"
+                    },
+                    {
+                        "name": "operator",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "char",
+                        "size": 200
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "getpendsheetfromtarget": {
+        "name": "GetPendSheetFromTarget",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "pend",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "key",
+                "type": "char",
+                "size": 100
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "target",
+                        "type": "id"
+                    },
+                    {
+                        "name": "operator",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "char",
+                        "size": 200
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "getpenddetailfromitem": {
+        "name": "GetPendDetailFromItem",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "pend",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "key",
+                "type": "char",
+                "size": 100
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "itemX",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "amount",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "price",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "pend",
+                        "type": "id"
+                    },
+                    {
+                        "name": "pendValue",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "getpenddetailfromsheetid": {
+        "name": "GetPendDetailFromSheetId",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "pend",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "sheetId",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "itemX",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "amount",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "price",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "pend",
+                        "type": "id"
+                    },
+                    {
+                        "name": "pendValue",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    }
+                ]
+            }
+        ]
+    },
+    "bizphrasetype": {
+        "name": "BizPhraseType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "any": 0,
+            "atom": 11,
+            "spec": 12,
+            "bud": 13,
+            "sheet": 101,
+            "main": 102,
+            "detail": 103,
+            "pend": 104,
+            "detailAct": 111,
+            "with": 151,
+            "pick": 161,
+            "role": 201,
+            "permit": 202,
+            "options": 301,
+            "tree": 401,
+            "tie": 501,
+            "title": 901,
+            "key": 1001,
+            "prop": 1011,
+            "optionsitem": 1031
+        }
+    },
+    "buddatatype": {
+        "name": "BudDataType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "none": 0,
+            "int": 11,
+            "atom": 12,
+            "radio": 13,
+            "check": 14,
+            "ID": 19,
+            "dec": 21,
+            "char": 31,
+            "str": 32,
+            "date": 41
+        }
+    },
+    "bizbudflag": {
+        "name": "BizBudFlag",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "index": 1
+        }
+    },
+    "getbizobjects": {
+        "name": "GetBizObjects",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "lang",
+                "type": "char",
+                "size": 10
+            },
+            {
+                "name": "culture",
+                "type": "char",
+                "size": 10
+            }
+        ],
+        "returns": [
+            {
+                "name": "objs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "source",
+                        "type": "text"
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            },
+            {
+                "name": "buds",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            }
+        ]
+    },
     "saveatom": {
         "name": "SaveAtom",
         "type": "action",
@@ -2103,18 +2599,7 @@ export const uqSchema={
             }
         ],
         "jsoned": true,
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "yes",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            }
-        ]
+        "returns": [] as any
     },
     "removedraft": {
         "name": "RemoveDraft",
@@ -2821,127 +3306,6 @@ export const uqSchema={
             }
         ]
     },
-    "bizphrasetype": {
-        "name": "BizPhraseType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "any": 0,
-            "atom": 11,
-            "spec": 12,
-            "bud": 13,
-            "sheet": 101,
-            "main": 102,
-            "detail": 103,
-            "pend": 104,
-            "detailAct": 111,
-            "with": 151,
-            "pick": 161,
-            "role": 201,
-            "permit": 202,
-            "options": 301,
-            "tree": 401,
-            "tie": 501,
-            "moniker": 901,
-            "key": 1001,
-            "prop": 1011,
-            "optionsitem": 1031
-        }
-    },
-    "buddatatype": {
-        "name": "BudDataType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "none": 0,
-            "int": 11,
-            "atom": 12,
-            "radio": 13,
-            "check": 14,
-            "ID": 19,
-            "dec": 21,
-            "char": 31,
-            "str": 32,
-            "date": 41
-        }
-    },
-    "bizbudflag": {
-        "name": "BizBudFlag",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "index": 1
-        }
-    },
-    "getbizobjects": {
-        "name": "GetBizObjects",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "lang",
-                "type": "char",
-                "size": 10
-            },
-            {
-                "name": "culture",
-                "type": "char",
-                "size": 10
-            }
-        ],
-        "returns": [
-            {
-                "name": "objs",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "source",
-                        "type": "text"
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            },
-            {
-                "name": "buds",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            }
-        ]
-    },
     "atom": {
         "name": "Atom",
         "type": "id",
@@ -3136,7 +3500,12 @@ export const uqSchema={
                 "precision": 18
             }
         ],
-        "keys": [] as any,
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
         "global": false,
         "idType": 3,
         "isMinute": true
@@ -3228,292 +3597,6 @@ export const uqSchema={
         "global": false,
         "idType": 3,
         "isMinute": true
-    },
-    "getpendsheetfromno": {
-        "name": "GetPendSheetFromNo",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "pend",
-                "type": "char",
-                "size": 200
-            },
-            {
-                "name": "key",
-                "type": "char",
-                "size": 100
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id",
-                        "null": false
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "no",
-                        "type": "char",
-                        "size": 20
-                    },
-                    {
-                        "name": "target",
-                        "type": "id"
-                    },
-                    {
-                        "name": "operator",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "sheet",
-                        "type": "char",
-                        "size": 200
-                    }
-                ],
-                "order": "asc"
-            }
-        ]
-    },
-    "getpendsheetfromtarget": {
-        "name": "GetPendSheetFromTarget",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "pend",
-                "type": "char",
-                "size": 200
-            },
-            {
-                "name": "key",
-                "type": "char",
-                "size": 100
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id",
-                        "null": false
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "no",
-                        "type": "char",
-                        "size": 20
-                    },
-                    {
-                        "name": "target",
-                        "type": "id"
-                    },
-                    {
-                        "name": "operator",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "sheet",
-                        "type": "char",
-                        "size": 200
-                    }
-                ],
-                "order": "asc"
-            }
-        ]
-    },
-    "getpenddetailfromitem": {
-        "name": "GetPendDetailFromItem",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "pend",
-                "type": "char",
-                "size": 200
-            },
-            {
-                "name": "key",
-                "type": "char",
-                "size": 100
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id",
-                        "null": false
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "origin",
-                        "type": "id"
-                    },
-                    {
-                        "name": "item",
-                        "type": "id"
-                    },
-                    {
-                        "name": "itemX",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "amount",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "price",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "pend",
-                        "type": "id"
-                    },
-                    {
-                        "name": "pendValue",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "sheet",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "no",
-                        "type": "char",
-                        "size": 30
-                    }
-                ],
-                "order": "asc"
-            }
-        ]
-    },
-    "getpenddetailfromsheetid": {
-        "name": "GetPendDetailFromSheetId",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "pend",
-                "type": "char",
-                "size": 200
-            },
-            {
-                "name": "sheetId",
-                "type": "id"
-            }
-        ],
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id",
-                        "null": false
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "origin",
-                        "type": "id"
-                    },
-                    {
-                        "name": "item",
-                        "type": "id"
-                    },
-                    {
-                        "name": "itemX",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "amount",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "price",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "pend",
-                        "type": "id"
-                    },
-                    {
-                        "name": "pendValue",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "sheet",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "no",
-                        "type": "char",
-                        "size": 30
-                    }
-                ]
-            }
-        ]
     },
     "atomuom": {
         "name": "AtomUom",
@@ -5222,14 +5305,4 @@ export enum EnumAtom {
 	SumPersonPost = 'sumpersonpost',
 	SumGroupPost = 'sumgrouppost',
 	SumGroup = 'sumgroup',
-}
-
-export enum EnumMoniker {
-	Sum = 'sum',
-	SiteSetting = 'sitesetting',
-	storage = 'storage',
-	c = 'c',
-	AccountSetting = 'accountsetting',
-	PersonSetting = 'personsetting',
-	Price = 'price',
 }

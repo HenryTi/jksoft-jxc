@@ -1,18 +1,18 @@
 import { UqQuery } from "tonwa-uq";
 import { QueryMore } from "app/tool";
-import { EntityMoniker } from "app/Biz";
+import { EntityTitle } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { EnumMoniker, ReturnHistoryStorage$page, ReturnReportStorage$page } from "uqs/UqDefault";
+import { ReturnHistoryStorage$page, ReturnReportStorage$page } from "uqs/UqDefault";
 import { EasyTime, FA, LMR, dateFromMinuteId } from "tonwa-com";
 // import { useBizAtomSpec } from "app/views/JXC/Atom";
 
 export interface OptionsUseSubject {
-    moniker: EnumMoniker;
+    title: string; // EnumTitle;
     bud: string;
 }
 
-export function pathSubjectHistory(moniker: EnumMoniker) {
-    return `${moniker}-history`;
+export function pathSubjectHistory(title: string /*EnumTitle*/) {
+    return `${title}-history`;
 }
 
 export interface ReturnUseSubject {
@@ -23,10 +23,10 @@ export interface ReturnUseSubject {
 }
 
 export function useSubject(options: OptionsUseSubject): ReturnUseSubject {
-    const { moniker: subjectName, bud: budName } = options;
+    const { title: subjectName, bud: budName } = options;
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
-    const entity: EntityMoniker = biz.entities[subjectName] as EntityMoniker;
+    const entity: EntityTitle = biz.entities[subjectName] as EntityTitle;
     const QueryReport: UqQuery<any, any> = uq.ReportStorage;
     const QueryHistory: UqQuery<any, any> = uq.HistoryStorage;
 

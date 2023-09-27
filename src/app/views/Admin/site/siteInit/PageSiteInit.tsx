@@ -1,4 +1,4 @@
-import { BizBud, EntityMoniker } from "app/Biz";
+import { BizBud, EntityTitle } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
 import { Route } from "react-router-dom";
@@ -64,7 +64,7 @@ export function PageSiteInit() {
     async function getInit() {
         let result = await uq.GetSiteSetting.query({});
         const buds = readBuds(result);
-        const siteSetting = biz.entities['sitesetting'] as EntityMoniker;
+        const siteSetting = biz.entities['sitesetting'] as EntityTitle;
         const { buds: bizBuds } = siteSetting;
 
         let ret: InitValue[] = initBuds.map(v => {

@@ -2,6 +2,11 @@ import { BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
 import { EntityAtom, EntityPick } from "./EntityAtom";
 
+export interface RefEntity<T extends Entity> {
+    caption: string;
+    entity: T;
+}
+
 export interface Pickable {
     caption: string;
     atom: EntityAtom;

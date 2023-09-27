@@ -4,7 +4,7 @@ import { Entity } from './Entity';
 import { EntityAtom, EntityPick, EntitySpec } from './EntityAtom';
 import { EntityTree } from './EntityTree';
 import { EntityDetail, EntityMain, EntityPend, EntitySheet } from './EntitySheet';
-import { EntityMoniker } from './EntityMoniker';
+import { EntityTitle } from './EntityTitle';
 import { EntityTie } from './EntityTie';
 import { EntityPermit, EntityRole } from './EntityPermit';
 import { EntityOptions } from './EntityOptions';
@@ -72,8 +72,7 @@ export class Biz {
             options: this.buildOptions,
             permit: this.buildPermit,
             role: this.buildRole,
-            tab: this.buildBud,
-            moniker: this.buildBud,
+            title: this.buildTitle,
             tree: this.buildTree,
             tie: this.buildTie,
         }
@@ -157,8 +156,8 @@ export class Biz {
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildBud = (name: string, type: string): Entity => {
-        let bizEntity = new EntityMoniker(this, name, type);
+    private buildTitle = (name: string, type: string): Entity => {
+        let bizEntity = new EntityTitle(this, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 

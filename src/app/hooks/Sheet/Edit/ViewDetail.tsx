@@ -25,7 +25,7 @@ function ViewSection({ section, editable }: { section: DetailSection; editable: 
     const inputSection = useInputSection(detail);
     const rows = useAtomValue(section._rows);
     async function onClick() {
-        let ret = await inputSection();
+        let ret = await inputSection(section);
     }
 
     let content: any;
@@ -88,5 +88,5 @@ function ViewRow({ row, editable }: { row: DetailRow; editable: boolean; }) {
         <div className="text-end text-info d-flex flex-column">
             <div className={'ps-2 pe-3 ' + cnEdit} onClick={onEdit}><FA name="pencil" fixWidth={true} /></div>
         </div>
-    </div >
+    </div >;
 }

@@ -8,27 +8,29 @@ import { ModalInputRow } from "./ModalInputRow";
 export function useInputSection(detailMan: DetailMain) {
     const { openModal } = useModal();
     const pick = usePick();
-    async function input() {
-        let section = new DetailSection(detailMan);
-        const { detail } = section;
-        const { entityDetail } = detail;
-        const { pend, item } = entityDetail;
-        if (pend !== undefined) await addPend();
-        else await addInput();
-        return section;
-        async function addPend() {
-            let inputed = await openModal(<ModalInputPend />);
-            // await detail.addRow();
+    const { entityDetail } = detailMan;
+    const { pend, item } = entityDetail;
+
+    async function inputFromPend(detailSection: DetailSection) {
+        let inputed = await openModal(<ModalInputPend entityPend={pend} />);
+        // await detail.addRow();
+    }
+    async function inputSection(detailSection: DetailSection) {
+        let ret = await pick(item);
+        if (ret === undefined) return;
+        let { spec } = ret;
+        let isNewSection = false;
+        if (detailSection === undefined) {
+            detailSection = new DetailSection(detailMan);
+            isNewSection = true;
         }
-        async function addInput() {
-            let ret = await pick(item);
-            if (ret === undefined) return;
-            let { spec } = ret;
-            let row = new DetailRow(section);
-            row.item = spec;
-            await openModal(<ModalInputRow row={row} />);
+        let row = new DetailRow(detailSection);
+        row.item = spec;
+        let retInput = await openModal(<ModalInputRow row={row} />);
+        if (retInput === true) {
             await row.addToSection();
+            if (isNewSection === true) detailMan.addSection(detailSection);
         }
     }
-    return useCallback(input, []);
+    return useCallback(pend !== undefined ? inputFromPend : inputSection, []);
 }

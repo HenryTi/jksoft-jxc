@@ -1,33 +1,43 @@
-import * as jsonpack from 'jsonpack';
-import { useUqApp } from "app/UqApp";
 import { useRef, useState } from "react";
 import { Route } from "react-router-dom";
 import { Page, useModal } from "tonwa-app";
-import codeTxt from '/uq-app/index.ts.txt';
 import { PageUpload } from './PageUpload';
 
 function PageCompile() {
-    const uqApp = useUqApp();
     const { openModal } = useModal();
-    const [source, setSource] = useState<object>();
-    async function test() {
-        setSource({});
-        let { uqApi } = uqApp.uqMan;
-        const code = await (await fetch(codeTxt)).text();
-        let { schemas, logs } = await uqApi.compileOverride(code);
-        // let { schemas, logs } = await uqApi.compileOverride(biz);
-        // setText();
-        setSource({
-            logs,
-            schemas: jsonpack.unpack(schemas),
-        });
+    const fileInput = useRef<HTMLInputElement>();
+    function onUploaded(content: string) {
+        openModal(<PageUpload content={content} />);
     }
-    function onUpload() {
-        openModal(<PageUpload />);
+    function onSelectFiles() {
+        fileInput.current.click();
+    }
+    async function onFilesChange(evt: React.ChangeEvent<HTMLInputElement>) {
+        let { files } = evt.target;
+        await load(files[0]);
+        fileInput.current.value = '';
+    }
+    async function load(file: File) {
+        return new Promise<void>((resolve) => {
+            // textAreaRef.current.textContent = '';
+            let fr = new FileReader();
+            fr.readAsText(file);
+            fr.onloadend = async function (evt: ProgressEvent<FileReader>) {
+                resolve();
+                //setText(evt.target.result as string);
+                // textAreaRef.current.textContent = evt.target.result as string;
+                onUploaded(evt.target.result as string);
+            }
+        });
     }
     return <Page header={captionCompile}>
         <div className="p-3">
-            <button className="btn btn-primary" onClick={onUpload}>上传代码</button>
+            <button className="btn btn-primary" onClick={onSelectFiles}>上传业务设计</button>
+            <input ref={fileInput}
+                type="file"
+                className="w-100 form-control-file d-none"
+                name="files" multiple={false}
+                onChange={onFilesChange} />
         </div>
     </Page>;
 }

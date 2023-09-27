@@ -1,5 +1,5 @@
 import { BizBud } from "./BizBud";
-import { Entity, Pickable, getPickableCaption } from "./Entity";
+import { Entity, Pickable, RefEntity, getPickableCaption } from "./Entity";
 
 export class EntityMain extends Entity {
     target: Pickable;
@@ -25,7 +25,7 @@ export class EntityDetail extends Entity {
     itemCaption: string;
     itemX: Pickable;
     itemXCaption: string;
-    pend: EntityPend;
+    pend: RefEntity<EntityPend>; // EntityPend;
     value: BizBud;
     price: BizBud;
     amount: BizBud;
@@ -57,7 +57,11 @@ export class EntityDetail extends Entity {
     }
 
     private fromPend(pend: any) {
-        this.pend = this.biz.entities[pend] as EntityPend;
+        let { caption, entity } = pend;
+        this.pend = {
+            caption,
+            entity: this.biz.entities[entity] as EntityPend,
+        };
     }
 
     private fromValue(prop: any) {

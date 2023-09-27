@@ -1,108 +1,67 @@
 import * as jsonpack from 'jsonpack';
 import { useUqApp } from "app/UqApp";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Page, useModal } from "tonwa-app";
-import { ButtonAsync, EasyDate, LMR, List, Sep, wait } from "tonwa-com";
+import { ButtonAsync, EasyDate, FA, LMR, List, Sep, wait } from "tonwa-com";
 
-export function PageUpload() {
+export function PageUpload({ content }: { content: string; }) {
     const uqApp = useUqApp();
     const { openModal, closeModal } = useModal();
-    const fileInput = useRef<HTMLInputElement>();
-    const textAreaRef = useRef<HTMLTextAreaElement>();
-    const [files, setFiles] = useState<any[]>(null);
-    const [text, setText] = useState<string>();
-    // useAutosizeTextArea(textAreaRef.current, '');
-    function onFilesChange(evt: React.ChangeEvent<HTMLInputElement>) {
-        let upFiles: any[] = [];
-        let { files } = evt.target;
-        let len = files.length;
-        for (let i = 0; i < len; i++) {
-            upFiles.push(files[i]);
-        }
-        setFiles(upFiles);
-        if (len > 0) {
-            load(files[0]);
-        }
-    }
 
-    function onSelectFiles() {
-        fileInput.current.click();
-    }
-
-    function ViewFile({ value }: { value: File; }) {
-        const { name, size, lastModified } = value;
-        function sz(): string {
-            let n: number, u: string;
-            if (size < 1024) {
-                n = size; u = 'b';
-            }
-            else if (size < 1024 * 1024) {
-                n = Math.trunc((size / 1024) * 100) / 100; u = 'k';
-            }
-            else {
-                n = Math.trunc((size / 1024 / 1024) * 100) / 100; u = 'm';
-            }
-            return n + ' ' + u;
-        }
-        return <LMR className="px-3 py-2">
-            <div>
-                <div>{name}</div>
-                <div className="text-secondary small">修改日期: <EasyDate date={lastModified / 1000} /></div>
-            </div>
-            <div className="text-secondary small">{sz()}</div>
-        </LMR>;
-    }
-    async function load(file: File) {
-        return new Promise<void>((resolve) => {
-            textAreaRef.current.textContent = '';
-            let fr = new FileReader();
-            fr.readAsText(file);
-            fr.onloadend = async function (evt: ProgressEvent<FileReader>) {
-                resolve();
-                //setText(evt.target.result as string);
-                textAreaRef.current.textContent = evt.target.result as string;
-            }
-        });
-    }
     async function onComplie() {
         const { uqMan, biz } = uqApp;
         let { uqApi } = uqMan;
-        let { schemas, logs, hasError } = await uqApi.compileOverride(textAreaRef.current.textContent);
-        setFiles(undefined);
+        let { schemas, logs, hasError } = await uqApi.compileOverride(content);
+        let allSchemas: any;
+        let top: any;
+        function Top({ children, icon, color }: { icon: string; color: string; children: React.ReactNode }) {
+            return <div className='p-3 border-bottom tonwa-bg-gray-2'>
+                <FA className={'me-3 ' + color ?? ' '} name={icon} />
+                {children}
+            </div>
+        }
+        if (hasError === false) {
+            allSchemas = jsonpack.unpack(schemas);
+            biz.buildEntities(allSchemas);
+            top = <Top icon="check-circle" color="text-success">提交成功</Top>;
+        }
+        else {
+            top = <Top icon="exclamation-circle" color="text-danger">发生错误</Top>;
+        }
+        let results: string;
         if (logs.length > 0) {
             let text: string[] = [];
             (logs as string[]).forEach(v => {
                 if (v === null) return;
                 text.push(...v.split('\n'));
             });
-            textAreaRef.current.textContent = text.join('\n');
+            results = text.join('\n');
         }
-        let allSchemas: any;
-        if (hasError === false) {
-            allSchemas = jsonpack.unpack(schemas);
-            biz.buildEntities(allSchemas);
-        }
-        if (logs.length === 0) {
+        else {
             let str = JSON.stringify(allSchemas, null, 4);
-            textAreaRef.current.textContent = str;
+            results = str;
         }
+        closeModal();
+        openModal(<Page header="业务设计已提交">
+            {top}
+            <pre className='p-3 text-break' style={{ whiteSpace: 'pre-wrap' }}>{results}</pre>
+        </Page>);
     }
-    let btnUpload: any;
-    if (files?.length > 0) {
-        btnUpload = <ButtonAsync className="btn btn-primary me-3" onClick={onComplie}>提交</ButtonAsync>;
-    }
-    return <Page header="上传代码">
+    // <button className="btn btn-outline-primary me-3" onClick={onSelectFiles}>打开</button>
+    /*
+    <input ref={fileInput}
+    type="file"
+    className="w-100 form-control-file d-none"
+    name="files" multiple={false}
+    onChange={onFilesChange} />
+    */
+    return <Page header="业务设计">
         <div className="px-3 py-1 tonwa-bg-gray-2 d-flex">
-            <button className="btn btn-outline-primary me-3" onClick={onSelectFiles}>打开</button>
-            {btnUpload}
-            <input ref={fileInput}
-                type="file"
-                className="w-100 form-control-file d-none"
-                name="files" multiple={false}
-                onChange={onFilesChange} />
+            <ButtonAsync className="btn btn-primary me-3" onClick={onComplie}>提交</ButtonAsync>
         </div>
         <div className="p-1">
-            <textarea ref={textAreaRef} className="form-control fs-larger" rows={20} />
+            <pre className='p-3 text-break' style={{ whiteSpace: 'pre-wrap' }}>{content}</pre>
         </div>
     </Page>;
+    // <textarea ref={textAreaRef} className="form-control fs-larger" rows={20} />
 }

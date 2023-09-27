@@ -1,3 +1,29 @@
+Biz Query GetPend (
+    pend ID,                // pend entity id
+    key CHAR(100),
+)
+PAGE (
+    pend ID ASC,
+    sheet ID,
+    no NO,
+    target ID,
+    detail ID,
+    item ID,
+    itemX ID,
+    value VALUE,
+    price VALUE,
+    amount VALUE,
+) {
+    PAGE SELECT a.id as pend
+        , c.id as sheet, c.no, c.target
+        , b.id as detail, b.item, b.itemX, b.value, b.price, b.amount
+        FROM Pend as a
+            JOIN Detail as b on b.id=a.detail
+            JOIN Sheet as c ON c.id=b.base
+        WHERE a.base=pend
+        ORDER BY a.id ASC
+        LIMIT $pageSize;
+}
 
 Biz Query GetPendSheetFromNo ver 0.1 (
     pend Phrase, 

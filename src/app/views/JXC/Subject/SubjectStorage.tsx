@@ -1,12 +1,12 @@
 import { PageReport, PageHistory } from "app/hooks";
 import { pathDetailView } from "../SheetView";
 import { GSubject } from "app/tool";
-import { EnumMoniker } from "uqs/UqDefault";
+// import { EnumTitle } from "uqs/UqDefault";
 
-const moniker = EnumMoniker.storage;
+const title = 'storage';
 
 const props = {
-    moniker,
+    title,
     bud: 'goodsBalance',
     caption: '库存',
     captionHistory: '库存流水',
@@ -24,7 +24,7 @@ function PageHistoryStorage() {
 }
 
 export const gSubjectStorage: GSubject = {
-    name: moniker,
+    name: title,
     caption: props.caption,
     Report: <PageReportStorage />,
     History: <PageHistoryStorage />,
