@@ -385,7 +385,7 @@ export function useSheetAct(options: PropsSheetAct) {
 
     // return: id
     async function saveSheetToDb(sheet: Sheet): Promise<number> {
-        let { entityId } = entitySheet;
+        let { id: entityId } = entitySheet;
         let ret = await uq.SaveSheet.submit({
             ...sheet,
             phrase: entityId,

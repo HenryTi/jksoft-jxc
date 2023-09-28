@@ -43,7 +43,7 @@ export class Biz {
         let entityId = from62(base62);
         for (let i in this.entities) {
             let entity = this.entities[i];
-            if (entity.entityId === entityId) return entity as T;
+            if (entity.id === entityId) return entity as T;
         }
         return;
     }
@@ -61,7 +61,7 @@ export class Biz {
     }
 
     buildEntities(bizSchema: any) {
-        const builders: { [type: string]: (name: string, type: string) => Entity } = {
+        const builders: { [type: string]: (id: number, name: string, type: string) => Entity } = {
             sheet: this.buildSheet,
             main: this.buildMain,
             detail: this.buildDetail,
@@ -81,13 +81,13 @@ export class Biz {
         let arr: [Entity, any][] = [];
         for (let i in $biz) {
             let schema = ($biz as any)[i];
-            let { name, type, caption } = schema;
+            let { id, name, type, caption } = schema;
             let builder = builders[type];
             if (builder === undefined) {
                 if (name === '$user' || name === '$unit') continue;
                 throw new Error(`unknown biz type='${type}' name='${name}' caption='${caption}'`);
             }
-            let bizEntity = builder(name, type);
+            let bizEntity = builder(id, name, type);
             arr.push([bizEntity, schema]);
         }
         for (let [bizEntity, schema] of arr) {
@@ -98,76 +98,69 @@ export class Biz {
         }
     }
 
-    private buildSheet = (name: string, type: string): Entity => {
-        let bizEntity = new EntitySheet(this, name, type);
+    private buildSheet = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntitySheet(this, id, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildMain = (name: string, type: string): Entity => {
-        let bizEntity = new EntityMain(this, name, type);
+    private buildMain = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityMain(this, id, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildDetail = (name: string, type: string): Entity => {
-        let bizEntity = new EntityDetail(this, name, type);
+    private buildDetail = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityDetail(this, id, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildPend = (name: string, type: string): Entity => {
-        let bizEntity = new EntityPend(this, name, type);
+    private buildPend = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityPend(this, id, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildAtom = (name: string, type: string): Entity => {
-        let bizEntity = new EntityAtom(this, name, type);
+    private buildAtom = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityAtom(this, id, name, type);
         this.entities[bizEntity.phrase] = bizEntity;
         return this.entities[bizEntity.name] = bizEntity;
     }
-
-    private buildSpec = (name: string, type: string): Entity => {
-        let bizEntity = new EntitySpec(this, name, type);
+    private buildSpec = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntitySpec(this, id, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
-    /*
-        private buildBud = (name: string, type: string): Entity => {
-            let bizEntity = new EntityBud(this, name, type);
-            return this.entities[bizEntity.name] = bizEntity;
-        }
-    */
-    private buildPick = (name: string, type: string): Entity => {
-        let bizEntity = new EntityPick(this, name, type);
+    private buildPick = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityPick(this, id, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildOptions = (name: string, type: string): Entity => {
-        let bizEntity = new EntityOptions(this, name, type);
+    private buildOptions = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityOptions(this, id, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildPermit = (name: string, type: string): Entity => {
-        let bizEntity = new EntityPermit(this, name, type);
+    private buildPermit = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityPermit(this, id, name, type);
         this.permits.push(bizEntity);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildRole = (name: string, type: string): Entity => {
-        let bizEntity = new EntityRole(this, name, type);
+    private buildRole = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityRole(this, id, name, type);
         this.roles.push(bizEntity);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildTitle = (name: string, type: string): Entity => {
-        let bizEntity = new EntityTitle(this, name, type);
+    private buildTitle = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityTitle(this, id, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildTree = (name: string, type: string): Entity => {
-        let bizEntity = new EntityTree(this, name, type);
+    private buildTree = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityTree(this, id, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 
-    private buildTie = (name: string, type: string): Entity => {
-        let bizEntity = new EntityTie(this, name, type);
+    private buildTie = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityTie(this, id, name, type);
         return this.entities[bizEntity.name] = bizEntity;
     }
 }

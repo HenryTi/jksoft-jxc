@@ -9,7 +9,7 @@ export function ModalInputPend({ entityPend: refPend }: { entityPend: RefEntity<
     const { uq } = uqApp;
     const { closeModal } = useModal();
     let { caption, entity: entityPend } = refPend;
-    let { name: pendName, entityId } = entityPend;
+    let { name: pendName, id: entityId } = entityPend;
     let { data: pendRows } = useQuery([pendName], async () => {
         let result = await uq.GetPend.page({ pend: entityId, key: '' }, undefined, 100);
         return result.$page;

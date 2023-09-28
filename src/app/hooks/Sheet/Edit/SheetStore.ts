@@ -69,7 +69,7 @@ export class Main extends BaseObject {
         const { uq, entitySheet } = this.sheetStore;
         // let no = await uq.IDNO({ ID: uq.Sheet });
         let ret = await uq.SaveSheet.submit({
-            phrase: entitySheet.entityId,
+            phrase: entitySheet.id,
             no: undefined,
             target: target === 0 ? undefined : target,
             value: undefined,
@@ -191,7 +191,7 @@ export class DetailRow extends BaseObject {
         }
         const { id } = await uq.SaveDetail.submit({
             base: main.id,
-            phrase: this.section.detail.entityDetail.entityId,
+            phrase: this.section.detail.entityDetail.id,
             id: this.id,
             item: this.item,
             itemX: this.itemX,

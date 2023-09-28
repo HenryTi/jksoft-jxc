@@ -122,7 +122,7 @@ function PageStore({ store }: { store: SheetStore; }) {
         </Page>);
         if (ret === true) {
             const { entitySheet } = store;
-            navigate(`/sheet/${to62(entitySheet.entityId)}`, { replace: true, state: locationState++ });
+            navigate(`/sheet/${to62(entitySheet.id)}`, { replace: true, state: locationState++ });
         }
         else {
             navigate(-1);

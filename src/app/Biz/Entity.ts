@@ -26,7 +26,6 @@ export class Entity extends BizBase {
     readonly selfProps: BizBud[] = [];       // 本 Atom 定义的
     readonly buds: { [key: string]: BizBud; } = {};           // 包括全部继承来的
     readonly props: BizBud[] = [];
-    entityId: number;
 
     protected override fromSwitch(i: string, val: any) {
         if (val === undefined) {
@@ -35,7 +34,7 @@ export class Entity extends BizBase {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'props': this.fromProps(val); break;
-            case 'entityId': this.entityId = val; break;
+            // case 'entityId': this.entityId = val; break;
         }
     }
 

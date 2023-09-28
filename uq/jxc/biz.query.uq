@@ -13,16 +13,27 @@ PAGE (
     value VALUE,
     price VALUE,
     amount VALUE,
+)
+RETURNS atoms (
+    atom ID,
+    value JSON,
 ) {
     PAGE SELECT a.id as pend
-        , c.id as sheet, c.no, c.target
+        , d.id as sheet, d.no, d.target
         , b.id as detail, b.item, b.itemX, b.value, b.price, b.amount
         FROM Pend as a
             JOIN Detail as b on b.id=a.detail
-            JOIN Sheet as c ON c.id=b.base
+            JOIN Bud as c ON c.id=b.base
+            JOIN Sheet as d ON d.id=c.base
         WHERE a.base=pend
         ORDER BY a.id ASC
         LIMIT $pageSize;
+    FOR (VAR target ID, item ID, itemX ID
+        OF SELECT a.target, a.item, a.itemX
+            FROM $page as a)
+    {
+
+    }
 }
 
 Biz Query GetPendSheetFromNo ver 0.1 (

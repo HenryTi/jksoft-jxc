@@ -6,13 +6,15 @@ export class BizBase {
     readonly uq: UqExt;
     readonly name: string;
     readonly type: string;
+    id: number;
     phrase: string;
     caption: string;
     bizPhraseType: BizPhraseType;
 
-    constructor(biz: Biz, name: string, type: string) {
+    constructor(biz: Biz, id: number, name: string, type: string) {
         this.biz = biz;
         this.uq = biz.uq;
+        this.id = id;
         this.name = name;
         this.type = type;
     }
@@ -33,6 +35,7 @@ export class BizBase {
             default:
                 debugger;
                 throw Error(`unknown ${i}`);
+            case 'id': break;
             case 'name': break;
             case 'jName': break;
             case 'type': break;
