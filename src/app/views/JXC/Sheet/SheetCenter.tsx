@@ -11,7 +11,7 @@ import { Atom, Sheet } from "uqs/UqDefault";
 function PageSheetCenter() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
-    const sheetEntities = biz.sheetEntities();
+    const sheetEntities = biz.sheets;
     const query = useCallback(async (param: any, pageStart: any, pageSize: number) => {
         let { $page } = await uq.GetMyDrafts.page({}, pageStart, pageSize);
         return $page;

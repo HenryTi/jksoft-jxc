@@ -12,7 +12,7 @@ export const pathAtomCenter = 'atom-center';
 
 export function PageAtomCenter() {
     const { biz } = useUqApp();
-    const atomEntities = biz.rootAtoms();
+    const atomEntities = biz.atomRoots;
     function ViewItem({ value }: { value: Entity; }) {
         const { id, name, caption } = value;
         return <Link to={`../${pathAtomList(id)}`}>

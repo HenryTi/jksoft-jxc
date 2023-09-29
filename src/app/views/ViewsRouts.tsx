@@ -8,14 +8,15 @@ import { AppLogin, AppRegister, routePrivacy } from 'app/brand';
 import { useAtomValue } from 'jotai';
 import { PageNoSite, routeAdmin } from './Admin';
 import { routeSiteAdmin } from './Admin/site';
-// import { useBiz } from 'app/hooks';
+import { useSiteRole } from './Site/useSiteRole';
+import { TabBiz } from './JXC/TabBiz';
 
 export function ViewsRoutes() {
     let uqApp = useUqApp();
-    // useBiz();
     let { user: atomUser, atomSiteLogined } = uqApp;
     let user = useAtomValue(atomUser);
     let siteLogined = useAtomValue(atomSiteLogined);
+    let { userSite } = useSiteRole();
     let homeLayout: JSX.Element;
     if (siteLogined !== true) {
         homeLayout = <PageSpinner />;
@@ -31,11 +32,16 @@ export function ViewsRoutes() {
         homeLayout = <PageNoSite />;
     }
     else {
-        homeLayout = <PageTabsLayout tabs={[
-            { to: '/' + pathJXC, caption: '首页', icon: 'home' },
-            // adminTab,
-            { to: '/' + pathMe, caption: '我的', icon: 'user' },
-        ]} />;
+        const home = { to: '/' + pathJXC, caption: '首页', icon: 'home' };
+        const me = { to: '/' + pathMe, caption: '我的', icon: 'user' };
+        const designBiz = { to: '/biz', caption: '业务', icon: 'user' };
+        const { isAdmin } = userSite;
+        //let isAdmin = true;
+        let tabs = isAdmin === true ?
+            [home, designBiz, me]
+            :
+            [home, me];
+        homeLayout = <PageTabsLayout tabs={tabs} />;
     }
 
     return <Suspense fallback={<PageSpinner header="..." />}>
@@ -44,6 +50,7 @@ export function ViewsRoutes() {
                 <Route path="/" element={homeLayout}>
                     <Route index element={<TabJXC />} />
                     <Route path={pathJXC + '/*'} element={<TabJXC />} />
+                    <Route path={'biz' + '/*'} element={<TabBiz />} />
                     <Route path={pathMe + '/*'} element={<TabMe />} />
                 </Route>
                 {routeMe}

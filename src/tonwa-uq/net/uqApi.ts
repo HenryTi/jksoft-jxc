@@ -114,6 +114,10 @@ export class UqApi extends ApiBase {
         let ret = await this.post('compile/append', { source });
         return ret;
     }
+    async compileEntity(id: number, code: string): Promise<any> {
+        let ret = await this.post('compile/entity', { id, code });
+        return ret;
+    }
     async biz(): Promise<any> {
         let ret = await this.post('compile/biz', {});
         return ret;

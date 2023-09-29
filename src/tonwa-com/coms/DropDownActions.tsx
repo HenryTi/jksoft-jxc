@@ -82,9 +82,9 @@ export class DropdownActions extends React.Component<DropdownActionsProps, Dropd
         let cn = className ?? 'cursor-pointer dropdown-toggle btn btn-sm';
         //if (className) cn += className;
         let cnMenu = 'dropdown-menu';
-        if (isRight === true) cnMenu += ' dropdown-menu-right';
+        if (isRight === true) cnMenu += ' dropend dropdown-menu-end';
         if (dropdownOpen === true) cnMenu += ' show';
-        return <div className={'dropdown ' + containerClass}>
+        return <div className={'btn-group ' + containerClass}>
             <button ref={v => this.button = v}
                 className={cn}
                 data-toggle="dropdown"

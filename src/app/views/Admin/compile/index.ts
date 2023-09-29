@@ -1,1 +1,1 @@
-export * from './PageCompile';
+export * from './PageBiz';

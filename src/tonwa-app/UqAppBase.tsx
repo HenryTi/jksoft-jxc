@@ -276,12 +276,12 @@ export function ViewUqApp({ createUqApp, children }: { createUqApp: () => UqAppB
     let uqApp = useMemo(createUqApp, []);
     const [modalStack] = useAtom(uqApp.modal.stack);
     let [appInited, setAppInited] = useState<boolean>(false);
-    useEffect(() => {
+    useEffectOnce(() => {
         (async function () {
             await uqApp.init();
             setAppInited(true);
         })();
-    }, [uqApp]);
+    });
     if (appInited === false) {
         return <div className="p-5 text-center">
             <Spinner className="text-info" />

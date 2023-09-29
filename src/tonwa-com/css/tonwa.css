@@ -219,15 +219,19 @@
 }
 
 .w-24c {
-    width: 20rem !important;
+    width: 24rem !important;
 }
 
 .w-max-24c {
-    max-width: 20rem !important;
+    max-width: 24rem !important;
 }
 
 .w-min-24c {
-    min-width: 20rem !important;
+    min-width: 24rem !important;
+}
+
+.w-max-25c {
+    max-width: 25rem !important;
 }
 
 .w-30c {

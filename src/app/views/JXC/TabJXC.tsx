@@ -6,7 +6,6 @@ import { pathPrice } from "./AssignPrice";
 import { pathPermits } from "./Permits";
 import { useSelectAtom } from "app/hooks";
 import { useUqApp } from "app/UqApp";
-import { EnumAtom } from "uqs/UqDefault";
 import { pathMy } from "./My";
 import { pathSheetCenter } from "./Sheet";
 
@@ -30,13 +29,5 @@ export function TabJXC() {
                 {label}
             </Link>
         })}
-        <div className={cn} onClick={onFunc} role="button">
-            功能试验
-        </div>
     </Page>;
-
-    async function onFunc() {
-        let ret = await selectAtom(EnumAtom.Contact);
-        alert(JSON.stringify(ret));
-    }
 }

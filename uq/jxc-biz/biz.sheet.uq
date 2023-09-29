@@ -45,8 +45,9 @@ Biz Main MainStoreIn {
 
 Biz Detail DetailStoreIn ver 0.2 {
     Main MainStoreIn;
-    Item '商品' Pick Goods;            -- 某类Atom
     Pend PendStoreIn '待入库商品';      -- 从某个待处理账来
+    Item '商品' = Pend.item;            -- Pick Goods;
+    Value := Pend.value;
     ACT {
         Biz Pend -= value;
     };

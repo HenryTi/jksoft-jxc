@@ -217,3 +217,16 @@ RETURNS buds (
             JOIN objs as b ON b.id=a.base
         WHERE 1=1; -- AND a.valid=1;
 }
+
+Query GetEntityCode(
+    id ID,
+)
+RETURNS ret (
+    code TEXT,
+    schema TEXT,
+) {
+    INTO ret SELECT a.source as code, a.schema
+        FROM BizObject as a
+            JOIN BizPhrase as b ON b.id=a.id
+        WHERE a.id=id AND b.base=$site;
+};

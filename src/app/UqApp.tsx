@@ -89,6 +89,7 @@ export class UqApp extends UqAppBase<UQs> {
     // 4. 对于多site的处理，还需要再设计
     protected override async loadOnLogined(): Promise<void> {
         await this.loginSite();
+        console.log('site logined');
     }
 
     atomSiteLogined = atom(false);
@@ -135,11 +136,6 @@ export class UqApp extends UqAppBase<UQs> {
         let gSpec = this.gSpecs[spec.name];
         return gSpec;
         */
-    }
-
-    spec(spec: string): GSpec {
-        let gSpec = this.gSpecs[spec];
-        return gSpec;
     }
 }
 
