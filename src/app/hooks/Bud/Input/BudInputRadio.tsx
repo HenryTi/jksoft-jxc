@@ -24,9 +24,9 @@ export function BudInputRadio(props: EditBudProps) {
     if (hasChecked === false) {
         (radios[0])[3] = true;
     }
-    async function onCheckChanged(item: string) {
-        const { phrase: budPhrase } = bizBud;
-        const optionsItemPhrase = item;
+    async function onCheckChanged(item: string | number) {
+        const { id: budPhrase } = bizBud;
+        const optionsItemPhrase = item as number;
         await uq.SaveBudRadio.submit({
             budPhrase,
             id,

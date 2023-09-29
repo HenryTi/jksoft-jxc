@@ -163,14 +163,14 @@ function PageView() {
 }
 
 function UomI({ uomI: uomIInit }: { uomI: UomI; }) {
-    const { uq } = useUqApp();
+    const { uq, biz } = useUqApp();
     const { openModal } = useModal();
     const [uomI, setUomI] = useState(uomIInit);
     async function onEdit() {
         const { id } = uomI;
         await openModal(<PageUomIView id={id} />);
         setUomI(null);
-        let ret = await getAtomWithProps(uq, id);
+        let ret = await getAtomWithProps(biz, uq, id);
         setUomI(ret);
     }
     if (uomI === null) {

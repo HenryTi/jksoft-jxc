@@ -221,7 +221,7 @@ function PageDetail({ header, editingRow, entityDetail }: {
         closeModal(ret);
     }
 
-    let { entityId } = entityDetail;
+    let { id: entityId } = entityDetail;
     let base62 = to62(entityId);
     return <Page header={header ?? caption}>
         <div className="pt-3 tonwa-bg-gray-2 mb-3 container">

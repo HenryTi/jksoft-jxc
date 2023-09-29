@@ -16,9 +16,9 @@ const options: OptionsUseBizAtom = {
 
 export function PageSumGroup() {
     const useBizAtomReturn = useBizAtom(options);
-    const { entity, pathList, pathView, searchAtoms } = useBizAtomReturn;
-    const { atom: atomName } = useParams();
-    let entityAtom = useBizAtomReturn.getEntityAtom(atomName) ?? entity;
+    const { entity, searchAtoms } = useBizAtomReturn;
+    // let entityAtom = useBizAtomReturn.getEntityAtom(atomName) ?? entity;
+    let entityAtom = entity;
     const right = <Link className="btn btn-sm btn-success me-2" to={`../${pathAtomNew(entityAtom.name)}`}>
         <FA name="plus" />
     </Link>;

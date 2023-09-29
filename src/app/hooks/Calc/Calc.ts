@@ -8,9 +8,10 @@ enum CellType {
     exp = 2,
 }
 
-abstract class Cell {
+export abstract class Cell {
     abstract get type(): CellType;
     readonly name: string;
+    abstract get fixed(): boolean;
     value: number;
     constructor(name: string) {
         this.name = name;
@@ -19,6 +20,7 @@ abstract class Cell {
 
 class ValueCell extends Cell {
     readonly type = CellType.value;
+    readonly fixed = false;
 
     constructor(name: string, value: number) {
         super(name);
@@ -29,11 +31,13 @@ class ValueCell extends Cell {
 class ExpCell extends Cell {
     readonly type = CellType.exp;
     readonly exp: jsep.Expression;
+    readonly fixed: boolean;
 
-    constructor(name: string, value: number, exp: jsep.Expression) {
+    constructor(name: string, value: number, exp: jsep.Expression, fixed: boolean) {
         super(name);
         this.value = value;
         this.exp = exp;
+        this.fixed = fixed;
     }
 }
 
@@ -46,16 +50,29 @@ export class Calc {
         this.uqApp = uqApp;
     }
 
-    initCell(name: string, value: number, formula: string) {
+    initCell(name: string, value: number, formula: string): Cell {
+        let cell: Cell;
         if (formula === undefined) {
-            let cell = new ValueCell(name, value);
+            cell = new ValueCell(name, value);
             this.cells[name] = cell;
         }
         else {
+            let fixed = true;
+            let p = formula.indexOf('\n');
+            if (p > 0) {
+                let suffix = formula.substring(p + 1);
+                formula = formula.substring(0, p);
+                switch (suffix) {
+                    default: fixed = true; break;
+                    case 'init': fixed = false; break;
+                    case 'equ': fixed = true; break;
+                }
+            }
             let exp = jsep(formula);
-            let cell = new ExpCell(name, value, exp);
+            cell = new ExpCell(name, value, exp, fixed);
             this.cells[name] = cell;
         }
+        return cell;
     }
 
     getCellValue(name: string) {

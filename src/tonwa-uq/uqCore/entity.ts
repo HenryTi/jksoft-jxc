@@ -486,6 +486,7 @@ export abstract class Entity {
                 let n = Number(v);
                 let date = isNaN(n) === true ? new Date(v) : new Date(n * 1000);
                 return date;
+            case 'json': return JSON.parse(v);
             case 'enum':
             case 'tinyint':
             case 'smallint':

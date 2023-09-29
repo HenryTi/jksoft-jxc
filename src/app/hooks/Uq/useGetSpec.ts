@@ -3,7 +3,7 @@ import { EntitySpec } from "app/Biz/EntityAtom";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import { useQuery } from "react-query";
-import { Atom, UqExt } from "uqs/UqDefault";
+import { Atom, ReturnGetSpecProps, UqExt } from "uqs/UqDefault";
 
 interface SpecAtom {
     entity: EntityAtom;
@@ -47,64 +47,48 @@ export async function loadSpec(uq: UqExt, biz: Biz, specId: number): Promise<Spe
     if (value === null) return empty;
     if (value !== undefined) return value;
 
-    let { ret } = await uq.GetSpec.query({ id: specId });
+    let { props } = await uq.GetSpec.query({ id: specId });
     let atom: SpecAtom;
     let specs: SpecItem[] = [];
-    let len = ret.length;
+    let len = props.length;
     let i = 0;
-    let id: number;
     for (; i < len;) {
-        let row = ret[i++];
-        const { prop, value } = row;
-        id = Number(value);
-        let entity = biz.entities[prop];
+        let row = props[i++];
+        const { phrase } = row;
+        // id = Number(value);
+        let entity = biz.entityIds[phrase];
         let { type } = entity;
         if (type === 'atom') {
-            atom = buildAtom(entity as EntityAtom);
+            atom = buildAtom(entity as EntityAtom, row);
             break;
         }
         if (type === 'spec') {
-            let spec: SpecItem = buildSpec(entity as EntitySpec);
+            let spec: SpecItem = buildSpec(entity as EntitySpec, row);
             specs.push(spec);
         }
     }
-    function buildAtom(entity: EntityAtom): SpecAtom {
-        let no: string, ex: string;
-        for (; i < len;) {
-            let { prop, value } = ret[i++];
-            switch (prop) {
-                case 'no': no = value; break;
-                case 'ex': ex = value; break;
-            }
-        }
+    function buildAtom(entity: EntityAtom, row: ReturnGetSpecProps): SpecAtom {
+        const { id, phrase: base, value: [no, ex] } = row;
         return {
             entity,
-            value: {
-                id,
-                base: undefined,
-                no,
-                ex,
-            },
+            value: { id, base, no, ex, },
         }
     }
-    function buildSpec(entity: EntitySpec): SpecItem {
+    function buildSpec(entity: EntitySpec, row: ReturnGetSpecProps): SpecItem {
         let { keys: keysArr, props: propsArr } = entity;
-        let coll: { [bud: string]: string | number } = {};
+        let coll: { [bud: number]: string | number } = {};
         let keys: (string | number)[] = [];
         let props: (string | number)[] = [];
-        for (; i < len;) {
-            let { prop, value } = ret[i];
-            let p = prop.indexOf('.');
-            if (p < 0) break;
-            coll[prop] = value;
-            i++;
+        const { id, value: arr } = row;
+        for (let [bud, value] of arr) {
+            coll[bud] = value;
         }
 
         for (let k of keysArr) {
-            keys.push(coll[k.phrase]);
+            keys.push(coll[k.id]);
         }
         for (let p of propsArr) {
-            props.push(coll[p.phrase]);
+            props.push(coll[p.id]);
         }
         return {
             entity,

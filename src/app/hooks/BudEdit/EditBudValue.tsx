@@ -19,7 +19,7 @@ function EditBudValue(props: EditBudProps & { type: string; convertToBudValue: C
         let ret = await openModal<number>(<PagePickValue label={label} value={value as number} type={type} options={options} />);
         let budValue = convertToBudValue(ret);
         await uq.SaveBudValue.submit({
-            phrase: bizBud.phrase,
+            phraseId: bizBud.id,
             id,
             ...budValue
         });

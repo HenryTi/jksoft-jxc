@@ -23,7 +23,7 @@ export function EditBudAtom(props: EditBudProps) {
         if (ret === undefined) return;
         let atomId = ret.id;
         await uq.SaveBudValue.submit({
-            phrase: bizBud.phrase,
+            phraseId: bizBud.id,
             id,
             int: atomId,
             dec: undefined as number,

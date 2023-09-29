@@ -24,11 +24,11 @@ export function BudInputIntOf(props: EditBudProps) {
     if (hasChecked === false) {
         (radios[0])[3] = true;
     }
-    async function onCheckChanged(item: string) {
-        const { phrase: budPhrase } = bizBud;
+    async function onCheckChanged(item: string | number) {
+        const { id: phraseId } = bizBud;
         const value = items.find(v => v.phrase === item).value;
         await uq.SaveBudValue.submit({
-            phrase: budPhrase,
+            phraseId,
             id,
             int: value as number,
             dec: undefined as number,

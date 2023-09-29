@@ -2,11 +2,11 @@ import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { ViewSpec } from "app/hooks/View";
 import { Page, useModal } from "tonwa-app";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { DetailRow } from "./SheetStore";
 import { ButtonAsync, FA, useEffectOnce } from "tonwa-com";
 import { BizBud } from "app/Biz";
-import { Calc } from "../../Calc";
+import { Calc, Cell } from "../../Calc";
 import { useAtomValue } from "jotai";
 import { useUqApp } from "app/UqApp";
 
@@ -19,27 +19,26 @@ export function ModalInputRow({ row }: { row: DetailRow; }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { item } = row;
-    const fields: [string, number, BizBud, (value: number) => void][] = (function () {
+    const { current: fields } = useRef<[string, number, BizBud, (value: number) => void, Cell][]>([]);
+    const [calc, setCalc] = useState<Calc>();
+    useEffectOnce(() => {
         const { entityDetail } = row.section.detail;
         const { value, price, amount } = row;
         const { value: valueBud, price: priceBud, amount: amountBud } = entityDetail;
-        let ret: [string, number, BizBud, (value: number) => void][] = [];
         if (valueBud !== undefined) {
-            ret.push([fieldValue, value, valueBud, value => row.value = value]);
+            fields.push([fieldValue, value, valueBud, value => row.value = value, undefined]);
         }
         if (priceBud !== undefined) {
-            ret.push([fieldPrice, price, priceBud, value => row.price = value]);
+            fields.push([fieldPrice, price, priceBud, value => row.price = value, undefined]);
         }
         if (amountBud !== undefined) {
-            ret.push([fieldAmount, amount, amountBud, value => row.amount = value]);
+            fields.push([fieldAmount, amount, amountBud, value => row.amount = value, undefined]);
         }
-        return ret;
-    })();
-    const [calc, setCalc] = useState<Calc>();
-    useEffectOnce(() => {
         let c = new Calc(uqApp);
-        for (let [fieldName, value, bud] of fields) {
-            c.initCell(fieldName, value, bud.defaultValue);
+        for (let field of fields) {
+            let [fieldName, value, bud,] = field;
+            let cell = c.initCell(fieldName, value, bud.defaultValue);
+            field[4] = cell;
         }
         setCalc(c);
         c.refreshHasValue();
@@ -52,13 +51,13 @@ export function ModalInputRow({ row }: { row: DetailRow; }) {
 
         function buildFormRows(): FormRow[] {
             return fields.map(v => {
-                const [fieldName, value, bud] = v;
+                const [fieldName, value, bud, , cell] = v;
                 const { name, caption, defaultValue } = bud;
                 return {
                     name: fieldName,
                     label: caption ?? name,
                     type: 'number',
-                    options: { value, disabled: defaultValue !== undefined }
+                    options: { value, disabled: cell.fixed }
                 };
             });
         }

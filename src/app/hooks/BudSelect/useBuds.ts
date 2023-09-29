@@ -64,7 +64,7 @@ export function useBuds({ entity: entityName, budNames, noMedsMessage }: Options
         }
         await Promise.all(promises);
         async function saveBud(bizBud: BizBud, id: number, budValue: any) {
-            let { phrase } = bizBud;
+            let { id: phraseId } = bizBud;
             let int: number, dec: number, str: string;
             switch (bizBud.budDataType.type) {
                 case EnumBudType.int: int = budValue; break;
@@ -72,7 +72,7 @@ export function useBuds({ entity: entityName, budNames, noMedsMessage }: Options
                 case EnumBudType.char: str = budValue; break;
             }
             let param = {
-                phrase, id, int, dec, str
+                phraseId, id, int, dec, str
             };
             let { entity } = bizBud;
             let ret = await entity.uq.SaveBudValue.submit({ ...param });

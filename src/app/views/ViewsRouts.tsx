@@ -38,7 +38,7 @@ export function ViewsRoutes() {
         ]} />;
     }
 
-    return <Suspense fallback={<PageSpinner />}>
+    return <Suspense fallback={<PageSpinner header="..." />}>
         <BrowserRouter basename='jksoft-jxc'>
             <Routes>
                 <Route path="/" element={homeLayout}>

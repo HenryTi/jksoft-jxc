@@ -10,28 +10,23 @@ Biz Query GetSiteSetting (
 )
 RETURNS budsInt (
     bud ID,
-    phrase Phrase,
     value BIGINT,
 )
 RETURNS budsDec (
     bud ID,
-    phrase Phrase,
     value VALUE,
 )
 RETURNS budsStr (
     bud ID,
-    phrase Phrase,
     value CHAR(200),
 )
 RETURNS budsCheck (
     bud ID,
-    phrase Phrase,
-    item Phrase,
+    item ID,
 ) {
     VAR id ID = $site;
     VAR entityId ID = PhraseId('siteSetting');
     INTO budsInt SELECT a.x as bud
-        , e.name as phrase
         , a.value
         FROM IxBudInt as a
             -- JOIN Atom as b ON b.id=a.i
@@ -40,22 +35,22 @@ RETURNS budsCheck (
         WHERE a.i=id and e.base=entityId;
 
     INTO budsDec SELECT a.x as bud
-        , e.name as phrase
         , a.value
         FROM IxBudDec as a
             JOIN BizPhrase as e ON e.id=a.x
         WHERE a.i=id and e.base=entityId;
     INTO budsStr SELECT a.x as bud
-        , e.name as phrase
         , a.value
         FROM IxBudStr as a
             JOIN BizPhrase as e ON e.id=a.x
         WHERE a.i=id and e.base=entityId;
 
-    INTO budsCheck SELECT c.id as bud, c.name as phrase, d.name as item
+    INTO budsCheck SELECT b.base as bud
+        -- , c.name as phrase
+        , b.ext as item
         FROM IxBud as a
             JOIN Bud as b ON b.id=a.x
             JOIN BizPhrase as c ON c.id=b.base
-            JOIN BizPhrase as d ON d.id=b.ext
+            -- JOIN BizPhrase as d ON d.id=b.ext
         WHERE a.i=id AND c.base=entityId;
 };

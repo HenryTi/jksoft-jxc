@@ -73,8 +73,8 @@ export class EntitySpec extends EntityAtomIDWithBase {
 
     protected fromKeys(keys: any[]) {
         for (let key of keys) {
-            let { name, dataType } = key;
-            let bizProp = new BizBud(this.biz, name, dataType, this);
+            let { id, name, dataType } = key;
+            let bizProp = new BizBud(this.biz, id, name, dataType, this);
             let { budDataType } = bizProp;
             if (budDataType === undefined) {
                 debugger;

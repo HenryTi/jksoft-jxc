@@ -11,7 +11,7 @@ export function EditBudIntOf(props: EditBudProps) {
     let { options: { items, phrase: optionsPhrase } } = budDataType as BudRadio;
 
     let checks: { [item: string]: boolean; } = initValue as { [item: string]: boolean; } ?? {};
-    let radios: [item: string, caption: string, value: string | number, defaultCheck: boolean,][] = []
+    let radios: [item: string | number, caption: string, value: string | number, defaultCheck: boolean,][] = []
     let hasChecked = false;
     for (let item of items) {
         let { name, caption, value, phrase } = item;
@@ -24,11 +24,11 @@ export function EditBudIntOf(props: EditBudProps) {
     if (hasChecked === false) {
         (radios[0])[3] = true;
     }
-    async function onCheckChanged(item: string) {
-        const { phrase: budPhrase } = bizBud;
+    async function onCheckChanged(item: string | number) {
+        const { id: phraseId } = bizBud;
         const value = items.find(v => v.phrase === item).value;
         await uq.SaveBudValue.submit({
-            phrase: budPhrase,
+            phraseId,
             id,
             int: value as number,
             dec: undefined as number,

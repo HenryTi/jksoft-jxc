@@ -14,8 +14,9 @@ import { Entity } from './entity';
 import { ID, IX, IDX } from './ID';
 import { Net } from '../net';
 
-export type FieldType = 'id' | 'tinyint' | 'smallint' | 'int' | 'bigint' | 'dec' | 'float' | 'double' | 'char' | 'text'
-    | 'datetime' | 'date' | 'time' | 'timestamp' | 'enum';
+export type FieldType = 'id' | 'tinyint' | 'smallint' | 'int' | 'bigint'
+    | 'dec' | 'float' | 'double' | 'char' | 'text'
+    | 'datetime' | 'date' | 'time' | 'timestamp' | 'enum' | 'json';
 
 export function fieldDefaultValue(type: FieldType) {
     switch (type) {

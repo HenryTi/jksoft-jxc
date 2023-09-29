@@ -1,4 +1,4 @@
-import { AtomSpec, AtomUomProps, Spec, Uom, readUoms } from "app/tool";
+import { AtomSpec, AtomUomProps, Spec, Uom } from "app/tool";
 import { Page, uqAppModal, useModal } from "tonwa-app";
 import { EnumAtom } from "uqs/UqDefault";
 import { FA, LMR, List, Sep } from "tonwa-com";
@@ -46,8 +46,8 @@ export function useSelectAtomSpec() {
         }
 
         let { uq } = uqApp;
-        let { uoms: uomsArr } = await uq.GetAtom.query({ id: atom.id });
-        let uoms = readUoms(uomsArr);
+        let { props: uomsArr } = await uq.GetAtom.query({ id: atom.id });
+        let uoms = [] as any; // readUoms(uomsArr);
         let { length: uomsLength } = uoms;
         if (uomsLength === 0) {
             uom = {

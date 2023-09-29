@@ -28,7 +28,7 @@ export function ButtonPageBack(props: PageBackProps) {
         }
         return <BackContent icon={icon} onClick={onClickBack} />;
     }
-    if (onBack) {
+    if (onBack || back === 'none') {
         return <Back Back={BackClick} />;
     }
     else {

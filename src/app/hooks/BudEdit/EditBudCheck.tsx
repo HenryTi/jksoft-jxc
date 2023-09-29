@@ -13,8 +13,8 @@ export function EditBudCheck(props: EditBudProps) {
     let cn = 'me-4 ';
     if (readonly === true) cn += 'text-light invisible ';
     async function onCheckChanged(item: OptionsItem, checked: boolean) {
-        const { phrase: budPhrase } = bizBud;
-        const optionsItemPhrase = `${optionsPhrase}.${item.name}`;
+        const { id: budPhrase } = bizBud;
+        const optionsItemPhrase = item.id; // `${optionsPhrase}.${item.name}`;
         await uq.SaveBudCheck.submit({
             budPhrase,
             id,
@@ -22,13 +22,13 @@ export function EditBudCheck(props: EditBudProps) {
             checked: checked === true ? 1 : 0,
         });
     }
-    let checks: { [item: string]: boolean; } = initValue as { [item: string]: boolean; } ?? {};
+    let checks: { [item: number]: boolean; } = initValue as { [item: number]: boolean; } ?? {};
     return <LabelRowEdit label={caption ?? name}
         readonly={readonly}
         onEditClick={null}
     >
         {items.map((v, index) => {
-            let { name, caption, value, phrase } = v;
+            let { id, name, caption, value } = v;
             async function onChange(name: string, checked: boolean) {
                 await onCheckChanged(v, checked);
             }
@@ -37,7 +37,7 @@ export function EditBudCheck(props: EditBudProps) {
                 onCheckChanged={onChange}
                 disabled={readonly}
                 value={value}
-                defaultChecked={checks[phrase]}>
+                defaultChecked={checks[id]}>
                 {caption ?? name}
             </CheckAsync>;
         })}

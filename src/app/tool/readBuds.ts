@@ -1,38 +1,50 @@
-import { ReturnGetAtomBudsCheck, ReturnGetAtomBudsDec, ReturnGetAtomBudsInt, ReturnGetAtomBudsStr, ReturnGetAtomUoms } from "uqs/UqDefault";
+import { ReturnGetAtomProps } from "uqs/UqDefault";
 import { BudValue } from "../hooks/model";
 
-interface ParamBuds {
-    budsInt: ReturnGetAtomBudsInt[];
-    budsDec: ReturnGetAtomBudsDec[];
-    budsStr: ReturnGetAtomBudsStr[];
-    budsCheck: ReturnGetAtomBudsCheck[];
-}
-
-export function readBuds({ budsInt, budsDec, budsStr, budsCheck }: ParamBuds) {
-    let buds: { [prop: string]: { bud: number; phrase: string; value: BudValue; } } = {};
-    for (let bud of budsInt) {
-        buds[bud.phrase] = bud;
+export function readBuds(id: number, props: ReturnGetAtomProps[]) {
+    let main: any;
+    let buds: { [bud: number]: BudValue; } = {};
+    let prop = props[0];
+    if (prop !== undefined) {
+        const { phrase, value: [no, ex] } = prop;
+        main = { id, phrase, no, ex }
     }
-    for (let bud of budsDec) {
-        buds[bud.phrase] = bud;
+    let len = props.length;
+    let checks: { [bud: number]: { [item: number]: boolean } } = {}
+    for (let i = 1; i < len; i++) {
+        let { phrase, value } = props[i];
+        switch (value.length) {
+            default:
+            case 0: debugger; break;
+            case 1: buds[phrase] = value[0]; break;
+            case 2:
+                let check = checks[phrase];
+                if (check === undefined) {
+                    checks[phrase] = check = {};
+                }
+                check[value[1]] = true;
+                break;
+        }
     }
-    for (let bud of budsStr) {
-        buds[bud.phrase] = bud;
+    for (let i in checks) {
+        buds[i] = checks[i];
     }
+    /*
     for (let budCheck of budsCheck) {
-        const { bud, phrase, item } = budCheck;
-        let prop = buds[phrase];
+        const { bud, item } = budCheck;
+        let prop = buds[bud];
         let check: { [item: string]: boolean; };
         if (prop === undefined) {
             check = {};
-            prop = buds[phrase] = { bud, phrase, value: check };
+            prop = buds[bud] = { bud, value: check };
         }
         else {
             check = prop.value as { [item: string]: boolean; };
         }
         check[item] = true;
     }
-    return buds;
+    */
+    return { main, buds };
 }
 
 export interface AtomUomProps {
@@ -42,7 +54,9 @@ export interface AtomUomProps {
     prevEx?: string;
     ratio?: number;
 }
+/*
 export function readUoms(uomsArr: ReturnGetAtomUoms[]) {
     const ret: AtomUomProps[] = uomsArr;
     return ret;
 }
+*/

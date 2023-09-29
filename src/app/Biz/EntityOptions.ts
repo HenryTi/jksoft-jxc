@@ -1,6 +1,7 @@
 import { Entity } from "./Entity";
 
 export interface OptionsItem {
+    id: number;
     name: string;
     caption: string;
     value: string | number;

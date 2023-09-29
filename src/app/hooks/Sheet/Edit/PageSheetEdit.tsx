@@ -14,7 +14,6 @@ import { EntitySheet } from "app/Biz";
 
 let locationState = 1;
 export function PageSheetEdit() {
-    console.log('render PageSheetEdit');
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const { sheet: entityId62, id } = useParams();
@@ -37,7 +36,6 @@ export function PageSheetEdit() {
     }, [location.state]);
     useEffectOnce(() => {
         (async function () {
-            console.log('new SheetStore');
             let sheetStore = new SheetStore(
                 uq,
                 biz,
@@ -71,7 +69,6 @@ async function startStore(uqApp: UqApp, store: SheetStore, pick: PickFunc) {
 }
 
 function PageStore({ store }: { store: SheetStore; }) {
-    console.log('render PageStore', store.keyId);
     const { uq, caption, main, detail } = store;
     const uqApp = useUqApp();
     const pick = usePick();

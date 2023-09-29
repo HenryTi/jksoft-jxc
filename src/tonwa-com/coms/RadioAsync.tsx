@@ -3,15 +3,15 @@ import { Spinner, SpinnerSmall } from "./Spinner";
 
 interface Props {
     name: string;
-    items: [item: string, caption: string, value: string | number, defaultCheck: boolean,][];
-    onCheckChanged?: (item: string) => Promise<void>;
+    items: [item: string | number, caption: string, value: string | number, defaultCheck: boolean,][];
+    onCheckChanged?: (item: string | number) => Promise<void>;
 }
 
 export function RadioAsync(props: Props) {
     let { name, items, onCheckChanged } = props;
     let [submiting, setSubmiting] = useState(false);
 
-    async function onValueChanged(value: string) {
+    async function onValueChanged(value: string | number) {
         if (onCheckChanged === undefined) return;
         setSubmiting(true);
         await onCheckChanged(value);

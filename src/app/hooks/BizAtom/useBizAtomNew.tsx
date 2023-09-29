@@ -78,7 +78,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
     function ViewNewBase({ afterSubmit }: { afterSubmit: (atom: Atom) => void; }) {
         async function actSave(entityAtom: EntityAtom, no: string, data: any) {
             const { ex } = data;
-            let ret = await uq.SaveAtom.submit({ atom: entityAtom.phrase, base: undefined, keys: no, ex });
+            let ret = await uq.SaveAtom.submit({ atom: entityAtom.phrase, base: undefined, no, ex });
             return ret;
         }
         async function buildNew(): Promise<{ no: string; formRows: FormRow[] }> {

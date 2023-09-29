@@ -14,7 +14,7 @@ export const captionSiteInit = '初始设置';
 
 interface InitValue {
     bud: BizBud;
-    value: { bud: number; phrase: string; value: BudValue; }
+    value: { bud: number; value: BudValue; }
     options: RegisterOptions;
 }
 
@@ -63,21 +63,22 @@ export function PageSiteInit() {
 
     async function getInit() {
         let result = await uq.GetSiteSetting.query({});
-        const buds = readBuds(result);
+        const { buds } = readBuds(undefined, result as any);
         const siteSetting = biz.entities['sitesetting'] as EntityTitle;
-        const { buds: bizBuds } = siteSetting;
+        const { buds: bizBuds, props } = siteSetting;
 
-        let ret: InitValue[] = initBuds.map(v => {
-            const budPhrase = `${siteSetting.name}.${v}`;
+        let ret: InitValue[] = props.map(v => { // }) initBuds.map(v => {
+            const { id, name } = v;
+            const budPhrase = `${siteSetting.name}.${name}`;
             const options = budOptions[budPhrase];
-            const value = buds[budPhrase];
-            const bud = bizBuds[budPhrase];
+            const value = buds[id];
+            const bud = bizBuds[id];
             return {
                 bud,
                 value,
                 options,
             }
-        });
+        }) as any;
         return ret;
     }
 

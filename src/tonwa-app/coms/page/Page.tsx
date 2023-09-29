@@ -73,6 +73,7 @@ export function PageBase(props: PageProps) {
         }
     });
     if (header || back || right) {
+        // 没有onBack的时候，会引用useNavigate. 如果在Modal方式下，会引发异常。
         header = <div className="d-flex align-items-center">
             <ButtonPageBack {...props} />
             <div className="flex-fill">{header}</div>

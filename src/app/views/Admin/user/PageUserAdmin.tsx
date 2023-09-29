@@ -127,9 +127,9 @@ function ViewAtomItem({ value }: { value: any }) {
 }
 
 function PageUserMap({ userItems, onChanged }: { userItems: UserItems; onChanged: (userSite: number) => Promise<void> }) {
-    const { uq } = useUqApp();
+    const { uq, biz } = useUqApp();
     const { userSite, persons, groups } = userItems;
-    function ViewAtoms({ caption, atomPhrase, items }: { caption: string; atomPhrase: string; items: Item[]; }) {
+    function ViewAtoms({ caption, atomPhrase, items }: { caption: string; atomPhrase: number; items: Item[]; }) {
         const { openModal } = useModal();
         const refAtoms = useRef<any[]>(undefined);
         const refChanged = useRef<boolean>(false);
@@ -173,12 +173,14 @@ function PageUserMap({ userItems, onChanged }: { userItems: UserItems; onChanged
         </>;
     }
 
+    const atomPerson = biz.entities['person'];
+    const atomSumGroup = biz.entities['sumgroup'];
     return <Page header="用户账户">
         <div className="p-3">
             <IDViewUserSite uq={uq} userSite={userSite} />
         </div>
-        <ViewAtoms caption="个人" atomPhrase="atom.person" items={persons} />
-        <ViewAtoms caption="小组" atomPhrase="atom.sumgroup" items={groups} />
+        <ViewAtoms caption="个人" atomPhrase={atomPerson.id} items={persons} />
+        <ViewAtoms caption="小组" atomPhrase={atomSumGroup.id} items={groups} />
     </Page>;
 }
 

@@ -105,8 +105,8 @@ export class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budDataType: BudDataType;
     defaultValue: any;
-    constructor(biz: Biz, name: string, dataType: EnumBudType, entity: Entity) {
-        super(biz, name, 'bud');
+    constructor(biz: Biz, id: number, name: string, dataType: EnumBudType, entity: Entity) {
+        super(biz, id, name, 'bud');
         this.entity = entity;
         let budDataType: BudDataType;
         switch (dataType) {

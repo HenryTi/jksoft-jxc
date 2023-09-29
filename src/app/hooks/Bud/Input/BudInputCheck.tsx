@@ -13,8 +13,8 @@ export function BudInputCheck(props: EditBudProps) {
     let cn = 'me-4 ';
     if (readonly === true) cn += 'text-light invisible ';
     async function onCheckChanged(item: OptionsItem, checked: boolean) {
-        const { phrase: budPhrase } = bizBud;
-        const optionsItemPhrase = `${optionsPhrase}.${item.name}`;
+        const { id: budPhrase } = bizBud;
+        const optionsItemPhrase = item.id; // `${optionsPhrase}.${item.name}`;
         await uq.SaveBudCheck.submit({
             budPhrase,
             id,

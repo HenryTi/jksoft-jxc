@@ -85,11 +85,6 @@ export class EntityPend extends Entity {
             // case 'detail': this.fromDetail(val); break;
         }
     }
-    /*
-    protected fromDetail(detail: any) {
-        // this.detail = this.biz.entities[detail] as EntityDetail;
-    }
-    */
 }
 
 export interface DetailAct {

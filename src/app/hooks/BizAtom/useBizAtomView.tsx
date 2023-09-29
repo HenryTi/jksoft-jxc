@@ -1,27 +1,25 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Page, PageSpinner } from "tonwa-app";
-import { Sep, Spinner, useEffectOnce } from "tonwa-com";
+import { FA, Sep, Spinner, from62, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { EditBud, EditAtomField } from "../BudEdit";
-import { EntityAtom } from "app/Biz";
 import { LabelAtomUomEdit } from "../AtomUom";
 import { BudValue, ViewBudRowProps } from "../model";
-import { AtomUomProps } from "app/tool";
 
 export function useBizAtomView(options: OptionsUseBizAtom) {
     const { id } = useParams();
-    return useBizAtomViewFromId({ ...options, id: Number(id) });
+    return useBizAtomViewFromId({ ...options, id: from62(id) });
 }
 
 export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; }) {
     const { NOLabel, exLabel, id } = options;
-    const { uom, getAtom, saveField, saveBud } = useBizAtom(options)
+    const { uom, getAtom, saveField, saveBud, entity: entityAtom } = useBizAtom(options)
     const [state, setState] = useState<{
         main: any,
-        buds: { [prop: string]: { bud: number; phrase: string; value: BudValue; } };
-        uoms: AtomUomProps[];
-        entityAtom: EntityAtom;
+        buds: { [prop: number]: BudValue; };
+        // uoms: AtomUomProps[];
+        // entityAtom: EntityAtom;
     }>(undefined);
     useEffectOnce(() => {
         (async () => {
@@ -29,16 +27,20 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
             setState(ret);
         })();
     });
-    if (state === undefined || state.entityAtom === undefined) {
+    if (state === undefined/* || state.entityAtom === undefined*/) {
         return {
             view: <Spinner />,
             page: <PageSpinner />,
         };
     }
-    const { main, buds, entityAtom, uoms } = state;
+    const { main, buds/*, entityAtom, uoms*/ } = state;
+    let uoms = [] as any;
     let { name, caption, props: atomProps } = entityAtom;
+    let lbId = <span className="text-primary fw-normal">
+        <FA name="compass" className="text-danger me-1" /> ID
+    </span>;
     const viewRows: ViewBudRowProps[] = [
-        { name: 'id', label: 'id', readonly: true, type: 'number', },
+        { name: 'id', label: lbId, readonly: true, type: 'number', },
         { name: 'no', label: NOLabel ?? '编号', readonly: true, type: 'string', },
         { name: 'ex', label: exLabel ?? '名称', type: 'string', },
     ];
@@ -64,15 +66,12 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
             {viewUom}
             {
                 atomProps.map(v => {
-                    let { name, phrase, caption } = v;
-                    let prop = buds[phrase];
-                    return <React.Fragment key={name}>
+                    let { id: budId } = v;
+                    let prop = buds[budId];
+                    return <React.Fragment key={budId}>
                         <EditBud
                             id={id}
-                            // name={name} label={caption ?? name}
-                            // type={v.budDataType.dataType}
-                            bizBud={v} value={prop?.value as any}
-                        // saveField={saveField} saveBud={saveBud} 
+                            bizBud={v} value={prop as any}
                         />
                         <Sep />
                     </React.Fragment>;

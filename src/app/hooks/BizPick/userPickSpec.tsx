@@ -22,7 +22,7 @@ export function usePickSpec() {
         const { base, entitySpec, viewTop } = propsPickSpec;
         const { ix } = entitySpec;
         if (ix === true) {
-            let { ret } = await uq.GetSpecs.query({ base });
+            let { ret } = await uq.GetSpecsFromBase.query({ base });
             let retSpec: any;
             switch (ret.length) {
                 default:

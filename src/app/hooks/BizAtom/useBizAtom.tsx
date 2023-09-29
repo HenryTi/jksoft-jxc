@@ -1,4 +1,4 @@
-import { AtomUomProps, QueryMore, readBuds, readUoms } from "app/tool";
+import { QueryMore, readBuds } from "app/tool";
 import { UqApp, useUqApp } from "app/UqApp";
 import { Biz, BizBud, EntityAtom, EnumBudType } from "app/Biz";
 import { uqAppModal } from "tonwa-app";
@@ -6,25 +6,33 @@ import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { EnumAtom, UqExt } from "uqs/UqDefault";
 import { useLocation, useParams } from "react-router-dom";
 import { BudValue } from "../model";
+import { from62, to62 } from "tonwa-com";
 
-export function pathAtomNew(atomName: string) {
-    return `atom/${atomName}/new`;
+function atomInPath(atomPhraseId: number | string) {
+    if (typeof atomPhraseId === 'string') {
+        if (atomPhraseId !== ':atom') debugger;
+        return atomPhraseId;
+    }
+    return to62(atomPhraseId);
+}
+export function pathAtomNew(atomPhraseId: number | string) {
+    return `atom/${atomInPath(atomPhraseId)}/new`;
 }
 
-export function pathAtomList(atomName: string) {
-    return `atom/${atomName}/list`;
+export function pathAtomList(atomPhraseId: number | string) {
+    return `atom/${atomInPath(atomPhraseId)}/list`;
 }
 
-export function pathAtomView(atomName: string, id?: number) {
-    return `atom/${atomName}/view/${id ?? ':id'}`;
+export function pathAtomView(atomPhraseId: number | string, id?: number) {
+    return `atom/${atomInPath(atomPhraseId)}/${to62(id) ?? ':id'}`;
 }
 
-export function pathAtomEdit(atomName: string, id?: number) {
-    return `atom/${atomName}/edit/${id ?? ':id'}`;
+export function pathAtomEdit(atomPhraseId: number | string, id?: number) {
+    return `atom/${atomInPath(atomPhraseId)}/${to62(id) ?? ':id'}`;
 }
 
-export function pathAtom(atomName: string, id?: number) {
-    return `atom/${atomName}/${id ?? ':id'}`;
+export function pathAtom(atomPhraseId: number | string, id?: number) {
+    return `atom/${atomInPath(atomPhraseId)}/${to62(id) ?? ':id'}`;
 }
 
 export interface OptionsUseBizAtom {
@@ -42,11 +50,11 @@ export interface UseBizAtomReturn {
     pathList: string;
     getAtom(id: number): Promise<{
         main: any;
-        buds: { [prop: string]: { bud: number; phrase: string; value: BudValue; } };
-        uoms: AtomUomProps[];
-        entityAtom: EntityAtom;
+        buds: { [bud: number]: BudValue; };
+        // uoms: AtomUomProps[];
+        // entityAtom: EntityAtom;
     }>;
-    getEntityAtom: (phrase: string) => EntityAtom;
+    // getEntityAtom: (phrase: string) => EntityAtom;
     saveField: (id: number, name: string, value: string | number) => Promise<void>;
     saveBud: (id: number, bizBud: BizBud, value: string | number) => Promise<void>;
     searchAtoms: QueryMore;
@@ -54,47 +62,51 @@ export interface UseBizAtomReturn {
 }
 
 async function getAtomBase(uq: UqExt, id: number) {
-    let { main: [main], budsInt, budsDec, budsStr, budsCheck, uoms: uomsArr } = await uq.GetAtom.query({ id });
-    let buds = readBuds({ budsInt, budsDec, budsStr, budsCheck });
-    let uoms = readUoms(uomsArr);
+    let { props } = await uq.GetAtom.query({ id });
+    let { main, buds } = readBuds(id, props);
+    let uoms: any; // = readUoms(uomsArr);
     return {
         main, buds, uoms
     };
 }
 
-export async function getAtomWithProps(uq: UqExt, id: number): Promise<any> {
+export async function getAtomWithProps(biz: Biz, uq: UqExt, id: number): Promise<any> {
     let { main, buds } = await getAtomBase(uq, id);
     let ret = { ...main };
-    function setBud({ bud, phrase, value }: { bud: number; phrase: string; value: BudValue; }) {
-        let p = phrase.lastIndexOf('.');
-        let name = phrase.substring(p + 1);
-        (ret as any)[name] = value;
+    let { phrase: phraseId } = main;
+    let entity = biz.entityIds[phraseId];
+    function setBud(bud: number, value: BudValue) {
+        let bizBud = entity.buds[bud];
+        (ret as any)[bizBud.name] = value;
     }
-    for (let i in buds) setBud(buds[i]);
+    for (let i in buds) setBud(Number(i), buds[i]);
     return ret;
 }
 
 export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
     const a = useLocation();
-    const { atom: atomPhrase } = useParams();
+    const { atom } = useParams();
     // const { atomName: atomPhrase } = options;
+    let atomPhraseId = from62(atom);
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     // const biz = useBiz();
-    const entity = biz.entities[atomPhrase] as EntityAtom;
+    const entity = biz.entityIds[atomPhraseId] as EntityAtom;
     const phrase = entity.phrase;
     const pathView = entity.name;
     const pathList = entity.name + '-list';
 
+    /*
     function getEntityAtom(phrase: string): EntityAtom {
         return biz.entities[phrase] as EntityAtom;
     }
+    */
 
     async function getAtom(id: number) {
         let ret = await getAtomBase(uq, id);
         let { main } = ret;
         let { phrase } = main;
-        let entityAtom = biz.entities[phrase] as EntityAtom;
+        let entityAtom = biz.entityIds[phrase] as EntityAtom;
         return {
             ...ret, entityAtom
         };
@@ -106,7 +118,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
 
     async function saveBud(id: number, bizBud: BizBud, value: string | number) {
         let int: number, dec: number, str: string;
-        const { budDataType, phrase } = bizBud;
+        const { budDataType, id: phraseId } = bizBud;
         switch (budDataType.type) {
             default:
             case EnumBudType.int: int = value as number; break;
@@ -115,7 +127,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         }
         await uq.SaveBudValue.submit({
             id,
-            phrase,
+            phraseId,
             int, dec, str
         });
     }
@@ -149,7 +161,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         pathView,
         pathList,
         getAtom,
-        getEntityAtom,
+        // getEntityAtom,
         saveField,
         saveBud,
         searchAtoms,

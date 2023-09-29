@@ -17,7 +17,7 @@ function PageSheetCenter() {
         return $page;
     }, []);
     function ViewSheetType({ value }: { value: EntitySheet; }) {
-        let { caption, name, entityId } = value;
+        let { caption, name, id: entityId } = value;
         return <Link
             to={`/sheet/${to62(entityId)}`}
         >
@@ -41,7 +41,7 @@ function PageSheetCenter() {
         function ViewTarget({ value }: { value: Atom; }) {
             return <span>{value.ex}</span>;
         }
-        return <Link to={`/sheet/${to62(entitySheet.entityId)}/${to62(id)}`}>
+        return <Link to={`/sheet/${to62(entitySheet.id)}/${to62(id)}`}>
             <div className="d-flex px-3 py-3">
                 <FA name="file" className="me-3 text-danger" />
                 <span className="d-inline-block w-min-8c">{sheetCaption}</span>

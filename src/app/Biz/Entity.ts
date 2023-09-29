@@ -24,7 +24,7 @@ export function getPickableCaption(pickable: Pickable) {
 
 export class Entity extends BizBase {
     readonly selfProps: BizBud[] = [];       // 本 Atom 定义的
-    readonly buds: { [key: string]: BizBud; } = {};           // 包括全部继承来的
+    readonly buds: { [key: string | number]: BizBud; } = {};           // 包括全部继承来的
     readonly props: BizBud[] = [];
 
     protected override fromSwitch(i: string, val: any) {
@@ -39,8 +39,8 @@ export class Entity extends BizBase {
     }
 
     protected fromProp(prop: any) {
-        let { name, dataType } = prop;
-        let bizBud = new BizBud(this.biz, name, dataType, this);
+        let { id, name, dataType } = prop;
+        let bizBud = new BizBud(this.biz, id, name, dataType, this);
         let { budDataType } = bizBud;
         if (budDataType === undefined) {
             debugger;
@@ -61,7 +61,8 @@ export class Entity extends BizBase {
 
     protected buildBuds() {
         for (let bud of this.selfProps) {
-            let { name, phrase } = bud;
+            let { id, name, phrase } = bud;
+            this.buds[id] = bud;
             this.buds[name] = bud;
             this.buds[phrase] = bud;
             this.props.push(bud);

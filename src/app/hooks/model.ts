@@ -4,12 +4,12 @@ import { PickProps, UqAppBase } from "tonwa-app";
 
 export interface ViewBudRowProps {
     name: string;
-    label: string;
+    label: string | JSX.Element;
     readonly?: boolean;
     type: 'string' | 'number' | 'text';
 }
 
-export type BudValue = string | number | { [item: string]: boolean; };
+export type BudValue = string | number | { [item: number]: boolean; };
 
 export interface ViewBudProps extends ViewBudRowProps {
     id: number;

@@ -6,8 +6,9 @@ export function PageSpinner({ header }: { header?: string; }) {
         <Spinner className="m-5 text-center text-info" />
     </div>;
 
-    if (header === undefined) return content;
-    return <PageBase header={header}>
+    if (header === null) return content;
+    if (header === undefined) header = '...';
+    return <PageBase header={header} back="none">
         {content}
     </PageBase>
 }
