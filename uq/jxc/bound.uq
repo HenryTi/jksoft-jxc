@@ -293,7 +293,7 @@ ACT SetSumGroupPerson(
 
 -- Sum.pSource=-1: 则停止计算
 -- Sum.pSource=-2: 则彻底全部重新计算
-PROC CalcSource ver 0.1 () LOG Error {
+PROC CalcSource ver 0.2 () LOG Error {
     VAR pSource BIGINT, stamp INT, pId BIGINT;
     Biz Bud Sum.pSource of 0 to pSource;
     IF pSource IS NULL {
@@ -332,7 +332,9 @@ PROC CalcSource ver 0.1 () LOG Error {
     }
 };
 
-PROC CalcOneSource(sourceId ID) {
+PROC CalcOneSource ver 0.1 (
+    sourceId ID
+) {
     VAR site ID = c.base,
         bound ID = a.bound,         -- 绑定对象
         subject ID = a.subject,     -- 科目，比如，销售额，毛利润，积分点

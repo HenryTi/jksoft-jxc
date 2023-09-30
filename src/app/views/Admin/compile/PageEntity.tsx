@@ -1,9 +1,11 @@
+import * as jsonpack from 'jsonpack';
 import { Entity } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import { KeyboardEvent, useEffect, useRef } from "react";
 import { useQuery } from "react-query";
 import { Page } from "tonwa-app";
+import { ButtonAsync } from 'tonwa-com';
 
 export function PageEntity({ entity }: { entity: Entity }) {
     const uqApp = useUqApp();
@@ -14,6 +16,7 @@ export function PageEntity({ entity }: { entity: Entity }) {
         return ret[0];
     }, UseQueryOptions);
     const refTextArea = useRef<HTMLTextAreaElement>();
+    const refTextAreaLog = useRef<HTMLTextAreaElement>();
     useEffect(() => {
         refTextArea.current.focus();
     });
@@ -21,8 +24,31 @@ export function PageEntity({ entity }: { entity: Entity }) {
     async function onSubmit() {
         const { uqMan, biz } = uqApp;
         let { uqApi } = uqMan;
-        let { value: code } = refTextArea.current
+        const { current: textArea } = refTextArea;
+        const { current: textAreaLog } = refTextAreaLog;
+        let timer = setInterval(() => {
+            textAreaLog.value += '.';
+        }, 1000);
+        textArea.readOnly = true;
+        textAreaLog.value = '......';
+        let { value: code } = textArea;
         let { schemas, logs, hasError } = await uqApi.compileEntity(id, code);
+        let ret: string;
+        if (hasError === true) {
+            let text: string[] = [];
+            (logs as string[]).forEach(v => {
+                if (v === null) return;
+                text.push(...v.split('\n'));
+            });
+            ret = text.join('\n');
+        }
+        else {
+            let allSchemas = jsonpack.unpack(schemas);
+            ret = '提交成功!\n' + JSON.stringify(allSchemas, null, 4);
+        }
+        textAreaLog.value = ret;
+        textArea.readOnly = false;
+        clearInterval(timer);
     }
     function onTabKeyDown(evt: KeyboardEvent) {
         const { key, altKey, ctrlKey, shiftKey } = evt;
@@ -36,14 +62,24 @@ export function PageEntity({ entity }: { entity: Entity }) {
             <div className="text-secondary tonwa-bg-gray-2 d-flex align-items-center px-1 border-bottom">
                 <div className="m-1">设计界面实现中...</div>
                 <div className="flex-grow-1"></div>
-                <button className="btn btn-sm btn-outline-primary m-1" onClick={onSubmit}>提交</button>
+                <ButtonAsync className="btn btn-sm btn-outline-primary m-1"
+                    onClick={onSubmit}>
+                    提交
+                </ButtonAsync>
             </div>
             <div className="flex-grow-1 p-1 border border-info rounded">
                 <textarea ref={refTextArea} spellCheck={false}
                     onKeyDown={onTabKeyDown}
                     className="p-2 h-100 w-100 border-0"
                     defaultValue={code}
-                    style={{ border: 'none', outline: 'none', fontFamily: 'monospace', }}
+                    style={{ border: 'none', outline: 'none', fontFamily: 'monospace', resize: 'none' }}
+                />
+            </div>
+            <div className="h-16c border-top border-dark border-3">
+                <textarea ref={refTextAreaLog} spellCheck={false}
+                    readOnly={true}
+                    className="p-2 h-100 w-100 border-0"
+                    style={{ border: 'none', outline: 'none', fontFamily: 'monospace', resize: 'none' }}
                 />
             </div>
         </div>

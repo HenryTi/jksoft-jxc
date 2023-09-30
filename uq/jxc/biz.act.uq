@@ -701,7 +701,7 @@ RETURNS ret (
 PROC ProcGetSpec ver 0.1 (
     id ID,
 )
-RETURNS props (
+RETURNS props VIRTUAL (
     id ID,
     phrase ID,
     value JSON,
@@ -751,7 +751,7 @@ RETURNS props (
 PROC ProcGetAtom ver 0.1 (
     id ID,
 )
-RETURNS props (
+RETURNS props VIRTUAL (
     phrase ID,
     value JSON,
 ) {

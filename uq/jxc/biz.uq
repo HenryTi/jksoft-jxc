@@ -103,7 +103,8 @@ IDX BizBud (
     flag SMALLINT DEFAULT 0,
 );
 
-PROC SaveBizObject ver 0.2 (
+PROC SaveBizObject ver 0.3 (
+    entityId ID,
     name Phrase,
     caption CHAR(100),
     type ENUM BizPhraseType,
@@ -116,10 +117,18 @@ RETURNS ret (
 ) {
     TRANS START;
     VAR id ID;
-    WITH BizPhrase as a 
-        ID to id
-        KEY($site as base, name) 
-        SET a.type=type, a.memo=memo;
+    IF entityId IS NOT NULL {
+        WITH BizPhrase as a 
+            ID=entityId
+            SET a.name=name, a.type=type, a.memo=memo;
+        SET id = entityId;
+    }
+    ELSE {
+        WITH BizPhrase as a 
+            ID to id
+            KEY($site as base, name) 
+            SET a.type=type, a.memo=memo;
+    }
     IF caption IS NOT NULL {
         WITH BizResource IXX=id I=0 X=0 SET res=caption;
     }
@@ -140,7 +149,7 @@ IDX XBiz (
     id,
 );
 
-PROC SaveBizBud ver 0.2 (
+PROC SaveBizBud ver 0.3 (
     base ID,
     name Phrase,
     caption CHAR(100),
