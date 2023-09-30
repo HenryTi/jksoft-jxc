@@ -17,10 +17,12 @@ export function PageEntity({ entity }: { entity: Entity }) {
     }, UseQueryOptions);
     const refTextArea = useRef<HTMLTextAreaElement>();
     const refTextAreaLog = useRef<HTMLTextAreaElement>();
+    const refButtonAsync = useRef<typeof ButtonAsync>();
     const interval = useRef<NodeJS.Timer>();
     const [pageCaption, setPageCaption] = useState(caption ?? name);
     useEffect(() => {
-        refTextArea.current.focus();
+        const { current: textArea } = refTextArea;
+        textArea?.focus();
     });
     const { code, schema } = data;
     async function onSubmit() {
@@ -28,8 +30,16 @@ export function PageEntity({ entity }: { entity: Entity }) {
         let { uqApi } = uqMan;
         const { current: textArea } = refTextArea;
         const { current: textAreaLog } = refTextAreaLog;
+        let intervals = 0;
         interval.current = setInterval(() => {
             textAreaLog.value += '.';
+            intervals += 1;
+            if (intervals > 5) {
+                textAreaLog.value = 'Overtime! 5 seconds';
+                textArea.readOnly = false;
+                clearInterval(interval.current);
+                interval.current = undefined;
+            }
         }, 1000);
         textArea.readOnly = true;
         textAreaLog.value = '......';
@@ -68,17 +78,17 @@ export function PageEntity({ entity }: { entity: Entity }) {
             clearInterval(interval.current);
         }
     }
-    return <Page header={pageCaption} onClosed={clearTimer} >
-        <div className="d-flex flex-column h-100">
+    return <Page header={pageCaption} onClosed={clearTimer} hideScroll={true}>
+        <div className="d-flex flex-column" style={{ height: "calc(100% - 1em)" }}>
             <div className="text-secondary tonwa-bg-gray-2 d-flex align-items-center px-1 border-bottom">
                 <div className="m-1">设计界面实现中...</div>
                 <div className="flex-grow-1"></div>
-                <ButtonAsync className="btn btn-sm btn-outline-primary m-1"
+                <ButtonAsync overtime={5} className="btn btn-sm btn-outline-primary m-1"
                     onClick={onSubmit}>
                     提交
                 </ButtonAsync>
             </div>
-            <div className="flex-grow-1 p-1 border border-info rounded">
+            <div className="p-1 border-info rounded flex-grow-1">
                 <textarea ref={refTextArea} spellCheck={false}
                     onKeyDown={onTabKeyDown}
                     className="p-2 h-100 w-100 border-0"
@@ -86,7 +96,7 @@ export function PageEntity({ entity }: { entity: Entity }) {
                     style={{ border: 'none', outline: 'none', fontFamily: 'monospace', resize: 'none' }}
                 />
             </div>
-            <div className="h-16c border-top border-dark border-3">
+            <div className="border-top border-dark h-16c">
                 <textarea ref={refTextAreaLog} spellCheck={false}
                     readOnly={true}
                     className="p-2 h-100 w-100 border-0"

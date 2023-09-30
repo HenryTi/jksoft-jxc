@@ -51,4 +51,5 @@ export interface PageProps extends PageHeaderProps, PageFooterProps, PageContent
     auth?: boolean;                     // 需要验证，default=true
     onClosing?: () => Promise<boolean>;
     onClosed?: () => Promise<void> | void;
+    hideScroll?: boolean;
 }

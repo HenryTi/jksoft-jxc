@@ -39,7 +39,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
             view: viewNew,
         };
     }
-    const { name, caption } = entity;
+    const { id: entityId, name, caption } = entity;
     return {
         page: <PageNew />,
         pageContent: <ViewNew />,
@@ -56,7 +56,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
     function ViewNew() {
         const navigate = useNavigate();
         function afterSubmit(atom: Atom) {
-            navigate(`../${pathAtomView(name, atom.id)}`, { replace: true });
+            navigate(`../${pathAtomView(entityId, atom.id)}`, { replace: true });
         }
         return <ViewNewBase afterSubmit={afterSubmit} />;
     }

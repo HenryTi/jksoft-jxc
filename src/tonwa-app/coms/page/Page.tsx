@@ -14,7 +14,7 @@ const scrollEdgeGap = 30;
 
 export function PageBase(props: PageProps) {
     const uqApp = useUqAppBase();
-    let { children, header, back, right, footer, onClosed } = props;
+    let { children, header, back, right, footer, onClosed, hideScroll } = props;
     const divRef = useRef<HTMLDivElement>();
     const { pathname } = document.location;
     useEffectOnce(() => {
@@ -22,8 +22,12 @@ export function PageBase(props: PageProps) {
         if (!div) return;
         let elScroll = getScrollableParent(div);
         if (!elScroll) return;
-        //elScroll.addEventListener("scroll", onScroll);
-        window.onscroll = onScroll;
+        if (hideScroll === true) {
+            window.onscroll = undefined;
+        }
+        else {
+            window.onscroll = onScroll;
+        }
 
         let bottomTimeSave = 0;
         let topTimeSave = 0;

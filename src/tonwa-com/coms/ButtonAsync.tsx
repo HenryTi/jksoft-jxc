@@ -6,11 +6,12 @@ import { ComAsync } from "./ComAsync";
 interface Props extends React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
     children: React.ReactNode;
     tag?: string;
+    overtime?: number;
 }
 
 export function ButtonAsync(props: { onClick: (evt: MouseEvent<HTMLButtonElement>) => Promise<void> } & Props): JSX.Element {
     const [isWaiting, setIsWaiting] = useState<boolean>(false);
-    let { children, onClick, tag } = props;
+    let { children, onClick, tag, overtime } = props;
     let isMounted = useRef<boolean>(false);
     let newOnClick: MouseEventHandler<HTMLButtonElement> | undefined;
     useEffect(() => {
@@ -21,6 +22,11 @@ export function ButtonAsync(props: { onClick: (evt: MouseEvent<HTMLButtonElement
     });
     if (onClick) {
         newOnClick = async (evt: MouseEvent<HTMLButtonElement>) => {
+            if (overtime !== undefined) {
+                setTimeout(() => {
+                    setIsWaiting(false);
+                }, overtime * 1000);
+            }
             setIsWaiting(true);
             try {
                 await onClick(evt);
