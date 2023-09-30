@@ -150,7 +150,8 @@ IDX XBiz (
 );
 
 PROC SaveBizBud ver 0.3 (
-    base ID,
+    base ID,                    -- entity id
+    id ID,                      -- bud id
     name Phrase,
     caption CHAR(100),
     type ENUM BizPhraseType,
@@ -163,11 +164,17 @@ RETURNS ret (
     id ID,
 ) {
     TRANS START;
-    VAR id ID;
-    WITH BizPhrase as a 
-        ID to id
-        KEY(base, name) 
-        SET a.type=type, a.memo=memo;
+    IF id IS NOT NULL {
+        WITH BizPhrase as a 
+            ID=id
+            SET a.name=name, a.type=type, a.memo=memo;
+    }
+    ELSE {
+        WITH BizPhrase as a 
+            ID to id
+            KEY(base, name) 
+            SET a.type=type, a.memo=memo;
+    }
     WITH BizResource IXX=id I=0 X=0 SET res=caption;
     WITH XBiz ID=id;
     WITH BizBud as a ID=id 

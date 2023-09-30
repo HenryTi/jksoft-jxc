@@ -8,7 +8,7 @@ import { EntityTitle } from './EntityTitle';
 import { EntityTie } from './EntityTie';
 import { EntityPermit, EntityRole } from './EntityPermit';
 import { EntityOptions } from './EntityOptions';
-import { from62, setAtomValue } from 'tonwa-com';
+import { from62, getAtomValue, setAtomValue } from 'tonwa-com';
 import { atom } from 'jotai';
 
 export class Biz {
@@ -33,8 +33,8 @@ export class Biz {
     readonly roles: EntityRole[] = [];
     readonly permits: EntityPermit[] = [];
 
-    private readonly all: [Entity[], string?, string?, string?][];
-    readonly _all = atom<[Entity[], string?, string?, string?][]>([]);
+    readonly all: [Entity[], string?, string?, string?][] = [];
+    readonly _refresh = atom(false);
 
     entities: { [name: string]: Entity } = {};
     entityIds: { [id: number]: Entity } = {};
@@ -43,39 +43,10 @@ export class Biz {
         this.uqApp = uqApp;
         this.uq = uqApp.uq;
         this.buildEntities(bizSchema);
-        this.rootAtoms();
-        this.all = [
-            [this.atoms],
-            [this.atomRoots, '基础编码', 'id-card-o'],
-            [this.specs, '细分编码', 'asterisk'],
-            [this.sheets, '业务单据', 'file'],
-            [this.mains, '单据主表', 'file-o'],
-            [this.details, '单据明细', 'file-text-o'],
-            [this.pends, '待处理', 'clone'],
-            [this.picks, '捡取器', 'hand-pointer-o'],
-            [this.options, '可选项', 'check-square-o'],
-            [this.ties, '对照表', 'list'],
-            [this.trees, '层级结构', 'indent'],
-            [this.titles, '科目', 'flag-o'],
-            [this.roles, '角色', 'user-o'],
-            [this.permits, '许可', 'user'],
-        ];
-        setAtomValue(this._all, this.all);
+        // setAtomValue(this._all, this.all);
     }
 
     init() { }
-
-    private rootAtoms() {
-        for (let i in this.entityIds) {
-            const entity = this.entityIds[i];
-            if (entity.type === 'atom') {
-                const entityAtom = entity as EntityAtom;
-                const { _extends } = entityAtom;
-                if (_extends !== undefined) continue;
-                this.atomRoots.push(entityAtom);
-            }
-        }
-    }
 
     entityFrom62<T extends Entity>(base62: string): T {
         let entityId = from62(base62);
@@ -99,9 +70,12 @@ export class Biz {
             tree: this.buildTree,
             tie: this.buildTie,
         }
-        this.entities = {};
+        for (let a of this.all) a[0].splice(0);
+        this.all.splice(0);
         let $biz = bizSchema;
         let arr: [Entity, any][] = [];
+        this.entities = {};
+        this.entityIds = {};
         for (let i in $biz) {
             let schema = ($biz as any)[i];
             let { id, name, phrase, type, caption } = schema;
@@ -123,6 +97,36 @@ export class Biz {
         }
         for (let [bizEntity] of arr) {
             bizEntity.scan();
+        }
+        this.buildRootAtoms();
+        this.all.push(
+            [this.atoms],
+            [this.atomRoots, '基础编码', 'id-card-o'],
+            [this.specs, '细分编码', 'asterisk'],
+            [this.sheets, '业务单据', 'file'],
+            [this.mains, '单据主表', 'file-o'],
+            [this.details, '单据明细', 'file-text-o'],
+            [this.pends, '待处理', 'clone'],
+            [this.picks, '捡取器', 'hand-pointer-o'],
+            [this.options, '可选项', 'check-square-o'],
+            [this.ties, '对照表', 'list'],
+            [this.trees, '层级结构', 'indent'],
+            [this.titles, '科目', 'flag-o'],
+            [this.roles, '角色', 'user-o'],
+            [this.permits, '许可', 'user'],
+        );
+        setAtomValue(this._refresh, !getAtomValue(this._refresh));
+    }
+
+    private buildRootAtoms() {
+        for (let i in this.entityIds) {
+            const entity = this.entityIds[i];
+            if (entity.type === 'atom') {
+                const entityAtom = entity as EntityAtom;
+                const { _extends } = entityAtom;
+                if (_extends !== undefined) continue;
+                this.atomRoots.push(entityAtom);
+            }
         }
     }
 

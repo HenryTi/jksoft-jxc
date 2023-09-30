@@ -2,7 +2,7 @@ import * as jsonpack from 'jsonpack';
 import { Entity } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
-import { KeyboardEvent, useEffect, useRef } from "react";
+import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { Page } from "tonwa-app";
 import { ButtonAsync } from 'tonwa-com';
@@ -17,6 +17,8 @@ export function PageEntity({ entity }: { entity: Entity }) {
     }, UseQueryOptions);
     const refTextArea = useRef<HTMLTextAreaElement>();
     const refTextAreaLog = useRef<HTMLTextAreaElement>();
+    const interval = useRef<NodeJS.Timer>();
+    const [pageCaption, setPageCaption] = useState(caption ?? name);
     useEffect(() => {
         refTextArea.current.focus();
     });
@@ -26,7 +28,7 @@ export function PageEntity({ entity }: { entity: Entity }) {
         let { uqApi } = uqMan;
         const { current: textArea } = refTextArea;
         const { current: textAreaLog } = refTextAreaLog;
-        let timer = setInterval(() => {
+        interval.current = setInterval(() => {
             textAreaLog.value += '.';
         }, 1000);
         textArea.readOnly = true;
@@ -43,12 +45,16 @@ export function PageEntity({ entity }: { entity: Entity }) {
             ret = text.join('\n');
         }
         else {
-            let allSchemas = jsonpack.unpack(schemas);
-            ret = '提交成功!\n' + JSON.stringify(allSchemas, null, 4);
+            let bizSchema = jsonpack.unpack(schemas);
+            biz.buildEntities(bizSchema);
+            ret = '提交成功!\n' + JSON.stringify(bizSchema, null, 4);
         }
         textAreaLog.value = ret;
         textArea.readOnly = false;
-        clearInterval(timer);
+        clearInterval(interval.current);
+        interval.current = undefined;
+        let newEntity = biz.entityIds[entity.id];
+        setPageCaption(newEntity.caption ?? newEntity.name);
     }
     function onTabKeyDown(evt: KeyboardEvent) {
         const { key, altKey, ctrlKey, shiftKey } = evt;
@@ -57,7 +63,12 @@ export function PageEntity({ entity }: { entity: Entity }) {
         let t = evt.currentTarget as HTMLTextAreaElement;
         t.setRangeText('    ', t.selectionStart, t.selectionEnd, 'end');
     }
-    return <Page header={caption ?? name} >
+    function clearTimer() {
+        if (interval.current !== undefined) {
+            clearInterval(interval.current);
+        }
+    }
+    return <Page header={pageCaption} onClosed={clearTimer} >
         <div className="d-flex flex-column h-100">
             <div className="text-secondary tonwa-bg-gray-2 d-flex align-items-center px-1 border-bottom">
                 <div className="m-1">设计界面实现中...</div>

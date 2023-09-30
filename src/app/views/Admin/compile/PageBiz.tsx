@@ -5,8 +5,8 @@ import { PageUpload } from './PageUpload';
 import { useUqApp } from "app/UqApp";
 import { Entity } from "app/Biz";
 import { PageEntity } from "./PageEntity";
-import { useAtomValue } from "jotai";
 import { FA } from "tonwa-com";
+import { useAtomValue } from "jotai";
 
 function PageBiz() {
     const { right, view } = buildViewBiz();
@@ -16,9 +16,11 @@ function PageBiz() {
 }
 
 export function buildViewBiz() {
-    const { biz } = useUqApp();
+    const uqApp = useUqApp();
+    const { biz } = uqApp;
     const { openModal } = useModal();
-    const all = useAtomValue(biz._all);
+    const refresh = useAtomValue(biz._refresh);
+
     const fileInput = useRef<HTMLInputElement>();
     function onUploaded(content: string) {
         openModal(<PageUpload content={content} />);
@@ -86,7 +88,7 @@ export function buildViewBiz() {
         right: <button className="btn btn-primary btn-sm me-1" onClick={onSelectFiles}>上传业务</button>,
         view: <div className="">
             <div className="tonwa-bg-gray-1">
-                {all.map((v, index) => {
+                {biz.all.map((v, index) => {
                     const [entitys, caption, icon] = v;
                     if (caption === undefined) return null;
                     return <div key={index} className="mx-2 my-3 border border-dark-subtle">
