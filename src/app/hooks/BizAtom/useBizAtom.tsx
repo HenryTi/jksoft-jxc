@@ -36,7 +36,7 @@ export function pathAtom(atomPhraseId: number | string, id?: number) {
 }
 
 export interface OptionsUseBizAtom {
-    atomName: EnumAtom;
+    atomName: string;
     NOLabel?: string;
     exLabel?: string;
 }

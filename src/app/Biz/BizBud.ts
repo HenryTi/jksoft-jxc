@@ -1,9 +1,10 @@
 import { ID } from "tonwa-uq";
-import { EntityAtom } from ".";
+import { EntityAtom, EntityPick } from ".";
 import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
 import { EntityOptions } from './EntityOptions';
+import { BizPhraseType } from "uqs/UqDefault";
 
 export enum EnumBudType {
     none = 0,
@@ -12,6 +13,7 @@ export enum EnumBudType {
     radio = 13,                 // single radio ids
     check = 14,                 // multiple checks
     intof = 15,
+    pick = 18,
     ID = 19,
 
     dec = 21,                   // dec(18.6)
@@ -99,6 +101,29 @@ export class BudDate extends BudDataNumber {
 }
 export class BudDateTime extends BudDataNumber {
     type = EnumBudType.datetime;
+}
+
+export class BudPickable extends BudDataNumber {
+    readonly type = EnumBudType.pick;
+    private schema: any;
+    atom: EntityAtom;
+    pick: EntityPick;
+    value: string;
+    fromSchema(schema: any) {
+        this.schema = schema;
+    }
+    override scan(biz: Biz) {
+        const { entities } = biz;
+        const { pick } = this.schema;
+        if (pick !== undefined) {
+            const pickEntity = entities[pick];
+            switch (pickEntity.bizPhraseType) {
+                case BizPhraseType.atom: this.atom = pickEntity as EntityAtom; break;
+                case BizPhraseType.pick: this.pick = pickEntity as EntityPick; break;
+            }
+        }
+        this.schema = undefined;
+    }
 }
 
 export class BizBud extends BizBase {

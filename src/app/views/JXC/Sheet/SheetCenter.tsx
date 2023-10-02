@@ -6,7 +6,7 @@ import { EntitySheet } from "app/Biz";
 import { EasyTime, FA, List, to62 } from "tonwa-com";
 import { PageSheetEdit, ViewSheetTime } from "app/hooks";
 import { useCallback } from "react";
-import { Atom, Sheet } from "uqs/UqDefault";
+import { Atom, Bin, Sheet } from "uqs/UqDefault";
 
 function PageSheetCenter() {
     const uqApp = useUqApp();
@@ -27,8 +27,8 @@ function PageSheetCenter() {
             </div>
         </Link>
     }
-    function ViewSheetItem({ value }: { value: (Sheet & { phrase: string; }) }) {
-        const { id, no, phrase, target } = value;
+    function ViewSheetItem({ value }: { value: (Sheet & Bin & { phrase: string; }) }) {
+        const { id, no, phrase, i } = value;
         let entitySheet = biz.entities[phrase];
         let sheetCaption: string;
         if (entitySheet === undefined) {
@@ -47,7 +47,7 @@ function PageSheetCenter() {
                 <span className="d-inline-block w-min-8c">{sheetCaption}</span>
                 <span className="d-inline-block w-min-10c">{no}</span>
                 <span className="d-inline-block w-min-8c">
-                    <IDView uq={uq} id={target} Template={ViewTarget} />
+                    <IDView uq={uq} id={i} Template={ViewTarget} />
                 </span>
                 <div className="flex-grow-1" />
                 <ViewSheetTime id={id} />

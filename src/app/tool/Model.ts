@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { setAtomValue } from "tonwa-com";
-import { Atom, Detail } from "uqs/UqDefault";
+import { Atom, Bin } from "uqs/UqDefault";
 
 export interface Spec {
     id?: number;
@@ -41,7 +41,7 @@ export interface AtomUom {
     uom: number;
 }
 
-export interface OriginDetail extends Detail {
+export interface OriginDetail extends Bin {
     pend: number;
     pendValue: number;
     sheet: string;          // sheet phrase
@@ -50,21 +50,21 @@ export interface OriginDetail extends Detail {
 
 export interface SheetRow {
     origin: OriginDetail;
-    details: Detail[];
+    details: Bin[];
 }
 
 export class EditingRow {
     origin: OriginDetail;
-    readonly atomDetails = atom<Detail[]>([]);         // 新产生的明细内容。不分解明细的话，就只有一行
+    readonly atomDetails = atom<Bin[]>([]);         // 新产生的明细内容。不分解明细的话，就只有一行
     error?: string;
 
-    constructor(origin: OriginDetail, details: Detail[]) {
+    constructor(origin: OriginDetail, details: Bin[]) {
         this.origin = origin;
         setAtomValue(this.atomDetails, details ?? []);
     }
 }
 
 export interface DetailWithOrigin {
-    detail: Detail;
+    detail: Bin;
     origin: OriginDetail;
 }

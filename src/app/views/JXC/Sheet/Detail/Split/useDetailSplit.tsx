@@ -1,7 +1,7 @@
 import { InputNumber } from "app/coms";
 import { EditingRow, SheetRow } from "app/tool";
 import { IDView } from "tonwa-app";
-import { Atom, Detail } from "uqs/UqDefault";
+import { Atom, Bin } from "uqs/UqDefault";
 import { FA, LMR, List } from "tonwa-com";
 import { useAtomValue } from "jotai";
 import { OptionsUseSheetDetail, UseSheetDetailReturn } from "app/hooks";
@@ -29,10 +29,10 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
         return selected;
     }
 
-    function ViewRow({ editingRow, updateRow }: { editingRow: EditingRow; updateRow: (editingRow: EditingRow, details: Detail[]) => Promise<void>; }): JSX.Element {
+    function ViewRow({ editingRow, updateRow }: { editingRow: EditingRow; updateRow: (editingRow: EditingRow, details: Bin[]) => Promise<void>; }): JSX.Element {
         const { uq } = uqApp;
         const { origin } = editingRow;
-        const { item, value, price: price, amount: amount } = origin;
+        const { i, value, price: price, amount: amount } = origin;
         const details = useAtomValue(editingRow.atomDetails);
         const onAddRow = async () => {
             let targetAtom = await selectTarget();
@@ -41,12 +41,13 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
                 return;
             }
             let rowsSum = 0;
+            let x = 0;
             for (let detail of details) { rowsSum += detail.value; }
-            let detail: Detail = {
+            let detail: Bin = {
                 id: undefined,
                 base: undefined, // sheet.id,
-                target: targetAtom.id,
-                item,
+                i: targetAtom.id,
+                x,
                 value: value - rowsSum,
                 origin: origin.id,
                 price: undefined,
@@ -54,14 +55,14 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
             };
             await updateRow(editingRow, [...details, detail]);
         }
-        const ViewItem = ({ value: row }: { value: Detail }) => {
-            const { target, item, value } = row;
+        const ViewItem = ({ value: row }: { value: Bin }) => {
+            const { x, i, value } = row;
             const onInputed = async (value: number) => {
                 row.value = value;
             }
             return <LMR className="py-2 pe-5 ps-5">
                 <div className="">
-                    <IDView uq={uq} id={target} Template={ViewAtom} />
+                    <IDView uq={uq} id={x} Template={ViewAtom} />
                 </div>
                 <div>
                     <InputNumber onInputed={onInputed} defaultValue={value} />

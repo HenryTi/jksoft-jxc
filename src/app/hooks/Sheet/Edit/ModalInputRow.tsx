@@ -18,7 +18,7 @@ export function ModalInputRow({ row }: { row: DetailRow; }) {
     const uqApp = useUqApp();
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
-    const { item } = row;
+    const { i: item } = row;
     const { current: fields } = useRef<[string, number, BizBud, (value: number) => void, Cell][]>([]);
     const [calc, setCalc] = useState<Calc>();
     useEffectOnce(() => {

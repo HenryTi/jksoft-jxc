@@ -1,31 +1,11 @@
 import { BizBud } from "./BizBud";
-import { Entity, Pickable, RefEntity, getPickableCaption } from "./Entity";
-
-/*
-export class EntityMain extends Entity {
-    target: Pickable;
-    targetCaption: string;
-
-    protected override fromSwitch(i: string, val: any) {
-        if (val === undefined) {
-            return;
-        }
-        switch (i) {
-            default: super.fromSwitch(i, val); break;
-            case 'target':
-                this.target = this.fromPickable(val);
-                this.targetCaption = getPickableCaption(this.target);
-                break;
-        }
-    }
-}
-*/
+import { Entity, RefEntity } from "./Entity";
 
 export class EntityBin extends Entity {
-    i: Pickable;
-    iCaption: string;
-    x: Pickable;
-    xCaption: string;
+    i: BizBud;
+    // iCaption: string;
+    x: BizBud;
+    // xCaption: string;
     pend: RefEntity<EntityPend>; // EntityPend;
     value: BizBud;
     price: BizBud;
@@ -38,12 +18,12 @@ export class EntityBin extends Entity {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'i':
-                this.i = this.fromPickable(val);
-                this.iCaption = getPickableCaption(this.i);
+                this.i = val; // this.fromPickable(val);
+                // this.iCaption = getPickableCaption(this.i);
                 break;
             case 'x':
-                this.x = this.fromPickable(val);
-                this.xCaption = getPickableCaption(this.x);
+                this.x = val; // this.fromPickable(val);
+                // this.xCaption = getPickableCaption(this.x);
                 break;
             case 'pend': this.fromPend(val); break;
             case 'value': this.fromValue(val); break;
@@ -71,14 +51,35 @@ export class EntityBin extends Entity {
     private fromAmount(prop: any) {
         this.amount = this.fromProp(prop);
     }
+
+    scan() {
+        super.scan();
+        this.i?.scan();
+        this.x?.scan();
+    }
 }
 
 export class EntityPend extends Entity {
-    // detail: EntityDetail;
+    s: BizBud;
+    si: BizBud;
+    sx: BizBud;
+    i: BizBud;
+    x: BizBud;
+    value: BizBud;
+    price: BizBud;
+    amount: BizBud;
+
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
-            // case 'detail': this.fromDetail(val); break;
+            case 's': this.s = val; break;
+            case 'si': this.si = val; break;
+            case 'sx': this.sx = val; break;
+            case 'i': this.i = val; break;
+            case 'x': this.x = val; break;
+            case 'value': this.value = val; break;
+            case 'price': this.price = val; break;
+            case 'amount': this.amount = val; break;
         }
     }
 }

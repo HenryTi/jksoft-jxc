@@ -26,7 +26,7 @@ export function useDetailPend(options: OptionsUseDetailPend): UseSheetDetailRetu
         const { atomDetails } = editingRow;
         const details = useAtomValue(atomDetails);
         const { origin } = editingRow;
-        const { item, value: originValue, price: price, amount: amount, pendValue } = origin;
+        const { i, value: originValue, price: price, amount: amount, pendValue } = origin;
         const row = details[0];
         const { value } = row;
         (row as any).$saveValue = value;
@@ -38,7 +38,7 @@ export function useDetailPend(options: OptionsUseDetailPend): UseSheetDetailRetu
                 await updateRow(editingRow, [row])
             }
         }
-        // <ViewAtomSpec id={item} className={cnCol} />
+        // <ViewAtomSpec id={i} className={cnCol} />
         return <div className="container">
             <div className="row">
                 <div className={" text-end " + cnCol}>

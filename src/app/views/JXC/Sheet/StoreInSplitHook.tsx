@@ -1,6 +1,6 @@
 import { useUqApp } from "app/UqApp";
 import { GSheet, SheetRow } from "app/tool";
-import { EnumAtom, Sheet } from "uqs/UqDefault";
+import { Bin, EnumAtom, Sheet } from "uqs/UqDefault";
 import { IDView } from "tonwa-app";
 import { useDetailSplit } from "./Detail";
 import { PageSheetAct, usePendFromItem, useSelectAtom } from "app/hooks";
@@ -32,8 +32,8 @@ function PageStoreIn() {
         </Band>;
     }
     */
-    function ViewTarget({ sheet }: { sheet: Sheet; }) {
-        return <IDView id={sheet.target} uq={uq} Template={ViewAtom} />;
+    function ViewTarget({ sheet }: { sheet: Sheet & Bin; }) {
+        return <IDView id={sheet.i} uq={uq} Template={ViewAtom} />;
     }
     async function selectTarget() {
         return await selectAtom('Contact'.toLowerCase() as EnumAtom);

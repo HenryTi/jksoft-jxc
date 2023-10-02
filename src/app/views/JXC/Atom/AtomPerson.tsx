@@ -4,7 +4,7 @@ import { EnumAtom } from "uqs/UqDefault";
 import { ViewAtom } from "app/hooks";
 
 const options: OptionsUseBizAtom = {
-    atomName: EnumAtom.Person,
+    atomName: 'person',
     NOLabel: undefined,
     exLabel: undefined,
 }

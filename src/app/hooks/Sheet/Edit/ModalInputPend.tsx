@@ -32,11 +32,11 @@ export function ModalInputPend({ entityPend: refPend }: { entityPend: RefEntity<
     }
     const digits = 2;
     function ViewPendRow({ value: row }: { value: ReturnGetPend$page }) {
-        const { item, price, amount, value } = row;
+        const { i, price, amount, value } = row;
         return <div className="container">
             <div className="row">
                 <div className="col py-2">
-                    <ViewSpec id={item} />
+                    <ViewSpec id={i} />
                 </div>
                 <div className="col py-2 text-break">{JSON.stringify(row)}</div>
                 <div className="col py-2 d-flex flex-column align-items-end me-2">

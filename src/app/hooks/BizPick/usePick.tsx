@@ -1,19 +1,20 @@
-import { EntityAtom, EntityOptions, Pickable } from "app/Biz";
-import { EntityAtomID, EntitySpec } from "app/Biz/EntityAtom";
+import { BizBud, BudPickable, EntityAtom, EnumBudType } from "app/Biz";
+import { EntitySpec } from "app/Biz/EntityAtom";
 import { useCallback } from "react";
-import { Page, useModal } from "tonwa-app";
 import { usePickAtom } from "./usePickAtom";
 import { usePickSpec } from "./userPickSpec";
 import { useUqApp } from "app/UqApp";
 
-export type PickFunc = (pickable: Pickable) => Promise<{ atom: number; spec: number; }>;
+export type PickFunc = (pickable: BizBud) => Promise<{ atom: number; spec: number; }>;
 
 export function usePick() {
     const { biz } = useUqApp();
     const pickAtom = usePickAtom();
     const pickSpec = usePickSpec();
-    async function pick(pickable: Pickable): Promise<{ atom: number; spec: number; }> {
-        let { caption, atom, pick } = pickable;
+    async function pick(pickable: BizBud): Promise<{ atom: number; spec: number; }> {
+        let { caption, budDataType } = pickable;
+        if (budDataType.type !== EnumBudType.pick) debugger;
+        const { atom, pick } = budDataType as BudPickable;
         let atoms: EntityAtom[];
         let specs: EntitySpec[];
         if (pick !== undefined) {

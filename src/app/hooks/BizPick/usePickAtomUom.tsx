@@ -1,6 +1,6 @@
 import { EntityAtom, EntitySpec } from "app/Biz/EntityAtom";
 import { useUqApp } from "app/UqApp";
-import { AtomPhrase, AtomUomProps, readUoms } from "app/tool";
+import { AtomUomProps } from "app/tool";
 import { useCallback } from "react";
 import { Page, useModal } from "tonwa-app";
 import { FA, LMR, List, Sep } from "tonwa-com";
@@ -22,8 +22,8 @@ export function usePickAtomUom() {
         if (uom === false) {
             return { id: base };
         }
-        let { uoms: uomsArr } = await uq.GetAtom.query({ id: base });
-        let uoms = readUoms(uomsArr);
+        // let { uoms: uomsArr } = await uq.GetAtom.query({ id: base });
+        let uoms: any[] = []; //readUoms(uomsArr);
         let ret = await openModal(<PageSelectUom />);
         return ret;
 

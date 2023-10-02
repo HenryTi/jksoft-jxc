@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useModal } from "tonwa-app";
 import { SearchBox } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
-import { Detail, Sheet } from "uqs/UqDefault";
+import { Bin, Sheet } from "uqs/UqDefault";
 import { EditingRow, OriginDetail, SheetRow } from "../../tool";
 
 export interface OptionsUsePend {
@@ -17,11 +17,11 @@ export interface OptionsUsePend {
 
 export async function selectPend(editingRows: EditingRow[], internalSelect: (editingRows: EditingRow[]) => Promise<OriginDetail[]>): Promise<SheetRow[]> {
     function pendItemToEditingRow(originDetail: OriginDetail): SheetRow {
-        let { item, pend, pendValue, sheet, no, id } = originDetail;
+        let { i, pend, pendValue, sheet, no, id } = originDetail;
         return {
             origin: originDetail,
             details: [
-                { item, value: pendValue, origin: id } as Detail
+                { i, value: pendValue, origin: id } as Bin
             ]
         };
     }

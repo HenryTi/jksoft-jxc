@@ -4,14 +4,14 @@ import { EnumAtom } from "uqs/UqDefault";
 import { PageAssignEdit } from "./PageAssignEdit";
 import { Med, RowMed, useAMSBudsSearch } from "./useBuds";
 import { List, getAtomValue, setAtomValue } from "tonwa-com";
-import { EntityAtom } from "app/Biz";
+import { EntityAtom, EntityAtomID } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai";
 import { Uom } from "app/tool";
 import { ViewAtom } from "../BizAtom";
 
 interface PageAssignProps {
-    atom: EnumAtom;
+    atom: string;
     caption: string;
     budNames: string | (string[]);
     noMedsMessage: string;
@@ -26,7 +26,7 @@ export function PageAssign(props: PageAssignProps) {
     if (children !== undefined) {
         switch (children.length) {
             case 0: break;
-            case 1: entityAtom = children[0]; break;
+            case 1: entityAtom = children[0] as any; break;
             default:
                 return <PageTypes />;
         }
@@ -34,13 +34,13 @@ export function PageAssign(props: PageAssignProps) {
     return <PageAssignContent atomName={atomName} />;
 
     function PageTypes() {
-        function ViewItem({ value }: { value: EntityAtom; }) {
+        function ViewItem({ value }: { value: EntityAtomID; }) {
             const { caption } = value;
             return <div className="px-3 py-2">
                 {caption}
             </div>
         }
-        function onItemClick(item: EntityAtom) {
+        function onItemClick(item: EntityAtomID) {
             const { name } = item;
             openModal(<PageAssignContent atomName={name} />);
         }

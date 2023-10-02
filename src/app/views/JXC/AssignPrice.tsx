@@ -6,7 +6,7 @@ export const pathPrice = 'price';
 
 function PagePrice() {
     return <PageAssign
-        atom={EnumAtom.Goods}
+        atom={'goods'}
         caption={'零售价设置'}
         budNames={['Price.retail']}
         noMedsMessage="noMedsMessage" />

@@ -1,4 +1,4 @@
-import { EntityAtom, EntitySheet, EntitySpec, EntityBin, EntityMain, Biz } from "app/Biz";
+import { EntityAtom, EntitySheet, EntitySpec, EntityBin, Biz } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { PickFunc } from "../../BizPick";
 import { UseQueryOptions } from "app/tool";
@@ -27,8 +27,8 @@ abstract class BaseObject extends KeyIdObject {
 }
 
 export class Main extends BaseObject {
-    readonly entityMain: EntityMain;
-    readonly _target = atom<number>(0);         // _ 开始，表示 atom
+    readonly entityMain: EntityBin;
+    readonly _i = atom<number>(0);         // _ 开始，表示 atom
     readonly _id = atom<number>(0);
     get id() { return getAtomValue(this._id); }
     no: string;
@@ -43,48 +43,51 @@ export class Main extends BaseObject {
         let { id } = this;
         if (id > 0) return;
         await this.pickTarget(pick);
-        let target = getAtomValue(this._target);
-        if (target > 0) {
+        let i = getAtomValue(this._i);
+        if (i > 0) {
             return await this.createIfNotExists();
         }
     }
 
     async pickTarget(pick: PickFunc) {
-        const { target } = this.entityMain;
-        if (target === undefined) return;
-        let ret = await pick(target);
+        const { i } = this.entityMain;
+        if (i === undefined) return;
+        let ret = await pick(i);
         if (ret === undefined) return;
         let { spec } = ret;
-        setAtomValue(this._target, spec);
+        setAtomValue(this._i, spec);
     }
 
     async createIfNotExists() {
         let sheetId = getAtomValue(this._id);
-        let target = getAtomValue(this._target);
+        let i = getAtomValue(this._i);
         if (sheetId > 0) return {
             id: sheetId,
             no: this.no,
-            target,
+            i,
         };
         const { uq, entitySheet } = this.sheetStore;
         // let no = await uq.IDNO({ ID: uq.Sheet });
         let ret = await uq.SaveSheet.submit({
             phrase: entitySheet.id,
             no: undefined,
-            target: target === 0 ? undefined : target,
+            i: i === 0 ? undefined : i,
+            x: 0,
             value: undefined,
+            price: undefined,
+            amount: undefined,
         });
         let { id, no } = ret;
         setAtomValue(this._id, id);
         this.no = no;
-        return Object.assign(ret, { target });
+        return Object.assign(ret, { i });
     }
 
     setValue(value: any) {
-        const { id, no, target } = value;
+        const { id, no, i } = value;
         this.no = no;
         setAtomValue(this._id, id);
-        setAtomValue(this._target, target);
+        setAtomValue(this._i, i);
     }
 }
 
@@ -167,8 +170,8 @@ export class DetailEx extends DetailBase {
 export class DetailRow extends BaseObject {
     readonly section: DetailSection;
     id: number;
-    item: number;
-    itemX: number;
+    i: number;
+    x: number;
     value: number;
     price: number;
     amount: number;
@@ -193,8 +196,8 @@ export class DetailRow extends BaseObject {
             base: main.id,
             phrase: this.section.detail.entityDetail.id,
             id: this.id,
-            item: this.item,
-            itemX: this.itemX,
+            i: this.i,
+            x: this.x,
             value: this.value,
             price: this.price,
             amount: this.amount,
@@ -211,7 +214,7 @@ export class DetailRow extends BaseObject {
 
     async delFromSection() {
         const { uq } = this.sheetStore;
-        await uq.DeleteDetail.submit({ id: this.id });
+        await uq.DeleteBin.submit({ id: this.id });
         this.section.delRow(this);
     }
 
@@ -223,8 +226,8 @@ export class DetailRow extends BaseObject {
     setValue(row: any) {
         const { id, item, itemX, value, price, amount, origin, pendFrom } = row;
         this.id = id;
-        this.item = item;
-        this.itemX = itemX;
+        this.i = item;
+        this.x = itemX;
         this.value = value;
         this.price = price;
         this.amount = amount;

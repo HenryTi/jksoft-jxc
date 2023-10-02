@@ -4,11 +4,11 @@ import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { ButtonAsync, getAtomValue, List, LMR, Sep, setAtomValue, useEffectOnce } from "tonwa-com";
-import { Atom, Detail, Sheet } from "uqs/UqDefault";
+import { Atom, Bin, Sheet } from "uqs/UqDefault";
 import { DetailWithOrigin, EditingRow, OriginDetail, SheetRow } from "app/tool";
 import { UseSheetDetailReturn } from "./useSheetDetail";
 import { useUqApp } from "app/UqApp";
-import { EntitySheet, getPickableCaption } from "app/Biz";
+import { EntitySheet } from "app/Biz";
 
 export interface PropsSheetAct {
     entitySheet: EntitySheet;
@@ -16,7 +16,7 @@ export interface PropsSheetAct {
     // caption?: string;
     // targetCaption: string;
     // ViewTargetBand: (props: { sheet: Sheet; }) => JSX.Element;
-    ViewTarget: (props: { sheet: Sheet; }) => JSX.Element;
+    ViewTarget: (props: { sheet: Sheet & Bin; }) => JSX.Element;
     selectTarget: (header?: string) => Promise<Atom>;
     loadStart: () => Promise<{ sheet: Sheet; sheetRows: SheetRow[] }>;
     useDetailReturn: UseSheetDetailReturn;
@@ -35,7 +35,7 @@ export function useSheetAct(options: PropsSheetAct) {
     // const { current: genEditing } = useRef(useSheetEditing(sheetName, act, useDetailReturn));
     // const { onEditRow, onAddRow, atomRows, atomSheet, atomSubmitable } = genEditing;
     const { current: { atomSheet, atomRows, atomSubmitable } } = useRef((function () {
-        const atomSheet = atom(undefined as Sheet);
+        const atomSheet = atom(undefined as Sheet & Bin);
         const atomRows = atom(undefined as EditingRow[]);
         const atomSubmitable = atom(get => {
             let rows = get(atomRows);
@@ -163,9 +163,9 @@ export function useSheetAct(options: PropsSheetAct) {
     }
 
     let viewTargetBand: JSX.Element;
-    const { target } = main;
-    if (target !== undefined) {
-        viewTargetBand = <Band label={getPickableCaption(target)}>
+    const { i } = main;
+    if (i !== undefined) {
+        viewTargetBand = <Band label={i.caption}>
             <ViewTarget sheet={sheet} />
         </Band>;
     }
@@ -225,7 +225,7 @@ export function useSheetAct(options: PropsSheetAct) {
     */
     async function loadSheet(sheetId: number): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
         let { main: [sheet], details, origins } = await uq.GetSheet.query({ id: sheetId });
-        let originColl: { [id: number]: Detail/* & { done: number; }*/ } = {};
+        let originColl: { [id: number]: Bin/* & { done: number; }*/ } = {};
         for (let origin of origins) {
             let { id } = origin;
             originColl[id] = origin;
@@ -235,7 +235,7 @@ export function useSheetAct(options: PropsSheetAct) {
             let origin = originColl[originId];
             // let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue, sheet, no };
             let originDetail: OriginDetail = { ...origin, pend: pendFrom, pendValue } as any;
-            let detail: Detail = { ...v };
+            let detail: Bin = { ...v };
             return { origin: originDetail, details: [detail] };
         });
         return { sheet, sheetRows };
@@ -245,7 +245,7 @@ export function useSheetAct(options: PropsSheetAct) {
         setAtomValue(atomSheet, sheet);
     }
     */
-    async function updateRow(editingRow: EditingRow, details: Detail[]) {
+    async function updateRow(editingRow: EditingRow, details: Bin[]) {
         let dirtyDetails: DetailWithOrigin[] = [];
         getDirtyDetails(dirtyDetails, editingRow, details);
         if (dirtyDetails.length > 0) {
@@ -274,7 +274,7 @@ export function useSheetAct(options: PropsSheetAct) {
         setAtomValue(atomRows, [...rows, ...newRows]);
     }
 
-    function getDirtyDetails(dirtyDetails: DetailWithOrigin[], editingRow: EditingRow, details: Detail[]) {
+    function getDirtyDetails(dirtyDetails: DetailWithOrigin[], editingRow: EditingRow, details: Bin[]) {
         let orgDetails = getAtomValue(editingRow.atomDetails);
         for (let detail of details) {
             let { origin } = editingRow;
@@ -289,10 +289,10 @@ export function useSheetAct(options: PropsSheetAct) {
         }
     }
 
-    function compareDetail(d1: Detail, d2: Detail): boolean {
+    function compareDetail(d1: Bin, d2: Bin): boolean {
         if (d1.base !== d2.base) return false
-        if (d1.item !== d2.item) return false;
-        if (d1.itemX !== d2.itemX) return false;
+        if (d1.i !== d2.i) return false;
+        if (d1.x !== d2.x) return false;
         if (d1.origin !== d2.origin) return false;
         if (d1.value !== d2.value) return false;
         if (d1.price !== d2.price) return false;
@@ -300,14 +300,13 @@ export function useSheetAct(options: PropsSheetAct) {
         return true;
     }
 
-    async function saveDetail(sheet: Sheet, detailWithOrigin: DetailWithOrigin): Promise<void> {
-        let { id: sheetId, target } = sheet;
+    async function saveDetail(sheet: Sheet & Bin, detailWithOrigin: DetailWithOrigin): Promise<void> {
+        let { id: sheetId, i } = sheet;
         let { detail, origin } = detailWithOrigin;
         let pendFrom = origin?.pend;
         let result = await uq.SaveDetail.submit({
             ...detail as any,
             base: sheetId,
-            target,
             pendFrom,
         });
         let id = result.id;
@@ -384,7 +383,7 @@ export function useSheetAct(options: PropsSheetAct) {
     }
 
     // return: id
-    async function saveSheetToDb(sheet: Sheet): Promise<number> {
+    async function saveSheetToDb(sheet: Sheet & Bin): Promise<number> {
         let { id: entityId } = entitySheet;
         let ret = await uq.SaveSheet.submit({
             ...sheet,

@@ -4,7 +4,7 @@ import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView } from
 import { ViewAtom } from "app/hooks";
 
 const options: OptionsUseBizAtom = {
-    atomName: EnumAtom.Goods,
+    atomName: 'goods',
     NOLabel: undefined,
     exLabel: undefined,
 }
@@ -29,7 +29,7 @@ function PageList() {
 }
 
 export const gGoods: GAtom = {
-    name: EnumAtom.Goods,
+    name: options.atomName,
     pageNew: <PageNew />,
     pageEdit: <PageView />,
     pageList: <PageList />,

@@ -5,9 +5,9 @@ import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "./ViewSheetTime";
 
 export function ViewMain({ main }: { main: Main }) {
-    const { id, no, _target, entityMain, keyId } = main;
-    const { targetCaption } = entityMain;
-    const targetValue = useAtomValue(_target);
+    const { id, no, _i, entityMain, keyId } = main;
+    const { i } = entityMain;
+    const targetValue = useAtomValue(_i);
     return <div className="tonwa-bg-gray-3 py-3 container">
         <Band label={'单据编号'} className="mb-1">
             <b>{no}</b> &nbsp; &nbsp;
@@ -15,7 +15,7 @@ export function ViewMain({ main }: { main: Main }) {
         </Band>
         {
             targetValue > 0 &&
-            <Band label={targetCaption} className="mb-1">
+            <Band label={i.caption} className="mb-1">
                 <div className="">
                     <ViewSpec id={targetValue} />
                 </div>

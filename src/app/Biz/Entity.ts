@@ -1,18 +1,13 @@
 import { BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
 import { EntityAtom, EntityPick } from "./EntityAtom";
+import { BizPhraseType } from "uqs/UqDefault";
 
 export interface RefEntity<T extends Entity> {
     caption: string;
     entity: T;
 }
-
-export interface Pickable {
-    caption: string;
-    atom: EntityAtom;
-    pick: EntityPick;
-}
-
+/*
 export function getPickableCaption(pickable: Pickable) {
     let { caption, atom, pick } = pickable;
     if (caption !== undefined) return caption;
@@ -21,6 +16,7 @@ export function getPickableCaption(pickable: Pickable) {
     }
     return pick.caption ?? pick.name;
 }
+*/
 
 export class Entity extends BizBase {
     readonly selfProps: BizBud[] = [];       // 本 Atom 定义的
@@ -68,18 +64,11 @@ export class Entity extends BizBase {
             this.props.push(bud);
         }
     }
-
+    /*
     protected fromPickable(prop: any): Pickable {
-        const { entities } = this.biz;
-        const { caption, atom: atomName, pick: pickName } = prop;
-        const atom = atomName === undefined ? undefined : entities[atomName] as EntityAtom;
-        const pick = pickName === undefined ? undefined : entities[pickName] as EntityPick;
-        return {
-            caption,
-            atom,
-            pick,
-        }
+        return prop;
     }
+    */
 
     scan() {
         for (let bud of this.selfProps) {

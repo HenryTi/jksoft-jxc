@@ -25,7 +25,7 @@ export function useInputSection(detailMan: DetailMain) {
             isNewSection = true;
         }
         let row = new DetailRow(detailSection);
-        row.item = spec;
+        row.i = spec;
         let retInput = await openModal(<ModalInputRow row={row} />);
         if (retInput === true) {
             await row.addToSection();

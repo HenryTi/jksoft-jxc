@@ -59,7 +59,7 @@ function ViewSection({ section, editable }: { section: DetailSection; editable: 
 
 function ViewRow({ row, editable }: { row: DetailRow; editable: boolean; }) {
     const { openModal } = useModal();
-    const { item, value, price, amount } = row
+    const { i: item, value, price, amount } = row
     const digits = 2;
     async function onEdit() {
         if (editable === false) return;

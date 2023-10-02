@@ -1,4 +1,4 @@
-import { Atom, EnumAtom, EnumTitle } from "uqs/UqDefault";
+import { Atom, EnumAtom } from "uqs/UqDefault";
 import { Spec } from "./Model";
 import { EntityAtom, EntitySheet } from "app/Biz";
 import { EntitySpec } from "app/Biz/EntityAtom";
@@ -12,7 +12,7 @@ export interface PropsAtomSelect {
 }
 
 export interface GAtom {
-    name: EnumAtom;
+    name: string;
     caption?: string;
     entity?: EntityAtom;
     pageNew: JSX.Element;
@@ -46,7 +46,7 @@ export interface PropsSpecEdit<T extends Spec> {
 }
 
 export interface GSubject {
-    name: EnumTitle;
+    name: string, // EnumTitle;
     caption?: string;
     Report: JSX.Element;
     History: JSX.Element;

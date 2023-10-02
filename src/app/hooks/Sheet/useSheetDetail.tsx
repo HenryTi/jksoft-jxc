@@ -1,6 +1,6 @@
 import { EntityBin } from "app/Biz/EntitySheet";
 import { EditingRow, SheetRow } from "app/tool";
-import { Atom, Detail } from "uqs/UqDefault";
+import { Atom, Bin } from "uqs/UqDefault";
 // import { ReturnUseEditing } from "./useSheetEditing";
 // import { GenAtomSpec } from "../BizAtomSpec";
 
@@ -8,7 +8,7 @@ export interface OptionsUseSheetDetail {
     detail: string;
 }
 
-export type UpdateRow = (editingRow: EditingRow, details: Detail[]) => Promise<void>;
+export type UpdateRow = (editingRow: EditingRow, details: Bin[]) => Promise<void>;
 
 export interface UseSheetDetailReturn {
     detail: EntityBin;

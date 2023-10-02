@@ -3,7 +3,7 @@ import { Band, FormRow, FormRowsView } from "app/coms";
 import { OptionsUseSheetDetail, UpdateRow, ViewSpec, usePick, useSelectAtomSpec } from "app/hooks";
 import { AtomSpec, AtomPhrase, EditingRow, SheetRow, Spec } from "app/tool";
 import { Page, uqAppModal, useModal } from "tonwa-app";
-import { Detail, EnumAtom } from "uqs/UqDefault";
+import { Bin, EnumAtom } from "uqs/UqDefault";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useUqApp } from "app/UqApp";
 import { FA, SpinnerSmall, to62 } from "tonwa-com";
@@ -65,11 +65,11 @@ export function useDetailQPA({ detail: detailName }: OptionsUseDetailQPA): UseSh
         return [ret];
     }
 
-    function editingRowFromAtom(item: number): EditingRow {
-        if (item === undefined) return;
-        let row: Detail = {
-            item,
-        } as Detail;
+    function editingRowFromAtom(i: number): EditingRow {
+        if (i === undefined) return;
+        let row: Bin = {
+            i,
+        } as Bin;
         let editingRow = new EditingRow(undefined, [row]);
         return editingRow;
     }
@@ -138,15 +138,15 @@ function PageDetail({ header, editingRow, entityDetail }: {
     editingRow = editingRow ?? new EditingRow(undefined, undefined);
     const { atomDetails } = editingRow;
     let details = useAtomValue(atomDetails);
-    let refDetail = useRef<Detail>(details === undefined ? {} as Detail : { ...details[0] });
+    let refDetail = useRef<Bin>(details === undefined ? {} as Bin : { ...details[0] });
     let detail = refDetail.current;
-    const { value, price: price, amount: amount, item } = detail;
+    const { value, price: price, amount: amount, i } = detail;
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [hasValue, setHasValue] = useState(value != undefined);
     let valueDisabled: boolean = false;
 
-    function buildFormRows(detial: Detail): FormRow[] {
+    function buildFormRows(detial: Bin): FormRow[] {
         let { value, price: price, amount: amount } = detial;
         return [
             buildValueRow(value),
@@ -228,7 +228,7 @@ function PageDetail({ header, editingRow, entityDetail }: {
             <div>entityId:{entityId} base62: {base62}</div>
             <Band label="商品">
                 <div className="">
-                    <ViewSpec id={item} />
+                    <ViewSpec id={i} />
                 </div>
             </Band>
         </div>
@@ -247,10 +247,10 @@ function ViewDetailQPA({ editingRow }: { editingRow: EditingRow; updateRow: Upda
             ViewDetailQPA editingRow rows === undefined || rows.length = 0;
         </div>
     }
-    const { item, value, price: price, amount: amount } = details[0];
+    const { i, value, price: price, amount: amount } = details[0];
     return <div className="container">
         <div className="row">
-            <ViewSpec id={item} />
+            <ViewSpec id={i} />
             <div className={cnCol + ' d-flex justify-content-end align-items-end'}>
                 <div className="text-end">
                     <span><small>单价:</small> {price?.toFixed(4)} <small>金额:</small> {amount?.toFixed(4)}</span>

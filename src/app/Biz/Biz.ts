@@ -54,6 +54,7 @@ export class Biz {
     }
 
     buildEntities(bizSchema: any) {
+        if (bizSchema === undefined) return;
         const builders: { [type: string]: (id: number, name: string, type: string) => Entity } = {
             sheet: this.buildSheet,
             bin: this.buildBin,

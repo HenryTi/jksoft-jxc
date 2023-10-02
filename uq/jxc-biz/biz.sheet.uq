@@ -1,5 +1,5 @@
 Biz Bin MainPurchase {
-    I '往来单位' ATOM Contact;
+    I '往来单位' Pick Contact;
 }
 
 Pick PurchaseItem '捡取商品' {
@@ -10,7 +10,7 @@ Pick PurchaseItem '捡取商品' {
 };
 
 Biz Title D {
-    a DEC History;
+    PROP a DEC History;
 }
 
 Biz Bin DetailPurchase ver 0.1 {
@@ -38,11 +38,13 @@ Biz Sheet SheetPurchase '采购单 v5' {
 }
 
 Biz Bin MainStoreIn {
-    I '存货仓库' ATOM Storage;
+    I '存货仓库' Pick Storage;
 }
 
 Biz Bin DetailStoreIn ver 0.2 {
-    Pend PendStoreIn '待入库商品';      -- 从某个待处理账来
+    Pend PendStoreIn '待入库商品' {
+        SEARCH I;
+    };      -- 从某个待处理账来
     I '商品' = Pend.i;            -- Pick Goods;
     Value := Pend.value;
     ACT {
@@ -51,8 +53,14 @@ Biz Bin DetailStoreIn ver 0.2 {
 }
 
 Biz Pend PendStoreIn '待入库' {
-    p1 DEC;
-    p2 DEC;
+    S '单据';
+    SI '客户';
+    I '商品';
+    Value '数量';
+    Prop {
+        p1 DEC;
+        p2 DEC;
+    };
 }
 
 Biz Sheet SheetStoreIn '入库单' {
@@ -75,7 +83,7 @@ Biz Sheet SheetSale '销售单' {
 
 Biz Bin DetailSale ver 0.1 {
     I '商品Pick' Pick PurchaseItem; -- ATOM Goods;       -- 某类Atom
-    X '客户' ATOM Contact;
+    X '客户' Pick Contact;
     Value '数量' DEC;
     Price '单价' DEC;
     Amount '金额' DEC = Value * Price;
@@ -87,15 +95,19 @@ Biz Bin MainStoreOut {
 }
 
 Biz Bin DetailStoreOut ver 0.2 {
-    I '商品' ATOM Goods;       -- 某类Atom
-    Pend PendStoreOut; -- ON Sheet ON Target ON Item ON Row;
+    I '商品' Pick Goods;       -- 某类Atom
+    Pend PendStoreOut {
+        SEARCH s;
+    }; -- ON Sheet ON Target ON Item ON Row;
     ACT (detail ID) 
     -- From PendStoreOut 
     {
     };
 }
 
-Biz Pend PendStoreOut '待出库';
+Biz Pend PendStoreOut '待出库' {
+
+}
 
 Biz Sheet SheetStoreOut '出库单' {
     Main MainStoreOut;
