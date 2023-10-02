@@ -9,7 +9,7 @@ export function useInputSection(detailMan: DetailMain) {
     const { openModal } = useModal();
     const pick = usePick();
     const { entityDetail } = detailMan;
-    const { pend, item } = entityDetail;
+    const { pend, i: item } = entityDetail;
 
     async function inputFromPend(detailSection: DetailSection) {
         let inputed = await openModal(<ModalInputPend entityPend={pend} />);

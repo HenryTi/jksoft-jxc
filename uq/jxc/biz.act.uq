@@ -190,9 +190,11 @@ RETURNS props (
 Biz ACT SaveSheet (
     phrase ID,                 -- sheet phrase id --  CHAR(100),
     no NO,
-    target ID,
-    -- operator ID,            -- employee Item
+    i ID,
+    x ID,
     value VALUE,
+    price VALUE,
+    amount VALUE,
 )
 RETURNS ret (
     id ID,
@@ -210,8 +212,8 @@ RETURNS ret (
         SET no = NO(Sheet);
     }
     VAR sheetId ID;
-    WITH Sheet as a ID to sheetId Key(phrase, no) 
-        SET a.target=target, a.operator=me, a.value=value;
+    WITH Sheet as a ID to sheetId Key(phrase, no) SET a.operator=me;
+    WITH Bin as a ID=sheetId SET a.i=i, a.x=x, a.value=value, a.price=price, a.amount=amount;
 
     WITH IxMy I=me X=sheetId;
 
@@ -222,8 +224,8 @@ Biz ACT SaveDetail (
     base ID,                -- sheet id
     phrase ID,              -- detail phrase id
     id ID,
-    item ID,                -- 计量对象。比如：商品不同包装或者批次
-    itemX ID,               -- 操作对象。比如：客户，仓库，等
+    i ID,                -- 计量对象。比如：商品不同包装或者批次
+    x ID,               -- 操作对象。比如：客户，仓库，等
     origin ID,
     value VALUE,
     price VALUE,
@@ -252,32 +254,31 @@ RETURNS ret (
     }
     SET base=ID(Bud New KEY base=base, ext=phrase);
     IF id IS NULL {
-        SET id = ID(Detail New KEY base=base);
+        SET id = ID(Bin New KEY base=base);
     }
-    WITH Detail ID=id SET item=item
-        , itemX=itemX
+    WITH Bin ID=id SET i=i, x=x
         , origin=origin
         , value=value, price=price, amount=amount;
     IF pendFrom IS NOT NULL {
-        WITH DetailPend as a ID=id SET a.pendFrom=pendFrom;
+        WITH BinPend as a ID=id SET a.pendFrom=pendFrom;
     }
     INTO ret SELECT id;
 };
 
-Biz AC DeleteDetail (
+Biz AC DeleteBin (
     id ID,
 ) {
     VAR me ID = Me();
     IF NOT EXISTS(
         SELECT a.id
-            FROM Detail as a
+            FROM Bin as a
                 JOIN IxMy as b ON b.x=a.base
             WHERE b.i=me
     ) {
         -- 如果base sheet没有在我的draft里面，不能写入明细。这是安全保证
         RETURN;
     }
-    WITH Detail ID=id DEL;
+    WITH Bin ID=id DEL;
 }
 
 Biz AC SubmitSheet(
@@ -510,10 +511,11 @@ Biz Query GetSheet ver 0.1 (
 )
 RETURNS main (
     * SHEET,
+    * Bin,
     phrase ID,
 )
 RETURNS details (
-    * Detail,
+    * Bin,
     -- done VALUE,
     pendFrom ID,
     pendValue VALUE,
@@ -522,7 +524,7 @@ RETURNS details (
     phrase ID,
 )
 RETURNS origins (
-    * Detail,
+    * Bin,
     -- done VALUE,
 )
 /*
@@ -533,22 +535,23 @@ RETURNS buds (
     value VALUE,
 ) */
 {
-    INTO main SELECT * a, b.id as phrase
+    INTO main SELECT * a, * b, b.id as phrase
         FROM Sheet as a
-            JOIN BizPhrase as b ON b.id=a.base
+            JOIN Bin as b ON b.id=a.id
+            JOIN BizPhrase as c ON c.id=a.base
         WHERE a.id=id AND b.base=$site;
     INTO details SELECT * a
         , c.pendFrom, d.value as pendValue
         , b.ext as phrase
-        FROM Detail as a
+        FROM Bin as a
             JOIN Bud as b ON b.id=a.base
-            LEFT JOIN DetailPend as c ON c.id=a.id
+            LEFT JOIN BinPend as c ON c.id=a.id
             LEFT JOIN Pend as d ON d.id=c.pendFrom
             -- LEFT JOIN Sheet as e ON e.id=a.base
         WHERE b.base=id;
     INTO origins SELECT DISTINCT * b -- , IFNULL(c.value, 0) as done
         FROM (SELECT DISTINCT origin FROM details) as a
-            JOIN DETAIL as b ON b.id=a.origin
+            JOIN Bin as b ON b.id=a.origin
     ;
     /*
     INTO buds SELECT a.id, b.x as bud, d.name as phrase, b.value

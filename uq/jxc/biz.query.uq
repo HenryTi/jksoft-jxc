@@ -6,10 +6,9 @@ PAGE (
     pend ID ASC,
     sheet ID,
     no NO,
-    target ID,
     detail ID,
-    item ID,
-    itemX ID,
+    i ID,
+    x ID,
     value VALUE,
     price VALUE,
     amount VALUE,
@@ -19,17 +18,17 @@ RETURNS atoms (
     value JSON,
 ) {
     PAGE SELECT a.id as pend
-        , d.id as sheet, d.no, d.target
-        , b.id as detail, b.item, b.itemX, b.value, b.price, b.amount
+        , d.id as sheet, d.no
+        , b.id as detail, b.i, b.x, b.value, b.price, b.amount
         FROM Pend as a
-            JOIN Detail as b on b.id=a.detail
+            JOIN Bin as b on b.id=a.detail
             JOIN Bud as c ON c.id=b.base
             JOIN Sheet as d ON d.id=c.base
         WHERE a.base=pend
         ORDER BY a.id ASC
         LIMIT $pageSize;
-    FOR (VAR target ID, item ID, itemX ID
-        OF SELECT a.target, a.item, a.itemX
+    FOR (VAR i ID, x ID
+        OF SELECT a.i, a.x
             FROM $page as a)
     {
 
@@ -46,7 +45,7 @@ PAGE (
 ) {
     PAGE SELECT DISTINCT * c, BudPhrase(c.base) as sheet
         FROM Pend as a
-            JOIN Detail as b ON b.id=a.detail
+            JOIN Bin as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base
         WHERE 1=1 AND a.base=SiteBudId(pend)
             AND c.id>$pageStart
@@ -65,12 +64,10 @@ PAGE (
 ) {
     PAGE SELECT DISTINCT * c, BudPhrase(c.base) as sheet
         FROM Pend as a
-            JOIN Detail as b ON b.id=a.detail
+            JOIN Bin as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base
-            JOIN Atom as d ON d.id=c.target
         WHERE 1=1 AND a.base=SiteBudId(pend)
             AND c.id>$pageStart
-            AND SEARCH(d.no, d.ex ON key)
         ORDER BY c.id ASC
         LIMIT $pageSize;
 };
@@ -80,7 +77,7 @@ Biz Query GetPendDetailFromItem (
     key CHAR(100),               -- item no or ex
 )
 PAGE (
-    * DETAIL ASC,
+    * Bin ASC,
     pend ID,
     pendValue VALUE,
     sheet Phrase,
@@ -88,9 +85,9 @@ PAGE (
 ) {
     PAGE SELECT * b, a.id as pend, a.value as pendValue, BudPhrase(c.base) as sheet, c.no
         FROM Pend as a
-            JOIN Detail as b ON b.id=a.detail
+            JOIN Bin as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base
-            JOIN AtomSpec as d ON d.id=b.item
+            JOIN AtomSpec as d ON d.id=b.i
             JOIN AtomUom as e ON e.id=d.atomUom
             JOIN Atom as f ON f.id=e.atom
         WHERE 1=1 AND a.base=SiteBudId(pend)
@@ -105,7 +102,7 @@ Biz Query GetPendDetailFromSheetId (
     sheetId ID,               -- origin sheet id
 )
 RETURNS ret (
-    * DETAIL,
+    * Bin,
     pend ID,
     pendValue VALUE,
     sheet Phrase,
@@ -113,7 +110,7 @@ RETURNS ret (
 ) {
     INTO ret SELECT * b, a.id as pend, a.value as pendValue, BudPhrase(c.base) as sheet, c.no
         FROM Pend as a
-            JOIN Detail as b ON b.id=a.detail
+            JOIN Bin as b ON b.id=a.detail
             JOIN Sheet as c ON c.id=b.base
         WHERE 1=1 AND a.base=SiteBudId(pend)
             AND b.base=sheetId

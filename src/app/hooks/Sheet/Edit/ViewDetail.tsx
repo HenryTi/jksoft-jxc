@@ -21,7 +21,7 @@ export function ViewDetail({ detail, editable }: { detail: DetailMain; editable:
 function ViewSection({ section, editable }: { section: DetailSection; editable: boolean; }) {
     const { detail } = section;
     const { entityDetail } = detail;
-    const { itemX } = entityDetail;
+    const { x: itemX } = entityDetail;
     const inputSection = useInputSection(detail);
     const rows = useAtomValue(section._rows);
     async function onClick() {

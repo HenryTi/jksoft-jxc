@@ -1,4 +1,4 @@
-import { EntityAtom, EntitySheet, EntitySpec, EntityDetail, EntityMain, Biz } from "app/Biz";
+import { EntityAtom, EntitySheet, EntitySpec, EntityBin, EntityMain, Biz } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { PickFunc } from "../../BizPick";
 import { UseQueryOptions } from "app/tool";
@@ -89,9 +89,9 @@ export class Main extends BaseObject {
 }
 
 abstract class DetailBase extends BaseObject {
-    readonly entityDetail: EntityDetail;
+    readonly entityDetail: EntityBin;
     readonly caption: string;
-    constructor(sheetStore: SheetStore, entityDetail: EntityDetail, caption: string) {
+    constructor(sheetStore: SheetStore, entityDetail: EntityBin, caption: string) {
         super(sheetStore);
         this.entityDetail = entityDetail;
         this.caption = caption ?? entityDetail.caption;

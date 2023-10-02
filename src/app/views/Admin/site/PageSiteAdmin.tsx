@@ -56,9 +56,9 @@ function PageSiteAdmin() {
     const cmds = [
         { label: captionAchieve, path: pathAchieve },
         { label: captionUser, path: pathUser },
-        { label: <CaptionAtom atom={EnumAtom.UomI} />, path: pathAtomList(gUomI.name) },
         { label: captionCompile, path: pathCompile },
     ];
+    //{ label: <CaptionAtom atom={EnumAtom.UomI} />, path: pathAtomList(gUomI.name) },
     return <Page header={<IDView uq={uq} id={Number(site)} Template={ViewSite} />}>
         <SiteRoleAdmin />
         {cmds.map((v, index) => {

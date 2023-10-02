@@ -11,7 +11,7 @@ import { useAtomValue } from "jotai";
 // import { ViewAUSAtom, ViewAtomSpec, ViewUom, ViewSpec, ViewSpecWithLabel } from "../../ViewAUS";
 import { UseSheetDetailReturn } from "app/hooks";
 import { ViewAtom } from "app/hooks";
-import { EntityDetail } from "app/Biz/EntitySheet";
+import { EntityBin } from "app/Biz/EntitySheet";
 
 const fieldQuantity = 'value';
 const fieldPrice = 'price';
@@ -26,9 +26,9 @@ export function useDetailQPA({ detail: detailName }: OptionsUseDetailQPA): UseSh
     // const selectAtomSpec = useSelectAtomSpec();
     const { openModal, closeModal } = useModal();
     const pick = usePick();
-    const entityDetail = uqApp.biz.entities[detailName] as EntityDetail;
+    const entityDetail = uqApp.biz.entities[detailName] as EntityBin;
     async function addRow(editingRows: EditingRow[]): Promise<SheetRow[]> {
-        let pickValue = await pick(entityDetail.item);
+        let pickValue = await pick(entityDetail.i);
         if (pickValue === undefined) return;
         // alert(JSON.stringify(pickValue));
         // let atomSpec = await selectAtomSpec('goods' as EnumAtom);
@@ -131,7 +131,7 @@ function useSaveAtomSpec() {
 function PageDetail({ header, editingRow, entityDetail }: {
     header?: string;
     editingRow?: EditingRow;
-    entityDetail: EntityDetail;
+    entityDetail: EntityBin;
 }): JSX.Element {
     const caption = '明细';
     const itemCaption = '商品';

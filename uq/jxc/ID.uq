@@ -18,19 +18,19 @@ ID Sheet (
     id MINUTE,
     KEY base ID,            -- sitePhrase
     KEY no,
-    target ID,              -- 操作对象
+    -- target ID,              -- 操作对象
     operator ID,            -- employee Item
-    value VALUE,
+    -- value VALUE,
 );
 
 -- 所有单据的明细，单值
-ID Detail (
+ID Bin (
     id MINUTE,
     KEY base ID,            -- SheetPurchase or SheetSale
     KEY id,
     origin ID,              -- 源单
-    item ID,                -- 计量对象。比如：商品不同包装或者批次
-    itemX ID,               -- 两层关系，一行可分 操作对象。
+    i ID,                   -- 计量对象。比如：商品不同包装或者批次
+    x ID,                   -- 两层关系，一行可分 操作对象。
     value VALUE,
     amount VALUE,
     price VALUE,
@@ -41,11 +41,12 @@ ID Pend (
     KEY base ID,            -- BizPhrase
     KEY id,
     detail ID,
-    value VALUE,
+    mid JSON,               -- 中间值，以数组方式存放
+    value VALUE,            -- 待处理数，到0，就清除
 );
 
--- detail的pend来源。Pend处理完后，删除。
-IDX DetailPend (
+-- bin的pend来源。Pend处理完后，删除。
+IDX BinPend (
     id,                 -- detail id
     pendFrom ID,
 );
@@ -56,7 +57,7 @@ IX IxSpec (
     prev,                   -- 排序
 );
 
-IDX SheetRed (
+IDX BinRed (
     id,
     red TINYINT DEFAULT 1,  -- 红冲单挂这里，挂主表
 );

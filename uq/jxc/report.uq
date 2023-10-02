@@ -79,7 +79,7 @@ PAGE (
     VAR SiteBudId ID = ID(Bud KEY base=objId, ext=phraseId);
     PAGE SELECT a.id, a.value, a.ref, a.plusMinus, c.no as sheetNo, e.name as sheetPhrase
         FROM History as a
-            LEFT JOIN Detail as b ON b.id=a.ref
+            LEFT JOIN Bin as b ON b.id=a.ref
             LEFT JOIN Sheet as c ON c.id=b.base 
             LEFT JOIN Bud as d ON d.id=c.base
             LEFT JOIN BizPhrase as e ON e.id=d.ext

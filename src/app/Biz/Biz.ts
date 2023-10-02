@@ -3,7 +3,7 @@ import { UqExt } from 'uqs/UqDefault';
 import { Entity } from './Entity';
 import { EntityAtom, EntityPick, EntitySpec } from './EntityAtom';
 import { EntityTree } from './EntityTree';
-import { EntityDetail, EntityMain, EntityPend, EntitySheet } from './EntitySheet';
+import { EntityBin, EntityPend, EntitySheet } from './EntitySheet';
 import { EntityTitle } from './EntityTitle';
 import { EntityTie } from './EntityTie';
 import { EntityPermit, EntityRole } from './EntityPermit';
@@ -19,8 +19,7 @@ export class Biz {
     readonly specs: EntitySpec[] = [];
 
     readonly sheets: EntitySheet[] = []
-    readonly mains: EntityMain[] = [];
-    readonly details: EntityDetail[] = [];
+    readonly bins: EntityBin[] = [];
     readonly pends: EntityPend[] = [];
 
     readonly picks: EntityPick[] = [];
@@ -57,8 +56,7 @@ export class Biz {
     buildEntities(bizSchema: any) {
         const builders: { [type: string]: (id: number, name: string, type: string) => Entity } = {
             sheet: this.buildSheet,
-            main: this.buildMain,
-            detail: this.buildDetail,
+            bin: this.buildBin,
             pend: this.buildPend,
             atom: this.buildAtom,
             spec: this.buildSpec,
@@ -104,8 +102,7 @@ export class Biz {
             [this.atomRoots, '基础编码', 'id-card-o'],
             [this.specs, '细分编码', 'asterisk'],
             [this.sheets, '业务单据', 'file'],
-            [this.mains, '单据主表', 'file-o'],
-            [this.details, '单据明细', 'file-text-o'],
+            [this.bins, '单据条', 'file-text-o'],
             [this.pends, '待处理', 'clone'],
             [this.picks, '捡取器', 'hand-pointer-o'],
             [this.options, '可选项', 'check-square-o'],
@@ -136,15 +133,9 @@ export class Biz {
         return bizEntity;
     }
 
-    private buildMain = (id: number, name: string, type: string): Entity => {
-        let bizEntity = new EntityMain(this, id, name, type);
-        this.mains.push(bizEntity);
-        return bizEntity;
-    }
-
-    private buildDetail = (id: number, name: string, type: string): Entity => {
-        let bizEntity = new EntityDetail(this, id, name, type);
-        this.details.push(bizEntity);
+    private buildBin = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityBin(this, id, name, type);
+        this.bins.push(bizEntity);
         return bizEntity;
     }
 

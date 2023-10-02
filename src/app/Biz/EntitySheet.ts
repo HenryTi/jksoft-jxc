@@ -1,6 +1,7 @@
 import { BizBud } from "./BizBud";
 import { Entity, Pickable, RefEntity, getPickableCaption } from "./Entity";
 
+/*
 export class EntityMain extends Entity {
     target: Pickable;
     targetCaption: string;
@@ -18,13 +19,13 @@ export class EntityMain extends Entity {
         }
     }
 }
+*/
 
-export class EntityDetail extends Entity {
-    main: EntityMain;
-    item: Pickable;
-    itemCaption: string;
-    itemX: Pickable;
-    itemXCaption: string;
+export class EntityBin extends Entity {
+    i: Pickable;
+    iCaption: string;
+    x: Pickable;
+    xCaption: string;
     pend: RefEntity<EntityPend>; // EntityPend;
     value: BizBud;
     price: BizBud;
@@ -36,24 +37,19 @@ export class EntityDetail extends Entity {
         }
         switch (i) {
             default: super.fromSwitch(i, val); break;
-            case 'main': this.fromMain(val); break;
-            case 'item':
-                this.item = this.fromPickable(val);
-                this.itemCaption = getPickableCaption(this.item);
+            case 'i':
+                this.i = this.fromPickable(val);
+                this.iCaption = getPickableCaption(this.i);
                 break;
-            case 'itemx':
-                this.itemX = this.fromPickable(val);
-                this.itemXCaption = getPickableCaption(this.itemX);
+            case 'x':
+                this.x = this.fromPickable(val);
+                this.xCaption = getPickableCaption(this.x);
                 break;
             case 'pend': this.fromPend(val); break;
             case 'value': this.fromValue(val); break;
             case 'price': this.fromPrice(val); break;
             case 'amount': this.fromAmount(val); break;
         }
-    }
-
-    private fromMain(main: any) {
-        this.main = this.biz.entities[main] as EntityMain;
     }
 
     private fromPend(pend: any) {
@@ -89,14 +85,14 @@ export class EntityPend extends Entity {
 
 export interface DetailAct {
     actName: string;
-    detail: EntityDetail;
+    detail: EntityBin;
     fromPend: EntityPend;
 }
 
 export class EntitySheet extends Entity {
-    main: EntityMain;
+    main: EntityBin;
     readonly details: {
-        detail: EntityDetail;
+        detail: EntityBin;
         caption: string;
     }[] = [];
     // to be removed
@@ -112,13 +108,13 @@ export class EntitySheet extends Entity {
     }
 
     private fromMain(main: any) {
-        this.main = this.biz.entities[main] as EntityMain;
+        this.main = this.biz.entities[main] as EntityBin;
     }
 
     protected fromDetails(details: any[]) {
         for (let { detail: name, caption } of details) {
             this.details.push({
-                detail: this.biz.entities[name] as EntityDetail,
+                detail: this.biz.entities[name] as EntityBin,
                 caption,
             })
         }
@@ -133,7 +129,7 @@ export class EntitySheet extends Entity {
             const { name, fromPend, detail } = act;
             this.detailActs.push({
                 actName: name,
-                detail: this.biz.entities[detail] as EntityDetail,
+                detail: this.biz.entities[detail] as EntityBin,
                 fromPend: this.biz.entities[fromPend] as EntityPend,
             });
         }
