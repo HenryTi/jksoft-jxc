@@ -12,7 +12,7 @@ export function useInputSection(detailMan: DetailMain) {
     const { pend, i: item } = entityDetail;
 
     async function inputFromPend(detailSection: DetailSection) {
-        let inputed = await openModal(<ModalInputPend entityPend={pend} />);
+        let inputed = await openModal(<ModalInputPend propPend={pend} />);
         // await detail.addRow();
     }
     async function inputSection(detailSection: DetailSection) {

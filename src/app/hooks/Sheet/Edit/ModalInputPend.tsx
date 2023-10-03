@@ -1,22 +1,24 @@
-import { EntityPend, RefEntity } from "app/Biz";
+import { EntityPend, PropPend } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { ViewSpec } from "app/hooks/View";
 import { UseQueryOptions } from "app/tool";
+import { useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { Page, useModal } from "tonwa-app";
 import { List } from "tonwa-com";
 import { ReturnGetPend$page } from "uqs/UqDefault";
 
-export function ModalInputPend({ entityPend: refPend }: { entityPend: RefEntity<EntityPend>; }) {
+export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
     const uqApp = useUqApp();
     const { uq } = uqApp;
     const { closeModal } = useModal();
-    let { caption, entity: entityPend } = refPend;
-    let { name: pendName, id: entityId } = entityPend;
+    let { caption, entity: entityPend, search } = propPend;
+    let { name: pendName, id: entityId, predefined } = entityPend;
     let { data: pendRows } = useQuery([pendName], async () => {
         let result = await uq.GetPend.page({ pend: entityId, key: '' }, undefined, 100);
         return result.$page;
     }, UseQueryOptions);
+    let [selectedItems, setSelectedItems] = useState<{ [id: number]: ReturnGetPend$page; }>({});
 
     if (caption === undefined) {
         caption = entityPend.caption ?? pendName;
@@ -47,9 +49,33 @@ export function ModalInputPend({ entityPend: refPend }: { entityPend: RefEntity<
             </div>
         </div>;
     }
+    function onItemSelect(item: ReturnGetPend$page, isSelected: boolean) {
+        const { pend } = item;
+        if (isSelected === true) {
+            selectedItems[pend] = item;
+        }
+        else {
+            delete selectedItems[pend];
+        }
+        setSelectedItems({ ...selectedItems });
+    }
     return <Page header={caption}>
-        <div className="p-3 border-bottom">pend: {pendName}</div>
-        <List items={pendRows} ViewItem={ViewPendRow} className="" />
+        <div className="p-3 border-bottom">
+            <div className="d-flex">
+                <div className="me-3">pend: {pendName}</div>
+                <div className="me-3">search: {JSON.stringify(search)}</div>
+                {
+                    Object.values(predefined).map(v => {
+                        const { name, caption, entity } = v;
+                        return <div key={name} className="me-3">
+                            {name}: {caption}
+                        </div>;
+                    })
+                }
+            </div>
+            <div>{Object.keys(selectedItems).map(v => v).join(', ')}</div>
+        </div>
+        <List items={pendRows} ViewItem={ViewPendRow} className="" onItemSelect={onItemSelect} />
         <div className="p-3">
             <button className="btn btn-primary" onClick={onClick}>输入</button>
         </div>

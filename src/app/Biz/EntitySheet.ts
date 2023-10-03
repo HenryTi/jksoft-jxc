@@ -1,12 +1,10 @@
-import { BizBud } from "./BizBud";
-import { Entity, RefEntity } from "./Entity";
+import { BizBud, EnumBudType } from "./BizBud";
+import { Entity, PropPend } from "./Entity";
 
 export class EntityBin extends Entity {
     i: BizBud;
-    // iCaption: string;
     x: BizBud;
-    // xCaption: string;
-    pend: RefEntity<EntityPend>; // EntityPend;
+    pend: PropPend;
     value: BizBud;
     price: BizBud;
     amount: BizBud;
@@ -33,10 +31,11 @@ export class EntityBin extends Entity {
     }
 
     private fromPend(pend: any) {
-        let { caption, entity } = pend;
+        let { caption, entity, search } = pend;
         this.pend = {
             caption,
             entity: this.biz.entities[entity] as EntityPend,
+            search,
         };
     }
 
@@ -52,34 +51,54 @@ export class EntityBin extends Entity {
         this.amount = this.fromProp(prop);
     }
 
+    private buildBudPickable(prop: any): BizBud {
+        const { id, name, caption } = prop;
+        let bud = new BizBud(this.biz, id, name, EnumBudType.pick, this);
+        bud.caption = caption;
+        bud.budDataType.fromSchema(prop);
+        bud.scan();
+        return bud;
+    }
+
     scan() {
         super.scan();
-        this.i?.scan();
-        this.x?.scan();
+        if (this.i !== undefined) {
+            this.i = this.buildBudPickable(this.i as any);
+        }
+        if (this.x !== undefined) {
+            this.x = this.buildBudPickable(this.x as any);
+        }
     }
 }
 
+const predefined = [
+    's', 'si', 'sx', 'svalue', 'sprice', 'samount',
+    'i', 'x', 'value', 'price', 'amount'
+];
+
 export class EntityPend extends Entity {
-    s: BizBud;
-    si: BizBud;
-    sx: BizBud;
-    i: BizBud;
-    x: BizBud;
-    value: BizBud;
-    price: BizBud;
-    amount: BizBud;
+    predefined: { [name: string]: BizBud };
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
-            default: super.fromSwitch(i, val); break;
+            default:
+                if (predefined.includes(i) === true) break;
+                super.fromSwitch(i, val); break;
+            case 'predefined':
+                this.predefined = val; break;
+            /*
             case 's': this.s = val; break;
             case 'si': this.si = val; break;
             case 'sx': this.sx = val; break;
+            case 'svalue': this.svalue = val; break;
+            case 'sprice': this.sprice = val; break;
+            case 'samount': this.samount = val; break;
             case 'i': this.i = val; break;
             case 'x': this.x = val; break;
             case 'value': this.value = val; break;
             case 'price': this.price = val; break;
             case 'amount': this.amount = val; break;
+            */
         }
     }
 }

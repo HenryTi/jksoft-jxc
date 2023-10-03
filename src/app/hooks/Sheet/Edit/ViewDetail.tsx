@@ -21,7 +21,7 @@ export function ViewDetail({ detail, editable }: { detail: DetailMain; editable:
 function ViewSection({ section, editable }: { section: DetailSection; editable: boolean; }) {
     const { detail } = section;
     const { entityDetail } = detail;
-    const { x: itemX } = entityDetail;
+    const { x } = entityDetail;
     const inputSection = useInputSection(detail);
     const rows = useAtomValue(section._rows);
     async function onClick() {
@@ -29,7 +29,7 @@ function ViewSection({ section, editable }: { section: DetailSection; editable: 
     }
 
     let content: any;
-    if (itemX === undefined) {
+    if (x === undefined) {
         let row = rows[0];
         if (row !== undefined) {
             content = <ViewRow row={row} editable={editable} />;
@@ -59,7 +59,7 @@ function ViewSection({ section, editable }: { section: DetailSection; editable: 
 
 function ViewRow({ row, editable }: { row: DetailRow; editable: boolean; }) {
     const { openModal } = useModal();
-    const { i: item, value, price, amount } = row
+    const { i, value, price, amount } = row
     const digits = 2;
     async function onEdit() {
         if (editable === false) return;
@@ -78,7 +78,7 @@ function ViewRow({ row, editable }: { row: DetailRow; editable: boolean; }) {
     let cnEdit = editable === true ? 'cursor-pointer' : 'text-light';
     return <div className="d-flex ps-3 py-2 align-items-stretch">
         <div className="flex-grow-1">
-            <ViewSpec id={item} />
+            <ViewSpec id={i} />
         </div>
         <div className="text-end d-flex flex-column justify-content-end me-2">
             <ViewValue caption={'单价'} value={price.toFixed(digits)} />

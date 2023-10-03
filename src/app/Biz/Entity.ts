@@ -1,12 +1,13 @@
 import { BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
-import { EntityAtom, EntityPick } from "./EntityAtom";
-import { BizPhraseType } from "uqs/UqDefault";
+import { EntityPend } from "./EntitySheet";
 
-export interface RefEntity<T extends Entity> {
+export interface PropPend {
     caption: string;
-    entity: T;
+    entity: EntityPend;
+    search: string[];
 }
+
 /*
 export function getPickableCaption(pickable: Pickable) {
     let { caption, atom, pick } = pickable;

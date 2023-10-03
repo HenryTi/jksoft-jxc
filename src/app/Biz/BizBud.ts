@@ -117,9 +117,9 @@ export class BudPickable extends BudDataNumber {
         const { pick } = this.schema;
         if (pick !== undefined) {
             const pickEntity = entities[pick];
-            switch (pickEntity.bizPhraseType) {
-                case BizPhraseType.atom: this.atom = pickEntity as EntityAtom; break;
-                case BizPhraseType.pick: this.pick = pickEntity as EntityPick; break;
+            switch (pickEntity.type) {
+                case 'atom': this.atom = pickEntity as EntityAtom; break;
+                case 'pick': this.pick = pickEntity as EntityPick; break;
             }
         }
         this.schema = undefined;
@@ -145,6 +145,8 @@ export class BizBud extends BizBase {
                 budDataType = new BudAtom(); break;
             case EnumBudType.ID:
                 budDataType = new BudID(); break;
+            case EnumBudType.pick:
+                budDataType = new BudPickable(); break;
             case EnumBudType.intof: budDataType = new BudIntOf(); break;
             case EnumBudType.radio: budDataType = new BudRadio(); break;
             case EnumBudType.check: budDataType = new BudCheck(); break;

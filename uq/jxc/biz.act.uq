@@ -537,9 +537,9 @@ RETURNS buds (
 {
     INTO main SELECT * a, * b, b.id as phrase
         FROM Sheet as a
-            JOIN Bin as b ON b.id=a.id
+            LEFT JOIN Bin as b ON b.id=a.id
             JOIN BizPhrase as c ON c.id=a.base
-        WHERE a.id=id AND b.base=$site;
+        WHERE a.id=id AND c.base=$site;
     INTO details SELECT * a
         , c.pendFrom, d.value as pendValue
         , b.ext as phrase

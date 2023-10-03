@@ -120,14 +120,14 @@ export class DetailMain extends DetailBase {
     }
 
     private addRowValue(sections: DetailSection[], rowValue: any) {
-        const { item, itemX, value } = rowValue;
-        if (!item || !value) return;
+        const { i, x, value } = rowValue;
+        if (!i || !value) return;
         let detailSection: DetailSection;
-        if (itemX) {
-            let index = sections.findIndex(v => v.item === item);
+        if (x) {
+            let index = sections.findIndex(v => v.i === i);
             if (index < 0) {
                 detailSection = new DetailSection(this);
-                detailSection.item = item;
+                detailSection.i = i;
                 sections.push(detailSection);
             }
             else {
@@ -224,10 +224,10 @@ export class DetailRow extends BaseObject {
     }
 
     setValue(row: any) {
-        const { id, item, itemX, value, price, amount, origin, pendFrom } = row;
+        const { id, i, x, value, price, amount, origin, pendFrom } = row;
         this.id = id;
-        this.i = item;
-        this.x = itemX;
+        this.i = i;
+        this.x = x;
         this.value = value;
         this.price = price;
         this.amount = amount;
@@ -239,7 +239,7 @@ export class DetailRow extends BaseObject {
 export class DetailSection extends BaseObject {
     readonly detail: DetailMain;
     readonly _rows = atom<DetailRow[]>([]);
-    item: number;           // item 作为key，来标明section
+    i: number;           // item 作为key，来标明section
 
     constructor(detailMain: DetailMain) {
         super(detailMain.sheetStore);
