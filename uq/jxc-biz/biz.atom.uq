@@ -96,3 +96,13 @@ Biz Tie DepartmentMember '部门' {
     Prop Senior;
     Prop Junior;
 };
+
+Tie XDirectoryGoods '大类商品对照表';
+
+ATOM GoodsDirectory '产品大类';
+
+ATOM Storage '仓库' {
+    prop 面积 dec;
+    prop 容积 dec;
+    prop 地点 char;
+}

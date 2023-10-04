@@ -10,6 +10,7 @@ import { EntityPermit, EntityRole } from './EntityPermit';
 import { EntityOptions } from './EntityOptions';
 import { from62, getAtomValue, setAtomValue } from 'tonwa-com';
 import { atom } from 'jotai';
+import { EntityReport } from './EntityReport';
 
 export class Biz {
     readonly uqApp: UqApp;
@@ -28,6 +29,7 @@ export class Biz {
     readonly ties: EntityTie[] = [];
     readonly trees: EntityTree[] = [];
     readonly titles: EntityTitle[] = [];
+    readonly reports: EntityReport[] = [];
 
     readonly roles: EntityRole[] = [];
     readonly permits: EntityPermit[] = [];
@@ -63,6 +65,7 @@ export class Biz {
             spec: this.buildSpec,
             pick: this.buildPick,
             options: this.buildOptions,
+            report: this.buildReport,
             permit: this.buildPermit,
             role: this.buildRole,
             title: this.buildTitle,
@@ -103,6 +106,7 @@ export class Biz {
             [this.atomRoots, '基础编码', 'id-card-o'],
             [this.specs, '细分编码', 'asterisk'],
             [this.sheets, '业务单据', 'file'],
+            [this.reports, '报表', 'file'],
             [this.bins, '单据条', 'file-text-o'],
             [this.pends, '待处理', 'clone'],
             [this.picks, '捡取器', 'hand-pointer-o'],
@@ -183,6 +187,12 @@ export class Biz {
     private buildTitle = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityTitle(this, id, name, type);
         this.titles.push(bizEntity);
+        return bizEntity;
+    }
+
+    private buildReport = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityReport(this, id, name, type);
+        this.reports.push(bizEntity);
         return bizEntity;
     }
 

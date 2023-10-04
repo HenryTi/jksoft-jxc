@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { pathAtomCenter } from "./Atom/AtomCenter";
-import { pathReportCenter } from "./Subject/SubjectCenter";
+import { pathReportCenter } from "./Report/ReportCenter";
 import { pathPrice } from "./AssignPrice";
 import { pathPermits } from "./Permits";
 import { useSelectAtom } from "app/hooks";
@@ -9,12 +9,10 @@ import { useUqApp } from "app/UqApp";
 import { pathMy } from "./My";
 import { pathSheetCenter } from "./Sheet";
 import { BizPhraseType } from "uqs/UqDefault";
-import { useAtomValue } from "jotai";
 import { ViewNotifyCount } from "app/tool";
 
 export function TabJXC() {
     const uqApp = useUqApp();
-    const selectAtom = useSelectAtom();
     const arr: { label: string; path: string; phrase?: BizPhraseType }[] = [
         { label: '单据中心', path: pathSheetCenter, phrase: BizPhraseType.sheet },
         { label: '档案中心', path: pathAtomCenter },

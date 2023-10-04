@@ -4,6 +4,7 @@ import { routeMy } from "./My";
 
 import { routeAtomCenter } from "./Atom";
 import { routeSheetCenter } from "./Sheet";
+import { routeReportCenter } from "./Report";
 
 export const pathJXC = 'jxc';
 export function routeJCX(uqApp: UqApp) {
@@ -11,8 +12,9 @@ export function routeJCX(uqApp: UqApp) {
     // buildSpecs(uqApp);
 
     const routes = <>
-        {routeAtomCenter(uqApp)}
-        {routeSheetCenter(uqApp)}
+        {routeAtomCenter()}
+        {routeSheetCenter()}
+        {routeReportCenter()}
         {routeMy}
     </>;
     /*

@@ -1,6 +1,6 @@
 import { PageQueryMore } from "app/coms";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useSubject } from "./useSubject";
+import { useReport } from "./useReport";
 // import { EnumTitle } from "uqs/UqDefault";
 
 export function PageHistory({ title, bud, captionHistory, pathDetailView, historySortField }: {
@@ -11,7 +11,7 @@ export function PageHistory({ title, bud, captionHistory, pathDetailView, histor
     sortField: string;
     historySortField: string;
 }) {
-    const gen = useSubject({ title: title, bud });
+    const gen = useReport({ title: title, bud });
     const navigate = useNavigate();
     const { subjectHistory, ViewItemHistory, ViewItem } = gen;
     const { id } = useParams();

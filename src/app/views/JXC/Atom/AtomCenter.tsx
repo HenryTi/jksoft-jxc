@@ -53,7 +53,7 @@ function PageList() {
     return page;
 }
 
-export function routeAtomCenter(uqApp: UqApp) {
+export function routeAtomCenter() {
     const n = ':atom';
     return <>
         <Route path={pathAtomCenter} element={<PageAtomCenter />} />

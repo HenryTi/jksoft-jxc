@@ -84,13 +84,10 @@ export async function getAtomWithProps(biz: Biz, uq: UqExt, id: number): Promise
 }
 
 export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
-    const a = useLocation();
     const { atom } = useParams();
-    // const { atomName: atomPhrase } = options;
     let atomPhraseId = from62(atom);
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
-    // const biz = useBiz();
     const entity = biz.entityIds[atomPhraseId] as EntityAtom;
     const phrase = entity.phrase;
     const pathView = entity.name;

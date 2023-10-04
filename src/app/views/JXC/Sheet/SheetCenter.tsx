@@ -74,7 +74,7 @@ function PageSheetCenter() {
 }
 
 export const pathSheetCenter = 'sheet-center';
-export function routeSheetCenter(uqApp: UqApp) {
+export function routeSheetCenter() {
     return <>
         <Route path={pathSheetCenter} element={<PageSheetCenter />} />
         <Route path={'sheet/:sheet/:id'} element={<PageSheetEdit />} />
