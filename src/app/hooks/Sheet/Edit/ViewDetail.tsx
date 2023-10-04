@@ -1,13 +1,13 @@
 import { useAtomValue } from "jotai";
-import { DetailMain, DetailRow, DetailSection } from "./SheetStore";
+import { CoreDetail, Row, Section } from "./SheetStore";
 import { FA, LMR, Sep } from "tonwa-com";
-import { useInputSection } from "./useInputSection";
 import { ViewSpec } from "app/hooks/View";
 import { useModal } from "tonwa-app";
-import { ModalInputRow } from "./ModalInputRow";
+import { ModalInputRow } from "./ModalInputDirect";
 import React from "react";
+import { useCoreDetailEdit } from "./useCoreDetailEdit";
 
-export function ViewDetail({ detail, editable }: { detail: DetailMain; editable: boolean; }) {
+export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
     const { caption } = detail;
     return <div>
@@ -18,14 +18,14 @@ export function ViewDetail({ detail, editable }: { detail: DetailMain; editable:
     </div>
 }
 
-function ViewSection({ section, editable }: { section: DetailSection; editable: boolean; }) {
-    const { detail } = section;
+function ViewSection({ section, editable }: { section: Section; editable: boolean; }) {
+    const { coreDetail: detail } = section;
     const { entityDetail } = detail;
     const { x } = entityDetail;
-    const inputSection = useInputSection(detail);
+    const edit = useCoreDetailEdit(detail);
     const rows = useAtomValue(section._rows);
     async function onClick() {
-        let ret = await inputSection(section);
+        let ret = await edit(section, undefined);
     }
 
     let content: any;
@@ -57,9 +57,9 @@ function ViewSection({ section, editable }: { section: DetailSection; editable: 
     </div>
 }
 
-function ViewRow({ row, editable }: { row: DetailRow; editable: boolean; }) {
+function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const { openModal } = useModal();
-    const { i, value, price, amount } = row
+    const { i, value, price, amount } = row.props
     const digits = 2;
     async function onEdit() {
         if (editable === false) return;

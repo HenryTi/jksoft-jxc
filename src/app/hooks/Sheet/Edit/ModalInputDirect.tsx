@@ -3,7 +3,7 @@ import { Band, FormRow, FormRowsView } from "app/coms";
 import { ViewSpec } from "app/hooks/View";
 import { Page, useModal } from "tonwa-app";
 import { ChangeEvent, useRef, useState } from "react";
-import { DetailRow } from "./SheetStore";
+import { Row } from "./SheetStore";
 import { ButtonAsync, FA, useEffectOnce } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { Calc, Cell } from "../../Calc";
@@ -14,25 +14,26 @@ const fieldValue = 'value';
 const fieldPrice = 'price';
 const fieldAmount = 'amount';
 
-export function ModalInputRow({ row }: { row: DetailRow; }) {
+export function ModalInputRow({ row }: { row: Row; }) {
     const uqApp = useUqApp();
     const { closeModal } = useModal();
-    const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
-    const { i: item } = row;
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onBlur' });
+    const { props, section } = row;
+    const { i } = props;
     const { current: fields } = useRef<[string, number, BizBud, (value: number) => void, Cell][]>([]);
     const [calc, setCalc] = useState<Calc>();
     useEffectOnce(() => {
-        const { entityDetail } = row.section.detail;
-        const { value, price, amount } = row;
+        const { entityDetail } = section.coreDetail;
+        const { value, price, amount } = props;
         const { value: valueBud, price: priceBud, amount: amountBud } = entityDetail;
         if (valueBud !== undefined) {
-            fields.push([fieldValue, value, valueBud, value => row.value = value, undefined]);
+            fields.push([fieldValue, value, valueBud, value => props.value = value, undefined]);
         }
         if (priceBud !== undefined) {
-            fields.push([fieldPrice, price, priceBud, value => row.price = value, undefined]);
+            fields.push([fieldPrice, price, priceBud, value => props.price = value, undefined]);
         }
         if (amountBud !== undefined) {
-            fields.push([fieldAmount, amount, amountBud, value => row.amount = value, undefined]);
+            fields.push([fieldAmount, amount, amountBud, value => props.amount = value, undefined]);
         }
         let c = new Calc(uqApp);
         for (let field of fields) {
@@ -99,7 +100,7 @@ export function ModalInputRow({ row }: { row: DetailRow; }) {
         return <Page header="输入明细" right={right}>
             <div className="pt-3 tonwa-bg-gray-2 mb-3 container">
                 <Band>
-                    <ViewSpec id={item} />
+                    <ViewSpec id={i} />
                 </Band>
             </div>
             <form className="container" onSubmit={handleSubmit(onSubmit)}>

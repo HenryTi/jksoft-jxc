@@ -4,10 +4,10 @@ const gaps = [10, 3, 3, 3, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10, 10, 15, 15,
 
 export class AutoRefresh {
     private readonly uqApp: UqAppBase;
-    private readonly refreshAction: Promise<void>;
+    private readonly refreshAction: () => Promise<void>;
     private timer: any;
 
-    constructor(uqApp: UqAppBase, refreshAction: Promise<void>) {
+    constructor(uqApp: UqAppBase, refreshAction: () => Promise<void>) {
         this.uqApp = uqApp;
         this.refreshAction = refreshAction;
     }
@@ -16,6 +16,7 @@ export class AutoRefresh {
         if (this.refreshAction === undefined) return;
         this.stop();
         this.timer = setInterval(this.callTick, 1000);
+        this.refreshAction();
     }
 
     stop() {
@@ -29,7 +30,7 @@ export class AutoRefresh {
     refresh = async () => {
         let d = Date.now() / 1000;
         if (d - this.refreshTime < 30) return;
-        await this.refreshAction;
+        await this.refreshAction();
         this.refreshTime = d;
     }
 
@@ -44,7 +45,7 @@ export class AutoRefresh {
             let { uqSites: uqUnit } = this.uqApp;
             if (uqUnit) {
                 let poked = await uqUnit.Poked();
-                if (poked === true) return;
+                if (poked === false) return;
                 this.gapIndex = 1;
                 await this.refresh();
             }

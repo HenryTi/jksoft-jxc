@@ -5,7 +5,7 @@ import { ButtonAsync, FA, LMR, from62, getAtomValue, to62, useEffectOnce, wait }
 import { ViewMain } from "./ViewMain";
 import { ViewDetail } from "./ViewDetail";
 import { useAtomValue } from "jotai";
-import { useInputSection } from "./useInputSection";
+import { useCoreDetailAdd } from "./useCoreDetailAdd";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { UqApp, useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
@@ -76,7 +76,7 @@ function PageStore({ store }: { store: SheetStore; }) {
     const navigate = useNavigate();
     const [editable, setEditable] = useState(true);
 
-    const inputSection = useInputSection(detail);
+    const addNew = useCoreDetailAdd(detail);
     const start = useCallback(async function () {
         startStore(uqApp, store, pick);
         /*
@@ -135,7 +135,7 @@ function PageStore({ store }: { store: SheetStore; }) {
     }
 
     async function onAddRow() {
-        let ret = await inputSection(undefined);
+        let ret = await addNew();
     }
     async function onRemoveSheet() {
         let message = `${caption} ${main.no} 真的要作废吗？`;
@@ -161,7 +161,7 @@ function PageStore({ store }: { store: SheetStore; }) {
     async function startInputDetail() {
         let ret = await start();
         if (ret === undefined) {
-            await inputSection(undefined);
+            await addNew();
         }
     }
     if (id === 0) {

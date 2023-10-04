@@ -52,6 +52,7 @@ export abstract class UqAppBase<UQS = any> {
         stack: atom([] as [JSX.Element, (value: any | PromiseLike<any>) => void, (result: any) => void][]),
     }
     readonly pageCache: PageCache;
+    get autoRefresh(): () => Promise<void> { return undefined };
 
     uqsMan: UQsMan;
     guest: number;
@@ -108,13 +109,13 @@ export abstract class UqAppBase<UQS = any> {
     async logined(user: User) {
         this.net.logoutApis();
         setAtomValue(this.user, user);
-        let autoLoader: Promise<any> = undefined;
-        let autoRefresh = new AutoRefresh(this, autoLoader);
         if (user) {
             jwtDecode(user.token);
             this.net.setCenterToken(user.id, user.token);
             this.localData.user.set(user);
             await this.loadOnLogined();
+            let autoRefresh = new AutoRefresh(this, this.autoRefresh);
+            autoRefresh.start();
         }
         else {
             this.net.clearCenterToken();
@@ -123,7 +124,6 @@ export abstract class UqAppBase<UQS = any> {
             setAtomValue(this.user, undefined);
             document.cookie = '';
             localStorage.clear();
-            autoRefresh.stop();
         }
     }
 

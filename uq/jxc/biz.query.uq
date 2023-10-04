@@ -5,34 +5,69 @@ Biz Query GetPend (
 PAGE (
     pend ID ASC,
     sheet ID,
+    id ID,
+    i ID,
+    x ID,
+    value VALUE,
+    price VALUE,
+    amount VALUE,
+    mid JSON,
+    pendValue VALUE,
+)
+RETURNS retSheet (
+    id ID,
     no NO,
-    detail ID,
     i ID,
     x ID,
     value VALUE,
     price VALUE,
     amount VALUE,
 )
-RETURNS atoms (
+RETURNS retAtom (
     atom ID,
     value JSON,
 ) {
-    PAGE SELECT a.id as pend
-        , d.id as sheet, d.no
-        , b.id as detail, b.i, b.x, b.value, b.price, b.amount
+    PAGE SELECT a.id as pend, d.base as sheet, a.detail as id
+        , b.i, b.x, b.value, b.price, b.amount
+        , a.mid, a.value as pendValue
         FROM Pend as a
             JOIN Bin as b on b.id=a.detail
-            JOIN Bud as c ON c.id=b.base
-            JOIN Sheet as d ON d.id=c.base
-        WHERE a.base=pend
+            JOIN BizPhrase as c ON c.id=a.base
+            LEFT JOIN Bud as d ON d.id=b.base
+        WHERE a.base=pend AND c.base=$site
         ORDER BY a.id ASC
         LIMIT $pageSize;
+
+    INTO retSheet SELECT b.id, b.no
+        , c.i, c.x, c.value, c.price, c.amount
+        FROM (SELECT DISTINCT a.sheet as id FROM $page as a) as s
+            JOIN Sheet as b ON b.id=s.id
+            JOIN Bin as c ON c.id=b.id;
+
     FOR (VAR i ID, x ID
-        OF SELECT a.i, a.x
-            FROM $page as a)
+        OF SELECT n.i, n.x FROM(
+            SELECT a.i, a.x
+                FROM $page as a 
+                UNION SELECT b.i, b.x FROM retSheet as b
+        ) as n)
     {
 
     }
+}
+
+Biz Query GetPendsNotify()
+RETURNS ret (
+    phrase ID,                  -- sheet phrase
+    count INT,                  -- pending count
+) {
+    INTO ret SELECT p as phrase, count(*) as count
+        FROM (
+            SELECT a.id, b.id as phrase 
+                FROM Pend as a
+                    JOIN BizPhrase as b ON b.id=a.base
+            WHERE b.base=$site
+        ) as x
+        GROUP BY x.phrase as p;
 }
 
 Biz Query GetPendSheetFromNo ver 0.1 (

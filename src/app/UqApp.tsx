@@ -6,7 +6,7 @@ import { UqConfig, UqMan, UqQuery, UqSites } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
-import { UqExt } from 'uqs/UqDefault';
+import { BizPhraseType, UqExt } from 'uqs/UqDefault';
 import { GSpec } from './tool';
 import { atom } from 'jotai';
 import { Biz, EntityAtom } from './Biz';
@@ -90,6 +90,31 @@ export class UqApp extends UqAppBase<UQs> {
     protected override async loadOnLogined(): Promise<void> {
         await this.loginSite();
         console.log('site logined');
+    }
+
+    _notifyCounts = atom<{ [phrase: number | BizPhraseType]: number }>({});
+    get autoRefresh() {
+        return async (): Promise<void> => {
+            let { ret } = await this.uq.GetPendsNotify.query({});
+            let nc = getAtomValue(this._notifyCounts);
+            let sum = 0;
+            for (let sheet of this.biz.sheets) {
+                nc[sheet.id] = 0;
+            }
+            for (let row of ret) {
+                let { phrase, count } = row;
+                nc[phrase] = count;
+                sum += count;
+            }
+            nc[BizPhraseType.sheet] = sum;
+            setAtomValue(this._notifyCounts, { ...nc });
+        }
+    }
+
+    clearNotifyCount(phrase: number | BizPhraseType) {
+        let nc = getAtomValue(this._notifyCounts);
+        nc[phrase] = 0;
+        setAtomValue(this._notifyCounts, { ...nc });
     }
 
     atomSiteLogined = atom(false);

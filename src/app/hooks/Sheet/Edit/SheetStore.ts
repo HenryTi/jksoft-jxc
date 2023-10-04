@@ -26,7 +26,7 @@ abstract class BaseObject extends KeyIdObject {
     }
 }
 
-export class Main extends BaseObject {
+export class SheetMain extends BaseObject {
     readonly entityMain: EntityBin;
     readonly _i = atom<number>(0);         // _ 开始，表示 atom
     readonly _id = atom<number>(0);
@@ -91,6 +91,24 @@ export class Main extends BaseObject {
     }
 }
 
+export interface SheetRow extends BinRow {
+    no: string;
+}
+export interface BinRow {
+    id: number;
+    i: number;
+    x: number;
+    value: number;
+    price: number;
+    amount: number;
+}
+export interface PendRow {
+    pend: number;               // pend id
+    sheet: SheetRow;
+    detail: BinRow;
+    value: number;
+}
+
 abstract class DetailBase extends BaseObject {
     readonly entityDetail: EntityBin;
     readonly caption: string;
@@ -103,13 +121,13 @@ abstract class DetailBase extends BaseObject {
     abstract addRowValues(rowValues: any): void;
 }
 
-export class DetailMain extends DetailBase {
-    readonly _sections = atom<DetailSection[]>([]);
+export class CoreDetail extends DetailBase {
+    readonly _sections = atom<Section[]>([]);
     origin: {
-        main: Main;
-        rows: DetailRow[];
+        main: SheetMain;
+        rows: Row[];
     }
-    pending: DetailRow[];
+    pending: Row[];
 
     addRowValues(rowValues: any[]) {
         const sections = getAtomValue(this._sections);
@@ -119,14 +137,14 @@ export class DetailMain extends DetailBase {
         setAtomValue(this._sections, [...sections]);
     }
 
-    private addRowValue(sections: DetailSection[], rowValue: any) {
+    private addRowValue(sections: Section[], rowValue: any) {
         const { i, x, value } = rowValue;
         if (!i || !value) return;
-        let detailSection: DetailSection;
+        let detailSection: Section;
         if (x) {
             let index = sections.findIndex(v => v.i === i);
             if (index < 0) {
-                detailSection = new DetailSection(this);
+                detailSection = new Section(this);
                 detailSection.i = i;
                 sections.push(detailSection);
             }
@@ -135,21 +153,21 @@ export class DetailMain extends DetailBase {
             }
         }
         else {
-            detailSection = new DetailSection(this);
+            detailSection = new Section(this);
             sections.push(detailSection);
         }
-        let detailRow = new DetailRow(detailSection);
-        detailRow.setValue(rowValue);
-        detailSection.addRow(detailRow);
-        return detailRow;
+        let row = new Row(detailSection);
+        row.setValue(rowValue);
+        detailSection.addRow(row);
+        return row;
     }
 
-    addSection(detailSection: DetailSection) {
+    addSection(detailSection: Section) {
         const sections = getAtomValue(this._sections);
         setAtomValue(this._sections, [...sections, detailSection]);
     }
 
-    async delEmptySection(section: DetailSection) {
+    async delEmptySection(section: Section) {
         if (section.isEmpty === false) return;
         let sections = getAtomValue(this._sections);
         let index = sections.findIndex(v => v === section);
@@ -161,24 +179,29 @@ export class DetailMain extends DetailBase {
 }
 
 // 多余的Detail，只能手工输入
-export class DetailEx extends DetailBase {
+export class ExDetail extends DetailBase {
     addRowValues(rowValues: any) {
         return;
     }
 }
 
-export class DetailRow extends BaseObject {
-    readonly section: DetailSection;
+export interface RowProps {
     id: number;
     i: number;
     x: number;
     value: number;
     price: number;
     amount: number;
-    origin: number;
+    origin: number;             // origin detail id
     pendFrom: number;
+    pendValue: number;
+}
 
-    constructor(section: DetailSection) {
+export class Row extends BaseObject {
+    readonly section: Section;
+    readonly props: RowProps = {} as any;
+
+    constructor(section: Section) {
         super(section.sheetStore);
         this.section = section;
     }
@@ -194,17 +217,10 @@ export class DetailRow extends BaseObject {
         }
         const { id } = await uq.SaveDetail.submit({
             base: main.id,
-            phrase: this.section.detail.entityDetail.id,
-            id: this.id,
-            i: this.i,
-            x: this.x,
-            value: this.value,
-            price: this.price,
-            amount: this.amount,
-            origin: this.origin,
-            pendFrom: this.pendFrom,
+            phrase: this.section.coreDetail.entityDetail.id,
+            ...this.props,
         });
-        this.id = id;
+        this.props.id = id;
     }
 
     async addToSection() {
@@ -214,7 +230,7 @@ export class DetailRow extends BaseObject {
 
     async delFromSection() {
         const { uq } = this.sheetStore;
-        await uq.DeleteBin.submit({ id: this.id });
+        await uq.DeleteBin.submit({ id: this.props.id });
         this.section.delRow(this);
     }
 
@@ -223,27 +239,19 @@ export class DetailRow extends BaseObject {
         this.section.rowChanged();
     }
 
-    setValue(row: any) {
-        const { id, i, x, value, price, amount, origin, pendFrom } = row;
-        this.id = id;
-        this.i = i;
-        this.x = x;
-        this.value = value;
-        this.price = price;
-        this.amount = amount;
-        this.origin = origin;
-        this.pendFrom = pendFrom;
+    setValue(row: RowProps) {
+        Object.assign(this.props, row);
     }
 }
 
-export class DetailSection extends BaseObject {
-    readonly detail: DetailMain;
-    readonly _rows = atom<DetailRow[]>([]);
+export class Section extends BaseObject {
+    readonly coreDetail: CoreDetail;
+    readonly _rows = atom<Row[]>([]);
     i: number;           // item 作为key，来标明section
 
-    constructor(detailMain: DetailMain) {
-        super(detailMain.sheetStore);
-        this.detail = detailMain;
+    constructor(coreDetail: CoreDetail) {
+        super(coreDetail.sheetStore);
+        this.coreDetail = coreDetail;
     }
 
     get isEmpty() {
@@ -251,19 +259,25 @@ export class DetailSection extends BaseObject {
         return rows.length === 0;
     }
 
-    addRow(row: DetailRow) {
+    addRow(row: Row) {
         let rows = getAtomValue(this._rows);
         setAtomValue(this._rows, [...rows, row]);
     }
 
-    delRow(row: DetailRow) {
+    async addRowProps(rowProps: RowProps) {
+        let row = new Row(this);
+        row.setValue(rowProps);
+        await row.addToSection();
+    }
+
+    delRow(row: Row) {
         let rows = getAtomValue(this._rows);
         let index = rows.findIndex(v => v === row);
         if (index >= 0) {
             rows.splice(index, 1);
             setAtomValue(this._rows, [...rows]);
         }
-        this.detail.delEmptySection(this);
+        this.coreDetail.delEmptySection(this);
     }
 
     rowChanged() {
@@ -276,9 +290,9 @@ export class SheetStore extends KeyIdObject {
     readonly uq: UqExt;
     readonly biz: Biz;
     readonly entitySheet: EntitySheet;
-    readonly main: Main;
-    readonly detail: DetailMain;
-    readonly detailExs: DetailEx[] = [];
+    readonly main: SheetMain;
+    readonly detail: CoreDetail;
+    readonly detailExs: ExDetail[] = [];
     readonly caption: string;
     readonly idOnUrl: number;
 
@@ -287,7 +301,7 @@ export class SheetStore extends KeyIdObject {
         this.uq = uq;
         this.biz = biz;
         this.entitySheet = entitySheet;
-        this.main = new Main(this);
+        this.main = new SheetMain(this);
         if (id > 0) {
             this.idOnUrl = id;
             setAtomValue(this.main._id, id);
@@ -296,11 +310,11 @@ export class SheetStore extends KeyIdObject {
         let len = details.length;
         if (len > 0) {
             const { detail, caption } = details[0];
-            this.detail = new DetailMain(this, detail, caption);
+            this.detail = new CoreDetail(this, detail, caption);
         }
         for (let i = 1; i < len; i++) {
             const { detail, caption } = details[i];
-            this.detailExs.push(new DetailEx(this, detail, caption));
+            this.detailExs.push(new ExDetail(this, detail, caption));
         }
         this.caption = entitySheet.caption ?? entitySheet.name;
     }

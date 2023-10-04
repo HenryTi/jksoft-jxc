@@ -7,6 +7,7 @@ import { EasyTime, FA, List, to62 } from "tonwa-com";
 import { PageSheetEdit, ViewSheetTime } from "app/hooks";
 import { useCallback } from "react";
 import { Atom, Bin, Sheet } from "uqs/UqDefault";
+import { ViewNotifyCount } from "app/tool";
 
 function PageSheetCenter() {
     const uqApp = useUqApp();
@@ -17,13 +18,18 @@ function PageSheetCenter() {
         return $page;
     }, []);
     function ViewSheetType({ value }: { value: EntitySheet; }) {
-        let { caption, name, id: entityId } = value;
+        let { caption, name, id: entityId, coreDetail } = value;
+        let pendEntityId: number;
+        if (coreDetail !== undefined) {
+            pendEntityId = coreDetail.pend?.entity?.id;
+        }
         return <Link
             to={`/sheet/${to62(entityId)}`}
         >
             <div className="px-3 py-2 align-items-center d-flex">
                 <BI name="card-list" className="fs-larger me-3 text-primary" />
                 <span className="text-body">{caption ?? name}</span>
+                <ViewNotifyCount phrase={pendEntityId} />
             </div>
         </Link>
     }
@@ -66,7 +72,6 @@ function PageSheetCenter() {
         <div className="tonwa-bg-gray-2 small text-secondary mt-4 px-3 pt-2 pb-1">单据草稿</div>
     </PageQueryMore>;
 }
-
 
 export const pathSheetCenter = 'sheet-center';
 export function routeSheetCenter(uqApp: UqApp) {

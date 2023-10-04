@@ -45,7 +45,8 @@ ID Pend (
     value VALUE,            -- 待处理数，到0，就清除
 );
 
--- bin的pend来源。Pend处理完后，删除。
+-- bin的pend来源。
+-- detail 提交之后，BinPend 这一行删除。
 IDX BinPend (
     id,                 -- detail id
     pendFrom ID,

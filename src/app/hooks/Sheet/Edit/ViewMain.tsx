@@ -1,10 +1,10 @@
-import { Main } from "./SheetStore";
+import { SheetMain } from "./SheetStore";
 import { Band } from "app/coms";
 import { ViewSpec } from "app/hooks/View";
 import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "./ViewSheetTime";
 
-export function ViewMain({ main }: { main: Main }) {
+export function ViewMain({ main }: { main: SheetMain }) {
     const { id, no, _i, entityMain, keyId } = main;
     const { i } = entityMain;
     const targetValue = useAtomValue(_i);

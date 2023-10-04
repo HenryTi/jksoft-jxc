@@ -111,6 +111,7 @@ export interface DetailAct {
 
 export class EntitySheet extends Entity {
     main: EntityBin;
+    coreDetail: EntityBin;
     readonly details: {
         detail: EntityBin;
         caption: string;
@@ -138,6 +139,7 @@ export class EntitySheet extends Entity {
                 caption,
             })
         }
+        this.coreDetail = this.details[0].detail;
     }
     /*
     protected fromStates(states: any[]) {
