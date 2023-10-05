@@ -1,5 +1,7 @@
 REPORT Sale '销售额' {
-    Title D.a;
-    List a '产品销售额' OF SpecMedicine;
+    From Goods To SpecMedicine;
+    Title (D.a 'Da', D.a 'Dda');
+    -- List a '产品销售额' OF SpecMedicine;
     -- List  '品类销售额' OF GoodsDirectory ON XDirectoryGoods;
+    -- From GoodsDirectory X XDirectoryGoods To SpecMedicine;
 }
