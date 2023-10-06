@@ -298,6 +298,41 @@ Biz AC SubmitSheet(
     WITH IxMy I=me X=id DEL;
 };
 
+-- atomId is null, then Atom of phrase
+-- else, phrase IX atomId as i
+QUERY GetReport (
+    reportPhrase ID,
+    atomPhrase ID,
+    atomId ID,
+    dateStart Date,
+    dateEnd Date,
+    params JSON,
+)
+PAGE (
+    id ID ASC,
+    phrase ID,
+    no NO,
+    ex EX,
+    value VALUE,
+)
+RETURNS specs (
+    id ID,
+    phrase ID,
+    base ID,
+    value VALUE,
+    props JSON,
+) {
+    VAR me ID = Me();
+    -- 以后可以加其它的检查条件，查询权限
+    IF NOT EXISTS (SELECT a.id FROM BizPhrase as a WHERE a.id=reportPhrase AND a.base=$site)
+        OR  NOT EXISTS (SELECT a.id FROM BizPhrase as a WHERE a.id=atomPhrase AND a.base=$site)
+    {
+        RETURN;
+    }
+    VAR sql CHAR(500) = CONCAT('call `$site`.`', $site, '.', reportPhrase, '`(?,?,?,?,?,?,?,?,?);');
+    ExecSql sql USING $site, me, $pageStart, $pageSize, atomPhrase, atomId, dateStart, dateEnd, params;
+}
+
 Biz ACT RemoveDraft (
     id ID,
 ) {
