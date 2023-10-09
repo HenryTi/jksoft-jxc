@@ -16,7 +16,7 @@ const arr: { label: string; icon?: string; iconColor?: string; path: string; phr
     { label: '单据中心', icon: 'file-o', path: pathSheetCenter, phrase: BizPhraseType.sheet },
     { label: '档案中心', path: pathAtomCenter },
     { label: '报表中心', path: pathReportCenter },
-    { label: '设置价格', path: pathPrice },
+    // { label: '设置价格', path: pathPrice },
     { label: '我的', icon: 'user-o', path: pathMy },
     { label: '操作设置', icon: 'cog', iconColor: 'text-info', path: pathActSetting },
 ];

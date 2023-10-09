@@ -12,12 +12,14 @@ import { atom } from 'jotai';
 import { Biz, EntityAtom } from './Biz';
 import { ViewsRoutes } from './views';
 
+// const pathBase = 'jksoft-jxc';
+const pathBase = '';
 const appConfig: AppConfig = {
     version: '0.1.0',
     center: 'https://tv.jkchemical.com',
     noUnit: true,
     oem: undefined,
-    pathBase: 'jksoft-jxc',
+    pathBase,
 };
 
 function uqConfigsFromJson(json: { devs: { [dev: string]: any }; uqs: any[]; }): UqConfig[] {

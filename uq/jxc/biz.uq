@@ -101,7 +101,8 @@ IDX BizBud (
     id,
     type ENUM BudDataType,
     obj ID,                     -- BizObject define of atom or options
-    flag SMALLINT DEFAULT 0,
+    flag SMALLINT DEFAULT 0,    -- 如果要加索引，flag=BizBudFlag.index
+    ex JSON,                    -- 其它附加属性。比如，小数点数。格式。
 );
 
 IX IxPermission (
@@ -200,6 +201,7 @@ PROC SaveBizBud ver 0.3 (
     dataType ENUM BudDataType,
     objId ID,
     flag SMALLINT,
+    ex JSON,
 )
 RETURNS ret (
     id ID,
@@ -220,7 +222,7 @@ RETURNS ret (
     WITH XBiz ID=id;
     WITH BizBud as a ID=id 
         SET a.type=dataType
-            , a.obj=objId, a.flag=ifnull(flag, 0);
+            , a.obj=objId, a.flag=ifnull(flag, 0), a.ex=ex;
     INTO ret SELECT id;
     TRANS COMMIT;
 };
@@ -249,6 +251,7 @@ RETURNS buds (
     base ID,
     phrase PHRASE,
     caption CHAR(100),
+    ex JSON,
 )
 {
     VAR langCode SMALLINT = IFNULL((SELECT a.id FROM BizLang as a WHERE a.lang=lang), 0);
@@ -269,9 +272,11 @@ RETURNS buds (
             WHERE r.ixx=a.id AND (r.i=0 AND r.x=0 or r.i=langCode AND r.x=0 or r.i=langCode AND r.x=cultureCode)
             ORDER BY r.i DESC, r.x desc
             LIMIT 1) as caption
+        , c.ex
         FROM BizPhrase as a
             JOIN XBiz as a1 ON a1.id=a.id
             JOIN objs as b ON b.id=a.base
+            JOIN BizBud as c ON c.id=a.id
         WHERE 1=1; -- AND a.valid=1;
 }
 

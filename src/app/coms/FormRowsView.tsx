@@ -22,6 +22,7 @@ export interface BandInputProps {
     label?: string | JSX.Element;
     labelClassName?: string;
     type: HTMLInputTypeAttribute,
+    step?: string;
     inputProps: UseFormRegisterReturn,
     errors?: Partial<FieldErrorsImpl<{
         [x: string]: any;
@@ -57,13 +58,13 @@ function registerOptions(type: HTMLInputTypeAttribute, label: string | JSX.Eleme
 }
 
 export function BandInput(props: BandInputProps) {
-    const { inputProps, errors, type, defaultValue, right, labelClassName } = props;
+    const { inputProps, errors, type, step, defaultValue, right, labelClassName } = props;
     let { label } = props;
     const { name } = inputProps;
     let error = errors[name];
     let cnInput = 'form-control ';
     if (error) cnInput += 'is-invalid';
-    let vInput = <input {...inputProps} className={cnInput} type={type} defaultValue={defaultValue} />;
+    let vInput = <input {...inputProps} className={cnInput} type={type} step={step} defaultValue={defaultValue} />;
     if (right !== undefined && !error) {
         vInput = <div className="input-group">
             {vInput}
@@ -120,6 +121,7 @@ interface FormLabelName extends FormLabel {
 export interface FormInput extends FormLabelName {
     type: HTMLInputTypeAttribute,
     options?: RegisterOptions,
+    step?: string;
 }
 
 export interface FormBand extends FormLabel {
@@ -267,13 +269,14 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
             clearErrors={clearErrors} />;
     }
 
-    const { name, type, options, readOnly, right } = row as FormInput;
+    const { name, type, options, readOnly, right, step } = row as FormInput;
     switch (type) {
         default:
             const theLabel = options.required === true ?
                 <b className="text-primary">{label}</b> : label;
             let newOptions = registerOptions(type, label, options);
-            return <BandInput label={theLabel} type={type} errors={errors}
+            return <BandInput label={theLabel} type={type} step={step}
+                errors={errors}
                 labelClassName={labelClassName}
                 inputProps={register(name, newOptions)} defaultValue={options?.value}
                 right={right} />;

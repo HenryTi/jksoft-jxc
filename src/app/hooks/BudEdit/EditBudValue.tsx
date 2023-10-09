@@ -8,17 +8,17 @@ import { PagePickValue } from "./PagePickValue";
 
 type ConvertToBudValue = (value: any) => { int: number; dec: number; str: string; };
 type FromBudValue = (value: any) => any;
-function EditBudValue(props: EditBudProps & { type: string; convertToBudValue: ConvertToBudValue; fromBudValue?: FromBudValue; }) {
+function EditBudValue(props: EditBudProps & { type: string; step?: string; convertToBudValue: ConvertToBudValue; fromBudValue?: FromBudValue; }) {
     const { uq } = useUqApp();
     const { openModal } = useModal();
-    const { id, readonly, value: initValue, bizBud, type, convertToBudValue, options, fromBudValue } = props;
+    const { id, readonly, value: initValue, bizBud, type, step, convertToBudValue, options, fromBudValue } = props;
     const [value, setValue] = useState<string | number>(
         fromBudValue === undefined ? initValue as string | number : fromBudValue(initValue)
     );
     const { caption, name } = bizBud;
     const label = caption ?? name;
     async function onEditClick() {
-        let ret = await openModal<number>(<PagePickValue label={label} value={value as number} type={type} options={options} />);
+        let ret = await openModal<number>(<PagePickValue label={label} value={value as number} type={type} options={options} step={step} />);
         let budValue = convertToBudValue(ret);
         await uq.SaveBudValue.submit({
             phraseId: bizBud.id,
@@ -65,7 +65,7 @@ export function EditBudDec(props: EditBudProps) {
             str: undefined as string,
         }
     }
-    return <EditBudValue {...props} type="number" convertToBudValue={convertToBudValue} />;
+    return <EditBudValue {...props} type="number" step="0.001" convertToBudValue={convertToBudValue} />;
 }
 
 const date19700101 = Date.parse('1970-1-1');

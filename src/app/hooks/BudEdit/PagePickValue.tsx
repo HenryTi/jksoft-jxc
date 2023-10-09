@@ -9,14 +9,14 @@ export async function pickValue(uqApp: UqAppBase, pickProps: PickProps, options:
     return ret;
 }
 
-export function PagePickValue<T extends string | number>({ label, value, type, options }: { label: string | JSX.Element; value: T | string; type: string; options: RegisterOptions; }) {
+export function PagePickValue<T extends string | number>({ label, value, type, options, step }: { label: string | JSX.Element; value: T | string; type: string; step?: string; options: RegisterOptions; }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     async function onSubmit(data: any) {
         closeModal(data['value']);
     }
     const formRows: FormRow[] = [
-        { name: 'value', label, type, options: { ...options, value }, },
+        { name: 'value', label, type, options: { ...options, value }, step },
         { type: 'submit', label: '提交', options: {} }
     ];
     return <Page header={label}>
