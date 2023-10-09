@@ -1,12 +1,14 @@
-import { defineConfig } from 'vite'
+import { ConfigEnv, defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
+export const pathBase = 'jksoft-jxc';
+
 export default defineConfig({
-    base: '/jksoft-jxc',
+    base: '/' + pathBase,
     plugins: [
         react(),
         tsconfigPaths(),
     ],
-})
+});

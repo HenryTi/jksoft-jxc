@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri Oct 06 2023 00:03:00 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sun Oct 08 2023 20:40:44 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -206,8 +206,94 @@ export interface Result$AllPhrases {
 	detail: Return$AllPhrasesDetail[];
 }
 
+export enum BizPhraseType {
+	any = 0,
+	atom = 11,
+	spec = 12,
+	bud = 13,
+	sheet = 101,
+	main = 102,
+	detail = 103,
+	pend = 104,
+	detailAct = 111,
+	with = 151,
+	pick = 161,
+	role = 201,
+	permit = 202,
+	options = 301,
+	tree = 401,
+	tie = 501,
+	report = 601,
+	title = 901,
+	key = 1001,
+	prop = 1011,
+	optionsitem = 1031
+}
+
+export enum BudDataType {
+	none = 0,
+	int = 11,
+	atom = 12,
+	radio = 13,
+	check = 14,
+	ID = 19,
+	dec = 21,
+	char = 31,
+	str = 32,
+	date = 41
+}
+
+export enum BizBudFlag {
+	index = 1
+}
+
+export interface ParamGetBizObjects {
+	lang: string;
+	culture: string;
+}
+export interface ReturnGetBizObjectsObjs {
+	id: number;
+	phrase: string;
+	source: string;
+	caption: string;
+}
+export interface ReturnGetBizObjectsBuds {
+	id: number;
+	base: number;
+	phrase: string;
+	caption: string;
+}
+export interface ResultGetBizObjects {
+	objs: ReturnGetBizObjectsObjs[];
+	buds: ReturnGetBizObjectsBuds[];
+}
+
+export interface ParamGetEntityCode {
+	id: number;
+}
+export interface ReturnGetEntityCodeRet {
+	code: string;
+	schema: string;
+}
+export interface ResultGetEntityCode {
+	ret: ReturnGetEntityCodeRet[];
+}
+
+export interface ParamCreateSiteForUser {
+	no: string;
+	ex: string;
+	tonwaUser: number;
+}
+export interface ReturnCreateSiteForUserRet {
+	site: number;
+	userSite: number;
+}
+export interface ResultCreateSiteForUser {
+	ret: ReturnCreateSiteForUserRet[];
+}
+
 export interface ParamSaveAtom {
-	atom: string;
+	atomPhrase: number;
 	base: number;
 	no: string;
 	ex: string;
@@ -352,6 +438,23 @@ export interface ResultGetReport {
 	specs: ReturnGetReportSpecs[];
 }
 
+export interface ParamGetHistory {
+	objId: number;
+	title: number;
+}
+export interface ReturnGetHistory$page {
+	id: number;
+	value: number;
+	ref: number;
+	plusMinus: number;
+	sheetNo: string;
+	sheetPhrase: number;
+	binPhrase: number;
+}
+export interface ResultGetHistory {
+	$page: ReturnGetHistory$page[];
+}
+
 export interface ParamRemoveDraft {
 	id: number;
 }
@@ -471,6 +574,7 @@ export interface ResultSearchAtomUomBuds {
 
 export interface ParamGetSheet {
 	id: number;
+	detail: number;
 }
 export interface ReturnGetSheetMain {
 	id: number;
@@ -537,77 +641,46 @@ export interface ResultGetSpecsFromBase {
 	ret: ReturnGetSpecsFromBaseRet[];
 }
 
-export enum BizPhraseType {
-	any = 0,
-	atom = 11,
-	spec = 12,
-	bud = 13,
-	sheet = 101,
-	main = 102,
-	detail = 103,
-	pend = 104,
-	detailAct = 111,
-	with = 151,
-	pick = 161,
-	role = 201,
-	permit = 202,
-	options = 301,
-	tree = 401,
-	tie = 501,
-	report = 601,
-	title = 901,
-	key = 1001,
-	prop = 1011,
-	optionsitem = 1031
+export interface ParamReportStorage {
+	key: string;
+	subject: string;
 }
-
-export enum BudDataType {
-	none = 0,
-	int = 11,
-	atom = 12,
-	radio = 13,
-	check = 14,
-	ID = 19,
-	dec = 21,
-	char = 31,
-	str = 32,
-	date = 41
-}
-
-export enum BizBudFlag {
-	index = 1
-}
-
-export interface ParamGetBizObjects {
-	lang: string;
-	culture: string;
-}
-export interface ReturnGetBizObjectsObjs {
+export interface ReturnReportStorage$page {
+	atom: number;
+	uom: number;
+	spec: number;
 	id: number;
-	phrase: string;
-	source: string;
-	caption: string;
+	value: number;
+	init: number;
 }
-export interface ReturnGetBizObjectsBuds {
-	id: number;
-	base: number;
-	phrase: string;
-	caption: string;
-}
-export interface ResultGetBizObjects {
-	objs: ReturnGetBizObjectsObjs[];
-	buds: ReturnGetBizObjectsBuds[];
+export interface ResultReportStorage {
+	$page: ReturnReportStorage$page[];
 }
 
-export interface ParamGetEntityCode {
-	id: number;
+export interface ParamReportStorageAtom {
+	key: string;
+	subject: string;
 }
-export interface ReturnGetEntityCodeRet {
-	code: string;
-	schema: string;
+export interface ReturnReportStorageAtom$page {
+	obj: number;
+	value: number;
+	init: number;
 }
-export interface ResultGetEntityCode {
-	ret: ReturnGetEntityCodeRet[];
+export interface ResultReportStorageAtom {
+	$page: ReturnReportStorageAtom$page[];
+}
+
+export interface ParamReportStorageSpec {
+	key: string;
+	subject: string;
+}
+export interface ReturnReportStorageSpec$page {
+	obj: number;
+	value: number;
+	init: number;
+}
+export interface ResultReportStorageSpec {
+	$page: ReturnReportStorageSpec$page[];
 }
 
 export interface ParamGetPend {
@@ -829,64 +902,6 @@ export interface HistoryInActs extends ID {
 	value: number;
 	ref: number | ID;
 	plusMinus: number;
-}
-
-export interface ParamReportStorage {
-	key: string;
-	subject: string;
-}
-export interface ReturnReportStorage$page {
-	atom: number;
-	uom: number;
-	spec: number;
-	id: number;
-	value: number;
-	init: number;
-}
-export interface ResultReportStorage {
-	$page: ReturnReportStorage$page[];
-}
-
-export interface ParamReportStorageAtom {
-	key: string;
-	subject: string;
-}
-export interface ReturnReportStorageAtom$page {
-	obj: number;
-	value: number;
-	init: number;
-}
-export interface ResultReportStorageAtom {
-	$page: ReturnReportStorageAtom$page[];
-}
-
-export interface ParamReportStorageSpec {
-	key: string;
-	subject: string;
-}
-export interface ReturnReportStorageSpec$page {
-	obj: number;
-	value: number;
-	init: number;
-}
-export interface ResultReportStorageSpec {
-	$page: ReturnReportStorageSpec$page[];
-}
-
-export interface ParamHistoryStorage {
-	objId: number;
-	subject: string;
-}
-export interface ReturnHistoryStorage$page {
-	id: number;
-	value: number;
-	ref: number;
-	plusMinus: number;
-	sheetNo: string;
-	sheetPhrase: string;
-}
-export interface ResultHistoryStorage {
-	$page: ReturnHistoryStorage$page[];
 }
 
 export enum SumFormulaType {
@@ -1296,6 +1311,9 @@ export interface UqExt extends Uq {
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
 	$AllPhrases: UqQuery<Param$AllPhrases, Result$AllPhrases>;
+	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
+	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
+	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
 	SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
 	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
@@ -1308,6 +1326,7 @@ export interface UqExt extends Uq {
 	DeleteBin: UqAction<ParamDeleteBin, ResultDeleteBin>;
 	SubmitSheet: UqAction<ParamSubmitSheet, ResultSubmitSheet>;
 	GetReport: UqQuery<ParamGetReport, ResultGetReport>;
+	GetHistory: UqQuery<ParamGetHistory, ResultGetHistory>;
 	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
 	GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
 	SearchAtom: UqQuery<ParamSearchAtom, ResultSearchAtom>;
@@ -1316,8 +1335,9 @@ export interface UqExt extends Uq {
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
 	GetSpecsFromBase: UqQuery<ParamGetSpecsFromBase, ResultGetSpecsFromBase>;
-	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
-	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
+	ReportStorage: UqQuery<ParamReportStorage, ResultReportStorage>;
+	ReportStorageAtom: UqQuery<ParamReportStorageAtom, ResultReportStorageAtom>;
+	ReportStorageSpec: UqQuery<ParamReportStorageSpec, ResultReportStorageSpec>;
 	GetPend: UqQuery<ParamGetPend, ResultGetPend>;
 	GetPendsNotify: UqQuery<ParamGetPendsNotify, ResultGetPendsNotify>;
 	GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
@@ -1332,10 +1352,6 @@ export interface UqExt extends Uq {
 	IxBud: UqIX<any>;
 	Bud: UqID<any>;
 	History: UqID<any>;
-	ReportStorage: UqQuery<ParamReportStorage, ResultReportStorage>;
-	ReportStorageAtom: UqQuery<ParamReportStorageAtom, ResultReportStorageAtom>;
-	ReportStorageSpec: UqQuery<ParamReportStorageSpec, ResultReportStorageSpec>;
-	HistoryStorage: UqQuery<ParamHistoryStorage, ResultHistoryStorage>;
 	SumFormula: UqID<any>;
 	SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
 	SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
@@ -1815,6 +1831,193 @@ export const uqSchema={
             }
         ]
     },
+    "bizphrasetype": {
+        "name": "BizPhraseType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "any": 0,
+            "atom": 11,
+            "spec": 12,
+            "bud": 13,
+            "sheet": 101,
+            "main": 102,
+            "detail": 103,
+            "pend": 104,
+            "detailAct": 111,
+            "with": 151,
+            "pick": 161,
+            "role": 201,
+            "permit": 202,
+            "options": 301,
+            "tree": 401,
+            "tie": 501,
+            "report": 601,
+            "title": 901,
+            "key": 1001,
+            "prop": 1011,
+            "optionsitem": 1031
+        }
+    },
+    "buddatatype": {
+        "name": "BudDataType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "none": 0,
+            "int": 11,
+            "atom": 12,
+            "radio": 13,
+            "check": 14,
+            "ID": 19,
+            "dec": 21,
+            "char": 31,
+            "str": 32,
+            "date": 41
+        }
+    },
+    "bizbudflag": {
+        "name": "BizBudFlag",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "index": 1
+        }
+    },
+    "getbizobjects": {
+        "name": "GetBizObjects",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "lang",
+                "type": "char",
+                "size": 10
+            },
+            {
+                "name": "culture",
+                "type": "char",
+                "size": 10
+            }
+        ],
+        "returns": [
+            {
+                "name": "objs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "source",
+                        "type": "text"
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            },
+            {
+                "name": "buds",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            }
+        ]
+    },
+    "getentitycode": {
+        "name": "GetEntityCode",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "code",
+                        "type": "text"
+                    },
+                    {
+                        "name": "schema",
+                        "type": "text"
+                    }
+                ]
+            }
+        ]
+    },
+    "createsiteforuser": {
+        "name": "CreateSiteForUser",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "tonwaUser",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "site",
+                        "type": "id"
+                    },
+                    {
+                        "name": "userSite",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
     "saveatom": {
         "name": "SaveAtom",
         "type": "action",
@@ -1822,9 +2025,8 @@ export const uqSchema={
         "sys": true,
         "fields": [
             {
-                "name": "atom",
-                "type": "char",
-                "size": 100
+                "name": "atomPhrase",
+                "type": "id"
             },
             {
                 "name": "base",
@@ -2255,6 +2457,61 @@ export const uqSchema={
             }
         ]
     },
+    "gethistory": {
+        "name": "GetHistory",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "objId",
+                "type": "id"
+            },
+            {
+                "name": "title",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "ref",
+                        "type": "id"
+                    },
+                    {
+                        "name": "plusMinus",
+                        "type": "tinyint"
+                    },
+                    {
+                        "name": "sheetNo",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "sheetPhrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "binPhrase",
+                        "type": "id"
+                    }
+                ],
+                "order": "desc"
+            }
+        ]
+    },
     "removedraft": {
         "name": "RemoveDraft",
         "type": "action",
@@ -2630,6 +2887,10 @@ export const uqSchema={
             {
                 "name": "id",
                 "type": "id"
+            },
+            {
+                "name": "detail",
+                "type": "id"
             }
         ],
         "returns": [
@@ -2852,152 +3113,141 @@ export const uqSchema={
             }
         ]
     },
-    "bizphrasetype": {
-        "name": "BizPhraseType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "any": 0,
-            "atom": 11,
-            "spec": 12,
-            "bud": 13,
-            "sheet": 101,
-            "main": 102,
-            "detail": 103,
-            "pend": 104,
-            "detailAct": 111,
-            "with": 151,
-            "pick": 161,
-            "role": 201,
-            "permit": 202,
-            "options": 301,
-            "tree": 401,
-            "tie": 501,
-            "report": 601,
-            "title": 901,
-            "key": 1001,
-            "prop": 1011,
-            "optionsitem": 1031
-        }
-    },
-    "buddatatype": {
-        "name": "BudDataType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "none": 0,
-            "int": 11,
-            "atom": 12,
-            "radio": 13,
-            "check": 14,
-            "ID": 19,
-            "dec": 21,
-            "char": 31,
-            "str": 32,
-            "date": 41
-        }
-    },
-    "bizbudflag": {
-        "name": "BizBudFlag",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "index": 1
-        }
-    },
-    "getbizobjects": {
-        "name": "GetBizObjects",
+    "reportstorage": {
+        "name": "ReportStorage",
         "type": "query",
         "private": false,
         "sys": true,
         "fields": [
             {
-                "name": "lang",
+                "name": "key",
                 "type": "char",
-                "size": 10
+                "size": 50
             },
             {
-                "name": "culture",
+                "name": "subject",
                 "type": "char",
-                "size": 10
+                "size": 200
             }
         ],
         "returns": [
             {
-                "name": "objs",
+                "name": "$page",
                 "fields": [
+                    {
+                        "name": "atom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "uom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "spec",
+                        "type": "id"
+                    },
                     {
                         "name": "id",
                         "type": "id"
                     },
                     {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
                     },
                     {
-                        "name": "source",
-                        "type": "text"
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
+                        "name": "init",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
                     }
-                ]
-            },
-            {
-                "name": "buds",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
+                ],
+                "order": "asc"
             }
         ]
     },
-    "getentitycode": {
-        "name": "GetEntityCode",
+    "reportstorageatom": {
+        "name": "ReportStorageAtom",
         "type": "query",
         "private": false,
         "sys": true,
         "fields": [
             {
-                "name": "id",
-                "type": "id"
+                "name": "key",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "subject",
+                "type": "char",
+                "size": 200
             }
         ],
         "returns": [
             {
-                "name": "ret",
+                "name": "$page",
                 "fields": [
                     {
-                        "name": "code",
-                        "type": "text"
+                        "name": "obj",
+                        "type": "id"
                     },
                     {
-                        "name": "schema",
-                        "type": "text"
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "init",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
                     }
-                ]
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "reportstoragespec": {
+        "name": "ReportStorageSpec",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "key",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "subject",
+                "type": "char",
+                "size": 200
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "obj",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "init",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ],
+                "order": "asc"
             }
         ]
     },
@@ -3700,197 +3950,6 @@ export const uqSchema={
         "global": false,
         "idType": 3,
         "isMinute": true
-    },
-    "reportstorage": {
-        "name": "ReportStorage",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "key",
-                "type": "char",
-                "size": 50
-            },
-            {
-                "name": "subject",
-                "type": "char",
-                "size": 200
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "atom",
-                        "type": "id"
-                    },
-                    {
-                        "name": "uom",
-                        "type": "id"
-                    },
-                    {
-                        "name": "spec",
-                        "type": "id"
-                    },
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "init",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    }
-                ],
-                "order": "asc"
-            }
-        ]
-    },
-    "reportstorageatom": {
-        "name": "ReportStorageAtom",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "key",
-                "type": "char",
-                "size": 50
-            },
-            {
-                "name": "subject",
-                "type": "char",
-                "size": 200
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "obj",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "init",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    }
-                ],
-                "order": "asc"
-            }
-        ]
-    },
-    "reportstoragespec": {
-        "name": "ReportStorageSpec",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "key",
-                "type": "char",
-                "size": 50
-            },
-            {
-                "name": "subject",
-                "type": "char",
-                "size": 200
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "obj",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "init",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    }
-                ],
-                "order": "asc"
-            }
-        ]
-    },
-    "historystorage": {
-        "name": "HistoryStorage",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "objId",
-                "type": "id"
-            },
-            {
-                "name": "subject",
-                "type": "char",
-                "size": 200
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "ref",
-                        "type": "id"
-                    },
-                    {
-                        "name": "plusMinus",
-                        "type": "tinyint"
-                    },
-                    {
-                        "name": "sheetNo",
-                        "type": "char",
-                        "size": 30
-                    },
-                    {
-                        "name": "sheetPhrase",
-                        "type": "char",
-                        "size": 200
-                    }
-                ],
-                "order": "desc"
-            }
-        ]
     },
     "sumformulatype": {
         "name": "SumFormulaType",

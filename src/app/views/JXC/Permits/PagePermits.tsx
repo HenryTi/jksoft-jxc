@@ -6,9 +6,7 @@ import { Route } from "react-router-dom";
 import { Page, ViewUser } from "tonwa-app";
 import { FA, List, Sep } from "tonwa-com";
 
-export const pathPermits = 'permits';
-
-function PagePermits() {
+export function PagePermits() {
     const uqApp = useUqApp();
     const user = useAtomValue(uqApp.user);
     const { biz } = uqApp;
@@ -84,7 +82,3 @@ function PagePermits() {
         </div>
     </Page>
 }
-
-export const routePermits = <>
-    <Route path={pathPermits} element={<PagePermits />} />
-</>;

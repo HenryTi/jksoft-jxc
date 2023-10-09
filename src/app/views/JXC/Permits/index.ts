@@ -1,1 +1,1 @@
-export * from './Permits';
+export * from './PageActSettings';

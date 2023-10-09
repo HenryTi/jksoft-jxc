@@ -48,7 +48,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
     };
 
     function PageNew() {
-        return <Page header={`新建${caption}`}>
+        return <Page header={`新建${caption ?? name}`}>
             <ViewNew />
         </Page>;
     }
@@ -70,7 +70,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
     }
 
     function ModalNew() {
-        return <Page header={`新建${caption}`}>
+        return <Page header={`新建${caption ?? name}`}>
             <ModalViewNew />
         </Page>;
     }
@@ -78,7 +78,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
     function ViewNewBase({ afterSubmit }: { afterSubmit: (atom: Atom) => void; }) {
         async function actSave(entityAtom: EntityAtom, no: string, data: any) {
             const { ex } = data;
-            let ret = await uq.SaveAtom.submit({ atom: entityAtom.phrase, base: undefined, no, ex });
+            let ret = await uq.SaveAtom.submit({ atomPhrase: entityAtom.id, base: undefined, no, ex });
             return ret;
         }
         async function buildNew(): Promise<{ no: string; formRows: FormRow[] }> {

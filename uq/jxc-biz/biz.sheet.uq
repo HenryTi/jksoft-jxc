@@ -11,18 +11,21 @@ Pick PurchaseItem '捡取商品' {
 
 Biz Title D {
     PROP a DEC History;
+    PROP b DEC History;
+    PROP c '库存' DEC History;
 }
 
 Biz Bin DetailPurchase ver 0.1 {
     I '商品Pick' Pick PurchaseItem; -- ATOM Goods;       -- 某类Atom
     Value '数量' DEC;
-    Price '单价' DEC;
+    Price '单价' DEC = 6;
     Amount '金额' DEC = Value * Price;
     
     ACT {
         -- Biz Pend += value;
         Biz Pend PendStoreIn SET p1=price, p2=amount;
         Biz Title D.a of I += value;
+        Biz Title D.b of I += value;
     };
 }
 
@@ -58,8 +61,8 @@ Biz Pend PendStoreIn '待入库' {
     I '商品';
     Value '数量';
     Prop {
-        p1 DEC;
-        p2 DEC;
+        p1 DEC :=87;
+        p2 DEC = 3*5;
     };
 }
 
@@ -112,4 +115,23 @@ Biz Pend PendStoreOut '待出库' {
 Biz Sheet SheetStoreOut '出库单' {
     Main MainStoreOut;
     Detail DetailStoreOut;
+}
+
+Bin 验收单主表 {
+    I '往来单位' Pick Contact;
+}
+Bin 验收单明细 {
+    I '商品Pick' Pick PurchaseItem; -- ATOM Goods;       -- 某类Atom
+    Value '数量' DEC;
+    Price '单价' DEC := 3;
+    Amount '金额' DEC = Value * Price;
+    Prop {
+        a dec;
+        b dec;
+    };
+}
+
+Sheet 验收单 {
+    Main 验收单主表;
+    Detail 验收单明细;
 }

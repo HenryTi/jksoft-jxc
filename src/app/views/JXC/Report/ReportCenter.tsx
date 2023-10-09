@@ -1,10 +1,12 @@
 import { UqApp, useUqApp } from "app/UqApp";
 import { Link, Route } from "react-router-dom";
 import { Page } from "tonwa-app";
-import { pathReport, useReport } from "app/hooks";
+import { PageHistory, pathReport, useReport } from "app/hooks";
 import React from "react";
 import { Sep } from "tonwa-com";
 import { EntityReport } from "app/Biz";
+import { path } from "app/tool";
+import { PageRef } from "app/hooks/Report";
 
 export const pathReportCenter = 'report';
 
@@ -42,5 +44,7 @@ export function routeReportCenter() {
     return <>
         <Route path={pathReportCenter} element={<PageReportCenter />} />
         <Route path={pathReport(n)} element={<PageReport />} />
+        <Route path={path('history', 'title', 'id')} element={<PageHistory />} />
+        <Route path={path('ref', undefined, 'id')} element={<PageRef />} />
     </>;
 }

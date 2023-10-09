@@ -81,8 +81,8 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
             <ViewSpec id={i} />
         </div>
         <div className="text-end d-flex flex-column justify-content-end me-2">
-            <ViewValue caption={'单价'} value={price.toFixed(digits)} />
-            <ViewValue caption={'金额'} value={amount.toFixed(digits)} />
+            <ViewValue caption={'单价'} value={price?.toFixed(digits)} />
+            <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />
             <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
         </div >
         <div className="text-end text-info d-flex flex-column">

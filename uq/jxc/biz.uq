@@ -104,6 +104,46 @@ IDX BizBud (
     flag SMALLINT DEFAULT 0,
 );
 
+IX IxPermission (
+    i,                          -- entity biz id
+    x,                          -- role biz id
+    a BIT DEFAULT 0,
+    c BIT DEFAULT 0,
+    r BIT DEFAULT 0,
+    u BIT DEFAULT 0,
+    d BIT DEFAULT 0,
+    l BIT DEFAULT 0,
+);
+
+IX IxUserRole (
+    i,
+    x,
+);
+
+PROC SaveIxPermission (
+    bizRoles JSON,            -- '[[i,x, a, c, r, u, d, l], ]'
+) {
+    JSONTABLE tbl (
+        i ID PATH '$[0]', 
+        x ID PATH '$[1]',
+        a BIT PATH '$[2]',
+        c BIT PATH '$[3]',
+        r BIT PATH '$[4]',
+        u BIT PATH '$[5]',
+        d BIT PATH '$[6]',
+        l BIT PATH '$[7]'
+    ) FROM bizRoles PATH '$[*]';
+    /-mysql
+    DELETE a FROM ixpermission as a JOIN bizphrase as b ON b.id=a.i WHERE b.base=_$site;
+    -/
+    FOR (VAR i ID, x ID, a BIT, c BIT, r BIT, u BIT, d BIT, l BIT 
+        OF SELECT a.i, a.x, a.a, a.c, a.r, a.u, a.d, a.l
+            FROM tbl as a) 
+    {
+        WITH IxPermission I=IFNULL(i, 0) X=x SET a=a, c=c, r=r, u=u, d=d, l=l;
+    }
+}
+
 PROC SaveBizObject ver 0.3 (
     entityId ID,
     name Phrase,
@@ -188,9 +228,9 @@ RETURNS ret (
 PROC SaveBizIX (
     pairs JSON,            -- '[[i,x], [i,x], ]'
 ) {
-    JSONTABLE tbl (i PHRASE PATH '$[0]', x PHRASE PATH '$[1]') FROM pairs PATH '$[*]';
-    FOR (VAR i PHRASE, x PHRASE OF SELECT a.i, a.x FROM tbl as a) {
-        WITH IxBizPhrase I=IFNULL(PhraseId(i), 0) X=PhraseId(x);
+    JSONTABLE tbl (i ID PATH '$[0]', x ID PATH '$[1]') FROM pairs PATH '$[*]';
+    FOR (VAR i ID, x ID OF SELECT a.i, a.x FROM tbl as a) {
+        WITH IxBizPhrase I=IFNULL(i, 0) X=x;
     }
 };
 
@@ -247,3 +287,19 @@ RETURNS ret (
             JOIN BizPhrase as b ON b.id=a.id
         WHERE a.id=id AND b.base=$site;
 };
+
+Biz Ac CreateSiteForUser ver 0.2 (
+    no NO,
+    ex EX,
+    tonwaUser ID,
+)
+RETURNS ret (
+    site ID,
+    userSite ID,
+) {
+    VAR site ID, userSite ID, user ID;
+    WITH $Site ID to site KEY(no) SET ex=ex;
+    WITH $User ID to user KEY(tonwaUser);
+    WITH $UserSite ID to userSite KEY(site, user) SET admin=3;
+    INTO ret SELECT site, userSite;
+}

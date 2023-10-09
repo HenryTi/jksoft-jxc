@@ -1,35 +1,45 @@
+import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useReport } from "./useReport";
+import { UseQueryOptions, path } from "app/tool";
+import { useQuery } from "react-query";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Page } from "tonwa-app";
+import { EasyTime, from62 } from "tonwa-com";
+import { ParamGetHistory, ReturnGetHistory$page } from "uqs/UqDefault";
+import { ViewSpec } from "../View";
+// import { useSubject } from "./useReport";
 // import { EnumTitle } from "uqs/UqDefault";
 
-export function PageHistory({ title, bud, captionHistory, pathDetailView, historySortField }: {
-    title: string; // EnumTitle;
-    bud: string;
-    captionHistory: string;
-    pathDetailView: string;
-    sortField: string;
-    historySortField: string;
-}) {
-    const gen = useReport({ title: title, bud });
-    const navigate = useNavigate();
-    const { subjectHistory, ViewItemHistory, ViewItem } = gen;
-    const { id } = useParams();
-    const objId = Number(id);
-    const param = { objId };
-    const location = useLocation();
-    async function onHistoryClick(item: any) {
-        navigate(`../${pathDetailView}/${item.ref}`);
+export function PageHistory() {
+    const { uq } = useUqApp();
+    const { title: title62, id: id62 } = useParams();
+    const id = from62(id62);
+    const title = from62(title62);
+    const param: ParamGetHistory = {
+        objId: id,
+        title,
+    };
+    function ViewItem({ value: row }: { value: ReturnGetHistory$page; }) {
+        let { id, value, ref, plusMinus, sheetNo, sheetPhrase, binPhrase } = row;
+        return <Link to={path('../ref', undefined, ref)}>
+            <div className="px-3 py-2 d-flex">
+                <div className="w-8c small text-secondary"><EasyTime date={(id / (1024 * 1024)) * 60} /></div>
+                <div className="me-3">{sheetNo}</div>
+                <div className="flex-grow-1">
+                    ref: {ref} plusMinus: {plusMinus} sheetPhrase: {sheetPhrase} binPhrase: {binPhrase}
+                </div>
+                <div className="fw-bold">{value}</div>
+            </div>
+        </Link>;
     }
-    return <PageQueryMore
-        header={captionHistory}
+    return <PageQueryMore header="流水"
+        query={uq.GetHistory}
         param={param}
-        query={subjectHistory}
-        ViewItem={ViewItemHistory}
-        sortField={historySortField}
-        onItemClick={onHistoryClick}>
-        <div className="border-bottom tonwa-bg-gray-2 py-2 mb-2">
-            <ViewItem value={location.state} clickable={false} />
+        sortField="id"
+        ViewItem={ViewItem}
+    >
+        <div className="p-3 tonwa-bg-gray-2">
+            <ViewSpec id={id} />
         </div>
     </PageQueryMore>;
 }

@@ -43,7 +43,7 @@ function PageSheetView() {
     const [sheetDetails, setSheetDetails] = useState<any[]>(undefined);
     useEffectOnce(() => {
         (async function () {
-            let { main: [retSheetMain], details: retDetails } = await uq.GetSheet.query({ id: Number(id) });
+            let { main: [retSheetMain], details: retDetails } = await uq.GetSheet.query({ id: Number(id), detail: undefined });
             setSheetMain(retSheetMain);
             setSheetDetails(retDetails);
         })();

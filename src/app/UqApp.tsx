@@ -17,6 +17,7 @@ const appConfig: AppConfig = {
     center: 'https://tv.jkchemical.com',
     noUnit: true,
     oem: undefined,
+    pathBase: 'jksoft-jxc',
 };
 
 function uqConfigsFromJson(json: { devs: { [dev: string]: any }; uqs: any[]; }): UqConfig[] {

@@ -17,7 +17,7 @@ export interface UseSiteRoleReturn {
 
 export function useSiteRole() {
     const uqApp = useUqApp();
-    return useSiteRoleBase(uqApp.uqSites.userSite);
+    return useSiteRoleBase(uqApp.uqSites?.userSite);
 }
 
 export function useSiteRole0() {
@@ -28,14 +28,18 @@ export function useSiteRole0() {
 function useSiteRoleBase(userSite: UserSite): UseSiteRoleReturn {
     const uqApp = useUqApp();
     let unitRoles = atom({} as UnitRoles);
-    let uqMan: UqMan = uqApp.uqSites.uqMan;
-    let site: number = userSite.siteId;
     useEffect(() => {
+        if (userSite === undefined) return;
         init();
     });
+    if (userSite === undefined) return {} as any;
+
+    let site: number = userSite.siteId;
+    let uqMan: UqMan = uqApp.uqSites.uqMan;
 
     async function init() {
         try {
+            if (userSite.isAdmin === false) return;
             let ret = await loadUnitUsers();
             if (ret === undefined) return;
             setAtomValue(unitRoles, ret);
@@ -48,14 +52,14 @@ function useSiteRoleBase(userSite: UserSite): UseSiteRoleReturn {
     let onAdminChanged: () => Promise<void> = undefined;
 
     async function loadUnitUsers(): Promise<UnitRoles> {
-        let owners: UserSite[] = [];
-        let admins: UserSite[] = [];
-        let coll: { [user: number]: UserSite } = {};
         let query: Query = uqMan.entities['$role_site_users'] as any;
         let result = await query.query({ site });
         if (result === undefined) return;
         let { users: userRows, roles: roleRows } = result;
         let users: UserSite[] = [];
+        let owners: UserSite[] = [];
+        let admins: UserSite[] = [];
+        let coll: { [user: number]: UserSite } = {};
         for (let userRow of userRows) {
             let userSite: UserSite = { ...userRow, rolesAtom: atom([]), permits: {} };
             let { id, admin } = userRow;

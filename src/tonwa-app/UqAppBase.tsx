@@ -22,6 +22,7 @@ export interface AppConfig { //extends UqsConfig {
     noUnit?: boolean;			// app的运行，不跟unit绑定
     htmlTitle?: string;
     mustLogin?: boolean;
+    pathBase: string;
 }
 
 export interface AppEnv {
@@ -85,6 +86,11 @@ export abstract class UqAppBase<UQS = any> {
     }
 
     abstract get pathLogin(): string;
+    get pathBase(): string {
+        let { pathBase } = this.appConfig;
+        if (pathBase.startsWith('/') === true) pathBase.substring(1);
+        return pathBase;
+    }
 
     protected get defaultUqRoleNames(): { [lang: string]: any } { return undefined }
 
@@ -150,12 +156,9 @@ export abstract class UqAppBase<UQS = any> {
 
     async init(): Promise<void> {
         if (this.uqsMan !== undefined) return;
-        console.log('UqApp.load()');
         await this.net.init();
-        console.log('await this.net.init()');
         try {
             let uqsMan = await createUQsMan(this.net, this.appConfig.version, this.uqConfigs, this.uqsSchema);
-            console.log('createUQsMan');
             this.uqsMan = uqsMan;
             this.uqs = uqsProxy(uqsMan) as UQS;
 

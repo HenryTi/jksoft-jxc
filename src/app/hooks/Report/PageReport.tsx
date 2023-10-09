@@ -3,12 +3,17 @@ import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { useCallback } from "react";
 import { ParamGetReport } from "uqs/UqDefault";
+import { ViewSpecProps } from "../View";
+import { FA } from "tonwa-com";
+import { Link } from "react-router-dom";
+import { path } from "app/tool";
 
 interface SpecRow {
     id: number;
     phrase: number;
     base: number;
     value: number;
+    props: object;
 }
 
 interface ReportRow {
@@ -22,17 +27,7 @@ interface ReportRow {
 
 export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
     const { uq } = useUqApp();
-    const { id, from } = entityReport;
-    /*
-    const { data } = useQuery([id], async () => {
-        let params = {
-            a: 1,
-            b: 2,
-        };
-        let { $page } = await uq.GetReport.page({ phrase: id, params }, undefined, 100);
-        return $page;
-    }, UseQueryOptions);
-    */
+    const { id, from, title } = entityReport;
     const param: ParamGetReport = {
         reportPhrase: id,
         atomPhrase: from.id,
@@ -67,12 +62,17 @@ export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
                 {id} {phrase} {no} <b>{ex}</b> {value}
             </div>
             <div className="ms-5 border-start">
-                {specs.map(v => {
-                    let { id, phrase, base, value } = v;
-                    return <div key={id} className="d-flex ps-3 pe-3 py-2 border-bottom">
-                        <div className="flex-grow-1">{id} {phrase} {base}</div>
-                        <b>{value}</b>
+                {specs?.map(v => {
+                    let { id, phrase, base, value, props } = v;
+                    return <Link key={id} to={path('../history', title[0].bud.id, id)}><div className="d-flex ps-3 pe-3 py-2 border-bottom">
+                        <ViewSpecProps phrase={phrase} props={props as []} />
+                        <div className="flex-grow-1">
+                            {id} {phrase} {base}
+                        </div>
+                        <b className="me-5">{value}</b>
+                        <FA name="angle-right" />
                     </div>
+                    </Link>
                 })}
             </div>
         </div>;
@@ -86,4 +86,3 @@ export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
         <div className="p-3 border-bottom">{entityReport.caption ?? entityReport.name}</div>
     </PageQueryMore>;
 }
-

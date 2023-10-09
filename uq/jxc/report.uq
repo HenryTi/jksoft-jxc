@@ -62,28 +62,3 @@ PAGE (
         ORDER BY c.id ASC
         LIMIT $pageSize;
 };
-
-QUERY HistoryStorage (
-    objId ID,
-    subject CHAR(200),
-)
-PAGE (
-    id ID DESC,
-    value VALUE,
-    ref ID,
-    plusMinus TINYINT,
-    sheetNo NO,
-    sheetPhrase Phrase,
-) {
-    VAR phraseId ID = PhraseId(subject);
-    VAR SiteBudId ID = ID(Bud KEY base=objId, ext=phraseId);
-    PAGE SELECT a.id, a.value, a.ref, a.plusMinus, c.no as sheetNo, e.name as sheetPhrase
-        FROM History as a
-            LEFT JOIN Bin as b ON b.id=a.ref
-            LEFT JOIN Sheet as c ON c.id=b.base 
-            LEFT JOIN Bud as d ON d.id=c.base
-            LEFT JOIN BizPhrase as e ON e.id=d.ext
-        WHERE a.id < $pageStart AND a.bud=SiteBudId
-        ORDER BY a.id DESC
-        LIMIT $pageSize;
-};

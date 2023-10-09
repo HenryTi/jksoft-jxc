@@ -8,6 +8,8 @@ import { pathEditMe } from "./routeMe";
 import { PageSys, Permit, ViewSite, isPermitted } from "../Site";
 import React from "react";
 import { pathSiteAdmin } from "../Admin/site";
+import { useQuery } from "react-query";
+import { UseQueryOptions } from "app/tool";
 
 const pathAbout = 'about';
 
@@ -40,6 +42,9 @@ export function TabMe() {
         </LMR>;
     }
     function SysAdmin() {
+        const { uq } = useUqApp();
+        const { data: adminIsMe } = useQuery(['adminIsMe'], async () => await uq.AdminIsMe(), UseQueryOptions);
+        if (adminIsMe === false) return null;
         let { userSite0 } = uqSites;
         if (userSite0 === undefined) return null;
         async function onSitesAdmin() {

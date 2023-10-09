@@ -96,7 +96,7 @@ function PageRegisterBase({ header, accountLable, privacy, loginTop, ModalPasswo
                     </Band>
                 </Form>
                 <div className="text-center py-3">
-                    <Link className="btn btn-link text-primary" to={'/login'}>已有账号，直接登录</Link>
+                    <Link className="btn btn-link text-primary" to={pathLogin}>已有账号，直接登录</Link>
                 </div>
             </div>
         </div>

@@ -10,7 +10,7 @@ import { BI } from "app/coms";
 
 export const pathAtomCenter = 'atom-center';
 
-export function PageAtomCenter() {
+function PageAtomCenter() {
     const { biz } = useUqApp();
     const atomEntities = biz.atomRoots;
     function ViewItem({ value }: { value: Entity; }) {

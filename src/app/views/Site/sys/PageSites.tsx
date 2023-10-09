@@ -2,13 +2,15 @@ import { useUqApp } from "app/UqApp";
 import { FormRow, FormRowsView } from "app/coms";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Page, PageSpinner, useModal } from "tonwa-app";
+import { Page, PageSpinner, SelectUser, useModal } from "tonwa-app";
 import { List, useEffectOnce } from "tonwa-com";
-import { Query, UqMan } from "tonwa-uq";
+import { Query, UqMan, User } from "tonwa-uq";
 import { ViewSite } from "../ViewSite";
+import { roleT } from "../res";
 
 export function PageSites() {
     const uqApp = useUqApp();
+    const { uq } = uqApp;
     const { openModal, closeModal } = useModal();
     const right = <button className="btn btn-sm btn-success me-1" onClick={onAdd}>新增</button>;
     const [list, setList] = useState<any[]>(undefined);
@@ -32,23 +34,31 @@ export function PageSites() {
         <List items={list} ViewItem={ViewItemSite} />
     </Page>;
 
-    function onAdd() {
-        openModal(<PageAdd />)
+    async function onAdd() {
+        let top = <div className="my-3">{roleT('searchUser')}</div>;
+        let user = await openModal<User>(<SelectUser header={roleT('user')} top={top} />);
+        await openModal(<PageAdd user={user} />)
     }
 
-    function PageAdd() {
+    function PageAdd({ user }: { user: User; }) {
+        const { id, name, assigned, nick } = user;
         const [no, setNo] = useState<string>(undefined);
         useEffectOnce(() => {
             (async function () {
-                let n = await uqApp.uq.IDNO({ ID: '$site' as any });
+                let n = await uq.IDNO({ ID: '$site' as any });
                 setNo(n);
             })();
         });
         const { register, handleSubmit, formState: { errors }, } = useForm({ mode: 'onBlur' });
         async function onSubmit(data: any) {
-            let site = { id: undefined as number, no, ex: data.ex };
-            let ret = await uqApp.uq.ActID({ ID: '$site' as any, value: site });
-            site.id = ret;
+            const { ex } = data;
+            let ret = await uq.CreateSiteForUser.submit({ no, ex, tonwaUser: user.id });
+            let { site: siteId, userSite } = ret;
+            let site = {
+                id: siteId,
+                no,
+                ex,
+            }
             setList([site, ...list]);
             closeModal();
         }
@@ -65,7 +75,24 @@ export function PageSites() {
             { name: 'ex', label: '名称', type: 'text', options: { maxLength: 50 } },
             { type: 'submit', label: '提交' },
         ];
+        let vUser: any;
+        if (assigned !== undefined) {
+            vUser = <div><b>{assigned}</b> {nick ?? name}</div>;
+        }
+        else if (nick !== undefined) {
+            vUser = <div><b>{nick}</b> {name}</div>;
+        }
+        else {
+            vUser = <div><b>{name}</b></div>;
+        }
         return <Page header="新增机构">
+            <div className="p-3 d-flex">
+                <small className="me-3">机构拥有者</small>
+                <div>
+                    <div><b>{assigned ?? nick ?? name}</b> {name}</div>
+                    <div className="small text-secondary">{id}</div>
+                </div>
+            </div>
             <form onSubmit={handleSubmit(onSubmit)} className="container my-3 pe-5">
                 <FormRowsView rows={formRows} {...{ register, errors }} />
             </form>

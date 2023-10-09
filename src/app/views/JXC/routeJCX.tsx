@@ -5,8 +5,9 @@ import { routeMy } from "./My";
 import { routeAtomCenter } from "./Atom";
 import { routeSheetCenter } from "./Sheet";
 import { routeReportCenter } from "./Report";
+import { routePermits } from "./Permits";
 
-export const pathJXC = 'jxc';
+export const pathHome = 'home';
 export function routeJCX(uqApp: UqApp) {
     // console.error('routeJCX', pathJXC);
     // buildSpecs(uqApp);
@@ -16,6 +17,7 @@ export function routeJCX(uqApp: UqApp) {
         {routeSheetCenter()}
         {routeReportCenter()}
         {routeMy}
+        {routePermits}
     </>;
     /*
     { routeAtom(uqApp, gContact) }
@@ -33,10 +35,9 @@ export function routeJCX(uqApp: UqApp) {
     {routeSheetView(uqApp)}
 
     {routePrice}
-    {routePermits}
     */
     return <>
-        <Route path={`${pathJXC}/*`}>
+        <Route path={`${pathHome}/*`}>
             {routes}
         </Route>
         <Route path={`/*`}>

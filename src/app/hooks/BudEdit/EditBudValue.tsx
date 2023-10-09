@@ -1,18 +1,20 @@
 
 import { EditBudProps } from "../model";
 import { useModal } from "tonwa-app";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { LabelRowEdit } from "./LabelRowEdit";
 import { useUqApp } from "app/UqApp";
 import { PagePickValue } from "./PagePickValue";
 
 type ConvertToBudValue = (value: any) => { int: number; dec: number; str: string; };
-
-function EditBudValue(props: EditBudProps & { type: string; convertToBudValue: ConvertToBudValue }) {
+type FromBudValue = (value: any) => any;
+function EditBudValue(props: EditBudProps & { type: string; convertToBudValue: ConvertToBudValue; fromBudValue?: FromBudValue; }) {
     const { uq } = useUqApp();
     const { openModal } = useModal();
-    const { id, readonly, value: initValue, bizBud, type, convertToBudValue, options } = props;
-    const [value, setValue] = useState<string | number>(initValue as string | number);
+    const { id, readonly, value: initValue, bizBud, type, convertToBudValue, options, fromBudValue } = props;
+    const [value, setValue] = useState<string | number>(
+        fromBudValue === undefined ? initValue as string | number : fromBudValue(initValue)
+    );
     const { caption, name } = bizBud;
     const label = caption ?? name;
     async function onEditClick() {
@@ -64,4 +66,32 @@ export function EditBudDec(props: EditBudProps) {
         }
     }
     return <EditBudValue {...props} type="number" convertToBudValue={convertToBudValue} />;
+}
+
+const date19700101 = Date.parse('1970-1-1');
+const milliseconds = 1000 * 60 * 60 * 24;
+function getDays(date: string) {
+    return Math.floor((Date.parse(date) - date19700101) / milliseconds) + 1;
+}
+function fromDays(days: number) {
+    return new Date(date19700101 + days * milliseconds);
+}
+export function EditBudDate(props: EditBudProps) {
+    const convertToBudValue = useCallback(function convertToBudValue(value: any) {
+        let d = getDays(value);
+        return {
+            int: d,
+            dec: undefined as number,
+            str: undefined as string,
+        }
+    }, []);
+    const fromBudValue = useCallback(function (days: number) {
+        let date = fromDays(days);
+        let ret = date.toISOString();
+        let p = ret.indexOf('T');
+        return ret.substring(0, p);
+    }, []);
+    return <EditBudValue {...props} type="date"
+        fromBudValue={fromBudValue}
+        convertToBudValue={convertToBudValue} />;
 }

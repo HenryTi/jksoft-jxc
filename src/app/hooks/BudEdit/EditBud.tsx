@@ -8,7 +8,7 @@ import { EditBudRadio } from "./EditBudRadio";
 import { EditBudProps, ViewBudProps } from "../model";
 import { pickValue } from "./PagePickValue";
 import { EditBudCheck } from "./EditBudCheck";
-import { EditBudString, EditBudInt, EditBudDec } from "./EditBudValue";
+import { EditBudString, EditBudInt, EditBudDec, EditBudDate } from "./EditBudValue";
 import { EditBudIntOf } from "./EditBudIntOf";
 import { EnumBudType } from "app/Biz";
 
@@ -48,14 +48,24 @@ export function EditBud(editProps: EditBudProps) {
     const { bizBud } = editProps;
     const { type } = bizBud.budDataType;
     switch (type) {
-        default: return <>unknown bud type {type} {EnumBudType[type]} </>;
-        case EnumBudType.int: return <EditBudInt {...editProps} />;
+        default:
+            return <>unknown bud type {type} {EnumBudType[type]} </>;
+        case EnumBudType.int:
+            return <EditBudInt {...editProps} />;
         case EnumBudType.char:
-        case EnumBudType.str: return <EditBudString {...editProps} />;
-        case EnumBudType.dec: return <EditBudDec {...editProps} />;
-        case EnumBudType.radio: return <EditBudRadio {...editProps} />;
-        case EnumBudType.check: return <EditBudCheck{...editProps} />;
-        case EnumBudType.intof: return <EditBudIntOf{...editProps} />;
-        case EnumBudType.atom: return <EditBudAtom {...editProps} />;
+        case EnumBudType.str:
+            return <EditBudString {...editProps} />;
+        case EnumBudType.dec:
+            return <EditBudDec {...editProps} />;
+        case EnumBudType.radio:
+            return <EditBudRadio {...editProps} />;
+        case EnumBudType.check:
+            return <EditBudCheck{...editProps} />;
+        case EnumBudType.intof:
+            return <EditBudIntOf{...editProps} />;
+        case EnumBudType.atom:
+            return <EditBudAtom {...editProps} />;
+        case EnumBudType.date:
+            return <EditBudDate {...editProps} />;
     }
 }

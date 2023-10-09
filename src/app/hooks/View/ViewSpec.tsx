@@ -1,5 +1,6 @@
-import { BizBud } from "app/Biz";
+import { BizBud, EntitySpec } from "app/Biz";
 import { useGetSpec } from "../Uq";
+import { useUqApp } from "app/UqApp";
 
 export function ViewSpec({ id }: { id: number; }) {
     const { atom: { value: atomValue }, specs } = useGetSpec(id);
@@ -40,4 +41,30 @@ export function ViewSpec({ id }: { id: number; }) {
         <ViewAtom />
         <ViewSpecs />
     </div>
+}
+
+export function ViewSpecProps({ phrase, props: propValues, className }: { phrase: number; props: (string | number)[]; className?: string; }) {
+    const { biz } = useUqApp();
+    let entity = biz.entityIds[phrase] as EntitySpec;
+    let { keys, props } = entity;
+    let keysLen = keys.length;
+    let len = propValues.length;
+    let ret: any[] = [];
+    for (let i = 0; i < len; i++) {
+        if (i < keysLen) {
+            ret.push(buildProp(keys[i], propValues[i]));
+        }
+        else {
+            ret.push(buildProp(props[i - keysLen], propValues[i]));
+        }
+    }
+
+    function buildProp(bud: BizBud, value: string | number) {
+        return <span key={bud.id} className="d-inline-block me-3">
+            <span className="small text-secondary w-min-3c me-1">{bud.caption}:</span>
+            {value}
+        </span>;
+    }
+
+    return <div className={className}>{ret}</div>;
 }

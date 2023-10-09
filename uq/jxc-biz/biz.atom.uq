@@ -1,8 +1,17 @@
 Atom b ver 0.5 {
+    Permit (经理 crud, 检验 r);
+    Permit 销售1 r;
+    Permit *;                 -- 所有角色开放所有权限
+    -- Permit * r;               -- 所有角色开放读权限
     prop a int ;
     prop b char = 1;
     prop c char;
 };
+
+Atom bc9 {
+    -- 没有Role，则意味着 ROLE -;
+    prop bc9a CHAR;
+}
 
 Atom Contact '往来单位' {
     prop a '整数' int;

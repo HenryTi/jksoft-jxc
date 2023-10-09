@@ -322,7 +322,7 @@ export class SheetStore extends KeyIdObject {
     async load() {
         let { id } = this.main;
         if (id === undefined || id === 0) return;
-        let { main, details } = await this.uq.GetSheet.query({ id });
+        let { main, details } = await this.uq.GetSheet.query({ id, detail: undefined });
         this.main.setValue(main[0]);
         this.detail.addRowValues(details);
     }

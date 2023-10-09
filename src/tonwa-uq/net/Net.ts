@@ -61,6 +61,7 @@ export class Net {
         this.centerUrl = centerUrl;
         this.uqDebug = uqDebug;
         this.resDebug = res;
+        console.log('centerUrl', centerUrl, 'uqDebug', uqDebug, 'res', res);
         if (uqs !== undefined) {
             for (let uq of uqs) {
                 let { db } = uq;
@@ -115,7 +116,7 @@ export class Net {
         return this.centerChannel = new HttpChannel(this, this.centerUrl, this.centerToken);
     }
 
-    buildUqUrl(db: string, url: string, urlTest: string): string {
+    private buildUqUrl(db: string, url: string, urlTest: string): string {
         let testOrProd: string;
         let dbToCheck = db.toLowerCase();
         if (this.testing === true) {

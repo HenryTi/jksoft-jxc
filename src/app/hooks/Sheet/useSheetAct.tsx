@@ -224,7 +224,7 @@ export function useSheetAct(options: PropsSheetAct) {
     }
     */
     async function loadSheet(sheetId: number): Promise<{ sheet: Sheet; sheetRows: SheetRow[] }> {
-        let { main: [sheet], details, origins } = await uq.GetSheet.query({ id: sheetId });
+        let { main: [sheet], details, origins } = await uq.GetSheet.query({ id: sheetId, detail: undefined });
         let originColl: { [id: number]: Bin/* & { done: number; }*/ } = {};
         for (let origin of origins) {
             let { id } = origin;

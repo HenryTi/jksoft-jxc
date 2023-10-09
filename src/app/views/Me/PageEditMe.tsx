@@ -57,7 +57,7 @@ export function PageEditMe() {
             </PropEdit>
             <Sep />
             <div className="mt-5 w-100 text-center">
-                <Link className="btn btn-danger w-100 w-max-20c" to={pathLogout}>
+                <Link className="btn btn-danger w-100 w-max-20c" to={'../' + pathLogout}>
                     <FA name="sign-out" size="lg" /> {t(ResApp.logout)}
                 </Link>
             </div>

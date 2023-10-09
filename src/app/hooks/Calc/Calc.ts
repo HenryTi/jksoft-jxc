@@ -145,7 +145,7 @@ export class Calc {
         const { name } = exp;
         let cell = this.cells[name];
         if (cell === undefined) return;
-        if (cell.type !== CellType.value) return;
+        // if (cell.type !== CellType.value) return;
         return cell.value;
     }
 

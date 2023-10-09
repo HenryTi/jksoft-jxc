@@ -1,5 +1,5 @@
 Biz ACT SaveAtom ver 0.2 (
-    atom CHAR(100),
+    atomPhrase ID,
     base BIGINT,                -- always null, to align with $site.SaveAtom
     no NO,
     ex CHAR(200),
@@ -7,33 +7,19 @@ Biz ACT SaveAtom ver 0.2 (
 RETURNS ret (
     id ID,
 ) {
-    SET base = PhraseId(atom);
+    -- SET base = PhraseId(atom);
 
     -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
     VAR id ID = 0;
-    SET id=(SELECT a.id FROM Atom as a WHERE a.base=base and a.no=no);
-    -- SET id = ID(Atom KEY base=base, no=no);
+    SET id=(SELECT a.id FROM Atom as a WHERE a.base=atomPhrase and a.no=no);
+    -- SET id = ID(Atom KEY base=atomPhrase, no=no);
     IF id IS NULL {
-        SET id = ID(Atom new KEY base=base);
+        SET id = ID(Atom new KEY base=atomPhrase);
     }
     WITH Atom as a ID=id SET a.no=no, a.ex=ex;
-    -- WITH IxAtom i=base x=id;
+    -- WITH IxAtom i=atomPhrase x=id;
     INTO ret SELECT id;
 }
-/*
-Biz ACT SaveAtom ver 0.5 (
-    atom PHRASE,
-    base ID,            -- if null, then $site
-    keys TEXT,          -- starts with [, then [k0, k1, ...], else string
-    ex EX,
-)
-RETURNS ret virtual (
-    id ID,
-) {
-    VAR phraseId ID = PhraseId(atom);
-    __UqSys saveAtom;
-}
-*/
 Biz ACT SaveBudValue ver 0.2 (
     phraseId ID,
     id ID,
@@ -300,7 +286,7 @@ Biz AC SubmitSheet(
 
 -- atomId is null, then Atom of phrase
 -- else, phrase IX atomId as i
-QUERY GetReport (
+Biz QUERY GetReport (
     reportPhrase ID,
     atomPhrase ID,
     atomId ID,
@@ -323,6 +309,19 @@ RETURNS specs (
     props JSON,
 ) {
     VAR me ID = Me();
+
+    -- 查权限
+    IF NOT EXISTS (SELECT i FROM IxPermission WHERE i=reportPhrase AND x=-1 AND a=1)
+       OR NOT EXISTS (SELECT a.i 
+            FROM IxPermission as a
+                JOIN IxUserRole as b ON b.i=me AND b.x=a.x
+            WHERE a.i=reportPhrase AND a.a=1
+        )
+        AND NOT EXISTS (SELECT id FROM $UserSite WHERE id=me AND (admin&1)=1)
+    {
+        RETURN;
+    }
+
     -- 以后可以加其它的检查条件，查询权限
     IF NOT EXISTS (SELECT a.id FROM BizPhrase as a WHERE a.id=reportPhrase AND a.base=$site)
         OR  NOT EXISTS (SELECT a.id FROM BizPhrase as a WHERE a.id=atomPhrase AND a.base=$site)
@@ -332,6 +331,33 @@ RETURNS specs (
     VAR sql CHAR(500) = CONCAT('call `$site`.`', $site, '.', reportPhrase, '`(?,?,?,?,?,?,?,?,?);');
     ExecSql sql USING $site, me, $pageStart, $pageSize, atomPhrase, atomId, dateStart, dateEnd, params;
 }
+
+QUERY GetHistory (
+    objId ID,
+    title ID,
+)
+PAGE (
+    id ID DESC,
+    value VALUE,
+    ref ID,
+    plusMinus TINYINT,
+    sheetNo NO,
+    sheetPhrase ID,
+    binPhrase ID,
+) {
+    -- VAR bud ID = ID(Bud KEY base=objId, ext=title);
+    PAGE SELECT a.id, a.value, a.ref, a.plusMinus, c.no as sheetNo, d.ext as sheetPhrase, b1.ext as binPhrase
+        FROM History as a
+            LEFT JOIN Bud as a1 ON a1.id=a.bud
+            LEFT JOIN Bin as b ON b.id=a.ref
+            LEFT JOIN Bud as b1 ON b1.id=b.base
+            LEFT JOIN Sheet as c ON c.id=b1.base 
+            LEFT JOIN Bud as d ON d.id=c.base
+            LEFT JOIN BizPhrase as e ON e.id=d.ext
+        WHERE a.id < $pageStart AND a1.base=objId AND a1.ext=title
+        ORDER BY a.id DESC
+        LIMIT $pageSize;
+};
 
 Biz ACT RemoveDraft (
     id ID,
@@ -542,7 +568,7 @@ RETURNS budsStr (
 
 Biz Query GetSheet ver 0.1 (
     id ID,
-    -- budNames CHAR(200),  -- \t separated phrases of the assigns
+    detail ID,
 )
 RETURNS main (
     * SHEET,
@@ -562,14 +588,13 @@ RETURNS origins (
     * Bin,
     -- done VALUE,
 )
-/*
-RETURNS buds (
-    id ID,              -- detail id
-    bud ID,
-    phrase Phrase,
-    value VALUE,
-) */
 {
+    IF id IS NULL {
+        SET id = b.base
+            FROM Bin as a 
+                JOIN Bud as b ON b.id=a.base
+            WHERE a.id=detail;
+    }
     INTO main SELECT * a, * b, b.id as phrase
         FROM Sheet as a
             LEFT JOIN Bin as b ON b.id=a.id
@@ -583,7 +608,7 @@ RETURNS buds (
             LEFT JOIN BinPend as c ON c.id=a.id
             LEFT JOIN Pend as d ON d.id=c.pendFrom
             -- LEFT JOIN Sheet as e ON e.id=a.base
-        WHERE b.base=id;
+        WHERE b.base=id AND (detail IS NULL OR a.id=detail);
     INTO origins SELECT DISTINCT * b -- , IFNULL(c.value, 0) as done
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN Bin as b ON b.id=a.origin

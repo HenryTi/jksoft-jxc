@@ -2,5 +2,5 @@ import { Atom } from "uqs/UqDefault";
 
 export function ViewSite({ value }: { value: Atom }) {
     let { no, ex } = value;
-    return <>{ex ?? '默认机构'} &nbsp; {no}</>;
+    return <><b>{ex ?? '(无名机构)'}</b> &nbsp; <small className="text-secondary">{no}</small></>;
 }
