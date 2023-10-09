@@ -15,7 +15,7 @@ function EditBudValue(props: EditBudProps & { type: string; step?: string; conve
     const [value, setValue] = useState<string | number>(
         fromBudValue === undefined ? initValue as string | number : fromBudValue(initValue)
     );
-    const { caption, name } = bizBud;
+    const { caption, name, ex } = bizBud;
     const label = caption ?? name;
     async function onEditClick() {
         let ret = await openModal<number>(<PagePickValue label={label} value={value as number} type={type} options={options} step={step} />);
@@ -58,6 +58,7 @@ export function EditBudInt(props: EditBudProps) {
 }
 
 export function EditBudDec(props: EditBudProps) {
+    const { ex } = props.bizBud;
     function convertToBudValue(value: any) {
         return {
             int: undefined as number,
@@ -65,7 +66,12 @@ export function EditBudDec(props: EditBudProps) {
             str: undefined as string,
         }
     }
-    return <EditBudValue {...props} type="number" step="0.001" convertToBudValue={convertToBudValue} />;
+    let step: string;
+    if (ex !== undefined) {
+        let { fraction } = ex;
+        step = String(1 / Math.pow(10, fraction));
+    }
+    return <EditBudValue {...props} type="number" step={step} convertToBudValue={convertToBudValue} />;
 }
 
 const date19700101 = Date.parse('1970-1-1');
