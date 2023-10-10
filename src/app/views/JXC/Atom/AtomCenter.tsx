@@ -7,8 +7,7 @@ import { UqApp, useUqApp } from "app/UqApp";
 import { Entity } from "app/Biz";
 import { ViewAtom } from "app/hooks";
 import { BI } from "app/coms";
-
-export const pathAtomCenter = 'atom-center';
+import { pathAtomCenter } from "app/views/pathes";
 
 function PageAtomCenter() {
     const { biz } = useUqApp();

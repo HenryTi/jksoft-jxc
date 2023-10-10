@@ -1,13 +1,14 @@
-import { UqApp, useUqApp } from "app/UqApp";
+import { useUqApp } from "app/UqApp";
 import { BI, PageQueryMore } from "app/coms";
 import { Link, Route } from "react-router-dom";
-import { IDView, Page } from "tonwa-app";
+import { IDView } from "tonwa-app";
 import { EntitySheet } from "app/Biz";
-import { EasyTime, FA, List, to62 } from "tonwa-com";
+import { FA, List, to62 } from "tonwa-com";
 import { PageSheetEdit, ViewSheetTime } from "app/hooks";
 import { useCallback } from "react";
 import { Atom, Bin, Sheet } from "uqs/UqDefault";
 import { ViewNotifyCount } from "app/tool";
+import { pathSheetCenter } from "app/views/pathes";
 
 function PageSheetCenter() {
     const uqApp = useUqApp();
@@ -73,7 +74,6 @@ function PageSheetCenter() {
     </PageQueryMore>;
 }
 
-export const pathSheetCenter = 'sheet-center';
 export function routeSheetCenter() {
     return <>
         <Route path={pathSheetCenter} element={<PageSheetCenter />} />

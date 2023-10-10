@@ -4,8 +4,8 @@ import { PagePermits } from "./PagePermits";
 import { FA, List, Sep } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { EntityPermit, EntityRole, PermitItem } from "app/Biz/EntityPermit";
+import { pathActSetting } from "app/views/pathes";
 
-export const pathActSetting = 'act-setting';
 const pathPermits = 'permits';
 
 function PageActSettings() {

@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 import { LabelRowEdit } from "./LabelRowEdit";
 import { useUqApp } from "app/UqApp";
 import { PagePickValue } from "./PagePickValue";
+import { contenFromDays, getDays } from "app/tool";
 
 type ConvertToBudValue = (value: any) => { int: number; dec: number; str: string; };
 type FromBudValue = (value: any) => any;
@@ -82,14 +83,6 @@ export function EditBudDec(props: EditBudProps) {
     return <EditBudValue {...props} type="number" step={step} convertToBudValue={convertToBudValue} />;
 }
 
-const date19700101 = Date.parse('1970-1-1');
-const milliseconds = 1000 * 60 * 60 * 24;
-function getDays(date: string) {
-    return Math.floor((Date.parse(date) - date19700101) / milliseconds) + 1;
-}
-function fromDays(days: number) {
-    return new Date(date19700101 + days * milliseconds);
-}
 export function EditBudDate(props: EditBudProps) {
     const convertToBudValue = useCallback(function convertToBudValue(value: any) {
         let d = getDays(value);
@@ -99,14 +92,7 @@ export function EditBudDate(props: EditBudProps) {
             str: undefined as string,
         }
     }, []);
-    const fromBudValue = useCallback(function (days: number) {
-        if (days === undefined) return '';
-        let date = fromDays(days);
-        let ret = date.toISOString();
-        let p = ret.indexOf('T');
-        return ret.substring(0, p);
-    }, []);
     return <EditBudValue {...props} type="date"
-        fromBudValue={fromBudValue}
+        fromBudValue={contenFromDays}
         convertToBudValue={convertToBudValue} />;
 }

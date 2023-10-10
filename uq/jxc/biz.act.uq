@@ -205,7 +205,7 @@ RETURNS ret (
     INTO ret SELECT sheetId as id, no;
 };
 
-Biz ACT SaveDetail (
+Biz AC SaveDetail ver 0.1 (
     base ID,                -- sheet id
     phrase ID,              -- detail phrase id
     id ID,

@@ -31,7 +31,10 @@ function PageAtomSelect(props: PropsAtomSelect) {
     // const ViewItemAtom = uqApp.gAtoms[entityAtom.name]?.ViewItem; //useBizAtomViewItem(entityAtom)
     // const { caption, placeholder, entity } = genAtom.genAtomSelect;
     const [searchParam, setSearchParam] = useState(loadOnOpen === false ? undefined : { key: undefined as string });
-    const searchBox = <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder={placeholder ?? (entityAtom.caption + ' 编号或描述')} />;
+    const entityAtomCaption = entityAtom.caption ?? entityAtom.name;
+    const searchBox = <SearchBox className="px-3 py-2"
+        onSearch={onSearch}
+        placeholder={placeholder ?? (entityAtomCaption + ' 编号或描述')} />;
     async function onSearch(key: string) {
         setSearchParam({
             key
@@ -52,9 +55,7 @@ function PageAtomSelect(props: PropsAtomSelect) {
             <ViewAtom value={value.atom} />
         </div>;
     }
-    // pageSize={8}
-    // pageMoreSize={2}
-    return <PageQueryMore header={`选择${caption ?? entityAtom.caption}`}
+    return <PageQueryMore header={`选择${caption ?? entityAtomCaption}`}
         query={searchAtoms}
         param={searchParam}
         sortField="id"

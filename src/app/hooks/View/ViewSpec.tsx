@@ -18,13 +18,15 @@ export function ViewSpec({ id }: { id: number; }) {
             {specs.map(v => {
                 const { id, keys, props, entity } = v;
                 let bands: any[] = [];
-                let keyId = 1;
                 function buildBands(buds: BizBud[], values: (string | number)[]) {
-                    let len = buds.length;
+                    let { length: len } = buds;
                     for (let i = 0; i < len; i++) {
-                        let bud = buds[i];
-                        let band = <div key={keyId++}>
-                            <span className="d-inline-block me-3 small text-secondary w-min-3c">{bud.caption}</span> {values[i]}
+                        let { id, caption, name, budDataType } = buds[i];
+                        let band = <div key={id}>
+                            <span className="d-inline-block me-2 small text-secondary w-min-4c">
+                                {caption ?? name}
+                            </span>
+                            {budDataType.valueToContent(values[i])}
                         </div>;
                         bands.push(band);
                     }

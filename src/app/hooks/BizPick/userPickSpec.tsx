@@ -6,6 +6,8 @@ import { Page, useModal } from "tonwa-app";
 import { budFormRow } from "../Bud";
 import { useUqApp } from "app/UqApp";
 import { ParamSaveSpec } from "uqs/UqDefault";
+import { EnumBudType } from "app/Biz";
+import { getDays } from "app/tool";
 
 export interface PropsPickSpec {
     base: number;
@@ -42,7 +44,7 @@ export function usePickSpec() {
 
         function PagePickSpec() {
             const { id: entityId, caption, name, keys, props } = entitySpec;
-            const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
+            const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
             const submitCaption = '提交';
             const submitClassName: string = undefined;
 
@@ -54,8 +56,12 @@ export function usePickSpec() {
             const onSubmitForm = async (data: any) => {
                 const keyValues: { [bud: string]: number | string } = {};
                 for (let key of keys) {
-                    const { name } = key;
-                    keyValues[name] = data[name];
+                    const { name, budDataType } = key;
+                    let v = data[name];
+                    switch (budDataType.type) {
+                        case EnumBudType.date: v = getDays(v); break;
+                    }
+                    keyValues[name] = v;
                 }
                 const propValues: { [bud: string]: number | string } = {};
                 for (let prop of props) {

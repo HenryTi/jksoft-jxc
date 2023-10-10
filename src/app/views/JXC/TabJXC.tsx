@@ -1,24 +1,18 @@
 import { Link } from "react-router-dom";
 import { IDView, Page } from "tonwa-app";
-import { pathAtomCenter } from "./Atom/AtomCenter";
-import { pathReportCenter } from "./Report/ReportCenter";
-import { pathPrice } from "./AssignPrice";
 import { useUqApp } from "app/UqApp";
-import { pathMy } from "./My";
-import { pathSheetCenter } from "./Sheet";
 import { BizPhraseType } from "uqs/UqDefault";
 import { ViewNotifyCount } from "app/tool";
-import { pathActSetting } from "./Permits";
 import { FA } from "tonwa-com";
 import { ViewSite } from "../Site";
+import { pathActSetting, pathAtomCenter, pathMy, pathReportCenter, pathSheetCenter } from "../pathes";
 
 const arr: { label: string; icon?: string; iconColor?: string; path: string; phrase?: BizPhraseType }[] = [
     { label: '单据中心', icon: 'file-o', path: pathSheetCenter, phrase: BizPhraseType.sheet },
     { label: '档案中心', path: pathAtomCenter },
     { label: '报表中心', path: pathReportCenter },
-    // { label: '设置价格', path: pathPrice },
-    { label: '我的', icon: 'user-o', path: pathMy },
-    { label: '操作设置', icon: 'cog', iconColor: 'text-info', path: pathActSetting },
+    { label: '我的', path: pathMy, icon: 'user-o' },
+    { label: '操作设置', path: pathActSetting, icon: 'cog', iconColor: 'text-info' },
 ];
 
 export function TabJXC() {

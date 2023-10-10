@@ -108,6 +108,7 @@ function PageStore({ store }: { store: SheetStore; }) {
         let retSubmit = await uq.SubmitSheet.submit({ id: main.id })
         removeSheetFromCache();
         setEditable(true);
+        uqApp.autoRefresh?.();
         let ret = await openModal<boolean>(<Page header="提交成功" back="none">
             <div className="p-3">
                 {caption} <b>{main.no}</b> 已提交 {JSON.stringify(retSubmit)}

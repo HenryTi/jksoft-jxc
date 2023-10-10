@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Oct 09 2023 10:05:22 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue Oct 10 2023 09:43:47 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -204,37 +204,6 @@ export interface Return$AllPhrasesDetail {
 export interface Result$AllPhrases {
 	main: Return$AllPhrasesMain[];
 	detail: Return$AllPhrasesDetail[];
-}
-
-export interface IxBud extends IX {
-	i: number;
-	x: number;
-}
-
-export interface Bud extends ID {
-	base: number;
-	ext: number;
-}
-
-export interface BudInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-	ext: number | ID;
-}
-
-export interface History extends ID {
-	bud: number;
-	value: number;
-	ref: number;
-	plusMinus: number;
-}
-
-export interface HistoryInActs extends ID {
-	ID?: UqID<any>;
-	bud: number | ID;
-	value: number;
-	ref: number | ID;
-	plusMinus: number;
 }
 
 export interface ParamSaveAtom {
@@ -671,6 +640,37 @@ export interface ReturnCreateSiteForUserRet {
 }
 export interface ResultCreateSiteForUser {
 	ret: ReturnCreateSiteForUserRet[];
+}
+
+export interface IxBud extends IX {
+	i: number;
+	x: number;
+}
+
+export interface Bud extends ID {
+	base: number;
+	ext: number;
+}
+
+export interface BudInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	ext: number | ID;
+}
+
+export interface History extends ID {
+	bud: number;
+	value: number;
+	ref: number;
+	plusMinus: number;
+}
+
+export interface HistoryInActs extends ID {
+	ID?: UqID<any>;
+	bud: number | ID;
+	value: number;
+	ref: number | ID;
+	plusMinus: number;
 }
 
 export interface ParamReportStorage {
@@ -1312,9 +1312,6 @@ export interface UqExt extends Uq {
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
 	$AllPhrases: UqQuery<Param$AllPhrases, Result$AllPhrases>;
-	IxBud: UqIX<any>;
-	Bud: UqID<any>;
-	History: UqID<any>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
 	SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
 	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
@@ -1339,6 +1336,9 @@ export interface UqExt extends Uq {
 	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
 	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
 	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
+	IxBud: UqIX<any>;
+	Bud: UqID<any>;
+	History: UqID<any>;
 	ReportStorage: UqQuery<ParamReportStorage, ResultReportStorage>;
 	ReportStorageAtom: UqQuery<ParamReportStorageAtom, ResultReportStorageAtom>;
 	ReportStorageSpec: UqQuery<ParamReportStorageSpec, ResultReportStorageSpec>;
@@ -1832,94 +1832,6 @@ export const uqSchema={
             }
         ]
     },
-    "ixbud": {
-        "name": "IxBud",
-        "type": "ix",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "i",
-                "type": "id"
-            },
-            {
-                "name": "x",
-                "type": "id"
-            }
-        ],
-        "ixx": false,
-        "hasSort": false,
-        "xType": 0
-    },
-    "bud": {
-        "name": "Bud",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "ext",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "ext",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "history": {
-        "name": "History",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "bud",
-                "type": "id"
-            },
-            {
-                "name": "value",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            },
-            {
-                "name": "ref",
-                "type": "id"
-            },
-            {
-                "name": "plusMinus",
-                "type": "tinyint"
-            }
-        ],
-        "keys": [] as any,
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
     "saveatom": {
         "name": "SaveAtom",
         "type": "action",
@@ -2227,6 +2139,7 @@ export const uqSchema={
                 "type": "id"
             }
         ],
+        "jsoned": true,
         "returns": [
             {
                 "name": "ret",
@@ -3204,6 +3117,94 @@ export const uqSchema={
                 ]
             }
         ]
+    },
+    "ixbud": {
+        "name": "IxBud",
+        "type": "ix",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            }
+        ],
+        "ixx": false,
+        "hasSort": false,
+        "xType": 0
+    },
+    "bud": {
+        "name": "Bud",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "ext",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "ext",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "history": {
+        "name": "History",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "bud",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            },
+            {
+                "name": "ref",
+                "type": "id"
+            },
+            {
+                "name": "plusMinus",
+                "type": "tinyint"
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
     },
     "reportstorage": {
         "name": "ReportStorage",

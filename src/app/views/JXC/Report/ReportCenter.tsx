@@ -7,8 +7,7 @@ import { Sep } from "tonwa-com";
 import { EntityReport } from "app/Biz";
 import { path } from "app/tool";
 import { PageRef } from "app/hooks/Report";
-
-export const pathReportCenter = 'report';
+import { pathReportCenter } from "app/views/pathes";
 
 function PageReportCenter() {
     const { biz } = useUqApp();

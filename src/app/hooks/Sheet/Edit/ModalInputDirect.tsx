@@ -19,11 +19,12 @@ export function ModalInputRow({ row }: { row: Row; }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { props, section } = row;
+    const { entityDetail } = section.coreDetail;
+    const { i: budI, x: budX } = entityDetail;
     const { i, x } = props;
     const { current: fields } = useRef<[string, number, BizBud, (value: number) => void, Cell][]>([]);
     const [calc, setCalc] = useState<Calc>();
     useEffectOnce(() => {
-        const { entityDetail } = section.coreDetail;
         const { value, price, amount } = props;
         const { value: valueBud, price: priceBud, amount: amountBud } = entityDetail;
         if (valueBud !== undefined) {
@@ -97,17 +98,19 @@ export function ModalInputRow({ row }: { row: Row; }) {
         const right = <ButtonAsync onClick={onDel} className="btn btn-sm btn-primary me-1">
             <FA name="trash" fixWidth={true} />
         </ButtonAsync>;
+        function ViewIdField({ bud, value }: { bud: BizBud; value: number; }) {
+            if (bud === undefined) return null;
+            const { caption, name } = bud;
+            return <Band label={caption ?? name} className="border-bottom py-2">
+                <div className="px-3">
+                    <ViewSpec id={value} />
+                </div>
+            </Band>;
+        }
         return <Page header="输入明细" right={right}>
-            <div className="pt-3 tonwa-bg-gray-2 mb-3 container">
-                <Band>
-                    <ViewSpec id={i} />
-                </Band>
-                {
-                    x &&
-                    <Band>
-                        <ViewSpec id={i} />
-                    </Band>
-                }
+            <div className="py-1 tonwa-bg-gray-2 mb-3 container">
+                <ViewIdField bud={budI} value={i} />
+                <ViewIdField bud={budX} value={x} />
             </div>
             <form className="container" onSubmit={handleSubmit(onSubmit)}>
                 <FormRowsView rows={formRows} register={register} errors={errors} />

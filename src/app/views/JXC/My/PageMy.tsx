@@ -7,8 +7,7 @@ import { List, getAtomValue, useEffectOnce } from "tonwa-com";
 import { useState } from "react";
 import { ReturnGetMyBalanceRet, ReturnGetMySumsRet } from "uqs/UqDefault";
 import { Period, usePeriod } from "./Period";
-
-export const pathMy = 'my';
+import { pathMy } from "app/views/pathes";
 
 export function PageMy() {
     const { uq } = useUqApp();

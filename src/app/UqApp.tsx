@@ -101,8 +101,8 @@ export class UqApp extends UqAppBase<UQs> {
             let { ret } = await this.uq.GetPendsNotify.query({});
             let nc = getAtomValue(this._notifyCounts);
             let sum = 0;
-            for (let sheet of this.biz.sheets) {
-                nc[sheet.id] = 0;
+            for (let pend of this.biz.pends) {
+                nc[pend.id] = 0;
             }
             for (let row of ret) {
                 let { phrase, count } = row;

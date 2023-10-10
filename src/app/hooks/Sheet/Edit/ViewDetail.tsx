@@ -6,6 +6,7 @@ import { useModal } from "tonwa-app";
 import { ModalInputRow } from "./ModalInputDirect";
 import React from "react";
 import { useCoreDetailEdit } from "./useCoreDetailEdit";
+import { BizBud } from "app/Biz";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -38,7 +39,7 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
     else {
         content = <>
             <LMR className="tonwa-bg-gray-1 pt-1 px-3">
-                <div>Section {section.keyId}</div>
+                <div className="small text-secondary">分组</div>
                 <button
                     className="btn btn-sm btn-link"
                     disabled={!editable}
@@ -59,7 +60,9 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const { openModal } = useModal();
-    const { i, value, price, amount } = row.props
+    const { props, section: { coreDetail: { entityDetail } } } = row;
+    const { i: budI, x: budX } = entityDetail;
+    const { i, x, value, price, amount } = props
     const digits = 2;
     async function onEdit() {
         if (editable === false) return;
@@ -76,17 +79,34 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     }
     if (value === undefined) return null;
     let cnEdit = editable === true ? 'cursor-pointer' : 'text-light';
-    return <div className="d-flex ps-3 py-2 align-items-stretch">
-        <div className="flex-grow-1">
-            <ViewSpec id={i} />
+    function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
+        if (bud === undefined) return null;
+        return <div>
+            <ViewSpec id={value} />
         </div>
-        <div className="text-end d-flex flex-column justify-content-end me-2">
-            <ViewValue caption={'单价'} value={price?.toFixed(digits)} />
-            <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />
-            <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
+    }
+    return <div className="py-2 align-items-stretch row">
+        <div className="col-4">
+            <div className="ps-3">
+                <ViewIdField bud={budI} value={i} />
+            </div>
+        </div>
+        <div className="col-4">
+            <div className="ps-3">
+                <ViewIdField bud={budX} value={x} />
+            </div>
+        </div>
+        <div className="col-3">
+            <div className="pe-3 text-end d-flex flex-column align-items-end">
+                <ViewValue caption={'单价'} value={price?.toFixed(digits)} />
+                <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />
+                <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
+            </div>
         </div >
-        <div className="text-end text-info d-flex flex-column">
-            <div className={'ps-2 pe-3 ' + cnEdit} onClick={onEdit}><FA name="pencil" fixWidth={true} /></div>
+        <div className="col-1">
+            <div className="text-end text-info d-flex flex-column ">
+                <div className={'ps-2 pe-3 ' + cnEdit} onClick={onEdit}><FA name="pencil" fixWidth={true} /></div>
+            </div>
         </div>
     </div >;
 }

@@ -5,6 +5,7 @@ import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
 import { EntityOptions } from './EntityOptions';
 import { BizPhraseType } from "uqs/UqDefault";
+import { contenFromDays } from "app/tool";
 
 export enum EnumBudType {
     none = 0,
@@ -30,6 +31,9 @@ export abstract class BudDataType {
     abstract get dataType(): string;
     fromSchema(schema: any) { }
     scan(biz: Biz) { }
+    valueToContent(value: string | number) {
+        return value;
+    }
 }
 
 abstract class BudDataNumber extends BudDataType {
@@ -98,6 +102,10 @@ export class BudCheck extends BudOptions {
 }
 export class BudDate extends BudDataNumber {
     type = EnumBudType.date;
+    valueToContent(value: string | number) {
+        let v = value as number;
+        return contenFromDays(v);
+    }
 }
 export class BudDateTime extends BudDataNumber {
     type = EnumBudType.datetime;

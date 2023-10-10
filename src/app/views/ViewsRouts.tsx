@@ -26,8 +26,6 @@ function RoutesContainer({ children }: { children: React.ReactNode; }) {
     </Suspense>;
 }
 
-
-
 export function ViewsRoutes() {
     let uqApp = useUqApp();
     let { user: atomUser, atomSiteLogined, pathLogin } = uqApp;
