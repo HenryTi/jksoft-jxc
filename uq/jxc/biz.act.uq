@@ -110,10 +110,10 @@ Biz Act DelAtom (
 }
 
 Biz Ac SaveSpec ver 0.2 (
-    spec CHAR(100),
+    spec ID,
     base ID,
-    keys TEXT,              -- {"k1": v1, "k2": v2}
-    props TEXT,             -- {"p1": p1, "p2": p2}
+    keys JSON,              -- {"k1": v1, "k2": v2}
+    props JSON,             -- {"p1": p1, "p2": p2}
 )
 RETURNS ret (
     id ID,
@@ -121,8 +121,7 @@ RETURNS ret (
     VAR me ID = Me();
     VAR id ID;
     VAR sql CHAR(500);
-    VAR specPhraseId ID = PhraseId(spec);
-    SET sql=CONCAT('call `$site`.`', $site, '.', specPhraseId, '$s`(?,?,?,?,?);');
+    SET sql=CONCAT('call `$site`.`', $site, '.', spec, '$s`(?,?,?,?,?);');
     ExecSql sql to id USING $site, me, BudId(base, spec), keys, props;
     INTO ret SELECT id;
 }

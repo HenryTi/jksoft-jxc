@@ -195,22 +195,6 @@ export abstract class UqAppBase<UQS = any> {
     protected loadOnLogined(): Promise<void> {
         return;
     }
-
-    /*
-    private readonly objects = new Map<new (uqApp: any) => any, any>();
-    objectOf<T, A extends UqAppBase>(constructor: new (uqApp: A) => T) {
-        let ret = this.objects.get(constructor) as T;
-        if (ret === undefined) {
-            ret = new constructor(this as any);
-            this.objects.set(constructor, ret);
-            this.onObjectBuilt(ret);
-        }
-        return ret;
-    }
-
-    protected onObjectBuilt(object: any) {
-    }
-    */
 }
 
 class LocalStorageDb extends LocalDb {

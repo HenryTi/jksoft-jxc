@@ -11,7 +11,7 @@ export function PageUpload({ content }: { content: string; }) {
     async function onComplie() {
         const { uqMan, biz } = uqApp;
         let { uqApi } = uqMan;
-        let { schemas, logs, hasError } = await uqApi.compileOverride(content);
+        let { schemas, logs, hasError } = await uqApi.compile(content);
         let allSchemas: any;
         let top: any;
         function Top({ children, icon, color }: { icon: string; color: string; children: React.ReactNode }) {

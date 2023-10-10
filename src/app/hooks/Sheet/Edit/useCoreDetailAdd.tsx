@@ -9,7 +9,7 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
     const { openModal } = useModal();
     const pick = usePick();
     const { entityDetail } = coreDetail;
-    const { pend, i: item } = entityDetail;
+    const { pend, i, x } = entityDetail;
 
     // if no detailSection add new, else edit
     async function addNewFromPend() {
@@ -80,14 +80,21 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
 
     // if no detailSection add new, else edit
     async function addNewDirect() {
-        let ret = await pick(item);
-        if (ret === undefined) return;
-        let { spec } = ret;
-
         let section = new Section(coreDetail);
-        coreDetail.addSection(section);
         let row = new Row(section);
+        let retI = await pick(i);
+        if (retI === undefined) return;
+        let { spec } = retI;
         row.props.i = spec;
+
+        if (x !== undefined) {
+            let retX = await pick(x);
+            if (retX === undefined) return;
+            let { spec } = retX;
+            row.props.x = spec;
+        }
+
+        coreDetail.addSection(section);
         await openModal(<ModalInputRow row={row} />);
         await row.addToSection();
     }

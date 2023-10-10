@@ -82,17 +82,17 @@ RETURNS CHAR(200) {
 
 FUNC BudId ver 0.1 (
     base ID,                -- any ID, if null then $site
-    phrase Phrase,
+    phrase ID,
 ) 
 RETURNS ID {
-    VAR phraseId ID;
+    /* VAR phraseId ID;
     SET phraseId = (SELECT a.id 
         FROM BizPhrase as a 
 --            JOIN BizPhrase as b ON b.id=a.base
         WHERE a.name=phrase
 --         and b.base=$site
-    );
-    VAR budId ID = ID(Bud New KEY base=ifnull(base, $site), ext=phraseId);
+    ); */
+    VAR budId ID = ID(Bud New KEY base=ifnull(base, $site), ext=phrase);
     return budId;
 };
 

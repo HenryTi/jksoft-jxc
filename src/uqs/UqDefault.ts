@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Oct 08 2023 20:40:44 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Mon Oct 09 2023 10:05:22 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,13 +23,13 @@ export interface IX {
 
 export enum EnumID {
 	$phrase = '$phrase',
+	Bud = 'bud',
+	History = 'history',
 	Atom = 'atom',
 	Spec = 'spec',
 	Sheet = 'sheet',
 	Bin = 'bin',
 	Pend = 'pend',
-	Bud = 'bud',
-	History = 'history',
 	SumFormula = 'sumformula',
 	AtomUom = 'atomuom',
 	AtomSpec = 'atomspec',
@@ -206,90 +206,35 @@ export interface Result$AllPhrases {
 	detail: Return$AllPhrasesDetail[];
 }
 
-export enum BizPhraseType {
-	any = 0,
-	atom = 11,
-	spec = 12,
-	bud = 13,
-	sheet = 101,
-	main = 102,
-	detail = 103,
-	pend = 104,
-	detailAct = 111,
-	with = 151,
-	pick = 161,
-	role = 201,
-	permit = 202,
-	options = 301,
-	tree = 401,
-	tie = 501,
-	report = 601,
-	title = 901,
-	key = 1001,
-	prop = 1011,
-	optionsitem = 1031
+export interface IxBud extends IX {
+	i: number;
+	x: number;
 }
 
-export enum BudDataType {
-	none = 0,
-	int = 11,
-	atom = 12,
-	radio = 13,
-	check = 14,
-	ID = 19,
-	dec = 21,
-	char = 31,
-	str = 32,
-	date = 41
-}
-
-export enum BizBudFlag {
-	index = 1
-}
-
-export interface ParamGetBizObjects {
-	lang: string;
-	culture: string;
-}
-export interface ReturnGetBizObjectsObjs {
-	id: number;
-	phrase: string;
-	source: string;
-	caption: string;
-}
-export interface ReturnGetBizObjectsBuds {
-	id: number;
+export interface Bud extends ID {
 	base: number;
-	phrase: string;
-	caption: string;
-}
-export interface ResultGetBizObjects {
-	objs: ReturnGetBizObjectsObjs[];
-	buds: ReturnGetBizObjectsBuds[];
+	ext: number;
 }
 
-export interface ParamGetEntityCode {
-	id: number;
-}
-export interface ReturnGetEntityCodeRet {
-	code: string;
-	schema: string;
-}
-export interface ResultGetEntityCode {
-	ret: ReturnGetEntityCodeRet[];
+export interface BudInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	ext: number | ID;
 }
 
-export interface ParamCreateSiteForUser {
-	no: string;
-	ex: string;
-	tonwaUser: number;
+export interface History extends ID {
+	bud: number;
+	value: number;
+	ref: number;
+	plusMinus: number;
 }
-export interface ReturnCreateSiteForUserRet {
-	site: number;
-	userSite: number;
-}
-export interface ResultCreateSiteForUser {
-	ret: ReturnCreateSiteForUserRet[];
+
+export interface HistoryInActs extends ID {
+	ID?: UqID<any>;
+	bud: number | ID;
+	value: number;
+	ref: number | ID;
+	plusMinus: number;
 }
 
 export interface ParamSaveAtom {
@@ -339,10 +284,10 @@ export interface ResultDelAtom {
 }
 
 export interface ParamSaveSpec {
-	spec: string;
+	spec: number;
 	base: number;
-	keys: string;
-	props: string;
+	keys: any;
+	props: any;
 }
 export interface ReturnSaveSpecRet {
 	id: number;
@@ -641,6 +586,93 @@ export interface ResultGetSpecsFromBase {
 	ret: ReturnGetSpecsFromBaseRet[];
 }
 
+export enum BizPhraseType {
+	any = 0,
+	atom = 11,
+	spec = 12,
+	bud = 13,
+	sheet = 101,
+	main = 102,
+	detail = 103,
+	pend = 104,
+	detailAct = 111,
+	with = 151,
+	pick = 161,
+	role = 201,
+	permit = 202,
+	options = 301,
+	tree = 401,
+	tie = 501,
+	report = 601,
+	title = 901,
+	key = 1001,
+	prop = 1011,
+	optionsitem = 1031
+}
+
+export enum BudDataType {
+	none = 0,
+	int = 11,
+	atom = 12,
+	radio = 13,
+	check = 14,
+	ID = 19,
+	dec = 21,
+	char = 31,
+	str = 32,
+	date = 41
+}
+
+export enum BizBudFlag {
+	index = 1
+}
+
+export interface ParamGetBizObjects {
+	lang: string;
+	culture: string;
+}
+export interface ReturnGetBizObjectsObjs {
+	id: number;
+	phrase: string;
+	source: string;
+	caption: string;
+}
+export interface ReturnGetBizObjectsBuds {
+	id: number;
+	base: number;
+	phrase: string;
+	caption: string;
+	ex: any;
+}
+export interface ResultGetBizObjects {
+	objs: ReturnGetBizObjectsObjs[];
+	buds: ReturnGetBizObjectsBuds[];
+}
+
+export interface ParamGetEntityCode {
+	id: number;
+}
+export interface ReturnGetEntityCodeRet {
+	code: string;
+	schema: string;
+}
+export interface ResultGetEntityCode {
+	ret: ReturnGetEntityCodeRet[];
+}
+
+export interface ParamCreateSiteForUser {
+	no: string;
+	ex: string;
+	tonwaUser: number;
+}
+export interface ReturnCreateSiteForUserRet {
+	site: number;
+	userSite: number;
+}
+export interface ResultCreateSiteForUser {
+	ret: ReturnCreateSiteForUserRet[];
+}
+
 export interface ParamReportStorage {
 	key: string;
 	subject: string;
@@ -871,37 +903,6 @@ export interface PendInActs extends ID {
 	detail: number | ID;
 	mid: any;
 	value: number;
-}
-
-export interface IxBud extends IX {
-	i: number;
-	x: number;
-}
-
-export interface Bud extends ID {
-	base: number;
-	ext: number;
-}
-
-export interface BudInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-	ext: number | ID;
-}
-
-export interface History extends ID {
-	bud: number;
-	value: number;
-	ref: number;
-	plusMinus: number;
-}
-
-export interface HistoryInActs extends ID {
-	ID?: UqID<any>;
-	bud: number | ID;
-	value: number;
-	ref: number | ID;
-	plusMinus: number;
 }
 
 export enum SumFormulaType {
@@ -1278,14 +1279,14 @@ export interface ResultGetUomI {
 
 export interface ParamActs {
 	$phrase?: $phraseInActs[];
+	ixBud?: IxBud[];
+	bud?: BudInActs[];
+	history?: HistoryInActs[];
 	atom?: AtomInActs[];
 	spec?: SpecInActs[];
 	sheet?: SheetInActs[];
 	bin?: BinInActs[];
 	pend?: PendInActs[];
-	ixBud?: IxBud[];
-	bud?: BudInActs[];
-	history?: HistoryInActs[];
 	sumFormula?: SumFormulaInActs[];
 	atomUom?: AtomUomInActs[];
 	atomSpec?: AtomSpecInActs[];
@@ -1311,9 +1312,9 @@ export interface UqExt extends Uq {
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
 	$AllPhrases: UqQuery<Param$AllPhrases, Result$AllPhrases>;
-	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
-	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
-	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
+	IxBud: UqIX<any>;
+	Bud: UqID<any>;
+	History: UqID<any>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
 	SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
 	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
@@ -1335,6 +1336,9 @@ export interface UqExt extends Uq {
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
 	GetSpecsFromBase: UqQuery<ParamGetSpecsFromBase, ResultGetSpecsFromBase>;
+	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
+	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
+	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
 	ReportStorage: UqQuery<ParamReportStorage, ResultReportStorage>;
 	ReportStorageAtom: UqQuery<ParamReportStorageAtom, ResultReportStorageAtom>;
 	ReportStorageSpec: UqQuery<ParamReportStorageSpec, ResultReportStorageSpec>;
@@ -1349,9 +1353,6 @@ export interface UqExt extends Uq {
 	Sheet: UqID<any>;
 	Bin: UqID<any>;
 	Pend: UqID<any>;
-	IxBud: UqIX<any>;
-	Bud: UqID<any>;
-	History: UqID<any>;
 	SumFormula: UqID<any>;
 	SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
 	SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
@@ -1831,192 +1832,93 @@ export const uqSchema={
             }
         ]
     },
-    "bizphrasetype": {
-        "name": "BizPhraseType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "any": 0,
-            "atom": 11,
-            "spec": 12,
-            "bud": 13,
-            "sheet": 101,
-            "main": 102,
-            "detail": 103,
-            "pend": 104,
-            "detailAct": 111,
-            "with": 151,
-            "pick": 161,
-            "role": 201,
-            "permit": 202,
-            "options": 301,
-            "tree": 401,
-            "tie": 501,
-            "report": 601,
-            "title": 901,
-            "key": 1001,
-            "prop": 1011,
-            "optionsitem": 1031
-        }
-    },
-    "buddatatype": {
-        "name": "BudDataType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "none": 0,
-            "int": 11,
-            "atom": 12,
-            "radio": 13,
-            "check": 14,
-            "ID": 19,
-            "dec": 21,
-            "char": 31,
-            "str": 32,
-            "date": 41
-        }
-    },
-    "bizbudflag": {
-        "name": "BizBudFlag",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "index": 1
-        }
-    },
-    "getbizobjects": {
-        "name": "GetBizObjects",
-        "type": "query",
+    "ixbud": {
+        "name": "IxBud",
+        "type": "ix",
         "private": false,
         "sys": true,
         "fields": [
             {
-                "name": "lang",
-                "type": "char",
-                "size": 10
+                "name": "i",
+                "type": "id"
             },
             {
-                "name": "culture",
-                "type": "char",
-                "size": 10
+                "name": "x",
+                "type": "id"
             }
         ],
-        "returns": [
-            {
-                "name": "objs",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "source",
-                        "type": "text"
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            },
-            {
-                "name": "buds",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            }
-        ]
+        "ixx": false,
+        "hasSort": false,
+        "xType": 0
     },
-    "getentitycode": {
-        "name": "GetEntityCode",
-        "type": "query",
+    "bud": {
+        "name": "Bud",
+        "type": "id",
         "private": false,
         "sys": true,
         "fields": [
             {
                 "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "ext",
                 "type": "id"
             }
         ],
-        "returns": [
+        "keys": [
             {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "code",
-                        "type": "text"
-                    },
-                    {
-                        "name": "schema",
-                        "type": "text"
-                    }
-                ]
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "ext",
+                "type": "id"
             }
-        ]
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
     },
-    "createsiteforuser": {
-        "name": "CreateSiteForUser",
-        "type": "action",
+    "history": {
+        "name": "History",
+        "type": "id",
         "private": false,
         "sys": true,
         "fields": [
             {
-                "name": "no",
-                "type": "char",
-                "size": 30
+                "name": "id",
+                "type": "id",
+                "null": false
             },
             {
-                "name": "ex",
-                "type": "char",
-                "size": 200
-            },
-            {
-                "name": "tonwaUser",
+                "name": "bud",
                 "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            },
+            {
+                "name": "ref",
+                "type": "id"
+            },
+            {
+                "name": "plusMinus",
+                "type": "tinyint"
             }
         ],
-        "jsoned": true,
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "site",
-                        "type": "id"
-                    },
-                    {
-                        "name": "userSite",
-                        "type": "id"
-                    }
-                ]
-            }
-        ]
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
     },
     "saveatom": {
         "name": "SaveAtom",
@@ -2154,8 +2056,7 @@ export const uqSchema={
         "fields": [
             {
                 "name": "spec",
-                "type": "char",
-                "size": 100
+                "type": "id"
             },
             {
                 "name": "base",
@@ -2163,11 +2064,11 @@ export const uqSchema={
             },
             {
                 "name": "keys",
-                "type": "text"
+                "type": "json"
             },
             {
                 "name": "props",
-                "type": "text"
+                "type": "json"
             }
         ],
         "jsoned": true,
@@ -3113,6 +3014,197 @@ export const uqSchema={
             }
         ]
     },
+    "bizphrasetype": {
+        "name": "BizPhraseType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "any": 0,
+            "atom": 11,
+            "spec": 12,
+            "bud": 13,
+            "sheet": 101,
+            "main": 102,
+            "detail": 103,
+            "pend": 104,
+            "detailAct": 111,
+            "with": 151,
+            "pick": 161,
+            "role": 201,
+            "permit": 202,
+            "options": 301,
+            "tree": 401,
+            "tie": 501,
+            "report": 601,
+            "title": 901,
+            "key": 1001,
+            "prop": 1011,
+            "optionsitem": 1031
+        }
+    },
+    "buddatatype": {
+        "name": "BudDataType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "none": 0,
+            "int": 11,
+            "atom": 12,
+            "radio": 13,
+            "check": 14,
+            "ID": 19,
+            "dec": 21,
+            "char": 31,
+            "str": 32,
+            "date": 41
+        }
+    },
+    "bizbudflag": {
+        "name": "BizBudFlag",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "index": 1
+        }
+    },
+    "getbizobjects": {
+        "name": "GetBizObjects",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "lang",
+                "type": "char",
+                "size": 10
+            },
+            {
+                "name": "culture",
+                "type": "char",
+                "size": 10
+            }
+        ],
+        "returns": [
+            {
+                "name": "objs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "source",
+                        "type": "text"
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            },
+            {
+                "name": "buds",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    },
+                    {
+                        "name": "ex",
+                        "type": "json"
+                    }
+                ]
+            }
+        ]
+    },
+    "getentitycode": {
+        "name": "GetEntityCode",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "code",
+                        "type": "text"
+                    },
+                    {
+                        "name": "schema",
+                        "type": "text"
+                    }
+                ]
+            }
+        ]
+    },
+    "createsiteforuser": {
+        "name": "CreateSiteForUser",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "tonwaUser",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "site",
+                        "type": "id"
+                    },
+                    {
+                        "name": "userSite",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
     "reportstorage": {
         "name": "ReportStorage",
         "type": "query",
@@ -3859,94 +3951,6 @@ export const uqSchema={
                 "type": "id"
             }
         ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "ixbud": {
-        "name": "IxBud",
-        "type": "ix",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "i",
-                "type": "id"
-            },
-            {
-                "name": "x",
-                "type": "id"
-            }
-        ],
-        "ixx": false,
-        "hasSort": false,
-        "xType": 0
-    },
-    "bud": {
-        "name": "Bud",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "ext",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "ext",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "history": {
-        "name": "History",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "bud",
-                "type": "id"
-            },
-            {
-                "name": "value",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            },
-            {
-                "name": "ref",
-                "type": "id"
-            },
-            {
-                "name": "plusMinus",
-                "type": "tinyint"
-            }
-        ],
-        "keys": [] as any,
         "global": false,
         "idType": 3,
         "isMinute": true

@@ -106,16 +106,20 @@ export class UqApi extends ApiBase {
         return ret;
     }
 
-    async compileOverride(source: string): Promise<any> {
+    async compile(source: string): Promise<any> {
         let ret = await this.post('compile/override', { source });
-        return ret;
-    }
-    async compileAppend(source: string): Promise<any> {
-        let ret = await this.post('compile/append', { source });
         return ret;
     }
     async compileEntity(id: number, code: string): Promise<any> {
         let ret = await this.post('compile/entity', { id, code });
+        return ret;
+    }
+    async renameEntity(id: number, name: string): Promise<any> {
+        let ret = await this.post('compile/rename', { id, name });
+        return ret;
+    }
+    async delEntity(id: number): Promise<any> {
+        let ret = await this.post('compile/del-entity', { id });
         return ret;
     }
     async biz(): Promise<any> {

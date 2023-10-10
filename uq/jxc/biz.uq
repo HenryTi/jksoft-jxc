@@ -308,3 +308,24 @@ RETURNS ret (
     WITH $UserSite ID to userSite KEY(site, user) SET admin=3;
     INTO ret SELECT site, userSite;
 }
+
+PROC RenameEntity(
+    id ID,
+    name PHRASE,
+    code TEXT,
+)
+RETURNS ret (
+    OK TINYINT,
+) {
+    IF EXISTS(SELECT a.id FROM BizPhrase as a WHERE a.name=name AND a.id<>id) {
+        RETURN;
+    }
+    VAR oldName PHRASE = a.name FROM BizPhrase as a WHERE a.id=id;
+    SET @oldName=oldName;
+    /-mysql
+    UPDATE bizphrase SET name=_name WHERE id=_id;
+    UPDATE bizphrase SET name=CONCAT(_name, SUBSTR(name, length(@oldname)+1)) WHERE name LIKE CONCAT(@oldname, '.%');
+    UPDATE bizobject SET source=_code WHERE id=_id;
+    -/
+    INTO ret SELECT 1 as OK;
+}

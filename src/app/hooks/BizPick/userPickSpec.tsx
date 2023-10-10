@@ -41,7 +41,7 @@ export function usePickSpec() {
         }
 
         function PagePickSpec() {
-            const { caption, name, keys, props } = entitySpec;
+            const { id: entityId, caption, name, keys, props } = entitySpec;
             const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
             const submitCaption = '提交';
             const submitClassName: string = undefined;
@@ -63,10 +63,10 @@ export function usePickSpec() {
                     propValues[name] = data[name];
                 }
                 const param: ParamSaveSpec = {
-                    spec: name,
+                    spec: entityId,
                     base,
-                    keys: JSON.stringify(keyValues),
-                    props: JSON.stringify(propValues),
+                    keys: keyValues,
+                    props: propValues,
                 };
                 let results = await uq.SaveSpec.submit(param);
                 const { id } = results;

@@ -117,7 +117,26 @@ export class Biz {
             [this.roles, '角色', 'user-o'],
             [this.permits, '许可', 'user'],
         );
+        this.refresh();
+    }
+
+    refresh() {
         setAtomValue(this._refresh, !getAtomValue(this._refresh));
+    }
+
+    delEntity(entity: Entity) {
+        this.entities[entity.name];
+        this.entityIds[entity.id];
+        for (let arr of this.all) {
+            const [entities] = arr;
+            for (let i = 0; i < entities.length; i++) {
+                if (entities[i] === entity) {
+                    entities.splice(i, 1);
+                    break;
+                }
+            }
+        }
+        this.refresh();
     }
 
     private buildRootAtoms() {

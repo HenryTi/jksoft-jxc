@@ -4,25 +4,25 @@ import { Biz } from "./Biz";
 export class BizBase {
     readonly biz: Biz;
     readonly uq: UqExt;
-    readonly name: string;
     readonly type: string;
+    private _name: string;
     id: number;
     phrase: string;
     caption: string;
     bizPhraseType: BizPhraseType;
+    get name(): string { return this._name; }
 
     constructor(biz: Biz, id: number, name: string, type: string) {
         this.biz = biz;
         this.uq = biz.uq;
         this.id = id;
-        this.name = name;
+        this._name = name;
         this.type = type;
     }
-    /*
-    get phrase() {
-        return `${this.type}.${this.name}`;
+
+    setName(name: string) {
+        this._name = name;
     }
-    */
 
     fromSchema(schema: any) {
         for (let i in schema) {

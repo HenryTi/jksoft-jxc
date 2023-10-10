@@ -19,7 +19,7 @@ export function ModalInputRow({ row }: { row: Row; }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { props, section } = row;
-    const { i } = props;
+    const { i, x } = props;
     const { current: fields } = useRef<[string, number, BizBud, (value: number) => void, Cell][]>([]);
     const [calc, setCalc] = useState<Calc>();
     useEffectOnce(() => {
@@ -102,6 +102,12 @@ export function ModalInputRow({ row }: { row: Row; }) {
                 <Band>
                     <ViewSpec id={i} />
                 </Band>
+                {
+                    x &&
+                    <Band>
+                        <ViewSpec id={i} />
+                    </Band>
+                }
             </div>
             <form className="container" onSubmit={handleSubmit(onSubmit)}>
                 <FormRowsView rows={formRows} register={register} errors={errors} />

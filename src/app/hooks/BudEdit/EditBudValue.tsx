@@ -27,11 +27,19 @@ function EditBudValue(props: EditBudProps & { type: string; step?: string; conve
         });
         setValue(ret);
     }
+    let content: any = value;
+    if (ex !== undefined) {
+        const { format } = ex;
+        if (format !== undefined) {
+            let f: string = format;
+            content = f.replace('{value}', value ? String(value) : '?');
+        }
+    }
     return <LabelRowEdit label={label}
         readonly={readonly}
         onEditClick={onEditClick}
     >
-        {value}
+        {content}
     </LabelRowEdit>;
 }
 
@@ -66,7 +74,7 @@ export function EditBudDec(props: EditBudProps) {
             str: undefined as string,
         }
     }
-    let step: string;
+    let step: string = '0.000001';
     if (ex !== undefined) {
         let { fraction } = ex;
         step = String(1 / Math.pow(10, fraction));
@@ -92,6 +100,7 @@ export function EditBudDate(props: EditBudProps) {
         }
     }, []);
     const fromBudValue = useCallback(function (days: number) {
+        if (days === undefined) return '';
         let date = fromDays(days);
         let ret = date.toISOString();
         let p = ret.indexOf('T');

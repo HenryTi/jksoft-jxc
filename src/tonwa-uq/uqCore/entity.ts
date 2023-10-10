@@ -244,7 +244,7 @@ export abstract class Entity {
         }
         let ret = dt.toISOString();
         let p = ret.indexOf('T');
-        return p > 0 ? ret.substr(0, p) : ret;
+        return p > 0 ? ret.substring(0, p) : ret;
     }
 
     pack(data: any): string {
