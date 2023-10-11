@@ -281,6 +281,7 @@ Biz AC SubmitSheet(
     ExecSql sql USING $site, me, id;
 
     WITH IxState I=me X=id DEL;
+    WITH IxState I=id X=phraseId;
 };
 
 -- atomId is null, then Atom of phrase

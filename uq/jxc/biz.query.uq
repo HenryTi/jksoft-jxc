@@ -164,6 +164,7 @@ RETURNS ret (
     INTO ret SELECT phrase, count(a.id) as count
         FROM Sheet as a
             JOIN BizPhrase as b ON b.id=a.base
+            JOIN IxState as c ON c.i=a.id AND c.x=a.base
         WHERE b.base=$site AND a.id>=uminute_from_time(from, timeZone) AND a.id<uminute_from_time(to, timeZone)
         GROUP BY b.id as phrase;
 };
@@ -179,6 +180,7 @@ PAGE (
         FROM Sheet as a
             JOIN Bin as b ON b.id=a.id
             JOIN BizPhrase as c ON c.id=a.base
+            JOIN IxState as d ON d.i=a.id AND d.x=a.base
         WHERE a.base=phrase AND a.id>$pageStart AND c.base=$site
         ORDER BY a.id ASC
         LIMIT $pageSize;
