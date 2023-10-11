@@ -78,9 +78,9 @@ export function List<T>(props: ListProps<T>) {
         else {
             renderItem = (v, index, key) => (
                 <div className="form-check mx-3">
-                    <input type="checkbox" className=" mt-2 form-check-input" id={key}
+                    <input type="checkbox" className="mt-2 form-check-input" id={key}
                         onChange={evt => onCheckChange(v, evt)} />
-                    <label className="form-check-label" htmlFor={key}>
+                    <label className="form-check-label w-100 ms-1" htmlFor={key}>
                         <ItemView value={v} index={index} />
                     </label>
                 </div>

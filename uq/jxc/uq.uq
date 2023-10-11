@@ -1,6 +1,6 @@
 -- UQ2 only support ID, IDX, IX
 -- UQ2 [bizdev]/[jxc] version='0.01' author='henry';
-UQ2 [jksoft]/[jksoft-mini-jxc-trial] version='0.53' author='henry' {
+UQ2 [jksoft]/[jksoft-mini-jxc-trial] version='0.55' author='henry' {
     SCHEDULE CalcSource REPEAT -1 INTERVAL 1;
     SCHEDULE CalcGroup REPEAT -1 INTERVAL 1;
 }

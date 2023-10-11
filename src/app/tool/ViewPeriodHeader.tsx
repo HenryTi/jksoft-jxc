@@ -1,7 +1,6 @@
 import { FA } from "tonwa-com";
-import { EnumPeriod, Period, usePeriod } from "./Period";
+import { EnumPeriod, Period } from "./Period";
 import { useAtomValue } from "jotai";
-import { useEffect } from "react";
 
 const cnColPeriod = "col text-center border-start border-end";
 const cnPeriod = " py-2 px-3 ";

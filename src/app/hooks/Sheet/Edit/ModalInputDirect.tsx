@@ -5,7 +5,7 @@ import { Page, useModal } from "tonwa-app";
 import { ChangeEvent, useRef, useState } from "react";
 import { Row } from "./SheetStore";
 import { ButtonAsync, FA, useEffectOnce } from "tonwa-com";
-import { BizBud } from "app/Biz";
+import { BizBud, EnumBudType } from "app/Biz";
 import { Calc, Cell } from "../../Calc";
 import { useAtomValue } from "jotai";
 import { useUqApp } from "app/UqApp";
@@ -54,13 +54,26 @@ export function ModalInputRow({ row }: { row: Row; }) {
         function buildFormRows(): FormRow[] {
             return fields.map(v => {
                 const [fieldName, value, bud, , cell] = v;
-                const { name, caption, defaultValue } = bud;
-                return {
+                const { name, caption, budDataType: { type }, defaultValue } = bud;
+                let ret = {
                     name: fieldName,
                     label: caption ?? name,
                     type: 'number',
                     options: { value, disabled: cell.fixed }
-                };
+                } as any;
+                if (type === EnumBudType.dec) {
+                    const { ex } = bud;
+                    let step: string = '0.000001';
+                    if (ex !== undefined) {
+                        const { fraction } = ex;
+                        if (ex !== undefined) {
+                            let { fraction } = ex;
+                            step = String(1 / Math.pow(10, fraction));
+                        }
+                    }
+                    ret.step = step;
+                }
+                return ret;
             });
         }
         async function onChange(evt: ChangeEvent<HTMLInputElement>) {

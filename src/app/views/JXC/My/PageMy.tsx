@@ -1,13 +1,14 @@
 import { Route } from "react-router-dom";
 import { Page } from "tonwa-app";
-import { ViewPeriodHeader } from "./ViewPeriodHeader";
 import { ViewBalances } from "./ViewBalances";
 import { useUqApp } from "app/UqApp";
 import { List, getAtomValue, useEffectOnce } from "tonwa-com";
 import { useState } from "react";
 import { ReturnGetMyBalanceRet, ReturnGetMySumsRet } from "uqs/UqDefault";
-import { Period, usePeriod } from "./Period";
+// import { Period, usePeriod } from "../../../tool/Period";
 import { pathMy } from "app/views/pathes";
+import { Period, usePeriod } from "app/tool/Period";
+import { ViewPeriodHeader } from "app/tool";
 
 export function PageMy() {
     const { uq } = useUqApp();

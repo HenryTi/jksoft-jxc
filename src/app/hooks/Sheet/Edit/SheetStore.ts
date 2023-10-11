@@ -28,10 +28,12 @@ abstract class BaseObject extends KeyIdObject {
 
 export class SheetMain extends BaseObject {
     readonly entityMain: EntityBin;
-    readonly _i = atom<number>(0);         // _ 开始，表示 atom
-    readonly _id = atom<number>(0);
-    get id() { return getAtomValue(this._id); }
+    readonly _binRow = atom<BinRow>({} as BinRow);
+    // readonly _i = atom<number>(0);         // _ 开始，表示 atom
+    // readonly _id = atom<number>(0);
+    // get id() { return getAtomValue(this._id); }
     no: string;
+    get binRow() { return getAtomValue(this._binRow) }
 
     constructor(sheetStore: SheetStore) {
         super(sheetStore);
@@ -40,34 +42,35 @@ export class SheetMain extends BaseObject {
 
     // return: true: new sheet created
     async start(pick: PickFunc) {
-        let { id } = this;
+        const row = this.binRow;
+        const { id } = row;
         if (id > 0) return;
-        await this.pickTarget(pick);
-        let i = getAtomValue(this._i);
-        if (i > 0) {
-            return await this.createIfNotExists();
+        const { i, x } = this.entityMain;
+        if (i !== undefined) {
+            let ret = await pick(i);
+            if (ret === undefined) return;
+            let { spec } = ret;
+            row.i = spec;
         }
-    }
-
-    async pickTarget(pick: PickFunc) {
-        const { i } = this.entityMain;
-        if (i === undefined) return;
-        let ret = await pick(i);
-        if (ret === undefined) return;
-        let { spec } = ret;
-        setAtomValue(this._i, spec);
+        if (x !== undefined) {
+            let ret = await pick(x);
+            if (ret === undefined) return;
+            let { spec } = ret;
+            row.x = spec;
+        }
+        setAtomValue(this._binRow, row);
+        return await this.createIfNotExists();
     }
 
     async createIfNotExists() {
-        let sheetId = getAtomValue(this._id);
-        let i = getAtomValue(this._i);
+        const row = this.binRow;
+        let { id: sheetId, i } = row;
         if (sheetId > 0) return {
             id: sheetId,
             no: this.no,
             i,
         };
         const { uq, entitySheet } = this.sheetStore;
-        // let no = await uq.IDNO({ ID: uq.Sheet });
         let ret = await uq.SaveSheet.submit({
             phrase: entitySheet.id,
             no: undefined,
@@ -78,16 +81,21 @@ export class SheetMain extends BaseObject {
             amount: undefined,
         });
         let { id, no } = ret;
-        setAtomValue(this._id, id);
+        row.id = id;
+        setAtomValue(this._binRow, { ...row });
         this.no = no;
         return Object.assign(ret, { i });
     }
 
     setValue(value: any) {
-        const { id, no, i } = value;
+        const { no } = value;
         this.no = no;
-        setAtomValue(this._id, id);
-        setAtomValue(this._i, i);
+        setAtomValue(this._binRow, value);
+    }
+
+    setId(id: number) {
+        let row = this.binRow;
+        setAtomValue(this._binRow, { ...row, id });
     }
 }
 
@@ -216,7 +224,7 @@ export class Row extends BaseObject {
             throw new Error(err);
         }
         const { id } = await uq.SaveDetail.submit({
-            base: main.id,
+            base: main.binRow.id,
             phrase: this.section.coreDetail.entityDetail.id,
             ...this.props,
         });
@@ -304,7 +312,7 @@ export class SheetStore extends KeyIdObject {
         this.main = new SheetMain(this);
         if (id > 0) {
             this.idOnUrl = id;
-            setAtomValue(this.main._id, id);
+            this.main.setId(id);
         }
         const { details } = this.entitySheet;
         let len = details.length;
@@ -320,7 +328,7 @@ export class SheetStore extends KeyIdObject {
     }
 
     async load() {
-        let { id } = this.main;
+        let { id } = this.main.binRow;
         if (id === undefined || id === 0) return;
         let { main, details } = await this.uq.GetSheet.query({ id, detail: undefined });
         this.main.setValue(main[0]);
@@ -329,7 +337,7 @@ export class SheetStore extends KeyIdObject {
 
     async discard() {
         // 作废草稿单据
-        let { id } = this.main;
+        let { binRow: { id } } = this.main;
         if (id >= 0) {
             await this.uq.RemoveDraft.submit({ id });
             return id;

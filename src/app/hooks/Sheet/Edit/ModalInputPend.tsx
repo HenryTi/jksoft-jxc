@@ -69,19 +69,23 @@ export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
     const digits = 2;
     function ViewPendRow({ value: pendRow }: { value: PendRow }) {
         const { detail: { i, price, amount, value } } = pendRow;
-        return <div className="container">
-            <div className="row">
-                <div className="col py-2">
+        return <div className="d-flex w-100">
+            <div className="">
+                <div className="py-2">
                     <ViewSpec id={i} />
                 </div>
-                <div className="col py-2 text-break">{JSON.stringify(pendRow)}</div>
-                <div className="col py-2 d-flex flex-column align-items-end me-2">
-                    <ViewValue caption={'单价'} value={price.toFixed(digits)} />
-                    <ViewValue caption={'金额'} value={amount.toFixed(digits)} />
-                    <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
-                </div >
             </div>
-        </div>;
+            <div className="flex-grow-1" />
+            <div className="">
+                <div className="py-2 d-flex flex-column align-items-end">
+                    <ViewValue caption={'单价'} value={price?.toFixed(digits)} />
+                    <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />
+                    <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
+                </div>
+            </div >
+        </div>
+            ;
+        // <div className="col py-2 text-break">{JSON.stringify(pendRow)}</div>
     }
     function onItemSelect(item: PendRow, isSelected: boolean) {
         const { pend } = item;

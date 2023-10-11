@@ -1,5 +1,5 @@
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
-import { SheetStore, useSheetStore } from "./SheetStore";
+import { SheetStore } from "./SheetStore";
 import { PickFunc, usePick } from "app/hooks/BizPick";
 import { ButtonAsync, FA, LMR, from62, getAtomValue, to62, useEffectOnce, wait } from "tonwa-com";
 import { ViewMain } from "./ViewMain";
@@ -105,7 +105,7 @@ function PageStore({ store }: { store: SheetStore; }) {
     async function onSubmit() {
         setEditable(false);
         await wait(3000);
-        let retSubmit = await uq.SubmitSheet.submit({ id: main.id })
+        let retSubmit = await uq.SubmitSheet.submit({ id: main.binRow.id })
         removeSheetFromCache();
         setEditable(true);
         uqApp.autoRefresh?.();
@@ -128,7 +128,7 @@ function PageStore({ store }: { store: SheetStore; }) {
     }
 
     function removeSheetFromCache() {
-        let { id } = main;
+        let { binRow: { id } } = main;
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (data) {
             data.removeItem<{ id: number; }>(v => v.id === id) as any;
@@ -158,7 +158,7 @@ function PageStore({ store }: { store: SheetStore; }) {
         cnAdd = 'btn btn-outline-primary me-3';
     }
     let content: any;
-    let id = useAtomValue(main._id);
+    let { id } = useAtomValue(main._binRow);
     async function startInputDetail() {
         let ret = await start();
         if (ret === undefined) {

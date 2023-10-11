@@ -58,17 +58,12 @@ Biz Bin 入库单明细 ver 0.2 {
     Pend 待入库账 '待入库商品' {
         SEARCH I;
     };      -- 从某个待处理账来
-    I '商品' = Pend.i;            
-    Value := Pend.value;
+    I '商品' = Pend.i;
+    Value '数量' := Pend.value;
     ACT {
         Biz Pend -= value;
     };
 }
-
-
-
-
-
 
 Biz Sheet SheetSale '销售单' {
     Main MainSale;

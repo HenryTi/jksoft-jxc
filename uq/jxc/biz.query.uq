@@ -151,3 +151,35 @@ RETURNS ret (
             AND b.base=sheetId
         ORDER BY b.id ASC;
 };
+
+Biz Query GetSiteSheets (
+    from DATE,
+    to DATE,
+    timeZone TINYINT,
+)
+RETURNS ret (
+    phrase ID,
+    count INT,
+ ) {
+    INTO ret SELECT phrase, count(a.id) as count
+        FROM Sheet as a
+            JOIN BizPhrase as b ON b.id=a.base
+        WHERE b.base=$site AND a.id>=uminute_from_time(from, timeZone) AND a.id<uminute_from_time(to, timeZone)
+        GROUP BY b.id as phrase;
+};
+
+Biz Query GetSiteSheetList (
+    phrase ID,
+)
+PAGE (
+    * SHEET ASC,
+    * Bin,
+) {
+    PAGE SELECT * a, * b
+        FROM Sheet as a
+            JOIN Bin as b ON b.id=a.id
+            JOIN BizPhrase as c ON c.id=a.base
+        WHERE a.base=phrase AND a.id>$pageStart AND c.base=$site
+        ORDER BY a.id ASC
+        LIMIT $pageSize;
+};

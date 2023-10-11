@@ -8,6 +8,7 @@ import { EntityReport } from "app/Biz";
 import { path } from "app/tool";
 import { PageRef } from "app/hooks/Report";
 import { pathReportCenter } from "app/views/pathes";
+import { PageSheets, headerSheets } from "./PageSheets";
 
 function PageReportCenter() {
     const { biz } = useUqApp();
@@ -23,6 +24,10 @@ function PageReportCenter() {
 
     return <Page header="报表中心">
         <div className="mb-3">
+            <Link to={`../${pathSheets}`}>
+                <div className="px-3 py-3">{headerSheets}</div>
+            </Link>
+            <Sep />
             {reports.map(v => {
                 return <React.Fragment key={v.id}>
                     <ViewItemReport value={v} />
@@ -38,6 +43,8 @@ function PageReport() {
     return page;
 }
 
+const pathSheets = 'sheets';
+
 export function routeReportCenter() {
     const n = ':report';
     return <>
@@ -45,5 +52,6 @@ export function routeReportCenter() {
         <Route path={pathReport(n)} element={<PageReport />} />
         <Route path={path('history', 'title', 'id')} element={<PageHistory />} />
         <Route path={path('ref', undefined, 'id')} element={<PageRef />} />
+        <Route path={path(pathSheets, undefined, undefined)} element={<PageSheets />} />
     </>;
 }
