@@ -1,14 +1,14 @@
 import { UqApp, useUqApp } from "app/UqApp";
 import { Link, Route } from "react-router-dom";
 import { Page } from "tonwa-app";
-import { PageHistory, pathReport, useReport } from "app/hooks";
+import { PageHistory, PageSheetList, PageSheets, pathReport, pathSheetRef, pathSheets, pathSheetsList, useReport } from "app/hooks";
 import React from "react";
 import { Sep } from "tonwa-com";
 import { EntityReport } from "app/Biz";
 import { path } from "app/tool";
-import { PageRef } from "app/hooks/Report";
+import { PageRef, headerSheets } from "app/hooks";
 import { pathReportCenter } from "app/views/pathes";
-import { PageSheets, headerSheets } from "./PageSheets";
+// import { PageSheetList, PageSheets, headerSheets, pathSheetsList } from "../../../hooks/Report/PageSheets";
 
 function PageReportCenter() {
     const { biz } = useUqApp();
@@ -43,15 +43,15 @@ function PageReport() {
     return page;
 }
 
-const pathSheets = 'sheets';
-
 export function routeReportCenter() {
     const n = ':report';
     return <>
         <Route path={pathReportCenter} element={<PageReportCenter />} />
         <Route path={pathReport(n)} element={<PageReport />} />
         <Route path={path('history', 'title', 'id')} element={<PageHistory />} />
-        <Route path={path('ref', undefined, 'id')} element={<PageRef />} />
+        <Route path={path(pathSheetRef, 'id', 'd')} element={<PageRef />} />
+        <Route path={path(pathSheetRef, 'id', undefined)} element={<PageRef />} />
         <Route path={path(pathSheets, undefined, undefined)} element={<PageSheets />} />
+        <Route path={path(pathSheetsList, 'sheet62', undefined)} element={<PageSheetList />} />
     </>;
 }

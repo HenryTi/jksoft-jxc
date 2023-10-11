@@ -12,6 +12,22 @@ import { from62, getAtomValue, setAtomValue } from 'tonwa-com';
 import { atom } from 'jotai';
 import { EntityReport } from './EntityReport';
 
+enum EnumEntity {
+    sheet,
+    bin,
+    pend,
+    atom,
+    spec,
+    pick,
+    options,
+    report,
+    permit,
+    role,
+    title,
+    tree,
+    tie,
+};
+
 export class Biz {
     readonly uqApp: UqApp;
     readonly uq: UqExt;
@@ -57,31 +73,32 @@ export class Biz {
 
     buildEntities(bizSchema: any) {
         if (bizSchema === undefined) return;
-        const builders: { [type: string]: (id: number, name: string, type: string) => Entity } = {
-            sheet: this.buildSheet,
-            bin: this.buildBin,
-            pend: this.buildPend,
-            atom: this.buildAtom,
-            spec: this.buildSpec,
-            pick: this.buildPick,
-            options: this.buildOptions,
-            report: this.buildReport,
-            permit: this.buildPermit,
-            role: this.buildRole,
-            title: this.buildTitle,
-            tree: this.buildTree,
-            tie: this.buildTie,
+        const builders: { [type in EnumEntity]: (id: number, name: string, type: string) => Entity } = {
+            [EnumEntity.sheet]: this.buildSheet,
+            [EnumEntity.bin]: this.buildBin,
+            [EnumEntity.pend]: this.buildPend,
+            [EnumEntity.atom]: this.buildAtom,
+            [EnumEntity.spec]: this.buildSpec,
+            [EnumEntity.pick]: this.buildPick,
+            [EnumEntity.options]: this.buildOptions,
+            [EnumEntity.report]: this.buildReport,
+            [EnumEntity.permit]: this.buildPermit,
+            [EnumEntity.role]: this.buildRole,
+            [EnumEntity.title]: this.buildTitle,
+            [EnumEntity.tree]: this.buildTree,
+            [EnumEntity.tie]: this.buildTie,
         }
         for (let a of this.all) a[0].splice(0);
         this.all.splice(0);
         let $biz = bizSchema;
-        let arr: [Entity, any][] = [];
+        let arr: { [entity in EnumEntity]?: [Entity, any][]; } = {};
         this.entities = {};
         this.entityIds = {};
         for (let i in $biz) {
             let schema = ($biz as any)[i];
             let { id, name, phrase, type, caption } = schema;
-            let builder = builders[type];
+            let enumType = EnumEntity[type] as unknown as EnumEntity;
+            let builder = builders[enumType];
             if (builder === undefined) {
                 if (name === '$user' || name === '$unit') continue;
                 throw new Error(`unknown biz type='${type}' name='${name}' caption='${caption}'`);
@@ -92,13 +109,39 @@ export class Biz {
             if (name !== phrase) {
                 this.entities[phrase] = bizEntity;
             }
-            arr.push([bizEntity, schema]);
+            let entityArr = arr[enumType];
+            if (entityArr === undefined) {
+                entityArr = [];
+                arr[enumType] = entityArr;
+            }
+            entityArr.push([bizEntity, schema]);
         }
-        for (let [bizEntity, schema] of arr) {
-            bizEntity.fromSchema(schema);
+        for (let i in arr) {
+            for (let [bizEntity, schema] of arr[i as unknown as EnumEntity]) {
+                bizEntity.fromSchema(schema);
+            }
         }
-        for (let [bizEntity] of arr) {
-            bizEntity.scan();
+        const typeSeq: EnumEntity[] = [
+            EnumEntity.title,
+            EnumEntity.options,
+            EnumEntity.permit,
+            EnumEntity.role,
+            EnumEntity.atom,
+            EnumEntity.spec,
+            EnumEntity.sheet,
+            EnumEntity.bin,
+            EnumEntity.pend,
+            EnumEntity.pick,
+            EnumEntity.report,
+            EnumEntity.tree,
+            EnumEntity.tie,
+        ];
+        for (let i of typeSeq) {
+            let entityArr = arr[i];
+            if (entityArr === undefined) continue;
+            for (let [bizEntity] of entityArr) {
+                bizEntity.scan();
+            }
         }
         this.buildRootAtoms();
         this.all.push(
@@ -117,6 +160,15 @@ export class Biz {
             [this.roles, '角色', 'user-o'],
             [this.permits, '许可', 'user'],
         );
+        for (let a of this.all) {
+            let [arr] = a;
+            arr.sort((a, b) => {
+                const { id: aId } = a;
+                const { id: bId } = b;
+                if (aId < 0) return -1;
+                return aId === bId ? 0 : 1;
+            });
+        }
         this.refresh();
     }
 

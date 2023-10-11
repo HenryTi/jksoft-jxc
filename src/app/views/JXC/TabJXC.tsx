@@ -8,10 +8,10 @@ import { ViewSite } from "../Site";
 import { pathActSetting, pathAtomCenter, pathMy, pathReportCenter, pathSheetCenter } from "../pathes";
 
 const arr: { label: string; icon?: string; iconColor?: string; path: string; phrase?: BizPhraseType }[] = [
-    { label: '单据中心', icon: 'file-o', path: pathSheetCenter, phrase: BizPhraseType.sheet },
-    { label: '档案中心', path: pathAtomCenter },
-    { label: '报表中心', path: pathReportCenter },
-    { label: '我的', path: pathMy, icon: 'user-o' },
+    { label: '单据中心', path: pathSheetCenter, icon: 'file-o', phrase: BizPhraseType.sheet },
+    { label: '档案中心', path: pathAtomCenter, icon: 'database', iconColor: 'text-succeed' },
+    { label: '报表中心', path: pathReportCenter, icon: 'calculator', iconColor: 'text-info' },
+    { label: '我的', path: pathMy, icon: 'user-o', iconColor: 'text-warning' },
     { label: '操作设置', path: pathActSetting, icon: 'cog', iconColor: 'text-info' },
 ];
 

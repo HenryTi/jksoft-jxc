@@ -42,9 +42,6 @@ Biz Title D {
     PROP c '库存' DEC History;
 }
 
-
-
-
 Biz Sheet SheetStoreIn '入库单' {
     Main 入库单主表;
     Detail 入库单明细;

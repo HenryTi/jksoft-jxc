@@ -13,12 +13,13 @@ export interface ReportJoin {
     entity: Entity;
 }
 
+export interface ReportTitle {
+    caption: string;
+    entity: EntityTitle;
+    bud: BizBud;
+}
 export class EntityReport extends Entity {
-    title: {
-        caption: string;
-        entity: EntityTitle;
-        bud: BizBud;
-    }[];
+    title: ReportTitle[];
     from: EntityAtom;
     joins: ReportJoin[];
     lists: ReportList[];

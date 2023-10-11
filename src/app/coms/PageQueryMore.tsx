@@ -196,7 +196,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
     if (Bottom) bottom = <Bottom items={items} />;
 
     let content: any;
-    if (loading === true && items !== undefined) {
+    if (loading === true) {
         content = <div>
             <Spinner className="m-3 text-info" />
             <div id="$$bottom" />

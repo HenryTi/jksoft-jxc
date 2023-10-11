@@ -9,7 +9,10 @@ function idPart(part: number | string) {
     }
 }
 
-
 export function path(route: string, phrase: number | string, id: number | string) {
     return `${route}${idPart(phrase)}${idPart(id)}`;
+}
+
+export function pathTo(path0: string, p1: number, p2: number) {
+    return path(`../${path0}`, p1, p2);
 }

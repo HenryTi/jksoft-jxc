@@ -265,7 +265,8 @@ RETURNS buds (
         FROM BizPhrase as a 
             JOIN XBiz as a1 ON a1.id=a.id
             LEFT JOIN BizObject as b ON b.id=a.id
-        WHERE a.base=$site; -- AND a.valid=1;
+        WHERE a.base=$site
+        ORDER BY a.id ASC;
     INTO buds SELECT a.id, a.base, a.name as phrase
         , (SELECT r.res
             FROM BizResource AS r

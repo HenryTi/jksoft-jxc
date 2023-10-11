@@ -200,7 +200,7 @@ RETURNS ret (
     WITH Sheet as a ID to sheetId Key(phrase, no) SET a.operator=me;
     WITH Bin as a ID=sheetId SET a.i=i, a.x=x, a.value=value, a.price=price, a.amount=amount;
 
-    WITH IxMy I=me X=sheetId;
+    WITH IxState I=me X=sheetId;
 
     INTO ret SELECT sheetId as id, no;
 };
@@ -228,7 +228,7 @@ RETURNS ret (
 ) {
     VAR me ID = Me();
     -- 安全判断
-    IF base IS NULL OR NOT EXISTS(SELECT x FROM IxMy WHERE i=me AND x=base) {
+    IF base IS NULL OR NOT EXISTS(SELECT x FROM IxState WHERE i=me AND x=base) {
         -- base sheet必须在我的draft里面
         RETURN;
     }
@@ -257,7 +257,7 @@ Biz AC DeleteBin (
     IF NOT EXISTS(
         SELECT a.id
             FROM Bin as a
-                JOIN IxMy as b ON b.x=a.base
+                JOIN IxState as b ON b.x=a.base
             WHERE b.i=me
     ) {
         -- 如果base sheet没有在我的draft里面，不能写入明细。这是安全保证
@@ -272,7 +272,7 @@ Biz AC SubmitSheet(
     VAR me ID = Me();
     VAR phraseId ID = a.base
         FROM Sheet as a 
-            JOIN IxMy as b ON b.x=a.id
+            JOIN IxState as b ON b.x=a.id
         WHERE b.i=me AND a.id=id;
     IF phraseId IS NULL {
         RETURN;
@@ -280,7 +280,7 @@ Biz AC SubmitSheet(
     VAR sql CHAR(500) = CONCAT('call `$site`.`', $site, '.', phraseId, '`(?,?,?);');
     ExecSql sql USING $site, me, id;
 
-    WITH IxMy I=me X=id DEL;
+    WITH IxState I=me X=id DEL;
 };
 
 -- atomId is null, then Atom of phrase
@@ -298,13 +298,13 @@ PAGE (
     phrase ID,
     no NO,
     ex EX,
-    value VALUE,
+    value JSON,
 )
 RETURNS specs (
     id ID,
     phrase ID,
     base ID,
-    value VALUE,
+    value JSON,
     props JSON,
 ) {
     VAR me ID = Me();
@@ -362,7 +362,7 @@ Biz ACT RemoveDraft (
     id ID,
 ) {
     VAR me ID = Me();
-    WITH IxMy I=me X=id DEL;
+    WITH IxState I=me X=id DEL;
 };
 
 Biz QUERY GetMyDrafts ver 0.2 (
@@ -374,7 +374,7 @@ PAGE (
     VAR me ID = Me();
     -- 获取我正在录入的单据
     PAGE SELECT * b, c.name as phrase
-        FROM IxMy as a
+        FROM IxState as a
             JOIN Sheet as b ON a.x=b.id
             JOIN BizPhrase as c ON c.id=b.base
         WHERE b.id<$pageStart AND a.i=me AND c.base=$site

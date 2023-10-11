@@ -1,18 +1,19 @@
-import { EntityReport } from "app/Biz";
+import { EntityReport, ReportTitle } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { useCallback } from "react";
 import { ParamGetReport } from "uqs/UqDefault";
-import { ViewSpecProps } from "../View";
+import { ViewSpecPropsH } from "../View";
 import { FA } from "tonwa-com";
 import { Link } from "react-router-dom";
-import { path } from "app/tool";
+import { Period, ViewPeriodHeader, path, usePeriod } from "app/tool";
+import { useAtomValue } from "jotai";
 
 interface SpecRow {
     id: number;
     phrase: number;
     base: number;
-    value: number;
+    value: number[];
     props: object;
 }
 
@@ -28,14 +29,21 @@ interface ReportRow {
 export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
     const { uq } = useUqApp();
     const { id, from, title } = entityReport;
+    let timeZone: number = 8;
+    let unitBizMonth: number = 6;
+    let unitBizDate: number = 1;
+    const [period, setEnumPeriod] = usePeriod(timeZone, unitBizMonth, unitBizDate, onChanged);
+    const state = useAtomValue(period.state);
     const param: ParamGetReport = {
         reportPhrase: id,
         atomPhrase: from.id,
         atomId: undefined,
-        dateStart: '2023-10-3',
-        dateEnd: '2023-10-6',
+        dateStart: state.from,
+        dateEnd: state.to,
         params: { a: 1 }
     };
+    async function onChanged(period: Period) {
+    }
     const query = useCallback(async (queryParam: any, pageStart: any, pageSize: number) => {
         let { $page, specs } = await uq.GetReport.page(queryParam, pageStart, pageSize);
         let ret: ReportRow[] = [];
@@ -55,23 +63,52 @@ export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
         return ret;
     }, []);
 
+    function ViewValue({ values, titles, isSum }: { values: (string | number)[]; titles: ReportTitle[]; isSum?: boolean }) {
+        let cn = isSum === true ? 'fw-bold' : '';
+        return <div className="d-flex">
+            {titles.map((title, index) => {
+                const { caption: titleCaption, entity: { caption, name } } = title;
+                return <div className="w-6c">
+                    <div className="small text-secondary text-end">{titleCaption ?? caption ?? name}</div>
+                    <div className={'text-end ' + cn}>{values[index]}</div>
+                </div>;
+            })}
+        </div>;
+    }
     function ViewItem({ value: rr }: { value: ReportRow }) {
-        const { id, phrase, no, ex, value, specs } = rr;
+        const { no, ex, specs } = rr;
+        const sums: number[] = [];
+        for (let spec of specs) {
+            const { value } = spec;
+            if (value === undefined) continue;
+            const { length: len } = value;
+            for (let i = 0; i < len; i++) {
+                let sum = sums[i];
+                if (sum === undefined) sum = 0;
+                sum += value[i];
+                sums[i] = sum;
+            }
+        }
         return <div className="">
-            <div className="px-3 py-3 tonwa-bg-gray-2">
-                {id} {phrase} {no} <b>{ex}</b> {value}
+            <div className="px-3 py-2 tonwa-bg-gray-2 d-flex align-items-end">
+                <div className="flex-grow-1">
+                    <div className="small text-secondary">{no}</div>
+                    <div><b>{ex}</b></div>
+                </div>
+                <ViewValue values={sums} titles={title} isSum={true} />
+                <FA name="angle-right" className="ms-5 invisible" />
             </div>
             <div className="ms-5 border-start">
                 {specs?.map(v => {
-                    let { id, phrase, base, value, props } = v;
-                    return <Link key={id} to={path('../history', title[0].bud.id, id)}><div className="d-flex ps-3 pe-3 py-2 border-bottom">
-                        <ViewSpecProps phrase={phrase} props={props as []} />
-                        <div className="flex-grow-1">
-                            {id} {phrase} {base}
+                    let { id, phrase, value, props } = v;
+                    return <Link key={id} to={path('../history', title[0].bud.id, id)}>
+                        <div className="d-flex ps-3 pe-3 py-2 border-bottom align-items-center">
+                            <ViewSpecPropsH phrase={phrase} props={props as []} />
+                            <div className="flex-grow-1">
+                            </div>
+                            <ViewValue values={value} titles={title} />
+                            <FA name="angle-right" className="ms-5" />
                         </div>
-                        <b className="me-5">{value}</b>
-                        <FA name="angle-right" />
-                    </div>
                     </Link>
                 })}
             </div>
@@ -83,6 +120,6 @@ export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
         sortField="id"
         ViewItem={ViewItem}
     >
-        <div className="p-3 border-bottom">{entityReport.caption ?? entityReport.name}</div>
+        <ViewPeriodHeader period={period} setEnumPeriod={setEnumPeriod} />
     </PageQueryMore>;
 }

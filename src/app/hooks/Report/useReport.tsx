@@ -35,6 +35,9 @@ export interface ReturnUseReport {
     page: JSX.Element;
 }
 
+export const pathSheets = 'sheets';
+export const pathSheetRef = 'ref';
+
 export function useReport(): ReturnUseReport {
     const { report } = useParams();
     let phraseId = from62(report);

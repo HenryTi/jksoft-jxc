@@ -1,31 +1,55 @@
 import { SheetMain } from "./SheetStore";
-import { Band } from "app/coms";
-import { ViewSpec } from "app/hooks/View";
+import { ViewSpecR } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "./ViewSheetTime";
 import { BizBud } from "app/Biz";
 
 export function ViewMain({ main }: { main: SheetMain }) {
     const { no, entityMain, _binRow } = main;
-    const { i: budI, x: budX } = entityMain;
+    const { i: budI, x: budX, props } = entityMain;
     const { id, i, x } = useAtomValue(_binRow);
+    let { length } = props;
+    let propRow: any[] = [];
+    const propRowArr: any[][] = [propRow];
+    for (let i = 0; i < length; i++) {
+        let budProp = props[i];
+        let { id, caption, name } = budProp;
+        propRow.push(<div key={id} className="col-3">
+            <div className="small text-secodary">{caption ?? name}</div>
+            <div className="py-1"><b>值</b></div>
+        </div>);
+        if (i === length - 1) break;
+        if (i % 4 === 3) {
+            propRow = [];
+            propRowArr.push(propRow);
+        }
+    }
+    let viewRowArr: any;
+    if (length > 0) {
+        viewRowArr = propRowArr.map((row, index) => <div key={index} className="row py-3 border-bottom border-secondary-subtle">
+            {row}
+        </div>);
+    }
 
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
         if (bud === undefined) return null;
         const { caption, name } = bud;
-        return <Band label={caption ?? name} className="mb-1">
-            <div className="">
-                <ViewSpec id={value} />
-            </div>
-        </Band>
+        return <div className="col-3">
+            <div className="small text-secondary">{caption ?? name}</div>
+            <ViewSpecR id={value} />
+        </div>
     }
 
-    return <div className="tonwa-bg-gray-3 py-3 container">
-        <Band label={'单据编号'} className="mb-1">
-            <b>{no}</b> &nbsp; &nbsp;
-            <ViewSheetTime id={id} />
-        </Band>
-        <ViewIdField bud={budI} value={i} />
-        <ViewIdField bud={budX} value={x} />
+    return <div className="tonwa-bg-gray-3 px-3 container">
+        <div className="row py-3 border-bottom border-secondary-subtle">
+            <div className="col-3">
+                <div className="small text-secondary">单据编号</div>
+                <div><b>{no}</b></div>
+                <ViewSheetTime id={id} />
+            </div>
+            <ViewIdField bud={budI} value={i} />
+            <ViewIdField bud={budX} value={x} />
+        </div>
+        {viewRowArr}
     </div>;
 }
