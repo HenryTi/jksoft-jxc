@@ -12,7 +12,7 @@ export abstract class Cell {
     abstract get type(): CellType;
     readonly name: string;
     abstract get fixed(): boolean;
-    value: number;
+    value: number | string;
     constructor(name: string) {
         this.name = name;
     }
@@ -50,10 +50,10 @@ export class Calc {
         this.uqApp = uqApp;
     }
 
-    initCell(name: string, value: number, formula: string): Cell {
+    initCell(name: string, value: number | string, formula: string): Cell {
         let cell: Cell;
         if (formula === undefined) {
-            cell = new ValueCell(name, value);
+            cell = new ValueCell(name, value as number);
             this.cells[name] = cell;
         }
         else {
@@ -69,7 +69,11 @@ export class Calc {
                 }
             }
             let exp = jsep(formula);
-            cell = new ExpCell(name, value, exp, fixed);
+            let v = value;
+            if (v === undefined) {
+                v = this.runExpSync(exp);
+            }
+            cell = new ExpCell(name, (value ?? v) as number, exp, fixed);
             this.cells[name] = cell;
         }
         return cell;
@@ -146,10 +150,60 @@ export class Calc {
         let cell = this.cells[name];
         if (cell === undefined) return;
         // if (cell.type !== CellType.value) return;
-        return cell.value;
+        return cell.value as number;
     }
 
     private async literal(exp: jsep.Literal): Promise<number> {
         return Number(exp.value);
+    }
+
+    private runExpSync(exp: jsep.Expression): number {
+        switch (exp.type) {
+            case 'BinaryExpression': return this.binarySync(exp as jsep.BinaryExpression);
+            case 'Identifier': return this.identifierSync(exp as jsep.Identifier);
+            case 'Literal': return this.literalSync(exp as jsep.Literal);
+            case 'UnaryExpression': return this.unarySync(exp as jsep.UnaryExpression);
+        }
+    }
+
+    private binarySync(exp: jsep.BinaryExpression): number {
+        const { operator, left, right } = exp;
+        let vLeft = this.runExpSync(left);
+        if (vLeft === undefined) return;
+        let vRight = this.runExpSync(right);
+        if (vRight === undefined) return;
+        switch (operator) {
+            default: return;
+            case '-': return vLeft - vRight;
+            case '+': return vLeft + vRight;
+            case '*': return vLeft * vRight;
+            case '/':
+                if (vRight === 0) return;
+                return vLeft / vRight;
+        }
+    }
+
+    private unarySync(exp: jsep.UnaryExpression): number {
+        const { operator, argument } = exp;
+        let v = this.runExpSync(argument);
+        switch (operator) {
+            default: return;
+            case '-': return -v;
+            case '+': return v;
+        }
+    }
+
+    private identifierSync(exp: jsep.Identifier): number {
+        const { name } = exp;
+        let cell = this.cells[name];
+        if (cell === undefined) return;
+        // if (cell.type !== CellType.value) return;
+        return cell.value as number;
+    }
+
+    private literalSync(exp: jsep.Literal): number {
+        const { value } = exp;
+        let n = Number(value);
+        return Number.isNaN(n) === true ? value : n as any;
     }
 }

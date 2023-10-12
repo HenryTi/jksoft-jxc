@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { CoreDetail, Row, Section, RowProps } from "./SheetStore";
+import { CoreDetail, Row, Section, BinDetail } from "./SheetStore";
 import { useModal } from "tonwa-app";
 import { usePick } from "app/hooks/BizPick";
 import { ModalInputRow } from "./ModalInputDirect";
@@ -13,11 +13,11 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
 
     // if no detailSection add new, else edit
     async function addNewFromPend() {
-        let inputed = await openModal<RowProps[]>(<ModalInputPend propPend={pend} />);
+        let inputed = await openModal<BinDetail[]>(<ModalInputPend propPend={pend} />);
         if (inputed === undefined) return;
-        let iArr: RowProps[] = [];
+        let iArr: BinDetail[] = [];
         let iGroup: number[] = [];
-        let iColl: { [i: number]: RowProps[] } = {};
+        let iColl: { [i: number]: BinDetail[] } = {};
         for (let r of inputed) {
             let { i, x } = r;
             if (x === undefined) {

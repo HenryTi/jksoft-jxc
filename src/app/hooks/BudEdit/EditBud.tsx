@@ -48,12 +48,12 @@ export function EditAtomField(props: ViewBudProps) {
 
 export function EditBudLabelRow(editProps: EditBudProps) {
     const ValueEdit = LabelRowEditHere
-    return EditBud({ ...editProps, ValueEdit });
+    return EditBud({ ...editProps, ViewValueEdit: ValueEdit });
 }
 
 export function EditBudInline(editProps: EditBudProps) {
     const ValueEdit = InlineEdit;
-    return EditBud({ ...editProps, ValueEdit });
+    return EditBud({ ...editProps, ViewValueEdit: ValueEdit });
 }
 
 function EditBud(editProps: EditBudTemplateProps) {

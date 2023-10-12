@@ -139,7 +139,7 @@ export class EntitySheet extends Entity {
                 caption,
             })
         }
-        this.coreDetail = this.details[0].detail;
+        this.coreDetail = this.details[0]?.detail;
     }
     /*
     protected fromStates(states: any[]) {

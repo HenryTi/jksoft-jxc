@@ -10,7 +10,7 @@ import { useState } from "react";
 
 export function EditBudAtom(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
-    const { id, readonly, value: initValue, bizBud, ValueEdit } = props;
+    const { id, readonly, value: initValue, bizBud, ViewValueEdit: ValueEdit } = props;
     const [value, setValue] = useState<number>(initValue as number);
     const { caption, name, budDataType } = bizBud;
     const { bizAtom } = budDataType as BudAtom;

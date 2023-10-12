@@ -7,7 +7,7 @@ import { useQuery } from "react-query";
 import { Page, useModal } from "tonwa-app";
 import { List } from "tonwa-com";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
-import { PendRow, RowProps } from "./SheetStore";
+import { PendRow, BinDetail } from "./SheetStore";
 
 export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
     const uqApp = useUqApp();
@@ -25,8 +25,8 @@ export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
         for (let v of $page) {
             let pendRow: PendRow = {
                 pend: v.pend,
-                sheet: collSheet[v.sheet],
-                detail: v,
+                sheet: { ...collSheet[v.sheet], buds: {} },
+                detail: { ...v, buds: {} },
                 value: v.pendValue,
             };
             ret.push(pendRow);
@@ -45,10 +45,10 @@ export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
             if (aPend === bPend) return 0;
             return 1;
         });
-        let ret: RowProps[] = [];
+        let ret: BinDetail[] = [];
         for (let pendRow of pendRows) {
             const { pend, detail, value } = pendRow;
-            let rowProps: RowProps = {
+            let rowProps: BinDetail = {
                 ...detail,
                 origin: detail.id,             // origin detail id
                 pendFrom: pend,

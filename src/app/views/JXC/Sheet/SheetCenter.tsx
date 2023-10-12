@@ -5,7 +5,7 @@ import { IDView } from "tonwa-app";
 import { EntitySheet } from "app/Biz";
 import { FA, List, to62 } from "tonwa-com";
 import { PageSheetEdit, ViewSheetTime } from "app/hooks";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Atom, Bin, Sheet } from "uqs/UqDefault";
 import { ViewNotifyCount } from "app/tool";
 import { pathSheetCenter } from "app/views/pathes";
@@ -36,6 +36,7 @@ function PageSheetCenter() {
     }
     function ViewSheetItem({ value }: { value: (Sheet & Bin & { phrase: string; }) }) {
         const { id, no, phrase, i } = value;
+        const [del, setDel] = useState(0);
         let entitySheet = biz.entities[phrase];
         let sheetCaption: string;
         if (entitySheet === undefined) {
@@ -47,6 +48,33 @@ function PageSheetCenter() {
         }
         function ViewTarget({ value }: { value: Atom; }) {
             return <span>{value.ex}</span>;
+        }
+        if (entitySheet === undefined) {
+            async function onDelMyDraft() {
+                setDel(1);
+                await uq.RemoveDraft.submit({ id });
+                setDel(2);
+            }
+            let cnText = 'px-3 py-2 small text-secondary flex-fill ';
+            const cnRight = 'px-3 text-secondary py-2 ';
+            let right: any;
+            switch (del) {
+                default:
+                    right = <div className={cnRight + 'cursor-pointer'} onClick={onDelMyDraft}><FA name="trash" /></div>;
+                    break;
+                case 1:
+                    right = <div className={cnRight}><FA name='spinner' spin={true} /></div>;
+                    break;
+                case 2:
+                    right = <div className={cnRight}>已删除</div>;
+                    cnText += 'text-decoration-line-through';
+                    break;
+            }
+
+            return <div className="d-flex">
+                <div className={cnText}>{id}: 单据定义不存在</div>
+                {right}
+            </div>;
         }
         return <Link to={`/sheet/${to62(entitySheet.id)}/${to62(id)}`}>
             <div className="d-flex px-3 py-3">

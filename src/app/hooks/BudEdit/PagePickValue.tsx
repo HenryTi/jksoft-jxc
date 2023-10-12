@@ -9,7 +9,7 @@ export async function pickValue(uqApp: UqAppBase, pickProps: PickProps, options:
     return ret;
 }
 
-export function PagePickValue<T extends string | number>({ label, value, type, options, step }: { label: string | JSX.Element; value: T | string; type: string; step?: string; options: RegisterOptions; }) {
+export function PagePickValue<T extends string | number>({ label, value, type, options, step }: { label: string | JSX.Element; value: T; type: string; step?: string; options: RegisterOptions; }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     async function onSubmit(data: any) {

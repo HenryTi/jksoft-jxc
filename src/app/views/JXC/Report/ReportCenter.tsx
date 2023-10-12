@@ -3,7 +3,7 @@ import { Link, Route } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { PageHistory, PageSheetList, PageSheets, pathReport, pathSheetRef, pathSheets, pathSheetsList, useReport } from "app/hooks";
 import React from "react";
-import { Sep } from "tonwa-com";
+import { FA, Sep } from "tonwa-com";
 import { EntityReport } from "app/Biz";
 import { path } from "app/tool";
 import { PageRef, headerSheets } from "app/hooks";
@@ -18,16 +18,22 @@ function PageReportCenter() {
         const { id, caption, name } = value;
 
         return <Link to={`../${pathReport(id)}`}>
-            <div className="px-3 py-3">{caption ?? name}</div>
+            <div className="py-3 pe-3">
+                <FA name="id-card-o" className="mx-4" />
+                {caption ?? name}
+            </div>
         </Link>
     }
 
     return <Page header="报表中心">
         <div className="mb-3">
             <Link to={`../${pathSheets}`}>
-                <div className="px-3 py-3">{headerSheets}</div>
+                <div className="pe-3 py-3">
+                    <FA name="address-card-o" className="mx-4 text-info" />
+                    {headerSheets}
+                </div>
             </Link>
-            <Sep />
+            <Sep sep={2} />
             {reports.map(v => {
                 return <React.Fragment key={v.id}>
                     <ViewItemReport value={v} />

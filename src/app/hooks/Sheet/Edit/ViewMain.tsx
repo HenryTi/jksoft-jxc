@@ -3,26 +3,33 @@ import { EditBudInline, ViewSpecR } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "./ViewSheetTime";
 import { BizBud } from "app/Biz";
+import { setAtomValue } from "tonwa-com";
 
 export function ViewMain({ main }: { main: SheetMain }) {
     const { no, entityMain, _binRow } = main;
     const { i: budI, x: budX, props } = entityMain;
-    const { id, i, x, } = useAtomValue(_binRow);
+    const binRow = useAtomValue(_binRow);
+    const { id: idRow, i, x, buds } = binRow;
     let { length } = props;
     let propRow: any[] = [];
     const propRowArr: any[][] = [propRow];
     for (let i = 0; i < length; i++) {
         let budProp = props[i];
         let { id, caption, name } = budProp;
+        let value = buds[id];
         propRow.push(<div key={id} className="col-3">
             <div className="small text-secodary">{caption ?? name}</div>
-            <div className="py-1"><EditBudInline bizBud={budProp} id={id} value={undefined} /></div>
+            <div className="py-1"><EditBudInline bizBud={budProp} id={idRow} value={value} onChanged={onBudChanged} /></div>
         </div>);
         if (i === length - 1) break;
         if (i % 4 === 3) {
             propRow = [];
             propRowArr.push(propRow);
         }
+    }
+    function onBudChanged(bud: BizBud, value: string | number) {
+        buds[bud.id] = value;
+        setAtomValue(_binRow, { ...binRow });
     }
     let viewRowArr: any;
     if (length > 0) {
@@ -45,7 +52,7 @@ export function ViewMain({ main }: { main: SheetMain }) {
             <div className="col-3">
                 <div className="small text-secondary">单据编号</div>
                 <div><b>{no}</b></div>
-                <ViewSheetTime id={id} />
+                <ViewSheetTime id={idRow} />
             </div>
             <ViewIdField bud={budI} value={i} />
             <ViewIdField bud={budX} value={x} />

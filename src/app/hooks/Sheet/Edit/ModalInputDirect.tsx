@@ -20,21 +20,25 @@ export function ModalInputRow({ row }: { row: Row; }) {
     const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { props, section } = row;
     const { entityDetail } = section.coreDetail;
-    const { i: budI, x: budX } = entityDetail;
-    const { i, x } = props;
-    const { current: fields } = useRef<[string, number, BizBud, (value: number) => void, Cell][]>([]);
+    const { i: budI, x: budX, props: budArr } = entityDetail;
+    const { i, x, buds: budValues } = props;
+    const { current: fields } = useRef<[string, number | string, BizBud, (value: number | string) => void, Cell][]>([]);
     const [calc, setCalc] = useState<Calc>();
     useEffectOnce(() => {
         const { value, price, amount } = props;
         const { value: valueBud, price: priceBud, amount: amountBud } = entityDetail;
         if (valueBud !== undefined) {
-            fields.push([fieldValue, value, valueBud, value => props.value = value, undefined]);
+            fields.push([fieldValue, value, valueBud, value => props.value = value as number, undefined]);
         }
         if (priceBud !== undefined) {
-            fields.push([fieldPrice, price, priceBud, value => props.price = value, undefined]);
+            fields.push([fieldPrice, price, priceBud, value => props.price = value as number, undefined]);
         }
         if (amountBud !== undefined) {
-            fields.push([fieldAmount, amount, amountBud, value => props.amount = value, undefined]);
+            fields.push([fieldAmount, amount, amountBud, value => props.amount = value as number, undefined]);
+        }
+        for (let bud of budArr) {
+            const { name, id, defaultValue } = bud;
+            fields.push([name, budValues[id], bud, value => props.buds[id] = value, undefined]);
         }
         let c = new Calc(uqApp);
         for (let field of fields) {
@@ -59,19 +63,25 @@ export function ModalInputRow({ row }: { row: Row; }) {
                     name: fieldName,
                     label: caption ?? name,
                     type: 'number',
-                    options: { value, disabled: cell.fixed }
+                    options: { value: value ?? cell.value, disabled: cell.fixed }
                 } as any;
-                if (type === EnumBudType.dec) {
-                    const { ex } = bud;
-                    let step: string = '0.000001';
-                    if (ex !== undefined) {
-                        const { fraction } = ex;
+                switch (type) {
+                    case EnumBudType.char:
+                    case EnumBudType.str:
+                        ret.type = 'text';
+                        break;
+                    case EnumBudType.dec:
+                        const { ex } = bud;
+                        let step: string = '0.000001';
                         if (ex !== undefined) {
-                            let { fraction } = ex;
-                            step = String(1 / Math.pow(10, fraction));
+                            const { fraction } = ex;
+                            if (ex !== undefined) {
+                                let { fraction } = ex;
+                                step = String(1 / Math.pow(10, fraction));
+                            }
                         }
-                    }
-                    ret.step = step;
+                        ret.step = step;
+                        break;
                 }
                 return ret;
             });

@@ -5,7 +5,7 @@ import { EditBudTemplateProps } from "./model";
 
 export function EditBudCheck(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
-    const { id, readonly, value: initValue, bizBud, ValueEdit } = props;
+    const { id, readonly, value: initValue, bizBud, ViewValueEdit: ValueEdit } = props;
     const { budDataType, caption, name } = bizBud;
     let { options: { items, phrase: optionsPhrase } } = budDataType as BudCheck;
 

@@ -29,11 +29,8 @@ abstract class BaseObject extends KeyIdObject {
 export class SheetMain extends BaseObject {
     readonly entityMain: EntityBin;
     readonly _binRow = atom<BinRow>({} as BinRow);
-    // readonly _i = atom<number>(0);         // _ 开始，表示 atom
-    // readonly _id = atom<number>(0);
-    // get id() { return getAtomValue(this._id); }
-    no: string;
     get binRow() { return getAtomValue(this._binRow) }
+    no: string;
 
     constructor(sheetStore: SheetStore) {
         super(sheetStore);
@@ -109,6 +106,7 @@ export interface BinRow {
     value: number;
     price: number;
     amount: number;
+    buds: { [bud: number]: string | number };
 }
 export interface PendRow {
     pend: number;               // pend id
@@ -193,13 +191,7 @@ export class ExDetail extends DetailBase {
     }
 }
 
-export interface RowProps {
-    id: number;
-    i: number;
-    x: number;
-    value: number;
-    price: number;
-    amount: number;
+export interface BinDetail extends BinRow {
     origin: number;             // origin detail id
     pendFrom: number;
     pendValue: number;
@@ -207,7 +199,7 @@ export interface RowProps {
 
 export class Row extends BaseObject {
     readonly section: Section;
-    readonly props: RowProps = {} as any;
+    readonly props: BinDetail = { buds: {} } as any;
 
     constructor(section: Section) {
         super(section.sheetStore);
@@ -247,7 +239,7 @@ export class Row extends BaseObject {
         this.section.rowChanged();
     }
 
-    setValue(row: RowProps) {
+    setValue(row: BinDetail) {
         Object.assign(this.props, row);
     }
 }
@@ -272,7 +264,7 @@ export class Section extends BaseObject {
         setAtomValue(this._rows, [...rows, row]);
     }
 
-    async addRowProps(rowProps: RowProps) {
+    async addRowProps(rowProps: BinDetail) {
         let row = new Row(this);
         row.setValue(rowProps);
         await row.addToSection();
@@ -303,6 +295,8 @@ export class SheetStore extends KeyIdObject {
     readonly detailExs: ExDetail[] = [];
     readonly caption: string;
     readonly idOnUrl: number;
+    // readonly _budColl = atom<{ [row: number]: { [bud: number]: string | number } }>({});
+    // budColl: { [row: number]: { [bud: number]: string | number } };
 
     constructor(uq: UqExt, biz: Biz, entitySheet: EntitySheet, id: number) {
         super();
@@ -330,8 +324,22 @@ export class SheetStore extends KeyIdObject {
     async load() {
         let { id } = this.main.binRow;
         if (id === undefined || id === 0) return;
-        let { main, details } = await this.uq.GetSheet.query({ id, detail: undefined });
-        this.main.setValue(main[0]);
+        let { main, details, buds } = await this.uq.GetSheet.query({ id, detail: undefined });
+        const budColl: { [row: number]: { [bud: number]: string | number } } = {};
+        for (let { id, bud, value } of buds) {
+            let budValues = budColl[id];
+            if (budValues === undefined) {
+                budColl[id] = budValues = {};
+            }
+            budValues[bud] = value;
+        }
+        let mainRow = main[0];
+        (mainRow as any).buds = budColl[id] ?? {};
+        this.main.setValue(mainRow);
+        for (let row of details) {
+            const { id } = row;
+            (row as any).buds = budColl[id] ?? {};
+        }
         this.detail.addRowValues(details);
     }
 
@@ -356,6 +364,10 @@ export class SheetStore extends KeyIdObject {
             this.detail.
         }
         */
+    }
+
+    async saveProp(id: number, bud: number, int: number, dec: number, str: string) {
+        await this.uq.SaveBudValue.submit({ phraseId: bud, id, int, dec, str });
     }
 }
 

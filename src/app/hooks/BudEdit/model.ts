@@ -31,10 +31,11 @@ export interface EditBudProps {
     bizBud: BizBud;
     readonly?: boolean;
     options?: RegisterOptions;
+    onChanged?: (bizBud: BizBud, value: string | number) => Promise<void> | void;
 }
 
 export interface EditBudTemplateProps extends EditBudProps {
-    ValueEdit: ValueEdit;
+    ViewValueEdit: ViewValueEdit;
 }
 
 export interface EditProps {
@@ -44,5 +45,5 @@ export interface EditProps {
     readonly?: boolean;
 }
 
-export type ValueEdit = (props: EditProps) => JSX.Element;
+export type ViewValueEdit = (props: EditProps) => JSX.Element;
 

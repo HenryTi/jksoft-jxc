@@ -32,6 +32,12 @@ Biz ACT SaveBudValue ver 0.2 (
         IF id IS NULL {
             SET id=$site;
         }
+        ELSE {
+            IF NOT EXISTS (SELECT a.id FROM BizPhrase as a JOIN BizPhrase as b ON b.id=a.base WHERE a.id=phraseId AND b.base=$site)
+            {
+                RETURN;
+            }
+        }
         IF int IS NOT NULL {
             WITH IxBudInt as a I=id X=phraseId SET a.value=int;
             IF EXISTS(SELECT a.id FROM BizBud as a WHERE (a.flag & 1)=1) {
@@ -588,6 +594,11 @@ RETURNS origins (
     * Bin,
     -- done VALUE,
 )
+RETURNS buds (
+    id ID,
+    bud ID,
+    value BudStr,
+)
 {
     IF id IS NULL {
         SET id = b.base
@@ -607,20 +618,29 @@ RETURNS origins (
             JOIN Bud as b ON b.id=a.base
             LEFT JOIN BinPend as c ON c.id=a.id
             LEFT JOIN Pend as d ON d.id=c.pendFrom
-            -- LEFT JOIN Sheet as e ON e.id=a.base
         WHERE b.base=id AND (detail IS NULL OR a.id=detail);
     INTO origins SELECT DISTINCT * b -- , IFNULL(c.value, 0) as done
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN Bin as b ON b.id=a.origin
     ;
-    /*
-    INTO buds SELECT a.id, b.x as bud, d.name as phrase, b.value
-        FROM Detail as a
-            JOIN IxBudDec as b ON b.i=a.id
-            JOIN BizPhrase as d ON d.id=b.x -- c.phrase
-        WHERE a.base=id 
-            AND (budNames IS NULL OR LOCATE(d.name, budNames)>0);
-    */
+    INTO buds SELECT a.id, b.x as bud, b.value
+        FROM details as a
+            JOIN IxBudDec as b ON b.i=a.id;
+    INTO buds SELECT a.id, b.x as bud, b.value
+        FROM details as a
+            JOIN IxBudInt as b ON b.i=a.id;
+    INTO buds SELECT a.id, b.x as bud, b.value
+        FROM details as a
+            JOIN IxBudStr as b ON b.i=a.id;
+    INTO buds SELECT a.id, b.x as bud, b.value
+        FROM main as a
+            JOIN IxBudDec as b ON b.i=a.id;
+    INTO buds SELECT a.id, b.x as bud, b.value
+        FROM main as a
+            JOIN IxBudInt as b ON b.i=a.id;
+    INTO buds SELECT a.id, b.x as bud, b.value
+        FROM main as a
+            JOIN IxBudStr as b ON b.i=a.id;
 };
 
 Biz Query GetAtom (

@@ -11,14 +11,14 @@ type FromBudValue = (value: any) => any;
 function EditBudValue(props: EditBudTemplateProps & { type: string; step?: string; convertToBudValue: ConvertToBudValue; fromBudValue?: FromBudValue; }) {
     const { uq } = useUqApp();
     const { openModal } = useModal();
-    const { id, readonly, value: initValue, bizBud, type, step, convertToBudValue, options, fromBudValue, ValueEdit } = props;
+    const { id, readonly, value: initValue, bizBud, type, step, convertToBudValue, options, fromBudValue, ViewValueEdit: ValueEdit, onChanged } = props;
     const [value, setValue] = useState<string | number>(
         fromBudValue === undefined ? initValue as string | number : fromBudValue(initValue)
     );
     const { caption, name, ex } = bizBud;
     const label = caption ?? name;
     async function onEditClick() {
-        let ret = await openModal<number>(<PagePickValue label={label} value={value as number} type={type} options={options} step={step} />);
+        let ret = await openModal<number | string>(<PagePickValue label={label} value={value} type={type} options={options} step={step} />);
         let budValue = convertToBudValue(ret);
         await uq.SaveBudValue.submit({
             phraseId: bizBud.id,
@@ -26,6 +26,7 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
             ...budValue
         });
         setValue(ret);
+        onChanged?.(bizBud, ret);
     }
     let content: any = value;
     if (ex !== undefined) {
