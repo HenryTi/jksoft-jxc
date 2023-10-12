@@ -1,5 +1,5 @@
+import { BudValue } from "app/hooks/BudEdit/model";
 import { ReturnGetAtomProps } from "uqs/UqDefault";
-import { BudValue } from "../hooks/model";
 
 export function readBuds(id: number, props: ReturnGetAtomProps[]) {
     let main: any;

@@ -1,18 +1,16 @@
 import { IDView, PickProps, UqAppBase, useModal } from "tonwa-app";
 import { BudAtom } from "app/Biz";
 import { EnumAtom } from "uqs/UqDefault";
-import { EditBudValue } from "./model";
+import { EditBudProps, EditBudTemplateProps, EditBudValue } from "./model";
 import { RegisterOptions } from "react-hook-form";
 import { useUqApp } from "app/UqApp";
 import { ViewAtomId, useSelectAtom } from "../BizAtom";
-
-import { EditBudProps } from "../model";
-import { LabelRowEdit } from "./LabelRowEdit";
+//import { LabelRowEdit } from "./LabelRowEdit";
 import { useState } from "react";
 
-export function EditBudAtom(props: EditBudProps) {
+export function EditBudAtom(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
-    const { id, readonly, value: initValue, bizBud, options } = props;
+    const { id, readonly, value: initValue, bizBud, ValueEdit } = props;
     const [value, setValue] = useState<number>(initValue as number);
     const { caption, name, budDataType } = bizBud;
     const { bizAtom } = budDataType as BudAtom;
@@ -31,10 +29,10 @@ export function EditBudAtom(props: EditBudProps) {
         });
         setValue(atomId);
     }
-    return <LabelRowEdit label={label}
+    return <ValueEdit label={label}
         readonly={readonly}
         onEditClick={onEditClick}
     >
         <ViewAtomId id={value} />
-    </LabelRowEdit>;
+    </ValueEdit>;
 }

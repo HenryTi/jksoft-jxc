@@ -1,12 +1,11 @@
 import { BudRadio } from "app/Biz";
 import { RadioAsync } from "tonwa-com";
-import { EditBudProps } from "../model";
-import { LabelRowEdit } from "./LabelRowEdit";
 import { useUqApp } from "app/UqApp";
+import { EditBudTemplateProps } from "./model";
 
-export function EditBudIntOf(props: EditBudProps) {
+export function EditBudIntOf(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
-    const { id, readonly, value: initValue, bizBud } = props;
+    const { id, readonly, value: initValue, bizBud, ValueEdit } = props;
     const { budDataType, caption, name } = bizBud;
     let { options: { items, phrase: optionsPhrase } } = budDataType as BudRadio;
 
@@ -35,10 +34,10 @@ export function EditBudIntOf(props: EditBudProps) {
             str: undefined as string,
         });
     }
-    return <LabelRowEdit label={caption ?? name}
+    return <ValueEdit label={caption ?? name}
         readonly={readonly}
         onEditClick={null}
     >
         <RadioAsync name={name} items={radios} onCheckChanged={onCheckChanged} />
-    </LabelRowEdit>;
+    </ValueEdit>;
 }

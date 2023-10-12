@@ -5,12 +5,14 @@ import { PageMoreCacheData } from "app/coms";
 import { useState } from "react";
 import { EditBudAtom } from "./EditBudAtom";
 import { EditBudRadio } from "./EditBudRadio";
-import { EditBudProps, ViewBudProps } from "../model";
+// import { EditBudProps, ViewBudProps } from "../model";
 import { pickValue } from "./PagePickValue";
 import { EditBudCheck } from "./EditBudCheck";
 import { EditBudString, EditBudInt, EditBudDec, EditBudDate } from "./EditBudValue";
 import { EditBudIntOf } from "./EditBudIntOf";
 import { EnumBudType } from "app/Biz";
+import { EditBudProps, EditBudTemplateProps, ViewBudProps } from "./model";
+import { InlineEdit, LabelRowEdit as LabelRowEditHere } from "./LabelRowEdit";
 
 interface OpProps {
     saveBud: (newValue: string | number) => Promise<void>;
@@ -44,7 +46,17 @@ export function EditAtomField(props: ViewBudProps) {
     return <ViewBud {...props} saveBud={saveBudFunc} />;
 }
 
-export function EditBud(editProps: EditBudProps) {
+export function EditBudLabelRow(editProps: EditBudProps) {
+    const ValueEdit = LabelRowEditHere
+    return EditBud({ ...editProps, ValueEdit });
+}
+
+export function EditBudInline(editProps: EditBudProps) {
+    const ValueEdit = InlineEdit;
+    return EditBud({ ...editProps, ValueEdit });
+}
+
+function EditBud(editProps: EditBudTemplateProps) {
     const { bizBud } = editProps;
     const { type } = bizBud.budDataType;
     switch (type) {
@@ -69,3 +81,4 @@ export function EditBud(editProps: EditBudProps) {
             return <EditBudDate {...editProps} />;
     }
 }
+

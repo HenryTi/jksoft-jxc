@@ -1,5 +1,5 @@
 import { SheetMain } from "./SheetStore";
-import { ViewSpecR } from "app/hooks";
+import { EditBudInline, ViewSpecR } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "./ViewSheetTime";
 import { BizBud } from "app/Biz";
@@ -7,7 +7,7 @@ import { BizBud } from "app/Biz";
 export function ViewMain({ main }: { main: SheetMain }) {
     const { no, entityMain, _binRow } = main;
     const { i: budI, x: budX, props } = entityMain;
-    const { id, i, x } = useAtomValue(_binRow);
+    const { id, i, x, } = useAtomValue(_binRow);
     let { length } = props;
     let propRow: any[] = [];
     const propRowArr: any[][] = [propRow];
@@ -16,7 +16,7 @@ export function ViewMain({ main }: { main: SheetMain }) {
         let { id, caption, name } = budProp;
         propRow.push(<div key={id} className="col-3">
             <div className="small text-secodary">{caption ?? name}</div>
-            <div className="py-1"><b>值</b></div>
+            <div className="py-1"><EditBudInline bizBud={budProp} id={id} value={undefined} /></div>
         </div>);
         if (i === length - 1) break;
         if (i % 4 === 3) {

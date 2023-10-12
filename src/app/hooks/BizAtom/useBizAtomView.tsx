@@ -3,9 +3,10 @@ import { useParams } from "react-router-dom";
 import { Page, PageSpinner } from "tonwa-app";
 import { FA, Sep, Spinner, from62, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
-import { EditBud, EditAtomField } from "../BudEdit";
+import { EditBudLabelRow, EditAtomField } from "../BudEdit";
 import { LabelAtomUomEdit } from "../AtomUom";
-import { BudValue, ViewBudRowProps } from "../model";
+import { BudValue, ViewBudRowProps } from "../BudEdit/model";
+// import { BudValue, ViewBudRowProps } from "../model";
 
 export function useBizAtomView(options: OptionsUseBizAtom) {
     const { id } = useParams();
@@ -69,7 +70,7 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
                     let { id: budId } = v;
                     let prop = buds[budId];
                     return <React.Fragment key={budId}>
-                        <EditBud
+                        <EditBudLabelRow
                             id={id}
                             bizBud={v} value={prop as any}
                         />

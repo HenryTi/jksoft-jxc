@@ -1,12 +1,11 @@
 import { CheckAsync } from "tonwa-com";
 import { BudCheck, OptionsItem } from "app/Biz";
-import { EditBudProps } from "../model";
-import { LabelRowEdit } from "./LabelRowEdit";
 import { useUqApp } from "app/UqApp";
+import { EditBudTemplateProps } from "./model";
 
-export function EditBudCheck(props: EditBudProps) {
+export function EditBudCheck(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
-    const { id, readonly, value: initValue, bizBud } = props;
+    const { id, readonly, value: initValue, bizBud, ValueEdit } = props;
     const { budDataType, caption, name } = bizBud;
     let { options: { items, phrase: optionsPhrase } } = budDataType as BudCheck;
 
@@ -23,7 +22,7 @@ export function EditBudCheck(props: EditBudProps) {
         });
     }
     let checks: { [item: number]: boolean; } = initValue as { [item: number]: boolean; } ?? {};
-    return <LabelRowEdit label={caption ?? name}
+    return <ValueEdit label={caption ?? name}
         readonly={readonly}
         onEditClick={null}
     >
@@ -41,5 +40,5 @@ export function EditBudCheck(props: EditBudProps) {
                 {caption ?? name}
             </CheckAsync>;
         })}
-    </LabelRowEdit>;
+    </ValueEdit>;
 }

@@ -3,10 +3,10 @@ import { UqApp, useUqApp } from "app/UqApp";
 import { Biz, BizBud, EntityAtom, EnumBudType } from "app/Biz";
 import { uqAppModal } from "tonwa-app";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
-import { EnumAtom, UqExt } from "uqs/UqDefault";
-import { useLocation, useParams } from "react-router-dom";
-import { BudValue } from "../model";
+import { UqExt } from "uqs/UqDefault";
+import { useParams } from "react-router-dom";
 import { from62, to62 } from "tonwa-com";
+import { BudValue } from "../BudEdit";
 
 function atomInPath(atomPhraseId: number | string) {
     if (typeof atomPhraseId === 'string') {
@@ -51,10 +51,7 @@ export interface UseBizAtomReturn {
     getAtom(id: number): Promise<{
         main: any;
         buds: { [bud: number]: BudValue; };
-        // uoms: AtomUomProps[];
-        // entityAtom: EntityAtom;
     }>;
-    // getEntityAtom: (phrase: string) => EntityAtom;
     saveField: (id: number, name: string, value: string | number) => Promise<void>;
     saveBud: (id: number, bizBud: BizBud, value: string | number) => Promise<void>;
     searchAtoms: QueryMore;

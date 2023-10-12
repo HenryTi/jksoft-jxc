@@ -2,10 +2,10 @@ import { useState } from "react";
 import { FA, LabelRow, LabelRowPropsBase } from "tonwa-com";
 import { UqAppBase, useUqAppBase } from "../UqAppBase";
 import { RegisterOptions } from "react-hook-form";
-import { BudValue } from "app/hooks/model";
 
 export type OnValueChanged = (value: string | number, checked?: boolean) => Promise<void>;
 
+export type BudValue = string | number | { [item: number]: boolean; };
 export interface PickProps {
     label: string | JSX.Element;
     value: BudValue;

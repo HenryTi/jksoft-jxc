@@ -1,18 +1,17 @@
 
-import { EditBudProps } from "../model";
 import { useModal } from "tonwa-app";
 import { useCallback, useState } from "react";
-import { LabelRowEdit } from "./LabelRowEdit";
 import { useUqApp } from "app/UqApp";
 import { PagePickValue } from "./PagePickValue";
 import { contenFromDays, getDays } from "app/tool";
+import { EditBudTemplateProps } from "./model";
 
 type ConvertToBudValue = (value: any) => { int: number; dec: number; str: string; };
 type FromBudValue = (value: any) => any;
-function EditBudValue(props: EditBudProps & { type: string; step?: string; convertToBudValue: ConvertToBudValue; fromBudValue?: FromBudValue; }) {
+function EditBudValue(props: EditBudTemplateProps & { type: string; step?: string; convertToBudValue: ConvertToBudValue; fromBudValue?: FromBudValue; }) {
     const { uq } = useUqApp();
     const { openModal } = useModal();
-    const { id, readonly, value: initValue, bizBud, type, step, convertToBudValue, options, fromBudValue } = props;
+    const { id, readonly, value: initValue, bizBud, type, step, convertToBudValue, options, fromBudValue, ValueEdit } = props;
     const [value, setValue] = useState<string | number>(
         fromBudValue === undefined ? initValue as string | number : fromBudValue(initValue)
     );
@@ -36,15 +35,15 @@ function EditBudValue(props: EditBudProps & { type: string; step?: string; conve
             content = f.replace('{value}', value ? String(value) : '?');
         }
     }
-    return <LabelRowEdit label={label}
+    return <ValueEdit label={label}
         readonly={readonly}
         onEditClick={onEditClick}
     >
         {content}
-    </LabelRowEdit>;
+    </ValueEdit>;
 }
 
-export function EditBudString(props: EditBudProps) {
+export function EditBudString(props: EditBudTemplateProps) {
     function convertToBudValue(value: any) {
         return {
             int: undefined as number,
@@ -55,7 +54,7 @@ export function EditBudString(props: EditBudProps) {
     return <EditBudValue {...props} type="text" convertToBudValue={convertToBudValue} />;
 }
 
-export function EditBudInt(props: EditBudProps) {
+export function EditBudInt(props: EditBudTemplateProps) {
     function convertToBudValue(value: any) {
         return {
             int: value,
@@ -66,7 +65,7 @@ export function EditBudInt(props: EditBudProps) {
     return <EditBudValue {...props} type="number" convertToBudValue={convertToBudValue} />;
 }
 
-export function EditBudDec(props: EditBudProps) {
+export function EditBudDec(props: EditBudTemplateProps) {
     const { ex } = props.bizBud;
     function convertToBudValue(value: any) {
         return {
@@ -83,7 +82,7 @@ export function EditBudDec(props: EditBudProps) {
     return <EditBudValue {...props} type="number" step={step} convertToBudValue={convertToBudValue} />;
 }
 
-export function EditBudDate(props: EditBudProps) {
+export function EditBudDate(props: EditBudTemplateProps) {
     const convertToBudValue = useCallback(function convertToBudValue(value: any) {
         let d = getDays(value);
         return {
