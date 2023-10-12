@@ -11,7 +11,7 @@ import { ViewSpec } from "../View";
 // import { EnumTitle } from "uqs/UqDefault";
 
 export function PageHistory() {
-    const { uq } = useUqApp();
+    const { uq, biz } = useUqApp();
     const { title: title62, id: id62 } = useParams();
     const id = from62(id62);
     const title = from62(title62);
@@ -21,16 +21,18 @@ export function PageHistory() {
     };
     function ViewItem({ value: row }: { value: ReturnGetHistory$page; }) {
         let { id, value, ref, plusMinus, sheetNo, sheetPhrase, binPhrase } = row;
+        let { caption, name } = biz.entityIds[binPhrase];
         return <Link to={path('../ref', undefined, ref)}>
             <div className="px-3 py-2 d-flex">
                 <div className="w-8c small text-secondary"><EasyTime date={(id / (1024 * 1024)) * 60} /></div>
                 <div className="me-3">{sheetNo}</div>
                 <div className="flex-grow-1">
-                    ref: {ref} plusMinus: {plusMinus} sheetPhrase: {sheetPhrase} binPhrase: {binPhrase}
+                    {caption ?? name}
                 </div>
                 <div className="fw-bold">{value}</div>
             </div>
         </Link>;
+        // ref: {ref} plusMinus: {plusMinus} sheetPhrase: {sheetPhrase} binPhrase: {binPhrase}
     }
     return <PageQueryMore header="流水"
         query={uq.GetHistory}

@@ -7,6 +7,7 @@ import { List, useEffectOnce } from "tonwa-com";
 import { Query, UqMan, User } from "tonwa-uq";
 import { ViewSite } from "../ViewSite";
 import { roleT } from "../res";
+import { Atom } from "uqs/UqDefault";
 
 export function PageSites() {
     const uqApp = useUqApp();
@@ -24,6 +25,12 @@ export function PageSites() {
     });
     if (list === undefined) {
         return <PageSpinner />;
+    }
+    function ViewSite({ value }: { value: Atom }) {
+        let { no, ex } = value;
+        return <div className="d-flex">
+            <small className="text-secondary me-5 w-8c">{no}</small>
+            <b>{ex ?? '(无名机构)'}</b></div>;
     }
     function ViewItemSite({ value }: { value: any }) {
         return <div className="px-3 py-2">

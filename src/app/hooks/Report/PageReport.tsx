@@ -68,7 +68,7 @@ export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
         return <div className="d-flex">
             {titles.map((title, index) => {
                 const { caption: titleCaption, entity: { caption, name } } = title;
-                return <div className="w-6c">
+                return <div className="w-6c" key={index}>
                     <div className="small text-secondary text-end">{titleCaption ?? caption ?? name}</div>
                     <div className={'text-end ' + cn}>{values[index]}</div>
                 </div>;
