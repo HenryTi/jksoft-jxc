@@ -204,6 +204,6 @@ export class Calc {
     private literalSync(exp: jsep.Literal): number {
         const { value } = exp;
         let n = Number(value);
-        return Number.isNaN(n) === true ? value : n as any;
+        return Number.isNaN(n) === true ? n as any : value;
     }
 }

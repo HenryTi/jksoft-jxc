@@ -181,6 +181,8 @@ export function FormRowsView(props: FormRowsViewProps) {
 
 function FormRowView({ row, register, errors, labelClassName, clearErrors, setValue }: FormRowViewProps) {
     const { label, inputs } = row as FormBand;
+
+    const [submitDisabled, setSubmitDisabled] = useState(false); //(row as any).options?.disabled ?? false)
     if (register)
         if (inputs !== undefined) {
             return <Band label={label} labelClassName={labelClassName}>{
@@ -269,7 +271,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
             clearErrors={clearErrors} />;
     }
 
-    const { name, type, options, readOnly, right, step } = row as FormInput;
+    const { name, type, readOnly, right, step, options } = row as FormInput;
     switch (type) {
         default:
             const theLabel = options.required === true ?
@@ -282,7 +284,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
                 right={right} />;
         case 'submit':
             return <Band>
-                <input type="submit" disabled={options?.disabled}
+                <input type="submit" disabled={submitDisabled}
                     readOnly={readOnly}
                     className={(row as FormSubmit).className ?? 'btn btn-primary'}
                     value={(label as string) ?? '提交'} />

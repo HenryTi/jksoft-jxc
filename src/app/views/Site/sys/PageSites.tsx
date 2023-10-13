@@ -4,8 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Page, PageSpinner, SelectUser, useModal } from "tonwa-app";
 import { List, useEffectOnce } from "tonwa-com";
-import { Query, UqMan, User } from "tonwa-uq";
-import { ViewSite } from "../ViewSite";
+import { Query, User } from "tonwa-uq";
 import { roleT } from "../res";
 import { Atom } from "uqs/UqDefault";
 
@@ -44,6 +43,7 @@ export function PageSites() {
     async function onAdd() {
         let top = <div className="my-3">{roleT('searchUser')}</div>;
         let user = await openModal<User>(<SelectUser header={roleT('user')} top={top} />);
+        if (user === undefined) return;
         await openModal(<PageAdd user={user} />)
     }
 

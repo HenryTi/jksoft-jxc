@@ -28,7 +28,7 @@ abstract class BaseObject extends KeyIdObject {
 
 export class SheetMain extends BaseObject {
     readonly entityMain: EntityBin;
-    readonly _binRow = atom<BinRow>({} as BinRow);
+    readonly _binRow = atom<BinRow>({ buds: {} } as BinRow);
     get binRow() { return getAtomValue(this._binRow) }
     no: string;
 
