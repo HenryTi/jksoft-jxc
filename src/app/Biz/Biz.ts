@@ -28,6 +28,14 @@ enum EnumEntity {
     tie,
 };
 
+interface Group {
+    caption: string;
+    entities: [Entity[], string?, string?, string?][];
+    icon?: string;
+    iconColor?: string;
+}
+// [{group: name Entity[], string?, string?, string?][]
+
 export class Biz {
     readonly uqApp: UqApp;
     readonly uq: UqExt;
@@ -50,7 +58,7 @@ export class Biz {
     readonly roles: EntityRole[] = [];
     readonly permits: EntityPermit[] = [];
 
-    readonly all: [Entity[], string?, string?, string?][] = [];
+    readonly all: Group[] = [];
     readonly _refresh = atom(false);
 
     entities: { [name: string]: Entity } = {};
@@ -88,7 +96,13 @@ export class Biz {
             [EnumEntity.tree]: this.buildTree,
             [EnumEntity.tie]: this.buildTie,
         }
-        for (let a of this.all) a[0].splice(0);
+        for (let group of this.all) {
+            let { entities } = group;
+            for (let entitiesRow of entities) {
+                let [arr] = entitiesRow;
+                arr.splice(0);
+            }
+        }
         this.all.splice(0);
         let $biz = bizSchema;
         let arr: { [entity in EnumEntity]?: [Entity, any][]; } = {};
@@ -145,29 +159,58 @@ export class Biz {
         }
         this.buildRootAtoms();
         this.all.push(
-            [this.atoms],
-            [this.atomRoots, '基础编码', 'id-card-o'],
-            [this.specs, '细分编码', 'asterisk'],
-            [this.sheets, '业务单据', 'file'],
-            [this.reports, '报表', 'file'],
-            [this.bins, '单据条', 'file-text-o'],
-            [this.pends, '待处理', 'clone'],
-            [this.picks, '捡取器', 'hand-pointer-o'],
-            [this.options, '可选项', 'check-square-o'],
-            [this.ties, '对照表', 'list'],
-            [this.trees, '层级结构', 'indent'],
-            [this.titles, '科目', 'flag-o'],
-            [this.roles, '角色', 'user-o'],
-            [this.permits, '许可', 'user'],
+            {
+                caption: '基础数据',
+                entities: [
+                    [this.atoms],
+                    [this.atomRoots, '基础编码', 'id-card-o'],
+                    [this.specs, '细分编码', 'asterisk'],
+                    [this.titles, '科目', 'flag-o'],
+                ],
+            },
+            {
+                caption: '业务流程',
+                entities: [
+                    [this.sheets, '业务单据', 'file'],
+                    [this.bins, '单据条', 'file-text-o'],
+                    [this.pends, '待处理', 'clone'],
+                ],
+            },
+            {
+                caption: '数据关系',
+                entities: [
+                    [this.picks, '捡取器', 'hand-pointer-o'],
+                    [this.options, '可选项', 'check-square-o'],
+                    [this.ties, '对照表', 'list'],
+                    [this.trees, '层级结构', 'indent'],
+                ],
+            },
+            {
+                caption: '查询汇总',
+                entities: [
+                    [this.reports, '报表', 'file'],
+                ],
+            },
+            {
+                caption: '权限',
+                entities:
+                    [
+                        [this.roles, '角色', 'user-o'],
+                        [this.permits, '许可', 'user'],
+                    ]
+            }
         );
-        for (let a of this.all) {
-            let [arr] = a;
-            arr.sort((a, b) => {
-                const { id: aId } = a;
-                const { id: bId } = b;
-                if (aId < 0) return -1;
-                return aId === bId ? 0 : 1;
-            });
+        for (let group of this.all) {
+            let { entities } = group;
+            for (let entitiesRow of entities) {
+                let [arr] = entitiesRow;
+                arr.sort((a, b) => {
+                    const { id: aId } = a;
+                    const { id: bId } = b;
+                    if (aId < 0) return -1;
+                    return aId === bId ? 0 : 1;
+                });
+            }
         }
         this.refresh();
     }
@@ -179,12 +222,15 @@ export class Biz {
     delEntity(entity: Entity) {
         this.entities[entity.name];
         this.entityIds[entity.id];
-        for (let arr of this.all) {
-            const [entities] = arr;
-            for (let i = 0; i < entities.length; i++) {
-                if (entities[i] === entity) {
-                    entities.splice(i, 1);
-                    break;
+        for (let group of this.all) {
+            const { entities } = group;
+            for (let row of entities) {
+                const [entities] = row;
+                for (let i = 0; i < entities.length; i++) {
+                    if (entities[i] === entity) {
+                        entities.splice(i, 1);
+                        break;
+                    }
                 }
             }
         }
