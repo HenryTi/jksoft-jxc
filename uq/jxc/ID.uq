@@ -24,10 +24,8 @@ ID Sheet (
 );
 
 -- 所有单据的明细，单值
-ID Bin (
-    id MINUTE,
-    KEY base ID,            -- SheetPurchase or SheetSale
-    KEY id,
+IDX Bin (
+    id,
     origin ID,              -- 源单
     i ID,                   -- 计量对象。比如：商品不同包装或者批次
     x ID,                   -- 两层关系，一行可分 操作对象。
@@ -40,7 +38,7 @@ ID Pend (
     id MINUTE,
     KEY base ID,            -- BizPhrase
     KEY id,
-    detail ID,
+    bin ID,
     mid JSON,               -- 中间值，以数组方式存放
     value VALUE,            -- 待处理数，到0，就清除
 );

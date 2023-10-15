@@ -113,7 +113,7 @@ export class EntitySheet extends Entity {
     main: EntityBin;
     coreDetail: EntityBin;
     readonly details: {
-        detail: EntityBin;
+        bin: EntityBin;
         caption: string;
     }[] = [];
     // to be removed
@@ -133,13 +133,13 @@ export class EntitySheet extends Entity {
     }
 
     protected fromDetails(details: any[]) {
-        for (let { detail: name, caption } of details) {
+        for (let { bin, caption } of details) {
             this.details.push({
-                detail: this.biz.entities[name] as EntityBin,
+                bin: this.biz.entities[bin] as EntityBin,
                 caption,
             })
         }
-        this.coreDetail = this.details[0]?.detail;
+        this.coreDetail = this.details[0]?.bin;
     }
     /*
     protected fromStates(states: any[]) {

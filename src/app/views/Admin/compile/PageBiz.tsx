@@ -63,7 +63,7 @@ export function buildViewBiz() {
             </div>
         }
         return <div key={id}
-            className="px-2 py-1 border border-secondary-subtle shadow-sm mx-2 my-1 rounded h-min-3c w-16c w-max-16c cursor-pointer link-primary bg-white d-flex"
+            className="px-2 py-2 border border-secondary-subtle shadow-sm mx-2 my-1 rounded h-min-3c w-16c w-max-16c cursor-pointer link-primary bg-white d-flex"
             onClick={onEntity}>
             <FA name={icon} className="mt-1 me-2 text-success" />
             {content}
@@ -91,8 +91,8 @@ export function buildViewBiz() {
                 {
                     biz.all.map((group, index) => {
                         let { caption: groupCaption, entities } = group;
-                        return <div key={index} className="mb-3">
-                            <div className="bg-info-subtle bg-gradient px-3 py-1 small"><b>{groupCaption}</b></div>
+                        return <div key={index} className="mb-4">
+                            <div className="bg-info-subtle bg-gradient px-3 pb-2 pt-3 small"><b>{groupCaption}</b></div>
                             {
                                 entities.map((v, index) => {
                                     let [arr, caption, icon] = v;

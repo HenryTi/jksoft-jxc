@@ -27,13 +27,13 @@ RETURNS retAtom (
     atom ID,
     value JSON,
 ) {
-    PAGE SELECT a.id as pend, d.base as sheet, a.detail as id
+    PAGE SELECT a.id as pend, d.base as sheet, a.bin as id
         , b.i, b.x, b.value, b.price, b.amount
         , a.mid, a.value as pendValue
         FROM Pend as a
-            JOIN Bin as b on b.id=a.detail
+            JOIN Bin as b on b.id=a.bin
             JOIN BizPhrase as c ON c.id=a.base
-            LEFT JOIN Bud as d ON d.id=b.base
+            LEFT JOIN Bud as d ON d.id=b.id
         WHERE a.base=pend AND c.base=$site
         ORDER BY a.id ASC
         LIMIT $pageSize;
@@ -80,7 +80,7 @@ PAGE (
 ) {
     PAGE SELECT DISTINCT * c, BudPhrase(c.base) as sheet
         FROM Pend as a
-            JOIN Bin as b ON b.id=a.detail
+            JOIN Bud as b ON b.id=a.bin
             JOIN Sheet as c ON c.id=b.base
         WHERE 1=1 AND a.base=SiteBudId(pend)
             AND c.id>$pageStart
@@ -99,7 +99,7 @@ PAGE (
 ) {
     PAGE SELECT DISTINCT * c, BudPhrase(c.base) as sheet
         FROM Pend as a
-            JOIN Bin as b ON b.id=a.detail
+            JOIN Bud as b ON b.id=a.bin
             JOIN Sheet as c ON c.id=b.base
         WHERE 1=1 AND a.base=SiteBudId(pend)
             AND c.id>$pageStart
@@ -120,8 +120,9 @@ PAGE (
 ) {
     PAGE SELECT * b, a.id as pend, a.value as pendValue, BudPhrase(c.base) as sheet, c.no
         FROM Pend as a
-            JOIN Bin as b ON b.id=a.detail
-            JOIN Sheet as c ON c.id=b.base
+            JOIN Bin as b ON b.id=a.bin
+            JOIN Bud as b1 ON b1.id=a.bin
+            JOIN Sheet as c ON c.id=b1.base
             JOIN AtomSpec as d ON d.id=b.i
             JOIN AtomUom as e ON e.id=d.atomUom
             JOIN Atom as f ON f.id=e.atom
@@ -145,10 +146,11 @@ RETURNS ret (
 ) {
     INTO ret SELECT * b, a.id as pend, a.value as pendValue, BudPhrase(c.base) as sheet, c.no
         FROM Pend as a
-            JOIN Bin as b ON b.id=a.detail
-            JOIN Sheet as c ON c.id=b.base
+            JOIN Bin as b ON b.id=a.bin
+            JOIN Bud as b1 ON b1.id=a.bin
+            JOIN Sheet as c ON c.id=b1.base
         WHERE 1=1 AND a.base=SiteBudId(pend)
-            AND b.base=sheetId
+            AND c.id=sheetId
         ORDER BY b.id ASC;
 };
 

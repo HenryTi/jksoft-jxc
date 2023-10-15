@@ -8,7 +8,7 @@ import { ModalInputPend } from "./ModalInputPend";
 export function useCoreDetailAdd(coreDetail: CoreDetail) {
     const { openModal } = useModal();
     const pick = usePick();
-    const { entityDetail } = coreDetail;
+    const { entityBin: entityDetail } = coreDetail;
     const { pend, i, x } = entityDetail;
 
     // if no detailSection add new, else edit

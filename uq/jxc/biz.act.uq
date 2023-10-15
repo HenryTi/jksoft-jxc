@@ -243,9 +243,10 @@ RETURNS ret (
         -- phrase id 必须是 my site
         RETURN;
     }
-    SET base=ID(Bud New KEY base=base, ext=phrase);
+    -- SET base=ID(Bud New KEY base=base, ext=phrase);
     IF id IS NULL {
-        SET id = ID(Bin New KEY base=base);
+        SET id = ID(Bud New KEY base=base, ext=phrase);
+        -- ID(Bin New KEY base=base);
     }
     WITH Bin ID=id SET i=i, x=x
         , origin=origin
@@ -260,12 +261,14 @@ Biz AC DeleteBin (
     id ID,
 ) {
     VAR me ID = Me();
-    IF NOT EXISTS(
-        SELECT a.id
-            FROM Bin as a
-                JOIN IxState as b ON b.x=a.base
-            WHERE b.i=me
-    ) {
+    IF NOT EXISTS(SELECT a.i
+            FROM IxState as a
+            WHERE a.i=me AND a.x=id)
+       AND NOT EXISTS(SELECT a.i
+            FROM IxState as a
+                JOIN Bud as b ON b.id=a.x
+            WHERE a.i=me AND b.base=id)
+    {
         -- 如果base sheet没有在我的draft里面，不能写入明细。这是安全保证
         RETURN;
     }
@@ -356,7 +359,7 @@ PAGE (
         FROM History as a
             LEFT JOIN Bud as a1 ON a1.id=a.bud
             LEFT JOIN Bin as b ON b.id=a.ref
-            LEFT JOIN Bud as b1 ON b1.id=b.base
+            LEFT JOIN Bud as b1 ON b1.id=b.id
             LEFT JOIN Sheet as c ON c.id=b1.base 
             LEFT JOIN Bud as d ON d.id=c.base
             LEFT JOIN BizPhrase as e ON e.id=d.ext
@@ -583,16 +586,12 @@ RETURNS main (
 )
 RETURNS details (
     * Bin,
-    -- done VALUE,
     pendFrom ID,
     pendValue VALUE,
-    -- sheet ID,
-    -- no NO,
     phrase ID,
 )
 RETURNS origins (
     * Bin,
-    -- done VALUE,
 )
 RETURNS buds (
     id ID,
@@ -601,10 +600,7 @@ RETURNS buds (
 )
 {
     IF id IS NULL {
-        SET id = b.base
-            FROM Bin as a 
-                JOIN Bud as b ON b.id=a.base
-            WHERE a.id=detail;
+        SET id = b.base FROM Bud as b WHERE b.id=detail;
     }
     INTO main SELECT * a, * b, b.id as phrase
         FROM Sheet as a
@@ -615,7 +611,7 @@ RETURNS buds (
         , c.pendFrom, d.value as pendValue
         , b.ext as phrase
         FROM Bin as a
-            JOIN Bud as b ON b.id=a.base
+            JOIN Bud as b ON b.id=a.id
             LEFT JOIN BinPend as c ON c.id=a.id
             LEFT JOIN Pend as d ON d.id=c.pendFrom
         WHERE b.base=id AND (detail IS NULL OR a.id=detail);

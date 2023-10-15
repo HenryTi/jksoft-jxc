@@ -116,12 +116,12 @@ export interface PendRow {
 }
 
 abstract class DetailBase extends BaseObject {
-    readonly entityDetail: EntityBin;
+    readonly entityBin: EntityBin;
     readonly caption: string;
-    constructor(sheetStore: SheetStore, entityDetail: EntityBin, caption: string) {
+    constructor(sheetStore: SheetStore, entityBin: EntityBin, caption: string) {
         super(sheetStore);
-        this.entityDetail = entityDetail;
-        this.caption = caption ?? entityDetail.caption;
+        this.entityBin = entityBin;
+        this.caption = caption ?? entityBin.caption;
     }
 
     abstract addRowValues(rowValues: any): void;
@@ -217,7 +217,7 @@ export class Row extends BaseObject {
         }
         const { id } = await uq.SaveDetail.submit({
             base: main.binRow.id,
-            phrase: this.section.coreDetail.entityDetail.id,
+            phrase: this.section.coreDetail.entityBin.id,
             ...this.props,
         });
         this.props.id = id;
@@ -311,11 +311,11 @@ export class SheetStore extends KeyIdObject {
         const { details } = this.entitySheet;
         let len = details.length;
         if (len > 0) {
-            const { detail, caption } = details[0];
+            const { bin: detail, caption } = details[0];
             this.detail = new CoreDetail(this, detail, caption);
         }
         for (let i = 1; i < len; i++) {
-            const { detail, caption } = details[i];
+            const { bin: detail, caption } = details[i];
             this.detailExs.push(new ExDetail(this, detail, caption));
         }
         this.caption = entitySheet.caption ?? entitySheet.name;

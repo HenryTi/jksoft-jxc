@@ -21,7 +21,7 @@ export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable:
 
 function ViewSection({ section, editable }: { section: Section; editable: boolean; }) {
     const { coreDetail: detail } = section;
-    const { entityDetail } = detail;
+    const { entityBin: entityDetail } = detail;
     const { x } = entityDetail;
     const edit = useCoreDetailEdit(detail);
     const rows = useAtomValue(section._rows);
@@ -60,7 +60,7 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const { openModal } = useModal();
-    const { props, section: { coreDetail: { entityDetail } } } = row;
+    const { props, section: { coreDetail: { entityBin: entityDetail } } } = row;
     const { i: budI, x: budX } = entityDetail;
     const { i, x, value, price, amount } = props
     const digits = 2;

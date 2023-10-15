@@ -19,7 +19,7 @@ export function ModalInputRow({ row }: { row: Row; }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { props, section } = row;
-    const { entityDetail } = section.coreDetail;
+    const { entityBin: entityDetail } = section.coreDetail;
     const { i: budI, x: budX, props: budArr } = entityDetail;
     const { i, x, buds: budValues } = props;
     const { current: fields } = useRef<[string, number | string, BizBud, (value: number | string) => void, Cell][]>([]);
