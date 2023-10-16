@@ -576,8 +576,8 @@ RETURNS budsStr (
 };
 
 Biz Query GetSheet ver 0.1 (
-    id ID,
-    detail ID,
+    id ID,                      -- sheetId or detailId
+    -- detail ID,
 )
 RETURNS main (
     * SHEET,
@@ -599,9 +599,15 @@ RETURNS buds (
     value BudStr,
 )
 {
-    IF id IS NULL {
-        SET id = b.base FROM Bud as b WHERE b.id=detail;
+    VAR maySheetId ID, detail ID;
+    SET maySheetId = a.base FROM Bud as a WHERE a.id=id;
+    IF maySheetId IS NOT NULL {
+        SET detail = id;
+        SET id = maySheetId;
     }
+    -- IF id IS NULL {
+    --    SET id = b.base FROM Bud as b WHERE b.id=detail;
+    -- }
     INTO main SELECT * a, * b, b.id as phrase
         FROM Sheet as a
             LEFT JOIN Bin as b ON b.id=a.id

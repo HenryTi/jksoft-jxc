@@ -5,8 +5,8 @@ import { useState } from "react";
 import { useModal } from "tonwa-app";
 import { SearchBox } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
-import { Bin, Sheet } from "uqs/UqDefault";
-import { EditingRow, OriginDetail, SheetRow } from "../../tool";
+import { Sheet } from "uqs/UqDefault";
+import { Bin, EditingRow, OriginDetail, SheetRow } from "../../tool";
 
 export interface OptionsUsePend {
     pendName: string;

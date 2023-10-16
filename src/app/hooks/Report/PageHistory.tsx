@@ -1,12 +1,13 @@
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
-import { UseQueryOptions, path } from "app/tool";
+import { UseQueryOptions, path, pathTo } from "app/tool";
 import { useQuery } from "react-query";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { EasyTime, from62 } from "tonwa-com";
 import { ParamGetHistory, ReturnGetHistory$page } from "uqs/UqDefault";
 import { ViewSpec } from "../View";
+import { pathSheetRef } from "./useReport";
 // import { useSubject } from "./useReport";
 // import { EnumTitle } from "uqs/UqDefault";
 
@@ -22,7 +23,7 @@ export function PageHistory() {
     function ViewItem({ value: row }: { value: ReturnGetHistory$page; }) {
         let { id, value, ref, plusMinus, sheetNo, sheetPhrase, binPhrase } = row;
         let { caption, name } = biz.entityIds[binPhrase];
-        return <Link to={path('../ref', undefined, ref)}>
+        return <Link to={pathTo(pathSheetRef, ref, undefined)}>
             <div className="px-3 py-2 d-flex">
                 <div className="w-8c small text-secondary"><EasyTime date={(id / (1024 * 1024)) * 60} /></div>
                 <div className="me-3">{sheetNo}</div>

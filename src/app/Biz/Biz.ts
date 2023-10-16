@@ -207,7 +207,7 @@ export class Biz {
                 arr.sort((a, b) => {
                     const { id: aId } = a;
                     const { id: bId } = b;
-                    if (aId < 0) return -1;
+                    if (aId < bId) return -1;
                     return aId === bId ? 0 : 1;
                 });
             }

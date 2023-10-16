@@ -8,12 +8,13 @@ import { ViewSpec } from "../View";
 
 export function PageRef() {
     const { uq } = useUqApp();
-    const { id: id62, d: detail62 } = useParams();
+    const { id: id62/*, d: detail62*/ } = useParams();
     const id = from62(id62);
-    const detail = from62(detail62);
+    // const detail = from62(detail62);
 
     const { data } = useQuery([id], async () => {
-        let ret = await uq.GetSheet.query({ id, detail });
+        // id 可以是sheetId，也可以是detailId
+        let ret = await uq.GetSheet.query({ id /*, detail*/ });
         return ret;
     }, UseQueryOptions);
 

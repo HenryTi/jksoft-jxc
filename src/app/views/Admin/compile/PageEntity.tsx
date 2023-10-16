@@ -6,7 +6,7 @@ import { UseQueryOptions } from "app/tool";
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { Page, useModal } from "tonwa-app";
-import { ButtonAsync, getAtomValue, setAtomValue } from 'tonwa-com';
+import { ButtonAsync } from 'tonwa-com';
 import { Grammar, highlight } from "prismjs";
 import './code-editor-style.css'
 import Editor from 'react-simple-code-editor';

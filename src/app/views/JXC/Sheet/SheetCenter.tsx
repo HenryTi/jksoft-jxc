@@ -7,18 +7,8 @@ import { FA, List, to62 } from "tonwa-com";
 import { PageSheetEdit, ViewSheetTime } from "app/hooks";
 import { useCallback, useState } from "react";
 import { Atom, Sheet } from "uqs/UqDefault";
-import { ViewNotifyCount } from "app/tool";
+import { Bin, ViewNotifyCount } from "app/tool";
 import { pathSheetCenter } from "app/views/pathes";
-
-interface Bin {
-    id: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
-}
 
 function PageSheetCenter() {
     const uqApp = useUqApp();

@@ -9,8 +9,8 @@ function idPart(part: number | string) {
     }
 }
 
-export function path(route: string, phrase: number | string, id: number | string) {
-    return `${route}${idPart(phrase)}${idPart(id)}`;
+export function path(route: string, id1: number | string, id2: number | string) {
+    return `${route}${idPart(id1)}${idPart(id2)}`;
 }
 
 export function pathTo(path0: string, p1: number, p2: number) {

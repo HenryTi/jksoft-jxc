@@ -67,7 +67,7 @@ export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
         let cn = isSum === true ? 'fw-bold' : '';
         return <div className="d-flex">
             {titles.map((title, index) => {
-                const { caption: titleCaption, entity: { caption, name } } = title;
+                const { caption: titleCaption, bud: { caption, name } } = title;
                 return <div className="w-6c" key={index}>
                     <div className="small text-secondary text-end">{titleCaption ?? caption ?? name}</div>
                     <div className={'text-end ' + cn}>{values[index]}</div>

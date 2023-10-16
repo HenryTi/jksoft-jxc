@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { setAtomValue } from "tonwa-com";
-import { Atom, Bin } from "uqs/UqDefault";
+import { Atom } from "uqs/UqDefault";
 
 export interface Spec {
     id?: number;
@@ -67,4 +67,14 @@ export class EditingRow {
 export interface DetailWithOrigin {
     detail: Bin;
     origin: OriginDetail;
+}
+
+export interface Bin {
+    id: number;
+    origin: number;
+    i: number;
+    x: number;
+    value: number;
+    amount: number;
+    price: number;
 }

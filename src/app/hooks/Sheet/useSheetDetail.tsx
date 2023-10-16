@@ -1,6 +1,6 @@
 import { EntityBin } from "app/Biz/EntitySheet";
-import { EditingRow, SheetRow } from "app/tool";
-import { Atom, Bin } from "uqs/UqDefault";
+import { Bin, EditingRow, SheetRow } from "app/tool";
+import { Atom } from "uqs/UqDefault";
 // import { ReturnUseEditing } from "./useSheetEditing";
 // import { GenAtomSpec } from "../BizAtomSpec";
 

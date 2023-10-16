@@ -1,9 +1,8 @@
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { OptionsUseSheetDetail, UpdateRow, ViewSpec, usePick, useSelectAtomSpec } from "app/hooks";
-import { AtomSpec, AtomPhrase, EditingRow, SheetRow, Spec } from "app/tool";
+import { AtomSpec, AtomPhrase, EditingRow, SheetRow, Spec, Bin } from "app/tool";
 import { Page, uqAppModal, useModal } from "tonwa-app";
-import { Bin, EnumAtom } from "uqs/UqDefault";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useUqApp } from "app/UqApp";
 import { FA, SpinnerSmall, to62 } from "tonwa-com";
@@ -67,7 +66,7 @@ export function useDetailQPA({ detail: detailName }: OptionsUseDetailQPA): UseSh
 
     function editingRowFromAtom(i: number): EditingRow {
         if (i === undefined) return;
-        let row: Bin = {
+        let row = {
             i,
         } as Bin;
         let editingRow = new EditingRow(undefined, [row]);

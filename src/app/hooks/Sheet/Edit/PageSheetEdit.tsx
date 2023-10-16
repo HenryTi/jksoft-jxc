@@ -79,26 +79,8 @@ function PageStore({ store }: { store: SheetStore; }) {
     const addNew = useCoreDetailAdd(detail);
     const start = useCallback(async function () {
         startStore(uqApp, store, pick);
-        /*
-        let ret = await store.start(pick);
-        if (ret === undefined) return; // 已有单据，不需要pick. 或者没有创建新单据
-        let { id, no, target } = ret;
-        if (id > 0) {
-            let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
-            if (data) {
-                const { phrase } = store.entitySheet;
-                data.addItem({
-                    id,
-                    no,
-                    target,
-                    phrase,
-                });
-            }
-        }
-        */
     }, []);
     useEffectOnce(() => {
-        // startStore(uqApp, store, pick);
         start();
     });
 

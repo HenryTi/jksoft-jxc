@@ -1,7 +1,7 @@
 import { InputNumber } from "app/coms";
-import { EditingRow, SheetRow } from "app/tool";
+import { Bin, EditingRow, SheetRow } from "app/tool";
 import { IDView } from "tonwa-app";
-import { Atom, Bin } from "uqs/UqDefault";
+import { Atom } from "uqs/UqDefault";
 import { FA, LMR, List } from "tonwa-com";
 import { useAtomValue } from "jotai";
 import { OptionsUseSheetDetail, UseSheetDetailReturn } from "app/hooks";
@@ -45,7 +45,6 @@ export function useDetailSplit(options: OptionsUseDetailSplit): UseSheetDetailRe
             for (let detail of details) { rowsSum += detail.value; }
             let detail: Bin = {
                 id: undefined,
-                base: undefined, // sheet.id,
                 i: targetAtom.id,
                 x,
                 value: value - rowsSum,

@@ -8,6 +8,18 @@ Biz Bin 采购单主表 {
     X '采购员' Pick 职员信息;
 }
 
+QUERY q1 (
+    k1 'dddd' CHAR='3',
+    k2 'bbbb' INT=5,
+    k3 'bbc' Options b,
+) {
+    :(FROM) 医疗器械批次->(as)a x (货品信息,医疗器械)->b x ...;
+    @(WHERE) (a.id=1) && (a.x=3);
+    !(SELECT) a='bbd';           -- 基本不需要，因为选出字段都有默认id。当不是默认时，才需要select
+    !(SELECT) b=a.3;
+    #c @(ON) 1>2;                -- 禁止项
+};
+
 Pick 查询货品 {
     ATOM (货品信息,医疗器械);
     Spec 医疗器械批次;
@@ -45,6 +57,31 @@ Biz Title D {
 Biz Sheet SheetStoreIn '入库单' {
     Main 入库单主表;
     Detail 入库单明细;
+    /*
+    ACT {
+
+    }
+    STATE a1 {
+        Main {
+            prop a dec;
+            prop b dec;
+            ATC {
+
+            }
+        }
+        Detail 入库单明细 {
+            prop c dec;
+            ACT {
+
+            }
+        }
+        ACT {
+
+        }
+    }
+    STATE a2 {
+    }
+    */
 }
 
 Biz Bin 入库单主表 {

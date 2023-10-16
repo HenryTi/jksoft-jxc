@@ -4,7 +4,6 @@ import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
 import { EntityOptions } from './EntityOptions';
-import { BizPhraseType } from "uqs/UqDefault";
 import { contenFromDays } from "app/tool";
 
 export enum EnumBudType {
@@ -182,6 +181,7 @@ export class BizBud extends BizBase {
             case 'items':
             case 'atom':
             case 'options':
+            case 'setType':
                 break;
             case 'value': this.defaultValue = val; break;
         }

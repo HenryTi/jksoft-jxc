@@ -324,7 +324,7 @@ export class SheetStore extends KeyIdObject {
     async load() {
         let { id } = this.main.binRow;
         if (id === undefined || id === 0) return;
-        let { main, details, buds } = await this.uq.GetSheet.query({ id, detail: undefined });
+        let { main, details, buds } = await this.uq.GetSheet.query({ id });
         const budColl: { [row: number]: { [bud: number]: string | number } } = {};
         for (let { id, bud, value } of buds) {
             let budValues = budColl[id];
