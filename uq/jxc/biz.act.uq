@@ -211,7 +211,7 @@ RETURNS ret (
     INTO ret SELECT sheetId as id, no;
 };
 
-Biz AC SaveDetail ver 0.1 (
+Biz AC SaveDetail ver 0.2 (
     base ID,                -- sheet id
     phrase ID,              -- detail phrase id
     id ID,
@@ -243,10 +243,8 @@ RETURNS ret (
         -- phrase id 必须是 my site
         RETURN;
     }
-    -- SET base=ID(Bud New KEY base=base, ext=phrase);
     IF id IS NULL {
-        SET id = ID(Bud New KEY base=base, ext=phrase);
-        -- ID(Bin New KEY base=base);
+        SET id = ID(Detail New Key base=ID(Bud New KEY base=base, ext=phrase));
     }
     WITH Bin ID=id SET i=i, x=x
         , origin=origin
@@ -355,12 +353,13 @@ PAGE (
     binPhrase ID,
 ) {
     -- VAR bud ID = ID(Bud KEY base=objId, ext=title);
-    PAGE SELECT a.id, a.value, a.ref, a.plusMinus, c.no as sheetNo, d.ext as sheetPhrase, b1.ext as binPhrase
+    PAGE SELECT a.id, a.value, a.ref, a.plusMinus, c.no as sheetNo, d.ext as sheetPhrase, b2.ext as binPhrase
         FROM History as a
             LEFT JOIN Bud as a1 ON a1.id=a.bud
             LEFT JOIN Bin as b ON b.id=a.ref
-            LEFT JOIN Bud as b1 ON b1.id=b.id
-            LEFT JOIN Sheet as c ON c.id=b1.base 
+            LEFT JOIN Detail as b1 ON b1.id=b.id
+            LEFT JOIN Bud as b2 ON b2.id=b1.base
+            LEFT JOIN Sheet as c ON c.id=b2.base
             LEFT JOIN Bud as d ON d.id=c.base
             LEFT JOIN BizPhrase as e ON e.id=d.ext
         WHERE a.id < $pageStart AND a1.base=objId AND a1.ext=title
@@ -600,14 +599,11 @@ RETURNS buds (
 )
 {
     VAR maySheetId ID, detail ID;
-    SET maySheetId = a.base FROM Bud as a WHERE a.id=id;
+    SET maySheetId = b.base FROM Detail as a JOIN Bud as b ON b.id=a.base WHERE a.id=id;
     IF maySheetId IS NOT NULL {
         SET detail = id;
         SET id = maySheetId;
     }
-    -- IF id IS NULL {
-    --    SET id = b.base FROM Bud as b WHERE b.id=detail;
-    -- }
     INTO main SELECT * a, * b, b.id as phrase
         FROM Sheet as a
             LEFT JOIN Bin as b ON b.id=a.id
@@ -617,7 +613,8 @@ RETURNS buds (
         , c.pendFrom, d.value as pendValue
         , b.ext as phrase
         FROM Bin as a
-            JOIN Bud as b ON b.id=a.id
+            JOIN Detail as a1 ON a1.id=a.id
+            JOIN Bud as b ON b.id=a1.base
             LEFT JOIN BinPend as c ON c.id=a.id
             LEFT JOIN Pend as d ON d.id=c.pendFrom
         WHERE b.base=id AND (detail IS NULL OR a.id=detail);

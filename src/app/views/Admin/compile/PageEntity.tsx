@@ -64,10 +64,11 @@ export function PageEntity({ entity }: { entity: Entity }) {
         }, 1000);
         setReadOnly(true);
         textAreaLog.value = '......';
-        let { schemas, hasError } = await uqApi.compileEntity(id, code);
+        let { schemas, hasError, logs } = await uqApi.compileEntity(id, code);
         let ret: string;
         if (hasError === true) {
-            ret = '不能改实体名，也不能新增实体';
+            if (logs === undefined) logs = ['编译出现内部错误'];
+            ret = (logs as string[]).join('\n');
         }
         else {
             let bizSchema = jsonpack.unpack(schemas);

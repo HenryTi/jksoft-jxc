@@ -4,7 +4,7 @@ import { UseQueryOptions, path, pathTo } from "app/tool";
 import { useQuery } from "react-query";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Page } from "tonwa-app";
-import { EasyTime, from62 } from "tonwa-com";
+import { EasyTime, FA, from62 } from "tonwa-com";
 import { ParamGetHistory, ReturnGetHistory$page } from "uqs/UqDefault";
 import { ViewSpec } from "../View";
 import { pathSheetRef } from "./useReport";
@@ -22,7 +22,14 @@ export function PageHistory() {
     };
     function ViewItem({ value: row }: { value: ReturnGetHistory$page; }) {
         let { id, value, ref, plusMinus, sheetNo, sheetPhrase, binPhrase } = row;
-        let { caption, name } = biz.entityIds[binPhrase];
+        let entity = biz.entityIds[binPhrase];
+        if (entity === undefined) {
+            return <div className="px-3 py-2">
+                <FA name="exclamation-circle" className="text-danger me-2" />
+                <span className="text-secondary">数据错误。应该是以前版本的数据 id:{id} ref:{ref} {binPhrase}</span>
+            </div>;
+        }
+        let { caption, name } = entity;
         return <Link to={pathTo(pathSheetRef, ref, undefined)}>
             <div className="px-3 py-2 d-flex">
                 <div className="w-8c small text-secondary"><EasyTime date={(id / (1024 * 1024)) * 60} /></div>

@@ -14,13 +14,17 @@ ID Spec (
 );
 
 -- 单据主表。单明细单据，也有主表
-ID Sheet (
+ID Sheet ver 0.1 (
     id MINUTE,
     KEY base ID,            -- sitePhrase
     KEY no,
-    -- target ID,              -- 操作对象
     operator ID,            -- employee Item
-    -- value VALUE,
+);
+
+ID Detail (
+    id MINUTE,
+    KEY base ID,
+    KEY id,
 );
 
 -- 所有单据的明细，单值

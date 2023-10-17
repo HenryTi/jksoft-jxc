@@ -8,18 +8,22 @@ Biz Bin 采购单主表 {
     X '采购员' Pick 职员信息;
 }
 
+/*
 QUERY q1 (
     k1 'dddd' CHAR='3',
     k2 'bbbb' INT=5,
     k3 'bbc' Options b,
 ) {
-    :(FROM) 医疗器械批次->(as)a x (货品信息,医疗器械)->b x ...;
+    :(FROM) 医疗器械批次->(as)a x^ (货品信息,医疗器械)->b x ...;
     @(WHERE) (a.id=1) && (a.x=3);
     !(SELECT) a='bbd';           -- 基本不需要，因为选出字段都有默认id。当不是默认时，才需要select
     !(SELECT) b=a.3;
     #c @(ON) 1>2;                -- 禁止项
+    (:医疗器械批次->(as)a x^ (货品信息|医疗器械)->b @ a.id=1 && a.x=3 !b.id)
+    (:医疗器械批次 @=1 !id)
+    (:医疗器械批次@1 !a)
 };
-
+*/
 Pick 查询货品 {
     ATOM (货品信息,医疗器械);
     Spec 医疗器械批次;
@@ -42,6 +46,8 @@ Biz Bin 采购单明细 ver 0.1 {
     Price '单价' dec(2);
     Amount '金额' dec(2) = Value * Price;
     ACT {
+        -- VAR a VALUE = (:采购单明细@bin!value);
+        VAR a VALUE = (:采购单明细@bin);
         Biz Pend 待入库账 SET p1=price, p2=amount;
         Biz Title D.a of I += value;
         Biz Title D.b of I += value;
