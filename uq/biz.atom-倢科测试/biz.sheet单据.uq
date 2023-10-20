@@ -8,12 +8,13 @@ Biz Bin 采购单主表 {
     X '采购员' Pick 职员信息;
 }
 
-/*
 QUERY q1 (
-    k1 'dddd' CHAR='3',
-    k2 'bbbb' INT=5,
-    k3 'bbc' Options b,
+    a '参数a' CHAR='3',
+    b '参数b' INT=5,
+    -- c '参数c' Options b,
+    c, d, e,
 ) {
+    /*
     :(FROM) 医疗器械批次->(as)a x^ (货品信息,医疗器械)->b x ...;
     @(WHERE) (a.id=1) && (a.x=3);
     !(SELECT) a='bbd';           -- 基本不需要，因为选出字段都有默认id。当不是默认时，才需要select
@@ -31,9 +32,37 @@ QUERY q1 (
     Use TimeSpan a week(now), day(now), year(now), month(now), hour(now), minute(now);
     Use TimeSpan a+=1;
     (#采购额(id) in a - 6);
+    */
+    VAR v1 INT = c; 
+    VAR p1 CHAR(200) = a; 
+    FROM 货品信息|医疗器械 OF 部门(id) as a
+        ID a.id ASC
+        -- RETURNS 1 as a, 2 as b
+        SEARCH p1
+        WHERE a like p1
+    ;
+    FROM 医疗器械批次 OF base as a
+        ID a.id ASC
+    ;
 };
-*/
+
 Pick 查询货品 {
+    QUERY (
+        a '参数a' CHAR,
+        b '参数b' CHAR,
+        c, d, e,
+    ) {
+        VAR v1 INT = c; 
+        VAR p1 CHAR(200) = a; 
+        VAR p2 CHAR(200) = e;
+        FROM 货品信息|医疗器械 -- OF 部门~(id)
+            ID ASC
+            COLUMN (#价格(!id)) as price
+            BAN %批准日期 < today - INTERVAL 2 year
+            -- SEARCH p2
+            WHERE %批准文号='3355'
+        ;
+    };
     ATOM (货品信息,医疗器械);
     Spec 医疗器械批次;
 };

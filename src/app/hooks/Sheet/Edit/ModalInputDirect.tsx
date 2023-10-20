@@ -40,7 +40,7 @@ export function ModalInputRow({ row }: { row: Row; }) {
             const { name, id, defaultValue } = bud;
             fields.push([name, budValues[id], bud, value => props.buds[id] = value, undefined]);
         }
-        let c = new Calc(uqApp);
+        let c = new Calc();
         for (let field of fields) {
             let [fieldName, value, bud,] = field;
             let cell = c.initCell(fieldName, value, bud.defaultValue);

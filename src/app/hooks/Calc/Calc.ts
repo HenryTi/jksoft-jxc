@@ -42,13 +42,8 @@ class ExpCell extends Cell {
 }
 
 export class Calc {
-    private readonly uqApp: UqApp
     private cells: { [name: string]: Cell } = {};
     _hasValue = atom(false);
-
-    constructor(uqApp: UqApp) {
-        this.uqApp = uqApp;
-    }
 
     initCell(name: string, value: number | string, formula: string): Cell {
         let cell: Cell;
@@ -71,7 +66,7 @@ export class Calc {
             let exp = jsep(formula);
             let v = value;
             if (v === undefined) {
-                v = this.runExpSync(exp);
+                v = this.runExp(exp);
             }
             cell = new ExpCell(name, (value ?? v) as number, exp, fixed);
             this.cells[name] = cell;
@@ -95,7 +90,7 @@ export class Calc {
         setAtomValue(this._hasValue, hasValue);
     }
 
-    async setCellValue(name: string, value: number, callback: (name: string, value: number) => void) {
+    setCellValue(name: string, value: number, callback: (name: string, value: number) => void) {
         const c = this.cells[name];
         if (c === undefined) return;
         if (c.type !== CellType.value) return;
@@ -103,26 +98,26 @@ export class Calc {
         for (let i in this.cells) {
             const cell = this.cells[i];
             if (cell.type === CellType.exp) {
-                let value = cell.value = await this.runExp((cell as ExpCell).exp);
+                let value = cell.value = this.runExp((cell as ExpCell).exp);
                 callback(cell.name, value);
             }
         }
     }
 
-    private async runExp(exp: jsep.Expression): Promise<number> {
+    private runExp(exp: jsep.Expression): number {
         switch (exp.type) {
-            case 'BinaryExpression': return await this.binary(exp as jsep.BinaryExpression);
-            case 'Identifier': return await this.identifier(exp as jsep.Identifier);
-            case 'Literal': return await this.literal(exp as jsep.Literal);
-            case 'UnaryExpression': return await this.unary(exp as jsep.UnaryExpression);
+            case 'BinaryExpression': return this.binary(exp as jsep.BinaryExpression);
+            case 'Identifier': return this.identifier(exp as jsep.Identifier);
+            case 'Literal': return this.literal(exp as jsep.Literal);
+            case 'UnaryExpression': return this.unary(exp as jsep.UnaryExpression);
         }
     }
 
-    private async binary(exp: jsep.BinaryExpression): Promise<number> {
+    private binary(exp: jsep.BinaryExpression): number {
         const { operator, left, right } = exp;
-        let vLeft = await this.runExp(left);
+        let vLeft = this.runExp(left);
         if (vLeft === undefined) return;
-        let vRight = await this.runExp(right);
+        let vRight = this.runExp(right);
         if (vRight === undefined) return;
         switch (operator) {
             default: return;
@@ -135,9 +130,9 @@ export class Calc {
         }
     }
 
-    private async unary(exp: jsep.UnaryExpression): Promise<number> {
+    private unary(exp: jsep.UnaryExpression): number {
         const { operator, argument } = exp;
-        let v = await this.runExp(argument);
+        let v = this.runExp(argument);
         switch (operator) {
             default: return;
             case '-': return -v;
@@ -145,7 +140,7 @@ export class Calc {
         }
     }
 
-    private async identifier(exp: jsep.Identifier): Promise<number> {
+    private identifier(exp: jsep.Identifier): number {
         const { name } = exp;
         let cell = this.cells[name];
         if (cell === undefined) return;
@@ -153,57 +148,7 @@ export class Calc {
         return cell.value as number;
     }
 
-    private async literal(exp: jsep.Literal): Promise<number> {
+    private literal(exp: jsep.Literal): number {
         return Number(exp.value);
-    }
-
-    private runExpSync(exp: jsep.Expression): number {
-        switch (exp.type) {
-            case 'BinaryExpression': return this.binarySync(exp as jsep.BinaryExpression);
-            case 'Identifier': return this.identifierSync(exp as jsep.Identifier);
-            case 'Literal': return this.literalSync(exp as jsep.Literal);
-            case 'UnaryExpression': return this.unarySync(exp as jsep.UnaryExpression);
-        }
-    }
-
-    private binarySync(exp: jsep.BinaryExpression): number {
-        const { operator, left, right } = exp;
-        let vLeft = this.runExpSync(left);
-        if (vLeft === undefined) return;
-        let vRight = this.runExpSync(right);
-        if (vRight === undefined) return;
-        switch (operator) {
-            default: return;
-            case '-': return vLeft - vRight;
-            case '+': return vLeft + vRight;
-            case '*': return vLeft * vRight;
-            case '/':
-                if (vRight === 0) return;
-                return vLeft / vRight;
-        }
-    }
-
-    private unarySync(exp: jsep.UnaryExpression): number {
-        const { operator, argument } = exp;
-        let v = this.runExpSync(argument);
-        switch (operator) {
-            default: return;
-            case '-': return -v;
-            case '+': return v;
-        }
-    }
-
-    private identifierSync(exp: jsep.Identifier): number {
-        const { name } = exp;
-        let cell = this.cells[name];
-        if (cell === undefined) return;
-        // if (cell.type !== CellType.value) return;
-        return cell.value as number;
-    }
-
-    private literalSync(exp: jsep.Literal): number {
-        const { value } = exp;
-        let n = Number(value);
-        return Number.isNaN(n) === true ? n as any : value;
     }
 }
