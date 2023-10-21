@@ -57,7 +57,7 @@ Pick 查询货品 {
         VAR p2 CHAR(200) = e;
         FROM 货品信息|医疗器械 -- OF 部门~(id)
             ID ASC
-            COLUMN (#价格(!id)) as price
+            COLUMN (#价格(%id)) as price
             BAN %批准日期 < today - INTERVAL 2 year
             -- SEARCH p2
             WHERE %批准文号='3355'
