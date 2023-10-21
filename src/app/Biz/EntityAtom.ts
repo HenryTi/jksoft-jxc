@@ -120,18 +120,7 @@ export class EntitySpec extends EntityAtomIDWithBase {
         return ret;
     }
 }
-/*
-export class EntityBud extends EntityAtomIDWithBase {
-    join: EntityAtomID;
 
-    protected override fromSwitch(i: string, val: any) {
-        switch (i) {
-            default: super.fromSwitch(i, val); break;
-            case 'join': this.join = val; break;
-        }
-    }
-}
-*/
 export class EntityPick extends Entity {
     atoms: EntityAtom[];
     specs: EntitySpec[];

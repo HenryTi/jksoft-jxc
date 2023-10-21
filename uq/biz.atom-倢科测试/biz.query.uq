@@ -1,0 +1,25 @@
+QUERY 查询货品Query (
+    a '参数a' CHAR,
+    b '参数b' CHAR,
+    c, d, e,
+) {
+    VAR v1 INT = c; 
+    VAR p1 CHAR(200) = a; 
+    VAR p2 CHAR(200) = e;
+    FROM 货品信息|医疗器械 -- OF 部门~(id)
+        ID ASC
+        COLUMN (
+            1 as a
+            /*
+            %id,
+            %no,
+            $ex,
+            %a,
+            price '价格' = (#价格(%id)),
+            */
+        )
+        -- BAN %批准日期 < today - INTERVAL 2 year
+        -- SEARCH p2
+        WHERE 1=1 -- %批准文号='3355'
+    ;
+};

@@ -11,6 +11,7 @@ import { EntityOptions } from './EntityOptions';
 import { from62, getAtomValue, setAtomValue } from 'tonwa-com';
 import { atom } from 'jotai';
 import { EntityReport } from './EntityReport';
+import { EntityQuery } from './EntityQuery';
 
 enum EnumEntity {
     sheet,
@@ -18,6 +19,7 @@ enum EnumEntity {
     pend,
     atom,
     spec,
+    query,
     pick,
     options,
     report,
@@ -47,6 +49,7 @@ export class Biz {
     readonly bins: EntityBin[] = [];
     readonly pends: EntityPend[] = [];
 
+    readonly queries: EntityQuery[] = [];
     readonly picks: EntityPick[] = [];
     readonly options: EntityOptions[] = [];
 
@@ -87,6 +90,7 @@ export class Biz {
             [EnumEntity.pend]: this.buildPend,
             [EnumEntity.atom]: this.buildAtom,
             [EnumEntity.spec]: this.buildSpec,
+            [EnumEntity.query]: this.buildQuery,
             [EnumEntity.pick]: this.buildPick,
             [EnumEntity.options]: this.buildOptions,
             [EnumEntity.report]: this.buildReport,
@@ -179,6 +183,7 @@ export class Biz {
             {
                 caption: '数据关系',
                 entities: [
+                    [this.queries, '捡取查询', 'hand-pointer-o'],
                     [this.picks, '捡取器', 'hand-pointer-o'],
                     [this.options, '可选项', 'check-square-o'],
                     [this.ties, '对照表', 'list'],
@@ -277,12 +282,16 @@ export class Biz {
         this.specs.push(bizEntity);
         return bizEntity;
     }
+    private buildQuery = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityQuery(this, id, name, type);
+        this.queries.push(bizEntity);
+        return bizEntity;
+    }
     private buildPick = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityPick(this, id, name, type);
         this.picks.push(bizEntity);
         return bizEntity;
     }
-
     private buildOptions = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityOptions(this, id, name, type);
         this.options.push(bizEntity);

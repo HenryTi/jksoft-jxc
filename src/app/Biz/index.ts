@@ -8,3 +8,4 @@ export * from './EntityTie';
 export * from './Entity';
 export * from './EntityOptions';
 export * from './EntityReport';
+export * from './EntityQuery';
