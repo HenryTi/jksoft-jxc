@@ -7,9 +7,9 @@ QUERY 查询货品Query (
     VAR p1 CHAR(200) = a; 
     VAR p2 CHAR(200) = e;
     FROM 货品信息|医疗器械 -- OF 部门~(id)
-        ID ASC
         COLUMN (
-            1 as a
+            ID ASC,
+            a=1,
             /*
             %id,
             %no,

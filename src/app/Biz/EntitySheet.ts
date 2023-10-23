@@ -2,6 +2,7 @@ import { BizBud, EnumBudType } from "./BizBud";
 import { Entity, PropPend } from "./Entity";
 
 export class EntityBin extends Entity {
+    picks: any;
     i: BizBud;
     x: BizBud;
     pend: PropPend;
@@ -15,14 +16,9 @@ export class EntityBin extends Entity {
         }
         switch (i) {
             default: super.fromSwitch(i, val); break;
-            case 'i':
-                this.i = val; // this.fromPickable(val);
-                // this.iCaption = getPickableCaption(this.i);
-                break;
-            case 'x':
-                this.x = val; // this.fromPickable(val);
-                // this.xCaption = getPickableCaption(this.x);
-                break;
+            case 'picks': this.picks = val; break;
+            case 'i': this.i = val; break;
+            case 'x': this.x = val; break;
             case 'pend': this.fromPend(val); break;
             case 'value': this.fromValue(val); break;
             case 'price': this.fromPrice(val); break;

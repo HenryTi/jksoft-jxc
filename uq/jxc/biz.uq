@@ -152,7 +152,6 @@ PROC SaveBizObject ver 0.3 (
     type ENUM BizPhraseType,
     memo CHAR(100),
     source TEXT,
-    schema TEXT,
 )
 RETURNS ret (
     id ID,
@@ -174,7 +173,7 @@ RETURNS ret (
     IF caption IS NOT NULL {
         WITH BizResource IXX=id I=0 X=0 SET res=caption;
     }
-    WITH BizObject as a ID=id SET a.source=source, a.schema=schema;
+    WITH BizObject as a ID=id SET a.source=source;
     WITH XBiz ID=id;
     -- 所有名下的属性置为无效，重新设置
     -- WITH BizPhrase as a KEY(id as base) SET a.valid=0;
@@ -184,6 +183,13 @@ RETURNS ret (
     }
     INTO ret SELECT id;
     TRANS COMMIT;
+}
+
+PROC SaveBizSchema ver 0.3 (
+    entityId ID,
+    schema TEXT,
+) {
+    WITH BizObject as a ID=entityId SET a.schema=schema;
 }
 
 -- Biz object on the X is valid
