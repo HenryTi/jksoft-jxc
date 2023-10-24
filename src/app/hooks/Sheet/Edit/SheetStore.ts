@@ -8,6 +8,8 @@ import { useParams } from "react-router-dom";
 import { UqExt } from "uqs/UqDefault";
 import { atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
+import { PickResults } from "./useBinPicks";
+import { Calc, CalcCells } from "app/hooks/Calc";
 
 
 abstract class KeyIdObject {
@@ -38,22 +40,38 @@ export class SheetMain extends BaseObject {
     }
 
     // return: true: new sheet created
-    async start(pick: PickFunc) {
+    async start(pick: () => Promise<PickResults>) {
         const row = this.binRow;
         const { id } = row;
         if (id > 0) return;
+        const results = await pick();
         const { i, x } = this.entityMain;
+        const cells: CalcCells = {};
         if (i !== undefined) {
+            cells['i'] = { value: undefined, formula: i.defaultValue };
+            /*
             let ret = await pick(i);
             if (ret === undefined) return;
             let { spec } = ret;
             row.i = spec;
+            */
         }
         if (x !== undefined) {
+            cells['x'] = { value: undefined, formula: x.defaultValue };
+            /*
             let ret = await pick(x);
             if (ret === undefined) return;
             let { spec } = ret;
             row.x = spec;
+            */
+        }
+        const calc = new Calc(cells, results);
+        calc.run(undefined);
+        if (i !== undefined) {
+            row.i = calc.getValue('i') as number;
+        }
+        if (x !== undefined) {
+            row.x = calc.getValue('x') as number;
         }
         setAtomValue(this._binRow, row);
         return await this.createIfNotExists();
@@ -61,18 +79,19 @@ export class SheetMain extends BaseObject {
 
     async createIfNotExists() {
         const row = this.binRow;
-        let { id: sheetId, i } = row;
+        let { id: sheetId, i, x } = row;
         if (sheetId > 0) return {
             id: sheetId,
             no: this.no,
             i,
+            x,
         };
         const { uq, entitySheet } = this.sheetStore;
         let ret = await uq.SaveSheet.submit({
             phrase: entitySheet.id,
             no: undefined,
             i: i === 0 ? undefined : i,
-            x: 0,
+            x: x === 0 ? undefined : x,
             value: undefined,
             price: undefined,
             amount: undefined,
@@ -349,19 +368,9 @@ export class SheetStore extends KeyIdObject {
             return id;
         }
     }
-    async start(pick: PickFunc) {
+    async start(pick: () => Promise<PickResults>) {
         let ret = await this.main.start(pick);
         if (ret !== undefined) return ret;
-        // await this.detail.inputSection();
-        /*
-        let target = getAtomValue(this.main._target);
-        if (target > 0) {
-            return await this.main.createNew();
-        }
-        else {
-            this.detail.
-        }
-        */
     }
 
     async saveProp(id: number, bud: number, int: number, dec: number, str: string) {

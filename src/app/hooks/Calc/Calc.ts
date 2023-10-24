@@ -1,7 +1,6 @@
-import { UqApp } from 'app/UqApp';
-import { atom } from 'jotai';
+// import { atom } from 'jotai';
 import jsep from 'jsep';
-import { setAtomValue } from 'tonwa-com';
+// import { setAtomValue } from 'tonwa-com';
 
 enum CellType {
     value = 1,
@@ -11,7 +10,7 @@ enum CellType {
 export abstract class Cell {
     abstract get type(): CellType;
     readonly name: string;
-    abstract get fixed(): boolean;
+    abstract get immutable(): boolean;
     value: number | string;
     constructor(name: string) {
         this.name = name;
@@ -20,7 +19,7 @@ export abstract class Cell {
 
 class ValueCell extends Cell {
     readonly type = CellType.value;
-    readonly fixed = false;
+    readonly immutable = false;
 
     constructor(name: string, value: number | string) {
         super(name);
@@ -31,41 +30,45 @@ class ValueCell extends Cell {
 class ExpCell extends Cell {
     readonly type = CellType.exp;
     readonly exp: jsep.Expression;
-    readonly fixed: boolean;
+    readonly immutable: boolean;
 
-    constructor(name: string, value: number, exp: jsep.Expression, fixed: boolean) {
+    constructor(name: string, value: number, exp: jsep.Expression, immutable: boolean) {
         super(name);
         this.value = value;
         this.exp = exp;
-        this.fixed = fixed;
+        this.immutable = immutable;
     }
 }
 
+export interface CalcCells { [name: string]: { value: string | number; formula: string; } };
 export class Calc {
     private readonly predefined: { [name: string]: any };
     private readonly cells: { [name: string]: Cell } = {};
-    _hasValue = atom(false);
 
-    constructor(predefined?: { [name: string]: any }) {
+    constructor(cells: CalcCells, predefined?: { [name: string]: any }) {
         this.predefined = predefined ?? undefined;
+        for (let i in cells) {
+            const { value, formula } = cells[i];
+            this.initCell(i, value, formula);
+        }
     }
 
-    initCell(name: string, value: number | string, formula: string): Cell {
+    private initCell(name: string, value: number | string, formula: string): Cell {
         let cell: Cell;
         if (formula === undefined) {
             cell = new ValueCell(name, value as number);
             this.cells[name] = cell;
         }
         else {
-            let fixed = true;
+            let immutable = true;
             let p = formula.indexOf('\n');
             if (p > 0) {
                 let suffix = formula.substring(p + 1);
                 formula = formula.substring(0, p);
                 switch (suffix) {
-                    default: fixed = true; break;
-                    case 'init': fixed = false; break;
-                    case 'equ': fixed = true; break;
+                    default: immutable = true; break;
+                    case 'init': immutable = false; break;
+                    case 'equ': immutable = true; break;
                 }
             }
             let exp = jsep(formula);
@@ -73,40 +76,51 @@ export class Calc {
             if (v === undefined) {
                 v = this.runExp(exp);
             }
-            cell = new ExpCell(name, (value ?? v) as number, exp, fixed);
+            cell = new ExpCell(name, (value ?? v) as number, exp, immutable);
             this.cells[name] = cell;
         }
         return cell;
     }
 
-    getCellValue(name: string) {
-        return this.cells[name]?.value;
+    getExpValue(name: string): number | string {
+        let cell = this.cells[name];
+        if (cell === undefined) return;
+        if (cell.type === CellType.exp) return cell.value;
     }
 
-    refreshHasValue() {
-        let hasValue = true;
+    getValue(name: string): number | string {
+        let cell = this.cells[name];
+        return cell?.value;
+    }
+
+    isImmutable(name: string) {
+        let cell = this.cells[name];
+        if (cell === undefined) return;
+        return cell.immutable;
+    }
+
+    getCell(name: string): Cell {
+        let cell = this.cells[name];
+        return cell;
+    }
+
+    run(callback: (name: string, value: string | number) => void) {
         for (let i in this.cells) {
-            let cell = this.cells[i];
-            if (cell.value === undefined) {
-                hasValue = false;
-                break;
+            const cell = this.cells[i];
+            if (cell.type === CellType.exp) {
+                cell.value = this.runExp((cell as ExpCell).exp);
+                if (callback !== undefined) {
+                    const { name, value } = cell;
+                    callback(name, value);
+                }
             }
         }
-        setAtomValue(this._hasValue, hasValue);
     }
-
-    setCellValue(name: string, value: number, callback: (name: string, value: number) => void) {
+    setValue(name: string, value: number | string) {
         const c = this.cells[name];
         if (c === undefined) return;
         if (c.type !== CellType.value) return;
         c.value = value;
-        for (let i in this.cells) {
-            const cell = this.cells[i];
-            if (cell.type === CellType.exp) {
-                let value = cell.value = this.runExp((cell as ExpCell).exp);
-                callback(cell.name, value);
-            }
-        }
     }
 
     private runExp(exp: jsep.Expression): number {
@@ -149,9 +163,14 @@ export class Calc {
     private identifier(exp: jsep.Identifier): number {
         const { name } = exp;
         let cell = this.cells[name];
-        if (cell === undefined) return;
-        // if (cell.type !== CellType.value) return;
-        return cell.value as number;
+        if (cell !== undefined) {
+            return cell.value as number;
+        }
+        let v = this.predefined?.[name];
+        switch (typeof v) {
+            default: return v;
+            case 'object': return v.id;
+        }
     }
 
     private member(exp: jsep.MemberExpression): number {

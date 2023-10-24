@@ -61,9 +61,8 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const { openModal } = useModal();
     const { props, section: { coreDetail: { entityBin } } } = row;
-    const { i: budI, x: budX } = entityBin;
+    const { i: budI, x: budX, price: budPrice, value: budValue, amount: budAmount } = entityBin;
     const { i, x, value, price, amount } = props
-    const digits = 2;
     async function onEdit() {
         if (editable === false) return;
         let ret = await openModal(<ModalInputRow row={row} picked={undefined} />);
@@ -98,9 +97,9 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         </div>
         <div className="col-3">
             <div className="pe-3 text-end d-flex flex-column align-items-end">
-                <ViewValue caption={'单价'} value={price?.toFixed(digits)} />
-                <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />
                 <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
+                <ViewValue caption={'单价'} value={budPrice.valueToContent(price)} />
+                <ViewValue caption={'金额'} value={budAmount.valueToContent(amount)} />
             </div>
         </div >
         <div className="col-1">

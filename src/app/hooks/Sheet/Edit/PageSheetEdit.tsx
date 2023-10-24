@@ -11,6 +11,7 @@ import { UqApp, useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EntitySheet } from "app/Biz";
+import { PickResults, useBinPicks } from "./useBinPicks";
 
 let locationState = 1;
 export function PageSheetEdit() {
@@ -21,7 +22,7 @@ export function PageSheetEdit() {
     const sheetId = from62(id);
     const [sheetStore, setSheetStore] = useState<SheetStore>();
     const location = useLocation();
-    const pick = usePick();
+    const pick = useBinPicks(entitySheet.main);
     useEffect(() => {
         // 重新开始新建一个单据
         if (!location.state) return;
@@ -32,7 +33,7 @@ export function PageSheetEdit() {
             undefined,
         );
         setSheetStore(sheetStore);
-        startStore(uqApp, sheetStore, pick);
+        startSheetStore(uqApp, sheetStore, pick);
     }, [location.state]);
     useEffectOnce(() => {
         (async function () {
@@ -50,14 +51,14 @@ export function PageSheetEdit() {
     return <PageStore store={sheetStore} />;
 }
 
-async function startStore(uqApp: UqApp, store: SheetStore, pick: PickFunc) {
-    let ret = await store.start(pick);
+async function startSheetStore(uqApp: UqApp, sheetStore: SheetStore, pick: () => Promise<PickResults>) {
+    let ret = await sheetStore.start(pick);
     if (ret === undefined) return; // 已有单据，不需要pick. 或者没有创建新单据
     let { id, no, target } = ret;
     if (id > 0) {
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (data) {
-            const { phrase } = store.entitySheet;
+            const { phrase } = sheetStore.entitySheet;
             data.addItem({
                 id,
                 no,
@@ -71,14 +72,14 @@ async function startStore(uqApp: UqApp, store: SheetStore, pick: PickFunc) {
 function PageStore({ store }: { store: SheetStore; }) {
     const { uq, caption, main, detail } = store;
     const uqApp = useUqApp();
-    const pick = usePick();
+    const pick = useBinPicks(main.entityMain);
     const { openModal, closeModal } = useModal();
     const navigate = useNavigate();
     const [editable, setEditable] = useState(true);
 
     const addNew = useCoreDetailAdd(detail);
     const start = useCallback(async function () {
-        startStore(uqApp, store, pick);
+        startSheetStore(uqApp, store, pick);
     }, []);
     useEffectOnce(() => {
         start();

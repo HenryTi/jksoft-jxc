@@ -29,7 +29,7 @@ export abstract class BudDataType {
     abstract get type(): EnumBudType;
     abstract get dataType(): string;
     fromSchema(schema: any) { }
-    scan(biz: Biz) { }
+    scan(biz: Biz, bud: BizBud) { }
     valueToContent(value: string | number) {
         return value;
     }
@@ -51,6 +51,18 @@ export class BudInt extends BudDataNumber {
 }
 export class BudDec extends BudDataNumber {
     readonly type = EnumBudType.dec;
+    fraction: number;
+    override scan(biz: Biz, bud: BizBud) {
+        const { ex } = bud;
+        if (ex !== undefined) {
+            this.fraction = ex.fraction;
+        }
+    }
+    valueToContent(value: number) {
+        if (this.fraction === undefined) return value;
+        if (value === undefined) return;
+        return value.toFixed(this.fraction);
+    }
 }
 export class BudString extends BudDataString {
     readonly type = EnumBudType.str;
@@ -62,7 +74,7 @@ export class BudAtom extends BudDataNumber {
     fromSchema(schema: any) {
         this.atom = schema.atom;
     }
-    override scan(biz: Biz) {
+    override scan(biz: Biz, bud: BizBud) {
         this.bizAtom = biz.entities[this.atom] as EntityAtom;
     }
 }
@@ -73,7 +85,7 @@ export class BudID extends BudDataNumber {
     fromSchema(schema: any) {
         this.IDName = schema.ID;
     }
-    override scan(biz: Biz) {
+    override scan(biz: Biz, bud: BizBud) {
         if (this.IDName !== undefined) {
             this.ID = (biz.uqApp.uq as any)[this.IDName] as ID;
         }
@@ -83,7 +95,7 @@ abstract class BudOptions extends BudDataType {
     private optionsName: string;
     options: EntityOptions;
     get dataType(): 'string' | 'number' { return; }
-    override scan(biz: Biz) {
+    override scan(biz: Biz, bud: BizBud) {
         this.options = biz.entities[this.optionsName] as EntityOptions;
     }
     fromSchema(schema: any) {
@@ -119,7 +131,7 @@ export class BudPickable extends BudDataNumber {
     fromSchema(schema: any) {
         this.schema = schema;
     }
-    override scan(biz: Biz) {
+    override scan(biz: Biz, bud: BizBud) {
         const { entities } = biz;
         const { pick } = this.schema;
         if (pick !== undefined) {
@@ -136,7 +148,7 @@ export class BudPickable extends BudDataNumber {
 export class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budDataType: BudDataType;
-    defaultValue: any;
+    defaultValue: string;
     ex: any;
     constructor(biz: Biz, id: number, name: string, dataType: EnumBudType, entity: Entity) {
         super(biz, id, name, 'bud');
@@ -164,7 +176,10 @@ export class BizBud extends BizBase {
         this.budDataType = budDataType;
     }
     scan() {
-        this.budDataType.scan(this.biz);
+        this.budDataType.scan(this.biz, this);
+    }
+    valueToContent(value: any) {
+        return this.budDataType.valueToContent(value);
     }
 
     protected fromSwitch(i: string, val: any) {
