@@ -295,8 +295,6 @@ export class SheetStore extends KeyIdObject {
     readonly detailExs: ExDetail[] = [];
     readonly caption: string;
     readonly idOnUrl: number;
-    // readonly _budColl = atom<{ [row: number]: { [bud: number]: string | number } }>({});
-    // budColl: { [row: number]: { [bud: number]: string | number } };
 
     constructor(uq: UqExt, biz: Biz, entitySheet: EntitySheet, id: number) {
         super();

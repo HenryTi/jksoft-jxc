@@ -21,45 +21,17 @@ export interface OptionsUseDetailQPA extends OptionsUseSheetDetail {
 
 export function useDetailQPA({ detail: detailName }: OptionsUseDetailQPA): UseSheetDetailReturn {
     const uqApp = useUqApp();
-    // const saveAtomSpec = useSaveAtomSpec();
-    // const selectAtomSpec = useSelectAtomSpec();
     const { openModal, closeModal } = useModal();
     const pick = usePick();
-    const entityDetail = uqApp.biz.entities[detailName] as EntityBin;
+    const entityBin = uqApp.biz.entities[detailName] as EntityBin;
     async function addRow(editingRows: EditingRow[]): Promise<SheetRow[]> {
-        let pickValue = await pick(entityDetail.i);
+        let pickValue = await pick(entityBin.i);
         if (pickValue === undefined) return;
-        // alert(JSON.stringify(pickValue));
-        // let atomSpec = await selectAtomSpec('goods' as EnumAtom);
-        // if (atomSpec === undefined) return;
-        /*
-        let { atom, uom } = atomSpec;
-        if (!uom.id) {
-            await openModal(<Page header="提示">
-                <div className="px-3">
-                    <div className="my-3">
-                        <ViewAtom value={atom} />
-                    </div>
-                    <div className="my-3 text-danger">
-                        <FA name="times-circle" /> 无计量单位
-                    </div>
-                    <div className="my-3">
-                        <button className="btn btn-outline-primary" onClick={closeModal}>
-                            返回
-                        </button>
-                    </div>
-                </div>
-            </Page>);
-            return;
-        }
-        let item = await saveAtomSpec(atomSpec);
-        atomSpec.id = item;
-        */
         const { spec } = pickValue;
         let item = spec;
         let editingRow = editingRowFromAtom(item);
         if (editingRow === undefined) return;
-        let ret = await openModal(<PageDetail header={'新增明细'} editingRow={editingRow} entityDetail={entityDetail} />);
+        let ret = await openModal(<PageDetail header={'新增明细'} editingRow={editingRow} entityBin={entityBin} />);
         if (ret === undefined) return [];
         return [ret];
     }
@@ -75,13 +47,13 @@ export function useDetailQPA({ detail: detailName }: OptionsUseDetailQPA): UseSh
 
     async function editRow(editingRow: EditingRow, updateRow: UpdateRow): Promise<void> {
         const { openModal } = uqAppModal(uqApp);
-        let ret = await openModal<SheetRow>(<PageDetail header="修改明细" editingRow={editingRow} entityDetail={entityDetail} />);
+        let ret = await openModal<SheetRow>(<PageDetail header="修改明细" editingRow={editingRow} entityBin={entityBin} />);
         if (ret === undefined) return;
         await updateRow(editingRow, ret.details);
     }
 
     return {
-        detail: entityDetail,
+        detail: entityBin,
         ViewItemTemplate: ViewAtom,
         ViewRow: ViewDetailQPA,
         addRow,
@@ -127,10 +99,10 @@ function useSaveAtomSpec() {
     return saveAtomSpec;
 }
 
-function PageDetail({ header, editingRow, entityDetail }: {
+function PageDetail({ header, editingRow, entityBin }: {
     header?: string;
     editingRow?: EditingRow;
-    entityDetail: EntityBin;
+    entityBin: EntityBin;
 }): JSX.Element {
     const caption = '明细';
     const itemCaption = '商品';
@@ -220,7 +192,7 @@ function PageDetail({ header, editingRow, entityDetail }: {
         closeModal(ret);
     }
 
-    let { id: entityId } = entityDetail;
+    let { id: entityId } = entityBin;
     let base62 = to62(entityId);
     return <Page header={header ?? caption}>
         <div className="pt-3 tonwa-bg-gray-2 mb-3 container">

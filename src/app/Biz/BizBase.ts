@@ -18,6 +18,7 @@ export class BizBase {
         this.id = id;
         this._name = name;
         this.type = type;
+        this.bizPhraseType = BizPhraseType[type as keyof typeof BizPhraseType];
     }
 
     setName(name: string) {

@@ -122,9 +122,7 @@ export class UqApp extends UqAppBase<UQs> {
 
     atomSiteLogined = atom(false);
     loginSite = async () => {
-        console.error('loginSite');
         if (this.uqSites !== undefined) return this.biz;
-        console.error('loginSite start loading');
         this.uqSites = new UqSites(this.uqMan);
         await this.uqSites.login();
         let { userSite } = this.uqSites;

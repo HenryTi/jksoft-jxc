@@ -8,25 +8,31 @@ import { ButtonAsync, FA, useEffectOnce } from "tonwa-com";
 import { BizBud, EnumBudType } from "app/Biz";
 import { Calc, Cell } from "../../Calc";
 import { useAtomValue } from "jotai";
-import { useUqApp } from "app/UqApp";
 
+const fieldI = 'i';
+const fieldX = 'x';
 const fieldValue = 'value';
 const fieldPrice = 'price';
 const fieldAmount = 'amount';
 
-export function ModalInputRow({ row }: { row: Row; }) {
-    const uqApp = useUqApp();
+export function ModalInputRow({ row, picked }: { row: Row; picked: { [name: string]: any } }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { props, section } = row;
-    const { entityBin: entityDetail } = section.coreDetail;
-    const { i: budI, x: budX, props: budArr } = entityDetail;
+    const { entityBin } = section.coreDetail;
+    const { i: budI, x: budX, props: budArr } = entityBin;
     const { i, x, buds: budValues } = props;
     const { current: fields } = useRef<[string, number | string, BizBud, (value: number | string) => void, Cell][]>([]);
     const [calc, setCalc] = useState<Calc>();
     useEffectOnce(() => {
-        const { value, price, amount } = props;
-        const { value: valueBud, price: priceBud, amount: amountBud } = entityDetail;
+        const { i, x, value, price, amount } = props;
+        const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud } = entityBin;
+        if (iBud !== undefined) {
+            fields.push([fieldI, i, iBud, value => props.i = value as number, undefined]);
+        }
+        if (xBud !== undefined) {
+            fields.push([fieldX, x, xBud, value => props.x = value as number, undefined]);
+        }
         if (valueBud !== undefined) {
             fields.push([fieldValue, value, valueBud, value => props.value = value as number, undefined]);
         }
@@ -40,7 +46,7 @@ export function ModalInputRow({ row }: { row: Row; }) {
             const { name, id, defaultValue } = bud;
             fields.push([name, budValues[id], bud, value => props.buds[id] = value, undefined]);
         }
-        let c = new Calc();
+        let c = new Calc(picked);
         for (let field of fields) {
             let [fieldName, value, bud,] = field;
             let cell = c.initCell(fieldName, value, bud.defaultValue);
@@ -96,7 +102,7 @@ export function ModalInputRow({ row }: { row: Row; }) {
                 let v = Number(valueInputText);
                 valueInput = Number.isNaN(v) === true ? undefined : v;
             }
-            await calc.setCellValue(name, valueInput, (name, value) => {
+            calc.setCellValue(name, valueInput, (name, value) => {
                 setValue(name, value?.toFixed(4));
             });
             calc.refreshHasValue();

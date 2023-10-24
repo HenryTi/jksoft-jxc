@@ -16,7 +16,7 @@ export function useSelectAtom() {
     }
 }
 
-function PageAtomSelect(props: PropsAtomSelect) {
+export function PageAtomSelect(props: PropsAtomSelect) {
     const { buds, loadOnOpen, caption, placeholder, atomName } = props;
     const uqApp = useUqApp();
     const { biz } = uqApp;

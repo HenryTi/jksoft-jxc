@@ -163,11 +163,6 @@ export class BizBud extends BizBase {
         }
         this.budDataType = budDataType;
     }
-    /*
-    get phrase(): string {
-        return `${this.entity.phrase}.${this.name}`;
-    }
-    */
     scan() {
         this.budDataType.scan(this.biz);
     }

@@ -21,8 +21,8 @@ export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable:
 
 function ViewSection({ section, editable }: { section: Section; editable: boolean; }) {
     const { coreDetail: detail } = section;
-    const { entityBin: entityDetail } = detail;
-    const { x } = entityDetail;
+    const { entityBin } = detail;
+    const { x } = entityBin;
     const edit = useCoreDetailEdit(detail);
     const rows = useAtomValue(section._rows);
     async function onClick() {
@@ -60,13 +60,13 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const { openModal } = useModal();
-    const { props, section: { coreDetail: { entityBin: entityDetail } } } = row;
-    const { i: budI, x: budX } = entityDetail;
+    const { props, section: { coreDetail: { entityBin } } } = row;
+    const { i: budI, x: budX } = entityBin;
     const { i, x, value, price, amount } = props
     const digits = 2;
     async function onEdit() {
         if (editable === false) return;
-        let ret = await openModal(<ModalInputRow row={row} />);
+        let ret = await openModal(<ModalInputRow row={row} picked={undefined} />);
         if (ret === true) {
             await row.changed();
         }

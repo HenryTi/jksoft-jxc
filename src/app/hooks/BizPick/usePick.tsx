@@ -1,4 +1,4 @@
-import { BizBud, BudPickable, EntityAtom, EnumBudType } from "app/Biz";
+import { BizBud, BudAtom, BudPickable, EntityAtom, EnumBudType } from "app/Biz";
 import { EntitySpec } from "app/Biz/EntityAtom";
 import { useCallback } from "react";
 import { usePickAtom } from "./usePickAtom";
@@ -13,18 +13,12 @@ export function usePick() {
     const pickSpec = usePickSpec();
     async function pick(pickable: BizBud): Promise<{ atom: number; spec: number; }> {
         let { caption, budDataType } = pickable;
-        if (budDataType.type !== EnumBudType.pick) debugger;
-        const { atom, pick } = budDataType as BudPickable;
+        if (budDataType.type !== EnumBudType.atom) debugger;
+        const { bizAtom } = budDataType as BudAtom;
         let atoms: EntityAtom[];
         let specs: EntitySpec[];
-        if (pick !== undefined) {
-            atoms = pick.atoms;
-            specs = [...pick.specs];
-        }
-        else {
-            atoms = [atom];
-            specs = [];
-        }
+        atoms = [bizAtom];
+        specs = [];
         if (caption === undefined) {
             let { caption: atomCaption, name: atomName } = atoms[0];
             caption = atomCaption ?? atomName;

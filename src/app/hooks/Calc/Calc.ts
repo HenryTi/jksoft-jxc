@@ -22,7 +22,7 @@ class ValueCell extends Cell {
     readonly type = CellType.value;
     readonly fixed = false;
 
-    constructor(name: string, value: number) {
+    constructor(name: string, value: number | string) {
         super(name);
         this.value = value;
     }
@@ -42,8 +42,13 @@ class ExpCell extends Cell {
 }
 
 export class Calc {
-    private cells: { [name: string]: Cell } = {};
+    private readonly predefined: { [name: string]: any };
+    private readonly cells: { [name: string]: Cell } = {};
     _hasValue = atom(false);
+
+    constructor(predefined?: { [name: string]: any }) {
+        this.predefined = predefined ?? undefined;
+    }
 
     initCell(name: string, value: number | string, formula: string): Cell {
         let cell: Cell;
@@ -110,6 +115,7 @@ export class Calc {
             case 'Identifier': return this.identifier(exp as jsep.Identifier);
             case 'Literal': return this.literal(exp as jsep.Literal);
             case 'UnaryExpression': return this.unary(exp as jsep.UnaryExpression);
+            case 'MemberExpression': return this.member(exp as jsep.MemberExpression);
         }
     }
 
@@ -146,6 +152,15 @@ export class Calc {
         if (cell === undefined) return;
         // if (cell.type !== CellType.value) return;
         return cell.value as number;
+    }
+
+    private member(exp: jsep.MemberExpression): number {
+        const { object, property } = exp;
+        let obj = this.runExp(object);
+        let ret = this.predefined[obj];
+        if (property === undefined) return ret;
+        let p = this.runExp(property);
+        return ret[p];
     }
 
     private literal(exp: jsep.Literal): number {

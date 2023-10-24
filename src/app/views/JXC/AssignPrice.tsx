@@ -9,7 +9,7 @@ function PagePrice() {
         atom={'goods'}
         caption={'零售价设置'}
         budNames={['Price.retail']}
-        noMedsMessage="noMedsMessage" />
+        noMedsMessage="@pathPrice" />
 }
 
 export const routePrice = <>

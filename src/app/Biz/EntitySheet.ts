@@ -1,8 +1,44 @@
+import { BizPhraseType } from "uqs/UqDefault";
+import { Biz } from "./Biz";
 import { BizBud, EnumBudType } from "./BizBud";
 import { Entity, PropPend } from "./Entity";
+import { EntityAtom, EntitySpec } from "./EntityAtom";
+import { EntityQuery } from "./EntityQuery";
+
+
+export interface PickParam {
+    name: string;
+    bud: string;
+    prop: string;       // prop of bud
+}
+export abstract class PickBase {
+    bizPhraseType: BizPhraseType;
+}
+export class PickQuery extends PickBase {
+    query: EntityQuery;
+}
+export class PickAtom extends PickBase {
+    from: EntityAtom[];
+}
+export class PickSpec extends PickBase {
+    from: EntitySpec;
+}
+export class PickPend extends PickBase {
+    from: EntityPend;
+}
+
+export class BinPick extends BizBud {
+    readonly bin: EntityBin;
+    param: PickParam[];
+    pick: PickBase;
+    constructor(biz: Biz, id: number, name: string, bin: EntityBin) {
+        super(biz, id, name, EnumBudType.pick, bin);
+        this.bin = bin;
+    }
+}
 
 export class EntityBin extends Entity {
-    picks: any;
+    picks: BinPick[];
     i: BizBud;
     x: BizBud;
     pend: PropPend;
@@ -48,16 +84,60 @@ export class EntityBin extends Entity {
     }
 
     private buildBudPickable(prop: any): BizBud {
-        const { id, name, caption } = prop;
-        let bud = new BizBud(this.biz, id, name, EnumBudType.pick, this);
-        bud.caption = caption;
+        const { id, name } = prop;
+        let bud = new BizBud(this.biz, id, name, EnumBudType.atom, this);
+        bud.fromSchema(prop);
+        // bud.caption = caption;
         bud.budDataType.fromSchema(prop);
         bud.scan();
         return bud;
     }
 
+    private buildPick(v: any): BinPick {
+        const { id, name, param, from } = v;
+        let ret = new BinPick(this.biz, id, name, this);
+        ret.param = param;
+        let arr = (from as string[]).map(v => this.biz.entities[v]);
+        let entity = arr[0];
+        let { bizPhraseType } = entity;
+        let pickBase: PickBase;
+        function buildPickAtom() {
+            let pick = new PickAtom();
+            pick.from = arr as EntityAtom[];
+            return pick;
+        }
+        function buildPickSpec() {
+            let pick = new PickSpec();
+            pick.from = entity as EntitySpec;
+            return pick;
+        }
+        function buildPickQuery() {
+            let pick = new PickQuery();
+            pick.query = entity as EntityQuery;
+            return pick;
+        }
+        function buildPickPend() {
+            let pick = new PickPend();
+            pick.from = entity as EntityPend;
+            return pick;
+        }
+        switch (bizPhraseType) {
+            default: debugger;
+            case BizPhraseType.atom: pickBase = buildPickAtom(); break;
+            case BizPhraseType.spec: pickBase = buildPickSpec(); break;
+            case BizPhraseType.query: pickBase = buildPickQuery(); break;
+            case BizPhraseType.pend: pickBase = buildPickPend(); break;
+        }
+        pickBase.bizPhraseType = bizPhraseType;
+        ret.pick = pickBase;
+        return ret;
+    }
+
     scan() {
         super.scan();
+        if (this.picks !== undefined) {
+            this.picks = this.picks.map(v => this.buildPick(v as any));
+        }
         if (this.i !== undefined) {
             this.i = this.buildBudPickable(this.i as any);
         }
