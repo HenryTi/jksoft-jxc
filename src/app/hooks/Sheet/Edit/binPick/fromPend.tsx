@@ -1,13 +1,72 @@
-import { EntityPend, PropPend } from "app/Biz";
+import { BinPick, PickPend, PropPend } from "app/Biz";
+import { useCallback } from "react";
+import { Page, useModal } from "tonwa-app";
+import { PickResults } from "./useBinPicks";
+import { BinDetail, CoreDetail, Section } from "../SheetStore";
 import { useUqApp } from "app/UqApp";
 import { ViewSpec } from "app/hooks/View";
 import { UseQueryOptions } from "app/tool";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { Page, useModal } from "tonwa-app";
 import { List } from "tonwa-com";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
-import { PendRow, BinDetail } from "./SheetStore";
+import { PendRow } from "../SheetStore";
+
+
+export function usePickFromPend() {
+    const modal = useModal();
+    return useCallback(
+        async function pickFromPend(pickResults: PickResults, binPick: BinPick, coreDetail: CoreDetail): Promise<any> {
+            let { name, caption, pick } = binPick;
+            let pickBase = pick as PickPend;
+            let propPend: PropPend = {
+                caption,
+                entity: pickBase.from,
+                search: [],
+            };
+            //async function addNewFromPend(modal: Modal, coreDetail: CoreDetail, pend: PropPend) {
+            let inputed = await modal.open<BinDetail[]>(<ModalInputPend propPend={propPend} />);
+            if (inputed === undefined) return;
+            let iArr: BinDetail[] = [];
+            let iGroup: number[] = [];
+            let iColl: { [i: number]: BinDetail[] } = {};
+            for (let r of inputed) {
+                let { i, x } = r;
+                if (x === undefined) {
+                    iArr.push(r);
+                }
+                else {
+                    let group = iColl[i];
+                    if (group === undefined) {
+                        group = [r];
+                        iColl[i] = group;
+                        iGroup.push(i);
+                    }
+                    else {
+                        group.push(r);
+                    }
+                }
+            }
+            await addNewArr();
+            await addNewGroup();
+            async function addNewArr() {
+                if (coreDetail === undefined) {
+                    alert('Pick Pend on main not implemented');
+                    return;
+                }
+                for (let rowProps of iArr) {
+                    let sec = new Section(coreDetail);
+                    coreDetail.addSection(sec);
+                    await sec.addRowProps(rowProps);
+                }
+            }
+            async function addNewGroup() {
+
+            }
+            // }
+            return undefined; // ret;
+        }, []);
+}
 
 export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
     const uqApp = useUqApp();
@@ -119,3 +178,4 @@ export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
         </div>
     </Page>
 }
+

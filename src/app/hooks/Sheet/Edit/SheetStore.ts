@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import { UqExt } from "uqs/UqDefault";
 import { atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
-import { PickResults } from "./useBinPicks";
+import { PickResults } from "./binPick/useBinPicks";
 import { Calc, CalcCells } from "app/hooks/Calc";
 
 
@@ -40,11 +40,11 @@ export class SheetMain extends BaseObject {
     }
 
     // return: true: new sheet created
-    async start(pick: () => Promise<PickResults>) {
+    async start(pick: (coreDetail: CoreDetail) => Promise<PickResults>) {
         const row = this.binRow;
         const { id } = row;
         if (id > 0) return;
-        const results = await pick();
+        const results = await pick(undefined);
         const { i, x } = this.entityMain;
         const cells: CalcCells = {};
         if (i !== undefined) {
@@ -368,7 +368,7 @@ export class SheetStore extends KeyIdObject {
             return id;
         }
     }
-    async start(pick: () => Promise<PickResults>) {
+    async start(pick: (coreDetail: CoreDetail) => Promise<PickResults>) {
         let ret = await this.main.start(pick);
         if (ret !== undefined) return ret;
     }

@@ -3,7 +3,7 @@ import { CoreDetail, Row, Section } from "./SheetStore";
 import { FA, LMR, Sep } from "tonwa-com";
 import { ViewSpec } from "app/hooks/View";
 import { useModal } from "tonwa-app";
-import { ModalInputRow } from "./ModalInputDirect";
+import { ModalInputRow } from "./ModalInputRow";
 import React from "react";
 import { useCoreDetailEdit } from "./useCoreDetailEdit";
 import { BizBud } from "app/Biz";
@@ -84,6 +84,14 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
             <ViewSpec id={value} />
         </div>
     }
+    let vPrice: any;
+    if (budPrice !== undefined) {
+        vPrice = <ViewValue caption={'单价'} value={budPrice.valueToContent(price)} />;
+    }
+    let vAmount: any;
+    if (budAmount !== undefined) {
+        vAmount = <ViewValue caption={'金额'} value={budAmount.valueToContent(amount)} />;
+    }
     return <div className="py-2 align-items-stretch row">
         <div className="col-4">
             <div className="ps-3">
@@ -98,8 +106,8 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         <div className="col-3">
             <div className="pe-3 text-end d-flex flex-column align-items-end">
                 <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
-                <ViewValue caption={'单价'} value={budPrice.valueToContent(price)} />
-                <ViewValue caption={'金额'} value={budAmount.valueToContent(amount)} />
+                {vPrice}
+                {vAmount}
             </div>
         </div >
         <div className="col-1">

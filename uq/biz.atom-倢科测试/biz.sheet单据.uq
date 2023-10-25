@@ -8,7 +8,7 @@ Biz Bin 采购单主表 {
     X '采购员' Pick 职员信息;
 }
 
-QUERY q1 (
+QUERY qq1 (
     a '参数a' CHAR='3',
     b '参数b' INT=5,
     -- c '参数c' Options b,
@@ -59,6 +59,31 @@ Biz Pend 待入库账 '待入库' {
     Prop {
         p1 DEC;
         p2 DEC;
+    };
+}
+
+Biz Bin 采购单明细带查询 ver 0.1 {
+    Pick pickA FROM q1;
+    Pick pickB FROM q2 {
+        PARAM base=pickA;
+    }
+    I '商品Pick' = PickSpec; 
+    Value '数量' dec(2);
+    Price '单价' dec(2) = {
+        PUT = 2;
+        PUT Amount = Value*Price;
+    } ON (I);
+    Amount '金额' dec(2) = Value * Price;
+    ACT {
+        Use TimeSpan w Week; 
+        Use TimeSpan m Month; 
+        VAR a VALUE = (#采购单明细(bin).value); 
+        VAR b VALUE = (#销售单明细(bin).value);
+        VAR c VALUE = (#采购.数量(i).sum in w);
+        VAR d VALUE = (#采购.数量(i));
+        Biz Pend 待入库账 SET p1=price, p2=amount;
+        Biz Title 销售.数量 of I += value;
+        Biz Title 销售.金额 of I += value;
     };
 }
 

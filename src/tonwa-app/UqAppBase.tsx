@@ -216,7 +216,13 @@ export function useModal() {
     return uqAppModal(uqApp);
 }
 
-export function uqAppModal(uqApp: UqAppBase): { openModal: OpenModal; closeModal: (result?: any) => void } {
+export interface Modal {
+    openModal: OpenModal;
+    open: OpenModal;
+    closeModal: (result?: any) => void;
+    close: (result?: any) => void;
+}
+export function uqAppModal(uqApp: UqAppBase): Modal {
     const { modal } = uqApp;
     const { stack: modalStackAtom } = modal;
     async function openModal<T = any>(element: JSX.Element, onClosed?: (result: any) => void): Promise<T> {
@@ -242,7 +248,7 @@ export function uqAppModal(uqApp: UqAppBase): { openModal: OpenModal; closeModal
         onClosed?.(result);
         uqApp.onCloseModal?.();
     }
-    return { openModal, closeModal }
+    return { openModal, open: openModal, closeModal, close: closeModal, }
 }
 
 

@@ -1,17 +1,8 @@
 import { useCallback } from "react";
 import { CoreDetail, Row, Section, BinDetail } from "./SheetStore";
 import { Page, useModal } from "tonwa-app";
-// import { usePick } from "app/hooks/BizPick";
-import { ModalInputRow } from "./ModalInputDirect";
-import { ModalInputPend } from "./ModalInputPend";
-/*
-import { BinPick, PickAtom, PickPend, PickQuery, PickSpec } from "app/Biz";
-import { Atom, BizPhraseType } from "uqs/UqDefault";
-import { PageAtomSelect, ViewAtom, useSelectAtom } from "app/hooks/BizAtom";
-import { AtomPhrase } from "app/tool";
-import { usePickSpec } from "app/hooks/BizPick/userPickSpec";
-*/
-import { useBinPicks } from "./useBinPicks";
+import { ModalInputRow } from "./ModalInputRow";
+import { useBinPicks } from "./binPick";
 
 /*
 type PickResult = { [prop: string]: any };
@@ -20,12 +11,12 @@ interface PickResults {
 }
 */
 export function useCoreDetailAdd(coreDetail: CoreDetail) {
-    const { openModal, closeModal } = useModal();
+    const { openModal } = useModal();
     // const pick = usePick();
     const { entityBin } = coreDetail;
     const { pend } = entityBin;
     const pick = useBinPicks(entityBin);
-
+    /*
     // if no detailSection add new, else edit
     async function addNewFromPend() {
         let inputed = await openModal<BinDetail[]>(<ModalInputPend propPend={pend} />);
@@ -63,12 +54,13 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
 
         }
     }
+    */
     // if no detailSection add new, else edit
     async function addNewDirect() {
         let section = new Section(coreDetail);
         let row = new Row(section);
 
-        let pickResults = await pick();
+        let pickResults = await pick(coreDetail);
         if (pickResults === undefined) return;
 
         /*
@@ -90,5 +82,6 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
         await openModal(<ModalInputRow row={row} picked={pickResults} />);
         await row.addToSection();
     }
-    return useCallback(pend !== undefined ? addNewFromPend : addNewDirect, []);
+    //return useCallback(pend !== undefined ? addNewFromPend : addNewDirect, []);
+    return useCallback(addNewDirect, []);
 }

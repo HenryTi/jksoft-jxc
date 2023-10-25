@@ -1,5 +1,5 @@
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
-import { SheetStore } from "./SheetStore";
+import { CoreDetail, SheetStore } from "./SheetStore";
 import { PickFunc, usePick } from "app/hooks/BizPick";
 import { ButtonAsync, FA, LMR, from62, getAtomValue, to62, useEffectOnce, wait } from "tonwa-com";
 import { ViewMain } from "./ViewMain";
@@ -11,7 +11,7 @@ import { UqApp, useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EntitySheet } from "app/Biz";
-import { PickResults, useBinPicks } from "./useBinPicks";
+import { PickResults, useBinPicks } from "./binPick/useBinPicks";
 
 let locationState = 1;
 export function PageSheetEdit() {
@@ -51,7 +51,7 @@ export function PageSheetEdit() {
     return <PageStore store={sheetStore} />;
 }
 
-async function startSheetStore(uqApp: UqApp, sheetStore: SheetStore, pick: () => Promise<PickResults>) {
+async function startSheetStore(uqApp: UqApp, sheetStore: SheetStore, pick: (coreDetail: CoreDetail) => Promise<PickResults>) {
     let ret = await sheetStore.start(pick);
     if (ret === undefined) return; // 已有单据，不需要pick. 或者没有创建新单据
     let { id, no, target } = ret;
