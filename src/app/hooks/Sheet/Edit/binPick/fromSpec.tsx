@@ -11,29 +11,23 @@ export function usePickFromSpec() {
         let { name, caption, param, pick } = binPick;
         let pickBase = pick as PickSpec;
         let { from } = pickBase;
-        let retAtom = results[param[0]?.bud] as Atom;
+        const { props } = results;
+        let retAtom = props[param[0]?.bud] as Atom;
         const viewTop = <div>
             <ViewAtom value={retAtom} />
         </div>;
         const buttonCaption = '提交';
         const buttonClassName = 'btn btn-primary';
-        let { retSpec, retViewTop } = await returnUsePickSpec({
-            base: results[param[0]?.bud]?.id,
+        let ret = await returnUsePickSpec({
+            base: props[param[0]?.bud]?.id,
             entitySpec: from,
             viewTop,
             buttonCaption,
             buttonClassName,
         });
-        /*
-        function onPick() {
-            closeModal({ name, caption });
-        }
-        let ret = await openModal(<Page header={caption ?? name} >
-            <div className="p-3">
-                <button className="btn btn-primary" onClick={onPick}>选择</button>
-            </div>
-        </Page>);
-        */
-        return results[name] = retSpec;
+        if (ret === undefined) return false;
+        let { retSpec, retViewTop } = ret;
+        props[name] = retSpec;
+        return true;
     }, []);
 }

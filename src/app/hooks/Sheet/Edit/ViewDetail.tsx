@@ -7,6 +7,7 @@ import { ModalInputRow } from "./ModalInputRow";
 import React from "react";
 import { useCoreDetailEdit } from "./useCoreDetailEdit";
 import { BizBud } from "app/Biz";
+import { RowStore } from "./binPick";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -60,12 +61,13 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const { openModal } = useModal();
-    const { props, section: { coreDetail: { entityBin } } } = row;
+    const { props: binDetail, section: { coreDetail: { entityBin } } } = row;
     const { i: budI, x: budX, price: budPrice, value: budValue, amount: budAmount } = entityBin;
-    const { i, x, value, price, amount } = props
+    let { i, x, value, price, amount } = binDetail
     async function onEdit() {
         if (editable === false) return;
-        let ret = await openModal(<ModalInputRow row={row} picked={undefined} />);
+        const rowStore = new RowStore(entityBin, binDetail, undefined);
+        let ret = await openModal(<ModalInputRow row={row} rowStore={rowStore} />);
         if (ret === true) {
             await row.changed();
         }
@@ -76,7 +78,10 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
             <span className="w-min-4c">{value}</span>
         </div>;
     }
-    if (value === undefined) return null;
+    if (value === undefined) {
+        value = 0;
+        // return null;
+    }
     let cnEdit = editable === true ? 'cursor-pointer' : 'text-light';
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
         if (bud === undefined) return null;

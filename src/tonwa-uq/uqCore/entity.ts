@@ -278,6 +278,12 @@ export abstract class Entity {
         switch (field.type) {
             case 'datetime':
                 return this.buildDateTimeParam(d);
+            case 'json':
+                switch (typeof d) {
+                    default: debugger; throw new Error('error value for json');
+                    case 'string': return d;
+                    case 'object': return JSON.stringify(d);
+                }
             default:
                 switch (typeof d) {
                     default: return d;

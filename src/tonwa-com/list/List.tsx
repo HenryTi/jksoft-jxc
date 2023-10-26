@@ -14,6 +14,7 @@ export interface ListPropsWithoutItems<T> {
     none?: JSX.Element;
     loading?: JSX.Element;
     onItemClick?: (item: T) => Promise<string | void> | string | void;
+    itemBan?: (item: T) => string;
 }
 
 export interface ListProps<T> extends ListPropsWithoutItems<T> {
@@ -23,7 +24,7 @@ export interface ListProps<T> extends ListPropsWithoutItems<T> {
 
 export function List<T>(props: ListProps<T>) {
     let [showLoading, setShowLoding] = useState(false);
-    let { items, className, itemKey, ViewItem: ItemView, onItemClick, onItemSelect, sep, none, loading } = props;
+    let { items, className, itemKey, ViewItem: ItemView, onItemClick, onItemSelect, sep, none, loading, itemBan } = props;
     className = className ?? '';
     useEffect(() => {
         // loading超过200ms，显示spinner
@@ -76,15 +77,30 @@ export function List<T>(props: ListProps<T>) {
             );
         }
         else {
-            renderItem = (v, index, key) => (
-                <div className="form-check mx-3">
-                    <input type="checkbox" className="mt-2 form-check-input" id={key}
+            renderItem = (v, index, key) => {
+                let disabled: boolean;
+                let banMessage: string;
+                let vMessage: any;
+                if (itemBan !== undefined) {
+                    banMessage = itemBan(v)
+                }
+                if (banMessage !== undefined) {
+                    disabled = true;
+                    vMessage = <div className="text-danger small">{banMessage}</div>;
+                }
+                else {
+                    disabled = false;
+                }
+                return <div className="form-check mx-3">
+                    <input type="checkbox" disabled={disabled}
+                        className="mt-2 form-check-input" id={key}
                         onChange={evt => onCheckChange(v, evt)} />
                     <label className="form-check-label w-100 ms-1" htmlFor={key}>
                         <ItemView value={v} index={index} />
+                        {vMessage}
                     </label>
                 </div>
-            );
+            };
         }
     }
     else {

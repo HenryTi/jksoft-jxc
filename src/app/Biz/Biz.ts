@@ -150,6 +150,7 @@ export class Biz {
             EnumEntity.bin,
             EnumEntity.pend,
             EnumEntity.pick,
+            EnumEntity.query,
             EnumEntity.report,
             EnumEntity.tree,
             EnumEntity.tie,

@@ -1,8 +1,7 @@
-import { EntityAtom, EntitySheet, EntitySpec, EntityBin, Biz } from "app/Biz";
+import { EntitySheet, EntityBin, Biz } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { PickFunc } from "../../BizPick";
 import { UseQueryOptions } from "app/tool";
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { UqExt } from "uqs/UqDefault";
@@ -40,32 +39,20 @@ export class SheetMain extends BaseObject {
     }
 
     // return: true: new sheet created
-    async start(pick: (coreDetail: CoreDetail) => Promise<PickResults>) {
+    async start(pick: () => Promise<PickResults>) {
         const row = this.binRow;
         const { id } = row;
         if (id > 0) return;
-        const results = await pick(undefined);
+        const results = await pick();
         const { i, x } = this.entityMain;
         const cells: CalcCells = {};
         if (i !== undefined) {
             cells['i'] = { value: undefined, formula: i.defaultValue };
-            /*
-            let ret = await pick(i);
-            if (ret === undefined) return;
-            let { spec } = ret;
-            row.i = spec;
-            */
         }
         if (x !== undefined) {
             cells['x'] = { value: undefined, formula: x.defaultValue };
-            /*
-            let ret = await pick(x);
-            if (ret === undefined) return;
-            let { spec } = ret;
-            row.x = spec;
-            */
         }
-        const calc = new Calc(cells, results);
+        const calc = new Calc(cells, results.props);
         calc.run(undefined);
         if (i !== undefined) {
             row.i = calc.getValue('i') as number;
@@ -368,7 +355,7 @@ export class SheetStore extends KeyIdObject {
             return id;
         }
     }
-    async start(pick: (coreDetail: CoreDetail) => Promise<PickResults>) {
+    async start(pick: () => Promise<PickResults>) {
         let ret = await this.main.start(pick);
         if (ret !== undefined) return ret;
     }

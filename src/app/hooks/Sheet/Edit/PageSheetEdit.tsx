@@ -51,7 +51,7 @@ export function PageSheetEdit() {
     return <PageStore store={sheetStore} />;
 }
 
-async function startSheetStore(uqApp: UqApp, sheetStore: SheetStore, pick: (coreDetail: CoreDetail) => Promise<PickResults>) {
+async function startSheetStore(uqApp: UqApp, sheetStore: SheetStore, pick: () => Promise<PickResults>) {
     let ret = await sheetStore.start(pick);
     if (ret === undefined) return; // 已有单据，不需要pick. 或者没有创建新单据
     let { id, no, target } = ret;

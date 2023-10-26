@@ -291,6 +291,21 @@ Biz AC SubmitSheet(
     WITH IxState I=id X=phraseId;
 };
 
+Biz AC DoQuery (
+    query ID, 
+    json JSON,
+    pageStart INT,
+    pageSize INT,
+)
+RETURNS ret (
+    id ID,
+    ban TINYINT,
+    json JSON,
+) {
+    VAR sql CHAR(500) = CONCAT('call `$site`.`', $site, '.', query, 'q`(?,?,?,?);');
+    ExecSql sql USING $user, json, pageStart, pageSize;
+};
+
 -- atomId is null, then Atom of phrase
 -- else, phrase IX atomId as i
 Biz QUERY GetReport (

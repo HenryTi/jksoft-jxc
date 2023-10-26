@@ -16,7 +16,7 @@ import { PendRow } from "../SheetStore";
 export function usePickFromPend() {
     const modal = useModal();
     return useCallback(
-        async function pickFromPend(pickResults: PickResults, binPick: BinPick, coreDetail: CoreDetail): Promise<any> {
+        async function pickFromPend(pickResults: PickResults, binPick: BinPick): Promise<any> {
             let { name, caption, pick } = binPick;
             let pickBase = pick as PickPend;
             let propPend: PropPend = {
@@ -24,9 +24,8 @@ export function usePickFromPend() {
                 entity: pickBase.from,
                 search: [],
             };
-            //async function addNewFromPend(modal: Modal, coreDetail: CoreDetail, pend: PropPend) {
             let inputed = await modal.open<BinDetail[]>(<ModalInputPend propPend={propPend} />);
-            if (inputed === undefined) return;
+            if (inputed === undefined) return false;
             let iArr: BinDetail[] = [];
             let iGroup: number[] = [];
             let iColl: { [i: number]: BinDetail[] } = {};
@@ -47,6 +46,7 @@ export function usePickFromPend() {
                     }
                 }
             }
+            /*
             await addNewArr();
             await addNewGroup();
             async function addNewArr() {
@@ -63,8 +63,10 @@ export function usePickFromPend() {
             async function addNewGroup() {
 
             }
-            // }
-            return undefined; // ret;
+            */
+            pickResults.arr.push(...iArr);
+            pickResults.group.push(...iGroup);
+            return true; // ret;
         }, []);
 }
 

@@ -4,10 +4,7 @@ import { ActionCaller } from './caller';
 export class UqAction<P, R> extends Entity {
     get typeName(): string { return 'action'; }
     async submit(data: P, $$user: number = undefined, waiting: boolean = true) {
-        let caller = this.schema.jsoned === true ?
-            new ActionSubmitJsonCaller(this, data, $$user, waiting)
-            :
-            new ActionSubmitCaller(this, data, $$user, waiting);
+        let caller = new ActionSubmitCaller(this, data, $$user, waiting);
         let ret = await caller.request();
         return ret;
     }
@@ -25,19 +22,11 @@ export class Action extends UqAction<any, any> {
 export class ActionSubmitCaller extends ActionCaller {
     get path(): string { return 'action/' + this.entity.name; }
     buildParams(): any {
+        let data = this._entity.schema.jsoned === true ?
+            this.entity.packJson(this.params) : this.entity.pack(this.params);
         return {
             $$user: this.$$user,
-            data: this.entity.pack(this.params)
-        };
-    }
-}
-
-export class ActionSubmitJsonCaller extends ActionCaller {
-    get path(): string { return 'action/' + this.entity.name; }
-    buildParams(): any {
-        return {
-            $$user: this.$$user,
-            data: this.entity.packJson(this.params)
+            data
         };
     }
 }

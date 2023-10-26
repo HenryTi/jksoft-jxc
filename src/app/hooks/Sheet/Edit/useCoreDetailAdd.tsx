@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { CoreDetail, Row, Section, BinDetail } from "./SheetStore";
 import { Page, useModal } from "tonwa-app";
 import { ModalInputRow } from "./ModalInputRow";
-import { useBinPicks } from "./binPick";
+import { RowStore, useBinPicks } from "./binPick";
 
 /*
 type PickResult = { [prop: string]: any };
@@ -14,73 +14,71 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
     const { openModal } = useModal();
     // const pick = usePick();
     const { entityBin } = coreDetail;
-    const { pend } = entityBin;
+    // const { pend } = entityBin;
     const pick = useBinPicks(entityBin);
-    /*
     // if no detailSection add new, else edit
-    async function addNewFromPend() {
-        let inputed = await openModal<BinDetail[]>(<ModalInputPend propPend={pend} />);
-        if (inputed === undefined) return;
-        let iArr: BinDetail[] = [];
-        let iGroup: number[] = [];
-        let iColl: { [i: number]: BinDetail[] } = {};
-        for (let r of inputed) {
-            let { i, x } = r;
-            if (x === undefined) {
-                iArr.push(r);
-            }
-            else {
-                let group = iColl[i];
-                if (group === undefined) {
-                    group = [r];
-                    iColl[i] = group;
-                    iGroup.push(i);
+    async function addNewDirect() {
+        let pickResults = await pick();
+        const { props: picked, arr, group } = pickResults;
+
+        function convertRowProps(props: any) {
+            let ret: { [name: string]: any } = {};
+            let pickName: string;
+            for (let i in props) {
+                if (i === '$') continue;
+                let v = props[i];
+                let nv: any;
+                if (typeof v === 'object') {
+                    const { name, value } = v;
+                    if (i === name) {
+                        nv = value;
+                    }
+                    else {
+                        pickName = name;
+                        nv = value?.id;
+                    }
+                    if (i === undefined) debugger;
                 }
                 else {
-                    group.push(r);
+                    nv = v;
                 }
+                ret[i] = nv;
             }
+            return { [pickName]: ret };
         }
-        await addNewArr();
-        await addNewGroup();
         async function addNewArr() {
-            for (let rowProps of iArr) {
+            if (coreDetail === undefined) {
+                alert('Pick Pend on main not implemented');
+                return;
+            }
+            for (let rowProps of arr) {
+                rowProps = convertRowProps(rowProps);
+                let rowStore = new RowStore(entityBin, {} as BinDetail, rowProps);
+                rowStore.calc.run(undefined);
+                let values = rowStore.getValues();
                 let sec = new Section(coreDetail);
                 coreDetail.addSection(sec);
-                await sec.addRowProps(rowProps);
+                // await sec.addRowProps(rowProps);
+                await sec.addRowProps(values as any);
             }
         }
         async function addNewGroup() {
 
         }
-    }
-    */
-    // if no detailSection add new, else edit
-    async function addNewDirect() {
-        let section = new Section(coreDetail);
-        let row = new Row(section);
-
-        let pickResults = await pick(coreDetail);
-        if (pickResults === undefined) return;
-
-        /*
-        let retI = await pick(i);
-        if (retI === undefined) return;
-        let { spec } = retI;
-        row.props.i = spec;
-
-        if (x !== undefined) {
-            let retX = await pick(x);
-            if (retX === undefined) return;
-            let { spec } = retX;
-            row.props.x = spec;
+        if (arr.length > 0) {
+            await addNewArr();
+            await addNewGroup();
         }
-        */
-        // row.props.i = pickResults['pickspec']?.id;
-
-        coreDetail.addSection(section);
-        await openModal(<ModalInputRow row={row} picked={pickResults} />);
-        await row.addToSection();
+        else {
+            let section = new Section(coreDetail);
+            let row = new Row(section);
+            coreDetail.addSection(section);
+            const binDetail: BinDetail = {} as any;
+            const rowStore = new RowStore(entityBin, binDetail, picked);
+            rowStore.calc.run(undefined);
+            await openModal(<ModalInputRow row={row} rowStore={rowStore} />);
+            await row.addToSection();
+        }
     }
     //return useCallback(pend !== undefined ? addNewFromPend : addNewDirect, []);
     return useCallback(addNewDirect, []);

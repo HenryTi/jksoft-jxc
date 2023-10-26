@@ -107,7 +107,9 @@ export class Calc {
     run(callback: (name: string, value: string | number) => void) {
         for (let i in this.cells) {
             const cell = this.cells[i];
-            if (cell.type === CellType.exp) {
+            const { immutable, type } = cell;
+            if (immutable === false) continue;
+            if (type === CellType.exp) {
                 cell.value = this.runExp((cell as ExpCell).exp);
                 if (callback !== undefined) {
                     const { name, value } = cell;
@@ -119,7 +121,7 @@ export class Calc {
     setValue(name: string, value: number | string) {
         const c = this.cells[name];
         if (c === undefined) return;
-        if (c.type !== CellType.value) return;
+        if (c.immutable === true) return;
         c.value = value;
     }
 
