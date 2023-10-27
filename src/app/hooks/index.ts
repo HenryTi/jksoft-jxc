@@ -3,6 +3,7 @@ export * from './BizAtomSpec';
 export * from './BudSelect';
 export * from './BudEdit';
 export * from './Sheet';
+export * from './Assign';
 export * from './Report';
 export * from './useBiz';
 export * from './BizPick';
