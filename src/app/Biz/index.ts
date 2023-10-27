@@ -3,6 +3,7 @@ export * from './EntityAtom';
 export * from './EntitySheet';
 export * from './BizBud';
 export * from './EntityTitle';
+export * from './EntityAssign';
 export * from './EntityTree';
 export * from './EntityTie';
 export * from './Entity';

@@ -1,103 +1,138 @@
 import { FormRow } from "app/coms";
 import { BinDetail } from "../SheetStore";
 import { BizBud, BudDec, EntityBin, EnumBudType } from "app/Biz";
-import { Calc, CalcCells } from "../../../Calc";
+import { Calc, Formulas, PickedNameValues } from "../../../Calc";
 
-const fieldI = 'i';
-const fieldX = 'x';
-const fieldValue = 'value';
-const fieldPrice = 'price';
-const fieldAmount = 'amount';
+abstract class Field {
+    readonly name: string;
+    readonly bud: BizBud;
+    readonly binDetail: BinDetail;
+    constructor(bud: BizBud, binDetail: BinDetail) {
+        this.name = bud.name;
+        this.bud = bud;
+        this.binDetail = binDetail;
+    }
+    abstract getValue(): any;
+    abstract setValue(v: any): void;
+}
+
+class FieldI extends Field {
+    getValue(): any { return this.binDetail.i; }
+    setValue(v: any) { this.binDetail.i = v; }
+}
+
+class FieldX extends Field {
+    getValue(): any { return this.binDetail.x; }
+    setValue(v: any) { this.binDetail.x = v; }
+}
+
+class FieldValue extends Field {
+    getValue(): any { return this.binDetail.value; }
+    setValue(v: any) { this.binDetail.value = v; }
+}
+
+class FieldPrice extends Field {
+    getValue(): any { return this.binDetail.price; }
+    setValue(v: any) { this.binDetail.price = v; }
+}
+
+class FieldAmount extends Field {
+    getValue(): any { return this.binDetail.amount; }
+    setValue(v: any) { this.binDetail.amount = v; }
+}
+
+class FieldBud extends Field {
+    getValue(): any { return this.binDetail.buds[this.bud.id]; }
+    setValue(v: any) { this.binDetail.buds[this.bud.id] = v; }
+}
 
 export class RowStore {
-    readonly calc: Calc;
-    readonly fields: [string, number | string, BizBud, (value: number | string) => void][];
-    readonly bin: EntityBin;
-    readonly rowProps: BinDetail;
-    readonly values: { [name: string]: () => any } = {};
-    readonly requiredFields: string[] = [];
-    constructor(bin: EntityBin, binDetail: BinDetail, picked: { [name: string]: any }) {
-        this.bin = bin;
-        this.rowProps = binDetail;
+    private readonly fields: Field[];
+    private readonly fieldColl: { [name: string]: Field } = {};
+    private readonly calc: Calc;
+    private readonly requiredFields: Field[] = [];
+    readonly binDetail: BinDetail = {} as any;
+    constructor(bin: EntityBin) {
         this.fields = [];
-        const { i, x, value, price, amount, buds: budValues } = binDetail;
         const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, props: budArr } = bin;
-        const calcCells: CalcCells = {};
-        let fields = this.fields;
+
         let requiredFields = this.requiredFields;
-        function setField(fieldName: string, fieldValue: string | number, bud: BizBud, set: (value: string | number) => void) {
-            fields.push([fieldName, fieldValue, bud, set]);
-            const { defaultValue } = bud;
-            calcCells[fieldName] = { value: fieldValue, formula: defaultValue };
-        }
-        function setRequired(bud: BizBud) {
-            const { name, defaultValue } = bud;
-            if (defaultValue === undefined || defaultValue.endsWith('\ninit') === true) {
-                requiredFields.push(name);
-            }
-        }
         if (iBud !== undefined) {
-            this.values[fieldI] = () => this.rowProps.i;
-            calcCells[fieldI] = { value: i, formula: iBud.defaultValue };
+            this.initField(new FieldI(iBud, this.binDetail), false);
         }
         if (xBud !== undefined) {
-            this.values[fieldX] = () => this.rowProps.x;
-            calcCells[fieldX] = { value: x, formula: xBud.defaultValue };
+            this.initField(new FieldX(xBud, this.binDetail), false);
         }
         if (valueBud !== undefined) {
-            this.values[fieldValue] = () => this.rowProps.value;
-            setField(fieldValue, value, valueBud, value => binDetail.value = value as number);
-            setRequired(valueBud);
+            this.initField(new FieldValue(valueBud, this.binDetail));
         }
         if (priceBud !== undefined) {
-            this.values[fieldPrice] = () => this.rowProps.price;
-            setField(fieldPrice, price, priceBud, value => binDetail.price = value as number);
-            setRequired(priceBud);
+            this.initField(new FieldPrice(priceBud, this.binDetail));
         }
         if (amountBud !== undefined) {
-            this.values[fieldAmount] = () => this.rowProps.amount;
-            setField(fieldAmount, amount, amountBud, value => binDetail.amount = value as number);
-            setRequired(amountBud);
+            this.initField(new FieldAmount(amountBud, this.binDetail));
         }
         for (let bud of budArr) {
-            const { name, id } = bud;
-            let value = budValues[id];
-            this.values[name] = () => this.rowProps.buds[id];
-            setField(name, value, bud, value => {
-                binDetail.buds[id] = value;
-            });
+            this.initField(new FieldBud(bud, this.binDetail));
         }
-        this.calc = new Calc(calcCells, picked);
+        const formulas: Formulas = {};
+        for (let i in this.fieldColl) {
+            let f = this.fieldColl[i];
+            let { name, bud } = f;
+            this.fieldColl[name] = f;
+            let { defaultValue } = bud;
+            if (defaultValue !== undefined) {
+                formulas[name] = defaultValue;
+                if (defaultValue.endsWith('\ninit') === true) {
+                    requiredFields.push(f);
+                }
+            }
+            else {
+                requiredFields.push(f);
+            }
+        }
+        this.calc = new Calc(formulas);
     }
 
+    private initField(field: Field, onForm: boolean = true) {
+        this.fieldColl[field.name] = field;
+        if (onForm === true) this.fields.push(field);
+    }
+
+    init(picked: { [name: string]: any }) {
+        let nameValues = new PickedNameValues(picked);
+        this.calc.init(nameValues);
+    }
+
+    setValues(binDetail: BinDetail) {
+        Object.assign(this.binDetail, binDetail);
+        this.calc.setValues(binDetail);
+    }
+
+    setValue(name: string, value: number | string, callback: (name: string, value: string | number) => void) {
+        const c = (name: string, value: string | number) => {
+            callback?.(name, value);
+            (this.binDetail as any)[name] = value;
+        }
+        (this.binDetail as any)[name] = value;
+        this.calc.setValue(name, value, c);
+
+    }
+    /*
     // 数据从界面设置到row props中
     setData(data: any) {
-        this.rowProps.i = this.getValue('i') as number;
-        this.rowProps.x = this.getValue('x') as number;
-        for (let field of this.fields) {
-            const [name, , , set] = field;
+        for (let i in this.fieldColl) {
+            let field = this.fieldColl[i];
+            const { name } = field;
             let v = data[name];
-            set(v);
+            field.setValue(v);
         }
     }
-
-    getValue(name: string): number | string {
-        let v = this.calc.getValue(name);
-        return v ?? this.values[name]?.();
-    }
-
-    getValues() {
-        let ret: { [name: string]: any } = {};
-        for (let i in this.values) {
-            ret[i] = this.getValue(i);
-        }
-        return ret;
-    }
-
+    */
     get submitable(): boolean {
         let ret = true;
         for (let field of this.requiredFields) {
-            let v = this.calc.getValue(field);
+            let v = this.calc.values[field.name];
             if (v === undefined) return false;
         }
         return ret;
@@ -105,14 +140,14 @@ export class RowStore {
 
     buildFormRows(): FormRow[] {
         return this.fields.map(v => {
-            const [fieldName, value, bud] = v;
-            const { name, caption, budDataType } = bud;
-            let cell = this.calc.getCell(fieldName);
+            const { name, bud } = v;
+            const { caption, budDataType } = bud;
+            let immutable = this.calc.immutable(name);
             let ret = {
-                name: fieldName,
+                name,
                 label: caption ?? name,
                 type: 'number',
-                options: { value: value ?? cell?.value, disabled: cell?.immutable }
+                options: { value: v.getValue(), disabled: immutable }
             } as any;
             switch (budDataType.type) {
                 case EnumBudType.char:

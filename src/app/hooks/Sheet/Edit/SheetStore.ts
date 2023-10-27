@@ -8,7 +8,7 @@ import { UqExt } from "uqs/UqDefault";
 import { atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
 import { PickResults } from "./binPick/useBinPicks";
-import { Calc, CalcCells } from "app/hooks/Calc";
+import { Calc, Formulas } from "app/hooks/Calc";
 
 
 abstract class KeyIdObject {
@@ -45,20 +45,21 @@ export class SheetMain extends BaseObject {
         if (id > 0) return;
         const results = await pick();
         const { i, x } = this.entityMain;
-        const cells: CalcCells = {};
+        const formulas: Formulas = {};
         if (i !== undefined) {
-            cells['i'] = { value: undefined, formula: i.defaultValue };
+            formulas.i = i.defaultValue;
         }
         if (x !== undefined) {
-            cells['x'] = { value: undefined, formula: x.defaultValue };
+            formulas.x = x.defaultValue;
         }
-        const calc = new Calc(cells, results.props);
-        calc.run(undefined);
+        const calc = new Calc(formulas);
+        let { props } = results;
+        calc.init(props as any);
         if (i !== undefined) {
-            row.i = calc.getValue('i') as number;
+            row.i = calc.values.i as number;
         }
         if (x !== undefined) {
-            row.x = calc.getValue('x') as number;
+            row.x = calc.values.x as number;
         }
         setAtomValue(this._binRow, row);
         return await this.createIfNotExists();
@@ -151,7 +152,7 @@ export class CoreDetail extends DetailBase {
 
     private addRowValue(sections: Section[], rowValue: any) {
         const { i, x, value } = rowValue;
-        if (!i || !value) return;
+        if (i === undefined || value === undefined) return;
         let detailSection: Section;
         if (x) {
             let index = sections.findIndex(v => v.i === i);

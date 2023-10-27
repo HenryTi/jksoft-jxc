@@ -66,9 +66,11 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     let { i, x, value, price, amount } = binDetail
     async function onEdit() {
         if (editable === false) return;
-        const rowStore = new RowStore(entityBin, binDetail, undefined);
+        const rowStore = new RowStore(entityBin);
+        rowStore.setValues(binDetail);
         let ret = await openModal(<ModalInputRow row={row} rowStore={rowStore} />);
         if (ret === true) {
+            Object.assign(binDetail, rowStore.binDetail);
             await row.changed();
         }
     }

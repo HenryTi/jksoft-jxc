@@ -2,149 +2,124 @@
 import jsep from 'jsep';
 // import { setAtomValue } from 'tonwa-com';
 
+/*
 enum CellType {
     value = 1,
     exp = 2,
 }
+*/
 
 export abstract class Cell {
-    abstract get type(): CellType;
+    // abstract get type(): CellType;
     readonly name: string;
-    abstract get immutable(): boolean;
+    // abstract get immutable(): boolean;
     value: number | string;
     constructor(name: string) {
         this.name = name;
     }
+    init() { }
 }
 
 class ValueCell extends Cell {
-    readonly type = CellType.value;
-    readonly immutable = false;
-
+    // readonly type = CellType.value;
+    // readonly immutable = false;
+    /*
     constructor(name: string, value: number | string) {
         super(name);
         this.value = value;
     }
+    */
 }
 
-class ExpCell extends Cell {
-    readonly type = CellType.exp;
+abstract class ExpCellBase extends Cell {
+    // readonly type = CellType.exp;
     readonly exp: jsep.Expression;
-    readonly immutable: boolean;
+    // readonly immutable: boolean;
 
-    constructor(name: string, value: number, exp: jsep.Expression, immutable: boolean) {
+    constructor(name: string, exp: jsep.Expression) {
         super(name);
-        this.value = value;
+        // this.value = value;
         this.exp = exp;
-        this.immutable = immutable;
+        // this.immutable = immutable;
     }
 }
 
-export interface CalcCells { [name: string]: { value: string | number; formula: string; } };
-export class Calc {
-    private readonly predefined: { [name: string]: any };
-    private readonly cells: { [name: string]: Cell } = {};
+class ExpOnceCell extends ExpCellBase {
 
-    constructor(cells: CalcCells, predefined?: { [name: string]: any }) {
-        this.predefined = predefined ?? undefined;
-        for (let i in cells) {
-            const { value, formula } = cells[i];
-            this.initCell(i, value, formula);
-        }
+}
+
+class ExpCell extends ExpCellBase {
+    // readonly type = CellType.exp;
+    // readonly immutable: boolean;
+}
+
+export abstract class NameValues {
+    abstract identifier(name: string): string | number;
+    abstract member(name0: string, name1: string): string | number;
+}
+
+export class PickedNameValues extends NameValues {
+    private readonly values: { [name: string]: any };
+    constructor(values: { [name: string]: any }) {
+        super();
+        this.values = values;
     }
+    identifier(name: string): string | number {
+        let ret = this.values[name];
+        if (typeof ret === 'object') {
+            return ret.id;
+        }
+        return ret;
+    }
+    member(name0: string, name1: string): string | number {
+        let obj = this.values[name0];
+        if (typeof obj !== 'object') return;
+        let ret = obj[name1];
+        if (typeof ret === 'object') return ret.id;
+        return ret;
+    }
+}
 
-    private initCell(name: string, value: number | string, formula: string): Cell {
-        let cell: Cell;
-        if (formula === undefined) {
-            cell = new ValueCell(name, value as number);
-            this.cells[name] = cell;
+export class Formula {
+    private readonly exp: jsep.Expression;
+    readonly once: boolean;
+    constructor(formula: string) {
+        let p = formula.indexOf('\n');
+        if (p > 0) {
+            let suffix = formula.substring(p + 1);
+            formula = formula.substring(0, p);
+            this.once = suffix === 'init';
         }
         else {
-            let immutable = true;
-            let p = formula.indexOf('\n');
-            if (p > 0) {
-                let suffix = formula.substring(p + 1);
-                formula = formula.substring(0, p);
-                switch (suffix) {
-                    default: immutable = true; break;
-                    case 'init': immutable = false; break;
-                    case 'equ': immutable = true; break;
-                }
-            }
-            let exp = jsep(formula);
-            let v = value;
-            if (v === undefined) {
-                v = this.runExp(exp);
-            }
-            cell = new ExpCell(name, (value ?? v) as number, exp, immutable);
-            this.cells[name] = cell;
+            this.once = false;
         }
-        return cell;
+        this.exp = jsep(formula);
     }
 
-    getExpValue(name: string): number | string {
-        let cell = this.cells[name];
-        if (cell === undefined) return;
-        if (cell.type === CellType.exp) return cell.value;
+    run(nameValues: NameValues) {
+        return this.runExp(this.exp, nameValues);
     }
 
-    getValue(name: string): number | string {
-        let cell = this.cells[name];
-        return cell?.value;
-    }
-
-    isImmutable(name: string) {
-        let cell = this.cells[name];
-        if (cell === undefined) return;
-        return cell.immutable;
-    }
-
-    getCell(name: string): Cell {
-        let cell = this.cells[name];
-        return cell;
-    }
-
-    run(callback: (name: string, value: string | number) => void) {
-        for (let i in this.cells) {
-            const cell = this.cells[i];
-            const { immutable, type } = cell;
-            if (immutable === false) continue;
-            if (type === CellType.exp) {
-                cell.value = this.runExp((cell as ExpCell).exp);
-                if (callback !== undefined) {
-                    const { name, value } = cell;
-                    callback(name, value);
-                }
-            }
-        }
-    }
-    setValue(name: string, value: number | string) {
-        const c = this.cells[name];
-        if (c === undefined) return;
-        if (c.immutable === true) return;
-        c.value = value;
-    }
-
-    private runExp(exp: jsep.Expression): number {
+    private runExp(exp: jsep.Expression, nameValues: NameValues): string | number {
         switch (exp.type) {
-            case 'BinaryExpression': return this.binary(exp as jsep.BinaryExpression);
-            case 'Identifier': return this.identifier(exp as jsep.Identifier);
+            case 'BinaryExpression': return this.binary(exp as jsep.BinaryExpression, nameValues);
+            case 'Identifier': return this.identifier(exp as jsep.Identifier, nameValues);
             case 'Literal': return this.literal(exp as jsep.Literal);
-            case 'UnaryExpression': return this.unary(exp as jsep.UnaryExpression);
-            case 'MemberExpression': return this.member(exp as jsep.MemberExpression);
+            case 'UnaryExpression': return this.unary(exp as jsep.UnaryExpression, nameValues);
+            case 'MemberExpression': return this.member(exp as jsep.MemberExpression, nameValues);
         }
     }
 
-    private binary(exp: jsep.BinaryExpression): number {
+    private binary(exp: jsep.BinaryExpression, nameValues: NameValues): number {
         const { operator, left, right } = exp;
-        let vLeft = this.runExp(left);
+        let vLeft = this.runExp(left, nameValues) as number;
         if (vLeft === undefined) return;
-        let vRight = this.runExp(right);
+        let vRight = this.runExp(right, nameValues) as number;
         if (vRight === undefined) return;
         switch (operator) {
             default: return;
-            case '-': return vLeft - vRight;
-            case '+': return vLeft + vRight;
+            case '-': return vLeft as number - vRight;
+            case '+': return vLeft as number + vRight;
             case '*': return vLeft * vRight;
             case '/':
                 if (vRight === 0) return;
@@ -152,9 +127,9 @@ export class Calc {
         }
     }
 
-    private unary(exp: jsep.UnaryExpression): number {
+    private unary(exp: jsep.UnaryExpression, nameValues: NameValues): number {
         const { operator, argument } = exp;
-        let v = this.runExp(argument);
+        let v = this.runExp(argument, nameValues) as number;
         switch (operator) {
             default: return;
             case '-': return -v;
@@ -162,29 +137,78 @@ export class Calc {
         }
     }
 
-    private identifier(exp: jsep.Identifier): number {
+    private identifier(exp: jsep.Identifier, nameValues: NameValues): number {
         const { name } = exp;
-        let cell = this.cells[name];
-        if (cell !== undefined) {
-            return cell.value as number;
-        }
-        let v = this.predefined?.[name];
-        switch (typeof v) {
-            default: return v;
-            case 'object': return v.id;
-        }
+        return nameValues.identifier(name) as number;
     }
 
-    private member(exp: jsep.MemberExpression): number {
+    private member(exp: jsep.MemberExpression, nameValues: NameValues): number {
         const { object, property } = exp;
-        let obj = this.runExp(object);
-        let ret = this.predefined[obj];
-        if (property === undefined) return ret;
-        let p = this.runExp(property);
-        return ret[p];
+        let { type, name: objName } = object as jsep.Identifier;
+        if (type !== property.type && type !== 'Identifier') debugger;
+        let { name: propName } = property as jsep.Identifier;
+        return nameValues.member(objName, propName) as number;
     }
 
     private literal(exp: jsep.Literal): number {
         return Number(exp.value);
+    }
+}
+
+export interface Formulas { [name: string]: string; };
+export class Calc implements NameValues {
+    private readonly formulas: { [name: string]: Formula } = {};
+    readonly values: { [name: string]: string | number } = {};
+
+    constructor(formulas: Formulas) {
+        for (let i in formulas) {
+            let f = formulas[i];
+            if (f === undefined) continue;
+            let formula = new Formula(f);
+            this.formulas[i] = formula;
+        }
+    }
+
+    init(nameValues: NameValues) {
+        for (let i in this.formulas) {
+            this.values[i] = this.formulas[i].run(nameValues);
+        }
+    }
+
+    setValues(values: any) {
+        Object.assign(this.values, values);
+    }
+
+    immutable(name: string) {
+        let f = this.formulas[name];
+        if (f === undefined) return false;
+        return f.once === false;
+    }
+
+    private run(callback: (name: string, value: string | number) => void) {
+        for (let i in this.formulas) {
+            let formula = this.formulas[i];
+            if (formula.once === true) continue;
+            try {
+                let ret = formula.run(this);
+                if (ret === undefined) continue;
+                this.values[i] = ret;
+                callback(i, ret);
+            }
+            catch {
+            }
+        }
+    }
+
+    setValue(name: string, value: number | string, callback: (name: string, value: string | number) => void) {
+        this.values[name] = value;
+        this.run(callback);
+    }
+
+    identifier(name: string): string | number {
+        return this.values[name];
+    }
+    member(name0: string, name1: string): string | number {
+        throw new Error();
     }
 }

@@ -1,27 +1,40 @@
-QUERY 查询货品Query (
+Title 价格 {
+    PROP 零售价 DEC;
+    PROP 批发价 DEC;
+};
+
+Assign 赋值价格 {
+    Atom 货品信息|医疗器械;
+    Title 价格.零售价, 价格.批发价;
+}
+
+QUERY 查询货品Query (  
     a '参数a' CHAR,
-    b '参数b' CHAR,
-    c, d, e,
+    b '参数b' CHAR, 
+    c, d, e, 
 ) {
     VAR v1 INT = c; 
-    VAR p1 CHAR(200) = a; 
+    VAR p1 CHAR(200) = a;  
     VAR p2 CHAR(200) = e;
     FROM 货品信息|医疗器械 -- OF 部门~(id)
         COLUMN (
-            ID ASC,
-            BAN %批准日期 < today - INTERVAL 2 year,
+            ID ASC,  
+            BAN '含糖字' = LOCATE('糖', %ex)>0,
             cola = 1,
-            /*
-            %id,
+            price = 5,
             %no,
-            $ex,
+            %ex,
+            /* 
+            %id,
             %a,
             price '价格' = (#价格(%id)),
             */
         )
-        WHERE 1=1 -- %批准文号='3355'
+        -- BAN %批准日期 < today - INTERVAL 2 year
+        -- SEARCH p2
+        WHERE SEARCH(%no, %ex LIKE a) -- %批准文号='3355'
     ;
-};
+}
 
 QUERY 查询货品Query1 (
     a,
@@ -45,15 +58,15 @@ Biz Bin 采购单带查询主表 {
     I '客户' = customer;
 }
 
-Biz Bin 采购单明细带查询 ver 0.1 {
-    Pick pickA FROM 查询货品Query;
-    Pick pickB FROM 查询货品Query1 {
-        PARAM a=pickA.cola;
-    }
-    I '商品Pick' = pickA; 
-    Value '数量' dec(2);
-    Price '单价' dec(2) = 3/*{
-        PUT = 2;
+BIN 采购单明细带查询 ver 0.1 {
+    Pick pickA FROM 查询货品Query; 
+    /*Pick pickB FROM 查询货品Query1 {  
+        PARAM a=pickA.cola; 
+    }*/  
+    I '商品Pick' = pickA;  
+    Value '数量' dec(2); 
+    Price '单价' dec(2) = pickA.price/*{
+        PUT = 2;  
         PUT Amount = Value*Price;
     } ON (I)*/;
     Amount '金额' dec(2) = Value * Price;

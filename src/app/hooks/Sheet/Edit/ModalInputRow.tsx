@@ -14,7 +14,6 @@ export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore;
     const { props, section } = row;
     const { entityBin } = section.coreDetail;
     const { i: budI, x: budX } = entityBin;
-    const { calc } = rowStore;
     const [submitable, setSubmitable] = useState(rowStore.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { value: valueInputText, name } = evt.target;
@@ -26,8 +25,7 @@ export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore;
             let v = Number(valueInputText);
             valueInput = Number.isNaN(v) === true ? undefined : v;
         }
-        calc.setValue(name, valueInput);
-        calc.run((name, value) => {
+        rowStore.setValue(name, valueInput, (name, value) => {
             setValue(name, value);
         });
         setSubmitable(rowStore.submitable);
@@ -38,7 +36,7 @@ export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore;
     formRows.push({ type: 'submit', label: '提交', options: { disabled: submitable === false } });
 
     async function onSubmit(data: any) {
-        rowStore.setData(data);
+        // rowStore.setData(data);
         closeModal(true);
     }
 
@@ -60,8 +58,8 @@ export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore;
     }
     return <Page header="输入明细" right={right}>
         <div className="py-1 tonwa-bg-gray-2 mb-3 container">
-            <ViewIdField bud={budI} value={rowStore.getValue('i') as number} />
-            <ViewIdField bud={budX} value={rowStore.getValue('x') as number} />
+            <ViewIdField bud={budI} value={rowStore.binDetail.i} />
+            <ViewIdField bud={budX} value={rowStore.binDetail.x} />
         </div>
         <form className="container" onSubmit={handleSubmit(onSubmit)}>
             <FormRowsView rows={formRows} register={register} errors={errors} />

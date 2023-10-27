@@ -12,6 +12,7 @@ import { from62, getAtomValue, setAtomValue } from 'tonwa-com';
 import { atom } from 'jotai';
 import { EntityReport } from './EntityReport';
 import { EntityQuery } from './EntityQuery';
+import { EntityAssign } from './EntityAssign';
 
 enum EnumEntity {
     sheet,
@@ -26,6 +27,7 @@ enum EnumEntity {
     permit,
     role,
     title,
+    assign,
     tree,
     tie,
 };
@@ -57,6 +59,7 @@ export class Biz {
     readonly trees: EntityTree[] = [];
     readonly titles: EntityTitle[] = [];
     readonly reports: EntityReport[] = [];
+    readonly assigns: EntityAssign[] = [];
 
     readonly roles: EntityRole[] = [];
     readonly permits: EntityPermit[] = [];
@@ -97,6 +100,7 @@ export class Biz {
             [EnumEntity.permit]: this.buildPermit,
             [EnumEntity.role]: this.buildRole,
             [EnumEntity.title]: this.buildTitle,
+            [EnumEntity.assign]: this.buildAssign,
             [EnumEntity.tree]: this.buildTree,
             [EnumEntity.tie]: this.buildTie,
         }
@@ -141,6 +145,7 @@ export class Biz {
         }
         const typeSeq: EnumEntity[] = [
             EnumEntity.title,
+            EnumEntity.assign,
             EnumEntity.options,
             EnumEntity.permit,
             EnumEntity.role,
@@ -171,6 +176,7 @@ export class Biz {
                     [this.atomRoots, '基础编码', 'id-card-o'],
                     [this.specs, '细分编码', 'asterisk'],
                     [this.titles, '科目', 'flag-o'],
+                    [this.assigns, '赋值', 'flag-o']
                 ],
             },
             {
@@ -314,6 +320,12 @@ export class Biz {
     private buildTitle = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityTitle(this, id, name, type);
         this.titles.push(bizEntity);
+        return bizEntity;
+    }
+
+    private buildAssign = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityAssign(this, id, name, type);
+        this.assigns.push(bizEntity);
         return bizEntity;
     }
 

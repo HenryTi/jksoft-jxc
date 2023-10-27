@@ -6,6 +6,7 @@ import { routeAtomCenter } from "./Atom";
 import { routeSheetCenter } from "./Sheet";
 import { routeReportCenter } from "./Report";
 import { routePermits } from "./Permits";
+import { routeAssignCenter } from "./Assign";
 
 export const pathHome = 'home';
 export function routeJCX(uqApp: UqApp) {
@@ -16,6 +17,7 @@ export function routeJCX(uqApp: UqApp) {
         {routeAtomCenter()}
         {routeSheetCenter()}
         {routeReportCenter()}
+        {routeAssignCenter()}
         {routeMy}
         {routePermits}
     </>;

@@ -660,119 +660,12 @@ RETURNS buds (
 Biz Query GetAtom (
     id ID,
 )
-/*
-RETURNS main (
-    id ID,
-    phrase ID,
-    no CHAR(50),
-    ex CHAR(50),
-)
-*/
 RETURNS props (
     phrase ID,
     value JSON,
 )
-/*
-RETURNS budsInt (
-    bud ID,
-    -- phrase Phrase,
-    value BIGINT,
-)
-RETURNS budsDec (
-    bud ID,
-    -- phrase Phrase,
-    value VALUE,
-)
-RETURNS budsStr (
-    bud ID,
-    -- phrase Phrase,
-    value CHAR(200),
-)
-RETURNS budsCheck (
-    bud ID,
-    -- phrase Phrase,
-    item ID, -- Phrase,
-)
-RETURNS uoms (
-    atomUom ID,             -- AtomUom
-    uom ID,                 -- uomI or uomX Atom
-    -- no NO,                  -- of no
-    ex EX,                  -- of uom
-    -- prev ID,                -- for declare the ratio
-    prevEx EX,
-    ratio VALUE,            -- : ex = ratio prevEx
-) 
-*/
 {
     PROC ProcGetAtom(id);
-/*
-    INTO main SELECT a.id, a.base as phrase, a.no, a.ex
-        FROM Atom as a
-            JOIN BizPhrase as c ON c.id=a.base
-        WHERE a.id=id AND c.base=$site;
-
-    INTO budsInt SELECT a.x as bud
-        -- , e.name as phrase
-        , a.value
-        FROM IxBudInt as a
-            -- JOIN Atom as b ON b.id=a.i
-            -- JOIN BizPhrase as c on c.id=b.base
-            -- JOIN BizPhrase as e ON e.id=a.x
-        WHERE a.i=id -- and e.type=BizPhraseType.prop
-            -- AND c.base=$site
-            ;
-    INTO budsInt SELECT a.x as bud
-        -- , e.name as phrase
-        , a.value
-        FROM IxBudInt as a
-            -- JOIN Atom as b ON b.id=a.i
-            -- JOIN BizPhrase as c on c.id=b.base
-            JOIN BizPhrase as e ON e.id=a.x
-        WHERE a.i=id AND e.name = '$.uom'
-            -- AND c.base=$site
-            ;
-    INTO budsDec SELECT a.x as bud
-        -- , e.name as phrase
-        , a.value
-        FROM IxBudDec as a
-            -- JOIN Atom as b ON b.id=a.i
-            -- JOIN BizPhrase as c on c.id=b.base
-            -- JOIN BizPhrase as e ON e.id=a.x
-        WHERE a.i=id -- and e.type=BizPhraseType.prop
-            -- AND c.base=$site
-            ;
-    INTO budsStr SELECT a.x as bud
-        -- , e.name as phrase
-        , a.value
-        FROM IxBudStr as a
-            -- JOIN Atom as b ON b.id=a.i
-            -- JOIN BizPhrase as c on c.id=b.base
-            -- JOIN BizPhrase as e ON e.id=a.x
-        WHERE a.i=id -- and e.type=BizPhraseType.prop
-            -- AND c.base=$site
-            ;
-    INTO budsCheck SELECT b.base as bud
-        -- , c.name as phrase
-        , b.ext as item
-        FROM IxBud as a
-            JOIN Bud as b ON b.id=a.x
-            -- JOIN BizPhrase as c ON c.id=b.base
-            -- JOIN BizPhrase as d ON d.id=b.ext
-            -- JOIN Atom as e ON e.id=a.i
-            -- JOIN BizPhrase as f ON f.id=e.base
-        WHERE a.i=id; -- AND c.type=BizPhraseType.prop; -- AND f.base=$site;
-
-    INTO uoms SELECT b.id as atomUom,             -- AtomUom
-                b.uom,                    -- uomI or uomX Atom
-                c.ex,                   -- of uom
-                null as prevEx,
-                null as ratio            -- : ex = ratio prevEx
-        FROM IxAtom as a
-            JOIN AtomUom as b ON b.id=a.x
-            JOIN Atom as c ON c.id=b.uom
-            -- LEFT JOIN IxUom as d ON d.i=b.uom
-        WHERE a.i=id;
-*/
 };
 
 Biz Query GetSpecsFromBase ver 0.1 (
@@ -846,36 +739,35 @@ RETURNS props VIRTUAL (
 }
 
 PROC ProcGetAtom ver 0.1 (
-    id ID,
+    atom ID,
 )
 RETURNS props VIRTUAL (
     phrase ID,
     value JSON,
 ) {
-    VAR jval JSON;
+    VAR id ID = a.id 
+        FROM Atom as a JOIN BizPhrase as b on b.id=a.base 
+        WHERE a.id=atom AND b.base=$site;
     INTO props SELECT a.base as phrase, JSON_ARRAY(a.no, a.ex) as value
         FROM Atom as a
         WHERE a.id=id;
     INTO props SELECT a.x as phrase, JSON_ARRAY(a.value) as value
-        FROM IxBudInt as a WHERE a.i=id;
+        FROM IxBudInt as a 
+            JOIN BizPhrase as b on b.id=a.x
+            JOIN BizPhrase as c on c.id=b.base
+        WHERE a.i=id AND c.type=BizPhraseType.atom;
     INTO props SELECT a.x as phrase, JSON_ARRAY(a.value) as value
-        FROM IxBudDec as a WHERE a.i=id;
+        FROM IxBudDec as a 
+            JOIN BizPhrase as b on b.id=a.x
+            JOIN BizPhrase as c on c.id=b.base
+        WHERE a.i=id AND c.type=BizPhraseType.atom;
     INTO props SELECT a.x as phrase, JSON_ARRAY(a.value) as value
-        FROM IxBudStr as a WHERE a.i=id;
+        FROM IxBudStr as a 
+            JOIN BizPhrase as b on b.id=a.x
+            JOIN BizPhrase as c on c.id=b.base
+        WHERE a.i=id AND c.type=BizPhraseType.atom;
     INTO props SELECT b.base as phrase, JSON_ARRAY(0, b.ext) as value
         FROM IxBud as a
             JOIN Bud as b ON b.id=a.x
         WHERE a.i=id;
-    /*
-    INTO uoms SELECT b.id as atomUom,             -- AtomUom
-                b.uom,                    -- uomI or uomX Atom
-                c.ex,                   -- of uom
-                null as prevEx,
-                null as ratio            -- : ex = ratio prevEx
-        FROM IxAtom as a
-            JOIN AtomUom as b ON b.id=a.x
-            JOIN Atom as c ON c.id=b.uom
-            -- LEFT JOIN IxUom as d ON d.i=b.uom
-        WHERE a.i=id;
-    */
 }

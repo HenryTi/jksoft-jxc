@@ -67,10 +67,22 @@ export function usePickFromQuery() {
             }
             pickedArr.push(picked);
         }
+        let retParam = await modal.open(<PageParam />);
         let ret = await modal.open(<PageFromQuery />);
         if (ret === undefined) return false;
-        pickResults.arr = pickedArr;
+        pickResults.arr = ret;
         return true;
+
+        function PageParam() {
+            function onOk() {
+                modal.close({});
+            }
+            return <Page header="param">
+                <div className="p-3">
+                    <button className="btn btn-primary" onClick={onOk}>确认</button>
+                </div>
+            </Page>;
+        }
 
         function PageFromQuery() {
             let [selectedItems, setSelectedItems] = useState<{ [id: number]: Picked; }>({});
