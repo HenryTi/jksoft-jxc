@@ -1,9 +1,13 @@
-import { BinPick, BizBud, Entity, PickQuery } from "app/Biz";
+import { BinPick, BizBud, PickQuery } from "app/Biz";
 import { useCallback, useState } from "react";
 import { PickResults } from "./useBinPicks";
 import { Page, useModal } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { List } from "tonwa-com";
+import { FormRow, FormRowsView } from "app/coms";
+import { budFormRow } from "app/hooks/Bud";
+import { useForm } from "react-hook-form";
+import { filterUndefined } from "app/tool";
 
 interface Prop<T = any> {
     name: string;
@@ -16,11 +20,14 @@ export function usePickFromQuery() {
     const { uq, biz } = useUqApp();
     const modal = useModal();
     return useCallback(async function pickFromQuery(pickResults: PickResults, binPick: BinPick): Promise<any> {
-        let { name, caption, pick } = binPick;
+        let { name, caption, pick, param } = binPick;
         let pickBase = pick as PickQuery;
         let { query } = pickBase;
-
-        let retQuery = await uq.DoQuery.submitReturns({ query: query.id, json: { a: null }, pageStart: undefined, pageSize: 100 });
+        const header = caption ?? query.caption ?? name;
+        let retParam = await modal.open(<PageParam />);
+        if (retParam === undefined) return false;
+        retParam = filterUndefined(retParam);
+        let retQuery = await uq.DoQuery.submitReturns({ query: query.id, json: retParam, pageStart: undefined, pageSize: 100 });
         let pickedArr: Picked[] = [];
         for (let row of retQuery.ret) {
             let propArr: Prop[] = [];
@@ -67,20 +74,26 @@ export function usePickFromQuery() {
             }
             pickedArr.push(picked);
         }
-        let retParam = await modal.open(<PageParam />);
         let ret = await modal.open(<PageFromQuery />);
         if (ret === undefined) return false;
         pickResults.arr = ret;
         return true;
 
         function PageParam() {
-            function onOk() {
-                modal.close({});
+            const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
+            const { params } = query;
+            const inputParams = params.filter(v => v.budDataType.type !== 0);
+            let formRows: FormRow[] = [
+                ...inputParams.map(v => budFormRow(v, false)),
+                { type: 'submit', label: '查找', options: {}, className: undefined }
+            ];
+            function onSubmitForm(data: any) {
+                modal.close(data);
             }
-            return <Page header="param">
-                <div className="p-3">
-                    <button className="btn btn-primary" onClick={onOk}>确认</button>
-                </div>
+            return <Page header={header}>
+                <form className="container my-3" onSubmit={handleSubmit(onSubmitForm)}>
+                    <FormRowsView rows={formRows} register={register} errors={errors} />
+                </form>
             </Page>;
         }
 
@@ -104,7 +117,7 @@ export function usePickFromQuery() {
                         const { name: bn, caption: bc } = bud;
                         caption = bc ?? bn;
                     }
-                    if (typeof value === 'object') value = value.id;
+                    if (value !== null && typeof value === 'object') value = value.id;
                     return <div>
                         <small className="text-secondary me-2 w-min-3c d-inline-block">{caption}</small>
                         <span>{value}</span>
@@ -140,8 +153,9 @@ export function usePickFromQuery() {
                     return banCaption;
                 }
             }
-            return <Page header={caption ?? name} >
+            return <Page header={header} >
                 <div>
+                    <div className="tonwa-bg-gray-2 p-3">{JSON.stringify(retParam)}</div>
                     <div className="tonwa-bg-gray-2 p-3 border-bottom">已选：{vSelected}</div>
                     <div>
                         <List items={pickedArr} ViewItem={ViewItem} className="" onItemSelect={onItemSelect} itemBan={itemBan} />

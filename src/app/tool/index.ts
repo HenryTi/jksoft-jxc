@@ -12,3 +12,4 @@ export * from './path';
 export * from './date';
 export * from './Period';
 export * from './ViewPeriodHeader';
+export * from './filterUndefined';

@@ -94,8 +94,9 @@ export class EntityBin extends Entity {
     }
 
     private buildPick(v: any): BinPick {
-        const { id, name, param, from } = v;
+        const { id, name, param, from, caption } = v;
         let ret = new BinPick(this.biz, id, name, this);
+        ret.caption = caption;
         ret.param = param;
         let arr = (from as string[]).map(v => this.biz.entities[v]);
         let entity = arr[0];
@@ -217,11 +218,7 @@ export class EntitySheet extends Entity {
         }
         this.coreDetail = this.details[0]?.bin;
     }
-    /*
-    protected fromStates(states: any[]) {
 
-    }
-    */
     protected fromActs(acts: any[]) {
         for (const act of acts) {
             const { name, fromPend, detail } = act;

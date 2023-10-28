@@ -10,6 +10,7 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
     const pick = useBinPicks(entityBin);
     async function addNewDirect() {
         let pickResults = await pick();
+        if (pickResults === undefined) return;
         const { props: picked, arr, group } = pickResults;
 
         function convertRowProps(props: any) {
@@ -44,13 +45,16 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
             }
             for (let rowProps of arr) {
                 rowProps = convertRowProps(rowProps);
-                let rowStore = new RowStore(entityBin);
-                rowStore.init(rowProps);
-                let values = rowStore.binDetail;
                 let sec = new Section(coreDetail);
                 coreDetail.addSection(sec);
-                if (values.value === undefined) values.value = 0;
-                await sec.addRowProps(values as any);
+
+                let rowStore = new RowStore(entityBin);
+                rowStore.init(rowProps);
+                let { binDetail } = rowStore;
+                if (binDetail.value === undefined) {
+                    rowStore.setValue('value', 0, undefined);
+                }
+                await sec.addRowProps(binDetail as any);
             }
         }
         async function addNewGroup() {

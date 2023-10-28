@@ -63,6 +63,27 @@ export class HttpChannel {
         return await this.innerFetchResult(url, options);
     }
 
+    async download(url: string, params: any = undefined, headers: any = undefined): Promise<any> {
+        if (params) {
+            let keys = Object.keys(params);
+            if (keys.length > 0) {
+                let c = '?';
+                for (let k of keys) {
+                    let v = params[k];
+                    if (v === undefined) continue;
+                    url += c + k + '=' + params[k];
+                    c = '&';
+                }
+            }
+        }
+        let options = this.buildOptions(headers);
+        options.method = 'GET';
+        (options as any).download = true;
+        let ret = await this.innerFetch(url, options);
+        return ret.res;
+        // return await this.innerFetchResult(url, options);
+    }
+
     async post(url: string, params: any, headers: any = undefined): Promise<any> {
         let options = this.buildOptions(headers);
         options.method = 'POST';
@@ -98,6 +119,10 @@ export class HttpChannel {
                 clearTimeout(timeOutHandler);
                 console.log('call error %s', res.statusText);
                 throw res.statusText;
+            }
+            if (options.download === true) {
+                this.downloadResponse(res);
+                return;
             }
             let ct = res.headers.get('content-type');
             if (ct && ct.indexOf('json') >= 0) {
@@ -141,6 +166,23 @@ export class HttpChannel {
         };
     }
 
+    private downloadResponse(response: Response) {
+        let { url } = response;
+        let p = url.lastIndexOf('/');
+        let file = url.substring(p + 1);
+        response.blob().then((blob) => {
+            // Creating new object of PDF file
+            const fileURL =
+                window.URL.createObjectURL(blob);
+
+            // Setting various property values
+            let alink = document.createElement("a");
+            alink.href = fileURL;
+            alink.download = file + '.uq';
+            alink.click();
+        });
+    }
+
     //protected abstract innerFetch(url: string, options: any): Promise<any>;
     protected async innerFetch(url: string, options: any): Promise<any> {
         let u = this.hostUrl + url;
@@ -164,7 +206,6 @@ export class HttpChannel {
             headers: newHeaders,
             method: undefined as any,
             body: undefined as any,
-            // cache: 'no-cache',
         };
         return options;
     }

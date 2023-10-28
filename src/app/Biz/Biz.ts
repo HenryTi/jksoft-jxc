@@ -33,12 +33,12 @@ enum EnumEntity {
 };
 
 interface Group {
+    name: string;
     caption: string;
     entities: [Entity[], string?, string?, string?][];
     icon?: string;
     iconColor?: string;
 }
-// [{group: name Entity[], string?, string?, string?][]
 
 export class Biz {
     readonly uqApp: UqApp;
@@ -74,7 +74,6 @@ export class Biz {
         this.uqApp = uqApp;
         this.uq = uqApp.uq;
         this.buildEntities(bizSchema);
-        // setAtomValue(this._all, this.all);
     }
 
     init() { }
@@ -170,6 +169,7 @@ export class Biz {
         this.buildRootAtoms();
         this.all.push(
             {
+                name: 'infos',
                 caption: '基础数据',
                 entities: [
                     [this.atoms],
@@ -180,6 +180,7 @@ export class Biz {
                 ],
             },
             {
+                name: 'sheets',
                 caption: '业务流程',
                 entities: [
                     [this.sheets, '业务单据', 'file'],
@@ -188,6 +189,7 @@ export class Biz {
                 ],
             },
             {
+                name: 'relate',
                 caption: '数据关系',
                 entities: [
                     [this.queries, '捡取查询', 'hand-pointer-o'],
@@ -198,12 +200,14 @@ export class Biz {
                 ],
             },
             {
+                name: 'reports',
                 caption: '查询汇总',
                 entities: [
                     [this.reports, '报表', 'file'],
                 ],
             },
             {
+                name: 'auth',
                 caption: '权限',
                 entities:
                     [

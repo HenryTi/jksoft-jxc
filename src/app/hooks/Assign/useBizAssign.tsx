@@ -1,13 +1,11 @@
 import { EntityAssign } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useParams } from "react-router-dom";
-import { Page } from "tonwa-app";
 import { from62, to62 } from "tonwa-com";
-import { RowMed, useAtomBudsSearch } from "../BudSelect";
-import { useQuery } from "react-query";
 import { PageQueryMore } from "app/coms";
 import { ViewAtom } from "../BizAtom";
-import { FocusEvent, FocusEventHandler, MouseEvent, useState } from "react";
+import { FocusEvent, useCallback, useState } from "react";
+import { ReturnGetAssigns$page } from "uqs/UqDefault";
 
 function assignInPath(phrase: number | string) {
     if (typeof phrase === 'string') {
@@ -32,38 +30,48 @@ export function useBizAssign(): UseBizAssingReturn {
         page: <PageAssign />
     }
     function PageAssign() {
-        const { name, caption, atoms } = entity;
-        const [searchParam, setSearchParam] = useState({ key: undefined as string });
-        let atomBudsSearch = useAtomBudsSearch({ entity: atoms[0].name, budNames: undefined });
-        async function searchAtoms(param: any, pageStart: any, pageSize: number) {
-            let ret = await atomBudsSearch.search(param, pageStart, pageSize);
-            return ret;
-        }
+        const { id, name, caption } = entity;
+        const [searchParam, setSearchParam] = useState({ assign: id, params: {} });
 
-        function ViewItem({ value }: { value: RowMed }) {
-            function onBlur(evt: FocusEvent<HTMLInputElement>) {
-                let { value } = evt.currentTarget;
-            }
+        const query = useCallback(async function (param: any, pageStart: any, pageSize: number) {
+            let ret = await uq.GetAssigns.page(searchParam, pageStart, pageSize);
+            return ret.$page;
+        }, []);
+
+        function ViewItem({ value }: { value: ReturnGetAssigns$page }) {
             return <div className="px-3 py-2 d-flex">
                 <div className="flex-grow-1">
-                    <ViewAtom value={value.atom} />
+                    <ViewAtom value={value as any} />
                 </div>
-                {entity.titles.map((v, index) => <input key={index} onBlur={onBlur}
-                    className="w-8c form-control ms-3 text-end" type="number" />)}
+                {entity.titles.map((bud, index) => {
+                    async function onBlur(evt: FocusEvent<HTMLInputElement>) {
+                        let { value: inputValue } = evt.currentTarget;
+                        let v = Number(inputValue);
+                        if (Number.isNaN(v) === true) return;
+                        await uq.SaveBudValue.submit({
+                            phraseId: bud.id,
+                            id: value.id,
+                            int: undefined,
+                            dec: v,
+                            str: undefined
+                        });
+                    }
+                    return <input key={index} onBlur={onBlur} defaultValue={value.values[index]}
+                        className="w-8c form-control ms-3 text-end align-self-start" type="number" />;
+                })}
             </div>;
         }
         const titleCaptions = entity.titles.map(v => v.caption ?? v.name);
         return <PageQueryMore header={caption ?? name}
-            query={searchAtoms}
+            query={query}
             param={searchParam}
             sortField="id"
             ViewItem={ViewItem}
         >
             <div className="px-3 my-3">{entity.atoms.map(v => (v.caption ?? v.name)).join(', ')}</div>
-            <div className="px-3 my-3">{entity.titles.map(v => (v.caption ?? v.name)).join(', ')}</div>
             <div className="d-flex px-3">
                 <div className="flex-grow-1"></div>
-                {titleCaptions.map((v, index) => <div key={index} className="w-8c text-end ms-3">{v}</div>)}
+                {titleCaptions.map((v, index) => <div key={index} className="w-8c text-end ms-3 me-2 small">{v}</div>)}
             </div>
         </PageQueryMore>;
     }

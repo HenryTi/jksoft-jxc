@@ -250,8 +250,6 @@ enum EnumResultType { data, sql };
 
 export interface Uq {
     $: UqMan;
-    // $name: string;
-    // $setUnit(unit: number): void;
     Role: { [key: string]: string[] };
     idObj<T = any>(id: number): Promise<T>;
     idJoins(id: number): Promise<{ ID: ID; main: [string, any]; joins: [string, any[]][]; }>;
@@ -1073,6 +1071,7 @@ export class UqMan {
     idCacheDel(id: number) {
         delete this.cache[id];
     }
+
     // 返回可能是数组
     protected idObj = async (id: number) => {
         let obj = this.cache[id];

@@ -126,6 +126,10 @@ export class UqApi extends ApiBase {
         let ret = await this.post('compile/biz', {});
         return ret;
     }
+    async source(name: string): Promise<any> {
+        let ret = await this.download('compile/source/' + name);
+        return ret;
+    }
 }
 
 export abstract class CenterApiBase extends ApiBase {

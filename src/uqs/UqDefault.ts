@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Oct 26 2023 21:48:13 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Fri Oct 27 2023 11:11:50 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -397,6 +397,20 @@ export interface ResultSearchAtom {
 	$page: ReturnSearchAtom$page[];
 }
 
+export interface ParamGetAssigns {
+	assign: number;
+	params: any;
+}
+export interface ReturnGetAssigns$page {
+	id: number;
+	no: string;
+	ex: string;
+	values: any;
+}
+export interface ResultGetAssigns {
+	$page: ReturnGetAssigns$page[];
+}
+
 export interface ParamSearchAtomBuds {
 	phrase: string;
 	key: string;
@@ -572,6 +586,7 @@ export enum BizPhraseType {
 	tie = 501,
 	report = 601,
 	title = 901,
+	assign = 902,
 	key = 1001,
 	prop = 1011,
 	optionsitem = 1031
@@ -1344,6 +1359,7 @@ export interface UqExt extends Uq {
 	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
 	GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
 	SearchAtom: UqQuery<ParamSearchAtom, ResultSearchAtom>;
+	GetAssigns: UqQuery<ParamGetAssigns, ResultGetAssigns>;
 	SearchAtomBuds: UqQuery<ParamSearchAtomBuds, ResultSearchAtomBuds>;
 	SearchAtomUomBuds: UqQuery<ParamSearchAtomUomBuds, ResultSearchAtomUomBuds>;
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
@@ -2419,6 +2435,48 @@ export const uqSchema={
             }
         ]
     },
+    "getassigns": {
+        "name": "GetAssigns",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "assign",
+                "type": "id"
+            },
+            {
+                "name": "params",
+                "type": "json"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "values",
+                        "type": "json"
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
     "searchatombuds": {
         "name": "SearchAtomBuds",
         "type": "query",
@@ -2954,6 +3012,7 @@ export const uqSchema={
             "tie": 501,
             "report": 601,
             "title": 901,
+            "assign": 902,
             "key": 1001,
             "prop": 1011,
             "optionsitem": 1031

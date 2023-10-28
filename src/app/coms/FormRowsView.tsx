@@ -284,7 +284,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
                 right={right} />;
         case 'submit':
             return <Band>
-                <input type="submit" disabled={options.disabled}
+                <input type="submit" disabled={options?.disabled}
                     readOnly={readOnly}
                     className={(row as FormSubmit).className ?? 'btn btn-primary'}
                     value={(label as string) ?? '提交'} />

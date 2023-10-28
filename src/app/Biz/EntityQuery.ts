@@ -9,7 +9,7 @@ export class EntityQuery extends Entity {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'asc': this.asc = val; break;
-            case 'params': this.params = val; break;
+            case 'params': this.params = (val as any[]).map(v => this.fromProp(v)); break;
             case 'ban': this.ban = val; break;
         }
     }

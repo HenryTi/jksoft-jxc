@@ -8,7 +8,7 @@ Assign 赋值价格 {
     Title 价格.零售价, 价格.批发价;
 }
 
-QUERY 查询货品Query (  
+QUERY 查询货品Query '查询货品Query标题' (  
     a '参数a' CHAR,
     b '参数b' CHAR, 
     c, d, e, 

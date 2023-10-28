@@ -51,4 +51,9 @@ export abstract class ApiBase {
         let channel = await this.getHttpChannel();
         return await channel.delete(this.path + path, params, this.customHeader());
     }
+
+    public async download(path: string, params: any = undefined): Promise<any> {
+        let channel = await this.getHttpChannel();
+        return await channel.download(this.path + path, params, this.customHeader());
+    }
 }

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { MouseEvent, useRef, useState } from "react";
 import { Route } from "react-router-dom";
 import { Page, useModal } from "tonwa-app";
 import { PageUpload } from './PageUpload';
@@ -90,9 +90,18 @@ export function buildViewBiz() {
             <div className="tonwa-bg-gray-1">
                 {
                     biz.all.map((group, index) => {
-                        let { caption: groupCaption, entities } = group;
+                        let { name, caption: groupCaption, entities } = group;
+                        async function onDownload(evt: MouseEvent<HTMLAnchorElement>) {
+                            evt.preventDefault();
+                            const { uqMan } = uqApp;
+                            let { uqApi } = uqMan;
+                            await uqApi.source(name);
+                        }
                         return <div key={index} className="mb-4">
-                            <div className="bg-info-subtle bg-gradient px-3 pb-2 pt-3 small"><b>{groupCaption}</b></div>
+                            <div className="bg-info-subtle bg-gradient px-3 pb-2 pt-3 small d-flex">
+                                <b className="flex-grow-1">{groupCaption}</b>
+                                <a className="" href="#" onClick={onDownload}>下载代码</a>
+                            </div>
                             {
                                 entities.map((v, index) => {
                                     let [arr, caption, icon] = v;

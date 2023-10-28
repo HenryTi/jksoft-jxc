@@ -1,57 +1,4 @@
-// import { atom } from 'jotai';
 import jsep from 'jsep';
-// import { setAtomValue } from 'tonwa-com';
-
-/*
-enum CellType {
-    value = 1,
-    exp = 2,
-}
-*/
-
-export abstract class Cell {
-    // abstract get type(): CellType;
-    readonly name: string;
-    // abstract get immutable(): boolean;
-    value: number | string;
-    constructor(name: string) {
-        this.name = name;
-    }
-    init() { }
-}
-
-class ValueCell extends Cell {
-    // readonly type = CellType.value;
-    // readonly immutable = false;
-    /*
-    constructor(name: string, value: number | string) {
-        super(name);
-        this.value = value;
-    }
-    */
-}
-
-abstract class ExpCellBase extends Cell {
-    // readonly type = CellType.exp;
-    readonly exp: jsep.Expression;
-    // readonly immutable: boolean;
-
-    constructor(name: string, exp: jsep.Expression) {
-        super(name);
-        // this.value = value;
-        this.exp = exp;
-        // this.immutable = immutable;
-    }
-}
-
-class ExpOnceCell extends ExpCellBase {
-
-}
-
-class ExpCell extends ExpCellBase {
-    // readonly type = CellType.exp;
-    // readonly immutable: boolean;
-}
 
 export abstract class NameValues {
     abstract identifier(name: string): string | number;
@@ -62,7 +9,8 @@ export class PickedNameValues extends NameValues {
     private readonly values: { [name: string]: any };
     constructor(values: { [name: string]: any }) {
         super();
-        this.values = values;
+        this.values = {};
+        Object.assign(this.values, values);
     }
     identifier(name: string): string | number {
         let ret = this.values[name];
@@ -158,18 +106,20 @@ export class Formula {
 export interface Formulas { [name: string]: string; };
 export class Calc implements NameValues {
     private readonly formulas: { [name: string]: Formula } = {};
-    readonly values: { [name: string]: string | number } = {};
+    readonly values: { [name: string]: string | number };
 
-    constructor(formulas: Formulas) {
+    constructor(formulas: Formulas, valuesStore?: { [name: string]: string | number }) {
         for (let i in formulas) {
             let f = formulas[i];
             if (f === undefined) continue;
             let formula = new Formula(f);
             this.formulas[i] = formula;
         }
+        this.values = valuesStore ?? {};
     }
 
-    init(nameValues: NameValues) {
+    init(picked: { [name: string]: any }) {
+        let nameValues = new PickedNameValues(picked);
         for (let i in this.formulas) {
             this.values[i] = this.formulas[i].run(nameValues);
         }

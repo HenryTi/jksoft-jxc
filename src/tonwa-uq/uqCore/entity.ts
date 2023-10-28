@@ -267,7 +267,10 @@ export abstract class Entity {
         let ret: string | number[] = [];
         let fields = this.fields;
         if (fields !== undefined) {
-            for (let field of fields) ret.push(data[field.name]);
+            for (let field of fields) {
+                let v = data[field.name];
+                ret.push(v);
+            }
         }
         return JSON.stringify(ret);
     }

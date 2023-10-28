@@ -425,6 +425,42 @@ PAGE (
         LIMIT $pageSize;
 };
 
+Biz Query GetAssigns (
+    assign ID,
+    params JSON,
+)
+PAGE (
+    id ID ASC,
+    no NO,
+    ex EX,
+    values JSON,
+) {
+    VAR me ID = Me();
+
+    /*
+    -- 查权限
+    IF NOT EXISTS (SELECT i FROM IxPermission WHERE i=assign AND x=-1 AND a=1)
+       OR NOT EXISTS (SELECT a.i 
+            FROM IxPermission as a
+                JOIN IxUserRole as b ON b.i=me AND b.x=a.x
+            WHERE a.i=assign AND a.a=1
+        )
+        AND NOT EXISTS (SELECT id FROM $UserSite WHERE id=me AND (admin&1)=1)
+    {
+        RETURN;
+    }
+
+    -- 以后可以加其它的检查条件，查询权限
+    IF NOT EXISTS (SELECT a.id FROM BizPhrase as a WHERE a.id=assign AND a.base=$site)
+        OR  NOT EXISTS (SELECT a.id FROM BizPhrase as a WHERE a.id=assign AND a.base=$site)
+    {
+        RETURN;
+    }
+    */
+    VAR sql CHAR(500) = CONCAT('call `$site`.`', $site, '.', assign, 'a`(?,?,?,?);');
+    ExecSql sql USING me, $pageStart, $pageSize, params;
+}
+
 Biz Query SearchAtomBuds ver 0.2 (
     phrase Phrase,
     key CHAR(50),

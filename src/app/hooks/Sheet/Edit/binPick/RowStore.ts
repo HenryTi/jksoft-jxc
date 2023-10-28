@@ -1,7 +1,7 @@
 import { FormRow } from "app/coms";
 import { BinDetail } from "../SheetStore";
 import { BizBud, BudDec, EntityBin, EnumBudType } from "app/Biz";
-import { Calc, Formulas, PickedNameValues } from "../../../Calc";
+import { Calc, Formulas } from "../../../Calc";
 
 abstract class Field {
     readonly name: string;
@@ -91,7 +91,7 @@ export class RowStore {
                 requiredFields.push(f);
             }
         }
-        this.calc = new Calc(formulas);
+        this.calc = new Calc(formulas, this.binDetail as any);
     }
 
     private initField(field: Field, onForm: boolean = true) {
@@ -100,8 +100,8 @@ export class RowStore {
     }
 
     init(picked: { [name: string]: any }) {
-        let nameValues = new PickedNameValues(picked);
-        this.calc.init(nameValues);
+        this.calc.init(picked);
+        // Object.assign(this.binDetail, this.calc.values);
     }
 
     setValues(binDetail: BinDetail) {
