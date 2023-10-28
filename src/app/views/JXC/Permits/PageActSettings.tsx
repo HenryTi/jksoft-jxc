@@ -59,10 +59,12 @@ function PageActSettings() {
         <Sep />
         <div className="">
             <List items={biz.roles} ViewItem={ViewItemRole} />
-            <div className="py-2" />
-            <List items={biz.permits} ViewItem={ViewItemPermit} sep={<div className="py-2" />} />
         </div>
     </Page>;
+    /*
+            <div className="py-2" />
+            <List items={biz.permits} ViewItem={ViewItemPermit} sep={<div className="py-2" />} />
+    */
 }
 
 export const routePermits = <>

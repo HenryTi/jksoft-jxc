@@ -16,14 +16,19 @@ export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore;
     const { i: budI, x: budX } = entityBin;
     const [submitable, setSubmitable] = useState(rowStore.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
-        const { value: valueInputText, name } = evt.target;
-        let valueInput: number;
-        if (valueInputText.trim().length === 0) {
-            valueInput = undefined;
+        const { type, value: valueInputText, name } = evt.target;
+        let valueInput: any;
+        if (type === 'number') {
+            if (valueInputText.trim().length === 0) {
+                valueInput = undefined;
+            }
+            else {
+                let v = Number(valueInputText);
+                valueInput = Number.isNaN(v) === true ? undefined : v;
+            }
         }
         else {
-            let v = Number(valueInputText);
-            valueInput = Number.isNaN(v) === true ? undefined : v;
+            valueInput = valueInputText;
         }
         rowStore.setValue(name, valueInput, (name, value) => {
             setValue(name, value);

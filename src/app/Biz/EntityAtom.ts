@@ -20,9 +20,10 @@ export abstract class EntityAtomID extends Entity {
         let { buds, props } = this;
         for (let p of ancestors) {
             for (let bud of p.selfProps) {
-                let { name, phrase } = bud;
+                let { id, name, phrase } = bud;
                 buds[name] = bud;
                 buds[phrase] = bud;
+                buds[id] = bud;
                 props.push(bud);
             }
         }

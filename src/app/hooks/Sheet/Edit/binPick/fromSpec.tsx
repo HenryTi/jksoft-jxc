@@ -3,31 +3,27 @@ import { usePickSpec } from "app/hooks/BizPick/userPickSpec";
 import { ViewAtom } from "app/hooks/BizAtom";
 import { Atom } from "uqs/UqDefault";
 import { useCallback } from "react";
-import { PickResults } from "./useBinPicks";
+import { NamedResults } from "./useBinPicks";
 
 export function usePickFromSpec() {
     const returnUsePickSpec = usePickSpec();
-    return useCallback(async function pickFromSpec(results: PickResults, binPick: BinPick): Promise<any> {
-        let { name, caption, param, pick } = binPick;
+    return useCallback(async function pickFromSpec(namedResults: NamedResults, binPick: BinPick): Promise<any> {
+        let { param, pick } = binPick;
         let pickBase = pick as PickSpec;
         let { from } = pickBase;
-        const { props } = results;
-        let retAtom = props[param[0]?.bud] as Atom;
+        let retAtom = namedResults[param[0]?.bud] as Atom;
         const viewTop = <div>
             <ViewAtom value={retAtom} />
         </div>;
         const buttonCaption = '提交';
         const buttonClassName = 'btn btn-primary';
         let ret = await returnUsePickSpec({
-            base: props[param[0]?.bud]?.id,
+            base: retAtom?.id,
             entitySpec: from,
             viewTop,
             buttonCaption,
             buttonClassName,
         });
-        if (ret === undefined) return false;
-        let { retSpec, retViewTop } = ret;
-        props[name] = retSpec;
-        return true;
+        return ret;
     }, []);
 }

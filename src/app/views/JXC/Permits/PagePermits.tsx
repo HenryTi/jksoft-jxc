@@ -10,7 +10,7 @@ export function PagePermits() {
     const uqApp = useUqApp();
     const user = useAtomValue(uqApp.user);
     const { biz } = uqApp;
-    const { roles, permits } = biz;
+    const { roles } = biz;
     const { uqSites: { userSite } } = uqApp;
     const permitColl = userSite.permits;
     function Check({ phrase }: { phrase: string; }) {
@@ -77,8 +77,10 @@ export function PagePermits() {
                 <ViewUser user={user} />
             </div>
             <List items={roles} ViewItem={ViewRole} />
-            <Sep />
-            <List items={permits} ViewItem={ViewPermit} />
         </div>
     </Page>
+    /*
+            <Sep />
+            <List items={permits} ViewItem={ViewPermit} />
+    */
 }

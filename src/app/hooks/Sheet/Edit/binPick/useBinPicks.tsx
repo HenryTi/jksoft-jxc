@@ -7,11 +7,11 @@ import { usePickFromPend } from "./fromPend";
 import { usePickFromQuery } from "./fromQuery";
 
 export type PickResult = { [prop: string]: any };
-export interface PickResults {
-    props: { [name: string]: PickResult; }
-    arr: any[];                 // 单行数组
-    group: any[];               // 多行组数组
+export interface NamedResults {
+    [name: string]: PickResult | (PickResult[]);
 }
+
+export type ReturnUseBinPicks = [NamedResults, BinPick, PickResult | PickResult[]];
 
 export function useBinPicks(bin: EntityBin) {
     const { picks: binPicks } = bin;
@@ -23,32 +23,31 @@ export function useBinPicks(bin: EntityBin) {
     // if no detailSection add new, else edit
     return useCallback(async function pick() {
         if (binPicks === undefined) return;
-        let results: PickResults = {
-            props: {},
-            arr: [],
-            group: [],
-        };
+        let namedResults: NamedResults = {};
+        let pickResult: PickResult | (PickResult[]);
+        let lastBinPick: BinPick;
         for (const binPick of binPicks) {
             const { name, pick } = binPick;
             const { bizPhraseType } = pick;
-            let picked: boolean;
             switch (bizPhraseType) {
                 default: debugger;
                 case BizPhraseType.atom:
-                    picked = await pickFromAtom(results, binPick);
+                    pickResult = await pickFromAtom(namedResults, binPick);
                     break;
                 case BizPhraseType.spec:
-                    picked = await pickFromSpec(results, binPick);
+                    pickResult = await pickFromSpec(namedResults, binPick);
                     break;
                 case BizPhraseType.query:
-                    picked = await pickFromQuery(results, binPick);
+                    pickResult = await pickFromQuery(namedResults, binPick);
                     break;
                 case BizPhraseType.pend:
-                    picked = await pickFromPend(results, binPick);
+                    pickResult = await pickFromPend(namedResults, binPick);
                     break;
             }
-            if (picked === false) return undefined;
+            if (pickResult === undefined) return undefined;
+            lastBinPick = binPick;
+            namedResults[name] = pickResult;
         }
-        return results;
+        return [namedResults, lastBinPick, pickResult] as ReturnUseBinPicks;
     }, []);
 }

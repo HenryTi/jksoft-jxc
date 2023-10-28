@@ -10,8 +10,8 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { UqApp, useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { EntitySheet } from "app/Biz";
-import { PickResults, useBinPicks } from "./binPick/useBinPicks";
+import { BinPick, EntitySheet } from "app/Biz";
+import { NamedResults, ReturnUseBinPicks, useBinPicks } from "./binPick/useBinPicks";
 
 let locationState = 1;
 export function PageSheetEdit() {
@@ -51,7 +51,7 @@ export function PageSheetEdit() {
     return <PageStore store={sheetStore} />;
 }
 
-async function startSheetStore(uqApp: UqApp, sheetStore: SheetStore, pick: () => Promise<PickResults>) {
+async function startSheetStore(uqApp: UqApp, sheetStore: SheetStore, pick: () => Promise<ReturnUseBinPicks>) {
     let ret = await sheetStore.start(pick);
     if (ret === undefined) return; // 已有单据，不需要pick. 或者没有创建新单据
     let { id, no, target } = ret;

@@ -132,7 +132,6 @@ export class UqApp extends UqAppBase<UQs> {
             siteLogined = true;
             let { uqApi } = this.uqMan;
             let { schemas, logs } = await uqApi.biz();
-            // this.biz = new Biz(this, uqSchema.$biz);
             if (schemas === undefined) {
                 debugger;
                 console.error('uq-api compile saved bizobject error', logs);

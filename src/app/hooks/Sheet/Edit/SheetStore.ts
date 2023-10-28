@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { UqExt } from "uqs/UqDefault";
 import { atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
-import { PickResults } from "./binPick/useBinPicks";
+import { NamedResults, ReturnUseBinPicks } from "./binPick/useBinPicks";
 import { Calc, Formulas } from "app/hooks/Calc";
 
 
@@ -39,7 +39,7 @@ export class SheetMain extends BaseObject {
     }
 
     // return: true: new sheet created
-    async start(pick: () => Promise<PickResults>) {
+    async start(pick: () => Promise<ReturnUseBinPicks>) {
         const row = this.binRow;
         const { id } = row;
         if (id > 0) return;
@@ -53,7 +53,7 @@ export class SheetMain extends BaseObject {
             formulas.x = x.defaultValue;
         }
         const calc = new Calc(formulas);
-        let { props } = results;
+        let [props] = results;
         calc.init(props as any);
         if (i !== undefined) {
             row.i = calc.values.i as number;
@@ -247,7 +247,16 @@ export class Row extends BaseObject {
     }
 
     setValue(row: BinDetail) {
-        Object.assign(this.props, row);
+        let { i, x, value, price, amount } = this.section.coreDetail.entityBin;
+        if (i !== undefined) this.props.i = row.i;
+        if (x !== undefined) this.props.x = row.x;
+        if (value !== undefined) this.props.value = row.value;
+        if (price !== undefined) this.props.price = row.price;
+        if (amount !== undefined) this.props.amount = row.amount;
+        this.props.origin = row.origin;
+        this.props.buds = row.buds;
+        this.props.pendFrom = row.pendFrom;
+        // Object.assign(this.props, row);
     }
 }
 
@@ -356,7 +365,7 @@ export class SheetStore extends KeyIdObject {
             return id;
         }
     }
-    async start(pick: () => Promise<PickResults>) {
+    async start(pick: () => Promise<ReturnUseBinPicks>) {
         let ret = await this.main.start(pick);
         if (ret !== undefined) return ret;
     }

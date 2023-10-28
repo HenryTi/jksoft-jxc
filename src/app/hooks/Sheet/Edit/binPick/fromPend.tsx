@@ -1,8 +1,8 @@
 import { BinPick, PickPend, PropPend } from "app/Biz";
 import { useCallback } from "react";
 import { Page, useModal } from "tonwa-app";
-import { PickResults } from "./useBinPicks";
-import { BinDetail, CoreDetail, Section } from "../SheetStore";
+import { NamedResults } from "./useBinPicks";
+import { BinDetail } from "../SheetStore";
 import { useUqApp } from "app/UqApp";
 import { ViewSpec } from "app/hooks/View";
 import { UseQueryOptions } from "app/tool";
@@ -16,7 +16,7 @@ import { PendRow } from "../SheetStore";
 export function usePickFromPend() {
     const modal = useModal();
     return useCallback(
-        async function pickFromPend(pickResults: PickResults, binPick: BinPick): Promise<any> {
+        async function pickFromPend(pickResults: NamedResults, binPick: BinPick): Promise<any> {
             let { name, caption, pick } = binPick;
             let pickBase = pick as PickPend;
             let propPend: PropPend = {
@@ -25,10 +25,11 @@ export function usePickFromPend() {
                 search: [],
             };
             let inputed = await modal.open<BinDetail[]>(<ModalInputPend propPend={propPend} />);
-            if (inputed === undefined) return false;
-            let iArr: BinDetail[] = [];
+            if (inputed === undefined) return;
+            let iArr: (BinDetail | [number, BinDetail[]])[] = [];
             let iGroup: number[] = [];
             let iColl: { [i: number]: BinDetail[] } = {};
+            // group 按 i 分组
             for (let r of inputed) {
                 let { i, x } = r;
                 if (x === undefined) {
@@ -46,27 +47,10 @@ export function usePickFromPend() {
                     }
                 }
             }
-            /*
-            await addNewArr();
-            await addNewGroup();
-            async function addNewArr() {
-                if (coreDetail === undefined) {
-                    alert('Pick Pend on main not implemented');
-                    return;
-                }
-                for (let rowProps of iArr) {
-                    let sec = new Section(coreDetail);
-                    coreDetail.addSection(sec);
-                    await sec.addRowProps(rowProps);
-                }
+            for (let g of iGroup) {
+                iArr.push([g, iColl[g]]);
             }
-            async function addNewGroup() {
-
-            }
-            */
-            pickResults.arr.push(...iArr);
-            pickResults.group.push(...iGroup);
-            return true; // ret;
+            return iArr;
         }, []);
 }
 
@@ -84,11 +68,13 @@ export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
         };
         let ret: PendRow[] = [];
         for (let v of $page) {
+            let { pendValue } = v;
+            if (pendValue === undefined || pendValue <= 0) continue;
             let pendRow: PendRow = {
                 pend: v.pend,
                 sheet: { ...collSheet[v.sheet], buds: {} },
                 detail: { ...v, buds: {} },
-                value: v.pendValue,
+                value: pendValue,
             };
             ret.push(pendRow);
         }
@@ -111,6 +97,7 @@ export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
             const { pend, detail, value } = pendRow;
             let rowProps: BinDetail = {
                 ...detail,
+                value,
                 origin: detail.id,             // origin detail id
                 pendFrom: pend,
                 pendValue: value,
@@ -129,7 +116,7 @@ export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
     }
     const digits = 2;
     function ViewPendRow({ value: pendRow }: { value: PendRow }) {
-        const { detail: { i, price, amount, value } } = pendRow;
+        const { detail: { i, price, amount }, value } = pendRow;
         return <div className="d-flex w-100">
             <div className="">
                 <div className="py-2">

@@ -24,8 +24,8 @@ enum EnumEntity {
     pick,
     options,
     report,
+    // permit,
     permit,
-    role,
     title,
     assign,
     tree,
@@ -62,7 +62,7 @@ export class Biz {
     readonly assigns: EntityAssign[] = [];
 
     readonly roles: EntityRole[] = [];
-    readonly permits: EntityPermit[] = [];
+    // readonly permits: EntityPermit[] = [];
 
     readonly all: Group[] = [];
     readonly _refresh = atom(false);
@@ -96,8 +96,8 @@ export class Biz {
             [EnumEntity.pick]: this.buildPick,
             [EnumEntity.options]: this.buildOptions,
             [EnumEntity.report]: this.buildReport,
-            [EnumEntity.permit]: this.buildPermit,
-            [EnumEntity.role]: this.buildRole,
+            // [EnumEntity.permit]: this.buildPermit,
+            [EnumEntity.permit]: this.buildRole,
             [EnumEntity.title]: this.buildTitle,
             [EnumEntity.assign]: this.buildAssign,
             [EnumEntity.tree]: this.buildTree,
@@ -146,8 +146,8 @@ export class Biz {
             EnumEntity.title,
             EnumEntity.assign,
             EnumEntity.options,
+            // EnumEntity.permit,
             EnumEntity.permit,
-            EnumEntity.role,
             EnumEntity.atom,
             EnumEntity.spec,
             EnumEntity.sheet,
@@ -211,8 +211,8 @@ export class Biz {
                 caption: '权限',
                 entities:
                     [
-                        [this.roles, '角色', 'user-o'],
-                        [this.permits, '许可', 'user'],
+                        [this.roles, '许可', 'user-o'],
+                        //[this.permits, '许可', 'user'],
                     ]
             }
         );
@@ -308,13 +308,13 @@ export class Biz {
         this.options.push(bizEntity);
         return bizEntity;
     }
-
+    /*
     private buildPermit = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityPermit(this, id, name, type);
         this.permits.push(bizEntity);
         return bizEntity;
     }
-
+    */
     private buildRole = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityRole(this, id, name, type);
         this.roles.push(bizEntity);

@@ -1,16 +1,15 @@
 import jsep from 'jsep';
 
-export abstract class NameValues {
-    abstract identifier(name: string): string | number;
-    abstract member(name0: string, name1: string): string | number;
+export interface NameValues {
+    identifier(name: string): string | number;
+    member(name0: string, name1: string): string | number;
 }
 
-export class PickedNameValues extends NameValues {
-    private readonly values: { [name: string]: any };
-    constructor(values: { [name: string]: any }) {
-        super();
-        this.values = {};
-        Object.assign(this.values, values);
+export class PickedNameValues implements NameValues {
+    private readonly values: any;
+    constructor(values: any) {
+        if (values === null || typeof values !== 'object') debugger;
+        this.values = values;
     }
     identifier(name: string): string | number {
         let ret = this.values[name];
@@ -120,6 +119,7 @@ export class Calc implements NameValues {
 
     init(picked: { [name: string]: any }) {
         let nameValues = new PickedNameValues(picked);
+        console.log('after let nameValues = new PickedNameValues(picked);');
         for (let i in this.formulas) {
             this.values[i] = this.formulas[i].run(nameValues);
         }

@@ -98,7 +98,7 @@ export function buildViewBiz() {
                             await uqApi.source(name);
                         }
                         return <div key={index} className="mb-4">
-                            <div className="bg-info-subtle bg-gradient px-3 pb-2 pt-3 small d-flex">
+                            <div className="bg-info-subtle bg-gradient px-3 pb-2 pt-2 small d-flex">
                                 <b className="flex-grow-1">{groupCaption}</b>
                                 <a className="" href="#" onClick={onDownload}>下载代码</a>
                             </div>

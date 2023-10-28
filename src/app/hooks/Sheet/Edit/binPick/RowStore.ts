@@ -51,7 +51,7 @@ export class RowStore {
     private readonly fieldColl: { [name: string]: Field } = {};
     private readonly calc: Calc;
     private readonly requiredFields: Field[] = [];
-    readonly binDetail: BinDetail = {} as any;
+    readonly binDetail: BinDetail = { buds: {} } as any;
     constructor(bin: EntityBin) {
         this.fields = [];
         const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, props: budArr } = bin;

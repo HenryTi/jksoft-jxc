@@ -1,6 +1,6 @@
 import { BinPick, BizBud, PickQuery } from "app/Biz";
 import { useCallback, useState } from "react";
-import { PickResults } from "./useBinPicks";
+import { NamedResults } from "./useBinPicks";
 import { Page, useModal } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { List } from "tonwa-com";
@@ -19,7 +19,7 @@ interface Picked { [name: string]: Prop }
 export function usePickFromQuery() {
     const { uq, biz } = useUqApp();
     const modal = useModal();
-    return useCallback(async function pickFromQuery(pickResults: PickResults, binPick: BinPick): Promise<any> {
+    return useCallback(async function pickFromQuery(namedResults: NamedResults, binPick: BinPick): Promise<any> {
         let { name, caption, pick, param } = binPick;
         let pickBase = pick as PickQuery;
         let { query } = pickBase;
@@ -75,9 +75,7 @@ export function usePickFromQuery() {
             pickedArr.push(picked);
         }
         let ret = await modal.open(<PageFromQuery />);
-        if (ret === undefined) return false;
-        pickResults.arr = ret;
-        return true;
+        return ret;
 
         function PageParam() {
             const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
