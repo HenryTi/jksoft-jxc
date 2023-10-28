@@ -14,7 +14,7 @@ interface Prop<T = any> {
     bud: BizBud;
     value: T;
 }
-interface Picked { [name: string]: Prop }
+interface Picked { [name: string]: Prop | any }
 
 export function usePickFromQuery() {
     const { uq, biz } = useUqApp();
@@ -37,7 +37,7 @@ export function usePickFromQuery() {
             propArr.push(picked.id = {
                 name,
                 bud: undefined,
-                value: row,
+                value: row.id,
             });
             picked.ban = {
                 name: 'ban',
@@ -75,7 +75,19 @@ export function usePickFromQuery() {
             pickedArr.push(picked);
         }
         let ret = await modal.open(<PageFromQuery />);
-        return ret;
+        return (ret as any[]).map(v => {
+            let obj = {} as any;
+            for (let i in v) {
+                let p = v[i];
+                if (typeof p === 'object') {
+                    obj[i] = p.value;
+                }
+                else {
+                    obj[i] = p;
+                }
+            }
+            return obj;
+        });
 
         function PageParam() {
             const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
@@ -126,7 +138,7 @@ export function usePickFromQuery() {
                 </div>
             }
             function onItemSelect(item: Picked, isSelected: boolean) {
-                const { id: { value: { id } } } = item;
+                const { id } = item;
                 if (isSelected === true) {
                     selectedItems[id] = item;
                 }
