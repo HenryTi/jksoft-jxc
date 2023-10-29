@@ -44,6 +44,7 @@ export class SheetMain extends BaseObject {
         const { id } = row;
         if (id > 0) return;
         const results = await pick();
+        if (results === undefined) return;
         const { i, x } = this.entityMain;
         const formulas: Formulas = {};
         if (i !== undefined) {

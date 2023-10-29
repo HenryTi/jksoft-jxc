@@ -32,10 +32,11 @@ export function usePickSpec() {
                 case 0: retSpec = { id: base }; break;
                 case 1: retSpec = ret[0]; break;
             }
-            return {
+            return retSpec;
+            /*{
                 retSpec,
                 retViewTop: viewTop,
-            }
+            }*/
         }
         else {
             let ret = await openModal(<PagePickSpec />);
@@ -77,13 +78,15 @@ export function usePickSpec() {
                 let results = await uq.SaveSpec.submit(param);
                 const { id } = results;
                 let retSpec = Object.assign({ id }, data);
-                closeModal({
+                closeModal(retSpec);
+                /*
+                    {
                     retSpec,
                     retViewTop: <div>
                         {viewTop}
                         <div>{JSON.stringify(retSpec)}</div>
                     </div>
-                });
+                });*/
             }
             return <Page header={caption ?? name}>
                 <div className="pt-3 tonwa-bg-gray-2">
