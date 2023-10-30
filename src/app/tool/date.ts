@@ -6,7 +6,7 @@ export function getDays(date: string) {
 export function fromDays(days: number) {
     return new Date(date19700101 + days * milliseconds);
 }
-export function contenFromDays(days: number) {
+export function contentFromDays(days: number) {
     if (days === undefined) return undefined;
     let date = fromDays(days);
     let ret = date.toISOString();

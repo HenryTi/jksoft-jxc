@@ -4,7 +4,7 @@ import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
 import { EntityOptions } from './EntityOptions';
-import { contenFromDays } from "app/tool";
+import { contentFromDays } from "app/tool";
 
 export enum EnumBudType {
     none = 0,
@@ -115,7 +115,7 @@ export class BudDate extends BudDataNumber {
     type = EnumBudType.date;
     valueToContent(value: string | number) {
         let v = value as number;
-        return contenFromDays(v);
+        return contentFromDays(v);
     }
 }
 export class BudDateTime extends BudDataNumber {

@@ -3,7 +3,7 @@ import { useModal } from "tonwa-app";
 import { useCallback, useState } from "react";
 import { useUqApp } from "app/UqApp";
 import { PagePickValue } from "./PagePickValue";
-import { contenFromDays, getDays } from "app/tool";
+import { contentFromDays, getDays } from "app/tool";
 import { EditBudTemplateProps } from "./model";
 
 type ConvertToBudValue = (value: any) => { int: number; dec: number; str: string; };
@@ -93,6 +93,6 @@ export function EditBudDate(props: EditBudTemplateProps) {
         }
     }, []);
     return <EditBudValue {...props} type="date"
-        fromBudValue={contenFromDays}
+        fromBudValue={contentFromDays}
         convertToBudValue={convertToBudValue} />;
 }

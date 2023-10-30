@@ -10,6 +10,7 @@ export interface OptionsItem {
 
 export class EntityOptions extends Entity {
     readonly items: OptionsItem[] = [];
+    readonly coll: { [id: number]: OptionsItem } = {};
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
@@ -26,5 +27,8 @@ export class EntityOptions extends Entity {
                 }
             }
         ));
+        for (let item of this.items) {
+            this.coll[item.id] = item;
+        }
     }
 }

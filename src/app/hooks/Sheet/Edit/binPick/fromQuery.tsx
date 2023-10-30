@@ -33,6 +33,7 @@ export function usePickFromQuery() {
             let propArr: Prop[] = [];
             let picked: { [name: string]: Prop } = {
                 $: propArr as any,
+                id: row.id as any,
             };
             picked.ban = {
                 name: 'ban',
@@ -49,6 +50,10 @@ export function usePickFromQuery() {
                     default: debugger; continue;
                     case 2:
                         if (typeof (v0) === 'string') {
+                            switch (v0) {
+                                case 'no': picked.no = v1; continue;
+                                case 'ex': picked.ex = v1; continue;
+                            }
                             name = v0;
                             value = v1
                         }
@@ -67,14 +72,17 @@ export function usePickFromQuery() {
                 }
                 propArr.push(picked[name] = { name, bud, value });
             }
+            /*
             propArr.push(picked.id = {
                 name,
                 bud: undefined,
                 value: row.id,
             });
+            */
             pickedArr.push(picked);
         }
         let ret = await modal.open(<PageFromQuery />);
+        if (ret === undefined) return;
         function toRet(v: any) {
             let obj = {} as any;
             for (let i in v) {
@@ -171,19 +179,36 @@ export function usePickFromQuery() {
                         const { name: bn, caption: bc } = bud;
                         caption = bc ?? bn;
                     }
-                    if (value !== null && typeof value === 'object') value = value.id;
-                    return <div className="my-2 me-3 w-min-16c d-flex">
-                        <small className="text-secondary me-2 w-min-3c">{caption}</small>
+                    // if (value !== null && typeof value === 'object') value = value.id;
+                    return <div className="my-2 me-3 w-min-16c d-flex align-items-center">
+                        <small className="text-secondary me-2 w-min-4c">{caption}</small>
                         <span><ViewBud bud={bud} value={value} /></span>
                     </div>;
                 }
-                return <div className={cnViewItem}>
-                    {propArr.map((v, index) => <VName key={index} {...v} />)}
+                const { no, ex } = picked;
+                let vFirst: any;
+                if (ex !== undefined) {
+                    vFirst = <><b>{ex}</b> {no}</>;
+                }
+                else if (no !== undefined) {
+                    vFirst = <><b>{no}</b></>;
+                }
+                if (vFirst !== undefined) {
+                    vFirst = <div className="my-2 mx-3 w-min-16c">
+                        {vFirst}
+                    </div>;
+                }
+                return <div>
+                    {vFirst}
+                    <div className={cnViewItem}>
+                        {propArr.map((v, index) => {
+                            return <VName key={index} {...v} />;
+                        })}
+                    </div>
                 </div>
             }
             return <Page header={header} >
                 <div>
-                    <div className="tonwa-bg-gray-2 p-3">{JSON.stringify(retParam)}</div>
                     <div className="tonwa-bg-gray-2 p-3 border-bottom">已选：{vSelected}</div>
                     <div>
                         <List items={pickedArr} ViewItem={ViewItem}
