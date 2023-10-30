@@ -12,33 +12,6 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
         let ret = await pick();
         if (ret === undefined) return;
         let [namedResults, binPick, pickResult] = ret;
-        /*
-        function convertRowProps(props: any) {
-            let ret: { [name: string]: any } = {};
-            let pickName: string;
-            for (let i in props) {
-                if (i === '$') continue;
-                let v = props[i];
-                let nv: any;
-                if (typeof v === 'object') {
-                    const { name, value } = v;
-                    if (i === name) {
-                        nv = value;
-                    }
-                    else {
-                        pickName = name;
-                        nv = value?.id;
-                    }
-                    if (i === undefined) debugger;
-                }
-                else {
-                    nv = v;
-                }
-                ret[i] = nv;
-            }
-            return { [pickName]: ret };
-        }
-        */
         if (Array.isArray(pickResult) === true) {
             // 直接选入行集，待修改
             if (coreDetail === undefined) {

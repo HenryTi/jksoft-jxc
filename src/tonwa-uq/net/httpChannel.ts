@@ -121,6 +121,7 @@ export class HttpChannel {
                 throw res.statusText;
             }
             if (options.download === true) {
+                clearTimeout(timeOutHandler);
                 this.downloadResponse(res);
                 return;
             }

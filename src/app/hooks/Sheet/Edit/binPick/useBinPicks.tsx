@@ -13,6 +13,11 @@ export interface NamedResults {
 
 export type ReturnUseBinPicks = [NamedResults, BinPick, PickResult | PickResult[]];
 
+export enum PickResultType {
+    single,
+    multiple,
+}
+
 export function useBinPicks(bin: EntityBin) {
     const { picks: binPicks } = bin;
     const pickFromAtom = usePickFromAtom();
@@ -21,7 +26,7 @@ export function useBinPicks(bin: EntityBin) {
     const pickFromQuery = usePickFromQuery();
 
     // if no detailSection add new, else edit
-    return useCallback(async function pick() {
+    return useCallback(async function pick(pickResultType: PickResultType = PickResultType.multiple) {
         if (binPicks === undefined) return;
         let namedResults: NamedResults = {};
         let pickResult: PickResult | (PickResult[]);
@@ -38,7 +43,7 @@ export function useBinPicks(bin: EntityBin) {
                     pickResult = await pickFromSpec(namedResults, binPick);
                     break;
                 case BizPhraseType.query:
-                    pickResult = await pickFromQuery(namedResults, binPick);
+                    pickResult = await pickFromQuery(namedResults, binPick, pickResultType);
                     break;
                 case BizPhraseType.pend:
                     pickResult = await pickFromPend(namedResults, binPick);

@@ -106,8 +106,13 @@ export function buildViewBiz() {
                                 entities.map((v, index) => {
                                     let [arr, caption, icon] = v;
                                     if (caption === undefined) return null;
+                                    if (arr.length === 0) return null;
+                                    let top: any;
+                                    if (entities.length > 1) {
+                                        top = <div className="px-3 pt-1 pb-1 border-bottom small">{caption}</div>;
+                                    }
                                     return <div key={index} className="">
-                                        <div className="px-3 pt-1 pb-1 border-bottom small">{caption}</div>
+                                        {top}
                                         <ViewEntitys entitys={arr} icon={icon} />
                                     </div>
                                 })

@@ -1,4 +1,4 @@
-import { BudValue } from "app/hooks/BudEdit/model";
+import { BudValue } from "app/hooks/Bud";
 import { ReturnGetAtomProps } from "uqs/UqDefault";
 
 export function readBuds(id: number, props: ReturnGetAtomProps[]) {
@@ -29,21 +29,6 @@ export function readBuds(id: number, props: ReturnGetAtomProps[]) {
     for (let i in checks) {
         buds[i] = checks[i];
     }
-    /*
-    for (let budCheck of budsCheck) {
-        const { bud, item } = budCheck;
-        let prop = buds[bud];
-        let check: { [item: string]: boolean; };
-        if (prop === undefined) {
-            check = {};
-            prop = buds[bud] = { bud, value: check };
-        }
-        else {
-            check = prop.value as { [item: string]: boolean; };
-        }
-        check[item] = true;
-    }
-    */
     return { main, buds };
 }
 
@@ -54,9 +39,3 @@ export interface AtomUomProps {
     prevEx?: string;
     ratio?: number;
 }
-/*
-export function readUoms(uomsArr: ReturnGetAtomUoms[]) {
-    const ret: AtomUomProps[] = uomsArr;
-    return ret;
-}
-*/

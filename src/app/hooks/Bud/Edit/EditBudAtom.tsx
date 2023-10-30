@@ -1,11 +1,7 @@
-import { IDView, PickProps, UqAppBase, useModal } from "tonwa-app";
 import { BudAtom } from "app/Biz";
-import { EnumAtom } from "uqs/UqDefault";
-import { EditBudProps, EditBudTemplateProps, EditBudValue } from "./model";
-import { RegisterOptions } from "react-hook-form";
+import { EditBudTemplateProps } from "./model";
 import { useUqApp } from "app/UqApp";
-import { ViewAtomId, useSelectAtom } from "../BizAtom";
-//import { LabelRowEdit } from "./LabelRowEdit";
+import { ViewAtomId, useSelectAtom } from "../../BizAtom";
 import { useState } from "react";
 
 export function EditBudAtom(props: EditBudTemplateProps) {

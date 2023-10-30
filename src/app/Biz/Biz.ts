@@ -146,7 +146,6 @@ export class Biz {
             EnumEntity.title,
             EnumEntity.assign,
             EnumEntity.options,
-            // EnumEntity.permit,
             EnumEntity.permit,
             EnumEntity.atom,
             EnumEntity.spec,
@@ -169,7 +168,23 @@ export class Biz {
         this.buildRootAtoms();
         this.all.push(
             {
-                name: 'infos',
+                name: 'sheet',
+                caption: '业务流程',
+                entities: [
+                    [this.sheets, '业务单据', 'file'],
+                    [this.bins, '单据条', 'file-text-o'],
+                    [this.pends, '待处理', 'clone'],
+                ],
+            },
+            {
+                name: 'query',
+                caption: '业务查询',
+                entities: [
+                    [this.queries, '捡取查询', 'hand-pointer-o'],
+                ],
+            },
+            {
+                name: 'info',
                 caption: '基础数据',
                 entities: [
                     [this.atoms],
@@ -177,15 +192,6 @@ export class Biz {
                     [this.specs, '细分编码', 'asterisk'],
                     [this.titles, '科目', 'flag-o'],
                     [this.assigns, '赋值', 'flag-o']
-                ],
-            },
-            {
-                name: 'sheets',
-                caption: '业务流程',
-                entities: [
-                    [this.sheets, '业务单据', 'file'],
-                    [this.bins, '单据条', 'file-text-o'],
-                    [this.pends, '待处理', 'clone'],
                 ],
             },
             {
@@ -200,14 +206,14 @@ export class Biz {
                 ],
             },
             {
-                name: 'reports',
+                name: 'report',
                 caption: '查询汇总',
                 entities: [
                     [this.reports, '报表', 'file'],
                 ],
             },
             {
-                name: 'auth',
+                name: 'permit',
                 caption: '权限',
                 entities:
                     [

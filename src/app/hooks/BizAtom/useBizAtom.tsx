@@ -6,7 +6,7 @@ import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { UqExt } from "uqs/UqDefault";
 import { useParams } from "react-router-dom";
 import { from62, to62 } from "tonwa-com";
-import { BudValue } from "../BudEdit";
+import { BudValue } from "../Bud";
 
 function atomInPath(atomPhraseId: number | string) {
     if (typeof atomPhraseId === 'string') {

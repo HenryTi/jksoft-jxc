@@ -3,10 +3,9 @@ import { useParams } from "react-router-dom";
 import { Page, PageSpinner } from "tonwa-app";
 import { FA, Sep, Spinner, from62, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
-import { EditBudLabelRow, EditAtomField } from "../BudEdit";
+import { EditBudLabelRow, EditAtomField } from "../Bud";
 import { LabelAtomUomEdit } from "../AtomUom";
-import { BudValue, ViewBudRowProps } from "../BudEdit/model";
-// import { BudValue, ViewBudRowProps } from "../model";
+import { BudValue, ViewBudRowProps } from "../Bud";
 
 export function useBizAtomView(options: OptionsUseBizAtom) {
     const { id } = useParams();

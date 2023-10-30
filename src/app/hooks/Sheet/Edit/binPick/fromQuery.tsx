@@ -1,11 +1,11 @@
 import { BinPick, BizBud, PickQuery } from "app/Biz";
 import { useCallback, useState } from "react";
-import { NamedResults } from "./useBinPicks";
+import { NamedResults, PickResultType } from "./useBinPicks";
 import { Page, useModal } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { List } from "tonwa-com";
 import { FormRow, FormRowsView } from "app/coms";
-import { budFormRow } from "app/hooks/Bud";
+import { ViewBud, budFormRow } from "app/hooks";
 import { useForm } from "react-hook-form";
 import { filterUndefined } from "app/tool";
 
@@ -19,7 +19,7 @@ interface Picked { [name: string]: Prop | any }
 export function usePickFromQuery() {
     const { uq, biz } = useUqApp();
     const modal = useModal();
-    return useCallback(async function pickFromQuery(namedResults: NamedResults, binPick: BinPick): Promise<any> {
+    return useCallback(async function pickFromQuery(namedResults: NamedResults, binPick: BinPick, pickResultType: PickResultType): Promise<any> {
         let { name, caption, pick, param } = binPick;
         let pickBase = pick as PickQuery;
         let { query } = pickBase;
@@ -34,11 +34,6 @@ export function usePickFromQuery() {
             let picked: { [name: string]: Prop } = {
                 $: propArr as any,
             };
-            propArr.push(picked.id = {
-                name,
-                bud: undefined,
-                value: row.id,
-            });
             picked.ban = {
                 name: 'ban',
                 bud: undefined,
@@ -72,10 +67,15 @@ export function usePickFromQuery() {
                 }
                 propArr.push(picked[name] = { name, bud, value });
             }
+            propArr.push(picked.id = {
+                name,
+                bud: undefined,
+                value: row.id,
+            });
             pickedArr.push(picked);
         }
         let ret = await modal.open(<PageFromQuery />);
-        return (ret as any[]).map(v => {
+        function toRet(v: any) {
             let obj = {} as any;
             for (let i in v) {
                 let p = v[i];
@@ -87,7 +87,13 @@ export function usePickFromQuery() {
                 }
             }
             return obj;
-        });
+        }
+        if (pickResultType === PickResultType.single) {
+            return toRet(ret);
+        }
+        else {
+            return (ret as any[]).map(v => toRet(v));
+        }
 
         function PageParam() {
             const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
@@ -118,26 +124,7 @@ export function usePickFromQuery() {
                 });
                 modal.close(values);
             }
-            function ViewItem({ value: picked }: { value: Picked }) {
-                let propArr: Prop[] = picked.$ as any;
-                function VName({ name, value, bud }: { name: string; value: any; bud: BizBud; }) {
-                    let caption: string;
-                    if (bud === undefined) caption = name;
-                    else {
-                        const { name: bn, caption: bc } = bud;
-                        caption = bc ?? bn;
-                    }
-                    if (value !== null && typeof value === 'object') value = value.id;
-                    return <div>
-                        <small className="text-secondary me-2 w-min-3c d-inline-block">{caption}</small>
-                        <span>{value}</span>
-                    </div>;
-                }
-                return <div className="py-2">
-                    {propArr.map((v, index) => <VName key={index} {...v} />)}
-                </div>
-            }
-            function onItemSelect(item: Picked, isSelected: boolean) {
+            function onMultipleClick(item: Picked, isSelected: boolean) {
                 const { id } = item;
                 if (isSelected === true) {
                     selectedItems[id] = item;
@@ -146,6 +133,9 @@ export function usePickFromQuery() {
                     delete selectedItems[id];
                 }
                 setSelectedItems({ ...selectedItems });
+            }
+            function onSingleClick(item: Picked) {
+                modal.close(item);
             }
             let vSelected: any;
             let selectedKeys = Object.keys(selectedItems);
@@ -163,12 +153,44 @@ export function usePickFromQuery() {
                     return banCaption;
                 }
             }
+            let onItemSelect: any, onItemClick: any;
+            let cnViewItem = 'd-flex flex-wrap ';
+            if (pickResultType === PickResultType.multiple) {
+                onItemSelect = onMultipleClick;
+            }
+            else {
+                onItemClick = onSingleClick;
+                cnViewItem += 'ps-3 ';
+            }
+            function ViewItem({ value: picked }: { value: Picked }) {
+                let propArr: Prop[] = picked.$ as any;
+                function VName({ name, value, bud }: { name: string; value: any; bud: BizBud; }) {
+                    let caption: string;
+                    if (bud === undefined) caption = name;
+                    else {
+                        const { name: bn, caption: bc } = bud;
+                        caption = bc ?? bn;
+                    }
+                    if (value !== null && typeof value === 'object') value = value.id;
+                    return <div className="my-2 me-3 w-min-16c d-flex">
+                        <small className="text-secondary me-2 w-min-3c">{caption}</small>
+                        <span><ViewBud bud={bud} value={value} /></span>
+                    </div>;
+                }
+                return <div className={cnViewItem}>
+                    {propArr.map((v, index) => <VName key={index} {...v} />)}
+                </div>
+            }
             return <Page header={header} >
                 <div>
                     <div className="tonwa-bg-gray-2 p-3">{JSON.stringify(retParam)}</div>
                     <div className="tonwa-bg-gray-2 p-3 border-bottom">已选：{vSelected}</div>
                     <div>
-                        <List items={pickedArr} ViewItem={ViewItem} className="" onItemSelect={onItemSelect} itemBan={itemBan} />
+                        <List items={pickedArr} ViewItem={ViewItem}
+                            className=""
+                            onItemSelect={onItemSelect}
+                            onItemClick={onItemClick}
+                            itemBan={itemBan} />
                     </div>
                     <button className="btn btn-primary m-3" onClick={onPick}>选入</button>
                 </div>
