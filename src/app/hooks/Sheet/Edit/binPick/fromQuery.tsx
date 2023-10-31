@@ -25,7 +25,7 @@ export function usePickFromQuery() {
         let { query } = pickBase;
         const header = caption ?? query.caption ?? name;
         let retParam = await modal.open(<PageParam />);
-        if (retParam === undefined) return false;
+        if (retParam === undefined) return;
         retParam = filterUndefined(retParam);
         let retQuery = await uq.DoQuery.submitReturns({ query: query.id, json: retParam, pageStart: undefined, pageSize: 100 });
         let pickedArr: Picked[] = [];

@@ -1,7 +1,6 @@
 import { EntityAtom } from "app/Biz";
 import { ViewAtom, useSelectAtom } from "../BizAtom";
 import { useCallback } from "react";
-import { Atom } from "uqs/UqDefault";
 import { AtomPhrase } from "app/tool";
 
 export function usePickAtom() {

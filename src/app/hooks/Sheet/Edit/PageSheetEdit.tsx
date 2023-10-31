@@ -1,6 +1,5 @@
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
-import { CoreDetail, SheetStore } from "./SheetStore";
-import { PickFunc, usePick } from "app/hooks/BizPick";
+import { SheetStore } from "./SheetStore";
 import { ButtonAsync, FA, LMR, from62, getAtomValue, to62, useEffectOnce, wait } from "tonwa-com";
 import { ViewMain } from "./ViewMain";
 import { ViewDetail } from "./ViewDetail";

@@ -3,7 +3,9 @@ import { useGetSpec } from "../Uq";
 import { useUqApp } from "app/UqApp";
 
 export function ViewSpecBase({ id, ViewAtom }: { id: number; ViewAtom: (props: { no: string; ex: string; }) => JSX.Element; }) {
-    const { atom: { value: atomValue }, specs } = useGetSpec(id);
+    const { atom, specs } = useGetSpec(id);
+    if (atom === undefined) return null;
+    const { value: atomValue } = atom;
     let viewAtom: any;
     if (atomValue !== undefined) {
         const { no, ex } = atomValue;
