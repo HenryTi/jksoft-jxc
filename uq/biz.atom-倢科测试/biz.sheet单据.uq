@@ -67,7 +67,7 @@ Biz Bin 采购单明细带查询 ver 0.1 {
     Pick pickB FROM q2 {
         PARAM base=pickA;
     }
-    I '商品Pick' = PickSpec; 
+    I <caption:数量, a:1, b:3> = PickSpec; 
     Value '数量' dec(2);
     Price '单价' dec(2) = {
         PUT = 2;

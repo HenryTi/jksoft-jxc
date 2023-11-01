@@ -406,7 +406,7 @@ PAGE (
         LIMIT $pageSize;
 };
 
-Biz AC DeleteMyDrafts ver 0.3 (
+Biz AC DeleteMyDrafts ver 0.5 (
 ) {
     VAR me ID = Me();
     WITH IxState as a I=me

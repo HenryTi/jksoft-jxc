@@ -62,7 +62,13 @@ export class EntityReport extends Entity {
         this.lists = (val as any[]).map(v => {
             const { id, name, caption, atom } = v;
             let r = new ReportList(this.biz, id, name, EnumBudType.none, this);
-            r.caption = caption;
+            let { ui } = r;
+            if (ui !== undefined) {
+                ui.caption = caption;
+            }
+            else {
+                r.ui = { caption };
+            }
             r.atom = this.biz.entities[atom] as EntityAtomID;
             return r;
         });

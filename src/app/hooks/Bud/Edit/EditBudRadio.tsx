@@ -2,13 +2,16 @@ import { BudRadio } from "app/Biz";
 import { RadioAsync } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { EditBudTemplateProps } from "./model";
+import { Page, useModal } from "tonwa-app";
+import { useState } from "react";
 
 export function EditBudRadio(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
+    const modal = useModal();
     const { id, readonly, value: initValue, bizBud, ViewValueEdit: ValueEdit } = props;
-    const { budDataType, caption, name } = bizBud;
-    let { options: { items, phrase: optionsPhrase } } = budDataType as BudRadio;
-
+    const { budDataType, caption, name, ui } = bizBud;
+    let { options: { items } } = budDataType as BudRadio;
+    const [value, setValue] = useState(initValue);
     let checks: { [item: number]: boolean; } = initValue as { [item: string]: boolean; } ?? {};
     let radios: [item: number, caption: string, value: string | number, defaultCheck: boolean,][] = []
     let hasChecked = false;
@@ -23,6 +26,31 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     if (hasChecked === false) {
         (radios[0])[3] = true;
     }
+
+    let editRadio = <RadioAsync name={name} items={radios} onCheckChanged={onCheckChanged} />;
+    let onEditClick: () => void;
+    let content: any;
+    let label = caption ?? name;
+    if (ui.edit === 'pop') {
+        onEditClick = async function () {
+            await modal.open(<Page header={label}>
+                {editRadio}
+            </Page>);
+        }
+        let optionItem = items.find(v => v.id === value);
+        if (optionItem === undefined) {
+            content = <small className="text-secondary">/</small>;
+        }
+        else {
+            const { caption, name } = optionItem;
+            content = caption ?? name;
+        }
+    }
+    else {
+        onEditClick = null;
+        content = editRadio;
+    }
+
     async function onCheckChanged(item: number | string) {
         const { id: budPhrase } = bizBud;
         const optionsItemPhrase = item as number;
@@ -30,13 +58,13 @@ export function EditBudRadio(props: EditBudTemplateProps) {
             budPhrase,
             id,
             optionsItemPhrase,
-            // checked: checked === true ? 1 : 0,
         });
+        setValue(optionsItemPhrase);
     }
     return <ValueEdit label={caption ?? name}
         readonly={readonly}
-        onEditClick={null}
+        onEditClick={onEditClick}
     >
-        <RadioAsync name={name} items={radios} onCheckChanged={onCheckChanged} />
+        {content}
     </ValueEdit>;
 }

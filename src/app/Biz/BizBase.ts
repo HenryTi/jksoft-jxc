@@ -1,5 +1,6 @@
 import { BizPhraseType, UqExt } from "uqs/UqDefault";
 import { Biz } from "./Biz";
+import { UI } from "./UI";
 
 export class BizBase {
     readonly biz: Biz;
@@ -8,9 +9,10 @@ export class BizBase {
     private _name: string;
     id: number;
     phrase: string;
-    caption: string;
+    ui: Partial<UI>;
     bizPhraseType: BizPhraseType;
     get name(): string { return this._name; }
+    get caption(): string { return this.ui?.caption; }
 
     constructor(biz: Biz, id: number, name: string, type: string) {
         this.biz = biz;
@@ -44,7 +46,10 @@ export class BizBase {
             case 'history': break;
             case 'phrase': this.phrase = val; break;
             case 'caption':
-                this.caption = val;
+                this.ui = { caption: val };
+                break;
+            case 'ui':
+                this.ui = val;
                 break;
         }
     }

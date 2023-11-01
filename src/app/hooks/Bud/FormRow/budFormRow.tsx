@@ -19,6 +19,6 @@ export function budFormRow(bud: BizBud, required: boolean = false) {
         case EnumBudType.date:
             return { name, label: caption ?? name, type: 'date', options };
         case EnumBudType.atom:
-            return { name, label: caption ?? name, atom: (budDataType as BudAtom).bizAtom.name as EnumAtom };
+            return { name, label: caption ?? name, atom: (budDataType as BudAtom).bizAtom?.name as EnumAtom };
     }
 }

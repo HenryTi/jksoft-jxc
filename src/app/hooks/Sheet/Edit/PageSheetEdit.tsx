@@ -9,8 +9,8 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { UqApp, useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BinPick, EntitySheet } from "app/Biz";
-import { NamedResults, PickResultType, ReturnUseBinPicks, useBinPicks } from "./binPick/useBinPicks";
+import { EntitySheet } from "app/Biz";
+import { PickResultType, ReturnUseBinPicks, useBinPicks } from "./binPick/useBinPicks";
 
 let locationState = 1;
 export function PageSheetEdit() {
@@ -43,6 +43,7 @@ export function PageSheetEdit() {
                 id === undefined ? undefined : sheetId
             );
             await sheetStore.load();
+            await startSheetStore(uqApp, sheetStore, pick);
             setSheetStore(sheetStore);
         })()
     });
@@ -80,9 +81,6 @@ function PageStore({ store }: { store: SheetStore; }) {
     const start = useCallback(async function () {
         startSheetStore(uqApp, store, pick);
     }, []);
-    useEffectOnce(() => {
-        start();
-    });
 
     async function onSubmit() {
         setEditable(false);

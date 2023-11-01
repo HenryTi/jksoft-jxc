@@ -1,4 +1,5 @@
 import { FormRow, FormRowsView } from "app/coms";
+import { getDays } from "app/tool";
 import { useForm, RegisterOptions } from "react-hook-form";
 import { Page, PickProps, UqAppBase, uqAppModal, useModal } from "tonwa-app";
 
@@ -9,11 +10,23 @@ export async function pickValue(uqApp: UqAppBase, pickProps: PickProps, options:
     return ret;
 }
 
-export function PagePickValue<T extends string | number>({ label, value, type, options, step }: { label: string | JSX.Element; value: T; type: string; step?: string; options: RegisterOptions; }) {
+interface Props<T extends string | number> {
+    label: string | JSX.Element; value: T; type: string; step?: string;
+    options: RegisterOptions;
+};
+export function PagePickValue<T extends string | number>({ label, value, type, options, step }: Props<T>) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     async function onSubmit(data: any) {
-        closeModal(data['value']);
+        let { value } = data;
+        /*
+        if (value !== undefined) {
+            switch (type) {
+                case 'date': value = getDays(value); break;
+            }
+        }
+        */
+        closeModal(value);
     }
     const formRows: FormRow[] = [
         { name: 'value', label, type, options: { ...options, value }, step },
@@ -26,13 +39,4 @@ export function PagePickValue<T extends string | number>({ label, value, type, o
             </form>
         </div>
     </Page>;
-    /*
-            <div>
-                <input ref={inp} className="form-control" type="text" defaultValue={value} />
-            </div>
-            <div className="mt-3">
-                <ButtonAsync className="btn btn-primary me-3" onClick={onSave}>保存</ButtonAsync>
-                <button className="btn btn-outline-primary" onClick={() => closeModal()}>取消</button>
-            </div>
-    */
 }

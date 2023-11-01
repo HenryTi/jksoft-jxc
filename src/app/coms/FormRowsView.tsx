@@ -274,7 +274,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     const { name, type, readOnly, right, step, options } = row as FormInput;
     switch (type) {
         default:
-            const theLabel = options.required === true ?
+            const theLabel = options?.required === true ?
                 <b className="text-primary">{label}</b> : label;
             let newOptions = registerOptions(type, label, options);
             return <BandInput label={theLabel} type={type} step={step}

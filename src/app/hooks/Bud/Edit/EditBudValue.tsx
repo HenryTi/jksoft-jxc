@@ -6,19 +6,19 @@ import { PagePickValue } from "./PagePickValue";
 import { contentFromDays, getDays } from "app/tool";
 import { EditBudTemplateProps } from "./model";
 
-type ConvertToBudValue = (value: any) => { int: number; dec: number; str: string; };
+type ConvertToBudValue = (value: any) => { value: any; int: number; dec: number; str: string; };
 type FromBudValue = (value: any) => any;
 function EditBudValue(props: EditBudTemplateProps & { type: string; step?: string; convertToBudValue: ConvertToBudValue; fromBudValue?: FromBudValue; }) {
     const { uq } = useUqApp();
     const { openModal } = useModal();
     const { id, readonly, value: initValue, bizBud, type, step, convertToBudValue, options, fromBudValue, ViewValueEdit: ValueEdit, onChanged } = props;
-    const [value, setValue] = useState<string | number>(
-        fromBudValue === undefined ? initValue as string | number : fromBudValue(initValue)
-    );
+    const budInitValue = fromBudValue === undefined ? initValue as string | number : fromBudValue(initValue);
+    const [value, setValue] = useState<string | number>(budInitValue);
     const { caption, name, ex } = bizBud;
     const label = caption ?? name;
     async function onEditClick() {
         let ret = await openModal<number | string>(<PagePickValue label={label} value={value} type={type} options={options} step={step} />);
+        if (ret === undefined) return;
         let budValue = convertToBudValue(ret);
         await uq.SaveBudValue.submit({
             phraseId: bizBud.id,
@@ -26,7 +26,7 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
             ...budValue
         });
         setValue(ret);
-        onChanged?.(bizBud, ret);
+        onChanged?.(bizBud, budValue.value);
     }
     let content: any = value;
     if (ex !== undefined) {
@@ -47,6 +47,7 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
 export function EditBudString(props: EditBudTemplateProps) {
     function convertToBudValue(value: any) {
         return {
+            value,
             int: undefined as number,
             dec: undefined as number,
             str: value,
@@ -58,6 +59,7 @@ export function EditBudString(props: EditBudTemplateProps) {
 export function EditBudInt(props: EditBudTemplateProps) {
     function convertToBudValue(value: any) {
         return {
+            value,
             int: value,
             dec: undefined as number,
             str: undefined as string,
@@ -70,6 +72,7 @@ export function EditBudDec(props: EditBudTemplateProps) {
     const { ex } = props.bizBud;
     function convertToBudValue(value: any) {
         return {
+            value,
             int: undefined as number,
             dec: value,
             str: undefined as string,
@@ -84,9 +87,10 @@ export function EditBudDec(props: EditBudTemplateProps) {
 }
 
 export function EditBudDate(props: EditBudTemplateProps) {
-    const convertToBudValue = useCallback(function convertToBudValue(value: any) {
+    const convertToBudValue = useCallback(function (value: any) {
         let d = getDays(value);
         return {
+            value: d,
             int: d,
             dec: undefined as number,
             str: undefined as string,

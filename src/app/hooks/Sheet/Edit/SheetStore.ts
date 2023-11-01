@@ -97,7 +97,7 @@ export class SheetMain extends BaseObject {
         row.id = id;
         setAtomValue(this._binRow, { ...row });
         this.no = no;
-        return Object.assign(ret, { i });
+        return Object.assign(ret, { i, ...row });
     }
 
     setValue(value: any) {

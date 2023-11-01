@@ -96,7 +96,7 @@ export class EntityBin extends Entity {
     private buildPick(v: any): BinPick {
         const { id, name, param, from, caption } = v;
         let ret = new BinPick(this.biz, id, name, this);
-        ret.caption = caption;
+        ret.ui = { caption };
         ret.param = param;
         let arr = (from as string[]).map(v => this.biz.entities[v]);
         let entity = arr[0];

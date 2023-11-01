@@ -1,3 +1,4 @@
+import { getDays } from 'app/tool';
 import jsep from 'jsep';
 
 export interface NameValues {
@@ -49,6 +50,7 @@ export class Formula {
 
     private runExp(exp: jsep.Expression, nameValues: NameValues): string | number {
         switch (exp.type) {
+            case 'CallExpression': return this.func(exp as jsep.CallExpression, nameValues);
             case 'BinaryExpression': return this.binary(exp as jsep.BinaryExpression, nameValues);
             case 'Identifier': return this.identifier(exp as jsep.Identifier, nameValues);
             case 'Literal': return this.literal(exp as jsep.Literal);
@@ -99,6 +101,19 @@ export class Formula {
 
     private literal(exp: jsep.Literal): number {
         return Number(exp.value);
+    }
+
+    private func(exp: jsep.CallExpression, nameValues: NameValues): number {
+        let func = (exp.callee as jsep.Identifier).name.toLowerCase();
+        let params = exp.arguments.map(v => this.runExp(v, nameValues));
+        let ret = funcs[func]?.(...params);
+        return ret;
+    }
+}
+
+const funcs: { [func: string]: (...params: any[]) => number } = {
+    curdate: function () {
+        return getDays(new Date().toISOString());
     }
 }
 
