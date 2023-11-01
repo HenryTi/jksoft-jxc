@@ -406,6 +406,13 @@ PAGE (
         LIMIT $pageSize;
 };
 
+Biz AC DeleteMyDrafts ver 0.3 (
+) {
+    VAR me ID = Me();
+    WITH IxState as a I=me
+        DEL WHERE EXISTS(SELECT b.id FROM Sheet as b JOIN BizPhrase as c ON c.id=b.base WHERE b.id=a.x AND c.base=$site);
+}
+
 Biz Query SearchAtom (
     atom ID,                -- atom phrase id
     key CHAR(50),

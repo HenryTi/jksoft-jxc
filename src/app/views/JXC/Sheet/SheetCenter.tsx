@@ -1,9 +1,9 @@
 import { useUqApp } from "app/UqApp";
 import { BI, PageQueryMore } from "app/coms";
 import { Link, Route } from "react-router-dom";
-import { IDView } from "tonwa-app";
+import { IDView, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { EntitySheet } from "app/Biz";
-import { FA, List, to62 } from "tonwa-com";
+import { FA, List, to62, wait } from "tonwa-com";
 import { PageSheetEdit, ViewSheetTime } from "app/hooks";
 import { useCallback, useState } from "react";
 import { Atom, Sheet } from "uqs/UqDefault";
@@ -11,6 +11,7 @@ import { Bin, ViewNotifyCount } from "app/tool";
 import { pathSheetCenter } from "app/views/pathes";
 
 function PageSheetCenter() {
+    const modal = useModal();
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const sheetEntities = biz.sheets;
@@ -18,6 +19,7 @@ function PageSheetCenter() {
         let { $page } = await uq.GetMyDrafts.page({}, pageStart, pageSize);
         return $page;
     }, []);
+    const [visible, setVisible] = useState(true);
     function ViewSheetType({ value }: { value: EntitySheet; }) {
         let { caption, name, id: entityId, coreDetail } = value;
         let pendEntityId: number;
@@ -89,17 +91,33 @@ function PageSheetCenter() {
             </div>
         </Link>;
     }
-    return <PageQueryMore header="单据中心"
-        query={query}
-        param={{}}
-        sortField={'id'}
-        ViewItem={ViewSheetItem}
-        none={<div className="small text-secondary p-3">[无]</div>}
-    >
-        <List items={sheetEntities} ViewItem={ViewSheetType} />
-
-        <div className="tonwa-bg-gray-2 small text-secondary mt-4 px-3 pt-2 pb-1">单据草稿</div>
-    </PageQueryMore>;
+    async function onRemoveDraft() {
+        if (await modal.open(<PageConfirm header="单据草稿" message="真的要删除全部单据草稿吗？" yes="删除" no="不删除" />) !== true) return;
+        setVisible(false);
+        await uq.DeleteMyDrafts.submit({});
+        await wait(10);
+        setVisible(true);
+    }
+    return visible === false ?
+        <PageSpinner />
+        :
+        <PageQueryMore header="单据中心"
+            query={query}
+            param={{}}
+            sortField={'id'}
+            ViewItem={ViewSheetItem}
+            none={<div className="small text-secondary p-3">[无]</div>}
+        >
+            <List items={sheetEntities} ViewItem={ViewSheetType} />
+            <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-1 mt-4 align-items-end">
+                <div className="small text-secondary pb-1 flex-grow-1">
+                    单据草稿
+                </div>
+                <button className="btn btn-sm btn-link" onClick={onRemoveDraft}>
+                    全部清除
+                </button>
+            </div>
+        </PageQueryMore>;
 }
 
 export function routeSheetCenter() {

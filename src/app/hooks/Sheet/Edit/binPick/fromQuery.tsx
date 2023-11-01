@@ -72,13 +72,6 @@ export function usePickFromQuery() {
                 }
                 propArr.push(picked[name] = { name, bud, value });
             }
-            /*
-            propArr.push(picked.id = {
-                name,
-                bud: undefined,
-                value: row.id,
-            });
-            */
             pickedArr.push(picked);
         }
         let ret = await modal.open(<PageFromQuery />);
@@ -163,12 +156,15 @@ export function usePickFromQuery() {
             }
             let onItemSelect: any, onItemClick: any;
             let cnViewItem = 'd-flex flex-wrap ';
+            let cnFirst: string;
             if (pickResultType === PickResultType.multiple) {
                 onItemSelect = onMultipleClick;
+                cnFirst = 'my-2 ';
             }
             else {
                 onItemClick = onSingleClick;
                 cnViewItem += 'ps-3 ';
+                cnFirst = 'my-2 mx-3';
             }
             function ViewItem({ value: picked }: { value: Picked }) {
                 let propArr: Prop[] = picked.$ as any;
@@ -188,13 +184,13 @@ export function usePickFromQuery() {
                 const { no, ex } = picked;
                 let vFirst: any;
                 if (ex !== undefined) {
-                    vFirst = <><b>{ex}</b> {no}</>;
+                    vFirst = <><b>{ex}</b> &nbsp; &nbsp; {no}</>;
                 }
                 else if (no !== undefined) {
                     vFirst = <><b>{no}</b></>;
                 }
                 if (vFirst !== undefined) {
-                    vFirst = <div className="my-2 mx-3 w-min-16c">
+                    vFirst = <div className={cnFirst}>
                         {vFirst}
                     </div>;
                 }

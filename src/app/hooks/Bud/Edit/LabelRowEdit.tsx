@@ -3,7 +3,7 @@ import { EditProps } from "./model";
 
 export function LabelRowEdit(props: EditProps) {
     let { label, children, onEditClick, readonly } = props;
-    let right: any = <span className="p-3">&nbsp;</span>;
+    let right: any = <span className="p-2">&nbsp;</span>;
     if (onEditClick !== null) {
         if (readonly !== true) {
             right = <div onClick={onEditClick} className="cursor-pointer p-3"><FA name="pencil" className="text-info" /></div>;
@@ -18,10 +18,10 @@ export function LabelRowEdit(props: EditProps) {
 
 export function InlineEdit(props: EditProps) {
     let { label, children, onEditClick, readonly } = props;
-    let right: any = <span className="p-3">&nbsp;</span>;
+    let right: any = <span className="p-2">&nbsp;</span>;
     if (onEditClick !== null) {
         if (readonly !== true) {
-            right = <div onClick={onEditClick} className="cursor-pointer p-2"><FA name="pencil" className="text-info" /></div>;
+            right = <div onClick={onEditClick} className="cursor-pointer p-2 align-self-start"><FA name="pencil" className="text-info" /></div>;
         }
     }
     return <div className="border border-secondary-subtle rounded d-flex bg-light align-items-center">

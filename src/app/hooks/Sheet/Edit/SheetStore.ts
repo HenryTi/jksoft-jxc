@@ -45,13 +45,16 @@ export class SheetMain extends BaseObject {
         if (id > 0) return;
         const results = await pick(PickResultType.single);
         if (results === undefined) return;
-        const { i, x } = this.entityMain;
+        const { i, x, props: mainProps } = this.entityMain;
         const formulas: Formulas = {};
         if (i !== undefined) {
             formulas.i = i.defaultValue;
         }
         if (x !== undefined) {
             formulas.x = x.defaultValue;
+        }
+        for (let mp of mainProps) {
+            formulas[mp.name] = mp.defaultValue;
         }
         const calc = new Calc(formulas);
         let [props] = results;
@@ -61,6 +64,11 @@ export class SheetMain extends BaseObject {
         }
         if (x !== undefined) {
             row.x = calc.values.x as number;
+        }
+        for (let mp of mainProps) {
+            let v = calc.values[mp.name];
+            if (v === undefined) continue;
+            row.buds[mp.id] = v;
         }
         setAtomValue(this._binRow, row);
         return await this.createIfNotExists();

@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri Oct 27 2023 11:11:50 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue Oct 31 2023 15:04:25 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -381,6 +381,11 @@ export interface ReturnGetMyDrafts$page {
 }
 export interface ResultGetMyDrafts {
 	$page: ReturnGetMyDrafts$page[];
+}
+
+export interface ParamDeleteMyDrafts {
+}
+export interface ResultDeleteMyDrafts {
 }
 
 export interface ParamSearchAtom {
@@ -1358,6 +1363,7 @@ export interface UqExt extends Uq {
 	GetHistory: UqQuery<ParamGetHistory, ResultGetHistory>;
 	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
 	GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
+	DeleteMyDrafts: UqAction<ParamDeleteMyDrafts, ResultDeleteMyDrafts>;
 	SearchAtom: UqQuery<ParamSearchAtom, ResultSearchAtom>;
 	GetAssigns: UqQuery<ParamGetAssigns, ResultGetAssigns>;
 	SearchAtomBuds: UqQuery<ParamSearchAtomBuds, ResultSearchAtomBuds>;
@@ -2391,6 +2397,15 @@ export const uqSchema={
                 "order": "desc"
             }
         ]
+    },
+    "deletemydrafts": {
+        "name": "DeleteMyDrafts",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "jsoned": true,
+        "returns": [] as any
     },
     "searchatom": {
         "name": "SearchAtom",
