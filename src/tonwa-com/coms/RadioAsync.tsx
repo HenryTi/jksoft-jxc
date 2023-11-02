@@ -5,10 +5,11 @@ interface Props {
     name: string;
     items: [item: string | number, caption: string, value: string | number, defaultCheck: boolean,][];
     onCheckChanged?: (item: string | number) => Promise<void>;
+    classNameRadio?: string;
 }
 
 export function RadioAsync(props: Props) {
-    let { name, items, onCheckChanged } = props;
+    let { name, items, onCheckChanged, classNameRadio } = props;
     let [submiting, setSubmiting] = useState(false);
 
     async function onValueChanged(value: string | number) {
@@ -26,13 +27,17 @@ export function RadioAsync(props: Props) {
     }
     return <>
         {spinner}
-        <ViewRadios name={name} items={items} onCheckChanged={onValueChanged} disabled={submiting} />
+        <ViewRadios name={name}
+            items={items}
+            onCheckChanged={onValueChanged}
+            disabled={submiting}
+            classNameRadio={classNameRadio} />
     </>;
 }
 
 function ViewRadios(props: Props & { disabled: boolean; }) {
-    let { name, items, onCheckChanged, disabled } = props;
-    let cn = 'me-4 ';
+    let { name, items, onCheckChanged, disabled, classNameRadio } = props;
+    let cn = (classNameRadio ?? 'me-4') + ' ';
     if (disabled === true) cn += 'text-light invisible ';
     return <>
         {items.map((v, index) => {

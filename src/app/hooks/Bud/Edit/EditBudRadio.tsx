@@ -27,14 +27,17 @@ export function EditBudRadio(props: EditBudTemplateProps) {
         (radios[0])[3] = true;
     }
 
-    let editRadio = <RadioAsync name={name} items={radios} onCheckChanged={onCheckChanged} />;
     let onEditClick: () => void;
     let content: any;
     let label = caption ?? name;
+    let cnRadio: string;
     if (ui.edit === 'pop') {
+        cnRadio = ' w-25 my-2 ';
         onEditClick = async function () {
             await modal.open(<Page header={label}>
-                {editRadio}
+                <div className="d-flex flex-wrap px-3 py-1">
+                    <Radio />
+                </div>
             </Page>);
         }
         let optionItem = items.find(v => v.id === value);
@@ -48,7 +51,11 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     }
     else {
         onEditClick = null;
-        content = editRadio;
+        content = <Radio />;
+    }
+
+    function Radio() {
+        return <RadioAsync name={name} items={radios} onCheckChanged={onCheckChanged} classNameRadio={cnRadio} />
     }
 
     async function onCheckChanged(item: number | string) {

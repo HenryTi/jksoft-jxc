@@ -784,7 +784,7 @@ RETURNS props VIRTUAL (
 PROC ProcGetAtom ver 0.1 (
     atom ID,
 )
-RETURNS props VIRTUAL (
+RETURNS props VIRTUAL ( -- VIRTUAL 就不会生成临时表，直接使用调用者的
     phrase ID,
     value JSON,
 ) {
