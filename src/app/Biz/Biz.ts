@@ -13,6 +13,7 @@ import { atom } from 'jotai';
 import { EntityReport } from './EntityReport';
 import { EntityQuery } from './EntityQuery';
 import { EntityAssign } from './EntityAssign';
+import { BizBud } from './BizBud';
 
 enum EnumEntity {
     sheet,
@@ -68,7 +69,7 @@ export class Biz {
     readonly _refresh = atom(false);
 
     entities: { [name: string]: Entity } = {};
-    entityIds: { [id: number]: Entity } = {};
+    private ids: { [id: number]: Entity | BizBud } = {};
 
     constructor(uqApp: UqApp, bizSchema: any) {
         this.uqApp = uqApp;
@@ -80,7 +81,12 @@ export class Biz {
 
     entityFrom62<T extends Entity>(base62: string): T {
         let entityId = from62(base62);
-        let entity = this.entityIds[entityId];
+        let entity = this.ids[entityId];
+        return entity as T;
+    }
+
+    entityFromId<T extends Entity>(id: number): T {
+        let entity = this.ids[id];
         return entity as T;
     }
 
@@ -114,7 +120,7 @@ export class Biz {
         let $biz = bizSchema;
         let arr: { [entity in EnumEntity]?: [Entity, any][]; } = {};
         this.entities = {};
-        this.entityIds = {};
+        this.ids = {};
         for (let i in $biz) {
             let schema = ($biz as any)[i];
             let { id, name, phrase, type, caption } = schema;
@@ -125,7 +131,7 @@ export class Biz {
                 throw new Error(`unknown biz type='${type}' name='${name}' caption='${caption}'`);
             }
             let bizEntity = builder(id, name, type);
-            this.entityIds[id] = bizEntity;
+            this.ids[id] = bizEntity;
             this.entities[name] = bizEntity;
             if (name !== phrase) {
                 this.entities[phrase] = bizEntity;
@@ -243,7 +249,7 @@ export class Biz {
 
     delEntity(entity: Entity) {
         this.entities[entity.name];
-        this.entityIds[entity.id];
+        this.ids[entity.id];
         for (let group of this.all) {
             const { entities } = group;
             for (let row of entities) {
@@ -260,8 +266,8 @@ export class Biz {
     }
 
     private buildRootAtoms() {
-        for (let i in this.entityIds) {
-            const entity = this.entityIds[i];
+        for (let i in this.ids) {
+            const entity = this.ids[i];
             if (entity.type === 'atom') {
                 const entityAtom = entity as EntityAtom;
                 const { _extends } = entityAtom;

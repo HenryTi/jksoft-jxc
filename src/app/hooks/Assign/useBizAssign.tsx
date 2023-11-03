@@ -24,7 +24,7 @@ export function useBizAssign(): UseBizAssingReturn {
     let phraseId = from62(assign);
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
-    const entity = biz.entityIds[phraseId] as EntityAssign;
+    const entity = biz.entityFromId<EntityAssign>(phraseId);
 
     return {
         page: <PageAssign />

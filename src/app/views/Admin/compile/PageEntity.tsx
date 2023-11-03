@@ -79,7 +79,7 @@ export function PageEntity({ entity }: { entity: Entity }) {
         setReadOnly(false);
         clearInterval(interval.current);
         interval.current = undefined;
-        let newEntity = biz.entityIds[entity.id];
+        let newEntity = biz.entityFromId(entity.id);
         setPageCaption(newEntity.caption ?? newEntity.name);
         setSumitDisabled(true);
     }

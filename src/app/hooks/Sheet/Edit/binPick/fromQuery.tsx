@@ -64,7 +64,7 @@ export function usePickFromQuery() {
                         }
                         break;
                     case 3:
-                        let bizEntity = biz.entityIds[v0];
+                        let bizEntity = biz.entityFromId(v0);
                         bud = bizEntity.buds[v1];
                         name = bud.name;
                         value = v[2];

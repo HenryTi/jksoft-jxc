@@ -28,7 +28,7 @@ export function PageSheets() {
     }
     function ViewItem({ value }: { value: ReturnGetSiteSheetsRet; }) {
         const { phrase, count } = value;
-        let entity = biz.entityIds[phrase];
+        let entity = biz.entityFromId(phrase);
         return <Link to={pathTo(pathSheetsList, entity.id, undefined)}>
             <div className="px-3 py-3 d-flex">
                 <div className="flex-grow-1">{entity.caption ?? entity.name}</div>
@@ -48,7 +48,7 @@ export function PageSheetList() {
     const { uq, biz } = useUqApp();
     const { sheet62 } = useParams();
     let entityId = from62(sheet62);
-    let entity = biz.entityIds[entityId];
+    let entity = biz.entityFromId(entityId);
     function ViewItem({ value }: { value: ReturnGetSiteSheetList$page }) {
         return <Link to={pathTo(pathSheetRef, value.id, undefined)}>
             <ViewItemMain value={value} />

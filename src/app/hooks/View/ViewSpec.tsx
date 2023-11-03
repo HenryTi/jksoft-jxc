@@ -76,7 +76,7 @@ interface VPPropsMore extends VPProps {
 
 function ViewSpecProps({ phrase, props: propValues, className, buildProp }: VPPropsMore) {
     const { biz } = useUqApp();
-    let entity = biz.entityIds[phrase] as EntitySpec;
+    let entity = biz.entityFromId<EntitySpec>(phrase);
     let { keys, props } = entity;
     let keysLen = keys.length;
     let len = propValues.length;

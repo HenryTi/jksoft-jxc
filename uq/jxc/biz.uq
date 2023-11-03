@@ -152,10 +152,26 @@ PROC SaveBizObject ver 0.3 (
     type ENUM BizPhraseType,
     memo CHAR(100),
     source TEXT,
+    buds JSON,
 )
 RETURNS ret (
     id ID,
+)
+RETURNS budIds (
+    id ID,
+    name Phrase,
 ) {
+    JSONTABLE tbl (
+        id ID PATH '$.id',
+        name Phrase PATH '$.name',
+        caption CHAR(100) PATH '$.caption',
+        type ENUM BizPhraseType PATH '$.type',
+        memo CHAR(100) PATH '$.memo',
+        dataType ENUM BudDataType PATH '$.dataType',
+        objId ID PATH '$.objId',
+        flag SMALLINT PATH '$.flag'
+    ) FROM buds PATH '$[*]';
+
     TRANS START;
     VAR id ID;
     IF entityId IS NOT NULL {
@@ -178,9 +194,42 @@ RETURNS ret (
     -- 所有名下的属性置为无效，重新设置
     -- WITH BizPhrase as a KEY(id as base) SET a.valid=0;
     -- 这类的操作，以后可以优化成一个delete语句，而不用循环
+    SET @id=id;
+    /-mysql
+    DELETE a FROM xbiz as a JOIN bizphrase as b ON b.id=a.id WHERE b.base=@Id;
+    -/
+    /*
     FOR (VAR budId ID OF SELECT a.id as budId FROM BizPhrase as a WHERE a.base=id) {
         WITH XBiz ID=budId DEL;
     }
+    */
+
+    FOR (
+        VAR budId ID, budName Phrase, budCaption CHAR(100), budType ENUM BizPhraseType
+            , budMemo CHAR(100), dataType ENUM BudDataType, objId ID, flag SMALLINT
+        OF SELECT a.id as budId, a.name as budName, a.caption as budCaption, a.type as budType
+            , a.memo as budMemo, a.dataType, a.objId, a.flag
+            FROM tbl as a
+    )  {
+        IF budId IS NOT NULL {
+            WITH BizPhrase as a 
+                ID=budId
+                SET a.name=budName, a.type=budType, a.memo=budMemo;
+        }
+        ELSE {
+            WITH BizPhrase as a 
+                ID to budId
+                KEY(id, budName) 
+                SET a.type=budType, a.memo=budMemo;
+        }
+        WITH BizResource IXX=budId I=0 X=0 SET res=budCaption;
+        WITH XBiz ID=budId;
+        WITH BizBud as a ID=budId 
+            SET a.type=dataType
+                , a.obj=objId, a.flag=ifnull(flag, 0);
+        INTO budIds SELECT budId as id, budName as name;
+    }
+
     INTO ret SELECT id;
     TRANS COMMIT;
 }

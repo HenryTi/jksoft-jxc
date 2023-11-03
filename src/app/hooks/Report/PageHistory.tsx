@@ -22,7 +22,7 @@ export function PageHistory() {
     };
     function ViewItem({ value: row }: { value: ReturnGetHistory$page; }) {
         let { id, value, ref, plusMinus, sheetNo, sheetPhrase, binPhrase } = row;
-        let entity = biz.entityIds[binPhrase];
+        let entity = biz.entityFromId(binPhrase);
         if (entity === undefined) {
             return <div className="px-3 py-2">
                 <FA name="exclamation-circle" className="text-danger me-2" />

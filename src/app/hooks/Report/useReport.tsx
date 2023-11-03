@@ -43,7 +43,7 @@ export function useReport(): ReturnUseReport {
     let phraseId = from62(report);
     const uqApp = useUqApp();
     const { biz } = uqApp;
-    const entity = biz.entityIds[phraseId] as EntityReport;
+    const entity = biz.entityFromId<EntityReport>(phraseId);
 
     return {
         page: <PageReport entityReport={entity} />,

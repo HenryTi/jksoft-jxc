@@ -20,7 +20,7 @@ export class EntityQuery extends Entity {
         super.scan();
         for (let col of this.cols) {
             let [eId, bId] = col;
-            let entity = this.biz.entityIds[eId];
+            let entity = this.biz.entityFromId(eId);
             if (entity === undefined) {
                 continue;
             }

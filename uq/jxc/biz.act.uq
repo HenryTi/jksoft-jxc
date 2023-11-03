@@ -656,13 +656,14 @@ RETURNS props (
     value JSON,
 )
 {
-    VAR maySheetId ID, detail ID;
+    VAR maySheetId ID, detail ID, sheetPhrase ID;
     SET maySheetId = b.base FROM Detail as a JOIN Bud as b ON b.id=a.base WHERE a.id=id;
     IF maySheetId IS NOT NULL {
         SET detail = id;
         SET id = maySheetId;
     }
-    INTO main SELECT * a, * b, b.id as phrase
+    SET sheetPhrase=a.base FROM Sheet as a WHERE a.id=id;
+    INTO main SELECT * a, * b, a.base as phrase
         FROM Sheet as a
             LEFT JOIN Bin as b ON b.id=a.id
             JOIN BizPhrase as c ON c.id=a.base
@@ -680,26 +681,7 @@ RETURNS props (
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN Bin as b ON b.id=a.origin
     ;
-    /*
-    INTO buds SELECT a.id, b.x as bud, b.value
-        FROM details as a
-            JOIN IxBudDec as b ON b.i=a.id;
-    INTO buds SELECT a.id, b.x as bud, b.value
-        FROM details as a
-            JOIN IxBudInt as b ON b.i=a.id;
-    INTO buds SELECT a.id, b.x as bud, b.value
-        FROM details as a
-            JOIN IxBudStr as b ON b.i=a.id;
-    INTO buds SELECT a.id, b.x as bud, b.value
-        FROM main as a
-            JOIN IxBudDec as b ON b.i=a.id;
-    INTO buds SELECT a.id, b.x as bud, b.value
-        FROM main as a
-            JOIN IxBudInt as b ON b.i=a.id;
-    INTO buds SELECT a.id, b.x as bud, b.value
-        FROM main as a
-            JOIN IxBudStr as b ON b.i=a.id;
-    */
+
     INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
         FROM details as s
             JOIN IxBudInt as a ON a.i=s.id;
@@ -728,8 +710,10 @@ RETURNS props (
             JOIN IxBud as a ON a.i=s.id
             JOIN Bud as b ON b.id=a.x;
 
-    IF routine_exists('$site', '4294967959.4294968428$s') {
-        VAR a INT = 1;
+    VAR procName CHAR(200) = CONCAT($site, '.', sheetPhrase, 'gs');
+    IF routine_exists('$site', procName) {
+        VAR sql CHAR(500) = CONCAT('call `$site`.`', procName, '`(?);');
+        ExecSql sql USING id;
     }
 };
 

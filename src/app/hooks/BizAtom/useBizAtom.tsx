@@ -70,7 +70,7 @@ export async function getAtomWithProps(biz: Biz, uq: UqExt, id: number): Promise
     let { main, buds } = await getAtomBase(uq, id);
     let ret = { ...main };
     let { phrase: phraseId } = main;
-    let entity = biz.entityIds[phraseId];
+    let entity = biz.entityFromId(phraseId);
     function setBud(bud: number, value: BudValue) {
         let bizBud = entity.buds[bud];
         (ret as any)[bizBud.name] = value;
@@ -84,7 +84,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
     let atomPhraseId = from62(atom);
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
-    const entity = biz.entityIds[atomPhraseId] as EntityAtom;
+    const entity = biz.entityFromId<EntityAtom>(atomPhraseId);
     const phrase = entity.phrase;
     const pathView = entity.name;
     const pathList = entity.name + '-list';
@@ -99,7 +99,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         let ret = await getAtomBase(uq, id);
         let { main } = ret;
         let { phrase } = main;
-        let entityAtom = biz.entityIds[phrase] as EntityAtom;
+        let entityAtom = biz.entityFromId<EntityAtom>(phrase);
         return {
             ...ret, entityAtom
         };

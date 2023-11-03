@@ -56,7 +56,7 @@ export async function loadSpec(uq: UqExt, biz: Biz, specId: number): Promise<Spe
         let row = props[i++];
         const { phrase } = row;
         // id = Number(value);
-        let entity = biz.entityIds[phrase];
+        let entity = biz.entityFromId(phrase);
         let { type } = entity;
         if (type === 'atom') {
             atom = buildAtom(entity as EntityAtom, row);
