@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Oct 31 2023 15:04:25 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Thu Nov 02 2023 09:16:26 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -537,16 +537,16 @@ export interface ReturnGetSheetOrigins {
 	amount: number;
 	price: number;
 }
-export interface ReturnGetSheetBuds {
+export interface ReturnGetSheetProps {
 	id: number;
-	bud: number;
-	value: string;
+	phrase: number;
+	value: any;
 }
 export interface ResultGetSheet {
 	main: ReturnGetSheetMain[];
 	details: ReturnGetSheetDetails[];
 	origins: ReturnGetSheetOrigins[];
-	buds: ReturnGetSheetBuds[];
+	props: ReturnGetSheetProps[];
 }
 
 export interface ParamGetAtom {
@@ -2926,20 +2926,19 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "buds",
+                "name": "props",
                 "fields": [
                     {
                         "name": "id",
                         "type": "id"
                     },
                     {
-                        "name": "bud",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
                         "name": "value",
-                        "type": "char",
-                        "size": 100
+                        "type": "json"
                     }
                 ]
             }

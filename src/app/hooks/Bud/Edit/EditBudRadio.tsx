@@ -34,13 +34,28 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     if (ui.edit === 'pop') {
         cnRadio = ' w-25 my-2 ';
         onEditClick = async function () {
+            function onReturn() {
+                modal.close();
+            }
             await modal.open(<Page header={label}>
                 <div className="d-flex flex-wrap px-3 py-1">
                     <Radio />
                 </div>
+                <div className="p-3 border-top">
+                    <button className="btn btn-primary" onClick={onReturn}>返回</button>;
+                </div>
             </Page>);
         }
-        let optionItem = items.find(v => v.id === value);
+        let vItem: number;
+        if (typeof value === 'object') {
+            for (let i in value) {
+                vItem = Number(i);
+            }
+        }
+        else {
+            vItem = value as number;
+        }
+        let optionItem = items.find(v => v.id === vItem);
         if (optionItem === undefined) {
             content = <small className="text-secondary">/</small>;
         }

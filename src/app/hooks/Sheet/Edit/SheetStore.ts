@@ -347,14 +347,46 @@ export class SheetStore extends KeyIdObject {
     async load() {
         let { id } = this.main.binRow;
         if (id === undefined || id === 0) return;
-        let { main, details, buds } = await this.uq.GetSheet.query({ id });
-        const budColl: { [row: number]: { [bud: number]: string | number } } = {};
-        for (let { id, bud, value } of buds) {
+        let { main, details, props } = await this.uq.GetSheet.query({ id });
+        const budColl: { [row: number]: { [bud: number]: string | number | { [item: number]: boolean } } } = {};
+        /*
+        for (let i = 1; i < len; i++) {
+            let { phrase, value } = props[i];
+            switch (value.length) {
+                default:
+                case 0: debugger; break;
+                case 1: buds[phrase] = value[0]; break;
+                case 2:
+                    let check = checks[phrase];
+                    if (check === undefined) {
+                        checks[phrase] = check = {};
+                    }
+                    check[value[1]] = true;
+                    break;
+            }
+        }
+        for (let i in checks) {
+            buds[i] = checks[i];
+        }
+        */
+        for (let { id, phrase, value } of props) {
             let budValues = budColl[id];
             if (budValues === undefined) {
                 budColl[id] = budValues = {};
             }
-            budValues[bud] = value;
+            // budValues[phrase] = value;
+            switch (value.length) {
+                default:
+                case 0: debugger; break;
+                case 1: budValues[phrase] = value[0]; break;
+                case 2:
+                    let checks = budValues[phrase] as { [bud: number]: boolean };
+                    if (checks === undefined) {
+                        budValues[phrase] = checks = {};
+                    }
+                    checks[value[1]] = true;
+                    break;
+            }
         }
         let mainRow = main[0];
         (mainRow as any).buds = budColl[id] ?? {};

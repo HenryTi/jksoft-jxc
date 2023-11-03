@@ -61,9 +61,8 @@ export interface UseBizAtomReturn {
 async function getAtomBase(uq: UqExt, id: number) {
     let { props } = await uq.GetAtom.query({ id });
     let { main, buds } = readBuds(id, props);
-    let uoms: any; // = readUoms(uomsArr);
     return {
-        main, buds, uoms
+        main, buds
     };
 }
 

@@ -650,10 +650,10 @@ RETURNS details (
 RETURNS origins (
     * Bin,
 )
-RETURNS buds (
+RETURNS props (
     id ID,
-    bud ID,
-    value BudStr,
+    phrase ID,
+    value JSON,
 )
 {
     VAR maySheetId ID, detail ID;
@@ -680,6 +680,7 @@ RETURNS buds (
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN Bin as b ON b.id=a.origin
     ;
+    /*
     INTO buds SELECT a.id, b.x as bud, b.value
         FROM details as a
             JOIN IxBudDec as b ON b.i=a.id;
@@ -698,6 +699,38 @@ RETURNS buds (
     INTO buds SELECT a.id, b.x as bud, b.value
         FROM main as a
             JOIN IxBudStr as b ON b.i=a.id;
+    */
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
+        FROM details as s
+            JOIN IxBudInt as a ON a.i=s.id;
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
+        FROM details as s
+            JOIN IxBudDec as a ON a.i=s.id;
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
+        FROM details as s
+            JOIN IxBudStr as a ON a.i=s.id;
+    INTO props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value
+        FROM details as s
+            JOIN IxBud as a ON a.i=s.id
+            JOIN Bud as b ON b.id=a.x;
+
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
+        FROM main as s
+            JOIN IxBudInt as a ON a.i=s.id;
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
+        FROM main as s
+            JOIN IxBudDec as a ON a.i=s.id;
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
+        FROM main as s
+            JOIN IxBudStr as a ON a.i=s.id;
+    INTO props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value
+        FROM main as s
+            JOIN IxBud as a ON a.i=s.id
+            JOIN Bud as b ON b.id=a.x;
+
+    IF routine_exists('$site', '4294967959.4294968428$s') {
+        VAR a INT = 1;
+    }
 };
 
 Biz Query GetAtom (

@@ -33,9 +33,15 @@ export function EditBudCheck(props: EditBudTemplateProps) {
     if (ui.edit === 'pop') {
         cn += ' w-25 my-1';
         onEditClick = async function () {
+            function onReturn() {
+                modal.close();
+            }
             await modal.open(<Page header={label}>
                 <div className="d-flex flex-wrap m-3">
                     <Checks />
+                </div>
+                <div className="p-3 border-top">
+                    <button className="btn btn-primary" onClick={onReturn}>返回</button>;
                 </div>
             </Page>);
         }
