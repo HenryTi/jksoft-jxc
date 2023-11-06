@@ -20,7 +20,7 @@ export function readBuds(id: number, props: ReturnGetAtomProps[]) {
             case 2:
                 let check = checks[phrase];
                 if (check === undefined) {
-                    checks[phrase] = checks = [];
+                    checks[phrase] = check = [];
                 }
                 check.push(value[1]);
                 break;
