@@ -259,18 +259,24 @@ Biz AC DeleteBin (
     id ID,
 ) {
     VAR me ID = Me();
-    IF NOT EXISTS(SELECT a.i
-            FROM IxState as a
-            WHERE a.i=me AND a.x=id)
-       AND NOT EXISTS(SELECT a.i
-            FROM IxState as a
-                JOIN Bud as b ON b.id=a.x
-            WHERE a.i=me AND b.base=id)
+    IF EXISTS(SELECT a.i
+        FROM IxState as a
+        WHERE a.i=me AND a.x=id)  -- sheet id
+    {
+        WITH Bin ID=id DEL;
+    }
+    ELSEIF EXISTS(SELECT a.i
+        FROM IxState as a
+        JOIN Sheet as b ON b.id=a.x
+        JOIN Bud as c ON c.base=b.id
+        JOIN Detail as d ON d.base=c.id
+        WHERE a.i=me AND d.id=id)
     {
         -- 如果base sheet没有在我的draft里面，不能写入明细。这是安全保证
+        WITH Bin ID=id DEL;
+        WITH Detail ID=id DEL;
         RETURN;
     }
-    WITH Bin ID=id DEL;
 }
 
 Biz AC SubmitSheet(
@@ -654,6 +660,7 @@ RETURNS props (
     id ID,
     phrase ID,
     value JSON,
+    owner ID,           -- show 字段的主字段。其它字段为0
 )
 {
     VAR maySheetId ID, detail ID, sheetPhrase ID;
@@ -682,30 +689,30 @@ RETURNS props (
             JOIN Bin as b ON b.id=a.origin
     ;
 
-    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
         FROM details as s
             JOIN IxBudInt as a ON a.i=s.id;
-    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
         FROM details as s
             JOIN IxBudDec as a ON a.i=s.id;
-    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
         FROM details as s
             JOIN IxBudStr as a ON a.i=s.id;
-    INTO props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value
+    INTO props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value, 0 as owner
         FROM details as s
             JOIN IxBud as a ON a.i=s.id
             JOIN Bud as b ON b.id=a.x;
 
-    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
         FROM main as s
             JOIN IxBudInt as a ON a.i=s.id;
-    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
         FROM main as s
             JOIN IxBudDec as a ON a.i=s.id;
-    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
         FROM main as s
             JOIN IxBudStr as a ON a.i=s.id;
-    INTO props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value
+    INTO props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value, 0 as owner
         FROM main as s
             JOIN IxBud as a ON a.i=s.id
             JOIN Bud as b ON b.id=a.x;

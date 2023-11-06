@@ -5,7 +5,11 @@ import { RegisterOptions } from "react-hook-form";
 
 export type OnValueChanged = (value: string | number, checked?: boolean) => Promise<void>;
 
-export type BudValue = string | number | { [item: number]: boolean; };
+// export type BudValue = string | number | { [item: number]: boolean; };
+export type BudCheckValue = number[];
+export type BudCheckEditValue = { [item: number]: boolean; };
+export type BudValue = string | number | BudCheckValue; // | BudCheckEditValue;
+
 export interface PickProps {
     label: string | JSX.Element;
     value: BudValue;
@@ -28,11 +32,6 @@ export function LabelRowEdit(props: LabelRowPropsBase & EditProps) {
     const uqApp = useUqAppBase();
     let { label, value: initValue, type, readonly, pickValue: pickValueProp, options, onValueChanged, ValueTemplate } = props;
     const [value, setValue] = useState(initValue);
-    /*
-    if (pickValueProp === undefined) {
-        pickValueProp = pickValue;
-    }
-    */
     async function onClick() {
         let ret = await pickValueProp(uqApp, { label, value: initValue, type, }, options);
         if (ret !== undefined) {

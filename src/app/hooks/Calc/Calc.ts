@@ -28,18 +28,23 @@ export class PickedNameValues implements NameValues {
     }
 }
 
+export enum FormulaSetType {
+    init,
+    equ,
+    show,
+}
 export class Formula {
     private readonly exp: jsep.Expression;
-    readonly once: boolean;
+    readonly setType: FormulaSetType;
     constructor(formula: string) {
         let p = formula.indexOf('\n');
         if (p > 0) {
             let suffix = formula.substring(p + 1);
             formula = formula.substring(0, p);
-            this.once = suffix === 'init';
+            this.setType = FormulaSetType[suffix as keyof typeof FormulaSetType];
         }
         else {
-            this.once = false;
+            this.setType = FormulaSetType.equ;
         }
         this.exp = jsep(formula);
     }
@@ -144,16 +149,16 @@ export class Calc implements NameValues {
         Object.assign(this.values, values);
     }
 
-    immutable(name: string) {
+    formulaSetType(name: string) {
         let f = this.formulas[name];
         if (f === undefined) return false;
-        return f.once === false;
+        return f.setType;
     }
 
     private run(callback: (name: string, value: string | number) => void) {
         for (let i in this.formulas) {
             let formula = this.formulas[i];
-            if (formula.once === true) continue;
+            if (formula.setType !== FormulaSetType.equ) continue;
             try {
                 let ret = formula.run(this);
                 if (ret === undefined) continue;

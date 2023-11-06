@@ -2,10 +2,10 @@ import { BizBud, EntityTitle } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
 import { Route } from "react-router-dom";
-import { Page } from "tonwa-app";
+import { BudValue, Page } from "tonwa-app";
 import { List, Sep } from "tonwa-com";
 import { RegisterOptions } from "react-hook-form";
-import { BudValue, EditBudLabelRow } from "app/hooks";
+import { EditBudLabelRow } from "app/hooks";
 import { UseQueryOptions, readBuds } from "app/tool";
 
 export const pathSiteInit = 'site-init';

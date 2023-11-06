@@ -1,12 +1,11 @@
 import { QueryMore, readBuds } from "app/tool";
 import { UqApp, useUqApp } from "app/UqApp";
 import { Biz, BizBud, EntityAtom, EnumBudType } from "app/Biz";
-import { uqAppModal } from "tonwa-app";
+import { BudValue, uqAppModal } from "tonwa-app";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { UqExt } from "uqs/UqDefault";
 import { useParams } from "react-router-dom";
 import { from62, to62 } from "tonwa-com";
-import { BudValue } from "../Bud";
 
 function atomInPath(atomPhraseId: number | string) {
     if (typeof atomPhraseId === 'string') {

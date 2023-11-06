@@ -1,4 +1,4 @@
-import { BudValue } from "app/hooks/Bud";
+import { BudCheckValue, BudValue } from "tonwa-app";
 import { ReturnGetAtomProps } from "uqs/UqDefault";
 
 export function readBuds(id: number, props: ReturnGetAtomProps[]) {
@@ -10,7 +10,7 @@ export function readBuds(id: number, props: ReturnGetAtomProps[]) {
         main = { id, phrase, no, ex }
     }
     let len = props.length;
-    let checks: { [bud: number]: { [item: number]: boolean } } = {}
+    let checks: { [bud: number]: BudCheckValue } = {}
     for (let i = 1; i < len; i++) {
         let { phrase, value } = props[i];
         switch (value.length) {
@@ -20,9 +20,9 @@ export function readBuds(id: number, props: ReturnGetAtomProps[]) {
             case 2:
                 let check = checks[phrase];
                 if (check === undefined) {
-                    checks[phrase] = check = {};
+                    checks[phrase] = checks = [];
                 }
-                check[value[1]] = true;
+                check.push(value[1]);
                 break;
         }
     }

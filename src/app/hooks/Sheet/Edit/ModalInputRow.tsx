@@ -37,7 +37,10 @@ export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore;
     }
     const options = { onChange };
     const formRows = rowStore.buildFormRows();
-    formRows.forEach(v => (v as any).options = { ...(v as any).options, ...options });
+    formRows.forEach(v => {
+        if (v === undefined) return null;
+        return (v as any).options = { ...(v as any).options, ...options };
+    });
     formRows.push({ type: 'submit', label: '提交', options: { disabled: submitable === false } });
 
     async function onSubmit(data: any) {

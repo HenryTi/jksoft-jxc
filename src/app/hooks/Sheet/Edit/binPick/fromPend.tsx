@@ -72,8 +72,8 @@ export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
             if (pendValue === undefined || pendValue <= 0) continue;
             let pendRow: PendRow = {
                 pend: v.pend,
-                sheet: { ...collSheet[v.sheet], buds: {} },
-                detail: { ...v, buds: {} },
+                sheet: { ...collSheet[v.sheet], buds: {}, owned: undefined },
+                detail: { ...v, buds: {}, owned: undefined },
                 value: pendValue,
             };
             ret.push(pendRow);

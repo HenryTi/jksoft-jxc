@@ -1,6 +1,6 @@
 import { BizBud } from "app/Biz";
 import { RegisterOptions } from "react-hook-form";
-import { OnValueChanged, PickProps, UqAppBase } from "tonwa-app";
+import { BudValue, OnValueChanged, PickProps, UqAppBase } from "tonwa-app";
 
 export interface EditBudValue {
     pickValue: (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) => Promise<string | number>;
@@ -13,8 +13,6 @@ export interface ViewBudRowProps {
     readonly?: boolean;
     type: 'string' | 'number' | 'text';
 }
-
-export type BudValue = string | number | { [item: number]: boolean; };
 
 export interface ViewBudProps extends ViewBudRowProps {
     id: number;

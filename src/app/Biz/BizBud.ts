@@ -177,6 +177,7 @@ export class BizBud extends BizBase {
     }
     scan() {
         this.budDataType.scan(this.biz, this);
+        this.biz.addBudIds(this);
     }
     valueToContent(value: any) {
         return this.budDataType.valueToContent(value);

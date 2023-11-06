@@ -2,7 +2,7 @@ import { CheckAsync, FA } from "tonwa-com";
 import { BudCheck, OptionsItem } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { EditBudTemplateProps } from "./model";
-import { Page, useModal } from "tonwa-app";
+import { BudCheckEditValue, BudCheckValue, Page, useModal } from "tonwa-app";
 import { useState } from "react";
 
 export function EditBudCheck(props: EditBudTemplateProps) {
@@ -10,8 +10,14 @@ export function EditBudCheck(props: EditBudTemplateProps) {
     const modal = useModal();
     const { id, readonly, value: initValue, bizBud, ViewValueEdit: ValueEdit } = props;
     const { budDataType, caption, name, ui } = bizBud;
-    const { options: { items, phrase: optionsPhrase } } = budDataType as BudCheck;
-    const [checks, setChecks] = useState(initValue as { [item: number]: boolean; } ?? {});
+    const { options: { items } } = budDataType as BudCheck;
+    const initCheckValue: BudCheckEditValue = {};
+    if (initValue !== undefined) {
+        for (let v of initValue as BudCheckValue) {
+            initCheckValue[v] = true;
+        }
+    }
+    const [checks, setChecks] = useState(initCheckValue);
     let cn = 'me-4 ';
     if (readonly === true) cn += 'text-light invisible ';
     async function onCheckChanged(item: OptionsItem, checked: boolean) {

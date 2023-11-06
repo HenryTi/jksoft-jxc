@@ -7,9 +7,9 @@ import { useParams } from "react-router-dom";
 import { UqExt } from "uqs/UqDefault";
 import { atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
-import { NamedResults, PickResultType, ReturnUseBinPicks } from "./binPick/useBinPicks";
+import { PickResultType, ReturnUseBinPicks } from "./binPick/useBinPicks";
 import { Calc, Formulas } from "app/hooks/Calc";
-
+import { BudCheckValue, BudValue } from "tonwa-app";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -123,6 +123,7 @@ export interface BinRow {
     price: number;
     amount: number;
     buds: { [bud: number]: string | number };
+    owned: { [bud: number]: [number, BudValue][] };
 }
 export interface PendRow {
     pend: number;               // pend id
@@ -236,6 +237,9 @@ export class Row extends BaseObject {
             phrase: this.section.coreDetail.entityBin.id,
             ...this.props,
         });
+        if (id !== this.props.id) {
+            console.error(`save detail id changed, org: ${this.props.id}, new: ${id}`);
+        }
         this.props.id = id;
     }
 
@@ -257,6 +261,7 @@ export class Row extends BaseObject {
 
     setValue(row: BinDetail) {
         let { i, x, value, price, amount } = this.section.coreDetail.entityBin;
+        this.props.id = row.id;
         if (i !== undefined) this.props.i = row.i;
         if (x !== undefined) this.props.x = row.x;
         if (value !== undefined) this.props.value = row.value;
@@ -265,6 +270,7 @@ export class Row extends BaseObject {
         this.props.origin = row.origin;
         this.props.buds = row.buds;
         this.props.pendFrom = row.pendFrom;
+        this.props.owned = row.owned;
         // Object.assign(this.props, row);
     }
 }
@@ -348,52 +354,48 @@ export class SheetStore extends KeyIdObject {
         let { id } = this.main.binRow;
         if (id === undefined || id === 0) return;
         let { main, details, props } = await this.uq.GetSheet.query({ id });
-        const budColl: { [row: number]: { [bud: number]: string | number | { [item: number]: boolean } } } = {};
-        /*
-        for (let i = 1; i < len; i++) {
-            let { phrase, value } = props[i];
-            switch (value.length) {
-                default:
-                case 0: debugger; break;
-                case 1: buds[phrase] = value[0]; break;
-                case 2:
-                    let check = checks[phrase];
-                    if (check === undefined) {
-                        checks[phrase] = check = {};
-                    }
-                    check[value[1]] = true;
-                    break;
-            }
-        }
-        for (let i in checks) {
-            buds[i] = checks[i];
-        }
-        */
-        for (let { id, phrase, value } of props) {
+        const budColl: { [row: number]: { [bud: number]: BudValue } } = {};
+        const ownerColl: { [row: number]: { [owner: number]: [number, BudValue][] } } = {};
+        for (let { id, phrase, value, owner } of props) {
             let budValues = budColl[id];
             if (budValues === undefined) {
                 budColl[id] = budValues = {};
             }
-            // budValues[phrase] = value;
             switch (value.length) {
                 default:
                 case 0: debugger; break;
                 case 1: budValues[phrase] = value[0]; break;
                 case 2:
-                    let checks = budValues[phrase] as { [bud: number]: boolean };
+                    let checks = budValues[phrase] as BudCheckValue;
                     if (checks === undefined) {
-                        budValues[phrase] = checks = {};
+                        budValues[phrase] = checks = [];
                     }
-                    checks[value[1]] = true;
+                    checks.push(value[1]);
                     break;
             }
         }
+        for (let { id, phrase, owner } of props) {
+            if (owner === 0) continue;
+            let ownerValues = ownerColl[id];
+            if (ownerValues === undefined) {
+                ownerColl[id] = ownerValues = {};
+            }
+            let owned = ownerValues[owner];
+            if (owned === undefined) {
+                owned = [];
+                ownerValues[owner] = owned;
+            }
+            owned.push([phrase, budColl[id][phrase]]);
+        }
+
         let mainRow = main[0];
         (mainRow as any).buds = budColl[id] ?? {};
+        (mainRow as any).owned = ownerColl[id] ?? {};
         this.main.setValue(mainRow);
         for (let row of details) {
             const { id } = row;
             (row as any).buds = budColl[id] ?? {};
+            (row as any).owned = ownerColl[id] ?? {};
         }
         this.detail.addRowValues(details);
     }

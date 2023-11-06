@@ -8,6 +8,8 @@ import React from "react";
 import { useCoreDetailEdit } from "./useCoreDetailEdit";
 import { BizBud } from "app/Biz";
 import { RowStore } from "./binPick";
+import { useUqApp } from "app/UqApp";
+import { ViewBud } from "app/hooks";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -60,10 +62,11 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 }
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
+    const { biz } = useUqApp();
     const { openModal } = useModal();
     const { props: binDetail, section: { coreDetail: { entityBin } } } = row;
     const { i: budI, x: budX, price: budPrice, value: budValue, amount: budAmount } = entityBin;
-    let { i, x, value, price, amount } = binDetail
+    let { i, x, value, price, amount, buds, owned } = binDetail
     async function onEdit() {
         if (editable === false) return;
         const rowStore = new RowStore(entityBin);
@@ -99,15 +102,36 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     if (budAmount !== undefined) {
         vAmount = <ViewValue caption={'金额'} value={budAmount.valueToContent(amount)} />;
     }
+
+    function OwnedBuds({ bizBud }: { bizBud: BizBud }) {
+        if (owned === undefined) return null;
+        if (bizBud === undefined) return null;
+        let values = owned[bizBud.id];
+        if (values === undefined) return null;
+        return <div className="d-flex flex-wrap my-1">{
+            values.map(value => {
+                let [budId, budValue] = value;
+                let bizBud = biz.budFromId(budId);
+                let { caption, name } = bizBud;
+                return <div className="d-flex w-min-12c align-items-center" key={budId}>
+                    <div className="w-min-4c me-3 small text-secondary">{caption ?? name}</div>
+                    <ViewBud bud={bizBud} value={budValue} />
+                </div>;
+            })}
+        </div>;
+    }
+
     return <div className="py-2 align-items-stretch row">
         <div className="col-4">
             <div className="ps-3">
                 <ViewIdField bud={budI} value={i} />
+                <OwnedBuds bizBud={budI} />
             </div>
         </div>
         <div className="col-4">
             <div className="ps-3">
                 <ViewIdField bud={budX} value={x} />
+                <OwnedBuds bizBud={budX} />
             </div>
         </div>
         <div className="col-3">

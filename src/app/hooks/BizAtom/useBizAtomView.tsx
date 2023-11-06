@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { Page, PageSpinner } from "tonwa-app";
+import { BudValue, Page, PageSpinner } from "tonwa-app";
 import { FA, Sep, Spinner, from62, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { EditBudLabelRow, EditAtomField } from "../Bud";
 import { LabelAtomUomEdit } from "../AtomUom";
-import { BudValue, ViewBudRowProps } from "../Bud";
+import { ViewBudRowProps } from "../Bud";
 
 export function useBizAtomView(options: OptionsUseBizAtom) {
     const { id } = useParams();
@@ -18,8 +18,6 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
     const [state, setState] = useState<{
         main: any,
         buds: { [prop: number]: BudValue; };
-        // uoms: AtomUomProps[];
-        // entityAtom: EntityAtom;
     }>(undefined);
     useEffectOnce(() => {
         (async () => {

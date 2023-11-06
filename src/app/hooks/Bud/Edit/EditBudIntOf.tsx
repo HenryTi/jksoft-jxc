@@ -2,6 +2,7 @@ import { BudRadio } from "app/Biz";
 import { RadioAsync } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { EditBudTemplateProps } from "./model";
+import { BudCheckEditValue, BudCheckValue } from "tonwa-app";
 
 export function EditBudIntOf(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
@@ -9,7 +10,11 @@ export function EditBudIntOf(props: EditBudTemplateProps) {
     const { budDataType, caption, name } = bizBud;
     let { options: { items, phrase: optionsPhrase } } = budDataType as BudRadio;
 
-    let checks: { [item: string]: boolean; } = initValue as { [item: string]: boolean; } ?? {};
+    const initCheckValue: BudCheckEditValue = {};
+    for (let v of initValue as BudCheckValue) {
+        initCheckValue[v] = true;
+    }
+    let checks: { [item: string]: boolean; } = initCheckValue;
     let radios: [item: string | number, caption: string, value: string | number, defaultCheck: boolean,][] = []
     let hasChecked = false;
     for (let item of items) {

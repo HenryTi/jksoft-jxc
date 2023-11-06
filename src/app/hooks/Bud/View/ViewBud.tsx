@@ -36,7 +36,7 @@ function radio(bud: BizBud, value: any) {
     if (value === null) return <small className="text-secondary">/</small>;
     let { options } = bud.budDataType as BudRadio;
     let v = options.coll[value[0]];
-    if (v === undefined) return <>{value} unknown</>;
+    if (v === undefined) return <>{JSON.stringify(value)}</>;
     const { caption, name } = v;
     return <>{caption ?? name}</>;
 }

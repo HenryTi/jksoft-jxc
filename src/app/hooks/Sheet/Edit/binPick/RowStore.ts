@@ -1,7 +1,7 @@
 import { FormRow } from "app/coms";
 import { BinDetail } from "../SheetStore";
 import { BizBud, BudDec, EntityBin, EnumBudType } from "app/Biz";
-import { Calc, Formulas } from "../../../Calc";
+import { Calc, FormulaSetType, Formulas } from "../../../Calc";
 
 abstract class Field {
     readonly name: string;
@@ -142,12 +142,13 @@ export class RowStore {
         return this.fields.map(v => {
             const { name, bud } = v;
             const { caption, budDataType } = bud;
-            let immutable = this.calc.immutable(name);
+            let setType = this.calc.formulaSetType(name);
+            if (setType === FormulaSetType.show) return;
             let ret = {
                 name,
                 label: caption ?? name,
                 type: 'number',
-                options: { value: v.getValue(), disabled: immutable }
+                options: { value: v.getValue(), disabled: setType === FormulaSetType.equ }
             } as any;
             switch (budDataType.type) {
                 case EnumBudType.char:

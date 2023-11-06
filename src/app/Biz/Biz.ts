@@ -90,6 +90,11 @@ export class Biz {
         return entity as T;
     }
 
+    budFromId(id: number) {
+        let bizBud = this.ids[id];
+        return bizBud as BizBud;
+    }
+
     buildEntities(bizSchema: any) {
         if (bizSchema === undefined) return;
         const builders: { [type in EnumEntity]: (id: number, name: string, type: string) => Entity } = {
@@ -245,6 +250,10 @@ export class Biz {
 
     refresh() {
         setAtomValue(this._refresh, !getAtomValue(this._refresh));
+    }
+
+    addBudIds(bizBud: BizBud) {
+        this.ids[bizBud.id] = bizBud;
     }
 
     delEntity(entity: Entity) {
