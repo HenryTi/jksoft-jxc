@@ -30,7 +30,11 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
                 if (binDetail.value === undefined) {
                     rowStore.setValue('value', 0, undefined);
                 }
-                await sec.addRowProps(Object.assign({}, rowProps, binDetail as any));
+                await sec.addRowProps(Object.assign(
+                    {},
+                    // rowProps, 这是多选明细，不应该加这里。在前面rowStore.init已经处理了字段带入
+                    binDetail as any
+                ));
             }
         }
         else {
