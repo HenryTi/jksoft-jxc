@@ -30,11 +30,12 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
                 if (binDetail.value === undefined) {
                     rowStore.setValue('value', 0, undefined);
                 }
-                await sec.addRowProps(Object.assign(
+                let row = await sec.addRowProps(Object.assign(
                     {},
                     // rowProps, 这是多选明细，不应该加这里。在前面rowStore.init已经处理了字段带入
                     binDetail as any
                 ));
+                await coreDetail.sheetStore.reloadRow(row.props.id);
             }
         }
         else {
@@ -48,6 +49,7 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
             if (ret === true) {
                 Object.assign(row.props, rowStore.binDetail);
                 await row.addToSection();
+                await coreDetail.sheetStore.reloadRow(row.props.id);
             }
         }
     }

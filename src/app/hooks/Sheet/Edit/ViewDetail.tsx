@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { CoreDetail, Row, Section } from "./SheetStore";
+import { BinDetail, CoreDetail, Row, Section } from "./SheetStore";
 import { FA, LMR, Sep } from "tonwa-com";
 import { ViewSpec } from "app/hooks/View";
 import { useModal } from "tonwa-app";
@@ -103,35 +103,17 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         vAmount = <ViewValue caption={'金额'} value={budAmount.valueToContent(amount)} />;
     }
 
-    function OwnedBuds({ bizBud }: { bizBud: BizBud }) {
-        if (owned === undefined) return null;
-        if (bizBud === undefined) return null;
-        let values = owned[bizBud.id];
-        if (values === undefined) return null;
-        return <div className="d-flex flex-wrap my-1">{
-            values.map(value => {
-                let [budId, budValue] = value;
-                let bizBud = biz.budFromId(budId);
-                let { caption, name } = bizBud;
-                return <div className="d-flex w-min-12c align-items-center" key={budId}>
-                    <div className="w-min-4c me-3 small text-secondary">{caption ?? name}</div>
-                    <ViewBud bud={bizBud} value={budValue} />
-                </div>;
-            })}
-        </div>;
-    }
-
     return <div className="py-2 align-items-stretch row">
         <div className="col-4">
             <div className="ps-3">
                 <ViewIdField bud={budI} value={i} />
-                <OwnedBuds bizBud={budI} />
+                <OwnedBuds bizBud={budI} binDetail={binDetail} />
             </div>
         </div>
         <div className="col-4">
             <div className="ps-3">
                 <ViewIdField bud={budX} value={x} />
-                <OwnedBuds bizBud={budX} />
+                <OwnedBuds bizBud={budX} binDetail={binDetail} />
             </div>
         </div>
         <div className="col-3">
@@ -147,4 +129,24 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
             </div>
         </div>
     </div >;
+}
+
+export function OwnedBuds({ bizBud, binDetail }: { bizBud: BizBud, binDetail: BinDetail; }) {
+    const { biz } = useUqApp();
+    let { owned } = binDetail;
+    if (owned === undefined) return null;
+    if (bizBud === undefined) return null;
+    let values = owned[bizBud.id];
+    if (values === undefined) return null;
+    return <div className="d-flex flex-wrap my-1">{
+        values.map(value => {
+            let [budId, budValue] = value;
+            let bizBud = biz.budFromId(budId);
+            let { caption, name } = bizBud;
+            return <div className="d-flex w-min-12c align-items-center" key={budId}>
+                <div className="w-min-4c me-3 small text-secondary">{caption ?? name}</div>
+                <ViewBud bud={bizBud} value={budValue} />
+            </div>;
+        })}
+    </div>;
 }

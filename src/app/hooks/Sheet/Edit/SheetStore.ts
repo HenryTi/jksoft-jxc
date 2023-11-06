@@ -160,6 +160,13 @@ export class CoreDetail extends DetailBase {
         setAtomValue(this._sections, [...sections]);
     }
 
+    setRowValues(rowValues: any[]) {
+        const sections = getAtomValue(this._sections);
+        for (let section of sections) {
+            section.setRowValues(rowValues);
+        }
+    }
+
     private addRowValue(sections: Section[], rowValue: any) {
         const { i, x, value } = rowValue;
         if (i === undefined || value === undefined) return;
@@ -295,10 +302,26 @@ export class Section extends BaseObject {
         setAtomValue(this._rows, [...rows, row]);
     }
 
+    setRowValues(rowValues: any[]) {
+        let rows = getAtomValue(this._rows);
+        let changed = false;
+        for (let row of rows) {
+            let { id } = row.props;
+            for (let rowValue of rowValues) {
+                if (id === rowValue.id) {
+                    row.setValue(rowValue);
+                    changed = true;
+                }
+            }
+        }
+        if (changed === true) this.rowChanged();
+    }
+
     async addRowProps(rowProps: BinDetail) {
         let row = new Row(this);
         row.setValue(rowProps);
         await row.addToSection();
+        return row;
     }
 
     delRow(row: Row) {
@@ -353,7 +376,19 @@ export class SheetStore extends KeyIdObject {
     async load() {
         let { id } = this.main.binRow;
         if (id === undefined || id === 0) return;
-        let { main, details, props } = await this.uq.GetSheet.query({ id });
+        let { main, details } = await this.loadBinData(id);
+        this.main.setValue(main);
+        this.detail.addRowValues(details);
+    }
+
+    async reloadRow(binId: number) {
+        let { details } = await this.loadBinData(binId);
+        this.detail.setRowValues(details);
+    }
+
+    // whole sheet or row detail
+    private async loadBinData(binId: number) {
+        let { main, details, props } = await this.uq.GetSheet.query({ id: binId });
         const budColl: { [row: number]: { [bud: number]: BudValue } } = {};
         const ownerColl: { [row: number]: { [owner: number]: [number, BudValue][] } } = {};
         for (let { id, phrase, value, owner } of props) {
@@ -389,15 +424,14 @@ export class SheetStore extends KeyIdObject {
         }
 
         let mainRow = main[0];
-        (mainRow as any).buds = budColl[id] ?? {};
-        (mainRow as any).owned = ownerColl[id] ?? {};
-        this.main.setValue(mainRow);
+        (mainRow as any).buds = budColl[binId] ?? {};
+        (mainRow as any).owned = ownerColl[binId] ?? {};
         for (let row of details) {
             const { id } = row;
             (row as any).buds = budColl[id] ?? {};
             (row as any).owned = ownerColl[id] ?? {};
         }
-        this.detail.addRowValues(details);
+        return { main: mainRow, details };
     }
 
     async discard() {

@@ -53,9 +53,9 @@ export class BudDec extends BudDataNumber {
     readonly type = EnumBudType.dec;
     fraction: number;
     override scan(biz: Biz, bud: BizBud) {
-        const { ex } = bud;
-        if (ex !== undefined) {
-            this.fraction = ex.fraction;
+        const { ui } = bud;
+        if (ui !== undefined) {
+            this.fraction = ui.fraction;
         }
     }
     valueToContent(value: number) {
@@ -149,7 +149,6 @@ export class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budDataType: BudDataType;
     defaultValue: string;
-    ex: any;
     constructor(biz: Biz, id: number, name: string, dataType: EnumBudType, entity: Entity) {
         super(biz, id, name, 'bud');
         this.entity = entity;
@@ -188,13 +187,14 @@ export class BizBud extends BizBase {
             default:
                 super.fromSwitch(i, val);
                 break;
-            case 'ex': this.ex = val; break;
+            case 'value': this.defaultValue = val; break;
+            case 'show':
+            case 'ex':
             case 'items':
             case 'atom':
             case 'options':
             case 'setType':
                 break;
-            case 'value': this.defaultValue = val; break;
         }
     }
 }

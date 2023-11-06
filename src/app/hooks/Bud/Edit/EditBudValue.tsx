@@ -14,7 +14,7 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
     const { id, readonly, value: initValue, bizBud, type, step, convertToBudValue, options, fromBudValue, ViewValueEdit: ValueEdit, onChanged } = props;
     const budInitValue = fromBudValue === undefined ? initValue as string | number : fromBudValue(initValue);
     const [value, setValue] = useState<string | number>(budInitValue);
-    const { caption, name, ex } = bizBud;
+    const { caption, name, ui } = bizBud;
     const label = caption ?? name;
     async function onEditClick() {
         let ret = await openModal<number | string>(<PagePickValue label={label} value={value} type={type} options={options} step={step} />);
@@ -29,12 +29,10 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
         onChanged?.(bizBud, budValue.value);
     }
     let content: any = value;
-    if (ex !== undefined) {
-        const { format } = ex;
-        if (format !== undefined) {
-            let f: string = format;
-            content = f.replace('{value}', value ? String(value) : '?');
-        }
+    const { format } = ui;
+    if (format !== undefined) {
+        let f: string = format;
+        content = f.replace('{value}', value ? String(value) : '?');
     }
     return <ValueEdit label={label}
         readonly={readonly}
@@ -69,7 +67,7 @@ export function EditBudInt(props: EditBudTemplateProps) {
 }
 
 export function EditBudDec(props: EditBudTemplateProps) {
-    const { ex } = props.bizBud;
+    const { ui } = props.bizBud;
     function convertToBudValue(value: any) {
         return {
             value,
@@ -79,8 +77,8 @@ export function EditBudDec(props: EditBudTemplateProps) {
         }
     }
     let step: string = '0.000001';
-    if (ex !== undefined) {
-        let { fraction } = ex;
+    let { fraction } = ui;
+    if (fraction !== undefined) {
         step = String(1 / Math.pow(10, fraction));
     }
     return <EditBudValue {...props} type="number" step={step} convertToBudValue={convertToBudValue} />;

@@ -7,6 +7,7 @@ import { Row } from "./SheetStore";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { RowStore } from "./binPick";
+import { OwnedBuds } from "./ViewDetail";
 
 export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore; }) {
     const { closeModal } = useModal();
@@ -14,6 +15,7 @@ export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore;
     const { props, section } = row;
     const { entityBin } = section.coreDetail;
     const { i: budI, x: budX } = entityBin;
+    const { binDetail } = rowStore;
     const [submitable, setSubmitable] = useState(rowStore.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;
@@ -27,8 +29,13 @@ export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore;
                 valueInput = Number.isNaN(v) === true ? undefined : v;
             }
         }
-        else {
-            valueInput = valueInputText;
+        else if (type === 'text') {
+            if (valueInputText.trim().length === 0) {
+                valueInput = undefined;
+            }
+            else {
+                valueInput = valueInputText;
+            }
         }
         rowStore.setValue(name, valueInput, (name, value) => {
             setValue(name, value);
@@ -44,7 +51,6 @@ export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore;
     formRows.push({ type: 'submit', label: '提交', options: { disabled: submitable === false } });
 
     async function onSubmit(data: any) {
-        // rowStore.setData(data);
         closeModal(true);
     }
 
@@ -61,13 +67,14 @@ export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore;
         return <Band label={caption ?? name} className="border-bottom py-2">
             <div className="px-3">
                 <ViewSpec id={value} />
+                <OwnedBuds bizBud={bud} binDetail={binDetail} />
             </div>
         </Band>;
     }
     return <Page header="输入明细" right={right}>
         <div className="py-1 tonwa-bg-gray-2 mb-3 container">
-            <ViewIdField bud={budI} value={rowStore.binDetail.i} />
-            <ViewIdField bud={budX} value={rowStore.binDetail.x} />
+            <ViewIdField bud={budI} value={binDetail.i} />
+            <ViewIdField bud={budX} value={binDetail.x} />
         </div>
         <form className="container" onSubmit={handleSubmit(onSubmit)}>
             <FormRowsView rows={formRows} register={register} errors={errors} />

@@ -181,28 +181,25 @@ export function FormRowsView(props: FormRowsViewProps) {
 
 function FormRowView({ row, register, errors, labelClassName, clearErrors, setValue }: FormRowViewProps) {
     const { label, inputs } = row as FormBand;
-
-    // const [submitDisabled, setSubmitDisabled] = useState(false); //(row as any).options?.disabled ?? false)
-    if (register)
-        if (inputs !== undefined) {
-            return <Band label={label} labelClassName={labelClassName}>{
-                inputs.map((v, index) => {
-                    const { label, name, type, options, readOnly } = v;
-                    if (type === 'checkbox') {
-                        return <label key={index} className="form-check-label me-3">
-                            <input className="form-check-input me-1"
-                                type="checkbox" readOnly={readOnly} {...register(name)} />
-                            {label ?? name}
-                        </label>;
-                    }
-                    else {
-                        let newOptions = registerOptions(type, label, options);
-                        <input className="form-check-input me-1" type={type} readOnly={readOnly} {...register(name, newOptions)} />
-                        { label ?? name }
-                    }
-                })
-            }</Band>
-        }
+    if (register && inputs !== undefined) {
+        return <Band label={label} labelClassName={labelClassName}>{
+            inputs.map((v, index) => {
+                const { label, name, type, options, readOnly } = v;
+                if (type === 'checkbox') {
+                    return <label key={index} className="form-check-label me-3">
+                        <input className="form-check-input me-1"
+                            type="checkbox" readOnly={readOnly} {...register(name)} />
+                        {label ?? name}
+                    </label>;
+                }
+                else {
+                    let newOptions = registerOptions(type, label, options);
+                    <input className="form-check-input me-1" type={type} readOnly={readOnly} {...register(name, newOptions)} />
+                    { label ?? name }
+                }
+            })
+        }</Band>
+    }
 
     const { radios } = row as FormRadios;
     if (radios !== undefined) {

@@ -80,7 +80,10 @@ export class RowStore {
             let f = this.fieldColl[i];
             let { name, bud } = f;
             this.fieldColl[name] = f;
-            let { defaultValue } = bud;
+            let { defaultValue, ui } = bud;
+            let { show, required } = ui;
+            if (show === true) continue;
+            if (required !== true) continue;
             if (defaultValue !== undefined) {
                 formulas[name] = defaultValue;
                 if (defaultValue.endsWith('\ninit') === true) {
@@ -118,17 +121,7 @@ export class RowStore {
         this.calc.setValue(name, value, c);
 
     }
-    /*
-    // 数据从界面设置到row props中
-    setData(data: any) {
-        for (let i in this.fieldColl) {
-            let field = this.fieldColl[i];
-            const { name } = field;
-            let v = data[name];
-            field.setValue(v);
-        }
-    }
-    */
+
     get submitable(): boolean {
         let ret = true;
         for (let field of this.requiredFields) {
@@ -139,33 +132,36 @@ export class RowStore {
     }
 
     buildFormRows(): FormRow[] {
-        return this.fields.map(v => {
-            const { name, bud } = v;
-            const { caption, budDataType } = bud;
+        let ret: FormRow[] = [];
+        for (let field of this.fields) {
+            const { name, bud } = field;
+            const { caption, budDataType, ui } = bud;
+            let { show } = ui;
+            if (show === true) continue;
             let setType = this.calc.formulaSetType(name);
-            if (setType === FormulaSetType.show) return;
-            let ret = {
+            let formRow = {
                 name,
                 label: caption ?? name,
                 type: 'number',
-                options: { value: v.getValue(), disabled: setType === FormulaSetType.equ }
+                options: { value: field.getValue(), disabled: setType === FormulaSetType.equ }
             } as any;
             switch (budDataType.type) {
                 case EnumBudType.char:
                 case EnumBudType.str:
-                    ret.type = 'text';
+                    formRow.type = 'text';
                     break;
                 case EnumBudType.dec:
                     let step: string = '0.000001';
                     const { fraction } = budDataType as BudDec;
                     if (fraction !== undefined) {
                         step = String(1 / Math.pow(10, fraction));
-                        ret.step = step;
+                        formRow.step = step;
                     }
-                    ret.options.valueAsNumber = true;
+                    formRow.options.valueAsNumber = true;
                     break;
             }
-            return ret;
-        });
+            ret.push(formRow);
+        }
+        return ret;
     }
 }

@@ -638,9 +638,9 @@ RETURNS budsStr (
         WHERE LOCATE(d.name, budNames)>0;
 };
 
+-- 可以取一个单据，也可以取单行
 Biz Query GetSheet ver 0.1 (
     id ID,                      -- sheetId or detailId
-    -- detail ID,
 )
 RETURNS main (
     * SHEET,
