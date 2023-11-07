@@ -26,7 +26,7 @@ export function ViewBud({ bud, value }: { bud: BizBud; value: any; }) {
 }
 
 function ViewAtom({ value }: { value: any; }) {
-    return <>{value?.ex}</>;
+    return <><b>{value?.ex}</b> &nbsp; &nbsp; <small className="text-secondary">{value?.no}</small></>;
 }
 function atom(bud: BizBud, value: any) {
     return <IDView uq={bud.biz.uq} id={value} Template={ViewAtom} />;

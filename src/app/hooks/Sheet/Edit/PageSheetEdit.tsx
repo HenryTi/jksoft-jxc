@@ -5,7 +5,7 @@ import { ViewMain } from "./ViewMain";
 import { ViewDetail } from "./ViewDetail";
 import { useAtomValue } from "jotai";
 import { useCoreDetailAdd } from "./useCoreDetailAdd";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { NavigateFunction, useLocation, useNavigate, useParams } from "react-router-dom";
 import { UqApp, useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -21,6 +21,7 @@ export function PageSheetEdit() {
     const sheetId = from62(id);
     const [sheetStore, setSheetStore] = useState<SheetStore>();
     const location = useLocation();
+    const navigate = useNavigate();
     const pick = useBinPicks(entitySheet.main);
     useEffect(() => {
         // 重新开始新建一个单据
@@ -32,7 +33,7 @@ export function PageSheetEdit() {
             undefined,
         );
         setSheetStore(sheetStore);
-        startSheetStore(uqApp, sheetStore, pick);
+        startSheetStore(uqApp, navigate, sheetStore, pick);
     }, [location.state]);
     useEffectOnce(() => {
         (async function () {
@@ -43,7 +44,7 @@ export function PageSheetEdit() {
                 id === undefined ? undefined : sheetId
             );
             await sheetStore.load();
-            await startSheetStore(uqApp, sheetStore, pick);
+            await startSheetStore(uqApp, navigate, sheetStore, pick);
             setSheetStore(sheetStore);
         })()
     });
@@ -51,9 +52,15 @@ export function PageSheetEdit() {
     return <PageStore store={sheetStore} />;
 }
 
-async function startSheetStore(uqApp: UqApp, sheetStore: SheetStore, pick: (pickResultType: PickResultType) => Promise<ReturnUseBinPicks>) {
+async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetStore: SheetStore, pick: (pickResultType: PickResultType) => Promise<ReturnUseBinPicks>) {
     let ret = await sheetStore.start(pick);
-    if (ret === undefined) return; // 已有单据，不需要pick. 或者没有创建新单据
+    if (ret === undefined) {
+        if (sheetStore.main.no === undefined) {
+            // 还没有创建单据
+            if (navigate !== undefined) navigate(-1);
+        }
+        return; // 已有单据，不需要pick. 或者没有创建新单据
+    }
     let { id, no, target } = ret;
     if (id > 0) {
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
@@ -79,7 +86,7 @@ function PageStore({ store }: { store: SheetStore; }) {
 
     const addNew = useCoreDetailAdd(detail);
     const start = useCallback(async function () {
-        startSheetStore(uqApp, store, pick);
+        startSheetStore(uqApp, navigate, store, pick);
     }, []);
 
     async function onSubmit() {

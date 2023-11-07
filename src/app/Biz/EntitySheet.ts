@@ -5,12 +5,12 @@ import { Entity, PropPend } from "./Entity";
 import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
 
-
 export interface PickParam {
     name: string;
     bud: string;
     prop: string;       // prop of bud
 }
+
 export abstract class PickBase {
     bizPhraseType: BizPhraseType;
 }
@@ -29,7 +29,7 @@ export class PickPend extends PickBase {
 
 export class BinPick extends BizBud {
     readonly bin: EntityBin;
-    param: PickParam[];
+    params: PickParam[];
     pick: PickBase;
     constructor(biz: Biz, id: number, name: string, bin: EntityBin) {
         super(biz, id, name, EnumBudType.pick, bin);
@@ -87,17 +87,16 @@ export class EntityBin extends Entity {
         const { id, name } = prop;
         let bud = new BizBud(this.biz, id, name, EnumBudType.atom, this);
         bud.fromSchema(prop);
-        // bud.caption = caption;
         bud.budDataType.fromSchema(prop);
         bud.scan();
         return bud;
     }
 
     private buildPick(v: any): BinPick {
-        const { id, name, param, from, caption } = v;
+        const { id, name, from, caption, params } = v;
         let ret = new BinPick(this.biz, id, name, this);
+        ret.params = params;
         ret.ui = { caption };
-        ret.param = param;
         let arr = (from as string[]).map(v => this.biz.entities[v]);
         let entity = arr[0];
         let { bizPhraseType } = entity;
