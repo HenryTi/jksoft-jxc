@@ -21,9 +21,9 @@ export function TabJXC() {
     const uqApp = useUqApp();
     const { uq, uqSites } = uqApp;
     let { userSite } = uqSites;
-    const cn = ' px-4 py-3 border-bottom align-items-center';
+    const cn = 'd-flex px-4 py-3 border-bottom align-items-center';
     return <Page header="同花" back="none">
-        <div className="px-3 py-2 border-bottom small tonwa-bg-gray-1 text-center">
+        <div className="px-3 py-2 border-bottom small tonwa-bg-gray-1 text-center fs-larger">
             <IDView uq={uq} id={userSite.site} Template={ViewSite} />
         </div>
         {arr.map((v, index) => {
@@ -32,9 +32,11 @@ export function TabJXC() {
                 uqApp.clearNotifyCount(phrase);
             }
             return <Link key={index} to={path} className={cn} onClick={onClick}>
-                <FA name={icon ?? 'file'} className={(iconColor ?? 'text-primary') + " me-4"} fixWidth={true} size="lg" />
-                {caption}
+                <FA name={icon ?? 'file'} className={(iconColor ?? 'text-primary') + " me-4"} fixWidth={true} size="2x" />
+                <span className="fs-larger">{caption}</span>
                 <ViewNotifyCount phrase={phrase} />
+                <div className="flex-grow-1"></div>
+                <FA name="angle-right" className="text-secondary" />
             </Link>
         })}
     </Page>;

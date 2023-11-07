@@ -55,7 +55,7 @@ function PageList() {
 export function routeAtomCenter() {
     const n = ':atom';
     return <>
-        <Route path={centers.atom.caption} element={<PageAtomCenter />} />
+        <Route path={centers.atom.path} element={<PageAtomCenter />} />
         <Route path={pathAtomNew(n)} element={<PageNew />} />
         <Route path={pathAtomList(n)} element={<PageList />} />
         <Route path={pathAtomEdit(n)} element={<PageView />} />
