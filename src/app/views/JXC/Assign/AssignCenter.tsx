@@ -2,7 +2,7 @@ import { Entity } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { BI } from "app/coms";
 import { pathAssign } from "app/hooks/Assign";
-import { pathAssignCenter } from "app/views/pathes";
+import { centers } from "app/views/pathes";
 import { Link, Route } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { List, Sep } from "tonwa-com";
@@ -20,7 +20,7 @@ export function PageAssignCenter() {
             </div>
         </Link>;
     }
-    return <Page header="赋值中心">
+    return <Page header={centers.assign.caption}>
         <Sep />
         <List items={atomEntities} ViewItem={ViewItem} />
     </Page>;
@@ -29,7 +29,7 @@ export function PageAssignCenter() {
 export function routeAssignCenter() {
     const n = ':atom';
     return <>
-        <Route path={pathAssignCenter} element={<PageAssignCenter />} />
+        <Route path={centers.assign.path} element={<PageAssignCenter />} />
         <Route path={pathAssign(':assign')} element={<PageAssign />} />
     </>;
 }

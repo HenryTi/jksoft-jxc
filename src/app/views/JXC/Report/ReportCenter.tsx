@@ -7,8 +7,7 @@ import { FA, Sep } from "tonwa-com";
 import { EntityReport } from "app/Biz";
 import { path } from "app/tool";
 import { PageRef, headerSheets } from "app/hooks";
-import { pathReportCenter } from "app/views/pathes";
-// import { PageSheetList, PageSheets, headerSheets, pathSheetsList } from "../../../hooks/Report/PageSheets";
+import { centers } from "app/views/pathes";
 
 function PageReportCenter() {
     const { biz } = useUqApp();
@@ -25,7 +24,7 @@ function PageReportCenter() {
         </Link>
     }
 
-    return <Page header="报表中心">
+    return <Page header={centers.report.caption}>
         <div className="mb-3">
             <Link to={`../${pathSheets}`}>
                 <div className="pe-3 py-3">
@@ -52,7 +51,7 @@ function PageReport() {
 export function routeReportCenter() {
     const n = ':report';
     return <>
-        <Route path={pathReportCenter} element={<PageReportCenter />} />
+        <Route path={centers.report.path} element={<PageReportCenter />} />
         <Route path={pathReport(n)} element={<PageReport />} />
         <Route path={path('history', 'title', 'id')} element={<PageHistory />} />
         <Route path={path(pathSheetRef, 'id', 'd')} element={<PageRef />} />

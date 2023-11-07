@@ -6,7 +6,7 @@ import { List, getAtomValue, useEffectOnce } from "tonwa-com";
 import { useState } from "react";
 import { ReturnGetMyBalanceRet, ReturnGetMySumsRet } from "uqs/UqDefault";
 // import { Period, usePeriod } from "../../../tool/Period";
-import { pathMy } from "app/views/pathes";
+import { centers } from "app/views/pathes";
 import { Period, usePeriod } from "app/tool/Period";
 import { ViewPeriodHeader } from "app/tool";
 
@@ -58,4 +58,4 @@ export function PageMy() {
     </Page>;
 }
 
-export const routeMy = <Route path={pathMy} element={<PageMy />} />;
+export const routeMy = <Route path={centers.me.path} element={<PageMy />} />;

@@ -8,7 +8,7 @@ import { PageSheetEdit, ViewSheetTime } from "app/hooks";
 import { useCallback, useState } from "react";
 import { Atom, Sheet } from "uqs/UqDefault";
 import { Bin, ViewNotifyCount } from "app/tool";
-import { pathSheetCenter } from "app/views/pathes";
+import { centers } from "app/views/pathes";
 
 function PageSheetCenter() {
     const modal = useModal();
@@ -101,7 +101,7 @@ function PageSheetCenter() {
     return visible === false ?
         <PageSpinner />
         :
-        <PageQueryMore header="单据中心"
+        <PageQueryMore header={centers.sheet.caption}
             query={query}
             param={{}}
             sortField={'id'}
@@ -122,7 +122,7 @@ function PageSheetCenter() {
 
 export function routeSheetCenter() {
     return <>
-        <Route path={pathSheetCenter} element={<PageSheetCenter />} />
+        <Route path={centers.sheet.path} element={<PageSheetCenter />} />
         <Route path={'sheet/:sheet/:id'} element={<PageSheetEdit />} />
         <Route path={'sheet/:sheet'} element={<PageSheetEdit />} />
     </>;

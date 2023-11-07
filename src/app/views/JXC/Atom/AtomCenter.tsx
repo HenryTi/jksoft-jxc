@@ -7,7 +7,7 @@ import { UqApp, useUqApp } from "app/UqApp";
 import { Entity } from "app/Biz";
 import { ViewAtom } from "app/hooks";
 import { BI } from "app/coms";
-import { pathAtomCenter } from "app/views/pathes";
+import { centers } from "app/views/pathes";
 
 function PageAtomCenter() {
     const { biz } = useUqApp();
@@ -21,7 +21,7 @@ function PageAtomCenter() {
             </div>
         </Link>;
     }
-    return <Page header="档案中心">
+    return <Page header={centers.atom.caption}>
         <Sep />
         <List items={atomEntities} ViewItem={ViewItem} />
     </Page>;
@@ -55,7 +55,7 @@ function PageList() {
 export function routeAtomCenter() {
     const n = ':atom';
     return <>
-        <Route path={pathAtomCenter} element={<PageAtomCenter />} />
+        <Route path={centers.atom.caption} element={<PageAtomCenter />} />
         <Route path={pathAtomNew(n)} element={<PageNew />} />
         <Route path={pathAtomList(n)} element={<PageList />} />
         <Route path={pathAtomEdit(n)} element={<PageView />} />

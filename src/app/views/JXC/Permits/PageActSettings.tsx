@@ -4,7 +4,7 @@ import { PagePermits } from "./PagePermits";
 import { FA, List, Sep } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { EntityPermit, EntityRole, PermitItem } from "app/Biz/EntityPermit";
-import { pathActSetting } from "app/views/pathes";
+import { centers } from "app/views/pathes";
 
 const pathPermits = 'permits';
 
@@ -50,7 +50,7 @@ function PageActSettings() {
         </div>
     }
 
-    return <Page header="操作设置">
+    return <Page header={centers.setting.caption}>
         <Link to={'../' + pathPermits}>
             <div className="p-3">
                 权限演示
@@ -68,6 +68,6 @@ function PageActSettings() {
 }
 
 export const routePermits = <>
-    <Route path={pathActSetting} element={<PageActSettings />} />
+    <Route path={centers.setting.path} element={<PageActSettings />} />
     <Route path={pathPermits} element={<PagePermits />} />
 </>;
