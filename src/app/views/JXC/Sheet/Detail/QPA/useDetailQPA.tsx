@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { OptionsUseSheetDetail, UpdateRow, ViewSpec, usePick, useSelectAtomSpec } from "app/hooks";
+import { OptionsUseSheetDetail, UpdateRow, ViewSpec, usePick } from "app/hooks";
 import { AtomSpec, AtomPhrase, EditingRow, SheetRow, Spec, Bin } from "app/tool";
 import { Page, uqAppModal, useModal } from "tonwa-app";
 import { ChangeEvent, useEffect, useRef, useState } from "react";

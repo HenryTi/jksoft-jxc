@@ -32,11 +32,13 @@ Biz ACT SaveBudValue ver 0.2 (
         IF id IS NULL {
             SET id=$site;
         }
-        ELSE {
-            IF NOT EXISTS (SELECT a.id FROM BizPhrase as a JOIN BizPhrase as b ON b.id=a.base WHERE a.id=phraseId AND b.base=$site)
-            {
-                RETURN;
-            }
+        ELSE IF NOT EXISTS (SELECT a.id FROM BizPhrase as a JOIN BizPhrase as b ON b.id=a.base WHERE a.id=phraseId AND b.base=$site)
+            OR NOT EXISTS (SELECT a.id FROM Bud as a
+                LEFT JOIN BizPhrase as b ON b.id=a.base
+                LEFT JOIN BizPhrase as c ON c.id=a.ext
+                WHERE a.id=phraseId AND (b.base=$site or c.base=$site))
+        {
+            RETURN;
         }
         IF int IS NOT NULL {
             WITH IxBudInt as a I=id X=phraseId SET a.value=int;

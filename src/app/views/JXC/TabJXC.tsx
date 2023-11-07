@@ -5,13 +5,14 @@ import { BizPhraseType } from "uqs/UqDefault";
 import { ViewNotifyCount } from "app/tool";
 import { FA } from "tonwa-com";
 import { ViewSite } from "../Site";
-import { pathActSetting, pathAssignCenter, pathAtomCenter, pathMy, pathReportCenter, pathSheetCenter } from "../pathes";
+import { captionTieCenter, pathActSetting, pathAssignCenter, pathAtomCenter, pathMy, pathReportCenter, pathSheetCenter, pathTieCenter } from "../pathes";
 
 const arr: { label: string; icon?: string; iconColor?: string; path: string; phrase?: BizPhraseType }[] = [
     { label: '单据中心', path: pathSheetCenter, icon: 'file-o', phrase: BizPhraseType.sheet },
     { label: '档案中心', path: pathAtomCenter, icon: 'database', iconColor: 'text-succeed' },
     { label: '报表中心', path: pathReportCenter, icon: 'calculator', iconColor: 'text-info' },
     { label: '赋值中心', path: pathAssignCenter, icon: 'calculator', iconColor: 'text-info' },
+    { label: captionTieCenter, path: pathTieCenter, icon: 'calculator', iconColor: 'text-info' },
     { label: '我的', path: pathMy, icon: 'user-o', iconColor: 'text-warning' },
     { label: '操作设置', path: pathActSetting, icon: 'cog', iconColor: 'text-info' },
 ];

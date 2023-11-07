@@ -7,6 +7,7 @@ import { routeSheetCenter } from "./Sheet";
 import { routeReportCenter } from "./Report";
 import { routePermits } from "./Permits";
 import { routeAssignCenter } from "./Assign";
+import { routeTieCenter } from "./Tie";
 
 export const pathHome = 'home';
 export function routeJCX(uqApp: UqApp) {
@@ -18,6 +19,7 @@ export function routeJCX(uqApp: UqApp) {
         {routeSheetCenter()}
         {routeReportCenter()}
         {routeAssignCenter()}
+        {routeTieCenter()}
         {routeMy}
         {routePermits}
     </>;

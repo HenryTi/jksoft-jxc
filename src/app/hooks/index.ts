@@ -1,5 +1,4 @@
 export * from './BizAtom';
-export * from './BizAtomSpec';
 export * from './BudSelect';
 export * from './Bud';
 export * from './Sheet';
@@ -9,3 +8,4 @@ export * from './useBiz';
 export * from './BizPick';
 export * from './View';
 export * from './Calc';
+export * from './Tie';
