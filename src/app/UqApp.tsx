@@ -7,7 +7,6 @@ import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
 import { BizPhraseType, UqExt } from 'uqs/UqDefault';
-import { GSpec } from './tool';
 import { atom } from 'jotai';
 import { Biz, EntityAtom } from './Biz';
 import { ViewsRoutes } from './views';
@@ -147,21 +146,6 @@ export class UqApp extends UqAppBase<UQs> {
         }
         setAtomValue(this.atomSiteLogined, siteLogined);
         return this.biz;
-    }
-
-    readonly gSpecs: { [name: string]: GSpec } = {};
-
-    // atom: name or phrase
-    specFromAtom(atom: string): GSpec {
-        let entity = this.biz.entities[atom] as EntityAtom;
-        if (entity === undefined) return;
-        debugger;
-        /*
-        let { spec } = entity;
-        if (spec === undefined) return;
-        let gSpec = this.gSpecs[spec.name];
-        return gSpec;
-        */
     }
 }
 
