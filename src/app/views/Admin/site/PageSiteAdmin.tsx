@@ -5,19 +5,15 @@ import { PageSiteInit, captionSiteInit } from "./siteInit";
 import { EnumSysRole } from "tonwa-uq";
 import { PageSiteRole } from "./PageSiteRole";
 import { Link, Route, useParams } from "react-router-dom";
-import { captionAchieve, pathAchieve } from "../achieve";
-import { captionUser, pathUser } from "../user";
-import { gUomI } from "../uom";
-import { CaptionAtom, pathAtomList } from "app/hooks";
 import { ViewSite } from "app/views/Site";
 import { BI } from "app/coms";
-import { EnumAtom } from "uqs/UqDefault";
-import { captionCompile, pathCompile } from "../compile";
+import { centers } from "app/views/pathes";
 
 function PageSiteAdmin() {
     const { uq, uqSites } = useUqApp();
     const { openModal } = useModal();
     const { site } = useParams();
+    const { user, achieve, compile } = centers;
     function Cmd({ onClick, content, icon, iconColor }: { onClick?: () => void; content: any; icon?: string; iconColor?: string }) {
         return <LMR className="px-3 py-2 align-items-center" onClick={onClick}>
             <BI name={icon ?? 'cog'} className={' fs-x-large me-3 my-1 ' + (iconColor ?? ' text-primary ')} />
@@ -54,9 +50,9 @@ function PageSiteAdmin() {
         </>;
     }
     const cmds = [
-        { label: captionAchieve, path: pathAchieve },
-        { label: captionUser, path: pathUser },
-        { label: captionCompile, path: pathCompile },
+        { label: achieve.caption, path: achieve.path },
+        { label: user.caption, path: user.path },
+        { label: compile.caption, path: compile.path },
     ];
     //{ label: <CaptionAtom atom={EnumAtom.UomI} />, path: pathAtomList(gUomI.name) },
     return <Page header={<IDView uq={uq} id={Number(site)} Template={ViewSite} />}>

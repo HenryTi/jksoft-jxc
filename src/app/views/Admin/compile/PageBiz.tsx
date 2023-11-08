@@ -7,10 +7,12 @@ import { Entity } from "app/Biz";
 import { PageEntity } from "./PageEntity";
 import { FA } from "tonwa-com";
 import { useAtomValue } from "jotai";
+import { centers } from "app/views/pathes";
 
 function PageBiz() {
     const { right, view } = buildViewBiz();
-    return <Page header={captionCompile} right={right}>
+    const { compile } = centers;
+    return <Page header={compile.caption} right={right}>
         {view}
     </Page>;
 }
@@ -132,6 +134,4 @@ export function buildViewBiz() {
     };
 }
 
-export const pathCompile = "compile";
-export const captionCompile = '业务设计';
-export const routeCompile = <Route path={`${pathCompile}`} element={<PageBiz />}></Route>;
+export const routeCompile = <Route path={`${centers.compile.path}`} element={<PageBiz />}></Route>;

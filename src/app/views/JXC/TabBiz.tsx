@@ -1,9 +1,10 @@
 import { Page } from "tonwa-app";
-import { buildViewBiz, captionCompile } from "../Admin/compile";
+import { buildViewBiz } from "../Admin/compile";
+import { centers } from "../pathes";
 
 export function TabBiz() {
     const { right, view } = buildViewBiz();
-    return <Page header={captionCompile} back="none" right={right}>
+    return <Page header={centers.compile.caption} back="none" right={right}>
         {view}
     </Page>;
 }

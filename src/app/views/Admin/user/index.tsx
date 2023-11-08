@@ -1,8 +1,9 @@
 import { Route } from 'react-router-dom';
-import { PageUserAdmin, pathUser } from './PageUserAdmin';
+import { PageUserAdmin } from './PageUserAdmin';
+import { centers } from 'app/views/pathes';
 
 export * from './PageUserAdmin';
 
 export const routeUser = <>
-    <Route path={pathUser} element={<PageUserAdmin />} />
+    <Route path={centers.user.path} element={<PageUserAdmin />} />
 </>;

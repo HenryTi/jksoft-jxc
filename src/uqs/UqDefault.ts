@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Nov 05 2023 16:17:00 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Tue Nov 07 2023 15:30:38 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -414,6 +414,36 @@ export interface ReturnGetAssigns$page {
 }
 export interface ResultGetAssigns {
 	$page: ReturnGetAssigns$page[];
+}
+
+export interface ParamGetTies {
+	tie: number;
+	params: any;
+}
+export interface ReturnGetTies$page {
+	id: number;
+	no: string;
+	ex: string;
+	values: any;
+}
+export interface ResultGetTies {
+	$page: ReturnGetTies$page[];
+}
+
+export interface ParamSaveTie {
+	tie: number;
+	i: number;
+	x: number;
+}
+export interface ResultSaveTie {
+}
+
+export interface ParamDeleteTie {
+	tie: number;
+	i: number;
+	x: number;
+}
+export interface ResultDeleteTie {
 }
 
 export interface ParamSearchAtomBuds {
@@ -1366,6 +1396,9 @@ export interface UqExt extends Uq {
 	DeleteMyDrafts: UqAction<ParamDeleteMyDrafts, ResultDeleteMyDrafts>;
 	SearchAtom: UqQuery<ParamSearchAtom, ResultSearchAtom>;
 	GetAssigns: UqQuery<ParamGetAssigns, ResultGetAssigns>;
+	GetTies: UqQuery<ParamGetTies, ResultGetTies>;
+	SaveTie: UqAction<ParamSaveTie, ResultSaveTie>;
+	DeleteTie: UqAction<ParamDeleteTie, ResultDeleteTie>;
 	SearchAtomBuds: UqQuery<ParamSearchAtomBuds, ResultSearchAtomBuds>;
 	SearchAtomUomBuds: UqQuery<ParamSearchAtomUomBuds, ResultSearchAtomUomBuds>;
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
@@ -2491,6 +2524,92 @@ export const uqSchema={
                 "order": "asc"
             }
         ]
+    },
+    "getties": {
+        "name": "GetTies",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "tie",
+                "type": "id"
+            },
+            {
+                "name": "params",
+                "type": "json"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "values",
+                        "type": "json"
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "savetie": {
+        "name": "SaveTie",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "tie",
+                "type": "id"
+            },
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [] as any
+    },
+    "deletetie": {
+        "name": "DeleteTie",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "tie",
+                "type": "id"
+            },
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [] as any
     },
     "searchatombuds": {
         "name": "SearchAtomBuds",

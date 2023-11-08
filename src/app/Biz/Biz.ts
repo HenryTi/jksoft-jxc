@@ -107,7 +107,6 @@ export class Biz {
             [EnumEntity.pick]: this.buildPick,
             [EnumEntity.options]: this.buildOptions,
             [EnumEntity.report]: this.buildReport,
-            // [EnumEntity.permit]: this.buildPermit,
             [EnumEntity.permit]: this.buildRole,
             [EnumEntity.title]: this.buildTitle,
             [EnumEntity.assign]: this.buildAssign,
@@ -206,10 +205,16 @@ export class Biz {
                 ],
             },
             {
+                name: 'query',
+                caption: '捡取查询',
+                entities: [
+                    [this.queries, '捡取查询', 'hand-pointer-o'],
+                ],
+            },
+            {
                 name: 'relate',
                 caption: '数据关系',
                 entities: [
-                    [this.queries, '捡取查询', 'hand-pointer-o'],
                     [this.picks, '捡取器', 'hand-pointer-o'],
                     [this.options, '可选项', 'check-square-o'],
                     [this.ties, '对照表', 'list'],

@@ -83,15 +83,14 @@ export class RowStore {
             let { defaultValue, ui } = bud;
             let { show, required } = ui;
             if (show === true) continue;
-            if (required !== true) continue;
             if (defaultValue !== undefined) {
                 formulas[name] = defaultValue;
                 if (defaultValue.endsWith('\ninit') === true) {
-                    requiredFields.push(f);
+                    if (required === true) requiredFields.push(f);
                 }
             }
             else {
-                requiredFields.push(f);
+                if (required === true) requiredFields.push(f);
             }
         }
         this.calc = new Calc(formulas, this.binDetail as any);

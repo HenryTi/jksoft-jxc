@@ -1,14 +1,12 @@
 import { useUqApp } from "app/UqApp";
 import { ButtonRightAdd } from "app/coms";
 import { ViewAtom } from "app/hooks";
+import { centers } from "app/views/pathes";
 import { ChangeEvent, useRef, useState } from "react";
 import { IDView, Page, SelectUser, ViewUserAssigned, useModal } from "tonwa-app";
 import { FA, LMR, List, useEffectOnce } from "tonwa-com";
 import { Uq, User } from "tonwa-uq";
 import { Atom } from "uqs/UqDefault";
-
-export const pathUser = 'admin-user';
-export const captionUser = '用户管理';
 
 interface Item {
     id: number;
@@ -101,7 +99,7 @@ export function PageUserAdmin() {
             <ViewItems caption="小组" items={groups} />
         </div>
     }
-    return <Page header={captionUser} right={<ButtonRightAdd onClick={onAdd} />}>
+    return <Page header={centers.user.caption} right={<ButtonRightAdd onClick={onAdd} />}>
         <div className="tonwa-bg-gray-3">
             <List items={list} ViewItem={ViewItem} itemKey={item => item.userSite} />
         </div>

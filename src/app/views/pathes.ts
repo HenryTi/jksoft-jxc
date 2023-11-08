@@ -11,7 +11,7 @@ export const pathActSetting = 'act-setting';
 export interface Center {
     path: string;
     caption: string;
-    icon: string;
+    icon?: string;
     iconColor?: string;
 }
 
@@ -56,5 +56,17 @@ export const centers = {
         path: 'act-setting',
         icon: 'cog',
         iconColor: 'text-info',
+    },
+    user: {
+        caption: '用户管理',
+        path: 'admin-user',
+    },
+    achieve: {
+        caption: '业绩设置',
+        path: 'admin-achieve',
+    },
+    compile: {
+        path: "compile",
+        caption: '业务设计',
     },
 }
