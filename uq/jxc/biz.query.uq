@@ -1,6 +1,6 @@
 Biz Query GetPend (
     pend ID,                // pend entity id
-    key CHAR(100),
+    params JSON,
 )
 PAGE (
     pend ID ASC,

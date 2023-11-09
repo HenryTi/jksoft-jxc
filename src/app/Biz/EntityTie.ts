@@ -22,7 +22,7 @@ export class EntityTie extends Entity {
         let atoms: number[] = val.atoms;
         return {
             caption,
-            atoms: atoms.map(v => this.biz.entityFromId(v) as EntityAtomID)
+            atoms: atoms?.map(v => this.biz.entityFromId(v) as EntityAtomID)
         };
     }
 }

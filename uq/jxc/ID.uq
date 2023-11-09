@@ -53,13 +53,13 @@ IDX BinPend (
     id,                 -- detail id
     pendFrom ID,
 );
-
+/*
 IX IxSpec (
     i,                      -- base
     x,                      -- spec
     prev,                   -- 排序
 );
-
+*/
 IDX BinRed (
     id,
     red TINYINT DEFAULT 1,  -- 红冲单挂这里，挂主表

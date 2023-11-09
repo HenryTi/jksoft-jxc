@@ -65,6 +65,12 @@ PEND 待入库账 '待入库' {
         p1 DEC;
         p2 DEC;
     };
+    QUERY (
+        param1 ID,
+        param2 ID,
+    ) {
+        FROM WHERE param1=1;
+    }
 }
 
 

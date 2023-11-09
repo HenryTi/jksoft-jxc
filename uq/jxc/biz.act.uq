@@ -801,6 +801,7 @@ RETURNS ret (
     keys JSON,
     props JSON,
 ) {
+    /*
     INTO ret SELECT a.x as id,
         (SELECT json_arrayagg(json_array(arr.name,arr.value)) FROM (
             select ix.name, i.value from IxBudInt as i join bizphrase as ix on ix.id=i.x where i.i=a.x
@@ -810,6 +811,16 @@ RETURNS ret (
         null as props
         FROM IxSpec as a
         WHERE a.i=base;
+    */
+    INTO ret SELECT a.id as id,
+        (SELECT json_arrayagg(json_array(arr.name,arr.value)) FROM (
+            select ix.name, i.value from IxBudInt as i join bizphrase as ix on ix.id=i.x where i.i=a.id
+            union select dx.name, d.value from IxBudDec as d join bizphrase as dx on dx.id=d.x where d.i=a.id
+            union select sx.name, s.value from IxBudStr as s join bizphrase as sx on sx.id=s.x where s.i=a.id
+        ) as arr ) as keys,
+        null as props
+        FROM Spec as a
+        WHERE a.base=base;
 }
 
 -- Spec or Atom

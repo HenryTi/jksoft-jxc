@@ -60,7 +60,7 @@ export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
     let { caption, entity: entityPend, search } = propPend;
     let { name: pendName, id: entityId, predefined } = entityPend;
     let { data: pendRows } = useQuery([pendName], async () => {
-        let { $page, retSheet, retAtom } = await uq.GetPend.page({ pend: entityId, key: '' }, undefined, 100);
+        let { $page, retSheet, retAtom } = await uq.GetPend.page({ pend: entityId, params: '{}' }, undefined, 100);
         let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
         for (let v of retSheet) {
             collSheet[v.id] = v;

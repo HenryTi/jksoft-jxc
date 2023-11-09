@@ -43,13 +43,16 @@ export function useBizTie(): UseBizTieReturn {
             return <ViewItemCom value={value} tie={entity} />;
         }
         function ViewAtomCaptions({ tieField }: { tieField: TieField }) {
-            const captions = tieField.atoms.map(v => v.caption ?? v.name);
+            let content: any;
+            const { atoms } = tieField;
+            if (atoms === undefined) {
+                content = <div>用户</div>;
+            }
+            else {
+                content = atoms.map(v => v.caption ?? v.name);
+            }
             return <div className="px-3 py-2">
-                {
-                    captions.map((v, index) => {
-                        return <div key={index} className="">{v}</div>;
-                    })
-                }
+                {content}
             </div>;
         }
         return <PageQueryMore header={caption ?? name}
@@ -73,7 +76,7 @@ export function pathTie(phrase: number | string) {
 
 function ViewItemCom({ value: { id: iId, no, ex, values }, tie }: { value: ReturnGetTies$page; tie: EntityTie; }) {
     const { uq } = useUqApp();
-    const { x } = tie;
+    const { i, x } = tie;
     const pickAtom = usePickAtom();
     const [xArr, setXArr] = useState<[number, string, string][]>(values ?? []);
     async function onAdd() {
@@ -94,6 +97,31 @@ function ViewItemCom({ value: { id: iId, no, ex, values }, tie }: { value: Retur
         }
     }
 
+    if (i.atoms === undefined) {
+        let [assigned, nick] = ex.split('|');
+        if (assigned === '') {
+            if (nick === '') {
+                ex = undefined;
+            }
+            else {
+                ex = nick;
+            }
+        }
+        else {
+            ex = assigned;
+        }
+    }
+
+    function ViewI() {
+        if (ex === undefined) {
+            return <div className="fw-bold flex-grow-1">{no}</div>;
+        }
+        return <>
+            <div className="fw-bold">{ex}</div>
+            <small className="ms-3 text-secondary flex-grow-1">{no}</small>
+        </>;
+    }
+
     let vx: any;
     if (xArr.length === 0) {
         vx = <div className="small text-secondary ms-3 mt-2">[无]</div>;
@@ -103,8 +131,7 @@ function ViewItemCom({ value: { id: iId, no, ex, values }, tie }: { value: Retur
     }
     return <div className="">
         <div className="d-flex tonwa-bg-gray-1 border-bottom pb-2 pt-1 ps-3 border-light-subtle align-items-end">
-            <div className="fw-bold">{ex}</div>
-            <small className="ms-3 text-secondary flex-grow-1">{no}</small>
+            <ViewI />
             <button className="btn btn-link pb-0" onClick={onAdd}>
                 <FA name="plus" />
             </button>
