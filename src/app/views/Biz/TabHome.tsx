@@ -17,14 +17,19 @@ const arr: { center: Center; phrase?: BizPhraseType }[] = [
     { center: centers.setting },
 ];
 
-export function TabJXC() {
+export function TabHome() {
     const uqApp = useUqApp();
     const { uq, uqSites } = uqApp;
     let { userSite } = uqSites;
     const cn = 'd-flex px-4 py-3 border-bottom align-items-center';
     return <Page header="同花" back="none">
-        <div className="px-3 py-2 border-bottom small tonwa-bg-gray-1 text-center fs-larger">
-            <IDView uq={uq} id={userSite.site} Template={ViewSite} />
+        <div className="d-flex border-bottom tonwa-bg-gray-1">
+            <div className="ps-5 py-2 flex-grow-1 text-center">
+                <IDView uq={uq} id={userSite.site} Template={ViewSite} />
+            </div>
+            <Link to={'../sites'} className="px-4 py-2">
+                <FA name="angle-right" className="text-secondary" />
+            </Link>
         </div>
         {arr.map((v, index) => {
             const { center: { caption, icon, iconColor, path }, phrase } = v;

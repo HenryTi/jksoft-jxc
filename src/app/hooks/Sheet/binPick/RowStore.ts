@@ -1,7 +1,7 @@
 import { FormRow } from "app/coms";
 import { BinDetail } from "../SheetStore";
 import { BizBud, BudDec, EntityBin, EnumBudType } from "app/Biz";
-import { Calc, FormulaSetType, Formulas } from "../../../Calc";
+import { Calc, FormulaSetType, Formulas } from "../../Calc";
 
 abstract class Field {
     readonly name: string;

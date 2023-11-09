@@ -2,12 +2,10 @@ import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai/react";
 import { Link } from "react-router-dom";
 import { FA, LMR, Sep, useT } from "tonwa-com";
-import { IDView, Image, Page, useModal } from "tonwa-app";
+import { Image, Page, useModal } from "tonwa-app";
 import { appT, ResApp } from "../../res";
 import { pathEditMe } from "./routeMe";
-import { PageSys, Permit, ViewSite, isPermitted } from "../Site";
-import React from "react";
-import { pathSiteAdmin } from "../Admin/site";
+import { PageSys } from "../Site";
 import { useQuery } from "react-query";
 import { UseQueryOptions } from "app/tool";
 
@@ -55,56 +53,6 @@ export function TabMe() {
             <Sep />
         </>;
     }
-    function SelectSite() {
-        let { mySites, userSite } = uqSites;
-        return <>
-            {mySites.map((v, index) => {
-                let { siteId } = v;
-                let isCurrent = (userSite?.siteId === siteId);
-                let icon: string, iconColor: string, color: string, onClick: () => void;
-                if (isCurrent === true) {
-                    icon = 'check-circle-o';
-                    color = '';
-                    iconColor = ' text-success ';
-                }
-                else {
-                    icon = 'angle-right';
-                    color = ' text-primary ';
-                    iconColor = '';
-                    onClick = onSiteSelect;
-                }
-                let content = <LMR className={'p-3 align-items-center ' + color} onClick={onClick}>
-                    <FA name={icon} fixWidth={true} className={' me-3 ' + iconColor} size="lg" />
-                    <IDView uq={uq} id={siteId} Template={ViewSite} />
-                    <Permit permit={[]}>
-                        <div>
-                            管理 <i className="bi-chevron-right" />
-                        </div>
-                    </Permit>
-                </LMR>;
-                async function onSiteSelect() {
-                    if (isCurrent === true) return;
-                    await uqApp.uqSites.setSite(siteId);
-                    document.location.reload();
-                }
-                /*
-                function onSiteAdmin() {
-                    // nav
-                    openModal(<PageSiteAdmin site={siteId} />);
-                }
-                */
-                if (isPermitted(uqApp, []) === true) {
-                    content = <Link to={`/${pathSiteAdmin}/${siteId}`}>
-                        {content}
-                    </Link>
-                }
-                return <React.Fragment key={index}>
-                    {content}
-                    <Sep />
-                </React.Fragment>
-            })}
-        </>
-    }
 
     function AboutLink() {
         return <Link to={pathAbout}>
@@ -120,7 +68,6 @@ export function TabMe() {
             <MeInfo />
             <Sep />
             <SysAdmin />
-            <SelectSite />
             <AboutLink />
             <Sep />
         </div>

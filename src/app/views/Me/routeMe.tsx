@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { PageChangePassword, UserQuit } from "tonwa-app";
 import { PageAbout } from "./PageAbout";
 import { PageEditMe } from "./PageEditMe";
+import { PageMySites } from "../Site/PageMySites";
 
 export const pathMe = 'me';
 export const pathEditMe = 'edit';

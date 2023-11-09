@@ -2,14 +2,15 @@ import React, { Suspense } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Page, PageTabsLayout, PageSpinner } from 'tonwa-app';
 import { pathMe, routeMe, TabMe } from './Me';
-import { pathHome, routeJCX, TabJXC } from './JXC';
+import { pathHome, routeApp, TabHome } from './Biz';
 import { useUqApp } from 'app/UqApp';
 import { AppLogin, AppRegister, routePrivacy } from 'app/brand';
 import { useAtomValue } from 'jotai';
 import { PageNoSite, routeAdmin } from './Admin';
 import { routeSiteAdmin } from './Admin/site';
 import { useSiteRole } from './Site/useSiteRole';
-import { TabBiz } from './JXC/TabBiz';
+import { TabCode } from './Biz/TabCode';
+import { PageMySites } from './Site/PageMySites';
 
 function RoutesContainer({ children }: { children: React.ReactNode; }) {
     let uqApp = useUqApp();
@@ -64,15 +65,16 @@ export function ViewsRoutes() {
 
     return <RoutesContainer>
         <Route path="/" element={homeLayout}>
-            <Route index element={<TabJXC />} />
-            <Route path={pathHome + '/*'} element={<TabJXC />} />
-            <Route path={'biz' + '/*'} element={<TabBiz />} />
+            <Route index element={<TabHome />} />
+            <Route path={pathHome + '/*'} element={<TabHome />} />
+            <Route path={'biz' + '/*'} element={<TabCode />} />
             <Route path={pathMe + '/*'} element={<TabMe />} />
         </Route>
         {routeMe}
-        {routeJCX(uqApp)}
+        {routeApp()}
         {routeAdmin(uqApp)}
         {routeSiteAdmin}
+        <Route path={'sites'} element={<PageMySites />} />
         <Route path="/test" element={<Page header="Test">test</Page>} />
     </RoutesContainer>;
 }

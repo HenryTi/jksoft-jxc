@@ -10,10 +10,7 @@ import { routeAssignCenter } from "./Assign";
 import { routeTieCenter } from "./Tie";
 
 export const pathHome = 'home';
-export function routeJCX(uqApp: UqApp) {
-    // console.error('routeJCX', pathJXC);
-    // buildSpecs(uqApp);
-
+export function routeApp() {
     const routes = <>
         {routeAtomCenter()}
         {routeSheetCenter()}
@@ -23,23 +20,6 @@ export function routeJCX(uqApp: UqApp) {
         {routeMy}
         {routePermits}
     </>;
-    /*
-    { routeAtom(uqApp, gContact) }
-    { routeAtom(uqApp, gPerson) }
-    { routeAtom(uqApp, gSumGroup) }
-    { routeAtom(uqApp, gGoods) }
-
-    {routeSheet(uqApp, gPurchase)}
-    {routeSheet(uqApp, gSale)}
-    {routeSheet(uqApp, gStoreIn)}
-    {routeSheet(uqApp, gStoreInSplit)}
-    {routeSheet(uqApp, gStoreOut)}
-    {routeSubjectCenter}
-    {routeSubject(uqApp, gSubjectStorage)}
-    {routeSheetView(uqApp)}
-
-    {routePrice}
-    */
     return <>
         <Route path={`${pathHome}/*`}>
             {routes}

@@ -12,7 +12,6 @@ import { List } from "tonwa-com";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { PendRow } from "../SheetStore";
 
-
 export function usePickFromPend() {
     const modal = useModal();
     return useCallback(
@@ -167,4 +166,3 @@ export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
         </div>
     </Page>
 }
-
