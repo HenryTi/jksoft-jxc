@@ -27,16 +27,23 @@ RETURNS retAtom (
     atom ID,
     value JSON,
 ) {
-    PAGE SELECT a.id as pend, d.base as sheet, a.bin as id
-        , b.i, b.x, b.value, b.price, b.amount
-        , a.mid, a.value as pendValue
-        FROM Pend as a
-            JOIN Bin as b on b.id=a.bin
-            JOIN BizPhrase as c ON c.id=a.base
-            LEFT JOIN Bud as d ON d.id=b.id
-        WHERE a.base=pend AND c.base=$site
-        ORDER BY a.id ASC
-        LIMIT $pageSize;
+    VAR procName CHAR(200) = CONCAT($site, '.', pend, 'gp');
+    IF routine_exists('$site', procName) {
+        VAR sql CHAR(500) = CONCAT('call `$site`.`', procName, '`(?,?,?,?);');
+        ExecSql sql USING $user,params,$pageStart,$pageSize;
+    }
+    else {
+        PAGE SELECT a.id as pend, d.base as sheet, a.bin as id
+            , b.i, b.x, b.value, b.price, b.amount
+            , a.mid, a.value as pendValue
+            FROM Pend as a
+                JOIN Bin as b on b.id=a.bin
+                JOIN BizPhrase as c ON c.id=a.base
+                LEFT JOIN Bud as d ON d.id=b.id
+            WHERE a.base=pend AND c.base=$site
+            ORDER BY a.id ASC
+            LIMIT $pageSize;
+    }
 
     INTO retSheet SELECT b.id, b.no
         , c.i, c.x, c.value, c.price, c.amount

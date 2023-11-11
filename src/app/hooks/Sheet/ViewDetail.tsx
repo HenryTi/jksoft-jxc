@@ -56,7 +56,7 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
         </>;
     }
 
-    return <div className="border-top">
+    return <div className="border-top container">
         {content}
     </div>
 }
@@ -79,8 +79,8 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     }
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
         return <div className="d-flex align-items-center">
-            <span className="me-3 small text-secondary">{caption}</span>
-            <span className="w-min-4c">{value}</span>
+            <div className="me-3 small text-secondary">{caption}</div>
+            <div className="w-min-4c text-end">{value}</div>
         </div>;
     }
     if (value === undefined) {
@@ -103,32 +103,34 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         vAmount = <ViewValue caption={'金额'} value={budAmount.valueToContent(amount)} />;
     }
 
+    let cnI: string;
+    let colX: any;
+    if (budX === undefined) {
+        cnI = ' col-8 ';
+    }
+    else {
+        cnI = ' col-4 ';
+        colX = <div className="col-4">
+            <ViewIdField bud={budX} value={x} />
+            <OwnedBuds bizBud={budX} binDetail={binDetail} />
+        </div>;
+    }
+
     return <div className="py-2 align-items-stretch row">
-        <div className="col-4">
-            <div className="ps-3">
-                <ViewIdField bud={budI} value={i} />
-                <OwnedBuds bizBud={budI} binDetail={binDetail} />
-            </div>
+        <div className={cnI}>
+            <ViewIdField bud={budI} value={i} />
+            <OwnedBuds bizBud={budI} binDetail={binDetail} />
         </div>
-        <div className="col-4">
-            <div className="ps-3">
-                <ViewIdField bud={budX} value={x} />
-                <OwnedBuds bizBud={budX} binDetail={binDetail} />
+        {colX}
+        <div className="col-4 d-flex flex-column align-items-end justify-content-end">
+            <div className={' flex-grow-1 ' + cnEdit} onClick={onEdit}>
+                <FA name="pencil" className="text-info" fixWidth={true} />
             </div>
-        </div>
-        <div className="col-3">
-            <div className="pe-3 text-end d-flex flex-column align-items-end">
-                <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
-                {vPrice}
-                {vAmount}
-            </div>
+            <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
+            {vPrice}
+            {vAmount}
         </div >
-        <div className="col-1">
-            <div className="text-end text-info d-flex flex-column ">
-                <div className={'ps-2 pe-3 ' + cnEdit} onClick={onEdit}><FA name="pencil" fixWidth={true} /></div>
-            </div>
-        </div>
-    </div >;
+    </div>;
 }
 
 export function OwnedBuds({ bizBud, binDetail }: { bizBud: BizBud, binDetail: BinDetail; }) {

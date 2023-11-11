@@ -8,3 +8,10 @@ export function TabCode() {
         {view}
     </Page>;
 }
+
+export function PageCode() {
+    const { right, view } = buildViewBiz();
+    return <Page header={centers.compile.caption} right={right}>
+        {view}
+    </Page>;
+}

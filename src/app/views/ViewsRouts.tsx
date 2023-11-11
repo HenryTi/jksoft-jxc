@@ -9,7 +9,7 @@ import { useAtomValue } from 'jotai';
 import { PageNoSite, routeAdmin } from './Admin';
 import { routeSiteAdmin } from './Admin/site';
 import { useSiteRole } from './Site/useSiteRole';
-import { TabCode } from './Biz/TabCode';
+import { PageCode, TabCode } from './Biz/TabCode';
 import { PageMySites } from './Site/PageMySites';
 
 function RoutesContainer({ children }: { children: React.ReactNode; }) {
@@ -53,21 +53,24 @@ export function ViewsRoutes() {
     else {
         const home = { to: '/' + pathHome, caption: '首页', icon: 'home' };
         const me = { to: '/' + pathMe, caption: '我的', icon: 'user' };
-        const designBiz = { to: '/biz', caption: '业务', icon: 'user' };
-        const { isAdmin } = userSite;
+        // const designBiz = { to: '/bizTab', caption: '业务', icon: 'user' };
+        // const { isAdmin } = userSite;
         //let isAdmin = true;
+        /*
         let tabs = isAdmin === true ?
             [home, designBiz, me]
             :
             [home, me];
-        homeLayout = <PageTabsLayout tabs={tabs} />;
+        */
+        homeLayout = <PageTabsLayout tabs={[home, me]} />;
     }
 
     return <RoutesContainer>
         <Route path="/" element={homeLayout}>
             <Route index element={<TabHome />} />
             <Route path={pathHome + '/*'} element={<TabHome />} />
-            <Route path={'biz' + '/*'} element={<TabCode />} />
+            <Route path={'bizTab' + '/*'} element={<TabCode />} />
+            <Route path={'biz' + '/*'} element={<PageCode />} />
             <Route path={pathMe + '/*'} element={<TabMe />} />
         </Route>
         {routeMe}

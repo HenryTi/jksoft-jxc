@@ -1,3 +1,5 @@
+import { BizPhraseType } from "uqs/UqDefault";
+
 /*
 export const pathAtomCenter = 'atom-center';
 export const pathSheetCenter = 'sheet-center';
@@ -13,6 +15,7 @@ export interface Center {
     caption: string;
     icon?: string;
     iconColor?: string;
+    phrase?: BizPhraseType;
 }
 
 export const centers = {
