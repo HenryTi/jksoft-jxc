@@ -1,23 +1,5 @@
 import { BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
-import { EntityPend } from "./EntitySheet";
-
-export interface PropPend {
-    caption: string;
-    entity: EntityPend;
-    search: string[];
-}
-
-/*
-export function getPickableCaption(pickable: Pickable) {
-    let { caption, atom, pick } = pickable;
-    if (caption !== undefined) return caption;
-    if (atom !== undefined) {
-        return atom.caption ?? atom.name;
-    }
-    return pick.caption ?? pick.name;
-}
-*/
 
 export class Entity extends BizBase {
     readonly selfProps: BizBud[] = [];       // 本 Atom 定义的

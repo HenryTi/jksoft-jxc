@@ -1,4 +1,4 @@
-import { BinPick, PickPend, PropPend } from "app/Biz";
+import { BinPick, EntityPend, PickParam, PickPend } from "app/Biz";
 import { useCallback } from "react";
 import { Page, useModal } from "tonwa-app";
 import { NamedResults } from "./useBinPicks";
@@ -7,23 +7,62 @@ import { useUqApp } from "app/UqApp";
 import { ViewSpec } from "app/hooks/View";
 import { UseQueryOptions } from "app/tool";
 import { useState } from "react";
-import { useQuery } from "react-query";
 import { List } from "tonwa-com";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { PendRow } from "../SheetStore";
+import { usePageParams } from "./PageParams";
 
 export function usePickFromPend() {
+    const { uq } = useUqApp();
     const modal = useModal();
+    const pickParam = usePageParams();
     return useCallback(
-        async function pickFromPend(pickResults: NamedResults, binPick: BinPick): Promise<any> {
-            let { name, caption, pick } = binPick;
+        async function pickFromPend(namedResults: NamedResults, binPick: BinPick): Promise<any> {
+            let { name, caption, pick, params: pickParams } = binPick;
             let pickBase = pick as PickPend;
-            let propPend: PropPend = {
+            let entityPend = pickBase.from;
+            const { params: queryParams } = entityPend;
+
+            let retParam: any;
+            if (queryParams !== undefined) {
+                const header = caption;
+                retParam = await pickParam({
+                    header,
+                    namedResults,
+                    queryParams,
+                    pickParams
+                });
+                if (retParam === undefined) return;
+            }
+            else {
+                retParam = {};
+            }
+            let { $page, retSheet, retAtom } = await uq.GetPend.page({ pend: entityPend.id, params: retParam }, undefined, 100);
+            let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
+            for (let v of retSheet) {
+                collSheet[v.id] = v;
+            };
+            let pendRows: PendRow[] = [];
+            for (let v of $page) {
+                let { pendValue } = v;
+                if (pendValue === undefined || pendValue <= 0) continue;
+                let pendRow: PendRow = {
+                    pend: v.pend,
+                    sheet: { ...collSheet[v.sheet], buds: {}, owned: undefined },
+                    detail: { ...v, buds: {}, owned: undefined },
+                    value: pendValue,
+                };
+                pendRows.push(pendRow);
+            }
+
+            let props: ModalInputPendProps = {
                 caption,
                 entity: pickBase.from,
                 search: [],
+                pendRows,
             };
-            let inputed = await modal.open<BinDetail[]>(<ModalInputPend propPend={propPend} />);
+
+            let inputed = await modal.open<BinDetail[]>(<ModalInputPend {...props} />);
             if (inputed === undefined) return;
             let iArr: (BinDetail | [number, BinDetail[]])[] = [];
             let iGroup: number[] = [];
@@ -53,14 +92,35 @@ export function usePickFromPend() {
         }, []);
 }
 
-export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
+interface ModalInputPendProps {
+    caption: string;
+    entity: EntityPend;
+    search: string[];
+    // namedResults: NamedResults;
+    // pickParams: PickParam[];
+    pendRows: PendRow[];
+}
+
+function ModalInputPend({ caption, entity: entityPend, search, pendRows }: ModalInputPendProps) {
     const uqApp = useUqApp();
     const { uq } = uqApp;
-    const { closeModal } = useModal();
-    let { caption, entity: entityPend, search } = propPend;
-    let { name: pendName, id: entityId, predefined } = entityPend;
+    const modal = useModal();
+    let { name: pendName, id: entityId, predefined, params } = entityPend;
+    /*
     let { data: pendRows } = useQuery([pendName], async () => {
-        let { $page, retSheet, retAtom } = await uq.GetPend.page({ pend: entityId, params: '{}' }, undefined, 100);
+        let retParam: any;
+        if (params === undefined) {
+            const header = caption;
+            retParam = await modal.open(<PageParams header={header}
+                namedResults={namedResults}
+                queryParams={params}
+                pickParams={pickParams} />);
+            if (retParam === undefined) return;
+        }
+        else {
+            retParam = {};
+        }
+        let { $page, retSheet, retAtom } = await uq.GetPend.page({ pend: entityId, params: retParam }, undefined, 100);
         let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
         for (let v of retSheet) {
             collSheet[v.id] = v;
@@ -79,6 +139,7 @@ export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
         }
         return ret;
     }, UseQueryOptions);
+    */
     let [selectedItems, setSelectedItems] = useState<{ [id: number]: PendRow; }>({});
 
     if (caption === undefined) {
@@ -105,7 +166,7 @@ export function ModalInputPend({ propPend }: { propPend: PropPend; }) {
             detail.id = undefined;          // 取的是origin detail id
             ret.push(rowProps);
         }
-        closeModal(ret);
+        modal.close(ret);
     }
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
         return <div className="d-flex text-end align-items-center">

@@ -4,10 +4,9 @@ import { NamedResults, PickResultType } from "./useBinPicks";
 import { Page, useModal } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { List } from "tonwa-com";
-import { Band, FormRow, FormRowsView } from "app/coms";
-import { ViewBud, budFormRow } from "app/hooks";
-import { useForm } from "react-hook-form";
+import { ViewBud } from "app/hooks";
 import { filterUndefined } from "app/tool";
+import { usePageParams } from "./PageParams";
 
 interface Prop<T = any> {
     name: string;
@@ -19,12 +18,18 @@ interface Picked { [name: string]: Prop | any }
 export function usePickFromQuery() {
     const { uq, biz } = useUqApp();
     const modal = useModal();
+    const pickParam = usePageParams();
     return useCallback(async function pickFromQuery(namedResults: NamedResults, binPick: BinPick, pickResultType: PickResultType): Promise<any> {
         let { name, caption, pick, params: pickParams } = binPick;
         let pickBase = pick as PickQuery;
         let { query } = pickBase;
         const header = caption ?? query.caption ?? name;
-        let retParam = await modal.open(<PageParam />);
+        let retParam = await pickParam({
+            header,
+            namedResults,
+            queryParams: query.params,
+            pickParams
+        });
         if (retParam === undefined) return;
         retParam = filterUndefined(retParam);
         let retQuery = await uq.DoQuery.submitReturns({ query: query.id, json: retParam, pageStart: undefined, pageSize: 100 });
@@ -94,52 +99,6 @@ export function usePickFromQuery() {
         }
         else {
             return (ret as any[]).map(v => toRet(v));
-        }
-
-        function PageParam() {
-            const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
-            const { params } = query;
-            const valueParams: [PickParam, BizBud, any][] = [];
-            const inputParams: BizBud[] = [];
-            for (let param of params) {
-                let { name, budDataType } = param;
-                let pickParam = pickParams?.find(v => v.name === name);
-                if (pickParam !== undefined) {
-                    let { bud, prop } = pickParam;
-                    let namedResult = namedResults[bud] as NamedResults;
-                    if (prop === undefined) prop = 'id';
-                    let v = namedResult[prop];
-                    valueParams.push([pickParam, param, v]);
-                }
-                else if (budDataType.type !== 0 && name !== undefined) {
-                    inputParams.push(param);
-                }
-            }
-            let formRows: FormRow[] = [
-                ...inputParams.map(v => budFormRow(v, false)),
-                { type: 'submit', label: '查找', options: {}, className: undefined }
-            ];
-            function onSubmitForm(data: any) {
-                let ret = { ...data };
-                for (let [pickParam, , value] of valueParams) {
-                    ret[pickParam.name] = value;
-                }
-                modal.close(ret);
-            }
-            return <Page header={header}>
-                {valueParams.map((v, index) => {
-                    const [pickParam, bizBud, value] = v;
-                    const { name } = pickParam
-                    return <Band key={index} label={name} className="px-3 py-2">
-                        <div className="fw-bold">
-                            <ViewBud bud={bizBud} value={value} />
-                        </div>
-                    </Band>
-                })}
-                <form className="container my-3" onSubmit={handleSubmit(onSubmitForm)}>
-                    <FormRowsView rows={formRows} register={register} errors={errors} />
-                </form>
-            </Page>;
         }
 
         function PageFromQuery() {

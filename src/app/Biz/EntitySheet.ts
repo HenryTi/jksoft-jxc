@@ -1,7 +1,7 @@
 import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
 import { BizBud, EnumBudType } from "./BizBud";
-import { Entity, PropPend } from "./Entity";
+import { Entity } from "./Entity";
 import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
 
@@ -143,12 +143,14 @@ export class EntityBin extends Entity {
 }
 
 const predefined = [
-    's', 'si', 'sx', 'svalue', 'sprice', 'samount',
-    'i', 'x', 'value', 'price', 'amount'
+    's', 'si', 'sx', 'svalue', 'sprice', 'samount'
+    , 'i', 'x', 'value', 'price', 'amount'
+    , 'pendvalue'
 ];
 
 export class EntityPend extends Entity {
     predefined: { [name: string]: BizBud };
+    params: BizBud[];
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -157,19 +159,8 @@ export class EntityPend extends Entity {
                 super.fromSwitch(i, val); break;
             case 'predefined':
                 this.predefined = val; break;
-            /*
-            case 's': this.s = val; break;
-            case 'si': this.si = val; break;
-            case 'sx': this.sx = val; break;
-            case 'svalue': this.svalue = val; break;
-            case 'sprice': this.sprice = val; break;
-            case 'samount': this.samount = val; break;
-            case 'i': this.i = val; break;
-            case 'x': this.x = val; break;
-            case 'value': this.value = val; break;
-            case 'price': this.price = val; break;
-            case 'amount': this.amount = val; break;
-            */
+            case 'params':
+                this.params = val; break;
         }
     }
 }
