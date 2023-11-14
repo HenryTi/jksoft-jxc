@@ -23,8 +23,12 @@ function PageSheetCenter() {
     function ViewSheetType({ value }: { value: EntitySheet; }) {
         let { caption, name, id: entityId, coreDetail } = value;
         let pendEntityId: number;
+        let vNotifyCount: any;
         if (coreDetail !== undefined) {
-            pendEntityId = coreDetail.pend?.entity?.id;
+            pendEntityId = coreDetail.pend?.id;
+            if (pendEntityId !== undefined) {
+                vNotifyCount = <ViewNotifyCount phrase={pendEntityId} />;
+            }
         }
         return <Link
             to={`/sheet/${to62(entityId)}`}
@@ -32,7 +36,7 @@ function PageSheetCenter() {
             <div className="px-3 py-2 align-items-center d-flex">
                 <BI name="card-list" className="fs-larger me-3 text-primary" />
                 <span className="text-body">{caption ?? name}</span>
-                <ViewNotifyCount phrase={pendEntityId} />
+                {vNotifyCount}
             </div>
         </Link>
     }

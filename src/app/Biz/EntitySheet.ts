@@ -41,7 +41,7 @@ export class EntityBin extends Entity {
     picks: BinPick[];
     i: BizBud;
     x: BizBud;
-    pend: PropPend;
+    pend: EntityPend; // PropPend;
     value: BizBud;
     price: BizBud;
     amount: BizBud;
@@ -63,12 +63,7 @@ export class EntityBin extends Entity {
     }
 
     private fromPend(pend: any) {
-        let { caption, entity, search } = pend;
-        this.pend = {
-            caption,
-            entity: this.biz.entities[entity] as EntityPend,
-            search,
-        };
+        this.pend = this.biz.entityFromId<EntityPend>(pend);
     }
 
     private fromValue(prop: any) {
