@@ -44,7 +44,7 @@ export interface UseBizAtomReturn {
     uqApp: UqApp;
     biz: Biz;
     entity: EntityAtom;
-    uom: boolean;
+    // uom: boolean;
     pathView: string;
     pathList: string;
     getAtom(id: number): Promise<{
@@ -149,7 +149,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         uqApp,
         biz,
         entity,
-        uom: (entity as EntityAtom).uom,
+        // uom: (entity as EntityAtom).uom,
         pathView,
         pathList,
         getAtom,

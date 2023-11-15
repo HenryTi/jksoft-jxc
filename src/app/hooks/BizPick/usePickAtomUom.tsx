@@ -18,10 +18,12 @@ export function usePickAtomUom() {
     const { openModal, closeModal } = useModal();
     return useCallback(async function (props: PropsPickAtomUom) {
         const { base, entityAtom, viewTop, buttonCaption, buttonClassName } = props;
+        /*
         const { uom } = entityAtom;
         if (uom === false) {
             return { id: base };
         }
+        */
         // let { uoms: uomsArr } = await uq.GetAtom.query({ id: base });
         let uoms: any[] = []; //readUoms(uomsArr);
         let ret = await openModal(<PageSelectUom />);

@@ -14,7 +14,7 @@ export function useBizAtomView(options: OptionsUseBizAtom) {
 
 export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; }) {
     const { NOLabel, exLabel, id } = options;
-    const { uom, getAtom, saveField, saveBud, entity: entityAtom } = useBizAtom(options)
+    const { getAtom, saveField, saveBud, entity: entityAtom } = useBizAtom(options)
     const [state, setState] = useState<{
         main: any,
         buds: { [prop: number]: BudValue; };
@@ -42,10 +42,13 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
         { name: 'no', label: NOLabel ?? '编号', readonly: true, type: 'string', },
         { name: 'ex', label: exLabel ?? '名称', type: 'string', },
     ];
+    /*
     let viewUom: any;
+
     if (uom === true) {
         viewUom = <LabelAtomUomEdit atomId={id} uoms={uoms} />;
     }
+    */
     return {
         caption,
         view: <View />,
@@ -61,7 +64,6 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
                     <Sep />
                 </React.Fragment>)
             }
-            {viewUom}
             {
                 atomProps.map(v => {
                     let { id: budId } = v;

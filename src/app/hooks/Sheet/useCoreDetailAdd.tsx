@@ -30,10 +30,12 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
                 if (binDetail.value === undefined) {
                     rowStore.setValue('value', 0, undefined);
                 }
+                const { origin, pendFrom, pendValue } = rowProps;
                 let row = await sec.addRowProps(Object.assign(
                     {},
                     // rowProps, 这是多选明细，不应该加这里。在前面rowStore.init已经处理了字段带入
-                    binDetail as any
+                    binDetail as any,
+                    { origin, pendFrom, pendValue },
                 ));
                 await coreDetail.sheetStore.reloadRow(row.props.id);
             }

@@ -35,12 +35,14 @@ export function usePick() {
         let atomId = retAtom.id;
         let specId: number;
         let ea = biz.entities[phrase] as EntityAtom; //atoms.find(v => v.phrase === phrase);
+        /*
         if (ea?.uom === true) {
             const specUom = biz.entities['specuom'] as EntitySpec;
             if (specUom !== undefined) {
                 specs.push(specUom);
             }
         }
+        */
         if (specs.length > 0) {
             let base: number = retAtom.id;
             viewTop = retViewTop;
