@@ -78,6 +78,7 @@ BIN 采购单明细 ver 0.1 {
         采购员备注 char required;
     };
     ACT {
+        Biz Pend 待入库账 SET p1=price, p2=amount, 物流中心=(#采购单主表(bin).i), 采购员备注=%采购员备注;
         Use TimeSpan w Week; 
         Use TimeSpan m Month; 
         VAR a VALUE = (#采购单明细(bin).value); 
