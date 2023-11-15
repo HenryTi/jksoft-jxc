@@ -52,8 +52,6 @@ QUERY 查询货品Query '查询货品Query-Q标题' (
     ;
 }
 
-
-
 QUERY 查询货品Query1 (
     a,
     b '参数query1 b' CHAR,

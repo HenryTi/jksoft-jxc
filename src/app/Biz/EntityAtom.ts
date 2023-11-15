@@ -38,12 +38,12 @@ export abstract class EntityAtomID extends Entity {
 }
 
 export class EntityAtom extends EntityAtomID {
-    uom: boolean;
+    // uom: boolean;
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
-            case 'uom': this.uom = val; break;
+            // case 'uom': this.uom = val; break;
         }
     }
 }
