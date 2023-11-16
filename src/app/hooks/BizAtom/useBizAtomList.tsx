@@ -4,7 +4,6 @@ import { FA, List, from62 } from 'tonwa-com';
 import { EntityAtom, EntityAtomID } from 'app/Biz';
 import { Page } from 'tonwa-app';
 import { OptionsUseBizAtom, pathAtomList, pathAtomNew, pathAtomView, useBizAtom } from './useBizAtom';
-import { useUqApp } from 'app/UqApp';
 
 interface OptionsList {
     ViewItemAtom: (props: { value: any; }) => JSX.Element;
@@ -15,9 +14,6 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     const { top } = options;
     const useBizAtomReturn = useBizAtom(options);
     const { entity, searchAtoms } = useBizAtomReturn;
-    // const { atom } = useParams();
-    // const atomPhraseId = from62(atom);
-    // let entityAtom = biz.entityIds[atomPhraseId] as EntityAtom; // useBizAtomReturn.getEntityAtom(atomName) ?? entity;
     let entityAtom = entity;
     const { children } = entity;
     switch (children.length) {
@@ -45,8 +41,6 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
             </div>
         </Link>;
     }
-    // pageSize={20}
-    // pageMoreSize={1}
     const sortField = 'id';
     const none = <div className='m-3 small text-muted'>[无{caption}]</div>;
     return {

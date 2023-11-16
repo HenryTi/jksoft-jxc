@@ -1,4 +1,4 @@
-import { EntitySheet, EntityBin, Biz } from "app/Biz";
+import { EntitySheet, EntityBin, Biz, EnumBudType } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import { useRef } from "react";
@@ -231,7 +231,7 @@ export class Row extends BaseObject {
     }
 
     private async save() {
-        const { uq, main } = this.sheetStore;
+        const { uq, main, detail } = this.sheetStore;
         let sheet = await main.createIfNotExists();
         if (sheet === undefined) {
             debugger;
@@ -239,10 +239,25 @@ export class Row extends BaseObject {
             console.error(err);
             throw new Error(err);
         }
+        let propArr: [number, 'int' | 'dec' | 'str', string | number][] = [];
+        for (let bud of detail.entityBin.props) {
+            let value = (this.props as any)[bud.name];
+            if (value === undefined) continue;
+            let type: 'int' | 'dec' | 'str';
+            switch (bud.budDataType.type) {
+                case EnumBudType.int: type = 'int'; break;
+                case EnumBudType.dec: type = 'dec'; break;
+                case EnumBudType.str:
+                case EnumBudType.char: type = 'str'; break;
+            }
+            if (type === undefined) continue;
+            propArr.push([bud.id, type, value]);
+        }
         const { id } = await uq.SaveDetail.submit({
             base: main.binRow.id,
             phrase: this.section.coreDetail.entityBin.id,
             ...this.props,
+            props: propArr,
         });
         if (id !== this.props.id) {
             console.error(`save detail id changed, org: ${this.props.id}, new: ${id}`);
