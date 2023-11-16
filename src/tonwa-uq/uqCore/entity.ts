@@ -191,6 +191,9 @@ export abstract class Entity {
             let d = params[name];
             let val: any;
             switch (type) {
+                case 'json':
+                    val = JSON.stringify(d);
+                    break;
                 case 'datetime':
                     val = this.buildDateTimeParam(d);
                     break;

@@ -6,32 +6,26 @@ import { RowMed, useAtomBudsSearch } from "../BudSelect";
 import { useUqApp } from "app/UqApp";
 import { AtomPhrase, PropsAtomSelect } from "app/tool";
 import { EntityAtom } from "app/Biz";
-import { Atom, EnumAtom } from "uqs/UqDefault";
+import { Atom } from "uqs/UqDefault";
 
 export function useSelectAtom() {
     const { openModal } = useModal();
-    return async function (atomName: EnumAtom | string, buds?: string[], viewTop?: any) {
-        let ret = await openModal<AtomPhrase>(<PageAtomSelect atomName={atomName} buds={buds} />);
+    return async function (atom: EntityAtom, buds?: number[], viewTop?: any) {
+        let ret = await openModal<AtomPhrase>(<PageAtomSelect atom={atom} buds={buds} />);
         return ret;
     }
 }
 
 export function PageAtomSelect(props: PropsAtomSelect) {
-    const { buds, loadOnOpen, caption, placeholder, atomName } = props;
+    const { buds, loadOnOpen, caption, placeholder, atom } = props;
     const uqApp = useUqApp();
     const { biz } = uqApp;
     const { closeModal } = useModal();
 
-    let entityAtom: EntityAtom = biz.entities[atomName] as EntityAtom;
-    if (entityAtom === undefined) {
-        debugger;
-        let err = (atomName === undefined ? 'no atomName' : `${atomName} not defined`) + ' in PageAtomSelect';
-        throw new Error(err);
-    }
     // const ViewItemAtom = uqApp.gAtoms[entityAtom.name]?.ViewItem; //useBizAtomViewItem(entityAtom)
     // const { caption, placeholder, entity } = genAtom.genAtomSelect;
     const [searchParam, setSearchParam] = useState(loadOnOpen === false ? undefined : { key: undefined as string });
-    const entityAtomCaption = entityAtom.caption ?? entityAtom.name;
+    const entityAtomCaption = atom.caption ?? atom.name;
     const searchBox = <SearchBox className="px-3 py-2"
         onSearch={onSearch}
         placeholder={placeholder ?? (entityAtomCaption + ' 编号或描述')} />;
@@ -44,7 +38,7 @@ export function PageAtomSelect(props: PropsAtomSelect) {
         let ret = selectedItem.atom;
         closeModal(ret);
     }
-    let atomBudsSearch = useAtomBudsSearch({ entity: atomName, budNames: buds, });
+    let atomBudsSearch = useAtomBudsSearch({ entity: atom, buds, });
     async function searchAtoms(param: any, pageStart: any, pageSize: number) {
         let ret = await atomBudsSearch.search(param, pageStart, pageSize);
         return ret;

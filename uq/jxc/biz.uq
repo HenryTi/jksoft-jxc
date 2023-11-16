@@ -276,7 +276,7 @@ RETURNS ret (
     WITH XBiz ID=id;
     WITH BizBud as a ID=id 
         SET a.type=dataType
-            , a.obj=objId, a.flag=ifnull(flag, 0); -- , a.ex=ex;
+            , a.obj=objId, a.flag=ifnull(flag, 0);
     INTO ret SELECT id;
     TRANS COMMIT;
 };

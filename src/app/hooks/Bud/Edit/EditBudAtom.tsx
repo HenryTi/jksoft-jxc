@@ -13,7 +13,7 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     const label = caption ?? name;
     const selectAtom = useSelectAtom();
     async function onEditClick() {
-        let ret = await selectAtom(bizAtom.name);
+        let ret = await selectAtom(bizAtom);
         if (ret === undefined) return;
         let atomId = ret.id;
         await uq.SaveBudValue.submit({

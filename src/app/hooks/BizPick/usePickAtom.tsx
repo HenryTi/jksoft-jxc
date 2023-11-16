@@ -6,7 +6,7 @@ import { AtomPhrase } from "app/tool";
 export function usePickAtom() {
     const selectAtom = useSelectAtom();
     async function pickAtom(atom: EntityAtom, viewTop: any): Promise<{ retAtom: AtomPhrase; retViewTop: any; }> {
-        let retAtom = await selectAtom(atom.name, [], viewTop);
+        let retAtom = await selectAtom(atom, [], viewTop);
         if (retAtom === undefined) return;
         let retViewTop = <div>
             {viewTop}

@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Nov 15 2023 23:52:10 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Thu Nov 16 2023 14:45:55 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -448,15 +448,15 @@ export interface ResultDeleteTie {
 }
 
 export interface ParamSearchAtomBuds {
-	phrase: string;
+	phrase: number;
 	key: string;
-	budNames: string;
+	buds: any;
 }
 export interface ReturnSearchAtomBuds$page {
 	id: number;
 	no: string;
 	ex: string;
-	phrase: string;
+	phrase: number;
 }
 export interface ReturnSearchAtomBudsMeds {
 	id: number;
@@ -466,19 +466,16 @@ export interface ReturnSearchAtomBudsMeds {
 export interface ReturnSearchAtomBudsBudsInt {
 	id: number;
 	bud: number;
-	phrase: string;
 	value: number;
 }
 export interface ReturnSearchAtomBudsBudsDec {
 	id: number;
 	bud: number;
-	phrase: string;
 	value: number;
 }
 export interface ReturnSearchAtomBudsBudsStr {
 	id: number;
 	bud: number;
-	phrase: string;
 	value: string;
 }
 export interface ResultSearchAtomBuds {
@@ -602,6 +599,93 @@ export interface ReturnGetSpecsFromBaseRet {
 }
 export interface ResultGetSpecsFromBase {
 	ret: ReturnGetSpecsFromBaseRet[];
+}
+
+export enum BizPhraseType {
+	any = 0,
+	atom = 11,
+	spec = 12,
+	bud = 13,
+	sheet = 101,
+	main = 102,
+	detail = 103,
+	pend = 104,
+	detailAct = 111,
+	query = 151,
+	pick = 161,
+	role = 201,
+	permit = 202,
+	options = 301,
+	tree = 401,
+	tie = 501,
+	report = 601,
+	title = 901,
+	assign = 902,
+	key = 1001,
+	prop = 1011,
+	optionsitem = 1031
+}
+
+export enum BudDataType {
+	none = 0,
+	int = 11,
+	atom = 12,
+	radio = 13,
+	check = 14,
+	ID = 19,
+	dec = 21,
+	char = 31,
+	str = 32,
+	date = 41
+}
+
+export enum BizBudFlag {
+	index = 1
+}
+
+export interface ParamGetBizObjects {
+	lang: string;
+	culture: string;
+}
+export interface ReturnGetBizObjectsObjs {
+	id: number;
+	phrase: string;
+	source: string;
+	caption: string;
+}
+export interface ReturnGetBizObjectsBuds {
+	id: number;
+	base: number;
+	phrase: string;
+	caption: string;
+}
+export interface ResultGetBizObjects {
+	objs: ReturnGetBizObjectsObjs[];
+	buds: ReturnGetBizObjectsBuds[];
+}
+
+export interface ParamGetEntityCode {
+	id: number;
+}
+export interface ReturnGetEntityCodeRet {
+	code: string;
+	schema: string;
+}
+export interface ResultGetEntityCode {
+	ret: ReturnGetEntityCodeRet[];
+}
+
+export interface ParamCreateSiteForUser {
+	no: string;
+	ex: string;
+	tonwaUser: number;
+}
+export interface ReturnCreateSiteForUserRet {
+	site: number;
+	userSite: number;
+}
+export interface ResultCreateSiteForUser {
+	ret: ReturnCreateSiteForUserRet[];
 }
 
 export interface ParamGetPend {
@@ -810,93 +894,6 @@ export interface PendInActs extends ID {
 	bin: number | ID;
 	mid: any;
 	value: number;
-}
-
-export enum BizPhraseType {
-	any = 0,
-	atom = 11,
-	spec = 12,
-	bud = 13,
-	sheet = 101,
-	main = 102,
-	detail = 103,
-	pend = 104,
-	detailAct = 111,
-	query = 151,
-	pick = 161,
-	role = 201,
-	permit = 202,
-	options = 301,
-	tree = 401,
-	tie = 501,
-	report = 601,
-	title = 901,
-	assign = 902,
-	key = 1001,
-	prop = 1011,
-	optionsitem = 1031
-}
-
-export enum BudDataType {
-	none = 0,
-	int = 11,
-	atom = 12,
-	radio = 13,
-	check = 14,
-	ID = 19,
-	dec = 21,
-	char = 31,
-	str = 32,
-	date = 41
-}
-
-export enum BizBudFlag {
-	index = 1
-}
-
-export interface ParamGetBizObjects {
-	lang: string;
-	culture: string;
-}
-export interface ReturnGetBizObjectsObjs {
-	id: number;
-	phrase: string;
-	source: string;
-	caption: string;
-}
-export interface ReturnGetBizObjectsBuds {
-	id: number;
-	base: number;
-	phrase: string;
-	caption: string;
-}
-export interface ResultGetBizObjects {
-	objs: ReturnGetBizObjectsObjs[];
-	buds: ReturnGetBizObjectsBuds[];
-}
-
-export interface ParamGetEntityCode {
-	id: number;
-}
-export interface ReturnGetEntityCodeRet {
-	code: string;
-	schema: string;
-}
-export interface ResultGetEntityCode {
-	ret: ReturnGetEntityCodeRet[];
-}
-
-export interface ParamCreateSiteForUser {
-	no: string;
-	ex: string;
-	tonwaUser: number;
-}
-export interface ReturnCreateSiteForUserRet {
-	site: number;
-	userSite: number;
-}
-export interface ResultCreateSiteForUser {
-	ret: ReturnCreateSiteForUserRet[];
 }
 
 export interface IxBud extends IX {
@@ -1405,6 +1402,9 @@ export interface UqExt extends Uq {
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
 	GetSpecsFromBase: UqQuery<ParamGetSpecsFromBase, ResultGetSpecsFromBase>;
+	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
+	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
+	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
 	GetPend: UqQuery<ParamGetPend, ResultGetPend>;
 	GetPendsNotify: UqQuery<ParamGetPendsNotify, ResultGetPendsNotify>;
 	GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
@@ -1418,9 +1418,6 @@ export interface UqExt extends Uq {
 	Sheet: UqID<any>;
 	Detail: UqID<any>;
 	Pend: UqID<any>;
-	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
-	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
-	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
 	IxBud: UqIX<any>;
 	Bud: UqID<any>;
 	History: UqID<any>;
@@ -2624,8 +2621,7 @@ export const uqSchema={
         "fields": [
             {
                 "name": "phrase",
-                "type": "char",
-                "size": 200
+                "type": "id"
             },
             {
                 "name": "key",
@@ -2633,9 +2629,8 @@ export const uqSchema={
                 "size": 50
             },
             {
-                "name": "budNames",
-                "type": "char",
-                "size": 300
+                "name": "buds",
+                "type": "json"
             }
         ],
         "returns": [
@@ -2658,8 +2653,7 @@ export const uqSchema={
                     },
                     {
                         "name": "phrase",
-                        "type": "char",
-                        "size": 200
+                        "type": "id"
                     }
                 ],
                 "order": "desc"
@@ -2693,11 +2687,6 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 50
-                    },
-                    {
                         "name": "value",
                         "type": "int"
                     }
@@ -2713,11 +2702,6 @@ export const uqSchema={
                     {
                         "name": "bud",
                         "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 50
                     },
                     {
                         "name": "value",
@@ -2737,11 +2721,6 @@ export const uqSchema={
                     {
                         "name": "bud",
                         "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 50
                     },
                     {
                         "name": "value",
@@ -3125,6 +3104,194 @@ export const uqSchema={
                     {
                         "name": "props",
                         "type": "json"
+                    }
+                ]
+            }
+        ]
+    },
+    "bizphrasetype": {
+        "name": "BizPhraseType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "any": 0,
+            "atom": 11,
+            "spec": 12,
+            "bud": 13,
+            "sheet": 101,
+            "main": 102,
+            "detail": 103,
+            "pend": 104,
+            "detailAct": 111,
+            "query": 151,
+            "pick": 161,
+            "role": 201,
+            "permit": 202,
+            "options": 301,
+            "tree": 401,
+            "tie": 501,
+            "report": 601,
+            "title": 901,
+            "assign": 902,
+            "key": 1001,
+            "prop": 1011,
+            "optionsitem": 1031
+        }
+    },
+    "buddatatype": {
+        "name": "BudDataType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "none": 0,
+            "int": 11,
+            "atom": 12,
+            "radio": 13,
+            "check": 14,
+            "ID": 19,
+            "dec": 21,
+            "char": 31,
+            "str": 32,
+            "date": 41
+        }
+    },
+    "bizbudflag": {
+        "name": "BizBudFlag",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "index": 1
+        }
+    },
+    "getbizobjects": {
+        "name": "GetBizObjects",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "lang",
+                "type": "char",
+                "size": 10
+            },
+            {
+                "name": "culture",
+                "type": "char",
+                "size": 10
+            }
+        ],
+        "returns": [
+            {
+                "name": "objs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "source",
+                        "type": "text"
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            },
+            {
+                "name": "buds",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            }
+        ]
+    },
+    "getentitycode": {
+        "name": "GetEntityCode",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "code",
+                        "type": "text"
+                    },
+                    {
+                        "name": "schema",
+                        "type": "text"
+                    }
+                ]
+            }
+        ]
+    },
+    "createsiteforuser": {
+        "name": "CreateSiteForUser",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "tonwaUser",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "site",
+                        "type": "id"
+                    },
+                    {
+                        "name": "userSite",
+                        "type": "id"
                     }
                 ]
             }
@@ -3803,194 +3970,6 @@ export const uqSchema={
         "global": false,
         "idType": 3,
         "isMinute": true
-    },
-    "bizphrasetype": {
-        "name": "BizPhraseType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "any": 0,
-            "atom": 11,
-            "spec": 12,
-            "bud": 13,
-            "sheet": 101,
-            "main": 102,
-            "detail": 103,
-            "pend": 104,
-            "detailAct": 111,
-            "query": 151,
-            "pick": 161,
-            "role": 201,
-            "permit": 202,
-            "options": 301,
-            "tree": 401,
-            "tie": 501,
-            "report": 601,
-            "title": 901,
-            "assign": 902,
-            "key": 1001,
-            "prop": 1011,
-            "optionsitem": 1031
-        }
-    },
-    "buddatatype": {
-        "name": "BudDataType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "none": 0,
-            "int": 11,
-            "atom": 12,
-            "radio": 13,
-            "check": 14,
-            "ID": 19,
-            "dec": 21,
-            "char": 31,
-            "str": 32,
-            "date": 41
-        }
-    },
-    "bizbudflag": {
-        "name": "BizBudFlag",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "index": 1
-        }
-    },
-    "getbizobjects": {
-        "name": "GetBizObjects",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "lang",
-                "type": "char",
-                "size": 10
-            },
-            {
-                "name": "culture",
-                "type": "char",
-                "size": 10
-            }
-        ],
-        "returns": [
-            {
-                "name": "objs",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "source",
-                        "type": "text"
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            },
-            {
-                "name": "buds",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            }
-        ]
-    },
-    "getentitycode": {
-        "name": "GetEntityCode",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id"
-            }
-        ],
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "code",
-                        "type": "text"
-                    },
-                    {
-                        "name": "schema",
-                        "type": "text"
-                    }
-                ]
-            }
-        ]
-    },
-    "createsiteforuser": {
-        "name": "CreateSiteForUser",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "no",
-                "type": "char",
-                "size": 30
-            },
-            {
-                "name": "ex",
-                "type": "char",
-                "size": 200
-            },
-            {
-                "name": "tonwaUser",
-                "type": "id"
-            }
-        ],
-        "jsoned": true,
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "site",
-                        "type": "id"
-                    },
-                    {
-                        "name": "userSite",
-                        "type": "id"
-                    }
-                ]
-            }
-        ]
     },
     "ixbud": {
         "name": "IxBud",

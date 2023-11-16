@@ -33,7 +33,11 @@ export function usePageParams() {
             }
         }
         if (inputParams.length === 0) {
-            return {};
+            let retParam: any = {};
+            for (let [pickParam, bizBud, value] of valueParams) {
+                retParam[pickParam.name] = value;
+            }
+            return retParam;
         }
         return await modal.open(<PageParams header={header}
             valueParams={valueParams}

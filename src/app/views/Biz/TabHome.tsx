@@ -16,6 +16,7 @@ export function TabHome() {
     return <Page header="同花" back="none">
         <div className="d-flex border-bottom tonwa-bg-gray-1">
             <div className="ps-5 py-2 flex-grow-1 text-center">
+                <FA name="university" className="me-3 text-info" />
                 <IDView uq={uq} id={userSite.site} Template={ViewSite} />
                 <Permit>
                     <Link to="/biz" className="ms-4">业务</Link>

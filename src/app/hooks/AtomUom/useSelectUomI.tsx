@@ -119,7 +119,7 @@ export function useSelectUomI() {
     async function selectAtomUom(uomId: number) {
         let uomI: Atom;
         if (uomId === undefined) {
-            let uom = await selectAtom(EnumAtom.Uom);
+            let uom = await selectAtom(undefined);
             if (uom === undefined) return;
             uomI = await selectUomI(uom);
             if (uomI === undefined) return;

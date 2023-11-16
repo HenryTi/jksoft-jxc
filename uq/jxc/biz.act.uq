@@ -546,16 +546,16 @@ Biz AC DeleteTie (
     WITH IxBud I=bud X=x DEL;
 }
 
-Biz Query SearchAtomBuds ver 0.2 (
-    phrase Phrase,
+Biz Query SearchAtomBuds ver 0.3 (
+    phrase ID,
     key CHAR(50),
-    budNames CHAR(300),
+    buds JSON,
 )
 PAGE (
     id ID desc,
     no CHAR(50),
     ex CHAR(50),
-    phrase Phrase,
+    phrase ID,
 )
 RETURNS meds (
     id ID,
@@ -565,19 +565,16 @@ RETURNS meds (
 RETURNS budsInt (
     id ID,
     bud ID,
-    phrase CHAR(50),
     value INT,
 )
 RETURNS budsDec (
     id ID,
     bud ID,
-    phrase CHAR(50),
     value VALUE,
 )
 RETURNS budsStr (
     id ID,
     bud ID,
-    phrase CHAR(50),
     value CHAR(200),
 ) {
     PAGE WITH RECURSIVE pPhrase AS (
@@ -585,13 +582,13 @@ RETURNS budsStr (
         FROM IxBizPhrase as r
             JOIN BizPhrase as p ON p.id=r.x
             JOIN XBiz as p1 ON p1.id=p.id
-        WHERE p.name=phrase -- AND p.valid=1
+        WHERE p.id=phrase -- AND p.valid=1
         UNION
         SELECT a.x as id, a.i as base
         FROM IxBizPhrase as a JOIN pPhrase AS b
             ON b.id=a.i
     )
-    SELECT a.id, a.no, a.ex, d.name as phrase
+    SELECT a.id, a.no, a.ex, d.id as phrase
         FROM Atom as a 
             JOIN pPhrase as c ON c.id=a.base
             JOIN BizPhrase as d ON d.id=a.base
@@ -603,29 +600,23 @@ RETURNS budsStr (
     INTO meds SELECT b.id, b.id as main, b.id as detail
         FROM $page as b;
 
-    INTO budsInt SELECT a.id, d.id as bud
-        , d.name as phrase
-        , b.value
+    INTO budsInt SELECT a.id, d.id as bud, b.value
         FROM $page as a 
             JOIN IxBudInt as b ON b.i=a.id
             JOIN BizPhrase as d ON d.id=b.x -- phrase
-        WHERE LOCATE(d.name, budNames)>0;
+        WHERE JSON_CONTAINS(buds, CAST(d.id as CHAR), '$');
 
-    INTO budsDec SELECT a.id, d.id as bud
-        , d.name as phrase
-        , b.value
+    INTO budsDec SELECT a.id, d.id as bud, b.value
         FROM $page as a 
             JOIN IxBudDec as b ON b.i=a.id
             JOIN BizPhrase as d ON d.id=b.x -- phrase
-        WHERE LOCATE(d.name, budNames)>0;
+        WHERE JSON_CONTAINS(buds, CAST(d.id as CHAR), '$');
 
-    INTO budsStr SELECT a.id, d.id as bud
-        , d.name as phrase
-        , b.value
+    INTO budsStr SELECT a.id, d.id as bud, b.value
         FROM $page as a 
             JOIN IxBudStr as b ON b.i=a.id
             JOIN BizPhrase as d ON d.id=b.x -- phrase
-        WHERE LOCATE(d.name, budNames)>0;
+        WHERE JSON_CONTAINS(buds, CAST(d.id as CHAR), '$');
 };
 
 Biz Query SearchAtomUomBuds ver 0.2 (
