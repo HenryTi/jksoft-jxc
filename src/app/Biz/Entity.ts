@@ -13,8 +13,11 @@ export class Entity extends BizBase {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'props': this.fromProps(val); break;
-            // case 'entityId': this.entityId = val; break;
+            case 'groups': this.fromGroups(val); break;
         }
+    }
+
+    protected fromGroups(groups: any) {
     }
 
     protected fromProp(prop: any) {
