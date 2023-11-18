@@ -7,13 +7,7 @@ import { FA, List } from "tonwa-com";
 import { ViewBud } from "app/hooks";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "./PageParams";
-
-interface Prop<T = any> {
-    name: string;
-    bud: BizBud;
-    value: T;
-}
-interface Picked { [name: string]: Prop | any }
+import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "./tool";
 
 export function usePickFromQuery() {
     const { uq, biz } = useUqApp();
@@ -36,7 +30,7 @@ export function usePickFromQuery() {
         let pickedArr: Picked[] = [];
         for (let row of retQuery.ret) {
             let propArr: Prop[] = [];
-            let picked: { [name: string]: Prop } = {
+            let picked: Picked = {
                 $: propArr as any,
                 id: row.id as any,
             };
@@ -45,6 +39,8 @@ export function usePickFromQuery() {
                 bud: undefined,
                 value: row.ban,
             };
+            pickedFromJsonArr(query, propArr, picked, row.json);
+            /*
             let arr: any[] = row.json;
             for (let v of arr) {
                 let { length } = v;
@@ -77,6 +73,7 @@ export function usePickFromQuery() {
                 }
                 propArr.push(picked[name] = { name, bud, value });
             }
+            */
             pickedArr.push(picked);
         }
         let ret = await modal.open(<PageFromQuery />);
@@ -162,19 +159,6 @@ export function usePickFromQuery() {
             }
             function ViewItem({ value: picked }: { value: Picked }) {
                 let propArr: Prop[] = picked.$ as any;
-                function VName({ name, value, bud }: { name: string; value: any; bud: BizBud; }) {
-                    let caption: string;
-                    if (bud === undefined) caption = name;
-                    else {
-                        const { name: bn, caption: bc } = bud;
-                        caption = bc ?? bn;
-                    }
-                    // if (value !== null && typeof value === 'object') value = value.id;
-                    return <div className="my-2 me-3 w-min-16c d-flex align-items-center">
-                        <small className="text-secondary me-2 w-min-4c">{caption}</small>
-                        <span><ViewBud bud={bud} value={value} /></span>
-                    </div>;
-                }
                 const { no, ex } = picked;
                 let vFirst: any;
                 if (ex !== undefined) {
@@ -192,7 +176,7 @@ export function usePickFromQuery() {
                     {vFirst}
                     <div className={cnViewItem}>
                         {propArr.map((v, index) => {
-                            return <VName key={index} {...v} />;
+                            return <VNamedBud key={index} {...v} />;
                         })}
                     </div>
                 </div>

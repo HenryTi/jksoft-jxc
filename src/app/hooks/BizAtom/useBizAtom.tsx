@@ -132,7 +132,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
     async function selectLeafAtom(entityAtom: EntityAtom): Promise<EntityAtom> {
         if (entityAtom === undefined) entityAtom = entity;
         const { openModal } = uqAppModal(uqApp);
-        const { children } = entityAtom;
+        const { subClasses: children } = entityAtom;
         switch (children.length) {
             case 0: return entityAtom;
             case 1: return children[0] as EntityAtom;

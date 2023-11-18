@@ -11,6 +11,7 @@ import { List } from "tonwa-com";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { PendRow } from "../SheetStore";
 import { usePageParams } from "./PageParams";
+import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "./tool";
 
 export function usePickFromPend() {
     const { uq } = useUqApp();
@@ -44,13 +45,15 @@ export function usePickFromPend() {
             };
             let pendRows: PendRow[] = [];
             for (let v of $page) {
-                let { pendValue } = v;
+                let { pendValue, mid, cols } = v;
                 if (pendValue === undefined || pendValue <= 0) continue;
                 let pendRow: PendRow = {
                     pend: v.pend,
                     sheet: { ...collSheet[v.sheet], buds: {}, owned: undefined },
                     detail: { ...v, buds: {}, owned: undefined },
                     value: pendValue,
+                    mid,
+                    cols,
                 };
                 pendRows.push(pendRow);
             }
@@ -106,40 +109,6 @@ function ModalInputPend({ caption, entity: entityPend, search, pendRows }: Modal
     const { uq } = uqApp;
     const modal = useModal();
     let { name: pendName, id: entityId, predefined, params } = entityPend;
-    /*
-    let { data: pendRows } = useQuery([pendName], async () => {
-        let retParam: any;
-        if (params === undefined) {
-            const header = caption;
-            retParam = await modal.open(<PageParams header={header}
-                namedResults={namedResults}
-                queryParams={params}
-                pickParams={pickParams} />);
-            if (retParam === undefined) return;
-        }
-        else {
-            retParam = {};
-        }
-        let { $page, retSheet, retAtom } = await uq.GetPend.page({ pend: entityId, params: retParam }, undefined, 100);
-        let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
-        for (let v of retSheet) {
-            collSheet[v.id] = v;
-        };
-        let ret: PendRow[] = [];
-        for (let v of $page) {
-            let { pendValue } = v;
-            if (pendValue === undefined || pendValue <= 0) continue;
-            let pendRow: PendRow = {
-                pend: v.pend,
-                sheet: { ...collSheet[v.sheet], buds: {}, owned: undefined },
-                detail: { ...v, buds: {}, owned: undefined },
-                value: pendValue,
-            };
-            ret.push(pendRow);
-        }
-        return ret;
-    }, UseQueryOptions);
-    */
     let [selectedItems, setSelectedItems] = useState<{ [id: number]: PendRow; }>({});
 
     if (caption === undefined) {
@@ -176,23 +145,34 @@ function ModalInputPend({ caption, entity: entityPend, search, pendRows }: Modal
     }
     const digits = 2;
     function ViewPendRow({ value: pendRow }: { value: PendRow }) {
-        const { detail: { i, price, amount }, value } = pendRow;
-        return <div className="d-flex w-100">
-            <div className="">
-                <div className="py-2">
-                    <ViewSpec id={i} />
+        const { detail: { i, price, amount }, value, mid, cols } = pendRow;
+        let propArr: Prop[] = [];
+        let picked: Picked = {};
+        pickedFromJsonArr(entityPend, propArr, picked, cols);
+        return <div className="container">
+            <div className="row">
+                <div className="col-3">
+                    <div className="py-2">
+                        <ViewSpec id={i} />
+                    </div>
                 </div>
+                <div className="col-3 text-break">
+                    {JSON.stringify(mid)}
+                </div>
+                <div className="col-3 text-break">
+                    {propArr.map((v, index) => {
+                        return <VNamedBud key={index} {...v} />;
+                    })}
+                </div>
+                <div className="col-3">
+                    <div className="py-2 d-flex flex-column align-items-end">
+                        <ViewValue caption={'单价'} value={price?.toFixed(digits)} />
+                        <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />
+                        <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
+                    </div>
+                </div >
             </div>
-            <div className="flex-grow-1" />
-            <div className="">
-                <div className="py-2 d-flex flex-column align-items-end">
-                    <ViewValue caption={'单价'} value={price?.toFixed(digits)} />
-                    <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />
-                    <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
-                </div>
-            </div >
-        </div>
-            ;
+        </div>;
         // <div className="col py-2 text-break">{JSON.stringify(pendRow)}</div>
     }
     function onItemSelect(item: PendRow, isSelected: boolean) {

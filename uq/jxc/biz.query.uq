@@ -11,8 +11,9 @@ PAGE (
     value VALUE,
     price VALUE,
     amount VALUE,
-    mid JSON,
     pendValue VALUE,
+    mid JSON,
+    cols JSON,
 )
 RETURNS retSheet (
     id ID,
@@ -35,7 +36,7 @@ RETURNS retAtom (
     else {
         PAGE SELECT a.id as pend, d.base as sheet, a.bin as id
             , b.i, b.x, b.value, b.price, b.amount
-            , a.mid, a.value as pendValue
+            , a.value as pendValue, a.mid, null as cols
             FROM Pend as a
                 JOIN Bin as b on b.id=a.bin
                 JOIN BizPhrase as c ON c.id=a.base

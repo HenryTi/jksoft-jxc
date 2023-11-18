@@ -130,6 +130,8 @@ export interface PendRow {
     sheet: SheetRow;
     detail: BinRow;
     value: number;
+    mid: any[];
+    cols: any[];
 }
 
 abstract class DetailBase extends BaseObject {

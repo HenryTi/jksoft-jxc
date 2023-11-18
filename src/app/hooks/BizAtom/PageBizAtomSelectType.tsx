@@ -4,7 +4,7 @@ import { List } from "tonwa-com";
 
 export function PageBizAtomSelectType({ caption, entityAtom }: { caption: string; entityAtom: EntityAtom; }) {
     const { closeModal } = useModal();
-    const { children } = entityAtom;
+    const { subClasses: children } = entityAtom;
     function ViewItem({ value }: { value: EntityAtomID; }) {
         const { caption } = value;
         return <div className="px-3 py-2">

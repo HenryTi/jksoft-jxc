@@ -48,6 +48,7 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
     </React.Fragment>);
     function buildVPropRows(props: BizBud[], plus: boolean = false) {
         return props.map(v => {
+            if (v === undefined) debugger;
             let { id: budId } = v;
             let prop = buds[budId];
             return <React.Fragment key={budId}>

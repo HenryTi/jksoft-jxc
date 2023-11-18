@@ -15,7 +15,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     const useBizAtomReturn = useBizAtom(options);
     const { entity, searchAtoms } = useBizAtomReturn;
     let entityAtom = entity;
-    const { children } = entity;
+    const { subClasses: children } = entity;
     switch (children.length) {
         case 0: break;
         case 1: entityAtom = children[0] as any; break;
@@ -57,7 +57,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
 
     function PageTypes() {
         let caption = entityAtom.caption ?? entityAtom.name;
-        const { children } = entityAtom;
+        const { subClasses: children } = entityAtom;
         function ViewItem({ value }: { value: EntityAtomID; }) {
             const { id, caption } = value;
             return <Link to={`../${pathAtomList(id)}`}>

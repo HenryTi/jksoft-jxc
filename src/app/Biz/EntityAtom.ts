@@ -3,8 +3,9 @@ import { BizBud } from "./BizBud";
 import { BudGroup, Entity } from "./Entity";
 
 export abstract class EntityAtomID extends Entity {
-    // _extends: EntityAtomID;
-    readonly children: EntityAtomID[] = [];
+    readonly subClasses: EntityAtomID[] = [];
+
+    getSubClasses(): Entity[] { return this.subClasses; }
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -30,7 +31,13 @@ export abstract class EntityAtomID extends Entity {
 
     private mergeBudGroups(entitySelf: EntitySelf) {
         const { groups, groupColl } = entitySelf;
-        if (groups === undefined) return;
+        if (groups === undefined) {
+            if (this.budGroups !== undefined) {
+                const { home } = this.budGroups;
+                home.buds.push(...entitySelf.buds);
+            }
+            return;
+        }
         if (this.budGroups === undefined) {
             this.budGroups = this.cloneBudGroups(groups);
         }
@@ -57,14 +64,13 @@ export abstract class EntityAtomID extends Entity {
 
     protected fromExtends(extendsId: number) {
         if (extendsId === undefined) return;
-        let _extends = this.biz.atomBuilder.initExtends(this, extendsId);
-        if (_extends === undefined) debugger;
-        _extends.children.push(this);
+        let superClass = this.biz.atomBuilder.initSuperClass(this, extendsId);
+        if (superClass === undefined) debugger;
+        superClass.subClasses.push(this);
     }
 }
 
 export class EntityAtom extends EntityAtomID {
-
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;

@@ -3,26 +3,105 @@ import { useForm } from "react-hook-form";
 import { Entity } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
-import { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { Page, useModal } from "tonwa-app";
-import { ButtonAsync } from 'tonwa-com';
+import { ButtonAsync, FA, Spinner, getAtomValue, setAtomValue } from 'tonwa-com';
 import { Grammar, highlight } from "prismjs";
 import './code-editor-style.css'
 import Editor from 'react-simple-code-editor';
 import { uqGrammar } from './grammar';
 import { FormRow, FormRowsView, Band } from 'app/coms';
+import { atom, useAtomValue } from 'jotai';
 
-export function PageEntity({ entity }: { entity: Entity }) {
+class Nav {
+    readonly supers: Entity[] = [];
+    cur: Entity;
+    subs: Entity[];
+    changed = atom(false);
+    private readonly onChange: (newEntity: Entity) => void;
+    constructor(entity: Entity, onChange: (newEntity: Entity) => void) {
+        this.cur = entity;
+        this.onChange = onChange;
+        this.subs = entity.getSubClasses();
+    }
+    showView() {
+        const View = () => {
+            if (this.subs === undefined) return null;
+            const setCur = (entity: Entity) => {
+                if (entity === this.cur) return;
+                let index = this.supers.findIndex(v => v === entity);
+                if (index >= 0) {
+                    this.supers.splice(index);
+                    this.cur = entity;
+                    this.subs = entity.getSubClasses();
+                }
+                else {
+                    index = this.subs.findIndex(v => v === entity);
+                    if (index < 0) return;
+                    this.supers.push(this.cur);
+                    this.cur = entity;
+                    this.subs = entity.getSubClasses();
+                }
+                let changed = getAtomValue(this.changed);
+                setAtomValue(this.changed, !changed);
+                this.onChange(entity);
+            }
+            useAtomValue(this.changed);
+            function VClick({ entity }: { entity: Entity }) {
+                const { caption, name } = entity;
+                const onClick = () => setCur(entity);
+                return <div className="px-3 py-2 cursor-pointer text-primary" onClick={onClick}>{caption ?? name}</div>
+            }
+            function VSuper({ entity }: { entity: Entity; }) {
+                return <>
+                    <VClick entity={entity} />
+                    <FA name="angle-right" className="" />
+                </>;
+            }
+            const VCur = () => {
+                const { caption, name } = this.cur;
+                let vRightAngle: any;
+                if (this.subs.length > 0) vRightAngle = <FA name="angle-right" className="" />;
+                return <>
+                    <div className="fw-bold mx-3">{caption ?? name}</div>
+                    {vRightAngle}
+                </>;
+            }
+            return <div className="tonwa-bg-gray-3 d-flex flex-wrap align-items-center">
+                {this.supers.map(v => <VSuper key={v.id} entity={v} />)}
+                <VCur />
+                {this.subs.map((v, index) => {
+                    let vSep: any;
+                    if (index > 0) vSep = <small className="text-seconday">|</small>;
+                    return <React.Fragment key={v.id}>
+                        {vSep}
+                        <VClick entity={v} />
+                    </React.Fragment>;
+                })}
+            </div>
+        }
+        return <View />;
+    }
+}
+
+export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
     const uqApp = useUqApp();
     const { uq, uqMan, biz } = uqApp;
     const { uqApi } = uqMan;
     const { openModal, closeModal } = useModal();
+    const [entity, setEntity] = useState(orgEntity);
     const { id, caption, name } = entity;
-    const { data } = useQuery([id], async () => {
+    const query = useCallback(async (id: number) => {
         let { ret } = await uq.GetEntityCode.query({ id });
-        return ret[0];
+        let data = ret[0];
+        return data;
+    }, [])
+    const { data } = useQuery([id], async () => {
+        return await query(id);
     }, UseQueryOptions);
+    const [code, setCode] = useState(data?.code);
+    const nav = useMemo(() => new Nav(orgEntity, onEntityChange), [orgEntity]);
     const refTextAreaLog = useRef<HTMLTextAreaElement>();
     const refContainerEditorArea = useRef<HTMLDivElement>();
     const interval = useRef<NodeJS.Timer>();
@@ -33,8 +112,7 @@ export function PageEntity({ entity }: { entity: Entity }) {
         div.style.maxHeight = div.parentElement.clientHeight + 'px';
     });
 
-    const { code: codeInit, schema } = data ?? {};
-    const [code, setCode] = useState(codeInit);
+    // const { code: codeInit, schema } = data ?? {};
     const [readOnly, setReadOnly] = useState(false);
     const [submitDisabled, setSumitDisabled] = useState(true);
     const [deleted, setDeleted] = useState(false);
@@ -44,6 +122,12 @@ export function PageEntity({ entity }: { entity: Entity }) {
                 没有能够拿到{entity.name}的code
             </div>
         </Page>;
+    }
+    async function onEntityChange(newEntity: Entity) {
+        setEntity(newEntity);
+        setCode(null);
+        let data = await query(newEntity.id);
+        setCode(data.code);
     }
     function onCodeChange(code: string) {
         setCode(code);
@@ -184,6 +268,7 @@ export function PageEntity({ entity }: { entity: Entity }) {
                     <button className={btnClassName('btn-outline-primary')} onClick={onDel}>删除</button>
                 </div>
             }
+            {nav.showView()}
             <div className="border-info rounded flex-grow-1">
                 <div ref={refContainerEditorArea} className="container_editor_area w-100">
                     <Editor className="container__editor"

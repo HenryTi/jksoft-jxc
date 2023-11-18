@@ -122,12 +122,12 @@ export class Biz {
             }
         }
         this.all.splice(0);
-        let $biz = bizSchema;
+        let { biz } = bizSchema;
         let arr: { [entity in EnumEntity]?: [Entity, any][]; } = {};
         this.entities = {};
         this.ids = {};
-        for (let i in $biz) {
-            let schema = ($biz as any)[i];
+        for (let schema of biz) {
+            // let schema = ($biz as any)[i];
             let { id, name, phrase, type, caption } = schema;
             let enumType = EnumEntity[type] as unknown as EnumEntity;
             let builder = builders[enumType];

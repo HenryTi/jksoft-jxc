@@ -25,6 +25,8 @@ export class Entity extends BizBase {
     readonly props: BizBud[] = [];
     budGroups: BudGroups;
 
+    getSubClasses(): Entity[] { return undefined; }
+
     protected override fromSwitch(i: string, val: any) {
         if (val === undefined) {
             return;
@@ -171,6 +173,8 @@ export class Entity extends BizBase {
     }
 
     private scanBudGroup(group: BudGroup) {
-        group.buds = (group.buds as any[]).map(v => this.budColl[v]);
+        group.buds = (group.buds as any[]).map(v => {
+            return typeof (v) === 'number' ? this.budColl[v] : v;
+        });
     }
 }

@@ -151,6 +151,7 @@ const predefined = [
 export class EntityPend extends Entity {
     predefined: { [name: string]: BizBud };
     params: BizBud[];
+    private cols: BizBud[];
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -161,6 +162,18 @@ export class EntityPend extends Entity {
                 this.predefined = val; break;
             case 'params':
                 this.params = val; break;
+            case 'cols':
+                this.cols = val; break;
+        }
+    }
+
+    scan(): void {
+        super.scan();
+        if (this.cols !== undefined) {
+            for (let bud of this.cols) {
+                if (bud === undefined) continue;
+                this.budColl[bud.id] = bud;
+            }
         }
     }
 }

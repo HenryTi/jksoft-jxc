@@ -22,16 +22,16 @@ export class AtomsBuilder {
         entitySelf.initBudGroups(budGroups);
     }
 
-    initExtends(entity: Entity, extendsId: number) {
+    initSuperClass(entity: Entity, extendsId: number) {
         let self = this.self(entity);
-        return self._extends = this.biz.entityFromId(extendsId) as EntityAtomID;
+        return self.superClass = this.biz.entityFromId(extendsId) as EntityAtomID;
     }
 
     getAncestorSelfs(entity: EntityAtomID) {
         const ancestors: EntitySelf[] = [];
         for (let p = this.self(entity); p !== undefined;) {
             ancestors.unshift(p);
-            p = this.self(p._extends);
+            p = this.self(p.superClass);
         }
         return ancestors;
     }
@@ -49,7 +49,7 @@ export class AtomsBuilder {
 
     buildRootAtoms() {
         for (let atom of this.biz.atoms) {
-            let { _extends } = this.self(atom);
+            let { superClass: _extends } = this.self(atom);
             if (_extends !== undefined) continue;
             this.biz.atomRoots.push(atom);
         }
@@ -58,7 +58,7 @@ export class AtomsBuilder {
 
 export class EntitySelf {
     readonly entity: Entity;
-    _extends: EntityAtomID;
+    superClass: EntityAtomID;
     buds: BizBud[];
     groups: BudGroups;
     readonly groupColl: { [name: string]: BudGroup }; // name is the BudGroup name in Entity

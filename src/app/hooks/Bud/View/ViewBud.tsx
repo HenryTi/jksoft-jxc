@@ -1,11 +1,10 @@
 import { BizBud, BudRadio, EnumBudType } from "app/Biz";
-import { ViewAtomId } from "app/hooks";
 import { contentFromDays } from "app/tool";
 import { IDView } from "tonwa-app";
 
 export function ViewBud({ bud, value }: { bud: BizBud; value: any; }) {
     if (bud === undefined) return <>{value}</>;
-    switch (bud.budDataType.type) {
+    switch (bud.budDataType?.type) {
         default:
         case EnumBudType.dec:
         case EnumBudType.none:
