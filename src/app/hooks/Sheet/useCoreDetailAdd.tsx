@@ -6,8 +6,8 @@ import { PickResult, RowStore, useBinPicks } from "./binPick";
 
 export function useCoreDetailAdd(coreDetail: CoreDetail) {
     const { openModal } = useModal();
-    const { entityBin } = coreDetail;
-    const pick = useBinPicks(entityBin);
+    const { entityBin, sheetStore } = coreDetail;
+    const pick = useBinPicks(entityBin, sheetStore.main.binRow);
     async function addNewDirect() {
         let ret = await pick();
         if (ret === undefined) return;

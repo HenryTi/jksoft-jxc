@@ -10,7 +10,7 @@ import { BI } from "app/coms";
 export function ViewUomList() {
     const { biz } = useUqApp();
     let bizUom = biz.entities[EnumAtom.Uom];
-    let budType = bizUom.buds['type'];
+    let budType = bizUom.budColl['type'];
     let budItems = budType.budDataType as BudRadio;
     function ViewBaseUnit({ value }: { value: any[] }) {
         const [name, caption, enm] = value;

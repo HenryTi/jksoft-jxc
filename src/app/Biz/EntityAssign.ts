@@ -26,7 +26,7 @@ export class EntityAssign extends Entity {
         this.titles = (this.titles as unknown as [string, string][]).map(
             ([t0, t1]) => {
                 let bizEntity = this.biz.entities[t0];
-                return bizEntity.buds[t1];
+                return bizEntity.budColl[t1];
             }
         );
     }

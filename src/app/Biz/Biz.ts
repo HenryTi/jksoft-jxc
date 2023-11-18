@@ -6,7 +6,7 @@ import { EntityTree } from './EntityTree';
 import { EntityBin, EntityPend, EntitySheet } from './EntitySheet';
 import { EntityTitle } from './EntityTitle';
 import { EntityTie } from './EntityTie';
-import { EntityPermit, EntityRole } from './EntityPermit';
+import { EntityRole } from './EntityPermit';
 import { EntityOptions } from './EntityOptions';
 import { from62, getAtomValue, setAtomValue } from 'tonwa-com';
 import { atom } from 'jotai';
@@ -14,6 +14,7 @@ import { EntityReport } from './EntityReport';
 import { EntityQuery } from './EntityQuery';
 import { EntityAssign } from './EntityAssign';
 import { BizBud } from './BizBud';
+import { AtomsBuilder } from './AtomsBuilder';
 
 enum EnumEntity {
     sheet,
@@ -25,7 +26,6 @@ enum EnumEntity {
     pick,
     options,
     report,
-    // permit,
     permit,
     title,
     assign,
@@ -63,13 +63,13 @@ export class Biz {
     readonly assigns: EntityAssign[] = [];
 
     readonly roles: EntityRole[] = [];
-    // readonly permits: EntityPermit[] = [];
 
     readonly all: Group[] = [];
     readonly _refresh = atom(false);
 
     entities: { [name: string]: Entity } = {};
     private ids: { [id: number]: Entity | BizBud } = {};
+    atomBuilder: AtomsBuilder;
 
     constructor(uqApp: UqApp, bizSchema: any) {
         this.uqApp = uqApp;
@@ -97,6 +97,7 @@ export class Biz {
 
     buildEntities(bizSchema: any) {
         if (bizSchema === undefined) return;
+        this.atomBuilder = new AtomsBuilder(this);
         const builders: { [type in EnumEntity]: (id: number, name: string, type: string) => Entity } = {
             [EnumEntity.sheet]: this.buildSheet,
             [EnumEntity.bin]: this.buildBin,
@@ -175,7 +176,7 @@ export class Biz {
                 bizEntity.scan();
             }
         }
-        this.buildRootAtoms();
+        this.atomBuilder.buildRootAtoms();
         this.all.push(
             {
                 name: 'sheet',
@@ -250,6 +251,8 @@ export class Biz {
                 });
             }
         }
+
+        this.atomBuilder = undefined;
         this.refresh();
     }
 
@@ -277,18 +280,6 @@ export class Biz {
             }
         }
         this.refresh();
-    }
-
-    private buildRootAtoms() {
-        for (let i in this.ids) {
-            const entity = this.ids[i];
-            if (entity.type === 'atom') {
-                const entityAtom = entity as EntityAtom;
-                const { _extends } = entityAtom;
-                if (_extends !== undefined) continue;
-                this.atomRoots.push(entityAtom);
-            }
-        }
     }
 
     private buildSheet = (id: number, name: string, type: string): Entity => {
@@ -334,13 +325,6 @@ export class Biz {
         this.options.push(bizEntity);
         return bizEntity;
     }
-    /*
-    private buildPermit = (id: number, name: string, type: string): Entity => {
-        let bizEntity = new EntityPermit(this, id, name, type);
-        this.permits.push(bizEntity);
-        return bizEntity;
-    }
-    */
     private buildRole = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityRole(this, id, name, type);
         this.roles.push(bizEntity);

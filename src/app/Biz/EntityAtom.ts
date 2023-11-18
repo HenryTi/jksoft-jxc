@@ -1,8 +1,9 @@
+import { EntitySelf } from "./AtomsBuilder";
 import { BizBud } from "./BizBud";
-import { Entity } from "./Entity";
+import { BudGroup, Entity } from "./Entity";
 
 export abstract class EntityAtomID extends Entity {
-    _extends: EntityAtomID;
+    // _extends: EntityAtomID;
     readonly children: EntityAtomID[] = [];
 
     protected override fromSwitch(i: string, val: any) {
@@ -12,38 +13,61 @@ export abstract class EntityAtomID extends Entity {
         }
     }
 
-    protected override buildBuds() {
-        const ancestors: EntityAtomID[] = [];
-        for (let p: EntityAtomID = this; p !== undefined; p = p._extends) {
-            ancestors.unshift(p);
+    protected override buildBudsGroups() {
+        const ancestorSelfs = this.biz.atomBuilder.getAncestorSelfs(this);
+        const ancestorSelfs0 = ancestorSelfs[0];
+        // const { buds, groups } = ancestorSelfs0;
+        this.buildBudsGroupsFromSelf(ancestorSelfs0);
+
+        let len = ancestorSelfs.length;
+        for (let i = 1; i < len; i++) {
+            let p = ancestorSelfs[i];
+            const { buds } = p;
+            this.props.push(...buds);
+            this.mergeBudGroups(p);
         }
-        let { buds, props } = this;
-        for (let p of ancestors) {
-            for (let bud of p.selfProps) {
-                let { id, name, phrase } = bud;
-                buds[name] = bud;
-                buds[phrase] = bud;
-                buds[id] = bud;
-                props.push(bud);
+    }
+
+    private mergeBudGroups(entitySelf: EntitySelf) {
+        const { groups, groupColl } = entitySelf;
+        if (groups === undefined) return;
+        if (this.budGroups === undefined) {
+            this.budGroups = this.cloneBudGroups(groups);
+        }
+        const { home, must, arr } = this.budGroups;
+        this.mergeBudGroup(home, groups.home);
+        this.mergeBudGroup(must, groups.must);
+        for (let g of arr) {
+            const { groupName } = g;
+            let group = groupColl[groupName];
+            if (group === undefined) {
+                group = this.cloneBudGroup(g);
+                groupColl[groupName] = group;
+                arr.push(group);
+            }
+            else {
+                this.mergeBudGroup(group, g);
             }
         }
     }
 
-    protected fromExtends(extendsName: any) {
-        if (extendsName === undefined) return;
-        let _extends = this._extends = this.biz.entities[extendsName] as EntityAtomID;
+    private mergeBudGroup(to: BudGroup, from: BudGroup) {
+        to.buds.push(...from.buds);
+    }
+
+    protected fromExtends(extendsId: number) {
+        if (extendsId === undefined) return;
+        let _extends = this.biz.atomBuilder.initExtends(this, extendsId);
         if (_extends === undefined) debugger;
         _extends.children.push(this);
     }
 }
 
 export class EntityAtom extends EntityAtomID {
-    // uom: boolean;
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
-            // case 'uom': this.uom = val; break;
         }
     }
 }

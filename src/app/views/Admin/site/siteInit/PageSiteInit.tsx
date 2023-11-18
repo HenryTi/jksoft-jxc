@@ -64,7 +64,7 @@ export function PageSiteInit() {
         let result = await uq.GetSiteSetting.query({});
         const { buds } = readBuds(undefined, result as any);
         const siteSetting = biz.entities['sitesetting'] as EntityTitle;
-        const { buds: bizBuds, props } = siteSetting;
+        const { budColl: bizBuds, props } = siteSetting;
 
         let ret: InitValue[] = props.map(v => { // }) initBuds.map(v => {
             const { id, name } = v;

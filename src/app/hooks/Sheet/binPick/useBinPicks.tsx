@@ -5,6 +5,7 @@ import { usePickFromAtom } from "./fromAtom";
 import { usePickFromSpec } from "./fromSpec";
 import { usePickFromPend } from "./fromPend";
 import { usePickFromQuery } from "./fromQuery";
+import { BinRow } from "../SheetStore";
 
 export type PickResult = { [prop: string]: any };
 export interface NamedResults {
@@ -18,7 +19,7 @@ export enum PickResultType {
     multiple,
 }
 
-export function useBinPicks(bin: EntityBin) {
+export function useBinPicks(bin: EntityBin, sheetBinRow?: BinRow) {
     const { picks: binPicks } = bin;
     const pickFromAtom = usePickFromAtom();
     const pickFromSpec = usePickFromSpec();
@@ -28,7 +29,9 @@ export function useBinPicks(bin: EntityBin) {
     // if no detailSection add new, else edit
     return useCallback(async function pick(pickResultType: PickResultType = PickResultType.multiple) {
         if (binPicks === undefined) return;
-        let namedResults: NamedResults = {};
+        let namedResults: NamedResults = {
+            '%sheet': sheetBinRow ?? {},
+        };
         let pickResult: PickResult | (PickResult[]);
         let lastBinPick: BinPick;
         for (const binPick of binPicks) {

@@ -26,10 +26,10 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
     const { coreDetail: detail } = section;
     const { entityBin } = detail;
     const { x } = entityBin;
-    const edit = useCoreDetailEdit(detail);
+    const editSection = useCoreDetailEdit(detail);
     const rows = useAtomValue(section._rows);
     async function onClick() {
-        let ret = await edit(section, undefined);
+        let ret = await editSection(section, undefined);
     }
 
     let content: any;
@@ -62,11 +62,10 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 }
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
-    const { biz } = useUqApp();
     const { openModal } = useModal();
     const { props: binDetail, section: { coreDetail: { entityBin } } } = row;
-    const { i: budI, x: budX, price: budPrice, value: budValue, amount: budAmount } = entityBin;
-    let { i, x, value, price, amount, buds, owned } = binDetail
+    const { i: budI, x: budX, price: budPrice, amount: budAmount } = entityBin;
+    let { i, x, value, price, amount } = binDetail
     async function onEdit() {
         if (editable === false) return;
         const rowStore = new RowStore(entityBin);

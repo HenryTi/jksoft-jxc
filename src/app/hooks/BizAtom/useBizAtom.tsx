@@ -71,7 +71,7 @@ export async function getAtomWithProps(biz: Biz, uq: UqExt, id: number): Promise
     let { phrase: phraseId } = main;
     let entity = biz.entityFromId(phraseId);
     function setBud(bud: number, value: BudValue) {
-        let bizBud = entity.buds[bud];
+        let bizBud = entity.budColl[bud];
         (ret as any)[bizBud.name] = value;
     }
     for (let i in buds) setBud(Number(i), buds[i]);

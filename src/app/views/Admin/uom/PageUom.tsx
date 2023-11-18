@@ -27,7 +27,7 @@ function PageView() {
     const { uq, biz } = useUqApp();
     const { openModal } = useModal();
     const uom = biz.entities[options.atomName];
-    const { caption, buds } = uom;
+    const { caption, budColl: buds } = uom;
     const { budDataType } = buds['type'];
     const { id: idParam } = useParams();
     const id = Number(idParam);

@@ -24,11 +24,11 @@ export class EntityQuery extends Entity {
             if (entity === undefined) {
                 continue;
             }
-            let bud = entity.buds[bId];
+            let bud = entity.budColl[bId];
             if (bud === undefined) {
                 continue;
             }
-            this.buds[bud.id] = bud;
+            this.budColl[bud.id] = bud;
         }
     }
 }

@@ -27,6 +27,7 @@ export interface EditBudProps {
     id: number;
     value: BudValue;
     bizBud: BizBud;
+    plus?: boolean;             // 重要的字段
     readonly?: boolean;
     options?: RegisterOptions;
     onChanged?: (bizBud: BizBud, value: string | number) => Promise<void> | void;
@@ -41,6 +42,7 @@ export interface EditProps {
     children: React.ReactNode;
     onEditClick: () => void;
     readonly?: boolean;
+    plus?: boolean;             // 重要的，label上做标识
 }
 
 export type ViewValueEdit = (props: EditProps) => JSX.Element;

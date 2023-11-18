@@ -76,7 +76,7 @@ export class EntityReport extends Entity {
 
     scan() {
         for (let t of this.title) {
-            t.bud = t.entity.buds[t.bud as any];
+            t.bud = t.entity.budColl[t.bud as any];
         }
     }
 }

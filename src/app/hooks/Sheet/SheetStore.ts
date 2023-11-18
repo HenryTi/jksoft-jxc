@@ -150,7 +150,6 @@ export class CoreDetail extends DetailBase {
         main: SheetMain;
         rows: Row[];
     }
-    pending: Row[];
 
     addRowValues(rowValues: any[]) {
         const sections = getAtomValue(this._sections);

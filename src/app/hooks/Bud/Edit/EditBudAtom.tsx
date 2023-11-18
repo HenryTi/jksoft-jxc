@@ -6,7 +6,7 @@ import { useState } from "react";
 
 export function EditBudAtom(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
-    const { id, readonly, value: initValue, bizBud, ViewValueEdit: ValueEdit } = props;
+    const { id, readonly, plus, value: initValue, bizBud, ViewValueEdit: ValueEdit } = props;
     const [value, setValue] = useState<number>(initValue as number);
     const { caption, name, budDataType } = bizBud;
     const { bizAtom } = budDataType as BudAtom;
@@ -27,6 +27,7 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     }
     return <ValueEdit label={label}
         readonly={readonly}
+        plus={plus}
         onEditClick={onEditClick}
     >
         <ViewAtomId id={value} />

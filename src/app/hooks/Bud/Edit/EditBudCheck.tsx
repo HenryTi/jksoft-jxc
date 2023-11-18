@@ -8,7 +8,7 @@ import { useState } from "react";
 export function EditBudCheck(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
     const modal = useModal();
-    const { id, readonly, value: initValue, bizBud, ViewValueEdit: ValueEdit } = props;
+    const { id, readonly, plus, value: initValue, bizBud, ViewValueEdit: ValueEdit } = props;
     const { budDataType, caption, name, ui } = bizBud;
     const { options: { items } } = budDataType as BudCheck;
     const initCheckValue: BudCheckEditValue = {};
@@ -96,6 +96,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
 
     return <ValueEdit label={caption ?? name}
         readonly={readonly}
+        plus={plus}
         onEditClick={onEditClick}
     >
         {content}

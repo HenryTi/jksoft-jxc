@@ -1,10 +1,29 @@
 import { BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
+import { Biz } from "./Biz";
+import { EntitySelf } from "./AtomsBuilder";
+
+export class BudGroup extends BizBase {
+    groupName: string;      // not phrase, only name part
+    buds: BizBud[] = [];
+    constructor(biz: Biz, id: number, name: string, type: string) {
+        super(biz, id, name, type);
+        let p = name.indexOf('.');
+        if (p < 0) this.groupName = name
+        else this.groupName = name.substring(p + 1);
+    }
+}
+export interface BudGroups {
+    home: BudGroup;
+    must: BudGroup;
+    arr: BudGroup[];
+}
 
 export class Entity extends BizBase {
-    readonly selfProps: BizBud[] = [];       // 本 Atom 定义的
-    readonly buds: { [key: string | number]: BizBud; } = {};           // 包括全部继承来的
+    // readonly selfProps: BizBud[] = [];       // 本 Atom 定义的
+    readonly budColl: { [key: string | number]: BizBud; } = {};           // 包括全部继承来的
     readonly props: BizBud[] = [];
+    budGroups: BudGroups;
 
     protected override fromSwitch(i: string, val: any) {
         if (val === undefined) {
@@ -17,7 +36,31 @@ export class Entity extends BizBase {
         }
     }
 
-    protected fromGroups(groups: any) {
+    protected fromGroups(groups: any[]) {
+        let budGroups: BudGroups = {
+            home: new BudGroup(this.biz, 0, '-', undefined),
+            must: new BudGroup(this.biz, 0, '+', undefined),
+            arr: [],
+        } as any;
+        for (let g of groups) {
+            const { id, name, buds } = g;
+            let group: BudGroup;
+            switch (g.name) {
+                case '-':
+                    group = budGroups.home = new BudGroup(this.biz, id, name, undefined);
+                    break;
+                case '+':
+                    group = budGroups.must = new BudGroup(this.biz, id, name, undefined);
+                    break;
+                default:
+                    group = new BudGroup(this.biz, id, name, undefined);
+                    budGroups.arr.push(group);
+                    break;
+            }
+            group.buds = buds;
+        }
+
+        this.biz.atomBuilder.initBudGroups(this, budGroups);
     }
 
     protected fromProp(prop: any) {
@@ -34,32 +77,100 @@ export class Entity extends BizBase {
     }
 
     protected fromProps(props: any[]) {
+        let buds: BizBud[] = [];
         for (let prop of props) {
             let bizBud = this.fromProp(prop);
             if (bizBud === undefined) continue;
-            this.selfProps.push(bizBud);
+            buds.push(bizBud);
+        }
+        this.biz.atomBuilder.initBuds(this, buds);
+    }
+
+    protected buildBudsGroups(/*buds: BizBud[], groups: BudGroups*/) {
+        let entitySelf = this.biz.atomBuilder.self(this);
+        this.buildBudsGroupsFromSelf(entitySelf);
+        /*
+        let { buds, groups } = entitySelf;
+        if (buds === undefined) {
+            return;
+        }
+        this.props.push(...buds);
+        this.budGroups = this.cloneBudGroups(groups);
+        for (let bud of buds) {
+            bud.scan();
+            this.budColl[bud.id] = bud;
+        }
+        // this.buildBudsGroups(entitySelf);
+        */
+    }
+
+    protected buildBudsGroupsFromSelf(entitySelf: EntitySelf) {
+        let { buds, groups } = entitySelf;
+        if (buds === undefined) {
+            return;
+        }
+        this.props.push(...buds);
+        this.budGroups = this.cloneBudGroups(groups);
+        for (let bud of buds) {
+            bud.scan();
+            this.budColl[bud.id] = bud;
         }
     }
 
-    protected buildBuds() {
-        for (let bud of this.selfProps) {
-            let { id, name, phrase } = bud;
-            this.buds[id] = bud;
-            this.buds[name] = bud;
-            this.buds[phrase] = bud;
-            this.props.push(bud);
+    cloneBudGroups(groups: BudGroups) {
+        if (groups === undefined) return undefined;
+        let { home: privateHome, must: privateMust, arr: privateArr } = groups;
+        let home = this.cloneBudGroup(privateHome);
+        let must = this.cloneBudGroup(privateMust);
+        let arr = [];
+        for (let g of privateArr) {
+            arr.push(this.cloneBudGroup(g));
+        }
+        return {
+            home, must, arr,
         }
     }
-    /*
-    protected fromPickable(prop: any): Pickable {
-        return prop;
+
+    protected cloneBudGroup(group: BudGroup) {
+        if (group === undefined) debugger;
+        const { id, name, type, buds } = group;
+        let ret: BudGroup = new BudGroup(this.biz, id, name, type);
+        // clone other attribute
+        if (buds !== undefined) {
+            ret.buds.push(...buds);
+        }
+        return ret;
     }
-    */
 
     scan() {
-        for (let bud of this.selfProps) {
-            bud.scan();
+        this.buildBudsGroups();
+        this.scanBudGroups();
+        /*
+        let entitySelf = this.biz.atomBuilder.self(this);
+        let { buds } = entitySelf;
+        if (buds === undefined) {
+            return;
         }
-        this.buildBuds();
+        else {
+            for (let bud of buds) {
+                bud.scan();
+                this.budColl[bud.id] = bud;
+            }
+            this.buildBudsGroups(entitySelf);
+            this.scanBudGroups();
+        }
+        */
+    }
+
+    private scanBudGroups() {
+        if (this.budGroups === undefined) return;
+        const { home, must, arr } = this.budGroups;
+        this.scanBudGroup(home);
+        this.scanBudGroup(must);
+        for (let group of arr) this.scanBudGroup(group);
+    }
+
+    private scanBudGroup(group: BudGroup) {
+        group.buds = (group.buds as any[]).map(v => this.budColl[v]);
     }
 }
