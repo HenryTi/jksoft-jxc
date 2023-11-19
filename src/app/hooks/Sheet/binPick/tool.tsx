@@ -45,6 +45,57 @@ export function pickedFromJsonArr(entity: Entity, propArr: Prop[], picked: Picke
     }
 }
 
+export function arrFromJsonArr(entity: Entity, arr: any[]) {
+    let propArr: Prop[] = [];
+    const { biz } = entity;
+    for (let v of arr) {
+        let { length } = v;
+        let v0 = v[0];
+        let v1 = v[1];
+        let name: string, bud: BizBud, value: any;
+        switch (length) {
+            default: debugger; continue;
+            case 2:
+                if (typeof (v0) === 'string') {
+                    switch (v0) {
+                        case 'no': continue;
+                        case 'ex': continue;
+                    }
+                    name = v0;
+                    value = v1
+                }
+                else {
+                    bud = entity.budColl[v0];
+                    name = bud.name;
+                    value = v1;
+                }
+                break;
+            case 3:
+                let bizEntity = biz.entityFromId(v0);
+                bud = bizEntity.budColl[v1];
+                name = bud.name;
+                value = v[2];
+                break;
+        }
+        let prop: Prop = { name, bud, value };
+        propArr.push(prop);
+    }
+    return propArr;
+}
+
+// table pend
+export function arrFromJsonMid(entity: Entity, mid: any) {
+    let ret: Prop[] = [];
+    const { budColl } = entity;
+    for (let i in mid) {
+        let bud = budColl[i];
+        let value = mid[i];
+        if (value === null) continue;
+        ret.push({ name: bud.name, bud, value });
+    }
+    return ret;
+}
+
 export function VNamedBud({ name, value, bud }: { name: string; value: any; bud: BizBud; }) {
     let caption: string;
     if (bud === undefined) caption = name;

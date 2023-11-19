@@ -1,17 +1,16 @@
-import { BinPick, EntityPend, PickParam, PickPend } from "app/Biz";
+import { BinPick, EntityPend, PickPend } from "app/Biz";
 import { useCallback } from "react";
 import { Page, useModal } from "tonwa-app";
 import { NamedResults } from "./useBinPicks";
 import { BinDetail } from "../SheetStore";
 import { useUqApp } from "app/UqApp";
 import { ViewSpec } from "app/hooks/View";
-import { UseQueryOptions } from "app/tool";
 import { useState } from "react";
 import { List } from "tonwa-com";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { PendRow } from "../SheetStore";
 import { usePageParams } from "./PageParams";
-import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "./tool";
+import { Prop, VNamedBud, arrFromJsonArr, arrFromJsonMid } from "./tool";
 
 export function usePickFromPend() {
     const { uq } = useUqApp();
@@ -47,13 +46,15 @@ export function usePickFromPend() {
             for (let v of $page) {
                 let { pendValue, mid, cols } = v;
                 if (pendValue === undefined || pendValue <= 0) continue;
+                let propArr: Prop[] = arrFromJsonArr(entityPend, cols);
+                let midArr = arrFromJsonMid(entityPend, mid);
                 let pendRow: PendRow = {
                     pend: v.pend,
                     sheet: { ...collSheet[v.sheet], buds: {}, owned: undefined },
                     detail: { ...v, buds: {}, owned: undefined },
                     value: pendValue,
-                    mid,
-                    cols,
+                    mid: midArr,
+                    cols: propArr,
                 };
                 pendRows.push(pendRow);
             }
@@ -99,16 +100,13 @@ interface ModalInputPendProps {
     caption: string;
     entity: EntityPend;
     search: string[];
-    // namedResults: NamedResults;
-    // pickParams: PickParam[];
     pendRows: PendRow[];
 }
 
 function ModalInputPend({ caption, entity: entityPend, search, pendRows }: ModalInputPendProps) {
     const uqApp = useUqApp();
-    const { uq } = uqApp;
     const modal = useModal();
-    let { name: pendName, id: entityId, predefined, params } = entityPend;
+    let { name: pendName } = entityPend;
     let [selectedItems, setSelectedItems] = useState<{ [id: number]: PendRow; }>({});
 
     if (caption === undefined) {
@@ -144,11 +142,15 @@ function ModalInputPend({ caption, entity: entityPend, search, pendRows }: Modal
         </div>;
     }
     const digits = 2;
+    function ViewPropArr({ className, arr }: { className?: string; arr: Prop[]; }) {
+        return <div className={className}>
+            {arr.map((v, index) => {
+                return <VNamedBud key={index} {...v} />;
+            })}
+        </div>;
+    }
     function ViewPendRow({ value: pendRow }: { value: PendRow }) {
         const { detail: { i, price, amount }, value, mid, cols } = pendRow;
-        let propArr: Prop[] = [];
-        let picked: Picked = {};
-        pickedFromJsonArr(entityPend, propArr, picked, cols);
         return <div className="container">
             <div className="row">
                 <div className="col-3">
@@ -156,14 +158,8 @@ function ModalInputPend({ caption, entity: entityPend, search, pendRows }: Modal
                         <ViewSpec id={i} />
                     </div>
                 </div>
-                <div className="col-3 text-break">
-                    {JSON.stringify(mid)}
-                </div>
-                <div className="col-3 text-break">
-                    {propArr.map((v, index) => {
-                        return <VNamedBud key={index} {...v} />;
-                    })}
-                </div>
+                <ViewPropArr className="col-3" arr={mid} />
+                <ViewPropArr className="col-3" arr={cols} />
                 <div className="col-3">
                     <div className="py-2 d-flex flex-column align-items-end">
                         <ViewValue caption={'单价'} value={price?.toFixed(digits)} />
@@ -173,7 +169,6 @@ function ModalInputPend({ caption, entity: entityPend, search, pendRows }: Modal
                 </div >
             </div>
         </div>;
-        // <div className="col py-2 text-break">{JSON.stringify(pendRow)}</div>
     }
     function onItemSelect(item: PendRow, isSelected: boolean) {
         const { pend } = item;
@@ -186,24 +181,26 @@ function ModalInputPend({ caption, entity: entityPend, search, pendRows }: Modal
         setSelectedItems({ ...selectedItems });
     }
     return <Page header={caption}>
-        <div className="p-3 border-bottom">
-            <div className="d-flex">
-                <div className="me-3">pend: {pendName}</div>
-                <div className="me-3">search: {JSON.stringify(search)}</div>
-                {
-                    Object.values(predefined).map(v => {
-                        const { name, caption, entity } = v;
-                        return <div key={name} className="me-3">
-                            {name}: {caption}
-                        </div>;
-                    })
-                }
-            </div>
-            <div>{Object.keys(selectedItems).map(v => v).join(', ')}</div>
-        </div>
         <List items={pendRows} ViewItem={ViewPendRow} className="" onItemSelect={onItemSelect} />
         <div className="p-3">
             <button className="btn btn-primary" onClick={onClick}>选入</button>
         </div>
-    </Page>
+    </Page>;
+    /*
+        <div className="p-3 border-bottom">
+        <div className="d-flex">
+            <div className="me-3">pend: {pendName}</div>
+            <div className="me-3">search: {JSON.stringify(search)}</div>
+            {
+                Object.values(predefined).map(v => {
+                    const { name, caption, entity } = v;
+                    return <div key={name} className="me-3">
+                        {name}: {caption}
+                    </div>;
+                })
+            }
+        </div>
+        <div>{Object.keys(selectedItems).map(v => v).join(', ')}</div>
+    </div>
+    */
 }
