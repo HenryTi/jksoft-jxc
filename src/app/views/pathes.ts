@@ -70,6 +70,6 @@ export const centers = {
     },
     compile: {
         path: "compile",
-        caption: '业务设计',
+        caption: '业务',
     },
 }

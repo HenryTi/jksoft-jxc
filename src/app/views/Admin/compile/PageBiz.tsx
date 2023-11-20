@@ -1,6 +1,6 @@
 import React, { MouseEvent, useRef, useState } from "react";
 import { Route } from "react-router-dom";
-import { Page, useModal } from "tonwa-app";
+import { IDView, Page, useModal } from "tonwa-app";
 import { PageUpload } from './PageUpload';
 import { useUqApp } from "app/UqApp";
 import { Entity } from "app/Biz";
@@ -8,11 +8,11 @@ import { PageEntity } from "./PageEntity";
 import { FA } from "tonwa-com";
 import { useAtomValue } from "jotai";
 import { centers } from "app/views/pathes";
+import { ViewSite } from "app/views/Site";
 
 function PageBiz() {
-    const { right, view } = useBuildViewBiz();
-    const { compile } = centers;
-    return <Page header={compile.caption} right={right}>
+    const { header, right, view } = useBuildViewBiz();
+    return <Page header={header} right={right}>
         {view}
     </Page>;
 }
@@ -22,41 +22,13 @@ export function useBuildViewBiz() {
     const { biz } = uqApp;
     const { openModal } = useModal();
     const refresh = useAtomValue(biz._refresh);
-    // let { current: filesContent } = useRef('');
+    const { compile } = centers;
+    const { uq, uqSites } = uqApp;
+    let { userSite } = uqSites;
 
     function onInputCode() {
         openModal(<PageUpload />);
-        //fileInput.current.click();
     }
-    /*
-    const fileInput = useRef<HTMLInputElement>();
-    function onUploaded(content: string) {
-        filesContent += content;
-    }
-    async function onFilesChange(evt: React.ChangeEvent<HTMLInputElement>) {
-        filesContent = '';
-        let { files } = evt.target;
-        if (files === null) return;
-        for (let file of files) {
-            await load(file);
-        }
-        openModal(<PageUpload content={filesContent} />);
-        fileInput.current.value = '';
-    }
-    async function load(file: File) {
-        return new Promise<void>((resolve) => {
-            // textAreaRef.current.textContent = '';
-            let fr = new FileReader();
-            fr.readAsText(file);
-            fr.onloadend = async function (evt: ProgressEvent<FileReader>) {
-                resolve();
-                //setText(evt.target.result as string);
-                // textAreaRef.current.textContent = evt.target.result as string;
-                onUploaded(evt.target.result as string);
-            }
-        });
-    }
-    */
     function ViewEntityItem({ value, icon }: { value: Entity; icon: string; }) {
         const { id, caption, name } = value;
         function onEntity() {
@@ -95,6 +67,10 @@ export function useBuildViewBiz() {
         </div>;
     }
     return {
+        header: <>
+            {compile.caption} -
+            <IDView uq={uq} id={userSite.site} Template={ViewSite} />
+        </>,
         right: <button className="btn btn-primary btn-sm me-1" onClick={onInputCode}>上传业务</button>,
         view: <div className="">
             <div className="tonwa-bg-gray-1">
