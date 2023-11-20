@@ -10,29 +10,35 @@ import { useAtomValue } from "jotai";
 import { centers } from "app/views/pathes";
 
 function PageBiz() {
-    const { right, view } = buildViewBiz();
+    const { right, view } = useBuildViewBiz();
     const { compile } = centers;
     return <Page header={compile.caption} right={right}>
         {view}
     </Page>;
 }
 
-export function buildViewBiz() {
+export function useBuildViewBiz() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
     const { openModal } = useModal();
     const refresh = useAtomValue(biz._refresh);
+    let { current: filesContent } = useRef('');
 
     const fileInput = useRef<HTMLInputElement>();
     function onUploaded(content: string) {
-        openModal(<PageUpload content={content} />);
+        filesContent += content;
     }
     function onSelectFiles() {
         fileInput.current.click();
     }
     async function onFilesChange(evt: React.ChangeEvent<HTMLInputElement>) {
+        filesContent = '';
         let { files } = evt.target;
-        await load(files[0]);
+        if (files === null) return;
+        for (let file of files) {
+            await load(file);
+        }
+        openModal(<PageUpload content={filesContent} />);
         fileInput.current.value = '';
     }
     async function load(file: File) {
@@ -127,7 +133,7 @@ export function buildViewBiz() {
                 <input ref={fileInput}
                     type="file"
                     className="w-100 form-control-file d-none"
-                    name="files" multiple={false}
+                    name="files" multiple={true}
                     onChange={onFilesChange} />
             </div>
         </div>,

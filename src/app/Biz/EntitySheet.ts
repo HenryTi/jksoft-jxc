@@ -199,13 +199,7 @@ export class EntityPend extends Entity {
         }
     }
 }
-/*
-export interface DetailAct {
-    actName: string;
-    detail: EntityBin;
-    fromPend: EntityPend;
-}
-*/
+
 export class EntitySheet extends Entity {
     main: EntityBin;
     coreDetail: EntityBin;
@@ -221,15 +215,11 @@ export class EntitySheet extends Entity {
         return ret;
     }
 
-    // to be removed
-    // readonly detailActs: DetailAct[] = [];
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'main': this.fromMain(val); break;
             case 'details': this.fromDetails(val); break;
-            // case 'states': this.fromStates(val); break;
-            // case 'acts': this.fromActs(val); break;
         }
     }
 
@@ -246,26 +236,4 @@ export class EntitySheet extends Entity {
         }
         this.coreDetail = this.details[0]?.bin;
     }
-    /*
-    protected fromActs(acts: any[]) {
-        for (const act of acts) {
-            const { name, fromPend, detail } = act;
-            this.detailActs.push({
-                actName: name,
-                detail: this.biz.entities[detail] as EntityBin,
-                fromPend: this.biz.entities[fromPend] as EntityPend,
-            });
-        }
-    }
-    */
-    /*
-    getAct(detailName: string, actName: string): DetailAct {
-        for (let act of this.detailActs) {
-            let { actName: nAct, detail } = act;
-            if (nAct === actName && detail.name === detailName) {
-                return act;
-            }
-        }
-    }
-    */
 }

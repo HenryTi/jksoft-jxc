@@ -1,7 +1,6 @@
 PERMIT A菜单 {
 };
 
-
 PERMIT 销售1 {
 }
 
@@ -24,3 +23,5 @@ PERMIT 入库 {
 PERMIT 检验 {
     Permit 入库;
 };
+
+

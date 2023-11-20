@@ -36,16 +36,17 @@ QUERY 采购员查询供应商 '采购员查询供应商' (
 }
 
 QUERY 查询货品 '查询货品' (
+    供应商 ATOM,
     searchKey '关键字' CHAR,
-    maxRetailPrice '最大零售价' DEC := 11,
+    --maxRetailPrice '最大零售价' DEC := 11,
 ) {
-    FROM 货品信息|医疗器械|药品信息  
-        COLUMN (
-            ID ASC,  
-            BAN '零售价过高' = (#价格.零售价(%id))>ifnull(maxRetailPrice, 10000000000),
+    FROM 货品信息|医疗器械|药品信息  OF 供应商货品关联 ON 供应商
+        COLUMN ( 
+            ID ASC,
+            --BAN '零售价过高' = (#价格.零售价(%id))>ifnull(maxRetailPrice, 10000000000),
             price '零售价' = (#价格.零售价(%id)),
             wholesale '批发价' = (#价格.批发价(%id)),
-            %通用名,
+            %通用名, 
             %规格,
             %生产厂商,
             %计量单位,
@@ -56,11 +57,11 @@ QUERY 查询货品 '查询货品' (
             %no,--编号
             %ex,--名称
         )
-        WHERE SEARCH(%no, %ex LIKE searchKey)
+        WHERE SEARCH(%no, %ex LIKE searchKey) 
     ;
 }
 
-QUERY 库存查询 '库存查询' (
+QUERY 查询库存 '查询库存' (
     searchKey '关键字' CHAR,
     c, d, e, 
 ) {
@@ -81,35 +82,6 @@ QUERY 库存查询 '库存查询' (
     ;
 }
 
-QUERY 客商查询 '客商查询' (
-    searchKey '关键字' CHAR,
-) {
-    FROM 客商信息 
-        COLUMN (
-            ID ASC,  
-            cola = 1,
-            %联系人,
-            %资信度,
-            %no,--编号
-            %ex,--名称 
-        )
-        WHERE SEARCH(%no, %ex LIKE searchKey)
-    ;
-}
-
-QUERY 查询公司机构 '查询公司机构' (
-    searchKey '关键字' CHAR,
-) {
-    FROM 职员信息
-        COLUMN (
-            ID ASC, 
-            %ex,
-            %no,
-        )
-        WHERE SEARCH(%no, %ex LIKE searchKey)
-    ;
-}
-
 QUERY 查询物流中心 '查询物流中心' (
     searchKey '关键字' CHAR,
 ) {
@@ -122,5 +94,22 @@ QUERY 查询物流中心 '查询物流中心' (
         WHERE SEARCH(%no, %ex LIKE searchKey)
     ;
 }
+
+QUERY 查询客商 '查询客商' (
+    searchKey '关键字' CHAR,
+) {
+    FROM 客户信息 
+        COLUMN (
+            ID ASC,  
+            cola = 1,
+            %联系人,
+            %资信度,
+            %no,--编号
+            %ex,--名称 
+        )
+        WHERE SEARCH(%no, %ex LIKE searchKey)
+    ;
+}
+
 
 

@@ -24,7 +24,9 @@ export abstract class EntityAtomID extends Entity {
         for (let i = 1; i < len; i++) {
             let p = ancestorSelfs[i];
             const { buds } = p;
-            this.props.push(...buds);
+            if (buds !== undefined) {
+                this.props.push(...buds);
+            }
             this.mergeBudGroups(p);
         }
     }
@@ -34,7 +36,14 @@ export abstract class EntityAtomID extends Entity {
         if (groups === undefined) {
             if (this.budGroups !== undefined) {
                 const { home } = this.budGroups;
-                home.buds.push(...entitySelf.buds);
+                if (home === undefined) debugger;
+                const { buds } = home;
+                if (buds !== undefined) {
+                    let { buds: selfBuds } = entitySelf;
+                    if (selfBuds !== undefined) {
+                        buds.push(...selfBuds);
+                    }
+                }
             }
             return;
         }
