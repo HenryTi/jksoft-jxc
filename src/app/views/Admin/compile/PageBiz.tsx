@@ -22,14 +22,16 @@ export function useBuildViewBiz() {
     const { biz } = uqApp;
     const { openModal } = useModal();
     const refresh = useAtomValue(biz._refresh);
-    let { current: filesContent } = useRef('');
+    // let { current: filesContent } = useRef('');
 
+    function onInputCode() {
+        openModal(<PageUpload />);
+        //fileInput.current.click();
+    }
+    /*
     const fileInput = useRef<HTMLInputElement>();
     function onUploaded(content: string) {
         filesContent += content;
-    }
-    function onSelectFiles() {
-        fileInput.current.click();
     }
     async function onFilesChange(evt: React.ChangeEvent<HTMLInputElement>) {
         filesContent = '';
@@ -54,7 +56,7 @@ export function useBuildViewBiz() {
             }
         });
     }
-
+    */
     function ViewEntityItem({ value, icon }: { value: Entity; icon: string; }) {
         const { id, caption, name } = value;
         function onEntity() {
@@ -93,7 +95,7 @@ export function useBuildViewBiz() {
         </div>;
     }
     return {
-        right: <button className="btn btn-primary btn-sm me-1" onClick={onSelectFiles}>上传业务</button>,
+        right: <button className="btn btn-primary btn-sm me-1" onClick={onInputCode}>上传业务</button>,
         view: <div className="">
             <div className="tonwa-bg-gray-1">
                 {
@@ -128,13 +130,6 @@ export function useBuildViewBiz() {
                         </div>;
                     })
                 }
-            </div>
-            <div>
-                <input ref={fileInput}
-                    type="file"
-                    className="w-100 form-control-file d-none"
-                    name="files" multiple={true}
-                    onChange={onFilesChange} />
             </div>
         </div>,
     };

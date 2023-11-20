@@ -63,3 +63,10 @@ style={{ border: 'none', outline: 'none', fontFamily: 'monospace', resize: 'none
                         fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
                     }} />
 */
+
+export const editorStyle: React.CSSProperties = {
+    fontSize: 18,
+    border: 'none', outline: 'none',
+    overflowY: "visible",
+    fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+};

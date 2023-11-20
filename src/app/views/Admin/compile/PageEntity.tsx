@@ -10,7 +10,7 @@ import { ButtonAsync, FA, Spinner, getAtomValue, setAtomValue, useEffectOnce } f
 import { Grammar, highlight } from "prismjs";
 import './code-editor-style.css'
 import Editor from 'react-simple-code-editor';
-import { uqGrammar } from './grammar';
+import { editorStyle, uqGrammar } from './grammar';
 import { FormRow, FormRowsView, Band } from 'app/coms';
 import { atom, useAtomValue } from 'jotai';
 
@@ -226,12 +226,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
             </pre>
         </Page>);
     }
-    let style: React.CSSProperties = {
-        fontSize: 18,
-        border: 'none', outline: 'none',
-        overflowY: "visible",
-        fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-    };
+    let style: React.CSSProperties = { ...editorStyle };
     if (deleted === true) {
         style.textDecoration = 'line-through';
         style.color = 'lightgray';
