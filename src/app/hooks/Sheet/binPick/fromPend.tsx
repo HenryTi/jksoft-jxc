@@ -1,6 +1,6 @@
 import { BinPick, EntityPend, PickPend } from "app/Biz";
 import { useCallback } from "react";
-import { Page, useModal } from "tonwa-app";
+import { BudValue, Page, useModal } from "tonwa-app";
 import { NamedResults } from "./useBinPicks";
 import { BinDetail } from "../SheetStore";
 import { useUqApp } from "app/UqApp";
@@ -11,6 +11,7 @@ import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { PendRow } from "../SheetStore";
 import { usePageParams } from "./PageParams";
 import { Prop, VNamedBud, arrFromJsonArr, arrFromJsonMid } from "./tool";
+import { OwnedBuds, budValuesFromProps } from "app/hooks/tool";
 
 export function usePickFromPend() {
     const { uq } = useUqApp();
@@ -37,7 +38,8 @@ export function usePickFromPend() {
             else {
                 retParam = {};
             }
-            let { $page, retSheet, retAtom } = await uq.GetPend.page({ pend: entityPend.id, params: retParam }, undefined, 100);
+            let { $page, retSheet, props: showBuds } = await uq.GetPend.page({ pend: entityPend.id, params: retParam }, undefined, 100);
+            const { ownerColl, budColl } = budValuesFromProps(showBuds);
             let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
             for (let v of retSheet) {
                 collSheet[v.id] = v;
@@ -64,6 +66,7 @@ export function usePickFromPend() {
                 entity: pickBase.from,
                 search: [],
                 pendRows,
+                ownerColl,
             };
 
             let inputed = await modal.open<BinDetail[]>(<ModalInputPend {...props} />);
@@ -101,12 +104,17 @@ interface ModalInputPendProps {
     entity: EntityPend;
     search: string[];
     pendRows: PendRow[];
+    ownerColl: {
+        [row: number]: {
+            [owner: number]: [number, BudValue][];
+        };
+    }
 }
 
-function ModalInputPend({ caption, entity: entityPend, search, pendRows }: ModalInputPendProps) {
+function ModalInputPend({ caption, entity: entityPend, search, pendRows, ownerColl }: ModalInputPendProps) {
     const uqApp = useUqApp();
     const modal = useModal();
-    let { name: pendName } = entityPend;
+    let { name: pendName, i: iBud } = entityPend;
     let [selectedItems, setSelectedItems] = useState<{ [id: number]: PendRow; }>({});
 
     if (caption === undefined) {
@@ -150,12 +158,13 @@ function ModalInputPend({ caption, entity: entityPend, search, pendRows }: Modal
         </div>;
     }
     function ViewPendRow({ value: pendRow }: { value: PendRow }) {
-        const { detail: { i, price, amount }, value, mid, cols } = pendRow;
+        const { detail: { id, i, price, amount }, value, mid, cols } = pendRow;
         return <div className="container">
             <div className="row">
                 <div className="col-3">
                     <div className="py-2">
                         <ViewSpec id={i} />
+                        <OwnedBuds values={ownerColl[id][iBud.id]} />
                     </div>
                 </div>
                 <ViewPropArr className="col-3" arr={mid} />

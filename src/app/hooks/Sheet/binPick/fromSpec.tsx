@@ -1,5 +1,5 @@
 import { BinPick, PickSpec } from "app/Biz";
-import { usePickSpec } from "app/hooks/BizPick/userPickSpec";
+import { usePickSpec } from "app/hooks/BizPick";
 import { ViewAtom } from "app/hooks/BizAtom";
 import { Atom } from "uqs/UqDefault";
 import { useCallback } from "react";

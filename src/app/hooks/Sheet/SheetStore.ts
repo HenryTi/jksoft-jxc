@@ -10,6 +10,7 @@ import { from62, getAtomValue, setAtomValue } from "tonwa-com";
 import { PickResultType, ReturnUseBinPicks } from "./binPick/useBinPicks";
 import { Calc, Formulas } from "app/hooks/Calc";
 import { BudCheckValue, BudValue } from "tonwa-app";
+import { budValuesFromProps } from "../tool";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -405,6 +406,8 @@ export class SheetStore extends KeyIdObject {
     // whole sheet or row detail
     private async loadBinData(binId: number) {
         let { main, details, props } = await this.uq.GetSheet.query({ id: binId });
+        const { budColl, ownerColl } = budValuesFromProps(props);
+        /*
         const budColl: { [row: number]: { [bud: number]: BudValue } } = {};
         const ownerColl: { [row: number]: { [owner: number]: [number, BudValue][] } } = {};
         for (let { id, phrase, value, owner } of props) {
@@ -438,7 +441,7 @@ export class SheetStore extends KeyIdObject {
             }
             owned.push([phrase, budColl[id][phrase]]);
         }
-
+        */
         let mainRow = main[0];
         (mainRow as any).buds = budColl[binId] ?? {};
         (mainRow as any).owned = ownerColl[binId] ?? {};

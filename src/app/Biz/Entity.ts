@@ -25,6 +25,10 @@ export class Entity extends BizBase {
     readonly props: BizBud[] = [];
     budGroups: BudGroups;
 
+    // subClasses 有3种不同情况:
+    // 1. Atom 里面 extends 的sub
+    // 2. Sheet 里面，包含的 main 和 details
+    // 3. Bin 里面的 Pend
     getSubClasses(): Entity[] { return undefined; }
 
     protected override fromSwitch(i: string, val: any) {

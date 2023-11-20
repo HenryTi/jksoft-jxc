@@ -5,7 +5,7 @@ import { FA, from62, to62 } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { useCallback, useState } from "react";
 import { ReturnGetTies$page } from "uqs/UqDefault";
-import { usePickAtom } from "../BizPick/usePickAtom";
+import { usePickAtom } from "../BizPick";
 
 function tieInPath(phrase: number | string) {
     if (typeof phrase === 'string') {

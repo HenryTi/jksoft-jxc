@@ -10,6 +10,7 @@ import { BizBud } from "app/Biz";
 import { RowStore } from "./binPick";
 import { useUqApp } from "app/UqApp";
 import { ViewBud } from "app/hooks";
+import { OwnedBuds } from "../tool";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -111,14 +112,14 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         cnI = ' col-4 ';
         colX = <div className="col-4">
             <ViewIdField bud={budX} value={x} />
-            <OwnedBuds bizBud={budX} binDetail={binDetail} />
+            <BinOwnedBuds bizBud={budX} binDetail={binDetail} />
         </div>;
     }
 
     return <div className="py-2 align-items-stretch row">
         <div className={cnI}>
             <ViewIdField bud={budI} value={i} />
-            <OwnedBuds bizBud={budI} binDetail={binDetail} />
+            <BinOwnedBuds bizBud={budI} binDetail={binDetail} />
         </div>
         {colX}
         <div className="col-4 d-flex flex-column align-items-end justify-content-end">
@@ -132,22 +133,11 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     </div>;
 }
 
-export function OwnedBuds({ bizBud, binDetail }: { bizBud: BizBud, binDetail: BinDetail; }) {
-    const { biz } = useUqApp();
+// atom field owns buds
+export function BinOwnedBuds({ bizBud, binDetail }: { bizBud: BizBud, binDetail: BinDetail; }) {
     let { owned } = binDetail;
     if (owned === undefined) return null;
     if (bizBud === undefined) return null;
     let values = owned[bizBud.id];
-    if (values === undefined) return null;
-    return <div className="d-flex flex-wrap my-1">{
-        values.map(value => {
-            let [budId, budValue] = value;
-            let bizBud = biz.budFromId(budId);
-            let { caption, name } = bizBud;
-            return <div className="d-flex w-min-12c align-items-center" key={budId}>
-                <div className="w-min-4c me-3 small text-secondary">{caption ?? name}</div>
-                <ViewBud bud={bizBud} value={budValue} />
-            </div>;
-        })}
-    </div>;
+    return <OwnedBuds values={values} />;
 }

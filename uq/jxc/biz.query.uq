@@ -24,9 +24,11 @@ RETURNS retSheet (
     price VALUE,
     amount VALUE,
 )
-RETURNS retAtom (
-    atom ID,
+RETURNS props (
+    id ID,
+    phrase ID,
     value JSON,
+    owner ID,           -- show 字段的主字段。其它字段为0
 ) {
     VAR procName CHAR(200) = CONCAT($site, '.', pend, 'gp');
     IF routine_exists('$site', procName) {
@@ -51,16 +53,6 @@ RETURNS retAtom (
         FROM (SELECT DISTINCT a.sheet as id FROM $page as a) as s
             JOIN Sheet as b ON b.id=s.id
             JOIN Bin as c ON c.id=b.id;
-
-    FOR (VAR i ID, x ID
-        OF SELECT n.i, n.x FROM(
-            SELECT a.i, a.x
-                FROM $page as a 
-                UNION SELECT b.i, b.x FROM retSheet as b
-        ) as n)
-    {
-
-    }
 }
 
 Biz Query GetPendsNotify()

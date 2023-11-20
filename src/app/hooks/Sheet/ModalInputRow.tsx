@@ -7,7 +7,7 @@ import { Row } from "./SheetStore";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { RowStore } from "./binPick";
-import { OwnedBuds } from "./ViewDetail";
+import { BinOwnedBuds } from "./ViewDetail";
 
 export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore; }) {
     const { closeModal } = useModal();
@@ -67,7 +67,7 @@ export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore;
         return <Band label={caption ?? name} className="border-bottom py-2">
             <div className="px-3">
                 <ViewSpec id={value} />
-                <OwnedBuds bizBud={bud} binDetail={binDetail} />
+                <BinOwnedBuds bizBud={bud} binDetail={binDetail} />
             </div>
         </Band>;
     }

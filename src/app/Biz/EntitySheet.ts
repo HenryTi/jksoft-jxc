@@ -13,18 +13,23 @@ export interface PickParam {
 
 export abstract class PickBase {
     bizPhraseType: BizPhraseType;
+    abstract getSubClasses(): Entity[];
 }
 export class PickQuery extends PickBase {
     query: EntityQuery;
+    getSubClasses(): Entity[] { return [this.query]; }
 }
 export class PickAtom extends PickBase {
     from: EntityAtom[];
+    getSubClasses(): Entity[] { return; }
 }
 export class PickSpec extends PickBase {
     from: EntitySpec;
+    getSubClasses(): Entity[] { return; }
 }
 export class PickPend extends PickBase {
     from: EntityPend;
+    getSubClasses(): Entity[] { return [this.from]; }
 }
 
 export class BinPick extends BizBud {
@@ -41,10 +46,21 @@ export class EntityBin extends Entity {
     picks: BinPick[];
     i: BizBud;
     x: BizBud;
-    pend: EntityPend; // PropPend;
+    pend: EntityPend;
     value: BizBud;
     price: BizBud;
     amount: BizBud;
+
+    getSubClasses(): Entity[] {
+        let ret: Entity[] = [];
+        for (let pick of this.picks) {
+            let subs = pick.pick.getSubClasses();
+            if (subs !== undefined) {
+                ret.push(...subs);
+            }
+        }
+        return ret;
+    }
 
     protected override fromSwitch(i: string, val: any) {
         if (val === undefined) {
@@ -150,6 +166,8 @@ const predefined = [
 
 export class EntityPend extends Entity {
     predefined: { [name: string]: BizBud };
+    i: BizBud;
+    x: BizBud;
     params: BizBud[];
     private cols: BizBud[];
 
@@ -164,6 +182,10 @@ export class EntityPend extends Entity {
                 this.params = val; break;
             case 'cols':
                 this.cols = val; break;
+            case 'i':
+                this.i = val; break;
+            case 'x':
+                this.x = val; break;
         }
     }
 
@@ -177,13 +199,13 @@ export class EntityPend extends Entity {
         }
     }
 }
-
+/*
 export interface DetailAct {
     actName: string;
     detail: EntityBin;
     fromPend: EntityPend;
 }
-
+*/
 export class EntitySheet extends Entity {
     main: EntityBin;
     coreDetail: EntityBin;
@@ -191,15 +213,23 @@ export class EntitySheet extends Entity {
         bin: EntityBin;
         caption: string;
     }[] = [];
+
+    getSubClasses(): Entity[] {
+        let ret: Entity[] = [];
+        if (this.main !== undefined) ret.push(this.main);
+        ret.push(...this.details.map(v => v.bin));
+        return ret;
+    }
+
     // to be removed
-    readonly detailActs: DetailAct[] = [];
+    // readonly detailActs: DetailAct[] = [];
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'main': this.fromMain(val); break;
             case 'details': this.fromDetails(val); break;
             // case 'states': this.fromStates(val); break;
-            case 'acts': this.fromActs(val); break;
+            // case 'acts': this.fromActs(val); break;
         }
     }
 
@@ -216,7 +246,7 @@ export class EntitySheet extends Entity {
         }
         this.coreDetail = this.details[0]?.bin;
     }
-
+    /*
     protected fromActs(acts: any[]) {
         for (const act of acts) {
             const { name, fromPend, detail } = act;
@@ -227,7 +257,8 @@ export class EntitySheet extends Entity {
             });
         }
     }
-
+    */
+    /*
     getAct(detailName: string, actName: string): DetailAct {
         for (let act of this.detailActs) {
             let { actName: nAct, detail } = act;
@@ -236,4 +267,5 @@ export class EntitySheet extends Entity {
             }
         }
     }
+    */
 }

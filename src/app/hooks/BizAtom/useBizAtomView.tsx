@@ -68,7 +68,7 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
     else {
         const { home, must, arr } = budGroups;
         const vAtomId = String(entityAtom.id);
-        vPropRows = <Tabs className="my-3" id={vAtomId} defaultActiveKey={'+'}>
+        vPropRows = <Tabs className="mt-3 ps-3 border-bottom border-primary-subtle" id={vAtomId} defaultActiveKey={'+'}>
             <Tab eventKey={'+'} title={<FA name="star-o" className="text-danger" />}>
                 {buildVPropRows(must.buds, true)}
                 {buildVPropRows(home.buds)}
