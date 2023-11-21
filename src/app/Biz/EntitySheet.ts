@@ -38,7 +38,7 @@ export class PickInput extends PickBase {
 
 export class BinPick extends BizBud {
     readonly bin: EntityBin;
-    params: PickParam[];
+    pickParams: PickParam[];
     pick: PickBase;
     constructor(biz: Biz, id: number, name: string, bin: EntityBin) {
         super(biz, id, name, EnumBudType.pick, bin);
@@ -111,7 +111,7 @@ export class EntityBin extends Entity {
     private buildPick(v: any): BinPick {
         const { id, name, from, caption, params } = v;
         let ret = new BinPick(this.biz, id, name, this);
-        ret.params = params;
+        ret.pickParams = params;
         ret.ui = { caption };
         let arr = (from as string[]).map(v => this.biz.entities[v]);
         let entity = arr[0];

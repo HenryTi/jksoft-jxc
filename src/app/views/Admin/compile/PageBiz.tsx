@@ -1,7 +1,7 @@
 import React, { MouseEvent, useRef, useState } from "react";
 import { Route } from "react-router-dom";
 import { IDView, Page, useModal } from "tonwa-app";
-import { PageUpload } from './PageUpload';
+import { PageCode } from './PageCode';
 import { useUqApp } from "app/UqApp";
 import { Entity } from "app/Biz";
 import { PageEntity } from "./PageEntity";
@@ -26,8 +26,8 @@ export function useBuildViewBiz() {
     const { uq, uqSites } = uqApp;
     let { userSite } = uqSites;
 
-    function onInputCode() {
-        openModal(<PageUpload />);
+    function onCode() {
+        openModal(<PageCode />);
     }
     function ViewEntityItem({ value, icon }: { value: Entity; icon: string; }) {
         const { id, caption, name } = value;
@@ -71,40 +71,50 @@ export function useBuildViewBiz() {
             {compile.caption} -
             <IDView uq={uq} id={userSite.site} Template={ViewSite} />
         </>,
-        right: <button className="btn btn-primary btn-sm me-1" onClick={onInputCode}>上传业务</button>,
+        right: <button className="btn btn-primary btn-sm me-1" onClick={onCode}>
+            <FA name="bars" />
+        </button>,
         view: <div className="">
             <div className="tonwa-bg-gray-1">
                 {
-                    biz.all.map((group, index) => {
-                        let { name, caption: groupCaption, entities } = group;
-                        async function onDownload(evt: MouseEvent<HTMLAnchorElement>) {
-                            evt.preventDefault();
-                            const { uqMan } = uqApp;
-                            let { uqApi } = uqMan;
-                            await uqApi.source(name);
-                        }
-                        return <div key={index} className="mb-4">
-                            <div className="bg-info-subtle bg-gradient px-3 pb-2 pt-2 small d-flex">
-                                <b className="flex-grow-1">{groupCaption}</b>
-                                <a className="" href="#" onClick={onDownload}>下载代码</a>
-                            </div>
-                            {
-                                entities.map((v, index) => {
-                                    let [arr, caption, icon] = v;
-                                    if (caption === undefined) return null;
-                                    if (arr.length === 0) return null;
-                                    let top: any;
-                                    if (entities.length > 1) {
-                                        top = <div className="px-3 pt-1 pb-1 border-bottom small">{caption}</div>;
-                                    }
-                                    return <div key={index} className="">
-                                        {top}
-                                        <ViewEntitys entitys={arr} icon={icon} />
-                                    </div>
-                                })
+                    biz.hasEntity === false ?
+                        <div className="small text-secondary p-3">
+                            <FA name="hand-paper-o" className="me-3 text-info" />暂无代码
+                        </div>
+                        :
+                        biz.all.map((group, index) => {
+                            let { name, caption: groupCaption, entities, hasEntity } = group;
+                            async function onDownload(evt: MouseEvent<HTMLAnchorElement>) {
+                                evt.preventDefault();
+                                const { uqMan } = uqApp;
+                                let { uqApi } = uqMan;
+                                await uqApi.source(name);
                             }
-                        </div>;
-                    })
+                            return <div key={index} className="mb-4">
+                                {
+                                    hasEntity === true &&
+                                    <div className="tonwa-bg-gray-2 px-3 pb-2 pt-2 small d-flex">
+                                        <b className="flex-grow-1">{groupCaption}</b>
+                                        <a className="" href="#" onClick={onDownload}><FA name="download" /></a>
+                                    </div>
+                                }
+                                {
+                                    entities.map((v, index) => {
+                                        let [arr, caption, icon] = v;
+                                        if (caption === undefined) return null;
+                                        if (arr.length === 0) return null;
+                                        let top: any;
+                                        if (entities.length > 1) {
+                                            top = <div className="px-3 pt-1 pb-1 border-bottom small">{caption}</div>;
+                                        }
+                                        return <div key={index} className="">
+                                            {top}
+                                            <ViewEntitys entitys={arr} icon={icon} />
+                                        </div>
+                                    })
+                                }
+                            </div>;
+                        })
                 }
             </div>
         </div>,

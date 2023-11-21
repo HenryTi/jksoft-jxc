@@ -16,7 +16,7 @@ export function PageTabsLayout({ tabs }: PageTabsLayoutProps) {
     let vTabs = <div className="d-flex container">
         {tabs.map(v => {
             const { to, caption, icon } = v;
-            return <NavLink key={caption} to={to} className={tabClassName} replace={true}>
+            return <NavLink key={caption} to={to} className={tabClassName} replace={true} >
                 <FA name={icon} /> <br />
                 {caption}
             </NavLink>;

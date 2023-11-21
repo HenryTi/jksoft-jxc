@@ -6,8 +6,9 @@ import { ButtonAsync, FA } from "tonwa-com";
 import Editor from 'react-simple-code-editor';
 import { Grammar, highlight } from 'prismjs';
 import { editorStyle, uqGrammar } from './grammar';
+import { PageAdmin } from './PageAdmin';
 
-export function PageUpload() {
+export function PageCode() {
     const uqApp = useUqApp();
     const { openModal, closeModal } = useModal();
     const [code, setCode] = useState('');
@@ -99,12 +100,16 @@ export function PageUpload() {
         // openModal(<PageUpload content={filesContent} />);
         fileInput.current.value = '';
     }
+    function onAdmin() {
+        openModal(<PageAdmin />);
+    }
 
-    return <Page header={'业务代码'}>
+    return <Page header={'代码'}>
         <div className="px-3 py-1 tonwa-bg-gray-2 d-flex">
             <ButtonAsync className="btn btn-primary me-3" onClick={onComplie}>提交</ButtonAsync>
             <div className="flex-grow-1" />
             <button className="btn btn-outline-primary" onClick={onLoadFile}>载入文件</button>
+            <button className="btn btn-outline-primary ms-2" onClick={onAdmin}>管理</button>
         </div>
         <div className="border-info rounded flex-grow-1">
             <div className="container_editor_area w-100">

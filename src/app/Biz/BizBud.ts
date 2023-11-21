@@ -149,6 +149,7 @@ export class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budDataType: BudDataType;
     defaultValue: string;
+    atomParams: { [param: string]: string }; // only for BizBudAtom
     constructor(biz: Biz, id: number, name: string, dataType: EnumBudType, entity: Entity) {
         super(biz, id, name, 'bud');
         this.entity = entity;
@@ -188,6 +189,7 @@ export class BizBud extends BizBase {
                 super.fromSwitch(i, val);
                 break;
             case 'value': this.defaultValue = val; break;
+            case 'params': this.atomParams = val; break;
             case 'show':
             case 'ex':
             case 'items':

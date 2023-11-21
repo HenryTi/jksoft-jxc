@@ -51,17 +51,9 @@ export function ViewsRoutes() {
         homeLayout = <PageNoSite />;
     }
     else {
-        const home = { to: '/' + pathHome, caption: '首页', icon: 'home' };
+        // home: to '/' show active
+        const home = { to: '/', caption: '首页', icon: 'home' };
         const me = { to: '/' + pathMe, caption: '我的', icon: 'user' };
-        // const designBiz = { to: '/bizTab', caption: '业务', icon: 'user' };
-        // const { isAdmin } = userSite;
-        //let isAdmin = true;
-        /*
-        let tabs = isAdmin === true ?
-            [home, designBiz, me]
-            :
-            [home, me];
-        */
         homeLayout = <PageTabsLayout tabs={[home, me]} />;
     }
 
@@ -70,9 +62,9 @@ export function ViewsRoutes() {
             <Route index element={<TabHome />} />
             <Route path={pathHome + '/*'} element={<TabHome />} />
             <Route path={'bizTab' + '/*'} element={<TabCode />} />
-            <Route path={'biz' + '/*'} element={<PageCode />} />
             <Route path={pathMe + '/*'} element={<TabMe />} />
         </Route>
+        <Route path={'biz' + '/*'} element={<PageCode />} />
         {routeMe}
         {routeApp()}
         {routeAdmin(uqApp)}

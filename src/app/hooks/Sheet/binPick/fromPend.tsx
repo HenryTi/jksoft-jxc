@@ -19,7 +19,7 @@ export function usePickFromPend() {
     const pickParam = usePageParams();
     return useCallback(
         async function pickFromPend(namedResults: NamedResults, binPick: BinPick): Promise<any> {
-            let { name, caption, pick, params: pickParams } = binPick;
+            let { name, caption, pick, pickParams } = binPick;
             let pickBase = pick as PickPend;
             let entityPend = pickBase.from;
             const { params: queryParams } = entityPend;

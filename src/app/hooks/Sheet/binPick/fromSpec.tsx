@@ -8,10 +8,10 @@ import { NamedResults } from "./useBinPicks";
 export function usePickFromSpec() {
     const returnUsePickSpec = usePickSpec();
     return useCallback(async function pickFromSpec(namedResults: NamedResults, binPick: BinPick): Promise<any> {
-        let { params, pick } = binPick;
+        let { pickParams, pick } = binPick;
         let pickBase = pick as PickSpec;
         let { from } = pickBase;
-        let retAtom = namedResults[params[0]?.bud] as Atom;
+        let retAtom = namedResults[pickParams[0]?.bud] as Atom;
         const viewTop = <div>
             <ViewAtom value={retAtom} />
         </div>;

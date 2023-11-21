@@ -14,7 +14,7 @@ export function usePickFromQuery() {
     const modal = useModal();
     const pickParam = usePageParams();
     return useCallback(async function pickFromQuery(namedResults: NamedResults, binPick: BinPick, pickResultType: PickResultType): Promise<any> {
-        let { name, caption, pick, params: pickParams } = binPick;
+        let { name, caption, pick, pickParams } = binPick;
         let pickBase = pick as PickQuery;
         let { query } = pickBase;
         const header = caption ?? query.caption ?? name;

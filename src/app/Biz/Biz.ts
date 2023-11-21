@@ -37,6 +37,7 @@ interface Group {
     name: string;
     caption: string;
     entities: [Entity[], string?, string?, string?][];
+    hasEntity?: boolean;
     icon?: string;
     iconColor?: string;
 }
@@ -67,6 +68,7 @@ export class Biz {
     readonly all: Group[] = [];
     readonly _refresh = atom(false);
 
+    hasEntity: boolean;
     entities: { [name: string]: Entity } = {};
     private ids: { [id: number]: Entity | BizBud } = {};
     atomBuilder: AtomsBuilder;
@@ -239,8 +241,10 @@ export class Biz {
                     ]
             }
         );
+        let allHasEntity = false;
         for (let group of this.all) {
             let { entities } = group;
+            let hasEntity = false;
             for (let entitiesRow of entities) {
                 let [arr] = entitiesRow;
                 arr.sort((a, b) => {
@@ -249,9 +253,14 @@ export class Biz {
                     if (aId < bId) return -1;
                     return aId === bId ? 0 : 1;
                 });
+                if (arr.length > 0) {
+                    hasEntity = true;
+                    allHasEntity = true;
+                }
             }
+            group.hasEntity = hasEntity;
         }
-
+        this.hasEntity = allHasEntity;
         this.atomBuilder = undefined;
         this.refresh();
     }

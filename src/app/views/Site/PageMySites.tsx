@@ -1,7 +1,7 @@
 import { useUqApp } from "app/UqApp";
-import { IDView, Page, useModal } from "tonwa-app";
+import { IDView, Page } from "tonwa-app";
 import { FA, LMR, Sep } from "tonwa-com";
-import { Permit, ViewSite, isPermitted } from ".";
+import { Permit } from ".";
 import { Link, useNavigate } from "react-router-dom";
 import React from "react";
 import { pathSiteAdmin } from "../Admin/site";
@@ -40,17 +40,20 @@ function ViewMySites() {
         color = '';
         iconColor = ' text-success ';
 
-        function ViewSite({ value }: { value: Atom; }) {
+        function ViewCurSite({ value }: { value: Atom; }) {
             let { no, ex } = value;
-            return <div>
-                <div className=""><b>{ex ?? '(无名机构)'}</b></div>
-                <div className="small text-secondary">{no}</div>
+            return <div className="d-flex align-items-end">
+                <b className="fs-larger me-3">{ex ?? '(无名机构)'}</b>
+                <div className="text-secondary">{no}</div>
             </div>;
         }
-        return <div className="px-5 py-3">
-            <div className="small text-secondary">当前机构</div>
-            <div className="my-2">
-                <IDView uq={uq} id={siteId} Template={ViewSite} />
+        return <div className="px-3 py-3 d-flex align-items-end">
+            <FA name="university" size="lg" className="text-primary me-3 mb-1" />
+            <div className="flex-grow-1">
+                <div className="small text-secondary">
+                    当前机构
+                </div>
+                <IDView uq={uq} id={siteId} Template={ViewCurSite} />
             </div>
             <Permit permit={[]}>
                 <Link to={`/${pathSiteAdmin}/${siteId}`}>
@@ -60,6 +63,14 @@ function ViewMySites() {
         </div>;
     }
 
+    function ViewSite({ value }: { value: Atom }) {
+        let { no, ex } = value;
+        return <div className="d-flex align-items-center">
+            <FA name="university" fixWidth={true} className={' me-3 text-info '} />
+            <span className="me-3">{ex ?? '(无名机构)'}</span>
+            <small className="text-secondary">{no}</small>
+        </div>;
+    }
     return <>
         <CurSite />
         <Sep />
@@ -70,23 +81,11 @@ function ViewMySites() {
                 navigate('../');
                 document.location.reload();
             }
-            let content = <LMR className={'p-3 align-items-center  tonwa-bg-gray-1  text-primary '} onClick={onSiteSelect}>
-                <FA name="building-o" fixWidth={true} className={' me-3 text-warning '} size="lg" />
+            let content = <LMR className={'p-3 align-items-center  tonwa-bg-gray-1 text-primary '} onClick={onSiteSelect}>
+                <FA name="hand-o-right" className="me-3 text-warning" />
                 <IDView uq={uq} id={siteId} Template={ViewSite} />
                 <div />
             </LMR>;
-            /*
-            <Permit permit={[]}>
-            <div>
-                管理 <i className="bi-chevron-right" />
-            </div>
-            </Permit>
-    if (isPermitted(uqApp, []) === true) {
-                content = <Link to={`/${pathSiteAdmin}/${siteId}`}>
-                    {content}
-                </Link>
-            }
-            */
             return <React.Fragment key={index}>
                 {content}
                 <Sep />
