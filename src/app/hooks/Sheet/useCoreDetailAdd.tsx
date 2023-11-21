@@ -1,11 +1,13 @@
 import { useCallback } from "react";
 import { useModal } from "tonwa-app";
 import { CoreDetail, Row, Section } from "./SheetStore";
-import { ModalInputRow } from "./ModalInputRow";
+//import { ModalInputRow } from "./ModalInputRow";
 import { PickResult, RowStore, useBinPicks } from "./binPick";
+import { usePickInput } from "./binPick/usePickInput";
 
 export function useCoreDetailAdd(coreDetail: CoreDetail) {
     const { openModal } = useModal();
+    const pickInput = usePickInput();
     const { entityBin, sheetStore } = coreDetail;
     const pick = useBinPicks(entityBin, sheetStore.main.binRow);
     async function addNewDirect() {
@@ -19,7 +21,6 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
                 return;
             }
             for (let rowProps of pickResult as PickResult[]) {
-                // rowProps = convertRowProps(rowProps);
                 let sec = new Section(coreDetail);
                 coreDetail.addSection(sec);
 
@@ -47,7 +48,8 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
             coreDetail.addSection(section);
             const rowStore = new RowStore(entityBin);
             rowStore.init(namedResults);
-            let ret = await openModal(<ModalInputRow row={row} rowStore={rowStore} />);
+            let ret = await pickInput(row, rowStore);
+            //let ret = await openModal(<ModalInputRow row={row} rowStore={rowStore} />);
             if (ret === true) {
                 Object.assign(row.props, rowStore.binDetail);
                 await row.addToSection();

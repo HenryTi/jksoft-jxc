@@ -23,7 +23,7 @@ enum EnumEntity {
     atom,
     spec,
     query,
-    pick,
+    // pick,
     options,
     report,
     permit,
@@ -105,7 +105,7 @@ export class Biz {
             [EnumEntity.atom]: this.buildAtom,
             [EnumEntity.spec]: this.buildSpec,
             [EnumEntity.query]: this.buildQuery,
-            [EnumEntity.pick]: this.buildPick,
+            //[EnumEntity.pick]: this.buildPick,
             [EnumEntity.options]: this.buildOptions,
             [EnumEntity.report]: this.buildReport,
             [EnumEntity.permit]: this.buildRole,
@@ -163,7 +163,7 @@ export class Biz {
             EnumEntity.sheet,
             EnumEntity.bin,
             EnumEntity.pend,
-            EnumEntity.pick,
+            // EnumEntity.pick,
             EnumEntity.query,
             EnumEntity.report,
             EnumEntity.tree,
@@ -315,11 +315,13 @@ export class Biz {
         this.queries.push(bizEntity);
         return bizEntity;
     }
+    /*
     private buildPick = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityPick(this, id, name, type);
         this.picks.push(bizEntity);
         return bizEntity;
     }
+    */
     private buildOptions = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityOptions(this, id, name, type);
         this.options.push(bizEntity);

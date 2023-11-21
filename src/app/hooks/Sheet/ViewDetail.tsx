@@ -3,14 +3,15 @@ import { BinDetail, CoreDetail, Row, Section } from "./SheetStore";
 import { FA, LMR, Sep } from "tonwa-com";
 import { ViewSpec } from "app/hooks/View";
 import { useModal } from "tonwa-app";
-import { ModalInputRow } from "./ModalInputRow";
+// import { ModalInputRow } from "./ModalInputRow";
 import React from "react";
 import { useCoreDetailEdit } from "./useCoreDetailEdit";
 import { BizBud } from "app/Biz";
 import { RowStore } from "./binPick";
-import { useUqApp } from "app/UqApp";
-import { ViewBud } from "app/hooks";
+// import { useUqApp } from "app/UqApp";
+// import { ViewBud } from "app/hooks";
 import { OwnedBuds } from "../tool";
+import { usePickInput } from "./binPick/usePickInput";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -64,6 +65,7 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const { openModal } = useModal();
+    const pickInput = usePickInput();
     const { props: binDetail, section: { coreDetail: { entityBin } } } = row;
     const { i: budI, x: budX, price: budPrice, amount: budAmount } = entityBin;
     let { i, x, value, price, amount } = binDetail
@@ -71,7 +73,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         if (editable === false) return;
         const rowStore = new RowStore(entityBin);
         rowStore.setValues(binDetail);
-        let ret = await openModal(<ModalInputRow row={row} rowStore={rowStore} />);
+        let ret = await pickInput(row, rowStore); // openModal(<ModalInputRow row={row} rowStore={rowStore} />);
         if (ret === true) {
             Object.assign(binDetail, rowStore.binDetail);
             await row.changed();

@@ -37,8 +37,9 @@ export function useBinPicks(bin: EntityBin, sheetBinRow?: BinRow) {
         for (const binPick of binPicks) {
             const { name, pick } = binPick;
             const { bizPhraseType } = pick;
+            if (bizPhraseType === undefined) break;
             switch (bizPhraseType) {
-                default: debugger;
+                default: break;
                 case BizPhraseType.atom:
                     pickResult = await pickFromAtom(namedResults, binPick);
                     break;

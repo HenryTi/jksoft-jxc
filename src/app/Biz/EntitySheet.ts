@@ -32,6 +32,10 @@ export class PickPend extends PickBase {
     getSubClasses(): Entity[] { return [this.from]; }
 }
 
+export class PickInput extends PickBase {
+    getSubClasses(): Entity[] { return; }
+}
+
 export class BinPick extends BizBud {
     readonly bin: EntityBin;
     params: PickParam[];
@@ -47,6 +51,7 @@ export class EntityBin extends Entity {
     i: BizBud;
     x: BizBud;
     pend: EntityPend;
+    input: PickInput;
     value: BizBud;
     price: BizBud;
     amount: BizBud;
@@ -110,6 +115,12 @@ export class EntityBin extends Entity {
         ret.ui = { caption };
         let arr = (from as string[]).map(v => this.biz.entities[v]);
         let entity = arr[0];
+        if (entity === undefined) {
+            let pickBase = buildPickInput();
+            ret.pick = pickBase;
+            this.input = pickBase;
+            return ret;
+        }
         let { bizPhraseType } = entity;
         let pickBase: PickBase;
         function buildPickAtom() {
@@ -132,8 +143,12 @@ export class EntityBin extends Entity {
             pick.from = entity as EntityPend;
             return pick;
         }
+        function buildPickInput() {
+            let pick = new PickInput();
+            return pick
+        }
         switch (bizPhraseType) {
-            default: debugger;
+            default: pickBase = buildPickInput(); break;
             case BizPhraseType.atom: pickBase = buildPickAtom(); break;
             case BizPhraseType.spec: pickBase = buildPickSpec(); break;
             case BizPhraseType.query: pickBase = buildPickQuery(); break;

@@ -3,12 +3,12 @@ import { Band, FormRowsView } from "app/coms";
 import { ViewSpec } from "app/hooks/View";
 import { Page, useModal } from "tonwa-app";
 import { ChangeEvent, useState } from "react";
-import { Row } from "./SheetStore";
+import { Row } from "../SheetStore";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
-import { RowStore } from "./binPick";
-import { BinOwnedBuds } from "./ViewDetail";
-/*
+import { RowStore } from "../binPick";
+import { BinOwnedBuds } from "../ViewDetail";
+
 export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore; }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onBlur' });
@@ -81,4 +81,3 @@ export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore;
         </form>
     </Page>;
 }
-*/
