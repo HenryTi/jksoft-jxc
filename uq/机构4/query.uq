@@ -6,6 +6,8 @@ QUERY 查询职员 '查询职员' (
             ID ASC,
             %ex,
             %no,
+            %手机号,
+            %所属公司,
         )
         WHERE SEARCH(%no, %ex LIKE searchKey) 
     ;
@@ -22,7 +24,6 @@ QUERY 采购员查询供应商 '采购员查询供应商' (
             ID ASC,   
             %ex,
             %no,
-            %客户类型,
             %经营许可证号,      
             %经营许可证号有效期至,
             %地址, 
@@ -34,16 +35,31 @@ QUERY 采购员查询供应商 '采购员查询供应商' (
         WHERE SEARCH(%ex, %no LIKE searchKey) -- AND %采购员=采购员
     ;
 }
-
+QUERY 查询客商 '查询客商' (
+    searchKey '关键字' CHAR,
+    销售员 ATOM, 
+) {
+    FROM 客商信息 OF 销售员客商关联 ON 销售员
+        COLUMN (
+            ID ASC,  
+            %联系人,
+            %经营范围,
+            %证照有效期至,
+            %no,--编号
+            %ex,--名称 
+        )
+        WHERE SEARCH(%no, %ex LIKE searchKey)
+    ;
+}
 QUERY 查询货品 '查询货品' (
     供应商 ATOM,
     searchKey '关键字' CHAR,
-    --maxRetailPrice '最大零售价' DEC := 11,
+    maxRetailPrice '最大零售价' DEC := 11,
 ) {
     FROM 货品信息|医疗器械|药品信息  OF 供应商货品关联 ON 供应商
         COLUMN ( 
             ID ASC,
-            --BAN '零售价过高' = (#价格.零售价(%id))>ifnull(maxRetailPrice, 10000000000),
+            BAN '零售价过高' = (#价格.零售价(%id))>ifnull(maxRetailPrice, 10000000000),
             price '零售价' = (#价格.零售价(%id)),
             wholesale '批发价' = (#价格.批发价(%id)),
             %通用名, 
@@ -61,24 +77,24 @@ QUERY 查询货品 '查询货品' (
     ;
 }
 
-QUERY 查询库存 '查询库存' (
+QUERY 查询库存 '查询库存'  (
     searchKey '关键字' CHAR,
-    c, d, e, 
 ) {
-    VAR v1 INT = c; 
-    VAR p2 CHAR(200) = e;
-    FROM 货品信息|药品信息 
+    FROM 货品信息|医疗器械 
         COLUMN (
             ID ASC,  
-            库存数量 = (#库存.数量(%id)),--查不出库存数量
-            采购数量 = (#采购.数量(%id)),
-            销售数量 = (#销售.数量(%id)),
             %no,
             %ex,
             %规格,
+            %计量单位,
+            %包装,
             %生产厂商, 
+            %批准文号, 
+            库存数量 = (#库存.数量(%id)),
+            销售数量 = (#销售.数量(%id)),
         )
-        WHERE SEARCH(%no, %ex LIKE searchKey)
+        WHERE SEARCH(%no, %ex LIKE searchKey
+        ) and (#库存.数量(%id))>0
     ;
 }
 
@@ -95,21 +111,7 @@ QUERY 查询物流中心 '查询物流中心' (
     ;
 }
 
-QUERY 查询客商 '查询客商' (
-    searchKey '关键字' CHAR,
-) {
-    FROM 客户信息 
-        COLUMN (
-            ID ASC,  
-            cola = 1,
-            %联系人,
-            %资信度,
-            %no,--编号
-            %ex,--名称 
-        )
-        WHERE SEARCH(%no, %ex LIKE searchKey)
-    ;
-}
+
 
 
 

@@ -1,4 +1,4 @@
-SHEET 采购单 'po' { 
+SHEET 采购单 { 
     Main 采购单主表; 
     Detail 采购单明细; 
 }
@@ -14,22 +14,22 @@ BIN 采购单主表 {
         收货物流中心 ATOM 物流中心信息; 
         签订日期  date=curdate();
         结算方式 <edit:pop> radio 结算方式;
-        账期 int;
+        --账期 int;
         备注 CHAR;
     };
 }
 
-BIN 采购单明细 ver 0.1 {    
+BIN 采购单明细 ver 0.2 {    
     Pick 货品  FROM 查询货品 {
         Param 供应商 = %sheet.i; 
     }  
-    I '商品Pick' 货品信息 = 货品 {    
+    I '商品Pick' 货品信息 {    
         : 规格; 
         : 计量单位;
         : 包装;  
-        : 批准文号;
+        --: 批准文号;
         : 生产厂商;  
-    }; 
+    } = 货品; 
     Value '数量' dec(2); 
     Price '单价' dec(2) = 货品.price;
     Amount '金额' dec(2) = Value * Price;  
@@ -38,7 +38,7 @@ BIN 采购单明细 ver 0.1 {
         规格 char : i.规格;
         计量单位: i.计量单位;  
         包装 char : i.包装; 
-        批准文号 char : i.批准文号;   
+        --批准文号 char : i.批准文号;   
         生产厂商: i.生产厂商; 
         */
         采购员备注 char required;  
@@ -94,15 +94,11 @@ PEND 待入库账 '待入库' {
         VAR a ID = 1;     
         FROM
             COLUMN ( 
-                a 'a试验字段' = 1,  
+ 
             )
-            WHERE 1=1
-            --and %sheet.采购机构=param1 
-            --and %sheet.收货物流中心=param2   
-            --and %bin.采购员备注='1' 
+            WHERE 1=1 
             and %采购机构=param1  
             and %收货物流中心=param2 
-            --and %采购员备注='1' 
             ;
         /*
            and %Sheet.I=1 OR %p1=param1 and %p1=%p2 and %i in (#采购员供应商关联(me())) 
@@ -126,17 +122,18 @@ BIN 入库单主表 {
         param param1 = 采购机构; 
         param param2 = 收货物流中心; 
     };
-    I '商品' 货品信息 = Pend.i { 
+    I '商品' 货品信息  { 
         : 规格; 
         : 计量单位;
         : 包装;
         : 批准文号;
         : 生产厂商;
-    };
+    }= Pend.i;
     Value '数量' := Pend.value;
     ACT {
         Biz Pend -= value;
-        Biz Title 库存.数量 of I += Value;
+        --Biz Title 库存.数量 of I += Value;
+        Biz Title 库存.数量 of %I += %value;
     };
 }
 
@@ -146,12 +143,23 @@ SHEET 销售单 {
     Detail 销售单明细;
 }   
 BIN 销售单主表 {
-    Pick 客商 FROM 查询客商;
-    I '客商' = 客商; 
+    Pick 销售员 FROM 查询职员;
+    Pick 客商 FROM 查询客商 {
+       param 销售员 = 销售员; 
+    }
+    I '客商' = 客商;
+    X '销售员' = 销售员; 
 }
-BIN 销售单明细 ver 0.1 {
+BIN 销售单明细 ver 0.3 {
     Pick hp FROM 查询库存;
-    I '商品Pick' = hp; 
+    I '货品信息' 货品信息 {    
+        : 规格; 
+        : 计量单位;
+        : 包装;  
+        : 批准文号;
+        : 生产厂商;  
+    } = hp; 
+
     Value '数量' DEC;
     Price '单价' DEC;
     Amount '金额' DEC = Value * Price;
@@ -166,14 +174,37 @@ BIN 销售单明细 ver 0.1 {
 
 PEND 待出库账 '待出库' {  
     S '单据'; 
-    SI '客户';
-    I '商品';
-    Value '数量';
-    Prop {
-        p1 DEC;
-        p2 DEC;
+    SI '客户'; 
+    I '商品' 货品信息 {
+        : 规格;
+        : 计量单位;
+        : 包装;  
+        : 批准文号;
+        : 生产厂商;  
     };
-}
+    Value '数量'; 
+    Prop { 
+        p1 DEC;  
+        p2 DEC;
+        --销售机构 Atom; 
+        --发货物流中心 Atom;  
+    };
+    QUERY (
+        param1 Atom, 
+        param2 Atom,
+    ) {
+        VAR a ID = 1;     
+        FROM
+            COLUMN ( 
+                --a 'a试验字段' = 1,  
+            )
+            WHERE 1=1
+            --and %销售机构=param1  
+            --and %发货物流中心=param2 
+            ;
+        ; 
+    }
+} 
 
 SHEET 出库单 {
     Main 出库单主表;
@@ -189,9 +220,13 @@ BIN 出库单明细 ver 0.2 {
     Pick pend '待出库商品' FROM 待出库账 {
         -- param i;
     };
-    I '商品' 货品信息 = Pend.i {
-        : 生产厂商;
-    };            
+    I '商品' 货品信息 {
+        : 规格;
+        : 计量单位;
+        : 包装;  
+        : 批准文号;
+        : 生产厂商;  
+    }= Pend.i;            
     Value '数量' := Pend.value;
     ACT {
         Biz Pend -= value;

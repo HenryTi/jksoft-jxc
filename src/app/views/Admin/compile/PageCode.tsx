@@ -74,19 +74,19 @@ export function PageCode() {
     function onLoadFile() {
         fileInput.current.click();
     }
-    function onUploaded(content: string) {
-        setCode(code + content);
-    }
-    async function load(file: File) {
-        return new Promise<void>((resolve) => {
+    // function onUploaded(content: string) {
+    //    setCode(code + content);
+    // }
+    async function load(file: File): Promise<string> {
+        return new Promise<string>((resolve) => {
             // textAreaRef.current.textContent = '';
             let fr = new FileReader();
             fr.readAsText(file);
             fr.onloadend = async function (evt: ProgressEvent<FileReader>) {
-                resolve();
+                resolve(evt.target.result as string);
                 //setText(evt.target.result as string);
                 // textAreaRef.current.textContent = evt.target.result as string;
-                onUploaded(evt.target.result as string);
+                // onUploaded();
             }
         });
     }
@@ -94,11 +94,13 @@ export function PageCode() {
         // filesContent = '';
         let { files } = evt.target;
         if (files === null) return;
+        let fullContent = code;
         for (let file of files) {
-            await load(file);
+            fullContent += await load(file);
         }
         // openModal(<PageUpload content={filesContent} />);
         fileInput.current.value = '';
+        setCode(fullContent);
     }
     function onAdmin() {
         openModal(<PageAdmin />);

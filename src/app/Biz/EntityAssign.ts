@@ -23,10 +23,11 @@ export class EntityAssign extends Entity {
     }
 
     scan(): void {
-        this.titles = (this.titles as unknown as [string, string][]).map(
+        this.titles = (this.titles as unknown as [number, number][]).map(
             ([t0, t1]) => {
-                let bizEntity = this.biz.entities[t0];
-                return bizEntity.budColl[t1];
+                let bizEntity = this.biz.entityFromId(t0);
+                let ret = bizEntity.budColl[t1];
+                return ret;
             }
         );
     }

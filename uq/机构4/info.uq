@@ -1,15 +1,29 @@
-
-
-ATOM 职员信息 {
-    prop 部门 atom 部门信息;
-    prop 所属公司 atom 公司机构信息;
-    prop 性别 radio 性别; 
-    prop 家庭住址 char;
-    prop 手机号 char; 
+ATOM 证照信息 {
+    prop 证照类型  <edit:pop> radio 证照类型;
+    prop 证照号 char; 
+    prop 证照有效自  date;
+    prop 证照有效至  date;
+    prop 证照状态  <edit:pop> radio 证照状态;
+    prop 对应货品 atom 货品信息;
 };
 
-ATOM 公司机构信息 {
-    prop 地址 char;
+ATOM 职员信息 {
+        prop + {
+    部门 atom 部门信息;
+    所属公司 atom 公司机构信息;
+    性别 <edit:pop> radio 性别; 
+        }
+    prop 家庭住址 char;
+    prop 手机号 char; 
+    prop 邮箱 char; 
+    prop 生日 date;
+};
+
+ATOM 公司机构信息 ver 0.2 {
+        prop + {
+    地址 char;
+        }
+    prop 电话 char;
 };
 
 ATOM 部门信息 {
@@ -34,26 +48,23 @@ ATOM 物流中心信息 {
     }
 };
 
-ATOM 库区信息 {
-    prop 库区类型 radio 库区类型;
-    prop 保管员 atom 职员信息;
-    prop 所属物流中心 atom 物流中心信息;
 
-};
 
-ATOM 供应商信息 {
+ATOM 供应商信息 ver 0.1 {
+    prop + {
+    经营许可证号  CHAR;
+    经营许可证号有效期至  date;
+    采购员 atom 职员信息;
+    经营范围 <edit:pop> check 货品类别;
+    电话  CHAR; 
+    }
     prop 客户类型 radio 客户类型;
-    Prop 经营许可证号  CHAR;
-    Prop 经营许可证号有效期至  date;
     Prop 地址  CHAR; 
-    Prop 电话  CHAR; 
     Prop 统一社会信用代码  CHAR; 
     prop 联系人  CHAR; 
-    prop 经营范围 <edit:pop> check 货品类别;
-    prop 采购员 atom 职员信息;
 };
 
-ATOM 客户信息 { 
+ATOM 客商信息 { 
     prop 联系人 atom 职员信息;
     prop 客户类型 radio 客户类型;
     prop 企业 {  
@@ -67,11 +78,10 @@ ATOM 生产厂商信息 {
     prop 地址 char;
     prop 业务代表 char;
 };
-/*
+
 ATOM 药品信息 '药品信息' extends 货品信息 {
-    -- Prop 批准文号  CHAR;
+     Prop 批准文号  CHAR;
 };
-*/
 ATOM 医疗器械 '医疗器械' extends 货品信息 {
      Prop 注册证号  CHAR;
      Prop 注册证号有效期至  date;
@@ -83,12 +93,14 @@ ATOM 中药饮片 '中药饮片' extends 货品信息 {
 
 ATOM 货品信息 { 
     prop + {
-        通用名 char;
+
         规格 char;
-        批准文号 char;
+        注册证号  Char;
         生产厂商 atom 生产厂商信息;
         计量单位 <edit:pop> radio 计量单位;
     }
+    prop 批准文号 char;
+    prop 通用名 char;
     prop 条形码 char;
     prop 货品类别  <edit:pop> radio 货品类别;
     prop 存储 {
@@ -121,14 +133,14 @@ SPEC 药品批次 '药品批次' {
 
 TITLE SiteSetting { 
     PROP {
-        currency '默认货币' ATOM Currency;
+        默认货币 '默认货币' ATOM 默认货币;
         startSumMonth '汇总开始月' INT;      -- 月汇总的开始。之前的月汇总是预置的，之后的月汇总是计算的。
         startFiscalMonth '财年开始月' INT;   -- 财年开始月
         startFiscalDay '财年开始日' INT;     -- 财年开始日
     }
 };
 
-ATOM Currency {
+ATOM 默认货币 {
 };
 
 
@@ -159,31 +171,15 @@ ASSIGN 赋值价格 {
     Title 价格.零售价, 价格.批发价;
 }
 
-ATOM UomBase '基本单位' {
-    PROP discription '说明' CHAR;      -- 基本不需要描述。也可以：g=重量克
-    PROP type int of UomType INDEX;
-};
 /*
 IX IxUomType (
     i,                  -- bud(bud(site, @uom.type), typeValue)
     x,                  -- uom
 );
 */
-
-
-ATOM UomI '计量单位' {
-    PROP discription '说明' CHAR;      -- 计量单位需要描述
-    PROP uom '基本单位' ATOM Uom INDEX;
-    PROP ratio '换算率' DEC;
-};
-
--- 换算单位
--- 比如盒，还有10支，盒就是换算单位
-
-ATOM Uom '换算单位' {
-};
-
+/*
 SPEC SpecUom {
     IX BASE;
     KEY uom ATOM UOM;
 };
+*/
