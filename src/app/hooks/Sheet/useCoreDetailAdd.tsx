@@ -3,11 +3,11 @@ import { useModal } from "tonwa-app";
 import { CoreDetail, Row, Section } from "./SheetStore";
 //import { ModalInputRow } from "./ModalInputRow";
 import { PickResult, RowStore, useBinPicks } from "./binPick";
-import { usePickInput } from "./binPick/usePickInput";
+import { useInputRow } from "./useInputRow";
 
 export function useCoreDetailAdd(coreDetail: CoreDetail) {
     const { openModal } = useModal();
-    const pickInput = usePickInput();
+    const pickInput = useInputRow();
     const { entityBin, sheetStore } = coreDetail;
     const pick = useBinPicks(entityBin, sheetStore.main.binRow);
     async function addNewDirect() {

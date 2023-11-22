@@ -11,7 +11,7 @@ import { RowStore } from "./binPick";
 // import { useUqApp } from "app/UqApp";
 // import { ViewBud } from "app/hooks";
 import { OwnedBuds } from "../tool";
-import { usePickInput } from "./binPick/usePickInput";
+import { useInputRow } from "./useInputRow";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -65,7 +65,7 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const { openModal } = useModal();
-    const pickInput = usePickInput();
+    const pickInput = useInputRow();
     const { props: binDetail, section: { coreDetail: { entityBin } } } = row;
     const { i: budI, x: budX, price: budPrice, amount: budAmount } = entityBin;
     let { i, x, value, price, amount } = binDetail

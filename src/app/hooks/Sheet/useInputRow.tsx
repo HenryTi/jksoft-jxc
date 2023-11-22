@@ -1,15 +1,33 @@
+import { Page, useModal } from "tonwa-app";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Band, FormRowsView } from "app/coms";
 import { ViewSpec } from "app/hooks/View";
-import { Page, useModal } from "tonwa-app";
 import { ChangeEvent, useState } from "react";
-import { Row } from "../SheetStore";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
-import { RowStore } from "../binPick";
-import { BinOwnedBuds } from "../ViewDetail";
+import { BinOwnedBuds } from "./ViewDetail";
+import { Row } from "./SheetStore";
+import { RowStore } from "./binPick/RowStore";
 
-export function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore; }) {
+export function useInputRow() {
+    const modal = useModal();
+    return useCallback(async (row: Row, rowStore: RowStore) => {
+        const { props, section } = row;
+        const { entityBin } = section.coreDetail;
+        const { i: budI, x: budX } = entityBin;
+        const { atomParams } = budI;
+        if (atomParams !== undefined) {
+            const { name, caption } = budI;
+            await modal.open(<Page header={caption ?? name}>
+            </Page>);
+        }
+        let ret = await modal.open(<ModalInputRow row={row} rowStore={rowStore} />);
+        return ret;
+    }, []);
+}
+
+function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore; }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { props, section } = row;

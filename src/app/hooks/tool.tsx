@@ -1,6 +1,7 @@
 import { useUqApp } from "app/UqApp";
 import { BudCheckValue, BudValue } from "tonwa-app";
 import { ViewBud } from "./Bud";
+import { FA } from "tonwa-com";
 
 interface PropData {
     id: number;
@@ -54,10 +55,22 @@ export function OwnedBuds({ values }: { values: [number, BudValue][]; }) {
         values.map(value => {
             let [budId, budValue] = value;
             let bizBud = biz.budFromId(budId);
-            let { caption, name } = bizBud;
+            let content: any;
+            if (bizBud === undefined) {
+                content = <>
+                    <div className="w-min-4c me-3 small text-secondary">bud</div>
+                    <FA name="question-circle-o" className="text-danger me-2" /> {budId}
+                </>;
+            }
+            else {
+                let { caption, name } = bizBud;
+                content = <>
+                    <div className="w-min-4c me-3 small text-secondary">{caption ?? name}</div>
+                    <ViewBud bud={bizBud} value={budValue} />
+                </>;
+            }
             return <div className="d-flex w-min-12c align-items-center" key={budId}>
-                <div className="w-min-4c me-3 small text-secondary">{caption ?? name}</div>
-                <ViewBud bud={bizBud} value={budValue} />
+                {content}
             </div>;
         })}
     </div>;
