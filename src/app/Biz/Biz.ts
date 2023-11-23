@@ -15,6 +15,7 @@ import { EntityQuery } from './EntityQuery';
 import { EntityAssign } from './EntityAssign';
 import { BizBud } from './BizBud';
 import { AtomsBuilder } from './AtomsBuilder';
+import { EntityConsole } from './EntityConsole';
 
 enum EnumEntity {
     sheet,
@@ -31,6 +32,7 @@ enum EnumEntity {
     assign,
     tree,
     tie,
+    console,
 };
 
 interface Group {
@@ -65,9 +67,10 @@ export class Biz {
 
     readonly roles: EntityRole[] = [];
 
-    readonly all: Group[] = [];
+    readonly groups: Group[] = [];
     readonly _refresh = atom(false);
 
+    bizConsole: EntityConsole;
     hasEntity: boolean;
     entities: { [name: string]: Entity } = {};
     private ids: { [id: number]: Entity | BizBud } = {};
@@ -115,21 +118,22 @@ export class Biz {
             [EnumEntity.assign]: this.buildAssign,
             [EnumEntity.tree]: this.buildTree,
             [EnumEntity.tie]: this.buildTie,
+            [EnumEntity.console]: this.buildConsole,
         }
-        for (let group of this.all) {
+        for (let group of this.groups) {
             let { entities } = group;
             for (let entitiesRow of entities) {
                 let [arr] = entitiesRow;
                 arr.splice(0);
             }
         }
-        this.all.splice(0);
+        this.groups.splice(0);
         let { biz } = bizSchema;
         let arr: { [entity in EnumEntity]?: [Entity, any][]; } = {};
         this.entities = {};
         this.ids = {};
         for (let schema of biz) {
-            // let schema = ($biz as any)[i];
+            if (schema === undefined) debugger;
             let { id, name, phrase, type, caption } = schema;
             let enumType = EnumEntity[type] as unknown as EnumEntity;
             let builder = builders[enumType];
@@ -179,7 +183,7 @@ export class Biz {
             }
         }
         this.atomBuilder.buildRootAtoms();
-        this.all.push(
+        this.groups.push(
             {
                 name: 'sheet',
                 caption: '业务流程',
@@ -239,10 +243,15 @@ export class Biz {
                         [this.roles, '许可', 'user-o'],
                         //[this.permits, '许可', 'user'],
                     ]
+            },
+            {
+                name: 'console',
+                caption: '控制台',
+                entities: [[[this.bizConsole], '控制台', 'user']],
             }
         );
         let allHasEntity = false;
-        for (let group of this.all) {
+        for (let group of this.groups) {
             let { entities } = group;
             let hasEntity = false;
             for (let entitiesRow of entities) {
@@ -276,7 +285,7 @@ export class Biz {
     delEntity(entity: Entity) {
         this.entities[entity.name];
         this.ids[entity.id];
-        for (let group of this.all) {
+        for (let group of this.groups) {
             const { entities } = group;
             for (let row of entities) {
                 const [entities] = row;
@@ -369,6 +378,12 @@ export class Biz {
     private buildTie = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityTie(this, id, name, type);
         this.ties.push(bizEntity);
+        return bizEntity;
+    }
+
+    private buildConsole = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityConsole(this, id, name, type);
+        this.bizConsole = bizEntity;
         return bizEntity;
     }
 }

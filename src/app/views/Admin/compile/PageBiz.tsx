@@ -82,7 +82,7 @@ export function useBuildViewBiz() {
                             <FA name="hand-paper-o" className="me-3 text-info" />暂无代码
                         </div>
                         :
-                        biz.all.map((group, index) => {
+                        biz.groups.map((group, index) => {
                             let { name, caption: groupCaption, entities, hasEntity } = group;
                             async function onDownload(evt: MouseEvent<HTMLAnchorElement>) {
                                 evt.preventDefault();

@@ -1,3 +1,5 @@
+import { pathAtomList } from "app/hooks";
+import { to62 } from "tonwa-com";
 import { BizPhraseType } from "uqs/UqDefault";
 
 /*
@@ -24,11 +26,13 @@ export const centers = {
         caption: '档案中心',
         icon: 'database',
         iconColor: 'text-succeed',
+        getPath: pathAtomList,
     },
     sheet: {
         path: 'sheet-center',
         caption: '单据中心',
         icon: 'file-o',
+        getPath: (id: number) => `sheet/${to62(id)}`,
     },
     report: {
         path: 'report',

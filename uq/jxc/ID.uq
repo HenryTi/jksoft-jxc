@@ -13,6 +13,12 @@ ID Spec (
     KEY id,
 );
 
+ID Duo (
+    id MINUTE,
+    KEY i ID,
+    KEY x ID,
+);
+
 -- 单据主表。单明细单据，也有主表
 ID Sheet ver 0.1 (
     id MINUTE,

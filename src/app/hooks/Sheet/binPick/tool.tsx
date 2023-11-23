@@ -89,6 +89,7 @@ export function arrFromJsonMid(entity: Entity, mid: any) {
     const { budColl } = entity;
     for (let i in mid) {
         let bud = budColl[i];
+        if (bud === undefined) continue;
         let value = mid[i];
         if (value === null) continue;
         ret.push({ name: bud.name, bud, value });

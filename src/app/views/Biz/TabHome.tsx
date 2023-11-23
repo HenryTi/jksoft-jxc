@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { IDView, Page } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
-import { ViewNotifyCount } from "app/tool";
 import { FA } from "tonwa-com";
 import { Permit, ViewSite } from "../Site";
 import { Center, centers } from "../pathes";
+import { ViewConsole } from "./ViewConsole";
 
 export function TabHome() {
     const uqApp = useUqApp();
@@ -30,18 +30,6 @@ export function TabHome() {
             </div>
             {siteRight}
         </div>
-        {arr.map((v, index) => {
-            const { caption, icon, iconColor, path, phrase } = v;
-            function onClick() {
-                uqApp.clearNotifyCount(phrase);
-            }
-            return <Link key={index} to={path} className={cn} onClick={onClick}>
-                <FA name={icon ?? 'file'} className={(iconColor ?? 'text-primary') + " me-4"} fixWidth={true} size="2x" />
-                <span className="fs-larger">{caption}</span>
-                <ViewNotifyCount phrase={phrase} />
-                <div className="flex-grow-1"></div>
-                <FA name="angle-right" className="text-secondary" />
-            </Link>
-        })}
+        <ViewConsole />
     </Page>;
 }

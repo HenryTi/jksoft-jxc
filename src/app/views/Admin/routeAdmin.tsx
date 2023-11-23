@@ -1,4 +1,3 @@
-import { routeProp } from "../../../../prop";
 import { routePageAdmin } from "./PageAdmin";
 import { routeAchieve } from "./achieve";
 import { UqApp } from "app/UqApp";
@@ -10,7 +9,6 @@ import { routeCompile } from "./compile";
 
 export function routeAdmin(uqApp: UqApp) {
     return <>
-        {routeProp}
         {routePageAdmin}
         {routeAchieve}
         {routeCompile}
