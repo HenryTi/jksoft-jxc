@@ -144,7 +144,7 @@ function ViewFolder({ folder, index, active }: { folder: Folder; index: string, 
     return <AccordionItem eventKey={index} className="">
         <Accordion.Header>
             <Folder phrase={0} caption={ui?.caption ?? name}
-                icon="folder-o" iconColor="text-info" />
+                icon="folder-o" iconColor="text-warning" />
         </Accordion.Header>
         <Accordion.Body className="ps-5 pe-0">
             <ViewFolderContent folder={folder} active={sub} />
@@ -154,7 +154,9 @@ function ViewFolder({ folder, index, active }: { folder: Folder; index: string, 
 
 function ViewFile({ file }: { file: File; }) {
     const { entity: { name, ui, id, type } } = file;
-    const { icon, iconColor, getPath } = (centers as any)[type];
+    const centerDef = (centers as any)[type];
+    if (centerDef === undefined) return null; //debugger;
+    const { icon, iconColor, getPath } = centerDef;
     let to: string = getPath?.(id) ?? '';
     return <Link to={to}>
         <div className="d-flex py-3 pe-4">

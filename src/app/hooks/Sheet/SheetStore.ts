@@ -10,7 +10,7 @@ import { from62, getAtomValue, setAtomValue } from "tonwa-com";
 import { PickResultType, ReturnUseBinPicks } from "./binPick/useBinPicks";
 import { Calc, Formulas } from "app/hooks/Calc";
 import { BudCheckValue, BudValue } from "tonwa-app";
-import { budValuesFromProps } from "../tool";
+import { budValuesFromProps } from "../tool/tool";
 
 abstract class KeyIdObject {
     private static __keyId = 0;

@@ -1,6 +1,6 @@
 import { useUqApp } from "app/UqApp";
 import { BudCheckValue, BudValue } from "tonwa-app";
-import { ViewBud } from "./Bud";
+import { ViewBud } from "../Bud";
 import { FA } from "tonwa-com";
 
 interface PropData {

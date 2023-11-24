@@ -11,7 +11,7 @@ export function usePickFromAtom() {
         let { name, caption, pick } = binPick;
         let pickBase = pick as PickAtom;
         let ret = await modal.open<AtomPhrase>(<PageAtomSelect atom={pickBase.from[0]} caption={caption ?? name} />);
-        return ret;
+        return ret as any;
     }
     return useCallback(func, []);
 }

@@ -1,7 +1,7 @@
 import { UqApp } from 'app/UqApp';
 import { UqExt } from 'uqs/UqDefault';
 import { Entity } from './Entity';
-import { EntityAtom, EntityPick, EntitySpec } from './EntityAtom';
+import { EntityAtom, EntityDuo, EntityPick, EntitySpec } from './EntityAtom';
 import { EntityTree } from './EntityTree';
 import { EntityBin, EntityPend, EntitySheet } from './EntitySheet';
 import { EntityTitle } from './EntityTitle';
@@ -23,6 +23,7 @@ enum EnumEntity {
     pend,
     atom,
     spec,
+    duo,
     query,
     // pick,
     options,
@@ -50,6 +51,7 @@ export class Biz {
     readonly atoms: EntityAtom[] = [];
     readonly atomRoots: EntityAtom[] = [];
     readonly specs: EntitySpec[] = [];
+    readonly duos: EntityDuo[] = [];
 
     readonly sheets: EntitySheet[] = []
     readonly bins: EntityBin[] = [];
@@ -109,8 +111,8 @@ export class Biz {
             [EnumEntity.pend]: this.buildPend,
             [EnumEntity.atom]: this.buildAtom,
             [EnumEntity.spec]: this.buildSpec,
+            [EnumEntity.duo]: this.buildDuo,
             [EnumEntity.query]: this.buildQuery,
-            //[EnumEntity.pick]: this.buildPick,
             [EnumEntity.options]: this.buildOptions,
             [EnumEntity.report]: this.buildReport,
             [EnumEntity.permit]: this.buildRole,
@@ -166,6 +168,7 @@ export class Biz {
             EnumEntity.permit,
             EnumEntity.atom,
             EnumEntity.spec,
+            EnumEntity.duo,
             EnumEntity.sheet,
             EnumEntity.bin,
             EnumEntity.pend,
@@ -207,6 +210,7 @@ export class Biz {
                     [this.atoms],
                     [this.atomRoots, '基础编码', 'id-card-o'],
                     [this.specs, '细分编码', 'asterisk'],
+                    [this.duos, '双子', 'share-alt'],
                     [this.titles, '科目', 'flag-o'],
                     [this.assigns, '赋值', 'flag-o']
                 ],
@@ -244,12 +248,14 @@ export class Biz {
                         //[this.permits, '许可', 'user'],
                     ]
             },
-            {
+        );
+        if (this.bizConsole !== undefined) {
+            this.groups.push({
                 name: 'console',
                 caption: '控制台',
                 entities: [[[this.bizConsole], '控制台', 'user']],
-            }
-        );
+            });
+        }
         let allHasEntity = false;
         for (let group of this.groups) {
             let { entities } = group;
@@ -378,6 +384,12 @@ export class Biz {
     private buildTie = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityTie(this, id, name, type);
         this.ties.push(bizEntity);
+        return bizEntity;
+    }
+
+    private buildDuo = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityDuo(this, id, name, type);
+        this.duos.push(bizEntity);
         return bizEntity;
     }
 

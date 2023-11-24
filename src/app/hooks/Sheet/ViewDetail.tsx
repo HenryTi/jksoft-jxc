@@ -10,7 +10,7 @@ import { BizBud } from "app/Biz";
 import { RowStore } from "./binPick";
 // import { useUqApp } from "app/UqApp";
 // import { ViewBud } from "app/hooks";
-import { OwnedBuds } from "../tool";
+import { OwnedBuds } from "../tool/tool";
 import { useInputRow } from "./useInputRow";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {

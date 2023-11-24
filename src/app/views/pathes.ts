@@ -1,4 +1,4 @@
-import { pathAtomList } from "app/hooks";
+import { pathAssign, pathAtomList, pathReport, pathTie } from "app/hooks";
 import { to62 } from "tonwa-com";
 import { BizPhraseType } from "uqs/UqDefault";
 
@@ -39,18 +39,21 @@ export const centers = {
         caption: '报表中心',
         icon: 'calculator',
         iconColor: 'text-info',
+        getPath: pathReport,
     },
     assign: {
         path: 'assign-center',
         caption: '赋值中心',
         icon: 'sliders',
-        iconColor: 'text-danger'
+        iconColor: 'text-danger',
+        getPath: pathAssign,
     },
     tie: {
         path: 'tie-center',
         caption: '关系中心',
         icon: 'link',
         iconColor: 'text-success',
+        getPath: pathTie,
     },
     me: {
         caption: '我的',

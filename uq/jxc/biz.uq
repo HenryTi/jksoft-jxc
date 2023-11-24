@@ -27,6 +27,8 @@ ENUM BizPhraseType (
     key = 1001,
     prop = 1011,
     optionsitem = 1031,
+
+    console = 6001,
 );
 
 ID #BizPhrase (

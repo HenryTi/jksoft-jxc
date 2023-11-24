@@ -1,32 +1,6 @@
 import { getDays } from 'app/tool';
 import jsep from 'jsep';
-
-export interface NameValues {
-    identifier(name: string): string | number;
-    member(name0: string, name1: string): string | number;
-}
-
-export class PickedNameValues implements NameValues {
-    private readonly values: any;
-    constructor(values: any) {
-        if (values === null || typeof values !== 'object') debugger;
-        this.values = values;
-    }
-    identifier(name: string): string | number {
-        let ret = this.values[name];
-        if (typeof ret === 'object') {
-            return ret.id;
-        }
-        return ret;
-    }
-    member(name0: string, name1: string): string | number {
-        let obj = this.values[name0];
-        if (typeof obj !== 'object') return;
-        let ret = obj[name1];
-        if (typeof ret === 'object') return ret.id;
-        return ret;
-    }
-}
+import { INameValues, NameValues } from '../tool';
 
 export enum FormulaSetType {
     init,
@@ -49,11 +23,11 @@ export class Formula {
         this.exp = jsep(formula);
     }
 
-    run(nameValues: NameValues) {
+    run(nameValues: INameValues) {
         return this.runExp(this.exp, nameValues);
     }
 
-    private runExp(exp: jsep.Expression, nameValues: NameValues): string | number {
+    private runExp(exp: jsep.Expression, nameValues: INameValues): string | number {
         switch (exp.type) {
             case 'CallExpression': return this.func(exp as jsep.CallExpression, nameValues);
             case 'BinaryExpression': return this.binary(exp as jsep.BinaryExpression, nameValues);
@@ -64,7 +38,7 @@ export class Formula {
         }
     }
 
-    private binary(exp: jsep.BinaryExpression, nameValues: NameValues): number {
+    private binary(exp: jsep.BinaryExpression, nameValues: INameValues): number {
         const { operator, left, right } = exp;
         let vLeft = this.runExp(left, nameValues) as number;
         if (vLeft === undefined) return;
@@ -81,7 +55,7 @@ export class Formula {
         }
     }
 
-    private unary(exp: jsep.UnaryExpression, nameValues: NameValues): number {
+    private unary(exp: jsep.UnaryExpression, nameValues: INameValues): number {
         const { operator, argument } = exp;
         let v = this.runExp(argument, nameValues) as number;
         switch (operator) {
@@ -91,12 +65,12 @@ export class Formula {
         }
     }
 
-    private identifier(exp: jsep.Identifier, nameValues: NameValues): number {
+    private identifier(exp: jsep.Identifier, nameValues: INameValues): number {
         const { name } = exp;
         return nameValues.identifier(name) as number;
     }
 
-    private member(exp: jsep.MemberExpression, nameValues: NameValues): number {
+    private member(exp: jsep.MemberExpression, nameValues: INameValues): number {
         const { object, property } = exp;
         let { type, name: objName } = object as jsep.Identifier;
         if (type !== property.type && type !== 'Identifier') debugger;
@@ -108,7 +82,7 @@ export class Formula {
         return Number(exp.value);
     }
 
-    private func(exp: jsep.CallExpression, nameValues: NameValues): number {
+    private func(exp: jsep.CallExpression, nameValues: INameValues): number {
         let func = (exp.callee as jsep.Identifier).name.toLowerCase();
         let params = exp.arguments.map(v => this.runExp(v, nameValues));
         let ret = funcs[func]?.(...params);
@@ -123,7 +97,7 @@ const funcs: { [func: string]: (...params: any[]) => number } = {
 }
 
 export interface Formulas { [name: string]: string; };
-export class Calc implements NameValues {
+export class Calc implements INameValues {
     private readonly formulas: { [name: string]: Formula } = {};
     readonly values: { [name: string]: string | number };
 
@@ -137,8 +111,8 @@ export class Calc implements NameValues {
         this.values = valuesStore ?? {};
     }
 
-    init(picked: { [name: string]: any }) {
-        let nameValues = new PickedNameValues(picked);
+    init(nameValues: NameValues) {
+        // let nameValues = new PickedNameValues(picked);
         console.log('after let nameValues = new PickedNameValues(picked);');
         for (let i in this.formulas) {
             this.values[i] = this.formulas[i].run(nameValues);

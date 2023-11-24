@@ -1,4 +1,4 @@
-import { EntityAtom, EntityTie, TieField } from "app/Biz";
+import { EntityAtom, EntityTie } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useParams } from "react-router-dom";
 import { FA, from62, to62 } from "tonwa-com";
@@ -6,6 +6,7 @@ import { PageQueryMore } from "app/coms";
 import { useCallback, useState } from "react";
 import { ReturnGetTies$page } from "uqs/UqDefault";
 import { usePickAtom } from "../BizPick";
+import { IxField } from "app/Biz/BizBase";
 
 function tieInPath(phrase: number | string) {
     if (typeof phrase === 'string') {
@@ -42,9 +43,9 @@ export function useBizTie(): UseBizTieReturn {
         function ViewItem({ value }: { value: ReturnGetTies$page }) {
             return <ViewItemCom value={value} tie={entity} />;
         }
-        function ViewAtomCaptions({ tieField }: { tieField: TieField }) {
+        function ViewAtomCaptions({ ixField }: { ixField: IxField }) {
             let content: any;
-            const { atoms } = tieField;
+            const { atoms } = ixField;
             if (atoms === undefined) {
                 content = <div>用户</div>;
             }
@@ -62,9 +63,9 @@ export function useBizTie(): UseBizTieReturn {
             ViewItem={ViewItem}
         >
             <div className="d-flex align-items-center border-bottom py-2 tonwa-bg-gray-2">
-                <ViewAtomCaptions tieField={i} />
+                <ViewAtomCaptions ixField={i} />
                 <div className="mx-5">&lt;-&gt;</div>
-                <ViewAtomCaptions tieField={x} />
+                <ViewAtomCaptions ixField={x} />
             </div>
         </PageQueryMore>;
     }

@@ -1,6 +1,7 @@
 import { BizPhraseType, UqExt } from "uqs/UqDefault";
 import { Biz } from "./Biz";
 import { UI } from "./UI";
+import { EntityAtomID } from "./EntityAtom";
 
 export class BizBase {
     readonly biz: Biz;
@@ -55,3 +56,7 @@ export class BizBase {
     }
 }
 
+export interface IxField {
+    caption: string;
+    atoms: EntityAtomID[];
+}

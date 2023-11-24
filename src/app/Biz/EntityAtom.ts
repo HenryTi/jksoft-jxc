@@ -1,4 +1,5 @@
 import { EntitySelf } from "./AtomsBuilder";
+import { IxField } from "./BizBase";
 import { BizBud } from "./BizBud";
 import { BudGroup, Entity } from "./Entity";
 
@@ -83,6 +84,19 @@ export class EntityAtom extends EntityAtomID {
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
+        }
+    }
+}
+
+export class EntityDuo extends EntityAtomID {
+    i: IxField;
+    x: IxField;
+
+    protected fromSwitch(i: string, val: any) {
+        switch (i) {
+            default: super.fromSwitch(i, val); break;
+            case 'i': this.i = this.fromIxField(val); break;
+            case 'x': this.x = this.fromIxField(val); break;
         }
     }
 }
