@@ -1,14 +1,9 @@
-export interface INameValues {
-    identifier(name: string): string | number;
-    member(name0: string, name1: string): string | number;
-}
-
 export interface IValues {
     id: number;
     member(name1: string): string | number | { id?: number; };
 }
 
-export class NameValues implements INameValues {
+export class CalcSpace {
     private readonly namedValues: { [name: string]: IValues | string | number } = {};
     /*
     constructor(values: any) {

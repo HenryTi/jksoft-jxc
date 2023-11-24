@@ -6,6 +6,7 @@ import { Center, centers } from "../pathes";
 import { File, Folder } from "app/Biz";
 import { Accordion, AccordionItem } from "react-bootstrap";
 import React, { useState } from "react";
+import { UI } from "app/ui";
 
 const cn = 'd-flex px-4 py-3 border-bottom align-items-center';
 interface Active {
@@ -123,15 +124,15 @@ function ViewFolderContent({ folder, active }: { folder: Folder; active: Active;
 }
 
 function Folder({ icon, iconColor, caption, phrase }: FolderProps) {
-    return <div>
-        <FA name={icon} className={(iconColor ?? 'text-info') + " me-4"} fixWidth={true} size="2x" />
+    return <div className="d-flex align-items-center">
+        <FA name={icon} className={(iconColor ?? 'text-info') + " me-4"} fixWidth={true} size="lg" />
         <span className="fs-larger">{caption}</span>
         <ViewNotifyCount phrase={phrase} />
     </div>
 }
 
 function ViewFolder({ folder, index, active }: { folder: Folder; index: string, active: Active; }) {
-    const { name, ui } = folder;
+    const { name, ui: uiDef } = folder;
     let sub: Active;
     if (active !== undefined) {
         let { subs } = active;
@@ -141,10 +142,15 @@ function ViewFolder({ folder, index, active }: { folder: Folder; index: string, 
         }
         sub = active.subs[index];
     }
+    let ui = new UI(uiDef, {
+        icon: 'folder-o',
+        iconColor: 'warning',
+        caption: name,
+    });
     return <AccordionItem eventKey={index} className="">
         <Accordion.Header>
-            <Folder phrase={0} caption={ui?.caption ?? name}
-                icon="folder-o" iconColor="text-warning" />
+            <Folder phrase={0} caption={ui.caption}
+                icon={ui.icon} iconColor={'text-' + ui.iconColor ?? 'primary'} />
         </Accordion.Header>
         <Accordion.Body className="ps-5 pe-0">
             <ViewFolderContent folder={folder} active={sub} />
@@ -153,15 +159,20 @@ function ViewFolder({ folder, index, active }: { folder: Folder; index: string, 
 }
 
 function ViewFile({ file }: { file: File; }) {
-    const { entity: { name, ui, id, type } } = file;
+    const { ui: uiDef, entity: { name, id, type } } = file;
     const centerDef = (centers as any)[type];
     if (centerDef === undefined) return null; //debugger;
     const { icon, iconColor, getPath } = centerDef;
     let to: string = getPath?.(id) ?? '';
+    let ui = new UI(uiDef, {
+        caption: name,
+        iconColor: iconColor ?? 'primary',
+        icon,
+    });
     return <Link to={to}>
-        <div className="d-flex py-3 pe-4">
-            <FA name={icon} className={(iconColor ?? 'text-primary ') + ' px-1 ms-4 me-4'} size="2x" />
-            <span className="fs-larger">{ui?.caption ?? name}</span>
+        <div className="d-flex py-3 pe-4 align-items-center">
+            <FA name={ui.icon} className={('text-' + ui.iconColor) + ' px-1 ms-4 me-4'} size="lg" />
+            <span className="fs-larger">{ui.caption}</span>
             <div className="flex-grow-1"></div>
             <FA name="angle-right" className="text-secondary" />
         </div>

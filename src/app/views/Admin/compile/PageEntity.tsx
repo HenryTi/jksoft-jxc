@@ -106,21 +106,8 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
         return await query(id);
     }, UseQueryOptions);
     const [code, setCode] = useState(data?.code ?? '');
-    // const [logs, setLogs] = useState('');
     const nav = useMemo(() => new Nav(orgEntity, onEntityChange), [orgEntity]);
-    // const refTextAreaLog = useRef<HTMLTextAreaElement>();
-    // const refContainerEditorArea = useRef<HTMLDivElement>();
     const [pageCaption, setPageCaption] = useState(caption ?? name);
-    /*
-    useEffect(() => {
-        // let { current: div } = refContainerEditorArea;
-        // if (div === undefined) return;
-        // div.style.maxHeight = div.parentElement.clientHeight + 'px';
-    });
-    */
-
-    // const { code: codeInit, schema } = data ?? {};
-    const [readOnly, setReadOnly] = useState(false);
     const [submitDisabled, setSumitDisabled] = useState(true);
     const [deleted, setDeleted] = useState(false);
     if (data === undefined) {

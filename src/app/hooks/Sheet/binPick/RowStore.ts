@@ -102,7 +102,7 @@ export class RowStore {
     }
 
     init(picked: { [name: string]: any }) {
-        this.calc.init(picked);
+        this.calc.init(picked as any);
         // Object.assign(this.binDetail, this.calc.values);
     }
 

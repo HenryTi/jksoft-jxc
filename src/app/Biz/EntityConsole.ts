@@ -1,3 +1,4 @@
+import { UIStyle } from "app/ui";
 import { Entity } from "./Entity";
 
 export class EntityConsole extends Entity {
@@ -18,7 +19,13 @@ export class EntityConsole extends Entity {
         for (let folderVal of foldersVal) {
             folders.push(this.buildFolder(folderVal));
         }
-        files = (filesVal as string[]).map(v => ({ entity: this.biz.entities[v] }));
+        files = (filesVal).map((v: any) => {
+            const { id, ui } = v;
+            return {
+                ui,
+                entity: this.biz.entityFromId(id),
+            }
+        });
         let ret: Folder = {
             name,
             ui,
@@ -38,4 +45,5 @@ export interface Folder {
 
 export interface File {
     entity: Entity;
+    ui: Partial<UIStyle>;
 }

@@ -25,7 +25,7 @@ export const centers = {
         path: 'atom-center',
         caption: '档案中心',
         icon: 'database',
-        iconColor: 'text-succeed',
+        iconColor: 'text-success',
         getPath: pathAtomList,
     },
     sheet: {

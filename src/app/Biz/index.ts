@@ -10,5 +10,4 @@ export * from './Entity';
 export * from './EntityOptions';
 export * from './EntityReport';
 export * from './EntityQuery';
-export * from './UI';
 export * from './EntityConsole';

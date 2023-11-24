@@ -1,6 +1,6 @@
 import { getDays } from 'app/tool';
 import jsep from 'jsep';
-import { INameValues, NameValues } from '../tool';
+import { CalcSpace } from './CalcSpace';
 
 export enum FormulaSetType {
     init,
@@ -23,11 +23,11 @@ export class Formula {
         this.exp = jsep(formula);
     }
 
-    run(nameValues: INameValues) {
+    run(nameValues: CalcSpace) {
         return this.runExp(this.exp, nameValues);
     }
 
-    private runExp(exp: jsep.Expression, nameValues: INameValues): string | number {
+    private runExp(exp: jsep.Expression, nameValues: CalcSpace): string | number {
         switch (exp.type) {
             case 'CallExpression': return this.func(exp as jsep.CallExpression, nameValues);
             case 'BinaryExpression': return this.binary(exp as jsep.BinaryExpression, nameValues);
@@ -38,7 +38,7 @@ export class Formula {
         }
     }
 
-    private binary(exp: jsep.BinaryExpression, nameValues: INameValues): number {
+    private binary(exp: jsep.BinaryExpression, nameValues: CalcSpace): number {
         const { operator, left, right } = exp;
         let vLeft = this.runExp(left, nameValues) as number;
         if (vLeft === undefined) return;
@@ -55,7 +55,7 @@ export class Formula {
         }
     }
 
-    private unary(exp: jsep.UnaryExpression, nameValues: INameValues): number {
+    private unary(exp: jsep.UnaryExpression, nameValues: CalcSpace): number {
         const { operator, argument } = exp;
         let v = this.runExp(argument, nameValues) as number;
         switch (operator) {
@@ -65,12 +65,12 @@ export class Formula {
         }
     }
 
-    private identifier(exp: jsep.Identifier, nameValues: INameValues): number {
+    private identifier(exp: jsep.Identifier, nameValues: CalcSpace): number {
         const { name } = exp;
         return nameValues.identifier(name) as number;
     }
 
-    private member(exp: jsep.MemberExpression, nameValues: INameValues): number {
+    private member(exp: jsep.MemberExpression, nameValues: CalcSpace): number {
         const { object, property } = exp;
         let { type, name: objName } = object as jsep.Identifier;
         if (type !== property.type && type !== 'Identifier') debugger;
@@ -82,7 +82,7 @@ export class Formula {
         return Number(exp.value);
     }
 
-    private func(exp: jsep.CallExpression, nameValues: INameValues): number {
+    private func(exp: jsep.CallExpression, nameValues: CalcSpace): number {
         let func = (exp.callee as jsep.Identifier).name.toLowerCase();
         let params = exp.arguments.map(v => this.runExp(v, nameValues));
         let ret = funcs[func]?.(...params);
@@ -97,7 +97,8 @@ const funcs: { [func: string]: (...params: any[]) => number } = {
 }
 
 export interface Formulas { [name: string]: string; };
-export class Calc implements INameValues {
+export class Calc {
+    private readonly calcSpace: CalcSpace;
     private readonly formulas: { [name: string]: Formula } = {};
     readonly values: { [name: string]: string | number };
 
@@ -111,11 +112,11 @@ export class Calc implements INameValues {
         this.values = valuesStore ?? {};
     }
 
-    init(nameValues: NameValues) {
+    init(calcSpace: CalcSpace) {
         // let nameValues = new PickedNameValues(picked);
         console.log('after let nameValues = new PickedNameValues(picked);');
         for (let i in this.formulas) {
-            this.values[i] = this.formulas[i].run(nameValues);
+            //this.values[i] = this.formulas[i].run(nameValues);
         }
     }
 
@@ -134,7 +135,7 @@ export class Calc implements INameValues {
             let formula = this.formulas[i];
             if (formula.setType !== FormulaSetType.equ) continue;
             try {
-                let ret = formula.run(this);
+                let ret = formula.run(this.calcSpace);
                 if (ret === undefined) continue;
                 this.values[i] = ret;
                 callback(i, ret);

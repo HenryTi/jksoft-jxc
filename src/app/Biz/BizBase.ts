@@ -1,7 +1,7 @@
 import { BizPhraseType, UqExt } from "uqs/UqDefault";
 import { Biz } from "./Biz";
-import { UI } from "./UI";
 import { EntityAtomID } from "./EntityAtom";
+import { UIStyle } from "app/ui";
 
 export class BizBase {
     readonly biz: Biz;
@@ -10,7 +10,7 @@ export class BizBase {
     private _name: string;
     id: number;
     phrase: string;
-    ui: Partial<UI>;
+    ui: Partial<UIStyle>;
     bizPhraseType: BizPhraseType;
     get name(): string { return this._name; }
     get caption(): string { return this.ui?.caption; }

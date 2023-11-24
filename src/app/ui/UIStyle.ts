@@ -1,5 +1,7 @@
-export interface UI {
+export interface UIStyle {
     caption: string;
+    icon: string;
+    iconColor: string;
     format: string;
     edit: 'pop';
     fraction: number;
