@@ -100,28 +100,37 @@ export interface Formulas { [name: string]: string; };
 export class Calc {
     private readonly calcSpace: CalcSpace;
     private readonly formulas: { [name: string]: Formula } = {};
-    readonly values: { [name: string]: string | number };
+    private _results: { [name: string]: string | number };
 
-    constructor(formulas: Formulas, valuesStore?: { [name: string]: string | number }) {
+    constructor(formulas: Formulas, values?: { [name: string]: string | number | { [prop: string]: string | number } }) {
         for (let i in formulas) {
             let f = formulas[i];
             if (f === undefined) continue;
             let formula = new Formula(f);
             this.formulas[i] = formula;
         }
-        this.values = valuesStore ?? {};
+        this.calcSpace = new CalcSpace();
+        this.calcSpace.addValues(undefined, values);
     }
 
-    init(calcSpace: CalcSpace) {
-        // let nameValues = new PickedNameValues(picked);
-        console.log('after let nameValues = new PickedNameValues(picked);');
-        for (let i in this.formulas) {
-            //this.values[i] = this.formulas[i].run(nameValues);
+    get results(): { [name: string]: string | number } {
+        if (this._results === undefined) {
+            this.calc();
         }
+        return this._results;
     }
 
-    setValues(values: any) {
-        Object.assign(this.values, values);
+    addValues(name: string, values: object): void {
+        this.calcSpace.addValues(name, values);
+        this._results = undefined;
+    }
+
+    private calc() {
+        if (this._results === undefined) this._results = {};
+        for (let i in this.formulas) {
+            let ret = this.formulas[i].run(this.calcSpace);
+            this._results[i] = ret;
+        }
     }
 
     formulaSetType(name: string) {
@@ -137,7 +146,7 @@ export class Calc {
             try {
                 let ret = formula.run(this.calcSpace);
                 if (ret === undefined) continue;
-                this.values[i] = ret;
+                this.results[i] = ret;
                 callback(i, ret);
             }
             catch {
@@ -146,14 +155,15 @@ export class Calc {
     }
 
     setValue(name: string, value: number | string, callback: (name: string, value: string | number) => void) {
-        this.values[name] = value;
+        this.results[name] = value;
         this.run(callback);
     }
-
+    /*
     identifier(name: string): string | number {
-        return this.values[name];
+        return this.results[name];
     }
     member(name0: string, name1: string): string | number {
         throw new Error();
     }
+    */
 }

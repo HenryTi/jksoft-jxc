@@ -27,7 +27,7 @@ class Nav {
     }
     private setSubs(entity: Entity) {
         this.subs.splice(0);
-        let arr = entity.getSubClasses();
+        let arr = entity.getRefEntities();
         if (arr === undefined) return;
         this.subs.push(...arr);
     }

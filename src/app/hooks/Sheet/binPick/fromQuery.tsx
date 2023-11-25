@@ -1,19 +1,25 @@
-import { BinPick, BizBud, PickParam, PickQuery } from "app/Biz";
+import { BinPick, PickQuery } from "app/Biz";
 import { useCallback, useState } from "react";
-import { NamedResults, PickResultType } from "./useBinPicks";
+import { LastPickResultType, NamedResults, PickResult } from "./useBinPicks";
 import { Page, useModal } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { FA, List } from "tonwa-com";
-import { ViewBud } from "app/hooks";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "./PageParams";
 import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "./tool";
 
-export function usePickFromQuery() {
+export function usePickFromQuery(): [
+    (namedResults: NamedResults, binPick: BinPick) => Promise<PickResult>,
+    (namedResults: NamedResults, binPick: BinPick, lastPickResultType: LastPickResultType) => Promise<PickResult[]>,
+] {
     const { uq, biz } = useUqApp();
     const modal = useModal();
     const pickParam = usePageParams();
-    return useCallback(async function pickFromQuery(namedResults: NamedResults, binPick: BinPick, pickResultType: PickResultType): Promise<any> {
+    const pickFromQueryBase = useCallback(async function (
+        namedResults: NamedResults
+        , binPick: BinPick
+        , pickResultType: LastPickResultType)
+        : Promise<PickResult | PickResult[]> {
         let { name, caption, pick, pickParams } = binPick;
         let pickBase = pick as PickQuery;
         let { query } = pickBase;
@@ -40,40 +46,6 @@ export function usePickFromQuery() {
                 value: row.ban,
             };
             pickedFromJsonArr(query, propArr, picked, row.json);
-            /*
-            let arr: any[] = row.json;
-            for (let v of arr) {
-                let { length } = v;
-                let v0 = v[0];
-                let v1 = v[1];
-                let name: string, bud: BizBud, value: any;
-                switch (length) {
-                    default: debugger; continue;
-                    case 2:
-                        if (typeof (v0) === 'string') {
-                            switch (v0) {
-                                case 'no': picked.no = v1; continue;
-                                case 'ex': picked.ex = v1; continue;
-                            }
-                            name = v0;
-                            value = v1
-                        }
-                        else {
-                            bud = query.budColl[v0];
-                            name = bud.name;
-                            value = v1;
-                        }
-                        break;
-                    case 3:
-                        let bizEntity = biz.entityFromId(v0);
-                        bud = bizEntity.budColl[v1];
-                        name = bud.name;
-                        value = v[2];
-                        break;
-                }
-                propArr.push(picked[name] = { name, bud, value });
-            }
-            */
             pickedArr.push(picked);
         }
         let ret = await modal.open(<PageFromQuery />);
@@ -91,7 +63,7 @@ export function usePickFromQuery() {
             }
             return obj;
         }
-        if (pickResultType === PickResultType.single) {
+        if (pickResultType === LastPickResultType.scalar) {
             return toRet(ret);
         }
         else {
@@ -142,7 +114,7 @@ export function usePickFromQuery() {
             let cnViewItem = 'd-flex flex-wrap ';
             let cnFirst: string;
             let btnOk: any, vTop: any;
-            if (pickResultType === PickResultType.multiple) {
+            if (pickResultType === LastPickResultType.array) {
                 onItemSelect = onMultipleClick;
                 cnFirst = 'my-2 ';
                 btnOk = <button className="btn btn-primary m-3" onClick={onPick}>选入</button>;
@@ -196,4 +168,18 @@ export function usePickFromQuery() {
             </Page>
         }
     }, []);
+    const pickFromQueryScalar = useCallback(async function (
+        namedResults: NamedResults
+        , binPick: BinPick)
+        : Promise<PickResult> {
+        return await pickFromQueryBase(namedResults, binPick, LastPickResultType.scalar) as PickResult;
+    }, []);
+    const pickFromQuery = useCallback(async function (
+        namedResults: NamedResults
+        , binPick: BinPick
+        , lastPickResultType: LastPickResultType)
+        : Promise<PickResult[]> {
+        return await pickFromQueryBase(namedResults, binPick, lastPickResultType) as PickResult[];
+    }, []);
+    return [pickFromQueryScalar, pickFromQuery];
 }

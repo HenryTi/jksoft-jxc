@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { UqExt } from "uqs/UqDefault";
 import { atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
-import { PickResultType, ReturnUseBinPicks } from "./binPick/useBinPicks";
+import { LastPickResultType, ReturnUseBinPicks } from "./binPick/useBinPicks";
 import { Calc, Formulas } from "app/hooks/Calc";
 import { BudCheckValue, BudValue } from "tonwa-app";
 import { budValuesFromProps } from "../tool/tool";
@@ -40,12 +40,12 @@ export class SheetMain extends BaseObject {
     }
 
     // return: true: new sheet created
-    async start(pick: (pickResultType: PickResultType) => Promise<ReturnUseBinPicks>) {
+    async start(pick: (pickResultType: LastPickResultType) => Promise<ReturnUseBinPicks>) {
         const row = this.binRow;
         const { id } = row;
         if (id > 0) return;
-        const results = await pick(PickResultType.single);
-        if (results === undefined) return;
+        const pickResults = await pick(LastPickResultType.scalar);
+        if (pickResults === undefined) return;
         const { i, x, props: mainProps } = this.entityMain;
         const formulas: Formulas = {};
         if (i !== undefined) {
@@ -57,17 +57,18 @@ export class SheetMain extends BaseObject {
         for (let mp of mainProps) {
             formulas[mp.name] = mp.defaultValue;
         }
-        const calc = new Calc(formulas);
-        let [props] = results;
-        calc.init(props as any);
+        let { results, lastBinPick, lastResult } = pickResults;
+        const calc = new Calc(formulas, results);
+        calc.addValues(lastBinPick.name, lastResult[0]);
+        const { results: calcResults } = calc;
         if (i !== undefined) {
-            row.i = calc.values.i as number;
+            row.i = calcResults.i as number;
         }
         if (x !== undefined) {
-            row.x = calc.values.x as number;
+            row.x = calcResults.x as number;
         }
         for (let mp of mainProps) {
-            let v = calc.values[mp.name];
+            let v = calcResults[mp.name];
             if (v === undefined) continue;
             row.buds[mp.id] = v;
         }
@@ -461,7 +462,7 @@ export class SheetStore extends KeyIdObject {
             return id;
         }
     }
-    async start(pick: (pickResultType: PickResultType) => Promise<ReturnUseBinPicks>) {
+    async start(pick: (pickResultType: LastPickResultType) => Promise<ReturnUseBinPicks>) {
         let ret = await this.main.start(pick);
         if (ret !== undefined) return ret;
     }

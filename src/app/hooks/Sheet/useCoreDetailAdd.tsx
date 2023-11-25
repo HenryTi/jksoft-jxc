@@ -1,20 +1,17 @@
 import { useCallback } from "react";
-import { useModal } from "tonwa-app";
 import { CoreDetail, Row, Section } from "./SheetStore";
-//import { ModalInputRow } from "./ModalInputRow";
-import { PickResult, RowStore, useBinPicks } from "./binPick";
+import { LastPickResultType, PickResult, RowStore, useBinPicks } from "./binPick";
 import { useInputRow } from "./useInputRow";
 
 export function useCoreDetailAdd(coreDetail: CoreDetail) {
-    const { openModal } = useModal();
     const pickInput = useInputRow();
     const { entityBin, sheetStore } = coreDetail;
     const pick = useBinPicks(entityBin, sheetStore.main.binRow);
     async function addNewDirect() {
         let ret = await pick();
         if (ret === undefined) return;
-        let [namedResults, binPick, pickResult] = ret;
-        if (Array.isArray(pickResult) === true) {
+        let { results: namedResults, lastBinPick: binPick, lastResult: pickResult, lastPickResultType } = ret;
+        if (lastPickResultType === LastPickResultType.array) {
             // 直接选入行集，待修改
             if (coreDetail === undefined) {
                 alert('Pick Pend on main not implemented');

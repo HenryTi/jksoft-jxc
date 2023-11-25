@@ -13,27 +13,28 @@ export interface PickParam {
 
 export abstract class PickBase {
     bizPhraseType: BizPhraseType;
-    abstract getSubClasses(): Entity[];
+    // 代码编辑页面用。所有相关的entities
+    abstract getRefEntities(): Entity[];
 }
 export class PickQuery extends PickBase {
     query: EntityQuery;
-    getSubClasses(): Entity[] { return [this.query]; }
+    getRefEntities(): Entity[] { return [this.query]; }
 }
 export class PickAtom extends PickBase {
     from: EntityAtom[];
-    getSubClasses(): Entity[] { return; }
+    getRefEntities(): Entity[] { return; }
 }
 export class PickSpec extends PickBase {
     from: EntitySpec;
-    getSubClasses(): Entity[] { return; }
+    getRefEntities(): Entity[] { return; }
 }
 export class PickPend extends PickBase {
     from: EntityPend;
-    getSubClasses(): Entity[] { return [this.from]; }
+    getRefEntities(): Entity[] { return [this.from]; }
 }
 
 export class PickInput extends PickBase {
-    getSubClasses(): Entity[] { return; }
+    getRefEntities(): Entity[] { return; }
 }
 
 export class BinPick extends BizBud {
@@ -47,7 +48,8 @@ export class BinPick extends BizBud {
 }
 
 export class EntityBin extends Entity {
-    picks: BinPick[];
+    binPicks: BinPick[];
+    lastPick: BinPick;
     i: BizBud;
     x: BizBud;
     pend: EntityPend;
@@ -56,14 +58,20 @@ export class EntityBin extends Entity {
     price: BizBud;
     amount: BizBud;
 
-    getSubClasses(): Entity[] {
+    // 在代码界面上显示需要。本entity引用的entities
+    override getRefEntities(): Entity[] {
         let ret: Entity[] = [];
-        for (let pick of this.picks) {
-            let subs = pick.pick.getSubClasses();
+        function getSubs(binPick: BinPick) {
+            if (binPick === undefined) return;
+            let subs = binPick.pick.getRefEntities();
             if (subs !== undefined) {
                 ret.push(...subs);
             }
         }
+        for (let pick of this.binPicks) {
+            getSubs(pick);
+        }
+        getSubs(this.lastPick);
         return ret;
     }
 
@@ -73,7 +81,7 @@ export class EntityBin extends Entity {
         }
         switch (i) {
             default: super.fromSwitch(i, val); break;
-            case 'picks': this.picks = val; break;
+            case 'picks': this.binPicks = val; break;
             case 'i': this.i = val; break;
             case 'x': this.x = val; break;
             case 'pend': this.fromPend(val); break;
@@ -161,8 +169,11 @@ export class EntityBin extends Entity {
 
     scan() {
         super.scan();
-        if (this.picks !== undefined) {
-            this.picks = this.picks.map(v => this.buildPick(v as any));
+        if (this.binPicks !== undefined) {
+            this.binPicks = this.binPicks.map(v => this.buildPick(v as any));
+            let pLast = this.binPicks.length - 1;
+            this.lastPick = this.binPicks[pLast];
+            this.binPicks.splice(pLast, 1);
         }
         if (this.i !== undefined) {
             this.i = this.buildBudPickable(this.i as any);
@@ -223,7 +234,7 @@ export class EntitySheet extends Entity {
         caption: string;
     }[] = [];
 
-    getSubClasses(): Entity[] {
+    getRefEntities(): Entity[] {
         let ret: Entity[] = [];
         if (this.main !== undefined) ret.push(this.main);
         ret.push(...this.details.map(v => v.bin));

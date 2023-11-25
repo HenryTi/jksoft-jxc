@@ -1,7 +1,7 @@
 import { BinPick, EntityPend, PickPend } from "app/Biz";
 import { useCallback } from "react";
 import { BudValue, Page, useModal } from "tonwa-app";
-import { NamedResults } from "./useBinPicks";
+import { NamedResults, PickResult } from "./useBinPicks";
 import { BinDetail } from "../SheetStore";
 import { useUqApp } from "app/UqApp";
 import { ViewSpec } from "app/hooks/View";
@@ -18,7 +18,7 @@ export function usePickFromPend() {
     const modal = useModal();
     const pickParam = usePageParams();
     return useCallback(
-        async function pickFromPend(namedResults: NamedResults, binPick: BinPick): Promise<any> {
+        async function pickFromPend(namedResults: NamedResults, binPick: BinPick): Promise<PickResult[]> {
             let { name, caption, pick, pickParams } = binPick;
             let pickBase = pick as PickPend;
             let entityPend = pickBase.from;

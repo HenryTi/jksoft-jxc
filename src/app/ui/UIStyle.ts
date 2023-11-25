@@ -1,4 +1,5 @@
 export interface UIStyle {
+    "class": string;
     caption: string;
     icon: string;
     iconColor: string;

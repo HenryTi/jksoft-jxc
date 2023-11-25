@@ -6,7 +6,7 @@ import { BudGroup, Entity } from "./Entity";
 export abstract class EntityAtomID extends Entity {
     readonly subClasses: EntityAtomID[] = [];
 
-    getSubClasses(): Entity[] { return this.subClasses; }
+    getRefEntities(): Entity[] { return this.subClasses; }
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {

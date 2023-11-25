@@ -102,13 +102,12 @@ export class RowStore {
     }
 
     init(picked: { [name: string]: any }) {
-        this.calc.init(picked as any);
-        // Object.assign(this.binDetail, this.calc.values);
+        this.calc.addValues(undefined, picked);
     }
 
     setValues(binDetail: BinDetail) {
         Object.assign(this.binDetail, binDetail);
-        this.calc.setValues(binDetail);
+        this.calc.addValues(undefined, binDetail);
     }
 
     setValue(name: string, value: number | string, callback: (name: string, value: string | number) => void) {
@@ -124,7 +123,7 @@ export class RowStore {
     get submitable(): boolean {
         let ret = true;
         for (let field of this.requiredFields) {
-            let v = this.calc.values[field.name];
+            let v = this.calc.results[field.name];
             if (v === undefined) return false;
         }
         return ret;
