@@ -155,7 +155,8 @@ export class Calc {
     }
 
     setValue(name: string, value: number | string, callback: (name: string, value: string | number) => void) {
-        this.results[name] = value;
+        // this.results[name] = value;
+        this.calcSpace.setValue(name, value as number);
         this.run(callback);
     }
     /*

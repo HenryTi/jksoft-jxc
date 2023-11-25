@@ -8,6 +8,10 @@ export class CalcSpace {
         this.namedValues[name] = values;
     }
 
+    setValue(name: string, value: number) {
+        this.namedValues[name] = value;
+    }
+
     identifier(name: string): string | number {
         let ret = this.namedValues[name];
         if (typeof ret === 'object') {
