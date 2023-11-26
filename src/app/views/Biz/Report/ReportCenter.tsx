@@ -7,7 +7,7 @@ import { FA, Sep } from "tonwa-com";
 import { EntityReport } from "app/Biz";
 import { path } from "app/tool";
 import { PageRef, headerSheets } from "app/hooks";
-import { centers } from "app/views/pathes";
+import { centers } from "app/views/center";
 
 function PageReportCenter() {
     const { biz } = useUqApp();

@@ -12,6 +12,7 @@ import { RowStore } from "./binPick";
 // import { ViewBud } from "app/hooks";
 import { OwnedBuds } from "../tool/tool";
 import { useInputRow } from "./useInputRow";
+import { ViewBud } from "../Bud";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -67,8 +68,8 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const { openModal } = useModal();
     const pickInput = useInputRow();
     const { props: binDetail, section: { coreDetail: { entityBin } } } = row;
-    const { i: budI, x: budX, price: budPrice, amount: budAmount } = entityBin;
-    let { i, x, value, price, amount } = binDetail
+    const { i: budI, x: budX, price: budPrice, amount: budAmount, props } = entityBin;
+    let { i, x, value, price, amount, buds } = binDetail
     async function onEdit() {
         if (editable === false) return;
         const rowStore = new RowStore(entityBin);
@@ -105,26 +106,47 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         vAmount = <ViewValue caption={'金额'} value={budAmount.valueToContent(amount)} />;
     }
 
-    let cnI: string;
-    let colX: any;
-    if (budX === undefined) {
-        cnI = ' col-8 ';
+    let colCount = 1;
+    let cnCol: string = 'col ';
+    if (budX !== undefined) {
+        colCount++;
     }
-    else {
-        cnI = ' col-4 ';
-        colX = <div className="col-4">
+    if (props.length > 0) {
+        colCount++;
+    }
+
+    let colX: any;
+    let colProps: any;
+    if (budX !== undefined) {
+        colX = <div className={cnCol}>
             <ViewIdField bud={budX} value={x} />
             <BinOwnedBuds bizBud={budX} binDetail={binDetail} />
         </div>;
     }
+    if (props.length > 0) {
+        colProps = <div className={cnCol}>
+            <div className="d-flex flex-wrap">
+                {
+                    props.map((bud, index) => {
+                        const { id, name, caption } = bud;
+                        let v = buds[id];
+                        return <div key={id} className="w-min-12c">
+                            <small className="me-1 text-secondary">{caption ?? name} :</small>
+                            <ViewBud key={index} bud={bud} value={v} />
+                        </div>;
+                    })}
+            </div>
+        </div>;
+    }
 
     return <div className="py-2 align-items-stretch row">
-        <div className={cnI}>
+        <div className={cnCol}>
             <ViewIdField bud={budI} value={i} />
             <BinOwnedBuds bizBud={budI} binDetail={binDetail} />
         </div>
         {colX}
-        <div className="col-4 d-flex flex-column align-items-end justify-content-end">
+        {colProps}
+        <div className={cnCol + ' d-flex flex-column align-items-end justify-content-end'}>
             <div className={' flex-grow-1 ' + cnEdit} onClick={onEdit}>
                 <FA name="pencil" className="text-info" fixWidth={true} />
             </div>

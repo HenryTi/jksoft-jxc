@@ -4,13 +4,13 @@ import { Link, Route } from "react-router-dom";
 import { IDView, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { EntitySheet } from "app/Biz";
 import { FA, List, to62, wait } from "tonwa-com";
-import { PageSheetEdit, ViewSheetTime } from "app/hooks";
+import { ViewSheetTime } from "app/hooks";
 import { useCallback, useState } from "react";
 import { Atom, Sheet } from "uqs/UqDefault";
 import { Bin, ViewNotifyCount } from "app/tool";
 import { centers } from "app/views/center";
 
-function PageSheetCenter() {
+function PageEditingCenter() {
     const modal = useModal();
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
@@ -105,7 +105,7 @@ function PageSheetCenter() {
     return visible === false ?
         <PageSpinner />
         :
-        <PageQueryMore header={centers.sheet.caption}
+        <PageQueryMore header={centers.editing.caption}
             query={query}
             param={{}}
             sortField={'id'}
@@ -124,10 +124,8 @@ function PageSheetCenter() {
         </PageQueryMore>;
 }
 
-export function routeSheetCenter() {
+export function routeEditingCenter() {
     return <>
-        <Route path={centers.sheet.path} element={<PageSheetCenter />} />
-        <Route path={'sheet/:sheet/:id'} element={<PageSheetEdit />} />
-        <Route path={'sheet/:sheet'} element={<PageSheetEdit />} />
+        <Route path={centers.editing.path} element={<PageEditingCenter />} />
     </>;
 }

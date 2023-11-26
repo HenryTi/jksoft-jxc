@@ -96,18 +96,20 @@ const funcs: { [func: string]: (...params: any[]) => number } = {
     }
 }
 
-export interface Formulas { [name: string]: string; };
+export type Formulas = [string, string][];
 export class Calc {
     private readonly calcSpace: CalcSpace;
-    private readonly formulas: { [name: string]: Formula } = {};
+    private readonly formulas: Map<string, Formula>;
     private _results: { [name: string]: string | number };
 
-    constructor(formulas: Formulas, values?: { [name: string]: string | number | { [prop: string]: string | number } }) {
-        for (let i in formulas) {
-            let f = formulas[i];
-            if (f === undefined) continue;
-            let formula = new Formula(f);
-            this.formulas[i] = formula;
+    constructor(formulas: [string, string][], values?: { [name: string]: string | number | { [prop: string]: string | number } }) {
+        this.formulas = new Map();
+        for (let [name, formulaText] of formulas) {
+            // let f = formulas[i];
+            // if (f === undefined) continue;
+            if (formulaText === undefined) continue;
+            let formula = new Formula(formulaText);
+            this.formulas.set(name, formula);
         }
         this.calcSpace = new CalcSpace();
         this.calcSpace.addValues(undefined, values);
@@ -115,7 +117,7 @@ export class Calc {
 
     get results(): { [name: string]: string | number } {
         if (this._results === undefined) {
-            this.calc();
+            this.run(undefined);
         }
         return this._results;
     }
@@ -125,29 +127,35 @@ export class Calc {
         this._results = undefined;
     }
 
+    /*
     private calc() {
         if (this._results === undefined) this._results = {};
-        for (let i in this.formulas) {
-            let ret = this.formulas[i].run(this.calcSpace);
-            this._results[i] = ret;
+        for (let [name, formula] of this.formulas) {
+            let ret = formula.run(this.calcSpace);
+            if (ret === undefined) continue;
+            this.calcSpace.setValue(name, ret as any);
+            this._results[name] = ret;
         }
     }
+    */
 
     formulaSetType(name: string) {
-        let f = this.formulas[name];
+        let f = this.formulas.get(name);
         if (f === undefined) return false;
         return f.setType;
     }
 
     private run(callback: (name: string, value: string | number) => void) {
-        for (let i in this.formulas) {
-            let formula = this.formulas[i];
+        if (this._results === undefined) this._results = {};
+        for (let [name, formula] of this.formulas) {
             if (formula.setType !== FormulaSetType.equ) continue;
             try {
                 let ret = formula.run(this.calcSpace);
                 if (ret === undefined) continue;
-                this.results[i] = ret;
-                callback(i, ret);
+                this.results[name] = ret;
+                this.calcSpace.setValue(name, ret as any);
+                if (callback === undefined) continue;
+                callback(name, ret);
             }
             catch {
             }

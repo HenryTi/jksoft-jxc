@@ -3,7 +3,7 @@ import { Link, Route } from "react-router-dom";
 import { gUomI } from "./uom";
 import { CaptionAtom, pathAtomList } from "app/hooks";
 import { EnumAtom } from "uqs/UqDefault";
-import { centers } from "../pathes";
+import { centers } from "../center";
 
 export const pathAdmin = 'admin';
 function PageAdmin() {

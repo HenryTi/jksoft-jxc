@@ -3,7 +3,7 @@ import { IDView, Page } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { FA } from "tonwa-com";
 import { Permit, ViewSite } from "../Site";
-import { Center, centers } from "../pathes";
+import { Center, centers } from "../center";
 import { ViewConsole } from "./ViewConsole";
 
 export function TabHome() {

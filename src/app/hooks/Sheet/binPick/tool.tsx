@@ -106,7 +106,7 @@ export function VNamedBud({ name, value, bud }: { name: string; value: any; bud:
     }
     // if (value !== null && typeof value === 'object') value = value.id;
     return <div className="my-2 me-3 w-min-16c d-flex align-items-center">
-        <small className="text-secondary me-2 w-min-4c">{caption}</small>
+        <small className="text-secondary me-1">{caption}:</small>
         <span><ViewBud bud={bud} value={value} /></span>
     </div>;
 }

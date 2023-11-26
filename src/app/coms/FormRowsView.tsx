@@ -316,7 +316,7 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue }: 
         return <>{ex} &nbsp; <small className="text-muted">{no}</small></>;
     }
     let content: any;
-    if (id === undefined) {
+    if (id === undefined && atom !== null) {
         let { placeHolder } = row;
         if (!placeHolder) placeHolder = '点击选择';
         content = <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>;

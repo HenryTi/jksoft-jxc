@@ -1,4 +1,4 @@
-import { BinPick, EntityPend, PickPend } from "app/Biz";
+import { BinPick, EntityPend, PickPend, predefinedPendFields } from "app/Biz";
 import { useCallback } from "react";
 import { BudValue, Page, useModal } from "tonwa-app";
 import { NamedResults, PickResult } from "./useBinPicks";
@@ -22,6 +22,7 @@ export function usePickFromPend() {
             let { name, caption, pick, pickParams } = binPick;
             let pickBase = pick as PickPend;
             let entityPend = pickBase.from;
+            const pendProxyHander = new PendProxyHander(entityPend);
             const { params: queryParams } = entityPend;
 
             let retParam: any;
@@ -71,24 +72,29 @@ export function usePickFromPend() {
 
             let inputed = await modal.open<BinDetail[]>(<ModalInputPend {...props} />);
             if (inputed === undefined) return;
+            function proxy(obj: any) {
+                return new Proxy(obj, pendProxyHander);
+            }
             let iArr: (BinDetail | [number, BinDetail[]])[] = [];
             let iGroup: number[] = [];
             let iColl: { [i: number]: BinDetail[] } = {};
             // group 按 i 分组
+            // 行拆分。暂时没有内容
             for (let r of inputed) {
                 let { i, x } = r;
+                let rProxy = proxy(r);
                 if (x === undefined) {
-                    iArr.push(r);
+                    iArr.push(rProxy);
                 }
                 else {
                     let group = iColl[i];
                     if (group === undefined) {
-                        group = [r];
+                        group = [rProxy];
                         iColl[i] = group;
                         iGroup.push(i);
                     }
                     else {
-                        group.push(r);
+                        group.push(rProxy);
                     }
                 }
             }
@@ -97,6 +103,29 @@ export function usePickFromPend() {
             }
             return iArr;
         }, []);
+}
+
+const sheetFields = ['si', 'sx', 'svalue', 'sprice', 'samount'];
+class PendProxyHander implements ProxyHandler<any> {
+    private readonly entityPend: EntityPend;
+    constructor(entityPend: EntityPend) {
+        this.entityPend = entityPend;
+    }
+    get(target: any, p: string | symbol, receiver: any) {
+        if (sheetFields.findIndex(v => v === p) >= 0) {
+            let k = p.toString().substring(1);
+            let ret = target.sheet[k];
+            return ret
+        }
+        if (predefinedPendFields.findIndex(v => v === p) >= 0) {
+            return target[p];
+        }
+        let bud = this.entityPend.budColl[p as string];
+        if (bud === undefined) return;
+        let ret = target.mid[bud.id];
+        // console.log('PendProxyHander', target, p, this.entityPend, bud, ret);
+        return ret;
+    }
 }
 
 interface ModalInputPendProps {
@@ -129,13 +158,14 @@ function ModalInputPend({ caption, entity: entityPend, search, pendRows, ownerCo
         });
         let ret: BinDetail[] = [];
         for (let pendRow of pendRows) {
-            const { pend, detail, value } = pendRow;
+            const { pend, detail, value, sheet } = pendRow;
             let rowProps: BinDetail = {
                 ...detail,
                 value,
                 origin: detail.id,             // origin detail id
                 pendFrom: pend,
                 pendValue: value,
+                sheet,
                 id: undefined,              // 保存之后才有的新输入的 detail id。编辑时有
             };
             detail.id = undefined;          // 取的是origin detail id

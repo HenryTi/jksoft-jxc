@@ -22,7 +22,8 @@ interface ReportRow {
     phrase: number;
     no: string;
     ex: string;
-    value: number;
+    value: number[];
+    sums: number[];
     specs: SpecRow[];
 }
 
@@ -49,7 +50,7 @@ export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
         let ret: ReportRow[] = [];
         let coll: { [id: number]: ReportRow } = {};
         for (let row of $page) {
-            let rr: ReportRow = { ...row, specs: [] };
+            let rr: ReportRow = { ...row, specs: [], sums: undefined };
             const { id } = rr;
             coll[id] = rr;
             ret.push(rr);
@@ -59,6 +60,27 @@ export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
             let rr = coll[base];
             if (rr === undefined) continue;
             rr.specs.push(spec);
+        }
+        for (let rr of ret) {
+            const { value, specs } = rr;
+            const sums: number[] = [];
+            if (specs.length === 0) {
+                sums.push(...rr.value);
+            }
+            else {
+                for (let spec of specs) {
+                    const { value } = spec;
+                    if (value === undefined) continue;
+                    const { length: len } = value;
+                    for (let i = 0; i < len; i++) {
+                        let sum = sums[i];
+                        if (sum === undefined) sum = 0;
+                        sum += value[i];
+                        sums[i] = sum;
+                    }
+                }
+            }
+            rr.sums = sums;
         }
         return ret;
     }, []);
@@ -76,19 +98,7 @@ export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
         </div>;
     }
     function ViewItem({ value: rr }: { value: ReportRow }) {
-        const { no, ex, specs } = rr;
-        const sums: number[] = [];
-        for (let spec of specs) {
-            const { value } = spec;
-            if (value === undefined) continue;
-            const { length: len } = value;
-            for (let i = 0; i < len; i++) {
-                let sum = sums[i];
-                if (sum === undefined) sum = 0;
-                sum += value[i];
-                sums[i] = sum;
-            }
-        }
+        const { no, ex, specs, sums } = rr;
         return <div className="">
             <div className="px-3 py-2 tonwa-bg-gray-2 d-flex align-items-end">
                 <div className="flex-grow-1">

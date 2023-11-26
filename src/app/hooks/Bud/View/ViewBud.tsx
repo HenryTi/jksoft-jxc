@@ -24,11 +24,11 @@ export function ViewBud({ bud, value }: { bud: BizBud; value: any; }) {
     }
 }
 
-function ViewAtom({ value }: { value: any; }) {
-    return <><b>{value?.ex}</b> &nbsp; &nbsp; <small className="text-secondary">{value?.no}</small></>;
+function ViewAtomInBud({ value }: { value: any; }) {
+    return <>{value?.ex}</>;
 }
 function atom(bud: BizBud, value: any) {
-    return <IDView uq={bud.biz.uq} id={value} Template={ViewAtom} />;
+    return <IDView uq={bud.biz.uq} id={value} Template={ViewAtomInBud} />;
 }
 
 function radio(bud: BizBud, value: any) {

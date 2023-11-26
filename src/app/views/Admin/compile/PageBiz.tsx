@@ -7,7 +7,7 @@ import { Entity } from "app/Biz";
 import { PageEntity } from "./PageEntity";
 import { FA } from "tonwa-com";
 import { useAtomValue } from "jotai";
-import { centers } from "app/views/pathes";
+import { centers } from "app/views/center";
 import { ViewSite } from "app/views/Site";
 
 function PageBiz() {

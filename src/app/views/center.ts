@@ -18,9 +18,17 @@ export interface Center {
     icon?: string;
     iconColor?: string;
     phrase?: BizPhraseType;
+    getPath?: (id: number) => string;
 }
 
-export const centers = {
+export const centers: { [name: string]: Center } = {
+    editing: {
+        path: 'editing-center',
+        caption: '操作中心',
+        icon: 'keyboard-o',
+        iconColor: 'text-danger',
+        getPath: (id: number) => `sheet/${to62(id)}`,
+    },
     atom: {
         path: 'atom-center',
         caption: '档案中心',

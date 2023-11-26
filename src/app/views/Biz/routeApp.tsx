@@ -8,10 +8,12 @@ import { routeReportCenter } from "./Report";
 import { routePermits } from "./Permits";
 import { routeAssignCenter } from "./Assign";
 import { routeTieCenter } from "./Tie";
+import { routeEditingCenter } from "./Editing";
 
 export const pathHome = 'home';
 export function routeApp() {
     const routes = <>
+        {routeEditingCenter()}
         {routeAtomCenter()}
         {routeSheetCenter()}
         {routeReportCenter()}

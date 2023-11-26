@@ -4,7 +4,7 @@ import { PagePermits } from "./PagePermits";
 import { FA, List, Sep } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { EntityPermit, EntityRole, PermitItem } from "app/Biz/EntityPermit";
-import { centers } from "app/views/pathes";
+import { centers } from "app/views/center";
 
 const pathPermits = 'permits';
 

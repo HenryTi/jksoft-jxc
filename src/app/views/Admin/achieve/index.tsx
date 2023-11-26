@@ -2,7 +2,7 @@ import { Route } from "react-router-dom";
 import { PageAchieve } from "./PageAchieve";
 import { PageSumGroup, pathSumGroup } from "./PageSumGroup";
 import { PageSumFormula, pathSumFormula } from "./PageSumFormula";
-import { centers } from "app/views/pathes";
+import { centers } from "app/views/center";
 
 export * from './PageAchieve';
 

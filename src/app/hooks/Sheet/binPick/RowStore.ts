@@ -47,35 +47,44 @@ class FieldBud extends Field {
 }
 
 export class RowStore {
+    private readonly entityBin: EntityBin;
     private readonly fields: Field[];
+    private readonly fieldBuds: BizBud[];
     private readonly fieldColl: { [name: string]: Field } = {};
     private readonly calc: Calc;
     private readonly requiredFields: Field[] = [];
     readonly binDetail: BinDetail = { buds: {} } as any;
     constructor(bin: EntityBin) {
+        this.entityBin = bin;
         this.fields = [];
+        this.fieldBuds = [];
         const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, props: budArr } = bin;
 
         let requiredFields = this.requiredFields;
         if (iBud !== undefined) {
             this.initField(new FieldI(iBud, this.binDetail), false);
+            this.fieldBuds.push(iBud);
         }
         if (xBud !== undefined) {
             this.initField(new FieldX(xBud, this.binDetail), false);
+            this.fieldBuds.push(xBud);
         }
         if (valueBud !== undefined) {
             this.initField(new FieldValue(valueBud, this.binDetail));
+            this.fieldBuds.push(valueBud);
         }
         if (priceBud !== undefined) {
             this.initField(new FieldPrice(priceBud, this.binDetail));
+            this.fieldBuds.push(priceBud);
         }
         if (amountBud !== undefined) {
             this.initField(new FieldAmount(amountBud, this.binDetail));
+            this.fieldBuds.push(amountBud);
         }
         for (let bud of budArr) {
             this.initField(new FieldBud(bud, this.binDetail));
         }
-        const formulas: Formulas = {};
+        const formulas: Formulas = [];
         for (let i in this.fieldColl) {
             let f = this.fieldColl[i];
             let { name, bud } = f;
@@ -84,7 +93,7 @@ export class RowStore {
             let { show, required } = ui;
             if (show === true) continue;
             if (defaultValue !== undefined) {
-                formulas[name] = defaultValue;
+                formulas.push([name, defaultValue]);
                 if (defaultValue.endsWith('\ninit') === true) {
                     if (required === true) requiredFields.push(f);
                 }
@@ -103,6 +112,16 @@ export class RowStore {
 
     init(picked: { [name: string]: any }) {
         this.calc.addValues(undefined, picked);
+        const { results } = this.calc;
+        for (let bud of this.fieldBuds) {
+            let { name: budName } = bud;
+            (this.binDetail as any)[budName] = results[budName];
+        }
+        let buds: { [bud: string]: string | number } = this.binDetail.buds;
+        for (let bud of this.entityBin.props) {
+            let { name: budName } = bud;
+            buds[budName] = results[budName];
+        }
     }
 
     setValues(binDetail: BinDetail) {
@@ -113,11 +132,20 @@ export class RowStore {
     setValue(name: string, value: number | string, callback: (name: string, value: string | number) => void) {
         const c = (name: string, value: string | number) => {
             callback?.(name, value);
-            (this.binDetail as any)[name] = value;
+            this.setFieldOrBudValue(name, value);
         }
-        (this.binDetail as any)[name] = value;
+        this.setFieldOrBudValue(name, value);
         this.calc.setValue(name, value, c);
+    }
 
+    private setFieldOrBudValue(name: string, value: number | string) {
+        let field = this.fieldColl[name];
+        if (field === undefined) {
+            console.error('RowStore setFieldOrBudValue not defined name=', name)
+            debugger;
+        }
+        field.setValue(value);
+        // (this.binDetail as any)[name] = value;
     }
 
     get submitable(): boolean {
@@ -144,6 +172,11 @@ export class RowStore {
                 options: { value: field.getValue(), disabled: setType === FormulaSetType.equ }
             } as any;
             switch (budDataType.type) {
+                case EnumBudType.atom:
+                    formRow.default = field.getValue();
+                    formRow.atom = null;
+                    formRow.readOnly = true;
+                    break;
                 case EnumBudType.char:
                 case EnumBudType.str:
                     formRow.type = 'text';

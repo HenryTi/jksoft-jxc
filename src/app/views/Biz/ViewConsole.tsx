@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
 import { ViewNotifyCount } from "app/tool";
 import { FA, Sep } from "tonwa-com";
-import { Center, centers } from "../pathes";
+import { Center, centers } from "../center";
 import { File, Folder } from "app/Biz";
 import { Accordion, AccordionItem } from "react-bootstrap";
 import React, { useState } from "react";
@@ -23,31 +23,34 @@ const activeRoot: Active = {
 export function ViewConsole() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
-    const { sheet, atom, report, assign, tie, me, setting } = centers;
+    const { editing, sheet, atom, report, assign, tie, me, setting } = centers;
     const { bizConsole } = biz;
     let arr: Center[];
-    let viewFolder: any;
+    let viewFolder: any, viewEditing: any;
     if (bizConsole === undefined) {
         arr = [sheet, atom, report, assign, tie, me, setting,];
     }
     else {
         arr = [me, setting,];
+        viewEditing = <ViewFolderLink center={editing} />;
         viewFolder = <>
             <ViewFolderContent folder={bizConsole.folder} active={activeRoot} />
             <Sep />
         </>;
     }
+    function ViewFolderLink({ center }: { center: Center; }) {
+        const { caption, icon, iconColor, path, phrase } = center;
+        function onClick() {
+            uqApp.clearNotifyCount(phrase);
+        }
+        return <FolderLink path={path} className={cn} onClick={onClick}
+            phrase={phrase} caption={caption} icon={icon} iconColor={iconColor}
+        />
+    }
     return <div>
+        {viewEditing}
         {viewFolder}
-        {arr.map((v, index) => {
-            const { caption, icon, iconColor, path, phrase } = v;
-            function onClick() {
-                uqApp.clearNotifyCount(phrase);
-            }
-            return <FolderLink key={index} path={path} className={cn} onClick={onClick}
-                phrase={phrase} caption={caption} icon={icon} iconColor={iconColor}
-            />
-        })}
+        {arr.map((v, index) => <ViewFolderLink key={index} center={v} />)}
     </div>;
 }
 interface FolderProps {

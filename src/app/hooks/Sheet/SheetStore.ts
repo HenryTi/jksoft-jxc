@@ -47,15 +47,15 @@ export class SheetMain extends BaseObject {
         const pickResults = await pick(LastPickResultType.scalar);
         if (pickResults === undefined) return;
         const { i, x, props: mainProps } = this.entityMain;
-        const formulas: Formulas = {};
+        const formulas: Formulas = [];
         if (i !== undefined) {
-            formulas.i = i.defaultValue;
+            formulas.push(['i', i.defaultValue]);
         }
         if (x !== undefined) {
-            formulas.x = x.defaultValue;
+            formulas.push(['x', x.defaultValue]);
         }
         for (let mp of mainProps) {
-            formulas[mp.name] = mp.defaultValue;
+            formulas.push([mp.name, mp.defaultValue]);
         }
         let { results, lastBinPick, lastResult } = pickResults;
         const calc = new Calc(formulas, results);
@@ -222,6 +222,7 @@ export interface BinDetail extends BinRow {
     origin: number;             // origin detail id
     pendFrom: number;
     pendValue: number;
+    sheet: BinRow;
 }
 
 export class Row extends BaseObject {
@@ -244,17 +245,24 @@ export class Row extends BaseObject {
         }
         let propArr: [number, 'int' | 'dec' | 'str', string | number][] = [];
         for (let bud of detail.entityBin.props) {
-            let value = (this.props as any)[bud.name];
-            if (value === undefined) continue;
+            let { buds } = this.props;
+            let { id, name, budDataType } = bud;
+            let value = (buds as any)[name];
+            if (value === undefined) {
+                value = (buds as any)[id];
+                if (value === undefined) continue;
+            }
             let type: 'int' | 'dec' | 'str';
-            switch (bud.budDataType.type) {
+            switch (budDataType.type) {
+                default:
+                case EnumBudType.atom:
                 case EnumBudType.int: type = 'int'; break;
                 case EnumBudType.dec: type = 'dec'; break;
                 case EnumBudType.str:
                 case EnumBudType.char: type = 'str'; break;
             }
             if (type === undefined) continue;
-            propArr.push([bud.id, type, value]);
+            propArr.push([id, type, value]);
         }
         const { id } = await uq.SaveDetail.submit({
             base: main.binRow.id,

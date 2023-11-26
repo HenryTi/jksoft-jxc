@@ -7,7 +7,7 @@ import { PageSiteRole } from "./PageSiteRole";
 import { Link, Route, useParams } from "react-router-dom";
 import { ViewSite } from "app/views/Site";
 import { BI } from "app/coms";
-import { centers } from "app/views/pathes";
+import { centers } from "app/views/center";
 
 function PageSiteAdmin() {
     const { uq, uqSites } = useUqApp();

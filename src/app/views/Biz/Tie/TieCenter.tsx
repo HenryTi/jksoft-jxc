@@ -1,7 +1,7 @@
 import { Entity } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { BI } from "app/coms";
-import { centers } from "../../pathes";
+import { centers } from "../../center";
 import { Link, Route } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { List, Sep } from "tonwa-com";

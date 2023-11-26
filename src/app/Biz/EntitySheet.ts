@@ -184,10 +184,10 @@ export class EntityBin extends Entity {
     }
 }
 
-const predefined = [
+export const predefinedPendFields = [
     's', 'si', 'sx', 'svalue', 'sprice', 'samount'
     , 'i', 'x', 'value', 'price', 'amount'
-    , 'pendvalue'
+    , 'pendvalue', 'origin', 'pendFrom', 'pendValue',
 ];
 
 export class EntityPend extends Entity {
@@ -200,7 +200,7 @@ export class EntityPend extends Entity {
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default:
-                if (predefined.includes(i) === true) break;
+                if (predefinedPendFields.includes(i) === true) break;
                 super.fromSwitch(i, val); break;
             case 'predefined':
                 this.predefined = val; break;

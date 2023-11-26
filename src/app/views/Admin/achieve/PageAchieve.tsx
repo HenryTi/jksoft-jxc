@@ -10,7 +10,7 @@ import { useUqApp } from "app/UqApp";
 import { pathAtomList } from "app/hooks";
 import { gPersonPost } from "./AtomPersonPost";
 import { gGroupPost } from "./AtomGroupPost";
-import { centers } from "app/views/pathes";
+import { centers } from "app/views/center";
 
 export function PageAchieve() {
     const uqApp = useUqApp();
