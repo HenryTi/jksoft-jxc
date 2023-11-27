@@ -27,16 +27,20 @@ function PageEditingCenter() {
         if (coreDetail !== undefined) {
             pendEntityId = coreDetail.pend?.id;
             if (pendEntityId !== undefined) {
-                vNotifyCount = <ViewNotifyCount phrase={pendEntityId} />;
+                vNotifyCount = <div className="position-absolute" style={{ right: "0.3rem", top: "-0.5rem" }}>
+                    <ViewNotifyCount phrase={pendEntityId} />
+                </div>;
             }
         }
         return <Link
             to={`/sheet/${to62(entityId)}`}
         >
-            <div className="px-3 py-2 align-items-center d-flex">
-                <BI name="card-list" className="fs-larger me-3 text-primary" />
+            <div className="px-1 py-2 align-items-center d-flex">
+                <div className="position-relative">
+                    <FA name="file-text" className="my-2 mx-4 text-primary" size="lg" />
+                    {vNotifyCount}
+                </div>
                 <span className="text-body">{caption ?? name}</span>
-                {vNotifyCount}
             </div>
         </Link>
     }
@@ -83,8 +87,8 @@ function PageEditingCenter() {
             </div>;
         }
         return <Link to={`/sheet/${to62(entitySheet.id)}/${to62(id)}`}>
-            <div className="d-flex px-3 py-3">
-                <FA name="file-text-o" className="me-3 text-danger" />
+            <div className="d-flex ps-1 pe-3 py-3 align-items-center">
+                <FA name="file-text-o" className="mx-4 text-danger" size="lg" />
                 <span className="d-inline-block w-min-8c">{sheetCaption}</span>
                 <span className="d-inline-block w-min-10c">{no}</span>
                 <span className="d-inline-block w-min-8c">
