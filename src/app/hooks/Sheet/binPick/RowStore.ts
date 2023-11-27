@@ -135,9 +135,7 @@ export class RowStore {
     }
 
     init(picked: { [name: string]: any }) {
-        for (let i in picked) {
-            this.calc.addValues(i, picked[i]);
-        }
+        this.calc.addValues(undefined, picked);
         const { results } = this.calc;
         for (let i in this.fieldColl) {
             let field = this.fieldColl[i];
