@@ -12,6 +12,7 @@ import { Calc, Formulas } from "app/hooks/Calc";
 import { BudCheckValue, BudValue } from "tonwa-app";
 import { budValuesFromProps } from "../tool/tool";
 import { BinEditing } from "./BinEditing";
+import { BudEditing } from "../Bud";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -30,6 +31,7 @@ abstract class BaseObject extends KeyIdObject {
 }
 
 export class SheetMain extends BaseObject {
+    readonly budEditings: BudEditing[];
     readonly binEditing: BinEditing;
     readonly entityMain: EntityBin;
     readonly _binRow = atom<BinRow>({ buds: {} } as BinRow);
@@ -40,7 +42,7 @@ export class SheetMain extends BaseObject {
         super(sheetStore);
         let { main } = sheetStore.entitySheet;
         this.entityMain = main;
-        this.binEditing = new BinEditing(main);
+        this.budEditings = main.props.map(v => new BudEditing(v));
     }
 
     // return: true: new sheet created
@@ -120,6 +122,16 @@ export class SheetMain extends BaseObject {
     setId(id: number) {
         let row = this.binRow;
         setAtomValue(this._binRow, { ...row, id });
+    }
+
+    trigger() {
+        let ok = true;
+        const binRow = getAtomValue(this._binRow);
+        const { buds } = binRow;
+        for (let be of this.budEditings) {
+            if (be.trigger(buds[be.bizBud.id]) === false) ok = false;
+        }
+        return ok;
     }
 }
 

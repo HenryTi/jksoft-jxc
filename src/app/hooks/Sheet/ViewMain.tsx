@@ -4,20 +4,19 @@ import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "./ViewSheetTime";
 import { BizBud } from "app/Biz";
 import { setAtomValue } from "tonwa-com";
+import { BudCheckEditValue } from "tonwa-app";
 
 export function ViewMain({ main }: { main: SheetMain }) {
-    const { no, entityMain, _binRow, binEditing } = main;
-    const { i: budI, x: budX, props } = entityMain;
+    const { no, entityMain, _binRow, budEditings } = main;
+    const { i: budI, x: budX } = entityMain;
     const binRow = useAtomValue(_binRow);
     const { id: idBin, i, x, buds } = binRow;
-    let { length } = props;
+    let { length } = budEditings;
     let propRow: any[] = [];
     const propRowArr: any[][] = [propRow];
-    const budEditings: BudEditing[] = [];
     for (let i = 0; i < length; i++) {
-        let bizBud = props[i];
-        let budEditing = new BudEditing(bizBud);
-        budEditings.push(budEditing);
+        let budEditing = budEditings[i];
+        const { bizBud } = budEditing;
         let { id, caption, name } = bizBud;
         let value = buds[id];
         propRow.push(<div key={id} className="col-3">
@@ -30,11 +29,8 @@ export function ViewMain({ main }: { main: SheetMain }) {
             propRowArr.push(propRow);
         }
     }
-    function onTrigger() {
-        for (let be of budEditings) be.trigger(buds[be.bizBud.id]);
-    }
-    function onBudChanged(bud: BizBud, value: string | number) {
-        buds[bud.id] = value;
+    function onBudChanged(bud: BizBud, value: string | number | BudCheckEditValue) {
+        buds[bud.id] = value as any;
         setAtomValue(_binRow, { ...binRow });
     }
     let viewRowArr: any;
@@ -64,6 +60,5 @@ export function ViewMain({ main }: { main: SheetMain }) {
             <ViewIdField bud={budX} value={x} />
         </div>
         {viewRowArr}
-        <div><button onClick={onTrigger}>trigger</button></div>
     </div>;
 }

@@ -90,8 +90,8 @@ function PageStore({ store }: { store: SheetStore; }) {
     }, []);
 
     async function onSubmit() {
+        if (main.trigger() === false) return;
         setEditable(false);
-        await wait(3000);
         let retSubmit = await uq.SubmitSheet.submit({ id: main.binRow.id })
         removeSheetFromCache();
         setEditable(true);

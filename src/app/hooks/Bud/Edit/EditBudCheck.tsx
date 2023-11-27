@@ -8,7 +8,7 @@ import { useState } from "react";
 export function EditBudCheck(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
     const modal = useModal();
-    const { id, readonly, plus, value: initValue, budEditing: { error, bizBud }, ViewValueEdit: ValueEdit } = props;
+    const { id, readonly, plus, value: initValue, budEditing: { error, bizBud }, ViewValueEdit: ValueEdit, onChanged } = props;
     const { budDataType, caption, name, ui } = bizBud;
     const { options: { items } } = budDataType as BudCheck;
     const initCheckValue: BudCheckEditValue = {};
@@ -22,7 +22,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
     if (readonly === true) cn += 'text-light invisible ';
     async function onCheckChanged(item: OptionsItem, checked: boolean) {
         const { id: budPhrase } = bizBud;
-        const optionsItemPhrase = item.id; // `${optionsPhrase}.${item.name}`;
+        const optionsItemPhrase = item.id;
         await uq.SaveBudCheck.submit({
             budPhrase,
             id,
@@ -30,7 +30,9 @@ export function EditBudCheck(props: EditBudTemplateProps) {
             checked: checked === true ? 1 : 0,
         });
         checks[optionsItemPhrase] = checked;
-        setChecks({ ...checks });
+        let valChecks = { ...checks };
+        setChecks(valChecks);
+        onChanged?.(bizBud, valChecks);
     }
 
     let onEditClick: () => void;

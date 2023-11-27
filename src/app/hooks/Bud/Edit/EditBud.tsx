@@ -24,12 +24,15 @@ export class BudEditing implements IBudEditing {
     }
 
     trigger(value: any) {
+        let ok = true;
         const { required } = this.bizBud.ui;
         if (required === true) {
             if (value === undefined) {
                 setAtomValue(this.error, '必填项');
+                ok = false;
             }
         }
+        return ok;
     }
 }
 

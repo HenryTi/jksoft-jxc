@@ -1,7 +1,7 @@
 import { BizBud } from "app/Biz";
 import { Atom, WritableAtom } from "jotai";
 import { RegisterOptions } from "react-hook-form";
-import { BudValue, OnValueChanged, PickProps, UqAppBase } from "tonwa-app";
+import { BudCheckEditValue, BudValue, OnValueChanged, PickProps, UqAppBase } from "tonwa-app";
 
 export interface EditBudValue {
     pickValue: (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) => Promise<string | number>;
@@ -40,7 +40,7 @@ export interface EditBudProps {
     plus?: boolean;             // 重要的字段
     readonly?: boolean;
     options?: RegisterOptions;
-    onChanged?: (bizBud: BizBud, value: string | number) => Promise<void> | void;
+    onChanged?: (bizBud: BizBud, value: string | number | BudCheckEditValue) => Promise<void> | void;
 }
 
 export interface EditBudTemplateProps extends EditBudProps {
