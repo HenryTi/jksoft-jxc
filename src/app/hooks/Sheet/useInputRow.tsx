@@ -1,5 +1,5 @@
 import { Page, useModal } from "tonwa-app";
-import { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Band, FormRowsView } from "app/coms";
 import { ViewSpec } from "app/hooks/View";
@@ -29,7 +29,7 @@ export function useInputRow() {
 
 function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore; }) {
     const { closeModal } = useModal();
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onBlur' });
+    const { register, handleSubmit, setValue, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { props, section } = row;
     const { entityBin } = section.coreDetail;
     const { i: budI, x: budX } = entityBin;
@@ -69,6 +69,7 @@ function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore; }) {
     formRows.push({ type: 'submit', label: '提交', options: { disabled: submitable === false } });
 
     async function onSubmit(data: any) {
+        if (await trigger(undefined, { shouldFocus: true }) === false) return;
         closeModal(true);
     }
 

@@ -142,12 +142,14 @@ interface ModalInputPendProps {
 function ModalInputPend({ caption, entity: entityPend, search, pendRows, ownerColl }: ModalInputPendProps) {
     const uqApp = useUqApp();
     const modal = useModal();
-    let { name: pendName, i: iBud } = entityPend;
+    let { name: pendName, i: iBud, predefinedFields } = entityPend;
     let [selectedItems, setSelectedItems] = useState<{ [id: number]: PendRow; }>({});
 
     if (caption === undefined) {
         caption = entityPend.caption ?? pendName;
     }
+    let hasPrice = predefinedFields.findIndex(v => v === 'price') >= 0;
+    let hasAmount = predefinedFields.findIndex(v => v === 'amount') >= 0;
     function onClick() {
         let pendRows = Object.values(selectedItems).sort((a, b) => {
             let aPend = a.pend, bPend = b.pend;
@@ -201,8 +203,8 @@ function ModalInputPend({ caption, entity: entityPend, search, pendRows, ownerCo
                 <ViewPropArr className="col" arr={cols} />
                 <div className="col">
                     <div className="py-2 d-flex flex-column align-items-end">
-                        <ViewValue caption={'单价'} value={price?.toFixed(digits)} />
-                        <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />
+                        {hasPrice === true && <ViewValue caption={'单价'} value={price?.toFixed(digits)} />}
+                        {hasAmount === true && <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />}
                         <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
                     </div>
                 </div >

@@ -214,6 +214,7 @@ export const predefinedPendFields = [
 
 export class EntityPend extends Entity {
     predefined: { [name: string]: BizBud };
+    predefinedFields: string[];
     i: BizBud;
     x: BizBud;
     params: BizBud[];
@@ -234,6 +235,8 @@ export class EntityPend extends Entity {
                 this.i = val; break;
             case 'x':
                 this.x = val; break;
+            case 'predefinedFields':
+                this.predefinedFields = val; break;
         }
     }
 
