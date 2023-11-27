@@ -84,7 +84,7 @@ function PageEditingCenter() {
         }
         return <Link to={`/sheet/${to62(entitySheet.id)}/${to62(id)}`}>
             <div className="d-flex px-3 py-3">
-                <FA name="file" className="me-3 text-danger" />
+                <FA name="file-text-o" className="me-3 text-danger" />
                 <span className="d-inline-block w-min-8c">{sheetCaption}</span>
                 <span className="d-inline-block w-min-10c">{no}</span>
                 <span className="d-inline-block w-min-8c">

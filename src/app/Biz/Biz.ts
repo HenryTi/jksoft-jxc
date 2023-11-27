@@ -210,7 +210,7 @@ export class Biz {
                     [this.atoms],
                     [this.atomRoots, '基础编码', 'id-card-o'],
                     [this.specs, '细分编码', 'asterisk'],
-                    [this.duos, '双子', 'share-alt'],
+                    [this.duos, '合成编码', 'code-fork'],
                     [this.titles, '科目', 'flag-o'],
                     [this.assigns, '赋值', 'flag-o']
                 ],

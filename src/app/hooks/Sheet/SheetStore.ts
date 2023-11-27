@@ -48,14 +48,19 @@ export class SheetMain extends BaseObject {
         if (pickResults === undefined) return;
         const { i, x, props: mainProps } = this.entityMain;
         const formulas: Formulas = [];
+        function getFormulaText(text: string) {
+            if (text === undefined) return;
+            let parts = text.split('\n');
+            return parts[0];
+        }
         if (i !== undefined) {
-            formulas.push(['i', i.defaultValue]);
+            formulas.push(['i', getFormulaText(i.defaultValue)]);
         }
         if (x !== undefined) {
-            formulas.push(['x', x.defaultValue]);
+            formulas.push(['x', getFormulaText(x.defaultValue)]);
         }
         for (let mp of mainProps) {
-            formulas.push([mp.name, mp.defaultValue]);
+            formulas.push([mp.name, getFormulaText(mp.defaultValue)]);
         }
         let { results, lastBinPick, lastResult } = pickResults;
         const calc = new Calc(formulas, results);

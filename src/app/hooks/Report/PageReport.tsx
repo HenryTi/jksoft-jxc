@@ -1,13 +1,15 @@
-import { EntityReport, ReportTitle } from "app/Biz";
+import { EntityAtom, EntityDuo, EntityReport, ReportTitle } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { useCallback } from "react";
-import { ParamGetReport } from "uqs/UqDefault";
+import { BizPhraseType, ParamGetReport } from "uqs/UqDefault";
 import { ViewSpecPropsH } from "../View";
 import { FA } from "tonwa-com";
 import { Link } from "react-router-dom";
 import { Period, ViewPeriodHeader, path, usePeriod } from "app/tool";
 import { useAtomValue } from "jotai";
+import { IDView, Page, useModal } from "tonwa-app";
+import { PageAtomSelect, ViewAtom, ViewAtomId } from "../BizAtom";
 
 interface SpecRow {
     id: number;
@@ -28,6 +30,40 @@ interface ReportRow {
 }
 
 export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
+    const { from } = entityReport;
+    switch (from.bizPhraseType) {
+        default:
+            debugger;
+            break;
+        case BizPhraseType.atom:
+            return <PageResult entityReport={entityReport} atomId={undefined} top={undefined} />;
+        case BizPhraseType.duo:
+            return <PageSelect entityReport={entityReport} />;
+    }
+}
+
+function PageSelect({ entityReport }: { entityReport: EntityReport; }) {
+    const modal = useModal();
+    const { id, from, title, caption, name } = entityReport;
+    const { i } = from as EntityDuo;
+    let atom = i.atoms[0];
+    let atomCaption: string = atom.caption ?? atom.name;
+    /*
+    return <Page header={`选择${atomCaption} - ${caption ?? name}`}>
+
+    </Page>
+    */
+    async function onSelected(atomId: number) {
+        let top = <div className="p-3">
+            <ViewAtomId id={atomId} />
+        </div>
+        await modal.open(<PageResult entityReport={entityReport} atomId={atomId} top={top} />)
+    }
+
+    return <PageAtomSelect atom={atom as EntityAtom} onSelected={onSelected} />;
+}
+
+function PageResult({ entityReport, atomId, top }: { entityReport: EntityReport; atomId: number; top: any }) {
     const { uq } = useUqApp();
     const { id, from, title } = entityReport;
     let timeZone: number = 8;
@@ -38,7 +74,7 @@ export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
     const param: ParamGetReport = {
         reportPhrase: id,
         atomPhrase: from.id,
-        atomId: undefined,
+        atomId,
         dateStart: state.from,
         dateEnd: state.to,
         params: { a: 1 }
@@ -130,6 +166,7 @@ export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
         sortField="id"
         ViewItem={ViewItem}
     >
+        {top}
         <ViewPeriodHeader period={period} setEnumPeriod={setEnumPeriod} />
     </PageQueryMore>;
 }

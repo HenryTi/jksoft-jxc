@@ -2,15 +2,18 @@ import { getDays } from 'app/tool';
 import jsep from 'jsep';
 import { CalcSpace } from './CalcSpace';
 
+/*
 export enum FormulaSetType {
     init,
     equ,
     show,
 }
+*/
 export class Formula {
     private readonly exp: jsep.Expression;
-    readonly setType: FormulaSetType;
+    // readonly setType: FormulaSetType;
     constructor(formula: string) {
+        /*
         let p = formula.indexOf('\n');
         if (p > 0) {
             let suffix = formula.substring(p + 1);
@@ -20,6 +23,7 @@ export class Formula {
         else {
             this.setType = FormulaSetType.equ;
         }
+        */
         this.exp = jsep(formula);
     }
 
@@ -138,17 +142,18 @@ export class Calc {
         }
     }
     */
-
+    /*
     formulaSetType(name: string) {
         let f = this.formulas.get(name);
         if (f === undefined) return false;
         return f.setType;
     }
-
+    */
     private run(callback: (name: string, value: string | number) => void) {
         if (this._results === undefined) this._results = {};
         for (let [name, formula] of this.formulas) {
-            if (formula.setType !== FormulaSetType.equ) continue;
+            // const { setType } = formula;
+            // if (setType !== FormulaSetType.equ) continue;
             try {
                 let ret = formula.run(this.calcSpace);
                 if (ret === undefined) continue;

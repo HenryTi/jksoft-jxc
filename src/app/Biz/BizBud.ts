@@ -28,6 +28,8 @@ export enum EnumBudType {
 export abstract class BudDataType {
     abstract get type(): EnumBudType;
     abstract get dataType(): string;
+    min: string;
+    max: string;
     fromSchema(schema: any) { }
     scan(biz: Biz, bud: BizBud) { }
     valueToContent(value: string | number) {
@@ -188,6 +190,8 @@ export class BizBud extends BizBase {
             default:
                 super.fromSwitch(i, val);
                 break;
+            case 'min': this.budDataType.min = val; break;
+            case 'max': this.budDataType.max = val; break;
             case 'value': this.defaultValue = val; break;
             case 'params': this.atomParams = val; break;
             case 'show':

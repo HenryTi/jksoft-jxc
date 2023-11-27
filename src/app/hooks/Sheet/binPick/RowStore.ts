@@ -1,16 +1,41 @@
 import { FormRow } from "app/coms";
 import { BinDetail } from "../SheetStore";
 import { BizBud, BudDec, EntityBin, EnumBudType } from "app/Biz";
-import { Calc, FormulaSetType, Formulas } from "../../Calc";
+import { Calc, Formulas } from "../../Calc";
+
+export enum ValueSetType {
+    none,
+    init,
+    equ,
+    show,
+}
 
 abstract class Field {
     readonly name: string;
     readonly bud: BizBud;
     readonly binDetail: BinDetail;
+    readonly valueSet: string;
+    readonly valueSetType: ValueSetType;
     constructor(bud: BizBud, binDetail: BinDetail) {
         this.name = bud.name;
         this.bud = bud;
         this.binDetail = binDetail;
+        let { defaultValue } = bud;
+        if (defaultValue !== undefined) {
+            let p = defaultValue.indexOf('\n');
+            if (p > 0) {
+                let suffix = defaultValue.substring(p + 1);
+                this.valueSet = defaultValue.substring(0, p);
+                this.valueSetType = ValueSetType[suffix as keyof typeof ValueSetType];
+            }
+            else {
+                this.valueSetType = ValueSetType.equ;
+                this.valueSet = defaultValue;
+            }
+        }
+        else {
+            this.valueSetType = ValueSetType.none;
+        }
     }
     abstract getValue(): any;
     abstract setValue(v: any): void;
@@ -49,7 +74,6 @@ class FieldBud extends Field {
 export class RowStore {
     private readonly entityBin: EntityBin;
     private readonly fields: Field[];
-    private readonly fieldBuds: BizBud[];
     private readonly fieldColl: { [name: string]: Field } = {};
     private readonly calc: Calc;
     private readonly requiredFields: Field[] = [];
@@ -57,29 +81,23 @@ export class RowStore {
     constructor(bin: EntityBin) {
         this.entityBin = bin;
         this.fields = [];
-        this.fieldBuds = [];
         const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, props: budArr } = bin;
 
         let requiredFields = this.requiredFields;
         if (iBud !== undefined) {
             this.initField(new FieldI(iBud, this.binDetail), false);
-            this.fieldBuds.push(iBud);
         }
         if (xBud !== undefined) {
             this.initField(new FieldX(xBud, this.binDetail), false);
-            this.fieldBuds.push(xBud);
         }
         if (valueBud !== undefined) {
             this.initField(new FieldValue(valueBud, this.binDetail));
-            this.fieldBuds.push(valueBud);
         }
         if (priceBud !== undefined) {
             this.initField(new FieldPrice(priceBud, this.binDetail));
-            this.fieldBuds.push(priceBud);
         }
         if (amountBud !== undefined) {
             this.initField(new FieldAmount(amountBud, this.binDetail));
-            this.fieldBuds.push(amountBud);
         }
         for (let bud of budArr) {
             this.initField(new FieldBud(bud, this.binDetail));
@@ -87,19 +105,25 @@ export class RowStore {
         const formulas: Formulas = [];
         for (let i in this.fieldColl) {
             let f = this.fieldColl[i];
-            let { name, bud } = f;
+            let { name, bud, valueSet, valueSetType } = f;
             this.fieldColl[name] = f;
-            let { defaultValue, ui } = bud;
+            let { ui, budDataType: { min, max } } = bud;
             let { show, required } = ui;
             if (show === true) continue;
-            if (defaultValue !== undefined) {
-                formulas.push([name, defaultValue]);
-                if (defaultValue.endsWith('\ninit') === true) {
+            if (valueSet !== undefined) {
+                formulas.push([name, valueSet]);
+                if (valueSetType === ValueSetType.init) {
                     if (required === true) requiredFields.push(f);
                 }
             }
             else {
                 if (required === true) requiredFields.push(f);
+            }
+            if (min !== undefined) {
+                formulas.push([name + '.min', min]);
+            }
+            if (max !== undefined) {
+                formulas.push([name + '.max', max]);
             }
         }
         this.calc = new Calc(formulas, this.binDetail as any);
@@ -113,20 +137,17 @@ export class RowStore {
     init(picked: { [name: string]: any }) {
         this.calc.addValues(undefined, picked);
         const { results } = this.calc;
-        for (let bud of this.fieldBuds) {
-            let { name: budName } = bud;
-            (this.binDetail as any)[budName] = results[budName];
-        }
-        let buds: { [bud: string]: string | number } = this.binDetail.buds;
-        for (let bud of this.entityBin.props) {
-            let { name: budName } = bud;
-            buds[budName] = results[budName];
+        for (let i in this.fieldColl) {
+            let field = this.fieldColl[i];
+            field.setValue(results[field.name]);
         }
     }
 
     setValues(binDetail: BinDetail) {
         Object.assign(this.binDetail, binDetail);
-        this.calc.addValues(undefined, binDetail);
+        //this.calc.addValues(undefined, binDetail);
+        let obj = new Proxy(binDetail, this.entityBin.proxyHandler());
+        this.calc.addValues(undefined, obj);
     }
 
     setValue(name: string, value: number | string, callback: (name: string, value: string | number) => void) {
@@ -142,10 +163,10 @@ export class RowStore {
         let field = this.fieldColl[name];
         if (field === undefined) {
             console.error('RowStore setFieldOrBudValue not defined name=', name)
-            debugger;
+            // debugger;
+            return;
         }
         field.setValue(value);
-        // (this.binDetail as any)[name] = value;
     }
 
     get submitable(): boolean {
@@ -159,19 +180,20 @@ export class RowStore {
 
     buildFormRows(): FormRow[] {
         let ret: FormRow[] = [];
+        const { results: calcResults } = this.calc;
         for (let field of this.fields) {
-            const { name, bud } = field;
+            const { name, bud, valueSetType } = field;
             const { caption, budDataType, ui } = bud;
             let { show } = ui;
             if (show === true) continue;
-            let setType = this.calc.formulaSetType(name);
             let formRow = {
                 name,
                 label: caption ?? name,
                 type: 'number',
-                options: { value: field.getValue(), disabled: setType === FormulaSetType.equ }
+                options: { value: field.getValue(), disabled: valueSetType === ValueSetType.equ }
             } as any;
-            switch (budDataType.type) {
+            const { type, min, max } = budDataType;
+            switch (type) {
                 case EnumBudType.atom:
                     formRow.default = field.getValue();
                     formRow.atom = null;
@@ -189,6 +211,12 @@ export class RowStore {
                         formRow.step = step;
                     }
                     formRow.options.valueAsNumber = true;
+                    if (min !== undefined) {
+                        formRow.options.min = calcResults[`${name}.min`];
+                    }
+                    if (max !== undefined) {
+                        formRow.options.max = calcResults[`${name}.max`];
+                    }
                     break;
             }
             ret.push(formRow);

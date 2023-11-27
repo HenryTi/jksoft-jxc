@@ -17,7 +17,7 @@ export function useSelectAtom() {
 }
 
 export function PageAtomSelect(props: PropsAtomSelect) {
-    const { buds, loadOnOpen, caption, placeholder, atom } = props;
+    const { buds, loadOnOpen, caption, placeholder, atom, onSelected } = props;
     const uqApp = useUqApp();
     const { biz } = uqApp;
     const { closeModal } = useModal();
@@ -36,7 +36,12 @@ export function PageAtomSelect(props: PropsAtomSelect) {
     }
     async function onItemClick(selectedItem: RowMed) {
         let ret = selectedItem.atom;
-        closeModal(ret);
+        if (onSelected !== undefined) {
+            await onSelected(ret.id);
+        }
+        else {
+            closeModal(ret);
+        }
     }
     let atomBudsSearch = useAtomBudsSearch({ entity: atom, buds, });
     async function searchAtoms(param: any, pageStart: any, pageSize: number) {

@@ -74,7 +74,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         if (editable === false) return;
         const rowStore = new RowStore(entityBin);
         rowStore.setValues(binDetail);
-        let ret = await pickInput(row, rowStore); // openModal(<ModalInputRow row={row} rowStore={rowStore} />);
+        let ret = await pickInput(row, rowStore);
         if (ret === true) {
             Object.assign(binDetail, rowStore.binDetail);
             await row.changed();
@@ -88,7 +88,6 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     }
     if (value === undefined) {
         value = 0;
-        // return null;
     }
     let cnEdit = editable === true ? 'cursor-pointer' : 'text-light';
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {

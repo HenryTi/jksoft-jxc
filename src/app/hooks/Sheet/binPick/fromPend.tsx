@@ -123,7 +123,6 @@ class PendProxyHander implements ProxyHandler<any> {
         let bud = this.entityPend.budColl[p as string];
         if (bud === undefined) return;
         let ret = target.mid[bud.id];
-        // console.log('PendProxyHander', target, p, this.entityPend, bud, ret);
         return ret;
     }
 }
@@ -181,6 +180,7 @@ function ModalInputPend({ caption, entity: entityPend, search, pendRows, ownerCo
     }
     const digits = 2;
     function ViewPropArr({ className, arr }: { className?: string; arr: Prop[]; }) {
+        if (arr === undefined || arr.length === 0) return null;
         return <div className={className}>
             {arr.map((v, index) => {
                 return <VNamedBud key={index} {...v} />;
@@ -191,15 +191,15 @@ function ModalInputPend({ caption, entity: entityPend, search, pendRows, ownerCo
         const { detail: { id, i, price, amount }, value, mid, cols } = pendRow;
         return <div className="container">
             <div className="row">
-                <div className="col-3">
+                <div className="col">
                     <div className="py-2">
                         <ViewSpec id={i} />
                         <OwnedBuds values={ownerColl[id][iBud.id]} />
                     </div>
                 </div>
-                <ViewPropArr className="col-3" arr={mid} />
-                <ViewPropArr className="col-3" arr={cols} />
-                <div className="col-3">
+                <ViewPropArr className="col" arr={mid} />
+                <ViewPropArr className="col" arr={cols} />
+                <div className="col">
                     <div className="py-2 d-flex flex-column align-items-end">
                         <ViewValue caption={'单价'} value={price?.toFixed(digits)} />
                         <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />
@@ -225,21 +225,4 @@ function ModalInputPend({ caption, entity: entityPend, search, pendRows, ownerCo
             <button className="btn btn-primary" onClick={onClick}>选入</button>
         </div>
     </Page>;
-    /*
-        <div className="p-3 border-bottom">
-        <div className="d-flex">
-            <div className="me-3">pend: {pendName}</div>
-            <div className="me-3">search: {JSON.stringify(search)}</div>
-            {
-                Object.values(predefined).map(v => {
-                    const { name, caption, entity } = v;
-                    return <div key={name} className="me-3">
-                        {name}: {caption}
-                    </div>;
-                })
-            }
-        </div>
-        <div>{Object.keys(selectedItems).map(v => v).join(', ')}</div>
-    </div>
-    */
 }

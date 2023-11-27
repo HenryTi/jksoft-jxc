@@ -1,8 +1,10 @@
 export class CalcSpace {
+    private readonly roots: object[] = [];
     private readonly namedValues: { [name: string]: object | string | number } = {};
     addValues(name: string, values: object) {
         if (name === undefined) {
-            Object.assign(this.namedValues, values);
+            this.roots.push(values);
+            // Object.assign(this.namedValues, values);
             return;
         }
         this.namedValues[name] = values;
@@ -13,11 +15,16 @@ export class CalcSpace {
     }
 
     identifier(name: string): string | number {
-        let ret = this.namedValues[name];
-        if (typeof ret === 'object') {
-            return (ret as any).id;
+        let len = this.roots.length - 1;
+        for (let i = len; i >= 0; i--) {
+            let values = this.roots[i];
+            let ret = (values as any)[name];
+            if (ret === undefined) continue;
+            if (typeof ret === 'object') {
+                return (ret as any).id;
+            }
+            return ret;
         }
-        return ret;
     }
     member(name0: string, name1: string): string | number {
         let obj = this.namedValues[name0];

@@ -1,6 +1,6 @@
 import { BizBud, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
-import { EntityAtom, EntityAtomID } from "./EntityAtom";
+import { EntityAtom, EntityAtomID, EntityDuo } from "./EntityAtom";
 import { EntityTitle } from "./EntityTitle";
 
 export class ReportList extends BizBud {
@@ -20,7 +20,7 @@ export interface ReportTitle {
 }
 export class EntityReport extends Entity {
     title: ReportTitle[];
-    from: EntityAtom;
+    from: EntityAtom | EntityDuo;
     joins: ReportJoin[];
     lists: ReportList[];
     protected override fromSwitch(i: string, val: any) {
@@ -45,7 +45,7 @@ export class EntityReport extends Entity {
     }
 
     private fromFrom(val: any) {
-        this.from = this.biz.entities[val] as EntityAtom;
+        this.from = this.biz.entities[val] as EntityAtom | EntityDuo;
     }
 
     private fromJoins(val: any) {

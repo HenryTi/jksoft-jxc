@@ -7,6 +7,7 @@ export interface PropsAtomSelect {
     loadOnOpen?: boolean;
     caption?: string;
     placeholder?: string;
+    onSelected?: (atomId: number) => Promise<void>;
 }
 
 export interface GAtom {

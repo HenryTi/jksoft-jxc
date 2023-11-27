@@ -182,6 +182,28 @@ export class EntityBin extends Entity {
             this.x = this.buildBudPickable(this.x as any);
         }
     }
+
+    proxyHandler() {
+        return new BinProxyHander(this);
+    }
+}
+
+const binFields = ['i', 'x', 'value', 'price', 'amount'];
+class BinProxyHander implements ProxyHandler<any> {
+    private readonly entityBin: EntityBin;
+    constructor(entityBin: EntityBin) {
+        this.entityBin = entityBin;
+    }
+    get(target: any, p: string | symbol, receiver: any) {
+        if (binFields.findIndex(v => v === p) >= 0) {
+            let ret = target[p];
+            return ret
+        }
+        let bud = this.entityBin.budColl[p as string];
+        if (bud === undefined) return;
+        let ret = target.buds[bud.id];
+        return ret;
+    }
 }
 
 export const predefinedPendFields = [
