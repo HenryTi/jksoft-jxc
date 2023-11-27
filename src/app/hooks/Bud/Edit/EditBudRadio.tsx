@@ -8,7 +8,8 @@ import { useState } from "react";
 export function EditBudRadio(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
     const modal = useModal();
-    const { id, readonly, plus, value: initValue, bizBud, ViewValueEdit: ValueEdit } = props;
+    const { id, readonly, plus, value: initValue, budEditing, ViewValueEdit: ValueEdit } = props;
+    const { bizBud, error } = budEditing;
     const { budDataType, caption, name, ui } = bizBud;
     let { options: { items } } = budDataType as BudRadio;
     const initCheckValue: BudCheckEditValue = {};
@@ -96,6 +97,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
         plus={plus}
         readonly={readonly}
         onEditClick={onEditClick}
+        error={error}
     >
         {content}
     </ValueEdit>;

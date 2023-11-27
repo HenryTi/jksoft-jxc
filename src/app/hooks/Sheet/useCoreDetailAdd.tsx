@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 import { CoreDetail, Row, Section } from "./SheetStore";
-import { LastPickResultType, PickResult, RowStore, useBinPicks } from "./binPick";
+import { LastPickResultType, PickResult, useBinPicks } from "./binPick";
 import { useInputRow } from "./useInputRow";
+import { BinEditing } from "./BinEditing";
 
 export function useCoreDetailAdd(coreDetail: CoreDetail) {
     const pickInput = useInputRow();
@@ -22,9 +23,9 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
                 coreDetail.addSection(sec);
 
                 namedResults[binPick.name] = rowProps;
-                let rowStore = new RowStore(entityBin);
+                let rowStore = new BinEditing(entityBin);
                 rowStore.init(namedResults);
-                let { binDetail } = rowStore;
+                let { binRow: binDetail } = rowStore;
                 if (binDetail.value === undefined) {
                     rowStore.setValue('value', 0, undefined);
                 }
@@ -43,12 +44,12 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
             let section = new Section(coreDetail);
             let row = new Row(section);
             coreDetail.addSection(section);
-            const rowStore = new RowStore(entityBin);
-            rowStore.init(namedResults);
-            let ret = await pickInput(row, rowStore);
+            const binEditing = new BinEditing(entityBin);
+            binEditing.init(namedResults);
+            let ret = await pickInput(row, binEditing);
             //let ret = await openModal(<ModalInputRow row={row} rowStore={rowStore} />);
             if (ret === true) {
-                Object.assign(row.props, rowStore.binDetail);
+                Object.assign(row.props, binEditing.binRow);
                 await row.addToSection();
                 await coreDetail.sheetStore.reloadRow(row.props.id);
             }

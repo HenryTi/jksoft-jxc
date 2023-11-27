@@ -11,6 +11,7 @@ import { LastPickResultType, ReturnUseBinPicks } from "./binPick/useBinPicks";
 import { Calc, Formulas } from "app/hooks/Calc";
 import { BudCheckValue, BudValue } from "tonwa-app";
 import { budValuesFromProps } from "../tool/tool";
+import { BinEditing } from "./BinEditing";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -29,6 +30,7 @@ abstract class BaseObject extends KeyIdObject {
 }
 
 export class SheetMain extends BaseObject {
+    readonly binEditing: BinEditing;
     readonly entityMain: EntityBin;
     readonly _binRow = atom<BinRow>({ buds: {} } as BinRow);
     get binRow() { return getAtomValue(this._binRow) }
@@ -36,7 +38,9 @@ export class SheetMain extends BaseObject {
 
     constructor(sheetStore: SheetStore) {
         super(sheetStore);
-        this.entityMain = sheetStore.entitySheet.main;
+        let { main } = sheetStore.entitySheet;
+        this.entityMain = main;
+        this.binEditing = new BinEditing(main);
     }
 
     // return: true: new sheet created
@@ -421,41 +425,6 @@ export class SheetStore extends KeyIdObject {
     private async loadBinData(binId: number) {
         let { main, details, props } = await this.uq.GetSheet.query({ id: binId });
         const { budColl, ownerColl } = budValuesFromProps(props);
-        /*
-        const budColl: { [row: number]: { [bud: number]: BudValue } } = {};
-        const ownerColl: { [row: number]: { [owner: number]: [number, BudValue][] } } = {};
-        for (let { id, phrase, value, owner } of props) {
-            let budValues = budColl[id];
-            if (budValues === undefined) {
-                budColl[id] = budValues = {};
-            }
-            switch (value.length) {
-                default:
-                case 0: debugger; break;
-                case 1: budValues[phrase] = value[0]; break;
-                case 2:
-                    let checks = budValues[phrase] as BudCheckValue;
-                    if (checks === undefined) {
-                        budValues[phrase] = checks = [];
-                    }
-                    checks.push(value[1]);
-                    break;
-            }
-        }
-        for (let { id, phrase, owner } of props) {
-            if (owner === 0) continue;
-            let ownerValues = ownerColl[id];
-            if (ownerValues === undefined) {
-                ownerColl[id] = ownerValues = {};
-            }
-            let owned = ownerValues[owner];
-            if (owned === undefined) {
-                owned = [];
-                ownerValues[owner] = owned;
-            }
-            owned.push([phrase, budColl[id][phrase]]);
-        }
-        */
         let mainRow = main[0];
         (mainRow as any).buds = budColl[binId] ?? {};
         (mainRow as any).owned = ownerColl[binId] ?? {};

@@ -1,4 +1,5 @@
 import { BizBud } from "app/Biz";
+import { Atom, WritableAtom } from "jotai";
 import { RegisterOptions } from "react-hook-form";
 import { BudValue, OnValueChanged, PickProps, UqAppBase } from "tonwa-app";
 
@@ -23,10 +24,19 @@ export interface ViewBudProps extends ViewBudRowProps {
     pickValue?: (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) => Promise<string | number>;
 }
 
+export interface IEditing {
+    error: WritableAtom<string, any, any>;
+}
+
+export interface IBudEditing extends IEditing {
+    bizBud: BizBud;
+}
+
 export interface EditBudProps {
     id: number;
     value: BudValue;
-    bizBud: BizBud;
+    budEditing: IBudEditing;
+    // bizBud: BizBud;
     plus?: boolean;             // 重要的字段
     readonly?: boolean;
     options?: RegisterOptions;
@@ -37,7 +47,7 @@ export interface EditBudTemplateProps extends EditBudProps {
     ViewValueEdit: ViewValueEdit;
 }
 
-export interface EditProps {
+export interface EditProps extends IEditing {
     label: string | JSX.Element;
     children: React.ReactNode;
     onEditClick: () => void;

@@ -5,7 +5,7 @@ import { Route } from "react-router-dom";
 import { BudValue, Page } from "tonwa-app";
 import { List, Sep } from "tonwa-com";
 import { RegisterOptions } from "react-hook-form";
-import { EditBudLabelRow } from "app/hooks";
+import { BudEditing, EditBudLabelRow } from "app/hooks";
 import { UseQueryOptions, readBuds } from "app/tool";
 
 export const pathSiteInit = 'site-init';
@@ -84,9 +84,10 @@ export function PageSiteInit() {
     function ViewAssign({ value: item }: { value: InitValue; }) {
         const { value, options, bud } = item;
         let site: number = undefined; // uqApp.uqSites.userSite.siteId;
+        let budEditing = new BudEditing(bud);
         return <EditBudLabelRow
             id={site}
-            bizBud={bud}
+            budEditing={budEditing}
             value={value?.value}
             options={options}
         />;

@@ -3,13 +3,34 @@ import { EditBudRadio } from "./EditBudRadio";
 import { EditBudCheck } from "./EditBudCheck";
 import { EditBudString, EditBudInt, EditBudDec, EditBudDate } from "./EditBudValue";
 import { EditBudIntOf } from "./EditBudIntOf";
-import { EnumBudType } from "app/Biz";
-import { EditBudProps, EditBudTemplateProps } from "./model";
-import { InlineEdit, LabelRowEdit as LabelRowEditHere } from "./LabelRowEdit";
+import { BizBud, EnumBudType } from "app/Biz";
+import { EditBudProps, EditBudTemplateProps, IBudEditing } from "./model";
+import { LabelRowEdit as LabelRowEditHere } from "./LabelRowEdit";
+import { atom } from "jotai";
+import { getAtomValue, setAtomValue } from "tonwa-com";
+import { InlineEdit } from "./InlineEdit";
 
 export function EditBudLabelRow(editProps: EditBudProps) {
     const ValueEdit = LabelRowEditHere
     return EditBud({ ...editProps, ViewValueEdit: ValueEdit });
+}
+
+export class BudEditing implements IBudEditing {
+    readonly bizBud: BizBud;
+    error = atom<string>(undefined as string);
+
+    constructor(bizBud: BizBud) {
+        this.bizBud = bizBud;
+    }
+
+    trigger(value: any) {
+        const { required } = this.bizBud.ui;
+        if (required === true) {
+            if (value === undefined) {
+                setAtomValue(this.error, '必填项');
+            }
+        }
+    }
 }
 
 export function EditBudInline(editProps: EditBudProps) {
@@ -18,7 +39,7 @@ export function EditBudInline(editProps: EditBudProps) {
 }
 
 function EditBud(editProps: EditBudTemplateProps) {
-    const { bizBud } = editProps;
+    const { budEditing: { bizBud } } = editProps;
     const { type } = bizBud.budDataType;
     switch (type) {
         default:

@@ -1,7 +1,7 @@
 import { FormRow } from "app/coms";
-import { BinDetail } from "../SheetStore";
+import { BinDetail, BinRow } from "./SheetStore";
 import { BizBud, BudDec, EntityBin, EnumBudType } from "app/Biz";
-import { Calc, Formulas } from "../../Calc";
+import { Calc, Formulas } from "../Calc";
 
 export enum ValueSetType {
     none,
@@ -13,13 +13,13 @@ export enum ValueSetType {
 abstract class Field {
     readonly name: string;
     readonly bud: BizBud;
-    readonly binDetail: BinDetail;
+    readonly binRow: BinRow;
     readonly valueSet: string;
     readonly valueSetType: ValueSetType;
-    constructor(bud: BizBud, binDetail: BinDetail) {
+    constructor(bud: BizBud, binRow: BinRow) {
         this.name = bud.name;
         this.bud = bud;
-        this.binDetail = binDetail;
+        this.binRow = binRow;
         let { defaultValue } = bud;
         if (defaultValue !== undefined) {
             let p = defaultValue.indexOf('\n');
@@ -42,42 +42,43 @@ abstract class Field {
 }
 
 class FieldI extends Field {
-    getValue(): any { return this.binDetail.i; }
-    setValue(v: any) { this.binDetail.i = v; }
+    getValue(): any { return this.binRow.i; }
+    setValue(v: any) { this.binRow.i = v; }
 }
 
 class FieldX extends Field {
-    getValue(): any { return this.binDetail.x; }
-    setValue(v: any) { this.binDetail.x = v; }
+    getValue(): any { return this.binRow.x; }
+    setValue(v: any) { this.binRow.x = v; }
 }
 
 class FieldValue extends Field {
-    getValue(): any { return this.binDetail.value; }
-    setValue(v: any) { this.binDetail.value = v; }
+    getValue(): any { return this.binRow.value; }
+    setValue(v: any) { this.binRow.value = v; }
 }
 
 class FieldPrice extends Field {
-    getValue(): any { return this.binDetail.price; }
-    setValue(v: any) { this.binDetail.price = v; }
+    getValue(): any { return this.binRow.price; }
+    setValue(v: any) { this.binRow.price = v; }
 }
 
 class FieldAmount extends Field {
-    getValue(): any { return this.binDetail.amount; }
-    setValue(v: any) { this.binDetail.amount = v; }
+    getValue(): any { return this.binRow.amount; }
+    setValue(v: any) { this.binRow.amount = v; }
 }
 
 class FieldBud extends Field {
-    getValue(): any { return this.binDetail.buds[this.bud.id]; }
-    setValue(v: any) { this.binDetail.buds[this.bud.id] = v; }
+    getValue(): any { return this.binRow.buds[this.bud.id]; }
+    setValue(v: any) { this.binRow.buds[this.bud.id] = v; }
 }
 
-export class RowStore {
+// 跟当前行相关的编辑，计算，状态
+export class BinEditing {
     private readonly entityBin: EntityBin;
     private readonly fields: Field[];
     private readonly fieldColl: { [name: string]: Field } = {};
     private readonly calc: Calc;
     private readonly requiredFields: Field[] = [];
-    readonly binDetail: BinDetail = { buds: {} } as any;
+    readonly binRow: BinRow = { buds: {} } as any;
     constructor(bin: EntityBin) {
         this.entityBin = bin;
         this.fields = [];
@@ -85,22 +86,22 @@ export class RowStore {
 
         let requiredFields = this.requiredFields;
         if (iBud !== undefined) {
-            this.initField(new FieldI(iBud, this.binDetail), false);
+            this.initField(new FieldI(iBud, this.binRow), false);
         }
         if (xBud !== undefined) {
-            this.initField(new FieldX(xBud, this.binDetail), false);
+            this.initField(new FieldX(xBud, this.binRow), false);
         }
         if (valueBud !== undefined) {
-            this.initField(new FieldValue(valueBud, this.binDetail));
+            this.initField(new FieldValue(valueBud, this.binRow));
         }
         if (priceBud !== undefined) {
-            this.initField(new FieldPrice(priceBud, this.binDetail));
+            this.initField(new FieldPrice(priceBud, this.binRow));
         }
         if (amountBud !== undefined) {
-            this.initField(new FieldAmount(amountBud, this.binDetail));
+            this.initField(new FieldAmount(amountBud, this.binRow));
         }
         for (let bud of budArr) {
-            this.initField(new FieldBud(bud, this.binDetail));
+            this.initField(new FieldBud(bud, this.binRow));
         }
         const formulas: Formulas = [];
         for (let i in this.fieldColl) {
@@ -126,7 +127,7 @@ export class RowStore {
                 formulas.push([name + '.max', max]);
             }
         }
-        this.calc = new Calc(formulas, this.binDetail as any);
+        this.calc = new Calc(formulas, this.binRow as any);
     }
 
     private initField(field: Field, onForm: boolean = true) {
@@ -143,10 +144,10 @@ export class RowStore {
         }
     }
 
-    setValues(binDetail: BinDetail) {
-        Object.assign(this.binDetail, binDetail);
+    setValues(binRow: BinRow) {
+        Object.assign(this.binRow, binRow);
         //this.calc.addValues(undefined, binDetail);
-        let obj = new Proxy(binDetail, this.entityBin.proxyHandler());
+        let obj = new Proxy(binRow, this.entityBin.proxyHandler());
         this.calc.addValues(undefined, obj);
     }
 
@@ -176,6 +177,32 @@ export class RowStore {
             if (v === undefined) return false;
         }
         return ret;
+    }
+
+    onChange(name: string, type: 'text' | 'number', valueInputText: string, callback: (name: string, value: string | number) => void) {
+        let valueInput: any;
+        if (type === 'number') {
+            if (valueInputText.trim().length === 0) {
+                valueInput = undefined;
+            }
+            else {
+                let v = Number(valueInputText);
+                valueInput = Number.isNaN(v) === true ? undefined : v;
+            }
+        }
+        else if (type === 'text') {
+            if (valueInputText.trim().length === 0) {
+                valueInput = undefined;
+            }
+            else {
+                valueInput = valueInputText;
+            }
+        }
+        this.setValue(name, valueInput, (name, value) => {
+            // setValue(name, value);
+            callback(name, value);
+        });
+        // setSubmitable(rowStore.submitable);
     }
 
     buildFormRows(): FormRow[] {

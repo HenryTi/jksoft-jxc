@@ -1,5 +1,5 @@
 import { Page, useModal } from "tonwa-app";
-import React, { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Band, FormRowsView } from "app/coms";
 import { ViewSpec } from "app/hooks/View";
@@ -8,11 +8,11 @@ import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { BinOwnedBuds } from "./ViewDetail";
 import { Row } from "./SheetStore";
-import { RowStore } from "./binPick/RowStore";
+import { BinEditing } from "./BinEditing";
 
 export function useInputRow() {
     const modal = useModal();
-    return useCallback(async (row: Row, rowStore: RowStore) => {
+    return useCallback(async (row: Row, binEditing: BinEditing) => {
         const { props, section } = row;
         const { entityBin } = section.coreDetail;
         const { i: budI, x: budX } = entityBin;
@@ -22,21 +22,22 @@ export function useInputRow() {
             await modal.open(<Page header={caption ?? name}>
             </Page>);
         }
-        let ret = await modal.open(<ModalInputRow row={row} rowStore={rowStore} />);
+        let ret = await modal.open(<ModalInputRow row={row} binEditing={binEditing} />);
         return ret;
     }, []);
 }
 
-function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore; }) {
+function ModalInputRow({ row, binEditing }: { row: Row; binEditing: BinEditing; }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { props, section } = row;
     const { entityBin } = section.coreDetail;
     const { i: budI, x: budX } = entityBin;
-    const { binDetail } = rowStore;
-    const [submitable, setSubmitable] = useState(rowStore.submitable);
+    const { binRow: binDetail } = binEditing;
+    const [submitable, setSubmitable] = useState(binEditing.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;
+        /*
         let valueInput: any;
         if (type === 'number') {
             if (valueInputText.trim().length === 0) {
@@ -58,10 +59,14 @@ function ModalInputRow({ row, rowStore }: { row: Row; rowStore: RowStore; }) {
         rowStore.setValue(name, valueInput, (name, value) => {
             setValue(name, value);
         });
-        setSubmitable(rowStore.submitable);
+        */
+        binEditing.onChange(name, type as 'number' | 'text', valueInputText, (name, value) => {
+            setValue(name, value);
+        });
+        setSubmitable(binEditing.submitable);
     }
     const options = { onChange };
-    const formRows = rowStore.buildFormRows();
+    const formRows = binEditing.buildFormRows();
     formRows.forEach(v => {
         if (v === undefined) return null;
         return (v as any).options = { ...(v as any).options, ...options };

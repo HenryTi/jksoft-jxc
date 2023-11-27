@@ -11,9 +11,10 @@ type FromBudValue = (value: any) => any;
 function EditBudValue(props: EditBudTemplateProps & { type: string; step?: string; convertToBudValue: ConvertToBudValue; fromBudValue?: FromBudValue; }) {
     const { uq } = useUqApp();
     const { openModal } = useModal();
-    const { id, readonly, plus, value: initValue, bizBud, type, step, convertToBudValue, options, fromBudValue, ViewValueEdit: ValueEdit, onChanged } = props;
+    const { id, readonly, plus, value: initValue, budEditing, type, step, convertToBudValue, options, fromBudValue, ViewValueEdit: ValueEdit, onChanged } = props;
     const budInitValue = fromBudValue === undefined ? initValue as string | number : fromBudValue(initValue);
     const [value, setValue] = useState<string | number>(budInitValue);
+    const { bizBud } = budEditing;
     const { caption, name, ui } = bizBud;
     const label = caption ?? name;
     async function onEditClick() {
@@ -38,6 +39,7 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
         readonly={readonly}
         plus={plus}
         onEditClick={onEditClick}
+        error={budEditing.error}
     >
         {content}
     </ValueEdit>;
@@ -68,7 +70,7 @@ export function EditBudInt(props: EditBudTemplateProps) {
 }
 
 export function EditBudDec(props: EditBudTemplateProps) {
-    const { ui } = props.bizBud;
+    const { ui } = props.budEditing.bizBud;
     function convertToBudValue(value: any) {
         return {
             value,

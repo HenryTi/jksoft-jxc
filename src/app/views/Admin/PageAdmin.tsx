@@ -1,8 +1,5 @@
 import { Page } from "tonwa-app";
 import { Link, Route } from "react-router-dom";
-import { gUomI } from "./uom";
-import { CaptionAtom, pathAtomList } from "app/hooks";
-import { EnumAtom } from "uqs/UqDefault";
 import { centers } from "../center";
 
 export const pathAdmin = 'admin';
@@ -11,7 +8,6 @@ function PageAdmin() {
     const cmds = [
         { label: achieve.caption, path: achieve.path },
         { label: user.caption, path: user.path },
-        { label: <CaptionAtom atom={EnumAtom.UomI} />, path: pathAtomList(gUomI.name) },
     ];
     return <Page header="管理员">
         {cmds.map((v, index) => {

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { BudValue, Page, PageSpinner } from "tonwa-app";
 import { FA, Sep, Spinner, from62, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
-import { EditBudLabelRow, EditAtomField } from "../Bud";
+import { EditBudLabelRow, EditAtomField, BudEditing } from "../Bud";
 import { ViewBudRowProps } from "../Bud";
 import { BizBud } from "app/Biz";
 import { Tabs, Tab } from "react-bootstrap";
@@ -49,13 +49,14 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
     function buildVPropRows(props: BizBud[], plus: boolean = false) {
         return props.map(v => {
             if (v === undefined) debugger;
+            let budEditing = new BudEditing(v);
             let { id: budId } = v;
             let prop = buds[budId];
             return <React.Fragment key={budId}>
                 <EditBudLabelRow
                     id={id}
                     plus={plus}
-                    bizBud={v} value={prop as any}
+                    budEditing={budEditing} value={prop as any}
                 />
                 <Sep />
             </React.Fragment>;

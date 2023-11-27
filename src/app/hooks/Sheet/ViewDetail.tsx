@@ -1,18 +1,15 @@
 import { useAtomValue } from "jotai";
-import { BinDetail, CoreDetail, Row, Section } from "./SheetStore";
+import { BinDetail, BinRow, CoreDetail, Row, Section } from "./SheetStore";
 import { FA, LMR, Sep } from "tonwa-com";
 import { ViewSpec } from "app/hooks/View";
 import { useModal } from "tonwa-app";
-// import { ModalInputRow } from "./ModalInputRow";
 import React from "react";
 import { useCoreDetailEdit } from "./useCoreDetailEdit";
 import { BizBud } from "app/Biz";
-import { RowStore } from "./binPick";
-// import { useUqApp } from "app/UqApp";
-// import { ViewBud } from "app/hooks";
 import { OwnedBuds } from "../tool/tool";
 import { useInputRow } from "./useInputRow";
 import { ViewBud } from "../Bud";
+import { BinEditing } from "./BinEditing";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -72,11 +69,11 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     let { i, x, value, price, amount, buds } = binDetail
     async function onEdit() {
         if (editable === false) return;
-        const rowStore = new RowStore(entityBin);
-        rowStore.setValues(binDetail);
-        let ret = await pickInput(row, rowStore);
+        const binEditing = new BinEditing(entityBin);
+        binEditing.setValues(binDetail);
+        let ret = await pickInput(row, binEditing);
         if (ret === true) {
-            Object.assign(binDetail, rowStore.binDetail);
+            Object.assign(binDetail, binEditing.binRow);
             await row.changed();
         }
     }
@@ -157,7 +154,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
 }
 
 // atom field owns buds
-export function BinOwnedBuds({ bizBud, binDetail }: { bizBud: BizBud, binDetail: BinDetail; }) {
+export function BinOwnedBuds({ bizBud, binDetail }: { bizBud: BizBud, binDetail: BinRow; }) {
     let { owned } = binDetail;
     if (owned === undefined) return null;
     if (bizBud === undefined) return null;
