@@ -31,7 +31,7 @@ export function EditBudAtom(props: EditBudTemplateProps) {
         readonly={readonly}
         plus={plus}
         onEditClick={onEditClick}
-        error={error}
+        {...budEditing}
     >
         <ViewAtomId id={value} />
     </ValueEdit>;

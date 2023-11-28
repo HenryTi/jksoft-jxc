@@ -39,7 +39,7 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
         readonly={readonly}
         plus={plus}
         onEditClick={onEditClick}
-        error={budEditing.error}
+        {...budEditing}
     >
         {content}
     </ValueEdit>;

@@ -2,6 +2,7 @@ import { FormRow } from "app/coms";
 import { BinDetail, BinRow } from "./SheetStore";
 import { BizBud, BudDec, EntityBin, EnumBudType } from "app/Biz";
 import { Calc, Formulas } from "../Calc";
+import { RegisterOptions } from "react-hook-form";
 
 export enum ValueSetType {
     none,
@@ -39,6 +40,7 @@ abstract class Field {
     }
     abstract getValue(): any;
     abstract setValue(v: any): void;
+    get required(): boolean { return this.bud.ui.required; }
 }
 
 class FieldI extends Field {
@@ -54,6 +56,7 @@ class FieldX extends Field {
 class FieldValue extends Field {
     getValue(): any { return this.binRow.value; }
     setValue(v: any) { this.binRow.value = v; }
+    get required(): boolean { return true; }
 }
 
 class FieldPrice extends Field {
@@ -106,10 +109,10 @@ export class BinEditing {
         const formulas: Formulas = [];
         for (let i in this.fieldColl) {
             let f = this.fieldColl[i];
-            let { name, bud, valueSet, valueSetType } = f;
+            let { name, bud, valueSet, valueSetType, required } = f;
             this.fieldColl[name] = f;
             let { ui, budDataType: { min, max } } = bud;
-            let { show, required } = ui;
+            let { show } = ui;
             if (show === true) continue;
             if (valueSet !== undefined) {
                 formulas.push([name, valueSet]);
@@ -209,15 +212,21 @@ export class BinEditing {
         let ret: FormRow[] = [];
         const { results: calcResults } = this.calc;
         for (let field of this.fields) {
-            const { name, bud, valueSetType } = field;
+            const { name, bud, valueSetType, required } = field;
             const { caption, budDataType, ui } = bud;
             let { show } = ui;
             if (show === true) continue;
+            let options: RegisterOptions = {
+                value: field.getValue(),
+                disabled: valueSetType === ValueSetType.equ,
+                required,
+            };
             let formRow = {
                 name,
                 label: caption ?? name,
                 type: 'number',
-                options: { value: field.getValue(), disabled: valueSetType === ValueSetType.equ }
+                options,
+                required,
             } as any;
             const { type, min, max } = budDataType;
             switch (type) {

@@ -26,6 +26,7 @@ export interface ViewBudProps extends ViewBudRowProps {
 
 export interface IEditing {
     error: WritableAtom<string, any, any>;
+    required: boolean;
 }
 
 export interface IBudEditing extends IEditing {

@@ -287,7 +287,7 @@ function PageLogs({ entity, code }: { entity: Entity, code: string; }) {
             else {
                 let bizSchema = jsonpack.unpack(schemas);
                 biz.buildEntities(bizSchema);
-                ret = '提交成功!\n' + JSON.stringify(bizSchema, null, 4);
+                ret = '编译成功!\n' + JSON.stringify(bizSchema, null, 4);
             }
             //textAreaLog.value = ret;
             setAtomValue(atomLogs, ret);

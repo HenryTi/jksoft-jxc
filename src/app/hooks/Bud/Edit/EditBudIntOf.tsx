@@ -44,7 +44,7 @@ export function EditBudIntOf(props: EditBudTemplateProps) {
         readonly={readonly}
         plus={plus}
         onEditClick={null}
-        error={error}
+        {...budEditing}
     >
         <RadioAsync name={name} items={radios} onCheckChanged={onCheckChanged} />
     </ValueEdit>;

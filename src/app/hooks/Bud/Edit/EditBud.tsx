@@ -17,16 +17,17 @@ export function EditBudLabelRow(editProps: EditBudProps) {
 
 export class BudEditing implements IBudEditing {
     readonly bizBud: BizBud;
+    readonly required: boolean;
     error = atom<string>(undefined as string);
 
     constructor(bizBud: BizBud) {
         this.bizBud = bizBud;
+        this.required = this.bizBud.ui.required;
     }
 
     trigger(value: any) {
         let ok = true;
-        const { required } = this.bizBud.ui;
-        if (required === true) {
+        if (this.required === true) {
             if (value === undefined) {
                 setAtomValue(this.error, '必填项');
                 ok = false;

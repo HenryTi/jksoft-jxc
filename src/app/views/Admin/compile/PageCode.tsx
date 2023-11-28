@@ -14,7 +14,7 @@ export function PageCode() {
     const [code, setCode] = useState('');
     const fileInput = useRef<HTMLInputElement>();
 
-    async function onComplie() {
+    async function onCompile() {
         const { uqMan, biz } = uqApp;
         let { uqApi } = uqMan;
         let { schemas, logs, hasError } = await uqApi.compile(code);
@@ -29,7 +29,7 @@ export function PageCode() {
         if (hasError === false) {
             allSchemas = jsonpack.unpack(schemas);
             biz.buildEntities(allSchemas);
-            top = <Top icon="check-circle" color="text-success">提交成功</Top>;
+            top = <Top icon="check-circle" color="text-success">编译成功</Top>;
         }
         else {
             top = <Top icon="exclamation-circle" color="text-danger">发生错误</Top>;
@@ -47,7 +47,6 @@ export function PageCode() {
             let str = JSON.stringify(allSchemas, null, 4);
             results = str;
         }
-        closeModal();
         openModal(<Page header="业务设计已提交">
             {top}
             <pre className='p-3 text-break' style={{ whiteSpace: 'pre-wrap' }}>{results}</pre>
@@ -108,7 +107,7 @@ export function PageCode() {
 
     return <Page header={'代码'}>
         <div className="px-3 py-1 tonwa-bg-gray-2 d-flex">
-            <ButtonAsync className="btn btn-primary me-3" onClick={onComplie}>提交</ButtonAsync>
+            <ButtonAsync className="btn btn-primary me-3" onClick={onCompile}>提交</ButtonAsync>
             <div className="flex-grow-1" />
             <button className="btn btn-outline-primary" onClick={onLoadFile}>载入文件</button>
             <button className="btn btn-outline-primary ms-2" onClick={onAdmin}>管理</button>

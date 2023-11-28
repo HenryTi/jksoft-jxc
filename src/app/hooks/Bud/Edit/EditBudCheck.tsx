@@ -8,7 +8,8 @@ import { useState } from "react";
 export function EditBudCheck(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
     const modal = useModal();
-    const { id, readonly, plus, value: initValue, budEditing: { error, bizBud }, ViewValueEdit: ValueEdit, onChanged } = props;
+    const { id, readonly, plus, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
+    const { bizBud } = budEditing;
     const { budDataType, caption, name, ui } = bizBud;
     const { options: { items } } = budDataType as BudCheck;
     const initCheckValue: BudCheckEditValue = {};
@@ -100,7 +101,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
         readonly={readonly}
         plus={plus}
         onEditClick={onEditClick}
-        error={error}
+        {...budEditing}
     >
         {content}
     </ValueEdit>;

@@ -37,29 +37,6 @@ function ModalInputRow({ row, binEditing }: { row: Row; binEditing: BinEditing; 
     const [submitable, setSubmitable] = useState(binEditing.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;
-        /*
-        let valueInput: any;
-        if (type === 'number') {
-            if (valueInputText.trim().length === 0) {
-                valueInput = undefined;
-            }
-            else {
-                let v = Number(valueInputText);
-                valueInput = Number.isNaN(v) === true ? undefined : v;
-            }
-        }
-        else if (type === 'text') {
-            if (valueInputText.trim().length === 0) {
-                valueInput = undefined;
-            }
-            else {
-                valueInput = valueInputText;
-            }
-        }
-        rowStore.setValue(name, valueInput, (name, value) => {
-            setValue(name, value);
-        });
-        */
         binEditing.onChange(name, type as 'number' | 'text', valueInputText, (name, value) => {
             setValue(name, value);
         });

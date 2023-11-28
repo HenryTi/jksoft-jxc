@@ -16,11 +16,12 @@ export function ViewMain({ main }: { main: SheetMain }) {
     const propRowArr: any[][] = [propRow];
     for (let i = 0; i < length; i++) {
         let budEditing = budEditings[i];
-        const { bizBud } = budEditing;
+        const { bizBud, required } = budEditing;
+        const cn = required === true ? ' text-primary ' : ' text-secodary ';
         let { id, caption, name } = bizBud;
         let value = buds[id];
         propRow.push(<div key={id} className="col-3">
-            <div className="small text-secodary">{caption ?? name}</div>
+            <div className={'small ' + cn}>{caption ?? name}</div>
             <div className="py-1"><EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} /></div>
         </div>);
         if (i === length - 1) break;

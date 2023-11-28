@@ -97,7 +97,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
         plus={plus}
         readonly={readonly}
         onEditClick={onEditClick}
-        error={error}
+        {...budEditing}
     >
         {content}
     </ValueEdit>;
