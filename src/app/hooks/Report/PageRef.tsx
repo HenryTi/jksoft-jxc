@@ -7,11 +7,12 @@ import { EasyTime, from62 } from "tonwa-com";
 import { ViewSpec } from "../View";
 
 export function PageRef() {
-    const { uq } = useUqApp();
     const { id: id62/*, d: detail62*/ } = useParams();
-    const id = from62(id62);
-    // const detail = from62(detail62);
+    return <PageRefId id={Number(id62)} />;
+}
 
+export function PageRefId({ id }: { id: number; }) {
+    const { uq } = useUqApp();
     const { data } = useQuery([id], async () => {
         // id 可以是sheetId，也可以是detailId
         let ret = await uq.GetSheet.query({ id /*, detail*/ });

@@ -29,7 +29,7 @@ export function useInputRow() {
 
 function ModalInputRow({ row, binEditing }: { row: Row; binEditing: BinEditing; }) {
     const { closeModal } = useModal();
-    const { register, handleSubmit, setValue, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
+    const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { props, section } = row;
     const { entityBin } = section.coreDetail;
     const { i: budI, x: budX } = entityBin;
@@ -52,6 +52,10 @@ function ModalInputRow({ row, binEditing }: { row: Row; binEditing: BinEditing; 
 
     async function onSubmit(data: any) {
         if (await trigger(undefined, { shouldFocus: true }) === false) return;
+        if (data.value === 0) {
+            setError('value', { message: '不能为 0' });
+            return;
+        }
         closeModal(true);
     }
 

@@ -24,12 +24,14 @@ export function EditBudCheck(props: EditBudTemplateProps) {
     async function onCheckChanged(item: OptionsItem, checked: boolean) {
         const { id: budPhrase } = bizBud;
         const optionsItemPhrase = item.id;
-        await uq.SaveBudCheck.submit({
-            budPhrase,
-            id,
-            optionsItemPhrase,
-            checked: checked === true ? 1 : 0,
-        });
+        if (id !== undefined) {
+            await uq.SaveBudCheck.submit({
+                budPhrase,
+                id,
+                optionsItemPhrase,
+                checked: checked === true ? 1 : 0,
+            });
+        }
         checks[optionsItemPhrase] = checked;
         let valChecks = { ...checks };
         setChecks(valChecks);

@@ -1,3 +1,28 @@
+QUERY 查询物流中心库存 '查询物流中心库存'  (
+    searchKey '关键字' CHAR,
+    p物流中心 ATOM,
+) {
+    FROM 货品信息|器械|药品 
+        COLUMN (
+            ID ASC,  
+            %no,
+            %ex,
+            %规格型号,
+            %单位,
+            %注册人或备案人,
+            %受托生产企业,
+            %注册证号或备案凭证号,
+            %生产许可证号,
+            %存储条件,
+            物流中心=p物流中心,
+            库存数量 = (#库存.可出数量((#物流中心货品(p物流中心, %id)))),
+        )
+        WHERE SEARCH(%no, %ex LIKE searchKey) 
+            -- and (#库存.可出数量(%id))>0
+            and (#库存.可出数量((#物流中心货品(p物流中心, %id))))>0
+    ;
+};
+
 QUERY 查询职员 '查询职员' (
     searchKey '关键字' CHAR,
 ) {
@@ -111,8 +136,6 @@ QUERY 查询物流中心 '查询物流中心' (
         WHERE SEARCH(%no, %ex LIKE searchKey)
     ;
 }
-
-
 
 
 

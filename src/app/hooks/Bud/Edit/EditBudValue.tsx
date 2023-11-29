@@ -21,11 +21,13 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
         let ret = await openModal<number | string>(<PagePickValue label={label} value={value} type={type} options={options} step={step} />);
         if (ret === undefined) return;
         let budValue = convertToBudValue(ret);
-        await uq.SaveBudValue.submit({
-            phraseId: bizBud.id,
-            id,
-            ...budValue
-        });
+        if (id !== undefined) {
+            await uq.SaveBudValue.submit({
+                phraseId: bizBud.id,
+                id,
+                ...budValue
+            });
+        }
         setValue(ret);
         onChanged?.(bizBud, budValue.value);
     }

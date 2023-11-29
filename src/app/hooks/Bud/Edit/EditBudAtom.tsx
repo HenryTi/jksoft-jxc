@@ -16,14 +16,16 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     async function onEditClick() {
         let ret = await selectAtom(bizAtom);
         if (ret === undefined) return;
-        let atomId = ret.id;
-        await uq.SaveBudValue.submit({
-            phraseId: bizBud.id,
-            id,
-            int: atomId,
-            dec: undefined as number,
-            str: undefined as string,
-        });
+        let atomId = ret === null ? undefined : ret.id;
+        if (id !== undefined) {
+            await uq.SaveBudValue.submit({
+                phraseId: bizBud.id,
+                id,
+                int: atomId,
+                dec: undefined as number,
+                str: undefined as string,
+            });
+        }
         setValue(atomId);
         onChanged?.(bizBud, atomId);
     }

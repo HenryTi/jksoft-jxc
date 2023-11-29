@@ -1,6 +1,10 @@
 SHEET 采购单 { 
     Main 采购单主表; 
-    Detail 采购单明细; 
+    Detail 采购单明细;
+    SEARCH (
+        I, X, 采购机构,
+        采购单明细(I, 采购员备注),
+    );
 }
 BIN 采购单主表 {
     Pick 采购员 FROM 查询职员;

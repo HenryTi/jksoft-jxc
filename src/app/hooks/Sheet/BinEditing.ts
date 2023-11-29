@@ -176,8 +176,10 @@ export class BinEditing {
     get submitable(): boolean {
         let ret = true;
         for (let field of this.requiredFields) {
-            let v = this.calc.results[field.name];
-            if (v === undefined) return false;
+            let v = field.getValue(); // this.calc.results[field.name];
+            if (v === undefined) {
+                return false;
+            }
         }
         return ret;
     }

@@ -20,9 +20,11 @@ export class BudEditing implements IBudEditing {
     readonly required: boolean;
     error = atom<string>(undefined as string);
 
-    constructor(bizBud: BizBud) {
+    constructor(bizBud: BizBud, required: boolean = undefined) {
         this.bizBud = bizBud;
-        this.required = this.bizBud.ui.required;
+        this.required = required === undefined ?
+            this.bizBud.ui.required
+            : required;
     }
 
     trigger(value: any) {

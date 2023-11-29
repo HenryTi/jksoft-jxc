@@ -33,6 +33,8 @@ export interface IBudEditing extends IEditing {
     bizBud: BizBud;
 }
 
+export type OnBudChanged = (bud: BizBud, value: string | number | BudCheckEditValue) => Promise<void> | void;
+
 export interface EditBudProps {
     id: number;
     value: BudValue;

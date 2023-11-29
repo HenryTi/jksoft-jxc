@@ -86,11 +86,13 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     async function onCheckChanged(item: number | string) {
         const { id: budPhrase } = bizBud;
         const optionsItemPhrase = item as number;
-        await uq.SaveBudRadio.submit({
-            budPhrase,
-            id,
-            optionsItemPhrase,
-        });
+        if (id !== undefined) {
+            await uq.SaveBudRadio.submit({
+                budPhrase,
+                id,
+                optionsItemPhrase,
+            });
+        }
         setValue({ [optionsItemPhrase]: true });
     }
     return <ValueEdit label={caption ?? name}

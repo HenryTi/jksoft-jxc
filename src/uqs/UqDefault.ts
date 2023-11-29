@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Nov 21 2023 10:10:08 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Tue Nov 28 2023 12:08:25 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -22,122 +22,123 @@ export interface IX {
 }
 
 export enum EnumID {
-    $phrase = '$phrase',
-    Atom = 'atom',
-    Spec = 'spec',
-    Sheet = 'sheet',
-    Detail = 'detail',
-    Pend = 'pend',
-    Bud = 'bud',
-    History = 'history',
-    SumFormula = 'sumformula',
-    AtomUom = 'atomuom',
-    AtomSpec = 'atomspec',
+	$phrase = '$phrase',
+	Atom = 'atom',
+	Spec = 'spec',
+	Duo = 'duo',
+	Sheet = 'sheet',
+	Detail = 'detail',
+	Pend = 'pend',
+	AtomUom = 'atomuom',
+	AtomSpec = 'atomspec',
+	SumFormula = 'sumformula',
+	Bud = 'bud',
+	History = 'history',
 }
 
 export interface $phrase extends ID {
-    name: string;
-    caption: string;
-    base: number;
-    valid: number;
-    owner: number;
-    type: number;
-    index: number;
+	name: string;
+	caption: string;
+	base: number;
+	valid: number;
+	owner: number;
+	type: number;
+	index: number;
 }
 
 export interface $phraseInActs extends ID {
-    ID?: UqID<any>;
-    name: string;
-    caption: string;
-    base: number;
-    valid: number;
-    owner: number;
-    type: number;
-    index: number;
+	ID?: UqID<any>;
+	name: string;
+	caption: string;
+	base: number;
+	valid: number;
+	owner: number;
+	type: number;
+	index: number;
 }
 
 export interface Param$role_My {
 }
 export interface Return$role_MySites {
-    id: number;
-    site: number;
-    admin: number;
-    entity: string;
-    assigned: string;
-    def: number;
+	id: number;
+	site: number;
+	admin: number;
+	entity: string;
+	assigned: string;
+	def: number;
 }
 export interface Return$role_MyRoles {
-    site: number;
-    role: string;
+	site: number;
+	role: string;
 }
 export interface Return$role_MyPermits {
-    site: number;
-    permit: string;
+	site: number;
+	permit: string;
 }
 export interface Result$role_My {
-    sites: Return$role_MySites[];
-    roles: Return$role_MyRoles[];
-    permits: Return$role_MyPermits[];
+	sites: Return$role_MySites[];
+	roles: Return$role_MyRoles[];
+	permits: Return$role_MyPermits[];
 }
 
 export interface Param$role_Site_Users {
-    site: number;
+	site: number;
 }
 export interface Return$role_Site_UsersUsers {
-    id: number;
-    user: number;
-    admin: number;
-    assigned: string;
-    name: string;
-    nick: string;
-    icon: string;
-    addBy: number;
+	id: number;
+	user: number;
+	admin: number;
+	assigned: string;
+	name: string;
+	nick: string;
+	icon: string;
+	addBy: number;
 }
 export interface Return$role_Site_UsersRoles {
-    user: number;
-    role: string;
+	user: number;
+	role: string;
 }
 export interface Result$role_Site_Users {
-    users: Return$role_Site_UsersUsers[];
-    roles: Return$role_Site_UsersRoles[];
+	users: Return$role_Site_UsersUsers[];
+	roles: Return$role_Site_UsersRoles[];
 }
 
 export interface Param$role_Site_Add_Admin {
-    site: number;
-    user: number;
-    admin: number;
-    assigned: string;
+	site: number;
+	user: number;
+	admin: number;
+	assigned: string;
 }
 export interface Result$role_Site_Add_Admin {
 }
 
 export interface Param$role_Site_Del_Admin {
-    site: number;
-    user: number;
-    admin: number;
+	site: number;
+	user: number;
+	admin: number;
 }
 export interface Result$role_Site_Del_Admin {
 }
 
 export interface Param$role_Site_Add_User {
-    site: number;
-    user: number;
-    assigned: string;
+	site: number;
+	user: number;
+	assigned: string;
 }
 export interface Result$role_Site_Add_User {
 }
 
 export interface Param$role_Site_User_Role {
-    site: number;
-    user: number;
-    action: string;
-    role: string;
+	site: number;
+	user: number;
+	action: string;
+	role: string;
 }
 export interface Result$role_Site_User_Role {
 }
 
 export interface Param$role_Site_Quit_Owner {
-    site: number;
+	site: number;
 }
 export interface Result$role_Site_Quit_Owner {
 }
@@ -145,16 +146,16 @@ export interface Result$role_Site_Quit_Owner {
 export interface Param$sites {
 }
 export interface Return$sites$page {
-    id: number;
-    no: string;
-    ex: string;
+	id: number;
+	no: string;
+	ex: string;
 }
 export interface Result$sites {
-    $page: Return$sites$page[];
+	$page: Return$sites$page[];
 }
 
 export interface Param$setSite {
-    site: number;
+	site: number;
 }
 export interface Result$setSite {
 }
@@ -162,14 +163,14 @@ export interface Result$setSite {
 export interface Param$poked {
 }
 export interface Return$pokedRet {
-    poke: number;
+	poke: number;
 }
 export interface Result$poked {
-    ret: Return$pokedRet[];
+	ret: Return$pokedRet[];
 }
 
 export interface Param$setMyTimezone {
-    _timezone: number;
+	_timezone: number;
 }
 export interface Result$setMyTimezone {
 }
@@ -177,196 +178,303 @@ export interface Result$setMyTimezone {
 export interface Param$getUnitTime {
 }
 export interface Return$getUnitTimeRet {
-    timezone: number;
-    unitTimeZone: number;
-    unitBizMonth: number;
-    unitBizDate: number;
+	timezone: number;
+	unitTimeZone: number;
+	unitBizMonth: number;
+	unitBizDate: number;
 }
 export interface Result$getUnitTime {
-    ret: Return$getUnitTimeRet[];
+	ret: Return$getUnitTimeRet[];
+}
+
+export interface ParamSearchAllSheets {
+	no: string;
+	phrase: number;
+	paramMain: any;
+	paramDetail: any;
+}
+export interface ReturnSearchAllSheets$page {
+	id: number;
+	no: string;
+	phrase: number;
+	operator: number;
+	buds: any;
+}
+export interface ResultSearchAllSheets {
+	$page: ReturnSearchAllSheets$page[];
+}
+
+export enum BizPhraseType {
+	any = 0,
+	atom = 11,
+	spec = 12,
+	bud = 13,
+	budGroup = 14,
+	duo = 15,
+	sheet = 101,
+	main = 102,
+	detail = 103,
+	pend = 104,
+	detailAct = 111,
+	query = 151,
+	pick = 161,
+	role = 201,
+	permit = 202,
+	options = 301,
+	tree = 401,
+	tie = 501,
+	report = 601,
+	title = 901,
+	assign = 902,
+	key = 1001,
+	prop = 1011,
+	optionsitem = 1031,
+	console = 6001
+}
+
+export enum BudDataType {
+	none = 0,
+	int = 11,
+	atom = 12,
+	radio = 13,
+	check = 14,
+	ID = 19,
+	dec = 21,
+	char = 31,
+	str = 32,
+	date = 41
+}
+
+export enum BizBudFlag {
+	index = 1
+}
+
+export interface ParamGetBizObjects {
+	lang: string;
+	culture: string;
+}
+export interface ReturnGetBizObjectsObjs {
+	id: number;
+	phrase: string;
+	source: string;
+	caption: string;
+}
+export interface ReturnGetBizObjectsBuds {
+	id: number;
+	base: number;
+	phrase: string;
+	caption: string;
+}
+export interface ResultGetBizObjects {
+	objs: ReturnGetBizObjectsObjs[];
+	buds: ReturnGetBizObjectsBuds[];
+}
+
+export interface ParamGetEntityCode {
+	id: number;
+}
+export interface ReturnGetEntityCodeRet {
+	code: string;
+	schema: string;
+}
+export interface ResultGetEntityCode {
+	ret: ReturnGetEntityCodeRet[];
+}
+
+export interface ParamCreateSiteForUser {
+	no: string;
+	ex: string;
+	tonwaUser: number;
+}
+export interface ReturnCreateSiteForUserRet {
+	site: number;
+	userSite: number;
+}
+export interface ResultCreateSiteForUser {
+	ret: ReturnCreateSiteForUserRet[];
 }
 
 export interface ParamSaveAtom {
-    atomPhrase: number;
-    base: number;
-    no: string;
-    ex: string;
+	atomPhrase: number;
+	base: number;
+	no: string;
+	ex: string;
 }
 export interface ReturnSaveAtomRet {
-    id: number;
+	id: number;
 }
 export interface ResultSaveAtom {
-    ret: ReturnSaveAtomRet[];
+	ret: ReturnSaveAtomRet[];
 }
 
 export interface ParamSaveBudValue {
-    phraseId: number;
-    id: number;
-    int: number;
-    dec: number;
-    str: string;
+	phraseId: number;
+	id: number;
+	int: number;
+	dec: number;
+	str: string;
 }
 export interface ResultSaveBudValue {
 }
 
 export interface ParamSaveBudCheck {
-    budPhrase: number;
-    id: number;
-    optionsItemPhrase: number;
-    checked: number;
+	budPhrase: number;
+	id: number;
+	optionsItemPhrase: number;
+	checked: number;
 }
 export interface ResultSaveBudCheck {
 }
 
 export interface ParamSaveBudRadio {
-    budPhrase: number;
-    id: number;
-    optionsItemPhrase: number;
+	budPhrase: number;
+	id: number;
+	optionsItemPhrase: number;
 }
 export interface ResultSaveBudRadio {
 }
 
 export interface ParamDelAtom {
-    id: number;
+	id: number;
 }
 export interface ResultDelAtom {
 }
 
 export interface ParamSaveSpec {
-    spec: number;
-    base: number;
-    keys: any;
-    props: any;
+	spec: number;
+	base: number;
+	keys: any;
+	props: any;
 }
 export interface ReturnSaveSpecRet {
-    id: number;
+	id: number;
 }
 export interface ResultSaveSpec {
-    ret: ReturnSaveSpecRet[];
+	ret: ReturnSaveSpecRet[];
 }
 
 export interface ParamGetSpec {
-    id: number;
+	id: number;
 }
 export interface ReturnGetSpecProps {
-    id: number;
-    phrase: number;
-    value: any;
+	id: number;
+	phrase: number;
+	value: any;
 }
 export interface ResultGetSpec {
-    props: ReturnGetSpecProps[];
+	props: ReturnGetSpecProps[];
 }
 
 export interface ParamSaveSheet {
-    phrase: number;
-    no: string;
-    i: number;
-    x: number;
-    value: number;
-    price: number;
-    amount: number;
+	phrase: number;
+	no: string;
+	i: number;
+	x: number;
+	value: number;
+	price: number;
+	amount: number;
 }
 export interface ReturnSaveSheetRet {
-    id: number;
-    no: string;
+	id: number;
+	no: string;
 }
 export interface ResultSaveSheet {
-    ret: ReturnSaveSheetRet[];
+	ret: ReturnSaveSheetRet[];
 }
 
 export interface ParamSaveDetail {
-    base: number;
-    phrase: number;
-    id: number;
-    i: number;
-    x: number;
-    origin: number;
-    value: number;
-    price: number;
-    amount: number;
-    pendFrom: number;
-    props: any;
+	base: number;
+	phrase: number;
+	id: number;
+	i: number;
+	x: number;
+	origin: number;
+	value: number;
+	price: number;
+	amount: number;
+	pendFrom: number;
+	props: any;
 }
 export interface ReturnSaveDetailRet {
-    id: number;
+	id: number;
 }
 export interface ResultSaveDetail {
-    ret: ReturnSaveDetailRet[];
+	ret: ReturnSaveDetailRet[];
 }
 
 export interface ParamDeleteBin {
-    id: number;
+	id: number;
 }
 export interface ResultDeleteBin {
 }
 
 export interface ParamSubmitSheet {
-    id: number;
+	id: number;
 }
 export interface ResultSubmitSheet {
 }
 
 export interface ParamDoQuery {
-    query: number;
-    json: any;
-    pageStart: number;
-    pageSize: number;
+	query: number;
+	json: any;
+	pageStart: number;
+	pageSize: number;
 }
 export interface ReturnDoQueryRet {
-    id: number;
-    ban: number;
-    json: any;
+	id: number;
+	ban: number;
+	json: any;
 }
 export interface ResultDoQuery {
-    ret: ReturnDoQueryRet[];
+	ret: ReturnDoQueryRet[];
 }
 
 export interface ParamGetReport {
-    reportPhrase: number;
-    atomPhrase: number;
-    atomId: number;
-    dateStart: any;
-    dateEnd: any;
-    params: any;
+	reportPhrase: number;
+	atomPhrase: number;
+	atomId: number;
+	dateStart: any;
+	dateEnd: any;
+	params: any;
 }
 export interface ReturnGetReport$page {
-    id: number;
-    phrase: number;
-    no: string;
-    ex: string;
-    value: any;
+	id: number;
+	phrase: number;
+	no: string;
+	ex: string;
+	value: any;
 }
 export interface ReturnGetReportSpecs {
-    id: number;
-    phrase: number;
-    base: number;
-    value: any;
-    props: any;
+	id: number;
+	phrase: number;
+	base: number;
+	value: any;
+	props: any;
 }
 export interface ResultGetReport {
-    $page: ReturnGetReport$page[];
-    specs: ReturnGetReportSpecs[];
+	$page: ReturnGetReport$page[];
+	specs: ReturnGetReportSpecs[];
 }
 
 export interface ParamGetHistory {
-    objId: number;
-    title: number;
+	objId: number;
+	title: number;
 }
 export interface ReturnGetHistory$page {
-    id: number;
-    value: number;
-    ref: number;
-    plusMinus: number;
-    sheetNo: string;
-    sheetPhrase: number;
-    binPhrase: number;
+	id: number;
+	value: number;
+	ref: number;
+	plusMinus: number;
+	sheetNo: string;
+	sheetPhrase: number;
+	binPhrase: number;
 }
 export interface ResultGetHistory {
-    $page: ReturnGetHistory$page[];
+	$page: ReturnGetHistory$page[];
 }
 
 export interface ParamRemoveDraft {
-    id: number;
+	id: number;
 }
 export interface ResultRemoveDraft {
 }
@@ -374,14 +482,14 @@ export interface ResultRemoveDraft {
 export interface ParamGetMyDrafts {
 }
 export interface ReturnGetMyDrafts$page {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    phrase: string;
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	phrase: string;
 }
 export interface ResultGetMyDrafts {
-    $page: ReturnGetMyDrafts$page[];
+	$page: ReturnGetMyDrafts$page[];
 }
 
 export interface ParamDeleteMyDrafts {
@@ -390,215 +498,215 @@ export interface ResultDeleteMyDrafts {
 }
 
 export interface ParamSearchAtom {
-    atom: number;
-    key: string;
+	atom: number;
+	key: string;
 }
 export interface ReturnSearchAtom$page {
-    id: number;
-    no: string;
-    ex: string;
-    phrase: number;
+	id: number;
+	no: string;
+	ex: string;
+	phrase: number;
 }
 export interface ResultSearchAtom {
-    $page: ReturnSearchAtom$page[];
+	$page: ReturnSearchAtom$page[];
 }
 
 export interface ParamGetAssigns {
-    assign: number;
-    params: any;
+	assign: number;
+	params: any;
 }
 export interface ReturnGetAssigns$page {
-    id: number;
-    no: string;
-    ex: string;
-    values: any;
+	id: number;
+	no: string;
+	ex: string;
+	values: any;
 }
 export interface ResultGetAssigns {
-    $page: ReturnGetAssigns$page[];
+	$page: ReturnGetAssigns$page[];
 }
 
 export interface ParamGetTies {
-    tie: number;
-    params: any;
+	tie: number;
+	params: any;
 }
 export interface ReturnGetTies$page {
-    id: number;
-    no: string;
-    ex: string;
-    values: any;
+	id: number;
+	no: string;
+	ex: string;
+	values: any;
 }
 export interface ResultGetTies {
-    $page: ReturnGetTies$page[];
+	$page: ReturnGetTies$page[];
 }
 
 export interface ParamSaveTie {
-    tie: number;
-    i: number;
-    x: number;
+	tie: number;
+	i: number;
+	x: number;
 }
 export interface ResultSaveTie {
 }
 
 export interface ParamDeleteTie {
-    tie: number;
-    i: number;
-    x: number;
+	tie: number;
+	i: number;
+	x: number;
 }
 export interface ResultDeleteTie {
 }
 
 export interface ParamSearchAtomBuds {
-    phrase: number;
-    key: string;
-    buds: any;
+	phrase: number;
+	key: string;
+	buds: any;
 }
 export interface ReturnSearchAtomBuds$page {
-    id: number;
-    no: string;
-    ex: string;
-    phrase: number;
+	id: number;
+	no: string;
+	ex: string;
+	phrase: number;
 }
 export interface ReturnSearchAtomBudsMeds {
-    id: number;
-    main: number;
-    detail: number;
+	id: number;
+	main: number;
+	detail: number;
 }
 export interface ReturnSearchAtomBudsBudsInt {
-    id: number;
-    bud: number;
-    value: number;
+	id: number;
+	bud: number;
+	value: number;
 }
 export interface ReturnSearchAtomBudsBudsDec {
-    id: number;
-    bud: number;
-    value: number;
+	id: number;
+	bud: number;
+	value: number;
 }
 export interface ReturnSearchAtomBudsBudsStr {
-    id: number;
-    bud: number;
-    value: string;
+	id: number;
+	bud: number;
+	value: string;
 }
 export interface ResultSearchAtomBuds {
-    $page: ReturnSearchAtomBuds$page[];
-    meds: ReturnSearchAtomBudsMeds[];
-    budsInt: ReturnSearchAtomBudsBudsInt[];
-    budsDec: ReturnSearchAtomBudsBudsDec[];
-    budsStr: ReturnSearchAtomBudsBudsStr[];
+	$page: ReturnSearchAtomBuds$page[];
+	meds: ReturnSearchAtomBudsMeds[];
+	budsInt: ReturnSearchAtomBudsBudsInt[];
+	budsDec: ReturnSearchAtomBudsBudsDec[];
+	budsStr: ReturnSearchAtomBudsBudsStr[];
 }
 
 export interface ParamSearchAtomUomBuds {
-    phrase: string;
-    key: string;
-    budNames: string;
+	phrase: string;
+	key: string;
+	budNames: string;
 }
 export interface ReturnSearchAtomUomBuds$page {
-    id: number;
-    no: string;
-    ex: string;
-    phrase: string;
+	id: number;
+	no: string;
+	ex: string;
+	phrase: string;
 }
 export interface ReturnSearchAtomUomBudsUoms {
-    id: number;
-    atom: number;
-    uom: number;
+	id: number;
+	atom: number;
+	uom: number;
 }
 export interface ReturnSearchAtomUomBudsBudsInt {
-    id: number;
-    bud: number;
-    phrase: string;
-    value: number;
+	id: number;
+	bud: number;
+	phrase: string;
+	value: number;
 }
 export interface ReturnSearchAtomUomBudsBudsDec {
-    id: number;
-    bud: number;
-    phrase: string;
-    value: number;
+	id: number;
+	bud: number;
+	phrase: string;
+	value: number;
 }
 export interface ReturnSearchAtomUomBudsBudsStr {
-    id: number;
-    bud: number;
-    phrase: string;
-    value: string;
+	id: number;
+	bud: number;
+	phrase: string;
+	value: string;
 }
 export interface ResultSearchAtomUomBuds {
-    $page: ReturnSearchAtomUomBuds$page[];
-    uoms: ReturnSearchAtomUomBudsUoms[];
-    budsInt: ReturnSearchAtomUomBudsBudsInt[];
-    budsDec: ReturnSearchAtomUomBudsBudsDec[];
-    budsStr: ReturnSearchAtomUomBudsBudsStr[];
+	$page: ReturnSearchAtomUomBuds$page[];
+	uoms: ReturnSearchAtomUomBudsUoms[];
+	budsInt: ReturnSearchAtomUomBudsBudsInt[];
+	budsDec: ReturnSearchAtomUomBudsBudsDec[];
+	budsStr: ReturnSearchAtomUomBudsBudsStr[];
 }
 
 export interface ParamGetSheet {
-    id: number;
+	id: number;
 }
 export interface ReturnGetSheetMain {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
-    phrase: number;
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	phrase: number;
 }
 export interface ReturnGetSheetDetails {
-    id: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
-    pendFrom: number;
-    pendValue: number;
-    phrase: number;
+	id: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	pendFrom: number;
+	pendValue: number;
+	phrase: number;
 }
 export interface ReturnGetSheetOrigins {
-    id: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
+	id: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
 }
 export interface ReturnGetSheetProps {
-    id: number;
-    phrase: number;
-    value: any;
-    owner: number;
+	id: number;
+	phrase: number;
+	value: any;
+	owner: number;
 }
 export interface ResultGetSheet {
-    main: ReturnGetSheetMain[];
-    details: ReturnGetSheetDetails[];
-    origins: ReturnGetSheetOrigins[];
-    props: ReturnGetSheetProps[];
+	main: ReturnGetSheetMain[];
+	details: ReturnGetSheetDetails[];
+	origins: ReturnGetSheetOrigins[];
+	props: ReturnGetSheetProps[];
 }
 
 export interface ParamGetAtom {
-    id: number;
+	id: number;
 }
 export interface ReturnGetAtomProps {
-    phrase: number;
-    value: any;
+	phrase: number;
+	value: any;
 }
 export interface ResultGetAtom {
-    props: ReturnGetAtomProps[];
+	props: ReturnGetAtomProps[];
 }
 
 export interface ParamGetSpecsFromBase {
-    base: number;
+	base: number;
 }
 export interface ReturnGetSpecsFromBaseRet {
-    id: number;
-    keys: any;
-    props: any;
+	id: number;
+	keys: any;
+	props: any;
 }
 export interface ResultGetSpecsFromBase {
-    ret: ReturnGetSpecsFromBaseRet[];
+	ret: ReturnGetSpecsFromBaseRet[];
 }
 
 export interface ParamClearCode {
@@ -606,868 +714,791 @@ export interface ParamClearCode {
 export interface ResultClearCode {
 }
 
+export interface Atom extends ID {
+	base: number;
+	no?: string;
+	ex: string;
+}
+
+export interface AtomInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	no?: string;
+	ex: string;
+}
+
+export interface Spec extends ID {
+	base: number;
+}
+
+export interface SpecInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+}
+
+export interface Duo extends ID {
+	i: number;
+	x: number;
+}
+
+export interface DuoInActs extends ID {
+	ID?: UqID<any>;
+	i: number | ID;
+	x: number | ID;
+}
+
+export interface Sheet extends ID {
+	base: number;
+	no: string;
+	operator: number;
+}
+
+export interface SheetInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	no: string;
+	operator: number | ID;
+}
+
+export interface Detail extends ID {
+	base: number;
+}
+
+export interface DetailInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+}
+
+export interface Pend extends ID {
+	base: number;
+	bin: number;
+	mid: any;
+	value: number;
+}
+
+export interface PendInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	bin: number | ID;
+	mid: any;
+	value: number;
+}
+
 export interface ParamGetPend {
-    pend: number;
-    params: any;
+	pend: number;
+	params: any;
 }
 export interface ReturnGetPend$page {
-    pend: number;
-    sheet: number;
-    id: number;
-    i: number;
-    x: number;
-    value: number;
-    price: number;
-    amount: number;
-    pendValue: number;
-    mid: any;
-    cols: any;
+	pend: number;
+	sheet: number;
+	id: number;
+	i: number;
+	x: number;
+	value: number;
+	price: number;
+	amount: number;
+	pendValue: number;
+	mid: any;
+	cols: any;
 }
 export interface ReturnGetPendRetSheet {
-    id: number;
-    no: string;
-    i: number;
-    x: number;
-    value: number;
-    price: number;
-    amount: number;
+	id: number;
+	no: string;
+	i: number;
+	x: number;
+	value: number;
+	price: number;
+	amount: number;
 }
 export interface ReturnGetPendProps {
-    id: number;
-    phrase: number;
-    value: any;
-    owner: number;
+	id: number;
+	phrase: number;
+	value: any;
+	owner: number;
 }
 export interface ResultGetPend {
-    $page: ReturnGetPend$page[];
-    retSheet: ReturnGetPendRetSheet[];
-    props: ReturnGetPendProps[];
+	$page: ReturnGetPend$page[];
+	retSheet: ReturnGetPendRetSheet[];
+	props: ReturnGetPendProps[];
 }
 
 export interface ParamGetPendsNotify {
 }
 export interface ReturnGetPendsNotifyRet {
-    phrase: number;
-    count: number;
+	phrase: number;
+	count: number;
 }
 export interface ResultGetPendsNotify {
-    ret: ReturnGetPendsNotifyRet[];
+	ret: ReturnGetPendsNotifyRet[];
 }
 
 export interface ParamGetPendSheetFromNo {
-    pend: string;
-    key: string;
+	pend: string;
+	key: string;
 }
 export interface ReturnGetPendSheetFromNo$page {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    sheet: string;
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	sheet: string;
 }
 export interface ResultGetPendSheetFromNo {
-    $page: ReturnGetPendSheetFromNo$page[];
+	$page: ReturnGetPendSheetFromNo$page[];
 }
 
 export interface ParamGetPendSheetFromTarget {
-    pend: string;
-    key: string;
+	pend: string;
+	key: string;
 }
 export interface ReturnGetPendSheetFromTarget$page {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    sheet: string;
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	sheet: string;
 }
 export interface ResultGetPendSheetFromTarget {
-    $page: ReturnGetPendSheetFromTarget$page[];
+	$page: ReturnGetPendSheetFromTarget$page[];
 }
 
 export interface ParamGetPendDetailFromItem {
-    pend: string;
-    key: string;
+	pend: string;
+	key: string;
 }
 export interface ReturnGetPendDetailFromItem$page {
-    id: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
-    pend: number;
-    pendValue: number;
-    sheet: string;
-    no: string;
+	id: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	pend: number;
+	pendValue: number;
+	sheet: string;
+	no: string;
 }
 export interface ResultGetPendDetailFromItem {
-    $page: ReturnGetPendDetailFromItem$page[];
+	$page: ReturnGetPendDetailFromItem$page[];
 }
 
 export interface ParamGetPendDetailFromSheetId {
-    pend: string;
-    sheetId: number;
+	pend: string;
+	sheetId: number;
 }
 export interface ReturnGetPendDetailFromSheetIdRet {
-    id: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
-    pend: number;
-    pendValue: number;
-    sheet: string;
-    no: string;
+	id: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	pend: number;
+	pendValue: number;
+	sheet: string;
+	no: string;
 }
 export interface ResultGetPendDetailFromSheetId {
-    ret: ReturnGetPendDetailFromSheetIdRet[];
+	ret: ReturnGetPendDetailFromSheetIdRet[];
 }
 
 export interface ParamGetSiteSheets {
-    from: any;
-    to: any;
-    timeZone: number;
+	from: any;
+	to: any;
+	timeZone: number;
 }
 export interface ReturnGetSiteSheetsRet {
-    phrase: number;
-    count: number;
+	phrase: number;
+	count: number;
 }
 export interface ResultGetSiteSheets {
-    ret: ReturnGetSiteSheetsRet[];
+	ret: ReturnGetSiteSheetsRet[];
 }
 
 export interface ParamGetSiteSheetList {
-    phrase: number;
+	phrase: number;
 }
 export interface ReturnGetSiteSheetList$page {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
 }
 export interface ResultGetSiteSheetList {
-    $page: ReturnGetSiteSheetList$page[];
+	$page: ReturnGetSiteSheetList$page[];
 }
 
-export enum BizPhraseType {
-    any = 0,
-    atom = 11,
-    spec = 12,
-    bud = 13,
-    budGroup = 14,
-    duo = 15,           // 二重奏
-
-    sheet = 101,
-    main = 102,
-    detail = 103,
-    pend = 104,
-    detailAct = 111,
-    query = 151,
-    pick = 161,
-    role = 201,
-    permit = 202,
-    options = 301,
-    tree = 401,
-    tie = 501,
-    report = 601,
-    title = 901,
-    assign = 902,
-    key = 1001,
-    prop = 1011,
-    optionsitem = 1031,
-    console = 6001,
+export interface AtomUom extends ID {
+	atom: number;
+	uom: number;
+	visible: number;
 }
 
-export enum BudDataType {
-    none = 0,
-    int = 11,
-    atom = 12,
-    radio = 13,
-    check = 14,
-    ID = 19,
-    dec = 21,
-    char = 31,
-    str = 32,
-    date = 41
+export interface AtomUomInActs extends ID {
+	ID?: UqID<any>;
+	atom: number | ID;
+	uom: number | ID;
+	visible: number;
 }
 
-export enum BizBudFlag {
-    index = 1
+export interface AtomSpec extends ID {
+	atomUom: number;
+	spec: number;
 }
 
-export interface ParamGetBizObjects {
-    lang: string;
-    culture: string;
-}
-export interface ReturnGetBizObjectsObjs {
-    id: number;
-    phrase: string;
-    source: string;
-    caption: string;
-}
-export interface ReturnGetBizObjectsBuds {
-    id: number;
-    base: number;
-    phrase: string;
-    caption: string;
-}
-export interface ResultGetBizObjects {
-    objs: ReturnGetBizObjectsObjs[];
-    buds: ReturnGetBizObjectsBuds[];
+export interface AtomSpecInActs extends ID {
+	ID?: UqID<any>;
+	atomUom: number | ID;
+	spec: number | ID;
 }
 
-export interface ParamGetEntityCode {
-    id: number;
+export interface ParamSaveUomType {
+	id: number;
+	type: number;
 }
-export interface ReturnGetEntityCodeRet {
-    code: string;
-    schema: string;
-}
-export interface ResultGetEntityCode {
-    ret: ReturnGetEntityCodeRet[];
+export interface ResultSaveUomType {
 }
 
-export interface ParamCreateSiteForUser {
-    no: string;
-    ex: string;
-    tonwaUser: number;
+export interface ParamSaveUomIUom {
+	id: number;
+	type: number;
 }
-export interface ReturnCreateSiteForUserRet {
-    site: number;
-    userSite: number;
-}
-export interface ResultCreateSiteForUser {
-    ret: ReturnCreateSiteForUserRet[];
+export interface ResultSaveUomIUom {
 }
 
-export interface Atom extends ID {
-    base: number;
-    no?: string;
-    ex: string;
+export interface ParamGetUomFromType {
+	id: number;
+}
+export interface ReturnGetUomFromTypeUom {
+	id: number;
+	no: string;
+	ex: string;
+	discription: string;
+}
+export interface ResultGetUomFromType {
+	uom: ReturnGetUomFromTypeUom[];
 }
 
-export interface AtomInActs extends ID {
-    ID?: UqID<any>;
-    base: number | ID;
-    no?: string;
-    ex: string;
+export interface ParamGetUomIListOfUom {
+	uom: number;
+}
+export interface ReturnGetUomIListOfUom$page {
+	id: number;
+	no: string;
+	ex: string;
+	phrase: string;
+}
+export interface ResultGetUomIListOfUom {
+	$page: ReturnGetUomIListOfUom$page[];
 }
 
-export interface Spec extends ID {
-    base: number;
+export interface ParamGetAtomUomI {
+	id: number;
+}
+export interface ReturnGetAtomUomIUomI {
+	id: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnGetAtomUomIUomX {
+	id: number;
+	no: string;
+	ex: string;
+	ratio: number;
+	prevEx: string;
+	prevRatio: number;
+	atomUom: number;
+}
+export interface ResultGetAtomUomI {
+	uomI: ReturnGetAtomUomIUomI[];
+	uomX: ReturnGetAtomUomIUomX[];
 }
 
-export interface SpecInActs extends ID {
-    ID?: UqID<any>;
-    base: number | ID;
+export interface ParamSaveUomX {
+	i: number;
+	no: string;
+	ex: string;
+	ratio: number;
+}
+export interface ReturnSaveUomXRet {
+	id: number;
+}
+export interface ResultSaveUomX {
+	ret: ReturnSaveUomXRet[];
 }
 
-export interface Sheet extends ID {
-    base: number;
-    no: string;
-    operator: number;
+export interface ParamDelUomX {
+	uomI: number;
+	uomX: number;
+}
+export interface ResultDelUomX {
 }
 
-export interface SheetInActs extends ID {
-    ID?: UqID<any>;
-    base: number | ID;
-    no: string;
-    operator: number | ID;
+export interface ParamSaveAtomUom {
+	atom: number;
+	uom: number;
+}
+export interface ReturnSaveAtomUomRet {
+	id: number;
+}
+export interface ResultSaveAtomUom {
+	ret: ReturnSaveAtomUomRet[];
 }
 
-export interface Detail extends ID {
-    base: number;
+export interface ParamHideAtomUomX {
+	id: number;
+}
+export interface ResultHideAtomUomX {
 }
 
-export interface DetailInActs extends ID {
-    ID?: UqID<any>;
-    base: number | ID;
+export interface ParamDeleteAtomUomI {
+	atom: number;
+	uomI: number;
+}
+export interface ResultDeleteAtomUomI {
 }
 
-export interface Pend extends ID {
-    base: number;
-    bin: number;
-    mid: any;
-    value: number;
+export interface ParamSaveAtomSpec {
+	atomUom: number;
+	spec: number;
+}
+export interface ReturnSaveAtomSpecRet {
+	id: number;
+}
+export interface ResultSaveAtomSpec {
+	ret: ReturnSaveAtomSpecRet[];
 }
 
-export interface PendInActs extends ID {
-    ID?: UqID<any>;
-    base: number | ID;
-    bin: number | ID;
-    mid: any;
-    value: number;
+export interface ParamGetUomI {
+	id: number;
 }
-
-export interface IxBud extends IX {
-    i: number;
-    x: number;
+export interface ReturnGetUomIUomI {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+	discription: string;
+	ratio: number;
+	uom: number;
+	uomNo: string;
+	uomEx: string;
+	uomDiscription: string;
 }
-
-export interface Bud extends ID {
-    base: number;
-    ext: number;
+export interface ReturnGetUomIUomX {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+	ratio: number;
 }
-
-export interface BudInActs extends ID {
-    ID?: UqID<any>;
-    base: number | ID;
-    ext: number | ID;
-}
-
-export interface History extends ID {
-    bud: number;
-    value: number;
-    ref: number;
-    plusMinus: number;
-}
-
-export interface HistoryInActs extends ID {
-    ID?: UqID<any>;
-    bud: number | ID;
-    value: number;
-    ref: number | ID;
-    plusMinus: number;
-}
-
-export interface ParamReportStorage {
-    key: string;
-    subject: string;
-}
-export interface ReturnReportStorage$page {
-    atom: number;
-    uom: number;
-    spec: number;
-    id: number;
-    value: number;
-    init: number;
-}
-export interface ResultReportStorage {
-    $page: ReturnReportStorage$page[];
-}
-
-export interface ParamReportStorageAtom {
-    key: string;
-    subject: string;
-}
-export interface ReturnReportStorageAtom$page {
-    obj: number;
-    value: number;
-    init: number;
-}
-export interface ResultReportStorageAtom {
-    $page: ReturnReportStorageAtom$page[];
-}
-
-export interface ParamReportStorageSpec {
-    key: string;
-    subject: string;
-}
-export interface ReturnReportStorageSpec$page {
-    obj: number;
-    value: number;
-    init: number;
-}
-export interface ResultReportStorageSpec {
-    $page: ReturnReportStorageSpec$page[];
+export interface ResultGetUomI {
+	UomI: ReturnGetUomIUomI[];
+	UomX: ReturnGetUomIUomX[];
 }
 
 export enum SumFormulaType {
-    person = 1,
-    group = 2
+	person = 1,
+	group = 2
 }
 
 export interface SumFormula extends ID {
-    formulaType: any;
-    subject: number;
-    post: number;
-    sumSubject: number;
-    caption: string;
-    start: any;
-    end: any;
-    ratio: number;
-    valid: number;
+	formulaType: any;
+	subject: number;
+	post: number;
+	sumSubject: number;
+	caption: string;
+	start: any;
+	end: any;
+	ratio: number;
+	valid: number;
 }
 
 export interface SumFormulaInActs extends ID {
-    ID?: UqID<any>;
-    formulaType: any;
-    subject: number | ID;
-    post: number | ID;
-    sumSubject: number | ID;
-    caption: string;
-    start: any;
-    end: any;
-    ratio: number;
-    valid: number;
+	ID?: UqID<any>;
+	formulaType: any;
+	subject: number | ID;
+	post: number | ID;
+	sumSubject: number | ID;
+	caption: string;
+	start: any;
+	end: any;
+	ratio: number;
+	valid: number;
 }
 
 export interface ParamSearchGroupPersons {
-    group: number;
-    key: string;
+	group: number;
+	key: string;
 }
 export interface ReturnSearchGroupPersons$page {
-    id: number;
-    no: string;
-    ex: string;
-    phrase: string;
-    selected: number;
+	id: number;
+	no: string;
+	ex: string;
+	phrase: string;
+	selected: number;
 }
 export interface ResultSearchGroupPersons {
-    $page: ReturnSearchGroupPersons$page[];
+	$page: ReturnSearchGroupPersons$page[];
 }
 
 export interface ParamSaveSumFormula {
-    id: number;
-    formulaType: any;
-    subject: number;
-    post: number;
-    sumSubject: number;
-    caption: string;
-    start: any;
-    end: any;
-    ratio: number;
+	id: number;
+	formulaType: any;
+	subject: number;
+	post: number;
+	sumSubject: number;
+	caption: string;
+	start: any;
+	end: any;
+	ratio: number;
 }
 export interface ReturnSaveSumFormulaRet {
-    id: number;
+	id: number;
 }
 export interface ResultSaveSumFormula {
-    ret: ReturnSaveSumFormulaRet[];
+	ret: ReturnSaveSumFormulaRet[];
 }
 
 export interface ParamChangeSumFormulaCaption {
-    id: number;
-    caption: string;
+	id: number;
+	caption: string;
 }
 export interface ResultChangeSumFormulaCaption {
 }
 
 export interface ParamChangeSumFormula {
-    id: number;
-    start: any;
-    end: any;
-    ratio: number;
+	id: number;
+	start: any;
+	end: any;
+	ratio: number;
 }
 export interface ReturnChangeSumFormulaRet {
-    id: number;
+	id: number;
 }
 export interface ResultChangeSumFormula {
-    ret: ReturnChangeSumFormulaRet[];
+	ret: ReturnChangeSumFormulaRet[];
 }
 
 export interface ParamUserSiteFromTonwaUser {
-    tonwaUser: number;
+	tonwaUser: number;
 }
 export interface ReturnUserSiteFromTonwaUserRet {
-    userSite: number;
+	userSite: number;
 }
 export interface ResultUserSiteFromTonwaUser {
-    ret: ReturnUserSiteFromTonwaUserRet[];
+	ret: ReturnUserSiteFromTonwaUserRet[];
 }
 
 export interface ParamChangeIxMySum {
-    userSite: number;
-    added: {
-        id: number;
-    }[];
-    removed: {
-        idDel: number;
-    }[];
+	userSite: number;
+	added: {
+		id: number;
+	}[];
+	removed: {
+		idDel: number;
+	}[];
 
 }
 export interface ResultChangeIxMySum {
 }
 
 export interface ParamGetIxMySum {
-    userSite: number;
+	userSite: number;
 }
 export interface ReturnGetIxMySumUsers {
-    tonwaUser: number;
-    userSite: number;
+	tonwaUser: number;
+	userSite: number;
 }
 export interface ReturnGetIxMySumAtoms {
-    userSite: number;
-    atom: number;
-    phrase: string;
-    no: string;
-    ex: string;
+	userSite: number;
+	atom: number;
+	phrase: string;
+	no: string;
+	ex: string;
 }
 export interface ResultGetIxMySum {
-    users: ReturnGetIxMySumUsers[];
-    atoms: ReturnGetIxMySumAtoms[];
+	users: ReturnGetIxMySumUsers[];
+	atoms: ReturnGetIxMySumAtoms[];
 }
 
 export interface ParamGetAllFormula {
 }
 export interface ReturnGetAllFormulaRet {
-    id: number;
-    formulaType: any;
-    subject: number;
-    post: number;
-    sumSubject: number;
-    caption: string;
-    start: any;
-    end: any;
-    ratio: number;
-    valid: number;
+	id: number;
+	formulaType: any;
+	subject: number;
+	post: number;
+	sumSubject: number;
+	caption: string;
+	start: any;
+	end: any;
+	ratio: number;
+	valid: number;
 }
 export interface ResultGetAllFormula {
-    ret: ReturnGetAllFormulaRet[];
+	ret: ReturnGetAllFormulaRet[];
 }
 
 export interface ParamSetSumGroupPerson {
-    group: number;
-    person: number;
-    act: number;
+	group: number;
+	person: number;
+	act: number;
 }
 export interface ResultSetSumGroupPerson {
 }
 
 export interface ParamGetMySums {
-    start: any;
-    end: any;
+	start: any;
+	end: any;
 }
 export interface ReturnGetMySumsRet {
-    obj: number;
-    post: number;
-    subject: number;
-    value: number;
+	obj: number;
+	post: number;
+	subject: number;
+	value: number;
 }
 export interface ResultGetMySums {
-    ret: ReturnGetMySumsRet[];
+	ret: ReturnGetMySumsRet[];
 }
 
 export interface ParamGetMyBalance {
 }
 export interface ReturnGetMyBalanceRet {
-    obj: number;
-    post: number;
-    subject: number;
-    value: number;
+	obj: number;
+	post: number;
+	subject: number;
+	value: number;
 }
 export interface ResultGetMyBalance {
-    ret: ReturnGetMyBalanceRet[];
+	ret: ReturnGetMyBalanceRet[];
+}
+
+export interface IxBud extends IX {
+	i: number;
+	x: number;
+}
+
+export interface Bud extends ID {
+	base: number;
+	ext: number;
+}
+
+export interface BudInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	ext: number | ID;
+}
+
+export interface History extends ID {
+	bud: number;
+	value: number;
+	ref: number;
+	plusMinus: number;
+}
+
+export interface HistoryInActs extends ID {
+	ID?: UqID<any>;
+	bud: number | ID;
+	value: number;
+	ref: number | ID;
+	plusMinus: number;
 }
 
 export interface ParamGetSiteSetting {
 }
 export interface ReturnGetSiteSettingBudsInt {
-    bud: number;
-    value: number;
+	bud: number;
+	value: number;
 }
 export interface ReturnGetSiteSettingBudsDec {
-    bud: number;
-    value: number;
+	bud: number;
+	value: number;
 }
 export interface ReturnGetSiteSettingBudsStr {
-    bud: number;
-    value: string;
+	bud: number;
+	value: string;
 }
 export interface ReturnGetSiteSettingBudsCheck {
-    bud: number;
-    item: number;
+	bud: number;
+	item: number;
 }
 export interface ResultGetSiteSetting {
-    budsInt: ReturnGetSiteSettingBudsInt[];
-    budsDec: ReturnGetSiteSettingBudsDec[];
-    budsStr: ReturnGetSiteSettingBudsStr[];
-    budsCheck: ReturnGetSiteSettingBudsCheck[];
+	budsInt: ReturnGetSiteSettingBudsInt[];
+	budsDec: ReturnGetSiteSettingBudsDec[];
+	budsStr: ReturnGetSiteSettingBudsStr[];
+	budsCheck: ReturnGetSiteSettingBudsCheck[];
 }
 
-export interface AtomUom extends ID {
-    atom: number;
-    uom: number;
-    visible: number;
+export interface ParamReportStorage {
+	key: string;
+	subject: string;
+}
+export interface ReturnReportStorage$page {
+	atom: number;
+	uom: number;
+	spec: number;
+	id: number;
+	value: number;
+	init: number;
+}
+export interface ResultReportStorage {
+	$page: ReturnReportStorage$page[];
 }
 
-export interface AtomUomInActs extends ID {
-    ID?: UqID<any>;
-    atom: number | ID;
-    uom: number | ID;
-    visible: number;
+export interface ParamReportStorageAtom {
+	key: string;
+	subject: string;
+}
+export interface ReturnReportStorageAtom$page {
+	obj: number;
+	value: number;
+	init: number;
+}
+export interface ResultReportStorageAtom {
+	$page: ReturnReportStorageAtom$page[];
 }
 
-export interface AtomSpec extends ID {
-    atomUom: number;
-    spec: number;
+export interface ParamReportStorageSpec {
+	key: string;
+	subject: string;
 }
-
-export interface AtomSpecInActs extends ID {
-    ID?: UqID<any>;
-    atomUom: number | ID;
-    spec: number | ID;
+export interface ReturnReportStorageSpec$page {
+	obj: number;
+	value: number;
+	init: number;
 }
-
-export interface ParamSaveUomType {
-    id: number;
-    type: number;
-}
-export interface ResultSaveUomType {
-}
-
-export interface ParamSaveUomIUom {
-    id: number;
-    type: number;
-}
-export interface ResultSaveUomIUom {
-}
-
-export interface ParamGetUomFromType {
-    id: number;
-}
-export interface ReturnGetUomFromTypeUom {
-    id: number;
-    no: string;
-    ex: string;
-    discription: string;
-}
-export interface ResultGetUomFromType {
-    uom: ReturnGetUomFromTypeUom[];
-}
-
-export interface ParamGetUomIListOfUom {
-    uom: number;
-}
-export interface ReturnGetUomIListOfUom$page {
-    id: number;
-    no: string;
-    ex: string;
-    phrase: string;
-}
-export interface ResultGetUomIListOfUom {
-    $page: ReturnGetUomIListOfUom$page[];
-}
-
-export interface ParamGetAtomUomI {
-    id: number;
-}
-export interface ReturnGetAtomUomIUomI {
-    id: number;
-    no: string;
-    ex: string;
-}
-export interface ReturnGetAtomUomIUomX {
-    id: number;
-    no: string;
-    ex: string;
-    ratio: number;
-    prevEx: string;
-    prevRatio: number;
-    atomUom: number;
-}
-export interface ResultGetAtomUomI {
-    uomI: ReturnGetAtomUomIUomI[];
-    uomX: ReturnGetAtomUomIUomX[];
-}
-
-export interface ParamSaveUomX {
-    i: number;
-    no: string;
-    ex: string;
-    ratio: number;
-}
-export interface ReturnSaveUomXRet {
-    id: number;
-}
-export interface ResultSaveUomX {
-    ret: ReturnSaveUomXRet[];
-}
-
-export interface ParamDelUomX {
-    uomI: number;
-    uomX: number;
-}
-export interface ResultDelUomX {
-}
-
-export interface ParamSaveAtomUom {
-    atom: number;
-    uom: number;
-}
-export interface ReturnSaveAtomUomRet {
-    id: number;
-}
-export interface ResultSaveAtomUom {
-    ret: ReturnSaveAtomUomRet[];
-}
-
-export interface ParamHideAtomUomX {
-    id: number;
-}
-export interface ResultHideAtomUomX {
-}
-
-export interface ParamDeleteAtomUomI {
-    atom: number;
-    uomI: number;
-}
-export interface ResultDeleteAtomUomI {
-}
-
-export interface ParamSaveAtomSpec {
-    atomUom: number;
-    spec: number;
-}
-export interface ReturnSaveAtomSpecRet {
-    id: number;
-}
-export interface ResultSaveAtomSpec {
-    ret: ReturnSaveAtomSpecRet[];
-}
-
-export interface ParamGetUomI {
-    id: number;
-}
-export interface ReturnGetUomIUomI {
-    id: number;
-    base: number;
-    no: string;
-    ex: string;
-    discription: string;
-    ratio: number;
-    uom: number;
-    uomNo: string;
-    uomEx: string;
-    uomDiscription: string;
-}
-export interface ReturnGetUomIUomX {
-    id: number;
-    base: number;
-    no: string;
-    ex: string;
-    ratio: number;
-}
-export interface ResultGetUomI {
-    UomI: ReturnGetUomIUomI[];
-    UomX: ReturnGetUomIUomX[];
+export interface ResultReportStorageSpec {
+	$page: ReturnReportStorageSpec$page[];
 }
 
 
 
 export interface ParamActs {
-    $phrase?: $phraseInActs[];
-    atom?: AtomInActs[];
-    spec?: SpecInActs[];
-    sheet?: SheetInActs[];
-    detail?: DetailInActs[];
-    pend?: PendInActs[];
-    ixBud?: IxBud[];
-    bud?: BudInActs[];
-    history?: HistoryInActs[];
-    sumFormula?: SumFormulaInActs[];
-    atomUom?: AtomUomInActs[];
-    atomSpec?: AtomSpecInActs[];
+	$phrase?: $phraseInActs[];
+	atom?: AtomInActs[];
+	spec?: SpecInActs[];
+	duo?: DuoInActs[];
+	sheet?: SheetInActs[];
+	detail?: DetailInActs[];
+	pend?: PendInActs[];
+	atomUom?: AtomUomInActs[];
+	atomSpec?: AtomSpecInActs[];
+	sumFormula?: SumFormulaInActs[];
+	ixBud?: IxBud[];
+	bud?: BudInActs[];
+	history?: HistoryInActs[];
 }
 
 
 export interface UqExt extends Uq {
-    Acts(param: ParamActs): Promise<any>;
-    SQL: Uq;
+	Acts(param:ParamActs): Promise<any>;
+	SQL: Uq;
     Role: { [key: string]: string[] };
 
-    $phrase: UqID<any>;
-    $role_My: UqQuery<Param$role_My, Result$role_My>;
-    $role_Site_Users: UqQuery<Param$role_Site_Users, Result$role_Site_Users>;
-    $role_Site_Add_Admin: UqAction<Param$role_Site_Add_Admin, Result$role_Site_Add_Admin>;
-    $role_Site_Del_Admin: UqAction<Param$role_Site_Del_Admin, Result$role_Site_Del_Admin>;
-    $role_Site_Add_User: UqAction<Param$role_Site_Add_User, Result$role_Site_Add_User>;
-    $role_Site_User_Role: UqAction<Param$role_Site_User_Role, Result$role_Site_User_Role>;
-    $role_Site_Quit_Owner: UqAction<Param$role_Site_Quit_Owner, Result$role_Site_Quit_Owner>;
-    $sites: UqQuery<Param$sites, Result$sites>;
-    $setSite: UqAction<Param$setSite, Result$setSite>;
-    $poked: UqQuery<Param$poked, Result$poked>;
-    $setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
-    $getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
-    SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
-    SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
-    SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
-    SaveBudRadio: UqAction<ParamSaveBudRadio, ResultSaveBudRadio>;
-    DelAtom: UqAction<ParamDelAtom, ResultDelAtom>;
-    SaveSpec: UqAction<ParamSaveSpec, ResultSaveSpec>;
-    GetSpec: UqQuery<ParamGetSpec, ResultGetSpec>;
-    SaveSheet: UqAction<ParamSaveSheet, ResultSaveSheet>;
-    SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
-    DeleteBin: UqAction<ParamDeleteBin, ResultDeleteBin>;
-    SubmitSheet: UqAction<ParamSubmitSheet, ResultSubmitSheet>;
-    DoQuery: UqAction<ParamDoQuery, ResultDoQuery>;
-    GetReport: UqQuery<ParamGetReport, ResultGetReport>;
-    GetHistory: UqQuery<ParamGetHistory, ResultGetHistory>;
-    RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
-    GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
-    DeleteMyDrafts: UqAction<ParamDeleteMyDrafts, ResultDeleteMyDrafts>;
-    SearchAtom: UqQuery<ParamSearchAtom, ResultSearchAtom>;
-    GetAssigns: UqQuery<ParamGetAssigns, ResultGetAssigns>;
-    GetTies: UqQuery<ParamGetTies, ResultGetTies>;
-    SaveTie: UqAction<ParamSaveTie, ResultSaveTie>;
-    DeleteTie: UqAction<ParamDeleteTie, ResultDeleteTie>;
-    SearchAtomBuds: UqQuery<ParamSearchAtomBuds, ResultSearchAtomBuds>;
-    SearchAtomUomBuds: UqQuery<ParamSearchAtomUomBuds, ResultSearchAtomUomBuds>;
-    GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
-    GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
-    GetSpecsFromBase: UqQuery<ParamGetSpecsFromBase, ResultGetSpecsFromBase>;
-    ClearCode: UqAction<ParamClearCode, ResultClearCode>;
-    GetPend: UqQuery<ParamGetPend, ResultGetPend>;
-    GetPendsNotify: UqQuery<ParamGetPendsNotify, ResultGetPendsNotify>;
-    GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
-    GetPendSheetFromTarget: UqQuery<ParamGetPendSheetFromTarget, ResultGetPendSheetFromTarget>;
-    GetPendDetailFromItem: UqQuery<ParamGetPendDetailFromItem, ResultGetPendDetailFromItem>;
-    GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
-    GetSiteSheets: UqQuery<ParamGetSiteSheets, ResultGetSiteSheets>;
-    GetSiteSheetList: UqQuery<ParamGetSiteSheetList, ResultGetSiteSheetList>;
-    GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
-    GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
-    CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
-    Atom: UqID<any>;
-    Spec: UqID<any>;
-    Sheet: UqID<any>;
-    Detail: UqID<any>;
-    Pend: UqID<any>;
-    IxBud: UqIX<any>;
-    Bud: UqID<any>;
-    History: UqID<any>;
-    ReportStorage: UqQuery<ParamReportStorage, ResultReportStorage>;
-    ReportStorageAtom: UqQuery<ParamReportStorageAtom, ResultReportStorageAtom>;
-    ReportStorageSpec: UqQuery<ParamReportStorageSpec, ResultReportStorageSpec>;
-    SumFormula: UqID<any>;
-    SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
-    SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
-    ChangeSumFormulaCaption: UqAction<ParamChangeSumFormulaCaption, ResultChangeSumFormulaCaption>;
-    ChangeSumFormula: UqAction<ParamChangeSumFormula, ResultChangeSumFormula>;
-    UserSiteFromTonwaUser: UqAction<ParamUserSiteFromTonwaUser, ResultUserSiteFromTonwaUser>;
-    ChangeIxMySum: UqAction<ParamChangeIxMySum, ResultChangeIxMySum>;
-    GetIxMySum: UqQuery<ParamGetIxMySum, ResultGetIxMySum>;
-    GetAllFormula: UqQuery<ParamGetAllFormula, ResultGetAllFormula>;
-    SetSumGroupPerson: UqAction<ParamSetSumGroupPerson, ResultSetSumGroupPerson>;
-    GetMySums: UqQuery<ParamGetMySums, ResultGetMySums>;
-    GetMyBalance: UqQuery<ParamGetMyBalance, ResultGetMyBalance>;
-    GetSiteSetting: UqQuery<ParamGetSiteSetting, ResultGetSiteSetting>;
-    AtomUom: UqID<any>;
-    AtomSpec: UqID<any>;
-    SaveUomType: UqAction<ParamSaveUomType, ResultSaveUomType>;
-    SaveUomIUom: UqAction<ParamSaveUomIUom, ResultSaveUomIUom>;
-    GetUomFromType: UqQuery<ParamGetUomFromType, ResultGetUomFromType>;
-    GetUomIListOfUom: UqQuery<ParamGetUomIListOfUom, ResultGetUomIListOfUom>;
-    GetAtomUomI: UqQuery<ParamGetAtomUomI, ResultGetAtomUomI>;
-    SaveUomX: UqAction<ParamSaveUomX, ResultSaveUomX>;
-    DelUomX: UqAction<ParamDelUomX, ResultDelUomX>;
-    SaveAtomUom: UqAction<ParamSaveAtomUom, ResultSaveAtomUom>;
-    HideAtomUomX: UqAction<ParamHideAtomUomX, ResultHideAtomUomX>;
-    DeleteAtomUomI: UqAction<ParamDeleteAtomUomI, ResultDeleteAtomUomI>;
-    SaveAtomSpec: UqAction<ParamSaveAtomSpec, ResultSaveAtomSpec>;
-    GetUomI: UqQuery<ParamGetUomI, ResultGetUomI>;
+	$phrase: UqID<any>;
+	$role_My: UqQuery<Param$role_My, Result$role_My>;
+	$role_Site_Users: UqQuery<Param$role_Site_Users, Result$role_Site_Users>;
+	$role_Site_Add_Admin: UqAction<Param$role_Site_Add_Admin, Result$role_Site_Add_Admin>;
+	$role_Site_Del_Admin: UqAction<Param$role_Site_Del_Admin, Result$role_Site_Del_Admin>;
+	$role_Site_Add_User: UqAction<Param$role_Site_Add_User, Result$role_Site_Add_User>;
+	$role_Site_User_Role: UqAction<Param$role_Site_User_Role, Result$role_Site_User_Role>;
+	$role_Site_Quit_Owner: UqAction<Param$role_Site_Quit_Owner, Result$role_Site_Quit_Owner>;
+	$sites: UqQuery<Param$sites, Result$sites>;
+	$setSite: UqAction<Param$setSite, Result$setSite>;
+	$poked: UqQuery<Param$poked, Result$poked>;
+	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
+	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
+	SearchAllSheets: UqQuery<ParamSearchAllSheets, ResultSearchAllSheets>;
+	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
+	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
+	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
+	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
+	SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
+	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
+	SaveBudRadio: UqAction<ParamSaveBudRadio, ResultSaveBudRadio>;
+	DelAtom: UqAction<ParamDelAtom, ResultDelAtom>;
+	SaveSpec: UqAction<ParamSaveSpec, ResultSaveSpec>;
+	GetSpec: UqQuery<ParamGetSpec, ResultGetSpec>;
+	SaveSheet: UqAction<ParamSaveSheet, ResultSaveSheet>;
+	SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
+	DeleteBin: UqAction<ParamDeleteBin, ResultDeleteBin>;
+	SubmitSheet: UqAction<ParamSubmitSheet, ResultSubmitSheet>;
+	DoQuery: UqAction<ParamDoQuery, ResultDoQuery>;
+	GetReport: UqQuery<ParamGetReport, ResultGetReport>;
+	GetHistory: UqQuery<ParamGetHistory, ResultGetHistory>;
+	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
+	GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
+	DeleteMyDrafts: UqAction<ParamDeleteMyDrafts, ResultDeleteMyDrafts>;
+	SearchAtom: UqQuery<ParamSearchAtom, ResultSearchAtom>;
+	GetAssigns: UqQuery<ParamGetAssigns, ResultGetAssigns>;
+	GetTies: UqQuery<ParamGetTies, ResultGetTies>;
+	SaveTie: UqAction<ParamSaveTie, ResultSaveTie>;
+	DeleteTie: UqAction<ParamDeleteTie, ResultDeleteTie>;
+	SearchAtomBuds: UqQuery<ParamSearchAtomBuds, ResultSearchAtomBuds>;
+	SearchAtomUomBuds: UqQuery<ParamSearchAtomUomBuds, ResultSearchAtomUomBuds>;
+	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
+	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
+	GetSpecsFromBase: UqQuery<ParamGetSpecsFromBase, ResultGetSpecsFromBase>;
+	ClearCode: UqAction<ParamClearCode, ResultClearCode>;
+	Atom: UqID<any>;
+	Spec: UqID<any>;
+	Duo: UqID<any>;
+	Sheet: UqID<any>;
+	Detail: UqID<any>;
+	Pend: UqID<any>;
+	GetPend: UqQuery<ParamGetPend, ResultGetPend>;
+	GetPendsNotify: UqQuery<ParamGetPendsNotify, ResultGetPendsNotify>;
+	GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
+	GetPendSheetFromTarget: UqQuery<ParamGetPendSheetFromTarget, ResultGetPendSheetFromTarget>;
+	GetPendDetailFromItem: UqQuery<ParamGetPendDetailFromItem, ResultGetPendDetailFromItem>;
+	GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
+	GetSiteSheets: UqQuery<ParamGetSiteSheets, ResultGetSiteSheets>;
+	GetSiteSheetList: UqQuery<ParamGetSiteSheetList, ResultGetSiteSheetList>;
+	AtomUom: UqID<any>;
+	AtomSpec: UqID<any>;
+	SaveUomType: UqAction<ParamSaveUomType, ResultSaveUomType>;
+	SaveUomIUom: UqAction<ParamSaveUomIUom, ResultSaveUomIUom>;
+	GetUomFromType: UqQuery<ParamGetUomFromType, ResultGetUomFromType>;
+	GetUomIListOfUom: UqQuery<ParamGetUomIListOfUom, ResultGetUomIListOfUom>;
+	GetAtomUomI: UqQuery<ParamGetAtomUomI, ResultGetAtomUomI>;
+	SaveUomX: UqAction<ParamSaveUomX, ResultSaveUomX>;
+	DelUomX: UqAction<ParamDelUomX, ResultDelUomX>;
+	SaveAtomUom: UqAction<ParamSaveAtomUom, ResultSaveAtomUom>;
+	HideAtomUomX: UqAction<ParamHideAtomUomX, ResultHideAtomUomX>;
+	DeleteAtomUomI: UqAction<ParamDeleteAtomUomI, ResultDeleteAtomUomI>;
+	SaveAtomSpec: UqAction<ParamSaveAtomSpec, ResultSaveAtomSpec>;
+	GetUomI: UqQuery<ParamGetUomI, ResultGetUomI>;
+	SumFormula: UqID<any>;
+	SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
+	SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
+	ChangeSumFormulaCaption: UqAction<ParamChangeSumFormulaCaption, ResultChangeSumFormulaCaption>;
+	ChangeSumFormula: UqAction<ParamChangeSumFormula, ResultChangeSumFormula>;
+	UserSiteFromTonwaUser: UqAction<ParamUserSiteFromTonwaUser, ResultUserSiteFromTonwaUser>;
+	ChangeIxMySum: UqAction<ParamChangeIxMySum, ResultChangeIxMySum>;
+	GetIxMySum: UqQuery<ParamGetIxMySum, ResultGetIxMySum>;
+	GetAllFormula: UqQuery<ParamGetAllFormula, ResultGetAllFormula>;
+	SetSumGroupPerson: UqAction<ParamSetSumGroupPerson, ResultSetSumGroupPerson>;
+	GetMySums: UqQuery<ParamGetMySums, ResultGetMySums>;
+	GetMyBalance: UqQuery<ParamGetMyBalance, ResultGetMyBalance>;
+	IxBud: UqIX<any>;
+	Bud: UqID<any>;
+	History: UqID<any>;
+	GetSiteSetting: UqQuery<ParamGetSiteSetting, ResultGetSiteSetting>;
+	ReportStorage: UqQuery<ParamReportStorage, ResultReportStorage>;
+	ReportStorageAtom: UqQuery<ParamReportStorageAtom, ResultReportStorageAtom>;
+	ReportStorageSpec: UqQuery<ParamReportStorageSpec, ResultReportStorageSpec>;
 }
 
 
-export const uqSchema = {
+export const uqSchema={
     "$phrase": {
         "name": "$phrase",
         "type": "id",
@@ -1852,6 +1883,251 @@ export const uqSchema = {
                     {
                         "name": "unitBizDate",
                         "type": "tinyint"
+                    }
+                ]
+            }
+        ]
+    },
+    "searchallsheets": {
+        "name": "SearchAllSheets",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "phrase",
+                "type": "id"
+            },
+            {
+                "name": "paramMain",
+                "type": "json"
+            },
+            {
+                "name": "paramDetail",
+                "type": "json"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "operator",
+                        "type": "id"
+                    },
+                    {
+                        "name": "buds",
+                        "type": "json"
+                    }
+                ],
+                "order": "desc"
+            }
+        ]
+    },
+    "bizphrasetype": {
+        "name": "BizPhraseType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "any": 0,
+            "atom": 11,
+            "spec": 12,
+            "bud": 13,
+            "budGroup": 14,
+            "duo": 15,
+            "sheet": 101,
+            "main": 102,
+            "detail": 103,
+            "pend": 104,
+            "detailAct": 111,
+            "query": 151,
+            "pick": 161,
+            "role": 201,
+            "permit": 202,
+            "options": 301,
+            "tree": 401,
+            "tie": 501,
+            "report": 601,
+            "title": 901,
+            "assign": 902,
+            "key": 1001,
+            "prop": 1011,
+            "optionsitem": 1031,
+            "console": 6001
+        }
+    },
+    "buddatatype": {
+        "name": "BudDataType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "none": 0,
+            "int": 11,
+            "atom": 12,
+            "radio": 13,
+            "check": 14,
+            "ID": 19,
+            "dec": 21,
+            "char": 31,
+            "str": 32,
+            "date": 41
+        }
+    },
+    "bizbudflag": {
+        "name": "BizBudFlag",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "index": 1
+        }
+    },
+    "getbizobjects": {
+        "name": "GetBizObjects",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "lang",
+                "type": "char",
+                "size": 10
+            },
+            {
+                "name": "culture",
+                "type": "char",
+                "size": 10
+            }
+        ],
+        "returns": [
+            {
+                "name": "objs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "source",
+                        "type": "text"
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            },
+            {
+                "name": "buds",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            }
+        ]
+    },
+    "getentitycode": {
+        "name": "GetEntityCode",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "code",
+                        "type": "text"
+                    },
+                    {
+                        "name": "schema",
+                        "type": "text"
+                    }
+                ]
+            }
+        ]
+    },
+    "createsiteforuser": {
+        "name": "CreateSiteForUser",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "tonwaUser",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "site",
+                        "type": "id"
+                    },
+                    {
+                        "name": "userSite",
+                        "type": "id"
                     }
                 ]
             }
@@ -3131,6 +3407,208 @@ export const uqSchema = {
         "jsoned": true,
         "returns": [] as any
     },
+    "atom": {
+        "name": "Atom",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 200
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "spec": {
+        "name": "Spec",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "duo": {
+        "name": "Duo",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "sheet": {
+        "name": "Sheet",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "operator",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "detail": {
+        "name": "Detail",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "pend": {
+        "name": "Pend",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "bin",
+                "type": "id"
+            },
+            {
+                "name": "mid",
+                "type": "json"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
     "getpend": {
         "name": "GetPend",
         "type": "query",
@@ -3646,1159 +4124,6 @@ export const uqSchema = {
                     }
                 ],
                 "order": "asc"
-            }
-        ]
-    },
-    "bizphrasetype": {
-        "name": "BizPhraseType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "any": 0,
-            "atom": 11,
-            "spec": 12,
-            "bud": 13,
-            "sheet": 101,
-            "main": 102,
-            "detail": 103,
-            "pend": 104,
-            "detailAct": 111,
-            "query": 151,
-            "pick": 161,
-            "role": 201,
-            "permit": 202,
-            "options": 301,
-            "tree": 401,
-            "tie": 501,
-            "report": 601,
-            "title": 901,
-            "assign": 902,
-            "key": 1001,
-            "prop": 1011,
-            "optionsitem": 1031
-        }
-    },
-    "buddatatype": {
-        "name": "BudDataType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "none": 0,
-            "int": 11,
-            "atom": 12,
-            "radio": 13,
-            "check": 14,
-            "ID": 19,
-            "dec": 21,
-            "char": 31,
-            "str": 32,
-            "date": 41
-        }
-    },
-    "bizbudflag": {
-        "name": "BizBudFlag",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "index": 1
-        }
-    },
-    "getbizobjects": {
-        "name": "GetBizObjects",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "lang",
-                "type": "char",
-                "size": 10
-            },
-            {
-                "name": "culture",
-                "type": "char",
-                "size": 10
-            }
-        ],
-        "returns": [
-            {
-                "name": "objs",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "source",
-                        "type": "text"
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            },
-            {
-                "name": "buds",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            }
-        ]
-    },
-    "getentitycode": {
-        "name": "GetEntityCode",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id"
-            }
-        ],
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "code",
-                        "type": "text"
-                    },
-                    {
-                        "name": "schema",
-                        "type": "text"
-                    }
-                ]
-            }
-        ]
-    },
-    "createsiteforuser": {
-        "name": "CreateSiteForUser",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "no",
-                "type": "char",
-                "size": 30
-            },
-            {
-                "name": "ex",
-                "type": "char",
-                "size": 200
-            },
-            {
-                "name": "tonwaUser",
-                "type": "id"
-            }
-        ],
-        "jsoned": true,
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "site",
-                        "type": "id"
-                    },
-                    {
-                        "name": "userSite",
-                        "type": "id"
-                    }
-                ]
-            }
-        ]
-    },
-    "atom": {
-        "name": "Atom",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "no",
-                "type": "char",
-                "size": 30
-            },
-            {
-                "name": "ex",
-                "type": "char",
-                "size": 200
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "spec": {
-        "name": "Spec",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "sheet": {
-        "name": "Sheet",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "no",
-                "type": "char",
-                "size": 20
-            },
-            {
-                "name": "operator",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "no",
-                "type": "char",
-                "size": 20
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "detail": {
-        "name": "Detail",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "pend": {
-        "name": "Pend",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "bin",
-                "type": "id"
-            },
-            {
-                "name": "mid",
-                "type": "json"
-            },
-            {
-                "name": "value",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "ixbud": {
-        "name": "IxBud",
-        "type": "ix",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "i",
-                "type": "id"
-            },
-            {
-                "name": "x",
-                "type": "id"
-            }
-        ],
-        "ixx": false,
-        "hasSort": false,
-        "xType": 0
-    },
-    "bud": {
-        "name": "Bud",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "ext",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "ext",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "history": {
-        "name": "History",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "bud",
-                "type": "id"
-            },
-            {
-                "name": "value",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            },
-            {
-                "name": "ref",
-                "type": "id"
-            },
-            {
-                "name": "plusMinus",
-                "type": "tinyint"
-            }
-        ],
-        "keys": [] as any,
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "reportstorage": {
-        "name": "ReportStorage",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "key",
-                "type": "char",
-                "size": 50
-            },
-            {
-                "name": "subject",
-                "type": "char",
-                "size": 200
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "atom",
-                        "type": "id"
-                    },
-                    {
-                        "name": "uom",
-                        "type": "id"
-                    },
-                    {
-                        "name": "spec",
-                        "type": "id"
-                    },
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "init",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    }
-                ],
-                "order": "asc"
-            }
-        ]
-    },
-    "reportstorageatom": {
-        "name": "ReportStorageAtom",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "key",
-                "type": "char",
-                "size": 50
-            },
-            {
-                "name": "subject",
-                "type": "char",
-                "size": 200
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "obj",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "init",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    }
-                ],
-                "order": "asc"
-            }
-        ]
-    },
-    "reportstoragespec": {
-        "name": "ReportStorageSpec",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "key",
-                "type": "char",
-                "size": 50
-            },
-            {
-                "name": "subject",
-                "type": "char",
-                "size": 200
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "obj",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "init",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    }
-                ],
-                "order": "asc"
-            }
-        ]
-    },
-    "sumformulatype": {
-        "name": "SumFormulaType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "person": 1,
-            "group": 2
-        }
-    },
-    "sumformula": {
-        "name": "SumFormula",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "formulaType",
-                "type": "enum"
-            },
-            {
-                "name": "subject",
-                "type": "id"
-            },
-            {
-                "name": "post",
-                "type": "id"
-            },
-            {
-                "name": "sumSubject",
-                "type": "id"
-            },
-            {
-                "name": "caption",
-                "type": "char",
-                "size": 100
-            },
-            {
-                "name": "start",
-                "type": "date"
-            },
-            {
-                "name": "end",
-                "type": "date"
-            },
-            {
-                "name": "ratio",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            },
-            {
-                "name": "valid",
-                "type": "tinyint"
-            }
-        ],
-        "keys": [
-            {
-                "name": "formulaType",
-                "type": "enum"
-            },
-            {
-                "name": "subject",
-                "type": "id"
-            },
-            {
-                "name": "post",
-                "type": "id"
-            },
-            {
-                "name": "sumSubject",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "searchgrouppersons": {
-        "name": "SearchGroupPersons",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "group",
-                "type": "id"
-            },
-            {
-                "name": "key",
-                "type": "char",
-                "size": 50
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "no",
-                        "type": "char",
-                        "size": 50
-                    },
-                    {
-                        "name": "ex",
-                        "type": "char",
-                        "size": 50
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "selected",
-                        "type": "tinyint"
-                    }
-                ],
-                "order": "desc"
-            }
-        ]
-    },
-    "savesumformula": {
-        "name": "SaveSumFormula",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id"
-            },
-            {
-                "name": "formulaType",
-                "type": "enum"
-            },
-            {
-                "name": "subject",
-                "type": "id"
-            },
-            {
-                "name": "post",
-                "type": "id"
-            },
-            {
-                "name": "sumSubject",
-                "type": "id"
-            },
-            {
-                "name": "caption",
-                "type": "char",
-                "size": 100
-            },
-            {
-                "name": "start",
-                "type": "date"
-            },
-            {
-                "name": "end",
-                "type": "date"
-            },
-            {
-                "name": "ratio",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            }
-        ],
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    }
-                ]
-            }
-        ]
-    },
-    "changesumformulacaption": {
-        "name": "ChangeSumFormulaCaption",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id"
-            },
-            {
-                "name": "caption",
-                "type": "char",
-                "size": 100
-            }
-        ],
-        "returns": [] as any
-    },
-    "changesumformula": {
-        "name": "ChangeSumFormula",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id"
-            },
-            {
-                "name": "start",
-                "type": "date"
-            },
-            {
-                "name": "end",
-                "type": "date"
-            },
-            {
-                "name": "ratio",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            }
-        ],
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    }
-                ]
-            }
-        ]
-    },
-    "usersitefromtonwauser": {
-        "name": "UserSiteFromTonwaUser",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "tonwaUser",
-                "type": "id"
-            }
-        ],
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "userSite",
-                        "type": "id"
-                    }
-                ]
-            }
-        ]
-    },
-    "changeixmysum": {
-        "name": "ChangeIxMySum",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "userSite",
-                "type": "id"
-            }
-        ],
-        "arrs": [
-            {
-                "name": "added",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    }
-                ]
-            },
-            {
-                "name": "removed",
-                "fields": [
-                    {
-                        "name": "idDel",
-                        "type": "id"
-                    }
-                ]
-            }
-        ],
-        "returns": [] as any
-    },
-    "getixmysum": {
-        "name": "GetIxMySum",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "userSite",
-                "type": "id"
-            }
-        ],
-        "returns": [
-            {
-                "name": "users",
-                "fields": [
-                    {
-                        "name": "tonwaUser",
-                        "type": "id"
-                    },
-                    {
-                        "name": "userSite",
-                        "type": "id"
-                    }
-                ]
-            },
-            {
-                "name": "atoms",
-                "fields": [
-                    {
-                        "name": "userSite",
-                        "type": "id"
-                    },
-                    {
-                        "name": "atom",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "no",
-                        "type": "char",
-                        "size": 30
-                    },
-                    {
-                        "name": "ex",
-                        "type": "char",
-                        "size": 200
-                    }
-                ]
-            }
-        ]
-    },
-    "getallformula": {
-        "name": "GetAllFormula",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [] as any,
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id",
-                        "null": false
-                    },
-                    {
-                        "name": "formulaType",
-                        "type": "enum"
-                    },
-                    {
-                        "name": "subject",
-                        "type": "id"
-                    },
-                    {
-                        "name": "post",
-                        "type": "id"
-                    },
-                    {
-                        "name": "sumSubject",
-                        "type": "id"
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    },
-                    {
-                        "name": "start",
-                        "type": "date"
-                    },
-                    {
-                        "name": "end",
-                        "type": "date"
-                    },
-                    {
-                        "name": "ratio",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "valid",
-                        "type": "tinyint"
-                    }
-                ]
-            }
-        ]
-    },
-    "setsumgroupperson": {
-        "name": "SetSumGroupPerson",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "group",
-                "type": "id"
-            },
-            {
-                "name": "person",
-                "type": "id"
-            },
-            {
-                "name": "act",
-                "type": "tinyint"
-            }
-        ],
-        "returns": [] as any
-    },
-    "getmysums": {
-        "name": "GetMySums",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "start",
-                "type": "date"
-            },
-            {
-                "name": "end",
-                "type": "date"
-            }
-        ],
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "obj",
-                        "type": "id"
-                    },
-                    {
-                        "name": "post",
-                        "type": "id"
-                    },
-                    {
-                        "name": "subject",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    }
-                ]
-            }
-        ]
-    },
-    "getmybalance": {
-        "name": "GetMyBalance",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [] as any,
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "obj",
-                        "type": "id"
-                    },
-                    {
-                        "name": "post",
-                        "type": "id"
-                    },
-                    {
-                        "name": "subject",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    }
-                ]
-            }
-        ]
-    },
-    "getsitesetting": {
-        "name": "GetSiteSetting",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [] as any,
-        "returns": [
-            {
-                "name": "budsInt",
-                "fields": [
-                    {
-                        "name": "bud",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "bigint"
-                    }
-                ]
-            },
-            {
-                "name": "budsDec",
-                "fields": [
-                    {
-                        "name": "bud",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    }
-                ]
-            },
-            {
-                "name": "budsStr",
-                "fields": [
-                    {
-                        "name": "bud",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "char",
-                        "size": 200
-                    }
-                ]
-            },
-            {
-                "name": "budsCheck",
-                "fields": [
-                    {
-                        "name": "bud",
-                        "type": "id"
-                    },
-                    {
-                        "name": "item",
-                        "type": "id"
-                    }
-                ]
             }
         ]
     },
@@ -5322,6 +4647,803 @@ export const uqSchema = {
             }
         ]
     },
+    "sumformulatype": {
+        "name": "SumFormulaType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "person": 1,
+            "group": 2
+        }
+    },
+    "sumformula": {
+        "name": "SumFormula",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "formulaType",
+                "type": "enum"
+            },
+            {
+                "name": "subject",
+                "type": "id"
+            },
+            {
+                "name": "post",
+                "type": "id"
+            },
+            {
+                "name": "sumSubject",
+                "type": "id"
+            },
+            {
+                "name": "caption",
+                "type": "char",
+                "size": 100
+            },
+            {
+                "name": "start",
+                "type": "date"
+            },
+            {
+                "name": "end",
+                "type": "date"
+            },
+            {
+                "name": "ratio",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            },
+            {
+                "name": "valid",
+                "type": "tinyint"
+            }
+        ],
+        "keys": [
+            {
+                "name": "formulaType",
+                "type": "enum"
+            },
+            {
+                "name": "subject",
+                "type": "id"
+            },
+            {
+                "name": "post",
+                "type": "id"
+            },
+            {
+                "name": "sumSubject",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "searchgrouppersons": {
+        "name": "SearchGroupPersons",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "group",
+                "type": "id"
+            },
+            {
+                "name": "key",
+                "type": "char",
+                "size": 50
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "selected",
+                        "type": "tinyint"
+                    }
+                ],
+                "order": "desc"
+            }
+        ]
+    },
+    "savesumformula": {
+        "name": "SaveSumFormula",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "formulaType",
+                "type": "enum"
+            },
+            {
+                "name": "subject",
+                "type": "id"
+            },
+            {
+                "name": "post",
+                "type": "id"
+            },
+            {
+                "name": "sumSubject",
+                "type": "id"
+            },
+            {
+                "name": "caption",
+                "type": "char",
+                "size": 100
+            },
+            {
+                "name": "start",
+                "type": "date"
+            },
+            {
+                "name": "end",
+                "type": "date"
+            },
+            {
+                "name": "ratio",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "changesumformulacaption": {
+        "name": "ChangeSumFormulaCaption",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "caption",
+                "type": "char",
+                "size": 100
+            }
+        ],
+        "returns": [] as any
+    },
+    "changesumformula": {
+        "name": "ChangeSumFormula",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "start",
+                "type": "date"
+            },
+            {
+                "name": "end",
+                "type": "date"
+            },
+            {
+                "name": "ratio",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "usersitefromtonwauser": {
+        "name": "UserSiteFromTonwaUser",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "tonwaUser",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "userSite",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "changeixmysum": {
+        "name": "ChangeIxMySum",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "userSite",
+                "type": "id"
+            }
+        ],
+        "arrs": [
+            {
+                "name": "added",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            },
+            {
+                "name": "removed",
+                "fields": [
+                    {
+                        "name": "idDel",
+                        "type": "id"
+                    }
+                ]
+            }
+        ],
+        "returns": [] as any
+    },
+    "getixmysum": {
+        "name": "GetIxMySum",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "userSite",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "users",
+                "fields": [
+                    {
+                        "name": "tonwaUser",
+                        "type": "id"
+                    },
+                    {
+                        "name": "userSite",
+                        "type": "id"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "userSite",
+                        "type": "id"
+                    },
+                    {
+                        "name": "atom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            }
+        ]
+    },
+    "getallformula": {
+        "name": "GetAllFormula",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "formulaType",
+                        "type": "enum"
+                    },
+                    {
+                        "name": "subject",
+                        "type": "id"
+                    },
+                    {
+                        "name": "post",
+                        "type": "id"
+                    },
+                    {
+                        "name": "sumSubject",
+                        "type": "id"
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    },
+                    {
+                        "name": "start",
+                        "type": "date"
+                    },
+                    {
+                        "name": "end",
+                        "type": "date"
+                    },
+                    {
+                        "name": "ratio",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "valid",
+                        "type": "tinyint"
+                    }
+                ]
+            }
+        ]
+    },
+    "setsumgroupperson": {
+        "name": "SetSumGroupPerson",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "group",
+                "type": "id"
+            },
+            {
+                "name": "person",
+                "type": "id"
+            },
+            {
+                "name": "act",
+                "type": "tinyint"
+            }
+        ],
+        "returns": [] as any
+    },
+    "getmysums": {
+        "name": "GetMySums",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "start",
+                "type": "date"
+            },
+            {
+                "name": "end",
+                "type": "date"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "obj",
+                        "type": "id"
+                    },
+                    {
+                        "name": "post",
+                        "type": "id"
+                    },
+                    {
+                        "name": "subject",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            }
+        ]
+    },
+    "getmybalance": {
+        "name": "GetMyBalance",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "obj",
+                        "type": "id"
+                    },
+                    {
+                        "name": "post",
+                        "type": "id"
+                    },
+                    {
+                        "name": "subject",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            }
+        ]
+    },
+    "ixbud": {
+        "name": "IxBud",
+        "type": "ix",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            }
+        ],
+        "ixx": false,
+        "hasSort": false,
+        "xType": 0
+    },
+    "bud": {
+        "name": "Bud",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "ext",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "ext",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "history": {
+        "name": "History",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "bud",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            },
+            {
+                "name": "ref",
+                "type": "id"
+            },
+            {
+                "name": "plusMinus",
+                "type": "tinyint"
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "getsitesetting": {
+        "name": "GetSiteSetting",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "returns": [
+            {
+                "name": "budsInt",
+                "fields": [
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "bigint"
+                    }
+                ]
+            },
+            {
+                "name": "budsDec",
+                "fields": [
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            },
+            {
+                "name": "budsStr",
+                "fields": [
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "budsCheck",
+                "fields": [
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "item",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "reportstorage": {
+        "name": "ReportStorage",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "key",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "subject",
+                "type": "char",
+                "size": 200
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "atom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "uom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "spec",
+                        "type": "id"
+                    },
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "init",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "reportstorageatom": {
+        "name": "ReportStorageAtom",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "key",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "subject",
+                "type": "char",
+                "size": 200
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "obj",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "init",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "reportstoragespec": {
+        "name": "ReportStorageSpec",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "key",
+                "type": "char",
+                "size": 50
+            },
+            {
+                "name": "subject",
+                "type": "char",
+                "size": 200
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "obj",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "init",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
     "$biz": {
         "$user": {
             "name": "$user",
@@ -5330,6 +5452,283 @@ export const uqSchema = {
         "$unit": {
             "name": "$unit",
             "type": "$unit"
+        },
+        "storage": {
+            "name": "storage",
+            "type": "moniker",
+            "caption": "库存",
+            "assigns": [
+                {
+                    "name": "goodsinit",
+                    "type": "assign",
+                    "dataType": "dec"
+                },
+                {
+                    "name": "goodsbalance",
+                    "type": "assign",
+                    "dataType": "dec",
+                    "history": true
+                }
+            ]
+        },
+        "c": {
+            "name": "c",
+            "type": "moniker",
+            "assigns": [
+                {
+                    "name": "流水",
+                    "type": "assign",
+                    "caption": "下一步",
+                    "dataType": "char",
+                    "value": "s2"
+                }
+            ]
+        },
+        "accountsetting": {
+            "name": "accountsetting",
+            "jName": "AccountSetting",
+            "type": "moniker",
+            "caption": "AccountSetting",
+            "assigns": [
+                {
+                    "name": "name",
+                    "type": "assign",
+                    "caption": "单位名称",
+                    "dataType": "char"
+                },
+                {
+                    "name": "库存上限",
+                    "type": "assign",
+                    "dataType": "dec"
+                },
+                {
+                    "name": "库存下限",
+                    "type": "assign",
+                    "dataType": "dec"
+                }
+            ]
+        },
+        "personsetting": {
+            "name": "personsetting",
+            "jName": "PersonSetting",
+            "type": "moniker",
+            "caption": "PersonSetting",
+            "assigns": [
+                {
+                    "name": "name",
+                    "type": "assign",
+                    "caption": "名字",
+                    "dataType": "char"
+                },
+                {
+                    "name": "工时上限",
+                    "type": "assign",
+                    "dataType": "int"
+                },
+                {
+                    "name": "工时下限",
+                    "type": "assign",
+                    "dataType": "int"
+                }
+            ]
+        },
+        "price": {
+            "name": "price",
+            "jName": "Price",
+            "type": "moniker",
+            "caption": "Price",
+            "assigns": [
+                {
+                    "name": "retail",
+                    "type": "assign",
+                    "dataType": "dec"
+                }
+            ]
+        },
+        "a菜单": {
+            "name": "a菜单",
+            "jName": "A菜单",
+            "type": "permit",
+            "caption": "A菜单",
+            "items": [
+                {
+                    "phrase": "permit.a菜单.i1",
+                    "name": "i1"
+                },
+                {
+                    "phrase": "permit.a菜单.i2",
+                    "name": "i2"
+                },
+                {
+                    "phrase": "permit.a菜单.i4",
+                    "name": "i4"
+                }
+            ],
+            "permits": [] as any
+        },
+        "销售1": {
+            "name": "销售1",
+            "type": "permit",
+            "items": [
+                {
+                    "phrase": "permit.销售1.入库",
+                    "name": "入库"
+                },
+                {
+                    "phrase": "permit.销售1.发货",
+                    "name": "发货"
+                },
+                {
+                    "phrase": "permit.销售1.检验",
+                    "name": "检验"
+                }
+            ],
+            "permits": [] as any
+        },
+        "入库": {
+            "name": "入库",
+            "type": "permit",
+            "items": [
+                {
+                    "phrase": "permit.入库.上架",
+                    "name": "上架"
+                },
+                {
+                    "phrase": "permit.入库.收货",
+                    "name": "收货"
+                }
+            ],
+            "permits": [] as any
+        },
+        "检验": {
+            "name": "检验",
+            "type": "permit",
+            "items": [
+                {
+                    "phrase": "permit.检验.初检",
+                    "name": "初检"
+                },
+                {
+                    "phrase": "permit.检验.复检",
+                    "name": "复检"
+                }
+            ],
+            "permits": [
+                "入库"
+            ]
+        },
+        "经理": {
+            "name": "经理",
+            "type": "role"
+        },
+        "销售部经理": {
+            "name": "销售部经理",
+            "type": "role"
+        },
+        "检验员": {
+            "name": "检验员",
+            "type": "role"
+        },
+        "customertree": {
+            "name": "customertree",
+            "jName": "CustomerTree",
+            "type": "tree",
+            "caption": "客户分组"
+        },
+        "vendortree": {
+            "name": "vendortree",
+            "jName": "VendorTree",
+            "type": "tree",
+            "caption": "供应商分组"
+        },
+        "uom": {
+            "name": "uom",
+            "jName": "Uom",
+            "type": "atom",
+            "caption": "基本单位",
+            "props": [
+                {
+                    "name": "discription",
+                    "type": "prop",
+                    "caption": "说明",
+                    "dataType": "char"
+                },
+                {
+                    "name": "type",
+                    "type": "prop",
+                    "dataType": "radio",
+                    "items": [
+                        [
+                            "count",
+                            "计数",
+                            1
+                        ],
+                        [
+                            "length",
+                            "长度",
+                            2
+                        ],
+                        [
+                            "area",
+                            "面积",
+                            3
+                        ],
+                        [
+                            "volume",
+                            "体积",
+                            4
+                        ],
+                        [
+                            "weight",
+                            "重量",
+                            5
+                        ],
+                        [
+                            "time",
+                            "时长",
+                            6
+                        ],
+                        [
+                            "currency",
+                            "货币",
+                            7
+                        ]
+                    ]
+                }
+            ]
+        },
+        "uomi": {
+            "name": "uomi",
+            "jName": "UomI",
+            "type": "atom",
+            "caption": "计量单位",
+            "props": [
+                {
+                    "name": "discription",
+                    "type": "prop",
+                    "caption": "说明",
+                    "dataType": "char"
+                },
+                {
+                    "name": "uom",
+                    "type": "prop",
+                    "caption": "基本单位",
+                    "dataType": "atom",
+                    "atom": "uom"
+                },
+                {
+                    "name": "ratio",
+                    "type": "prop",
+                    "caption": "换算率",
+                    "dataType": "dec"
+                }
+            ]
+        },
+        "uomx": {
+            "name": "uomx",
+            "jName": "UomX",
+            "type": "atom",
+            "caption": "换算单位"
         },
         "sum": {
             "name": "sum",
@@ -5425,293 +5824,16 @@ export const uqSchema = {
                     "dataType": "int"
                 }
             ]
-        },
-        "uom": {
-            "name": "uom",
-            "jName": "Uom",
-            "type": "atom",
-            "caption": "基本单位",
-            "props": [
-                {
-                    "name": "discription",
-                    "type": "prop",
-                    "caption": "说明",
-                    "dataType": "char"
-                },
-                {
-                    "name": "type",
-                    "type": "prop",
-                    "dataType": "radio",
-                    "items": [
-                        [
-                            "count",
-                            "计数",
-                            1
-                        ],
-                        [
-                            "length",
-                            "长度",
-                            2
-                        ],
-                        [
-                            "area",
-                            "面积",
-                            3
-                        ],
-                        [
-                            "volume",
-                            "体积",
-                            4
-                        ],
-                        [
-                            "weight",
-                            "重量",
-                            5
-                        ],
-                        [
-                            "time",
-                            "时长",
-                            6
-                        ],
-                        [
-                            "currency",
-                            "货币",
-                            7
-                        ]
-                    ]
-                }
-            ]
-        },
-        "uomi": {
-            "name": "uomi",
-            "jName": "UomI",
-            "type": "atom",
-            "caption": "计量单位",
-            "props": [
-                {
-                    "name": "discription",
-                    "type": "prop",
-                    "caption": "说明",
-                    "dataType": "char"
-                },
-                {
-                    "name": "uom",
-                    "type": "prop",
-                    "caption": "基本单位",
-                    "dataType": "atom",
-                    "atom": "uom"
-                },
-                {
-                    "name": "ratio",
-                    "type": "prop",
-                    "caption": "换算率",
-                    "dataType": "dec"
-                }
-            ]
-        },
-        "uomx": {
-            "name": "uomx",
-            "jName": "UomX",
-            "type": "atom",
-            "caption": "换算单位"
-        },
-        "a菜单": {
-            "name": "a菜单",
-            "jName": "A菜单",
-            "type": "permit",
-            "caption": "A菜单",
-            "items": [
-                {
-                    "phrase": "permit.a菜单.i1",
-                    "name": "i1"
-                },
-                {
-                    "phrase": "permit.a菜单.i2",
-                    "name": "i2"
-                },
-                {
-                    "phrase": "permit.a菜单.i4",
-                    "name": "i4"
-                }
-            ],
-            "permits": [] as any
-        },
-        "销售1": {
-            "name": "销售1",
-            "type": "permit",
-            "items": [
-                {
-                    "phrase": "permit.销售1.入库",
-                    "name": "入库"
-                },
-                {
-                    "phrase": "permit.销售1.发货",
-                    "name": "发货"
-                },
-                {
-                    "phrase": "permit.销售1.检验",
-                    "name": "检验"
-                }
-            ],
-            "permits": [] as any
-        },
-        "入库": {
-            "name": "入库",
-            "type": "permit",
-            "items": [
-                {
-                    "phrase": "permit.入库.上架",
-                    "name": "上架"
-                },
-                {
-                    "phrase": "permit.入库.收货",
-                    "name": "收货"
-                }
-            ],
-            "permits": [] as any
-        },
-        "检验": {
-            "name": "检验",
-            "type": "permit",
-            "items": [
-                {
-                    "phrase": "permit.检验.初检",
-                    "name": "初检"
-                },
-                {
-                    "phrase": "permit.检验.复检",
-                    "name": "复检"
-                }
-            ],
-            "permits": [
-                "入库"
-            ]
-        },
-        "经理": {
-            "name": "经理",
-            "type": "role"
-        },
-        "销售部经理": {
-            "name": "销售部经理",
-            "type": "role"
-        },
-        "检验员": {
-            "name": "检验员",
-            "type": "role"
-        },
-        "storage": {
-            "name": "storage",
-            "type": "moniker",
-            "caption": "库存",
-            "assigns": [
-                {
-                    "name": "goodsinit",
-                    "type": "assign",
-                    "dataType": "dec"
-                },
-                {
-                    "name": "goodsbalance",
-                    "type": "assign",
-                    "dataType": "dec",
-                    "history": true
-                }
-            ]
-        },
-        "c": {
-            "name": "c",
-            "type": "moniker",
-            "assigns": [
-                {
-                    "name": "流水",
-                    "type": "assign",
-                    "caption": "下一步",
-                    "dataType": "char",
-                    "value": "s2"
-                }
-            ]
-        },
-        "accountsetting": {
-            "name": "accountsetting",
-            "jName": "AccountSetting",
-            "type": "moniker",
-            "caption": "AccountSetting",
-            "assigns": [
-                {
-                    "name": "name",
-                    "type": "assign",
-                    "caption": "单位名称",
-                    "dataType": "char"
-                },
-                {
-                    "name": "库存上限",
-                    "type": "assign",
-                    "dataType": "dec"
-                },
-                {
-                    "name": "库存下限",
-                    "type": "assign",
-                    "dataType": "dec"
-                }
-            ]
-        },
-        "personsetting": {
-            "name": "personsetting",
-            "jName": "PersonSetting",
-            "type": "moniker",
-            "caption": "PersonSetting",
-            "assigns": [
-                {
-                    "name": "name",
-                    "type": "assign",
-                    "caption": "名字",
-                    "dataType": "char"
-                },
-                {
-                    "name": "工时上限",
-                    "type": "assign",
-                    "dataType": "int"
-                },
-                {
-                    "name": "工时下限",
-                    "type": "assign",
-                    "dataType": "int"
-                }
-            ]
-        },
-        "price": {
-            "name": "price",
-            "jName": "Price",
-            "type": "moniker",
-            "caption": "Price",
-            "assigns": [
-                {
-                    "name": "retail",
-                    "type": "assign",
-                    "dataType": "dec"
-                }
-            ]
-        },
-        "customertree": {
-            "name": "customertree",
-            "jName": "CustomerTree",
-            "type": "tree",
-            "caption": "客户分组"
-        },
-        "vendortree": {
-            "name": "vendortree",
-            "jName": "VendorTree",
-            "type": "tree",
-            "caption": "供应商分组"
         }
     }
 }
 
 export enum EnumAtom {
-    Subject = 'subject',
-    SumPersonPost = 'sumpersonpost',
-    SumGroupPost = 'sumgrouppost',
-    SumGroup = 'sumgroup',
-    Uom = 'uom',
-    UomI = 'uomi',
-    UomX = 'uomx',
+	Uom = 'uom',
+	UomI = 'uomi',
+	UomX = 'uomx',
+	Subject = 'subject',
+	SumPersonPost = 'sumpersonpost',
+	SumGroupPost = 'sumgrouppost',
+	SumGroup = 'sumgroup',
 }

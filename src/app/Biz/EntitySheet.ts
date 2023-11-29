@@ -225,18 +225,12 @@ export class EntityPend extends Entity {
             default:
                 if (predefinedPendFields.includes(i) === true) break;
                 super.fromSwitch(i, val); break;
-            case 'predefined':
-                this.predefined = val; break;
-            case 'params':
-                this.params = val; break;
-            case 'cols':
-                this.cols = val; break;
-            case 'i':
-                this.i = val; break;
-            case 'x':
-                this.x = val; break;
-            case 'predefinedFields':
-                this.predefinedFields = val; break;
+            case 'predefined': this.predefined = val; break;
+            case 'params': this.params = val; break;
+            case 'cols': this.cols = val; break;
+            case 'i': this.i = val; break;
+            case 'x': this.x = val; break;
+            case 'predefinedFields': this.predefinedFields = val; break;
         }
     }
 
@@ -258,6 +252,7 @@ export class EntitySheet extends Entity {
         bin: EntityBin;
         caption: string;
     }[] = [];
+    search: { bin: EntityBin; buds: BizBud[]; }[];
 
     getRefEntities(): Entity[] {
         let ret: Entity[] = [];
@@ -271,6 +266,7 @@ export class EntitySheet extends Entity {
             default: super.fromSwitch(i, val); break;
             case 'main': this.fromMain(val); break;
             case 'details': this.fromDetails(val); break;
+            case 'search': this.search = val; break;
         }
     }
 
@@ -286,5 +282,43 @@ export class EntitySheet extends Entity {
             })
         }
         this.coreDetail = this.details[0]?.bin;
+    }
+
+    scan(): void {
+        if (this.search !== undefined) {
+            let search: { bin: EntityBin; buds: BizBud[]; }[] = [];
+            for (let i in this.search) {
+                let id = Number(i);
+                let bin: EntityBin;
+                if (this.main.id === id) {
+                    bin = this.main;
+                }
+                else {
+                    for (let { bin: binDetail } of this.details) {
+                        if (binDetail.id === id) {
+                            bin = binDetail;
+                            break;
+                        }
+                    }
+                }
+                search.push({ bin, buds: (this.search[i] as unknown as number[]).map(v => this.budFromId(bin, v)) });
+            }
+            this.search = search;
+        }
+    }
+
+    private budFromId(bin: EntityBin, budId: number) {
+        let bud: BizBud;
+        const { i, x, budColl } = bin;
+        if (budId === i?.id) {
+            bud = i;
+        }
+        else if (budId === x?.id) {
+            bud = x;
+        }
+        else {
+            bud = budColl[budId];
+        }
+        return bud;
     }
 }

@@ -93,22 +93,9 @@ export class Entity extends BizBase {
         this.biz.atomBuilder.initBuds(this, buds);
     }
 
-    protected buildBudsGroups(/*buds: BizBud[], groups: BudGroups*/) {
+    protected buildBudsGroups() {
         let entitySelf = this.biz.atomBuilder.self(this);
         this.buildBudsGroupsFromSelf(entitySelf);
-        /*
-        let { buds, groups } = entitySelf;
-        if (buds === undefined) {
-            return;
-        }
-        this.props.push(...buds);
-        this.budGroups = this.cloneBudGroups(groups);
-        for (let bud of buds) {
-            bud.scan();
-            this.budColl[bud.id] = bud;
-        }
-        // this.buildBudsGroups(entitySelf);
-        */
     }
 
     protected buildBudsGroupsFromSelf(entitySelf: EntitySelf) {
@@ -163,21 +150,6 @@ export class Entity extends BizBase {
     scan() {
         this.buildBudsGroups();
         this.scanBudGroups();
-        /*
-        let entitySelf = this.biz.atomBuilder.self(this);
-        let { buds } = entitySelf;
-        if (buds === undefined) {
-            return;
-        }
-        else {
-            for (let bud of buds) {
-                bud.scan();
-                this.budColl[bud.id] = bud;
-            }
-            this.buildBudsGroups(entitySelf);
-            this.scanBudGroups();
-        }
-        */
     }
 
     private scanBudGroups() {

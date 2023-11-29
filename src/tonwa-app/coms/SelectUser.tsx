@@ -67,7 +67,7 @@ export function ViewUser({ user }: { user: User; }) {
     </div>;
 }
 
-export function ViewUserAssigned({ user, assigned }: { user: User; assigned: string; }) {
+export function ViewUserAssigned({ user, assigned }: { user: User; assigned: string; }): JSX.Element {
     if (!user) return <div>user is empty</div>;
     let { name, nick, icon } = user;
     let content: any;

@@ -1,11 +1,12 @@
 import { useUqApp } from "app/UqApp";
 import { ButtonRightAdd } from "app/coms";
 import { ViewAtom } from "app/hooks";
+import { IDViewUserSite } from "app/tool";
 import { centers } from "app/views/center";
 import { ChangeEvent, useRef, useState } from "react";
-import { IDView, Page, SelectUser, ViewUserAssigned, useModal } from "tonwa-app";
+import { Page, SelectUser, useModal } from "tonwa-app";
 import { FA, LMR, List, useEffectOnce } from "tonwa-com";
-import { Uq, User } from "tonwa-uq";
+import { User } from "tonwa-uq";
 import { Atom } from "uqs/UqDefault";
 
 interface Item {
@@ -240,15 +241,4 @@ function PageSelectAtom({ atoms, selected: selectedList, onSelectChanged }: {
             <button className="btn btn-primary" onClick={onClose}>关闭</button>
         </div>
     </Page>;
-}
-
-function IDViewUserSite({ uq, userSite }: { uq: Uq; userSite: number; }) {
-    function ViewUserSite({ value }: { value: any }) {
-        const { assigned } = value;
-        function ViewUserHere({ value }: { value: any }) {
-            return <ViewUserAssigned user={value} assigned={assigned} />;
-        }
-        return <IDView uq={uq} id={value.user} Template={ViewUserHere} />;
-    }
-    return <IDView uq={uq} id={userSite} Template={ViewUserSite} />
 }

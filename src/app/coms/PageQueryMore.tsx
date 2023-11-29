@@ -22,6 +22,8 @@ interface PageQueryMoreProps<P, R> extends PageProps {
     itemKey?: ((item: any) => string | number);
 }
 
+const defaultPageSize = 1000;
+
 export class PageMoreCacheData {
     start: any;
     items: any[];
@@ -76,7 +78,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
     if (shallowEqual(current.param, param) === false) {
         current.allLoaded = false;
     }
-    pageSize = pageSize ?? 20;
+    pageSize = pageSize ?? defaultPageSize;
     pageMoreSize = pageMoreSize ?? 5;
     const uqApp = useUqApp();
     const callQuery = useCallback(async function callQuery(more: boolean = false) {
@@ -181,6 +183,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         }, 20);
     }
     async function onScrollBottom(scroller: Scroller) {
+        return;
         if (current.isPopFirst === true) return;
         if (scrolling === true) return;
         scrolling = true;

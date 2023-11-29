@@ -9,6 +9,7 @@ import { useCallback, useState } from "react";
 import { Atom, Sheet } from "uqs/UqDefault";
 import { Bin, ViewNotifyCount } from "app/tool";
 import { centers } from "app/views/center";
+import { PageSearch } from "./PageSearch";
 
 function PageEditingCenter() {
     const modal = useModal();
@@ -117,12 +118,18 @@ function PageEditingCenter() {
             none={<div className="small text-secondary p-3">[无]</div>}
         >
             <List items={sheetEntities} ViewItem={ViewSheetType} />
-            <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-1 mt-4 align-items-end">
+            <Link to={`/sheet/search`}>
+                <div className="px-1 py-2 align-items-center d-flex border-bottom">
+                    <FA name="search" className="mx-4 my-2 text-warning" />
+                    单据搜索
+                </div>
+            </Link>
+            <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-2 align-items-end">
                 <div className="small text-secondary pb-1 flex-grow-1">
-                    单据草稿
+                    我的草稿
                 </div>
                 <button className="btn btn-sm btn-link" onClick={onRemoveDraft}>
-                    全部清除
+                    清除草稿
                 </button>
             </div>
         </PageQueryMore>;
@@ -131,5 +138,6 @@ function PageEditingCenter() {
 export function routeEditingCenter() {
     return <>
         <Route path={centers.editing.path} element={<PageEditingCenter />} />
+        <Route path={'sheet/search'} element={<PageSearch />} />
     </>;
 }

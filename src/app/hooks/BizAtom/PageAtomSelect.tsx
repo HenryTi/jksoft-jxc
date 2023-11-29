@@ -54,12 +54,17 @@ export function PageAtomSelect(props: PropsAtomSelect) {
             <ViewAtom value={value.atom} />
         </div>;
     }
+    function onClear() {
+        closeModal(null);
+    }
+    let right = <button className="btn btn-sm me-1 btn-primary" onClick={onClear}>清值</button>
     return <PageQueryMore header={`选择${caption ?? entityAtomCaption}`}
         query={searchAtoms}
         param={searchParam}
         sortField="id"
         ViewItem={ViewItem}
         onItemClick={onItemClick}
+        right={right}
     >
         {searchBox}
     </PageQueryMore>;
