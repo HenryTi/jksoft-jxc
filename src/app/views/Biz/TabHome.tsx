@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
-import { IDView, Page } from "tonwa-app";
+import { IDView, Page, useModal } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { FA } from "tonwa-com";
 import { Permit, ViewSite } from "../Site";
 import { Center, centers } from "../center";
 import { ViewConsole } from "./ViewConsole";
+import { PageMoreTest } from "app/coms/PageMore";
 
 export function TabHome() {
     const uqApp = useUqApp();
+    const modal = useModal();
     const { uq, uqSites } = uqApp;
     let { userSite, mySites } = uqSites;
     const { sheet, atom, report, assign, tie, me, setting } = centers;
@@ -19,6 +21,10 @@ export function TabHome() {
             <FA name="angle-right" className="text-secondary" />
         </Link>;
     }
+    function onTest() {
+        modal.open(<PageMoreTest />);
+    }
+    // <button onClick={onTest}>test</button>
     return <Page header="同花" back="none">
         <div className="d-flex border-bottom tonwa-bg-gray-1">
             <div className="ps-5 py-2 flex-grow-1 text-center">
