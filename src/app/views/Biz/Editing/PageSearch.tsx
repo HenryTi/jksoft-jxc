@@ -119,7 +119,7 @@ function PageSearchSheet({ sheet }: { sheet: EntitySheet; }) {
         if (no.length === 0) no = undefined;
         paramValues['no'] = no;
     }
-    let vSearchNo = <div className="col-3">
+    let vSearchNo = <div key="$no" className="col-3">
         <div className="small text-secondary-subtle">{caption}编号</div>
         <div className="py-1">
             <input type="text" className="form-control border-secondary-subtle py-2" onChange={onNoChange} />

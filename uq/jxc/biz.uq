@@ -125,6 +125,11 @@ IX IxUserRole (
     x,
 );
 
+FUNC bs_curdate()
+RETURNS INT {
+    return DATEDIFF(CURDATE(), '1970-1-1');
+}
+
 PROC SaveIxPermission (
     bizRoles JSON,            -- '[[i,x, a, c, r, u, d, l], ]'
 ) {

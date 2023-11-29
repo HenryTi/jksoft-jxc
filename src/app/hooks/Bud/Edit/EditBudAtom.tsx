@@ -14,6 +14,10 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     const label = caption ?? name;
     const selectAtom = useSelectAtom();
     async function onEditClick() {
+        if (bizAtom === undefined) {
+            alert('查询字段，必须声明Atom类型');
+            return;
+        }
         let ret = await selectAtom(bizAtom);
         if (ret === undefined) return;
         let atomId = ret === null ? undefined : ret.id;

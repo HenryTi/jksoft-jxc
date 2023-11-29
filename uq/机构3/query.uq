@@ -20,6 +20,7 @@ QUERY 查询货品 '查询货品' (
             %ex,--名称
         )
         WHERE SEARCH(%no, %ex LIKE searchKey)
+--            AND CHECK((#器械(%id).供应商类别) ON (#供应商信息(供应商).经营范围))
     ;
 }
 

@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { Sep, Spinner, SpinnerSmall } from "../coms";
+import { FA, Sep, Spinner, SpinnerSmall } from "../coms";
 
 interface ItemProps<T> {
     value: T;
@@ -53,6 +53,25 @@ export function List<T>(props: ListProps<T>) {
     function onCheckChange(item: T, evt: ChangeEvent<HTMLInputElement>): void {
         onItemSelect(item, evt.currentTarget.checked);
     }
+    function renderBan(item: T) {
+        // let disabled: boolean;
+        let banMessage: string;
+        let vMessage: any;
+        if (itemBan !== undefined) {
+            banMessage = itemBan(item)
+        }
+        if (banMessage !== undefined) {
+            // disabled = true;
+            vMessage = <div className="text-danger small mx-3 mb-3">
+                <FA name="exclamation-circle" className="me-2" />
+                {banMessage}
+            </div>;
+        }
+        else {
+            // disabled = false;
+        }
+        return vMessage;
+    }
     let onItemNav: (item: T) => void;
     if (onItemClick) {
         onItemNav = async (item: T): Promise<void> => {
@@ -64,20 +83,23 @@ export function List<T>(props: ListProps<T>) {
     }
     if (onItemSelect) {
         if (onItemNav) {
-            renderItem = (v, index, key) => (
-                <div className="d-flex">
+            renderItem = (v, index, key) => {
+                let vBan = renderBan(v);
+                return <div className="d-flex">
                     <label className="ps-3 pe-2 align-self-stretch d-flex align-items-center">
                         <input type="checkbox" className="form-check-input"
-                            onChange={evt => onCheckChange(v, evt)} />
+                            onChange={evt => onCheckChange(v, evt)} disabled={vBan !== undefined} />
                     </label>
                     <div className="flex-grow-1 cursor-pointer" onClick={() => onItemNav(v)}>
                         <ItemView value={v} index={index} />
+                        {vBan}
                     </div>
-                </div>
-            );
+                </div>;
+            }
         }
         else {
             renderItem = (v, index, key) => {
+                /*
                 let disabled: boolean;
                 let banMessage: string;
                 let vMessage: any;
@@ -91,13 +113,15 @@ export function List<T>(props: ListProps<T>) {
                 else {
                     disabled = false;
                 }
+                */
+                let vBan = renderBan(v);
                 return <div className="form-check mx-3">
-                    <input type="checkbox" disabled={disabled}
+                    <input type="checkbox" disabled={vBan !== undefined}
                         className="mt-2 form-check-input" id={key}
                         onChange={evt => onCheckChange(v, evt)} />
                     <label className="form-check-label w-100 ms-1" htmlFor={key}>
                         <ItemView value={v} index={index} />
-                        {vMessage}
+                        {vBan}
                     </label>
                 </div>
             };
@@ -109,12 +133,14 @@ export function List<T>(props: ListProps<T>) {
         }
         renderItem = (v, index) => {
             let funcClick: any, cn: string;
-            if (onItemNav) {
+            let vBan = renderBan(v);
+            if (onItemNav && vBan === undefined) {
                 funcClick = () => onItemNav(v);
                 cn = 'tonwa-list-item cursor-pointer';
             }
             return <div onClick={funcClick} className={cn}>
                 <ItemView value={v} index={index} />
+                {vBan}
             </div>
         };
     }

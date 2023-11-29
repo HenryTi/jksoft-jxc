@@ -19,11 +19,7 @@ export function useSelectAtom() {
 export function PageAtomSelect(props: PropsAtomSelect) {
     const { buds, loadOnOpen, caption, placeholder, atom, onSelected } = props;
     const uqApp = useUqApp();
-    const { biz } = uqApp;
     const { closeModal } = useModal();
-
-    // const ViewItemAtom = uqApp.gAtoms[entityAtom.name]?.ViewItem; //useBizAtomViewItem(entityAtom)
-    // const { caption, placeholder, entity } = genAtom.genAtomSelect;
     const [searchParam, setSearchParam] = useState(loadOnOpen === false ? undefined : { key: undefined as string });
     const entityAtomCaption = atom.caption ?? atom.name;
     const searchBox = <SearchBox className="px-3 py-2"
