@@ -1,18 +1,18 @@
-import { EntitySheet, EntityBin, Biz, EnumBudType } from "app/Biz";
+import { EntitySheet, EntityBin, Biz, EnumBudType, EntityPend } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import { useRef } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { UqExt } from "uqs/UqDefault";
-import { atom } from "jotai";
+import { ReturnGetPendRetSheet, UqExt } from "uqs/UqDefault";
+import { WritableAtom, atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
-import { LastPickResultType, ReturnUseBinPicks } from "./binPick/useBinPicks";
+import { PickFunc, RearPickResultType } from "./binPick/useBinPicks";
 import { Calc, Formulas } from "app/hooks/Calc";
-import { BudCheckValue, BudValue } from "tonwa-app";
-import { budValuesFromProps } from "../tool/tool";
-import { BinEditing } from "./BinEditing";
+import { BudValue } from "tonwa-app";
+import { OwnerColl, budValuesFromProps } from "../tool/tool";
 import { BudEditing } from "../Bud";
+import { Prop, arrFromJsonArr, arrFromJsonMid } from "./tool";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -32,7 +32,6 @@ abstract class BaseObject extends KeyIdObject {
 
 export class SheetMain extends BaseObject {
     readonly budEditings: BudEditing[];
-    readonly binEditing: BinEditing;
     readonly entityMain: EntityBin;
     readonly _binRow = atom<BinRow>({ buds: {} } as BinRow);
     get binRow() { return getAtomValue(this._binRow) }
@@ -46,11 +45,11 @@ export class SheetMain extends BaseObject {
     }
 
     // return: true: new sheet created
-    async start(pick: (pickResultType: LastPickResultType) => Promise<ReturnUseBinPicks>) {
+    async start(pick: PickFunc) {
         const row = this.binRow;
         const { id } = row;
         if (id > 0) return;
-        const pickResults = await pick(LastPickResultType.scalar);
+        const pickResults = await pick(this.sheetStore, RearPickResultType.scalar);
         if (pickResults === undefined) return;
         const { i, x, props: mainProps } = this.entityMain;
         const formulas: Formulas = [];
@@ -68,7 +67,7 @@ export class SheetMain extends BaseObject {
         for (let mp of mainProps) {
             formulas.push([mp.name, getFormulaText(mp.defaultValue)]);
         }
-        let { results, lastBinPick, lastResult } = pickResults;
+        let { results, rearBinPick: lastBinPick, rearResult: lastResult } = pickResults;
         const calc = new Calc(formulas, results);
         calc.addValues(lastBinPick.name, lastResult[0]);
         const { results: calcResults } = calc;
@@ -150,7 +149,8 @@ export interface BinRow {
 }
 export interface PendRow {
     pend: number;               // pend id
-    sheet: SheetRow;
+    //sheet: SheetRow;
+    origin: number;
     detail: BinRow;
     value: number;
     mid: any[];
@@ -191,8 +191,8 @@ export class CoreDetail extends DetailBase {
         }
     }
 
-    private addRowValue(sections: Section[], rowValue: any) {
-        const { i, x, value } = rowValue;
+    private addRowValue(sections: Section[], rowValue: BinDetail) {
+        const { i, x, value, pendFrom } = rowValue;
         if (i === undefined || value === undefined) return;
         let detailSection: Section;
         if (x) {
@@ -213,6 +213,7 @@ export class CoreDetail extends DetailBase {
         let row = new Row(detailSection);
         row.setValue(rowValue);
         detailSection.addRow(row);
+        this.sheetStore.addPendRow(pendFrom, row);
         return row;
     }
 
@@ -243,7 +244,7 @@ export interface BinDetail extends BinRow {
     origin: number;             // origin detail id
     pendFrom: number;
     pendValue: number;
-    sheet: BinRow;
+    // sheet: BinRow;
 }
 
 export class Row extends BaseObject {
@@ -387,6 +388,7 @@ export class Section extends BaseObject {
     }
 }
 
+let pendAtomId = 1;
 export class SheetStore extends KeyIdObject {
     readonly uq: UqExt;
     readonly biz: Biz;
@@ -396,6 +398,7 @@ export class SheetStore extends KeyIdObject {
     readonly detailExs: ExDetail[] = [];
     readonly caption: string;
     readonly idOnUrl: number;
+    pendColl: { [pend: number]: WritableAtom<Section[], any, any> };
 
     constructor(uq: UqExt, biz: Biz, entitySheet: EntitySheet, id: number) {
         super();
@@ -425,7 +428,9 @@ export class SheetStore extends KeyIdObject {
         if (id === undefined || id === 0) return;
         let { main, details } = await this.loadBinData(id);
         this.main.setValue(main);
-        this.detail.addRowValues(details);
+        if (this.detail !== undefined) {
+            this.detail.addRowValues(details);
+        }
     }
 
     async reloadRow(binId: number) {
@@ -456,13 +461,102 @@ export class SheetStore extends KeyIdObject {
             return id;
         }
     }
-    async start(pick: (pickResultType: LastPickResultType) => Promise<ReturnUseBinPicks>) {
+    async start(pick: PickFunc) {
         let ret = await this.main.start(pick);
         if (ret !== undefined) return ret;
     }
 
     async saveProp(id: number, bud: number, int: number, dec: number, str: string) {
         await this.uq.SaveBudValue.submit({ phraseId: bud, id, int, dec, str });
+    }
+
+    addPendRow(pend: number, row: Row) {
+        let _sections = this.pendColl[pend];
+        if (_sections === undefined) {
+            debugger;
+        }
+        let sections = getAtomValue(_sections);
+        let { id: rowId } = row.props;
+        for (let section of sections) {
+            const { _rows } = section;
+            let rows = getAtomValue(_rows);
+            if (rows.findIndex(v => v.props.id === rowId) >= 0) {
+                setAtomValue(_rows, [...rows]);
+                return;
+            }
+        }
+        let { section } = row;
+        if (section === undefined) {
+            section = new Section(this.detail);
+            section.addRow(row);
+        }
+        sections.push(section);
+        setAtomValue(_sections, [...sections]);
+    }
+
+    addBinDetail(binDetail: BinDetail) {
+        let { pendFrom } = binDetail;
+        let _sections = this.pendColl[pendFrom];
+        if (_sections === undefined) {
+            debugger;
+        }
+        let section: Section = new Section(this.detail);
+        let row: Row = new Row(section);
+        Object.assign(row.props, binDetail);
+        const { _rows } = section;
+        let rows = getAtomValue(_rows);
+        rows.push(row);
+        setAtomValue(_rows, [...rows]);
+        let sections = getAtomValue(_sections);
+        sections.push(section);
+        setAtomValue(_sections, [...sections]);
+        console.log('addBinDetail', sections, rows);
+    }
+
+    delPendRow(row: Row) {
+        let pend = row.props.pendFrom;
+        let _sections = this.pendColl[pend];
+        if (_sections === undefined) return;
+        let sections = getAtomValue(_sections);
+        for (let section of sections) {
+            const { _rows } = section;
+            let rows = getAtomValue(_rows);
+            let p = rows.findIndex(v => v.props.pendFrom === pend);
+            if (p < 0) continue;
+            rows.splice(p, 1);
+            break;
+        }
+    }
+
+    async loadPend(entityPend: EntityPend, params: any): Promise<{ pendRows: PendRow[]; ownerColl: OwnerColl; }> {
+        let ret = await this.uq.GetPend.page({ pend: entityPend.id, params }, undefined, 100);
+        this.pendColl = {};
+        let { $page, retSheet, props: showBuds } = ret;
+        const { ownerColl, budColl } = budValuesFromProps(showBuds);
+        let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
+        for (let v of retSheet) {
+            collSheet[v.id] = v;
+        };
+        let pendRows: PendRow[] = [];
+        // build pendColl;
+        for (let v of $page) {
+            let { id, pend, pendValue, mid, cols } = v;
+            if (pendValue === undefined || pendValue <= 0) continue;
+            this.pendColl[pend] = atom([]);
+            let propArr: Prop[] = arrFromJsonArr(entityPend, cols);
+            let midArr = arrFromJsonMid(entityPend, mid);
+            let pendRow: PendRow = {
+                pend,
+                // sheet: { ...collSheet[v.sheet], buds: {}, owned: undefined },
+                detail: { ...v, buds: {}, owned: undefined },
+                origin: id,
+                value: pendValue,
+                mid: midArr,
+                cols: propArr,
+            };
+            pendRows.push(pendRow);
+        }
+        return { pendRows, ownerColl };
     }
 }
 

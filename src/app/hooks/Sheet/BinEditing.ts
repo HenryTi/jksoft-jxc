@@ -3,6 +3,7 @@ import { BinDetail, BinRow } from "./SheetStore";
 import { BizBud, BudDec, EntityBin, EnumBudType } from "app/Biz";
 import { Calc, Formulas } from "../Calc";
 import { RegisterOptions } from "react-hook-form";
+import { NamedResults } from "./NamedResults";
 
 export enum ValueSetType {
     none,
@@ -76,13 +77,15 @@ class FieldBud extends Field {
 
 // 跟当前行相关的编辑，计算，状态
 export class BinEditing {
-    private readonly entityBin: EntityBin;
     private readonly fields: Field[];
     private readonly fieldColl: { [name: string]: Field } = {};
     private readonly calc: Calc;
     private readonly requiredFields: Field[] = [];
+    readonly entityBin: EntityBin;
     readonly binRow: BinRow = { buds: {} } as any;
-    constructor(bin: EntityBin) {
+    onDel: () => Promise<void>;
+
+    constructor(bin: EntityBin, initBinRow?: BinRow) {
         this.entityBin = bin;
         this.fields = [];
         const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, props: budArr } = bin;
@@ -131,6 +134,9 @@ export class BinEditing {
             }
         }
         this.calc = new Calc(formulas, this.binRow as any);
+        if (initBinRow !== undefined) {
+            this.setValues(initBinRow);
+        }
     }
 
     private initField(field: Field, onForm: boolean = true) {
@@ -138,8 +144,8 @@ export class BinEditing {
         if (onForm === true) this.fields.push(field);
     }
 
-    init(picked: { [name: string]: any }) {
-        this.calc.addValues(undefined, picked);
+    setNamedParams(namedResults: { [name: string]: any }) {
+        this.calc.addValues(undefined, namedResults);
         const { results } = this.calc;
         for (let i in this.fieldColl) {
             let field = this.fieldColl[i];
@@ -147,7 +153,7 @@ export class BinEditing {
         }
     }
 
-    setValues(binRow: BinRow) {
+    private setValues(binRow: BinRow) {
         Object.assign(this.binRow, binRow);
         //this.calc.addValues(undefined, binDetail);
         let obj = new Proxy(binRow, this.entityBin.proxyHandler());

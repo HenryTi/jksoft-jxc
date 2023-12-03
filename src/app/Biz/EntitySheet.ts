@@ -33,10 +33,6 @@ export class PickPend extends PickBase {
     getRefEntities(): Entity[] { return [this.from]; }
 }
 
-export class PickInput extends PickBase {
-    getRefEntities(): Entity[] { return; }
-}
-
 export class BinPick extends BizBud {
     readonly bin: EntityBin;
     pickParams: PickParam[];
@@ -47,13 +43,42 @@ export class BinPick extends BizBud {
     }
 }
 
+export abstract class PendInput extends BizBud {
+    entityPend: EntityPend;
+    build(val: any): void {
+        this.ui = val.ui;
+    }
+}
+
+export class PendInputSpec extends PendInput {
+    spec: EntitySpec;
+    baseExp: string;
+    build(val: any): void {
+        super.build(val);
+        const { spec, base } = val;
+        this.spec = this.biz.entityFromId(spec) as EntitySpec;
+        this.bizPhraseType = this.spec.bizPhraseType;
+        this.baseExp = base;
+    }
+}
+
+export class PendInputAtom extends PendInput {
+    atom: EntityAtom;
+    build(val: any): void {
+        super.build(val);
+        const { atom } = val;
+        this.atom = this.biz.entityFromId(atom) as EntityAtom;
+        this.bizPhraseType = this.atom.bizPhraseType;
+    }
+}
+
 export class EntityBin extends Entity {
     binPicks: BinPick[];
-    lastPick: BinPick;
+    rearPick: BinPick;          // endmost pick
+    inputs: PendInput[];
     i: BizBud;
     x: BizBud;
     pend: EntityPend;
-    input: PickInput;
     value: BizBud;
     price: BizBud;
     amount: BizBud;
@@ -71,7 +96,7 @@ export class EntityBin extends Entity {
         for (let pick of this.binPicks) {
             getSubs(pick);
         }
-        getSubs(this.lastPick);
+        getSubs(this.rearPick);
         return ret;
     }
 
@@ -82,6 +107,7 @@ export class EntityBin extends Entity {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'picks': this.binPicks = val; break;
+            case 'inputs': this.inputs = val; break;
             case 'i': this.i = val; break;
             case 'x': this.x = val; break;
             case 'pend': this.fromPend(val); break;
@@ -124,9 +150,8 @@ export class EntityBin extends Entity {
         let arr = (from as string[]).map(v => this.biz.entities[v]);
         let entity = arr[0];
         if (entity === undefined) {
-            let pickBase = buildPickInput();
+            let pickBase = undefined; // buildPickInput();
             ret.pick = pickBase;
-            this.input = pickBase;
             return ret;
         }
         let { bizPhraseType } = entity;
@@ -151,12 +176,8 @@ export class EntityBin extends Entity {
             pick.from = entity as EntityPend;
             return pick;
         }
-        function buildPickInput() {
-            let pick = new PickInput();
-            return pick
-        }
         switch (bizPhraseType) {
-            default: pickBase = buildPickInput(); break;
+            default: pickBase = undefined; break;
             case BizPhraseType.atom: pickBase = buildPickAtom(); break;
             case BizPhraseType.spec: pickBase = buildPickSpec(); break;
             case BizPhraseType.query: pickBase = buildPickQuery(); break;
@@ -167,13 +188,37 @@ export class EntityBin extends Entity {
         return ret;
     }
 
+    private buildInput(v: any): PendInput {
+        const { id, name, spec, atom } = v;
+        let input: PendInput;
+        if (spec !== undefined) {
+            input = new PendInputSpec(this.biz, id, name, undefined, this);
+        }
+        else if (atom !== undefined) {
+            input = new PendInputAtom(this.biz, id, name, undefined, this);
+        }
+        else {
+            debugger;
+            return;
+        }
+        input.build(v);
+        return input;
+    }
+
     scan() {
         super.scan();
         if (this.binPicks !== undefined) {
             this.binPicks = this.binPicks.map(v => this.buildPick(v as any));
             let pLast = this.binPicks.length - 1;
-            this.lastPick = this.binPicks[pLast];
+            this.rearPick = this.binPicks[pLast];
             this.binPicks.splice(pLast, 1);
+        }
+        if (this.inputs !== undefined) {
+            this.inputs = this.inputs.map(v => {
+                let input = this.buildInput(v as any);
+                input.entityPend = this.pend;
+                return input;
+            });
         }
         if (this.i !== undefined) {
             this.i = this.buildBudPickable(this.i as any);

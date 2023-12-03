@@ -118,6 +118,8 @@ BIN 入库单主表 {
         param param1 = 采购机构; 
         param param2 = 收货物流中心; 
     };
+    Input spec SPEC 药品批次 Base=Pend.i;
+    Input store ATOM 库房;
     I '商品' 货品信息  { 
             : 规格型号; 
             : 单位; 

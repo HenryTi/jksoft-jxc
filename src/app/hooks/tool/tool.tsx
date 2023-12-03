@@ -10,9 +10,12 @@ interface PropData {
     owner: number;
 }
 
+export interface OwnerColl {
+    [row: number]: { [owner: number]: [number, BudValue][] }
+}
 export function budValuesFromProps(props: PropData[]) {
     const budColl: { [row: number]: { [bud: number]: BudValue } } = {};
-    const ownerColl: { [row: number]: { [owner: number]: [number, BudValue][] } } = {};
+    const ownerColl: OwnerColl = {};
     for (let { id, phrase, value, owner } of props) {
         let budValues = budColl[id];
         if (budValues === undefined) {

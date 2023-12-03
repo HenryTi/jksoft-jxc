@@ -118,6 +118,8 @@ SPEC 器械批次 '器械批次' {
     Prop 注册证号或备案凭证号  Char;
 };
 
+ATOM 库房 {
+};
 
 TITLE SiteSetting { 
     PROP {

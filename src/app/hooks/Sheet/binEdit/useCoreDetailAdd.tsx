@@ -1,18 +1,19 @@
 import { useCallback } from "react";
-import { CoreDetail, Row, Section } from "./SheetStore";
-import { LastPickResultType, PickResult, useBinPicks } from "./binPick";
-import { useInputRow } from "./useInputRow";
-import { BinEditing } from "./BinEditing";
+import { CoreDetail, Row, Section } from "../SheetStore";
+import { RearPickResultType, useBinPicks } from "../binPick";
+import { useRowEdit } from "./rowEdit";
+import { BinEditing } from "../BinEditing";
+import { PickResult } from "../NamedResults";
 
 export function useCoreDetailAdd(coreDetail: CoreDetail) {
-    const pickInput = useInputRow();
+    const rowEdit = useRowEdit();
     const { entityBin, sheetStore } = coreDetail;
-    const pick = useBinPicks(entityBin, sheetStore.main.binRow);
+    const pick = useBinPicks(entityBin);
     async function addNewDirect() {
-        let ret = await pick();
+        let ret = await pick(sheetStore);
         if (ret === undefined) return;
-        let { results: namedResults, lastBinPick: binPick, lastResult: pickResult, lastPickResultType } = ret;
-        if (lastPickResultType === LastPickResultType.array) {
+        let { results: namedResults, rearBinPick: binPick, rearResult: pickResult, rearPickResultType: lastPickResultType } = ret;
+        if (lastPickResultType === RearPickResultType.array) {
             // 直接选入行集，待修改
             if (coreDetail === undefined) {
                 alert('Pick Pend on main not implemented');
@@ -23,17 +24,17 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
                 coreDetail.addSection(sec);
 
                 namedResults[binPick.name] = rowProps;
-                let rowStore = new BinEditing(entityBin);
-                rowStore.init(namedResults);
-                let { binRow: binDetail } = rowStore;
-                if (binDetail.value === undefined) {
-                    rowStore.setValue('value', 0, undefined);
+                let binEditing = new BinEditing(entityBin);
+                binEditing.setNamedParams(namedResults);
+                let { binRow } = binEditing;
+                if (binRow.value === undefined) {
+                    binEditing.setValue('value', 0, undefined);
                 }
                 const { origin, pendFrom, pendValue } = rowProps;
                 let row = await sec.addRowProps(Object.assign(
                     {},
                     // rowProps, 这是多选明细，不应该加这里。在前面rowStore.init已经处理了字段带入
-                    binDetail as any,
+                    binRow as any,
                     { origin, pendFrom, pendValue },
                 ));
                 await coreDetail.sheetStore.reloadRow(row.props.id);
@@ -44,10 +45,9 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
             let section = new Section(coreDetail);
             let row = new Row(section);
             coreDetail.addSection(section);
-            const binEditing = new BinEditing(entityBin);
-            binEditing.init(namedResults);
-            let ret = await pickInput(row, binEditing);
-            //let ret = await openModal(<ModalInputRow row={row} rowStore={rowStore} />);
+            const binEditing = new BinEditing(entityBin, row.props);
+            binEditing.setNamedParams(namedResults);
+            let ret = await rowEdit(binEditing);
             if (ret === true) {
                 Object.assign(row.props, binEditing.binRow);
                 await row.addToSection();

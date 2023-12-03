@@ -1,5 +1,7 @@
-import { BizBud, Entity } from "app/Biz";
+import { BizBud, Entity, EntityPend, predefinedPendFields } from "app/Biz";
 import { ViewBud } from "app/hooks/Bud";
+import { PendRow, SheetStore } from "./SheetStore";
+import { NamedResults } from "./NamedResults";
 
 export interface Prop<T = any> {
     name: string;
@@ -110,3 +112,34 @@ export function VNamedBud({ name, value, bud }: { name: string; value: any; bud:
         <span><ViewBud bud={bud} value={value} /></span>
     </div>;
 }
+
+export interface PendBandEditProps {
+    sheetStore: SheetStore;
+    namedResults: NamedResults;
+    pendRow: PendRow;
+}
+
+const sheetFields = ['si', 'sx', 'svalue', 'sprice', 'samount'];
+export class PendProxyHander implements ProxyHandler<any> {
+    private readonly entityPend: EntityPend;
+    constructor(entityPend: EntityPend) {
+        this.entityPend = entityPend;
+    }
+    get(target: any, p: string | symbol, receiver: any) {
+        if (sheetFields.findIndex(v => v === p) >= 0) {
+            let k = p.toString().substring(1);
+            let ret = target.sheet[k];
+            return ret
+        }
+        let { detail } = target;
+        if (detail !== undefined) target = detail;
+        if (predefinedPendFields.findIndex(v => v === p) >= 0) {
+            return target[p];
+        }
+        let bud = this.entityPend.budColl[p as string];
+        if (bud === undefined) return;
+        let ret = target.mid[bud.id];
+        return ret;
+    }
+}
+

@@ -3,7 +3,7 @@ import { useModal } from "tonwa-app";
 import { PageAtomSelect } from "app/hooks/BizAtom";
 import { AtomPhrase } from "app/tool";
 import { useCallback } from "react";
-import { NamedResults, PickResult } from "./useBinPicks";
+import { NamedResults, PickResult } from "../NamedResults";
 
 export function usePickFromAtom() {
     const modal = useModal();

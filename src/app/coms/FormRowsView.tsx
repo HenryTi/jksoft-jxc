@@ -148,7 +148,7 @@ export interface FormAtom extends FormLabelName {
 }
 
 export interface FormSubmit extends FormLabel {
-    label?: string;
+    label?: string | JSX.Element;
     type: 'submit';
     className?: string;
 }
@@ -280,11 +280,13 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
                 inputProps={register(name, newOptions)} defaultValue={options?.value}
                 right={right} />;
         case 'submit':
+            // readOnly={readOnly}
             return <Band>
-                <input type="submit" disabled={options?.disabled}
-                    readOnly={readOnly}
+                <button type="submit" disabled={options?.disabled}
                     className={(row as FormSubmit).className ?? 'btn btn-primary'}
-                    value={(label as string) ?? '提交'} />
+                >
+                    {(label as string) ?? '提交'}
+                </button>
             </Band>;
     }
 }

@@ -6,15 +6,16 @@ import { ViewSpec } from "app/hooks/View";
 import { ChangeEvent, useState } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
-import { BinOwnedBuds } from "./ViewDetail";
-import { Row } from "./SheetStore";
-import { BinEditing } from "./BinEditing";
+import { BinOwnedBuds } from "../ViewDetail";
+// import { Row } from "../../SheetStore";
+import { BinEditing } from "../../BinEditing";
 
-export function useInputRow() {
+export function useRowEdit() {
     const modal = useModal();
-    return useCallback(async (row: Row, binEditing: BinEditing) => {
-        const { props, section } = row;
-        const { entityBin } = section.coreDetail;
+    return useCallback(async (/*row: Row, */binEditing: BinEditing) => {
+        //const { props, section } = row;
+        //const { entityBin } = section.coreDetail;
+        const { entityBin } = binEditing;
         const { i: budI, x: budX } = entityBin;
         const { atomParams } = budI;
         if (atomParams !== undefined) {
@@ -22,16 +23,17 @@ export function useInputRow() {
             await modal.open(<Page header={caption ?? name}>
             </Page>);
         }
-        let ret = await modal.open(<ModalInputRow row={row} binEditing={binEditing} />);
+        let ret = await modal.open(<ModalInputRow /*row={row} */ binEditing={binEditing} />);
         return ret;
     }, []);
 }
 
-function ModalInputRow({ row, binEditing }: { row: Row; binEditing: BinEditing; }) {
+function ModalInputRow({ /*row, */binEditing }: { /*row: Row; */binEditing: BinEditing; }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
-    const { props, section } = row;
-    const { entityBin } = section.coreDetail;
+    //const { props, section } = row;
+    //const { entityBin } = section.coreDetail;
+    const { entityBin } = binEditing;
     const { i: budI, x: budX } = entityBin;
     const { binRow: binDetail } = binEditing;
     const [submitable, setSubmitable] = useState(binEditing.submitable);
@@ -60,12 +62,16 @@ function ModalInputRow({ row, binEditing }: { row: Row; binEditing: BinEditing; 
     }
 
     async function onDel() {
-        await row.delFromSection();
+        await binEditing.onDel();
+        //await row.delFromSection();
         closeModal();
     }
-    const right = <ButtonAsync onClick={onDel} className="btn btn-sm btn-primary me-1">
-        <FA name="trash" fixWidth={true} />
-    </ButtonAsync>;
+    let right: any;
+    if (binEditing.onDel !== undefined) {
+        right = <ButtonAsync onClick={onDel} className="btn btn-sm btn-primary me-1">
+            <FA name="trash" fixWidth={true} />
+        </ButtonAsync>;
+    }
     function ViewIdField({ bud, value }: { bud: BizBud; value: number; }) {
         if (bud === undefined) return null;
         const { caption, name } = bud;

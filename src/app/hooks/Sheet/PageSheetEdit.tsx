@@ -1,16 +1,16 @@
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { SheetStore } from "./SheetStore";
-import { ButtonAsync, FA, LMR, from62, getAtomValue, to62, useEffectOnce, wait } from "tonwa-com";
-import { ViewMain } from "./ViewMain";
-import { ViewDetail } from "./ViewDetail";
+import { ButtonAsync, FA, LMR, from62, to62, useEffectOnce } from "tonwa-com";
+import { ViewMain } from "./binEdit";
+import { ViewDetail } from "./binEdit";
 import { useAtomValue } from "jotai";
-import { useCoreDetailAdd } from "./useCoreDetailAdd";
+import { useCoreDetailAdd } from "./binEdit";
 import { NavigateFunction, useLocation, useNavigate, useParams } from "react-router-dom";
 import { UqApp, useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EntitySheet } from "app/Biz";
-import { LastPickResultType, ReturnUseBinPicks, useBinPicks } from "./binPick/useBinPicks";
+import { PickFunc, useBinPicks } from "./binPick/useBinPicks";
 
 let locationState = 1;
 export function PageSheetEdit() {
@@ -52,7 +52,7 @@ export function PageSheetEdit() {
     return <PageStore store={sheetStore} />;
 }
 
-async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetStore: SheetStore, pick: (pickResultType: LastPickResultType) => Promise<ReturnUseBinPicks>) {
+async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetStore: SheetStore, pick: PickFunc) {
     let ret = await sheetStore.start(pick);
     if (ret === undefined) {
         if (sheetStore.main.no === undefined) {
@@ -83,11 +83,6 @@ function PageStore({ store }: { store: SheetStore; }) {
     const { openModal, closeModal } = useModal();
     const navigate = useNavigate();
     const [editable, setEditable] = useState(true);
-
-    const addNew = useCoreDetailAdd(detail);
-    const start = useCallback(async function () {
-        startSheetStore(uqApp, navigate, store, pick);
-    }, []);
 
     async function onSubmit() {
         if (main.trigger() === false) return;
@@ -121,10 +116,6 @@ function PageStore({ store }: { store: SheetStore; }) {
             data.removeItem<{ id: number; }>(v => v.id === id) as any;
         }
     }
-
-    async function onAddRow() {
-        let ret = await addNew();
-    }
     async function onRemoveSheet() {
         let message = `${caption} ${main.no} 真的要作废吗？`;
         let ret = await openModal(<PageConfirm header="确认" message={message} yes="单据作废" no="不作废" />);
@@ -135,47 +126,74 @@ function PageStore({ store }: { store: SheetStore; }) {
         }
     }
 
-    let sections = useAtomValue(detail._sections);
-    let btnSubmit: any, cnAdd: string;
-    if (sections.length === 0) {
-        cnAdd = 'btn btn-primary me-3';
-    }
-    else {
-        btnSubmit = <ButtonAsync className="btn btn-primary me" onClick={onSubmit} disabled={sections.length === 0}>提交</ButtonAsync>;
-        cnAdd = 'btn btn-outline-primary me-3';
-    }
-    let content: any;
     let { id } = useAtomValue(main._binRow);
-    async function startInputDetail() {
-        let ret = await start();
-        if (ret === undefined) {
-            await addNew();
-        }
-    }
-    if (id === 0) {
-        content = <div className="p-3">
-            <button className="btn btn-primary" onClick={startInputDetail}>开始录单</button>
-        </div>;
-    }
-    else {
-        content = <>
+
+    function MainOnlyEdit() {
+        let btnSubmit = <ButtonAsync className="btn btn-primary me" onClick={onSubmit}>提交</ButtonAsync>;
+        return <>
             <ViewMain main={main} />
-            <ViewDetail detail={detail} editable={editable} />
             <LMR className="px-3 py-3 border-top">
                 {btnSubmit}
                 {
                     editable === true && <>
-                        <button className={cnAdd} onClick={onAddRow}>
-                            <FA name="plus" className="me-1" />
-                            明细
-                        </button>
                         {id && <button className={'btn btn-outline-primary'} onClick={onRemoveSheet}>作废</button>}
                     </>
                 }
             </LMR>
         </>;
     }
+
+    function MainDetailEdit() {
+        const addNew = useCoreDetailAdd(detail);
+        const start = useCallback(async function () {
+            startSheetStore(uqApp, navigate, store, pick);
+        }, []);
+        const { entityBin } = detail;
+        const { inputs } = entityBin;
+        async function startInputDetail() {
+            let ret = await start();
+            if (ret === undefined) {
+                await addNew();
+            }
+        }
+        async function onAddRow() {
+            let ret = await addNew();
+        }
+        let sections = useAtomValue(detail._sections);
+        let btnSubmit: any, cnAdd: string;
+        if (sections.length === 0) {
+            cnAdd = 'btn btn-primary me-3';
+        }
+        else {
+            btnSubmit = <ButtonAsync className="btn btn-primary me" onClick={onSubmit} disabled={sections.length === 0}>提交</ButtonAsync>;
+            cnAdd = 'btn btn-outline-primary me-3';
+        }
+        if (id === 0) {
+            return <div className="p-3">
+                <button className="btn btn-primary" onClick={startInputDetail}>开始录单</button>
+            </div>;
+        }
+        else {
+            return <>
+                <ViewMain main={main} />
+                <ViewDetail detail={detail} editable={editable} />
+                <LMR className="px-3 py-3 border-top">
+                    {btnSubmit}
+                    {
+                        editable === true && <>
+                            <button className={cnAdd} onClick={onAddRow}>
+                                <FA name="plus" className="me-1" />
+                                明细
+                            </button>
+                            {id && <button className={'btn btn-outline-primary'} onClick={onRemoveSheet}>作废</button>}
+                        </>
+                    }
+                </LMR>
+            </>;
+        }
+    }
+
     return <Page header={caption}>
-        {content}
+        {detail === undefined ? <MainOnlyEdit /> : <MainDetailEdit />}
     </Page>
 }

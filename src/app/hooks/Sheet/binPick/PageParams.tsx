@@ -1,5 +1,5 @@
 import { BizBud, PickParam } from "app/Biz";
-import { NamedResults } from "./useBinPicks";
+import { NamedResults } from "../NamedResults";
 import { Page, useModal } from "tonwa-app";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { ViewBud, budFormRow } from "app/hooks";
@@ -54,28 +54,6 @@ interface PageParamsProps {
 function PageParams({ header, valueParams, inputParams }: PageParamsProps) {
     const modal = useModal();
     const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
-    /*
-    const valueParams: [PickParam, BizBud, any][] = [];
-    const inputParams: BizBud[] = [];
-    for (let param of queryParams) {
-        let { name, budDataType } = param;
-        let pickParam = pickParams?.find(v => v.name === name);
-        if (pickParam !== undefined) {
-            let { bud, prop } = pickParam;
-            let namedResult = namedResults[bud] as NamedResults;
-            if (prop === undefined) prop = 'id';
-            let v = namedResult[prop];
-            valueParams.push([pickParam, param, v]);
-        }
-        else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {
-            inputParams.push(param);
-        }
-    }
-    if (inputParams.length === 0) {
-        modal.close({});
-        return;
-    }
-    */
     let formRows: FormRow[] = [
         ...inputParams.map(v => budFormRow(v, false)),
         { type: 'submit', label: '查找', options: {}, className: undefined }

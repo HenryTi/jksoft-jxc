@@ -1,16 +1,17 @@
 import { BinPick, PickQuery } from "app/Biz";
 import { useCallback, useState } from "react";
-import { LastPickResultType, NamedResults, PickResult } from "./useBinPicks";
+import { RearPickResultType } from "./useBinPicks";
 import { Page, useModal } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { FA, List } from "tonwa-com";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "./PageParams";
-import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "./tool";
+import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "../tool";
+import { NamedResults, PickResult } from "../NamedResults";
 
 export function usePickFromQuery(): [
     (namedResults: NamedResults, binPick: BinPick) => Promise<PickResult>,
-    (namedResults: NamedResults, binPick: BinPick, lastPickResultType: LastPickResultType) => Promise<PickResult[]>,
+    (namedResults: NamedResults, binPick: BinPick, lastPickResultType: RearPickResultType) => Promise<PickResult[]>,
 ] {
     const { uq, biz } = useUqApp();
     const modal = useModal();
@@ -18,7 +19,7 @@ export function usePickFromQuery(): [
     const pickFromQueryBase = useCallback(async function (
         namedResults: NamedResults
         , binPick: BinPick
-        , pickResultType: LastPickResultType)
+        , pickResultType: RearPickResultType)
         : Promise<PickResult | PickResult[]> {
         let { name, caption, pick, pickParams } = binPick;
         let pickBase = pick as PickQuery;
@@ -63,7 +64,7 @@ export function usePickFromQuery(): [
             }
             return obj;
         }
-        if (pickResultType === LastPickResultType.scalar) {
+        if (pickResultType === RearPickResultType.scalar) {
             return toRet(ret);
         }
         else {
@@ -114,7 +115,7 @@ export function usePickFromQuery(): [
             let cnViewItem = 'd-flex flex-wrap ';
             let cnFirst: string;
             let btnOk: any, vTop: any;
-            if (pickResultType === LastPickResultType.array) {
+            if (pickResultType === RearPickResultType.array) {
                 onItemSelect = onMultipleClick;
                 cnFirst = 'my-2 ';
                 btnOk = <button className="btn btn-primary m-3" onClick={onPick}>选入</button>;
@@ -172,12 +173,12 @@ export function usePickFromQuery(): [
         namedResults: NamedResults
         , binPick: BinPick)
         : Promise<PickResult> {
-        return await pickFromQueryBase(namedResults, binPick, LastPickResultType.scalar) as PickResult;
+        return await pickFromQueryBase(namedResults, binPick, RearPickResultType.scalar) as PickResult;
     }, []);
     const pickFromQuery = useCallback(async function (
         namedResults: NamedResults
         , binPick: BinPick
-        , lastPickResultType: LastPickResultType)
+        , lastPickResultType: RearPickResultType)
         : Promise<PickResult[]> {
         return await pickFromQueryBase(namedResults, binPick, lastPickResultType) as PickResult[];
     }, []);

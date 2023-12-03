@@ -115,7 +115,7 @@ abstract class EntityAtomIDWithBase extends EntityAtomID {
 export class EntitySpec extends EntityAtomIDWithBase {
     readonly keyColl: { [key: string]: BizBud; } = {};
     readonly keys: BizBud[] = [];
-    ix: boolean;
+    ix: boolean;    // 服务器端对应 isIxBase。如果true，不能临时录入，只能选择。
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {

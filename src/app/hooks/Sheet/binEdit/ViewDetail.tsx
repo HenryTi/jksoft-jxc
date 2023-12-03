@@ -1,24 +1,31 @@
 import { useAtomValue } from "jotai";
-import { BinDetail, BinRow, CoreDetail, Row, Section } from "./SheetStore";
+import { BinDetail, BinRow, CoreDetail, Row, Section } from "../SheetStore";
 import { FA, LMR, Sep } from "tonwa-com";
 import { ViewSpec } from "app/hooks/View";
 import { useModal } from "tonwa-app";
 import React from "react";
-import { useCoreDetailEdit } from "./useCoreDetailEdit";
+import { useCoreDetailEdit } from ".";
 import { BizBud } from "app/Biz";
-import { OwnedBuds } from "../tool/tool";
-import { useInputRow } from "./useInputRow";
-import { ViewBud } from "../Bud";
-import { BinEditing } from "./BinEditing";
+import { OwnedBuds } from "../../tool/tool";
+import { useRowEdit } from "./rowEdit";
+import { ViewBud } from "../../Bud";
+import { BinEditing } from "../BinEditing";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
     const { caption } = detail;
+    let content: any;
+    if (sections.length === 0) {
+        content = <div className="p-3 small text-info">[ 无明细 ]</div>
+    }
+    else {
+        content = <div>
+            {sections.map(v => <ViewSection key={v.keyId} section={v} editable={editable} />)}
+        </div>;
+    }
     return <div>
         <div className="py-1 px-3 tonwa-bg-gray-2">{caption ?? '明细'}</div>
-        <div>
-            {sections.map(v => <ViewSection key={v.keyId} section={v} editable={editable} />)}
-        </div>
+        {content}
     </div>
 }
 
@@ -62,16 +69,15 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 }
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
-    const { openModal } = useModal();
-    const pickInput = useInputRow();
+    const rowEdit = useRowEdit();
     const { props: binDetail, section: { coreDetail: { entityBin } } } = row;
     const { i: budI, x: budX, price: budPrice, amount: budAmount, props } = entityBin;
     let { i, x, value, price, amount, buds } = binDetail
     async function onEdit() {
         if (editable === false) return;
-        const binEditing = new BinEditing(entityBin);
-        binEditing.setValues(binDetail);
-        let ret = await pickInput(row, binEditing);
+        const binEditing = new BinEditing(entityBin, binDetail);
+        // binEditing.setValues(binDetail);
+        let ret = await rowEdit(binEditing);
         if (ret === true) {
             Object.assign(binDetail, binEditing.binRow);
             await row.changed();

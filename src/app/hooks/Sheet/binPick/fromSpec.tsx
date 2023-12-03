@@ -3,7 +3,7 @@ import { usePickSpec } from "app/hooks/BizPick";
 import { ViewAtom } from "app/hooks/BizAtom";
 import { Atom } from "uqs/UqDefault";
 import { useCallback } from "react";
-import { NamedResults, PickResult } from "./useBinPicks";
+import { NamedResults, PickResult } from "../NamedResults";
 
 export function usePickFromSpec() {
     const returnUsePickSpec = usePickSpec();
