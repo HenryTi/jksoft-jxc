@@ -1,9 +1,13 @@
 import { FormRow } from "app/coms";
-import { BinDetail, BinRow } from "./SheetStore";
-import { BizBud, BudDec, EntityBin, EnumBudType } from "app/Biz";
+import { BinDetail, BinRow, PendRow, Section, SheetStore } from "./SheetStore";
+import { BinDiv, BizBud, BudDec, EntityBin, EnumBudType } from "app/Biz";
 import { Calc, Formulas } from "../Calc";
 import { RegisterOptions } from "react-hook-form";
-import { NamedResults } from "./NamedResults";
+import { Atom, WritableAtom, atom } from "jotai";
+import { OwnerColl, budValuesFromProps } from "../tool";
+import { ReturnGetPendRetSheet } from "uqs/UqDefault";
+import { Prop, arrFromJsonArr, arrFromJsonMid } from "./tool";
+import { getAtomValue, setAtomValue } from "tonwa-com";
 
 export enum ValueSetType {
     none,
@@ -266,5 +270,166 @@ export class BinEditing {
             ret.push(formRow);
         }
         return ret;
+    }
+}
+
+export class BinStore {
+    readonly sheetStore: SheetStore;
+    readonly entityBin: EntityBin;
+    pendColl: { [pend: number]: WritableAtom<ValDiv, any, any> };
+    pendRows: PendRow[];
+    ownerColl: OwnerColl;
+    readonly valDiv: ValDiv;
+
+    constructor(sheetStore: SheetStore, entityBin: EntityBin) {
+        this.sheetStore = sheetStore;
+        this.entityBin = entityBin;
+        this.valDiv = new ValDiv(entityBin.div, undefined);
+    }
+
+    async loadPend(params: any): Promise<void> {
+        if (this.pendRows !== undefined) return;
+        let { pend: entityPend } = this.entityBin;
+        if (entityPend === undefined) debugger;
+        let ret = await this.sheetStore.uq.GetPend.page({ pend: entityPend.id, params }, undefined, 100);
+        this.pendColl = {};
+        let { $page, retSheet, props: showBuds } = ret;
+        const { ownerColl, budColl } = budValuesFromProps(showBuds);
+        let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
+        for (let v of retSheet) {
+            collSheet[v.id] = v;
+        };
+        let pendRows: PendRow[] = [];
+        // build pendColl;
+        for (let v of $page) {
+            let { id, pend, pendValue, mid, cols } = v;
+            if (pendValue === undefined || pendValue <= 0) continue;
+            this.pendColl[pend] = atom(undefined as ValDiv);
+            let propArr: Prop[] = arrFromJsonArr(entityPend, cols);
+            let midArr = arrFromJsonMid(entityPend, mid);
+            let pendRow: PendRow = {
+                pend,
+                // sheet: { ...collSheet[v.sheet], buds: {}, owned: undefined },
+                detail: { ...v, buds: {}, owned: undefined },
+                origin: id,
+                value: pendValue,
+                mid: midArr,
+                cols: propArr,
+            };
+            pendRows.push(pendRow);
+        }
+        this.pendRows = pendRows;
+        this.ownerColl = ownerColl;
+        // return { pendRows, ownerColl };
+    }
+
+    load(valRows: any[]) {
+        this.valDiv.addValRows(valRows);
+    }
+
+    addValRow(valRow: ValRow) {
+        let val = this.valDiv.addValRow(valRow);
+        const { pend } = valRow;
+        setAtomValue(this.pendColl[pend], val);
+    }
+}
+
+export type ValRow = { [name: string]: any } & {
+    id: number;
+    parent: number;
+};
+
+export class ValDiv {
+    private readonly divColl: { [id: number]: ValDiv };
+    readonly atomValRow: WritableAtom<any, any, any>;
+    readonly atomDivs: WritableAtom<ValDiv[], any, any>;
+    readonly binDiv: BinDiv;
+    // readonly id: number;
+    // valRow: any;
+    // divs: ValDiv[];
+    constructor(div: BinDiv, valRow: any) {
+        this.binDiv = div;
+        if (valRow !== undefined) {
+            this.atomValRow = atom<any>(valRow);
+        }
+        if (div.div !== undefined) {
+            this.divColl = {};
+            this.atomDivs = atom<ValDiv[]>([]);
+        }
+    }
+    setValRow(valRow: any) { setAtomValue(this.atomValRow, valRow) };
+
+    setDiv(id: number, valRow: any) {
+        let { div: binDiv } = this.binDiv;
+        if (binDiv === undefined) {
+            debugger;
+            return;
+        }
+        let valDiv = this.divColl[id];
+        if (valDiv === undefined) {
+            this.divColl[id] = valDiv = new ValDiv(binDiv, valRow);
+            let divs = getAtomValue(this.atomDivs);
+            setAtomValue(this.atomDivs, [...divs, ValDiv]);
+        }
+        else {
+            setAtomValue(valDiv.atomValRow, valRow);
+        }
+    }
+
+    addValRows(valRows: any[]) {
+        for (let valRow of valRows) {
+            this.addVal(this.binDiv, valRow, false);
+        }
+        // this.setDivAtoms();
+    }
+    /*
+    private setDivAtoms() {
+        const divs = getAtomValue(this.atomDivs);
+        for (let div of divs) {
+            const { atomDivs } = div;
+            // setAtomValue(atomDivs, divs);
+            div.setDivAtoms();
+        }
+    }
+    */
+    private isIn(valRow: any) {
+        let vr = getAtomValue(this.atomValRow);
+        if (vr === undefined) return false;
+        let { buds } = this.binDiv;
+        if (buds.length === 0) return false;
+        for (let bud of buds) {
+            let { name } = bud;
+            if (valRow[name] !== vr[name]) return false;
+        }
+        return true;
+    }
+
+    private addVal(binDiv: BinDiv, valRow: any, trigger: boolean) {
+        let { id } = valRow;
+        let val = new ValDiv(binDiv, valRow);
+        let divs = getAtomValue(this.atomDivs);
+        if (divs === undefined) {
+            divs = [val];
+            setAtomValue(this.atomDivs, divs);
+            this.divColl[id] = val;
+            return val;
+        }
+        for (let val of divs) {
+            if (val.isIn(valRow) === true) {
+                val.addVal(binDiv.div, valRow, trigger);
+                return val;
+            }
+        }
+        divs.push(val);
+        if (trigger === true) {
+            setAtomValue(this.atomDivs, [...divs]);
+        }
+        this.divColl[id] = val;
+        return val;
+    }
+
+    addValRow(valRow: any) {
+        let val = this.addVal(this.binDiv, valRow, true);
+        return val;
     }
 }

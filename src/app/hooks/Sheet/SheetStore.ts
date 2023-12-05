@@ -13,6 +13,7 @@ import { BudValue } from "tonwa-app";
 import { OwnerColl, budValuesFromProps } from "../tool/tool";
 import { BudEditing } from "../Bud";
 import { Prop, arrFromJsonArr, arrFromJsonMid } from "./tool";
+import { BinStore } from "./BinEditing";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -399,6 +400,7 @@ export class SheetStore extends KeyIdObject {
     readonly caption: string;
     readonly idOnUrl: number;
     pendColl: { [pend: number]: WritableAtom<Section[], any, any> };
+    readonly binStore: BinStore;
 
     constructor(uq: UqExt, biz: Biz, entitySheet: EntitySheet, id: number) {
         super();
@@ -421,6 +423,7 @@ export class SheetStore extends KeyIdObject {
             this.detailExs.push(new ExDetail(this, detail, caption));
         }
         this.caption = entitySheet.caption ?? entitySheet.name;
+        this.binStore = new BinStore(this, this.detail.entityBin);
     }
 
     async load() {

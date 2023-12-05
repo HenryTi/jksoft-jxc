@@ -111,7 +111,7 @@ BIN 入库单主表 {
     Pick 保管员 FROM 职员信息;
     I '保管员' = 保管员; 
 } 
- BIN 入库单明细 ver 0.2 {
+BIN 入库单明细 ver 0.2 {
     Pick 采购机构 FROM 公司机构信息;
     Pick 收货物流中心 FROM 物流中心信息;
     Pick pend '待入库商品' FROM 待入库账 {
@@ -129,6 +129,7 @@ BIN 入库单主表 {
             : 生产许可证号; 
             : 存储条件; 
     }= Pend.i;
+
     Value '数量' := Pend.value;
     ACT {
         Biz Pend -= value;
@@ -137,6 +138,43 @@ BIN 入库单主表 {
     };
 }
 
+BIN 入库单明细 ver 0.2 {
+    Pick 采购机构 FROM 公司机构信息;
+    Pick 收货物流中心 FROM 物流中心信息;
+    Pick pend '待入库商品' FROM 待入库账 {
+        param param1 = 采购机构; 
+        param param2 = 收货物流中心; 
+    };
+    Input spec SPEC 药品批次 Base=Pend.i;
+    Input store ATOM 库房;
+    I.base;
+    price;
+    amount;
+    Div {
+        I '商品' 货品信息  { 
+                : 规格型号; 
+                : 单位; 
+                : 注册人或备案人; 
+                : 受托生产企业; 
+                : 注册证号或备案凭证号; 
+                : 生产许可证号; 
+                : 存储条件; 
+        }= Pend.i;
+        Div {
+            Prop Storage ATOM;
+            Div {
+                操作 Options (收获, 退回, 暂存);
+                Value '数量' := Pend.value;
+            }
+        }
+    }
+
+    ACT {
+        Biz Pend -= value;
+        --Biz Title 库存.数量 of I += Value;
+        Biz Title 库存.数量 of %I += %value;
+    };
+}
 
 SHEET 销售单 {
     Main 销售单主表;

@@ -84,15 +84,9 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const entity = biz.entityFromId<EntityAtom>(atomPhraseId);
-    const phrase = entity.phrase;
+    // const phrase = entity.phrase;
     const pathView = entity.name;
     const pathList = entity.name + '-list';
-
-    /*
-    function getEntityAtom(phrase: string): EntityAtom {
-        return biz.entities[phrase] as EntityAtom;
-    }
-    */
 
     async function getAtom(id: number) {
         let ret = await getAtomBase(uq, id);
@@ -124,7 +118,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         });
     }
     async function searchAtoms(param: any, pageStart: any, pageSize: number): Promise<any[]> {
-        let newParam = { atom: phrase, ...param };
+        let newParam = { atom: atomPhraseId, ...param };
         let query = uq.SearchAtom;
         let { $page } = await query.page(newParam, pageStart, pageSize);
         return $page;
@@ -149,11 +143,9 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         uqApp,
         biz,
         entity,
-        // uom: (entity as EntityAtom).uom,
         pathView,
         pathList,
         getAtom,
-        // getEntityAtom,
         saveField,
         saveBud,
         searchAtoms,

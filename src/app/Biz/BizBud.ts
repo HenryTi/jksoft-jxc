@@ -204,3 +204,7 @@ export class BizBud extends BizBase {
         }
     }
 }
+
+export class BizBudSpecBase extends BizBud {
+    specBud: BizBud;
+}

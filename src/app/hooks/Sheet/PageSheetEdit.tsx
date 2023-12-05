@@ -65,12 +65,12 @@ async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetSt
     if (id > 0) {
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (data) {
-            const { phrase } = sheetStore.entitySheet;
+            const { id: entityId } = sheetStore.entitySheet;
             data.addItem({
                 id,
                 no,
                 target,
-                phrase,
+                entityId,
             });
         }
     }
@@ -148,8 +148,8 @@ function PageStore({ store }: { store: SheetStore; }) {
         const start = useCallback(async function () {
             startSheetStore(uqApp, navigate, store, pick);
         }, []);
-        const { entityBin } = detail;
-        const { inputs } = entityBin;
+        // const { entityBin } = detail;
+        // const { inputs } = entityBin;
         async function startInputDetail() {
             let ret = await start();
             if (ret === undefined) {

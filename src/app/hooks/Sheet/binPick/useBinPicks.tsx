@@ -45,7 +45,7 @@ export function useBinPicks(bin: EntityBin) {
                 pickResult = await pickFromQuery(namedResults, rearPick, rearPickResultType);
                 break;
             case BizPhraseType.pend:
-                pickResult = await pickFromPend(sheetStore, namedResults, rearPick);
+                pickResult = await pickFromPend(sheetStore.binStore, namedResults, rearPick);
         }
         return pickResult;
     }

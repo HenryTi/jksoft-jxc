@@ -9,13 +9,14 @@ import { OwnerColl } from "../../tool";
 import { PagePend } from "../binEdit";
 import { PagePendProps } from "../binEdit/model";
 import { PendProxyHander } from "../tool";
+import { BinStore } from "../BinEditing";
 
 export function usePickFromPend() {
     const modal = useModal();
-    const refPendValues = useRef<{ pendRows: PendRow[]; ownerColl: OwnerColl; }>(undefined)
+    // const refPendValues = useRef<{ pendRows: PendRow[]; ownerColl: OwnerColl; }>(undefined)
     const pickParam = usePageParams();
     return useCallback(
-        async function pickFromPend(sheetStore: SheetStore, namedResults: NamedResults, binPick: BinPick): Promise<PickResult[]> {
+        async function pickFromPend(binStore: BinStore, namedResults: NamedResults, binPick: BinPick): Promise<PickResult[]> {
             let { name, caption, pick, pickParams, bin } = binPick;
             let pickBase = pick as PickPend;
             let entityPend = pickBase.from;
@@ -36,25 +37,28 @@ export function usePickFromPend() {
             else {
                 retParam = {};
             }
+            await binStore.loadPend(retParam);
+            /*
             if (refPendValues.current === undefined) {
-                refPendValues.current = await sheetStore.loadPend(entityPend, retParam);
+                refPendValues.current = 
             }
             const { pendRows, ownerColl } = refPendValues.current;
+            */
             let props: PagePendProps = {
-                sheetStore,
                 caption,
-                bin,
-                entity: pickBase.from,
+                // bin,
+                binStore,
+                // entity: pickBase.from,
                 search: [],
-                pendRows,
-                ownerColl,
+                // pendRows,
+                // ownerColl,
                 namedResults,
             };
 
             let inputed = await modal.open<BinDetail[]>(<PagePend {...props} />);
             if (inputed === undefined) return;
             // 如果有inputs，直接已经输入进了。就不用返回了。
-            if (bin.inputs !== undefined) return;
+            if (bin.div.inputs !== undefined) return;
             function proxy(obj: any) {
                 return new Proxy(obj, pendProxyHander);
             }

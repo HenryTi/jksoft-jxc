@@ -9,29 +9,29 @@ export function EditBudIntOf(props: EditBudTemplateProps) {
     const { id, readonly, plus, value: initValue, budEditing, ViewValueEdit: ValueEdit } = props;
     const { bizBud, error } = budEditing;
     const { budDataType, caption, name } = bizBud;
-    let { options: { items, phrase: optionsPhrase } } = budDataType as BudRadio;
+    let { options: { items } } = budDataType as BudRadio;
 
     const initCheckValue: BudCheckEditValue = {};
     for (let v of initValue as BudCheckValue) {
         initCheckValue[v] = true;
     }
-    let checks: { [item: string]: boolean; } = initCheckValue;
+    let checks: { [item: number]: boolean; } = initCheckValue;
     let radios: [item: string | number, caption: string, value: string | number, defaultCheck: boolean,][] = []
     let hasChecked = false;
     for (let item of items) {
-        let { name, caption, value, phrase } = item;
-        let c: boolean = checks[phrase];
+        let { id, name, caption, value } = item;
+        let c: boolean = checks[id];
         if (c === true) {
             hasChecked = true;
         }
-        radios.push([phrase, caption ?? name, value, c]);
+        radios.push([id, caption ?? name, value, c]);
     }
     if (hasChecked === false) {
         (radios[0])[3] = true;
     }
     async function onCheckChanged(item: string | number) {
         const { id: phraseId } = bizBud;
-        const value = items.find(v => v.phrase === item).value;
+        const value = items.find(v => v.id === item).value;
         await uq.SaveBudValue.submit({
             phraseId,
             id,

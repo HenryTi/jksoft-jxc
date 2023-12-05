@@ -27,7 +27,7 @@ export function PageSumGroup() {
     function PageList() {
         let caption = entityAtom.caption ?? entityAtom.name;
         let searchParam = {
-            atom: entityAtom.phrase,
+            atom: entityAtom.id,
             key: undefined as string,
         };
         function ViewItem({ value }: { value: any }) {

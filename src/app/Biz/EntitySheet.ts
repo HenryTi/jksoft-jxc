@@ -1,6 +1,6 @@
 import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
-import { BizBud, EnumBudType } from "./BizBud";
+import { BizBud, BizBudSpecBase, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
@@ -72,10 +72,19 @@ export class PendInputAtom extends PendInput {
     }
 }
 
+export class BinDiv {
+    readonly parent: BinDiv;
+    inputs: PendInput[];
+    buds: BizBud[];
+    div: BinDiv;
+    constructor(parent: BinDiv) { this.parent = parent; }
+}
+
 export class EntityBin extends Entity {
     binPicks: BinPick[];
     rearPick: BinPick;          // endmost pick
-    inputs: PendInput[];
+    // inputs: PendInput[];
+    div: BinDiv;
     i: BizBud;
     x: BizBud;
     pend: EntityPend;
@@ -107,7 +116,8 @@ export class EntityBin extends Entity {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'picks': this.binPicks = val; break;
-            case 'inputs': this.inputs = val; break;
+            case 'inputs': /*this.inputs = val; */ break;
+            case 'div': this.div = val; break;
             case 'i': this.i = val; break;
             case 'x': this.x = val; break;
             case 'pend': this.fromPend(val); break;
@@ -213,19 +223,62 @@ export class EntityBin extends Entity {
             this.rearPick = this.binPicks[pLast];
             this.binPicks.splice(pLast, 1);
         }
-        if (this.inputs !== undefined) {
-            this.inputs = this.inputs.map(v => {
-                let input = this.buildInput(v as any);
-                input.entityPend = this.pend;
-                return input;
-            });
-        }
+        // this.inputs = this.scanInputs(this.inputs);
         if (this.i !== undefined) {
             this.i = this.buildBudPickable(this.i as any);
         }
         if (this.x !== undefined) {
             this.x = this.buildBudPickable(this.x as any);
         }
+        this.scanDiv(undefined, this.div);
+    }
+
+    private scanDiv(parent: BinDiv, div: any) {
+        if (div === undefined) return;
+        let binDiv = new BinDiv(parent);
+        let { inputs, div: subDiv, buds } = div;
+        binDiv.inputs = this.scanInputs(inputs);
+        binDiv.buds = this.scanBinBuds(buds);
+        binDiv.div = this.scanDiv(binDiv, subDiv);
+        return binDiv;
+    }
+
+    private scanInputs(inputs: any[]) {
+        if (inputs === undefined) return;
+        return inputs.map(v => {
+            let input = this.buildInput(v as any);
+            input.entityPend = this.pend;
+            return input;
+        });
+    }
+
+    private scanBinBuds(buds: any[]) {
+        if (buds === undefined) return;
+        let ret: BizBud[] = [];
+        let iBaseBud: BizBudSpecBase;
+        let xBaseBud: BizBudSpecBase;
+        for (let bud of buds) {
+            let bizBud: BizBud;
+            switch (bud) {
+                default: bizBud = this.budColl[bud]; break;
+                case 'i': bizBud = this.i; break;
+                case 'x': bizBud = this.x; break;
+                case 'i.':
+                    bizBud = iBaseBud = new BizBudSpecBase(this.biz, 0, 'i.', EnumBudType.none, this);
+                    break;
+                case 'x.':
+                    bizBud = xBaseBud = new BizBudSpecBase(this.biz, 0, 'x.', EnumBudType.none, this);
+                    break;
+                case 'value': bizBud = this.value; break;
+                case 'price': bizBud = this.price; break;
+                case 'amount': bizBud = this.amount; break;
+            }
+            if (bizBud === undefined) debugger;
+            ret.push(bizBud);
+        }
+        if (iBaseBud !== undefined) iBaseBud.specBud = this.i;
+        if (xBaseBud !== undefined) xBaseBud.specBud = this.x;
+        return ret;
     }
 
     proxyHandler() {

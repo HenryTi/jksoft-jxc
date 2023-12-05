@@ -3,6 +3,7 @@ import { BudValue } from "tonwa-app";
 import { SheetStore } from "../SheetStore";
 import { PendRow } from "../SheetStore";
 import { NamedResults } from "../NamedResults";
+import { BinStore } from "../BinEditing";
 
 interface OwnerColl {
     [row: number]: {
@@ -11,17 +12,18 @@ interface OwnerColl {
 }
 
 export interface PendProps {
-    sheetStore: SheetStore;
-    bin: EntityBin;
-    entity: EntityPend;
-    ownerColl: OwnerColl;
+    // sheetStore: SheetStore;
+    // bin: EntityBin;
+    // entity: EntityPend;
+    // ownerColl: OwnerColl;
+    binStore: BinStore;
     namedResults: NamedResults;
 }
 
 export interface PagePendProps extends PendProps {
     caption: string;
     search: string[];
-    pendRows: PendRow[];
+    // pendRows: PendRow[];
 }
 
 export interface PendBandProps extends PendProps {

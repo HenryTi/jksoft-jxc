@@ -7,7 +7,8 @@ import { PagePendProps } from "./model";
 import { ViewPendBand } from "./ViewPendBand";
 
 export function PagePend(props: PagePendProps) {
-    let { bin: { inputs }, caption, entity: entityPend, pendRows } = props;
+    let { binStore, caption } = props;
+    let { entityBin: { pend: entityPend, div: div }, pendRows } = binStore;
     const modal = useModal();
     let { name: pendName, predefinedFields } = entityPend;
     let [selectedItems, setSelectedItems] = useState<{ [id: number]: PendRow; }>({});
@@ -55,7 +56,7 @@ export function PagePend(props: PagePendProps) {
         setSelectedItems({ ...selectedItems });
     }
     let onItemSelectFunc: any, btnFinish: any;
-    if (inputs === undefined) {
+    if (div.div === undefined) {
         onItemSelectFunc = onItemSelect;
         btnFinish = <button className="btn btn-primary" onClick={onClick}>选入</button>;
     }

@@ -4,11 +4,13 @@ import { OwnedBuds } from "app/hooks/tool";
 import { ViewPendBandEdit } from "./ViewPendBandEdit";
 import { PendBandProps } from "./model";
 
-export function ViewPendBand({ bin, value: pendRow, sheetStore
-    , entity: entityPend, ownerColl, namedResults
+export function ViewPendBand({ value: pendRow
+    , binStore
+    , namedResults
     , hasPrice, hasAmount }: PendBandProps) {
+    const { entityBin, ownerColl } = binStore;
+    const { div, pend: entityPend } = entityBin;
     let { i: iBud } = entityPend;
-    const { inputs } = bin;
 
     const { pend, detail: { id, i, price, amount }, value, mid, cols } = pendRow;
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
@@ -44,9 +46,9 @@ export function ViewPendBand({ bin, value: pendRow, sheetStore
         </div >
     </div>;
 
-    if (inputs === undefined) return <div className="container">{rowContent}</div>;
+    if (div.div === undefined) return <div className="container">{rowContent}</div>;
     return <ViewPendBandEdit pendRow={pendRow}
         pendContent={rowContent}
-        sheetStore={sheetStore}
+        binStore={binStore}
         namedResults={namedResults} />;
 }

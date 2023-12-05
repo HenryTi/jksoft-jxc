@@ -14,7 +14,7 @@ export function usePendInputs(bin: EntityBin) {
     const inputAtom = useInputAtom();
     const inputSpec = useInputSpec();
     return useCallback(async function (props: InputProps<any>): Promise<NamedResults> {
-        const { inputs } = bin;
+        const { div: { inputs } } = bin;
         if (inputs === undefined) return;
         let ret: NamedResults = { ...props.namedResults };
         for (let input of inputs) {

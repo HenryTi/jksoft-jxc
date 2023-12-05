@@ -2,6 +2,7 @@ import { BizBud, Entity, EntityPend, predefinedPendFields } from "app/Biz";
 import { ViewBud } from "app/hooks/Bud";
 import { PendRow, SheetStore } from "./SheetStore";
 import { NamedResults } from "./NamedResults";
+import { BinStore } from "./BinEditing";
 
 export interface Prop<T = any> {
     name: string;
@@ -114,7 +115,8 @@ export function VNamedBud({ name, value, bud }: { name: string; value: any; bud:
 }
 
 export interface PendBandEditProps {
-    sheetStore: SheetStore;
+    //sheetStore: SheetStore;
+    binStore: BinStore;
     namedResults: NamedResults;
     pendRow: PendRow;
 }

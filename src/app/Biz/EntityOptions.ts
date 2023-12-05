@@ -5,7 +5,7 @@ export interface OptionsItem {
     name: string;
     caption: string;
     value: string | number;
-    phrase: string;
+    // phrase: string;
 }
 
 export class EntityOptions extends Entity {
@@ -19,14 +19,14 @@ export class EntityOptions extends Entity {
     }
 
     protected fromItems(items: any[]) {
-        this.items.push(...items.map(
+        this.items.push(...items/*.map(
             v => {
                 return {
                     ...v,
                     phrase: `${this.phrase}.${v.name}`,
                 }
             }
-        ));
+        )*/);
         for (let item of this.items) {
             this.coll[item.id] = item;
         }

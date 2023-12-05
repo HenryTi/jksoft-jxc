@@ -136,7 +136,8 @@ export class EntitySpec extends EntityAtomIDWithBase {
             }
             budDataType.fromSchema(key);
             bizProp.fromSchema(key);
-            this.keyColl[bizProp.phrase] = bizProp;
+            this.keyColl[bizProp.id] = bizProp;
+            // this.keyColl[bizProp.phrase] = bizProp;
             this.keys.push(bizProp);
         }
     }

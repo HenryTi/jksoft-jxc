@@ -1,10 +1,10 @@
-import { FA, getAtomValue } from "tonwa-com";
+import { FA, getAtomValue, setAtomValue } from "tonwa-com";
 import { BinDetail, BinRow, PendRow, Row, Section, SheetStore } from "../SheetStore";
-import { Atom, useAtomValue } from "jotai";
+import { Atom, atom, useAtomValue } from "jotai";
 import { InputProps, usePendInputs } from "../pendInput";
 import { PendBandEditProps } from "../tool";
 import { useRowEdit } from "./rowEdit";
-import { BinEditing } from "../BinEditing";
+import { BinEditing, ValDiv } from "../BinEditing";
 import { Page, useModal } from "tonwa-app";
 
 export interface ViewPendBandEditProps extends PendBandEditProps {
@@ -12,17 +12,19 @@ export interface ViewPendBandEditProps extends PendBandEditProps {
 }
 
 let rowId = 1;
-export function ViewPendBandEdit({ pendRow, pendContent, sheetStore, namedResults }: ViewPendBandEditProps) {
+export function ViewPendBandEdit({ pendRow, pendContent, binStore, namedResults }: ViewPendBandEditProps) {
     const modal = useModal();
-    const { entityBin } = sheetStore.detail;
+    // const { entityBin } = sheetStore.detail;
+    // const {binStore} = sheetStore;
+    const { entityBin } = binStore;
     const pendInputs = usePendInputs(entityBin);
     const rowEdit = useRowEdit();
     let { pend: pendId, origin, value } = pendRow;
-    let _sections = sheetStore.pendColl[pendId];
-    let sections = useAtomValue(_sections);
+    let _valDiv = binStore.pendColl[pendId];
+    let valDiv = useAtomValue(_valDiv);
     const inputProps: InputProps<any> = {
         namedResults,
-        sheetStore,
+        binStore,
         pendRow,
         binInput: undefined,
     }
@@ -41,7 +43,11 @@ export function ViewPendBandEdit({ pendRow, pendContent, sheetStore, namedResult
     const onEdit = onAddNew;
     async function onAddNew() {
         let retPendInputs = await pendInputs(inputProps);
-        if (retPendInputs === undefined) return;
+        if (retPendInputs === undefined) {
+            binStore.addValRow({ id: rowId, parent: undefined, pend: pendId, a: 1, b: 2 });
+            // setAtomValue(binStore.pendColl[pendId], [...valDiv, new Section(binStore.sheetStore.detail)]);
+            return;
+        }
         let binRow: BinRow = undefined;
         const binEditing = new BinEditing(entityBin, binRow);
         binEditing.setNamedParams(retPendInputs);
@@ -53,21 +59,45 @@ export function ViewPendBandEdit({ pendRow, pendContent, sheetStore, namedResult
             pendFrom: pendId,
             pendValue: value,
         }
-        sheetStore.addBinDetail(binDetail);
+        binStore.sheetStore.addBinDetail(binDetail);
     }
-    if (sections !== undefined && sections.length > 0) {
+    if (valDiv !== undefined) {
         return <div>
-            <ViewSections sections={sections} onEdit={onEdit} pendContent={pendContent} />
+            <div className="d-flex">
+                <ViewCheck icon="check-square" iconColor="text-primary" onClick={onEdit} />
+                <div>
+                    <div className="pe-3">
+                        {pendContent}
+                    </div>
+                    <div className="">
+                        yes, checked
+                    </div>
+                </div>
+            </div>
         </div>;
     }
     else {
         return <div className="d-flex pe-3">
-            <div className="cursor-pointer px-3 py-3 text-center align-self-end text-info" onClick={onAddNew}>
-                <FA name="check" fixWidth={true} />
-            </div>
+            <ViewCheck icon="check" iconColor="text-info" onClick={onAddNew} />
             {pendContent}
         </div>;
     }
+}
+
+function ViewCheck({ icon, iconColor, onClick }: { icon: string; iconColor: string; onClick: () => void; }) {
+    return <div className="cursor-pointer px-2 py-3 text-center align-self-end text-info" onClick={onClick}>
+        <FA name={icon} fixWidth={true} size="lg" className={iconColor + ' mx-1 '} />
+    </div>
+}
+
+function ViewDivPend({ value }: { value: ValDiv; }) {
+
+}
+
+function ViewDiv({ value }: { value: ValDiv; }) {
+    return <div>
+        View Div
+    </div>
 }
 
 interface PendSectionProps {
@@ -77,9 +107,7 @@ interface PendSectionProps {
 function ViewSections({ sections, onEdit, pendContent }: PendSectionProps & { sections: Section[]; }) {
     return <div>
         <div className="d-flex">
-            <div className="cursor-pointer p-3 text-info align-self-end" onClick={onEdit}>
-                <FA name="plus" fixWidth={true} />
-            </div>
+            <ViewCheck icon="check-square" iconColor="text-primary" onClick={onEdit} />
             <div>
                 <div className="pe-3">
                     {pendContent}
