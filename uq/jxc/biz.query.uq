@@ -1,0 +1,189 @@
+Biz Query GetPend (
+    pend ID,                // pend entity id
+    params JSON,
+)
+PAGE (
+    pend ID ASC,
+    sheet ID,
+    id ID,
+    i ID,
+    x ID,
+    value VALUE,
+    price VALUE,
+    amount VALUE,
+    pendValue VALUE,
+    mid JSON,
+    cols JSON,
+)
+RETURNS retSheet (
+    id ID,
+    no NO,
+    i ID,
+    x ID,
+    value VALUE,
+    price VALUE,
+    amount VALUE,
+)
+RETURNS props (
+    id ID,
+    phrase ID,
+    value JSON,
+    owner ID,           -- show 字段的主字段。其它字段为0
+) {
+    VAR procName CHAR(200) = CONCAT($site, '.', pend, 'gp');
+    IF routine_exists('$site', procName) {
+        VAR sql CHAR(500) = CONCAT('call `$site`.`', procName, '`(?,?,?,?);');
+        ExecSql sql USING $user,params,$pageStart,$pageSize;
+    }
+    else {
+        PAGE SELECT a.id as pend, d.base as sheet, a.bin as id
+            , b.i, b.x, b.value, b.price, b.amount
+            , a.value as pendValue, a.mid, null as cols
+            FROM Pend as a
+                JOIN Bin as b on b.id=a.bin
+                JOIN BizPhrase as c ON c.id=a.base
+                LEFT JOIN Bud as d ON d.id=b.id
+            WHERE a.base=pend AND c.base=$site
+            ORDER BY a.id ASC
+            LIMIT $pageSize;
+    }
+
+    INTO retSheet SELECT b.id, b.no
+        , c.i, c.x, c.value, c.price, c.amount
+        FROM (SELECT DISTINCT a.sheet as id FROM $page as a) as s
+            JOIN Sheet as b ON b.id=s.id
+            JOIN Bin as c ON c.id=b.id;
+}
+
+Biz Query GetPendsNotify()
+RETURNS ret (
+    phrase ID,                  -- sheet phrase
+    count INT,                  -- pending count
+) {
+    INTO ret SELECT p as phrase, count(*) as count
+        FROM (
+            SELECT a.id, b.id as phrase 
+                FROM Pend as a
+                    JOIN BizPhrase as b ON b.id=a.base
+            WHERE b.base=$site
+        ) as x
+        GROUP BY x.phrase as p;
+}
+
+Biz Query GetPendSheetFromNo ver 0.1 (
+    pend Phrase, 
+    key CHAR(100),              -- sheet no
+)
+PAGE (
+    * SHEET ASC,
+    sheet Phrase,
+) {
+    PAGE SELECT DISTINCT * c, BudPhrase(c.base) as sheet
+        FROM Pend as a
+            JOIN Bud as b ON b.id=a.bin
+            JOIN Sheet as c ON c.id=b.base
+        WHERE 1=1 AND a.base=SiteBudId(pend)
+            AND c.id>$pageStart
+            AND SEARCH(c.no ON key)
+        ORDER BY c.id ASC
+        LIMIT $pageSize;
+};
+
+Biz Query GetPendSheetFromTarget ver 0.1 (
+    pend Phrase, 
+    key CHAR(100),              -- target no or ex
+)
+PAGE (
+    * SHEET ASC,
+    sheet Phrase,
+) {
+    PAGE SELECT DISTINCT * c, BudPhrase(c.base) as sheet
+        FROM Pend as a
+            JOIN Bud as b ON b.id=a.bin
+            JOIN Sheet as c ON c.id=b.base
+        WHERE 1=1 AND a.base=SiteBudId(pend)
+            AND c.id>$pageStart
+        ORDER BY c.id ASC
+        LIMIT $pageSize;
+};
+
+Biz Query GetPendDetailFromItem (
+    pend Phrase,
+    key CHAR(100),               -- item no or ex
+)
+PAGE (
+    * Bin ASC,
+    pend ID,
+    pendValue VALUE,
+    sheet Phrase,
+    no NO,
+) {
+    PAGE SELECT * b, a.id as pend, a.value as pendValue, BudPhrase(c.base) as sheet, c.no
+        FROM Pend as a
+            JOIN Bin as b ON b.id=a.bin
+            JOIN Bud as b1 ON b1.id=a.bin
+            JOIN Sheet as c ON c.id=b1.base
+            JOIN AtomSpec as d ON d.id=b.i
+            JOIN AtomUom as e ON e.id=d.atomUom
+            JOIN Atom as f ON f.id=e.atom
+        WHERE 1=1 AND a.base=SiteBudId(pend)
+            AND b.id>$pageStart
+            AND SEARCH(f.no, f.ex ON key)
+        ORDER BY b.id ASC
+        LIMIT $pageSize;
+};
+
+Biz Query GetPendDetailFromSheetId (
+    pend Phrase,
+    sheetId ID,               -- origin sheet id
+)
+RETURNS ret (
+    * Bin,
+    pend ID,
+    pendValue VALUE,
+    sheet Phrase,
+    no NO,
+) {
+    INTO ret SELECT * b, a.id as pend, a.value as pendValue, BudPhrase(c.base) as sheet, c.no
+        FROM Pend as a
+            JOIN Bin as b ON b.id=a.bin
+            JOIN Bud as b1 ON b1.id=a.bin
+            JOIN Sheet as c ON c.id=b1.base
+        WHERE 1=1 AND a.base=SiteBudId(pend)
+            AND c.id=sheetId
+        ORDER BY b.id ASC;
+};
+
+Biz Query GetSiteSheets (
+    from DATE,
+    to DATE,
+    timeZone TINYINT,
+)
+RETURNS ret (
+    phrase ID,
+    count INT,
+ ) {
+    INTO ret SELECT phrase, count(a.id) as count
+        FROM Sheet as a
+            JOIN BizPhrase as b ON b.id=a.base
+            JOIN IxState as c ON c.i=a.id AND c.x=a.base
+        WHERE b.base=$site AND a.id>=uminute_from_time(from, timeZone) AND a.id<uminute_from_time(to, timeZone)
+        GROUP BY b.id as phrase;
+};
+
+Biz Query GetSiteSheetList (
+    phrase ID,
+)
+PAGE (
+    * SHEET ASC,
+    * Bin,
+) {
+    PAGE SELECT * a, * b
+        FROM Sheet as a
+            JOIN Bin as b ON b.id=a.id
+            JOIN BizPhrase as c ON c.id=a.base
+            JOIN IxState as d ON d.i=a.id AND d.x=a.base
+        WHERE a.base=phrase AND a.id>$pageStart AND c.base=$site
+        ORDER BY a.id ASC
+        LIMIT $pageSize;
+};

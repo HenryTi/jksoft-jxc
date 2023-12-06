@@ -1,0 +1,35 @@
+{
+    "devs": {
+        "bz": {
+            "name": "bizdev",
+            "alias": "bz"
+        },
+        "br": {
+            "name": "bruce",
+            "alias": "br"
+        },
+        "jksoft": {
+            "name": "jksoft",
+            "alias": "js"
+        }
+    },
+    "uqs": [
+        {
+            "dev": "jksoft",
+            "name": "jksoft-mini-jxc-trial",
+            "alias": "Ticket"
+        }
+    ],
+    "uqs1": [
+        {
+            "dev": "jksoft",
+            "name": "ticket",
+            "alias": "Ticket"
+        },
+        {
+            "dev": "bz",
+            "name": "jxc",
+            "alias": "Jxc"
+        }
+    ]
+}

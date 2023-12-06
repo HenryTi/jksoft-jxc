@@ -1,0 +1,88 @@
+.tonwa-band-container {
+    width: 100%;
+    /*padding-right: var(--bs-gutter-x, 0.75rem);
+      padding-left: var(--bs-gutter-x, 0.75rem);*/
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.tonwa-page-header {
+    background-color: blue;
+    color: white;
+}
+
+.tonwa-page-header>.container {
+    background-color: darkblue;
+}
+
+.tonwa-page-content {
+    background-color: #e0e0e0;
+}
+
+.tonwa-page-content>.container {
+    background-color: white;
+}
+
+.tonwa-page-footer {
+    background-color: #e8e8e8;
+}
+
+.tonwa-page-footer>.container {
+    background-color: #f0f0f0;
+}
+
+.tonwa-page-tabs {
+    background-color: #f0f0f0;
+}
+
+.tonwa-page {
+    display: flex;
+    flex: 1 1 auto !important;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.tonwa-page-full {
+    flex-grow: 1;
+}
+
+.tonwa-pane {
+    display: none;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: scroll;
+}
+
+.tonwa-pane.active {
+    display: flex;
+}
+
+@media (min-width: 576px) {
+    .tonwa-band-container {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .tonwa-band-container {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .tonwa-band-container {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .tonwa-band-container {
+        max-width: 1140px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .tonwa-band-container {
+        max-width: 1320px;
+    }
+}

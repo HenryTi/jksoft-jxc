@@ -1,0 +1,31 @@
+Biz Permit A菜单 {
+    Item i1;
+    item i2;
+    item i4;
+};
+
+Biz Permit 销售1 {
+    Item 入库;
+    Item 发货;
+    Item 检验;
+}
+Biz Permit 入库 {
+    Item 上架;
+    Item 收货;
+}
+Biz Permit 检验 {
+    Item 初检;
+    Item 复检;
+    Permit 入库;
+};
+
+Biz Role 经理 ver 0.14 {
+    Permit 销售1(检验);
+    Role 销售部经理;
+};
+Biz Role 销售部经理 {
+    Permit 入库;
+}
+Biz Role 检验员 {
+    Permit 检验;
+}
