@@ -1,4 +1,4 @@
-### 项目说明
+### 项目说明 
 1. 建立一个 /projects 目录
 2. 在 /projects 目录下，建/ts-uq子目录。
     1. 从github获取。
