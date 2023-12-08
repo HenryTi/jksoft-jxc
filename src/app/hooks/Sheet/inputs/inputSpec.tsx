@@ -9,11 +9,11 @@ import { ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
 import { budFormRow } from "app/hooks/Bud";
-import { InputProps } from "./usePendInputs";
 import { Calc } from "app/hooks/Calc";
 import { ViewAtomId } from "app/hooks/BizAtom";
 import { PendProxyHander } from "../tool";
 import { FA } from "tonwa-com";
+import { InputProps } from "./input";
 
 
 export interface PropsInputSpec extends InputProps<PendInputSpec> {

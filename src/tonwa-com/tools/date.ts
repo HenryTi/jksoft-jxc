@@ -19,7 +19,7 @@ export function dateFromMinuteId(id: number, timeZone?: number): Date {
     //return new Date((m + minute2020_01_01) * 60000);
     timeZone = timeZone ?? env.timeZone;
     let d = new Date(((id / Math.pow(2, 20)) + minute2020_01_01) * 60000);
-    d.setHours(d.getHours() + timeZone ?? 0);
+    d.setHours(d.getHours() + (timeZone ?? 0));
     return d;
 }
 

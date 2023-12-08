@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import { NamedResults, PickResult } from "../NamedResults";
+import { PickResult } from "../NamedResults";
 import { PendInputAtom } from "app/Biz";
-import { InputProps } from "./usePendInputs";
+import { InputProps } from "./input";
 
 export interface InputAtomProps extends InputProps<PendInputAtom> {
 }

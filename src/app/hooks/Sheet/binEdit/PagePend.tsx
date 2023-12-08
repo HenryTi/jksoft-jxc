@@ -1,10 +1,10 @@
 import { Page, useModal } from "tonwa-app";
 import { BinDetail } from "../SheetStore";
 import { useState } from "react";
-import { List, Sep } from "tonwa-com";
+import { FA, List, Sep } from "tonwa-com";
 import { PendRow } from "../SheetStore";
 import { PagePendProps } from "./model";
-import { ViewPendBand } from "./ViewPendBand";
+import { ViewPendRow } from "./ViewPendRow";
 
 export function PagePend(props: PagePendProps) {
     let { binStore, caption } = props;
@@ -32,7 +32,7 @@ export function PagePend(props: PagePendProps) {
                 ...detail,
                 value,
                 origin: detail.id,             // origin detail id
-                pendFrom: pend,
+                pend,
                 pendValue: value,
                 //sheet,
                 id: undefined,              // 保存之后才有的新输入的 detail id。编辑时有
@@ -43,7 +43,7 @@ export function PagePend(props: PagePendProps) {
         modal.close(ret);
     }
     function ViewItemPendRow({ value: pendRow }: { value: PendRow }) {
-        return <ViewPendBand value={pendRow} hasPrice={hasPrice} hasAmount={hasAmount} {...props} />;
+        return <ViewPendRow value={pendRow} hasPrice={hasPrice} hasAmount={hasAmount} {...props} />;
     }
     function onItemSelect(item: PendRow, isSelected: boolean) {
         const { pend } = item;
@@ -61,7 +61,10 @@ export function PagePend(props: PagePendProps) {
         btnFinish = <button className="btn btn-primary" onClick={onClick}>选入</button>;
     }
     else {
-        btnFinish = <button className="btn btn-outline-primary" onClick={() => modal.close()}>完成</button>;
+        btnFinish = <button className="btn btn-outline-primary" onClick={() => modal.close()}>
+            下一步
+            <FA name="angle-right" className="ms-2" />
+        </button>;
     }
     return <Page header={caption}>
         <List items={pendRows} ViewItem={ViewItemPendRow} className="" onItemSelect={onItemSelectFunc} sep={<Sep sep={5} />} />

@@ -1,3 +1,3 @@
-export * from './usePendInputs';
+export * from './useInputs';
 export * from './inputAtom';
 export * from './inputSpec';

@@ -3,4 +3,4 @@ export * from './ViewMain';
 export * from './PagePend';
 export * from './useCoreDetailAdd';
 export * from './useCoreDetailEdit';
-export * from './ViewDiv';
+export * from './ViewBinDivs';

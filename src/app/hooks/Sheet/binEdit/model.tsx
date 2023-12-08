@@ -1,15 +1,10 @@
-import { EntityBin, EntityPend } from "app/Biz";
-import { BudValue } from "tonwa-app";
-import { SheetStore } from "../SheetStore";
 import { PendRow } from "../SheetStore";
 import { NamedResults } from "../NamedResults";
 import { BinStore } from "../BinEditing";
 
-interface OwnerColl {
-    [row: number]: {
-        [owner: number]: [number, BudValue][];
-    };
-}
+let rowId = 1;
+
+export function getMockId() { return rowId++; }
 
 export interface PendProps {
     // sheetStore: SheetStore;

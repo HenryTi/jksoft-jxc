@@ -1,10 +1,10 @@
 import { ViewSpec } from "app/hooks/View";
 import { Prop, VNamedBud } from "../tool";
 import { OwnedBuds } from "app/hooks/tool";
-import { ViewPendBandEdit } from "./ViewPendBandEdit";
+import { ViewPendRowEdit } from "./ViewPendRowEdit";
 import { PendBandProps } from "./model";
 
-export function ViewPendBand({ value: pendRow
+export function ViewPendRow({ value: pendRow
     , binStore
     , namedResults
     , hasPrice, hasAmount }: PendBandProps) {
@@ -47,7 +47,7 @@ export function ViewPendBand({ value: pendRow
     </div>;
 
     if (div.div === undefined) return <div className="container">{rowContent}</div>;
-    return <ViewPendBandEdit pendRow={pendRow}
+    return <ViewPendRowEdit pendRow={pendRow}
         pendContent={rowContent}
         binStore={binStore}
         namedResults={namedResults} />;

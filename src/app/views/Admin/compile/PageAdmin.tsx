@@ -34,7 +34,7 @@ export function PageAdmin() {
 
 function VCmd({ icon, iconColor, caption, onAct }: Cmd) {
     return <div className="px-3 py-3 d-flex align-items-center cursor-pointer" onClick={onAct}>
-        <FA name={icon} className={'mx-3 ' + iconColor ?? 'text-primary'} fixWidth={true} />
+        <FA name={icon} className={'mx-3 ' + (iconColor ?? 'text-primary')} fixWidth={true} />
         <span>{caption}</span>
         <div className="flex-grow-1" />
         <FA name="angle-right" />

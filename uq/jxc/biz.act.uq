@@ -220,13 +220,14 @@ Biz AC SaveDetail ver 0.2 (
     value VALUE,
     price VALUE,
     amount VALUE,
-    pendFrom ID,
+    pend ID,
     props JSON,
 )
 RETURNS ret (
     id ID,
 ) {
     VAR me ID = Me();
+    VAR pendFrom ID = pend;
     -- 安全判断
     IF base IS NULL OR NOT EXISTS(SELECT x FROM IxState WHERE i=me AND x=base) {
         -- base sheet必须在我的draft里面
@@ -718,7 +719,7 @@ RETURNS main (
 )
 RETURNS details (
     * Bin,
-    pendFrom ID,
+    pend ID,
     pendValue VALUE,
     phrase ID,
 )
@@ -745,7 +746,7 @@ RETURNS props (
             JOIN BizPhrase as c ON c.id=a.base
         WHERE a.id=id AND c.base=$site;
     INTO details SELECT * a
-        , c.pendFrom, d.value as pendValue
+        , c.pendFrom as pend, d.value as pendValue
         , b.ext as phrase
         FROM Bin as a
             JOIN Detail as a1 ON a1.id=a.id

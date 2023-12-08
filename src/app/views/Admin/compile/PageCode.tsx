@@ -22,7 +22,7 @@ export function PageCode() {
         let top: any;
         function Top({ children, icon, color }: { icon: string; color: string; children: React.ReactNode }) {
             return <div className='p-3 border-bottom tonwa-bg-gray-2'>
-                <FA className={'me-3 ' + color ?? ' '} name={icon} />
+                <FA className={'me-3 ' + (color ?? ' ')} name={icon} />
                 {children}
             </div>
         }

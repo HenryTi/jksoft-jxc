@@ -1,8 +1,6 @@
 import { BizBud, Entity, EntityPend, predefinedPendFields } from "app/Biz";
 import { ViewBud } from "app/hooks/Bud";
-import { PendRow, SheetStore } from "./SheetStore";
-import { NamedResults } from "./NamedResults";
-import { BinStore } from "./BinEditing";
+import { BudValue } from "tonwa-app";
 
 export interface Prop<T = any> {
     name: string;
@@ -114,13 +112,6 @@ export function VNamedBud({ name, value, bud }: { name: string; value: any; bud:
     </div>;
 }
 
-export interface PendBandEditProps {
-    //sheetStore: SheetStore;
-    binStore: BinStore;
-    namedResults: NamedResults;
-    pendRow: PendRow;
-}
-
 const sheetFields = ['si', 'sx', 'svalue', 'sprice', 'samount'];
 export class PendProxyHander implements ProxyHandler<any> {
     private readonly entityPend: EntityPend;
@@ -145,3 +136,33 @@ export class PendProxyHander implements ProxyHandler<any> {
     }
 }
 
+export interface BinRow {
+    id: number;
+    i?: number;
+    x?: number;
+    value?: number;
+    price?: number;
+    amount?: number;
+    buds?: { [bud: number]: string | number };
+    owned?: { [bud: number]: [number, BudValue][] };
+};
+
+export interface ValRow extends BinRow {
+    origin?: number;     // origin可能指向源单id，也指向本单parent。
+    pend: number;
+    pendValue?: number;
+}
+/*
+export type BinRow = {
+    id: number;
+    i?: number;
+    x?: number;
+    value?: number;
+    price?: number;
+    amount?: number;
+    buds?: { [bud: number]: string | number };
+    owned?: { [bud: number]: [number, BudValue][] };
+    origin: number;     // origin可能指向源单id，也指向本单parent。
+    pend: number;
+};
+*/

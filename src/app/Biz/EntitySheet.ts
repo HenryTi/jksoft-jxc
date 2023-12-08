@@ -90,7 +90,6 @@ export class BinDiv {
 export class EntityBin extends Entity {
     binPicks: BinPick[];
     rearPick: BinPick;          // endmost pick
-    // inputs: PendInput[];
     div: BinDiv;
     i: BizBud;
     x: BizBud;
@@ -272,11 +271,13 @@ export class EntityBin extends Entity {
                 default: bizBud = this.budColl[bud]; break;
                 case 'i': bizBud = this.i; break;
                 case 'x': bizBud = this.x; break;
+                case '.i':
                 case 'i.':
-                    bizBud = iBaseBud = new BizBudSpecBase(this.biz, 0, 'i.', EnumBudType.none, this);
+                    bizBud = iBaseBud = new BizBudSpecBase(this.biz, 0, '.i', EnumBudType.none, this);
                     break;
+                case '.x':
                 case 'x.':
-                    bizBud = xBaseBud = new BizBudSpecBase(this.biz, 0, 'x.', EnumBudType.none, this);
+                    bizBud = xBaseBud = new BizBudSpecBase(this.biz, 0, '.x', EnumBudType.none, this);
                     break;
                 case 'value': bizBud = this.value; break;
                 case 'price': bizBud = this.price; break;

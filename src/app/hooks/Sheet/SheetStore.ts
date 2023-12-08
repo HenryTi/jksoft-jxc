@@ -12,7 +12,7 @@ import { Calc, Formulas } from "app/hooks/Calc";
 import { BudValue } from "tonwa-app";
 import { OwnerColl, budValuesFromProps } from "../tool/tool";
 import { BudEditing } from "../Bud";
-import { Prop, arrFromJsonArr, arrFromJsonMid } from "./tool";
+import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid, BinRow } from "./tool";
 import { BinStore } from "./BinEditing";
 
 abstract class KeyIdObject {
@@ -34,7 +34,7 @@ abstract class BaseObject extends KeyIdObject {
 export class SheetMain extends BaseObject {
     readonly budEditings: BudEditing[];
     readonly entityMain: EntityBin;
-    readonly _binRow = atom<BinRow>({ buds: {} } as BinRow);
+    readonly _binRow = atom<ValRow>({ buds: {} } as ValRow);
     get binRow() { return getAtomValue(this._binRow) }
     no: string;
 
@@ -135,22 +135,12 @@ export class SheetMain extends BaseObject {
     }
 }
 
-export interface SheetRow extends BinRow {
+export interface SheetRow extends ValRow {
     no: string;
 }
-export interface BinRow {
-    id: number;
-    i: number;
-    x: number;
-    value: number;
-    price: number;
-    amount: number;
-    buds: { [bud: number]: string | number };
-    owned: { [bud: number]: [number, BudValue][] };
-}
+
 export interface PendRow {
     pend: number;               // pend id
-    //sheet: SheetRow;
     origin: number;
     detail: BinRow;
     value: number;
@@ -193,7 +183,7 @@ export class CoreDetail extends DetailBase {
     }
 
     private addRowValue(sections: Section[], rowValue: BinDetail) {
-        const { i, x, value, pendFrom } = rowValue;
+        const { i, x, value, pend } = rowValue;
         if (i === undefined || value === undefined) return;
         let detailSection: Section;
         if (x) {
@@ -214,7 +204,7 @@ export class CoreDetail extends DetailBase {
         let row = new Row(detailSection);
         row.setValue(rowValue);
         detailSection.addRow(row);
-        this.sheetStore.addPendRow(pendFrom, row);
+        this.sheetStore.addPendRow(pend, row);
         return row;
     }
 
@@ -241,10 +231,10 @@ export class ExDetail extends DetailBase {
     }
 }
 
-export interface BinDetail extends BinRow {
-    origin: number;             // origin detail id
-    pendFrom: number;
-    pendValue: number;
+export interface BinDetail extends ValRow {
+    //origin: number;             // origin detail id
+    //pendFrom: number;
+    //pendValue: number;
     // sheet: BinRow;
 }
 
@@ -292,7 +282,7 @@ export class Row extends BaseObject {
             phrase: this.section.coreDetail.entityBin.id,
             ...this.props,
             props: propArr,
-        });
+        } as any);
         if (id !== this.props.id) {
             console.error(`save detail id changed, org: ${this.props.id}, new: ${id}`);
         }
@@ -325,7 +315,7 @@ export class Row extends BaseObject {
         if (amount !== undefined) this.props.amount = row.amount;
         this.props.origin = row.origin;
         this.props.buds = row.buds;
-        this.props.pendFrom = row.pendFrom;
+        this.props.pend = row.pend;
         this.props.owned = row.owned;
         // Object.assign(this.props, row);
     }
@@ -498,8 +488,8 @@ export class SheetStore extends KeyIdObject {
     }
 
     addBinDetail(binDetail: BinDetail) {
-        let { pendFrom } = binDetail;
-        let _sections = this.pendColl[pendFrom];
+        let { pend } = binDetail;
+        let _sections = this.pendColl[pend];
         if (_sections === undefined) {
             debugger;
         }
@@ -517,14 +507,14 @@ export class SheetStore extends KeyIdObject {
     }
 
     delPendRow(row: Row) {
-        let pend = row.props.pendFrom;
+        let pend = row.props.pend;
         let _sections = this.pendColl[pend];
         if (_sections === undefined) return;
         let sections = getAtomValue(_sections);
         for (let section of sections) {
             const { _rows } = section;
             let rows = getAtomValue(_rows);
-            let p = rows.findIndex(v => v.props.pendFrom === pend);
+            let p = rows.findIndex(v => v.props.pend === pend);
             if (p < 0) continue;
             rows.splice(p, 1);
             break;

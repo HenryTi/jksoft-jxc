@@ -154,7 +154,7 @@ function ViewFolder({ folder, index, active }: { folder: Folder; index: string, 
     return <AccordionItem eventKey={index} className="">
         <Accordion.Header>
             <Folder phrase={0} caption={ui.caption}
-                icon={ui.icon} iconColor={'text-' + ui.iconColor ?? 'primary'} />
+                icon={ui.icon} iconColor={'text-' + (ui.iconColor ?? 'primary')} />
         </Accordion.Header>
         <Accordion.Body className="ps-5 pe-0">
             <ViewFolderContent folder={folder} active={sub} />

@@ -24,7 +24,7 @@ function PageActSettings() {
         function ViewPiece({ className, value, icon }: { className?: string; icon?: any; value: EntityPermit | PermitItem }) {
             let { caption, name, type } = value as any;
             if (type === undefined) type = 'item';
-            return <div className={'px-3 py-2 border rounded mx-2 my-2 w-min-10c ' + className ?? ''} >
+            return <div className={'px-3 py-2 border rounded mx-2 my-2 w-min-10c ' + (className ?? '')} >
                 {icon} {caption ?? name}
             </div>
         }
