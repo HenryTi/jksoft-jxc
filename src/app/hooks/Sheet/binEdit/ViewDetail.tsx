@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { BinDetail, BinRow, CoreDetail, Row, Section } from "../SheetStore";
+import { CoreDetail, Row, Section } from "../SheetStore";
 import { FA, LMR, Sep } from "tonwa-com";
 import { ViewSpec } from "app/hooks/View";
 import { useModal } from "tonwa-app";
@@ -10,6 +10,7 @@ import { OwnedBuds } from "../../tool/tool";
 import { useRowEdit } from "./rowEdit";
 import { ViewBud } from "../../Bud";
 import { BinEditing } from "../BinEditing";
+import { BinRow } from "../tool";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);

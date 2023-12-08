@@ -5,7 +5,7 @@ import { usePickFromAtom } from "./fromAtom";
 import { usePickFromSpec } from "./fromSpec";
 import { usePickFromPend } from "./fromPend";
 import { usePickFromQuery } from "./fromQuery";
-import { BinRow, SheetStore } from "../SheetStore";
+import { SheetStore } from "../SheetStore";
 import { NamedResults, PickResult } from "../NamedResults";
 
 export interface ReturnUseBinPicks {

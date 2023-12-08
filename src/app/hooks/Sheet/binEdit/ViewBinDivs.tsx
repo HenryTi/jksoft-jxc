@@ -1,8 +1,9 @@
 import { useAtomValue } from "jotai";
-import { BinStore, ValDiv, BinRow } from "../BinEditing";
+import { BinStore, ValDiv } from "../BinEditing";
 import { FA } from "tonwa-com";
 import { getMockId } from "./model";
 import { ChangeEvent } from "react";
+import { BinRow, ValRow } from "../tool";
 
 export function ViewBinDivs({ binStore, editable }: { binStore: BinStore; editable: boolean; }) {
     return <div>
@@ -66,7 +67,7 @@ function ViewRow({ binStore, div, editable }: { binStore: BinStore; div: ValDiv;
     }
     function onAddSub() {
         let rId = getMockId();
-        let valRow: BinRow = { id: rId, origin: id, pend, a: 1, b: 2 };
+        let valRow: ValRow = { id: rId, origin: id, pend };
         binStore.setValRow(valRow);
     }
     function onDelSub() {
