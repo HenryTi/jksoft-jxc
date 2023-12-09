@@ -7,13 +7,13 @@ import { useParams } from "react-router-dom";
 import { ReturnGetPendRetSheet, UqExt } from "uqs/UqDefault";
 import { WritableAtom, atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
-import { PickFunc, RearPickResultType } from "./binPick/useBinPicks";
+import { PickFunc, RearPickResultType } from "../binPick/useBinPicks";
 import { Calc, Formulas } from "app/hooks/Calc";
 import { BudValue } from "tonwa-app";
-import { OwnerColl, budValuesFromProps } from "../tool/tool";
-import { BudEditing } from "../Bud";
-import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid, BinRow } from "./tool";
-import { BinStore } from "./BinEditing";
+import { OwnerColl, budValuesFromProps } from "../../tool";
+import { BudEditing } from "../../Bud";
+import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid, BinRow } from "../tool";
+import { DivStore } from "./DivStore";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -390,7 +390,7 @@ export class SheetStore extends KeyIdObject {
     readonly caption: string;
     readonly idOnUrl: number;
     pendColl: { [pend: number]: WritableAtom<Section[], any, any> };
-    readonly binStore: BinStore;
+    readonly binStore: DivStore;
 
     constructor(uq: UqExt, biz: Biz, entitySheet: EntitySheet, id: number) {
         super();
@@ -413,7 +413,7 @@ export class SheetStore extends KeyIdObject {
             this.detailExs.push(new ExDetail(this, detail, caption));
         }
         this.caption = entitySheet.caption ?? entitySheet.name;
-        this.binStore = new BinStore(this, this.detail.entityBin);
+        this.binStore = new DivStore(this, this.detail.entityBin);
     }
 
     async load() {

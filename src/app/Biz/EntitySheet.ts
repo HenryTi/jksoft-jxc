@@ -78,6 +78,7 @@ export class BinDiv {
     buds: BizBud[];
     div: BinDiv;
     constructor(parent: BinDiv) { this.parent = parent; }
+    /*
     getLevelDiv(level: number) {
         let p: BinDiv = this;
         for (let i = 0; i < level; i++) {
@@ -85,6 +86,7 @@ export class BinDiv {
         }
         return p;
     }
+    */
 }
 
 export class EntityBin extends Entity {

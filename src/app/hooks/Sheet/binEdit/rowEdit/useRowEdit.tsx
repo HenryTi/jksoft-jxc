@@ -8,7 +8,7 @@ import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { BinOwnedBuds } from "../ViewDetail";
 // import { Row } from "../../SheetStore";
-import { BinEditing } from "../../BinEditing";
+import { BinEditing } from "../../store";
 
 export function useRowEdit() {
     const modal = useModal();
@@ -35,7 +35,7 @@ function ModalInputRow({ /*row, */binEditing }: { /*row: Row; */binEditing: BinE
     //const { entityBin } = section.coreDetail;
     const { entityBin } = binEditing;
     const { i: budI, x: budX } = entityBin;
-    const { binRow: binDetail } = binEditing;
+    const { valRow: binDetail } = binEditing;
     const [submitable, setSubmitable] = useState(binEditing.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;

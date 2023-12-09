@@ -1,6 +1,6 @@
-import { PendRow } from "../SheetStore";
+import { PendRow } from "../store";
 import { NamedResults } from "../NamedResults";
-import { BinStore } from "../BinEditing";
+import { DivStore } from "../store";
 
 let rowId = 1;
 
@@ -11,7 +11,7 @@ export interface PendProps {
     // bin: EntityBin;
     // entity: EntityPend;
     // ownerColl: OwnerColl;
-    binStore: BinStore;
+    binStore: DivStore;
     namedResults: NamedResults;
 }
 

@@ -1,25 +1,25 @@
 import { useAtomValue } from "jotai";
-import { BinStore, ValDiv } from "../BinEditing";
+import { DivStore, ValDiv } from "../store";
 import { FA } from "tonwa-com";
 import { getMockId } from "./model";
 import { ChangeEvent } from "react";
 import { BinRow, ValRow } from "../tool";
 
-export function ViewBinDivs({ binStore, editable }: { binStore: BinStore; editable: boolean; }) {
+export function ViewBinDivs({ binStore, editable }: { binStore: DivStore; editable: boolean; }) {
     return <div>
         <ViewDivs binStore={binStore} div={binStore.valDiv} editable={editable} />
     </div>;
     // <button className="btn btn-primary" onClick={onRedraw}>刷新</button>
 }
 
-function ViewDivs({ binStore, div, editable, className }: { binStore: BinStore; div: ValDiv; editable: boolean; className?: string; }) {
+function ViewDivs({ binStore, div, editable, className }: { binStore: DivStore; div: ValDiv; editable: boolean; className?: string; }) {
     const divs = useAtomValue(div.atomDivs);
     return <div className={className}>
         {divs.map(v => <ViewDiv key={v.id} binStore={binStore} div={v} editable={editable} />)}
     </div>;
 }
 
-function ViewDiv({ binStore, div, editable }: { binStore: BinStore; div: ValDiv; editable: boolean; }) {
+function ViewDiv({ binStore, div, editable }: { binStore: DivStore; div: ValDiv; editable: boolean; }) {
     const { atomValRow, atomDivs } = div;
     let vRow: any;
     if (atomValRow !== undefined) {
@@ -31,7 +31,7 @@ function ViewDiv({ binStore, div, editable }: { binStore: BinStore; div: ValDiv;
     </div>
 }
 
-function ViewRow({ binStore, div, editable }: { binStore: BinStore; div: ValDiv; editable: boolean; }) {
+function ViewRow({ binStore, div, editable }: { binStore: DivStore; div: ValDiv; editable: boolean; }) {
     const { atomValRow, atomDivs, atomValue } = div;
     const val = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);

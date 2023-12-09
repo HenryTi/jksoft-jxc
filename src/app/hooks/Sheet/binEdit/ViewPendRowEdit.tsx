@@ -1,12 +1,12 @@
 import { FA } from "tonwa-com";
-import { BinDetail, Row, Section } from "../SheetStore";
+import { BinDetail, Row, Section } from "../store";
 import { useAtomValue } from "jotai";
 import { useInputs } from "../inputs";
 import { useRowEdit } from "./rowEdit";
-import { BinEditing, DivEditProps, UseInputsProps } from "../BinEditing";
+import { BinEditing, DivEditProps, UseInputsProps } from "../store";
 import { useModal } from "tonwa-app";
 import { getMockId } from "./model";
-import { ValRow } from "../tool";
+import { PendProxyHander, ValRow } from "../tool";
 
 export interface ViewPendRowEditProps extends DivEditProps {
     pendContent: any;
@@ -32,10 +32,15 @@ export function ViewPendRowEdit({ pendRow, pendContent, binStore, namedResults }
         sheetStore.addPendRow(pendId, { props: { id: rowId++ } } as any);
     }
     */
+    const { rearPick, pend } = entityBin;
+    let nr = {
+        ...namedResults,
+    };
+    nr[rearPick.name] = new Proxy(pendRow, new PendProxyHander(pend));
     const onEdit = onAddNew;
     async function onAddNew() {
         const useInputsProps: UseInputsProps = {
-            namedResults,
+            namedResults: nr,
             binStore,
             binDiv: binStore.binDiv,
             valDiv,
@@ -83,7 +88,7 @@ export function ViewPendRowEdit({ pendRow, pendContent, binStore, namedResults }
         let retRowEdit = await rowEdit(binEditing);
         if (retRowEdit === undefined) return;
         let binDetail: BinDetail = {
-            ...(binEditing.binRow),
+            ...(binEditing.valRow),
             origin: origin,             // origin detail id
             pend: pendId,
             pendValue: value,

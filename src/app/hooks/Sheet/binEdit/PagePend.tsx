@@ -1,8 +1,8 @@
 import { Page, useModal } from "tonwa-app";
-import { BinDetail } from "../SheetStore";
+import { BinDetail } from "../store";
 import { useState } from "react";
 import { FA, List, Sep } from "tonwa-com";
-import { PendRow } from "../SheetStore";
+import { PendRow } from "../store";
 import { PagePendProps } from "./model";
 import { ViewPendRow } from "./ViewPendRow";
 

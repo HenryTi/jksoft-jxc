@@ -1,8 +1,8 @@
 import { useCallback } from "react";
-import { CoreDetail, Row, Section } from "../SheetStore";
+import { CoreDetail, Row, Section } from "../store";
 import { RearPickResultType, useBinPicks } from "../binPick";
 import { useRowEdit } from "./rowEdit";
-import { BinEditing } from "../BinEditing";
+import { BinEditing } from "../store";
 import { PickResult } from "../NamedResults";
 
 export function useCoreDetailAdd(coreDetail: CoreDetail) {
@@ -26,7 +26,7 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
                 namedResults[binPick.name] = rowProps;
                 let binEditing = new BinEditing(entityBin);
                 binEditing.setNamedParams(namedResults);
-                let { binRow } = binEditing;
+                let { valRow: binRow } = binEditing;
                 if (binRow.value === undefined) {
                     binEditing.setValue('value', 0, undefined);
                 }
@@ -49,7 +49,7 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
             binEditing.setNamedParams(namedResults);
             let ret = await rowEdit(binEditing);
             if (ret === true) {
-                Object.assign(row.props, binEditing.binRow);
+                Object.assign(row.props, binEditing.valRow);
                 await row.addToSection();
                 await coreDetail.sheetStore.reloadRow(row.props.id);
             }

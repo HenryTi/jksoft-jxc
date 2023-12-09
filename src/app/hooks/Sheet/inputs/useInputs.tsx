@@ -1,18 +1,20 @@
 import { PendInput, PendInputAtom, PendInputSpec, EntityBin } from "app/Biz";
-import { useInputAtom } from "./inputAtom";
-import { useInputSpec } from "./inputSpec";
+import { inputAtom } from "./inputAtom";
+import { inputSpec } from "./inputSpec";
 import { useCallback } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
 import { NamedResults } from "../NamedResults";
-import { UseInputsProps } from "../BinEditing";
-import { inputDiv } from "./inputDiv";
+import { UseInputsProps } from "../store";
+import { InputDivProps, inputDiv } from "./inputDiv";
 import { ValRow } from "../tool";
+import { useUqApp } from "app";
+import { useModal } from "tonwa-app";
 
 export function useInputs() {
-    const inputAtom = useInputAtom();
-    const inputSpec = useInputSpec();
+    const uqApp = useUqApp();
+    const modal = useModal();
     return useCallback(async function (props: UseInputsProps): Promise<NamedResults> {
-        const { binStore, binDiv, valDiv } = props;
+        const { binDiv, valDiv } = props;
         let ret: NamedResults = { ...props.namedResults };
         for (let p = binDiv; p !== undefined; p = p.div) {
             const { inputs } = p;
@@ -27,12 +29,16 @@ export function useInputs() {
                         case BizPhraseType.atom:
                             retInput = await inputAtom({
                                 ...props,
+                                uqApp,
+                                modal,
                                 binInput: input as PendInputAtom,
                             });
                             break;
                         case BizPhraseType.spec:
                             retInput = await inputSpec({
                                 ...props,
+                                uqApp,
+                                modal,
                                 binInput: input as PendInputSpec,
                             });
                             break;
@@ -41,9 +47,19 @@ export function useInputs() {
                     ret[input.name] = retInput;
                 }
             }
-            let valRow: ValRow = await inputDiv(binStore, p, valDiv, ret);
+            const inputDivProps: InputDivProps = {
+                ...props,
+                binDiv: p,
+                valDiv,
+                namedResults: ret,
+                modal,
+                uqApp,
+            }
+            let valRow: ValRow = await inputDiv(inputDivProps);
             if (valRow === undefined) return;
-            valDiv.setValRow(valRow);
+            if (valDiv !== undefined) {
+                valDiv.setValRow(valRow);
+            }
             // save detail;
         }
         return ret;

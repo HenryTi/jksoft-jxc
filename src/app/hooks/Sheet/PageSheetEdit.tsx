@@ -1,5 +1,5 @@
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
-import { SheetStore } from "./SheetStore";
+import { SheetStore } from "./store";
 import { ButtonAsync, FA, LMR, from62, to62, useEffectOnce } from "tonwa-com";
 import { ViewBinDivs, ViewMain } from "./binEdit";
 import { ViewDetail } from "./binEdit";

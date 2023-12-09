@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { CoreDetail, Row, Section } from "../SheetStore";
+import { CoreDetail, Row, Section } from "../store";
 import { FA, LMR, Sep } from "tonwa-com";
 import { ViewSpec } from "app/hooks/View";
 import { useModal } from "tonwa-app";
@@ -9,7 +9,7 @@ import { BizBud } from "app/Biz";
 import { OwnedBuds } from "../../tool/tool";
 import { useRowEdit } from "./rowEdit";
 import { ViewBud } from "../../Bud";
-import { BinEditing } from "../BinEditing";
+import { BinEditing } from "../store";
 import { BinRow } from "../tool";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
@@ -80,7 +80,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         // binEditing.setValues(binDetail);
         let ret = await rowEdit(binEditing);
         if (ret === true) {
-            Object.assign(binDetail, binEditing.binRow);
+            Object.assign(binDetail, binEditing.valRow);
             await row.changed();
         }
     }

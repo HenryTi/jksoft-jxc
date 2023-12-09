@@ -1,4 +1,4 @@
-import { SheetMain } from "../SheetStore";
+import { SheetMain } from "../store";
 import { BudEditing, EditBudInline, ViewSpecR } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "../ViewSheetTime";
