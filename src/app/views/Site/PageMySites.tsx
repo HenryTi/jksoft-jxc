@@ -1,7 +1,7 @@
 import { useUqApp } from "app/UqApp";
 import { IDView, Page } from "tonwa-app";
 import { FA, LMR, Sep } from "tonwa-com";
-import { Permit } from ".";
+import { Permit } from "./Permit";
 import { Link, useNavigate } from "react-router-dom";
 import React from "react";
 import { pathSiteAdmin } from "../Admin/site";

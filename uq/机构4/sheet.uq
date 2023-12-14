@@ -176,6 +176,49 @@ BIN 入库单明细 ver 0.2 {
     };
 }
 
+BIN 入库单明细1 ver 0.2 {
+    Pick 采购机构 FROM 公司机构信息;
+    Pick 收货物流中心 FROM 物流中心信息; 
+    Pick pend '待入库商品' FROM 待入库账 { 
+        param param1 = 收货物流中心;
+    };
+    I.base;
+    Div {
+        Input spec SPEC 药品批次 Base=Pend.i; 
+        I '商品' 货品信息  { 
+                : 规格型号;
+                : 单位; 
+                : 注册人或备案人;   
+                : 受托生产企业;
+                : 注册证号或备案凭证号;
+                : 生产许可证号; 
+                : 存储条件; 
+        }= Pend.i;
+        Price '单价' := pend.price; 
+        Amount '金额'  = Value * Price;   
+        Div {
+            Prop 库区 Radio 库区类型; 
+            Value '入库数量' := pend.value >=0 <=订单数量; 
+        }
+    }
+    PROP {
+        订单数量'订单数量' = pend.value; 
+        采购机构 ATOM 公司机构信息= Pend.采购机构;
+        收货物流中心 ATOM 物流中心信息= Pend.收货物流中心;
+        供应商 ATOM 供应商信息= Pend.供应商;
+        供应商1 ATOM = Pend.si;
+    } 
+    ACT {
+        Biz Pend -= value;
+        Biz Pend 待采购结算账 SET 供应商=%供应商,采购机构=%采购机构,收货物流中心=%收货物流中心;
+        --Biz Title 库存.数量 of %I += %value;
+        --Biz Title 库存.可出数量 of %I += %value;
+        Biz Title 库存.数量 of (#物流中心货品(%收货物流中心,%I)) += %value;
+        Biz Title 库存.可出数量 of (#物流中心货品(%收货物流中心,%I)) += %value;
+        --Biz Title 库存.数量 of (#物流中心公司机构货品((#物流中心公司机构(收货物流中心,采购机构)),%I)) += %value;
+    };
+}
+
 SHEET 销售单 {
     Main 销售单主表;
     Detail 销售单明细;

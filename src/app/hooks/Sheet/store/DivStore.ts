@@ -1,4 +1,4 @@
-import { PendRow, SheetStore } from ".";
+import { PendRow, SheetStore } from "./SheetStore";
 import { BinDiv, EntityBin } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
 import { OwnerColl, budValuesFromProps } from "../../tool";
@@ -6,14 +6,14 @@ import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "../tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { NamedResults } from "../NamedResults";
-import { UqApp } from "app";
-import { Modal } from "tonwa-app";
+import { ValDiv } from './ValDiv';
 
 export class DivStore {
     private valColl: { [id: number]: ValDiv };
     readonly sheetStore: SheetStore;
     readonly entityBin: EntityBin;
     readonly binDiv: BinDiv;
+    namedResults: NamedResults;
     pendColl: { [pend: number]: WritableAtom<ValDiv, any, any> };
     pendRows: PendRow[];
     ownerColl: OwnerColl;
@@ -81,7 +81,7 @@ export class DivStore {
         if (valParent === undefined) {
             valParent = this.valDiv;
         }
-        const { atomDivs } = valParent;
+        const { atomValDivs: atomDivs } = valParent;
         let divs = getAtomValue(atomDivs);
         let p = divs.findIndex(v => v.id === id);
         if (p < 0) debugger;
@@ -158,7 +158,7 @@ export class DivStore {
         let { id } = valRow;
         // let level = valDiv.level + 1;
         //for (let p = binDiv; p !== undefined; p = p.div, level++) {
-        const { atomDivs } = valDiv;
+        const { atomValDivs: atomDivs } = valDiv;
         if (atomDivs === undefined) {
             // break;
             debugger;
@@ -185,72 +185,23 @@ export class DivStore {
         */
         return subVal;
     }
+
+    setValColl(valDiv: ValDiv) {
+        this.valColl[valDiv.id] = valDiv;
+    }
+
+    getPendRow(pend: number) {
+        return this.pendRows.find(v => v.pend === pend);
+    }
 }
 
 export interface DivEditProps {
-    binStore: DivStore;
-    namedResults: NamedResults;
+    divStore: DivStore;
+    // namedResults: NamedResults;
     pendRow: PendRow;
 }
 
 export interface UseInputsProps extends DivEditProps {
     binDiv: BinDiv;
-    valDiv: ValDiv;
-}
-
-// origin 指向本单时，构成行层级结构。
-/*
-export type BinRow = {
-    id: number;
-    i?: number;
-    x?: number;
-    value?: number;
-    price?: number;
-    amount?: number;
-    buds?: { [bud: number]: string | number };
-    owned?: { [bud: number]: [number, BudValue][] };
-    origin: number;     // origin可能指向源单id，也指向本单parent。
-    pend: number;
-};
-*/
-
-export class ValDiv {
-    readonly atomValRow: WritableAtom<ValRow, any, any>;
-    readonly atomDivs: WritableAtom<ValDiv[], any, any>;
-    readonly atomValue: WritableAtom<number, any, any>;
-    readonly id: number;
-    constructor(binDiv: BinDiv, valRow: ValRow) {
-        if (valRow !== undefined) {
-            const { value, id } = valRow;
-            this.atomValRow = atom<any>(valRow);
-            this.id = id;
-            this.atomValue = atom(value ?? 0);
-        }
-        if (binDiv.div !== undefined) {
-            this.atomDivs = atom<ValDiv[]>([]);
-            this.atomValue = atom(
-                get => {
-                    let divs = get(this.atomDivs);
-                    let sum = divs.reduce((sum: number, div: ValDiv) => {
-                        let v = get(div.atomValue);
-                        return sum + v;
-                    }, 0);
-                    return sum;
-                },
-                (get, set, newVal) => {
-                }
-            )
-        }
-    }
-
-    setValRow(valRow: any) {
-        if (this.id !== valRow.id) debugger;
-        setAtomValue(this.atomValRow, valRow);
-    };
-
-    setValue(value: number) {
-        let valRow = getAtomValue(this.atomValRow);
-        valRow.value = value;
-        setAtomValue(this.atomValue, value);
-    }
+    // valDiv: ValDiv;
 }

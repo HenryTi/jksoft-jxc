@@ -11,7 +11,7 @@ import { getDays } from "app/tool";
 import { budFormRow } from "app/hooks/Bud";
 import { Calc } from "app/hooks/Calc";
 import { ViewAtomId } from "app/hooks/BizAtom";
-import { PendProxyHander } from "../tool";
+import { PendProxyHander, btnNext, cnNextClassName } from "../tool";
 import { FA } from "tonwa-com";
 import { InputProps } from "./inputBase";
 
@@ -25,7 +25,8 @@ export interface PropsInputSpec extends InputProps<PendInputSpec> {
 };
 
 export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
-    const { namedResults, binInput, pendRow, uqApp, modal } = props;
+    const { binInput, pendRow, uqApp, modal, divStore } = props;
+    const { namedResults } = divStore;
     const { entityPend } = binInput;
     const formulas: [string, string][] = [
         ['base', binInput.baseExp],
@@ -60,8 +61,8 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     function PagePickSpec() {
         const { id: entityId, caption, name, keys, props } = entitySpec;
         const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
-        const submitCaption = <>下一步 <FA name="arrow-right" className="ms-2" /></>;
-        const submitClassName: string = "btn btn-outline-primary";
+        const submitCaption = btnNext;
+        const submitClassName: string = cnNextClassName;
 
         let formRows: FormRow[] = [
             ...keys.map(v => budFormRow(v, true)),

@@ -11,8 +11,8 @@ export interface PendProps {
     // bin: EntityBin;
     // entity: EntityPend;
     // ownerColl: OwnerColl;
-    binStore: DivStore;
-    namedResults: NamedResults;
+    divStore: DivStore;
+    // namedResults: NamedResults;
 }
 
 export interface PagePendProps extends PendProps {

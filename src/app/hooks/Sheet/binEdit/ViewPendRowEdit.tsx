@@ -1,24 +1,21 @@
-import { FA } from "tonwa-com";
-import { BinDetail, Row, Section } from "../store";
+import { FA, setAtomValue } from "tonwa-com";
+import { Row, Section } from "../store";
 import { useAtomValue } from "jotai";
 import { useInputs } from "../inputs";
 import { useRowEdit } from "./rowEdit";
-import { BinEditing, DivEditProps, UseInputsProps } from "../store";
-import { useModal } from "tonwa-app";
-import { getMockId } from "./model";
-import { PendProxyHander, ValRow } from "../tool";
+import { DivEditProps, UseInputsProps } from "../store";
+import { PendProxyHander } from "../tool";
 
 export interface ViewPendRowEditProps extends DivEditProps {
     pendContent: any;
 }
 
-export function ViewPendRowEdit({ pendRow, pendContent, binStore, namedResults }: ViewPendRowEditProps) {
-    const modal = useModal();
-    const { entityBin } = binStore;
+export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowEditProps) {
+    const { entityBin, binDiv } = divStore;
     const inputs = useInputs();
     const rowEdit = useRowEdit();
     let { pend: pendId, origin, value } = pendRow;
-    let _valDiv = binStore.pendColl[pendId];
+    let _valDiv = divStore.pendColl[pendId];
     let valDiv = useAtomValue(_valDiv);
     /*
     async function onEdit() {
@@ -33,20 +30,29 @@ export function ViewPendRowEdit({ pendRow, pendContent, binStore, namedResults }
     }
     */
     const { rearPick, pend } = entityBin;
-    let nr = {
-        ...namedResults,
-    };
-    nr[rearPick.name] = new Proxy(pendRow, new PendProxyHander(pend));
+    //let nr = {
+    //    ...namedResults,
+    //};
+    // nr[rearPick.name] = new Proxy(pendRow, new PendProxyHander(pend));
     const onEdit = onAddNew;
     async function onAddNew() {
+        let origin: number = undefined;
+        divStore.namedResults[rearPick.name] = new Proxy(pendRow, new PendProxyHander(pend));
         const useInputsProps: UseInputsProps = {
-            namedResults: nr,
-            binStore,
-            binDiv: binStore.binDiv,
-            valDiv,
+            // namedResults: nr,
+            divStore,
+            binDiv: divStore.binDiv,
+            // valDiv: vd,
             pendRow,
         }
-        let retInputs = await inputs(useInputsProps);
+        let retValDiv = await inputs(useInputsProps);
+        if (retValDiv === undefined) return;
+        // let id = getMockId();
+        // let vd = new ValDiv(binDiv, { id, pend: pendId, origin } as ValRow);
+        divStore.valDiv.setValDiv(retValDiv);
+        setAtomValue(_valDiv, retValDiv);
+        return;
+        /*
         if (retInputs === undefined) {
             let r1 = getMockId();
             let r1_1 = getMockId();
@@ -82,6 +88,8 @@ export function ViewPendRowEdit({ pendRow, pendContent, binStore, namedResults }
             ], true);
             return;
         }
+        */
+        /*
         let binRow: ValRow = undefined;
         const binEditing = new BinEditing(entityBin, binRow);
         binEditing.setNamedParams(retInputs);
@@ -94,6 +102,7 @@ export function ViewPendRowEdit({ pendRow, pendContent, binStore, namedResults }
             pendValue: value,
         }
         binStore.sheetStore.addBinDetail(binDetail);
+        */
     }
     if (valDiv !== undefined) {
         function Doing() {

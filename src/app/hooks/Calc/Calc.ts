@@ -126,6 +126,10 @@ export class Calc {
         return this._results;
     }
 
+    stopFormula(name: string) {
+        this.formulas.delete(name);
+    }
+
     addValues(name: string, values: object): void {
         this.calcSpace.addValues(name, values);
         this._results = undefined;

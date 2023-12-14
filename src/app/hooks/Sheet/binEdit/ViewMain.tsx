@@ -21,7 +21,7 @@ export function ViewMain({ main }: { main: SheetMain }) {
         let { id, caption, name } = bizBud;
         let value = buds[id];
         propRow.push(<div key={id} className="col-3">
-            <div className={'small ' + cn}>{caption ?? name}</div>
+            <div className={'ps-2 small ' + cn}>{caption ?? name}</div>
             <div className="py-1"><EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} /></div>
         </div>);
         if (i === length - 1) break;
@@ -54,8 +54,7 @@ export function ViewMain({ main }: { main: SheetMain }) {
         <div className="row py-3 border-bottom border-secondary-subtle">
             <div className="col-3">
                 <div className="small text-secondary">单据编号</div>
-                <div><b>{no}</b></div>
-                <ViewSheetTime id={idBin} />
+                <div>{no} &nbsp; <ViewSheetTime id={idBin} /></div>
             </div>
             <ViewIdField bud={budI} value={i} />
             <ViewIdField bud={budX} value={x} />

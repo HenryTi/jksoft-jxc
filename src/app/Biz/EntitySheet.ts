@@ -4,6 +4,7 @@ import { BizBud, BizBudSpecBase, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
+import { UI } from "app/ui";
 
 export interface PickParam {
     name: string;
@@ -73,11 +74,16 @@ export class PendInputAtom extends PendInput {
 }
 
 export class BinDiv {
+    readonly entityBin: EntityBin;
     readonly parent: BinDiv;
     inputs: PendInput[];
     buds: BizBud[];
     div: BinDiv;
-    constructor(parent: BinDiv) { this.parent = parent; }
+    ui: Partial<UI>;
+    constructor(entityBin: EntityBin, parent: BinDiv) {
+        this.entityBin = entityBin;
+        this.parent = parent;
+    }
     /*
     getLevelDiv(level: number) {
         let p: BinDiv = this;
@@ -239,16 +245,17 @@ export class EntityBin extends Entity {
             this.x = this.buildBudPickable(this.x as any);
         }
         let div = this.div;
-        this.div = new BinDiv(undefined);
+        this.div = new BinDiv(this, undefined);
         this.scanDiv(this.div, div);
     }
 
     private scanDiv(binDiv: BinDiv, div: any) {
-        let { inputs, div: subDiv, buds } = div;
+        let { inputs, div: subDiv, buds, ui } = div;
+        binDiv.ui = ui;
         binDiv.inputs = this.scanInputs(inputs);
         binDiv.buds = this.scanBinBuds(buds);
         if (subDiv !== undefined) {
-            let subBinDiv = binDiv.div = new BinDiv(binDiv);
+            let subBinDiv = binDiv.div = new BinDiv(this, binDiv);
             this.scanDiv(subBinDiv, subDiv);
         }
     }

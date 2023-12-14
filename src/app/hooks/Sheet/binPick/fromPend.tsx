@@ -16,7 +16,7 @@ export function usePickFromPend() {
     // const refPendValues = useRef<{ pendRows: PendRow[]; ownerColl: OwnerColl; }>(undefined)
     const pickParam = usePageParams();
     return useCallback(
-        async function pickFromPend(binStore: DivStore, namedResults: NamedResults, binPick: BinPick): Promise<PickResult[]> {
+        async function pickFromPend(divStore: DivStore, namedResults: NamedResults, binPick: BinPick): Promise<PickResult[]> {
             let { name, caption, pick, pickParams, bin } = binPick;
             let pickBase = pick as PickPend;
             let entityPend = pickBase.from;
@@ -37,22 +37,23 @@ export function usePickFromPend() {
             else {
                 retParam = {};
             }
-            await binStore.loadPend(retParam);
+            await divStore.loadPend(retParam);
             /*
             if (refPendValues.current === undefined) {
                 refPendValues.current = 
             }
             const { pendRows, ownerColl } = refPendValues.current;
             */
+            divStore.namedResults = namedResults;
             let props: PagePendProps = {
                 caption,
                 // bin,
-                binStore,
+                divStore,
                 // entity: pickBase.from,
                 search: [],
                 // pendRows,
                 // ownerColl,
-                namedResults,
+                // namedResults,
             };
 
             let inputed = await modal.open<BinDetail[]>(<PagePend {...props} />);

@@ -1,6 +1,7 @@
 import { BizBud, Entity, EntityPend, predefinedPendFields } from "app/Biz";
 import { ViewBud } from "app/hooks/Bud";
 import { BudValue } from "tonwa-app";
+import { FA } from "tonwa-com";
 
 export interface Prop<T = any> {
     name: string;
@@ -152,6 +153,10 @@ export interface ValRow extends BinRow {
     pend: number;
     pendValue?: number;
 }
+
+export const btnNext = <>下一步 <FA name="arrow-right" className="ms-2" /></>;
+export const cnNextClassName: string = "btn btn-primary";
+
 /*
 export type BinRow = {
     id: number;

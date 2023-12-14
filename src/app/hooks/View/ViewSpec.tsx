@@ -56,9 +56,8 @@ export function ViewSpec({ id }: { id: number; }) {
 
 export function ViewSpecR({ id }: { id: number; }) {
     function ViewAtom({ no, ex }: { no: string; ex: string; }) {
-        return <div>
-            <div><b>{ex}</b></div>
-            <div className="small text-secondary">{no}</div>
+        return <div title={'编号: ' + no}>
+            {ex}
         </div>;
     }
     return <ViewSpecBase id={id} ViewAtom={ViewAtom} />

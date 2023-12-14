@@ -41,12 +41,12 @@ function registerOptions(type: HTMLInputTypeAttribute, label: string | JSX.Eleme
         let min: any;
         const { min: vMin } = options;
         if (vMin !== undefined) {
-            min = { value: vMin, message: `最小值${vMin}` };
+            min = { value: vMin, message: `最小值 ${vMin}` };
         }
         let max: any;
         const { max: vMax } = options;
         if (vMax !== undefined) {
-            max = { value: vMax, message: `最大值${vMax}` };
+            max = { value: vMax, message: `最大值 ${vMax}` };
         }
         return { ...options, required, min, max };
     }
@@ -74,7 +74,7 @@ export function BandInput(props: BandInputProps) {
     if (type === 'hidden') label = null;
     return <Band label={label} labelClassName={labelClassName}>
         {vInput}
-        {error && <div className="invalid-feedback mt-1">
+        {error && <div className="invalid-feedback mt-1 ms-2">
             {error.message?.toString()}
         </div>}
     </Band>
@@ -203,7 +203,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
 
     const { radios } = row as FormRadios;
     if (radios !== undefined) {
-        const { name, default: defaultValue, readOnly } = row as FormRadios;
+        const { name, default: defaultValue, readOnly, options } = row as FormRadios;
         return <Band label={label}>
             {
                 radios.map((v, index) => {
@@ -213,7 +213,9 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
                             defaultChecked={value === defaultValue}
                             readOnly={readOnly}
                             value={value}
-                            type="radio" {...register(name)} />
+                            type="radio" {...register(name)}
+                            onChange={options?.onChange}
+                        />
                         {label ?? name}
                     </label>
                 })
@@ -282,11 +284,16 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
         case 'submit':
             // readOnly={readOnly}
             return <Band>
-                <button type="submit" disabled={options?.disabled}
-                    className={(row as FormSubmit).className ?? 'btn btn-primary'}
-                >
-                    {(label as string) ?? '提交'}
-                </button>
+                <div className="d-flex">
+                    <div className="flex-fill">
+                        <button type="submit" disabled={options?.disabled}
+                            className={(row as FormSubmit).className ?? 'btn btn-primary'}
+                        >
+                            {(label as string) ?? '提交'}
+                        </button>
+                    </div>
+                    {(row as FormSubmit).right}
+                </div>
             </Band>;
     }
 }

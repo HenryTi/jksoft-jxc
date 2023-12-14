@@ -5,10 +5,10 @@ import { ViewPendRowEdit } from "./ViewPendRowEdit";
 import { PendBandProps } from "./model";
 
 export function ViewPendRow({ value: pendRow
-    , binStore
-    , namedResults
+    , divStore
+    //, namedResults
     , hasPrice, hasAmount }: PendBandProps) {
-    const { entityBin, ownerColl } = binStore;
+    const { entityBin, ownerColl } = divStore;
     const { div, pend: entityPend } = entityBin;
     let { i: iBud } = entityPend;
 
@@ -49,6 +49,5 @@ export function ViewPendRow({ value: pendRow
     if (div.div === undefined) return <div className="container">{rowContent}</div>;
     return <ViewPendRowEdit pendRow={pendRow}
         pendContent={rowContent}
-        binStore={binStore}
-        namedResults={namedResults} />;
+        divStore={divStore} />;
 }

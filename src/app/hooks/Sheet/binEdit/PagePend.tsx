@@ -7,8 +7,8 @@ import { PagePendProps } from "./model";
 import { ViewPendRow } from "./ViewPendRow";
 
 export function PagePend(props: PagePendProps) {
-    let { binStore, caption } = props;
-    let { entityBin: { pend: entityPend, div: div }, pendRows } = binStore;
+    let { divStore, caption } = props;
+    let { entityBin: { pend: entityPend, div: div }, pendRows } = divStore;
     const modal = useModal();
     let { name: pendName, predefinedFields } = entityPend;
     let [selectedItems, setSelectedItems] = useState<{ [id: number]: PendRow; }>({});

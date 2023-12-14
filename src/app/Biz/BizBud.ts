@@ -1,5 +1,5 @@
 import { ID } from "tonwa-uq";
-import { EntityAtom, EntityPick } from ".";
+import { EntityAtom, EntityPick } from "./EntityAtom";
 import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";

@@ -4,18 +4,22 @@ import { inputSpec } from "./inputSpec";
 import { useCallback } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
 import { NamedResults } from "../NamedResults";
-import { UseInputsProps } from "../store";
+import { UseInputsProps, ValDiv } from "../store";
 import { InputDivProps, inputDiv } from "./inputDiv";
-import { ValRow } from "../tool";
+import { BinRow, ValRow } from "../tool";
 import { useUqApp } from "app";
 import { useModal } from "tonwa-app";
+import { getMockId } from "../binEdit/model";
 
 export function useInputs() {
     const uqApp = useUqApp();
     const modal = useModal();
-    return useCallback(async function (props: UseInputsProps): Promise<NamedResults> {
-        const { binDiv, valDiv } = props;
-        let ret: NamedResults = { ...props.namedResults };
+    return useCallback(async function (props: UseInputsProps): Promise<ValDiv> {
+        let { divStore, pendRow, binDiv } = props;
+        const { namedResults } = divStore;
+        let nr: NamedResults = { ...namedResults };
+        let valDiv: ValDiv, ret: ValDiv, parent: ValDiv;
+        let binRow: BinRow = { id: undefined, buds: {}, owned: {} };
         for (let p = binDiv; p !== undefined; p = p.div) {
             const { inputs } = p;
             if (inputs !== undefined) {
@@ -44,24 +48,59 @@ export function useInputs() {
                             break;
                     }
                     if (retInput === undefined) return;
-                    ret[input.name] = retInput;
+                    nr[input.name] = retInput;
                 }
             }
             const inputDivProps: InputDivProps = {
                 ...props,
                 binDiv: p,
-                valDiv,
-                namedResults: ret,
+                // valDiv,
+                binRow,
+                // namedResults: nr,
                 modal,
                 uqApp,
             }
             let valRow: ValRow = await inputDiv(inputDivProps);
             if (valRow === undefined) return;
-            if (valDiv !== undefined) {
-                valDiv.setValRow(valRow);
+            // let vd = valDiv;
+            // vd.setValRow(valRow);
+            mergeBinRow(binRow, valRow);
+            let origin = valDiv === undefined ? pendRow.origin : valDiv.id;
+            let id = getMockId();
+            valDiv = new ValDiv(p, { ...valRow, id, pend: pendRow.pend, origin });
+            divStore.setValColl(valDiv);
+            if (ret === undefined) {
+                parent = ret = valDiv;
             }
+            else {
+                parent.setValDiv(valDiv);
+            }
+            parent = valDiv;
             // save detail;
         }
         return ret;
     }, []);
+}
+
+function mergeBinRow(dest: BinRow, src: BinRow) {
+    /*
+    id: number;
+    i?: number;
+    x?: number;
+    value?: number;
+    price?: number;
+    amount?: number;
+    buds?: { [bud: number]: string | number };
+    owned?: { [bud: number]: [number, BudValue][] };
+    */
+    if (src === undefined) return;
+    const { id, i, x, value, price, amount, buds, owned } = src;
+    dest.id = id;
+    dest.i = i;
+    dest.x = x;
+    dest.value = value;
+    dest.price = price;
+    dest.amount = amount;
+    if (buds !== undefined) Object.assign(dest.buds, buds);
+    if (owned !== undefined) Object.assign(dest.owned, owned);
 }

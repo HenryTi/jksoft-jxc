@@ -34,6 +34,9 @@ export function IDView<T>({ id, uq, Template, spinner }: Props<T>) {
     if (value === undefined) {
         return spinner === undefined ? <SpinnerSmall /> : spinner;
     }
+    if (value === null) {
+        return null;
+    }
     if (Template) {
         return <Template value={value} />;
     }
