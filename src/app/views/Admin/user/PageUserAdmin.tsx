@@ -137,7 +137,6 @@ function PageUserMap({ userItems, onChanged }: { userItems: UserItems; onChanged
             (async function () {
                 const { $page: atoms } = await uq.SearchAtom.page({ atom: atomPhrase, key: undefined }, undefined, 1000);
                 refAtoms.current = atoms;
-                // selectedChanged(selected)
             })();
         })
         function selectedChanged(newSelected: number[]) {

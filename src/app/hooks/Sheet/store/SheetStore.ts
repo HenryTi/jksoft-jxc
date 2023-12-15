@@ -1,4 +1,4 @@
-import { EntitySheet, EntityBin, Biz, EnumBudType, EntityPend } from "app/Biz";
+import { EntitySheet, EntityBin, Biz, EnumBudType, EntityPend, BinRow } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import { useRef } from "react";
@@ -9,10 +9,9 @@ import { WritableAtom, atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
 import { PickFunc, RearPickResultType } from "../binPick/useBinPicks";
 import { Calc, Formulas } from "app/hooks/Calc";
-import { BudValue } from "tonwa-app";
 import { OwnerColl, budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
-import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid, BinRow } from "../tool";
+import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "../tool";
 import { DivStore } from "./DivStore";
 
 abstract class KeyIdObject {

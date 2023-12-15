@@ -1,5 +1,6 @@
+import { EntityAtomID } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { useSelectAtom } from "app/hooks";
+import { ViewSpec, useSelectAtom } from "app/hooks";
 import { HTMLInputTypeAttribute, ReactNode, useState } from "react";
 import {
     UseFormRegisterReturn, FieldErrorsImpl
@@ -145,6 +146,7 @@ export interface FormAtom extends FormLabelName {
     default?: number;
     atom: EnumAtom;
     options?: RegisterOptions;
+    entityAtom?: EntityAtomID;
 }
 
 export interface FormSubmit extends FormLabel {
@@ -260,9 +262,14 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
         </Band>
     }
 
-    const { atom } = row as FormAtom;
+    const { entityAtom, atom, options } = row as FormAtom;
+    if (entityAtom !== undefined) {
+        return <Band label={label}>
+            <ViewSpec id={options.value} />
+        </Band>;
+    }
     if (atom !== undefined) {
-        let { name, options } = row as FormAtom;
+        let { name } = row as FormAtom;
         let error: FieldError = errors[name] as FieldError;
         return <ViewFormAtom row={row as FormAtom} label={label} error={error}
             inputProps={register(name, options)}
@@ -270,7 +277,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
             clearErrors={clearErrors} />;
     }
 
-    const { name, type, readOnly, right, step, options } = row as FormInput;
+    const { name, type, readOnly, right, step } = row as FormInput;
     switch (type) {
         default:
             const theLabel = options?.required === true ?

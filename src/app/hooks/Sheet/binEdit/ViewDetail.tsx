@@ -4,12 +4,11 @@ import { FA, LMR, Sep } from "tonwa-com";
 import { ViewSpec } from "app/hooks/View";
 import React from "react";
 import { useCoreDetailEdit } from "./useCoreDetailEdit";
-import { BizBud } from "app/Biz";
+import { BinRow, BizBud } from "app/Biz";
 import { OwnedBuds } from "../../tool/tool";
 import { useRowEdit } from "./rowEdit";
 import { ViewBud } from "../../Bud";
 import { BinEditing } from "../store";
-import { BinRow } from "../tool";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -79,7 +78,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         // binEditing.setValues(binDetail);
         let ret = await rowEdit(binEditing);
         if (ret === true) {
-            Object.assign(binDetail, binEditing.valRow);
+            Object.assign(binDetail, binEditing.binRow);
             await row.changed();
         }
     }

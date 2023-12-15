@@ -185,7 +185,7 @@ BIN 入库单明细1 ver 0.2 {
     I.base;
     Div {
         Input spec SPEC 药品批次 Base=Pend.i; 
-        I '商品' 货品信息  { 
+        I '药品批次' 药品批次  { 
                 : 规格型号;
                 : 单位; 
                 : 注册人或备案人;   
@@ -193,11 +193,11 @@ BIN 入库单明细1 ver 0.2 {
                 : 注册证号或备案凭证号;
                 : 生产许可证号; 
                 : 存储条件; 
-        }= Pend.i;
+        }= spec;
         Price '单价' := pend.price; 
         Amount '金额'  = Value * Price;   
         Div {
-            Prop 库区 Radio 库区类型; 
+            Prop 库区 Radio 库区类型 required; 
             Value '入库数量' := pend.value >=0 <=订单数量; 
         }
     }

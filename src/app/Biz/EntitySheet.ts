@@ -5,6 +5,7 @@ import { Entity } from "./Entity";
 import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
 import { UI } from "app/ui";
+import { BudValue } from "tonwa-app";
 
 export interface PickParam {
     name: string;
@@ -76,6 +77,7 @@ export class PendInputAtom extends PendInput {
 export class BinDiv {
     readonly entityBin: EntityBin;
     readonly parent: BinDiv;
+    binBuds: BinBuds;
     inputs: PendInput[];
     buds: BizBud[];
     div: BinDiv;
@@ -83,6 +85,7 @@ export class BinDiv {
     constructor(entityBin: EntityBin, parent: BinDiv) {
         this.entityBin = entityBin;
         this.parent = parent;
+        // this.binBuds = new BinBuds(this);
     }
     /*
     getLevelDiv(level: number) {
@@ -93,6 +96,134 @@ export class BinDiv {
         return p;
     }
     */
+}
+
+export enum ValueSetType {
+    none,
+    init,
+    equ,
+    show,
+}
+
+export interface BinRow {
+    id: number;
+    i?: number;
+    x?: number;
+    value?: number;
+    price?: number;
+    amount?: number;
+    buds?: { [bud: number]: string | number };
+    owned?: { [bud: number]: [number, BudValue][] };
+};
+
+export abstract class BinField {
+    readonly name: string;
+    readonly bud: BizBud;
+    // readonly binRow: BinRow;
+    readonly valueSet: string;
+    readonly valueSetType: ValueSetType;
+    constructor(bud: BizBud/*, binRow: BinRow*/) {
+        this.name = bud.name;
+        this.bud = bud;
+        // this.binRow = binRow;
+        let { defaultValue } = bud;
+        if (defaultValue !== undefined) {
+            let p = defaultValue.indexOf('\n');
+            if (p > 0) {
+                let suffix = defaultValue.substring(p + 1);
+                this.valueSet = defaultValue.substring(0, p);
+                this.valueSetType = ValueSetType[suffix as keyof typeof ValueSetType];
+            }
+            else {
+                this.valueSetType = ValueSetType.equ;
+                this.valueSet = defaultValue;
+            }
+        }
+        else {
+            this.valueSetType = ValueSetType.none;
+        }
+    }
+    abstract getValue(binRow: BinRow): any;
+    abstract setValue(binRow: BinRow, v: any): void;
+    abstract get onForm(): boolean;
+    get required(): boolean { return this.bud.ui.required; }
+}
+
+class FieldI extends BinField {
+    readonly onForm = false;
+    getValue(binRow: BinRow): any { return binRow.i; }
+    setValue(binRow: BinRow, v: any) { binRow.i = v; }
+}
+
+class FieldX extends BinField {
+    readonly onForm = false;
+    getValue(binRow: BinRow): any { return binRow.x; }
+    setValue(binRow: BinRow, v: any) { binRow.x = v; }
+}
+
+class FieldValue extends BinField {
+    readonly onForm = true;
+    getValue(binRow: BinRow): any { return binRow.value; }
+    setValue(binRow: BinRow, v: any) { binRow.value = v; }
+    get required(): boolean { return true; }
+}
+
+class FieldPrice extends BinField {
+    readonly onForm = true;
+    getValue(binRow: BinRow): any { return binRow.price; }
+    setValue(binRow: BinRow, v: any) { binRow.price = v; }
+}
+
+class FieldAmount extends BinField {
+    readonly onForm = true;
+    getValue(binRow: BinRow): any { return binRow.amount; }
+    setValue(binRow: BinRow, v: any) { binRow.amount = v; }
+}
+
+class FieldBud extends BinField {
+    readonly onForm = true;
+    getValue(binRow: BinRow): any { return binRow.buds[this.bud.id]; }
+    setValue(binRow: BinRow, v: any) { binRow.buds[this.bud.id] = v; }
+}
+
+export class BudsFields {
+    protected readonly fieldColl: { [name: string]: BinField } = {};
+    readonly entityBin: EntityBin;
+    readonly fields: BinField[];
+    constructor(bin: EntityBin, buds: BizBud[]) {
+        this.entityBin = bin;
+        this.fields = [];
+
+        const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, props: budArr } = bin;
+
+        function fieldOfBud(bud: BizBud): new (bud: BizBud) => BinField {
+            if (budArr.findIndex(v => v === bud) >= 0) return FieldBud;
+            if (bud === iBud) return FieldI;
+            if (bud === xBud) return FieldX;
+            if (bud === valueBud) return FieldValue;
+            if (bud === priceBud) return FieldPrice;
+            if (bud === amountBud) return FieldAmount;
+            // debugger; .i will not list here
+            return undefined;
+        }
+
+        for (let bud of buds) {
+            let Field = fieldOfBud(bud);
+            if (Field === undefined) continue;
+            let field = new Field(bud);
+            this.fieldColl[field.name] = field;
+            // if (onForm === false) continue;
+            this.fields.push(field);
+        }
+    }
+}
+
+export class BinBuds extends BudsFields {
+    readonly binDiv: BinDiv;
+    constructor(binDiv: BinDiv) {
+        super(binDiv.entityBin, binDiv.buds);
+        this.binDiv = binDiv;
+    }
 }
 
 export class EntityBin extends Entity {
@@ -254,6 +385,7 @@ export class EntityBin extends Entity {
         binDiv.ui = ui;
         binDiv.inputs = this.scanInputs(inputs);
         binDiv.buds = this.scanBinBuds(buds);
+        binDiv.binBuds = new BinBuds(binDiv);
         if (subDiv !== undefined) {
             let subBinDiv = binDiv.div = new BinDiv(this, binDiv);
             this.scanDiv(subBinDiv, subDiv);

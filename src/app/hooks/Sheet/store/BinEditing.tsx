@@ -1,119 +1,9 @@
 import { RegisterOptions } from "react-hook-form";
 import { FormRow } from "app/coms";
-import { BinDiv, BizBud, BudDec, BudRadio, EntityBin, EnumBudType } from "app/Biz";
+import { BinDiv, BinField, BinRow, BizBud, BudAtom, BudDec, BudRadio, BudsFields, EntityBin, EnumBudType, ValueSetType } from "app/Biz";
 import { Calc, Formulas } from "../../Calc";
-import { BinRow, ValRow } from "../tool";
+import { ValRow } from "../tool";
 import { DivStore } from ".";
-
-export enum ValueSetType {
-    none,
-    init,
-    equ,
-    show,
-}
-
-abstract class BinField {
-    readonly name: string;
-    readonly bud: BizBud;
-    // readonly binRow: BinRow;
-    readonly valueSet: string;
-    readonly valueSetType: ValueSetType;
-    constructor(bud: BizBud/*, binRow: BinRow*/) {
-        this.name = bud.name;
-        this.bud = bud;
-        // this.binRow = binRow;
-        let { defaultValue } = bud;
-        if (defaultValue !== undefined) {
-            let p = defaultValue.indexOf('\n');
-            if (p > 0) {
-                let suffix = defaultValue.substring(p + 1);
-                this.valueSet = defaultValue.substring(0, p);
-                this.valueSetType = ValueSetType[suffix as keyof typeof ValueSetType];
-            }
-            else {
-                this.valueSetType = ValueSetType.equ;
-                this.valueSet = defaultValue;
-            }
-        }
-        else {
-            this.valueSetType = ValueSetType.none;
-        }
-    }
-    abstract getValue(binRow: BinRow): any;
-    abstract setValue(binRow: BinRow, v: any): void;
-    get required(): boolean { return this.bud.ui.required; }
-}
-
-class FieldI extends BinField {
-    getValue(binRow: BinRow): any { return binRow.i; }
-    setValue(binRow: BinRow, v: any) { binRow.i = v; }
-}
-
-class FieldX extends BinField {
-    getValue(binRow: BinRow): any { return binRow.x; }
-    setValue(binRow: BinRow, v: any) { binRow.x = v; }
-}
-
-class FieldValue extends BinField {
-    getValue(binRow: BinRow): any { return binRow.value; }
-    setValue(binRow: BinRow, v: any) { binRow.value = v; }
-    get required(): boolean { return true; }
-}
-
-class FieldPrice extends BinField {
-    getValue(binRow: BinRow): any { return binRow.price; }
-    setValue(binRow: BinRow, v: any) { binRow.price = v; }
-}
-
-class FieldAmount extends BinField {
-    getValue(binRow: BinRow): any { return binRow.amount; }
-    setValue(binRow: BinRow, v: any) { binRow.amount = v; }
-}
-
-class FieldBud extends BinField {
-    getValue(binRow: BinRow): any { return binRow.buds[this.bud.id]; }
-    setValue(binRow: BinRow, v: any) { binRow.buds[this.bud.id] = v; }
-}
-
-class BudsFields {
-    protected readonly fieldColl: { [name: string]: BinField } = {};
-    readonly entityBin: EntityBin;
-    readonly fields: BinField[];
-    constructor(bin: EntityBin, buds: BizBud[]) {
-        this.entityBin = bin;
-        this.fields = [];
-        const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, props: budArr } = bin;
-
-        function fieldOfBud(bud: BizBud): [new (bud: BizBud) => BinField, boolean?] {
-            if (budArr.findIndex(v => v === bud) >= 0) return [FieldBud];
-            if (bud === iBud) return [FieldI, false];
-            if (bud === xBud) return [FieldX, false];
-            if (bud === valueBud) return [FieldValue];
-            if (bud === priceBud) return [FieldPrice];
-            if (bud === amountBud) return [FieldAmount];
-            // debugger; .i will not list here
-            return undefined;
-        }
-
-        for (let bud of buds) {
-            let ret = fieldOfBud(bud);
-            if (ret === undefined) continue;
-            let [Field, onForm] = ret;
-            let field = new Field(bud);
-            this.fieldColl[field.name] = field;
-            if (onForm === false) continue;
-            this.fields.push(field);
-        }
-    }
-}
-
-export class BinBuds extends BudsFields {
-    readonly binDiv: BinDiv;
-    constructor(binDiv: BinDiv) {
-        super(binDiv.entityBin, binDiv.buds);
-        this.binDiv = binDiv;
-    }
-}
 
 abstract class BinFields extends BudsFields {
     /*
@@ -123,7 +13,7 @@ abstract class BinFields extends BudsFields {
     */
     private readonly calc: Calc;
     private readonly requiredFields: BinField[] = [];
-    readonly valRow: ValRow = { buds: {} } as any;
+    readonly binRow: BinRow = { buds: {} } as any;
     onDel: () => Promise<void>;
 
     constructor(bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
@@ -179,7 +69,7 @@ abstract class BinFields extends BudsFields {
                 formulas.push([name + '.max', max]);
             }
         }
-        this.calc = new Calc(formulas, this.valRow as any);
+        this.calc = new Calc(formulas, this.binRow as any);
         if (initBinRow !== undefined) {
             this.setValues(initBinRow);
         }
@@ -190,12 +80,12 @@ abstract class BinFields extends BudsFields {
         const { results } = this.calc;
         for (let i in this.fieldColl) {
             let field = this.fieldColl[i];
-            field.setValue(this.valRow, results[field.name]);
+            field.setValue(this.binRow, results[field.name]);
         }
     }
 
     private setValues(binRow: BinRow) {
-        Object.assign(this.valRow, binRow);
+        Object.assign(this.binRow, binRow);
         let obj = new Proxy(binRow, this.entityBin.proxyHandler());
         this.calc.addValues(undefined, obj);
     }
@@ -228,13 +118,13 @@ abstract class BinFields extends BudsFields {
             debugger;
             return;
         */
-        field.setValue(this.valRow, value);
+        field.setValue(this.binRow, value);
     }
 
     get submitable(): boolean {
         let ret = true;
         for (let field of this.requiredFields) {
-            let v = field.getValue(this.valRow); // this.calc.results[field.name];
+            let v = field.getValue(this.binRow); // this.calc.results[field.name];
             if (v === undefined) {
                 return false;
             }
@@ -291,16 +181,19 @@ abstract class BinFields extends BudsFields {
         return false;
     }
 
-    buildFormRows(): FormRow[] {
+    buildFormRows(filterOnForm: boolean = false): FormRow[] {
         let ret: FormRow[] = [];
         const { results: calcResults } = this.calc;
         for (let field of this.fields) {
-            const { name, bud, valueSetType, required } = field;
+            const { name, bud, valueSetType, required, onForm } = field;
+            if (filterOnForm === true) {
+                if (onForm === false) continue;
+            }
             const { caption, budDataType, ui } = bud;
             let { show } = ui;
             if (show === true) continue;
             let options: RegisterOptions = {
-                value: field.getValue(this.valRow),
+                value: field.getValue(this.binRow),
                 disabled: valueSetType === ValueSetType.equ,
                 required,
             };
@@ -314,9 +207,10 @@ abstract class BinFields extends BudsFields {
             const { type, min, max } = budDataType;
             switch (type) {
                 case EnumBudType.atom:
-                    formRow.default = field.getValue(this.valRow);
+                    formRow.default = field.getValue(this.binRow);
                     formRow.atom = null;
                     formRow.readOnly = true;
+                    formRow.entityAtom = (budDataType as BudAtom).bizAtom;
                     break;
                 case EnumBudType.char:
                 case EnumBudType.str:

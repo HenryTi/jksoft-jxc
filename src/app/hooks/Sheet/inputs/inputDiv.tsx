@@ -1,11 +1,12 @@
 import { DivEditing, UseInputsProps } from "../store";
 import { FA, getAtomValue } from "tonwa-com";
-import { BinRow, ValRow, btnNext, cnNextClassName } from "../tool";
+import { ValRow, btnNext, cnNextClassName } from "../tool";
 import { UqApp } from "app";
 import { Modal, Page, useModal } from "tonwa-app";
 import { FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
 import { ChangeEvent, useState } from "react";
+import { BinRow } from "app/Biz";
 
 export interface InputDivProps extends UseInputsProps {
     uqApp: UqApp;
@@ -13,17 +14,13 @@ export interface InputDivProps extends UseInputsProps {
     binRow: BinRow;
 }
 
-export async function inputDiv(props: InputDivProps): Promise<ValRow> {
+export async function inputDiv(props: InputDivProps): Promise<BinRow> {
     const { modal, divStore, binDiv, binRow } = props;
-    // binDiv, 
     let divEditing = new DivEditing(divStore, binDiv, binRow);
     if (divEditing.isInputNeeded() === true) {
-        // let ret = 
-        await modal.open(<PageInput divEditing={divEditing} />);
-        // valDiv.setValRow(divEditing.valRow);
-        //if (ret === undefined) return;
+        if (await modal.open(<PageInput divEditing={divEditing} />) !== true) return;
     }
-    return divEditing.valRow;
+    return divEditing.binRow;
 }
 
 function PageInput({ divEditing }: { divEditing: DivEditing; }) {
@@ -61,7 +58,11 @@ function PageInput({ divEditing }: { divEditing: DivEditing; }) {
         </div>
     });
     function onSubmitForm(data: any) {
-        modal.close();
+        if (divEditing.submitable === false) {
+            setSubmitable(divEditing.submitable);
+            return;
+        }
+        modal.close(true);
     }
     return <Page header={binDiv.ui?.caption}>
         <div className="my-3">

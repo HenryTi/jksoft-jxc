@@ -26,7 +26,7 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
                 namedResults[binPick.name] = rowProps;
                 let binEditing = new BinEditing(entityBin);
                 binEditing.setNamedParams(namedResults);
-                let { valRow: binRow } = binEditing;
+                let { binRow: binRow } = binEditing;
                 if (binRow.value === undefined) {
                     binEditing.setValue('value', 0, undefined);
                 }
@@ -49,7 +49,7 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
             binEditing.setNamedParams(namedResults);
             let ret = await rowEdit(binEditing);
             if (ret === true) {
-                Object.assign(row.props, binEditing.valRow);
+                Object.assign(row.props, binEditing.binRow);
                 await row.addToSection();
                 await coreDetail.sheetStore.reloadRow(row.props.id);
             }

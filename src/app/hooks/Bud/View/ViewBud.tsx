@@ -1,8 +1,13 @@
 import { BizBud, BudRadio, EnumBudType } from "app/Biz";
+import { ViewSpec } from "app/hooks";
 import { contentFromDays } from "app/tool";
-import { IDView } from "tonwa-app";
 
-export function ViewBud({ bud, value }: { bud: BizBud; value: any; }) {
+export enum ViewBudUIType {
+    notInDiv = 0,
+    inDiv = 1,
+}
+
+export function ViewBud({ bud, value, uiType }: { bud: BizBud; value: any; uiType?: ViewBudUIType; }) {
     if (bud === undefined) return <>{value}</>;
     switch (bud.budDataType?.type) {
         default:
@@ -10,10 +15,8 @@ export function ViewBud({ bud, value }: { bud: BizBud; value: any; }) {
         case EnumBudType.none:
         case EnumBudType.int:
         case EnumBudType.char:
-        case EnumBudType.str:
-            return <>{value}</>;
-
-        case EnumBudType.atom: return atom(bud, value);
+        case EnumBudType.str: return <>{value}</>;
+        case EnumBudType.atom: return atom(bud, value, uiType);
         case EnumBudType.radio: return radio(bud, value);
         case EnumBudType.check: return check(bud, value);
         case EnumBudType.intof: return intof(bud, value);
@@ -27,14 +30,15 @@ export function ViewBud({ bud, value }: { bud: BizBud; value: any; }) {
 function ViewAtomInBud({ value }: { value: any; }) {
     return <>{value?.ex}</>;
 }
-function atom(bud: BizBud, value: any) {
-    return <IDView uq={bud.biz.uq} id={value} Template={ViewAtomInBud} />;
+function atom(bud: BizBud, value: any, uiType: ViewBudUIType) {
+    return <ViewSpec id={value} />;
+    // return <IDView uq={bud.biz.uq} id={value} Template={ViewAtomInBud} />;
 }
 
 function radio(bud: BizBud, value: any) {
     if (value === null) return <small className="text-secondary">/</small>;
     let { options } = bud.budDataType as BudRadio;
-    let v = options.coll[value[0]];
+    let v = options.coll[value];
     if (v === undefined) return <>{JSON.stringify(value)}</>;
     const { caption, name } = v;
     return <>{caption ?? name}</>;

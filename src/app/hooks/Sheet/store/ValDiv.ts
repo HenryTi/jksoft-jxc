@@ -1,18 +1,16 @@
-import { BinDiv, BizBud } from "app/Biz";
+import { BinBuds, BinDiv, BizBud } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
 import { ValRow } from "../tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { BinBuds } from "./BinEditing";
 
 export class ValDiv {
-    // readonly binDiv: BinDiv;
-    readonly binBuds: BinBuds;
+    readonly binDiv: BinDiv;
     readonly atomValRow: WritableAtom<ValRow, any, any>;
     readonly atomValDivs: WritableAtom<ValDiv[], any, any>;
     readonly atomValue: WritableAtom<number, any, any>;
     readonly id: number;
     constructor(binDiv: BinDiv, valRow: ValRow) {
-        this.binBuds = new BinBuds(binDiv);
+        this.binDiv = binDiv;
         if (binDiv.div !== undefined) {
             this.atomValDivs = atom<ValDiv[]>([]);
             this.atomValue = atom(
@@ -70,7 +68,7 @@ export class ValDiv {
 
     getBudsValArr(): [BizBud, any][] {
         let valRow = getAtomValue(this.atomValRow);
-        return this.binBuds.fields.map(
+        return this.binDiv.binBuds.fields.map(
             field => {
                 let { bud } = field;
                 return [bud, field.getValue(valRow)];

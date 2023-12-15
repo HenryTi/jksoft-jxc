@@ -35,7 +35,7 @@ function ModalInputRow({ /*row, */binEditing }: { /*row: Row; */binEditing: BinE
     //const { entityBin } = section.coreDetail;
     const { entityBin } = binEditing;
     const { i: budI, x: budX } = entityBin;
-    const { valRow: binDetail } = binEditing;
+    const { binRow: binDetail } = binEditing;
     const [submitable, setSubmitable] = useState(binEditing.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;
@@ -45,7 +45,7 @@ function ModalInputRow({ /*row, */binEditing }: { /*row: Row; */binEditing: BinE
         setSubmitable(binEditing.submitable);
     }
     const options = { onChange };
-    const formRows = binEditing.buildFormRows();
+    const formRows = binEditing.buildFormRows(true);
     formRows.forEach(v => {
         if (v === undefined) return null;
         return (v as any).options = { ...(v as any).options, ...options };

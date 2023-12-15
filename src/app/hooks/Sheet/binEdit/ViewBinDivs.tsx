@@ -1,11 +1,9 @@
 import { useAtomValue } from "jotai";
 import { DivStore, UseInputsProps, ValDiv } from "../store";
-import { FA, getAtomValue } from "tonwa-com";
-import { getMockId } from "./model";
+import { FA } from "tonwa-com";
 import { ChangeEvent } from "react";
-import { ValRow } from "../tool";
 import { useInputs } from "../inputs";
-import { ViewAtomId, ViewBud } from "app/hooks";
+import { ViewBud, ViewBudUIType } from "app/hooks";
 
 interface ViewDivProps {
     divStore: DivStore;
@@ -42,7 +40,8 @@ function ViewDiv({ divStore, valDiv, editable }: ViewDivProps) {
 
 function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     const inputs = useInputs();
-    const { atomValRow, atomValDivs, atomValue, binBuds } = valDiv;
+    const { atomValRow, atomValDivs, atomValue, binDiv } = valDiv;
+    const { binBuds } = binDiv;
     const val = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);
     const { pend, id } = val;
@@ -98,11 +97,9 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
         <div className="flex-fill flex-wrap d-flex py-2 ps-3">
             {valDiv.getBudsValArr().map(([bud, value]) => {
                 const { id, name, caption } = bud;
-                // let atomId = val.buds[id] as number;
-                // if (!atomId) return null;
                 return <div key={id} className="d-flex me-3 w-12c">
                     <div className="text-secondary me-2">{caption ?? name}:</div>
-                    <ViewBud bud={bud} value={value} />
+                    <ViewBud bud={bud} value={value} uiType={ViewBudUIType.inDiv} />
                 </div>;
             })}
         </div>

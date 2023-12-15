@@ -1,12 +1,12 @@
-import { PendInput, PendInputAtom, PendInputSpec, EntityBin } from "app/Biz";
+import { PendInput, PendInputAtom, PendInputSpec, EntityBin, BinRow } from "app/Biz";
 import { inputAtom } from "./inputAtom";
 import { inputSpec } from "./inputSpec";
 import { useCallback } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
 import { NamedResults } from "../NamedResults";
-import { UseInputsProps, ValDiv } from "../store";
+import { DivEditing, UseInputsProps, ValDiv } from "../store";
 import { InputDivProps, inputDiv } from "./inputDiv";
-import { BinRow, ValRow } from "../tool";
+import { ValRow } from "../tool";
 import { useUqApp } from "app";
 import { useModal } from "tonwa-app";
 import { getMockId } from "../binEdit/model";
@@ -17,7 +17,7 @@ export function useInputs() {
     return useCallback(async function (props: UseInputsProps): Promise<ValDiv> {
         let { divStore, pendRow, binDiv } = props;
         const { namedResults } = divStore;
-        let nr: NamedResults = { ...namedResults };
+        // let nr: NamedResults = { ...namedResults };
         let valDiv: ValDiv, ret: ValDiv, parent: ValDiv;
         let binRow: BinRow = { id: undefined, buds: {}, owned: {} };
         for (let p = binDiv; p !== undefined; p = p.div) {
@@ -48,8 +48,10 @@ export function useInputs() {
                             break;
                     }
                     if (retInput === undefined) return;
-                    nr[input.name] = retInput;
+                    namedResults[input.name] = retInput;
                 }
+                let divEditing = new DivEditing(divStore, binDiv.div, binRow);
+                mergeBinRow(binRow, divEditing.binRow);
             }
             const inputDivProps: InputDivProps = {
                 ...props,
@@ -60,14 +62,14 @@ export function useInputs() {
                 modal,
                 uqApp,
             }
-            let valRow: ValRow = await inputDiv(inputDivProps);
-            if (valRow === undefined) return;
+            let retBinRow: BinRow = await inputDiv(inputDivProps);
+            if (retBinRow === undefined) return;
             // let vd = valDiv;
             // vd.setValRow(valRow);
-            mergeBinRow(binRow, valRow);
+            mergeBinRow(binRow, retBinRow);
             let origin = valDiv === undefined ? pendRow.origin : valDiv.id;
             let id = getMockId();
-            valDiv = new ValDiv(p, { ...valRow, id, pend: pendRow.pend, origin });
+            valDiv = new ValDiv(p, { ...binRow, id, pend: pendRow.pend, origin });
             divStore.setValColl(valDiv);
             if (ret === undefined) {
                 parent = ret = valDiv;

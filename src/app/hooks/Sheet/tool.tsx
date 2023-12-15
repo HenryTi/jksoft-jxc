@@ -1,4 +1,4 @@
-import { BizBud, Entity, EntityPend, predefinedPendFields } from "app/Biz";
+import { BinRow, BizBud, Entity, EntityPend, predefinedPendFields } from "app/Biz";
 import { ViewBud } from "app/hooks/Bud";
 import { BudValue } from "tonwa-app";
 import { FA } from "tonwa-com";
@@ -136,17 +136,6 @@ export class PendProxyHander implements ProxyHandler<any> {
         return ret;
     }
 }
-
-export interface BinRow {
-    id: number;
-    i?: number;
-    x?: number;
-    value?: number;
-    price?: number;
-    amount?: number;
-    buds?: { [bud: number]: string | number };
-    owned?: { [bud: number]: [number, BudValue][] };
-};
 
 export interface ValRow extends BinRow {
     origin?: number;     // origin可能指向源单id，也指向本单parent。
