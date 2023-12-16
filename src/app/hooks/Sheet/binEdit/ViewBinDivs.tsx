@@ -13,7 +13,7 @@ interface ViewDivProps {
 }
 
 export function ViewBinDivs({ divStore, editable }: { divStore: DivStore; editable: boolean; }) {
-    return <div>
+    return <div className="container">
         <ViewDivs divStore={divStore} valDiv={divStore.valDiv} editable={editable} />
     </div>;
     // <button className="btn btn-primary" onClick={onRedraw}>刷新</button>
@@ -34,7 +34,7 @@ function ViewDiv({ divStore, valDiv, editable }: ViewDivProps) {
     }
     return <div>
         {vRow}
-        {atomDivs && <ViewDivs divStore={divStore} valDiv={valDiv} editable={editable} className="ms-5" />}
+        {atomDivs && <ViewDivs divStore={divStore} valDiv={valDiv} editable={editable} />}
     </div>
 }
 
@@ -94,13 +94,15 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
         valDiv.setValue(n);
     }
     return <div className="d-flex align-items-center ">
-        <div className="flex-fill flex-wrap d-flex py-2 ps-3">
+        <div className="flex-fill row row-cols-4">
             {valDiv.getBudsValArr().map(([bud, value]) => {
-                const { id, name, caption } = bud;
-                return <div key={id} className="d-flex me-3 w-12c">
-                    <div className="text-secondary me-2">{caption ?? name}:</div>
-                    <ViewBud bud={bud} value={value} uiType={ViewBudUIType.inDiv} />
-                </div>;
+                const { id } = bud;
+                return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} />;
+                /*
+                    <div key={id} className="d-flex me-3 w-12c">
+                        <div className="text-secondary me-2">{caption ?? name}:</div>
+                    </div>;
+                */
             })}
         </div>
         {btn}

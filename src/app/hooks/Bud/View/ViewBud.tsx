@@ -9,21 +9,32 @@ export enum ViewBudUIType {
 
 export function ViewBud({ bud, value, uiType }: { bud: BizBud; value: any; uiType?: ViewBudUIType; }) {
     if (bud === undefined) return <>{value}</>;
-    switch (bud.budDataType?.type) {
+    const { name, caption, budDataType } = bud;
+    let type = budDataType?.type;
+    if (type === EnumBudType.atom) {
+        return atom(bud, value, uiType);
+    }
+    let content: any;
+    switch (type) {
         default:
         case EnumBudType.dec:
         case EnumBudType.none:
         case EnumBudType.int:
         case EnumBudType.char:
-        case EnumBudType.str: return <>{value}</>;
-        case EnumBudType.atom: return atom(bud, value, uiType);
-        case EnumBudType.radio: return radio(bud, value);
-        case EnumBudType.check: return check(bud, value);
-        case EnumBudType.intof: return intof(bud, value);
-        case EnumBudType.pick: return pick(bud, value);
-        case EnumBudType.ID: return ID(bud, value);
-        case EnumBudType.date: return date(bud, value);
-        case EnumBudType.datetime: return datetime(bud, value);
+        case EnumBudType.str: content = <>{value}</>; break;
+        case EnumBudType.radio: content = radio(bud, value); break;
+        case EnumBudType.check: content = check(bud, value); break;
+        case EnumBudType.intof: content = intof(bud, value); break;
+        case EnumBudType.pick: content = pick(bud, value); break;
+        case EnumBudType.ID: content = ID(bud, value); break;
+        case EnumBudType.date: content = date(bud, value); break;
+        case EnumBudType.datetime: content = datetime(bud, value); break;
+    }
+    if (uiType === ViewBudUIType.inDiv) {
+        return <div className="col"><small className="text-secondary me-2">{caption ?? name}</small> {content}</div>
+    }
+    else {
+        return content;
     }
 }
 
@@ -31,7 +42,7 @@ function ViewAtomInBud({ value }: { value: any; }) {
     return <>{value?.ex}</>;
 }
 function atom(bud: BizBud, value: any, uiType: ViewBudUIType) {
-    return <ViewSpec id={value} />;
+    return <ViewSpec id={value} uiType={uiType} />;
     // return <IDView uq={bud.biz.uq} id={value} Template={ViewAtomInBud} />;
 }
 

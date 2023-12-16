@@ -5,36 +5,28 @@ import { useInputs } from "../inputs";
 import { useRowEdit } from "./rowEdit";
 import { DivEditProps, UseInputsProps } from "../store";
 import { PendProxyHander } from "../tool";
+import { useModal } from "tonwa-app";
 
 export interface ViewPendRowEditProps extends DivEditProps {
     pendContent: any;
 }
 
 export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowEditProps) {
+    const modal = useModal();
     const { entityBin, binDiv } = divStore;
     const inputs = useInputs();
     const rowEdit = useRowEdit();
     let { pend: pendId, origin, value } = pendRow;
     let _valDiv = divStore.pendColl[pendId];
     let valDiv = useAtomValue(_valDiv);
-    /*
     async function onEdit() {
-        let retPendInputs = await pendInputs(inputProps);
-        if (retPendInputs === undefined) return;
-        let binRow: BinRow = undefined;
-        const binEditing = new BinEditing(entityBin, binRow);
-        binEditing.setNamedParams(retPendInputs);
-        let retRowEdit = await rowEdit(binEditing);
-        if (retRowEdit === undefined) return;
-        sheetStore.addPendRow(pendId, { props: { id: rowId++ } } as any);
+        modal.close();
     }
-    */
     const { rearPick, pend } = entityBin;
     //let nr = {
     //    ...namedResults,
     //};
     // nr[rearPick.name] = new Proxy(pendRow, new PendProxyHander(pend));
-    const onEdit = onAddNew;
     async function onAddNew() {
         let origin: number = undefined;
         divStore.namedResults[rearPick.name] = new Proxy(pendRow, new PendProxyHander(pend));

@@ -8,8 +8,9 @@ import { Accordion, AccordionItem } from "react-bootstrap";
 import React, { useState } from "react";
 import { UI } from "app/ui";
 
-const cn = 'd-flex px-4 py-3 border-bottom align-items-center';
-const iconSize = 'lg';
+const cn = ' d-flex px-4 py-3 border-bottom align-items-center ';
+const fs = ' ';
+const iconSize = '';
 interface Active {
     name: string;
     open: boolean;
@@ -67,7 +68,7 @@ interface FolderLinkProps extends FolderProps {
 function FolderLink({ path, className, icon, iconColor, onClick, caption, phrase }: FolderLinkProps) {
     return <Link to={path} className={className} onClick={onClick}>
         <FA name={icon ?? 'file'} className={(iconColor ?? 'text-primary') + " me-4"} fixWidth={true} size={iconSize} />
-        <span className="fs-larger">{caption}</span>
+        <span className={fs}>{caption}</span>
         <ViewNotifyCount phrase={phrase} />
         <div className="flex-grow-1"></div>
         <FA name="angle-right" className="text-secondary" />
@@ -130,7 +131,7 @@ function ViewFolderContent({ folder, active }: { folder: Folder; active: Active;
 function Folder({ icon, iconColor, caption, phrase }: FolderProps) {
     return <div className="d-flex align-items-center">
         <FA name={icon} className={(iconColor ?? 'text-info') + " ms-1 me-4"} fixWidth={true} size={iconSize} />
-        <span className="fs-larger">{caption}</span>
+        <span className={fs}>{caption}</span>
         <ViewNotifyCount phrase={phrase} />
     </div>
 }
@@ -176,7 +177,7 @@ function ViewFile({ file }: { file: File; }) {
     return <Link to={to}>
         <div className="d-flex py-3 pe-4 align-items-center">
             <FA name={ui.icon} className={('text-' + ui.iconColor) + ' px-1 ms-4 me-4'} size={iconSize} />
-            <span className="fs-larger">{ui.caption}</span>
+            <span className={fs}>{ui.caption}</span>
             <div className="flex-grow-1"></div>
             <FA name="angle-right" className="text-secondary" />
         </div>

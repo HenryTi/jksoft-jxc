@@ -1,15 +1,25 @@
-import { BizBud, EntitySpec } from "app/Biz";
+import { BizBud, EntityAtomID, EntitySpec } from "app/Biz";
 import { useGetSpec } from "../Uq";
 import { useUqApp } from "app/UqApp";
+import { ViewBudUIType } from "..";
+import React from "react";
 
-export function ViewSpecBase({ id, ViewAtom }: { id: number; ViewAtom: (props: { no: string; ex: string; }) => JSX.Element; }) {
+export function ViewSpecBase({ id, ViewAtom, uiType }: {
+    id: number;
+    ViewAtom: (props: { no: string; ex: string; entity?: EntityAtomID; }) => JSX.Element;
+    uiType?: ViewBudUIType;
+}) {
     const { atom, specs } = useGetSpec(id);
     if (atom === undefined) return null;
-    const { value: atomValue } = atom;
+    const { value: atomValue, entity } = atom;
     let viewAtom: any;
     if (atomValue !== undefined) {
         const { no, ex } = atomValue;
-        viewAtom = <ViewAtom no={no} ex={ex} />;
+        viewAtom = <ViewAtom no={no} ex={ex} entity={entity} />;
+    }
+    let cn = '';
+    if (uiType === ViewBudUIType.inDiv) {
+        cn = ' col ';
     }
     function ViewSpecs() {
         if (specs.length === 0) return null;
@@ -21,8 +31,8 @@ export function ViewSpecBase({ id, ViewAtom }: { id: number; ViewAtom: (props: {
                     let { length: len } = buds;
                     for (let i = 0; i < len; i++) {
                         let { id, caption, name, budDataType } = buds[i];
-                        let band = <div key={id}>
-                            <span className="d-inline-block me-2 small text-secondary w-min-4c">
+                        let band = <div key={id} className={cn}>
+                            <span className="me-2 small text-secondary">
                                 {caption ?? name}
                             </span>
                             {budDataType.valueToContent(values[i])}
@@ -32,25 +42,43 @@ export function ViewSpecBase({ id, ViewAtom }: { id: number; ViewAtom: (props: {
                 }
                 buildBands(entity.keys, keys);
                 buildBands(entity.props, props);
+                if (uiType === ViewBudUIType.inDiv) {
+                    return <React.Fragment key={id}>
+                        {bands}
+                    </React.Fragment>;
+                }
                 return <div key={id}>
                     {bands}
                 </div>
             })}
         </>;
     }
-    return <div>
+    let content = <>
         {viewAtom}
         <ViewSpecs />
-    </div>
+    </>;
+    if (uiType === ViewBudUIType.inDiv) {
+        return content;
+    }
+    return <div>{content}</div>;
 }
 
-export function ViewSpec({ id }: { id: number; }) {
-    function ViewAtom({ no, ex }: { no: string; ex: string; }) {
-        return <div title={'编号: ' + no}>
-            {ex}
+export function ViewSpec({ id, uiType }: { id: number; uiType?: ViewBudUIType; }) {
+    let cn = '';
+    if (uiType === ViewBudUIType.inDiv) {
+        cn = ' col ';
+    }
+    function ViewAtom({ no, ex, entity }: { no: string; ex: string; entity?: EntityAtomID; }) {
+        let label: any;
+        if (entity !== undefined) {
+            const { caption, name } = entity;
+            label = <small className="text-secondary me-2">{caption ?? name}</small>;
+        }
+        return <div title={'编号: ' + no} className={cn}>
+            {label}{ex}
         </div>;
     }
-    return <ViewSpecBase id={id} ViewAtom={ViewAtom} />
+    return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={uiType} />
 }
 
 export function ViewSpecR({ id }: { id: number; }) {

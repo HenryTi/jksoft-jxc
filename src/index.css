@@ -93,3 +93,9 @@ button:focus-visible {
         background-color: #f9f9f9;
     }
 }
+
+.accordion {
+    --bs-accordion-btn-padding-x: 1.25rem;
+    --bs-accordion-btn-padding-y: 1rem;
+    --bs-accordion-btn-icon-width: 0.75rem;
+}

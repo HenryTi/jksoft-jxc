@@ -3,7 +3,7 @@ import * as React from 'react';
 export interface FAProps {
     name: string;
     className?: string;
-    size?: 'lg' | '2x' | '3x' | '4x' | '5x';
+    size?: '' | 'lg' | '2x' | '3x' | '4x' | '5x';
     spin?: boolean;
     fixWidth?: boolean;
     border?: boolean;
