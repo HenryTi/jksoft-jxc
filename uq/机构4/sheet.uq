@@ -193,7 +193,7 @@ BIN 入库单明细1 ver 0.2 {
                 : 注册证号或备案凭证号;
                 : 生产许可证号; 
                 : 存储条件; 
-        }= spec;
+        } = spec;
         Price '单价' := pend.price; 
         Amount '金额'  = Value * Price;   
         Div {

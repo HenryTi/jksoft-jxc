@@ -77,6 +77,7 @@ export class PendInputAtom extends PendInput {
 export class BinDiv {
     readonly entityBin: EntityBin;
     readonly parent: BinDiv;
+    readonly level: number;
     binBuds: BinBuds;
     inputs: PendInput[];
     buds: BizBud[];
@@ -85,7 +86,7 @@ export class BinDiv {
     constructor(entityBin: EntityBin, parent: BinDiv) {
         this.entityBin = entityBin;
         this.parent = parent;
-        // this.binBuds = new BinBuds(this);
+        this.level = parent === undefined ? 0 : parent.level + 1;
     }
     /*
     getLevelDiv(level: number) {
@@ -190,6 +191,8 @@ export class BudsFields {
     protected readonly fieldColl: { [name: string]: BinField } = {};
     readonly entityBin: EntityBin;
     readonly fields: BinField[];
+    readonly hasIBase: boolean;
+    readonly hasXBase: boolean;
     constructor(bin: EntityBin, buds: BizBud[]) {
         this.entityBin = bin;
         this.fields = [];
@@ -208,11 +211,14 @@ export class BudsFields {
         }
 
         for (let bud of buds) {
+            switch (bud.name) {
+                case '.i': this.hasIBase = true; continue;
+                case '.x': this.hasXBase = true; continue;
+            }
             let Field = fieldOfBud(bud);
             if (Field === undefined) continue;
             let field = new Field(bud);
             this.fieldColl[field.name] = field;
-            // if (onForm === false) continue;
             this.fields.push(field);
         }
     }
@@ -230,6 +236,7 @@ export class EntityBin extends Entity {
     binPicks: BinPick[];
     rearPick: BinPick;          // endmost pick
     div: BinDiv;
+    divLevels: number;
     i: BizBud;
     x: BizBud;
     pend: EntityPend;
@@ -377,6 +384,7 @@ export class EntityBin extends Entity {
         }
         let div = this.div;
         this.div = new BinDiv(this, undefined);
+        this.divLevels = 0;
         this.scanDiv(this.div, div);
     }
 
@@ -387,6 +395,7 @@ export class EntityBin extends Entity {
         binDiv.buds = this.scanBinBuds(buds);
         binDiv.binBuds = new BinBuds(binDiv);
         if (subDiv !== undefined) {
+            ++this.divLevels;
             let subBinDiv = binDiv.div = new BinDiv(this, binDiv);
             this.scanDiv(subBinDiv, subDiv);
         }

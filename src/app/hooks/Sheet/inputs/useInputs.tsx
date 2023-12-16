@@ -1,7 +1,7 @@
 import { PendInput, PendInputAtom, PendInputSpec, EntityBin, BinRow } from "app/Biz";
 import { inputAtom } from "./inputAtom";
 import { inputSpec } from "./inputSpec";
-import { useCallback } from "react";
+import { useCallback, useDebugValue } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
 import { NamedResults } from "../NamedResults";
 import { DivEditing, UseInputsProps, ValDiv } from "../store";
@@ -17,7 +17,6 @@ export function useInputs() {
     return useCallback(async function (props: UseInputsProps): Promise<ValDiv> {
         let { divStore, pendRow, binDiv } = props;
         const { namedResults } = divStore;
-        // let nr: NamedResults = { ...namedResults };
         let valDiv: ValDiv, ret: ValDiv, parent: ValDiv;
         let binRow: BinRow = { id: undefined, buds: {}, owned: {} };
         for (let p = binDiv; p !== undefined; p = p.div) {
@@ -56,16 +55,12 @@ export function useInputs() {
             const inputDivProps: InputDivProps = {
                 ...props,
                 binDiv: p,
-                // valDiv,
                 binRow,
-                // namedResults: nr,
                 modal,
                 uqApp,
             }
             let retBinRow: BinRow = await inputDiv(inputDivProps);
             if (retBinRow === undefined) return;
-            // let vd = valDiv;
-            // vd.setValRow(valRow);
             mergeBinRow(binRow, retBinRow);
             let origin = valDiv === undefined ? pendRow.origin : valDiv.id;
             let id = getMockId();
@@ -75,6 +70,7 @@ export function useInputs() {
                 parent = ret = valDiv;
             }
             else {
+                parent.setIXBase(binRow);
                 parent.setValDiv(valDiv);
             }
             parent = valDiv;
@@ -85,16 +81,6 @@ export function useInputs() {
 }
 
 function mergeBinRow(dest: BinRow, src: BinRow) {
-    /*
-    id: number;
-    i?: number;
-    x?: number;
-    value?: number;
-    price?: number;
-    amount?: number;
-    buds?: { [bud: number]: string | number };
-    owned?: { [bud: number]: [number, BudValue][] };
-    */
     if (src === undefined) return;
     const { id, i, x, value, price, amount, buds, owned } = src;
     dest.id = id;

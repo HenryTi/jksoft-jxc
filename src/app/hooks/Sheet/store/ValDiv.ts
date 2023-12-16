@@ -1,4 +1,4 @@
-import { BinBuds, BinDiv, BizBud } from "app/Biz";
+import { BinBuds, BinDiv, BinRow, BizBud } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
 import { ValRow } from "../tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
@@ -9,6 +9,8 @@ export class ValDiv {
     readonly atomValDivs: WritableAtom<ValDiv[], any, any>;
     readonly atomValue: WritableAtom<number, any, any>;
     readonly id: number;
+    iBase: number;
+    xBase: number;
     constructor(binDiv: BinDiv, valRow: ValRow) {
         this.binDiv = binDiv;
         if (binDiv.div !== undefined) {
@@ -55,6 +57,20 @@ export class ValDiv {
         let valRow = getAtomValue(this.atomValRow);
         valRow.value = value;
         setAtomValue(this.atomValue, value);
+    }
+
+    setIXBase(binRow: BinRow) {
+        let { i, x } = binRow;
+        if (i !== undefined) {
+            if (this.binDiv.binBuds.hasIBase === true) {
+                this.iBase = i;
+            }
+        }
+        if (x !== undefined) {
+            if (this.binDiv.binBuds.hasXBase === true) {
+                this.xBase = x;
+            }
+        }
     }
 
     setValDiv(valDiv: ValDiv) {

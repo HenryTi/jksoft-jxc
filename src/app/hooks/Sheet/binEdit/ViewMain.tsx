@@ -20,7 +20,7 @@ export function ViewMain({ main }: { main: SheetMain }) {
         const cn = required === true ? ' text-primary ' : ' text-secodary ';
         let { id, caption, name } = bizBud;
         let value = buds[id];
-        propRow.push(<div key={id} className="col-3">
+        propRow.push(<div key={id} className="col">
             <div className={'ps-2 small ' + cn}>{caption ?? name}</div>
             <div className="py-1"><EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} /></div>
         </div>);
@@ -44,21 +44,25 @@ export function ViewMain({ main }: { main: SheetMain }) {
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
         if (bud === undefined) return null;
         const { caption, name } = bud;
-        return <div className="col-3">
+        return <div className="col">
             <div className="small text-secondary">{caption ?? name}</div>
             <ViewSpecR id={value} />
         </div>
     }
 
-    return <div className="tonwa-bg-gray-3 px-3 container">
-        <div className="row py-3 border-bottom border-secondary-subtle">
-            <div className="col-3">
-                <div className="small text-secondary">单据编号</div>
-                <div>{no} &nbsp; <ViewSheetTime id={idBin} /></div>
+    return <div className="tonwa-bg-gray-3 container d-flex">
+        <div className="flex-fill">
+            <div className="row row-cols-4 py-3 border-bottom border-secondary-subtle">
+                <div className="col">
+                    <div className="small text-secondary">单据编号</div>
+                    <div><span className="text-danger">{no}</span> &nbsp; <ViewSheetTime id={idBin} /></div>
+                </div>
+                <ViewIdField bud={budI} value={i} />
+                <ViewIdField bud={budX} value={x} />
             </div>
-            <ViewIdField bud={budI} value={i} />
-            <ViewIdField bud={budX} value={x} />
+            {viewRowArr}
         </div>
-        {viewRowArr}
+        <div className="w-min-8c w-max-8c">
+        </div>
     </div>;
 }

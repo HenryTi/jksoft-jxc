@@ -14,8 +14,10 @@ export function ViewSpecBase({ id, ViewAtom, uiType }: {
     const { value: atomValue, entity } = atom;
     let viewAtom: any;
     if (atomValue !== undefined) {
-        const { no, ex } = atomValue;
-        viewAtom = <ViewAtom no={no} ex={ex} entity={entity} />;
+        if (ViewAtom !== undefined) {
+            const { no, ex } = atomValue;
+            viewAtom = <ViewAtom no={no} ex={ex} entity={entity} />;
+        }
     }
     let cn = '';
     if (uiType === ViewBudUIType.inDiv) {
@@ -79,6 +81,23 @@ export function ViewSpec({ id, uiType }: { id: number; uiType?: ViewBudUIType; }
         </div>;
     }
     return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={uiType} />
+}
+
+export function ViewSpecNoAtom({ id, uiType }: { id: number; uiType?: ViewBudUIType; }) {
+    return <ViewSpecBase id={id} ViewAtom={undefined} uiType={uiType} />
+}
+
+export function ViewSpecBaseOnly({ id }: { id: number; }) {
+    const { atom } = useGetSpec(id);
+    if (atom === undefined) return null;
+    const { value: atomValue, entity } = atom;
+    if (atomValue === undefined) return null;
+    const { caption, name } = entity;
+    let label = <small className="text-secondary me-2">{caption ?? name}</small>;
+    const { no, ex } = atomValue;
+    return <div title={'编号: ' + no} className="mb-1">
+        {label}<b>{ex}</b>
+    </div>;
 }
 
 export function ViewSpecR({ id }: { id: number; }) {

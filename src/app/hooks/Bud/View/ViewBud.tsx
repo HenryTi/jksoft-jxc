@@ -1,5 +1,5 @@
 import { BizBud, BudRadio, EnumBudType } from "app/Biz";
-import { ViewSpec } from "app/hooks";
+import { ViewSpec, ViewSpecNoAtom } from "app/hooks";
 import { contentFromDays } from "app/tool";
 
 export enum ViewBudUIType {
@@ -31,7 +31,7 @@ export function ViewBud({ bud, value, uiType }: { bud: BizBud; value: any; uiTyp
         case EnumBudType.datetime: content = datetime(bud, value); break;
     }
     if (uiType === ViewBudUIType.inDiv) {
-        return <div className="col"><small className="text-secondary me-2">{caption ?? name}</small> {content}</div>
+        return <div className="col"><small className="text-secondary me-2">{caption ?? name}</small>{content}</div>
     }
     else {
         return content;
@@ -42,8 +42,13 @@ function ViewAtomInBud({ value }: { value: any; }) {
     return <>{value?.ex}</>;
 }
 function atom(bud: BizBud, value: any, uiType: ViewBudUIType) {
-    return <ViewSpec id={value} uiType={uiType} />;
-    // return <IDView uq={bud.biz.uq} id={value} Template={ViewAtomInBud} />;
+    switch (bud.name) {
+        default:
+            return <ViewSpec id={value} uiType={uiType} />;
+        case 'i':
+        case 'x':
+            return <ViewSpecNoAtom id={value} uiType={uiType} />;
+    }
 }
 
 function radio(bud: BizBud, value: any) {

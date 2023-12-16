@@ -3,7 +3,7 @@ import { DivStore, UseInputsProps, ValDiv } from "../store";
 import { FA } from "tonwa-com";
 import { ChangeEvent } from "react";
 import { useInputs } from "../inputs";
-import { ViewBud, ViewBudUIType } from "app/hooks";
+import { ViewBud, ViewBudUIType, ViewSpecBaseOnly } from "app/hooks";
 
 interface ViewDivProps {
     divStore: DivStore;
@@ -13,24 +13,36 @@ interface ViewDivProps {
 }
 
 export function ViewBinDivs({ divStore, editable }: { divStore: DivStore; editable: boolean; }) {
-    return <div className="container">
-        <ViewDivs divStore={divStore} valDiv={divStore.valDiv} editable={editable} />
+    const { valDiv } = divStore;
+    const divs = useAtomValue(valDiv.atomValDivs);
+    if (divs.length === 0) {
+        return <div className="small text-body-tertiary p-3">
+            无明细
+        </div>;
+    }
+    return <div className="tonwa-bg-gray-1">
+        {divs.map(v => {
+            return <div key={v.id} className="mb-3 border-top border-bottom border-2 border-primary-subtle">
+                <ViewDiv divStore={divStore} valDiv={v} editable={editable} />
+            </div>;
+        })}
     </div>;
-    // <button className="btn btn-primary" onClick={onRedraw}>刷新</button>
 }
 
 function ViewDivs({ divStore, valDiv, editable, className }: ViewDivProps) {
     const divs = useAtomValue(valDiv.atomValDivs);
-    return <div className={className}>
-        {divs.map(v => <ViewDiv key={v.id} divStore={divStore} valDiv={v} editable={editable} />)}
-    </div>;
+    return <>
+        {divs.map(v => {
+            return <ViewDiv key={v.id} divStore={divStore} valDiv={v} editable={editable} />;
+        })}
+    </>;
 }
 
-function ViewDiv({ divStore, valDiv, editable }: ViewDivProps) {
+function ViewDiv({ divStore, valDiv, editable, className }: ViewDivProps) {
     const { atomValRow, atomValDivs: atomDivs } = valDiv;
     let vRow: any;
     if (atomValRow !== undefined) {
-        vRow = <ViewRow divStore={divStore} valDiv={valDiv} editable={editable} />;
+        vRow = <ViewRow divStore={divStore} valDiv={valDiv} editable={editable} className={className} />;
     }
     return <div>
         {vRow}
@@ -38,41 +50,39 @@ function ViewDiv({ divStore, valDiv, editable }: ViewDivProps) {
     </div>
 }
 
+const marginRightStyle = { marginRight: "-1em" };
 function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     const inputs = useInputs();
     const { atomValRow, atomValDivs, atomValue, binDiv } = valDiv;
-    const { binBuds } = binDiv;
+    const { binBuds, level, entityBin } = binDiv;
+    const { divLevels } = entityBin;
+    const { hasIBase } = binBuds;
     const val = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);
     const { pend, id } = val;
     let btn: any;
-    let vDel = <div className="px-3 py-2 cursor-pointer text-warning" onClick={onDelSub}>
+    let vDel = <div className="px-3 cursor-pointer text-warning" onClick={onDelSub} style={marginRightStyle}>
         <FA name="times" />
     </div>;
+    const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end';
     if (atomValDivs !== undefined) {
         function DivRow() {
             const divs = useAtomValue(atomValDivs);
-            const vValue = divs.length === 0 ?
-                vDel :
-                <div className="me-2 text-body-tertiary text-end">{value}</div>;
-            return <>
-                {vValue}
-                <div className="px-3 py-2 cursor-pointer text-primary" onClick={onAddSub}>
+            return <div className={cnBtn}>
+                {divs.length === 0 ? vDel : <div className="text-body-tertiary text-end">{value}</div>}
+                <div className="px-3 cursor-pointer text-primary" onClick={onAddSub} style={marginRightStyle}>
                     <FA name="plus" />
                 </div>
-            </>;
+            </div>;
         }
         btn = <DivRow />;
     }
     else {
         // {value}
-        btn = <>
-            <div className="py-1 text-end fw-bold">
-                <input type="number" className="form-control text-end w-8c"
-                    onChange={onValueChange} defaultValue={value} />
-            </div>
+        btn = <div className={cnBtn}>
+            <div className="text-end">{value}</div>
             {vDel}
-        </>;
+        </div>;
     }
     async function onAddSub() {
         const pendRow = divStore.getPendRow(pend);
@@ -93,8 +103,18 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
         if (Number.isNaN(n) === true) return;
         valDiv.setValue(n);
     }
-    return <div className="d-flex align-items-center ">
+    let vIBase: any;
+    if (hasIBase === true) {
+        vIBase = <div className="col-12">
+            <ViewSpecBaseOnly id={valDiv.iBase} />
+        </div>;
+    }
+    let cn: string = ' container d-flex py-2 border-bottom ';
+    if (level < divLevels) cn += 'tonwa-bg-gray-' + (divLevels - level);
+    else cn += 'bg-white';
+    return <div className={cn}>
         <div className="flex-fill row row-cols-4">
+            {vIBase}
             {valDiv.getBudsValArr().map(([bud, value]) => {
                 const { id } = bud;
                 return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} />;
