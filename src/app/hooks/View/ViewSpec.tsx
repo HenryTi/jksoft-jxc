@@ -83,6 +83,20 @@ export function ViewSpec({ id, uiType }: { id: number; uiType?: ViewBudUIType; }
     return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={uiType} />
 }
 
+export function ViewBudSpec({ id, bud }: { id: number; bud: BizBud; }) {
+    function ViewAtom({ no, ex, entity }: { no: string; ex: string; entity?: EntityAtomID; }) {
+        let label: any;
+        if (entity !== undefined) {
+            const { caption, name } = bud;
+            label = <small className="text-secondary me-2">{caption ?? name}</small>;
+        }
+        return <div title={'编号: ' + no} className="col">
+            {label}{ex}
+        </div>;
+    }
+    return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={ViewBudUIType.inDiv} />
+}
+
 export function ViewSpecNoAtom({ id, uiType }: { id: number; uiType?: ViewBudUIType; }) {
     return <ViewSpecBase id={id} ViewAtom={undefined} uiType={uiType} />
 }

@@ -1,5 +1,5 @@
 import { BizBud, BudRadio, EnumBudType } from "app/Biz";
-import { ViewSpec, ViewSpecNoAtom } from "app/hooks";
+import { ViewBudSpec, ViewSpec, ViewSpecNoAtom } from "app/hooks";
 import { contentFromDays } from "app/tool";
 
 export enum ViewBudUIType {
@@ -44,7 +44,7 @@ function ViewAtomInBud({ value }: { value: any; }) {
 function atom(bud: BizBud, value: any, uiType: ViewBudUIType) {
     switch (bud.name) {
         default:
-            return <ViewSpec id={value} uiType={uiType} />;
+            return <ViewBudSpec id={value} bud={bud} />;
         case 'i':
         case 'x':
             return <ViewSpecNoAtom id={value} uiType={uiType} />;
