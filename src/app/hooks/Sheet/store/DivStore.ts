@@ -1,8 +1,8 @@
 import { PendRow, SheetStore } from "./SheetStore";
-import { BinDiv, EntityBin } from "app/Biz";
+import { BinDiv, BinRow, EntityBin, EnumBudType } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
 import { OwnerColl, budValuesFromProps } from "../../tool";
-import { ReturnGetPendRetSheet } from "uqs/UqDefault";
+import { ParamSaveDetail, ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "../tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { NamedResults } from "../NamedResults";
@@ -60,7 +60,6 @@ export class DivStore {
         }
         this.pendRows = pendRows;
         this.ownerColl = ownerColl;
-        // return { pendRows, ownerColl };
     }
 
     load(valRows: ValRow[]) {
@@ -126,24 +125,11 @@ export class DivStore {
                     const { origin: pOrigin } = getAtomValue(p.atomValRow);
                     p = this.valColl[pOrigin];
                 }
-                // if (level !== parentVal.level) debugger;
-                // binDiv = this.binDiv.getLevelDiv(level);
                 binDiv = this.binDiv;
                 for (let i = 0; i < level; i++) {
                     binDiv = binDiv.div;
                 }
                 if (binDiv === undefined) debugger;
-                /*
-                for (let p = binDiv; p.div != undefined; p = p.div) {
-                    const { atomDivs } = parentVal;
-                    if (atomDivs === undefined) break;
-                    let divs = getAtomValue(atomDivs);
-                    let vd = divs.find(v => v.id === parent);
-                    if (vd === undefined) break;
-                    parentVal = vd;
-                    binDiv = p.div;
-                }
-                */
             }
             val = this.setSub(binDiv, parentVal, valRow, trigger);
         }
@@ -154,35 +140,19 @@ export class DivStore {
     }
 
     private setSub(binDiv: BinDiv, valDiv: ValDiv, valRow: ValRow, trigger: boolean) {
-        //let ret: ValDiv;
         let { id } = valRow;
-        // let level = valDiv.level + 1;
-        //for (let p = binDiv; p !== undefined; p = p.div, level++) {
         const { atomValDivs: atomDivs } = valDiv;
         if (atomDivs === undefined) {
-            // break;
             debugger;
             return;
         }
         let divs = getAtomValue(atomDivs);
-        let subVal = new ValDiv(binDiv, valRow/*, level*/);
+        let subVal = new ValDiv(binDiv, valRow);
         this.valColl[id] = subVal;
-        //if (ret === undefined) {
-        //    ret = subVal;
-        //}
         divs.push(subVal);
-        //valDiv = subVal;
         if (trigger === true) {
             setAtomValue(atomDivs, [...divs]);
         }
-        //}
-        /*
-        if (this.valColl[id] === undefined) {
-            if (ret === undefined) debugger;
-            this.valColl[id] = ret;
-        }
-        return ret;
-        */
         return subVal;
     }
 
@@ -193,15 +163,53 @@ export class DivStore {
     getPendRow(pend: number) {
         return this.pendRows.find(v => v.pend === pend);
     }
+
+    async saveDetail(binDiv: BinDiv, binRow: BinRow, pend: number, origin: number) {
+        let { id, i, x, value, price, amount, buds: budsValues } = binRow;
+        const { buds } = binDiv;
+
+        let propArr: [number, 'int' | 'dec' | 'str', string | number][] = [];
+        for (let bud of buds) {
+            let { id, name, budDataType } = bud;
+            let value = (budsValues as any)[id];
+            if (value === undefined) continue;
+            let type: 'int' | 'dec' | 'str';
+            switch (budDataType.type) {
+                default:
+                case EnumBudType.atom:
+                case EnumBudType.int: type = 'int'; break;
+                case EnumBudType.dec: type = 'dec'; break;
+                case EnumBudType.str:
+                case EnumBudType.char: type = 'str'; break;
+            }
+            if (type === undefined) continue;
+            propArr.push([id, type, value]);
+        }
+
+        let param: ParamSaveDetail = {
+            base: this.sheetStore.main.binRow.id,
+            phrase: binDiv.entityBin.id,
+            id,
+            i,
+            x,
+            value,
+            price,
+            amount,
+            origin,
+            pend,
+            props: propArr,
+        };
+        let retSaveDetail = await this.sheetStore.uq.SaveDetail.submitReturns(param);
+        id = retSaveDetail.ret[0].id;
+        return id;
+    }
 }
 
 export interface DivEditProps {
     divStore: DivStore;
-    // namedResults: NamedResults;
     pendRow: PendRow;
 }
 
 export interface UseInputsProps extends DivEditProps {
     binDiv: BinDiv;
-    // valDiv: ValDiv;
 }

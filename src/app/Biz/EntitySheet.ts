@@ -88,15 +88,6 @@ export class BinDiv {
         this.parent = parent;
         this.level = parent === undefined ? 0 : parent.level + 1;
     }
-    /*
-    getLevelDiv(level: number) {
-        let p: BinDiv = this;
-        for (let i = 0; i < level; i++) {
-            p = p.div;
-        }
-        return p;
-    }
-    */
 }
 
 export enum ValueSetType {
@@ -120,13 +111,11 @@ export interface BinRow {
 export abstract class BinField {
     readonly name: string;
     readonly bud: BizBud;
-    // readonly binRow: BinRow;
     readonly valueSet: string;
     readonly valueSetType: ValueSetType;
-    constructor(bud: BizBud/*, binRow: BinRow*/) {
+    constructor(bud: BizBud) {
         this.name = bud.name;
         this.bud = bud;
-        // this.binRow = binRow;
         let { defaultValue } = bud;
         if (defaultValue !== undefined) {
             let p = defaultValue.indexOf('\n');
@@ -193,6 +182,7 @@ export class BudsFields {
     readonly fields: BinField[];
     readonly hasIBase: boolean;
     readonly hasXBase: boolean;
+    readonly valueBud: BizBud;
     constructor(bin: EntityBin, buds: BizBud[]) {
         this.entityBin = bin;
         this.fields = [];
@@ -214,6 +204,11 @@ export class BudsFields {
             switch (bud.name) {
                 case '.i': this.hasIBase = true; continue;
                 case '.x': this.hasXBase = true; continue;
+                case 'value':
+                    this.valueBud = bud;
+                    // let field = new FieldValue(bud);
+                    // this.fieldColl[field.name] = field;
+                    break;
             }
             let Field = fieldOfBud(bud);
             if (Field === undefined) continue;

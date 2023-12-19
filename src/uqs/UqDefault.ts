@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Dec 07 2023 23:29:26 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Mon Dec 18 2023 21:00:56 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,17 +23,17 @@ export interface IX {
 
 export enum EnumID {
 	$phrase = '$phrase',
+	AtomUom = 'atomuom',
+	AtomSpec = 'atomspec',
+	SumFormula = 'sumformula',
+	Bud = 'bud',
+	History = 'history',
 	Atom = 'atom',
 	Spec = 'spec',
 	Duo = 'duo',
 	Sheet = 'sheet',
 	Detail = 'detail',
 	Pend = 'pend',
-	AtomUom = 'atomuom',
-	AtomSpec = 'atomspec',
-	SumFormula = 'sumformula',
-	Bud = 'bud',
-	History = 'history',
 }
 
 export interface $phrase extends ID {
@@ -187,183 +187,6 @@ export interface Result$getUnitTime {
 	ret: Return$getUnitTimeRet[];
 }
 
-export enum BizPhraseType {
-	any = 0,
-	atom = 11,
-	spec = 12,
-	bud = 13,
-	budGroup = 14,
-	duo = 15,
-	sheet = 101,
-	main = 102,
-	detail = 103,
-	pend = 104,
-	detailAct = 111,
-	query = 151,
-	pick = 161,
-	role = 201,
-	permit = 202,
-	options = 301,
-	tree = 401,
-	tie = 501,
-	report = 601,
-	title = 901,
-	assign = 902,
-	key = 1001,
-	prop = 1011,
-	optionsitem = 1031,
-	console = 6001
-}
-
-export enum BudDataType {
-	none = 0,
-	int = 11,
-	atom = 12,
-	radio = 13,
-	check = 14,
-	ID = 19,
-	dec = 21,
-	char = 31,
-	str = 32,
-	date = 41
-}
-
-export enum BizBudFlag {
-	index = 1
-}
-
-export interface ParamGetBizObjects {
-	lang: string;
-	culture: string;
-}
-export interface ReturnGetBizObjectsObjs {
-	id: number;
-	phrase: string;
-	source: string;
-	caption: string;
-}
-export interface ReturnGetBizObjectsBuds {
-	id: number;
-	base: number;
-	phrase: string;
-	caption: string;
-}
-export interface ResultGetBizObjects {
-	objs: ReturnGetBizObjectsObjs[];
-	buds: ReturnGetBizObjectsBuds[];
-}
-
-export interface ParamGetEntityCode {
-	id: number;
-}
-export interface ReturnGetEntityCodeRet {
-	code: string;
-	schema: string;
-}
-export interface ResultGetEntityCode {
-	ret: ReturnGetEntityCodeRet[];
-}
-
-export interface ParamCreateSiteForUser {
-	no: string;
-	ex: string;
-	tonwaUser: number;
-}
-export interface ReturnCreateSiteForUserRet {
-	site: number;
-	userSite: number;
-}
-export interface ResultCreateSiteForUser {
-	ret: ReturnCreateSiteForUserRet[];
-}
-
-export interface ParamSearchAllSheets {
-	no: string;
-	phrase: number;
-	paramMain: any;
-	paramDetail: any;
-}
-export interface ReturnSearchAllSheets$page {
-	id: number;
-	no: string;
-	phrase: number;
-	operator: number;
-	buds: any;
-}
-export interface ResultSearchAllSheets {
-	$page: ReturnSearchAllSheets$page[];
-}
-
-export interface Atom extends ID {
-	base: number;
-	no?: string;
-	ex: string;
-}
-
-export interface AtomInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-	no?: string;
-	ex: string;
-}
-
-export interface Spec extends ID {
-	base: number;
-}
-
-export interface SpecInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-}
-
-export interface Duo extends ID {
-	i: number;
-	x: number;
-}
-
-export interface DuoInActs extends ID {
-	ID?: UqID<any>;
-	i: number | ID;
-	x: number | ID;
-}
-
-export interface Sheet extends ID {
-	base: number;
-	no: string;
-	operator: number;
-}
-
-export interface SheetInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-	no: string;
-	operator: number | ID;
-}
-
-export interface Detail extends ID {
-	base: number;
-}
-
-export interface DetailInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-}
-
-export interface Pend extends ID {
-	base: number;
-	bin: number;
-	mid: any;
-	value: number;
-}
-
-export interface PendInActs extends ID {
-	ID?: UqID<any>;
-	base: number | ID;
-	bin: number | ID;
-	mid: any;
-	value: number;
-}
-
 export interface ParamSaveAtom {
 	atomPhrase: number;
 	base: number;
@@ -462,7 +285,7 @@ export interface ParamSaveDetail {
 	value: number;
 	price: number;
 	amount: number;
-	pendFrom: number;
+	pend: number;
 	props: any;
 }
 export interface ReturnSaveDetailRet {
@@ -730,7 +553,7 @@ export interface ReturnGetSheetDetails {
 	value: number;
 	amount: number;
 	price: number;
-	pendFrom: number;
+	pend: number;
 	pendValue: number;
 	phrase: number;
 }
@@ -936,6 +759,23 @@ export interface ResultGetSiteSheetList {
 	$page: ReturnGetSiteSheetList$page[];
 }
 
+export interface ParamSearchAllSheets {
+	no: string;
+	phrase: number;
+	paramMain: any;
+	paramDetail: any;
+}
+export interface ReturnSearchAllSheets$page {
+	id: number;
+	no: string;
+	phrase: number;
+	operator: number;
+	buds: any;
+}
+export interface ResultSearchAllSheets {
+	$page: ReturnSearchAllSheets$page[];
+}
+
 export interface AtomUom extends ID {
 	atom: number;
 	uom: number;
@@ -1102,6 +942,96 @@ export interface ReturnGetUomIUomX {
 export interface ResultGetUomI {
 	UomI: ReturnGetUomIUomI[];
 	UomX: ReturnGetUomIUomX[];
+}
+
+export enum BizPhraseType {
+	any = 0,
+	atom = 11,
+	spec = 12,
+	bud = 13,
+	budGroup = 14,
+	duo = 15,
+	sheet = 101,
+	main = 102,
+	detail = 103,
+	pend = 104,
+	detailAct = 111,
+	query = 151,
+	pick = 161,
+	role = 201,
+	permit = 202,
+	options = 301,
+	tree = 401,
+	tie = 501,
+	report = 601,
+	title = 901,
+	assign = 902,
+	key = 1001,
+	prop = 1011,
+	optionsitem = 1031,
+	console = 6001
+}
+
+export enum BudDataType {
+	none = 0,
+	int = 11,
+	atom = 12,
+	radio = 13,
+	check = 14,
+	ID = 19,
+	dec = 21,
+	char = 31,
+	str = 32,
+	date = 41
+}
+
+export enum BizBudFlag {
+	index = 1
+}
+
+export interface ParamGetBizObjects {
+	lang: string;
+	culture: string;
+}
+export interface ReturnGetBizObjectsObjs {
+	id: number;
+	phrase: string;
+	source: string;
+	caption: string;
+}
+export interface ReturnGetBizObjectsBuds {
+	id: number;
+	base: number;
+	phrase: string;
+	caption: string;
+}
+export interface ResultGetBizObjects {
+	objs: ReturnGetBizObjectsObjs[];
+	buds: ReturnGetBizObjectsBuds[];
+}
+
+export interface ParamGetEntityCode {
+	id: number;
+}
+export interface ReturnGetEntityCodeRet {
+	code: string;
+	schema: string;
+}
+export interface ResultGetEntityCode {
+	ret: ReturnGetEntityCodeRet[];
+}
+
+export interface ParamCreateSiteForUser {
+	no: string;
+	ex: string;
+	tonwaUser: number;
+}
+export interface ReturnCreateSiteForUserRet {
+	site: number;
+	userSite: number;
+}
+export interface ResultCreateSiteForUser {
+	ret: ReturnCreateSiteForUserRet[];
 }
 
 export enum SumFormulaType {
@@ -1312,6 +1242,76 @@ export interface HistoryInActs extends ID {
 	plusMinus: number;
 }
 
+export interface Atom extends ID {
+	base: number;
+	no?: string;
+	ex: string;
+}
+
+export interface AtomInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	no?: string;
+	ex: string;
+}
+
+export interface Spec extends ID {
+	base: number;
+}
+
+export interface SpecInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+}
+
+export interface Duo extends ID {
+	i: number;
+	x: number;
+}
+
+export interface DuoInActs extends ID {
+	ID?: UqID<any>;
+	i: number | ID;
+	x: number | ID;
+}
+
+export interface Sheet extends ID {
+	base: number;
+	no: string;
+	operator: number;
+}
+
+export interface SheetInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	no: string;
+	operator: number | ID;
+}
+
+export interface Detail extends ID {
+	base: number;
+}
+
+export interface DetailInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+}
+
+export interface Pend extends ID {
+	base: number;
+	bin: number;
+	mid: any;
+	value: number;
+}
+
+export interface PendInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	bin: number | ID;
+	mid: any;
+	value: number;
+}
+
 export interface ParamGetSiteSetting {
 }
 export interface ReturnGetSiteSettingBudsInt {
@@ -1383,18 +1383,18 @@ export interface ResultReportStorageSpec {
 
 export interface ParamActs {
 	$phrase?: $phraseInActs[];
-	atom?: AtomInActs[];
-	spec?: SpecInActs[];
-	duo?: DuoInActs[];
-	sheet?: SheetInActs[];
-	detail?: DetailInActs[];
-	pend?: PendInActs[];
 	atomUom?: AtomUomInActs[];
 	atomSpec?: AtomSpecInActs[];
 	sumFormula?: SumFormulaInActs[];
 	ixBud?: IxBud[];
 	bud?: BudInActs[];
 	history?: HistoryInActs[];
+	atom?: AtomInActs[];
+	spec?: SpecInActs[];
+	duo?: DuoInActs[];
+	sheet?: SheetInActs[];
+	detail?: DetailInActs[];
+	pend?: PendInActs[];
 }
 
 
@@ -1416,16 +1416,6 @@ export interface UqExt extends Uq {
 	$poked: UqQuery<Param$poked, Result$poked>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
-	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
-	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
-	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
-	SearchAllSheets: UqQuery<ParamSearchAllSheets, ResultSearchAllSheets>;
-	Atom: UqID<any>;
-	Spec: UqID<any>;
-	Duo: UqID<any>;
-	Sheet: UqID<any>;
-	Detail: UqID<any>;
-	Pend: UqID<any>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
 	SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
 	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
@@ -1462,6 +1452,7 @@ export interface UqExt extends Uq {
 	GetPendDetailFromSheetId: UqQuery<ParamGetPendDetailFromSheetId, ResultGetPendDetailFromSheetId>;
 	GetSiteSheets: UqQuery<ParamGetSiteSheets, ResultGetSiteSheets>;
 	GetSiteSheetList: UqQuery<ParamGetSiteSheetList, ResultGetSiteSheetList>;
+	SearchAllSheets: UqQuery<ParamSearchAllSheets, ResultSearchAllSheets>;
 	AtomUom: UqID<any>;
 	AtomSpec: UqID<any>;
 	SaveUomType: UqAction<ParamSaveUomType, ResultSaveUomType>;
@@ -1476,6 +1467,9 @@ export interface UqExt extends Uq {
 	DeleteAtomUomI: UqAction<ParamDeleteAtomUomI, ResultDeleteAtomUomI>;
 	SaveAtomSpec: UqAction<ParamSaveAtomSpec, ResultSaveAtomSpec>;
 	GetUomI: UqQuery<ParamGetUomI, ResultGetUomI>;
+	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
+	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
+	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
 	SumFormula: UqID<any>;
 	SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
 	SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
@@ -1491,6 +1485,12 @@ export interface UqExt extends Uq {
 	IxBud: UqIX<any>;
 	Bud: UqID<any>;
 	History: UqID<any>;
+	Atom: UqID<any>;
+	Spec: UqID<any>;
+	Duo: UqID<any>;
+	Sheet: UqID<any>;
+	Detail: UqID<any>;
+	Pend: UqID<any>;
 	GetSiteSetting: UqQuery<ParamGetSiteSetting, ResultGetSiteSetting>;
 	ReportStorage: UqQuery<ParamReportStorage, ResultReportStorage>;
 	ReportStorageAtom: UqQuery<ParamReportStorageAtom, ResultReportStorageAtom>;
@@ -1888,453 +1888,6 @@ export const uqSchema={
             }
         ]
     },
-    "bizphrasetype": {
-        "name": "BizPhraseType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "any": 0,
-            "atom": 11,
-            "spec": 12,
-            "bud": 13,
-            "budGroup": 14,
-            "duo": 15,
-            "sheet": 101,
-            "main": 102,
-            "detail": 103,
-            "pend": 104,
-            "detailAct": 111,
-            "query": 151,
-            "pick": 161,
-            "role": 201,
-            "permit": 202,
-            "options": 301,
-            "tree": 401,
-            "tie": 501,
-            "report": 601,
-            "title": 901,
-            "assign": 902,
-            "key": 1001,
-            "prop": 1011,
-            "optionsitem": 1031,
-            "console": 6001
-        }
-    },
-    "buddatatype": {
-        "name": "BudDataType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "none": 0,
-            "int": 11,
-            "atom": 12,
-            "radio": 13,
-            "check": 14,
-            "ID": 19,
-            "dec": 21,
-            "char": 31,
-            "str": 32,
-            "date": 41
-        }
-    },
-    "bizbudflag": {
-        "name": "BizBudFlag",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "index": 1
-        }
-    },
-    "getbizobjects": {
-        "name": "GetBizObjects",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "lang",
-                "type": "char",
-                "size": 10
-            },
-            {
-                "name": "culture",
-                "type": "char",
-                "size": 10
-            }
-        ],
-        "returns": [
-            {
-                "name": "objs",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "source",
-                        "type": "text"
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            },
-            {
-                "name": "buds",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            }
-        ]
-    },
-    "getentitycode": {
-        "name": "GetEntityCode",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id"
-            }
-        ],
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "code",
-                        "type": "text"
-                    },
-                    {
-                        "name": "schema",
-                        "type": "text"
-                    }
-                ]
-            }
-        ]
-    },
-    "createsiteforuser": {
-        "name": "CreateSiteForUser",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "no",
-                "type": "char",
-                "size": 30
-            },
-            {
-                "name": "ex",
-                "type": "char",
-                "size": 200
-            },
-            {
-                "name": "tonwaUser",
-                "type": "id"
-            }
-        ],
-        "jsoned": true,
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "site",
-                        "type": "id"
-                    },
-                    {
-                        "name": "userSite",
-                        "type": "id"
-                    }
-                ]
-            }
-        ]
-    },
-    "searchallsheets": {
-        "name": "SearchAllSheets",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "no",
-                "type": "char",
-                "size": 30
-            },
-            {
-                "name": "phrase",
-                "type": "id"
-            },
-            {
-                "name": "paramMain",
-                "type": "json"
-            },
-            {
-                "name": "paramDetail",
-                "type": "json"
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "no",
-                        "type": "char",
-                        "size": 30
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "id"
-                    },
-                    {
-                        "name": "operator",
-                        "type": "id"
-                    },
-                    {
-                        "name": "buds",
-                        "type": "json"
-                    }
-                ],
-                "order": "desc"
-            }
-        ]
-    },
-    "atom": {
-        "name": "Atom",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "no",
-                "type": "char",
-                "size": 30
-            },
-            {
-                "name": "ex",
-                "type": "char",
-                "size": 200
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "spec": {
-        "name": "Spec",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "duo": {
-        "name": "Duo",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "i",
-                "type": "id"
-            },
-            {
-                "name": "x",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "i",
-                "type": "id"
-            },
-            {
-                "name": "x",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "sheet": {
-        "name": "Sheet",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "no",
-                "type": "char",
-                "size": 20
-            },
-            {
-                "name": "operator",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "no",
-                "type": "char",
-                "size": 20
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "detail": {
-        "name": "Detail",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "pend": {
-        "name": "Pend",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "base",
-                "type": "id"
-            },
-            {
-                "name": "bin",
-                "type": "id"
-            },
-            {
-                "name": "mid",
-                "type": "json"
-            },
-            {
-                "name": "value",
-                "type": "dec",
-                "scale": 6,
-                "precision": 18
-            }
-        ],
-        "keys": [
-            {
-                "name": "base",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
     "saveatom": {
         "name": "SaveAtom",
         "type": "action",
@@ -2638,7 +2191,7 @@ export const uqSchema={
                 "precision": 18
             },
             {
-                "name": "pendFrom",
+                "name": "pend",
                 "type": "id"
             },
             {
@@ -3465,7 +3018,7 @@ export const uqSchema={
                         "precision": 18
                     },
                     {
-                        "name": "pendFrom",
+                        "name": "pend",
                         "type": "id"
                     },
                     {
@@ -4127,6 +3680,60 @@ export const uqSchema={
             }
         ]
     },
+    "searchallsheets": {
+        "name": "SearchAllSheets",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "phrase",
+                "type": "id"
+            },
+            {
+                "name": "paramMain",
+                "type": "json"
+            },
+            {
+                "name": "paramDetail",
+                "type": "json"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "operator",
+                        "type": "id"
+                    },
+                    {
+                        "name": "buds",
+                        "type": "json"
+                    }
+                ],
+                "order": "desc"
+            }
+        ]
+    },
     "atomuom": {
         "name": "AtomUom",
         "type": "id",
@@ -4642,6 +4249,197 @@ export const uqSchema={
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
+                    }
+                ]
+            }
+        ]
+    },
+    "bizphrasetype": {
+        "name": "BizPhraseType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "any": 0,
+            "atom": 11,
+            "spec": 12,
+            "bud": 13,
+            "budGroup": 14,
+            "duo": 15,
+            "sheet": 101,
+            "main": 102,
+            "detail": 103,
+            "pend": 104,
+            "detailAct": 111,
+            "query": 151,
+            "pick": 161,
+            "role": 201,
+            "permit": 202,
+            "options": 301,
+            "tree": 401,
+            "tie": 501,
+            "report": 601,
+            "title": 901,
+            "assign": 902,
+            "key": 1001,
+            "prop": 1011,
+            "optionsitem": 1031,
+            "console": 6001
+        }
+    },
+    "buddatatype": {
+        "name": "BudDataType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "none": 0,
+            "int": 11,
+            "atom": 12,
+            "radio": 13,
+            "check": 14,
+            "ID": 19,
+            "dec": 21,
+            "char": 31,
+            "str": 32,
+            "date": 41
+        }
+    },
+    "bizbudflag": {
+        "name": "BizBudFlag",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "index": 1
+        }
+    },
+    "getbizobjects": {
+        "name": "GetBizObjects",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "lang",
+                "type": "char",
+                "size": 10
+            },
+            {
+                "name": "culture",
+                "type": "char",
+                "size": 10
+            }
+        ],
+        "returns": [
+            {
+                "name": "objs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "source",
+                        "type": "text"
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            },
+            {
+                "name": "buds",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "caption",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
+            }
+        ]
+    },
+    "getentitycode": {
+        "name": "GetEntityCode",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "code",
+                        "type": "text"
+                    },
+                    {
+                        "name": "schema",
+                        "type": "text"
+                    }
+                ]
+            }
+        ]
+    },
+    "createsiteforuser": {
+        "name": "CreateSiteForUser",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "tonwaUser",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "site",
+                        "type": "id"
+                    },
+                    {
+                        "name": "userSite",
+                        "type": "id"
                     }
                 ]
             }
@@ -5238,6 +5036,208 @@ export const uqSchema={
             }
         ],
         "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "atom": {
+        "name": "Atom",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 200
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "spec": {
+        "name": "Spec",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "duo": {
+        "name": "Duo",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "sheet": {
+        "name": "Sheet",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "operator",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "detail": {
+        "name": "Detail",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "pend": {
+        "name": "Pend",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "bin",
+                "type": "id"
+            },
+            {
+                "name": "mid",
+                "type": "json"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
         "global": false,
         "idType": 3,
         "isMinute": true

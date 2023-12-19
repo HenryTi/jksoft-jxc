@@ -6,11 +6,6 @@ import { ValRow } from "../tool";
 import { DivStore } from ".";
 
 abstract class BinFields extends BudsFields {
-    /*
-    private readonly fields: BinField[];
-    private readonly fieldColl: { [name: string]: BinField } = {};
-    readonly entityBin: EntityBin;
-    */
     private readonly calc: Calc;
     private readonly requiredFields: BinField[] = [];
     readonly binRow: BinRow = { buds: {} } as any;
@@ -18,32 +13,6 @@ abstract class BinFields extends BudsFields {
 
     constructor(bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
         super(bin, buds);
-        // this.entityBin = bin;
-        // this.fields = [];
-        /*
-        const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, props: budArr } = bin;
-
-        function fieldOfBud(bud: BizBud): [new (bud: BizBud, binRow: BinRow) => BinField, boolean?] {
-            if (budArr.findIndex(v => v === bud) >= 0) return [FieldBud];
-            if (bud === iBud) return [FieldI, false];
-            if (bud === xBud) return [FieldX, false];
-            if (bud === valueBud) return [FieldValue];
-            if (bud === priceBud) return [FieldPrice];
-            if (bud === amountBud) return [FieldAmount];
-            // debugger; .i will not list here
-            return undefined;
-        }
-
-        for (let bud of buds) {
-            let ret = fieldOfBud(bud);
-            if (ret === undefined) continue;
-            let [Field, onForm] = ret;
-            let field = new Field(bud, this.valRow);
-            this.fieldColl[field.name] = field;
-            if (onForm === false) continue;
-            this.fields.push(field);
-        }
-        */
         let requiredFields = this.requiredFields;
         const formulas: Formulas = [];
         for (let i in this.fieldColl) {
@@ -113,11 +82,6 @@ abstract class BinFields extends BudsFields {
         if (field === undefined) {
             return;
         }
-        /*
-            console.error('RowStore setFieldOrBudValue not defined name=', name)
-            debugger;
-            return;
-        */
         field.setValue(this.binRow, value);
     }
 

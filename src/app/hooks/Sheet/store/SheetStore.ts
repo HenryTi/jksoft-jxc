@@ -463,6 +463,7 @@ export class SheetStore extends KeyIdObject {
     }
 
     addPendRow(pend: number, row: Row) {
+        if (this.pendColl === undefined) return;
         let _sections = this.pendColl[pend];
         if (_sections === undefined) {
             debugger;

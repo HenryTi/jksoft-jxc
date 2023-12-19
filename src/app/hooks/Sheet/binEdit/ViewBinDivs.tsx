@@ -56,7 +56,7 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     const { atomValRow, atomValDivs, atomValue, binDiv } = valDiv;
     const { binBuds, level, entityBin } = binDiv;
     const { divLevels } = entityBin;
-    const { hasIBase } = binBuds;
+    const { hasIBase, valueBud } = binBuds;
     const val = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);
     const { pend, id } = val;
@@ -78,9 +78,12 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
         btn = <DivRow />;
     }
     else {
-        // {value}
+        let { caption, name } = valueBud;
         btn = <div className={cnBtn}>
-            <div className="text-end">{value}</div>
+            <div className="text-end">
+                <span className="small text-secondary me-2">{caption ?? name}</span>
+                {value}
+            </div>
             {vDel}
         </div>;
     }
@@ -118,14 +121,8 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
             {valDiv.getBudsValArr().map(([bud, value]) => {
                 const { id } = bud;
                 return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} />;
-                /*
-                    <div key={id} className="d-flex me-3 w-12c">
-                        <div className="text-secondary me-2">{caption ?? name}:</div>
-                    </div>;
-                */
             })}
         </div>
         {btn}
     </div >;
-    // <div className="px-3 py-2 text-break">{JSON.stringify(val)}</div>
 }

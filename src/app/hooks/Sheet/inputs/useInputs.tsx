@@ -1,15 +1,12 @@
-import { PendInput, PendInputAtom, PendInputSpec, EntityBin, BinRow } from "app/Biz";
+import { PendInputAtom, PendInputSpec, BinRow } from "app/Biz";
 import { inputAtom } from "./inputAtom";
 import { inputSpec } from "./inputSpec";
-import { useCallback, useDebugValue } from "react";
+import { useCallback } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
-import { NamedResults } from "../NamedResults";
 import { DivEditing, UseInputsProps, ValDiv } from "../store";
 import { InputDivProps, inputDiv } from "./inputDiv";
-import { ValRow } from "../tool";
 import { useUqApp } from "app";
 import { useModal } from "tonwa-app";
-import { getMockId } from "../binEdit/model";
 
 export function useInputs() {
     const uqApp = useUqApp();
@@ -63,7 +60,10 @@ export function useInputs() {
             if (retBinRow === undefined) return;
             mergeBinRow(binRow, retBinRow);
             let origin = valDiv === undefined ? pendRow.origin : valDiv.id;
-            let id = getMockId();
+
+            // save detail;
+            let id = await divStore.saveDetail(p, binRow, pendRow.pend, origin);
+
             valDiv = new ValDiv(p, { ...binRow, id, pend: pendRow.pend, origin });
             divStore.setValColl(valDiv);
             if (ret === undefined) {
@@ -74,7 +74,6 @@ export function useInputs() {
                 parent.setValDiv(valDiv);
             }
             parent = valDiv;
-            // save detail;
         }
         return ret;
     }, []);
