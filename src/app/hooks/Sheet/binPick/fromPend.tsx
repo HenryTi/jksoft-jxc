@@ -34,7 +34,7 @@ export function usePickFromPend() {
             else {
                 retParam = {};
             }
-            await divStore.loadPend(retParam, undefined);
+            await divStore.loadPend(retParam);
             divStore.namedResults = namedResults;
             let props: PagePendProps = {
                 caption,

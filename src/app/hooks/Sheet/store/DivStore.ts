@@ -8,8 +8,14 @@ import { getAtomValue, setAtomValue } from "tonwa-com";
 import { NamedResults } from "../NamedResults";
 import { ValDiv } from './ValDiv';
 
+enum PendLoadState {
+    none,
+    loading,
+    loaded,
+}
 export class DivStore {
     private valColl: { [id: number]: ValDiv };
+    private pendLoadState: PendLoadState;
     readonly sheetStore: SheetStore;
     readonly entityBin: EntityBin;
     readonly binDiv: BinDiv;
@@ -25,14 +31,47 @@ export class DivStore {
         this.binDiv = entityBin.div;
         this.valDiv = new ValDiv(entityBin.div, undefined/*, 0*/);
         this.valColl = {};
+        this.pendLoadState = PendLoadState.none;
     }
 
-    async loadPend(params: any, pendId: number): Promise<void> {
-        if (this.pendRows !== undefined) return;
+    async loadPend(params: any): Promise<void> {
+        if (this.pendLoadState === PendLoadState.none) {
+            this.pendRows = undefined;
+            this.pendColl = {};
+            this.pendLoadState = PendLoadState.loading;
+            const { pendRows,
+                ownerColl
+            } = await this.loadPendInternal(params, undefined);
+            this.pendLoadState = PendLoadState.loaded;
+            this.pendRows = pendRows;
+            this.ownerColl = ownerColl;
+        }
+    }
+
+    async loadPendId(pendId: number): Promise<void> {
+        if (this.pendColl === undefined) this.pendColl = {};
+        const {
+            pendRows,
+            ownerColl
+        } = await this.loadPendInternal({}, pendId);
+        if (this.pendRows === undefined) {
+            this.pendRows = pendRows;
+        }
+        else {
+            this.pendRows.push(...pendRows);
+        }
+        if (this.ownerColl === undefined) {
+            this.ownerColl = ownerColl;
+        }
+        else {
+            Object.assign(this.ownerColl, ownerColl);
+        }
+    }
+
+    private async loadPendInternal(params: any, pendId: number) {
         let { pend: entityPend } = this.entityBin;
         if (entityPend === undefined) debugger;
         let ret = await this.sheetStore.uqGetPend(entityPend, params, pendId);
-        this.pendColl = {};
         let { $page, retSheet, props: showBuds } = ret;
         const { ownerColl } = budValuesFromProps(showBuds);
         let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
@@ -45,7 +84,10 @@ export class DivStore {
             let { id, pend, pendValue, mid, cols } = v;
             if (pendValue === undefined || pendValue <= 0) continue;
             this.pendColl[pend] = atom(undefined as ValDiv);
-            let propArr: Prop[] = arrFromJsonArr(entityPend, cols);
+            let propArr: Prop[];
+            if (cols !== undefined) {
+                propArr = arrFromJsonArr(entityPend, cols);
+            }
             let midArr = arrFromJsonMid(entityPend, mid);
             let pendRow: PendRow = {
                 pend,
@@ -58,8 +100,10 @@ export class DivStore {
             };
             pendRows.push(pendRow);
         }
-        this.pendRows = pendRows;
-        this.ownerColl = ownerColl;
+        return {
+            pendRows,
+            ownerColl,
+        }
     }
 
     load(valRows: ValRow[]) {
@@ -170,9 +214,10 @@ export class DivStore {
     }
 
     async getPendRow(pend: number) {
-        let ret = this.pendRows.find(v => v.pend === pend);
+        let ret = this.pendRows?.find(v => v.pend === pend);
         if (ret === undefined) {
-
+            await this.loadPendId(pend);
+            ret = this.pendRows.find(v => v.pend === pend);
         }
         return ret;
     }
