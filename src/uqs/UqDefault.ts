@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Dec 18 2023 21:00:56 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Tue Dec 19 2023 22:07:31 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -608,8 +608,9 @@ export interface ResultClearCode {
 }
 
 export interface ParamGetPend {
-	pend: number;
+	pendEntity: number;
 	params: any;
+	pendId: number;
 }
 export interface ReturnGetPend$page {
 	pend: number;
@@ -3169,12 +3170,16 @@ export const uqSchema={
         "sys": true,
         "fields": [
             {
-                "name": "pend",
+                "name": "pendEntity",
                 "type": "id"
             },
             {
                 "name": "params",
                 "type": "json"
+            },
+            {
+                "name": "pendId",
+                "type": "id"
             }
         ],
         "returns": [

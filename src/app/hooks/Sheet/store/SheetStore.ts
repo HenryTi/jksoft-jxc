@@ -420,6 +420,7 @@ export class SheetStore extends KeyIdObject {
         if (id === undefined || id === 0) return;
         let { main, details } = await this.loadBinData(id);
         this.main.setValue(main);
+        this.divStore.load(details);
         if (this.detail !== undefined) {
             this.detail.addRowValues(details);
         }
@@ -522,7 +523,7 @@ export class SheetStore extends KeyIdObject {
     }
 
     async loadPend(entityPend: EntityPend, params: any): Promise<{ pendRows: PendRow[]; ownerColl: OwnerColl; }> {
-        let ret = await this.uq.GetPend.page({ pend: entityPend.id, params }, undefined, 100);
+        let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId: undefined }, undefined, 100);
         this.pendColl = {};
         let { $page, retSheet, props: showBuds } = ret;
         const { ownerColl, budColl } = budValuesFromProps(showBuds);
@@ -550,6 +551,15 @@ export class SheetStore extends KeyIdObject {
             pendRows.push(pendRow);
         }
         return { pendRows, ownerColl };
+    }
+
+    async uqGetPend(entityPend: EntityPend, params: any, pendId: number) {
+        let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
+        return ret;
+    }
+
+    async delDetail(id: number) {
+        await this.uq.DeleteBin.submit({ id });
     }
 }
 

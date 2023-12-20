@@ -1,6 +1,7 @@
 Biz Query GetPend (
-    pend ID,                // pend entity id
+    pendEntity ID,                // pend entity id
     params JSON,
+    pendId ID,
 )
 PAGE (
     pend ID ASC,
@@ -30,12 +31,27 @@ RETURNS props (
     value JSON,
     owner ID,           -- show 字段的主字段。其它字段为0
 ) {
-    VAR procName CHAR(200) = CONCAT($site, '.', pend, 'gp');
+    IF pendId IS NOT NULL {
+            PAGE SELECT t1.id AS pend, e.id AS sheet, t1.bin AS id, b.i AS i
+            , b.x AS x, b.value AS value, b.price AS price, b.amount
+            , t1.value AS pendvalue, t1.mid, null AS cols
+            FROM Pend AS t1 
+                JOIN Bin AS b ON b.id=t1.bin
+                JOIN BizPhrase AS c ON c.id=t1.base
+                LEFT JOIN Detail AS b1 ON b1.id=b.id
+                LEFT JOIN Bud AS d ON d.id=b1.base
+                LEFT JOIN Bin AS e ON e.id=d.base
+                LEFT JOIN Sheet AS f ON f.id=e.id
+                WHERE 1=1 AND t1.id>pendId AND t1.base=pendEntity;
+    }
+
+    VAR procName CHAR(200) = CONCAT($site, '.', pendEntity, 'gp');
     IF routine_exists('$site', procName) {
         VAR sql CHAR(500) = CONCAT('call `$site`.`', procName, '`(?,?,?,?);');
         ExecSql sql USING $user,params,$pageStart,$pageSize;
     }
     else {
+        /*
         PAGE SELECT a.id as pend, d.base as sheet, a.bin as id
             , b.i, b.x, b.value, b.price, b.amount
             , a.value as pendValue, a.mid, null as cols
@@ -45,6 +61,20 @@ RETURNS props (
                 LEFT JOIN Bud as d ON d.id=b.id
             WHERE a.base=pend AND c.base=$site
             ORDER BY a.id ASC
+            LIMIT $pageSize;
+        */
+        PAGE SELECT t1.id AS pend, e.id AS sheet, t1.bin AS id, b.i AS i
+        , b.x AS x, b.value AS value, b.price AS price, b.amount
+        , t1.value AS pendvalue, t1.mid, null AS cols
+        FROM Pend AS t1 
+            JOIN Bin AS b ON b.id=t1.bin
+            JOIN BizPhrase AS c ON c.id=t1.base
+            LEFT JOIN Detail AS b1 ON b1.id=b.id
+            LEFT JOIN Bud AS d ON d.id=b1.base
+            LEFT JOIN Bin AS e ON e.id=d.base
+            LEFT JOIN Sheet AS f ON f.id=e.id
+            WHERE 1=1 AND t1.id>$pageStart AND t1.base=pendEntity
+            ORDER BY t1.id ASC 
             LIMIT $pageSize;
     }
 

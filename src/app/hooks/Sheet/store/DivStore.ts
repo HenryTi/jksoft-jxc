@@ -27,11 +27,11 @@ export class DivStore {
         this.valColl = {};
     }
 
-    async loadPend(params: any): Promise<void> {
+    async loadPend(params: any, pendId: number): Promise<void> {
         if (this.pendRows !== undefined) return;
         let { pend: entityPend } = this.entityBin;
         if (entityPend === undefined) debugger;
-        let ret = await this.sheetStore.uq.GetPend.page({ pend: entityPend.id, params }, undefined, 100);
+        let ret = await this.sheetStore.uqGetPend(entityPend, params, pendId);
         this.pendColl = {};
         let { $page, retSheet, props: showBuds } = ret;
         const { ownerColl } = budValuesFromProps(showBuds);
@@ -72,7 +72,7 @@ export class DivStore {
         }
     }
 
-    delValRow(id: number) {
+    async delValRow(id: number) {
         let val = this.valColl[id];
         let valRow = getAtomValue(val.atomValRow);
         const { origin } = valRow;
@@ -83,7 +83,11 @@ export class DivStore {
         const { atomValDivs: atomDivs } = valParent;
         let divs = getAtomValue(atomDivs);
         let p = divs.findIndex(v => v.id === id);
-        if (p < 0) debugger;
+        if (p < 0) {
+            debugger;
+            return;
+        }
+        await this.sheetStore.delDetail(id);
         divs.splice(p, 1);
         setAtomValue(atomDivs, [...divs]);
     }
@@ -99,6 +103,7 @@ export class DivStore {
     }
 
     private setPend(pend: number, val: ValDiv) {
+        if (this.pendColl === undefined) return;
         let atom = this.pendColl[pend];
         let atomValue = getAtomValue(atom);
         if (atomValue === undefined) {
@@ -118,18 +123,22 @@ export class DivStore {
             }
             else {
                 parentVal = this.valColl[parent];
-                if (parentVal === undefined) debugger;
-                // 获取层级值
-                let level = 0;
-                for (let p = parentVal; p !== undefined; level++) {
-                    const { origin: pOrigin } = getAtomValue(p.atomValRow);
-                    p = this.valColl[pOrigin];
-                }
                 binDiv = this.binDiv;
-                for (let i = 0; i < level; i++) {
-                    binDiv = binDiv.div;
+                if (parentVal === undefined) {
+                    parentVal = this.valDiv;
                 }
-                if (binDiv === undefined) debugger;
+                else {
+                    // 获取层级值
+                    let level = 0;
+                    for (let p = parentVal; p !== undefined; level++) {
+                        const { origin: pOrigin } = getAtomValue(p.atomValRow);
+                        p = this.valColl[pOrigin];
+                    }
+                    for (let i = 0; i < level; i++) {
+                        binDiv = binDiv.div;
+                    }
+                    if (binDiv === undefined) debugger;
+                }
             }
             val = this.setSub(binDiv, parentVal, valRow, trigger);
         }
@@ -160,8 +169,12 @@ export class DivStore {
         this.valColl[valDiv.id] = valDiv;
     }
 
-    getPendRow(pend: number) {
-        return this.pendRows.find(v => v.pend === pend);
+    async getPendRow(pend: number) {
+        let ret = this.pendRows.find(v => v.pend === pend);
+        if (ret === undefined) {
+
+        }
+        return ret;
     }
 
     async saveDetail(binDiv: BinDiv, binRow: BinRow, pend: number, origin: number) {

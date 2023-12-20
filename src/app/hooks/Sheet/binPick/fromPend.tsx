@@ -1,11 +1,9 @@
-import { BinPick, EntityPend, PickPend, predefinedPendFields } from "app/Biz";
-import { useCallback, useRef } from "react";
+import { BinPick, PickPend } from "app/Biz";
+import { useCallback } from "react";
 import { useModal } from "tonwa-app";
 import { NamedResults, PickResult } from "../NamedResults";
-import { BinDetail, SheetStore } from "../store";
-import { PendRow } from "../store";
+import { BinDetail } from "../store";
 import { usePageParams } from "./PageParams";
-import { OwnerColl } from "../../tool";
 import { PagePend } from "../binEdit";
 import { PagePendProps } from "../binEdit/model";
 import { PendProxyHander } from "../tool";
@@ -13,7 +11,6 @@ import { DivStore } from "../store";
 
 export function usePickFromPend() {
     const modal = useModal();
-    // const refPendValues = useRef<{ pendRows: PendRow[]; ownerColl: OwnerColl; }>(undefined)
     const pickParam = usePageParams();
     return useCallback(
         async function pickFromPend(divStore: DivStore, namedResults: NamedResults, binPick: BinPick): Promise<PickResult[]> {
@@ -37,23 +34,12 @@ export function usePickFromPend() {
             else {
                 retParam = {};
             }
-            await divStore.loadPend(retParam);
-            /*
-            if (refPendValues.current === undefined) {
-                refPendValues.current = 
-            }
-            const { pendRows, ownerColl } = refPendValues.current;
-            */
+            await divStore.loadPend(retParam, undefined);
             divStore.namedResults = namedResults;
             let props: PagePendProps = {
                 caption,
-                // bin,
                 divStore,
-                // entity: pickBase.from,
                 search: [],
-                // pendRows,
-                // ownerColl,
-                // namedResults,
             };
 
             let inputed = await modal.open<BinDetail[]>(<PagePend {...props} />);

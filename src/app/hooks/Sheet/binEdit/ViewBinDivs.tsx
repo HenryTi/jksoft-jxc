@@ -88,7 +88,7 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
         </div>;
     }
     async function onAddSub() {
-        const pendRow = divStore.getPendRow(pend);
+        const pendRow = await divStore.getPendRow(pend);
         let props: UseInputsProps = {
             divStore,
             pendRow,
@@ -97,8 +97,8 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
         let ret = await inputs(props);
         valDiv.setValDiv(ret);
     }
-    function onDelSub() {
-        divStore.delValRow(id);
+    async function onDelSub() {
+        await divStore.delValRow(id);
     }
     function onValueChange(evt: ChangeEvent<HTMLInputElement>) {
         let v = evt.currentTarget.value;
