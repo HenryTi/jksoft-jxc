@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Dec 19 2023 22:07:31 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Thu Dec 21 2023 08:50:45 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -304,7 +304,18 @@ export interface ResultDeleteBin {
 export interface ParamSubmitSheet {
 	id: number;
 }
+export interface ReturnSubmitSheetCheckPend {
+	pend: number;
+	value: number;
+	overValue: number;
+}
+export interface ReturnSubmitSheetCheckBin {
+	bin: number;
+	message: string;
+}
 export interface ResultSubmitSheet {
+	checkPend: ReturnSubmitSheetCheckPend[];
+	checkBin: ReturnSubmitSheetCheckBin[];
 }
 
 export interface ParamDoQuery {
@@ -2239,7 +2250,43 @@ export const uqSchema={
             }
         ],
         "jsoned": true,
-        "returns": [] as any
+        "returns": [
+            {
+                "name": "checkPend",
+                "fields": [
+                    {
+                        "name": "pend",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "overValue",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            },
+            {
+                "name": "checkBin",
+                "fields": [
+                    {
+                        "name": "bin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "message",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            }
+        ]
     },
     "doquery": {
         "name": "DoQuery",

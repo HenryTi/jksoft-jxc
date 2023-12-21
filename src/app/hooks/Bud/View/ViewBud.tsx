@@ -30,12 +30,12 @@ export function ViewBud({ bud, value, uiType }: { bud: BizBud; value: any; uiTyp
         case EnumBudType.date: content = date(bud, value); break;
         case EnumBudType.datetime: content = datetime(bud, value); break;
     }
-    if (uiType === ViewBudUIType.inDiv) {
-        return <div className="col"><small className="text-secondary me-2">{caption ?? name}</small>{content}</div>
-    }
-    else {
-        return content;
-    }
+    //if (uiType === ViewBudUIType.inDiv) {
+    return <div className="col"><small className="text-secondary me-2">{caption ?? name}</small>{content}</div>
+    //}
+    //else {
+    //    return content;
+    //}
 }
 
 function ViewAtomInBud({ value }: { value: any; }) {

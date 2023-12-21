@@ -42,7 +42,7 @@ RETURNS props (
                 LEFT JOIN Bud AS d ON d.id=b1.base
                 LEFT JOIN Bin AS e ON e.id=d.base
                 LEFT JOIN Sheet AS f ON f.id=e.id
-                WHERE 1=1 AND t1.id>pendId AND t1.base=pendEntity;
+                WHERE 1=1 AND t1.id=pendId AND t1.base=pendEntity;
     }
 
     VAR procName CHAR(200) = CONCAT($site, '.', pendEntity, 'gp');

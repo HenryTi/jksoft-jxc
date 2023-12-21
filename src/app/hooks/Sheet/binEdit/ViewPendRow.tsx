@@ -4,15 +4,15 @@ import { OwnedBuds } from "app/hooks/tool";
 import { ViewPendRowEdit } from "./ViewPendRowEdit";
 import { PendBandProps } from "./model";
 
-export function ViewPendRow({ value: pendRow
+export function ViewPendRow({
+    value: pendRow
     , divStore
-    //, namedResults
     , hasPrice, hasAmount }: PendBandProps) {
     const { entityBin, ownerColl } = divStore;
     const { div, pend: entityPend } = entityBin;
     let { i: iBud } = entityPend;
 
-    const { pend, detail: { id, i, price, amount }, value, mid, cols } = pendRow;
+    const { detail: { id, i, price, amount }, value, mid, cols } = pendRow;
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
         return <div className="d-flex text-end align-items-center">
             <span className="me-3 small text-secondary">{caption}</span>

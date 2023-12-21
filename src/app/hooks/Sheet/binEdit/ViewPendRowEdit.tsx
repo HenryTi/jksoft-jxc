@@ -14,7 +14,6 @@ export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowE
     const modal = useModal();
     const { entityBin } = divStore;
     const inputs = useInputs();
-    // const rowEdit = useRowEdit();
     let { pend: pendId } = pendRow;
     let _valDiv = divStore.pendColl[pendId];
     let valDiv = useAtomValue(_valDiv);
@@ -27,6 +26,7 @@ export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowE
         const useInputsProps: UseInputsProps = {
             divStore,
             binDiv: divStore.binDiv,
+            valDiv,
             pendRow,
         }
         let retValDiv = await inputs(useInputsProps);

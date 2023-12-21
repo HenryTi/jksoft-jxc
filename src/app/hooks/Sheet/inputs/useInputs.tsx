@@ -12,9 +12,14 @@ export function useInputs() {
     const uqApp = useUqApp();
     const modal = useModal();
     return useCallback(async function (props: UseInputsProps): Promise<ValDiv> {
-        let { divStore, pendRow, binDiv } = props;
-        const { namedResults } = divStore;
-        let valDiv: ValDiv, ret: ValDiv, parent: ValDiv;
+        let { divStore, pendRow, binDiv, valDiv } = props;
+        let { namedResults, entityBin } = divStore;
+        let { rearPick } = entityBin;
+        if (namedResults === undefined) {
+            divStore.namedResults = namedResults = {};
+        }
+        namedResults[rearPick.name] = pendRow;
+        let ret: ValDiv, parent: ValDiv;
         let binRow: BinRow = { id: undefined, buds: {}, owned: {} };
         for (let p = binDiv; p !== undefined; p = p.div) {
             const { inputs } = p;

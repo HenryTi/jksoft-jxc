@@ -295,6 +295,15 @@ Biz AC DeleteBin (
 
 Biz AC SubmitSheet(
     id ID,
+) 
+RETURNS checkPend (
+    pend ID,
+    value VALUE,
+    overValue VALUE,
+)
+RETURNS checkBin (
+    bin ID,
+    message CHAR(200),
 ) {
     VAR me ID = Me();
     VAR phraseId ID = a.base
@@ -307,8 +316,10 @@ Biz AC SubmitSheet(
     VAR sql CHAR(500) = CONCAT('call `$site`.`', $site, '.', phraseId, '`(?,?,?);');
     ExecSql sql USING $site, me, id;
 
-    WITH IxState I=me X=id DEL;
-    WITH IxState I=id X=phraseId;
+    IF ((SELECT count(*) FROM checkPend)+(SELECT count(*) FROM checkBin)) = 0 {
+        WITH IxState I=me X=id DEL;
+        WITH IxState I=id X=phraseId;
+    }
 };
 
 Biz AC DoQuery (

@@ -66,11 +66,14 @@ export function OwnedBuds({ values }: { values: [number, BudValue][]; }) {
                 </>;
             }
             else {
+                content = <ViewBud bud={bizBud} value={budValue} />;
+                /*
                 let { caption, name } = bizBud;
                 content = <>
                     <div className="me-1 small text-secondary">{caption ?? name}:</div>
                     <ViewBud bud={bizBud} value={budValue} />
                 </>;
+                */
             }
             return <div className="d-flex w-min-12c align-items-center me-3" key={budId}>
                 {content}

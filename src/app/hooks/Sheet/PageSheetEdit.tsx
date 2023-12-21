@@ -1,5 +1,5 @@
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
-import { SheetStore } from "./store";
+import { SheetStore, SubmitState } from "./store";
 import { ButtonAsync, FA, LMR, from62, to62, useEffectOnce } from "tonwa-com";
 import { ViewBinDivs, ViewMain } from "./binEdit";
 import { ViewDetail } from "./binEdit";
@@ -23,6 +23,7 @@ export function PageSheetEdit() {
     const location = useLocation();
     const navigate = useNavigate();
     const pick = useBinPicks(entitySheet.main);
+    /*
     useEffect(() => {
         // 重新开始新建一个单据
         if (!location.state) return;
@@ -35,6 +36,7 @@ export function PageSheetEdit() {
         setSheetStore(sheetStore);
         startSheetStore(uqApp, navigate, sheetStore, pick);
     }, [location.state]);
+    */
     useEffectOnce(() => {
         (async function () {
             let sheetStore = new SheetStore(
@@ -77,23 +79,28 @@ async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetSt
 }
 
 function PageStore({ store }: { store: SheetStore; }) {
-    const { uq, caption, main, detail } = store;
+    const { uq, caption, main, detail, divStore } = store;
     const uqApp = useUqApp();
     const pick = useBinPicks(main.entityMain);
     const { openModal, closeModal } = useModal();
     const navigate = useNavigate();
     const [editable, setEditable] = useState(true);
+    const submitState = useAtomValue(divStore.atomSubmitState);
 
     async function onSubmit() {
         if (main.trigger() === false) return;
         setEditable(false);
-        let retSubmit = await uq.SubmitSheet.submit({ id: main.binRow.id })
+        let { checkPend, checkBin } = await uq.SubmitSheet.submitReturns({ id: main.binRow.id });
+        if (checkPend.length + checkBin.length > 0) {
+            alert('pendOverflow:' + JSON.stringify(checkPend) + JSON.stringify(checkBin));
+            return;
+        }
         removeSheetFromCache();
         setEditable(true);
         uqApp.autoRefresh?.();
         let ret = await openModal<boolean>(<Page header="提交成功" back="none">
             <div className="p-3">
-                {caption} <b>{main.no}</b> 已提交 {JSON.stringify(retSubmit)}
+                {caption} <b>{main.no}</b> 已提交 {JSON.stringify(checkPend)} {JSON.stringify(checkBin)}
             </div>
             <div className="border-top p-3">
                 <button className="btn btn-outline-primary" onClick={closeModal}>返回</button>
@@ -148,8 +155,6 @@ function PageStore({ store }: { store: SheetStore; }) {
         const start = useCallback(async function () {
             startSheetStore(uqApp, navigate, store, pick);
         }, []);
-        // const { entityBin } = detail;
-        // const { inputs } = entityBin;
         async function startInputDetail() {
             let ret = await start();
             if (ret === undefined) {
@@ -161,11 +166,12 @@ function PageStore({ store }: { store: SheetStore; }) {
         }
         let sections = useAtomValue(detail._sections);
         let btnSubmit: any, cnAdd: string;
-        if (sections.length === 0) {
+        if (sections.length === 0 && submitState === SubmitState.hide) {
             cnAdd = 'btn btn-primary me-3';
         }
         else {
-            btnSubmit = <ButtonAsync className="btn btn-primary me" onClick={onSubmit} disabled={sections.length === 0}>提交</ButtonAsync>;
+            let disabled = (sections.length === 0 && submitState === SubmitState.none) || submitState === SubmitState.disable;
+            btnSubmit = <ButtonAsync className="btn btn-primary me" onClick={onSubmit} disabled={disabled}>提交</ButtonAsync>;
             cnAdd = 'btn btn-outline-primary me-3';
         }
         if (id === 0) {

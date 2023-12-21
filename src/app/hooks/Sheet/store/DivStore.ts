@@ -13,6 +13,12 @@ enum PendLoadState {
     loading,
     loaded,
 }
+export enum SubmitState {
+    none,
+    hide,
+    disable,
+    enable,
+}
 export class DivStore {
     private valColl: { [id: number]: ValDiv };
     private pendLoadState: PendLoadState;
@@ -24,14 +30,30 @@ export class DivStore {
     pendRows: PendRow[];
     ownerColl: OwnerColl;
     readonly valDiv: ValDiv;
+    readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
 
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
         this.sheetStore = sheetStore;
         this.entityBin = entityBin;
         this.binDiv = entityBin.div;
-        this.valDiv = new ValDiv(entityBin.div, undefined/*, 0*/);
+        this.valDiv = new ValDiv(entityBin.div, undefined);
         this.valColl = {};
         this.pendLoadState = PendLoadState.none;
+        this.atomSubmitState = atom((get) => {
+            const { atomValDivs } = this.valDiv;
+            if (atomValDivs === undefined) return SubmitState.none;
+            let valDivs = get(atomValDivs);
+            let hasValue = false;
+            if (valDivs.length === 0) return SubmitState.none;
+            for (let valDiv of valDivs) {
+                const { atomValue, atomValRow } = valDiv;
+                let value = get(atomValue);
+                let valRow = get(atomValRow);
+                if (value !== undefined) hasValue = true;
+                if (value > valRow.pendValue) return SubmitState.disable;
+            }
+            return hasValue === true ? SubmitState.enable : SubmitState.hide;
+        }, null)
     }
 
     async loadPend(params: any): Promise<void> {
@@ -45,6 +67,11 @@ export class DivStore {
             this.pendLoadState = PendLoadState.loaded;
             this.pendRows = pendRows;
             this.ownerColl = ownerColl;
+            let valDivs = getAtomValue(this.valDiv.atomValDivs);
+            for (let valDiv of valDivs) {
+                let valRow = getAtomValue(valDiv.atomValRow);
+                this.setPend(valRow.pend, valDiv);
+            }
         }
     }
 
@@ -122,10 +149,14 @@ export class DivStore {
         const { origin } = valRow;
         let valParent = this.valColl[origin];
         if (valParent === undefined) {
+            // top div
             valParent = this.valDiv;
+            const { pend } = valRow;
+            let _valDiv = this.pendColl[pend];
+            setAtomValue(_valDiv, undefined);
         }
-        const { atomValDivs: atomDivs } = valParent;
-        let divs = getAtomValue(atomDivs);
+        const { atomValDivs } = valParent;
+        let divs = getAtomValue(atomValDivs);
         let p = divs.findIndex(v => v.id === id);
         if (p < 0) {
             debugger;
@@ -133,7 +164,7 @@ export class DivStore {
         }
         await this.sheetStore.delDetail(id);
         divs.splice(p, 1);
-        setAtomValue(atomDivs, [...divs]);
+        setAtomValue(atomValDivs, [...divs]);
     }
 
     setValRow(valRow: ValRow) {
@@ -148,10 +179,15 @@ export class DivStore {
 
     private setPend(pend: number, val: ValDiv) {
         if (this.pendColl === undefined) return;
-        let atom = this.pendColl[pend];
-        let atomValue = getAtomValue(atom);
-        if (atomValue === undefined) {
-            setAtomValue(atom, val);
+        let valAtom = this.pendColl[pend];
+        if (valAtom === undefined) {
+            this.pendColl[pend] = atom(val);
+        }
+        else {
+            let atomValue = getAtomValue(valAtom);
+            if (atomValue === undefined) {
+                setAtomValue(valAtom, val);
+            }
         }
     }
 
@@ -194,17 +230,17 @@ export class DivStore {
 
     private setSub(binDiv: BinDiv, valDiv: ValDiv, valRow: ValRow, trigger: boolean) {
         let { id } = valRow;
-        const { atomValDivs: atomDivs } = valDiv;
-        if (atomDivs === undefined) {
+        const { atomValDivs } = valDiv;
+        if (atomValDivs === undefined) {
             debugger;
             return;
         }
-        let divs = getAtomValue(atomDivs);
+        let divs = getAtomValue(atomValDivs);
         let subVal = new ValDiv(binDiv, valRow);
         this.valColl[id] = subVal;
         divs.push(subVal);
         if (trigger === true) {
-            setAtomValue(atomDivs, [...divs]);
+            setAtomValue(atomValDivs, [...divs]);
         }
         return subVal;
     }
@@ -270,4 +306,5 @@ export interface DivEditProps {
 
 export interface UseInputsProps extends DivEditProps {
     binDiv: BinDiv;
+    valDiv: ValDiv;
 }

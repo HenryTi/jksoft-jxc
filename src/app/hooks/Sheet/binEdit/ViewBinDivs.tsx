@@ -1,7 +1,6 @@
 import { useAtomValue } from "jotai";
 import { DivStore, UseInputsProps, ValDiv } from "../store";
 import { FA } from "tonwa-com";
-import { ChangeEvent } from "react";
 import { useInputs } from "../inputs";
 import { ViewBud, ViewBudUIType, ViewSpecBaseOnly } from "app/hooks";
 
@@ -64,12 +63,23 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     let vDel = <div className="px-3 cursor-pointer text-warning" onClick={onDelSub} style={marginRightStyle}>
         <FA name="times" />
     </div>;
-    const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end';
+    const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end  position-relative';
     if (atomValDivs !== undefined) {
         function DivRow() {
             const divs = useAtomValue(atomValDivs);
+            let pendOverflow: any;
+            if (level === 0 && value > val.pendValue) {
+                pendOverflow = <div className="text-danger d-flex justify-content-end position-absolute text-nowrap align-items-center" style={{ right: 0 }}>
+                    <FA name="exclamation-circle" className="me-1" fixWidth={true} />
+                    <small className="me-1">待处理</small>
+                    <span className="me-4">{val.pendValue}</span>
+                </div>;
+            }
             return <div className={cnBtn}>
-                {divs.length === 0 ? vDel : <div className="text-body-tertiary text-end">{value}</div>}
+                {divs.length === 0 ? vDel : <div className="text-body-tertiary text-end">
+                    <div>{value}</div>
+                    {pendOverflow}
+                </div>}
                 <div className="px-3 cursor-pointer text-primary" onClick={onAddSub} style={marginRightStyle}>
                     <FA name="plus" />
                 </div>
@@ -92,20 +102,24 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
         let props: UseInputsProps = {
             divStore,
             pendRow,
+            valDiv,
             binDiv: binBuds.binDiv.div,
         };
         let ret = await inputs(props);
+        if (ret === undefined) return;
         valDiv.setValDiv(ret);
     }
     async function onDelSub() {
         await divStore.delValRow(id);
     }
+    /*
     function onValueChange(evt: ChangeEvent<HTMLInputElement>) {
         let v = evt.currentTarget.value;
         let n = Number(v);
         if (Number.isNaN(n) === true) return;
         valDiv.setValue(n);
     }
+    */
     let vIBase: any;
     if (hasIBase === true) {
         vIBase = <div className="col-12">

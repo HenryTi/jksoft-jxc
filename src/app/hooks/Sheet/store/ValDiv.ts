@@ -21,7 +21,6 @@ export class ValDiv {
                     let sum = 0, len = valDivs.length;
                     for (let i = 0; i < len; i++) {
                         let valDiv = valDivs[i];
-                        if (valDiv === undefined) continue;
                         let v: number = 0;
                         try {
                             let { atomValue } = valDiv;
