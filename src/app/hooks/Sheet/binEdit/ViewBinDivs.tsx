@@ -12,7 +12,7 @@ interface ViewDivProps {
 }
 
 export function ViewBinDivs({ divStore, editable }: { divStore: DivStore; editable: boolean; }) {
-    const { valDiv } = divStore;
+    const { valDivs: valDiv } = divStore;
     const divs = useAtomValue(valDiv.atomValDivs);
     if (divs.length === 0) {
         return <div className="small text-body-tertiary p-3">
@@ -107,7 +107,7 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
         };
         let ret = await inputs(props);
         if (ret === undefined) return;
-        valDiv.setValDiv(ret);
+        valDiv.addValDiv(ret);
     }
     async function onDelSub() {
         await divStore.delValRow(id);

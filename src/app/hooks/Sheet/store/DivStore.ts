@@ -6,7 +6,7 @@ import { ParamSaveDetail, ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "../tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { NamedResults } from "../NamedResults";
-import { ValDiv } from './ValDiv';
+import { ValDiv, ValDivs } from './ValDiv';
 
 enum PendLoadState {
     none,
@@ -29,18 +29,18 @@ export class DivStore {
     pendColl: { [pend: number]: WritableAtom<ValDiv, any, any> };
     pendRows: PendRow[];
     ownerColl: OwnerColl;
-    readonly valDiv: ValDiv;
+    readonly valDivs: ValDivs;
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
 
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
         this.sheetStore = sheetStore;
         this.entityBin = entityBin;
         this.binDiv = entityBin.div;
-        this.valDiv = new ValDiv(entityBin.div, undefined);
+        this.valDivs = new ValDiv(entityBin.div, undefined);
         this.valColl = {};
         this.pendLoadState = PendLoadState.none;
         this.atomSubmitState = atom((get) => {
-            const { atomValDivs } = this.valDiv;
+            const { atomValDivs } = this.valDivs;
             if (atomValDivs === undefined) return SubmitState.none;
             let valDivs = get(atomValDivs);
             let hasValue = false;
@@ -67,7 +67,7 @@ export class DivStore {
         this.pendLoadState = PendLoadState.loaded;
         this.pendRows = pendRows;
         this.ownerColl = ownerColl;
-        const { atomValDivs } = this.valDiv;
+        const { atomValDivs } = this.valDivs;
         if (atomValDivs !== undefined) {
             let valDivs = getAtomValue(atomValDivs);
             for (let valDiv of valDivs) {
@@ -149,15 +149,18 @@ export class DivStore {
         let val = this.valColl[id];
         let valRow = getAtomValue(val.atomValRow);
         const { origin } = valRow;
-        let valParent = this.valColl[origin];
-        if (valParent === undefined) {
+        let valDiv = this.valColl[origin];
+        let atomValDivs: WritableAtom<ValDiv[], any, any>;
+        if (valDiv === undefined) {
             // top div
-            valParent = this.valDiv;
+            atomValDivs = this.valDivs.atomValDivs;
             const { pend } = valRow;
             let _valDiv = this.pendColl[pend];
             setAtomValue(_valDiv, undefined);
         }
-        const { atomValDivs } = valParent;
+        else {
+            atomValDivs = valDiv.atomValDivs;
+        }
         let divs = getAtomValue(atomValDivs);
         let p = divs.findIndex(v => v.id === id);
         if (p < 0) {
@@ -193,26 +196,26 @@ export class DivStore {
         }
     }
 
-    private setVal(valRow: ValRow, trigger: boolean) {
-        let { id, origin: parent } = valRow;
-        let val = this.valColl[id];
-        if (val === undefined) {
-            let parentVal: ValDiv;
+    private setVal(valRow: ValRow, trigger: boolean): ValDiv {
+        let { id, origin } = valRow;
+        let valDiv = this.valColl[id];
+        if (valDiv === undefined) {
+            let parentValDivs: ValDivs;
             let binDiv: BinDiv;
-            if (parent === undefined) {
-                parentVal = this.valDiv;
+            if (origin === undefined) {
+                parentValDivs = this.valDivs;
                 binDiv = this.binDiv;
             }
             else {
-                parentVal = this.valColl[parent];
+                let parentValDiv = this.valColl[origin];
                 binDiv = this.binDiv;
-                if (parentVal === undefined) {
-                    parentVal = this.valDiv;
+                if (parentValDiv === undefined) {
+                    parentValDivs = this.valDivs;
                 }
                 else {
                     // 获取层级值
                     let level = 0;
-                    for (let p = parentVal; p !== undefined; level++) {
+                    for (let p = parentValDiv; p !== undefined; level++) {
                         const { origin: pOrigin } = getAtomValue(p.atomValRow);
                         p = this.valColl[pOrigin];
                     }
@@ -222,17 +225,17 @@ export class DivStore {
                     if (binDiv === undefined) debugger;
                 }
             }
-            val = this.setSub(binDiv, parentVal, valRow, trigger);
+            valDiv = this.setSub(binDiv, parentValDivs, valRow, trigger);
         }
         else {
-            val.setValRow(valRow);
+            valDiv.setValRow(valRow);
         }
-        return val;
+        return valDiv;
     }
 
-    private setSub(binDiv: BinDiv, valDiv: ValDiv, valRow: ValRow, trigger: boolean) {
+    private setSub(binDiv: BinDiv, valDivs: ValDivs, valRow: ValRow, trigger: boolean) {
         let { id } = valRow;
-        const { atomValDivs } = valDiv;
+        const { atomValDivs } = valDivs;
         if (atomValDivs === undefined) {
             debugger;
             return;

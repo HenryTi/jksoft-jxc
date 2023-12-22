@@ -436,8 +436,10 @@ export class SheetStore extends KeyIdObject {
         let { main, details, props } = await this.uq.GetSheet.query({ id: binId });
         const { budColl, ownerColl } = budValuesFromProps(props);
         let mainRow = main[0];
-        (mainRow as any).buds = budColl[binId] ?? {};
-        (mainRow as any).owned = ownerColl[binId] ?? {};
+        if (mainRow !== undefined) {
+            (mainRow as any).buds = budColl[binId] ?? {};
+            (mainRow as any).owned = ownerColl[binId] ?? {};
+        }
         for (let row of details) {
             const { id } = row;
             (row as any).buds = budColl[id] ?? {};

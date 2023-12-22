@@ -28,11 +28,14 @@ export function ViewPendRow({
             })}
         </div>;
     }
+    let ownedBudsValuesColl = ownerColl[id];
+    if (ownedBudsValuesColl === undefined) debugger;
+    let ownedBudsValues = ownedBudsValuesColl[iBud.id];
     let rowContent = <div className="row">
         <div className="col">
             <div className="py-2">
                 <ViewSpec id={i} />
-                <OwnedBuds values={ownerColl[id][iBud.id]} />
+                <OwnedBuds values={ownedBudsValues} />
             </div>
         </div>
         <ViewPropArr className="col" arr={mid} />

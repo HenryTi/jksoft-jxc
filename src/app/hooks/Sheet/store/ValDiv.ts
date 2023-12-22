@@ -3,18 +3,31 @@ import { WritableAtom, atom } from "jotai";
 import { ValRow } from "../tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 
-export class ValDiv {
+export class ValDivs {
+    readonly atomValDivs: WritableAtom<ValDiv[], any, any>;
+    constructor() {
+        this.atomValDivs = atom<ValDiv[]>([]);
+    }
+
+    addValDiv(valDiv: ValDiv) {
+        let { atomValDivs } = this;
+        let valDivs = getAtomValue(atomValDivs);
+        valDivs.push(valDiv);
+        setAtomValue(atomValDivs, [...valDivs]);
+    }
+}
+
+export class ValDiv extends ValDivs {
     readonly binDiv: BinDiv;
     readonly atomValRow: WritableAtom<ValRow, any, any>;
-    readonly atomValDivs: WritableAtom<ValDiv[], any, any>;
     readonly atomValue: WritableAtom<number, any, any>;
     id: number;
     iBase: number;
     xBase: number;
     constructor(binDiv: BinDiv, valRow: ValRow) {
+        super();
         this.binDiv = binDiv;
         if (binDiv.div !== undefined) {
-            this.atomValDivs = atom<ValDiv[]>([]);
             this.atomValue = atom(
                 get => {
                     let valDivs = get(this.atomValDivs);
@@ -77,15 +90,6 @@ export class ValDiv {
             if (this.binDiv.binBuds.hasXBase === true) {
                 this.xBase = x;
             }
-        }
-    }
-
-    setValDiv(valDiv: ValDiv) {
-        let { atomValDivs } = this;
-        if (atomValDivs !== undefined) {
-            let valDivs = getAtomValue(atomValDivs);
-            valDivs.push(valDiv);
-            setAtomValue(atomValDivs, [...valDivs]);
         }
     }
 

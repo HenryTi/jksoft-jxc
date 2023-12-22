@@ -31,7 +31,7 @@ export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowE
         }
         let retValDiv = await inputs(useInputsProps);
         if (retValDiv === undefined) return;
-        divStore.valDiv.setValDiv(retValDiv);
+        divStore.valDivs.addValDiv(retValDiv);
         setAtomValue(_valDiv, retValDiv);
         return;
     }

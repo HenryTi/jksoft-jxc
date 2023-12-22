@@ -76,7 +76,7 @@ export function useInputs() {
             }
             else {
                 parent.setIXBase(binRow);
-                parent.setValDiv(valDiv);
+                parent.addValDiv(valDiv);
             }
             parent = valDiv;
         }

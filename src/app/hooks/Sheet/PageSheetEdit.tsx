@@ -181,9 +181,9 @@ function PageStore({ store }: { store: SheetStore; }) {
         }
         else {
             const { divStore } = store;
-            const { valDiv } = divStore;
+            const { binDiv } = divStore;
             let vDetail: any;
-            if (valDiv.atomValDivs === undefined) {
+            if (binDiv.div === undefined) {
                 vDetail = <ViewDetail detail={detail} editable={editable} />;
             }
             else {
