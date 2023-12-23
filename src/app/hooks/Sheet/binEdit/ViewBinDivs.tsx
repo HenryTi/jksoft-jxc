@@ -53,7 +53,7 @@ const marginRightStyle = { marginRight: "-1em" };
 function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     const inputs = useInputs();
     const { atomValRow, atomValDivs, atomValue, binDiv } = valDiv;
-    const { binBuds, level, entityBin } = binDiv;
+    const { binBuds, level, entityBin, div } = binDiv;
     const { divLevels } = entityBin;
     const { hasIBase, valueBud } = binBuds;
     const val = useAtomValue(atomValRow);
@@ -64,7 +64,7 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
         <FA name="times" />
     </div>;
     const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end  position-relative';
-    if (atomValDivs !== undefined) {
+    if (div !== undefined) {
         function DivRow() {
             const divs = useAtomValue(atomValDivs);
             let pendOverflow: any;

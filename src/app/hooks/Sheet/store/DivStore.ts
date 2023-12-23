@@ -120,7 +120,6 @@ export class DivStore {
             let midArr = arrFromJsonMid(entityPend, mid);
             let pendRow: PendRow = {
                 pend,
-                // sheet: { ...collSheet[v.sheet], buds: {}, owned: undefined },
                 detail: { ...v, buds: {}, owned: undefined },
                 origin: id,
                 value: pendValue,
@@ -223,6 +222,7 @@ export class DivStore {
                         binDiv = binDiv.div;
                     }
                     if (binDiv === undefined) debugger;
+                    parentValDivs = parentValDiv;
                 }
             }
             valDiv = this.setSub(binDiv, parentValDivs, valRow, trigger);
