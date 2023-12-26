@@ -131,8 +131,8 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
                     props.map((bud, index) => {
                         const { id, name, caption } = bud;
                         let v = buds[id];
+                        // <small className="me-1 text-secondary">{caption ?? name} :</small>
                         return <div key={id} className="w-min-12c">
-                            <small className="me-1 text-secondary">{caption ?? name} :</small>
                             <ViewBud key={index} bud={bud} value={v} />
                         </div>;
                     })}

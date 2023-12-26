@@ -8,18 +8,20 @@ import { PickResult } from "../NamedResults";
 export function useCoreDetailAdd(coreDetail: CoreDetail) {
     const rowEdit = useRowEdit();
     const { entityBin, sheetStore } = coreDetail;
-    const { divStore } = sheetStore;
-    divStore.namedResults = undefined;
+    // const { divStore } = sheetStore;
+    // divStore.namedResults = undefined;
     const pick = useBinPicks(entityBin);
     async function addNewDirect() {
         // divStore.namedResults = {}; // .initNamedResults();
-        let { namedResults } = divStore;
+        // let { namedResults } = divStore;
         let ret = await pick(sheetStore);
         if (ret === undefined) return;
+        /*
         if (namedResults === undefined) {
             divStore.namedResults = namedResults = {};
         }
-        let { /*results: namedResults, */rearBinPick: binPick, rearResult: pickResult, rearPickResultType: lastPickResultType } = ret;
+        */
+        let { namedResults, rearBinPick: binPick, rearResult: pickResult, rearPickResultType: lastPickResultType } = ret;
         if (lastPickResultType === RearPickResultType.array) {
             // 直接选入行集，待修改
             if (coreDetail === undefined) {

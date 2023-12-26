@@ -4,6 +4,8 @@ import { BinDiv, BinField, BinRow, BizBud, BudAtom, BudDec, BudRadio, BudsFields
 import { Calc, Formulas } from "../../Calc";
 import { ValRow } from "../tool";
 import { DivStore } from ".";
+import { NamedResults } from "../NamedResults";
+import { fromDays, getDays } from "app/tool";
 
 abstract class BinFields extends BudsFields {
     private readonly calc: Calc;
@@ -96,37 +98,33 @@ abstract class BinFields extends BudsFields {
         return ret;
     }
 
-    onChange(name: string, type: 'text' | 'number' | 'radio', valueInputText: string
+    onChange(name: string, type: 'text' | 'number' | 'radio' | 'date', valueInputText: string
         , callback: (name: string, value: string | number) => void) {
         let valueInput: any;
-        switch (type) {
-            default: debugger; break;
-            case 'number':
-                if (valueInputText.trim().length === 0) {
-                    valueInput = undefined;
-                }
-                else {
+        if (valueInputText.trim().length === 0) {
+            valueInput = undefined;
+        }
+        else {
+            switch (type) {
+                default: debugger; break;
+                case 'date':
+                    valueInput = getDays(valueInputText);
+                    break;
+                case 'number':
                     let v = Number(valueInputText);
                     valueInput = Number.isNaN(v) === true ? undefined : v;
-                }
-                break;
-            case 'text':
-                if (valueInputText.trim().length === 0) {
-                    valueInput = undefined;
-                }
-                else {
+                    break;
+                case 'text':
                     valueInput = valueInputText;
-                }
-                break;
-            case 'radio':
-                valueInput = Number(valueInputText);
-                break;
+                    break;
+                case 'radio':
+                    valueInput = Number(valueInputText);
+                    break;
+            }
         }
         this.setValue(name, valueInput, (name, value) => {
-            // setValue(name, value);
             callback(name, value);
         });
-        // setSubmitable(rowStore.submitable);
     }
 
     get results() { return this.calc.results; }
@@ -201,6 +199,12 @@ abstract class BinFields extends BudsFields {
                 case EnumBudType.check:
                     debugger; // impossible
                     break;
+                case EnumBudType.date:
+                    formRow.type = 'date';
+                    break;
+                case EnumBudType.datetime:
+                    debugger;
+                    break;
             }
             ret.push(formRow);
         }
@@ -220,10 +224,10 @@ function budRadios(budDataType: BudRadio): { label: string; value: string | numb
 
 export class DivEditing extends BinFields {
     readonly divStore: DivStore;
-    constructor(divStore: DivStore, binDiv: BinDiv, initBinRow?: BinRow) {
+    constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, initBinRow?: BinRow) {
         super(divStore.entityBin, binDiv.buds, initBinRow);
         this.divStore = divStore;
-        this.setNamedParams(divStore.namedResults);
+        this.setNamedParams(namedResults);
     }
 }
 

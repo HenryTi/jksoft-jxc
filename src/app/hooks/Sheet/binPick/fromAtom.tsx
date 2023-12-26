@@ -8,7 +8,7 @@ import { DivStore } from "../store";
 
 export function usePickFromAtom() {
     const modal = useModal();
-    async function func(divStore: DivStore/* pickResults: NamedResults*/, binPick: BinPick): Promise<PickResult> {
+    async function func(divStore: DivStore, namedResults: NamedResults, binPick: BinPick): Promise<PickResult> {
         let { name, caption, pick } = binPick;
         let pickBase = pick as PickAtom;
         let ret = await modal.open<AtomPhrase>(<PageAtomSelect atom={pickBase.from[0]} caption={caption ?? name} />);

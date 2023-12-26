@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "../ViewSheetTime";
 import { BizBud } from "app/Biz";
 import { setAtomValue } from "tonwa-com";
-import { BudCheckEditValue } from "tonwa-app";
+import { BudCheckEditValue, BudCheckValue } from "tonwa-app";
 
 export function ViewMain({ main }: { main: SheetMain }) {
     const { no, entityMain, _binRow, budEditings } = main;
@@ -30,7 +30,7 @@ export function ViewMain({ main }: { main: SheetMain }) {
             propRowArr.push(propRow);
         }
     }
-    function onBudChanged(bud: BizBud, value: string | number | BudCheckEditValue) {
+    function onBudChanged(bud: BizBud, value: string | number | BudCheckValue) {
         buds[bud.id] = value as any;
         setAtomValue(_binRow, { ...binRow });
     }

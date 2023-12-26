@@ -81,7 +81,7 @@ async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetSt
 function PageStore({ store }: { store: SheetStore; }) {
     const { uq, caption, main, detail, divStore } = store;
     const uqApp = useUqApp();
-    divStore.namedResults = undefined;
+    // divStore.namedResults = undefined;
     const pick = useBinPicks(main.entityMain);
     const { openModal, closeModal } = useModal();
     const navigate = useNavigate();

@@ -7,12 +7,12 @@ export enum ViewBudUIType {
     inDiv = 1,
 }
 
-export function ViewBud({ bud, value, uiType }: { bud: BizBud; value: any; uiType?: ViewBudUIType; }) {
+export function ViewBud({ bud, value, uiType, noLabel }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; }) {
     if (bud === undefined) return <>{value}</>;
     const { name, caption, budDataType } = bud;
     let type = budDataType?.type;
     if (type === EnumBudType.atom) {
-        return atom(bud, value, uiType);
+        return atom(bud, value, uiType, noLabel);
     }
     let content: any;
     switch (type) {
@@ -30,24 +30,22 @@ export function ViewBud({ bud, value, uiType }: { bud: BizBud; value: any; uiTyp
         case EnumBudType.date: content = date(bud, value); break;
         case EnumBudType.datetime: content = datetime(bud, value); break;
     }
-    //if (uiType === ViewBudUIType.inDiv) {
+    if (noLabel === true) {
+        return <div className="col">{content}</div>;
+    }
     return <div className="col"><small className="text-secondary me-2">{caption ?? name}</small>{content}</div>
-    //}
-    //else {
-    //    return content;
-    //}
 }
 
 function ViewAtomInBud({ value }: { value: any; }) {
     return <>{value?.ex}</>;
 }
-function atom(bud: BizBud, value: any, uiType: ViewBudUIType) {
+function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean) {
     switch (bud.name) {
         default:
-            return <ViewBudSpec id={value} bud={bud} />;
+            return <ViewBudSpec id={value} bud={bud} noLabel={noLabel} />;
         case 'i':
         case 'x':
-            return <ViewSpecNoAtom id={value} uiType={uiType} />;
+            return <ViewSpecNoAtom id={value} uiType={uiType} noLabel={noLabel} />;
     }
 }
 

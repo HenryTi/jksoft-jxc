@@ -25,7 +25,7 @@ export class DivStore {
     readonly sheetStore: SheetStore;
     readonly entityBin: EntityBin;
     readonly binDiv: BinDiv;
-    namedResults: NamedResults;
+    // namedResults: NamedResults;
     pendColl: { [pend: number]: WritableAtom<ValDiv, any, any> };
     pendRows: PendRow[];
     ownerColl: OwnerColl;
@@ -316,6 +316,7 @@ export class DivStore {
 export interface DivEditProps {
     divStore: DivStore;
     pendRow: PendRow;
+    namedResults: NamedResults;
 }
 
 export interface UseInputsProps extends DivEditProps {

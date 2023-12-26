@@ -67,8 +67,8 @@ export class SheetMain extends BaseObject {
         for (let mp of mainProps) {
             formulas.push([mp.name, getFormulaText(mp.defaultValue)]);
         }
-        let { /*results:namedResults, */rearBinPick: lastBinPick, rearResult: lastResult } = pickResults;
-        let { namedResults } = this.sheetStore.divStore;
+        let { namedResults, rearBinPick: lastBinPick, rearResult: lastResult } = pickResults;
+        // let { namedResults } = this.sheetStore.divStore;
         const calc = new Calc(formulas, namedResults);
         calc.addValues(lastBinPick.name, lastResult[0]);
         const { results: calcResults } = calc;

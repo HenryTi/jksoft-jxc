@@ -9,7 +9,7 @@ import { SheetStore } from "../store";
 import { NamedResults, PickResult } from "../NamedResults";
 
 export interface ReturnUseBinPicks {
-    // results: NamedResults;
+    namedResults: NamedResults;
     rearBinPick: BinPick;           // rear pick = the endmost pick
     rearResult: PickResult[];
     rearPickResultType: RearPickResultType;
@@ -27,9 +27,11 @@ export function useBinPicks(bin: EntityBin) {
     const pickFromSpec = usePickFromSpec();
     const pickFromPend = usePickFromPend();
     const [pickFromQueryScalar, pickFromQuery] = usePickFromQuery();
+    const refNamedResults = useRef<NamedResults>(undefined);
+    let { current: namedResults } = refNamedResults;
     const refPicked = useRef<ReturnUseBinPicks>(undefined);
 
-    async function pickRear(sheetStore: SheetStore, /*namedResults: NamedResults, */rearPickResultType: RearPickResultType) {
+    async function pickRear(sheetStore: SheetStore, rearPickResultType: RearPickResultType) {
         if (sheetStore === undefined) debugger;
         const { divStore } = sheetStore;
         const { rearPick } = bin;
@@ -38,16 +40,16 @@ export function useBinPicks(bin: EntityBin) {
         switch (pick.bizPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom:
-                pickResult = await pickFromAtom(divStore/*namedResults*/, rearPick);
+                pickResult = await pickFromAtom(divStore, namedResults, rearPick);
                 break;
             case BizPhraseType.spec:
-                pickResult = await pickFromSpec(divStore/*namedResults*/, rearPick);
+                pickResult = await pickFromSpec(divStore, namedResults, rearPick);
                 break;
             case BizPhraseType.query:
-                pickResult = await pickFromQuery(divStore/*namedResults*/, rearPick, rearPickResultType);
+                pickResult = await pickFromQuery(namedResults, rearPick, rearPickResultType);
                 break;
             case BizPhraseType.pend:
-                pickResult = await pickFromPend(divStore, /*namedResults, */rearPick);
+                pickResult = await pickFromPend(divStore, namedResults, rearPick);
         }
         return pickResult;
     }
@@ -59,12 +61,12 @@ export function useBinPicks(bin: EntityBin) {
         if (binPicks === undefined) return;
         const { divStore } = sheetStore;
         // divStore.initNamedResults();
-        let { namedResults } = divStore;
+        // let { namedResults } = divStore;
         if (namedResults/*refPicked.current*/ === undefined) {
             // namedResults = refPicked.current.results;
             //}
             //else {
-            namedResults = divStore.namedResults = {
+            namedResults = {
                 '%sheet': sheetStore.main.binRow, // sheetBinRow ?? {},
             };
             // divStore.initNamedResults();
@@ -77,13 +79,13 @@ export function useBinPicks(bin: EntityBin) {
                 switch (bizPhraseType) {
                     default: debugger; break;
                     case BizPhraseType.atom:
-                        pickResult = await pickFromAtom(divStore, binPick);
+                        pickResult = await pickFromAtom(divStore, namedResults, binPick);
                         break;
                     case BizPhraseType.spec:
-                        pickResult = await pickFromSpec(divStore, binPick);
+                        pickResult = await pickFromSpec(divStore, namedResults, binPick);
                         break;
                     case BizPhraseType.query:
-                        pickResult = await pickFromQueryScalar(divStore, binPick);
+                        pickResult = await pickFromQueryScalar(namedResults, binPick);
                         break;
                 }
                 if (pickResult === undefined) return undefined;
@@ -93,7 +95,7 @@ export function useBinPicks(bin: EntityBin) {
         }
 
         let ret: ReturnUseBinPicks = {
-            // results: namedResults,
+            namedResults,
             rearBinPick: rearPick,           // endmost pick
             rearResult: undefined,
             rearPickResultType: rearPickResultType,

@@ -5,20 +5,20 @@ import { Band, FormRow, FormRowsView } from "app/coms";
 import { ViewBud, budFormRow } from "app/hooks";
 import { useForm } from "react-hook-form";
 import { useCallback } from "react";
-import { DivStore } from "../store";
+// import { DivStore } from "../store";
 
 interface Props {
     header: string;
-    //namedResults: NamedResults;
-    divStore: DivStore;
+    namedResults: NamedResults;
+    // divStore: DivStore;
     queryParams: BizBud[];
     pickParams: PickParam[];
 }
 export function usePageParams() {
     const modal = useModal();
     return useCallback(async (props: Props) => {
-        const { header, divStore, queryParams, pickParams } = props;
-        const { namedResults } = divStore;
+        const { header, namedResults, queryParams, pickParams } = props;
+        // const { namedResults } = divStore;
         const valueParams: [PickParam, BizBud, any][] = [];
         const inputParams: BizBud[] = [];
         for (let param of queryParams) {
@@ -74,7 +74,7 @@ function PageParams({ header, valueParams, inputParams }: PageParamsProps) {
             const { name } = pickParam
             return <Band key={index} label={name} className="px-3 py-2">
                 <div className="fw-bold">
-                    <ViewBud bud={bizBud} value={value} />
+                    <ViewBud bud={bizBud} value={value} noLabel={true} />
                 </div>
             </Band>
         })}

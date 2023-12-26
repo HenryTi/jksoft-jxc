@@ -35,7 +35,9 @@ export function EditBudCheck(props: EditBudTemplateProps) {
         checks[optionsItemPhrase] = checked;
         let valChecks = { ...checks };
         setChecks(valChecks);
-        onChanged?.(bizBud, valChecks);
+        let checksArr: number[] = [];
+        for (let i in valChecks) checksArr.push(Number(i));
+        onChanged?.(bizBud, checksArr);
     }
 
     let onEditClick: () => void;

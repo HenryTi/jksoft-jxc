@@ -8,15 +8,19 @@ import { InputDivProps, inputDiv } from "./inputDiv";
 import { useUqApp } from "app";
 import { useModal } from "tonwa-app";
 import { PendProxyHander } from "../tool";
+import { NamedResults } from "../NamedResults";
 
 export function useInputs() {
     const uqApp = useUqApp();
     const modal = useModal();
     return useCallback(async function (props: UseInputsProps): Promise<ValDiv> {
         let { divStore, pendRow, binDiv, valDiv } = props;
-        let { namedResults, entityBin } = divStore;
+        let { entityBin } = divStore;
         let { rearPick } = entityBin;
-        namedResults[rearPick.name] = new Proxy(pendRow, new PendProxyHander(entityBin.pend));
+        let namedResults: NamedResults = {
+            [rearPick.name]: new Proxy(pendRow, new PendProxyHander(entityBin.pend)),
+        };
+        // namedResults[rearPick.name] = new Proxy(pendRow, new PendProxyHander(entityBin.pend));
         let ret: ValDiv, parent: ValDiv;
         let binRow: BinRow = { id: undefined, buds: {}, owned: {} };
         for (let p = binDiv; p !== undefined; p = p.div) {
@@ -49,7 +53,7 @@ export function useInputs() {
                     if (retInput === undefined) return;
                     namedResults[input.name] = retInput;
                 }
-                let divEditing = new DivEditing(divStore, binDiv.div, binRow);
+                let divEditing = new DivEditing(divStore, namedResults, binDiv.div, binRow);
                 mergeBinRow(binRow, divEditing.binRow);
             }
             const inputDivProps: InputDivProps = {
@@ -58,6 +62,7 @@ export function useInputs() {
                 binRow,
                 modal,
                 uqApp,
+                namedResults,
             }
             let retBinRow: BinRow = await inputDiv(inputDivProps);
             if (retBinRow === undefined) return;

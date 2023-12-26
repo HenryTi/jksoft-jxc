@@ -4,10 +4,11 @@ import { useUqApp } from "app/UqApp";
 import { ViewBudUIType } from "..";
 import React from "react";
 
-export function ViewSpecBase({ id, ViewAtom, uiType }: {
+export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
     id: number;
     ViewAtom: (props: { no: string; ex: string; entity?: EntityAtomID; }) => JSX.Element;
     uiType?: ViewBudUIType;
+    noLabel?: boolean;
 }) {
     const { atom, specs } = useGetSpec(id);
     if (atom === undefined) return null;
@@ -33,10 +34,15 @@ export function ViewSpecBase({ id, ViewAtom, uiType }: {
                     let { length: len } = buds;
                     for (let i = 0; i < len; i++) {
                         let { id, caption, name, budDataType } = buds[i];
-                        let band = <div key={id} className={cn}>
-                            <span className="me-2 small text-secondary">
+                        let label: any;
+                        if (noLabel !== true) {
+                            label = <span className="me-2 small text-secondary">
                                 {caption ?? name}
                             </span>
+
+                        }
+                        let band = <div key={id} className={cn}>
+                            {label}
                             {budDataType.valueToContent(values[i])}
                         </div>;
                         bands.push(band);
@@ -65,7 +71,7 @@ export function ViewSpecBase({ id, ViewAtom, uiType }: {
     return <div>{content}</div>;
 }
 
-export function ViewSpec({ id, uiType }: { id: number; uiType?: ViewBudUIType; }) {
+export function ViewSpec({ id, uiType, noLabel }: { id: number; uiType?: ViewBudUIType; noLabel?: boolean; }) {
     let cn = '';
     if (uiType === ViewBudUIType.inDiv) {
         cn = ' col ';
@@ -80,25 +86,27 @@ export function ViewSpec({ id, uiType }: { id: number; uiType?: ViewBudUIType; }
             {label}{ex}
         </div>;
     }
-    return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={uiType} />
+    return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={uiType} noLabel={noLabel} />
 }
 
-export function ViewBudSpec({ id, bud }: { id: number; bud: BizBud; }) {
+export function ViewBudSpec({ id, bud, noLabel }: { id: number; bud: BizBud; noLabel?: boolean; }) {
     function ViewAtom({ no, ex, entity }: { no: string; ex: string; entity?: EntityAtomID; }) {
         let label: any;
         if (entity !== undefined) {
             const { caption, name } = bud;
-            label = <small className="text-secondary me-2">{caption ?? name}</small>;
+            if (noLabel !== true) {
+                label = <small className="text-secondary me-2">{caption ?? name}</small>;
+            }
         }
         return <div title={'编号: ' + no} className="col">
             {label}{ex}
         </div>;
     }
-    return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={ViewBudUIType.inDiv} />
+    return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={ViewBudUIType.inDiv} noLabel={noLabel} />
 }
 
-export function ViewSpecNoAtom({ id, uiType }: { id: number; uiType?: ViewBudUIType; }) {
-    return <ViewSpecBase id={id} ViewAtom={undefined} uiType={uiType} />
+export function ViewSpecNoAtom({ id, uiType, noLabel }: { id: number; uiType?: ViewBudUIType; noLabel?: boolean; }) {
+    return <ViewSpecBase id={id} ViewAtom={undefined} uiType={uiType} noLabel={noLabel} />
 }
 
 export function ViewSpecBaseOnly({ id }: { id: number; }) {

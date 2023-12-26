@@ -104,6 +104,7 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
             pendRow,
             valDiv,
             binDiv: binBuds.binDiv.div,
+            namedResults: {},
         };
         let ret = await inputs(props);
         if (ret === undefined) return;

@@ -15,8 +15,8 @@ export interface InputDivProps extends UseInputsProps {
 }
 
 export async function inputDiv(props: InputDivProps): Promise<BinRow> {
-    const { modal, divStore, binDiv, binRow } = props;
-    let divEditing = new DivEditing(divStore, binDiv, binRow);
+    const { modal, divStore, binDiv, binRow, namedResults } = props;
+    let divEditing = new DivEditing(divStore, namedResults, binDiv, binRow);
     if (divEditing.isInputNeeded() === true) {
         if (await modal.open(<PageInput divEditing={divEditing} />) !== true) return;
     }

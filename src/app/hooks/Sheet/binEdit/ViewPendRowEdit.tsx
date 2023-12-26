@@ -12,7 +12,7 @@ export interface ViewPendRowEditProps extends DivEditProps {
 
 export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowEditProps) {
     const modal = useModal();
-    const { entityBin, namedResults } = divStore;
+    // const { entityBin } = divStore;
     const inputs = useInputs();
     let { pend: pendId } = pendRow;
     let _valDiv = divStore.pendColl[pendId];
@@ -20,14 +20,15 @@ export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowE
     async function onEdit() {
         modal.close();
     }
-    const { rearPick, pend } = entityBin;
+    // const { rearPick, pend } = entityBin;
     async function onAddNew() {
-        namedResults[rearPick.name] = new Proxy(pendRow, new PendProxyHander(pend));
+        // namedResults[rearPick.name] = new Proxy(pendRow, new PendProxyHander(pend));
         const useInputsProps: UseInputsProps = {
             divStore,
             binDiv: divStore.binDiv,
             valDiv,
             pendRow,
+            namedResults: {},
         }
         let retValDiv = await inputs(useInputsProps);
         if (retValDiv === undefined) return;

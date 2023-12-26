@@ -8,7 +8,7 @@ import { useState } from "react";
 export function EditBudRadio(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
     const modal = useModal();
-    const { id, readonly, plus, value: initValue, budEditing, ViewValueEdit: ValueEdit } = props;
+    const { id, readonly, plus, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
     const { bizBud, error } = budEditing;
     const { budDataType, caption, name, ui } = bizBud;
     let { options: { items } } = budDataType as BudRadio;
@@ -94,6 +94,9 @@ export function EditBudRadio(props: EditBudTemplateProps) {
             });
         }
         setValue({ [optionsItemPhrase]: true });
+        let checkItemArr: number[] = [];
+        for (let i in checks) checkItemArr.push(Number(i));
+        onChanged?.(bizBud, checkItemArr);
     }
     return <ValueEdit label={caption ?? name}
         plus={plus}
@@ -105,7 +108,10 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     </ValueEdit>;
 }
 
-export function ViewBudRadio({ bizBud, value: initValue }: { bizBud: BizBud; value: BudValue; }) {
+export function ViewBudRadio({ bizBud, value: initValue }: {
+    bizBud: BizBud;
+    value: BudValue;
+}) {
     const { budDataType, caption, name, ui } = bizBud;
     let { options: { items } } = budDataType as BudRadio;
     let cnRadio: string;
@@ -135,6 +141,7 @@ export function ViewBudRadio({ bizBud, value: initValue }: { bizBud: BizBud; val
     }
 
     async function onCheckChanged(item: number | string) {
+        debugger;
         const { id: budPhrase } = bizBud;
         const optionsItemPhrase = item as number;
         // setValue({ [optionsItemPhrase]: true });

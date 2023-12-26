@@ -4,7 +4,7 @@ import { PageQueryMore } from "app/coms";
 import { BudEditing, EditBudInline, OnBudChanged, PageRefId } from "app/hooks";
 import { IDViewUserSite } from "app/tool";
 import { ChangeEvent, useMemo, useRef, useState } from "react";
-import { BudCheckEditValue, Page, useModal } from "tonwa-app";
+import { BudCheckEditValue, BudCheckValue, Page, useModal } from "tonwa-app";
 import { ButtonAsync, EasyTime, FA, SearchBox, Sep } from "tonwa-com";
 import { User } from "tonwa-uq";
 
@@ -111,7 +111,7 @@ function PageSearchSheet({ sheet }: { sheet: EntitySheet; }) {
             paramDetail,
         });
     }
-    function onBudChanged(bud: BizBud, value: string | number | BudCheckEditValue) {
+    function onBudChanged(bud: BizBud, value: string | number | BudCheckValue) {
         paramValues[bud.id] = value as any;
     }
     function onNoChange(evt: ChangeEvent<HTMLInputElement>) {

@@ -55,5 +55,6 @@ export function ViewPendRow({
     if (div.div === undefined) return <div className="container">{rowContent}</div>;
     return <ViewPendRowEdit pendRow={pendRow}
         pendContent={rowContent}
-        divStore={divStore} />;
+        divStore={divStore}
+        namedResults={undefined} />;
 }

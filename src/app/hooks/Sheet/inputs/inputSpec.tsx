@@ -12,7 +12,6 @@ import { budFormRow } from "app/hooks/Bud";
 import { Calc } from "app/hooks/Calc";
 import { ViewAtomId } from "app/hooks/BizAtom";
 import { PendProxyHander, btnNext, cnNextClassName } from "../tool";
-import { FA } from "tonwa-com";
 import { InputProps } from "./inputBase";
 
 
@@ -25,8 +24,8 @@ export interface PropsInputSpec extends InputProps<PendInputSpec> {
 };
 
 export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
-    const { binInput, pendRow, uqApp, modal, divStore } = props;
-    const { namedResults } = divStore;
+    const { binInput, pendRow, uqApp, modal, namedResults } = props;
+    // const { namedResults } = divStore;
     const { entityPend } = binInput;
     const formulas: [string, string][] = [
         ['base', binInput.baseExp],
