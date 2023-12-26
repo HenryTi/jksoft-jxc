@@ -8,16 +8,17 @@ import { filterUndefined } from "app/tool";
 import { usePageParams } from "./PageParams";
 import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "../tool";
 import { NamedResults, PickResult } from "../NamedResults";
+import { DivStore } from "../store";
 
 export function usePickFromQuery(): [
-    (namedResults: NamedResults, binPick: BinPick) => Promise<PickResult>,
-    (namedResults: NamedResults, binPick: BinPick, lastPickResultType: RearPickResultType) => Promise<PickResult[]>,
+    (divStore: DivStore, binPick: BinPick) => Promise<PickResult>,
+    (divStore: DivStore, binPick: BinPick, lastPickResultType: RearPickResultType) => Promise<PickResult[]>,
 ] {
     const { uq, biz } = useUqApp();
     const modal = useModal();
     const pickParam = usePageParams();
     const pickFromQueryBase = useCallback(async function (
-        namedResults: NamedResults
+        divStore: DivStore/* pickResults: NamedResults*/
         , binPick: BinPick
         , pickResultType: RearPickResultType)
         : Promise<PickResult | PickResult[]> {
@@ -27,7 +28,7 @@ export function usePickFromQuery(): [
         const header = caption ?? query.caption ?? name;
         let retParam = await pickParam({
             header,
-            namedResults,
+            divStore,
             queryParams: query.params,
             pickParams
         });
@@ -170,17 +171,17 @@ export function usePickFromQuery(): [
         }
     }, []);
     const pickFromQueryScalar = useCallback(async function (
-        namedResults: NamedResults
+        divStore: DivStore
         , binPick: BinPick)
         : Promise<PickResult> {
-        return await pickFromQueryBase(namedResults, binPick, RearPickResultType.scalar) as PickResult;
+        return await pickFromQueryBase(divStore, binPick, RearPickResultType.scalar) as PickResult;
     }, []);
     const pickFromQuery = useCallback(async function (
-        namedResults: NamedResults
+        divStore: DivStore
         , binPick: BinPick
         , lastPickResultType: RearPickResultType)
         : Promise<PickResult[]> {
-        return await pickFromQueryBase(namedResults, binPick, lastPickResultType) as PickResult[];
+        return await pickFromQueryBase(divStore, binPick, lastPickResultType) as PickResult[];
     }, []);
     return [pickFromQueryScalar, pickFromQuery];
 }

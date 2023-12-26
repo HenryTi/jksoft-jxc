@@ -4,10 +4,12 @@ import { ViewAtom } from "app/hooks/BizAtom";
 import { Atom } from "uqs/UqDefault";
 import { useCallback } from "react";
 import { NamedResults, PickResult } from "../NamedResults";
+import { DivStore } from "../store";
 
 export function usePickFromSpec() {
     const returnUsePickSpec = usePickSpec();
-    return useCallback(async function pickFromSpec(namedResults: NamedResults, binPick: BinPick): Promise<PickResult> {
+    return useCallback(async function pickFromSpec(divStore: DivStore/* pickResults: NamedResults*/, binPick: BinPick): Promise<PickResult> {
+        const { namedResults } = divStore;
         let { pickParams, pick } = binPick;
         let pickBase = pick as PickSpec;
         let { from } = pickBase;

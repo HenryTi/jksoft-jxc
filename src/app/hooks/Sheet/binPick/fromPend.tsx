@@ -13,7 +13,7 @@ export function usePickFromPend() {
     const modal = useModal();
     const pickParam = usePageParams();
     return useCallback(
-        async function pickFromPend(divStore: DivStore, namedResults: NamedResults, binPick: BinPick): Promise<PickResult[]> {
+        async function pickFromPend(divStore: DivStore, /*namedResults: NamedResults, */binPick: BinPick): Promise<PickResult[]> {
             let { name, caption, pick, pickParams, bin } = binPick;
             let pickBase = pick as PickPend;
             let entityPend = pickBase.from;
@@ -25,7 +25,7 @@ export function usePickFromPend() {
                 const header = caption;
                 retParam = await pickParam({
                     header,
-                    namedResults,
+                    divStore,
                     queryParams,
                     pickParams
                 });
@@ -35,7 +35,7 @@ export function usePickFromPend() {
                 retParam = {};
             }
             await divStore.loadPend(retParam);
-            divStore.namedResults = namedResults;
+            // divStore.namedResults = namedResults;
             let props: PagePendProps = {
                 caption,
                 divStore,

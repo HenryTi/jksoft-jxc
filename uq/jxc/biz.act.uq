@@ -278,6 +278,7 @@ Biz AC DeleteBin (
         WHERE a.i=me AND a.x=id)  -- sheet id
     {
         WITH Bin ID=id DEL;
+        WITH BinPend ID=id DEL;
     }
     ELSEIF EXISTS(SELECT a.i
         FROM IxState as a
@@ -289,6 +290,7 @@ Biz AC DeleteBin (
         -- 如果base sheet没有在我的draft里面，不能写入明细。这是安全保证
         WITH Bin ID=id DEL;
         WITH Detail ID=id DEL;
+        WITH BinPend ID=id DEL;
         RETURN;
     }
 }

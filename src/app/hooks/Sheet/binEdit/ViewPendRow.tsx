@@ -3,6 +3,7 @@ import { Prop, VNamedBud } from "../tool";
 import { OwnedBuds } from "app/hooks/tool";
 import { ViewPendRowEdit } from "./ViewPendRowEdit";
 import { PendBandProps } from "./model";
+import { BudValue } from "tonwa-app";
 
 export function ViewPendRow({
     value: pendRow
@@ -29,8 +30,10 @@ export function ViewPendRow({
         </div>;
     }
     let ownedBudsValuesColl = ownerColl[id];
-    if (ownedBudsValuesColl === undefined) debugger;
-    let ownedBudsValues = ownedBudsValuesColl[iBud.id];
+    let ownedBudsValues: [number, BudValue][];
+    if (ownedBudsValuesColl !== undefined) {
+        ownedBudsValues = ownedBudsValuesColl[iBud.id];
+    }
     let rowContent = <div className="row">
         <div className="col">
             <div className="py-2">

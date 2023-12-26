@@ -67,8 +67,9 @@ export class SheetMain extends BaseObject {
         for (let mp of mainProps) {
             formulas.push([mp.name, getFormulaText(mp.defaultValue)]);
         }
-        let { results, rearBinPick: lastBinPick, rearResult: lastResult } = pickResults;
-        const calc = new Calc(formulas, results);
+        let { /*results:namedResults, */rearBinPick: lastBinPick, rearResult: lastResult } = pickResults;
+        let { namedResults } = this.sheetStore.divStore;
+        const calc = new Calc(formulas, namedResults);
         calc.addValues(lastBinPick.name, lastResult[0]);
         const { results: calcResults } = calc;
         if (i !== undefined) {
@@ -232,7 +233,7 @@ export class ExDetail extends DetailBase {
 
 export interface BinDetail extends ValRow {
     //origin: number;             // origin detail id
-    //pendFrom: number;
+    //pend: number;
     //pendValue: number;
     // sheet: BinRow;
 }
@@ -378,7 +379,6 @@ export class Section extends BaseObject {
     }
 }
 
-let pendAtomId = 1;
 export class SheetStore extends KeyIdObject {
     readonly uq: UqExt;
     readonly biz: Biz;

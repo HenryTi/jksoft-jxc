@@ -462,7 +462,7 @@ class BinProxyHander implements ProxyHandler<any> {
 export const predefinedPendFields = [
     's', 'si', 'sx', 'svalue', 'sprice', 'samount'
     , 'i', 'x', 'value', 'price', 'amount'
-    , 'pendvalue', 'origin', 'pendFrom', 'pendValue',
+    , 'pendvalue', 'origin', 'pend', 'pendValue'
 ];
 
 export class EntityPend extends Entity {

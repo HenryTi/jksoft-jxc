@@ -8,11 +8,18 @@ import { PickResult } from "../NamedResults";
 export function useCoreDetailAdd(coreDetail: CoreDetail) {
     const rowEdit = useRowEdit();
     const { entityBin, sheetStore } = coreDetail;
+    const { divStore } = sheetStore;
+    divStore.namedResults = undefined;
     const pick = useBinPicks(entityBin);
     async function addNewDirect() {
+        // divStore.namedResults = {}; // .initNamedResults();
+        let { namedResults } = divStore;
         let ret = await pick(sheetStore);
         if (ret === undefined) return;
-        let { results: namedResults, rearBinPick: binPick, rearResult: pickResult, rearPickResultType: lastPickResultType } = ret;
+        if (namedResults === undefined) {
+            divStore.namedResults = namedResults = {};
+        }
+        let { /*results: namedResults, */rearBinPick: binPick, rearResult: pickResult, rearPickResultType: lastPickResultType } = ret;
         if (lastPickResultType === RearPickResultType.array) {
             // 直接选入行集，待修改
             if (coreDetail === undefined) {
@@ -30,12 +37,12 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
                 if (binRow.value === undefined) {
                     binEditing.setValue('value', 0, undefined);
                 }
-                const { origin, pendFrom, pendValue } = rowProps;
+                const { origin, pend, pendValue } = rowProps;
                 let row = await sec.addRowProps(Object.assign(
                     {},
                     // rowProps, 这是多选明细，不应该加这里。在前面rowStore.init已经处理了字段带入
                     binRow as any,
-                    { origin, pendFrom, pendValue },
+                    { origin, pend, pendValue },
                 ));
                 await coreDetail.sheetStore.reloadRow(row.props.id);
             }

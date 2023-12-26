@@ -5,7 +5,7 @@ import { OwnerColl, budValuesFromProps } from "../../tool";
 import { ParamSaveDetail, ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "../tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { NamedResults } from "../NamedResults";
+import { NamedResults, PickResult } from "../NamedResults";
 import { ValDiv, ValDivs } from './ValDiv';
 
 enum PendLoadState {
@@ -53,9 +53,18 @@ export class DivStore {
                 if (value > valRow.pendValue) return SubmitState.disable;
             }
             return hasValue === true ? SubmitState.enable : SubmitState.hide;
-        }, null)
+        }, null);
+        // this.initNamedResults();
     }
-
+    /*
+    getNamedResults(): NamedResults { return this.namedResults; }
+    setNamedResults(name: string, results: PickResult) {
+        this.namedResults[name] = results;
+    }
+    initNamedResults() {
+        return this.namedResults = {};
+    }
+    */
     async loadPend(params: any): Promise<void> {
         if (this.pendLoadState !== PendLoadState.none) return;
         this.pendRows = undefined;

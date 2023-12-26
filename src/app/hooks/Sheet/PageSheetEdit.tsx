@@ -8,7 +8,7 @@ import { useCoreDetailAdd } from "./binEdit";
 import { NavigateFunction, useLocation, useNavigate, useParams } from "react-router-dom";
 import { UqApp, useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { EntitySheet } from "app/Biz";
 import { PickFunc, useBinPicks } from "./binPick/useBinPicks";
 
@@ -81,6 +81,7 @@ async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetSt
 function PageStore({ store }: { store: SheetStore; }) {
     const { uq, caption, main, detail, divStore } = store;
     const uqApp = useUqApp();
+    divStore.namedResults = undefined;
     const pick = useBinPicks(main.entityMain);
     const { openModal, closeModal } = useModal();
     const navigate = useNavigate();
