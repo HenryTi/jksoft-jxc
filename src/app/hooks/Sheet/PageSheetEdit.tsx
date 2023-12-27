@@ -193,7 +193,7 @@ function PageStore({ store }: { store: SheetStore; }) {
             return <>
                 <ViewMain main={main} />
                 {vDetail}
-                <LMR className="px-3 py-3 border-top">
+                <LMR className="px-3 py-3 border-top tonwa-bg-gray-1">
                     {btnSubmit}
                     {
                         editable === true && <>

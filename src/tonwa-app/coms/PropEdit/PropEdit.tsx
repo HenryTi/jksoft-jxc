@@ -4,6 +4,7 @@ import { Form, Submit } from "tonwa-com";
 import { Page } from "../page";
 import { Band, BandContainerContext, BandContainerProps, BandContentType, BandFieldErrors, BandMemos, BandTemplateProps, useBand, useBandContainer, VBandContainerContext } from "tonwa-com";
 import { useModal } from "../../UqAppBase";
+import { Pencil } from "app/hooks/tool";
 // import { Link, Route, Routes, useNavigate } from "react-router-dom";
 
 interface DetailProps extends BandContainerProps {
@@ -50,7 +51,7 @@ function DefaultBandTemplate(props: BandTemplateProps) {
         return <div onClick={onClick}
             className="px-3 align-self-stretch d-flex align-items-center cursor-pointer"
         >
-            {icon ?? <FA name="pencil" className="text-info" />}
+            {icon ?? <Pencil />}
         </div>;
     }
 

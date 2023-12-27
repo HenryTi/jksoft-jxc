@@ -5,6 +5,7 @@ import { EnumAtom } from "uqs/UqDefault";
 import { useState } from "react";
 import { useUqApp } from "app/UqApp";
 import { AtomUomProps } from "app/tool";
+import { Pencil } from "../tool";
 
 export interface ViewUomProps {
     atomId: number;
@@ -46,7 +47,7 @@ export function LabelAtomUomEdit({ atomId, uoms: uomsInit, className }: ViewUomP
             <div><CaptionAtom atom={EnumAtom.UomI} /></div>
             <div className="px-3">{children}</div>
             <div className="p-3 text-info cursor-pointer" onClick={onAtomSelectUom}>
-                <FA name="pencil" />
+                <Pencil />
             </div>
         </LabelRow>;
     }
@@ -64,7 +65,7 @@ export function LabelAtomUomEdit({ atomId, uoms: uomsInit, className }: ViewUomP
         <div className="mt-2"><CaptionAtom atom={EnumAtom.UomI} /></div>
         <List items={uoms} ViewItem={ViewItemUom} className="w-100" />
         <div className="p-3 text-info cursor-pointer border-start" onClick={onAtomSelectUom}>
-            <FA name="pencil" />
+            <Pencil />
         </div>
     </LabelRow>;
 }

@@ -56,18 +56,32 @@ export function PagePend(props: PagePendProps) {
         setSelectedItems({ ...selectedItems });
     }
     let onItemSelectFunc: any, btnFinish: any;
-    if (div.div === undefined) {
-        onItemSelectFunc = onItemSelect;
-        btnFinish = <button className="btn btn-primary" onClick={onClick}>选入</button>;
+    if (pendRows.length > 0) {
+        if (div.div === undefined) {
+            onItemSelectFunc = onItemSelect;
+            btnFinish = <button className="btn btn-primary" onClick={onClick}>选入</button>;
+        }
+        else {
+            btnFinish = <button className="btn btn-outline-primary" onClick={() => modal.close([])}>
+                下一步
+                <FA name="angle-right" className="ms-2" />
+            </button>;
+        }
     }
     else {
-        btnFinish = <button className="btn btn-outline-primary" onClick={() => modal.close()}>
-            下一步
-            <FA name="angle-right" className="ms-2" />
+        btnFinish = <button className="btn btn-outline-info" onClick={() => modal.close([])}>
+            关闭
         </button>;
     }
     return <Page header={caption}>
-        <List items={pendRows} ViewItem={ViewItemPendRow} className="" onItemSelect={onItemSelectFunc} sep={<Sep sep={5} />} />
+        <List items={pendRows}
+            ViewItem={ViewItemPendRow} className=""
+            onItemSelect={onItemSelectFunc}
+            sep={<Sep sep={5} />}
+            none={<div className="p-3 small text-secondary tonwa-bg-gray-2 border-bottom">
+                <FA name="times-circle" className="me-3 text-danger" size="lg" />
+                无内容
+            </div>} />
         <div className="p-3">
             {btnFinish}
         </div>

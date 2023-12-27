@@ -9,6 +9,7 @@ import { OwnedBuds } from "../../tool/tool";
 import { useRowEdit } from "./rowEdit";
 import { ViewBud } from "../../Bud";
 import { BinEditing } from "../store";
+import { Pencil } from "app/hooks/tool";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -23,7 +24,7 @@ export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable:
         </div>;
     }
     return <div>
-        <div className="py-1 px-3 tonwa-bg-gray-2">{caption ?? '明细'}</div>
+        <div className="pt-2 pb-1 px-3 tonwa-bg-gray-1">{caption ?? '明细'}</div>
         {content}
     </div>
 }
@@ -83,10 +84,10 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         }
     }
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
-        return <div className="d-flex align-items-center">
-            <div className="me-3 small text-secondary">{caption}</div>
-            <div className="w-min-4c text-end">{value}</div>
-        </div>;
+        return <span className="align-bottom">
+            <span className="me-3 small text-secondary">{caption}</span>
+            <span className="d-inline-block w-min-5c text-end">{value}</span>
+        </span>;
     }
     if (value === undefined) {
         value = 0;
@@ -125,31 +126,31 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         </div>;
     }
     if (props.length > 0) {
-        colProps = <div className={cnCol}>
-            <div className="d-flex flex-wrap">
-                {
-                    props.map((bud, index) => {
-                        const { id, name, caption } = bud;
-                        let v = buds[id];
-                        // <small className="me-1 text-secondary">{caption ?? name} :</small>
-                        return <div key={id} className="w-min-12c">
-                            <ViewBud key={index} bud={bud} value={v} />
-                        </div>;
-                    })}
-            </div>
-        </div>;
+        colProps = <>
+            {
+                props.map((bud, index) => {
+                    const { id, name, caption } = bud;
+                    let v = buds[id];
+                    // <small className="me-1 text-secondary">{caption ?? name} :</small>
+                    return <ViewBud key={id} bud={bud} value={v} />;
+                })}
+        </>;
     }
 
-    return <div className="py-2 align-items-stretch row">
-        <div className={cnCol}>
-            <ViewIdField bud={budI} value={i} />
-            <BinOwnedBuds bizBud={budI} binDetail={binDetail} />
+    return <div className="py-2 d-flex">
+        <div className="flex-fill">
+            <div className={'row row-cols-4'}>
+                <ViewIdField bud={budI} value={i} />
+                <BinOwnedBuds bizBud={budI} binDetail={binDetail} />
+            </div>
+            <div className="row row-cols-4">
+                {colX}
+                {colProps}
+            </div>
         </div>
-        {colX}
-        {colProps}
-        <div className={cnCol + ' d-flex flex-column align-items-end justify-content-end'}>
+        <div className={'w-min-12c d-flex flex-column align-items-end justify-content-end'}>
             <div className={' flex-grow-1 ' + cnEdit} onClick={onEdit}>
-                <FA name="pencil" className="text-info" fixWidth={true} />
+                <Pencil />
             </div>
             <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
             {vPrice}

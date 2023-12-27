@@ -1,6 +1,7 @@
 import { FA, setAtomValue } from "tonwa-com";
 import { EditProps } from "./model";
 import { useAtomValue } from "jotai";
+import { Pencil } from "app/hooks/tool";
 
 export function InlineEdit(props: EditProps) {
     let { children, onEditClick, readonly, error, required } = props;
@@ -8,7 +9,9 @@ export function InlineEdit(props: EditProps) {
     let right: any = <span className="p-2">&nbsp;</span>;
     if (onEditClick !== null) {
         if (readonly !== true) {
-            right = <div onClick={onEditClick} className="cursor-pointer px-2 pb-2 pt-1 align-self-start"><FA name="pencil" className="text-info" /></div>;
+            right = <div onClick={onEditClick} className="cursor-pointer px-2 pb-2 pt-1 align-self-start">
+                <Pencil />
+            </div>;
         }
     }
     function onClick() {
@@ -30,7 +33,7 @@ export function InlineEdit(props: EditProps) {
         vContent = children;
     }
     return <div>
-        <div className={'d-flex align-items-center border-bottom ' + cn} onClick={onClick}>
+        <div className={'d-flex align-items-center border rounded ' + cn} onClick={onClick}>
             <div className="flex-fill py-0 ps-2">{vContent}</div>
             {right}
         </div>

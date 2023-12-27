@@ -99,3 +99,7 @@ button:focus-visible {
     --bs-accordion-btn-padding-y: 1rem;
     --bs-accordion-btn-icon-width: 0.75rem;
 }
+
+.pencil-color {
+    color: #0cf;
+}

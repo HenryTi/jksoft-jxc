@@ -1,6 +1,7 @@
 import { useUqApp } from "app/UqApp";
 import { ButtonRightAdd } from "app/coms";
 import { ViewAtom } from "app/hooks";
+import { Pencil } from "app/hooks/tool";
 import { IDViewUserSite } from "app/tool";
 import { centers } from "app/views/center";
 import { ChangeEvent, useRef, useState } from "react";
@@ -111,7 +112,9 @@ function ListHeader({ caption, onEdit }: { caption: string; onEdit: () => Promis
     const cnHeader = ' tonwa-bg-gray-1 small d-flex align-items-end';
     let vEditButton: any;
     if (onEdit !== undefined) {
-        vEditButton = <div className="text-primary cursor-pointer py-2 px-3" onClick={onEdit}><FA name="pencil" /></div>;
+        vEditButton = <div className="text-primary cursor-pointer py-2 px-3" onClick={onEdit}>
+            <Pencil />
+        </div>;
     }
     return <div className={cnHeader}>
         <div className="flex-grow-1 ps-3 py-2">{caption}</div>

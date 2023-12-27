@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FA, LabelRow, LabelRowPropsBase } from "tonwa-com";
 import { UqAppBase, useUqAppBase } from "../UqAppBase";
 import { RegisterOptions } from "react-hook-form";
+import { Pencil } from "app/hooks/tool";
 
 export type OnValueChanged = (value: string | number, checked?: boolean) => Promise<void>;
 
@@ -42,7 +43,9 @@ export function LabelRowEdit(props: LabelRowPropsBase & EditProps) {
     let right: any = <span className="p-3">&nbsp;</span>;
     if (pickValueProp !== null) {
         if (readonly !== true) {
-            right = <div onClick={onClick} className="cursor-pointer p-3"><FA name="pencil" className="text-info" /></div>;
+            right = <div onClick={onClick} className="cursor-pointer p-3">
+                <Pencil />
+            </div>;
         }
     }
     let viewValue = ValueTemplate === undefined ?
