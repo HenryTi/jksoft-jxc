@@ -3,6 +3,7 @@ import { useGetSpec } from "../Uq";
 import { useUqApp } from "app/UqApp";
 import { ViewBudUIType } from "..";
 import React from "react";
+import { LabelBox } from "../Sheet/tool";
 
 export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
     id: number;
@@ -36,15 +37,11 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
                         let { id, caption, name, budDataType } = buds[i];
                         let label: any;
                         if (noLabel !== true) {
-                            label = <span className="me-2 small text-secondary">
-                                {caption ?? name}
-                            </span>
-
+                            label = caption ?? name;
                         }
-                        let band = <div key={id} className={cn}>
-                            {label}
+                        let band = <LabelBox key={id} label={label} colon={true}>
                             {budDataType.valueToContent(values[i])}
-                        </div>;
+                        </LabelBox>;
                         bands.push(band);
                     }
                 }
@@ -55,9 +52,9 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
                         {bands}
                     </React.Fragment>;
                 }
-                return <div key={id}>
+                return <React.Fragment key={id}>
                     {bands}
-                </div>
+                </React.Fragment >
             })}
         </>;
     }
@@ -68,7 +65,7 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
     if (uiType === ViewBudUIType.inDiv) {
         return content;
     }
-    return <div>{content}</div>;
+    return content;
 }
 
 export function ViewSpec({ id, uiType, noLabel }: { id: number; uiType?: ViewBudUIType; noLabel?: boolean; }) {
@@ -80,11 +77,11 @@ export function ViewSpec({ id, uiType, noLabel }: { id: number; uiType?: ViewBud
         let label: any;
         if (entity !== undefined) {
             const { caption, name } = entity;
-            label = <small className="text-secondary me-2">{caption ?? name}</small>;
+            label = caption ?? name;
         }
-        return <div title={'编号: ' + no} className={cn}>
+        return <LabelBox label={label} title={'编号: ' + no} colon={true}>
             {label}{ex}
-        </div>;
+        </LabelBox>;
     }
     return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={uiType} noLabel={noLabel} />
 }
@@ -95,12 +92,12 @@ export function ViewBudSpec({ id, bud, noLabel }: { id: number; bud: BizBud; noL
         if (entity !== undefined) {
             const { caption, name } = bud;
             if (noLabel !== true) {
-                label = <small className="text-secondary me-2">{caption ?? name}</small>;
+                label = caption ?? name; // <small className="text-secondary me-2">{caption ?? name}</small>;
             }
         }
-        return <div title={'编号: ' + no} className="col">
-            {label}{ex}
-        </div>;
+        return <LabelBox title={'编号: ' + no} label={label} colon={true}>
+            {ex}
+        </LabelBox>;
     }
     return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={ViewBudUIType.inDiv} noLabel={noLabel} />
 }

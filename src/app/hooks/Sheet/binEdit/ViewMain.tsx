@@ -5,6 +5,8 @@ import { ViewSheetTime } from "../ViewSheetTime";
 import { BizBud } from "app/Biz";
 import { FA, setAtomValue } from "tonwa-com";
 import { BudCheckEditValue, BudCheckValue } from "tonwa-app";
+import { LabelBox, LabelContent, cnRolCols } from "../tool";
+import React from "react";
 
 export function ViewMain({ main }: { main: SheetMain }) {
     const { no, entityMain, _binRow, budEditings } = main;
@@ -17,19 +19,11 @@ export function ViewMain({ main }: { main: SheetMain }) {
     for (let i = 0; i < length; i++) {
         let budEditing = budEditings[i];
         const { bizBud, required } = budEditing;
-        let labelRequired: any;
-        if (required === true) {
-            labelRequired = <span className="text-danger me-1">*</span>; // <FA name="star-o" className="small text-danger me-1" />;
-        }
         let { id, caption, name } = bizBud;
         let value = buds[id];
-        propRow.push(<div key={id} className="col">
-            <div className={'ps-1 text-secondary'}>
-                {labelRequired}
-                <small>{caption ?? name}</small>
-            </div>
-            <div className="py-1"><EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} /></div>
-        </div>);
+        propRow.push(<LabelBox key={id} label={caption ?? name} required={required}>
+            <EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} />
+        </LabelBox>);
         if (i === length - 1) break;
         if (i % 4 === 3) {
             propRow = [];
@@ -40,41 +34,42 @@ export function ViewMain({ main }: { main: SheetMain }) {
         buds[bud.id] = value as any;
         setAtomValue(_binRow, { ...binRow });
     }
-    let viewRowArr: any;
+
+    let cnBlock = ' d-flex border-bottom border-secondary-subtle bg-white container mt-2 ';
+    let viewProps: any;
     if (length > 0) {
-        viewRowArr = propRowArr.map((row, index) => <div key={index} className="row py-1 row-cols-4">
+        let viewRowArr = propRowArr.map((row, index) => <React.Fragment key={index}>
             {row}
-        </div>);
+        </React.Fragment>);
+        viewProps = <div className={cnBlock}>
+            <div className={'flex-fill py-2 '}>
+                <div className={cnRolCols}>
+                    {viewRowArr}
+                </div>
+            </div>
+        </div>
     }
 
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
         if (bud === undefined) return null;
         const { caption, name } = bud;
-        return <div className="col">
-            <div className="ps-1 small text-secondary">{caption ?? name}</div>
+        return <LabelContent label={caption ?? name}>
             <ViewSpecR id={value} />
-        </div>
+        </LabelContent>
     }
 
-    let cnBlock = 'd-flex border-bottom border-secondary-subtle bg-white container mt-2';
-    let blockRight = <div className="w-min-12c w-max-12c"></div>;
     return <div className="tonwa-bg-gray-1">
         <div className={cnBlock + ' border-top '}>
-            <div className="flex-fill row row-cols-4 py-3">
-                <div className="col">
-                    <div className="ps-1 small text-secondary">单据编号</div>
-                    <div><span className="text-danger">{no}</span> &nbsp; <ViewSheetTime id={idBin} /></div>
+            <div className={'flex-fill py-3 container'}>
+                <div className={cnRolCols}>
+                    <LabelContent label="单据编号">
+                        <span className="text-danger">{no}</span> &nbsp; <ViewSheetTime id={idBin} />
+                    </LabelContent>
+                    <ViewIdField bud={budI} value={i} />
+                    <ViewIdField bud={budX} value={x} />
                 </div>
-                <ViewIdField bud={budI} value={i} />
-                <ViewIdField bud={budX} value={x} />
             </div>
-            {blockRight}
         </div>
-        <div className={cnBlock}>
-            <div className="flex-fill py-2">
-                {viewRowArr}
-            </div>
-            {blockRight}
-        </div>
+        {viewProps}
     </div>;
 }

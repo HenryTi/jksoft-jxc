@@ -1,5 +1,6 @@
 import { BizBud, BudRadio, EnumBudType } from "app/Biz";
-import { ViewBudSpec, ViewSpec, ViewSpecNoAtom } from "app/hooks";
+import { ViewBudSpec, ViewSpecNoAtom } from "app/hooks";
+import { LabelBox } from "app/hooks/Sheet/tool";
 import { contentFromDays } from "app/tool";
 
 export enum ViewBudUIType {
@@ -9,6 +10,7 @@ export enum ViewBudUIType {
 
 export function ViewBud({ bud, value, uiType, noLabel }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; }) {
     if (bud === undefined) return <>{value}</>;
+    if (!value) return null;
     const { name, caption, budDataType } = bud;
     let type = budDataType?.type;
     if (type === EnumBudType.atom) {
@@ -33,7 +35,8 @@ export function ViewBud({ bud, value, uiType, noLabel }: { bud: BizBud; value: a
     if (noLabel === true) {
         return <div className="col">{content}</div>;
     }
-    return <div className="col"><small className="text-secondary me-2">{caption ?? name}</small>{content}</div>
+    //return <div className="col"><small className="text-secondary me-2">{caption ?? name}</small>{content}</div>
+    return <LabelBox label={caption ?? name} colon={true} >{content}</LabelBox>;
 }
 
 function ViewAtomInBud({ value }: { value: any; }) {

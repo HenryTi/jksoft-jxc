@@ -1,13 +1,11 @@
 import { Link } from "react-router-dom";
 import { IDView, Page, useModal } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
-import { FA, getAtomValue, setAtomValue } from "tonwa-com";
+import { FA } from "tonwa-com";
 import { Permit, ViewSite } from "../Site";
 import { Center, centers } from "../center";
 import { ViewConsole } from "./ViewConsole";
 import { PageMoreTest } from "app/coms/PageMore";
-import { useRef, useState } from "react";
-import { atom, useAtomValue } from "jotai";
 
 export function TabHome() {
     const uqApp = useUqApp();

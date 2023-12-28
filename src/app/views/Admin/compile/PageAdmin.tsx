@@ -1,7 +1,7 @@
 import React from "react";
 import { Page, useModal } from "tonwa-app";
 import { FA, Sep } from "tonwa-com";
-import { PageCmdClear } from "./PageCmdClear";
+import { PageCmdClearCode, PageCmdClearPend } from "./PageCmdClear";
 
 interface Cmd {
     icon: string;
@@ -18,11 +18,19 @@ export function PageAdmin() {
             iconColor: 'text-danger',
             caption: '清空代码',
             onAct: () => {
-                modal.open(<PageCmdClear />);
+                modal.open(<PageCmdClearCode />);
+            }
+        },
+        {
+            icon: 'trash',
+            iconColor: 'text-danger',
+            caption: '清空待处理',
+            onAct: () => {
+                modal.open(<PageCmdClearPend />);
             }
         },
     ];
-    return <Page header="代码管理">
+    return <Page header="管理">
         {cmdArr.map((v, index) => {
             return <React.Fragment key={index}>
                 <VCmd {...v} />

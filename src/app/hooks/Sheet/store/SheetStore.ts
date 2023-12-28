@@ -283,8 +283,9 @@ export class Row extends BaseObject {
             ...this.props,
             props: propArr,
         } as any);
-        if (id !== this.props.id) {
-            console.error(`save detail id changed, org: ${this.props.id}, new: ${id}`);
+        let org = this.props.id;
+        if (org !== undefined && id !== org) {
+            console.error(`save detail id changed, org: ${org}, new: ${id}`);
         }
         this.props.id = id;
     }

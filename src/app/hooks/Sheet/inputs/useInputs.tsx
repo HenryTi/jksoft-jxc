@@ -9,6 +9,7 @@ import { useUqApp } from "app";
 import { useModal } from "tonwa-app";
 import { PendProxyHander } from "../tool";
 import { NamedResults } from "../NamedResults";
+import { getAtomValue } from "tonwa-com";
 
 export function useInputs() {
     const uqApp = useUqApp();
@@ -20,9 +21,16 @@ export function useInputs() {
         let namedResults: NamedResults = {
             [rearPick.name]: new Proxy(pendRow, new PendProxyHander(entityBin.pend)),
         };
-        // namedResults[rearPick.name] = new Proxy(pendRow, new PendProxyHander(entityBin.pend));
         let ret: ValDiv, parent: ValDiv;
-        let binRow: BinRow = { id: undefined, buds: {}, owned: {} };
+        let binRow: BinRow;
+        if (valDiv === undefined) {
+            binRow = { id: undefined, buds: {}, owned: {} };
+        }
+        else {
+            let { atomValRow } = valDiv;
+            let valDivRow = getAtomValue(atomValRow);
+            binRow = { ...valDivRow, id: undefined };
+        }
         for (let p = binDiv; p !== undefined; p = p.div) {
             const { inputs } = p;
             if (inputs !== undefined) {

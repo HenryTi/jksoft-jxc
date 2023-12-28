@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Dec 21 2023 08:50:45 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Wed Dec 27 2023 21:01:27 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -616,6 +616,11 @@ export interface ResultGetSpecsFromBase {
 export interface ParamClearCode {
 }
 export interface ResultClearCode {
+}
+
+export interface ParamClearPend {
+}
+export interface ResultClearPend {
 }
 
 export interface ParamGetPend {
@@ -1456,6 +1461,7 @@ export interface UqExt extends Uq {
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
 	GetSpecsFromBase: UqQuery<ParamGetSpecsFromBase, ResultGetSpecsFromBase>;
 	ClearCode: UqAction<ParamClearCode, ResultClearCode>;
+	ClearPend: UqAction<ParamClearPend, ResultClearPend>;
 	GetPend: UqQuery<ParamGetPend, ResultGetPend>;
 	GetPendsNotify: UqQuery<ParamGetPendsNotify, ResultGetPendsNotify>;
 	GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
@@ -3203,6 +3209,15 @@ export const uqSchema={
     },
     "clearcode": {
         "name": "ClearCode",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "jsoned": true,
+        "returns": [] as any
+    },
+    "clearpend": {
+        "name": "ClearPend",
         "type": "action",
         "private": false,
         "sys": true,

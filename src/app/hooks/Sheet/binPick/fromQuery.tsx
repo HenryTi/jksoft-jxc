@@ -6,7 +6,7 @@ import { useUqApp } from "app/UqApp";
 import { FA, List } from "tonwa-com";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "./PageParams";
-import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "../tool";
+import { Picked, Prop, VNamedBud, cnRolCols, pickedFromJsonArr } from "../tool";
 import { NamedResults, PickResult } from "../NamedResults";
 import { DivStore } from "../store";
 
@@ -128,8 +128,8 @@ export function usePickFromQuery(): [
                 cnViewItem += 'ps-3 ';
                 cnFirst = 'my-2 mx-3';
                 vTop = <div className="tonwa-bg-gray-2 p-3 border-bottom text-info">
-                    选择请点击
-                    <FA name="hand-o-down" className="ms-3 text-danger" />
+                    <FA name="hand-o-down" className="me-3 text-danger" />
+                    请选择
                 </div>;
             }
             function ViewItem({ value: picked }: { value: Picked }) {
@@ -149,7 +149,7 @@ export function usePickFromQuery(): [
                 }
                 return <div>
                     {vFirst}
-                    <div className={cnViewItem}>
+                    <div className={cnRolCols}>
                         {propArr.map((v, index) => {
                             return <VNamedBud key={index} {...v} />;
                         })}

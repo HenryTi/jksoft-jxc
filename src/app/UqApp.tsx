@@ -14,7 +14,7 @@ import { ViewsRoutes } from './views';
 // const pathBase = 'jksoft-jxc';
 const pathBase = '';
 const appConfig: AppConfig = {
-    version: '0.1.0',
+    version: '1.0.1',
     center: 'https://tv.jkchemical.com',
     noUnit: true,
     oem: undefined,

@@ -9,7 +9,7 @@ export function InlineEdit(props: EditProps) {
     let right: any = <span className="p-2">&nbsp;</span>;
     if (onEditClick !== null) {
         if (readonly !== true) {
-            right = <div onClick={onEditClick} className="cursor-pointer px-2 pb-2 pt-1 align-self-start">
+            right = <div onClick={onEditClick} className="cursor-pointer pb-2 pt-1 align-self-start">
                 <Pencil />
             </div>;
         }

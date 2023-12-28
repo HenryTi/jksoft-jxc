@@ -10,6 +10,7 @@ import { useRowEdit } from "./rowEdit";
 import { ViewBud } from "../../Bud";
 import { BinEditing } from "../store";
 import { Pencil } from "app/hooks/tool";
+import { cnRolCols } from "../tool";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -63,9 +64,7 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
         </>;
     }
 
-    return <div className="border-top container">
-        {content}
-    </div>
+    return content;
 }
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
@@ -84,10 +83,10 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         }
     }
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
-        return <span className="align-bottom">
-            <span className="me-3 small text-secondary">{caption}</span>
-            <span className="d-inline-block w-min-5c text-end">{value}</span>
-        </span>;
+        return <div className="me-4">
+            <small className="text-secondary me-2">{caption} :</small>
+            {value}
+        </div>;
     }
     if (value === undefined) {
         value = 0;
@@ -95,9 +94,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     let cnEdit = editable === true ? 'cursor-pointer' : 'text-light';
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
         if (bud === undefined) return null;
-        return <div>
-            <ViewSpec id={value} />
-        </div>
+        return <ViewSpec id={value} />;
     }
     let vPrice: any;
     if (budPrice !== undefined) {
@@ -137,24 +134,24 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         </>;
     }
 
-    return <div className="py-2 d-flex">
-        <div className="flex-fill">
-            <div className={'row row-cols-4'}>
+    return <div className="py-2 border-bottom border-secondary">
+        <div className="container">
+            <div className={cnRolCols}>
                 <ViewIdField bud={budI} value={i} />
                 <BinOwnedBuds bizBud={budI} binDetail={binDetail} />
-            </div>
-            <div className="row row-cols-4">
                 {colX}
                 {colProps}
             </div>
         </div>
-        <div className={'w-min-12c d-flex flex-column align-items-end justify-content-end'}>
-            <div className={' flex-grow-1 ' + cnEdit} onClick={onEdit}>
-                <Pencil />
+        <div className={'d-flex justify-content-end pt-2 '}>
+            <div className="border-top border-secondary-subtle d-flex ps-2 pt-1 align-items-center">
+                {vPrice}
+                {vAmount}
+                <ViewValue caption={'数量'} value={<span className="fw-bold">{value}</span>} />
+                <div className={cnEdit} onClick={onEdit}>
+                    <Pencil />
+                </div>
             </div>
-            <ViewValue caption={'数量'} value={<span className="fs-larger fw-bold">{value}</span>} />
-            {vPrice}
-            {vAmount}
         </div >
     </div>;
 }

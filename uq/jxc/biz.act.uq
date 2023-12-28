@@ -962,3 +962,17 @@ BIZ AC ClearCode ver 0.2 () {
         -/
     }
 }
+
+BIZ AC ClearPend() {
+    VAR me ID = Me();
+    IF EXISTS (SELECT id FROM $UserSite WHERE id=me AND (admin&1)=1) {
+        SET @site=$site;
+        /-mysql
+        -- 删去pend
+        DELETE a
+            FROM pend AS a 
+                JOIN bizphrase AS b ON b.id=a.base 
+            WHERE b.base=@site;
+        -/
+    }
+}

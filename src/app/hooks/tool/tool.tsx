@@ -2,6 +2,7 @@ import { useUqApp } from "app/UqApp";
 import { BudCheckValue, BudValue } from "tonwa-app";
 import { ViewBud } from "../Bud";
 import { FA } from "tonwa-com";
+import React from "react";
 
 interface PropData {
     id: number;
@@ -54,7 +55,7 @@ export function budValuesFromProps(props: PropData[]) {
 export function OwnedBuds({ values }: { values: [number, BudValue][]; }) {
     if (values === undefined) return null;
     const { biz } = useUqApp();
-    return <div className="d-flex flex-wrap my-1">{
+    return <>{
         values.map(value => {
             let [budId, budValue] = value;
             let bizBud = biz.budFromId(budId);
@@ -75,9 +76,9 @@ export function OwnedBuds({ values }: { values: [number, BudValue][]; }) {
                 </>;
                 */
             }
-            return <div className="d-flex w-min-12c align-items-center me-3" key={budId}>
+            return <React.Fragment key={budId}>
                 {content}
-            </div>;
+            </React.Fragment>;
         })}
-    </div>;
+    </>;
 }

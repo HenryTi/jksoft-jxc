@@ -3,6 +3,7 @@ import { DivStore, UseInputsProps, ValDiv } from "../store";
 import { FA } from "tonwa-com";
 import { useInputs } from "../inputs";
 import { ViewBud, ViewBudUIType, ViewSpecBaseOnly } from "app/hooks";
+import { cnRolCols } from "../tool";
 
 interface ViewDivProps {
     divStore: DivStore;
@@ -15,8 +16,10 @@ export function ViewBinDivs({ divStore, editable }: { divStore: DivStore; editab
     const { valDivs: valDiv } = divStore;
     const divs = useAtomValue(valDiv.atomValDivs);
     if (divs.length === 0) {
-        return <div className="small text-body-tertiary p-3">
-            无明细
+        return <div className="tonwa-bg-gray-1">
+            <div className="mt-3 small text-body-tertiary p-3 bg-white border-top">
+                无明细
+            </div>
         </div>;
     }
     return <div className="tonwa-bg-gray-1">
@@ -131,12 +134,14 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     if (level < divLevels) cn += 'tonwa-bg-gray-' + (divLevels - level);
     else cn += 'bg-white';
     return <div className={cn}>
-        <div className="flex-fill row row-cols-4">
-            {vIBase}
-            {valDiv.getBudsValArr().map(([bud, value]) => {
-                const { id } = bud;
-                return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} />;
-            })}
+        <div className={'flex-fill container '}>
+            <div className={cnRolCols}>
+                {vIBase}
+                {valDiv.getBudsValArr().map(([bud, value]) => {
+                    const { id } = bud;
+                    return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} />;
+                })}
+            </div>
         </div>
         {btn}
     </div >;
