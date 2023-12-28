@@ -75,7 +75,7 @@ export async function loadSpec(uq: UqExt, biz: Biz, specId: number): Promise<Spe
         }
     }
     function buildSpec(entity: EntitySpec, row: ReturnGetSpecProps): SpecItem {
-        let { keys: keysArr, props: propsArr } = entity;
+        let { keys: keysArr, buds: propsArr } = entity;
         let coll: { [bud: number]: string | number } = {};
         let keys: (string | number)[] = [];
         let props: (string | number)[] = [];

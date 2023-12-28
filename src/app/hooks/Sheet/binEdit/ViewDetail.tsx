@@ -70,7 +70,7 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const rowEdit = useRowEdit();
     const { props: binDetail, section: { coreDetail: { entityBin } } } = row;
-    const { i: budI, x: budX, price: budPrice, amount: budAmount, props } = entityBin;
+    const { i: budI, x: budX, price: budPrice, amount: budAmount, buds: props } = entityBin;
     let { i, x, value, price, amount, buds } = binDetail
     async function onEdit() {
         if (editable === false) return;

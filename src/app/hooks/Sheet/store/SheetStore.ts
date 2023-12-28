@@ -41,7 +41,7 @@ export class SheetMain extends BaseObject {
         super(sheetStore);
         let { main } = sheetStore.entitySheet;
         this.entityMain = main;
-        this.budEditings = main.props.map(v => new BudEditing(v));
+        this.budEditings = main.buds.map(v => new BudEditing(v));
     }
 
     // return: true: new sheet created
@@ -51,7 +51,7 @@ export class SheetMain extends BaseObject {
         if (id > 0) return;
         const pickResults = await pick(this.sheetStore, RearPickResultType.scalar);
         if (pickResults === undefined) return;
-        const { i, x, props: mainProps } = this.entityMain;
+        const { i, x, buds: mainProps } = this.entityMain;
         const formulas: Formulas = [];
         function getFormulaText(text: string) {
             if (text === undefined) return;
@@ -126,8 +126,7 @@ export class SheetMain extends BaseObject {
 
     trigger() {
         let ok = true;
-        const binRow = getAtomValue(this._binRow);
-        const { buds } = binRow;
+        const { buds } = this.binRow;
         for (let be of this.budEditings) {
             if (be.trigger(buds[be.bizBud.id]) === false) ok = false;
         }
@@ -257,7 +256,7 @@ export class Row extends BaseObject {
             throw new Error(err);
         }
         let propArr: [number, 'int' | 'dec' | 'str', string | number][] = [];
-        for (let bud of detail.entityBin.props) {
+        for (let bud of detail.entityBin.buds) {
             let { buds } = this.props;
             let { id, name, budDataType } = bud;
             let value = (buds as any)[name];

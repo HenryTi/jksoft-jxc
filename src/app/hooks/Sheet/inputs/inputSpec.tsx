@@ -58,7 +58,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     }
 
     function PagePickSpec() {
-        const { id: entityId, caption, name, keys, props } = entitySpec;
+        const { id: entityId, caption, name, keys, buds: props } = entitySpec;
         const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
         const submitCaption = btnNext;
         const submitClassName: string = cnNextClassName;

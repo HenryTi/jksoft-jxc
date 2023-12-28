@@ -5,6 +5,7 @@ import { useUqApp } from "app/UqApp";
 import { PagePickValue } from "./PagePickValue";
 import { contentFromDays, getDays } from "app/tool";
 import { EditBudTemplateProps } from "./model";
+import { ViewBudEmpty } from "../../tool";
 
 type ConvertToBudValue = (value: any) => { value: any; int: number; dec: number; str: string; };
 type FromBudValue = (value: any) => any;
@@ -32,6 +33,7 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
         onChanged?.(bizBud, budValue.value);
     }
     let content: any = value;
+    if (value === undefined) content = <ViewBudEmpty />;
     const { format } = ui;
     if (format !== undefined) {
         let f: string = format;

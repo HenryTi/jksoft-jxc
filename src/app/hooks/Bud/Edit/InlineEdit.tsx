@@ -18,24 +18,22 @@ export function InlineEdit(props: EditProps) {
         setAtomValue(error, undefined);
     }
     let cn = ' bg-light ';
-    let vContent: any;
+    let vErr: any;
     if (required === true) {
         cn = ' bg-white ';
     }
     if (err !== undefined) {
-        cn = ' border-danger bg-info ';
-        vContent = <span className="text-danger small">
+        cn = ' border-danger ';
+        vErr = <span className="text-danger small">
             <FA name="exclamation-circle" className="me-2" />
             {err}
-        </span>
-    }
-    else {
-        vContent = children;
+        </span>;
     }
     return <div>
         <div className={'d-flex align-items-center border rounded ' + cn} onClick={onClick}>
-            <div className="flex-fill py-0 ps-2">{vContent}</div>
+            <div className="flex-fill py-0 ps-2">{children}</div>
             {right}
         </div>
+        {vErr}
     </div>;
 }

@@ -44,7 +44,7 @@ export function usePickSpec() {
         }
 
         function PagePickSpec() {
-            const { id: entityId, caption, name, keys, props } = entitySpec;
+            const { id: entityId, caption, name, keys, buds: props } = entitySpec;
             const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
             const submitCaption = '提交';
             const submitClassName: string = undefined;

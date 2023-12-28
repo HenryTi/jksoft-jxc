@@ -4,6 +4,7 @@ import { useUqApp } from "app/UqApp";
 import { EditBudTemplateProps } from "./model";
 import { BudCheckEditValue, BudCheckValue, BudValue, Page, useModal } from "tonwa-app";
 import { useState } from "react";
+import { ViewBudEmpty } from "../../tool";
 
 export function EditBudRadio(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
@@ -14,7 +15,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     let { options: { items } } = budDataType as BudRadio;
     const initCheckValue: BudCheckEditValue = {};
     if (initValue === undefined) {
-        initCheckValue[items[0].id] = true;
+        // initCheckValue[items[0].id] = true;
     }
     else {
         for (let v of initValue as BudCheckValue) {
@@ -67,7 +68,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
         }
         let optionItem = items.find(v => v.id === vItem);
         if (optionItem === undefined) {
-            content = <small className="text-secondary">/</small>;
+            content = <ViewBudEmpty />;
         }
         else {
             const { caption, name } = optionItem;
@@ -93,10 +94,10 @@ export function EditBudRadio(props: EditBudTemplateProps) {
                 optionsItemPhrase,
             });
         }
+        //let checkItemArr: number[] = [];
+        //for (let i in checks) checkItemArr.push(Number(i));
+        onChanged?.(bizBud, [optionsItemPhrase]);
         setValue({ [optionsItemPhrase]: true });
-        let checkItemArr: number[] = [];
-        for (let i in checks) checkItemArr.push(Number(i));
-        onChanged?.(bizBud, checkItemArr);
     }
     return <ValueEdit label={caption ?? name}
         plus={plus}

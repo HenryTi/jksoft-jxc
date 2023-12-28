@@ -234,7 +234,7 @@ export class DivEditing extends BinFields {
 // 跟当前行相关的编辑，计算，状态
 export class BinEditing extends BinFields {
     constructor(bin: EntityBin, initValRow?: ValRow) {
-        const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, props: budArr } = bin;
+        const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, buds: budArr } = bin;
         let buds: BizBud[] = [];
         if (iBud !== undefined) buds.push(iBud);
         if (xBud !== undefined) buds.push(xBud);

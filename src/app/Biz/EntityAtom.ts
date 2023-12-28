@@ -26,7 +26,7 @@ export abstract class EntityAtomID extends Entity {
             let p = ancestorSelfs[i];
             const { buds } = p;
             if (buds !== undefined) {
-                this.props.push(...buds);
+                this.buds.push(...buds);
             }
             this.mergeBudGroups(p);
         }
@@ -155,7 +155,7 @@ export class EntitySpec extends EntityAtomIDWithBase {
         for (let bud of this.keys) {
             ret.push(specValue[bud.name] ?? '');
         }
-        for (let bud of this.props) {
+        for (let bud of this.buds) {
             ret.push(specValue[bud.name] ?? '');
         }
         let s = ret.join(String.fromCharCode(12));
@@ -169,7 +169,7 @@ export class EntitySpec extends EntityAtomIDWithBase {
         for (let bud of this.keys) {
             ret[bud.name] = parts[i++];
         }
-        for (let bud of this.props) {
+        for (let bud of this.buds) {
             ret[bud.name] = parts[i++];
         }
         return ret;

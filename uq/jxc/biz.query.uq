@@ -38,11 +38,12 @@ RETURNS props (
             FROM Pend AS t1 
                 JOIN Bin AS b ON b.id=t1.bin
                 JOIN BizPhrase AS c ON c.id=t1.base
+                JOIN BizObject as c1 ON c1.id=c.id
                 LEFT JOIN Detail AS b1 ON b1.id=b.id
                 LEFT JOIN Bud AS d ON d.id=b1.base
                 LEFT JOIN Bin AS e ON e.id=d.base
                 LEFT JOIN Sheet AS f ON f.id=e.id
-                WHERE 1=1 AND t1.id=pendId AND t1.base=pendEntity;
+                WHERE 1=1 AND t1.id=pendId AND t1.base=pendEntity AND c.base=$site;
     }
 
     VAR procName CHAR(200) = CONCAT($site, '.', pendEntity, 'gp');
@@ -95,6 +96,7 @@ RETURNS ret (
             SELECT a.id, b.id as phrase 
                 FROM Pend as a
                     JOIN BizPhrase as b ON b.id=a.base
+                    JOIN BizObject as c ON c.id=b.id
             WHERE b.base=$site
         ) as x
         GROUP BY x.phrase as p;

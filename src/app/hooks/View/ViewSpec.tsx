@@ -46,7 +46,7 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
                     }
                 }
                 buildBands(entity.keys, keys);
-                buildBands(entity.props, props);
+                buildBands(entity.buds, props);
                 if (uiType === ViewBudUIType.inDiv) {
                     return <React.Fragment key={id}>
                         {bands}
@@ -141,7 +141,7 @@ interface VPPropsMore extends VPProps {
 function ViewSpecProps({ phrase, props: propValues, className, buildProp }: VPPropsMore) {
     const { biz } = useUqApp();
     let entity = biz.entityFromId<EntitySpec>(phrase);
-    let { keys, props } = entity;
+    let { keys, buds: props } = entity;
     let keysLen = keys.length;
     let len = propValues.length;
     let ret: any[] = [];

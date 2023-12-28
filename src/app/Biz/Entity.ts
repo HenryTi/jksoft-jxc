@@ -23,7 +23,7 @@ export interface BudGroups {
 export class Entity extends BizBase {
     // readonly selfProps: BizBud[] = [];       // 本 Atom 定义的
     readonly budColl: { [key: string | number]: BizBud; } = {};           // 包括全部继承来的
-    readonly props: BizBud[] = [];
+    readonly buds: BizBud[] = [];
     budGroups: BudGroups;
 
     // subEntities 有3种不同情况:
@@ -103,7 +103,7 @@ export class Entity extends BizBase {
         if (buds === undefined) {
             return;
         }
-        this.props.push(...buds);
+        this.buds.push(...buds);
         this.budGroups = this.cloneBudGroups(groups);
         for (let bud of buds) {
             bud.scan();

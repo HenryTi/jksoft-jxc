@@ -4,6 +4,7 @@ import { useUqApp } from "app/UqApp";
 import { EditBudTemplateProps } from "./model";
 import { BudCheckEditValue, BudCheckValue, Page, useModal } from "tonwa-app";
 import { useState } from "react";
+import { ViewBudEmpty } from "../../tool";
 
 export function EditBudCheck(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
@@ -64,7 +65,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
             if (checks[id] === true) arr.push(caption ?? name);
         }
         if (arr.length === 0) {
-            content = <small className="text-secondary">/</small>;
+            content = <ViewBudEmpty />;
         }
         else {
             content = <div className="d-flex flex-wrap py-1">

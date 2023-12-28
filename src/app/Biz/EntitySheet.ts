@@ -187,7 +187,7 @@ export class BudsFields {
         this.entityBin = bin;
         this.fields = [];
 
-        const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, props: budArr } = bin;
+        const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, buds: budArr } = bin;
 
         function fieldOfBud(bud: BizBud): new (bud: BizBud) => BinField {
             if (budArr.findIndex(v => v === bud) >= 0) return FieldBud;

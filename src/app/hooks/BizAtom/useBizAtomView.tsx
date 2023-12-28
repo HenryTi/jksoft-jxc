@@ -13,7 +13,7 @@ export function useBizAtomView(options: OptionsUseBizAtom) {
     return useBizAtomViewFromId({ ...options, id: from62(id) });
 }
 
-export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; }) {
+function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; }) {
     const { NOLabel, exLabel, id } = options;
     const { getAtom, saveField, saveBud, entity: entityAtom } = useBizAtom(options)
     const [state, setState] = useState<{
@@ -33,7 +33,7 @@ export function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; 
         };
     }
     const { main, buds } = state;
-    let { name, caption, props: atomProps, budGroups } = entityAtom;
+    let { name, caption, buds: atomProps, budGroups } = entityAtom;
     let lbId = <span className="text-primary fw-normal">
         <FA name="compass" className="text-danger me-1" /> ID
     </span>;

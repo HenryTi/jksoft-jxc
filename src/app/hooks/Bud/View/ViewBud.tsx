@@ -2,6 +2,7 @@ import { BizBud, BudRadio, EnumBudType } from "app/Biz";
 import { ViewBudSpec, ViewSpecNoAtom } from "app/hooks";
 import { LabelBox } from "app/hooks/Sheet/tool";
 import { contentFromDays } from "app/tool";
+import { ViewBudEmpty } from "../../tool";
 
 export enum ViewBudUIType {
     notInDiv = 0,
@@ -53,7 +54,7 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean) 
 }
 
 function radio(bud: BizBud, value: any) {
-    if (value === null) return <small className="text-secondary">/</small>;
+    if (value === null) return <ViewBudEmpty />;
     let { options } = bud.budDataType as BudRadio;
     let v = options.coll[value];
     if (v === undefined) return <>{JSON.stringify(value)}</>;
@@ -62,7 +63,7 @@ function radio(bud: BizBud, value: any) {
 }
 
 function check(bud: BizBud, value: any) {
-    if (value === null) return <small className="text-secondary">/</small>;
+    if (value === null) return <ViewBudEmpty />;
     let { options } = bud.budDataType as BudRadio;
     let vArr: any[] = [];
     let vals = value as number[];
