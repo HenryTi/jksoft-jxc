@@ -2,11 +2,12 @@ import * as jsonpack from 'jsonpack';
 import { useUqApp } from "app/UqApp";
 import React, { useRef, useState } from "react";
 import { Page, useModal } from "tonwa-app";
-import { ButtonAsync, FA } from "tonwa-com";
+import { ButtonAsync, ButtonSubmitAsync, FA } from "tonwa-com";
 import Editor from 'react-simple-code-editor';
 import { Grammar, highlight } from 'prismjs';
 import { editorStyle, uqGrammar } from './grammar';
 import { PageAdmin } from './PageAdmin';
+import { ButtonAsyncIcon } from 'app/tool/ButtonAsyncIcon';
 
 export function PageCode() {
     const uqApp = useUqApp();
@@ -107,7 +108,7 @@ export function PageCode() {
 
     return <Page header={'代码'}>
         <div className="px-3 py-1 tonwa-bg-gray-2 d-flex">
-            <ButtonAsync className="btn btn-primary me-3" onClick={onCompile}>提交</ButtonAsync>
+            <ButtonAsyncIcon onClick={onCompile} icon="send-o">提交</ButtonAsyncIcon>
             <div className="flex-grow-1" />
             <button className="btn btn-outline-primary" onClick={onLoadFile}>载入文件</button>
             <button className="btn btn-outline-primary ms-2" onClick={onAdmin}>管理</button>

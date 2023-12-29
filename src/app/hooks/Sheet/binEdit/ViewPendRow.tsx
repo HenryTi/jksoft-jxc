@@ -1,6 +1,6 @@
 import { ViewSpec } from "app/hooks/View";
 import { Prop, VNamedBud } from "../tool";
-import { OwnedBuds, RolCols } from "app/hooks/tool";
+import { OwnedBuds, RowCols } from "app/hooks/tool";
 import { ViewPendRowEdit } from "./ViewPendRowEdit";
 import { PendBandProps } from "./model";
 import { BudValue } from "tonwa-app";
@@ -36,12 +36,12 @@ export function ViewPendRow({
     }
     let rowContent = <div className="d-flex py-1">
         <div className={'flex-grow container'}>
-            <RolCols>
+            <RowCols>
                 <ViewSpec id={i} />
                 <OwnedBuds values={ownedBudsValues} />
                 <ViewPropArr className="col" arr={mid} />
                 <ViewPropArr className="col" arr={cols} />
-            </RolCols>
+            </RowCols>
         </div>
         <div className="w-min-10c d-flex flex-column align-items-end">
             {hasPrice === true && <ViewValue caption={'单价'} value={price?.toFixed(digits)} />}

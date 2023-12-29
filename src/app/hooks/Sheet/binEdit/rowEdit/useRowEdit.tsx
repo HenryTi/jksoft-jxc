@@ -2,12 +2,13 @@ import { Page, useModal } from "tonwa-app";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Band, FormRowsView } from "app/coms";
-import { ViewSpec } from "app/hooks/View";
+import { ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
 import { ChangeEvent, useState } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { BinOwnedBuds } from "../ViewDetail";
 import { BinEditing } from "../../store";
+import { RowCols } from "app/hooks/tool";
 
 export function useRowEdit() {
     const modal = useModal();
@@ -70,10 +71,13 @@ function ModalInputRow({ binEditing }: { binEditing: BinEditing; }) {
         if (bud === undefined) return null;
         const { caption, name } = bud;
         return <Band label={caption ?? name} className="border-bottom py-2">
-            <div className="px-3">
-                <ViewSpec id={value} />
-                <BinOwnedBuds bizBud={bud} valRow={binDetail} />
-            </div>
+            <ViewSpecBaseOnly id={value} />
+            <RowCols>
+                <ViewSpecNoAtom id={value} />
+            </RowCols>
+            <RowCols>
+                <BinOwnedBuds bizBud={bud} valRow={binDetail} noLabel={true} />
+            </RowCols>
         </Band>;
     }
     return <Page header="输入明细" right={right}>

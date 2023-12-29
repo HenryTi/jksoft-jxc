@@ -9,7 +9,7 @@ import { OwnedBuds } from "../../tool/tool";
 import { useRowEdit } from "./rowEdit";
 import { ViewBud } from "../../Bud";
 import { BinEditing } from "../store";
-import { Pencil, RolCols } from "app/hooks/tool";
+import { Pencil, RowCols } from "app/hooks/tool";
 import { ValRow } from "../tool";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
@@ -136,15 +136,15 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
 
     return <div className="py-2 border-bottom border-secondary">
         <div className="container">
-            <RolCols>
+            <RowCols>
                 <ViewIdField bud={budI} value={i} />
                 <BinOwnedBuds bizBud={budI} valRow={valRow} />
                 {colX}
                 {colProps}
-            </RolCols>
+            </RowCols>
         </div>
         <div className={'d-flex justify-content-end pt-2 '}>
-            <div className="border-top border-secondary-subtle d-flex ps-2 pt-1 align-items-center">
+            <div className="border-top border-secondary-subtle border-2 d-flex ps-2 pt-2 pb-1 align-items-center">
                 {vPrice}
                 {vAmount}
                 <ViewValue caption={'数量'} value={<span className="fw-bold">{value}</span>} />
@@ -157,10 +157,10 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
 }
 
 // atom field owns buds
-export function BinOwnedBuds({ bizBud, valRow }: { bizBud: BizBud, valRow: ValRow; }) {
+export function BinOwnedBuds({ bizBud, valRow, noLabel }: { bizBud: BizBud, valRow: ValRow; noLabel?: boolean; }) {
     let { owned } = valRow;
     if (owned === undefined) return null;
     if (bizBud === undefined) return null;
     let values = owned[bizBud.id];
-    return <OwnedBuds values={values} />;
+    return <OwnedBuds values={values} noLabel={noLabel} />;
 }

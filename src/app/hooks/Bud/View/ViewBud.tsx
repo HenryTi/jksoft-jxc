@@ -87,7 +87,10 @@ function pick(bud: BizBud, value: any) {
 }
 
 function date(bud: BizBud, value: any) {
-    return <>{contentFromDays(value)}</>;
+    if (typeof value === 'number') {
+        value = contentFromDays(value);
+    }
+    return <>{value}</>;
 }
 
 function datetime(bud: BizBud, value: any) {

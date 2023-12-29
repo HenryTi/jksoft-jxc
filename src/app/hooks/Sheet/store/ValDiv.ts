@@ -79,8 +79,8 @@ export class ValDiv extends ValDivs {
         setAtomValue(this.atomValue, value);
     }
 
-    setIXBase(binRow: BinRow) {
-        let { i, x } = binRow;
+    setIXBase(valRow: ValRow) {
+        let { i, x } = valRow;
         if (i !== undefined) {
             if (this.binDiv.binBuds.hasIBase === true) {
                 this.iBase = i;

@@ -82,7 +82,7 @@ export function BandInput(props: BandInputProps) {
 }
 
 export function Band({ label, labelClassName, children, className }: BandProps) {
-    labelClassName = labelClassName ?? 'form-label col-sm-2 col-3 text-end';
+    labelClassName = labelClassName ?? 'form-label col-md-2 col-sm-3 col-4 text-end small text-secondary mt-1';
     return <div className={label === null ? 'd-none' : 'row ' + (className ?? 'mb-3')}>
         <label className={labelClassName}>{label}</label>
         <div className={'col'} >
@@ -266,7 +266,9 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     const { entityAtom, atom, options } = row as FormAtom;
     if (entityAtom !== undefined) {
         return <Band label={label}>
-            <ViewSpec id={options.value} />
+            <div className="ms-2">
+                <ViewSpec id={options.value} noLabel={true} />
+            </div>
         </Band>;
     }
     if (atom !== undefined) {
@@ -282,7 +284,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     switch (type) {
         default:
             const theLabel = options?.required === true ?
-                <b className="text-primary">{label}</b> : label;
+                <>{label} <span className="text-danger fs-larger">*</span></> : label;
             let newOptions = registerOptions(type, label, options);
             return <BandInput label={theLabel} type={type} step={step}
                 errors={errors}

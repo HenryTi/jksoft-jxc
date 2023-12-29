@@ -3,7 +3,7 @@ import { DivStore, UseInputsProps, ValDiv } from "../store";
 import { FA } from "tonwa-com";
 import { useInputs } from "../inputs";
 import { ViewBud, ViewBudUIType, ViewSpecBaseOnly } from "app/hooks";
-import { RolCols } from "app/hooks/tool";
+import { RowCols } from "app/hooks/tool";
 
 interface ViewDivProps {
     divStore: DivStore;
@@ -66,7 +66,7 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     let vDel = <div className="px-3 cursor-pointer text-warning" onClick={onDelSub} style={marginRightStyle}>
         <FA name="times" />
     </div>;
-    const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end  position-relative';
+    const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end align-items-center position-relative';
     if (div !== undefined) {
         function DivRow() {
             const divs = useAtomValue(atomValDivs);
@@ -116,18 +116,18 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     async function onDelSub() {
         await divStore.delValRow(id);
     }
-    /*
-    function onValueChange(evt: ChangeEvent<HTMLInputElement>) {
-        let v = evt.currentTarget.value;
-        let n = Number(v);
-        if (Number.isNaN(n) === true) return;
-        valDiv.setValue(n);
-    }
-    */
     let vIBase: any;
     if (hasIBase === true) {
-        vIBase = <div className="col-12">
-            <ViewSpecBaseOnly id={valDiv.iBase} />
+        let { iBase } = valDiv;
+        let vContent: any;
+        if (iBase === undefined) {
+            vContent = 'I Base';
+        }
+        else {
+            vContent = <ViewSpecBaseOnly id={iBase} />;
+        }
+        vIBase = <div className="">
+            {vContent}
         </div>;
     }
     let cn: string = ' container d-flex py-2 border-bottom ';
@@ -135,13 +135,13 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     else cn += 'bg-white';
     return <div className={cn}>
         <div className={'flex-fill container '}>
-            <RolCols>
-                {vIBase}
+            {vIBase}
+            <RowCols>
                 {valDiv.getBudsValArr().map(([bud, value]) => {
                     const { id } = bud;
                     return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} />;
                 })}
-            </RolCols>
+            </RowCols>
         </div>
         {btn}
     </div >;

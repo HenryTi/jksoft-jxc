@@ -11,6 +11,7 @@ import { PageMoreCacheData } from "app/coms";
 import { useCallback, useState } from "react";
 import { EntitySheet } from "app/Biz";
 import { PickFunc, useBinPicks } from "./binPick/useBinPicks";
+import { ButtonAsyncIcon } from "app/tool/ButtonAsyncIcon";
 
 let locationState = 1;
 export function PageSheetEdit() {
@@ -136,15 +137,13 @@ function PageStore({ store }: { store: SheetStore; }) {
     let { id } = useAtomValue(main._valRow);
 
     function MainOnlyEdit() {
-        let btnSubmit = <ButtonAsync className="btn btn-primary me" onClick={onSubmit}>提交</ButtonAsync>;
+        let btnSubmit = <ButtonSubmit onClick={onSubmit} />;
         return <>
             <ViewMain main={main} />
             <LMR className="px-3 py-3 border-top">
                 {btnSubmit}
                 {
-                    editable === true && <>
-                        {id && <button className={'btn btn-outline-primary'} onClick={onRemoveSheet}>作废</button>}
-                    </>
+                    editable === true && <>{id && <ButtonDelete onClick={onRemoveSheet} />}</>
                 }
             </LMR>
         </>;
@@ -165,14 +164,14 @@ function PageStore({ store }: { store: SheetStore; }) {
             let ret = await addNew();
         }
         let sections = useAtomValue(detail._sections);
-        let btnSubmit: any, cnAdd: string;
+        let btnSubmit: any; // , cnAdd: string;
         if (sections.length === 0 && submitState === SubmitState.hide) {
-            cnAdd = 'btn btn-primary me-3';
+            // cnAdd = 'btn btn-primary me-3';
         }
         else {
             let disabled = (sections.length === 0 && submitState === SubmitState.none) || submitState === SubmitState.disable;
-            btnSubmit = <ButtonAsync className="btn btn-primary me" onClick={onSubmit} disabled={disabled}>提交</ButtonAsync>;
-            cnAdd = 'btn btn-outline-primary me-3';
+            btnSubmit = <ButtonSubmit onClick={onSubmit} disabled={disabled} />;
+            // cnAdd = 'btn btn-outline-primary me-3';
         }
         if (id === 0) {
             return <div className="p-3">
@@ -196,11 +195,8 @@ function PageStore({ store }: { store: SheetStore; }) {
                     {btnSubmit}
                     {
                         editable === true && <>
-                            <button className={cnAdd} onClick={onAddRow}>
-                                <FA name="plus" className="me-1" />
-                                明细
-                            </button>
-                            {id && <button className={'btn btn-outline-primary'} onClick={onRemoveSheet}>作废</button>}
+                            <ButtonDetail onClick={onAddRow} />
+                            {id && <ButtonDelete onClick={onRemoveSheet} />}
                         </>
                     }
                 </LMR>
@@ -211,4 +207,16 @@ function PageStore({ store }: { store: SheetStore; }) {
     return <Page header={caption}>
         {detail === undefined ? <MainOnlyEdit /> : <MainDetailEdit />}
     </Page>
+}
+
+function ButtonSubmit({ onClick, disabled }: { onClick: () => Promise<void>; disabled?: boolean; }) {
+    return <ButtonAsyncIcon onClick={onClick} disabled={disabled} icon="send-o">提交</ButtonAsyncIcon>
+}
+
+function ButtonDetail({ onClick }: { onClick: () => Promise<void> }) {
+    return <ButtonAsyncIcon onClick={onClick} className="btn-outline-primary" icon="plus">明细</ButtonAsyncIcon>;
+}
+
+function ButtonDelete({ onClick }: { onClick: () => Promise<void> }) {
+    return <ButtonAsyncIcon onClick={onClick} className="btn-outline-warning" icon="trash-o">作废</ButtonAsyncIcon>;
 }

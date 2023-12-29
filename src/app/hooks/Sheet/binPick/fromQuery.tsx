@@ -8,7 +8,7 @@ import { filterUndefined } from "app/tool";
 import { usePageParams } from "./PageParams";
 import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "../tool";
 import { NamedResults, PickResult } from "../NamedResults";
-import { RolCols } from "app/hooks/tool";
+import { RowCols } from "app/hooks/tool";
 
 export function usePickFromQuery(): [
     (namedResults: NamedResults, binPick: BinPick) => Promise<PickResult>,
@@ -18,7 +18,6 @@ export function usePickFromQuery(): [
     const modal = useModal();
     const pickParam = usePageParams();
     const pickFromQueryBase = useCallback(async function (
-        // divStore: DivStore
         namedResults: NamedResults
         , binPick: BinPick
         , pickResultType: RearPickResultType)
@@ -149,11 +148,11 @@ export function usePickFromQuery(): [
                 }
                 return <div>
                     {vFirst}
-                    <RolCols>
+                    <RowCols>
                         {propArr.map((v, index) => {
                             return <VNamedBud key={index} {...v} />;
                         })}
-                    </RolCols>
+                    </RowCols>
                 </div>
             }
             return <Page header={header} >
@@ -172,14 +171,12 @@ export function usePickFromQuery(): [
         }
     }, []);
     const pickFromQueryScalar = useCallback(async function (
-        // divStore: DivStore
         namedResults: NamedResults
         , binPick: BinPick)
         : Promise<PickResult> {
         return await pickFromQueryBase(namedResults, binPick, RearPickResultType.scalar) as PickResult;
     }, []);
     const pickFromQuery = useCallback(async function (
-        // divStore: DivStore
         namedResults: NamedResults
         , binPick: BinPick
         , lastPickResultType: RearPickResultType)

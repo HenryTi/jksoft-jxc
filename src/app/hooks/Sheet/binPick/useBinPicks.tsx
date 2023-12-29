@@ -60,38 +60,32 @@ export function useBinPicks(bin: EntityBin) {
         const { binPicks, rearPick } = bin;
         if (binPicks === undefined) return;
         const { divStore } = sheetStore;
-        // divStore.initNamedResults();
-        // let { namedResults } = divStore;
-        if (namedResults/*refPicked.current*/ === undefined) {
-            // namedResults = refPicked.current.results;
-            //}
-            //else {
-            namedResults = {
-                '%sheet': sheetStore.main.valRow, // sheetBinRow ?? {},
-            };
-            // divStore.initNamedResults();
-            // divStore.setNamedResults('%sheet', sheetStore.main.binRow);
-            let pickResult: PickResult;
-            for (const binPick of binPicks) {
-                const { name, pick } = binPick;
-                const { bizPhraseType } = pick;
-                if (bizPhraseType === undefined) break;
-                switch (bizPhraseType) {
-                    default: debugger; break;
-                    case BizPhraseType.atom:
-                        pickResult = await pickFromAtom(divStore, namedResults, binPick);
-                        break;
-                    case BizPhraseType.spec:
-                        pickResult = await pickFromSpec(divStore, namedResults, binPick);
-                        break;
-                    case BizPhraseType.query:
-                        pickResult = await pickFromQueryScalar(namedResults, binPick);
-                        break;
-                }
-                if (pickResult === undefined) return undefined;
-                namedResults[name] = pickResult;
-                // divStore.setNamedResults(name, pickResult);
+        //if (namedResults === undefined) {
+        namedResults = {
+            '%sheet': sheetStore.main.valRow, // sheetBinRow ?? {},
+        };
+        //}
+        let pickResult: PickResult;
+        for (const binPick of binPicks) {
+            const { name, pick } = binPick;
+            // pickResult = namedResults[name];
+            // if (pickResult !== undefined) continue;
+            const { bizPhraseType } = pick;
+            if (bizPhraseType === undefined) break;
+            switch (bizPhraseType) {
+                default: debugger; break;
+                case BizPhraseType.atom:
+                    pickResult = await pickFromAtom(divStore, namedResults, binPick);
+                    break;
+                case BizPhraseType.spec:
+                    pickResult = await pickFromSpec(divStore, namedResults, binPick);
+                    break;
+                case BizPhraseType.query:
+                    pickResult = await pickFromQueryScalar(namedResults, binPick);
+                    break;
             }
+            if (pickResult === undefined) return undefined;
+            namedResults[name] = pickResult;
         }
 
         let ret: ReturnUseBinPicks = {

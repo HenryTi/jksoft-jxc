@@ -21,10 +21,6 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
             viewAtom = <ViewAtom no={no} ex={ex} entity={entity} />;
         }
     }
-    let cn = '';
-    if (uiType === ViewBudUIType.inDiv) {
-        cn = ' col ';
-    }
     function ViewSpecs() {
         if (specs.length === 0) return null;
         return <>
@@ -35,13 +31,16 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
                     let { length: len } = buds;
                     for (let i = 0; i < len; i++) {
                         let { id, caption, name, budDataType } = buds[i];
-                        let label: any;
+                        let content: any = budDataType.valueToContent(values[i]);
+                        let band: any;
                         if (noLabel !== true) {
-                            label = caption ?? name;
+                            band = <LabelBox key={id} label={caption ?? name} colon={true}>
+                                {content}
+                            </LabelBox>;
                         }
-                        let band = <LabelBox key={id} label={label} colon={true}>
-                            {budDataType.valueToContent(values[i])}
-                        </LabelBox>;
+                        else {
+                            band = <>{content}</>;
+                        }
                         bands.push(band);
                     }
                 }
@@ -69,11 +68,11 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
 }
 
 export function ViewSpec({ id, uiType, noLabel }: { id: number; uiType?: ViewBudUIType; noLabel?: boolean; }) {
-    let cn = '';
-    if (uiType === ViewBudUIType.inDiv) {
-        cn = ' col ';
-    }
     function ViewAtom({ no, ex, entity }: { no: string; ex: string; entity?: EntityAtomID; }) {
+        let title = '编号: ' + no;
+        if (noLabel === true) {
+            return <span title={title}>{ex}</span>;
+        }
         let label: any;
         if (entity !== undefined) {
             const { caption, name } = entity;
@@ -88,14 +87,16 @@ export function ViewSpec({ id, uiType, noLabel }: { id: number; uiType?: ViewBud
 
 export function ViewBudSpec({ id, bud, noLabel }: { id: number; bud: BizBud; noLabel?: boolean; }) {
     function ViewAtom({ no, ex, entity }: { no: string; ex: string; entity?: EntityAtomID; }) {
+        let title = '编号: ' + no;
+        if (noLabel === true) {
+            return <span title={title}>{ex}</span>;
+        }
         let label: any;
         if (entity !== undefined) {
             const { caption, name } = bud;
-            if (noLabel !== true) {
-                label = caption ?? name; // <small className="text-secondary me-2">{caption ?? name}</small>;
-            }
+            label = caption ?? name; // <small className="text-secondary me-2">{caption ?? name}</small>;
         }
-        return <LabelBox title={'编号: ' + no} label={label} colon={true}>
+        return <LabelBox title={title} label={label} colon={true}>
             {ex}
         </LabelBox>;
     }
@@ -111,11 +112,11 @@ export function ViewSpecBaseOnly({ id }: { id: number; }) {
     if (atom === undefined) return null;
     const { value: atomValue, entity } = atom;
     if (atomValue === undefined) return null;
-    const { caption, name } = entity;
-    let label = <small className="text-secondary me-2">{caption ?? name}</small>;
+    // const { caption, name } = entity;
+    let label: any = undefined; // = <small className="text-secondary me-2">{caption ?? name}</small>;
     const { no, ex } = atomValue;
     return <div title={'编号: ' + no} className="mb-1">
-        {label}<b>{ex}</b>
+        {label} {ex}
     </div>;
 }
 

@@ -1,9 +1,9 @@
 import React from "react";
 
-const cnRolCols = ' row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 ';
+const cnRowCols = ' row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 ';
 
-export function RolCols({ children }: { children: React.ReactNode; }) {
-    return <div className={cnRolCols}>
+export function RowCols({ children }: { children: React.ReactNode; }) {
+    return <div className={cnRowCols}>
         {children}
     </div>;
 }
@@ -16,12 +16,18 @@ interface LabelBoxProps {
 }
 
 export function LabelBox({ label, children, required, title, colon, editable }: LabelBoxProps) {
+    let vLabel: any;
     if (required === true) {
-        label = <>
+        vLabel = <>
             {label}
             <span className="text-danger ms-1">*</span>
         </>;
     }
+    else {
+        vLabel = label;
+    }
+    let labelTitle: string;
+    if (typeof label === 'string') labelTitle = label;
     let vColon: any;
     if (colon === true) vColon = ':';
     let content = editable === false ?
@@ -31,12 +37,13 @@ export function LabelBox({ label, children, required, title, colon, editable }: 
         :
         children;
 
+    let cnLabel = 'col-4 text-secondary text-end d-flex align-items-center flex-row justify-content-end';
     return <div className="col">
         <div className="row">
-            <div className={'col-4 px-0 text-secondary text-end d-flex align-items-center flex-row justify-content-end small text-nowrap '} title={title}>
-                {label} {vColon}
+            <div className={cnLabel} title={labelTitle}>
+                <span className="small text-nowrap text-truncate">{vLabel} {vColon}</span>
             </div>
-            <div className="col-8 ps-2 py-1">
+            <div className="col-8 ps-2 py-1" title={title}>
                 {content}
             </div>
         </div>

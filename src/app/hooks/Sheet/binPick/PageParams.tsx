@@ -18,7 +18,6 @@ export function usePageParams() {
     const modal = useModal();
     return useCallback(async (props: Props) => {
         const { header, namedResults, queryParams, pickParams } = props;
-        // const { namedResults } = divStore;
         const valueParams: [PickParam, BizBud, any][] = [];
         const inputParams: BizBud[] = [];
         for (let param of queryParams) {
@@ -27,6 +26,7 @@ export function usePageParams() {
             if (pickParam !== undefined) {
                 let { bud, prop } = pickParam;
                 let namedResult = namedResults[bud] as NamedResults;
+                if (namedResult === undefined) debugger;
                 if (prop === undefined) prop = 'id';
                 let v = namedResult[prop];
                 valueParams.push([pickParam, param, v]);
@@ -73,9 +73,7 @@ function PageParams({ header, valueParams, inputParams }: PageParamsProps) {
             const [pickParam, bizBud, value] = v;
             const { name } = pickParam
             return <Band key={index} label={name} className="px-3 py-2">
-                <div className="fw-bold">
-                    <ViewBud bud={bizBud} value={value} noLabel={true} />
-                </div>
+                <ViewBud bud={bizBud} value={value} noLabel={true} />
             </Band>
         })}
         <form className="container my-3" onSubmit={handleSubmit(onSubmitForm)}>

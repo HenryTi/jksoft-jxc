@@ -52,7 +52,7 @@ export function budValuesFromProps(props: PropData[]) {
 }
 
 // atom field owns buds
-export function OwnedBuds({ values }: { values: [number, BudValue][]; }) {
+export function OwnedBuds({ values, noLabel }: { values: [number, BudValue][]; noLabel?: boolean; }) {
     if (values === undefined) return null;
     const { biz } = useUqApp();
     return <>{
@@ -67,14 +67,7 @@ export function OwnedBuds({ values }: { values: [number, BudValue][]; }) {
                 </>;
             }
             else {
-                content = <ViewBud bud={bizBud} value={budValue} />;
-                /*
-                let { caption, name } = bizBud;
-                content = <>
-                    <div className="me-1 small text-secondary">{caption ?? name}:</div>
-                    <ViewBud bud={bizBud} value={budValue} />
-                </>;
-                */
+                content = <ViewBud bud={bizBud} value={budValue} noLabel={noLabel} />;
             }
             return <React.Fragment key={budId}>
                 {content}

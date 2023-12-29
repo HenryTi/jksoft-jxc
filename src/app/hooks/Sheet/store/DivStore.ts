@@ -25,7 +25,6 @@ export class DivStore {
     readonly sheetStore: SheetStore;
     readonly entityBin: EntityBin;
     readonly binDiv: BinDiv;
-    // namedResults: NamedResults;
     pendColl: { [pend: number]: WritableAtom<ValDiv, any, any> };
     pendRows: PendRow[];
     ownerColl: OwnerColl;
@@ -54,17 +53,8 @@ export class DivStore {
             }
             return hasValue === true ? SubmitState.enable : SubmitState.hide;
         }, null);
-        // this.initNamedResults();
     }
-    /*
-    getNamedResults(): NamedResults { return this.namedResults; }
-    setNamedResults(name: string, results: PickResult) {
-        this.namedResults[name] = results;
-    }
-    initNamedResults() {
-        return this.namedResults = {};
-    }
-    */
+
     async loadPend(params: any): Promise<void> {
         if (this.pendLoadState !== PendLoadState.none) return;
         this.pendRows = undefined;
@@ -232,6 +222,7 @@ export class DivStore {
                     }
                     if (binDiv === undefined) debugger;
                     parentValDivs = parentValDiv;
+                    parentValDiv.setIXBase(valRow);
                 }
             }
             valDiv = this.setSub(binDiv, parentValDivs, valRow, trigger);
@@ -273,45 +264,8 @@ export class DivStore {
     }
 
     async saveDetail(binDiv: BinDiv, valRow: ValRow) {
-        // let { id, i, x, value, price, amount, buds: budsValues } = binRow;
         const { buds } = binDiv;
-
         let retId = await this.sheetStore.saveDetail(binDiv.entityBin, buds, valRow);
-        /*
-        let propArr: [number, 'int' | 'dec' | 'str', string | number][] = [];
-        for (let bud of buds) {
-            let { id, name, budDataType } = bud;
-            let value = (budsValues as any)[id];
-            if (value === undefined) continue;
-            let type: 'int' | 'dec' | 'str';
-            switch (budDataType.type) {
-                default:
-                case EnumBudType.atom:
-                case EnumBudType.int: type = 'int'; break;
-                case EnumBudType.dec: type = 'dec'; break;
-                case EnumBudType.str:
-                case EnumBudType.char: type = 'str'; break;
-            }
-            if (type === undefined) continue;
-            propArr.push([id, type, value]);
-        }
-
-        let param: ParamSaveDetail = {
-            base: this.sheetStore.main.binRow.id,
-            phrase: binDiv.entityBin.id,
-            id,
-            i,
-            x,
-            value,
-            price,
-            amount,
-            origin,
-            pend,
-            props: propArr,
-        };
-        let retSaveDetail = await this.sheetStore.uq.SaveDetail.submitReturns(param);
-        id = retSaveDetail.ret[0].id;
-        */
         return retId;
     }
 }
