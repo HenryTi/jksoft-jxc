@@ -35,7 +35,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
         radios.push([itemId, caption ?? name, value, c]);
     }
     if (hasChecked === false) {
-        (radios[0])[3] = true;
+        // (radios[0])[3] = true;
     }
 
     let onEditClick: () => void;
@@ -53,7 +53,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
                     <Radio />
                 </div>
                 <div className="p-3 border-top">
-                    <button className="btn btn-primary" onClick={onReturn}>返回</button>;
+                    <button className="btn btn-primary" onClick={onReturn}>返回</button>
                 </div>
             </Page>);
         }

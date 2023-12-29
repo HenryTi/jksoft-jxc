@@ -55,7 +55,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
                     <Checks />
                 </div>
                 <div className="p-3 border-top">
-                    <button className="btn btn-primary" onClick={onReturn}>返回</button>;
+                    <button className="btn btn-primary" onClick={onReturn}>返回</button>
                 </div>
             </Page>);
         }

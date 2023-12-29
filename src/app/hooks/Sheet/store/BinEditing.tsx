@@ -5,7 +5,7 @@ import { Calc, Formulas } from "../../Calc";
 import { ValRow } from "../tool";
 import { DivStore } from ".";
 import { NamedResults } from "../NamedResults";
-import { fromDays, getDays } from "app/tool";
+import { getDays } from "app/tool";
 
 abstract class BinFields extends BudsFields {
     private readonly calc: Calc;

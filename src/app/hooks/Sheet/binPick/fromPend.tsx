@@ -2,11 +2,10 @@ import { BinPick, PickPend } from "app/Biz";
 import { useCallback } from "react";
 import { useModal } from "tonwa-app";
 import { NamedResults, PickResult } from "../NamedResults";
-import { BinDetail } from "../store";
 import { usePageParams } from "./PageParams";
 import { PagePend } from "../binEdit";
 import { PagePendProps } from "../binEdit/model";
-import { PendProxyHander } from "../tool";
+import { PendProxyHander, ValRow } from "../tool";
 import { DivStore } from "../store";
 
 export function usePickFromPend() {
@@ -27,7 +26,7 @@ export function usePickFromPend() {
                     header,
                     namedResults,
                     queryParams,
-                    pickParams
+                    pickParams,
                 });
                 if (retParam === undefined) return;
             }
@@ -35,23 +34,23 @@ export function usePickFromPend() {
                 retParam = {};
             }
             await divStore.loadPend(retParam);
-            // divStore.namedResults = namedResults;
+
             let props: PagePendProps = {
                 caption,
                 divStore,
                 search: [],
             };
 
-            let inputed = await modal.open<BinDetail[]>(<PagePend {...props} />);
+            let inputed = await modal.open<ValRow[]>(<PagePend {...props} />);
             if (inputed === undefined) return;
             // 如果有inputs，直接已经输入进了。就不用返回了。
             if (bin.div.inputs !== undefined) return;
             function proxy(obj: any) {
                 return new Proxy(obj, pendProxyHander);
             }
-            let iArr: (BinDetail | [number, BinDetail[]])[] = [];
+            let iArr: (ValRow | [number, ValRow[]])[] = [];
             let iGroup: number[] = [];
-            let iColl: { [i: number]: BinDetail[] } = {};
+            let iColl: { [i: number]: ValRow[] } = {};
             // group 按 i 分组
             // 行拆分。暂时没有内容
             for (let r of inputed) {

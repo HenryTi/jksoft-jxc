@@ -10,6 +10,7 @@ import { useRowEdit } from "./rowEdit";
 import { ViewBud } from "../../Bud";
 import { BinEditing } from "../store";
 import { Pencil, RolCols } from "app/hooks/tool";
+import { ValRow } from "../tool";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -68,16 +69,16 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const rowEdit = useRowEdit();
-    const { valRow: binDetail, section: { coreDetail: { entityBin } } } = row;
+    const { valRow, section: { coreDetail: { entityBin } } } = row;
     const { i: budI, x: budX, price: budPrice, amount: budAmount, buds: props } = entityBin;
-    let { i, x, value, price, amount, buds } = binDetail
+    let { i, x, value, price, amount, buds } = valRow
     async function onEdit() {
         if (editable === false) return;
-        const binEditing = new BinEditing(entityBin, binDetail);
+        const binEditing = new BinEditing(entityBin, valRow);
         // binEditing.setValues(binDetail);
         let ret = await rowEdit(binEditing);
         if (ret === true) {
-            Object.assign(binDetail, binEditing.valRow);
+            Object.assign(valRow, binEditing.valRow);
             await row.changed();
         }
     }
@@ -118,7 +119,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     if (budX !== undefined) {
         colX = <div className={cnCol}>
             <ViewIdField bud={budX} value={x} />
-            <BinOwnedBuds bizBud={budX} binDetail={binDetail} />
+            <BinOwnedBuds bizBud={budX} valRow={valRow} />
         </div>;
     }
     if (props.length > 0) {
@@ -137,7 +138,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         <div className="container">
             <RolCols>
                 <ViewIdField bud={budI} value={i} />
-                <BinOwnedBuds bizBud={budI} binDetail={binDetail} />
+                <BinOwnedBuds bizBud={budI} valRow={valRow} />
                 {colX}
                 {colProps}
             </RolCols>
@@ -156,8 +157,8 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
 }
 
 // atom field owns buds
-export function BinOwnedBuds({ bizBud, binDetail }: { bizBud: BizBud, binDetail: BinRow; }) {
-    let { owned } = binDetail;
+export function BinOwnedBuds({ bizBud, valRow }: { bizBud: BizBud, valRow: ValRow; }) {
+    let { owned } = valRow;
     if (owned === undefined) return null;
     if (bizBud === undefined) return null;
     let values = owned[bizBud.id];

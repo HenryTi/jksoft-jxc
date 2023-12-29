@@ -6,6 +6,7 @@ import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
 import { UI } from "app/ui";
 import { BudValue } from "tonwa-app";
+import { contentFromDays, fromDays, getDays } from "app/tool";
 
 export interface PickParam {
     name: string;
@@ -176,6 +177,27 @@ class FieldBud extends BinField {
     setValue(binRow: BinRow, v: any) { binRow.buds[this.bud.id] = v; }
 }
 
+class FieldDateBud extends FieldBud {
+    getValue(binRow: BinRow): any {
+        let v = binRow.buds[this.bud.id];
+        return contentFromDays(v as number);
+    }
+}
+
+class FieldCheckBud extends FieldBud {
+    getValue(binRow: BinRow): any {
+        let v = binRow.buds[this.bud.id];
+        return v;
+    }
+}
+
+class FieldRadioBud extends FieldBud {
+    getValue(binRow: BinRow): any {
+        let v = binRow.buds[this.bud.id];
+        return v;
+    }
+}
+
 export class BudsFields {
     protected readonly fieldColl: { [name: string]: BinField } = {};
     readonly entityBin: EntityBin;
@@ -190,7 +212,14 @@ export class BudsFields {
         const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, buds: budArr } = bin;
 
         function fieldOfBud(bud: BizBud): new (bud: BizBud) => BinField {
-            if (budArr.findIndex(v => v === bud) >= 0) return FieldBud;
+            if (budArr.findIndex(v => v === bud) >= 0) {
+                switch (bud.budDataType.type) {
+                    default: return FieldBud;
+                    case EnumBudType.date: return FieldDateBud;
+                    case EnumBudType.check: return FieldCheckBud;
+                    case EnumBudType.radio: return FieldRadioBud;
+                }
+            }
             if (bud === iBud) return FieldI;
             if (bud === xBud) return FieldX;
             if (bud === valueBud) return FieldValue;
@@ -206,8 +235,6 @@ export class BudsFields {
                 case '.x': this.hasXBase = true; continue;
                 case 'value':
                     this.valueBud = bud;
-                    // let field = new FieldValue(bud);
-                    // this.fieldColl[field.name] = field;
                     break;
             }
             let Field = fieldOfBud(bud);

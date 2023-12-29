@@ -72,7 +72,7 @@ function ModalInputRow({ binEditing }: { binEditing: BinEditing; }) {
         return <Band label={caption ?? name} className="border-bottom py-2">
             <div className="px-3">
                 <ViewSpec id={value} />
-                <BinOwnedBuds bizBud={bud} binDetail={binDetail} />
+                <BinOwnedBuds bizBud={bud} valRow={binDetail} />
             </div>
         </Band>;
     }

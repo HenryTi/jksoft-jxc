@@ -3,7 +3,6 @@ import { Row, Section } from "../store";
 import { useAtomValue } from "jotai";
 import { useInputs } from "../inputs";
 import { DivEditProps, UseInputsProps } from "../store";
-import { PendProxyHander } from "../tool";
 import { useModal } from "tonwa-app";
 
 export interface ViewPendRowEditProps extends DivEditProps {
@@ -12,7 +11,6 @@ export interface ViewPendRowEditProps extends DivEditProps {
 
 export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowEditProps) {
     const modal = useModal();
-    // const { entityBin } = divStore;
     const inputs = useInputs();
     let { pend: pendId } = pendRow;
     let _valDiv = divStore.pendColl[pendId];
@@ -20,9 +18,7 @@ export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowE
     async function onEdit() {
         modal.close();
     }
-    // const { rearPick, pend } = entityBin;
     async function onAddNew() {
-        // namedResults[rearPick.name] = new Proxy(pendRow, new PendProxyHander(pend));
         const useInputsProps: UseInputsProps = {
             divStore,
             binDiv: divStore.binDiv,
@@ -68,7 +64,7 @@ export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowE
 }
 
 function ViewCheck({ icon, iconColor, onClick }: { icon: string; iconColor: string; onClick: () => void; }) {
-    return <div className="cursor-pointer px-2 py-3 text-center align-self-end text-info" onClick={onClick}>
+    return <div style={{ zIndex: 800 }} className="cursor-pointer px-2 py-3 text-center align-self-end text-info" onClick={onClick}>
         <FA name={icon} fixWidth={true} size="lg" className={iconColor + ' mx-1 '} />
     </div>
 }

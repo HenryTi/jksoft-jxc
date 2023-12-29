@@ -6,7 +6,7 @@ import { BizBud } from "app/Biz";
 import { FA, setAtomValue } from "tonwa-com";
 import { BudCheckEditValue, BudCheckValue } from "tonwa-app";
 import React from "react";
-import { LabelBox, LabelContent, RolCols } from "app/hooks/tool";
+import { LabelBox, RolCols } from "app/hooks/tool";
 
 export function ViewMain({ main }: { main: SheetMain }) {
     const { no, entityMain, _valRow: _binRow, budEditings } = main;
@@ -53,18 +53,18 @@ export function ViewMain({ main }: { main: SheetMain }) {
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
         if (bud === undefined) return null;
         const { caption, name } = bud;
-        return <LabelContent label={caption ?? name}>
+        return <LabelBox label={caption ?? name} editable={false}>
             <ViewSpecR id={value} />
-        </LabelContent>
+        </LabelBox>
     }
 
     return <div className="tonwa-bg-gray-1">
         <div className={cnBlock + ' border-top '}>
-            <div className={'flex-fill py-3 container'}>
+            <div className={'flex-fill py-3'}>
                 <RolCols>
-                    <LabelContent label="单据编号">
+                    <LabelBox label="单据编号" editable={false}>
                         <span className="text-danger">{no}</span> &nbsp; <ViewSheetTime id={idBin} />
-                    </LabelContent>
+                    </LabelBox>
                     <ViewIdField bud={budI} value={i} />
                     <ViewIdField bud={budX} value={x} />
                 </RolCols>

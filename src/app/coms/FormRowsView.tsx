@@ -96,11 +96,12 @@ export interface BandInputsProps {
     register: UseFormRegister<any>;
     inputs: FormInput[];
 }
+const cnCheckInput = ' form-check-label me-3 mb-2 w-min-8c ';
 export function BandInputs({ inputs: checks, register, label }: BandInputsProps) {
     return <Band label={label}>
         {checks.map((v, index) => {
             const { name, label } = v;
-            return <label key={index} className="form-check-label me-3">
+            return <label key={index} className={cnCheckInput}>
                 <input className="form-check-input me-1" type="checkbox" {...register(name)} />
                 {label ?? name}
             </label>;
@@ -188,7 +189,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
             inputs.map((v, index) => {
                 const { label, name, type, options, readOnly } = v;
                 if (type === 'checkbox') {
-                    return <label key={index} className="form-check-label me-3">
+                    return <label key={index} className={cnCheckInput}>
                         <input className="form-check-input me-1"
                             type="checkbox" readOnly={readOnly} {...register(name)} />
                         {label ?? name}
@@ -210,7 +211,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
             {
                 radios.map((v, index) => {
                     const { label, value } = v;
-                    return <label key={index} className="form-check-label me-3">
+                    return <label key={index} className={cnCheckInput}>
                         <input className="form-check-input me-1"
                             defaultChecked={value === defaultValue}
                             readOnly={readOnly}
