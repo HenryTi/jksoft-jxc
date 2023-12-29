@@ -1,10 +1,10 @@
-import { EntitySheet, EntityBin, Biz, EnumBudType, EntityPend, BinRow } from "app/Biz";
+import { EntitySheet, EntityBin, Biz, EnumBudType, EntityPend, BinRow, BizBud } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import { useRef } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { ReturnGetPendRetSheet, UqExt } from "uqs/UqDefault";
+import { ParamSaveDetail, ReturnGetPendRetSheet, UqExt } from "uqs/UqDefault";
 import { WritableAtom, atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
 import { PickFunc, RearPickResultType } from "../binPick/useBinPicks";
@@ -33,8 +33,8 @@ abstract class BaseObject extends KeyIdObject {
 export class SheetMain extends BaseObject {
     readonly budEditings: BudEditing[];
     readonly entityMain: EntityBin;
-    readonly _binRow = atom<ValRow>({ buds: {} } as ValRow);
-    get binRow() { return getAtomValue(this._binRow) }
+    readonly _valRow = atom<ValRow>({ buds: {} } as ValRow);
+    get valRow() { return getAtomValue(this._valRow) }
     no: string;
 
     constructor(sheetStore: SheetStore) {
@@ -46,7 +46,7 @@ export class SheetMain extends BaseObject {
 
     // return: true: new sheet created
     async start(pick: PickFunc) {
-        const row = this.binRow;
+        const row = this.valRow;
         const { id } = row;
         if (id > 0) return;
         const pickResults = await pick(this.sheetStore, RearPickResultType.scalar);
@@ -68,7 +68,6 @@ export class SheetMain extends BaseObject {
             formulas.push([mp.name, getFormulaText(mp.defaultValue)]);
         }
         let { namedResults, rearBinPick: lastBinPick, rearResult: lastResult } = pickResults;
-        // let { namedResults } = this.sheetStore.divStore;
         const calc = new Calc(formulas, namedResults);
         calc.addValues(lastBinPick.name, lastResult[0]);
         const { results: calcResults } = calc;
@@ -83,12 +82,12 @@ export class SheetMain extends BaseObject {
             if (v === undefined) continue;
             row.buds[mp.id] = v;
         }
-        setAtomValue(this._binRow, row);
+        setAtomValue(this._valRow, row);
         return await this.createIfNotExists();
     }
 
     async createIfNotExists() {
-        const row = this.binRow;
+        const row = this.valRow;
         let { id: sheetId, i, x } = row;
         if (sheetId > 0) return {
             id: sheetId,
@@ -96,6 +95,8 @@ export class SheetMain extends BaseObject {
             i,
             x,
         };
+        let ret = await this.sheetStore.saveSheet(this.valRow);
+        /*
         const { uq, entitySheet } = this.sheetStore;
         let ret = await uq.SaveSheet.submit({
             phrase: entitySheet.id,
@@ -105,10 +106,12 @@ export class SheetMain extends BaseObject {
             value: undefined,
             price: undefined,
             amount: undefined,
+            props: 
         });
+        */
         let { id, no } = ret;
         row.id = id;
-        setAtomValue(this._binRow, { ...row });
+        setAtomValue(this._valRow, { ...row });
         this.no = no;
         return Object.assign(ret, { i, ...row });
     }
@@ -116,17 +119,17 @@ export class SheetMain extends BaseObject {
     setValue(value: any) {
         const { no } = value;
         this.no = no;
-        setAtomValue(this._binRow, value);
+        setAtomValue(this._valRow, value);
     }
 
     setId(id: number) {
-        let row = this.binRow;
-        setAtomValue(this._binRow, { ...row, id });
+        let row = this.valRow;
+        setAtomValue(this._valRow, { ...row, id });
     }
 
     trigger() {
         let ok = true;
-        const { buds } = this.binRow;
+        const { buds } = this.valRow;
         for (let be of this.budEditings) {
             if (be.trigger(buds[be.bizBud.id]) === false) ok = false;
         }
@@ -181,7 +184,7 @@ export class CoreDetail extends DetailBase {
         }
     }
 
-    private addRowValue(sections: Section[], rowValue: BinDetail) {
+    private addRowValue(sections: Section[], rowValue: ValRow) {
         const { i, x, value, pend } = rowValue;
         if (i === undefined || value === undefined) return;
         let detailSection: Section;
@@ -230,16 +233,9 @@ export class ExDetail extends DetailBase {
     }
 }
 
-export interface BinDetail extends ValRow {
-    //origin: number;             // origin detail id
-    //pend: number;
-    //pendValue: number;
-    // sheet: BinRow;
-}
-
 export class Row extends BaseObject {
     readonly section: Section;
-    readonly props: BinDetail = { buds: {} } as any;
+    readonly valRow: ValRow = { buds: {} } as any;
 
     constructor(section: Section) {
         super(section.sheetStore);
@@ -255,9 +251,10 @@ export class Row extends BaseObject {
             console.error(err);
             throw new Error(err);
         }
+        /*
         let propArr: [number, 'int' | 'dec' | 'str', string | number][] = [];
         for (let bud of detail.entityBin.buds) {
-            let { buds } = this.props;
+            let { buds } = this.valRow;
             let { id, name, budDataType } = bud;
             let value = (buds as any)[name];
             if (value === undefined) {
@@ -279,14 +276,17 @@ export class Row extends BaseObject {
         const { id } = await uq.SaveDetail.submit({
             base: main.binRow.id,
             phrase: this.section.coreDetail.entityBin.id,
-            ...this.props,
+            ...this.valRow,
             props: propArr,
         } as any);
-        let org = this.props.id;
+        */
+        let entityBin = this.section.coreDetail.entityBin;
+        let id = await this.sheetStore.saveDetail(entityBin, entityBin.buds, this.valRow);
+        let org = this.valRow.id;
         if (org !== undefined && id !== org) {
             console.error(`save detail id changed, org: ${org}, new: ${id}`);
         }
-        this.props.id = id;
+        this.valRow.id = id;
     }
 
     async addToSection() {
@@ -296,7 +296,7 @@ export class Row extends BaseObject {
 
     async delFromSection() {
         const { uq } = this.sheetStore;
-        await uq.DeleteBin.submit({ id: this.props.id });
+        await uq.DeleteBin.submit({ id: this.valRow.id });
         this.section.delRow(this);
     }
 
@@ -305,18 +305,18 @@ export class Row extends BaseObject {
         this.section.rowChanged();
     }
 
-    setValue(row: BinDetail) {
+    setValue(row: ValRow) {
         let { i, x, value, price, amount } = this.section.coreDetail.entityBin;
-        this.props.id = row.id;
-        if (i !== undefined) this.props.i = row.i;
-        if (x !== undefined) this.props.x = row.x;
-        if (value !== undefined) this.props.value = row.value;
-        if (price !== undefined) this.props.price = row.price;
-        if (amount !== undefined) this.props.amount = row.amount;
-        this.props.origin = row.origin;
-        this.props.buds = row.buds;
-        this.props.pend = row.pend;
-        this.props.owned = row.owned;
+        this.valRow.id = row.id;
+        if (i !== undefined) this.valRow.i = row.i;
+        if (x !== undefined) this.valRow.x = row.x;
+        if (value !== undefined) this.valRow.value = row.value;
+        if (price !== undefined) this.valRow.price = row.price;
+        if (amount !== undefined) this.valRow.amount = row.amount;
+        this.valRow.origin = row.origin;
+        this.valRow.buds = row.buds;
+        this.valRow.pend = row.pend;
+        this.valRow.owned = row.owned;
         // Object.assign(this.props, row);
     }
 }
@@ -345,7 +345,7 @@ export class Section extends BaseObject {
         let rows = getAtomValue(this._rows);
         let changed = false;
         for (let row of rows) {
-            let { id } = row.props;
+            let { id } = row.valRow;
             for (let rowValue of rowValues) {
                 if (id === rowValue.id) {
                     row.setValue(rowValue);
@@ -356,9 +356,9 @@ export class Section extends BaseObject {
         if (changed === true) this.rowChanged();
     }
 
-    async addRowProps(rowProps: BinDetail) {
+    async addRowProps(valRow: ValRow) {
         let row = new Row(this);
-        row.setValue(rowProps);
+        row.setValue(valRow);
         await row.addToSection();
         return row;
     }
@@ -416,7 +416,7 @@ export class SheetStore extends KeyIdObject {
     }
 
     async load() {
-        let { id } = this.main.binRow;
+        let { id } = this.main.valRow;
         if (id === undefined || id === 0) return;
         let { main, details } = await this.loadBinData(id);
         this.main.setValue(main);
@@ -450,7 +450,7 @@ export class SheetStore extends KeyIdObject {
 
     async discard() {
         // 作废草稿单据
-        let { binRow: { id } } = this.main;
+        let { valRow: { id } } = this.main;
         if (id >= 0) {
             await this.uq.RemoveDraft.submit({ id });
             return id;
@@ -472,11 +472,11 @@ export class SheetStore extends KeyIdObject {
             debugger;
         }
         let sections = getAtomValue(_sections);
-        let { id: rowId } = row.props;
+        let { id: rowId } = row.valRow;
         for (let section of sections) {
             const { _rows } = section;
             let rows = getAtomValue(_rows);
-            if (rows.findIndex(v => v.props.id === rowId) >= 0) {
+            if (rows.findIndex(v => v.valRow.id === rowId) >= 0) {
                 setAtomValue(_rows, [...rows]);
                 return;
             }
@@ -490,15 +490,15 @@ export class SheetStore extends KeyIdObject {
         setAtomValue(_sections, [...sections]);
     }
 
-    addBinDetail(binDetail: BinDetail) {
-        let { pend } = binDetail;
+    addBinDetail(valRow: ValRow) {
+        let { pend } = valRow;
         let _sections = this.pendColl[pend];
         if (_sections === undefined) {
             debugger;
         }
         let section: Section = new Section(this.detail);
         let row: Row = new Row(section);
-        Object.assign(row.props, binDetail);
+        Object.assign(row.valRow, valRow);
         const { _rows } = section;
         let rows = getAtomValue(_rows);
         rows.push(row);
@@ -510,14 +510,14 @@ export class SheetStore extends KeyIdObject {
     }
 
     delPendRow(row: Row) {
-        let pend = row.props.pend;
+        let pend = row.valRow.pend;
         let _sections = this.pendColl[pend];
         if (_sections === undefined) return;
         let sections = getAtomValue(_sections);
         for (let section of sections) {
             const { _rows } = section;
             let rows = getAtomValue(_rows);
-            let p = rows.findIndex(v => v.props.pend === pend);
+            let p = rows.findIndex(v => v.valRow.pend === pend);
             if (p < 0) continue;
             rows.splice(p, 1);
             break;
@@ -562,6 +562,86 @@ export class SheetStore extends KeyIdObject {
 
     async delDetail(id: number) {
         await this.uq.DeleteBin.submit({ id });
+    }
+
+    private getPropArr(valRow: ValRow, buds: BizBud[]) {
+        const { buds: budsValues } = valRow;
+        let propArr: [number, 'int' | 'dec' | 'str', string | number][] = [];
+        for (let bud of buds) {
+            let { id, name, budDataType } = bud;
+            let value = (budsValues as any)[id];
+            if (value === undefined) continue;
+            let type: 'int' | 'dec' | 'str';
+            switch (budDataType.type) {
+                default:
+                case EnumBudType.atom:
+                case EnumBudType.int: type = 'int'; break;
+                case EnumBudType.dec: type = 'dec'; break;
+                case EnumBudType.str:
+                case EnumBudType.char: type = 'str'; break;
+            }
+            if (type === undefined) continue;
+            propArr.push([id, type, value]);
+        }
+        return propArr;
+    }
+
+    async saveSheet(valRow: ValRow) {
+        let propArr = this.getPropArr(valRow, this.main.entityMain.buds);
+        let { id: sheetId, i, x } = valRow;
+        const { uq, entitySheet } = this;
+        let ret = await uq.SaveSheet.submit({
+            phrase: entitySheet.id,
+            no: undefined,
+            i: i === 0 ? undefined : i,
+            x: x === 0 ? undefined : x,
+            value: undefined,
+            price: undefined,
+            amount: undefined,
+            props: propArr,
+        });
+        let { id, no } = ret;
+        return { id, no };
+    }
+
+    async saveDetail(entityBin: EntityBin, buds: BizBud[], valRow: ValRow) {
+        let { id, i, x, value, price, amount, pend, origin } = valRow;
+        let propArr = this.getPropArr(valRow, buds);
+        /*
+        let propArr: [number, 'int' | 'dec' | 'str', string | number][] = [];
+        for (let bud of buds) {
+            let { id, name, budDataType } = bud;
+            let value = (budsValues as any)[id];
+            if (value === undefined) continue;
+            let type: 'int' | 'dec' | 'str';
+            switch (budDataType.type) {
+                default:
+                case EnumBudType.atom:
+                case EnumBudType.int: type = 'int'; break;
+                case EnumBudType.dec: type = 'dec'; break;
+                case EnumBudType.str:
+                case EnumBudType.char: type = 'str'; break;
+            }
+            if (type === undefined) continue;
+            propArr.push([id, type, value]);
+        }
+        */
+        let param: ParamSaveDetail = {
+            base: this.main.valRow.id,
+            phrase: entityBin.id,
+            id,
+            i,
+            x,
+            value,
+            price,
+            amount,
+            origin,
+            pend,
+            props: propArr,
+        };
+        let retSaveDetail = await this.uq.SaveDetail.submitReturns(param);
+        id = retSaveDetail.ret[0].id;
+        return id;
     }
 }
 

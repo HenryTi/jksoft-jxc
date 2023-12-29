@@ -3,7 +3,7 @@ import { DivStore, UseInputsProps, ValDiv } from "../store";
 import { FA } from "tonwa-com";
 import { useInputs } from "../inputs";
 import { ViewBud, ViewBudUIType, ViewSpecBaseOnly } from "app/hooks";
-import { cnRolCols } from "../tool";
+import { RolCols } from "app/hooks/tool";
 
 interface ViewDivProps {
     divStore: DivStore;
@@ -135,13 +135,13 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     else cn += 'bg-white';
     return <div className={cn}>
         <div className={'flex-fill container '}>
-            <div className={cnRolCols}>
+            <RolCols>
                 {vIBase}
                 {valDiv.getBudsValArr().map(([bud, value]) => {
                     const { id } = bud;
                     return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} />;
                 })}
-            </div>
+            </RolCols>
         </div>
         {btn}
     </div >;

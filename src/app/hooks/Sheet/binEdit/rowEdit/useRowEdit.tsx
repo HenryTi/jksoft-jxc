@@ -30,7 +30,7 @@ function ModalInputRow({ binEditing }: { binEditing: BinEditing; }) {
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { entityBin } = binEditing;
     const { i: budI, x: budX } = entityBin;
-    const { binRow: binDetail } = binEditing;
+    const { valRow: binDetail } = binEditing;
     const [submitable, setSubmitable] = useState(binEditing.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;

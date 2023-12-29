@@ -1,11 +1,11 @@
 import { PendRow, SheetStore } from "./SheetStore";
-import { BinDiv, BinRow, EntityBin, EnumBudType } from "app/Biz";
+import { BinDiv, EntityBin } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
 import { OwnerColl, budValuesFromProps } from "../../tool";
-import { ParamSaveDetail, ReturnGetPendRetSheet } from "uqs/UqDefault";
+import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "../tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { NamedResults, PickResult } from "../NamedResults";
+import { NamedResults } from "../NamedResults";
 import { ValDiv, ValDivs } from './ValDiv';
 
 enum PendLoadState {
@@ -272,10 +272,12 @@ export class DivStore {
         return ret;
     }
 
-    async saveDetail(binDiv: BinDiv, binRow: BinRow, pend: number, origin: number) {
-        let { id, i, x, value, price, amount, buds: budsValues } = binRow;
+    async saveDetail(binDiv: BinDiv, valRow: ValRow) {
+        // let { id, i, x, value, price, amount, buds: budsValues } = binRow;
         const { buds } = binDiv;
 
+        let retId = await this.sheetStore.saveDetail(binDiv.entityBin, buds, valRow);
+        /*
         let propArr: [number, 'int' | 'dec' | 'str', string | number][] = [];
         for (let bud of buds) {
             let { id, name, budDataType } = bud;
@@ -309,7 +311,8 @@ export class DivStore {
         };
         let retSaveDetail = await this.sheetStore.uq.SaveDetail.submitReturns(param);
         id = retSaveDetail.ret[0].id;
-        return id;
+        */
+        return retId;
     }
 }
 

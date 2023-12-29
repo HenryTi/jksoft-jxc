@@ -3,7 +3,7 @@ import { useGetSpec } from "../Uq";
 import { useUqApp } from "app/UqApp";
 import { ViewBudUIType } from "..";
 import React from "react";
-import { LabelBox } from "../Sheet/tool";
+import { LabelBox } from "../tool";
 
 export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
     id: number;

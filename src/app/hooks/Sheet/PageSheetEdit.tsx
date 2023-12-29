@@ -63,7 +63,7 @@ async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetSt
         }
         return; // 已有单据，不需要pick. 或者没有创建新单据
     }
-    let { id, no, target } = ret;
+    let { id, no } = ret;
     if (id > 0) {
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (data) {
@@ -71,7 +71,6 @@ async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetSt
             data.addItem({
                 id,
                 no,
-                target,
                 entityId,
             });
         }
@@ -91,7 +90,7 @@ function PageStore({ store }: { store: SheetStore; }) {
     async function onSubmit() {
         if (main.trigger() === false) return;
         setEditable(false);
-        let { checkPend, checkBin } = await uq.SubmitSheet.submitReturns({ id: main.binRow.id });
+        let { checkPend, checkBin } = await uq.SubmitSheet.submitReturns({ id: main.valRow.id });
         if (checkPend.length + checkBin.length > 0) {
             alert('pendOverflow:' + JSON.stringify(checkPend) + JSON.stringify(checkBin));
             return;
@@ -118,7 +117,7 @@ function PageStore({ store }: { store: SheetStore; }) {
     }
 
     function removeSheetFromCache() {
-        let { binRow: { id } } = main;
+        let { valRow: { id } } = main;
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (data) {
             data.removeItem<{ id: number; }>(v => v.id === id) as any;
@@ -134,7 +133,7 @@ function PageStore({ store }: { store: SheetStore; }) {
         }
     }
 
-    let { id } = useAtomValue(main._binRow);
+    let { id } = useAtomValue(main._valRow);
 
     function MainOnlyEdit() {
         let btnSubmit = <ButtonAsync className="btn btn-primary me" onClick={onSubmit}>提交</ButtonAsync>;

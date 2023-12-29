@@ -67,7 +67,7 @@ export function useBinPicks(bin: EntityBin) {
             //}
             //else {
             namedResults = {
-                '%sheet': sheetStore.main.binRow, // sheetBinRow ?? {},
+                '%sheet': sheetStore.main.valRow, // sheetBinRow ?? {},
             };
             // divStore.initNamedResults();
             // divStore.setNamedResults('%sheet', sheetStore.main.binRow);

@@ -102,6 +102,6 @@ function ViewSection({ section }: { section: Section }) {
 }
 
 function ViewRow({ row }: { row: Row }) {
-    const { props } = row;
+    const { valRow: props } = row;
     return <div>row: {JSON.stringify(props)}</div>;
 }

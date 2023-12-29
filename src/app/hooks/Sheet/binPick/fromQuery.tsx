@@ -6,9 +6,9 @@ import { useUqApp } from "app/UqApp";
 import { FA, List } from "tonwa-com";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "./PageParams";
-import { Picked, Prop, VNamedBud, cnRolCols, pickedFromJsonArr } from "../tool";
+import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "../tool";
 import { NamedResults, PickResult } from "../NamedResults";
-import { DivStore } from "../store";
+import { RolCols } from "app/hooks/tool";
 
 export function usePickFromQuery(): [
     (namedResults: NamedResults, binPick: BinPick) => Promise<PickResult>,
@@ -149,11 +149,11 @@ export function usePickFromQuery(): [
                 }
                 return <div>
                     {vFirst}
-                    <div className={cnRolCols}>
+                    <RolCols>
                         {propArr.map((v, index) => {
                             return <VNamedBud key={index} {...v} />;
                         })}
-                    </div>
+                    </RolCols>
                 </div>
             }
             return <Page header={header} >

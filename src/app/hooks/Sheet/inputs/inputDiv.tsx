@@ -6,21 +6,20 @@ import { Modal, Page, useModal } from "tonwa-app";
 import { FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
 import { ChangeEvent, useState } from "react";
-import { BinRow } from "app/Biz";
 
 export interface InputDivProps extends UseInputsProps {
     uqApp: UqApp;
     modal: Modal;
-    binRow: BinRow;
+    valRow: ValRow;
 }
 
-export async function inputDiv(props: InputDivProps): Promise<BinRow> {
-    const { modal, divStore, binDiv, binRow, namedResults } = props;
-    let divEditing = new DivEditing(divStore, namedResults, binDiv, binRow);
+export async function inputDiv(props: InputDivProps): Promise<ValRow> {
+    const { modal, divStore, binDiv, valRow, namedResults } = props;
+    let divEditing = new DivEditing(divStore, namedResults, binDiv, valRow);
     if (divEditing.isInputNeeded() === true) {
         if (await modal.open(<PageInput divEditing={divEditing} />) !== true) return;
     }
-    return divEditing.binRow;
+    return divEditing.valRow;
 }
 
 function PageInput({ divEditing }: { divEditing: DivEditing; }) {

@@ -5,11 +5,11 @@ import { ViewSheetTime } from "../ViewSheetTime";
 import { BizBud } from "app/Biz";
 import { FA, setAtomValue } from "tonwa-com";
 import { BudCheckEditValue, BudCheckValue } from "tonwa-app";
-import { LabelBox, LabelContent, cnRolCols } from "../tool";
 import React from "react";
+import { LabelBox, LabelContent, RolCols } from "app/hooks/tool";
 
 export function ViewMain({ main }: { main: SheetMain }) {
-    const { no, entityMain, _binRow, budEditings } = main;
+    const { no, entityMain, _valRow: _binRow, budEditings } = main;
     const { i: budI, x: budX } = entityMain;
     const binRow = useAtomValue(_binRow);
     const { id: idBin, i, x, buds } = binRow;
@@ -43,9 +43,9 @@ export function ViewMain({ main }: { main: SheetMain }) {
         </React.Fragment>);
         viewProps = <div className={cnBlock}>
             <div className={'flex-fill py-2 '}>
-                <div className={cnRolCols}>
+                <RolCols>
                     {viewRowArr}
-                </div>
+                </RolCols>
             </div>
         </div>
     }
@@ -61,13 +61,13 @@ export function ViewMain({ main }: { main: SheetMain }) {
     return <div className="tonwa-bg-gray-1">
         <div className={cnBlock + ' border-top '}>
             <div className={'flex-fill py-3 container'}>
-                <div className={cnRolCols}>
+                <RolCols>
                     <LabelContent label="单据编号">
                         <span className="text-danger">{no}</span> &nbsp; <ViewSheetTime id={idBin} />
                     </LabelContent>
                     <ViewIdField bud={budI} value={i} />
                     <ViewIdField bud={budX} value={x} />
-                </div>
+                </RolCols>
             </div>
         </div>
         {viewProps}

@@ -9,8 +9,7 @@ import { OwnedBuds } from "../../tool/tool";
 import { useRowEdit } from "./rowEdit";
 import { ViewBud } from "../../Bud";
 import { BinEditing } from "../store";
-import { Pencil } from "app/hooks/tool";
-import { cnRolCols } from "../tool";
+import { Pencil, RolCols } from "app/hooks/tool";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -69,7 +68,7 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const rowEdit = useRowEdit();
-    const { props: binDetail, section: { coreDetail: { entityBin } } } = row;
+    const { valRow: binDetail, section: { coreDetail: { entityBin } } } = row;
     const { i: budI, x: budX, price: budPrice, amount: budAmount, buds: props } = entityBin;
     let { i, x, value, price, amount, buds } = binDetail
     async function onEdit() {
@@ -78,7 +77,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         // binEditing.setValues(binDetail);
         let ret = await rowEdit(binEditing);
         if (ret === true) {
-            Object.assign(binDetail, binEditing.binRow);
+            Object.assign(binDetail, binEditing.valRow);
             await row.changed();
         }
     }
@@ -136,12 +135,12 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
 
     return <div className="py-2 border-bottom border-secondary">
         <div className="container">
-            <div className={cnRolCols}>
+            <RolCols>
                 <ViewIdField bud={budI} value={i} />
                 <BinOwnedBuds bizBud={budI} binDetail={binDetail} />
                 {colX}
                 {colProps}
-            </div>
+            </RolCols>
         </div>
         <div className={'d-flex justify-content-end pt-2 '}>
             <div className="border-top border-secondary-subtle d-flex ps-2 pt-1 align-items-center">

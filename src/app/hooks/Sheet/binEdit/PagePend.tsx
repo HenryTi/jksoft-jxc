@@ -1,10 +1,10 @@
 import { Page, useModal } from "tonwa-app";
-import { BinDetail } from "../store";
 import { useState } from "react";
 import { FA, List, Sep } from "tonwa-com";
 import { PendRow } from "../store";
 import { PagePendProps } from "./model";
 import { ViewPendRow } from "./ViewPendRow";
+import { ValRow } from "../tool";
 
 export function PagePend(props: PagePendProps) {
     let { divStore, caption } = props;
@@ -25,10 +25,10 @@ export function PagePend(props: PagePendProps) {
             if (aPend === bPend) return 0;
             return 1;
         });
-        let ret: BinDetail[] = [];
+        let ret: ValRow[] = [];
         for (let pendRow of pendRows) {
             const { pend, detail, value/*, sheet*/ } = pendRow;
-            let rowProps: BinDetail = {
+            let rowProps: ValRow = {
                 ...detail,
                 value,
                 origin: detail.id,             // origin detail id

@@ -35,7 +35,7 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
                 namedResults[binPick.name] = rowProps;
                 let binEditing = new BinEditing(entityBin);
                 binEditing.setNamedParams(namedResults);
-                let { binRow: binRow } = binEditing;
+                let { valRow: binRow } = binEditing;
                 if (binRow.value === undefined) {
                     binEditing.setValue('value', 0, undefined);
                 }
@@ -46,7 +46,7 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
                     binRow as any,
                     { origin, pend, pendValue },
                 ));
-                await coreDetail.sheetStore.reloadRow(row.props.id);
+                await coreDetail.sheetStore.reloadRow(row.valRow.id);
             }
         }
         else {
@@ -54,13 +54,13 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
             let section = new Section(coreDetail);
             let row = new Row(section);
             coreDetail.addSection(section);
-            const binEditing = new BinEditing(entityBin, row.props);
+            const binEditing = new BinEditing(entityBin, row.valRow);
             binEditing.setNamedParams(namedResults);
             let ret = await rowEdit(binEditing);
             if (ret === true) {
-                Object.assign(row.props, binEditing.binRow);
+                Object.assign(row.valRow, binEditing.valRow);
                 await row.addToSection();
-                await coreDetail.sheetStore.reloadRow(row.props.id);
+                await coreDetail.sheetStore.reloadRow(row.valRow.id);
             }
         }
     }

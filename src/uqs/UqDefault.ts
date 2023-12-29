@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Dec 27 2023 21:01:27 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Thu Dec 28 2023 14:12:22 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -266,6 +266,7 @@ export interface ParamSaveSheet {
 	value: number;
 	price: number;
 	amount: number;
+	props: any;
 }
 export interface ReturnSaveSheetRet {
 	id: number;
@@ -2141,6 +2142,10 @@ export const uqSchema={
                 "type": "dec",
                 "scale": 6,
                 "precision": 18
+            },
+            {
+                "name": "props",
+                "type": "json"
             }
         ],
         "returns": [

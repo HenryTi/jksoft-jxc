@@ -185,6 +185,7 @@ Biz ACT SaveSheet (
     value VALUE,
     price VALUE,
     amount VALUE,
+    props JSON,
 )
 RETURNS ret (
     id ID,
@@ -204,6 +205,8 @@ RETURNS ret (
     VAR sheetId ID;
     WITH Sheet as a ID to sheetId Key(phrase, no) SET a.operator=me;
     WITH Bin as a ID=sheetId SET a.i=i, a.x=x, a.value=value, a.price=price, a.amount=amount;
+    
+    PROC SaveBinBuds(sheetId, props);
 
     WITH IxState I=me X=sheetId;
 
@@ -248,6 +251,8 @@ RETURNS ret (
         WITH BinPend as a ID=id SET a.pendFrom=pendFrom;
     }
 
+    PROC SaveBinBuds(id, props);
+    /*
     JSONTABLE tbl (
         bud ID PATH '$[0]', 
         type CHAR(10) PATH '$[1]',
@@ -265,9 +270,33 @@ RETURNS ret (
             WITH IxBudStr I=id X=bud SET value=value;
         }
     }
+    */
 
     INTO ret SELECT id;
 };
+
+PROC SaveBinBuds(
+    id ID,
+    props JSON,
+) {
+    JSONTABLE tbl (
+        bud ID PATH '$[0]', 
+        type CHAR(10) PATH '$[1]',
+        value CHAR(200) PATH '$[2]'
+    ) FROM props PATH '$[*]';
+
+    FOR (VAR bud ID, type CHAR(10), value CHAR(200) OF SELECT a.bud, a.type, a.value FROM tbl as a) {
+        if type='int' {
+            WITH IxBudInt I=id X=bud SET value=value;
+        }
+        elseif type='dec' {
+            WITH IxBudDec I=id X=bud SET value=value;
+        }
+        elseif type='str' {
+            WITH IxBudStr I=id X=bud SET value=value;
+        }
+    }
+}
 
 Biz AC DeleteBin (
     id ID,

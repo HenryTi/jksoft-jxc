@@ -10,7 +10,7 @@ import { fromDays, getDays } from "app/tool";
 abstract class BinFields extends BudsFields {
     private readonly calc: Calc;
     private readonly requiredFields: BinField[] = [];
-    readonly binRow: BinRow = { buds: {} } as any;
+    readonly valRow: ValRow = { buds: {} } as any;
     onDel: () => Promise<void>;
 
     constructor(bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
@@ -40,7 +40,7 @@ abstract class BinFields extends BudsFields {
                 formulas.push([name + '.max', max]);
             }
         }
-        this.calc = new Calc(formulas, this.binRow as any);
+        this.calc = new Calc(formulas, this.valRow as any);
         if (initBinRow !== undefined) {
             this.setValues(initBinRow);
         }
@@ -51,12 +51,12 @@ abstract class BinFields extends BudsFields {
         const { results } = this.calc;
         for (let i in this.fieldColl) {
             let field = this.fieldColl[i];
-            field.setValue(this.binRow, results[field.name]);
+            field.setValue(this.valRow, results[field.name]);
         }
     }
 
     private setValues(binRow: BinRow) {
-        Object.assign(this.binRow, binRow);
+        Object.assign(this.valRow, binRow);
         let obj = new Proxy(binRow, this.entityBin.proxyHandler());
         this.calc.addValues(undefined, obj);
     }
@@ -84,13 +84,13 @@ abstract class BinFields extends BudsFields {
         if (field === undefined) {
             return;
         }
-        field.setValue(this.binRow, value);
+        field.setValue(this.valRow, value);
     }
 
     get submitable(): boolean {
         let ret = true;
         for (let field of this.requiredFields) {
-            let v = field.getValue(this.binRow); // this.calc.results[field.name];
+            let v = field.getValue(this.valRow); // this.calc.results[field.name];
             if (v === undefined) {
                 return false;
             }
@@ -155,7 +155,7 @@ abstract class BinFields extends BudsFields {
             let { show } = ui;
             if (show === true) continue;
             let options: RegisterOptions = {
-                value: field.getValue(this.binRow),
+                value: field.getValue(this.valRow),
                 disabled: valueSetType === ValueSetType.equ,
                 required,
             };
@@ -169,7 +169,7 @@ abstract class BinFields extends BudsFields {
             const { type, min, max } = budDataType;
             switch (type) {
                 case EnumBudType.atom:
-                    formRow.default = field.getValue(this.binRow);
+                    formRow.default = field.getValue(this.valRow);
                     formRow.atom = null;
                     formRow.readOnly = true;
                     formRow.entityAtom = (budDataType as BudAtom).bizAtom;

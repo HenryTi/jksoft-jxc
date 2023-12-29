@@ -7,7 +7,7 @@ import { DivEditing, UseInputsProps, ValDiv } from "../store";
 import { InputDivProps, inputDiv } from "./inputDiv";
 import { useUqApp } from "app";
 import { useModal } from "tonwa-app";
-import { PendProxyHander } from "../tool";
+import { PendProxyHander, ValRow } from "../tool";
 import { NamedResults } from "../NamedResults";
 import { getAtomValue } from "tonwa-com";
 
@@ -22,14 +22,14 @@ export function useInputs() {
             [rearPick.name]: new Proxy(pendRow, new PendProxyHander(entityBin.pend)),
         };
         let ret: ValDiv, parent: ValDiv;
-        let binRow: BinRow;
+        let valRow: ValRow;
         if (valDiv === undefined) {
-            binRow = { id: undefined, buds: {}, owned: {} };
+            valRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
         }
         else {
             let { atomValRow } = valDiv;
             let valDivRow = getAtomValue(atomValRow);
-            binRow = { ...valDivRow, id: undefined };
+            valRow = { ...valDivRow, id: undefined };
         }
         for (let p = binDiv; p !== undefined; p = p.div) {
             const { inputs } = p;
@@ -61,32 +61,33 @@ export function useInputs() {
                     if (retInput === undefined) return;
                     namedResults[input.name] = retInput;
                 }
-                let divEditing = new DivEditing(divStore, namedResults, binDiv.div, binRow);
-                mergeBinRow(binRow, divEditing.binRow);
+                let divEditing = new DivEditing(divStore, namedResults, binDiv.div, valRow);
+                mergeValRow(valRow, divEditing.valRow);
             }
             const inputDivProps: InputDivProps = {
                 ...props,
                 binDiv: p,
-                binRow,
+                valRow: valRow,
                 modal,
                 uqApp,
                 namedResults,
             }
-            let retBinRow: BinRow = await inputDiv(inputDivProps);
-            if (retBinRow === undefined) return;
-            mergeBinRow(binRow, retBinRow);
+            let retValRow: ValRow = await inputDiv(inputDivProps);
+            if (retValRow === undefined) return;
+            mergeValRow(valRow, retValRow);
             let origin = valDiv === undefined ? pendRow.origin : valDiv.id;
-
+            valRow.origin = origin;
+            valRow.pend = pendRow.pend;
             // save detail;
-            let id = await divStore.saveDetail(p, binRow, pendRow.pend, origin);
+            let id = await divStore.saveDetail(p, valRow);
 
-            valDiv = new ValDiv(p, { ...binRow, id, pend: pendRow.pend, origin });
+            valDiv = new ValDiv(p, { ...valRow, id, pend: pendRow.pend, origin });
             divStore.setValColl(valDiv);
             if (ret === undefined) {
                 parent = ret = valDiv;
             }
             else {
-                parent.setIXBase(binRow);
+                parent.setIXBase(valRow);
                 parent.addValDiv(valDiv);
             }
             parent = valDiv;
@@ -95,9 +96,9 @@ export function useInputs() {
     }, []);
 }
 
-function mergeBinRow(dest: BinRow, src: BinRow) {
+function mergeValRow(dest: ValRow, src: ValRow) {
     if (src === undefined) return;
-    const { id, i, x, value, price, amount, buds, owned } = src;
+    const { id, i, x, value, price, amount, buds, owned, pend, pendValue, origin } = src;
     dest.id = id;
     dest.i = i;
     dest.x = x;
@@ -106,4 +107,7 @@ function mergeBinRow(dest: BinRow, src: BinRow) {
     dest.amount = amount;
     if (buds !== undefined) Object.assign(dest.buds, buds);
     if (owned !== undefined) Object.assign(dest.owned, owned);
+    dest.pend = pend;
+    dest.pendValue = pendValue;
+    dest.origin = origin;
 }
