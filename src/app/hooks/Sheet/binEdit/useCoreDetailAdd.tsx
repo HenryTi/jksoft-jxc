@@ -8,19 +8,10 @@ import { PickResult } from "../NamedResults";
 export function useCoreDetailAdd(coreDetail: CoreDetail) {
     const rowEdit = useRowEdit();
     const { entityBin, sheetStore } = coreDetail;
-    // const { divStore } = sheetStore;
-    // divStore.namedResults = undefined;
     const pick = useBinPicks(entityBin);
     async function addNewDirect() {
-        // divStore.namedResults = {}; // .initNamedResults();
-        // let { namedResults } = divStore;
         let ret = await pick(sheetStore);
         if (ret === undefined) return;
-        /*
-        if (namedResults === undefined) {
-            divStore.namedResults = namedResults = {};
-        }
-        */
         let { namedResults, rearBinPick: binPick, rearResult: pickResult, rearPickResultType: lastPickResultType } = ret;
         if (lastPickResultType === RearPickResultType.array) {
             // 直接选入行集，待修改
@@ -35,15 +26,15 @@ export function useCoreDetailAdd(coreDetail: CoreDetail) {
                 namedResults[binPick.name] = rowProps;
                 let binEditing = new BinEditing(entityBin);
                 binEditing.setNamedParams(namedResults);
-                let { valRow: binRow } = binEditing;
-                if (binRow.value === undefined) {
-                    binEditing.setValue('value', 0, undefined);
+                let { valRow } = binEditing;
+                if (valRow.value === undefined) {
+                    binEditing.setValue('value', 1, undefined);
                 }
                 const { origin, pend, pendValue } = rowProps;
                 let row = await sec.addRowProps(Object.assign(
                     {},
                     // rowProps, 这是多选明细，不应该加这里。在前面rowStore.init已经处理了字段带入
-                    binRow as any,
+                    valRow as any,
                     { origin, pend, pendValue },
                 ));
                 await coreDetail.sheetStore.reloadRow(row.valRow.id);

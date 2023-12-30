@@ -76,7 +76,7 @@ function ModalInputRow({ binEditing }: { binEditing: BinEditing; }) {
                 <ViewSpecNoAtom id={value} />
             </RowCols>
             <RowCols>
-                <BinOwnedBuds bizBud={bud} valRow={binDetail} noLabel={true} />
+                <BinOwnedBuds bizBud={bud} valRow={binDetail} noLabel={false} />
             </RowCols>
         </Band>;
     }

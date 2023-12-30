@@ -1,5 +1,5 @@
 import { DivEditing, UseInputsProps } from "../store";
-import { FA, getAtomValue } from "tonwa-com";
+import { FA } from "tonwa-com";
 import { ValRow, btnNext, cnNextClassName } from "../tool";
 import { UqApp } from "app";
 import { Modal, Page, useModal } from "tonwa-app";
@@ -14,7 +14,7 @@ export interface InputDivProps extends UseInputsProps {
 }
 
 export async function inputDiv(props: InputDivProps): Promise<ValRow> {
-    const { modal, divStore, binDiv, valRow, namedResults } = props;
+    const { modal, divStore, binDiv, valRow, namedResults, pendRow } = props;
     let divEditing = new DivEditing(divStore, namedResults, binDiv, valRow);
     if (divEditing.isInputNeeded() === true) {
         if (await modal.open(<PageInput divEditing={divEditing} />) !== true) return;
@@ -42,7 +42,7 @@ function PageInput({ divEditing }: { divEditing: DivEditing; }) {
         return (v as any).options = { ...(v as any).options, ...options };
     });
     function onPrev() {
-        alert('prev');
+        modal.close();
     }
     formRows.push({
         type: 'submit',

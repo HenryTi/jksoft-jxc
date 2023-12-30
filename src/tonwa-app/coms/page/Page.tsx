@@ -86,7 +86,7 @@ export function PageBase(props: PageProps) {
     }
     return <div ref={divRef} className="tonwa-page">
         <Suspense fallback={<PageSpinner />}>
-            <div className='tonwa-page-header position-sticky top-0'>
+            <div className='z-3 tonwa-page-header position-sticky top-0'>
                 <div className='container px-0'>
                     {header}
                 </div>

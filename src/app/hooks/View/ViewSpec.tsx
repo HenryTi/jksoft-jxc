@@ -33,14 +33,14 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
                         let { id, caption, name, budDataType } = buds[i];
                         let content: any = budDataType.valueToContent(values[i]);
                         let band: any;
-                        if (noLabel !== true) {
-                            band = <LabelBox key={id} label={caption ?? name} colon={true}>
-                                {content}
-                            </LabelBox>;
-                        }
-                        else {
-                            band = <>{content}</>;
-                        }
+                        //if (noLabel !== true) {
+                        band = <LabelBox key={id} label={caption ?? name} colon={true}>
+                            {content}
+                        </LabelBox>;
+                        //}
+                        //else {
+                        //    band = <>{content}</>;
+                        //}
                         bands.push(band);
                     }
                 }

@@ -37,12 +37,12 @@ export function LabelBox({ label, children, required, title, colon, editable }: 
         :
         children;
 
-    let cnLabelContainer = 'col-5 text-secondary text-end d-flex align-items-center flex-row justify-content-end';
-    let cnLabel = ' small text-nowrap text-truncate ';
+    let cnLabelContainer = 'col-5 text-secondary text-end d-flex align-items-center flex-row justify-content-end small';
+    let cnLabel = ' text-nowrap text-truncate ';
     return <div className="col">
         <div className="row gx-0">
             <div className={cnLabelContainer} title={labelTitle}>
-                <span className={cnLabel}>{vLabel} {vColon}</span>
+                <span className={cnLabel}>{vLabel}</span> {vColon}
             </div>
             <div className="col-7 ps-1 py-1" title={title}>
                 {content}
