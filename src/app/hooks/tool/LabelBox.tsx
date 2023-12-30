@@ -1,6 +1,6 @@
 import React from "react";
 
-const cnRowCols = ' row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 ';
+const cnRowCols = ' gx-0 row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 ';
 
 export function RowCols({ children }: { children: React.ReactNode; }) {
     return <div className={cnRowCols}>
@@ -20,7 +20,7 @@ export function LabelBox({ label, children, required, title, colon, editable }: 
     if (required === true) {
         vLabel = <>
             {label}
-            <span className="text-danger ms-1">*</span>
+            <span className="text-danger ms-0">*</span>
         </>;
     }
     else {
@@ -37,14 +37,14 @@ export function LabelBox({ label, children, required, title, colon, editable }: 
         :
         children;
 
-    let cnLabelContainer = 'col-4 text-secondary text-end d-flex align-items-center flex-row justify-content-end';
-    let cnLabel = ' small text-nowrap '; // ' text-truncate ';
+    let cnLabelContainer = 'col-5 text-secondary text-end d-flex align-items-center flex-row justify-content-end';
+    let cnLabel = ' small text-nowrap text-truncate ';
     return <div className="col">
-        <div className="row">
+        <div className="row gx-0">
             <div className={cnLabelContainer} title={labelTitle}>
                 <span className={cnLabel}>{vLabel} {vColon}</span>
             </div>
-            <div className="col-8 ps-2 py-1" title={title}>
+            <div className="col-7 ps-1 py-1" title={title}>
                 {content}
             </div>
         </div>
