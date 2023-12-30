@@ -6,7 +6,7 @@ import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
 import { UI } from "app/ui";
 import { BudValue } from "tonwa-app";
-import { contentFromDays, fromDays, getDays } from "app/tool";
+import { contentFromDays } from "app/tool";
 
 export interface PickParam {
     name: string;

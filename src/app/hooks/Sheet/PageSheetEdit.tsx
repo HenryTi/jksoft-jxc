@@ -60,7 +60,11 @@ async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetSt
     if (ret === undefined) {
         if (sheetStore.main.no === undefined) {
             // 还没有创建单据
-            // if (navigate !== undefined) navigate(-1);
+            if (navigate !== undefined) {
+                setTimeout(() => {
+                    navigate(-1);
+                }, 100);
+            }
         }
         return; // 已有单据，不需要pick. 或者没有创建新单据
     }

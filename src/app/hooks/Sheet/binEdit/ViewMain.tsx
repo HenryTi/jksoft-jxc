@@ -53,8 +53,9 @@ export function ViewMain({ main }: { main: SheetMain }) {
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
         if (bud === undefined) return null;
         const { caption, name } = bud;
+        let content = value ? <ViewSpecR id={value} /> : <>&nbsp;</>;
         return <LabelBox label={caption ?? name} editable={false}>
-            <ViewSpecR id={value} />
+            {content}
         </LabelBox>
     }
 

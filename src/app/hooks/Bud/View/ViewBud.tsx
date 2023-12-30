@@ -11,26 +11,31 @@ export enum ViewBudUIType {
 export function ViewBud({ bud, value, uiType, noLabel }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; }) {
     if (bud === undefined) return <>{value}</>;
     if (!value) return null;
-    const { name, caption, budDataType } = bud;
-    let type = budDataType?.type;
-    if (type === EnumBudType.atom) {
-        return atom(bud, value, uiType, noLabel);
-    }
     let content: any;
-    switch (type) {
-        default:
-        case EnumBudType.dec:
-        case EnumBudType.none:
-        case EnumBudType.int:
-        case EnumBudType.char:
-        case EnumBudType.str: content = <>{value}</>; break;
-        case EnumBudType.radio: content = radio(bud, value); break;
-        case EnumBudType.check: content = check(bud, value); break;
-        case EnumBudType.intof: content = intof(bud, value); break;
-        case EnumBudType.pick: content = pick(bud, value); break;
-        case EnumBudType.ID: content = ID(bud, value); break;
-        case EnumBudType.date: content = date(bud, value); break;
-        case EnumBudType.datetime: content = datetime(bud, value); break;
+    const { name, caption, budDataType } = bud;
+    if (value === undefined) {
+        content = <>&nbsp;</>;
+    }
+    else {
+        let type = budDataType?.type;
+        if (type === EnumBudType.atom) {
+            return atom(bud, value, uiType, noLabel);
+        }
+        switch (type) {
+            default:
+            case EnumBudType.dec:
+            case EnumBudType.none:
+            case EnumBudType.int:
+            case EnumBudType.char:
+            case EnumBudType.str: content = <>{value}</>; break;
+            case EnumBudType.radio: content = radio(bud, value); break;
+            case EnumBudType.check: content = check(bud, value); break;
+            case EnumBudType.intof: content = intof(bud, value); break;
+            case EnumBudType.pick: content = pick(bud, value); break;
+            case EnumBudType.ID: content = ID(bud, value); break;
+            case EnumBudType.date: content = date(bud, value); break;
+            case EnumBudType.datetime: content = datetime(bud, value); break;
+        }
     }
     if (noLabel === true) {
         return <div className="col">{content}</div>;
