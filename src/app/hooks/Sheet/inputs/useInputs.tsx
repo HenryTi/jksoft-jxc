@@ -22,14 +22,12 @@ export function useInputs() {
             [rearPick.name]: new Proxy(pendRow, new PendProxyHander(entityBin.pend)),
         };
         let ret: ValDiv, parent: ValDiv;
-        let valRow: ValRow;
-        if (valDiv === undefined) {
-            valRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
-        }
-        else {
+        let valRow: ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
+        if (valDiv !== undefined) {
             let { atomValRow } = valDiv;
             let valDivRow = getAtomValue(atomValRow);
-            valRow = { ...valDivRow, id: undefined };
+            mergeValRow(valRow, valDivRow);
+            valRow.id = undefined;
         }
         for (let p = binDiv; p !== undefined; p = p.div) {
             const { inputs } = p;
@@ -61,7 +59,7 @@ export function useInputs() {
                     if (retInput === undefined) return;
                     namedResults[input.name] = retInput;
                 }
-                let divEditing = new DivEditing(divStore, namedResults, binDiv.div, valRow);
+                let divEditing = new DivEditing(divStore, namedResults, binDiv.div, valDiv, valRow);
                 mergeValRow(valRow, divEditing.valRow);
             }
             const inputDivProps: InputDivProps = {
@@ -89,8 +87,8 @@ export function useInputs() {
             else {
                 parent.setIXBase(valRow);
                 parent.addValDiv(valDiv);
+                parent = valDiv;
             }
-            parent = valDiv;
         }
         return ret;
     }, []);

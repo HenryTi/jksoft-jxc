@@ -1,6 +1,7 @@
 import { EntityAtomID } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { ViewSpec, useSelectAtom } from "app/hooks";
+import { ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom, useSelectAtom } from "app/hooks";
+import { RowCols } from "app/hooks/tool";
 import { HTMLInputTypeAttribute, ReactNode, useState } from "react";
 import {
     UseFormRegisterReturn, FieldErrorsImpl
@@ -265,10 +266,17 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
 
     const { entityAtom, atom, options } = row as FormAtom;
     if (entityAtom !== undefined) {
+        const { value } = options;
+        /*
+        <div className="ms-2">
+        <ViewSpec id={options.value} noLabel={true} />
+        </div>
+        */
         return <Band label={label}>
-            <div className="ms-2">
-                <ViewSpec id={options.value} noLabel={true} />
-            </div>
+            <ViewSpecBaseOnly id={value} />
+            <RowCols>
+                <ViewSpecNoAtom id={value} />
+            </RowCols>
         </Band>;
     }
     if (atom !== undefined) {

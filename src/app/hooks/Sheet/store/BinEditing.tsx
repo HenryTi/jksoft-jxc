@@ -3,9 +3,10 @@ import { FormRow } from "app/coms";
 import { BinDiv, BinField, BinRow, BizBud, BudAtom, BudDec, BudRadio, BudsFields, EntityBin, EnumBudType, ValueSetType } from "app/Biz";
 import { Calc, Formulas } from "../../Calc";
 import { ValRow } from "../tool";
-import { DivStore } from ".";
+import { DivStore, ValDiv } from ".";
 import { NamedResults } from "../NamedResults";
 import { getDays } from "app/tool";
+import { getAtomValue } from "tonwa-com";
 
 abstract class BinFields extends BudsFields {
     private readonly calc: Calc;
@@ -143,6 +144,10 @@ abstract class BinFields extends BudsFields {
         return false;
     }
 
+    getDefaultValue(field: BinField): number {
+        return field.getValue(this.valRow);
+    }
+
     buildFormRows(filterOnForm: boolean = false): FormRow[] {
         let ret: FormRow[] = [];
         const { results: calcResults } = this.calc;
@@ -155,7 +160,7 @@ abstract class BinFields extends BudsFields {
             let { show } = ui;
             if (show === true) continue;
             let options: RegisterOptions = {
-                value: field.getValue(this.valRow),
+                value: this.getDefaultValue(field),
                 disabled: valueSetType === ValueSetType.equ,
                 required,
             };
@@ -224,10 +229,25 @@ function budRadios(budDataType: BudRadio): { label: string; value: string | numb
 
 export class DivEditing extends BinFields {
     readonly divStore: DivStore;
-    constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, initBinRow?: BinRow) {
+    readonly pendLeft: number;
+    constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, valDiv: ValDiv, initBinRow?: BinRow) {
         super(divStore.entityBin, binDiv.buds, initBinRow);
         this.divStore = divStore;
         this.setNamedParams(namedResults);
+        this.pendLeft = divStore.getPendLeft(valDiv);
+    }
+    /*
+    get pendLeft() {
+        return this.divStore.getPendLeft();
+    }
+    */
+    getDefaultValue(field: BinField): number {
+        if (field.name === 'value') {
+            if (this.pendLeft !== undefined) {
+                return this.pendLeft;
+            }
+        }
+        return field.getValue(this.valRow);
     }
 }
 

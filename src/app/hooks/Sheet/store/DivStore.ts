@@ -143,6 +143,34 @@ export class DivStore {
         }
     }
 
+    getPendLeft(valDiv: ValDiv): number {
+        if (valDiv === undefined) return undefined;
+        function has(valDivs: ValDivs, valDiv: ValDiv) {
+            let vds = getAtomValue(valDivs.atomValDivs);
+            for (let vd of vds) {
+                if (vd === valDiv) return true;
+                if (has(vd, valDiv) === true) return true;
+            }
+            return false;
+        }
+        let vds = getAtomValue(this.valDivs.atomValDivs);
+        for (let vd of vds) {
+            if (has(vd, valDiv) === true) {
+                let { atomValRow, atomValue } = vd;
+                let value = getAtomValue(atomValue);
+                let valRow = getAtomValue(atomValRow);
+                let { pend } = valRow;
+                let pendRow = this.pendRows?.find(v => v.pend === pend);
+                if (pendRow === undefined) {
+                    debugger;
+                    return 0;
+                }
+                return pendRow.value - value;
+            }
+        }
+        return undefined;
+    }
+
     async delValRow(id: number) {
         let val = this.valColl[id];
         let valRow = getAtomValue(val.atomValRow);

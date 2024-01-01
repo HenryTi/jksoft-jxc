@@ -1,4 +1,4 @@
-import { BinDiv, BinRow, BizBud } from "app/Biz";
+import { BinDiv, BizBud } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
 import { ValRow } from "../tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";

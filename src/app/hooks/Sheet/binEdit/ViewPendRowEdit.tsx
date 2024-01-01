@@ -1,5 +1,4 @@
 import { FA, setAtomValue } from "tonwa-com";
-import { Row, Section } from "../store";
 import { useAtomValue } from "jotai";
 import { useInputs } from "../inputs";
 import { DivEditProps, UseInputsProps } from "../store";
@@ -67,37 +66,4 @@ function ViewCheck({ icon, iconColor, onClick }: { icon: string; iconColor: stri
     return <div className="z-3 position-relative cursor-pointer px-2 py-3 text-center align-self-end text-info" onClick={onClick}>
         <FA name={icon} fixWidth={true} size="lg" className={iconColor + ' mx-1 '} />
     </div>
-}
-
-interface PendSectionProps {
-    onEdit: () => Promise<void>;
-    pendContent: any;
-}
-function ViewSections({ sections, onEdit, pendContent }: PendSectionProps & { sections: Section[]; }) {
-    return <div>
-        <div className="d-flex">
-            <ViewCheck icon="check-square" iconColor="text-primary" onClick={onEdit} />
-            <div>
-                <div className="pe-3">
-                    {pendContent}
-                </div>
-                <div className="">
-                    {sections.map(v => <ViewSection key={v.keyId} section={v} />)}
-                </div>
-            </div>
-        </div>
-    </div>;
-}
-
-function ViewSection({ section }: { section: Section }) {
-    const { _rows } = section;
-    let rows = useAtomValue(_rows);
-    return <div className="px-3 py-3 border-top">
-        {rows.map(v => <ViewRow key={v.keyId} row={v} />)}
-    </div>;
-}
-
-function ViewRow({ row }: { row: Row }) {
-    const { valRow: props } = row;
-    return <div>row: {JSON.stringify(props)}</div>;
 }

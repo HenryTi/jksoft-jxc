@@ -14,9 +14,10 @@ export interface InputDivProps extends UseInputsProps {
 }
 
 export async function inputDiv(props: InputDivProps): Promise<ValRow> {
-    const { modal, divStore, binDiv, valRow, namedResults, pendRow } = props;
-    let divEditing = new DivEditing(divStore, namedResults, binDiv, valRow);
+    const { modal, divStore, binDiv, valRow, namedResults, pendRow, valDiv } = props;
+    let divEditing = new DivEditing(divStore, namedResults, binDiv, valDiv, valRow);
     if (divEditing.isInputNeeded() === true) {
+        // divEditing.pendValue = pendRow.value;
         if (await modal.open(<PageInput divEditing={divEditing} />) !== true) return;
     }
     return divEditing.valRow;
