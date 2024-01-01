@@ -11,7 +11,9 @@ export class UI {
                 let parts = (uiIcon as string).split(',');
                 this.icon = parts[0].trim();
                 if (parts.length > 1) {
-                    this.iconColor = parts[1].trim();
+                    let iconColor = parts[1].trim();
+                    if (iconColor.indexOf('-') <= 0) iconColor = 'text-' + iconColor;
+                    this.iconColor = iconColor;
                 }
             }
         }

@@ -149,15 +149,15 @@ function ViewFolder({ folder, index, active }: { folder: Folder; index: string, 
     }
     let ui = new UI(uiDef, {
         icon: 'folder-o',
-        iconColor: 'warning',
+        iconColor: 'text-warning',
         caption: name,
     });
     return <AccordionItem eventKey={index} className="">
         <Accordion.Header>
             <Folder phrase={0} caption={ui.caption}
-                icon={ui.icon} iconColor={'text-' + (ui.iconColor ?? 'primary')} />
+                icon={ui.icon} iconColor={ui.iconColor} />
         </Accordion.Header>
-        <Accordion.Body className="ps-5 pe-0">
+        <Accordion.Body className="ps-5 pe-0 text-dark">
             <ViewFolderContent folder={folder} active={sub} />
         </Accordion.Body>
     </AccordionItem>;
@@ -171,12 +171,12 @@ function ViewFile({ file }: { file: File; }) {
     let to: string = getPath?.(id) ?? '';
     let ui = new UI(uiDef, {
         caption: name,
-        iconColor: iconColor ?? 'primary',
+        iconColor: iconColor ?? 'text-primary',
         icon,
     });
     return <Link to={to}>
-        <div className="d-flex py-3 pe-4 align-items-center">
-            <FA name={ui.icon} className={('text-' + ui.iconColor) + ' px-1 ms-4 me-4'} size={iconSize} />
+        <div className="d-flex py-2 pe-4 align-items-center text-dark">
+            <FA name={ui.icon} className={ui.iconColor + ' px-1 ms-4 me-4'} size={iconSize} />
             <span className={fs}>{ui.caption}</span>
             <div className="flex-grow-1"></div>
             <FA name="angle-right" className="text-secondary" />
