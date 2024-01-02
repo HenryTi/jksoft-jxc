@@ -2,28 +2,9 @@ import { getDays } from 'app/tool';
 import jsep from 'jsep';
 import { CalcSpace } from './CalcSpace';
 
-/*
-export enum FormulaSetType {
-    init,
-    equ,
-    show,
-}
-*/
 export class Formula {
     private readonly exp: jsep.Expression;
-    // readonly setType: FormulaSetType;
     constructor(formula: string) {
-        /*
-        let p = formula.indexOf('\n');
-        if (p > 0) {
-            let suffix = formula.substring(p + 1);
-            formula = formula.substring(0, p);
-            this.setType = FormulaSetType[suffix as keyof typeof FormulaSetType];
-        }
-        else {
-            this.setType = FormulaSetType.equ;
-        }
-        */
         this.exp = jsep(formula);
     }
 
@@ -109,8 +90,6 @@ export class Calc {
     constructor(formulas: [string, string][], values?: { [name: string]: string | number | { [prop: string]: string | number } }) {
         this.formulas = new Map();
         for (let [name, formulaText] of formulas) {
-            // let f = formulas[i];
-            // if (f === undefined) continue;
             if (formulaText === undefined) continue;
             let formula = new Formula(formulaText);
             this.formulas.set(name, formula);
@@ -135,29 +114,9 @@ export class Calc {
         this._results = undefined;
     }
 
-    /*
-    private calc() {
-        if (this._results === undefined) this._results = {};
-        for (let [name, formula] of this.formulas) {
-            let ret = formula.run(this.calcSpace);
-            if (ret === undefined) continue;
-            this.calcSpace.setValue(name, ret as any);
-            this._results[name] = ret;
-        }
-    }
-    */
-    /*
-    formulaSetType(name: string) {
-        let f = this.formulas.get(name);
-        if (f === undefined) return false;
-        return f.setType;
-    }
-    */
     private run(callback: (name: string, value: string | number) => void) {
         if (this._results === undefined) this._results = {};
         for (let [name, formula] of this.formulas) {
-            // const { setType } = formula;
-            // if (setType !== FormulaSetType.equ) continue;
             try {
                 let ret = formula.run(this.calcSpace);
                 if (ret === undefined) continue;
@@ -172,16 +131,7 @@ export class Calc {
     }
 
     setValue(name: string, value: number | string, callback: (name: string, value: string | number) => void) {
-        // this.results[name] = value;
         this.calcSpace.setValue(name, value as number);
         this.run(callback);
     }
-    /*
-    identifier(name: string): string | number {
-        return this.results[name];
-    }
-    member(name0: string, name1: string): string | number {
-        throw new Error();
-    }
-    */
 }

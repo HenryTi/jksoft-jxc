@@ -205,6 +205,7 @@ export class BudsFields {
     readonly hasIBase: boolean;
     readonly hasXBase: boolean;
     readonly valueBud: BizBud;
+    readonly fieldValue: BinField;
     constructor(bin: EntityBin, buds: BizBud[]) {
         this.entityBin = bin;
         this.fields = [];
@@ -242,6 +243,7 @@ export class BudsFields {
             let field = new Field(bud);
             this.fieldColl[field.name] = field;
             this.fields.push(field);
+            if (bud === this.valueBud) this.fieldValue = field;
         }
     }
 }
