@@ -257,6 +257,7 @@ export class BinBuds extends BudsFields {
 }
 
 export class EntityBin extends Entity {
+    main: EntityBin;
     binPicks: BinPick[];
     rearPick: BinPick;          // endmost pick
     div: BinDiv;
@@ -291,8 +292,9 @@ export class EntityBin extends Entity {
         }
         switch (i) {
             default: super.fromSwitch(i, val); break;
+            case 'main': this.main = this.biz.entityFromId<EntityBin>(val); break;
             case 'picks': this.binPicks = val; break;
-            case 'inputs': /*this.inputs = val; */ break;
+            case 'inputs': break;   // is a must
             case 'div': this.div = val; break;
             case 'i': this.i = val; break;
             case 'x': this.x = val; break;
@@ -399,7 +401,6 @@ export class EntityBin extends Entity {
             this.rearPick = this.binPicks[pLast];
             this.binPicks.splice(pLast, 1);
         }
-        // this.inputs = this.scanInputs(this.inputs);
         if (this.i !== undefined) {
             this.i = this.buildBudPickable(this.i as any);
         }

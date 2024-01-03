@@ -60,16 +60,13 @@ export function useBinPicks(bin: EntityBin) {
         const { binPicks, rearPick } = bin;
         if (binPicks === undefined) return;
         const { divStore } = sheetStore;
-        //if (namedResults === undefined) {
+        let { main } = sheetStore;
         namedResults = {
-            '%sheet': sheetStore.main.valRow, // sheetBinRow ?? {},
+            '%sheet': new Proxy(main.valRow, main.entityMain.proxyHandler()), // sheetStore.main.valRow, // sheetBinRow ?? {},
         };
-        //}
         let pickResult: PickResult;
         for (const binPick of binPicks) {
             const { name, pick } = binPick;
-            // pickResult = namedResults[name];
-            // if (pickResult !== undefined) continue;
             const { bizPhraseType } = pick;
             if (bizPhraseType === undefined) break;
             switch (bizPhraseType) {
@@ -106,3 +103,4 @@ export function useBinPicks(bin: EntityBin) {
         return ret;
     }, []);
 }
+

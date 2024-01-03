@@ -9,8 +9,8 @@ export enum ViewBudUIType {
 }
 
 export function ViewBud({ bud, value, uiType, noLabel }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; }) {
+    if (value === null) return null;
     if (bud === undefined) return <>{value}</>;
-    if (!value) return null;
     let content: any;
     const { name, caption, budDataType } = bud;
     if (value === undefined) {
