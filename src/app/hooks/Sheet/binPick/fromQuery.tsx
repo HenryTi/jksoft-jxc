@@ -125,7 +125,7 @@ export function usePickFromQuery(): [
             else {
                 onItemClick = onSingleClick;
                 cnViewItem += 'ps-3 ';
-                cnFirst = 'my-2 mx-3';
+                cnFirst = 'py-2 px-3 border-bottom ';
                 vTop = <div className="tonwa-bg-gray-2 p-3 border-bottom text-info">
                     <FA name="hand-o-down" className="me-3 text-danger" />
                     请选择
@@ -136,10 +136,10 @@ export function usePickFromQuery(): [
                 const { no, ex } = picked;
                 let vFirst: any;
                 if (ex !== undefined) {
-                    vFirst = <><b>{ex}</b> &nbsp; &nbsp; {no}</>;
+                    vFirst = <>{ex} &nbsp; &nbsp; <small className="text-secondary">{no}</small></>;
                 }
                 else if (no !== undefined) {
-                    vFirst = <><b>{no}</b></>;
+                    vFirst = <>{no}</>;
                 }
                 if (vFirst !== undefined) {
                     vFirst = <div className={cnFirst}>
@@ -148,7 +148,7 @@ export function usePickFromQuery(): [
                 }
                 return <div>
                     {vFirst}
-                    <RowCols>
+                    <RowCols contentClassName="py-2">
                         {propArr.map((v, index) => {
                             return <VNamedBud key={index} {...v} />;
                         })}

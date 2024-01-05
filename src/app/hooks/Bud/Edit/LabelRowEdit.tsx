@@ -3,20 +3,20 @@ import { EditProps } from "./model";
 import { Pencil } from "app/hooks/tool";
 
 export function LabelRowEdit(props: EditProps) {
-    let { label, plus, children, onEditClick, readonly } = props;
+    let { label, flag, children, onEditClick, readonly } = props;
     let right: any = <span className="p-3">&nbsp;</span>;
     if (onEditClick !== null) {
         if (readonly !== true) {
-            right = <div onClick={onEditClick} className="cursor-pointer p-3">
+            right = <div onClick={onEditClick} className="cursor-pointer py-3 px-1">
                 <Pencil />
             </div>;
         }
     }
     let vLabel: any;
-    if (plus === true) {
+    if (flag !== undefined) {
         vLabel = <>
-            <FA name="star-o" className="text-danger me-2" />
             {label}
+            {flag}
         </>;
     }
     else {
@@ -24,7 +24,7 @@ export function LabelRowEdit(props: EditProps) {
     }
     return <LabelRow {...props}>
         {vLabel}
-        <div className="ms-3 position-relative">{children}</div>
+        <div className="ms-2 position-relative">{children}</div>
         {right}
     </LabelRow>;
 }

@@ -11,6 +11,7 @@ export interface EditBudValue {
 export interface ViewBudRowProps {
     name: string;
     label: string | JSX.Element;
+    labelSize?: 0 | 1 | 2;
     readonly?: boolean;
     type: 'string' | 'number' | 'text';
 }
@@ -39,8 +40,9 @@ export interface EditBudProps {
     id: number;
     value: BudValue;
     budEditing: IBudEditing;
+    labelSize?: 0 | 1 | 2;
     // bizBud: BizBud;
-    plus?: boolean;             // 重要的字段
+    flag?: JSX.Element;             // 重要字段标志
     readonly?: boolean;
     options?: RegisterOptions;
     onChanged?: (bizBud: BizBud, value: string | number | BudCheckValue) => Promise<void> | void;
@@ -52,10 +54,11 @@ export interface EditBudTemplateProps extends EditBudProps {
 
 export interface EditProps extends IEditing {
     label: string | JSX.Element;
+    labelSize?: 0 | 1 | 2;
     children: React.ReactNode;
     onEditClick: () => void;
     readonly?: boolean;
-    plus?: boolean;             // 重要的，label上做标识
+    flag?: JSX.Element;             // 重要的，label上做标识
 }
 
 export type ViewValueEdit = (props: EditProps) => JSX.Element;

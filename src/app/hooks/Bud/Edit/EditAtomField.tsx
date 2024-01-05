@@ -11,7 +11,7 @@ interface OpProps {
     pickValue?: (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) => Promise<string | number>;
 }
 
-function ViewBud({ label, name, readonly, type, value: initValue, saveBud, id, pickValue: pickBudValue, ValueTemplate }: ViewBudProps & OpProps) {
+function ViewBud({ label, name, labelSize, readonly, type, value: initValue, saveBud, id, pickValue: pickBudValue, ValueTemplate }: ViewBudProps & OpProps) {
     let uqApp = useUqApp();
     let [value, setValue] = useState(initValue);
     async function onValueChanged(value: string | number, checked: boolean) {
@@ -23,7 +23,7 @@ function ViewBud({ label, name, readonly, type, value: initValue, saveBud, id, p
         }
         setValue(value);
     }
-    return <LabelRowEdit label={label}
+    return <LabelRowEdit label={label} labelSize={labelSize}
         value={value} readonly={readonly} type={type}
         onValueChanged={onValueChanged}
         pickValue={pickBudValue === null ? null : pickBudValue ?? pickValue}

@@ -29,7 +29,7 @@ export function PageSites() {
         let { no, ex } = value;
         return <div className="d-flex">
             <small className="text-secondary me-5 w-8c">{no}</small>
-            <b>{ex ?? '(无名机构)'}</b></div>;
+            {ex ?? '(无名机构)'}</div>;
     }
     function ViewItemSite({ value }: { value: any }) {
         return <div className="px-3 py-2">

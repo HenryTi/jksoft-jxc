@@ -9,7 +9,7 @@ import { ViewBudEmpty } from "../../tool";
 export function EditBudRadio(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
     const modal = useModal();
-    const { id, readonly, plus, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
+    const { id, readonly, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
     const { bizBud, error } = budEditing;
     const { budDataType, caption, name, ui } = bizBud;
     let { options: { items } } = budDataType as BudRadio;
@@ -100,7 +100,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
         setValue({ [optionsItemPhrase]: true });
     }
     return <ValueEdit label={caption ?? name}
-        plus={plus}
+        flag={flag}
         readonly={readonly}
         onEditClick={onEditClick}
         {...budEditing}

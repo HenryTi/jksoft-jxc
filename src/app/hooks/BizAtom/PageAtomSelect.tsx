@@ -69,7 +69,7 @@ export function PageAtomSelect(props: PropsAtomSelect) {
 function ViewAtom({ value }: { value: Atom; }) {
     let { no, ex } = value;
     return <div>
-        <div><b>{ex}</b></div>
-        <div className='small text-secondary'>{no}</div>
+        {ex}
+        <span className='ms-3 small text-secondary'>{no}</span>
     </div>;
 }

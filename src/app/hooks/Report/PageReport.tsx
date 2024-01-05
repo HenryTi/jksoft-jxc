@@ -139,7 +139,7 @@ function PageResult({ entityReport, atomId, top }: { entityReport: EntityReport;
             <div className="px-3 py-2 tonwa-bg-gray-2 d-flex align-items-end">
                 <div className="flex-grow-1">
                     <div className="small text-secondary">{no}</div>
-                    <div><b>{ex}</b></div>
+                    <div>{ex}</div>
                 </div>
                 <ViewValue values={sums} titles={title} isSum={true} />
                 <FA name="angle-right" className="ms-5 invisible" />

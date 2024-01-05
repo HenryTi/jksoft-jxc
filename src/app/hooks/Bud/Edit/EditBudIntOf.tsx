@@ -6,7 +6,7 @@ import { BudCheckEditValue, BudCheckValue } from "tonwa-app";
 
 export function EditBudIntOf(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
-    const { id, readonly, plus, value: initValue, budEditing, ViewValueEdit: ValueEdit } = props;
+    const { id, readonly, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit } = props;
     const { bizBud, error } = budEditing;
     const { budDataType, caption, name } = bizBud;
     let { options: { items } } = budDataType as BudRadio;
@@ -42,7 +42,7 @@ export function EditBudIntOf(props: EditBudTemplateProps) {
     }
     return <ValueEdit label={caption ?? name}
         readonly={readonly}
-        plus={plus}
+        flag={flag}
         onEditClick={null}
         {...budEditing}
     >

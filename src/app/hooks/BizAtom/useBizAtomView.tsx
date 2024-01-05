@@ -7,6 +7,7 @@ import { EditBudLabelRow, EditAtomField, BudEditing } from "../Bud";
 import { ViewBudRowProps } from "../Bud";
 import { BizBud } from "app/Biz";
 import { Tabs, Tab } from "react-bootstrap";
+import { RowCols } from "../tool";
 
 export function useBizAtomView(options: OptionsUseBizAtom) {
     const { id } = useParams();
@@ -37,29 +38,33 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; }) {
     let lbId = <span className="text-primary fw-normal">
         <FA name="compass" className="text-danger me-1" /> ID
     </span>;
+    const cnColumns2 = 'gx-0 row row-cols-1 row-cols-md-2 row-cols-lg-3';
     const fieldRows: ViewBudRowProps[] = [
         { name: 'id', label: lbId, readonly: true, type: 'number', },
         { name: 'no', label: NOLabel ?? '编号', readonly: true, type: 'string', },
         { name: 'ex', label: exLabel ?? '名称', type: 'string', },
     ];
-    const vFieldRows = fieldRows.map((v, index) => <React.Fragment key={index}>
-        <EditAtomField key={index} {...v} id={id} value={main[v.name]} saveField={saveField} saveBud={saveBud} />
-        <Sep />
-    </React.Fragment>);
-    function buildVPropRows(props: BizBud[], plus: boolean = false) {
+    const vFieldRows = <div className={cnColumns2}>{
+        fieldRows.map((v, index) => <div key={index} className="col">
+            <EditAtomField key={index} {...v} id={id} value={main[v.name]} saveField={saveField} saveBud={saveBud} labelSize={2} />
+            <Sep />
+        </div>)
+    }</div>;
+    function buildVPropRows(props: BizBud[], flag: JSX.Element = undefined) {
         return props.map(v => {
             if (v === undefined) debugger;
             let budEditing = new BudEditing(v);
             let { id: budId } = v;
             let prop = buds[budId];
-            return <React.Fragment key={budId}>
+            return <div key={budId} className="col">
                 <EditBudLabelRow
                     id={id}
-                    plus={plus}
+                    flag={flag}
+                    labelSize={2}
                     budEditing={budEditing} value={prop as any}
                 />
                 <Sep />
-            </React.Fragment>;
+            </div>;
         });
     }
     let vPropRows: any;
@@ -69,17 +74,21 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; }) {
     else {
         const { home, must, arr } = budGroups;
         const vAtomId = String(entityAtom.id);
-        vPropRows = <Tabs className="mt-3 ps-3 border-bottom border-primary-subtle" id={vAtomId} defaultActiveKey={'+'}>
+        vPropRows = <Tabs className="mt-3 ps-3" id={vAtomId} defaultActiveKey={'+'}>
             <Tab eventKey={'+'} title={<FA name="star-o" className="text-danger" />}>
-                {buildVPropRows(must.buds, true)}
-                {buildVPropRows(home.buds)}
+                <div className={cnColumns2}>
+                    {buildVPropRows(must.buds, <span className="text-danger">*</span>)}
+                    {buildVPropRows(home.buds)}
+                </div>
             </Tab>
             {arr.map(v => {
                 const { id, name, caption, buds } = v;
                 if (id === undefined) debugger;
                 const vId = String(id);
                 return <Tab key={id} eventKey={vId} title={caption ?? name}>
-                    {buildVPropRows(buds)}
+                    <div className={cnColumns2}>
+                        {buildVPropRows(buds)}
+                    </div>
                 </Tab>;
             })}
         </Tabs>;

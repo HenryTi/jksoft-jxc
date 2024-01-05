@@ -6,7 +6,8 @@ export interface ContainerProps {
 }
 type ContainerType = (props: ContainerProps) => JSX.Element;
 
-const defaultLeftSize = 3;
+// const defaultLeftSize = 3;
+// const 
 const defaultLabelClassName = ' py-1 tonwa-bg-gray-1 border-end small text-secondary ';
 const defaultMidClassName = ' ';
 function DefaultLabelContainer({ children }: ContainerProps) {
@@ -27,7 +28,7 @@ function DefaultRightContainer({ children }: ContainerProps) {
 
 export interface LabelRowPropsBase {
     className?: string;
-    labelSize?: number;
+    labelSize?: 0 | 1 | 2;
     labelAlign?: 'start' | 'center' | 'end';
     labelClassName?: string;
     LabelContainer?: ContainerType;
@@ -43,8 +44,14 @@ export interface LabelRowProps extends LabelRowPropsBase {
     children: ReactNode;
 }
 
+const cnCol = [
+    [' col-3 col-sm-2 ', ' col-9 col-sm-10 '],
+    [' col-3 col-sm-2 ', ' col-9 col-sm-10 '],
+    [' col-5 ', ' col-7 '],
+];
+
 export function LabelRow({ className, labelSize, labelAlign, labelClassName, LabelContainer, midClassName, MidContainer, RightContainer, vAlign, to, children }: LabelRowProps) {
-    labelSize = labelSize ?? defaultLeftSize;
+    labelSize = labelSize ?? 1;
     let cnLabelAlign: string;
     if (LabelContainer) {
         cnLabelAlign = '';
@@ -75,13 +82,14 @@ export function LabelRow({ className, labelSize, labelAlign, labelClassName, Lab
     else {
         midEnd = 2;
     }
+    let [cnColLabel, cnColContent] = cnCol[labelSize];
     let midArr: any[] = arr.slice(1, midEnd);
-    let cn = 'row mx-0 ' + (className ?? 'bg-white');
+    let cn = 'row mx-0 gx-0 ' + (className ?? 'bg-white');
     let content = <div className={cn}>
-        <div className={`col-sm-${labelSize} d-flex ${vAlignClassName} ${cnLabelAlign} ${labelClassName}`}>
+        <div className={cnColLabel + ` d-flex pe-2 text-nowrap text-truncate ${vAlignClassName} ${cnLabelAlign} ${labelClassName}`}>
             <LabelContainer>{arr[0]}</LabelContainer>
         </div>
-        <div className={`col-sm-${12 - labelSize} gx-0 d-flex ${vAlignClassName} ${midClassName}`}>
+        <div className={cnColContent + ` gx-0 d-flex ${vAlignClassName} ${midClassName}`}>
             <MidContainer>{midArr.map((v, index) => <React.Fragment key={index}>{v}</React.Fragment>)}</MidContainer>
             {right}
         </div>

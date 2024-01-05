@@ -9,7 +9,7 @@ import { ViewBudEmpty } from "../../tool";
 export function EditBudCheck(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
     const modal = useModal();
-    const { id, readonly, plus, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
+    const { id, readonly, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
     const { bizBud } = budEditing;
     const { budDataType, caption, name, ui } = bizBud;
     const { options: { items } } = budDataType as BudCheck;
@@ -104,7 +104,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
 
     return <ValueEdit label={caption ?? name}
         readonly={readonly}
-        plus={plus}
+        flag={flag}
         onEditClick={onEditClick}
         {...budEditing}
     >
