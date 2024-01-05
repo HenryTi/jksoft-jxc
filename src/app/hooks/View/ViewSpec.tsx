@@ -87,7 +87,7 @@ export function ViewSpec({ id, uiType, noLabel }: { id: number; uiType?: ViewBud
 
 export function ViewBudSpec({ id, bud, noLabel }: { id: number; bud: BizBud; noLabel?: boolean; }) {
     function ViewAtom({ no, ex, entity }: { no: string; ex: string; entity?: EntityAtomID; }) {
-        let title = '编号: ' + no;
+        let title = `${ex} ${no}`;
         if (noLabel === true) {
             return <span title={title}>{ex}</span>;
         }
@@ -122,7 +122,7 @@ export function ViewSpecBaseOnly({ id }: { id: number; }) {
 
 export function ViewSpecR({ id }: { id: number; }) {
     function ViewAtom({ no, ex }: { no: string; ex: string; }) {
-        return <div title={'编号: ' + no}>
+        return <div title={ex + ' ' + no}>
             {ex}
         </div>;
     }

@@ -26,8 +26,10 @@ export function ViewBud({ bud, value, uiType, noLabel }: { bud: BizBud; value: a
             case EnumBudType.dec:
             case EnumBudType.none:
             case EnumBudType.int:
+                content = <>{value}</>; break;
             case EnumBudType.char:
-            case EnumBudType.str: content = <>{value}</>; break;
+            case EnumBudType.str:
+                content = <span title={value}>{value}</span>; break;
             case EnumBudType.radio: content = radio(bud, value); break;
             case EnumBudType.check: content = check(bud, value); break;
             case EnumBudType.intof: content = intof(bud, value); break;
@@ -41,7 +43,7 @@ export function ViewBud({ bud, value, uiType, noLabel }: { bud: BizBud; value: a
         return <div className="col">{content}</div>;
     }
     //return <div className="col"><small className="text-secondary me-2">{caption ?? name}</small>{content}</div>
-    return <LabelBox label={caption ?? name} colon={true} >{content}</LabelBox>;
+    return <LabelBox label={caption ?? name} colon={true}>{content}</LabelBox>;
 }
 
 function ViewAtomInBud({ value }: { value: any; }) {

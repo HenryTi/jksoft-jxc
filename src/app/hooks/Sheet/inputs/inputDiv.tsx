@@ -67,7 +67,7 @@ function PageInput({ divEditing }: { divEditing: DivEditing; }) {
     return <Page header={binDiv.ui?.caption}>
         <div className="my-3">
             <form className="container" onSubmit={handleSubmit(onSubmitForm)}>
-                <FormRowsView rows={formRows} register={register} errors={errors} />
+                <FormRowsView rows={formRows} register={register} errors={errors} setValue={setValue} />
             </form>
         </div>
     </Page>

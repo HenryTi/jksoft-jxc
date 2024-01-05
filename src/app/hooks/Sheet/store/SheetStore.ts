@@ -419,6 +419,7 @@ export class SheetStore extends KeyIdObject {
         let { id } = this.main.valRow;
         if (id === undefined || id === 0) return;
         let { main, details } = await this.loadBinData(id);
+        if (main === undefined) return;
         this.main.setValue(main);
         this.divStore.load(details);
         if (this.detail !== undefined) {

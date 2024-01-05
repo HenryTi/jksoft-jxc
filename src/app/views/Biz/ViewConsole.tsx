@@ -49,8 +49,8 @@ export function ViewConsole() {
         />
     }
     return <div>
-        {viewEditing}
         {viewFolder}
+        {viewEditing}
         {arr.map((v, index) => <ViewFolderLink key={index} center={v} />)}
     </div>;
 }
@@ -119,7 +119,8 @@ function ViewFolderContent({ folder, active }: { folder: Folder; active: Active;
         let ks = getActiveKeys();
         setActiveKeys(ks);
     }
-    return <Accordion flush={true} className="" activeKey={activeKeys} onSelect={onSelect}>
+    // activeKey={activeKeys} onSelect={onSelect}
+    return <Accordion flush={true} className="">
         {folders.map((v, index) => <ViewFolder key={index} folder={v} index={String(index)} active={active} />)}
         {files.map((v, index) => <React.Fragment key={index}>
             {index > 0 && <Sep />}

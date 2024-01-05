@@ -108,8 +108,13 @@ SHEET 入库单 {
     Detail 入库单明细;
 } 
 BIN 入库单主表 {
-    Pick 保管员 FROM 职员信息;
-    I '保管员' = 保管员; 
+    Pick 查询物流中心 from 物流中心信息; 
+    Pick 保管员 from 职员信息;
+    I '保管员' 职员信息 = 保管员;
+    X '物流中心' 物流中心信息 = 查询物流中心;
+    Prop {
+      备注 char;
+    }
 } 
 BIN 入库单明细 ver 0.2 {
     Pick 采购机构 FROM 公司机构信息;
@@ -173,6 +178,17 @@ BIN 入库单明细 ver 0.2 {
         Biz Pend -= value;
         --Biz Title 库存.数量 of I += Value;
         Biz Title 库存.数量 of %I += %value;
+      Biz Title 库存.数量 of (#物流中心货品(%sheet.X,%I)) += %value;
+      Biz Title 库存.可出数量 of (#物流中心货品(%sheet.X,%I)) += %value;
+     
+     --写法1 
+     Biz Title 库存.数量 of (#物流中心货位货品new((#物流中心货位new(%sheet.X,%货位)),%I)) += %value;
+     
+     --Biz Title 库存.数量 of (#物流中心机构货品((#物流中心机构(收获物流中心,采购机构)),%I)) += %value
+     --写法2 
+     --VAR a = (#物流中心货位new(%sheet.X,%货位));
+     --VAR b = (#物流中心货位货品new(a,%I));
+     --Biz Title 库存.数量 of b += %value;
     };
 }
 

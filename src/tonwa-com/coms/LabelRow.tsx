@@ -7,7 +7,7 @@ export interface ContainerProps {
 type ContainerType = (props: ContainerProps) => JSX.Element;
 
 const defaultLeftSize = 3;
-const defaultLabelClassName = ' py-1 tonwa-bg-gray-1 fw-bold col-form-label border-end';
+const defaultLabelClassName = ' py-1 tonwa-bg-gray-1 border-end small text-secondary ';
 const defaultMidClassName = ' ';
 function DefaultLabelContainer({ children }: ContainerProps) {
     return <>

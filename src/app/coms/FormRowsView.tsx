@@ -1,6 +1,6 @@
-import { EntityAtomID } from "app/Biz";
+import { BizBud, EntityAtom, EntityAtomID } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom, useSelectAtom } from "app/hooks";
+import { BudEditing, EditBudInline, ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom, useSelectAtom } from "app/hooks";
 import { RowCols } from "app/hooks/tool";
 import { HTMLInputTypeAttribute, ReactNode, useState } from "react";
 import {
@@ -8,9 +8,9 @@ import {
     , RegisterOptions, UseFormRegister
     , FieldError, UseFormSetError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";
-import { IDView } from "tonwa-app";
+import { BudValue, IDView } from "tonwa-app";
 import { FA } from "tonwa-com";
-import { EnumAtom } from "uqs/UqDefault";
+import { BizPhraseType, EnumAtom } from "uqs/UqDefault";
 
 export interface BandProps {
     label?: string | JSX.Element;
@@ -272,20 +272,42 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
         <ViewSpec id={options.value} noLabel={true} />
         </div>
         */
-        return <Band label={label}>
-            <ViewSpecBaseOnly id={value} />
-            <RowCols>
-                <ViewSpecNoAtom id={value} />
-            </RowCols>
-        </Band>;
+        /*
+        <ViewSpecBaseOnly id={value} />
+        <RowCols>
+            <ViewSpecNoAtom id={value} />
+        </RowCols>
+            <ViewSpec id={options.value} noLabel={true} />
+        */
+        let { name } = row as FormAtom;
+        function onChange(target: { name: string; type: 'number'; value: string; }) {
+            options.onChange?.({ target });
+        }
+        let error: FieldError = errors[name] as FieldError;
+        if (entityAtom.bizPhraseType === BizPhraseType.spec) {
+            return <Band label={label}>
+                <ViewSpecBaseOnly id={value} />
+                <RowCols>
+                    <ViewSpecNoAtom id={value} />
+                </RowCols>
+            </Band>;
+        }
+        return <ViewFormAtom row={row as FormAtom} label={label} error={error}
+            entityAtom={entityAtom as EntityAtom}
+            inputProps={register(name, options)}
+            setValue={setValue}
+            clearErrors={clearErrors}
+            onChange={onChange} />;
     }
     if (atom !== undefined) {
         let { name } = row as FormAtom;
         let error: FieldError = errors[name] as FieldError;
         return <ViewFormAtom row={row as FormAtom} label={label} error={error}
+            entityAtom={null}
             inputProps={register(name, options)}
             setValue={setValue}
-            clearErrors={clearErrors} />;
+            clearErrors={clearErrors}
+            onChange={undefined} />;
     }
 
     const { name, type, readOnly, right, step } = row as FormInput;
@@ -316,34 +338,39 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     }
 }
 
-function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue }: {
+function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, entityAtom, onChange }: {
     row: FormAtom; label: string | JSX.Element;
+    entityAtom: EntityAtom;
     setValue: UseFormSetValue<any>;
     error: FieldError;
     // setError: UseFormSetError<any>;
     clearErrors: UseFormClearErrors<any>;
     inputProps: UseFormRegisterReturn,
+    onChange: (props: { name: string; value: string, type: 'number' }) => void;
 }) {
     const uqApp = useUqApp();
     const { uq } = uqApp;
     const selectAtom = useSelectAtom();
-    const { name, atom, default: defaultValue, readOnly } = row;
+    const { name, default: defaultValue, readOnly } = row;
     const [id, setId] = useState<number>(defaultValue);
     async function onSelectAtom() {
-        if (readOnly === true) return;
+        // if (readOnly === true) return;
         clearErrors?.(name);
-        let ret = await selectAtom(undefined/*atom*/);
+        let ret = await selectAtom(entityAtom);
         if (ret === undefined) return;
         const { id } = ret;
-        setValue(name, id);
+        if (setValue !== undefined) {
+            setValue(name, id);
+        }
         setId(id);
+        onChange?.({ name, value: String(id), type: 'number' });
     }
     function ViewAtom({ value }: { value: any }) {
         const { no, ex } = value;
         return <>{ex} &nbsp; <small className="text-muted">{no}</small></>;
     }
     let content: any;
-    if (id === undefined && atom !== null) {
+    if (id === undefined && entityAtom) {
         let { placeHolder } = row;
         if (!placeHolder) placeHolder = '点击选择';
         content = <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>;

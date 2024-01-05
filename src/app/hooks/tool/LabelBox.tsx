@@ -31,7 +31,7 @@ export function LabelBox({ label, children, required, title, colon, editable }: 
     let vColon: any;
     if (colon === true) vColon = ':';
     let content = editable === false ?
-        <div className="d-flex align-items-center border-bottom border-secondary-subtle tonwa-bg-gray-1 pt-1 pb-2 px-2">
+        <div className="d-flex align-items-center border-bottom border-secondary-subtle tonwa-bg-gray-1 pt-1 pb-2 px-2 text-nowrap text-truncate">
             {children}
         </div>
         :
@@ -44,7 +44,7 @@ export function LabelBox({ label, children, required, title, colon, editable }: 
             <div className={cnLabelContainer} title={labelTitle}>
                 <span className={cnLabel}>{vLabel}</span> {vColon}
             </div>
-            <div className="col-7 ps-1 py-1" title={title}>
+            <div className="col-7 ps-1 py-1 text-nowrap text-truncate" title={title}>
                 {content}
             </div>
         </div>
