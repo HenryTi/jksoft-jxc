@@ -96,19 +96,6 @@ export class SheetMain extends BaseObject {
             x,
         };
         let ret = await this.sheetStore.saveSheet(this.valRow);
-        /*
-        const { uq, entitySheet } = this.sheetStore;
-        let ret = await uq.SaveSheet.submit({
-            phrase: entitySheet.id,
-            no: undefined,
-            i: i === 0 ? undefined : i,
-            x: x === 0 ? undefined : x,
-            value: undefined,
-            price: undefined,
-            amount: undefined,
-            props: 
-        });
-        */
         let { id, no } = ret;
         row.id = id;
         setAtomValue(this._valRow, { ...row });
@@ -251,35 +238,7 @@ export class Row extends BaseObject {
             console.error(err);
             throw new Error(err);
         }
-        /*
-        let propArr: [number, 'int' | 'dec' | 'str', string | number][] = [];
-        for (let bud of detail.entityBin.buds) {
-            let { buds } = this.valRow;
-            let { id, name, budDataType } = bud;
-            let value = (buds as any)[name];
-            if (value === undefined) {
-                value = (buds as any)[id];
-                if (value === undefined) continue;
-            }
-            let type: 'int' | 'dec' | 'str';
-            switch (budDataType.type) {
-                default:
-                case EnumBudType.atom:
-                case EnumBudType.int: type = 'int'; break;
-                case EnumBudType.dec: type = 'dec'; break;
-                case EnumBudType.str:
-                case EnumBudType.char: type = 'str'; break;
-            }
-            if (type === undefined) continue;
-            propArr.push([id, type, value]);
-        }
-        const { id } = await uq.SaveDetail.submit({
-            base: main.binRow.id,
-            phrase: this.section.coreDetail.entityBin.id,
-            ...this.valRow,
-            props: propArr,
-        } as any);
-        */
+
         let entityBin = this.section.coreDetail.entityBin;
         let id = await this.sheetStore.saveDetail(entityBin, entityBin.buds, this.valRow);
         let org = this.valRow.id;
@@ -317,7 +276,6 @@ export class Row extends BaseObject {
         this.valRow.buds = row.buds;
         this.valRow.pend = row.pend;
         this.valRow.owned = row.owned;
-        // Object.assign(this.props, row);
     }
 }
 
@@ -608,25 +566,6 @@ export class SheetStore extends KeyIdObject {
     async saveDetail(entityBin: EntityBin, buds: BizBud[], valRow: ValRow) {
         let { id, i, x, value, price, amount, pend, origin } = valRow;
         let propArr = this.getPropArr(valRow, buds);
-        /*
-        let propArr: [number, 'int' | 'dec' | 'str', string | number][] = [];
-        for (let bud of buds) {
-            let { id, name, budDataType } = bud;
-            let value = (budsValues as any)[id];
-            if (value === undefined) continue;
-            let type: 'int' | 'dec' | 'str';
-            switch (budDataType.type) {
-                default:
-                case EnumBudType.atom:
-                case EnumBudType.int: type = 'int'; break;
-                case EnumBudType.dec: type = 'dec'; break;
-                case EnumBudType.str:
-                case EnumBudType.char: type = 'str'; break;
-            }
-            if (type === undefined) continue;
-            propArr.push([id, type, value]);
-        }
-        */
         let param: ParamSaveDetail = {
             base: this.main.valRow.id,
             phrase: entityBin.id,

@@ -27,14 +27,13 @@ export function PagePend(props: PagePendProps) {
         });
         let ret: ValRow[] = [];
         for (let pendRow of pendRows) {
-            const { pend, detail, value/*, sheet*/ } = pendRow;
+            const { pend, detail, value } = pendRow;
             let rowProps: ValRow = {
                 ...detail,
                 value,
                 origin: detail.id,             // origin detail id
                 pend,
                 pendValue: value,
-                //sheet,
                 id: undefined,              // 保存之后才有的新输入的 detail id。编辑时有
             };
             detail.id = undefined;          // 取的是origin detail id

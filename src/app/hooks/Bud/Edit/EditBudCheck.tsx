@@ -9,7 +9,7 @@ import { ViewBudEmpty } from "../../tool";
 export function EditBudCheck(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
     const modal = useModal();
-    const { id, readonly, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
+    const { id, readonly, labelSize, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
     const { bizBud } = budEditing;
     const { budDataType, caption, name, ui } = bizBud;
     const { options: { items } } = budDataType as BudCheck;
@@ -70,8 +70,8 @@ export function EditBudCheck(props: EditBudTemplateProps) {
         else {
             content = <div className="d-flex flex-wrap py-1">
                 {arr.map(v => {
-                    return <span key={v} className="me-4 my-1 w-min-12c">
-                        <FA name="angle-double-right" className="me-1 text-info" />
+                    return <span key={v} className="me-4 my-1">
+                        <FA name="check-circle" className="me-1 text-info small" />
                         {v}
                     </span>
                 })}
@@ -104,6 +104,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
 
     return <ValueEdit label={caption ?? name}
         readonly={readonly}
+        labelSize={labelSize}
         flag={flag}
         onEditClick={onEditClick}
         {...budEditing}

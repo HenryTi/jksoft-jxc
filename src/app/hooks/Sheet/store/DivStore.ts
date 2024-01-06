@@ -181,8 +181,10 @@ export class DivStore {
             // top div
             atomValDivs = this.valDivs.atomValDivs;
             const { pend } = valRow;
-            let _valDiv = this.pendColl[pend];
-            setAtomValue(_valDiv, undefined);
+            if (this.pendColl !== undefined) {
+                let _valDiv = this.pendColl[pend];
+                setAtomValue(_valDiv, undefined);
+            }
         }
         else {
             atomValDivs = valDiv.atomValDivs;
