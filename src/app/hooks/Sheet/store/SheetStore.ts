@@ -482,7 +482,7 @@ export class SheetStore extends KeyIdObject {
             break;
         }
     }
-
+    /*
     async loadPend(entityPend: EntityPend, params: any): Promise<{ pendRows: PendRow[]; ownerColl: OwnerColl; }> {
         let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId: undefined }, undefined, 100);
         this.pendColl = {};
@@ -513,7 +513,7 @@ export class SheetStore extends KeyIdObject {
         }
         return { pendRows, ownerColl };
     }
-
+    */
     async uqGetPend(entityPend: EntityPend, params: any, pendId: number) {
         let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
         return ret;

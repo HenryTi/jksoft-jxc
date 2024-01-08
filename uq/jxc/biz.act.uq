@@ -252,25 +252,6 @@ RETURNS ret (
     }
 
     PROC SaveBinBuds(id, props);
-    /*
-    JSONTABLE tbl (
-        bud ID PATH '$[0]', 
-        type CHAR(10) PATH '$[1]',
-        value CHAR(200) PATH '$[2]'
-    ) FROM props PATH '$[*]';
-
-    FOR (VAR bud ID, type CHAR(10), value CHAR(200) OF SELECT a.bud, a.type, a.value FROM tbl as a) {
-        if type='int' {
-            WITH IxBudInt I=id X=bud SET value=value;
-        }
-        elseif type='dec' {
-            WITH IxBudDec I=id X=bud SET value=value;
-        }
-        elseif type='str' {
-            WITH IxBudStr I=id X=bud SET value=value;
-        }
-    }
-    */
 
     INTO ret SELECT id;
 };
