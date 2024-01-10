@@ -16,6 +16,7 @@ import { EntityAssign } from './EntityAssign';
 import { BizBud } from './BizBud';
 import { AtomsBuilder } from './AtomsBuilder';
 import { EntityConsole } from './EntityConsole';
+import { EntityIn, EntityOut } from './EntityInOut';
 
 enum EnumEntity {
     sheet,
@@ -34,6 +35,8 @@ enum EnumEntity {
     tree,
     tie,
     console,
+    in,
+    out,
 };
 
 interface Group {
@@ -68,6 +71,8 @@ export class Biz {
     readonly assigns: EntityAssign[] = [];
 
     readonly roles: EntityRole[] = [];
+    readonly ins: EntityIn[] = [];
+    readonly outs: EntityOut[] = [];
 
     readonly groups: Group[] = [];
     readonly _refresh = atom(false);
@@ -121,6 +126,8 @@ export class Biz {
             [EnumEntity.tree]: this.buildTree,
             [EnumEntity.tie]: this.buildTie,
             [EnumEntity.console]: this.buildConsole,
+            [EnumEntity.in]: this.buildIn,
+            [EnumEntity.out]: this.buildOut,
         }
         for (let group of this.groups) {
             let { entities } = group;
@@ -176,6 +183,8 @@ export class Biz {
             EnumEntity.report,
             EnumEntity.tree,
             EnumEntity.tie,
+            EnumEntity.in,
+            EnumEntity.out,
         ];
         for (let i of typeSeq) {
             let entityArr = arr[i];
@@ -245,6 +254,15 @@ export class Biz {
                     [
                         [this.roles, '许可', 'user-o'],
                         //[this.permits, '许可', 'user'],
+                    ]
+            },
+            {
+                name: 'interface',
+                caption: '接口',
+                entities:
+                    [
+                        [this.ins, '接收', 'user-o'],
+                        [this.outs, '发送', 'user-o'],
                     ]
             },
         );
@@ -338,13 +356,6 @@ export class Biz {
         this.queries.push(bizEntity);
         return bizEntity;
     }
-    /*
-    private buildPick = (id: number, name: string, type: string): Entity => {
-        let bizEntity = new EntityPick(this, id, name, type);
-        this.picks.push(bizEntity);
-        return bizEntity;
-    }
-    */
     private buildOptions = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityOptions(this, id, name, type);
         this.options.push(bizEntity);
@@ -395,6 +406,18 @@ export class Biz {
     private buildConsole = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityConsole(this, id, name, type);
         this.bizConsole = bizEntity;
+        return bizEntity;
+    }
+
+    private buildIn = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityIn(this, id, name, type);
+        this.ins.push(bizEntity);
+        return bizEntity;
+    }
+
+    private buildOut = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityOut(this, id, name, type);
+        this.outs.push(bizEntity);
         return bizEntity;
     }
 }
