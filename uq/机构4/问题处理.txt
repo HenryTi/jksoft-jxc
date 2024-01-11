@@ -17,3 +17,43 @@ ID ASC，
 5、基础信息和单据中除了基础信息，其他字段能否直接录入，不要在弹出窗体中填写---后期前台修改
 6、明细批选的数据能赋值主表字段---后期底层修改
 
+IN inTest {
+    prop a int; 
+    prop b dec; 
+    prop c date; 
+    prop d char; 
+    ACT {
+        VAR sheetId ID; 
+        WITH Sheet ID TO sheetId SET no='1', ex='bb';
+    };
+    ARR arr { 
+        PROP d1 int; 
+        PROP d2 dec;
+        PROP d3 date; 
+        PROP d4 char;
+        ACT {
+            VAR b ID = 1; 
+            VAR c DEC(18,4) = 1.0; 
+        };
+    }
+};
+
+IN inTest (
+    a int; 
+    b dec; 
+    c date; 
+    d char; 
+)
+ARR arr (
+    d1 int; 
+    d2 dec;
+    d3 date; 
+    d4 char;
+) {
+    VAR sheetId ID; 
+    WITH Sheet ID TO sheetId SET no='1', ex='bb';
+    FOR ARR arr { 
+        VAR b ID = 1; 
+        VAR c DEC(18,4) = 1.0; 
+    }
+}
