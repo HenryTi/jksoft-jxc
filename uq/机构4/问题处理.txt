@@ -55,5 +55,6 @@ ARR arr (
     FOR ARR arr { 
         VAR b ID = 1; 
         VAR c DEC(18,4) = 1.0; 
+        BIZ Detail 采购单明细 OF 采购单=id SET i=1, x=2, 采购机构=2; 
     }
 }
