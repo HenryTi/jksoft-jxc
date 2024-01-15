@@ -26,7 +26,6 @@ enum EnumEntity {
     spec,
     duo,
     query,
-    // pick,
     options,
     report,
     permit,

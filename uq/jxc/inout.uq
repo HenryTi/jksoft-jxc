@@ -1,0 +1,48 @@
+ID IOQueue (
+    id MINUTE,
+    KEY endPoint ID IOEndPoint,
+    KEY base ID,                -- phrase of IN and OUT
+    KEY id,
+    value JSON,
+    INDEX base_id(base, id) UNIQUE,
+);
+
+-- 外部机构
+ID IOOuter (
+    id,
+    KEY base ID,                -- site
+    KEY id,
+    no NO,
+    ex EX,
+    token TEXT,                 -- 访问token，许可
+);
+
+ENUM EnumIOState (
+    ok                  = 0,
+    stopped             = 1,
+    errSqlProc          = 11,
+    errOutConnection    = 21,
+    errUnknown          = 999,
+);
+
+ID IOEndPoint (
+    id,
+    KEY outer ID IOOuter,
+    KEY inout ID,               -- IN or OUT bizphrase id
+    no NO,
+    ex EX,
+    type TINYINT,               -- 1: in, 2: push, 3: pull
+    url CHAR(200),
+    token TEXT,                 -- 访问token，许可。如果null，则取Outer token
+    cur BIGINT DEFAULT 0,       -- 当前已经处理完成指针，指向IOQUeue
+    state ENUM EnumIOState DEFAULT EnumIOState.ok,     -- 当前处理完成状态。如果不是0=正常，则停止等待。
+    INDEX inout_outer (inout, outer) UNIQUE;
+);  
+
+ID IOAtom (
+    id,                         -- IO atom id
+    KEY outer ID,               -- outer
+    KEY phrase ID,              -- inner atom phrase
+    KEY no,                     -- outer atom no
+    atom ID,                    -- inner id
+);
