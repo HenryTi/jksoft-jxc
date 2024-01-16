@@ -1,10 +1,24 @@
 ID IOQueue (
     id MINUTE,
     KEY endPoint ID IOEndPoint,
-    KEY base ID,                -- phrase of IN and OUT
+    -- KEY base ID,                -- phrase of IN and OUT
     KEY id,
     value JSON,
-    INDEX base_id(base, id) UNIQUE,
+    done TINYINT,                   -- 0: 未处理，1：已完成，-1: 出错
+    orgId ID,                       -- 防止重复，暂不处理
+    INDEX endPoint_orgId(endPoint, orgId) UNIQUE,
+);
+
+IX IOInOut (
+    i TINY,                         -- 0: out, 1: in
+    x,                              -- 待处理的IOQueue id
+);
+
+IDX IODone (
+    id,
+    endPoint ID IOEndPoint,
+    result JSON,
+    INDEX endPoint_id(endPoint, id) UNIQUE,
 );
 
 -- 外部机构
@@ -36,13 +50,134 @@ ID IOEndPoint (
     token TEXT,                 -- 访问token，许可。如果null，则取Outer token
     cur BIGINT DEFAULT 0,       -- 当前已经处理完成指针，指向IOQUeue
     state ENUM EnumIOState DEFAULT EnumIOState.ok,     -- 当前处理完成状态。如果不是0=正常，则停止等待。
-    INDEX inout_outer (inout, outer) UNIQUE;
+    INDEX inout_outer (inout, outer) UNIQUE,
 );  
+
+ID IOAtomType (
+    id,
+    KEY outer ID,               -- outer
+    KEY phrase ID,              -- inner atom phrase
+);
 
 ID IOAtom (
     id,                         -- IO atom id
-    KEY outer ID,               -- outer
-    KEY phrase ID,              -- inner atom phrase
+    KEY type ID IOAtomType,
     KEY no,                     -- outer atom no
     atom ID,                    -- inner id
+    INDEX type_atom(type, atom),
 );
+
+PROC ProcessIOIn (
+    batchNumber INT,            -- 批处理数量，默认1
+) {
+    IF batchNumber IS NULL {
+        SET batchNumber=1;
+    }
+    VAR i INT = 0, p BIGINT = 0, id ID=0, sql CHAR(500), site ID, inout ID;
+    WHILE i<batchNumber {
+        SET inout=null;
+        SET id=b.id, site=d.base, inout=c.inout
+            FROM IOInOut as a 
+                JOIN IOQueue as b ON a.i=1 AND b.id=a.x
+                JOIN IOEndPoint as c ON c.id=b.endPoint
+                JOIN IOOuter as d ON d.id=c.outer
+            WHERE a.x>id
+            ORDER BY a.x ASC 
+            LIMIT 1;
+        IF inout IS NULL { BREAK; }
+        TRANS START;
+        SET sql = CONCAT('call `$site`.`', site, '.', inout, '`(?);');
+        ExecSql sql USING id;
+        TRANS COMMIT;
+        SET i=i+1;
+    }
+}
+
+PROC ProcessIOOut (
+    batchNumber INT,            -- 批处理数量，默认1
+)
+RETURNS ret (
+    * IOQueue,
+) {
+    IF batchNumber IS NULL {
+        SET batchNumber=1;
+    }
+    INTO ret SELECT * b
+        FROM IOInOut as a JOIN IOQueue as b ON a.i=0 AND b.id=a.x
+        ORDER BY a.x ASC
+        LIMIT batchNumber;
+}
+
+PROC ProcessIOOutDone (
+    id ID,
+    result JSON,
+) {
+    VAR done ID, endPoint ID;
+    SET endPoint=(SELECT a.endPoint FROM IOQueue as a WHERE a.id=id);
+    IF endPoint IS NULL {
+        RETURN;
+    }
+    TRANS START;
+    IF result IS NOT NULL {
+        WITH IODone ID=id SET endPoint=endPoint, result=result;
+        SET done=2;
+    }
+    ELSE {
+        SET done=1;
+    }
+    WITH IOQueue ID=id SET done=done;
+    WITH IOInOut I=0 X=id DEL;
+    TRANS COMMIT;
+}
+
+PROC SaveIOQueue(
+    endPoint ID,
+    value JSON,
+    orgId ID,                   -- 防止重复
+) {
+    VAR id ID;
+    IF NOT EXISTS(SELECT a.id FROM IOQueue as a WHERE a.endPoint=endPoint AND a.orgId=orgId) {
+        WITH IOQueue ID to id KEY(endPoint) SET value=value, orgId=orgId;
+    }
+}
+
+ACT SaveIOAtom (
+    id ID,
+    outer ID,
+    phrase ID,                  -- inner atom phrase
+    no NO,                      -- outer atom no
+    atom ID,                    -- inner id
+) 
+RETURNS ret (
+    id ID,
+) {
+    VAR ioAtomType ID = a.id FROM IOAtomType as a WHERE a.outer=outer AND a.phrase=phrase;
+    IF id IS NULL {
+        WITH IOAtom as a ID to id KEY(ioAtomType, no) SET a.atom=atom;
+    }
+    ELSEIF no IS NOT NULL {
+        WITH IOAtom as a ID=id SET a.no=no;
+    }
+    ELSEIF atom IS NOT NULL {
+        WITH IOAtom as a ID=id SET a.atom=atom;
+    }
+    ELSE {
+        WITH IOAtom as a ID=id DEL;
+    }
+    INTO ret SELECT id;
+}
+
+BIZ QUERY GetIOAtoms (
+    outer ID,
+    phrase ID,
+)
+PAGE (
+    atom ID ASC,
+    id ID,
+) {
+    PAGE SELECT a.id, a.atom
+        FROM IOAtom as a JOIN IOAtomType as b ON b.id=a.type
+        WHERE b.outer=outer AND b.phrase=phrase AND a.atom>$pageStart
+        ORDER BY a.atom ASC
+        LIMIT $pageSize;
+}

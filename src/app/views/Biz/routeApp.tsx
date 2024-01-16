@@ -1,5 +1,4 @@
 import { Route } from "react-router-dom";
-import { UqApp } from "app/UqApp";
 import { routeMy } from "./My";
 
 import { routeAtomCenter } from "./Atom";
@@ -9,6 +8,7 @@ import { routePermits } from "./Permits";
 import { routeAssignCenter } from "./Assign";
 import { routeTieCenter } from "./Tie";
 import { routeEditingCenter } from "./Editing";
+import { routeIOCenter } from "./IO";
 
 export const pathHome = 'home';
 export function routeApp() {
@@ -19,6 +19,7 @@ export function routeApp() {
         {routeReportCenter()}
         {routeAssignCenter()}
         {routeTieCenter()}
+        {routeIOCenter()}
         {routeMy}
         {routePermits}
     </>;

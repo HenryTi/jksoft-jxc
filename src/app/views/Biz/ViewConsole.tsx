@@ -24,12 +24,12 @@ const activeRoot: Active = {
 export function ViewConsole() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
-    const { editing, sheet, atom, report, assign, tie, me, setting } = centers;
+    const { editing, sheet, atom, report, assign, tie, io, me, setting } = centers;
     const { bizConsole } = biz;
     let arr: Center[];
     let viewFolder: any, viewEditing: any;
     if (bizConsole === undefined) {
-        arr = [sheet, atom, report, assign, tie, me, setting,];
+        arr = [sheet, atom, report, assign, tie, io, me, setting,];
     }
     else {
         arr = [me, setting,];
@@ -119,7 +119,6 @@ function ViewFolderContent({ folder, active }: { folder: Folder; active: Active;
         let ks = getActiveKeys();
         setActiveKeys(ks);
     }
-    // activeKey={activeKeys} onSelect={onSelect}
     return <Accordion flush={true} className="">
         {folders.map((v, index) => <ViewFolder key={index} folder={v} index={String(index)} active={active} />)}
         {files.map((v, index) => <React.Fragment key={index}>

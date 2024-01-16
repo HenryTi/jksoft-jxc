@@ -2,16 +2,6 @@ import { pathAssign, pathAtomList, pathReport, pathTie } from "app/hooks";
 import { to62 } from "tonwa-com";
 import { BizPhraseType } from "uqs/UqDefault";
 
-/*
-export const pathAtomCenter = 'atom-center';
-export const pathSheetCenter = 'sheet-center';
-export const pathReportCenter = 'report';
-export const pathAssignCenter = 'assign-center';
-export const pathTieCenter = 'tie-center';
-export const captionTieCenter = '关系中心';
-export const pathMy = 'my';
-export const pathActSetting = 'act-setting';
-*/
 export interface Center {
     path: string;
     caption: string;
@@ -62,6 +52,12 @@ export const centers: { [name: string]: Center } = {
         icon: 'link',
         iconColor: 'text-success',
         getPath: pathTie,
+    },
+    io: {
+        path: 'io',
+        caption: '数据接口',
+        icon: 'refresh',
+        iconColor: 'text-info',
     },
     me: {
         caption: '我的',
