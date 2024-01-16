@@ -3,7 +3,7 @@ import { Page, useModal } from "tonwa-app";
 import { FormRow, FormRowsView } from "app/coms";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
-import { OptionsUseBizAtom, pathAtomView, useBizAtom } from "./useBizAtom";
+import { OptionsUseBizAtom, pathAtom, useBizAtom } from "./useBizAtom";
 import { useEffectOnce } from "tonwa-com";
 import { EntityAtom } from "app/Biz";
 import { useState } from "react";
@@ -56,7 +56,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
     function ViewNew() {
         const navigate = useNavigate();
         function afterSubmit(atom: Atom) {
-            navigate(`../${pathAtomView(entityId, atom.id)}`, { replace: true });
+            navigate(`../${pathAtom.view(entityId, atom.id)}`, { replace: true });
         }
         return <ViewNewBase afterSubmit={afterSubmit} />;
     }

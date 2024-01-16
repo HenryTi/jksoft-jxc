@@ -291,9 +291,26 @@ export class Biz {
             }
             group.hasEntity = hasEntity;
         }
+        this.buildSysEntities();
         this.hasEntity = allHasEntity;
         this.atomBuilder = undefined;
         this.refresh();
+    }
+
+    private buildSysEntities() {
+        const sysEntitys: { name: string; caption: string; }[] = [
+            { name: '$ioouter', caption: '接口机构' },
+            { name: '$ioapp', caption: '接口App' },
+        ];
+        for (let se of sysEntitys) {
+            const { name, caption } = se;
+            let entity = this.entities[name];
+            let { ui } = entity;
+            if (ui === undefined) {
+                entity.ui = ui = {};
+            }
+            ui.caption = caption;
+        }
     }
 
     refresh() {

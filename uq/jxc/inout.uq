@@ -14,6 +14,12 @@ IX IOInOut (
     x,                              -- 待处理的IOQueue id
 );
 
+-- Outer, App, OuterApp, AppInOut, 
+-- Duo EndPoint {
+--    I OuterApp;
+--    X AppInOut;
+-- };
+
 IDX IODone (
     id,
     endPoint ID IOEndPoint,
@@ -29,6 +35,14 @@ ID IOOuter (
     no NO,
     ex EX,
     token TEXT,                 -- 访问token，许可
+);
+
+ID IOApp (
+    id,
+    KEY base ID,
+    KEY id,
+    no NO,
+    ex EX,
 );
 
 ENUM EnumIOState (

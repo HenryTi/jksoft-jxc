@@ -1,4 +1,4 @@
-import { pathAssign, pathAtomList, pathReport, pathTie } from "app/hooks";
+import { pathAssign, pathAtom, pathReport, pathTie } from "app/hooks";
 import { to62 } from "tonwa-com";
 import { BizPhraseType } from "uqs/UqDefault";
 
@@ -24,7 +24,7 @@ export const centers: { [name: string]: Center } = {
         caption: '档案中心',
         icon: 'database',
         iconColor: 'text-success',
-        getPath: pathAtomList,
+        getPath: pathAtom.list,
     },
     sheet: {
         path: 'sheet-center',

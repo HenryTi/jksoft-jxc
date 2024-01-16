@@ -7,7 +7,7 @@ import React from "react";
 import { gSubject } from "./AtomSubject";
 import { GAtom } from "app/tool";
 import { useUqApp } from "app/UqApp";
-import { pathAtomList } from "app/hooks";
+import { pathAtom } from "app/hooks";
 import { gPersonPost } from "./AtomPersonPost";
 import { gGroupPost } from "./AtomGroupPost";
 import { centers } from "app/views/center";
@@ -35,9 +35,9 @@ export function PageAchieve() {
         }
         {
             gs.map((v, index) => {
-                const { name, caption } = uqApp.biz.entities[v.name];
+                const { id, caption } = uqApp.biz.entities[v.name];
                 return <React.Fragment key={index}>
-                    <Link to={`../${pathAtomList(name)}`} className="px-3 py-2 border-bottom align-items-center">
+                    <Link to={`../${pathAtom.list(id)}`} className="px-3 py-2 border-bottom align-items-center">
                         {caption}
                     </Link>
                     <Sep />
