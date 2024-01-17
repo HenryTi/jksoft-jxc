@@ -1,7 +1,6 @@
 import { useUqApp } from "app";
-import { Entity, EnumBudType } from "app/Biz";
+import { BizBud, BudArr, Entity, EnumBudType } from "app/Biz";
 import { EntityIn, EntityOut } from "app/Biz/EntityInOut";
-import { pathAtom } from "app/hooks";
 import { centers } from "app/views/center";
 import { Link, Route, useParams } from "react-router-dom";
 import { Page } from "tonwa-app";
@@ -101,15 +100,28 @@ function PageIODef() {
     let ioPhraseId = from62(io);
     const entity = biz.entityFromId<EntityIn | EntityOut>(ioPhraseId);
     const { name, caption, buds } = entity;
-    return <Page header={caption ?? name}>
-        <div>
+    function VBuds({ buds }: { buds: BizBud[] }) {
+        return <div>
             {buds.map(v => {
                 const { id, caption, name, budDataType } = v;
-                return <div key={id} className="border-bottom px-3 py-2">
-                    {caption ?? name} {EnumBudType[budDataType.type]}
-                </div>;
+                if (budDataType.type === EnumBudType.arr) {
+                    return <div key={id} className="border-bottom px-3 py-2">
+                        <div>{caption ?? name}</div>
+                        <div className="ps-4">
+                            <VBuds buds={(budDataType as BudArr).buds} />
+                        </div>
+                    </div>;
+                }
+                else {
+                    return <div key={id} className="border-bottom px-3 py-2">
+                        {caption ?? name} {EnumBudType[budDataType.type]}
+                    </div>;
+                }
             })}
-        </div>
+        </div>;
+    }
+    return <Page header={caption ?? name}>
+        <VBuds buds={buds} />
     </Page>;
 }
 

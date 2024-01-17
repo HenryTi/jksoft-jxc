@@ -2,6 +2,8 @@ import { BizPhraseType, UqExt } from "uqs/UqDefault";
 import { Biz } from "./Biz";
 import { EntityAtomID } from "./EntityAtom";
 import { UIStyle } from "app/ui";
+import { BizBud } from "./BizBud";
+import { Entity } from "./Entity";
 
 export class BizBase {
     readonly biz: Biz;
@@ -53,6 +55,30 @@ export class BizBase {
                 this.ui = val;
                 break;
         }
+    }
+
+    protected fromProp(entity: Entity, prop: any) {
+        if (prop === undefined) debugger;
+        let { id, name, dataType } = prop;
+        let bizBud = new BizBud(this.biz, id, name, dataType, entity);
+        let { budDataType } = bizBud;
+        if (budDataType === undefined) {
+            debugger;
+            return;
+        }
+        budDataType.fromSchema(prop);
+        bizBud.fromSchema(prop);
+        return bizBud;
+    }
+
+    protected fromProps(entity: Entity, props: any[]) {
+        let buds: BizBud[] = [];
+        for (let prop of props) {
+            let bizBud = this.fromProp(entity, prop);
+            if (bizBud === undefined) continue;
+            buds.push(bizBud);
+        }
+        return buds;
     }
 }
 

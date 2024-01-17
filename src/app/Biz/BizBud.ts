@@ -23,6 +23,8 @@ export enum EnumBudType {
 
     date = 41,
     datetime = 42,
+
+    arr = 99,
 };
 
 export abstract class BudDataType {
@@ -47,6 +49,10 @@ abstract class BudDataString extends BudDataType {
 
 export class BudNone extends BudDataString {
     readonly type = EnumBudType.none;
+}
+export class BudArr extends BudDataString {
+    readonly type = EnumBudType.arr;
+    buds: BizBud[];
 }
 export class BudInt extends BudDataNumber {
     readonly type = EnumBudType.int;
@@ -158,6 +164,7 @@ export class BizBud extends BizBase {
         let budDataType: BudDataType;
         switch (dataType) {
             case EnumBudType.none: budDataType = new BudNone(); break;
+            case EnumBudType.arr: budDataType = new BudArr(); break;
             case EnumBudType.int: budDataType = new BudInt(); break;
             case EnumBudType.dec: budDataType = new BudDec(); break;
             case EnumBudType.char:
@@ -189,6 +196,9 @@ export class BizBud extends BizBase {
         switch (i) {
             default:
                 super.fromSwitch(i, val);
+                break;
+            case 'props':
+                (this.budDataType as BudArr).buds = this.fromProps(this.entity, val);
                 break;
             case 'min': this.budDataType.min = val; break;
             case 'max': this.budDataType.max = val; break;
