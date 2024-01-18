@@ -33,12 +33,6 @@ function PageIOCenter() {
             path: `../${pathIOApp.list(ioApp.id)}`,
         },
         {
-            caption: '基础数据对照表',
-            icon: 'list-alt',
-            iconColor: '',
-            path: `../${pathMap}`,
-        },
-        {
             caption: '接口定义',
             icon: 'sign-in',
             iconColor: 'text-success',
