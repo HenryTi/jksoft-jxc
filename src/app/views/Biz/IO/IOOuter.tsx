@@ -12,6 +12,7 @@ import { CheckAsync, FA, LabelRow, Sep, from62 } from "tonwa-com";
 import { ReturnSearchAtom$page } from "uqs/UqDefault";
 import { BudColl, DuoObj, budArrToColl } from "./model";
 import { Entity, EntityAtom } from "app/Biz";
+import { PageAtomMap, PageSelectAtomEntity } from "./IOAtom";
 
 const ioOuter = 'ioouter';
 const $ioApp = '$ioapp';
@@ -52,7 +53,7 @@ const cnRowCols = ' row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3 ';
 const cnCommon = '  ';
 const cnItem = cnCommon + ' p-3 cursor-pointer border rounded-2 bg-white ';
 function ViewOuterApps() {
-    const { uq, biz: { entities } } = useUqApp();
+    const { uq, biz } = useUqApp();
     const modal = useModal();
     const { id } = useParams();
     const outerId = from62(id);
@@ -62,7 +63,7 @@ function ViewOuterApps() {
         let atoms: Entity[] = [];
         for (let v of ret) {
             let { id, x, props } = v;
-            let atomEntity = entities[x];
+            let atomEntity = biz.entityFromId(x);
             if (atomEntity !== undefined) {
                 atoms.push(atomEntity);
             }
@@ -100,37 +101,47 @@ function ViewOuterApps() {
     }
     function ViewAtomItem({ value }: { value: Entity }) {
         const { name, caption } = value;
-        return <div className={cnItem}>
+        function onAtom() {
+            modal.open(<PageAtomMap entity={value as EntityAtom} />);
+        }
+        return <div className={cnItem} onClick={onAtom}>
             {caption ?? name}
         </div>
     }
     async function onAddAtom() {
-        alert('正在实现...');
+        let ids: Set<number> = new Set(atoms.map(v => v.id));
+        await modal.open(<PageSelectAtomEntity outerId={outerId} ids={ids} />);
+        let { atoms: atomsArr } = await getAppDuos();
+        setAtoms(atomsArr);
     }
-    return <div className="tonwa-bg-gray-1 mt-3">
-        <div className="small text-secondary px-3 pt-2 pb-1 border-bottom">
-            接口App
-        </div>
-        <div className="container my-3">
-            <div className={cnRowCols}>
-                {apps.map(v => <div className="col" key={v.id}>
-                    <ViewDuoItem value={v} />
-                </div>)}
-                <div className="col d-flex align-items-center">
-                    <button className="btn btn-outline-primary" onClick={onAddApp}><FA name="plus" className="me-2" />增删</button>
+    return <div className="">
+        <div className="tonwa-bg-gray-1 mt-4">
+            <div className="tonwa-bg-gray-2 small text-secondary px-3 pt-2 pb-1 border-bottom">
+                接口App
+            </div>
+            <div className="container py-3">
+                <div className={cnRowCols}>
+                    {apps.map(v => <div className="col" key={v.id}>
+                        <ViewDuoItem value={v} />
+                    </div>)}
+                    <div className="col d-flex align-items-center">
+                        <button className="btn btn-outline-primary" onClick={onAddApp}><FA name="plus" className="me-2" />增删</button>
+                    </div>
                 </div>
             </div>
         </div>
-        <div className="small text-secondary px-3 pt-2 pb-1 border-bottom">
-            基础数据对照表
-        </div>
-        <div className="container my-3">
-            <div className={cnRowCols}>
-                {atoms.map(v => <div className="col" key={v.id}>
-                    <ViewAtomItem value={v} />
-                </div>)}
-                <div className="col d-flex align-items-center">
-                    <button className="btn btn-outline-primary" onClick={onAddAtom}><FA name="plus" className="me-2" />增删</button>
+        <div className="tonwa-bg-gray-1 mt-4">
+            <div className="tonwa-bg-gray-2 small text-secondary px-3 pt-2 pb-1 border-bottom mt-3">
+                基础数据对照表
+            </div>
+            <div className="container py-3">
+                <div className={cnRowCols}>
+                    {atoms.map(v => <div className="col" key={v.id}>
+                        <ViewAtomItem value={v} />
+                    </div>)}
+                    <div className="col d-flex align-items-center">
+                        <button className="btn btn-outline-primary" onClick={onAddAtom}><FA name="plus" className="me-2" />增删</button>
+                    </div>
                 </div>
             </div>
         </div>

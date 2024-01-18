@@ -8,7 +8,7 @@ import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
 import { BizPhraseType, UqExt } from 'uqs/UqDefault';
 import { atom } from 'jotai';
-import { Biz, EntityAtom } from './Biz';
+import { Biz } from './Biz';
 import { ViewsRoutes } from './views';
 
 // const pathBase = 'jksoft-jxc';
