@@ -7,9 +7,9 @@ import { Page } from "tonwa-app";
 import { FA, LMR, List, Sep, from62, to62 } from "tonwa-com";
 import { PageIOOuterList, PageIOOuterNew, PageIOOuterView, pathIOOuter } from "./IOOuter";
 import { PageIOAppList, PageIOAppNew, PageIOAppView, pathIOApp } from "./IOApp";
+import { PageMap, pathMap } from "./IOMap";
 
-const pathIn = `${centers.io.path}/in`;
-const pathOut = `${centers.io.path}/out`;
+const pathList = `${centers.io.path}/list`;
 const cnHeader = 'tonwa-bg-gray-2 pt-2 small pb-1 px-3';
 const cn = ' d-flex px-4 py-3 border-bottom align-items-center ';
 
@@ -33,40 +33,18 @@ function PageIOCenter() {
             path: `../${pathIOApp.list(ioApp.id)}`,
         },
         {
-            caption: '入口定义',
-            icon: 'sign-in',
-            iconColor: 'text-success',
-            path: `../${pathIn}`,
+            caption: '基础数据对照表',
+            icon: 'list-alt',
+            iconColor: '',
+            path: `../${pathMap}`,
         },
         {
-            caption: '出口定义',
-            icon: 'sign-out',
-            iconColor: 'text-warning',
-            path: `../${pathOut}`,
+            caption: '接口定义',
+            icon: 'sign-in',
+            iconColor: 'text-success',
+            path: `../${pathList}`,
         },
     ];
-
-    function ViewItem({ value, icon, color }: { value: Entity; icon: string; color: string; }) {
-        const { id, name, caption } = value;
-        return <Link to={`../${pathDef(id)}`}>
-            <div className="px-3 py-2 align-items-center d-flex">
-                <FA name={icon} className={'me-3 ' + color} fixWidth={true} size="lg" />
-                <span className="text-body">{caption ?? name}</span>
-            </div>
-        </Link>;
-    }
-
-    function ViewItemIn({ value }: { value: Entity; }) {
-        return <ViewItem value={value} icon="sign-in" color="text-success" />;
-    }
-    function ViewItemOut({ value }: { value: Entity; }) {
-        return <ViewItem value={value} icon="sign-out" color="text-primary" />;
-    }
-
-    function onAddOuter() {
-        alert('新增接口机构正在实现中...');
-    }
-    const outers: any[] = [];
     return <Page header={centers.io.caption}>
         {folders.map((v, index) => {
             return <FolderLink key={index} {...v} className={cn} onClick={undefined} />;
@@ -105,16 +83,16 @@ function PageIODef() {
             {buds.map(v => {
                 const { id, caption, name, budDataType } = v;
                 if (budDataType.type === EnumBudType.arr) {
-                    return <div key={id} className="border-bottom px-3 py-2">
-                        <div>{caption ?? name}</div>
+                    return <div key={name} className="border-bottom px-3 py-2">
+                        <div>{caption ?? name} []</div>
                         <div className="ps-4">
                             <VBuds buds={(budDataType as BudArr).buds} />
                         </div>
                     </div>;
                 }
                 else {
-                    return <div key={id} className="border-bottom px-3 py-2">
-                        {caption ?? name} {EnumBudType[budDataType.type]}
+                    return <div key={id ?? name} className="border-bottom px-3 py-2">
+                        <span className="d-inline-block w-min-8c">{caption ?? name}</span> {EnumBudType[budDataType.type].toUpperCase()}
                     </div>;
                 }
             })}
@@ -125,8 +103,11 @@ function PageIODef() {
     </Page>;
 }
 
-function PageDefs({ entities, header, icon, color }: { entities: Entity[]; header: string; icon: string; color: string; }) {
-    function ViewItem({ value }: { value: Entity; }) {
+function PageIOList() {
+    const uqApp = useUqApp();
+    const { biz } = uqApp;
+    const { ins, outs } = biz;
+    function ViewItem({ value, icon, color }: { value: Entity; icon: string; color: string; }) {
         const { id, name, caption } = value;
         return <Link to={`../${pathDef(id)}`}>
             <div className="px-3 py-2 align-items-center d-flex">
@@ -135,8 +116,19 @@ function PageDefs({ entities, header, icon, color }: { entities: Entity[]; heade
             </div>
         </Link>;
     }
-    return <Page header={header}>
-        <List items={entities} ViewItem={ViewItem} />
+    function ViewItemIn({ value }: { value: Entity; }) {
+        return <ViewItem value={value} icon="sign-in" color="text-success" />
+    }
+    function ViewItemOut({ value }: { value: Entity; }) {
+        return <ViewItem value={value} icon="sign-out" color="text-warning" />
+    }
+
+    return <Page header="接口定义">
+        <div className={cnHeader}>入口</div>
+        <List items={ins} ViewItem={ViewItemOut} />
+        <div className="mt-3" />
+        <div className={cnHeader}>出口</div>
+        <List items={outs} ViewItem={ViewItemIn} />
     </Page>;
 }
 
@@ -151,17 +143,12 @@ export function pathDef(phraseId: number | string) {
     return `${centers.io.path}/${ioPath(phraseId)}/def`;
 }
 export function routeIOCenter() {
-    const uqApp = useUqApp();
-    const { biz } = uqApp;
-    const { ins, outs } = biz;
-    // let ioOuter = entities['$ioouter'];
-    // let ioApp = entities['$ioapp'];
     const n = ':io';
     const atom = ':atom';
     return <>
         <Route path={centers.io.path} element={<PageIOCenter />} />
-        <Route path={pathIn} element={<PageDefs header="入口" entities={ins} icon="sign-in" color="text-success" />} />
-        <Route path={pathOut} element={<PageDefs header="出口" entities={outs} icon="sign-out" color="text-warning" />} />
+        <Route path={pathList} element={<PageIOList />} />
+        <Route path={pathMap} element={<PageMap />} />
         <Route path={pathDef(n)} element={<PageIODef />} />
         <Route path={pathIOOuter.list(atom)} element={<PageIOOuterList />} />
         <Route path={pathIOOuter.new(atom)} element={<PageIOOuterNew />} />

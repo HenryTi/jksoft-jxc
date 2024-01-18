@@ -1,6 +1,6 @@
 ID IOQueue (
     id MINUTE,
-    KEY endPoint ID IOEndPoint,
+    KEY endPoint ID, -- IOEndPoint,
     -- KEY base ID,                -- phrase of IN and OUT
     KEY id,
     value JSON,
@@ -14,19 +14,13 @@ IX IOInOut (
     x,                              -- 待处理的IOQueue id
 );
 
--- Outer, App, OuterApp, AppInOut, 
--- Duo EndPoint {
---    I OuterApp;
---    X AppInOut;
--- };
-
 IDX IODone (
     id,
-    endPoint ID IOEndPoint,
+    endPoint ID, -- IOEndPoint,
     result JSON,
     INDEX endPoint_id(endPoint, id) UNIQUE,
 );
-
+/*
 -- 外部机构
 ID IOOuter (
     id,
@@ -44,7 +38,7 @@ ID IOApp (
     no NO,
     ex EX,
 );
-
+*/
 ENUM EnumIOState (
     ok                  = 0,
     stopped             = 1,
@@ -55,17 +49,17 @@ ENUM EnumIOState (
 
 ID IOEndPoint (
     id,
-    KEY outer ID IOOuter,
+    KEY outer ID,               -- IOOuter,
     KEY inout ID,               -- IN or OUT bizphrase id
-    no NO,
-    ex EX,
-    type TINYINT,               -- 1: in, 2: push, 3: pull
-    url CHAR(200),
-    token TEXT,                 -- 访问token，许可。如果null，则取Outer token
+    KEY app ID,                 -- IOApp
+    -- type TINYINT,               -- 1: in, 2: push, 3: pull
+    -- url CHAR(200),
+    -- token TEXT,                 -- 访问token，许可。如果null，则取Outer token
     cur BIGINT DEFAULT 0,       -- 当前已经处理完成指针，指向IOQUeue
     state ENUM EnumIOState DEFAULT EnumIOState.ok,     -- 当前处理完成状态。如果不是0=正常，则停止等待。
-    INDEX inout_outer (inout, outer) UNIQUE,
-);  
+    valid TINYINT DEFAULT 1,
+    INDEX inout_outer (inout, outer, app) UNIQUE,
+);
 
 ID IOAtomType (
     id,
@@ -75,11 +69,47 @@ ID IOAtomType (
 
 ID IOAtom (
     id,                         -- IO atom id
-    KEY type ID IOAtomType,
+    KEY type ID,                -- DUO(outer, atomPhrase) -- IOAtomType,
     KEY no,                     -- outer atom no
     atom ID,                    -- inner id
     INDEX type_atom(type, atom),
 );
+
+Biz AC BuildIOEndPoint(
+    outer ID,
+    app ID,
+    io ID,
+) {
+    VAR endPoint ID;
+    IF outer = 0 {
+        -- app, io>0 增，io<0 减
+        FOR (var outerId ID OF SELECT a.id as outerId
+                FROM ATOM as a 
+                    JOIN BizPhrase as b ON b.id=a.base
+                WHERE b.name='$ioouter' AND b.base=$site
+        ) {
+            IF io>0 {
+                WITH IOEndPoint ID to endPoint KEY(outerId, io, app) SET valid=1;
+            }
+            ELSE {
+                WITH IOEndPoint KEY(outerId, -io, app) SET valid=0;
+            }
+        }
+    }
+    ELSE {
+        -- outer，app>0 增，app<0 减 
+        IF app>0 {
+            FOR (var ioId ID OF SELECT a.x as ioId FROM Duo as a WHERE a.i=app AND a.valid=1) {
+                WITH IOEndPoint ID to endPoint KEY(outer, ioId, app) SET valid=1;
+            }
+        }
+        ELSE {
+            FOR (var ioId ID OF SELECT a.x as ioId FROM Duo as a WHERE a.i=-app AND a.valid=1) {
+                WITH IOEndPoint KEY(outer, ioId, -app) SET valid=0;
+            }
+        }
+    }
+}
 
 PROC ProcessIOIn (
     batchNumber INT,            -- 批处理数量，默认1
@@ -94,7 +124,8 @@ PROC ProcessIOIn (
             FROM IOInOut as a 
                 JOIN IOQueue as b ON a.i=1 AND b.id=a.x
                 JOIN IOEndPoint as c ON c.id=b.endPoint
-                JOIN IOOuter as d ON d.id=c.outer
+                JOIN BizPhrase as d ON d.id=c.inout
+                -- JOIN IOOuter as d ON d.id=c.outer
             WHERE a.x>id
             ORDER BY a.x ASC 
             LIMIT 1;

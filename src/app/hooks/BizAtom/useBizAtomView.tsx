@@ -43,12 +43,14 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
         { name: 'no', label: NOLabel ?? '编号', readonly: true, type: 'string', },
         { name: 'ex', label: exLabel ?? '名称', type: 'string', },
     ];
-    const vFieldRows = <div className={cnColumns2}>{
-        fieldRows.map((v, index) => <div key={index} className="col">
-            <EditAtomField key={index} {...v} id={id} value={main[v.name]} saveField={saveField} saveBud={saveBud} labelSize={2} />
-            <Sep />
-        </div>)
-    }</div>;
+    const vFieldRows = <div className={cnColumns2}>
+        {
+            fieldRows.map((v, index) => <div key={index} className="col">
+                <EditAtomField key={index} {...v} id={id} value={main[v.name]} saveField={saveField} saveBud={saveBud} labelSize={2} />
+                <Sep />
+            </div>)
+        }
+    </div>;
     function buildVPropRows(props: BizBud[], flag: JSX.Element = undefined) {
         return props.map(v => {
             if (v === undefined) debugger;
