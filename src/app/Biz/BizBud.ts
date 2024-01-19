@@ -32,11 +32,22 @@ export abstract class BudDataType {
     abstract get dataType(): string;
     min: string;
     max: string;
-    fromSchema(schema: any) { }
+    fromSchema(schema: any) {
+        this.min = schema.min;
+        this.max = schema.max;
+    }
     scan(biz: Biz, bud: BizBud) { }
     valueToContent(value: string | number) {
         return value;
     }
+    /*
+    fromSwitch(entity: Entity, i: string, val: any) {
+        switch (i) {
+            case 'min': this.min = val; break;
+            case 'max': this.max = val; break;
+        }
+    }
+    */
 }
 
 abstract class BudDataNumber extends BudDataType {
@@ -53,6 +64,26 @@ export class BudNone extends BudDataString {
 export class BudArr extends BudDataString {
     readonly type = EnumBudType.arr;
     buds: BizBud[];
+    private props: any;
+    override fromSchema(schema: any): void {
+        this.props = schema.props;
+    }
+    scan(biz: Biz, bud: BizBud) {
+        this.buds = bud.entity.fromProps(this.props);
+        for (let bud of this.buds) {
+            bud.scan();
+        }
+        this.props = undefined;
+    }
+    /*
+    override fromSwitch(entity: Entity, i: string, val: any) {
+        switch (i) {
+            case 'props':
+                this.buds = entity.fromProps(val);
+                break;
+        }
+    }
+    */
 }
 export class BudInt extends BudDataNumber {
     readonly type = EnumBudType.int;
@@ -86,6 +117,7 @@ export class BudAtom extends BudDataNumber {
         this.bizAtom = biz.entities[this.atom] as EntityAtom;
     }
 }
+/*
 export class BudID extends BudDataNumber {
     readonly type = EnumBudType.ID;
     private IDName: string;
@@ -97,6 +129,18 @@ export class BudID extends BudDataNumber {
         if (this.IDName !== undefined) {
             this.ID = (biz.uqApp.uq as any)[this.IDName] as ID;
         }
+    }
+}
+*/
+export class BudIDIO extends BudDataNumber {
+    readonly type = EnumBudType.ID;
+    private atom: number;
+    bizAtom: EntityAtom;
+    fromSchema(schema: any) {
+        this.atom = schema.atom;
+    }
+    override scan(biz: Biz, bud: BizBud) {
+        this.bizAtom = biz.entityFromId(this.atom);
     }
 }
 abstract class BudOptions extends BudDataType {
@@ -173,7 +217,7 @@ export class BizBud extends BizBase {
             case EnumBudType.atom:
                 budDataType = new BudAtom(); break;
             case EnumBudType.ID:
-                budDataType = new BudID(); break;
+                budDataType = new BudIDIO(); break;
             case EnumBudType.pick:
                 budDataType = new BudPickable(); break;
             case EnumBudType.intof: budDataType = new BudIntOf(); break;
@@ -193,17 +237,16 @@ export class BizBud extends BizBase {
     }
 
     protected fromSwitch(i: string, val: any) {
+        // this.budDataType.fromSwitch(this.entity, i, val);
         switch (i) {
             default:
                 super.fromSwitch(i, val);
                 break;
-            case 'props':
-                (this.budDataType as BudArr).buds = this.fromProps(this.entity, val);
-                break;
-            case 'min': this.budDataType.min = val; break;
-            case 'max': this.budDataType.max = val; break;
             case 'value': this.defaultValue = val; break;
             case 'params': this.atomParams = val; break;
+            case 'props':
+            case 'min':
+            case 'max':
             case 'show':
             case 'ex':
             case 'items':

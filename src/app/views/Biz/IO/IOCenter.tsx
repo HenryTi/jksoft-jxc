@@ -7,7 +7,6 @@ import { Page } from "tonwa-app";
 import { FA, LMR, List, Sep, from62, to62 } from "tonwa-com";
 import { PageIOOuterList, PageIOOuterNew, PageIOOuterView, pathIOOuter } from "./IOOuter";
 import { PageIOAppList, PageIOAppNew, PageIOAppView, pathIOApp } from "./IOApp";
-import { PageMap, pathMap } from "./IOMap";
 
 const pathList = `${centers.io.path}/list`;
 const cnHeader = 'tonwa-bg-gray-2 pt-2 small pb-1 px-3';
@@ -142,7 +141,6 @@ export function routeIOCenter() {
     return <>
         <Route path={centers.io.path} element={<PageIOCenter />} />
         <Route path={pathList} element={<PageIOList />} />
-        <Route path={pathMap} element={<PageMap />} />
         <Route path={pathDef(n)} element={<PageIODef />} />
         <Route path={pathIOOuter.list(atom)} element={<PageIOOuterList />} />
         <Route path={pathIOOuter.new(atom)} element={<PageIOOuterNew />} />

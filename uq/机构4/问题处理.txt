@@ -39,16 +39,16 @@ IN inTest {
 };
 
 IN inTest (
-    a int; 
-    b dec; 
-    c date; 
-    d char; 
-)
-ARR arr (
-    d1 int; 
-    d2 dec;
-    d3 date; 
-    d4 char;
+    a int,
+    b dec, 
+    c date,
+    d char, 
+    arr (
+        d1 int,
+        d2 dec,
+        d3 date,
+        d4 char,
+    ),
 ) {
     VAR sheetId ID; 
     WITH Sheet ID TO sheetId SET no='1', ex='bb';
@@ -57,4 +57,18 @@ ARR arr (
         VAR c DEC(18,4) = 1.0; 
         BIZ Detail 采购单明细 OF 采购单=id SET i=1, x=2, 采购机构=2; 
     }
+}
+
+IOApp a {
+    ID b to 部门信息;
+    ID c to 物流中心信息;
+    ID d to 药品|器械;
+    IN intest {
+        a: b;
+        arr: {
+            d1: c ID b;
+        }
+    };
+    Out outtest {
+    };
 }

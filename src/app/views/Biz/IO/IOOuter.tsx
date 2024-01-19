@@ -12,7 +12,7 @@ import { CheckAsync, FA, LabelRow, Sep, from62 } from "tonwa-com";
 import { ReturnSearchAtom$page } from "uqs/UqDefault";
 import { BudColl, DuoObj, budArrToColl } from "./model";
 import { Entity, EntityAtom } from "app/Biz";
-import { PageAtomMap, PageSelectAtomEntity } from "./IOAtom";
+import { PageAtomMap } from "./IOAtom";
 
 const ioOuter = 'ioouter';
 const $ioApp = '$ioapp';
@@ -57,32 +57,37 @@ function ViewOuterApps() {
     const modal = useModal();
     const { id } = useParams();
     const outerId = from62(id);
+    const { IOIDs } = biz;
     async function getAppDuos() {
         let { ret } = await uq.GetDuos.query({ i: outerId });
         let apps: DuoObj[] = [];
-        let atoms: Entity[] = [];
+        // let atoms: Entity[] = [];
         for (let v of ret) {
             let { id, x, props } = v;
             let atomEntity = biz.entityFromId(x);
-            if (atomEntity !== undefined) {
-                atoms.push(atomEntity);
+            if (atomEntity !== undefined) continue;
+            /* {
+                if (IOIDs.findIndex(v => v.id === x) >= 0) {
+                    atoms.push(atomEntity);
+                }
             }
             else {
-                apps.push({
-                    id,
-                    x,
-                    i: outerId,
-                    buds: budArrToColl(props),
-                } as DuoObj);
-            }
+            */
+            apps.push({
+                id,
+                x,
+                i: outerId,
+                buds: budArrToColl(props),
+            } as DuoObj);
+            // }
         }
-        return { apps, atoms };
+        return apps; //, atoms };
     }
-    const { data: { apps: initApps, atoms: initAtoms } } = useQuery([id], async () => {
+    const { data: /*{ apps: initApps, atoms:*/ initApps } = useQuery([id], async () => {
         return await getAppDuos();
     }, UseQueryOptions);
     const [apps, setApps] = useState(initApps);
-    const [atoms, setAtoms] = useState(initAtoms);
+    // const [atoms, setAtoms] = useState(initAtoms);
 
     function ViewDuoItem({ value }: { value: DuoObj; }) {
         const { id, x, buds } = value;
@@ -96,23 +101,17 @@ function ViewOuterApps() {
     async function onAddApp() {
         let ids: Set<number> = new Set(apps.map(v => v.x));
         await modal.open(<PageSelectApps outerId={outerId} ids={ids} />);
-        let { apps: appsArr } = await getAppDuos();
+        let appsArr = await getAppDuos();
         setApps(appsArr);
     }
     function ViewAtomItem({ value }: { value: Entity }) {
         const { name, caption } = value;
         function onAtom() {
-            modal.open(<PageAtomMap entity={value as EntityAtom} />);
+            modal.open(<PageAtomMap outerId={outerId} entity={value as EntityAtom} />);
         }
         return <div className={cnItem} onClick={onAtom}>
             {caption ?? name}
         </div>
-    }
-    async function onAddAtom() {
-        let ids: Set<number> = new Set(atoms.map(v => v.id));
-        await modal.open(<PageSelectAtomEntity outerId={outerId} ids={ids} />);
-        let { atoms: atomsArr } = await getAppDuos();
-        setAtoms(atomsArr);
     }
     return <div className="">
         <div className="tonwa-bg-gray-1 mt-4">
@@ -136,12 +135,9 @@ function ViewOuterApps() {
             </div>
             <div className="container py-3">
                 <div className={cnRowCols}>
-                    {atoms.map(v => <div className="col" key={v.id}>
+                    {IOIDs.map(v => <div className="col" key={v.id}>
                         <ViewAtomItem value={v} />
                     </div>)}
-                    <div className="col d-flex align-items-center">
-                        <button className="btn btn-outline-primary" onClick={onAddAtom}><FA name="plus" className="me-2" />增删</button>
-                    </div>
                 </div>
             </div>
         </div>

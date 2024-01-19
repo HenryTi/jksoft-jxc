@@ -310,15 +310,15 @@ export class EntityBin extends Entity {
     }
 
     private fromValue(prop: any) {
-        this.value = this.fromProp(this, prop);
+        this.value = this.fromProp(prop);
     }
 
     private fromPrice(prop: any) {
-        this.price = this.fromProp(this, prop);
+        this.price = this.fromProp(prop);
     }
 
     private fromAmount(prop: any) {
-        this.amount = this.fromProp(this, prop);
+        this.amount = this.fromProp(prop);
     }
 
     private buildBudPickable(prop: any): BizBud {

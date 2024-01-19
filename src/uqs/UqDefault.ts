@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Jan 17 2024 19:11:47 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Thu Jan 18 2024 16:16:58 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,7 +25,6 @@ export enum EnumID {
 	$phrase = '$phrase',
 	IOQueue = 'ioqueue',
 	IOEndPoint = 'ioendpoint',
-	IOAtomType = 'ioatomtype',
 	IOAtom = 'ioatom',
 	Atom = 'atom',
 	Spec = 'spec',
@@ -231,28 +230,17 @@ export interface IOEndPointInActs extends ID {
 	valid: number;
 }
 
-export interface IOAtomType extends ID {
-	outer: number;
-	phrase: number;
-}
-
-export interface IOAtomTypeInActs extends ID {
-	ID?: UqID<any>;
-	outer: number | ID;
-	phrase: number | ID;
-}
-
 export interface IOAtom extends ID {
 	type: number;
-	no: string;
 	atom: number;
+	no?: string;
 }
 
 export interface IOAtomInActs extends ID {
 	ID?: UqID<any>;
 	type: number | ID;
-	no: string;
 	atom: number | ID;
+	no?: string;
 }
 
 export interface ParamBuildIOEndPoint {
@@ -267,8 +255,8 @@ export interface ParamSaveIOAtom {
 	id: number;
 	outer: number;
 	phrase: number;
-	no: string;
 	atom: number;
+	no: string;
 }
 export interface ReturnSaveIOAtomRet {
 	id: number;
@@ -283,6 +271,9 @@ export interface ParamGetIOAtoms {
 }
 export interface ReturnGetIOAtoms$page {
 	atom: number;
+	atomNo: string;
+	atomEx: string;
+	no: string;
 	id: number;
 }
 export interface ResultGetIOAtoms {
@@ -1246,7 +1237,6 @@ export interface ParamActs {
 	$phrase?: $phraseInActs[];
 	iOQueue?: IOQueueInActs[];
 	iOEndPoint?: IOEndPointInActs[];
-	iOAtomType?: IOAtomTypeInActs[];
 	iOAtom?: IOAtomInActs[];
 	atom?: AtomInActs[];
 	spec?: SpecInActs[];
@@ -1281,7 +1271,6 @@ export interface UqExt extends Uq {
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
 	IOQueue: UqID<any>;
 	IOEndPoint: UqID<any>;
-	IOAtomType: UqID<any>;
 	IOAtom: UqID<any>;
 	BuildIOEndPoint: UqAction<ParamBuildIOEndPoint, ResultBuildIOEndPoint>;
 	SaveIOAtom: UqAction<ParamSaveIOAtom, ResultSaveIOAtom>;
@@ -1847,40 +1836,6 @@ export const uqSchema={
         "idType": 3,
         "isMinute": false
     },
-    "ioatomtype": {
-        "name": "IOAtomType",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "outer",
-                "type": "id"
-            },
-            {
-                "name": "phrase",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "outer",
-                "type": "id"
-            },
-            {
-                "name": "phrase",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
     "ioatom": {
         "name": "IOAtom",
         "type": "id",
@@ -1897,13 +1852,13 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "no",
-                "type": "char",
-                "size": 20
-            },
-            {
                 "name": "atom",
                 "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
             }
         ],
         "keys": [
@@ -1912,9 +1867,8 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "no",
-                "type": "char",
-                "size": 20
+                "name": "atom",
+                "type": "id"
             }
         ],
         "global": false,
@@ -1962,13 +1916,13 @@ export const uqSchema={
                 "type": "id"
             },
             {
+                "name": "atom",
+                "type": "id"
+            },
+            {
                 "name": "no",
                 "type": "char",
                 "size": 30
-            },
-            {
-                "name": "atom",
-                "type": "id"
             }
         ],
         "returns": [
@@ -2005,6 +1959,21 @@ export const uqSchema={
                     {
                         "name": "atom",
                         "type": "id"
+                    },
+                    {
+                        "name": "atomNo",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "atomEx",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
                     },
                     {
                         "name": "id",

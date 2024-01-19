@@ -39,7 +39,7 @@ export class Entity extends BizBase {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'props':
-                let buds = this.fromProps(this, val);
+                let buds = this.fromProps(val);
                 this.biz.atomBuilder.initBuds(this, buds);
                 break;
             case 'groups': this.fromGroups(val); break;
@@ -144,5 +144,29 @@ export class Entity extends BizBase {
         group.buds = (group.buds as any[]).map(v => {
             return typeof (v) === 'number' ? this.budColl[v] : v;
         });
+    }
+
+    protected fromProp(prop: any) {
+        if (prop === undefined) debugger;
+        let { id, name, dataType } = prop;
+        let bizBud = new BizBud(this.biz, id, name, dataType, this);
+        let { budDataType } = bizBud;
+        if (budDataType === undefined) {
+            debugger;
+            return;
+        }
+        budDataType.fromSchema(prop);
+        bizBud.fromSchema(prop);
+        return bizBud;
+    }
+
+    fromProps(props: any[]) {
+        let buds: BizBud[] = [];
+        for (let prop of props) {
+            let bizBud = this.fromProp(prop);
+            if (bizBud === undefined) continue;
+            buds.push(bizBud);
+        }
+        return buds;
     }
 }

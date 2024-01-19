@@ -13,10 +13,10 @@ import { atom } from 'jotai';
 import { EntityReport } from './EntityReport';
 import { EntityQuery } from './EntityQuery';
 import { EntityAssign } from './EntityAssign';
-import { BizBud } from './BizBud';
+import { BizBud, BudArr, BudIDIO, EnumBudType } from './BizBud';
 import { AtomsBuilder } from './AtomsBuilder';
 import { EntityConsole } from './EntityConsole';
-import { EntityIn, EntityOut } from './EntityInOut';
+import { EntityIOApp, EntityIn, EntityOut } from './EntityInOut';
 
 enum EnumEntity {
     sheet,
@@ -36,6 +36,7 @@ enum EnumEntity {
     console,
     in,
     out,
+    ioApp,
 };
 
 interface Group {
@@ -72,6 +73,8 @@ export class Biz {
     readonly roles: EntityRole[] = [];
     readonly ins: EntityIn[] = [];
     readonly outs: EntityOut[] = [];
+    readonly ioApps: EntityIOApp[] = [];
+    readonly IOIDs: EntityAtom[] = [];
 
     readonly groups: Group[] = [];
     readonly _refresh = atom(false);
@@ -97,6 +100,7 @@ export class Biz {
     }
 
     entityFromId<T extends Entity>(id: number): T {
+        if (id === undefined) return;
         let entity = this.ids[id];
         return entity as T;
     }
@@ -108,6 +112,7 @@ export class Biz {
 
     buildEntities(bizSchema: any) {
         if (bizSchema === undefined) return;
+        this.IOIDs.splice(0);
         this.atomBuilder = new AtomsBuilder(this);
         const builders: { [type in EnumEntity]: (id: number, name: string, type: string) => Entity } = {
             [EnumEntity.sheet]: this.buildSheet,
@@ -127,6 +132,7 @@ export class Biz {
             [EnumEntity.console]: this.buildConsole,
             [EnumEntity.in]: this.buildIn,
             [EnumEntity.out]: this.buildOut,
+            [EnumEntity.ioApp]: this.buildIOApp,
         }
         for (let group of this.groups) {
             let { entities } = group;
@@ -193,6 +199,7 @@ export class Biz {
             }
         }
         this.atomBuilder.buildRootAtoms();
+        this.buildIOIDs();
         this.groups.push(
             {
                 name: 'sheet',
@@ -262,6 +269,7 @@ export class Biz {
                     [
                         [this.ins, '接收', 'user-o'],
                         [this.outs, '发送', 'user-o'],
+                        [this.ioApps, '外联应用', 'user-o'],
                     ]
             },
         );
@@ -310,6 +318,34 @@ export class Biz {
                 entity.ui = ui = {};
             }
             ui.caption = caption;
+        }
+    }
+
+    private buildIOIDs() {
+        for (let entityIn of this.ins) {
+            this.scanIOIDs(entityIn.buds);
+        }
+        for (let entityOut of this.outs) {
+            this.scanIOIDs(entityOut.buds);
+        }
+    }
+
+    private scanIOIDs(buds: BizBud[]) {
+        for (let bud of buds) {
+            const { budDataType } = bud;
+            switch (budDataType.type) {
+                case EnumBudType.ID:
+                    let budIDIO: BudIDIO = budDataType as BudIDIO;
+                    const { bizAtom } = budIDIO;
+                    if (bizAtom !== undefined) {
+                        this.IOIDs.push(bizAtom);
+                    }
+                    break;
+                case EnumBudType.arr:
+                    let budArr: BudArr = budDataType as BudArr;
+                    this.scanIOIDs(budArr.buds);
+                    break;
+            }
         }
     }
 
@@ -434,6 +470,12 @@ export class Biz {
     private buildOut = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityOut(this, id, name, type);
         this.outs.push(bizEntity);
+        return bizEntity;
+    }
+
+    private buildIOApp = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityIOApp(this, id, name, type);
+        this.ioApps.push(bizEntity);
         return bizEntity;
     }
 }

@@ -163,7 +163,6 @@ function PageUserMap({ userItems, onChanged }: { userItems: UserItems; onChanged
             }
             let selected: number[] = selectedItems.map(v => v.id);
             await openModal<Selection>(<PageSelectAtom atoms={refAtoms.current as any[]} selected={selected} onSelectChanged={onSelectChanged} />);
-            // if (ret === undefined) return;
             if (refChanged.current === true as any) {
                 await onChanged(userSite);
             }

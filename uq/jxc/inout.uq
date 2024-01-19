@@ -58,21 +58,25 @@ ID IOEndPoint (
     cur BIGINT DEFAULT 0,       -- 当前已经处理完成指针，指向IOQUeue
     state ENUM EnumIOState DEFAULT EnumIOState.ok,     -- 当前处理完成状态。如果不是0=正常，则停止等待。
     valid TINYINT DEFAULT 1,
-    INDEX inout_outer (inout, outer, app) UNIQUE,
+    INDEX inout_id (inout, id) UNIQUE,
 );
 
+/*
 ID IOAtomType (
     id,
     KEY outer ID,               -- outer
     KEY phrase ID,              -- inner atom phrase
 );
+*/
 
+-- Atom: AppAtomType
+-- Duo: AppAtomType <=> Atom
 ID IOAtom (
     id,                         -- IO atom id
     KEY type ID,                -- DUO(outer, atomPhrase) -- IOAtomType,
-    KEY no,                     -- outer atom no
-    atom ID,                    -- inner id
-    INDEX type_atom(type, atom),
+    KEY atom ID,                -- outer atom no
+    no NO,                      -- inner id
+    INDEX type_no(type, no),
 );
 
 Biz AC BuildIOEndPoint(
@@ -190,24 +194,21 @@ ACT SaveIOAtom (
     id ID,
     outer ID,
     phrase ID,                  -- inner atom phrase
-    no NO,                      -- outer atom no
     atom ID,                    -- inner id
+    no NO,                      -- outer atom no
 ) 
 RETURNS ret (
     id ID,
 ) {
-    VAR ioAtomType ID = a.id FROM IOAtomType as a WHERE a.outer=outer AND a.phrase=phrase;
+    VAR ioAtomType ID = ID(Duo new KEY I=outer, X=phrase);
     IF id IS NULL {
-        WITH IOAtom as a ID to id KEY(ioAtomType, no) SET a.atom=atom;
+        WITH IOAtom as a ID to id KEY(ioAtomType, atom) SET a.no=no;
     }
-    ELSEIF no IS NOT NULL {
-        WITH IOAtom as a ID=id SET a.no=no;
-    }
-    ELSEIF atom IS NOT NULL {
-        WITH IOAtom as a ID=id SET a.atom=atom;
+    ELSEIF no IS NULL {
+        WITH IOAtom as a ID=id DEL;
     }
     ELSE {
-        WITH IOAtom as a ID=id DEL;
+        WITH IOAtom as a ID=id SET a.no=no;
     }
     INTO ret SELECT id;
 }
@@ -218,11 +219,16 @@ BIZ QUERY GetIOAtoms (
 )
 PAGE (
     atom ID ASC,
+    atomNo NO,
+    atomEx EX,
+    no NO,
     id ID,
 ) {
-    PAGE SELECT a.id, a.atom
-        FROM IOAtom as a JOIN IOAtomType as b ON b.id=a.type
-        WHERE b.outer=outer AND b.phrase=phrase AND a.atom>$pageStart
+    PAGE SELECT a.atom, c.no as atomNo, c.ex as atomEx, a.no, a.id
+        FROM IOAtom as a 
+            JOIN Duo as b ON b.id=a.type
+            JOIN Atom as c ON c.id=a.atom
+        WHERE b.i=outer AND b.x=phrase AND a.atom>$pageStart
         ORDER BY a.atom ASC
         LIMIT $pageSize;
 }
