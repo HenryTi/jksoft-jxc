@@ -44,7 +44,7 @@ ID History (
     value Value,
     ref ID,                 -- 相关凭证
     plusMinus TINYINT,      -- 0: =, 1: +, -1: -
-    INDEX subject_id(bud, id) UNIQUE,
+    INDEX bud_id(bud, id) UNIQUE,
 );
 
 -- History 按日汇总，可以重新计算，如果调整了bud。

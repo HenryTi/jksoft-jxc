@@ -24,15 +24,16 @@ const activeRoot: Active = {
 export function ViewConsole() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
-    const { editing, sheet, atom, report, assign, tie, me, setting } = centers;
+    const { editing, sheet, atom, report, assign, tie, io, me, setting } = centers;
+    const baseArr = [io, me, setting];
     const { bizConsole } = biz;
     let arr: Center[];
     let viewFolder: any, viewEditing: any;
     if (bizConsole === undefined) {
-        arr = [sheet, atom, report, assign, tie, me, setting,];
+        arr = [sheet, atom, report, assign, tie, ...baseArr];
     }
     else {
-        arr = [me, setting,];
+        arr = [...baseArr];
         viewEditing = <ViewFolderLink center={editing} />;
         viewFolder = <>
             <ViewFolderContent folder={bizConsole.folder} active={activeRoot} />
@@ -119,13 +120,16 @@ function ViewFolderContent({ folder, active }: { folder: Folder; active: Active;
         let ks = getActiveKeys();
         setActiveKeys(ks);
     }
-    // activeKey={activeKeys} onSelect={onSelect}
     return <Accordion flush={true} className="">
         {folders.map((v, index) => <ViewFolder key={index} folder={v} index={String(index)} active={active} />)}
-        {files.map((v, index) => <React.Fragment key={index}>
-            {index > 0 && <Sep />}
-            <ViewFile key={index} file={v} />
-        </React.Fragment>)}
+        {files.flatMap((v, index) => {
+            let { entity: { name } } = v;
+            if (name[0] === '$') return [];
+            return [<React.Fragment key={index}>
+                {index > 0 && <Sep />}
+                <ViewFile key={index} file={v} />
+            </React.Fragment>];
+        })}
     </Accordion>;
 }
 
