@@ -7,40 +7,32 @@ import { UqExt } from "uqs/UqDefault";
 import { useParams } from "react-router-dom";
 import { from62, to62 } from "tonwa-com";
 
-function atomInPath(main: string, atomPhraseId: number | string) {
-    let p: string;
+function atomInPath(atomPhraseId: number | string) {
     if (typeof atomPhraseId === 'string') {
         if (atomPhraseId !== ':atom') debugger;
-        p = atomPhraseId;
+        return atomPhraseId;
     }
-    else {
-        p = to62(atomPhraseId);
-    }
-    return `${main}/${p}`;
+    return to62(atomPhraseId);
 }
-const atom = 'atom';
-
-export function buildPathAtom(main: string) {
-    return {
-        new: function (atomPhraseId: number | string) {
-            return `${atomInPath(main, atomPhraseId)}/new`;
-        },
-        list: function (atomPhraseId: number | string) {
-            return `${atomInPath(main, atomPhraseId)}/list`;
-        },
-        view: function (atomPhraseId: number | string, id?: number) {
-            return `${atomInPath(main, atomPhraseId)}/${to62(id) ?? ':id'}`;
-        },
-        edit: function (atomPhraseId: number | string, id?: number) {
-            return `${atomInPath(main, atomPhraseId)}/${to62(id) ?? ':id'}`;
-        },
-        index: function (atomPhraseId: number | string, id?: number) {
-            return `${atomInPath(main, atomPhraseId)}/${to62(id) ?? ':id'}`;
-        }
-    }
+export function pathAtomNew(atomPhraseId: number | string) {
+    return `atom/${atomInPath(atomPhraseId)}/new`;
 }
 
-export const pathAtom = buildPathAtom(atom);
+export function pathAtomList(atomPhraseId: number | string) {
+    return `atom/${atomInPath(atomPhraseId)}/list`;
+}
+
+export function pathAtomView(atomPhraseId: number | string, id?: number) {
+    return `atom/${atomInPath(atomPhraseId)}/${to62(id) ?? ':id'}`;
+}
+
+export function pathAtomEdit(atomPhraseId: number | string, id?: number) {
+    return `atom/${atomInPath(atomPhraseId)}/${to62(id) ?? ':id'}`;
+}
+
+export function pathAtom(atomPhraseId: number | string, id?: number) {
+    return `atom/${atomInPath(atomPhraseId)}/${to62(id) ?? ':id'}`;
+}
 
 export interface OptionsUseBizAtom {
     atomName: string;

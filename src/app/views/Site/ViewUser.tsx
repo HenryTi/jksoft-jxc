@@ -111,7 +111,7 @@ export function ViewUser({ siteRole, userSite: userSiteInit }: Props) {
                         }
                         return <CheckAsync key={index}
                             onCheckChanged={onCheckChanged}
-                            className={cnLabel} inputClassName={cnInput} gapClassName={cnInputGap}
+                            labelClassName={cnLabel} inputClassName={cnInput} gapClassName={cnInputGap}
                             defaultChecked={defaultChecked} name={name}
                         >
                             {caption ?? name}

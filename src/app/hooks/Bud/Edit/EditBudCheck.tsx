@@ -91,7 +91,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
                     await onCheckChanged(v, checked);
                 }
                 return <CheckAsync key={index}
-                    className={cn}
+                    labelClassName={cn}
                     onCheckChanged={onChange}
                     disabled={readonly}
                     value={value}

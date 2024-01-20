@@ -58,10 +58,8 @@ export function useBuildViewBiz() {
             content = <div className="m-1 text-secondary small">无</div>
         }
         else {
-            content = entitys.flatMap((v, index) => {
-                const { name, id } = v;
-                if (name[0] === '$') return [];
-                return [<ViewEntityItem key={id} value={v} icon={icon} />];
+            content = entitys.map((v, index) => {
+                return <ViewEntityItem key={v.id} value={v} icon={icon} />
             })
         }
         return <div className="d-flex flex-wrap px-2 py-1">

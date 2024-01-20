@@ -1,5 +1,5 @@
 -- independant, searchable
-ID Atom ver 0.2 (
+ID Atom ver 0.1 (
     id,
     KEY base ID,            -- sitePhrase
     KEY id,
@@ -7,28 +7,27 @@ ID Atom ver 0.2 (
     ex EX,
 );
 
-ID Spec ver 0.1 (
+ID Spec (
     id,
     KEY base ID,
     KEY id,
 );
 
-ID Duo ver 0.1 (
+ID Duo (
     id MINUTE,
     KEY i ID,
     KEY x ID,
-    valid TINYINT DEFAULT 1,
 );
 
 -- 单据主表。单明细单据，也有主表
-ID Sheet ver 0.2 (
+ID Sheet ver 0.1 (
     id MINUTE,
     KEY base ID,            -- sitePhrase
     KEY no,
     operator ID,            -- employee Item
 );
 
-ID Detail ver 0.1 (
+ID Detail (
     id MINUTE,
     KEY base ID,
     KEY id,
@@ -45,7 +44,7 @@ IDX Bin (
     price VALUE,
 );
 
-ID Pend ver 0.1 (
+ID Pend (
     id MINUTE,
     KEY base ID,            -- BizPhrase
     KEY id,

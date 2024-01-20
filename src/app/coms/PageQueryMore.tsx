@@ -212,7 +212,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
             </>;
         }
         else {
-            content = none === undefined ? <div className="m-3">-</div> : null;
+            content = none ?? <div className="m-3">-</div>;
         }
     }
 

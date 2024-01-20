@@ -39,3 +39,31 @@ export function TabHome() {
         <ViewConsole />
     </Page>;
 }
+/*
+jotai atom test
+function Test() {
+    const { current: arrAtom } = useRef(atom([1]));
+    const [state, setState] = useState(false);
+    let arrValue = useAtomValue(arrAtom);
+    function onInc() {
+        let arr = getAtomValue(arrAtom);
+        arr.push(arr[arr.length - 1] + 1);
+    }
+    function onRedraw() {
+        setState(!state);
+    }
+    function onIncRedraw() {
+        let last = arrValue[arrValue.length - 1] + 1;
+        setAtomValue(arrAtom, [...arrValue, last]);
+    }
+
+    return <div>
+        <div>arr: {getAtomValue(arrAtom).join(',')}</div>
+        <div>
+            <button className="btn btn-primary me-3" onClick={onInc}>inc</button>
+            <button className="btn btn-primary me-3" onClick={onRedraw}>redraw</button>
+            <button className="btn btn-primary me-3" onClick={onIncRedraw}>inc & redraw</button>
+        </div>
+    </div>
+}
+*/

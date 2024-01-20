@@ -478,6 +478,7 @@ PAGE (
     -- VAR base ID = PhraseId(atom);
     PAGE SELECT a.id, a.no, a.ex, a.base as phrase -- d.name as phrase
         FROM Atom as a 
+            -- JOIN BizPhrase as d ON d.id=a.base
         WHERE a.base=atom AND a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
         ORDER BY a.id desc
         LIMIT $pageSize;
@@ -648,6 +649,88 @@ RETURNS budsStr (
         WHERE JSON_CONTAINS(buds, CAST(d.id as CHAR), '$');
 };
 
+Biz Query SearchAtomUomBuds ver 0.2 (
+    phrase Phrase,
+    key CHAR(50),
+    budNames CHAR(300),
+)
+PAGE (
+    id ID desc,
+    no CHAR(50),
+    ex CHAR(50),
+    phrase Phrase,
+)
+RETURNS uoms (
+    id ID,
+    atom ID,
+    uom ID,
+)
+RETURNS budsInt (
+    id ID,
+    bud ID,
+    phrase CHAR(50),
+    value INT,
+)
+RETURNS budsDec (
+    id ID,
+    bud ID,
+    phrase CHAR(50),
+    value VALUE,
+)
+RETURNS budsStr (
+    id ID,
+    bud ID,
+    phrase CHAR(50),
+    value CHAR(200),
+) {
+    PAGE WITH RECURSIVE pPhrase AS (
+        SELECT r.x as id, r.i as base
+        FROM IxBizPhrase as r
+            JOIN BizPhrase as p ON p.id=r.x
+            JOIN XBiz as p1 ON p1.id=p.id
+        WHERE p.name=phrase -- AND p.valid=1
+        UNION
+        SELECT a.x as id, a.i as base
+        FROM IxBizPhrase as a JOIN pPhrase AS b
+            ON b.id=a.i
+    )
+    SELECT a.id, a.no, a.ex, d.name as phrase
+        FROM Atom as a 
+            JOIN Bud as b ON b.id=a.base
+            JOIN pPhrase as c ON c.id=b.ext
+            JOIN BizPhrase as d ON d.id=b.ext
+        WHERE a.id<$pageStart AND SEARCH(a.no, a.ex LIKE key)
+            AND b.base=$site
+        ORDER BY a.id desc
+        LIMIT $pageSize;
+
+    INTO uoms SELECT b.id, b.atom, b.uom
+        FROM $page as a 
+            JOIN AtomUom as b ON b.atom=a.id;
+
+    INTO budsInt SELECT a.id, d.id as bud
+        , d.name as phrase
+        , b.value
+        FROM uoms as a 
+            JOIN IxBudInt as b ON b.i=a.id
+            JOIN BizPhrase as d ON d.id=b.x -- c.phrase
+        WHERE LOCATE(d.name, budNames)>0;
+    INTO budsDec SELECT a.id, d.id as bud
+        , d.name as phrase
+        , b.value
+        FROM uoms as a 
+            JOIN IxBudDec as b ON b.i=a.id
+            JOIN BizPhrase as d ON d.id=b.x -- c.phrase
+        WHERE LOCATE(d.name, budNames)>0;
+    INTO budsStr SELECT a.id, d.id as bud
+        , d.name as phrase
+        , b.value
+        FROM uoms as a 
+            JOIN IxBudStr as b ON b.i=a.id
+            JOIN BizPhrase as d ON d.id=b.x -- c.phrase
+        WHERE LOCATE(d.name, budNames)>0;
+};
+
 -- 可以取一个单据，也可以取单行
 Biz Query GetSheet ver 0.1 (
     id ID,                      -- sheetId or detailId
@@ -753,6 +836,17 @@ RETURNS ret (
     keys JSON,
     props JSON,
 ) {
+    /*
+    INTO ret SELECT a.x as id,
+        (SELECT json_arrayagg(json_array(arr.name,arr.value)) FROM (
+            select ix.name, i.value from IxBudInt as i join bizphrase as ix on ix.id=i.x where i.i=a.x
+            union select dx.name, d.value from IxBudDec as d join bizphrase as dx on dx.id=d.x where d.i=a.x
+            union select sx.name, s.value from IxBudStr as s join bizphrase as sx on sx.id=s.x where s.i=a.x
+        ) as arr ) as keys,
+        null as props
+        FROM IxSpec as a
+        WHERE a.i=base;
+    */
     INTO ret SELECT a.id as id,
         (SELECT json_arrayagg(json_array(arr.name,arr.value)) FROM (
             select ix.name, i.value from IxBudInt as i join bizphrase as ix on ix.id=i.x where i.i=a.id
@@ -762,59 +856,6 @@ RETURNS ret (
         null as props
         FROM Spec as a
         WHERE a.base=base;
-}
-
-Biz AC SaveDuo (
-    i ID,
-    x ID,
-)
-RETURNS ret (
-    id ID,
-) {
-    VAR id ID;
-    IF NOT EXISTS(SELECT id 
-        FROM Atom as a JOIN BizPhrase as b ON b.id=a.base 
-        WHERE b.base=$site AND a.id in (i,x)
-    ) {
-        RETURN;
-    }
-    WITH Duo as a ID to id KEY(i, x) SET a.valid=1;
-    INTO ret SELECT id;
-}
-
-Biz AC DelDuo (
-    id ID,
-    i ID,
-    x ID,
-) {
-    IF id IS NULL {
-        SET id=ID(DUO KEY i=i, x=x);
-    }
-    IF EXISTS(SELECT id FROM Duo as a 
-            LEFT JOIN ATOM as b ON b.id=a.i LEFT JOIN BizPhrase as b1 ON b1.id=b.base AND b1.base=$site
-            LEFT JOIN ATOM as c ON c.id=a.x LEFT JOIN BizPhrase as c1 ON c1.id=c.base AND c1.base=$site
-        WHERE a.id=id AND (b.id IS NOT NULL OR c.id IS NOT NULL)
-    ) {
-        WITH Duo ID=id SET valid=0;
-    }
-}
-
-Biz Query GetDuos ver 0.1 (
-    i ID,
-)
-RETURNS ret (
-    id ID,
-    x ID,
-    props JSON,
-) {
-    INTO ret SELECT a.id as id, a.x,
-        (SELECT json_arrayagg(json_array(arr.bud,arr.value)) FROM (
-            select ix.id as bud, i.value from IxBudInt as i join bizphrase as ix on ix.id=i.x where i.i=a.id
-            union select dx.id as bud, d.value from IxBudDec as d join bizphrase as dx on dx.id=d.x where d.i=a.id
-            union select sx.id as bud, s.value from IxBudStr as s join bizphrase as sx on sx.id=s.x where s.i=a.id
-        ) as arr ) as props
-        FROM Duo as a
-        WHERE a.i=i AND a.valid=1;
 }
 
 -- Spec or Atom
@@ -868,13 +909,19 @@ RETURNS props VIRTUAL (
         WHERE a.id=id;
 }
 
-PROC ProcGetProps (
-    id ID,
+PROC ProcGetAtom ver 0.1 (
+    atom ID,
 )
 RETURNS props VIRTUAL ( -- VIRTUAL 就不会生成临时表，直接使用调用者的
     phrase ID,
     value JSON,
 ) {
+    VAR id ID = a.id 
+        FROM Atom as a JOIN BizPhrase as b on b.id=a.base 
+        WHERE a.id=atom AND b.base=$site;
+    INTO props SELECT a.base as phrase, JSON_ARRAY(a.no, a.ex) as value
+        FROM Atom as a
+        WHERE a.id=id;
     INTO props SELECT a.x as phrase, JSON_ARRAY(a.value) as value
         FROM IxBudInt as a 
             JOIN BizPhrase as b on b.id=a.x
@@ -895,24 +942,6 @@ RETURNS props VIRTUAL ( -- VIRTUAL 就不会生成临时表，直接使用调用
             JOIN Bud as b ON b.id=a.x
         WHERE a.i=id;
 }
-
-PROC ProcGetAtom ver 0.1 (
-    atom ID,
-)
-RETURNS props VIRTUAL ( -- VIRTUAL 就不会生成临时表，直接使用调用者的
-    phrase ID,
-    value JSON,
-) {
-    VAR id ID = a.id 
-        FROM Atom as a JOIN BizPhrase as b on b.id=a.base 
-        WHERE a.id=atom AND b.base=$site;
-    INTO props SELECT a.base as phrase, JSON_ARRAY(a.no, a.ex) as value
-        FROM Atom as a
-        WHERE a.id=id;
-    PROC ProcGetProps(id);
-}
-
-
 
 BIZ AC ClearCode ver 0.2 () {
     VAR me ID = Me();

@@ -1,4 +1,3 @@
-/*
 QUERY ReportStorage (
     key CHAR(50),
     subject CHAR(200),
@@ -63,4 +62,3 @@ PAGE (
         ORDER BY c.id ASC
         LIMIT $pageSize;
 };
-*/

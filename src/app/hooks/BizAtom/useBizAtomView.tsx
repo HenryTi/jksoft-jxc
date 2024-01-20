@@ -1,20 +1,21 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { BudValue, Page, PageSpinner, ViewSpinner } from "tonwa-app";
-import { FA, Sep, from62, useEffectOnce } from "tonwa-com";
+import { BudValue, Page, PageSpinner } from "tonwa-app";
+import { FA, Sep, Spinner, from62, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { EditBudLabelRow, EditAtomField, BudEditing } from "../Bud";
 import { ViewBudRowProps } from "../Bud";
 import { BizBud } from "app/Biz";
 import { Tabs, Tab } from "react-bootstrap";
+import { RowCols } from "../tool";
 
-export function useBizAtomView(options: OptionsUseBizAtom & { bottom?: any; }) {
+export function useBizAtomView(options: OptionsUseBizAtom) {
     const { id } = useParams();
     return useBizAtomViewFromId({ ...options, id: from62(id) });
 }
 
-function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { bottom?: any; }) {
-    const { NOLabel, exLabel, id, bottom } = options;
+function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; }) {
+    const { NOLabel, exLabel, id } = options;
     const { getAtom, saveField, saveBud, entity: entityAtom } = useBizAtom(options)
     const [state, setState] = useState<{
         main: any,
@@ -26,9 +27,9 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
             setState(ret);
         })();
     });
-    if (state === undefined) {
+    if (state === undefined/* || state.entityAtom === undefined*/) {
         return {
-            view: <ViewSpinner />,
+            view: <Spinner />,
             page: <PageSpinner />,
         };
     }
@@ -43,14 +44,12 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
         { name: 'no', label: NOLabel ?? '编号', readonly: true, type: 'string', },
         { name: 'ex', label: exLabel ?? '名称', type: 'string', },
     ];
-    const vFieldRows = <div className={cnColumns2}>
-        {
-            fieldRows.map((v, index) => <div key={index} className="col">
-                <EditAtomField key={index} {...v} id={id} value={main[v.name]} saveField={saveField} saveBud={saveBud} labelSize={2} />
-                <Sep />
-            </div>)
-        }
-    </div>;
+    const vFieldRows = <div className={cnColumns2}>{
+        fieldRows.map((v, index) => <div key={index} className="col">
+            <EditAtomField key={index} {...v} id={id} value={main[v.name]} saveField={saveField} saveBud={saveBud} labelSize={2} />
+            <Sep />
+        </div>)
+    }</div>;
     function buildVPropRows(props: BizBud[], flag: JSX.Element = undefined) {
         return props.map(v => {
             if (v === undefined) debugger;
@@ -70,17 +69,13 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
     }
     let vPropRows: any;
     if (budGroups === undefined) {
-        vPropRows = <div className={cnColumns2}>{buildVPropRows(atomProps)}</div>;
+        vPropRows = buildVPropRows(atomProps);
     }
     else {
         const { home, must, arr } = budGroups;
         const vAtomId = String(entityAtom.id);
-        const baseTitle = <span>
-            <span className="text-danger">*</span>基本
-        </span>;
-        // <FA name="star-o" className="small text-danger" />
         vPropRows = <Tabs className="mt-3 ps-3" id={vAtomId} defaultActiveKey={'+'}>
-            <Tab eventKey={'+'} title={baseTitle}>
+            <Tab eventKey={'+'} title={<FA name="star-o" className="text-danger" />}>
                 <div className={cnColumns2}>
                     {buildVPropRows(must.buds, <span className="text-danger">*</span>)}
                     {buildVPropRows(home.buds)}
@@ -108,7 +103,6 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
         return <>
             {vFieldRows}
             {vPropRows}
-            {bottom}
         </>;
     }
     function PageView() {

@@ -1,4 +1,4 @@
-import { OptionsUseBizAtom, pathAtom, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
+import { OptionsUseBizAtom, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
 import { GAtom } from "app/tool";
 import { ViewAtom } from "app/hooks";
 import { EnumAtom } from "uqs/UqDefault";
@@ -20,13 +20,10 @@ function PageView() {
 }
 
 function PageList() {
-    let optionsList = {
-        ...options,
+    let optionsList = Object.assign({}, options, {
         ViewItemAtom: ViewAtom,
-        pathAtomNew: pathAtom.new,
-        pathAtomView: pathAtom.view,
-        top: undefined as any,
-    };
+        top: undefined,
+    })
     let { page } = useBizAtomList(optionsList);
     return page;
 }

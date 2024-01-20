@@ -2,10 +2,7 @@ import { Route } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { List, Sep } from "tonwa-com";
-import {
-    OptionsUseBizAtom, pathAtom //, pathAtomEdit, pathAtomList, pathAtomNew, pathAtomView
-    , useBizAtomList, useBizAtomNew, useBizAtomView
-} from "app/hooks";
+import { OptionsUseBizAtom, pathAtom, pathAtomEdit, pathAtomList, pathAtomNew, pathAtomView, useBizAtomList, useBizAtomNew, useBizAtomView } from "app/hooks";
 import { UqApp, useUqApp } from "app/UqApp";
 import { Entity } from "app/Biz";
 import { ViewAtom } from "app/hooks";
@@ -17,7 +14,7 @@ function PageAtomCenter() {
     const atomEntities = biz.atomRoots;
     function ViewItem({ value }: { value: Entity; }) {
         const { id, name, caption } = value;
-        return <Link to={`../${pathAtom.list(id)}`}>
+        return <Link to={`../${pathAtomList(id)}`}>
             <div className="px-3 py-2 align-items-center d-flex">
                 <BI name="credit-card-2-front" className="fs-larger me-3 text-info" />
                 <span className="text-body">{caption ?? name}</span>
@@ -49,8 +46,6 @@ function PageView() {
 function PageList() {
     let optionsList = Object.assign({}, options, {
         ViewItemAtom: ViewAtom,
-        pathAtomNew: pathAtom.new,
-        pathAtomView: pathAtom.view,
         top: undefined,
     })
     let { page } = useBizAtomList(optionsList);
@@ -61,10 +56,10 @@ export function routeAtomCenter() {
     const n = ':atom';
     return <>
         <Route path={centers.atom.path} element={<PageAtomCenter />} />
-        <Route path={pathAtom.new(n)} element={<PageNew />} />
-        <Route path={pathAtom.list(n)} element={<PageList />} />
-        <Route path={pathAtom.edit(n)} element={<PageView />} />
-        <Route path={pathAtom.view(n)} element={<PageView />} />
-        <Route path={pathAtom.index(n)} element={<PageView />} />
+        <Route path={pathAtomNew(n)} element={<PageNew />} />
+        <Route path={pathAtomList(n)} element={<PageList />} />
+        <Route path={pathAtomEdit(n)} element={<PageView />} />
+        <Route path={pathAtomView(n)} element={<PageView />} />
+        <Route path={pathAtom(n)} element={<PageView />} />
     </>;
 }

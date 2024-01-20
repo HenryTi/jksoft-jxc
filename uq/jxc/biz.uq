@@ -23,9 +23,6 @@ ENUM BizPhraseType (
     tree = 401,
     tie = 501,
     report = 601,
-    in = 701,
-    out = 700,
-    ioApp = 710,
     title = 901,
     assign = 902,
 

@@ -9,7 +9,7 @@ type ContainerType = (props: ContainerProps) => JSX.Element;
 // const defaultLeftSize = 3;
 // const 
 const defaultLabelClassName = ' py-1 tonwa-bg-gray-1 border-end small text-secondary ';
-const defaultMidClassName = ' border-end ';
+const defaultMidClassName = ' ';
 function DefaultLabelContainer({ children }: ContainerProps) {
     return <>
         {children}
@@ -46,7 +46,7 @@ export interface LabelRowProps extends LabelRowPropsBase {
 
 const cnCol = [
     [' col-3 col-sm-2 ', ' col-9 col-sm-10 '],
-    [' col-4 col-sm-3 ', ' col-8 col-sm-9 '],
+    [' col-3 col-sm-2 ', ' col-9 col-sm-10 '],
     [' col-5 ', ' col-7 '],
 ];
 

@@ -1,0 +1,5 @@
+Biz Tree CustomerTree '客户分组' {
+};
+
+Biz Tree VendorTree '供应商分组' {
+};

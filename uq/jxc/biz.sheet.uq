@@ -1,0 +1,119 @@
+/*
+Biz Main MainPurchase {
+    target '往来单位' ATOM Contact;
+}
+
+Biz Detail DetailPurchase ver 0.1 {
+    Main MainPurchase;
+    Item '商品' ATOM Goods;       -- 某类Atom
+    Value '数量' DEC;
+    Amount '金额' DEC;
+    Price '单价' DEC;
+    
+    ACT (detail ID) {
+        VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
+        -- Biz Subject storage of item += value ref detail;
+        Biz Pend PendStoreIn Detail=detail SET Value=value;
+        -- err = 0 or null, 则ok，继续
+    };
+}
+
+Biz Detail DetailPurchaseMedicine ver 0.1 '采购药品明细' {
+    Main MainPurchase;
+    Item '药品' ATOM Medicine;       -- 某类Atom
+    ACT (detail ID) {
+        VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
+        -- Biz Subject storage of item += value ref detail;
+        Biz Pend PendStoreIn Detail=detail SET Value=value;
+        -- err = 0 or null, 则ok，继续
+    };
+}
+
+Biz Sheet SheetPurchase '采购单' {
+    Main MainPurchase;
+    Detail DetailPurchase;
+}
+
+Biz Main MainStoreIn {
+}
+
+Biz Detail DetailStoreIn ver 0.1 {
+    Main MainStoreIn;
+    Item '商品' ATOM Goods;         -- 某类Atom
+    Pend PendStoreIn;               -- 从某个待处理账来
+    ACT (detail ID) 
+    -- From PendStoreIn 
+    {
+        VAR value VALUE = value, item ID = item FROM Detail(detail); -- ID
+        Biz Bud storage.goodsBalance of item += value ref detail; 
+        VAR atomUom ID=a.atomUom, spec ID=a.spec FROM AtomSpec as a WHERE a.id=item;
+        IF spec>0 {
+            -- 不含批号的某种商品库存
+            Biz Bud storage.goodsBalance of atomUom += value ref detail;
+        }
+        -- detail写账报错，错误号1
+        -- WITH Temp ID=detail SET value=1;
+    };
+}
+
+Biz Pend PendStoreIn '待入库';
+
+Biz Sheet SheetStoreIn '入库单' {
+    Main MainStoreIn;
+    Detail DetailStoreIn;
+}
+
+Biz Sheet SheetStoreInMultiStorage '入库单-分仓' {
+    Main MainStoreIn;
+    Detail DetailStoreIn;
+}
+
+Biz Main MainSale {
+}
+
+Biz Sheet SheetSale '销售单' {
+    Main MainSale;
+    Detail DetailSale;
+}
+
+Biz Detail DetailSale ver 0.1 {
+    Main MainSale;
+    Item '商品' ATOM Goods;       -- 某类Atom
+    ACT (detail ID) {
+        VAR value VALUE = value, item ID = item FROM Detail=detail; -- ID
+        -- Biz Subject storage of item += value ref detail;
+        Biz Pend PendStoreOut Detail=detail SET Value=value;
+        -- err = 0 or null, 则ok，继续
+    };
+}
+
+Biz Main MainStoreOut {
+}
+
+Biz Detail DetailStoreOut ver 0.2 {
+    Main MainStoreOut;
+    Item '商品' ATOM Goods;       -- 某类Atom
+    Pend PendStoreOut;
+    ACT (detail ID) 
+    -- From PendStoreOut 
+    {
+        VAR value VALUE = value, item ID = item FROM Detail(detail); -- ID
+        Biz Bud storage.goodsBalance of item -= value ref detail;
+        VAR atomUom ID=atomUom, spec ID=spec FROM AtomSpec(item);
+        IF spec>0 {
+            -- 不含批号的某种商品库存
+            Biz Bud storage.goodsBalance of atomUom -= value;
+        }
+        -- Biz Further 
+        -- detail写账报错，错误号1
+        -- WITH Temp ID=detail SET value=1;
+    };
+}
+
+Biz Pend PendStoreOut '待出库';
+
+Biz Sheet SheetStoreOut '出库单' {
+    Main MainStoreOut;
+    Detail DetailStoreOut;
+}
+*/

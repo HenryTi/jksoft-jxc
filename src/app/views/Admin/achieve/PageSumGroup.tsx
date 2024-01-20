@@ -1,10 +1,11 @@
+import { EntityAtom } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
-import { OptionsUseBizAtom, pathAtom, useBizAtom } from "app/hooks";
+import { OptionsUseBizAtom, pathAtomNew, useBizAtom } from "app/hooks";
 import { ViewAtom } from "app/hooks";
-import { Link } from "react-router-dom";
-import { LinkModal } from "tonwa-app";
-import { CheckAsync, FA } from "tonwa-com";
+import { Link, useParams } from "react-router-dom";
+import { LinkModal, Page, useModal } from "tonwa-app";
+import { CheckAsync, FA, List } from "tonwa-com";
 import { Atom, EnumAtom } from "uqs/UqDefault";
 
 export const pathSumGroup = 'admin-sum-group';
@@ -16,8 +17,9 @@ const options: OptionsUseBizAtom = {
 export function PageSumGroup() {
     const useBizAtomReturn = useBizAtom(options);
     const { entity, searchAtoms } = useBizAtomReturn;
+    // let entityAtom = useBizAtomReturn.getEntityAtom(atomName) ?? entity;
     let entityAtom = entity;
-    const right = <Link className="btn btn-sm btn-success me-2" to={`../${pathAtom.new(entityAtom.id)}`}>
+    const right = <Link className="btn btn-sm btn-success me-2" to={`../${pathAtomNew(entityAtom.name)}`}>
         <FA name="plus" />
     </Link>;
     return <PageList />;
@@ -73,7 +75,7 @@ function PageOneGroup({ group }: { group: Atom; }) {
             let act: number = checked === true ? 1 : -1;
             await uq.SetSumGroupPerson.submit({ group: group.id, person: value.id, act, });
         }
-        return <CheckAsync className="d-flex px-3 py-2" onCheckChanged={onCheckChanged} defaultChecked={value.selected === 1}>
+        return <CheckAsync labelClassName="d-flex px-3 py-2" onCheckChanged={onCheckChanged} defaultChecked={value.selected === 1}>
             <ViewAtom value={value} />
         </CheckAsync>;
     }

@@ -1,19 +1,17 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { PageQueryMore } from '../../coms';
-import { FA, List } from 'tonwa-com';
-import { EntityAtomID } from 'app/Biz';
+import { FA, List, from62 } from 'tonwa-com';
+import { EntityAtom, EntityAtomID } from 'app/Biz';
 import { Page } from 'tonwa-app';
-import { OptionsUseBizAtom, pathAtom, useBizAtom } from './useBizAtom';
+import { OptionsUseBizAtom, pathAtomList, pathAtomNew, pathAtomView, useBizAtom } from './useBizAtom';
 
 interface OptionsList {
     ViewItemAtom: (props: { value: any; }) => JSX.Element;
-    pathAtomView: (atomPhraseId: number | string, id?: number) => string;
-    pathAtomNew: (atomPhraseId: number | string, id?: number) => string;
     top?: JSX.Element;
 }
 
 export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
-    const { top, pathAtomNew, pathAtomView } = options;
+    const { top } = options;
     const useBizAtomReturn = useBizAtom(options);
     const { entity, searchAtoms } = useBizAtomReturn;
     let entityAtom = entity;
@@ -62,7 +60,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
         const { subClasses: children } = entityAtom;
         function ViewItem({ value }: { value: EntityAtomID; }) {
             const { id, caption } = value;
-            return <Link to={`../${pathAtom.list(id)}`}>
+            return <Link to={`../${pathAtomList(id)}`}>
                 <div className="px-3 py-2">
                     {caption}
                 </div>
