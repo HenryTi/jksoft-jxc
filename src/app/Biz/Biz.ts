@@ -308,6 +308,7 @@ export class Biz {
     private buildSysEntities() {
         const sysEntitys: { name: string; caption: string; }[] = [
             { name: '$ioouter', caption: '接口机构' },
+            // obsolete
             { name: '$ioapp', caption: '接口App' },
         ];
         for (let se of sysEntitys) {

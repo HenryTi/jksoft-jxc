@@ -6,7 +6,7 @@ import { Link, Route, useParams } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { FA, LMR, List, Sep, from62, to62 } from "tonwa-com";
 import { PageIOOuterList, PageIOOuterNew, PageIOOuterView, pathIOOuter } from "./IOOuter";
-import { PageIOAppList, PageIOAppNew, PageIOAppView, pathIOApp } from "./IOApp";
+// import { PageIOAppList, PageIOAppNew, PageIOAppView, pathIOApp } from "./IOApp";
 
 const pathList = `${centers.io.path}/list`;
 const cnHeader = 'tonwa-bg-gray-2 pt-2 small pb-1 px-3';
@@ -17,6 +17,7 @@ function PageIOCenter() {
     const { biz } = uqApp;
     const { entities } = biz;
     let ioOuter = entities['$ioouter'];
+    // obsolete
     let ioApp = entities['$ioapp'];
     const folders: FolderLinkProps[] = [
         {
@@ -25,12 +26,14 @@ function PageIOCenter() {
             iconColor: 'text-primary',
             path: `../${pathIOOuter.list(ioOuter.id)}`,
         },
+        /*
         {
             caption: '接口App',
             icon: 'database',
             iconColor: 'text-info',
             path: `../${pathIOApp.list(ioApp.id)}`,
         },
+        */
         {
             caption: '接口定义',
             icon: 'sign-in',
@@ -145,8 +148,8 @@ export function routeIOCenter() {
         <Route path={pathIOOuter.list(atom)} element={<PageIOOuterList />} />
         <Route path={pathIOOuter.new(atom)} element={<PageIOOuterNew />} />
         <Route path={pathIOOuter.view(atom)} element={<PageIOOuterView />} />
-        <Route path={pathIOApp.list(atom)} element={<PageIOAppList />} />
-        <Route path={pathIOApp.new(atom)} element={<PageIOAppNew />} />
-        <Route path={pathIOApp.view(atom)} element={<PageIOAppView />} />
     </>;
+    // <Route path={pathIOApp.list(atom)} element={<PageIOAppList />} />
+    // <Route path={pathIOApp.new(atom)} element={<PageIOAppNew />} />
+    // <Route path={pathIOApp.view(atom)} element={<PageIOAppView />} />
 }

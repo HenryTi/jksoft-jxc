@@ -9,6 +9,7 @@ import { IDView, Page, useModal } from "tonwa-app";
 import { CheckAsync, FA, from62 } from "tonwa-com";
 import { BizPhraseType, ReturnGetDuosRet } from "uqs/UqDefault";
 
+/*
 const ioApp = 'ioapp';
 export const pathIOApp = buildPathAtom(ioApp);
 
@@ -110,7 +111,7 @@ function PageSelectIOs({ appId, ids }: { appId: number, ids: Set<number>; }) {
                 await uq.DelDuo.submit({ id: undefined, i: appId, x: id });
                 io = -id;
             }
-            await uq.BuildIOEndPoint.submit({ outer: 0, app: appId, io });
+            //await uq.BuildIOEndPoint.submit({ outer: 0, app: appId, io });
         }
         console.log('ids', Array.from(ids).join(','));
         return <CheckAsync className="border p-3 w-100" onCheckChanged={onCheckChanged} defaultChecked={ids.has(id)}>
@@ -140,3 +141,4 @@ function PageSelectIOs({ appId, ids }: { appId: number, ids: Set<number>; }) {
         </div>
     </Page>;
 }
+*/

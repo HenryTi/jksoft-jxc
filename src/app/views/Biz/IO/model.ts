@@ -1,18 +1,23 @@
+import { EntityIOApp } from "app/Biz";
+
 export interface BudColl {
     [id: number]: string | number;
 }
 
-export interface DuoObj {
-    id: number;
-    x: number;
-    i: number;
+export interface DuoOuterApp {
+    id: number;         // duo id
+    // x: number;
+    i: number;          // outer id
+    ioApp: EntityIOApp;
     buds: BudColl;
 }
 
 export function budArrToColl(arr: any[]): BudColl {
     const ret: BudColl = {};
-    for (let [id, value] of arr) {
-        ret[id] = value;
+    if (arr !== undefined) {
+        for (let [id, value] of arr) {
+            ret[id] = value;
+        }
     }
     return ret;
 }

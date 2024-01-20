@@ -1,5 +1,5 @@
 import { useUqApp } from "app";
-import { EntityAtom } from "app/Biz";
+import { EntityAtom, IOAppID } from "app/Biz";
 import { ButtonRight, ButtonRightAdd, PageQueryMore } from "app/coms";
 import { ViewAtom, getAtomWithProps, useSelectAtom } from "app/hooks";
 import { FormEvent, useState } from "react";
@@ -7,10 +7,11 @@ import { useQuery } from "react-query";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { FA, List } from "tonwa-com";
 
-export function PageAtomMap({ outerId, entity }: { outerId: number; entity: EntityAtom; }) {
+export function PageAtomMap({ outerId, ioAppID }: { outerId: number; ioAppID: IOAppID; }) {
     const { uq, biz } = useUqApp();
     const modal = useModal();
     const selectAtom = useSelectAtom();
+    const entity = ioAppID.atoms[0];
     const { data: { outer } } = useQuery(['getAtom in AtomMap', outerId], async () => {
         let promises = [
             getAtomWithProps(biz, biz.uq, outerId),

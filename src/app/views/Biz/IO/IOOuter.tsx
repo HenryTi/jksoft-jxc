@@ -9,12 +9,13 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { IDView, Page, useModal } from "tonwa-app";
 import { CheckAsync, FA, LabelRow, Sep, from62 } from "tonwa-com";
-import { ReturnSearchAtom$page } from "uqs/UqDefault";
-import { BudColl, DuoObj, budArrToColl } from "./model";
-import { Entity, EntityAtom } from "app/Biz";
-import { PageAtomMap } from "./IOAtom";
+import { BizPhraseType, ReturnSearchAtom$page } from "uqs/UqDefault";
+import { BudColl, DuoOuterApp, budArrToColl } from "./model";
+import { Entity, EntityAtom, EntityIOApp, IOAppID } from "app/Biz";
+import { PageAtomMap } from "./PageAtomMap";
 
 const ioOuter = 'ioouter';
+// obsolete
 const $ioApp = '$ioapp';
 export const pathIOOuter = buildPathAtom(ioOuter);
 
@@ -57,15 +58,16 @@ function ViewOuterApps() {
     const modal = useModal();
     const { id } = useParams();
     const outerId = from62(id);
-    const { IOIDs } = biz;
+    //const { IOIDs } = biz;
     async function getAppDuos() {
         let { ret } = await uq.GetDuos.query({ i: outerId });
-        let apps: DuoObj[] = [];
+        let apps: DuoOuterApp[] = [];
         // let atoms: Entity[] = [];
         for (let v of ret) {
             let { id, x, props } = v;
-            let atomEntity = biz.entityFromId(x);
-            if (atomEntity !== undefined) continue;
+            let ioApp = biz.entityFromId<EntityIOApp>(x);
+            if (ioApp === undefined) continue;
+            if (ioApp.bizPhraseType !== BizPhraseType.ioApp) continue;
             /* {
                 if (IOIDs.findIndex(v => v.id === x) >= 0) {
                     atoms.push(atomEntity);
@@ -75,10 +77,11 @@ function ViewOuterApps() {
             */
             apps.push({
                 id,
-                x,
+                // x,
                 i: outerId,
+                ioApp,
                 buds: budArrToColl(props),
-            } as DuoObj);
+            } as DuoOuterApp);
             // }
         }
         return apps; //, atoms };
@@ -89,29 +92,21 @@ function ViewOuterApps() {
     const [apps, setApps] = useState(initApps);
     // const [atoms, setAtoms] = useState(initAtoms);
 
-    function ViewDuoItem({ value }: { value: DuoObj; }) {
-        const { id, x, buds } = value;
+    function ViewDuoItem({ value }: { value: DuoOuterApp; }) {
+        const { id, ioApp, buds } = value;
         function onApp() {
-            modal.open(<PageOuterApp duo={id} outer={outerId} app={x} buds={buds} />);
+            modal.open(<PageOuterApp duo={id} outer={outerId} ioApp={ioApp} buds={buds} />);
         }
+        const { name, caption } = ioApp;
         return <div className={cnItem} onClick={onApp}>
-            <IDView uq={uq} id={x} Template={ViewAtom} />
+            {caption ?? name}
         </div>;
     }
     async function onAddApp() {
-        let ids: Set<number> = new Set(apps.map(v => v.x));
+        let ids: Set<number> = new Set(apps.map(v => v.ioApp.id));
         await modal.open(<PageSelectApps outerId={outerId} ids={ids} />);
         let appsArr = await getAppDuos();
         setApps(appsArr);
-    }
-    function ViewAtomItem({ value }: { value: Entity }) {
-        const { name, caption } = value;
-        function onAtom() {
-            modal.open(<PageAtomMap outerId={outerId} entity={value as EntityAtom} />);
-        }
-        return <div className={cnItem} onClick={onAtom}>
-            {caption ?? name}
-        </div>
     }
     return <div className="">
         <div className="tonwa-bg-gray-1 mt-4">
@@ -129,34 +124,16 @@ function ViewOuterApps() {
                 </div>
             </div>
         </div>
-        <div className="tonwa-bg-gray-1 mt-4">
-            <div className="tonwa-bg-gray-2 small text-secondary px-3 pt-2 pb-1 border-bottom mt-3">
-                基础数据对照表
-            </div>
-            <div className="container py-3">
-                <div className={cnRowCols}>
-                    {IOIDs.map(v => <div className="col" key={v.id}>
-                        <ViewAtomItem value={v} />
-                    </div>)}
-                </div>
-            </div>
-        </div>
     </div>;
 }
 
 function PageSelectApps({ outerId, ids }: { outerId: number, ids: Set<number>; }) {
     console.log('PageSelectApps ids', Array.from(ids).join(','));
     const { uq, biz } = useUqApp();
+    const { ioApps } = biz;
     const modal = useModal();
-    const appEntity = biz.entities[$ioApp];
-    const { data: apps } = useQuery(['allApps', appEntity.id], async () => {
-        let ret = await uq.SearchAtom.page({ atom: appEntity.id, key: undefined }, undefined, 1000);
-        let { $page } = ret;
-        $page.reverse();
-        return $page;
-    }, UseQueryOptions);
-    function ViewAppItem({ value }: { value: ReturnSearchAtom$page; }) {
-        const { id, no, ex } = value;
+    function ViewAppItem({ value }: { value: EntityIOApp; }) {
+        const { id, name, caption } = value;
         async function onCheckChanged(name: string, checked: boolean) {
             let app: number;
             if (checked === true) {
@@ -167,11 +144,11 @@ function PageSelectApps({ outerId, ids }: { outerId: number, ids: Set<number>; }
                 await uq.DelDuo.submit({ id: undefined, i: outerId, x: id });
                 app = - id;
             }
-            await uq.BuildIOEndPoint.submit({ outer: outerId, app, io: 0 });
+            //await uq.BuildIOEndPoint.submit({ outer: outerId, app, io: 0 });
         }
         console.log('ids', Array.from(ids).join(','));
         return <CheckAsync className="border p-3 w-100" onCheckChanged={onCheckChanged} defaultChecked={ids.has(id)}>
-            {ex}
+            {caption ?? name}
         </CheckAsync>;
     }
     function onClose() {
@@ -180,7 +157,7 @@ function PageSelectApps({ outerId, ids }: { outerId: number, ids: Set<number>; }
     return <Page header="增删接口App">
         <div className="container my-3">
             <div className={cnRowCols}>
-                {apps.map(v => <div className="col" key={v.id}>
+                {ioApps.map(v => <div className="col" key={v.id}>
                     <ViewAppItem value={v} />
                 </div>)}
             </div>
@@ -191,8 +168,9 @@ function PageSelectApps({ outerId, ids }: { outerId: number, ids: Set<number>; }
     </Page>;
 }
 
-function PageOuterApp({ duo, outer, app, buds }: { duo: number; outer: number; app: number; buds: BudColl; }) {
+function PageOuterApp({ duo, outer, ioApp, buds }: { duo: number; outer: number; ioApp: EntityIOApp; buds: BudColl; }) {
     const { uq, biz } = useUqApp();
+    const modal = useModal();
     const duoApp = biz.entities['$ioouterapp'];
     const vFieldRows = <div>
         {
@@ -205,6 +183,16 @@ function PageOuterApp({ duo, outer, app, buds }: { duo: number; outer: number; a
             })
         }
     </div>;
+    const { caption, name } = ioApp;
+    function ViewIOAppID({ value }: { value: IOAppID }) {
+        const { name, caption, atoms } = value;
+        function onAtom() {
+            modal.open(<PageAtomMap outerId={outer} ioAppID={value} />);
+        }
+        return <div className={cnItem} onClick={onAtom}>
+            {caption ?? name} :: {atoms.map(v => <span key={v.id}>{v.caption ?? v.name}</span>)}
+        </div>
+    }
     return <Page header="接口设置">
         <LabelRow labelSize={1}>
             <div>接口机构</div>
@@ -216,12 +204,25 @@ function PageOuterApp({ duo, outer, app, buds }: { duo: number; outer: number; a
         <LabelRow labelSize={1}>
             <div>接口App</div>
             <div className="p-3">
-                <IDView uq={uq} id={app} Template={ViewAtom} />
+                {caption ?? name}
             </div>
         </LabelRow>
         <Sep />
 
         <Sep className="mt-2" />
         {vFieldRows}
+
+        <div className="tonwa-bg-gray-1 mt-4">
+            <div className="tonwa-bg-gray-2 small text-secondary px-3 pt-2 pb-1 border-bottom mt-3">
+                基础数据对照表
+            </div>
+            <div className="container py-3">
+                <div className={cnRowCols}>
+                    {ioApp.IDs.map(v => <div className="col" key={v.id}>
+                        <ViewIOAppID value={v} />
+                    </div>)}
+                </div>
+            </div>
+        </div>
     </Page>;
 }
