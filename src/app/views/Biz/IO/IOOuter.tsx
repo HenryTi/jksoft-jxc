@@ -25,13 +25,19 @@ const options: OptionsUseBizAtom = {
     exLabel: undefined,
 }
 
-export function PageIOOuterList() {
+export function PageIOOuterList({ top, header }: { top: JSX.Element; header: string; }) {
+    const uqApp = useUqApp();
+    const { biz } = uqApp;
+    const { entities } = biz;
+    let ioOuter = entities['$ioouter'] as EntityAtom;
     let optionsList = {
         ...options,
         ViewItemAtom: ViewAtom,
         pathAtomNew: pathIOOuter.new,
         pathAtomView: pathIOOuter.view,
-        top: undefined as any,
+        entityAtom: ioOuter,
+        top,
+        header,
     };
     let { page } = useBizAtomList(optionsList);
     return page;

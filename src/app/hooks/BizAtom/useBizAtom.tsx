@@ -46,6 +46,8 @@ export interface OptionsUseBizAtom {
     atomName: string;
     NOLabel?: string;
     exLabel?: string;
+    entityAtom?: EntityAtom;
+    header?: string;
 }
 
 export interface UseBizAtomReturn {
@@ -91,8 +93,10 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
     let atomPhraseId = from62(atom);
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
-    const entity = biz.entityFromId<EntityAtom>(atomPhraseId);
-    // const phrase = entity.phrase;
+    let entity = options.entityAtom;
+    if (entity === undefined) {
+        entity = biz.entityFromId<EntityAtom>(atomPhraseId);
+    }
     const pathView = entity.name;
     const pathList = entity.name + '-list';
 

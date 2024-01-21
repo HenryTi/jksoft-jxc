@@ -49,16 +49,17 @@ ID IOAtomType (
 
 ID IOAppAtom (
     id,                         -- IO atom id
-    KEY appID ID,               -- pharse IOApp.IO
-    KEY no NO,                  -- outer app no
+    KEY appID ID,               -- pharse IOApp.ID
+    KEY atom ID,                -- tonwa uq atom id
+    no NO,                      -- outer app no
+    INDEX appID_no(appID, no) UNIQUE,
 );
-
-IX IOIxAtom (
-    i,                          -- tonwa uq atom id
-    x,                          -- ioapp atom id
-);
-
 /*
+IX IOIxAtom (
+    i,                          -- ioapp atom id
+    x,                          -- tonwa uq atom id
+);
+
 Biz AC BuildIOEndPoint(
     outer ID,
     appIO ID,           -- phrase of IOApp.IO
@@ -152,45 +153,44 @@ PROC SaveIOQueue(
     }
 }
 
-ACT SaveIOAtom (
+BIZ ACT SaveIOAtom (
     id ID,
     outer ID,
-    phrase ID,                  -- inner atom phrase
+    appIDPhrase ID,             -- inner atom phrase
     atom ID,                    -- inner id
     no NO,                      -- outer atom no
 ) 
 RETURNS ret (
     id ID,
 ) {
-    VAR ioAtomType ID = ID(Duo new KEY I=outer, X=phrase);
-    IF id IS NULL {
-        WITH IOAtom as a ID to id KEY(ioAtomType, atom) SET a.no=no;
-    }
-    ELSEIF no IS NULL {
-        WITH IOAtom as a ID=id DEL;
+    IF no IS NULL {
+        WITH IOAppAtom as a ID=id DEL;
     }
     ELSE {
-        WITH IOAtom as a ID=id SET a.no=no;
+        VAR appID ID = ID(Duo new KEY i=outer, x=appIDPhrase);
+        SET id = -a.id FROM IOAppAtom as a WHERE a.appID=appID AND a.no=no;
+        IF id IS NULL {
+            WITH IOAppAtom as a ID to id KEY(appID, atom) SET a.no=no;
+        }
     }
     INTO ret SELECT id;
 }
 
 BIZ QUERY GetIOAtoms (
     outer ID,
-    phrase ID,
+    appIDPhrase ID,
 )
 PAGE (
     atom ID ASC,
     atomNo NO,
     atomEx EX,
     no NO,
-    id ID,
 ) {
-    PAGE SELECT a.atom, c.no as atomNo, c.ex as atomEx, a.no, a.id
-        FROM IOAtom as a 
-            JOIN Duo as b ON b.id=a.type
+    VAR appID ID = ID(Duo KEY i=outer, x=appIDPhrase);
+    PAGE SELECT a.atom, c.no as atomNo, c.ex as atomEx, a.no
+        FROM IOAppAtom as a
             JOIN Atom as c ON c.id=a.atom
-        WHERE b.i=outer AND b.x=phrase AND a.atom>$pageStart
+        WHERE a.appID=appID AND a.atom>$pageStart
         ORDER BY a.atom ASC
         LIMIT $pageSize;
 }

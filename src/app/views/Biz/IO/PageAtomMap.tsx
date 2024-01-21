@@ -19,6 +19,10 @@ export function PageAtomMap({ outerId, ioAppID }: { outerId: number; ioAppID: IO
         let [outer] = await Promise.all(promises);
         return { outer };
     });
+    async function getIOAtoms(param: any, pageStart: any, pageSize: number): Promise<any[]> {
+        let ret = await uq.GetIOAtoms.page(param, pageStart, pageSize);
+        return ret.$page;
+    }
     const [items, setItems] = useState([]);
     async function onAdd() {
         let itemsAdd = [];
@@ -30,12 +34,20 @@ export function PageAtomMap({ outerId, ioAppID }: { outerId: number; ioAppID: IO
             let retSave = await uq.SaveIOAtom.submit({
                 id: undefined,
                 outer: outerId,
-                phrase: entity.id,
+                appIDPhrase: ioAppID.id,
                 no: ret,
                 atom: atomValue.id,
             });
             let { id: retSaveId } = retSave;
-            if (retSaveId === undefined) break;
+            if (retSaveId === undefined) {
+                // error
+                debugger;
+                break;
+            }
+            if (retSaveId < 0) {
+                alert(`${ret} 重复`);
+                continue;
+            }
             let index = items.findIndex(v => v.id === retSaveId);
             if (index >= 0) {
                 items.splice(index, 1);
@@ -59,7 +71,7 @@ export function PageAtomMap({ outerId, ioAppID }: { outerId: number; ioAppID: IO
             let retSave = await uq.SaveIOAtom.submit({
                 id,
                 outer: outerId,
-                phrase: entity.id,
+                appIDPhrase: ioAppID.id,
                 no: ret,
                 atom: atomValue.id,
             });
@@ -92,8 +104,8 @@ export function PageAtomMap({ outerId, ioAppID }: { outerId: number; ioAppID: IO
     }
     return <PageQueryMore
         header={`${outer.ex} ${entity.caption ?? entity.name}`}
-        query={uq.GetIOAtoms}
-        param={{ outer: outerId, phrase: entity.id }}
+        query={getIOAtoms}
+        param={{ outer: outerId, appIDPhrase: ioAppID.id }}
         sortField="atom"
         ViewItem={ViewItem}
         right={<ButtonRightAdd onClick={onAdd} />}

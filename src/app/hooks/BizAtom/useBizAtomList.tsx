@@ -13,7 +13,7 @@ interface OptionsList {
 }
 
 export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
-    const { top, pathAtomNew, pathAtomView } = options;
+    const { top, header, pathAtomNew, pathAtomView } = options;
     const useBizAtomReturn = useBizAtom(options);
     const { entity, searchAtoms } = useBizAtomReturn;
     let entityAtom = entity;
@@ -46,7 +46,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     const sortField = 'id';
     const none = <div className='m-3 small text-muted'>[无{caption}]</div>;
     return {
-        header: caption,
+        header: header ?? caption,
         right,
         query: searchAtoms,
         param: searchParam,
@@ -77,7 +77,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     }
 
     function PageList() {
-        return <PageQueryMore header={caption} right={right}
+        return <PageQueryMore header={header ?? caption} right={right}
             query={searchAtoms}
             param={searchParam}
             sortField={sortField}
