@@ -9,14 +9,12 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { IDView, Page, useModal } from "tonwa-app";
 import { CheckAsync, FA, LabelRow, Sep, from62 } from "tonwa-com";
-import { BizPhraseType, ReturnSearchAtom$page } from "uqs/UqDefault";
+import { BizPhraseType } from "uqs/UqDefault";
 import { BudColl, DuoOuterApp, budArrToColl } from "./model";
-import { Entity, EntityAtom, EntityIOApp, IOAppID } from "app/Biz";
+import { EntityAtom, EntityIOApp, IOAppID } from "app/Biz";
 import { PageAtomMap } from "./PageAtomMap";
 
 const ioOuter = 'ioouter';
-// obsolete
-const $ioApp = '$ioapp';
 export const pathIOOuter = buildPathAtom(ioOuter);
 
 const options: OptionsUseBizAtom = {
@@ -64,23 +62,14 @@ function ViewOuterApps() {
     const modal = useModal();
     const { id } = useParams();
     const outerId = from62(id);
-    //const { IOIDs } = biz;
     async function getAppDuos() {
         let { ret } = await uq.GetDuos.query({ i: outerId });
         let apps: DuoOuterApp[] = [];
-        // let atoms: Entity[] = [];
         for (let v of ret) {
             let { id, x, props } = v;
             let ioApp = biz.entityFromId<EntityIOApp>(x);
             if (ioApp === undefined) continue;
             if (ioApp.bizPhraseType !== BizPhraseType.ioApp) continue;
-            /* {
-                if (IOIDs.findIndex(v => v.id === x) >= 0) {
-                    atoms.push(atomEntity);
-                }
-            }
-            else {
-            */
             apps.push({
                 id,
                 // x,
@@ -88,15 +77,13 @@ function ViewOuterApps() {
                 ioApp,
                 buds: budArrToColl(props),
             } as DuoOuterApp);
-            // }
         }
-        return apps; //, atoms };
+        return apps;
     }
-    const { data: /*{ apps: initApps, atoms:*/ initApps } = useQuery([id], async () => {
+    const { data: initApps } = useQuery([id], async () => {
         return await getAppDuos();
     }, UseQueryOptions);
     const [apps, setApps] = useState(initApps);
-    // const [atoms, setAtoms] = useState(initAtoms);
 
     function ViewDuoItem({ value }: { value: DuoOuterApp; }) {
         const { id, ioApp, buds } = value;

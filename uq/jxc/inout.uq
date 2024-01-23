@@ -26,6 +26,7 @@ ENUM EnumIOState (
     stopped             = 1,
     errSqlProc          = 11,
     errOutConnection    = 21,
+    errID               = 31,
     errUnknown          = 999,
 );
 
@@ -36,16 +37,8 @@ ID IOEndPoint (
     cur BIGINT DEFAULT 0,       -- 当前已经处理完成指针，指向IOQUeue
     state ENUM EnumIOState DEFAULT EnumIOState.ok,     -- 当前处理完成状态。如果不是0=正常，则停止等待。
     valid TINYINT DEFAULT 1,
-    -- INDEX inout_id (inout, id) UNIQUE,
+    INDEX appIO_outer (appIO, outer) UNIQUE,
 );
-
-/*
-ID IOAtomType (
-    id,
-    KEY outer ID,               -- outer
-    KEY phrase ID,              -- inner atom phrase
-);
-*/
 
 ID IOAppAtom (
     id,                         -- IO atom id
@@ -54,30 +47,7 @@ ID IOAppAtom (
     no NO,                      -- outer app no
     INDEX appID_no(appID, no) UNIQUE,
 );
-/*
-IX IOIxAtom (
-    i,                          -- ioapp atom id
-    x,                          -- tonwa uq atom id
-);
 
-Biz AC BuildIOEndPoint(
-    outer ID,
-    appIO ID,           -- phrase of IOApp.IO
-) {
-    VAR endPoint ID;
-    -- outer，app>0 增，app<0 减 
-    IF app>0 {
-        FOR (var ioId ID OF SELECT a.x as ioId FROM Duo as a WHERE a.i=app AND a.valid=1) {
-            WITH IOEndPoint ID to endPoint KEY(outer, appIO) SET valid=1;
-        }
-    }
-    ELSE {
-        FOR (var ioId ID OF SELECT a.x as ioId FROM Duo as a WHERE a.i=-app AND a.valid=1) {
-            WITH IOEndPoint KEY(outer, ioId, -app) SET valid=0;
-        }
-    }
-}
-*/
 PROC ProcessIOIn (
     batchNumber INT,            -- 批处理数量，默认1
 ) {

@@ -74,7 +74,6 @@ export class Biz {
     readonly ins: EntityIn[] = [];
     readonly outs: EntityOut[] = [];
     readonly ioApps: EntityIOApp[] = [];
-    readonly IOIDs: EntityAtom[] = [];
 
     readonly groups: Group[] = [];
     readonly _refresh = atom(false);
@@ -112,7 +111,6 @@ export class Biz {
 
     buildEntities(bizSchema: any) {
         if (bizSchema === undefined) return;
-        this.IOIDs.splice(0);
         this.atomBuilder = new AtomsBuilder(this);
         const builders: { [type in EnumEntity]: (id: number, name: string, type: string) => Entity } = {
             [EnumEntity.sheet]: this.buildSheet,
@@ -199,7 +197,6 @@ export class Biz {
             }
         }
         this.atomBuilder.buildRootAtoms();
-        this.buildIOIDs();
         this.groups.push(
             {
                 name: 'sheet',
@@ -319,34 +316,6 @@ export class Biz {
                 entity.ui = ui = {};
             }
             ui.caption = caption;
-        }
-    }
-
-    private buildIOIDs() {
-        for (let entityIn of this.ins) {
-            this.scanIOIDs(entityIn.buds);
-        }
-        for (let entityOut of this.outs) {
-            this.scanIOIDs(entityOut.buds);
-        }
-    }
-
-    private scanIOIDs(buds: BizBud[]) {
-        for (let bud of buds) {
-            const { budDataType } = bud;
-            switch (budDataType.type) {
-                case EnumBudType.ID:
-                    let budIDIO: BudIDIO = budDataType as BudIDIO;
-                    const { bizAtom } = budIDIO;
-                    if (bizAtom !== undefined) {
-                        this.IOIDs.push(bizAtom);
-                    }
-                    break;
-                case EnumBudType.arr:
-                    let budArr: BudArr = budDataType as BudArr;
-                    this.scanIOIDs(budArr.buds);
-                    break;
-            }
         }
     }
 

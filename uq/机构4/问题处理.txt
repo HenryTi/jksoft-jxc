@@ -59,10 +59,26 @@ IN inTest (
     }
 }
 
-IOApp a {
+OUT OutTest (
+    a int,
+    b dec,  
+    c date, 
+    d char,
+    e ID, 
+    detail ( 
+            d1 int, 
+            d2 dec,
+            d3 date,
+            d4 char,
+            d5 ID,
+        )
+); 
+
+IOAPP jkscm '倢科SCM' {
     ID b to 部门信息;
     ID c to 物流中心信息;
     ID d to 药品|器械;
+    ID jk供应商信息 TO 供应商信息;
     IN intest {
         a: b;
         arr: {
@@ -70,5 +86,9 @@ IOApp a {
         }
     };
     Out outtest {
+        e: e ID d;
+        detail: detail2 {
+            d5: k ID b;
+        }
     };
 }
