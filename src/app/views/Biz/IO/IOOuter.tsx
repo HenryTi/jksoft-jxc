@@ -130,11 +130,11 @@ function PageSelectApps({ outerId, ids }: { outerId: number, ids: Set<number>; }
         async function onCheckChanged(name: string, checked: boolean) {
             let app: number;
             if (checked === true) {
-                await uq.SaveDuo.submit({ i: outerId, x: id });
+                await uq.SaveDuoOuterApp.submit({ i: outerId, x: id });
                 app = id;
             }
             else {
-                await uq.DelDuo.submit({ id: undefined, i: outerId, x: id });
+                await uq.DelDuoOuterApp.submit({ id: undefined, i: outerId, x: id });
                 app = - id;
             }
             //await uq.BuildIOEndPoint.submit({ outer: outerId, app, io: 0 });

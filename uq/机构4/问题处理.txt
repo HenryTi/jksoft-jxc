@@ -74,6 +74,13 @@ OUT OutTest (
         )
 ); 
 
+IOSite IO货主 {
+    Tie 部门信息;
+    IOApp {
+        jkscm;
+    };
+};
+
 IOAPP jkscm '倢科SCM' {
     ID b to 部门信息;
     ID c to 物流中心信息;

@@ -85,7 +85,7 @@ function PageIOCenter() {
         {folders.map((v, index) => {
             return <FolderLink key={index} {...v} className={cn} onClick={undefined} />;
         })}
-        <div className="d-flex mt-3 tonwa-bg-gray-1 ps-3 py-1 small text-secondary align-items-end">
+        <div className="d-flex mt-3 tonwa-bg-gray-1 ps-3 py-1 small text-secondary align-items-end border-bottom">
             <span>接口机构</span>
             <div className="flex-fill" />
             {right}

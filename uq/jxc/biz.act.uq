@@ -764,7 +764,7 @@ RETURNS ret (
         WHERE a.base=base;
 }
 
-Biz AC SaveDuo (
+Biz AC SaveDuoOuterApp (
     i ID,
     x ID,
 )
@@ -779,10 +779,11 @@ RETURNS ret (
         RETURN;
     }
     WITH Duo as a ID to id KEY(i, x) SET a.valid=1;
+    WITH IxBud as a I=x X=i;
     INTO ret SELECT id;
 }
 
-Biz AC DelDuo (
+Biz AC DelDuoOuterApp (
     id ID,
     i ID,
     x ID,
@@ -790,12 +791,16 @@ Biz AC DelDuo (
     IF id IS NULL {
         SET id=ID(DUO KEY i=i, x=x);
     }
+    ELSE {
+        SET i=a.i, x=a.x FROM Duo as a WHERE a.id=id;
+    }
     IF EXISTS(SELECT id FROM Duo as a 
             LEFT JOIN ATOM as b ON b.id=a.i LEFT JOIN BizPhrase as b1 ON b1.id=b.base AND b1.base=$site
             LEFT JOIN ATOM as c ON c.id=a.x LEFT JOIN BizPhrase as c1 ON c1.id=c.base AND c1.base=$site
         WHERE a.id=id AND (b.id IS NOT NULL OR c.id IS NOT NULL)
     ) {
         WITH Duo ID=id SET valid=0;
+        WITH IxBud I=x X=i DEL;
     }
 }
 

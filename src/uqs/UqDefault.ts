@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Jan 20 2024 10:56:34 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Mon Jan 22 2024 23:09:31 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -208,6 +208,7 @@ export enum EnumIOState {
 	stopped = 1,
 	errSqlProc = 11,
 	errOutConnection = 21,
+	errID = 31,
 	errUnknown = 999
 }
 
@@ -230,15 +231,15 @@ export interface IOEndPointInActs extends ID {
 
 export interface IOAppAtom extends ID {
 	appID: number;
-	no: string;
 	atom: number;
+	no?: string;
 }
 
 export interface IOAppAtomInActs extends ID {
 	ID?: UqID<any>;
 	appID: number | ID;
-	no: string;
 	atom: number | ID;
+	no?: string;
 }
 
 export interface ParamSaveIOAtom {
@@ -1180,23 +1181,23 @@ export interface ResultGetSpecsFromBase {
 	ret: ReturnGetSpecsFromBaseRet[];
 }
 
-export interface ParamSaveDuo {
+export interface ParamSaveDuoOuterApp {
 	i: number;
 	x: number;
 }
-export interface ReturnSaveDuoRet {
+export interface ReturnSaveDuoOuterAppRet {
 	id: number;
 }
-export interface ResultSaveDuo {
-	ret: ReturnSaveDuoRet[];
+export interface ResultSaveDuoOuterApp {
+	ret: ReturnSaveDuoOuterAppRet[];
 }
 
-export interface ParamDelDuo {
+export interface ParamDelDuoOuterApp {
 	id: number;
 	i: number;
 	x: number;
 }
-export interface ResultDelDuo {
+export interface ResultDelDuoOuterApp {
 }
 
 export interface ParamGetDuos {
@@ -1322,8 +1323,8 @@ export interface UqExt extends Uq {
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
 	GetSpecsFromBase: UqQuery<ParamGetSpecsFromBase, ResultGetSpecsFromBase>;
-	SaveDuo: UqAction<ParamSaveDuo, ResultSaveDuo>;
-	DelDuo: UqAction<ParamDelDuo, ResultDelDuo>;
+	SaveDuoOuterApp: UqAction<ParamSaveDuoOuterApp, ResultSaveDuoOuterApp>;
+	DelDuoOuterApp: UqAction<ParamDelDuoOuterApp, ResultDelDuoOuterApp>;
 	GetDuos: UqQuery<ParamGetDuos, ResultGetDuos>;
 	ClearCode: UqAction<ParamClearCode, ResultClearCode>;
 	ClearPend: UqAction<ParamClearPend, ResultClearPend>;
@@ -1768,6 +1769,7 @@ export const uqSchema={
             "stopped": 1,
             "errSqlProc": 11,
             "errOutConnection": 21,
+            "errID": 31,
             "errUnknown": 999
         }
     },
@@ -1833,13 +1835,13 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "no",
-                "type": "char",
-                "size": 20
-            },
-            {
                 "name": "atom",
                 "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
             }
         ],
         "keys": [
@@ -1848,9 +1850,8 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "no",
-                "type": "char",
-                "size": 20
+                "name": "atom",
+                "type": "id"
             }
         ],
         "global": false,
@@ -4586,8 +4587,8 @@ export const uqSchema={
             }
         ]
     },
-    "saveduo": {
-        "name": "SaveDuo",
+    "saveduoouterapp": {
+        "name": "SaveDuoOuterApp",
         "type": "action",
         "private": false,
         "sys": true,
@@ -4614,8 +4615,8 @@ export const uqSchema={
             }
         ]
     },
-    "delduo": {
-        "name": "DelDuo",
+    "delduoouterapp": {
+        "name": "DelDuoOuterApp",
         "type": "action",
         "private": false,
         "sys": true,
