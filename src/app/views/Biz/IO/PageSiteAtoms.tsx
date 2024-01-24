@@ -1,13 +1,12 @@
 import { useUqApp } from "app";
 import { EntityIOApp, EntityIOSite } from "app/Biz";
 import { ButtonRightAdd, PageQueryMore } from "app/coms";
-import { ViewAtom, useSelectAtom } from "app/hooks";
+import { LabelRowEdit, ViewAtom, useSelectAtom } from "app/hooks";
 import { AtomPhrase, UseQueryOptions } from "app/tool";
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { Page, useModal } from "tonwa-app";
-import { CheckAsync, FA, wait } from "tonwa-com";
-import { ResultGetIOSiteAtoms, ReturnGetIOAtomAppsRet } from "uqs/UqDefault";
+import { CheckAsync, FA, Sep, wait } from "tonwa-com";
 
 interface IOApp {
     ioApp: number;
@@ -47,6 +46,13 @@ export function PageSiteAtoms({ ioSite }: { ioSite: EntityIOSite; }) {
     />;
 }
 
+function TopItem({ label, children }: { label: string; children: React.ReactNode; }) {
+    return <div className="p-3 border-bottom d-flex align-items-center">
+        <small className="text-secondary me-3">{label}:</small>
+        {children}
+    </div>
+}
+
 function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; }) {
     const { uq } = useUqApp();
     const modal = useModal();
@@ -60,12 +66,6 @@ function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; 
         return coll;
     }, UseQueryOptions);
 
-    function TopItem({ label, children }: { label: string; children: React.ReactNode; }) {
-        return <div className="p-3 border-bottom d-flex align-items-center">
-            <small className="text-secondary me-3">{label}:</small>
-            {children}
-        </div>
-    }
     function ViewApp({ appEntity, appVal: initAppVal }: { appEntity: EntityIOApp; appVal: IOApp; }) {
         const [appVal, setAppVal] = useState(initAppVal);
         async function onCheckChanged(name: string, checked: boolean) {
@@ -83,9 +83,7 @@ function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; 
             }
         }
         async function onEdit() {
-            let ret = await modal.open(<Page header="edit app">
-                edit app
-            </Page>);
+            let ret = await modal.open(<PageEditApp ioSite={ioSite} atom={atom} appEntity={appEntity} appVal={appVal} />);
         }
         const { id, caption, name } = appEntity;
         let vContent: any, vRight: any, cnContent: string, onContentClick: () => void;
@@ -116,6 +114,41 @@ function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; 
         </div>
         <div className="">
             {apps.map(v => <ViewApp key={v.id} appEntity={v} appVal={data[v.id]} />)}
+        </div>
+    </Page>;
+}
+
+function PageEditApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; ioSite: EntityIOSite; appEntity: EntityIOApp; appVal: IOApp; }) {
+    const { caption, name, tie } = ioSite;
+    const { ins, outs } = appEntity;
+    const labelSize = 1;
+    async function onEditClick() {
+    }
+    return <Page header="编辑App">
+        <div className="tonwa-bg-gray-1">
+            <TopItem label="外连类型"><span>{caption ?? name}</span></TopItem>
+            <TopItem label={tie.caption ?? tie.name}><ViewAtom value={atom} /></TopItem>
+            <TopItem label="外连App"><span>{appEntity.caption ?? appEntity.name}</span></TopItem>
+        </div>
+        <div className="mb-3" />
+        <Sep />
+        <LabelRowEdit label="appUrl" labelSize={labelSize} onEditClick={onEditClick}
+            required={false} error={undefined}>
+            {appVal.appUrl}
+        </LabelRowEdit>
+        <Sep />
+        <LabelRowEdit label="appKey" labelSize={labelSize} onEditClick={onEditClick}
+            required={false} error={undefined}>
+            {appVal.appKey}
+        </LabelRowEdit>
+        <Sep />
+        <div className="mt-4">
+            <div className="small text-secondary px-3 pb-1 pt-2 border-bottom tonwa-bg-gray-1">入口</div>
+            {ins.map((v, index) => <div key={index} className="px-3 py-2 border-bottom">{JSON.stringify(v)}</div>)}
+        </div>
+        <div className="mt-4">
+            <div className="small text-secondary px-3 pb-1 pt-2 px-3 border-bottom tonwa-bg-gray-1">出口</div>
+            {outs.map((v, index) => <div key={index} className="px-3 py-2 border-bottom">{JSON.stringify(v)}</div>)}
         </div>
     </Page>;
 }
