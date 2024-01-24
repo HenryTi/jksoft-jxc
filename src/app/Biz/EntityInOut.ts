@@ -41,3 +41,16 @@ export class EntityIOApp extends Entity {
         return ret;
     }
 }
+
+export class EntityIOSite extends Entity {
+    tie: EntityAtom;
+    apps: EntityIOApp[];
+
+    protected override fromSwitch(i: string, val: any): void {
+        switch (i) {
+            default: super.fromSwitch(i, val); break;
+            case 'tie': this.tie = this.biz.entityFromId(val); break;
+            case 'apps': this.apps = (val as number[]).map(v => this.biz.entityFromId(v)); break;
+        }
+    }
+}

@@ -1,12 +1,14 @@
 import { useUqApp } from "app";
-import { EntityAtom } from "app/Biz";
+import { EntityAtom, EntityIOSite } from "app/Biz";
 import { centers } from "app/views/center";
 import { Link, Route } from "react-router-dom";
-import { FA } from "tonwa-com";
+import { FA, LMR, List } from "tonwa-com";
 import { PageIOOuterNew, PageIOOuterView, pathIOOuter } from "./IOOuter";
-import { ViewAtom, useBizAtomList } from "app/hooks";
-import { PageQueryMore } from "app/coms";
+import { ViewAtom, useBizAtomList, useSelectAtom } from "app/hooks";
+import { ButtonRightAdd, PageQueryMore } from "app/coms";
 import { PageIODef, PageIOList, pathDef } from "./IODef";
+import { Page, useModal } from "tonwa-app";
+import { PageSiteAtoms } from "./PageSiteAtoms";
 
 const pathList = `${centers.io.path}/list`;
 const cn = ' d-flex px-4 py-3 border-bottom align-items-center ';
@@ -31,11 +33,28 @@ function FolderLink({ path, className, icon, iconColor, onClick, caption }: Fold
 
 function PageIOCenter() {
     const uqApp = useUqApp();
-    const { biz } = uqApp;
-    const { entities } = biz;
-    let ioOuter = entities['$ioouter'];
-    // obsolete
-    let ioApp = entities['$ioapp'];
+    const { uq, biz } = uqApp;
+    const modal = useModal();
+    function ViewIOSite({ value: { caption, name } }: { value: EntityIOSite; }) {
+        return <LMR className="py-2 align-items-center">
+            <FA name="exchange" className="mx-4 text-primary" />
+            <span>{caption ?? name}</span>
+            <FA name="angle-right" className="mx-4" />
+        </LMR>;
+    }
+    function onItemClick(item: EntityIOSite) {
+        modal.open(<PageSiteAtoms ioSite={item} />);
+    }
+    return <Page header={centers.io.caption}>
+        <List items={biz.ioSites} ViewItem={ViewIOSite} onItemClick={onItemClick} />
+    </Page>;
+}
+
+function PageIOCenter1() {
+    const uqApp = useUqApp();
+    const { uq, biz } = uqApp;
+    const modal = useModal();
+    const selectAtom = useSelectAtom();
     const folders: FolderLinkProps[] = [
         /*
         {
@@ -58,27 +77,38 @@ function PageIOCenter() {
             path: `../${pathList}`,
         },
     ];
-    // const uqApp = useUqApp();
-    // const { biz } = uqApp;
-    // const { entities } = biz;
-    // let ioOuter = entities['$ioouter'] as EntityAtom;
-    let optionsList = {
-        atomName: 'atom' as any,
-        NOLabel: undefined as any,
-        exLabel: undefined as any,
-        ViewItemAtom: ViewAtom,
-        pathAtomNew: pathIOOuter.new,
-        pathAtomView: pathIOOuter.view,
-        entityAtom: ioOuter as EntityAtom,
-        // top,
-        header: centers.io.caption,
-    };
-    const none = <div className='m-3 small text-muted'>[无{ioOuter.caption ?? ioOuter.name}]</div>;
-    let { query, right, param, sortField, ViewItem, } = useBizAtomList(optionsList);
+    const none = <div className='m-3 small text-muted'>[无]</div>;
+    function ViewItem({ value: { id, no, ex } }: { value: { id: number; no: string; ex: string; } }) {
+        return <div className="px-3 py-2">
+            <div>{ex}</div>
+            <div className="text-secondary small">{no}</div>
+        </div>;
+    }
+    async function onAdd() {
+        function ModalSelectIOSite() {
+            function ViewIOSite({ value: { caption, name } }: { value: EntityIOSite; }) {
+                return <div className="px-3 py-2">
+                    {caption ?? name}
+                </div>;
+            }
+            function onSelect(item: EntityIOSite, isSelected: boolean) {
+                modal.close(item);
+            }
+            return <Page header="选择接口类型">
+                <List items={biz.ioSites} ViewItem={ViewIOSite} onItemSelect={onSelect} />
+            </Page>;
+        }
+        let ioSite = await modal.open<EntityIOSite>(< ModalSelectIOSite />);
+        if (ioSite === undefined) return;
+        let atom = await selectAtom(ioSite.tie);
+        if (atom === undefined) return;
+        alert(`ioSite:${ioSite.name}, atom: ${atom.ex}`);
+    }
+    const right = <ButtonRightAdd onClick={onAdd} />;
     return <PageQueryMore header={centers.io.caption}
-        query={query}
-        param={param}
-        sortField={sortField}
+        query={uq.GetIOAtomApps}
+        param={{} as any}
+        sortField={'id'}
         ViewItem={ViewItem}
         none={none}
     >
@@ -91,16 +121,6 @@ function PageIOCenter() {
             {right}
         </div>
     </PageQueryMore>;
-    //let { page } = useBizAtomList(optionsList);
-    //  return page;
-    // return <PageIOOuterList top={top} header={centers.io.caption} />;
-    /*
-    return <Page header={centers.io.caption}>
-        {folders.map((v, index) => {
-            return <FolderLink key={index} {...v} className={cn} onClick={undefined} />;
-        })}
-    </Page>;
-    */
 }
 export function routeIOCenter() {
     const n = ':io';
@@ -112,8 +132,4 @@ export function routeIOCenter() {
         <Route path={pathIOOuter.new(atom)} element={<PageIOOuterNew />} />
         <Route path={pathIOOuter.view(atom)} element={<PageIOOuterView />} />
     </>;
-    // <Route path={pathIOOuter.list(atom)} element={<PageIOOuterList />} />
-    // <Route path={pathIOApp.list(atom)} element={<PageIOAppList />} />
-    // <Route path={pathIOApp.new(atom)} element={<PageIOAppNew />} />
-    // <Route path={pathIOApp.view(atom)} element={<PageIOAppView />} />
 }

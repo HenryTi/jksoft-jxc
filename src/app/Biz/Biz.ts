@@ -16,7 +16,7 @@ import { EntityAssign } from './EntityAssign';
 import { BizBud, BudArr, BudIDIO, EnumBudType } from './BizBud';
 import { AtomsBuilder } from './AtomsBuilder';
 import { EntityConsole } from './EntityConsole';
-import { EntityIOApp, EntityIn, EntityOut } from './EntityInOut';
+import { EntityIOApp, EntityIOSite, EntityIn, EntityOut } from './EntityInOut';
 
 enum EnumEntity {
     sheet,
@@ -37,6 +37,7 @@ enum EnumEntity {
     in,
     out,
     ioApp,
+    ioSite,
 };
 
 interface Group {
@@ -74,6 +75,7 @@ export class Biz {
     readonly ins: EntityIn[] = [];
     readonly outs: EntityOut[] = [];
     readonly ioApps: EntityIOApp[] = [];
+    readonly ioSites: EntityIOSite[] = [];
 
     readonly groups: Group[] = [];
     readonly _refresh = atom(false);
@@ -131,6 +133,7 @@ export class Biz {
             [EnumEntity.in]: this.buildIn,
             [EnumEntity.out]: this.buildOut,
             [EnumEntity.ioApp]: this.buildIOApp,
+            [EnumEntity.ioSite]: this.buildIOSite,
         }
         for (let group of this.groups) {
             let { entities } = group;
@@ -266,7 +269,8 @@ export class Biz {
                     [
                         [this.ins, '接收', 'user-o'],
                         [this.outs, '发送', 'user-o'],
-                        [this.ioApps, '外联应用', 'user-o'],
+                        [this.ioSites, '外连机构', 'user-o'],
+                        [this.ioApps, '外连应用', 'user-o'],
                     ]
             },
         );
@@ -446,6 +450,12 @@ export class Biz {
     private buildIOApp = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityIOApp(this, id, name, type);
         this.ioApps.push(bizEntity);
+        return bizEntity;
+    }
+
+    private buildIOSite = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityIOSite(this, id, name, type);
+        this.ioSites.push(bizEntity);
         return bizEntity;
     }
 }

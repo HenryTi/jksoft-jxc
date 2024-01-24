@@ -30,23 +30,103 @@ ENUM EnumIOState (
     errUnknown          = 999,
 );
 
-ID IOEndPoint (
+ID IOSiteAtomApp (
     id,
-    KEY outer ID,               -- IOOuter,
-    KEY appIO ID,               -- IOApp.IO phrase id, id.base is pharse IOApp
-    cur BIGINT DEFAULT 0,       -- 当前已经处理完成指针，指向IOQUeue
-    state ENUM EnumIOState DEFAULT EnumIOState.ok,     -- 当前处理完成状态。如果不是0=正常，则停止等待。
-    valid TINYINT DEFAULT 1,
-    INDEX appIO_outer (appIO, outer) UNIQUE,
+    KEY ioSiteAtom ID,          -- DUO(IOSite entity id, tied atom)
+    KEY ioApp ID,               -- IOApp entity id
+    appUrl CHAR(200),           -- app url
+    appKey CHAR(400),           -- app key
+    valid TINYINT DEFAULT 1,    -- 0: invalid, 1: valid
 );
 
+ID IOEndPoint (
+    id,
+    KEY siteAtomApp ID,         -- IOSiteAtomApp,
+    KEY appIO ID,               -- IOApp.IO phrase id, id.base is pharse IOApp
+    url CHAR(200),              -- appIO 对应的url, http:// or https://开始，表示全部
+    cur BIGINT DEFAULT 0,       -- 当前已经处理完成指针，指向IOQUeue
+    state ENUM EnumIOState DEFAULT EnumIOState.ok,     -- 当前处理完成状态。如果不是0=正常，则停止等待。
+);
+
+-- Duo AppID (IOAtomSiteApp, appID);
 ID IOAppAtom (
     id,                         -- IO atom id
-    KEY appID ID,               -- pharse IOApp.ID
+    KEY appID ID,               -- Duo AppID (IOAtomSiteApp, pharse IOApp.ID)
     KEY atom ID,                -- tonwa uq atom id
     no NO,                      -- outer app no
     INDEX appID_no(appID, no) UNIQUE,
 );
+
+Biz QUERY GetIOSiteAtoms(
+    ioSite ID,
+)
+PAGE (
+    id ID ASC,
+    no NO,
+    ex EX,
+    ioSiteAtom ID,
+) {
+    PAGE SELECT b.id, b.no, b.ex, a.id as ioSiteAtom
+        FROM Duo as a 
+            JOIN Atom as b ON b.id=a.x
+            JOIN BizPhrase as c ON c.id=a.i
+        WHERE c.base=$site AND a.i=ioSite AND a.x>$pageStart AND a.valid=1
+        ORDER BY a.x ASC
+        LIMIT $pageSize;
+}
+
+Biz QUERY GetIOAtomApps(
+    ioSite ID,
+    atom ID,
+)
+RETURNS ret (
+    ioSite ID,                  -- IOSite entity id
+    atom ID,                    -- atom
+    ioApp ID,                   -- IOApp entity id
+    ioSiteAtom ID,
+    appUrl CHAR(200),           -- app url
+    appKey CHAR(400),           -- app key
+) {
+    VAR ioSiteAtom ID = ID(Duo Key i=ioSite, x=atom);
+    INTO ret SELECT b.i as ioSite, b.x as atom, a.ioApp, a.id as ioSiteAtom, a.appUrl, a.appKey
+        FROM IOSiteAtomApp as a
+            JOIN Duo as b ON b.id=a.ioSiteAtom
+        WHERE a.ioSiteAtom=ioSiteAtom;
+}
+
+Biz AC SetIOSiteAtomApp (
+    ioSite ID,
+    atom ID,
+    ioApp ID,                   -- IOApp entity id
+    valid TINYINT,
+)
+RETURNS ret (
+    id ID,
+) {
+    VAR id ID, ioSiteAtom ID;
+    SET ioSiteAtom=ID(Duo new Key i=ioSite, x=atom);
+    IF id IS NULL {
+        WITH IOSiteAtomApp as a ID to id KEY(ioSiteAtom, ioApp) SET a.valid=valid;
+    }
+    ELSE {
+        WITH IOSiteAtomApp as a KEY(ioSiteAtom, ioApp) SET a.valid=valid;
+    }
+    INTO ret SELECT id;
+}
+
+Biz AC SetIOSiteAtomAppUrl (
+    ioSiteAtomApp ID,
+    url CHAR(200),
+) {
+    WITH IOSiteAtomApp ID=ioSiteAtomApp SET appUrl=url;
+}
+
+Biz AC SetIOSiteAtomAppKey (
+    ioSiteAtomApp ID,
+    key CHAR(200),
+) {
+    WITH IOSiteAtomApp ID=ioSiteAtomApp SET appKey=key;
+}
 
 PROC ProcessIOIn (
     batchNumber INT,            -- 批处理数量，默认1

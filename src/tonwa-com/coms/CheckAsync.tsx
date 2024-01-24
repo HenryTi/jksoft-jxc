@@ -30,7 +30,7 @@ export function CheckAsync(props: Props) {
     if (running === true) {
         vRunning = <FA name="spinner" spin={true} className={gapClassName + ' text-info position-absolute mt-1 '} />;
     }
-    return <label className={(className ?? '') + ' d-inline-block position-relative '}>
+    return <label className={(className ?? ' d-inline-block ') + ' position-relative '}>
         {vRunning}
         <input type="checkbox" className={(inputClassName ?? ' form-check-input ') + gapClassName}
             name={name}

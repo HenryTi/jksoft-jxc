@@ -74,7 +74,7 @@ OUT OutTest (
         )
 ); 
 
-IOSite IO货主 {
+IOSite 货主接口 {
     Tie 部门信息;
     IOApp {
         jkscm;
