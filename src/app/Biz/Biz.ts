@@ -300,12 +300,13 @@ export class Biz {
             }
             group.hasEntity = hasEntity;
         }
-        this.buildSysEntities();
+        // this.buildSysEntities();
         this.hasEntity = allHasEntity;
         this.atomBuilder = undefined;
         this.refresh();
     }
 
+    /*
     private buildSysEntities() {
         const sysEntitys: { name: string; caption: string; }[] = [
             { name: '$ioouter', caption: '接口机构' },
@@ -322,7 +323,7 @@ export class Biz {
             ui.caption = caption;
         }
     }
-
+    */
     refresh() {
         setAtomValue(this._refresh, !getAtomValue(this._refresh));
     }
