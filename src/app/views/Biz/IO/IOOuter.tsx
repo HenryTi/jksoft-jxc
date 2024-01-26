@@ -180,7 +180,7 @@ function PageOuterApp({ duo, outer, ioApp, buds }: { duo: number; outer: number;
     function ViewIOAppID({ value }: { value: IOAppID }) {
         const { name, caption, atoms } = value;
         function onAtom() {
-            modal.open(<PageAtomMap outerId={outer} ioAppID={value} />);
+            //modal.open(<PageAtomMap outerId={outer} ioAppID={value} />);
         }
         return <div className={cnItem} onClick={onAtom}>
             {caption ?? name} :: {atoms.map(v => <span key={v.id}>{v.caption ?? v.name}</span>)}
