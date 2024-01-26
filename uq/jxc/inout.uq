@@ -42,7 +42,7 @@ ID IOEndPoint (
     id,
     KEY siteAtomApp ID,         -- IOSiteAtomApp,
     KEY appIO ID,               -- IOApp.IO bud id
-    url CHAR(200),              -- BizOut 对应的url, http:// or https://开始，表示全部
+    config JSON,                -- BizOut 对应的 config
     cur BIGINT DEFAULT 0,       -- 当前已经处理完成指针，指向IOQUeue
     state ENUM EnumIOState DEFAULT EnumIOState.ok,     -- 当前处理完成状态。如果不是0=正常，则停止等待。
 );
@@ -82,12 +82,12 @@ RETURNS ret (
     ioSite ID,                  -- IOSite entity id
     atom ID,                    -- atom
     ioApp ID,                   -- IOApp entity id
-    ioSiteAtom ID,
+    siteAtomApp ID,
     appUrl CHAR(200),           -- app url
     appKey CHAR(400),           -- app key
 ) {
     VAR ioSiteAtom ID = ID(Duo Key i=ioSite, x=atom);
-    INTO ret SELECT b.i as ioSite, b.x as atom, a.ioApp, a.id as ioSiteAtom, a.appUrl, a.appKey
+    INTO ret SELECT b.i as ioSite, b.x as atom, a.ioApp, a.id as siteAtomApp, a.appUrl, a.appKey
         FROM IOSiteAtomApp as a
             JOIN Duo as b ON b.id=a.ioSiteAtom
         WHERE a.ioSiteAtom=ioSiteAtom;
@@ -125,6 +125,27 @@ Biz AC SetIOSiteAtomAppKey (
     key CHAR(200),
 ) {
     WITH IOSiteAtomApp ID=ioSiteAtomApp SET appKey=key;
+}
+
+Biz QUERY GetIOEndPointConfigs(
+    siteAtomApp ID,             -- IOSiteAtomApp,
+)
+RETURNS ret (
+    id ID,
+    appIO ID,                   -- IOApp.IO bud id
+    config JSON,                -- BizOut 对应的 config
+) {
+    INTO ret SELECT a.id, a.appIO, a.config
+        FROM IOEndPoint as a
+        WHERE a.siteAtomApp=siteAtomApp;
+}
+
+Biz AC SetIOEndPointConfig(
+    siteAtomApp ID,
+    appIO ID,
+    config JSON,
+) {
+    WITH IOEndPoint as a KEY(siteAtomApp, appIO) SET a.config=config;
 }
 
 PROC ProcessIOIn (

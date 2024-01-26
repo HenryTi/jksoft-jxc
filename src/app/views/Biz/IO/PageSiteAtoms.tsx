@@ -8,8 +8,10 @@ import { useQuery } from "react-query";
 import { Page, useModal } from "tonwa-app";
 import { CheckAsync, FA, Sep, wait } from "tonwa-com";
 import { PageAtomMap } from "./PageAtomMap";
+import { ReturnGetIOEndPointConfigsRet } from "uqs/UqDefault";
 
 interface IOApp {
+    siteAtomApp: number;
     ioApp: number;
     appUrl: string;
     appKey: string;
@@ -122,9 +124,19 @@ function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; 
 }
 
 function PageApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; ioSite: EntityIOSite; appEntity: EntityIOApp; appVal: IOApp; }) {
+    const { uq } = useUqApp();
     const modal = useModal();
     const { caption, name, tie } = ioSite;
     const { IDs, ins, outs } = appEntity;
+    const { siteAtomApp } = appVal;
+    const { data } = useQuery([], async () => {
+        let ret = await uq.GetIOEndPointConfigs.query({ siteAtomApp });
+        const coll: { [appIO: number]: ReturnGetIOEndPointConfigsRet } = {};
+        for (let row of ret.ret) {
+            coll[row.appIO] = row;
+        }
+        return coll;
+    }, UseQueryOptions);
     const labelSize = 1;
     async function onEditClick() {
     }
@@ -135,13 +147,25 @@ function PageApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; ioSite
         </>;
     }
     function ViewIO({ value }: { value: any; }) {
+        const [config, setConfig] = useState(data[value.id]?.config);
         async function onOutClick() {
+            let newConfig = { "a": 1 }
+            await uq.SetIOEndPointConfig.submit({ siteAtomApp, appIO: value.id, config: JSON.stringify(newConfig) });
+            setConfig(newConfig);
         }
         const label = <span>{value.name}</span>;
+        let vConfig: any;
+        if (config === undefined) {
+            vConfig = <>无设置</>;
+        }
+        else {
+            vConfig = <>{JSON.stringify(config)}</>;
+        }
         return <>
             <LabelRowEdit label={label} labelSize={labelSize}
                 onEditClick={onOutClick} required={false} error={undefined}>
-                {JSON.stringify(value)}
+                <div>{JSON.stringify(value)}</div>
+                <div>{vConfig}</div>
             </LabelRowEdit>
             <Sep />
         </>;

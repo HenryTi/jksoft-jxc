@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Jan 25 2024 12:09:15 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Fri Jan 26 2024 17:11:27 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1186,7 +1186,7 @@ export interface IOSiteAtomAppInActs extends ID {
 export interface IOEndPoint extends ID {
 	siteAtomApp: number;
 	appIO: number;
-	url: string;
+	config: any;
 	cur: number;
 	state: any;
 }
@@ -1195,7 +1195,7 @@ export interface IOEndPointInActs extends ID {
 	ID?: UqID<any>;
 	siteAtomApp: number | ID;
 	appIO: number | ID;
-	url: string;
+	config: any;
 	cur: number;
 	state: any;
 }
@@ -1234,7 +1234,7 @@ export interface ReturnGetIOAtomAppsRet {
 	ioSite: number;
 	atom: number;
 	ioApp: number;
-	ioSiteAtom: number;
+	siteAtomApp: number;
 	appUrl: string;
 	appKey: string;
 }
@@ -1267,6 +1267,26 @@ export interface ParamSetIOSiteAtomAppKey {
 	key: string;
 }
 export interface ResultSetIOSiteAtomAppKey {
+}
+
+export interface ParamGetIOEndPointConfigs {
+	siteAtomApp: number;
+}
+export interface ReturnGetIOEndPointConfigsRet {
+	id: number;
+	appIO: number;
+	config: any;
+}
+export interface ResultGetIOEndPointConfigs {
+	ret: ReturnGetIOEndPointConfigsRet[];
+}
+
+export interface ParamSetIOEndPointConfig {
+	siteAtomApp: number;
+	appIO: number;
+	config: any;
+}
+export interface ResultSetIOEndPointConfig {
 }
 
 export interface ParamSaveIOAtom {
@@ -1412,6 +1432,8 @@ export interface UqExt extends Uq {
 	SetIOSiteAtomApp: UqAction<ParamSetIOSiteAtomApp, ResultSetIOSiteAtomApp>;
 	SetIOSiteAtomAppUrl: UqAction<ParamSetIOSiteAtomAppUrl, ResultSetIOSiteAtomAppUrl>;
 	SetIOSiteAtomAppKey: UqAction<ParamSetIOSiteAtomAppKey, ResultSetIOSiteAtomAppKey>;
+	GetIOEndPointConfigs: UqQuery<ParamGetIOEndPointConfigs, ResultGetIOEndPointConfigs>;
+	SetIOEndPointConfig: UqAction<ParamSetIOEndPointConfig, ResultSetIOEndPointConfig>;
 	SaveIOAtom: UqAction<ParamSaveIOAtom, ResultSaveIOAtom>;
 	GetIOAtoms: UqQuery<ParamGetIOAtoms, ResultGetIOAtoms>;
 }
@@ -4673,9 +4695,8 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "url",
-                "type": "char",
-                "size": 200
+                "name": "config",
+                "type": "json"
             },
             {
                 "name": "cur",
@@ -4809,7 +4830,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "ioSiteAtom",
+                        "name": "siteAtomApp",
                         "type": "id"
                     },
                     {
@@ -4895,6 +4916,59 @@ export const uqSchema={
                 "name": "key",
                 "type": "char",
                 "size": 200
+            }
+        ],
+        "jsoned": true,
+        "returns": [] as any
+    },
+    "getioendpointconfigs": {
+        "name": "GetIOEndPointConfigs",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "siteAtomApp",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "appIO",
+                        "type": "id"
+                    },
+                    {
+                        "name": "config",
+                        "type": "json"
+                    }
+                ]
+            }
+        ]
+    },
+    "setioendpointconfig": {
+        "name": "SetIOEndPointConfig",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "siteAtomApp",
+                "type": "id"
+            },
+            {
+                "name": "appIO",
+                "type": "id"
+            },
+            {
+                "name": "config",
+                "type": "json"
             }
         ],
         "jsoned": true,
