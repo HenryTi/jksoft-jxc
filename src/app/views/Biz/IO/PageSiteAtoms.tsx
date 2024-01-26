@@ -1,5 +1,5 @@
 import { useUqApp } from "app";
-import { EntityIOApp, EntityIOSite } from "app/Biz";
+import { EntityIOApp, EntityIOSite, IOAppID } from "app/Biz";
 import { ButtonRightAdd, PageQueryMore } from "app/coms";
 import { LabelRowEdit, ViewAtom, useSelectAtom } from "app/hooks";
 import { AtomPhrase, UseQueryOptions } from "app/tool";
@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { Page, useModal } from "tonwa-app";
 import { CheckAsync, FA, Sep, wait } from "tonwa-com";
+import { PageAtomMap } from "./PageAtomMap";
 
 interface IOApp {
     ioApp: number;
@@ -14,6 +15,8 @@ interface IOApp {
     appKey: string;
 }
 
+const cnRowCols = ' row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3 ';
+const cnItem = ' p-3 cursor-pointer border rounded-2 bg-white ';
 export function PageSiteAtoms({ ioSite }: { ioSite: EntityIOSite; }) {
     const { uq } = useUqApp();
     const modal = useModal();
@@ -83,7 +86,7 @@ function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; 
             }
         }
         async function onEdit() {
-            let ret = await modal.open(<PageEditApp ioSite={ioSite} atom={atom} appEntity={appEntity} appVal={appVal} />);
+            let ret = await modal.open(<PageApp ioSite={ioSite} atom={atom} appEntity={appEntity} appVal={appVal} />);
         }
         const { id, caption, name } = appEntity;
         let vContent: any, vRight: any, cnContent: string, onContentClick: () => void;
@@ -107,9 +110,9 @@ function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; 
             </div>
         </div>;
     }
-    return <Page header="设置接口App">
+    return <Page header="外连接口">
         <div className="tonwa-bg-gray-1">
-            <TopItem label="外联类型"><span>{caption ?? name}</span></TopItem>
+            <TopItem label="外连类型"><span>{caption ?? name}</span></TopItem>
             <TopItem label={tie.caption ?? tie.name}><ViewAtom value={atom} /></TopItem>
         </div>
         <div className="">
@@ -118,17 +121,52 @@ function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; 
     </Page>;
 }
 
-function PageEditApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; ioSite: EntityIOSite; appEntity: EntityIOApp; appVal: IOApp; }) {
+function PageApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; ioSite: EntityIOSite; appEntity: EntityIOApp; appVal: IOApp; }) {
+    const modal = useModal();
     const { caption, name, tie } = ioSite;
-    const { ins, outs } = appEntity;
+    const { IDs, ins, outs } = appEntity;
     const labelSize = 1;
     async function onEditClick() {
     }
-    return <Page header="编辑App">
+    function HeaderIO({ label }: { label: string }) {
+        return <>
+            <div className="mt-2 mb-1 ps-3 text-secondary small">{label}</div>
+            <Sep />
+        </>;
+    }
+    function ViewIO({ value }: { value: any; }) {
+        async function onOutClick() {
+        }
+        const label = <span>{value.name}</span>;
+        return <>
+            <LabelRowEdit label={label} labelSize={labelSize}
+                onEditClick={onOutClick} required={false} error={undefined}>
+                {JSON.stringify(value)}
+            </LabelRowEdit>
+            <Sep />
+        </>;
+    }
+    function ViewIn({ value }: { value: any }) {
+        return <ViewIO value={value} />;
+    }
+    function ViewOut({ value }: { value: any }) {
+        return <ViewIO value={value} />;
+    }
+    function ViewIOAppID({ value }: { value: IOAppID }) {
+        const { name, caption, atoms } = value;
+        const header = <>{atoms.map(v => <span key={v.id}>{v.caption ?? v.name}</span>)} :: {caption ?? name}</>;
+        function onAtom() {
+            modal.open(<PageAtomMap header={header} ioSite={ioSite} ioApp={appEntity} atom={atom} ioAppID={value} />);
+        }
+        return <div className={cnItem} onClick={onAtom}>
+            {header}
+        </div>
+    }
+    return <Page header="App">
         <div className="tonwa-bg-gray-1">
             <TopItem label="外连类型"><span>{caption ?? name}</span></TopItem>
-            <TopItem label={tie.caption ?? tie.name}><ViewAtom value={atom} /></TopItem>
             <TopItem label="外连App"><span>{appEntity.caption ?? appEntity.name}</span></TopItem>
+            <TopItem label={tie.caption ?? tie.name}><ViewAtom value={atom} /></TopItem>
         </div>
         <div className="mb-3" />
         <Sep />
@@ -142,13 +180,23 @@ function PageEditApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; io
             {appVal.appKey}
         </LabelRowEdit>
         <Sep />
-        <div className="mt-4">
-            <div className="small text-secondary px-3 pb-1 pt-2 border-bottom tonwa-bg-gray-1">入口</div>
-            {ins.map((v, index) => <div key={index} className="px-3 py-2 border-bottom">{JSON.stringify(v)}</div>)}
+        <div>
+            <HeaderIO label="入口" />
+            {ins.map((v, index) => <ViewIn key={index} value={v} />)}
         </div>
-        <div className="mt-4">
-            <div className="small text-secondary px-3 pb-1 pt-2 px-3 border-bottom tonwa-bg-gray-1">出口</div>
-            {outs.map((v, index) => <div key={index} className="px-3 py-2 border-bottom">{JSON.stringify(v)}</div>)}
+        <div>
+            <HeaderIO label="出口" />
+            {outs.map((v, index) => <ViewOut key={index} value={v} />)}
+        </div>
+        <div className="tonwa-bg-gray-1 small text-secondary px-3 pt-2 pb-1 border-bottom mt-3">
+            对照表
+        </div>
+        <div className="container py-3">
+            <div className={cnRowCols}>
+                {IDs.map(v => <div className="col" key={v.id}>
+                    <ViewIOAppID value={v} />
+                </div>)}
+            </div>
         </div>
     </Page>;
 }

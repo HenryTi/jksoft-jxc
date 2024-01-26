@@ -134,11 +134,11 @@ export class UqApp extends UqAppBase<UQs> {
             if (schemas === undefined) {
                 debugger;
                 console.error('uq-api compile saved bizobject error', logs);
-                this.biz = new Biz(this, undefined);
+                this.biz = new Biz(this, undefined, logs);
             }
             else {
                 let bizSchema = jsonpack.unpack(schemas);
-                this.biz = new Biz(this, bizSchema);
+                this.biz = new Biz(this, bizSchema, undefined);
             }
         }
         else {

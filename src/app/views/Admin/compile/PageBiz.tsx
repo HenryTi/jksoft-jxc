@@ -3,7 +3,7 @@ import { Route } from "react-router-dom";
 import { IDView, Page, useModal } from "tonwa-app";
 import { PageCode } from './PageCode';
 import { useUqApp } from "app/UqApp";
-import { Entity } from "app/Biz";
+import { BizGroup, Entity } from "app/Biz";
 import { PageEntity } from "./PageEntity";
 import { FA } from "tonwa-com";
 import { useAtomValue } from "jotai";
@@ -17,6 +17,7 @@ function PageBiz() {
     </Page>;
 }
 
+const rowCols = ' gx-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 ';
 export function useBuildViewBiz() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
@@ -44,13 +45,14 @@ export function useBuildViewBiz() {
                 <div>{caption}</div>
             </div>
         }
-        return <div key={id}
-            className="px-2 py-2 border border-secondary-subtle shadow-sm mx-2 my-1 rounded h-min-3c w-16c w-max-16c cursor-pointer link-primary bg-white d-flex"
-            onClick={onEntity}>
-            <FA name={icon} className="mt-1 me-2 text-success" />
-            {content}
+        return <div key={id} className="col">
+            <div
+                className="px-2 py-2 border border-secondary-subtle shadow-sm mx-2 my-1 rounded cursor-pointer link-primary bg-white d-flex"
+                onClick={onEntity}>
+                <FA name={icon} className="mt-1 me-2 text-success" />
+                {content}
+            </div>
         </div>
-
     }
     function ViewEntitys({ entitys, icon }: { entitys: Entity[]; icon: string; }) {
         let content: any;
@@ -64,8 +66,45 @@ export function useBuildViewBiz() {
                 return [<ViewEntityItem key={id} value={v} icon={icon} />];
             })
         }
-        return <div className="d-flex flex-wrap px-2 py-1">
-            {content}
+        return <div className="bg-white py-2">
+            <div className={rowCols}>
+                {content}
+            </div>
+        </div>;
+    }
+    function ViewGroup({ group }: { group: BizGroup }) {
+        let { name, caption: groupCaption, entities, hasEntity } = group;
+        async function onDownload(evt: MouseEvent<HTMLAnchorElement>) {
+            evt.preventDefault();
+            const { uqMan } = uqApp;
+            let { uqApi } = uqMan;
+            await uqApi.source(name);
+        }
+        return <div className="mb-4">
+            {
+                hasEntity === true &&
+                <div className="tonwa-bg-gray-2 px-3 pb-2 pt-2 small d-flex">
+                    <b className="flex-grow-1">{groupCaption}</b>
+                    <a className="" href="#" onClick={onDownload}><FA name="download" /></a>
+                </div>
+            }
+            <ViewEntitiesGroup entities={entities} />
+        </div>;
+    }
+    function ViewEntitiesGroup({ entities }: { entities: [Entity[], string?, string?, string?][] }) {
+        return <div>{entities.map((v, index) => {
+            let [arr, caption, icon] = v;
+            if (caption === undefined) return null;
+            if (arr.length === 0) return null;
+            let top: any;
+            if (entities.length > 1) {
+                top = <div className="px-3 pt-1 pb-1 border-bottom small">{caption}</div>;
+            }
+            return <div key={index}>
+                {top}
+                <ViewEntitys entitys={arr} icon={icon} />
+            </div>
+        })}
         </div>;
     }
     return {
@@ -77,48 +116,14 @@ export function useBuildViewBiz() {
             <FA name="bars" />
         </button>,
         view: <div className="">
-            <div className="tonwa-bg-gray-1">
-                {
-                    biz.hasEntity === false ?
-                        <div className="small text-secondary p-3">
-                            <FA name="hand-paper-o" className="me-3 text-info" />暂无代码
-                        </div>
-                        :
-                        biz.groups.map((group, index) => {
-                            let { name, caption: groupCaption, entities, hasEntity } = group;
-                            async function onDownload(evt: MouseEvent<HTMLAnchorElement>) {
-                                evt.preventDefault();
-                                const { uqMan } = uqApp;
-                                let { uqApi } = uqMan;
-                                await uqApi.source(name);
-                            }
-                            return <div key={index} className="mb-4">
-                                {
-                                    hasEntity === true &&
-                                    <div className="tonwa-bg-gray-2 px-3 pb-2 pt-2 small d-flex">
-                                        <b className="flex-grow-1">{groupCaption}</b>
-                                        <a className="" href="#" onClick={onDownload}><FA name="download" /></a>
-                                    </div>
-                                }
-                                {
-                                    entities.map((v, index) => {
-                                        let [arr, caption, icon] = v;
-                                        if (caption === undefined) return null;
-                                        if (arr.length === 0) return null;
-                                        let top: any;
-                                        if (entities.length > 1) {
-                                            top = <div className="px-3 pt-1 pb-1 border-bottom small">{caption}</div>;
-                                        }
-                                        return <div key={index} className="">
-                                            {top}
-                                            <ViewEntitys entitys={arr} icon={icon} />
-                                        </div>
-                                    })
-                                }
-                            </div>;
-                        })
-                }
-            </div>
+            <div className="tonwa-bg-gray-1">{
+                biz.hasEntity === false ?
+                    <div className="small text-secondary p-3">
+                        <FA name="hand-paper-o" className="me-3 text-info" />暂无代码
+                    </div>
+                    :
+                    biz.groups.map((group, index) => <ViewGroup key={index} group={group} />)
+            }</div>
         </div>,
     };
 }

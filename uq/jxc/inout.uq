@@ -1,10 +1,9 @@
 ID IOQueue (
     id MINUTE,
     KEY endPoint ID, -- IOEndPoint,
-    -- KEY base ID,                -- phrase of IN and OUT
     KEY id,
     value JSON,
-    done TINYINT,                   -- 0: 未处理，1：已完成，-1: 出错
+    done TINYINT DEFAULT 0,         -- 0: 未处理，1：已完成，-1: 出错
     orgId ID,                       -- 防止重复，暂不处理
     INDEX endPoint_orgId(endPoint, orgId) UNIQUE,
 );
@@ -42,8 +41,8 @@ ID IOSiteAtomApp (
 ID IOEndPoint (
     id,
     KEY siteAtomApp ID,         -- IOSiteAtomApp,
-    KEY appIO ID,               -- IOApp.IO phrase id, id.base is pharse IOApp
-    url CHAR(200),              -- appIO 对应的url, http:// or https://开始，表示全部
+    KEY appIO ID,               -- IOApp.IO bud id
+    url CHAR(200),              -- BizOut 对应的url, http:// or https://开始，表示全部
     cur BIGINT DEFAULT 0,       -- 当前已经处理完成指针，指向IOQUeue
     state ENUM EnumIOState DEFAULT EnumIOState.ok,     -- 当前处理完成状态。如果不是0=正常，则停止等待。
 );
@@ -137,12 +136,12 @@ PROC ProcessIOIn (
     VAR i INT = 0, p BIGINT = 0, id ID=0, sql CHAR(500), site ID, inout ID;
     WHILE i<batchNumber {
         SET inout=null;
-        SET id=b.id, site=e.base, inout=d.base
+        SET id=b.id, site=e.base, inout=c.appIO
             FROM IOInOut as a 
                 JOIN IOQueue as b ON a.i=1 AND b.id=a.x
                 JOIN IOEndPoint as c ON c.id=b.endPoint
-                JOIN BizPhrase as d ON d.id=c.appIO
-                JOIN BizPhrase as e ON e.id=d.base
+                JOIN IOSiteAtomApp as d ON d.id=c.siteAtomApp
+                JOIN BizPhrase as e ON e.id=d.ioApp
             WHERE a.x>id
             ORDER BY a.x ASC 
             LIMIT 1;
@@ -205,9 +204,11 @@ PROC SaveIOQueue(
 
 BIZ ACT SaveIOAtom (
     id ID,
-    outer ID,
-    appIDPhrase ID,             -- inner atom phrase
-    atom ID,                    -- inner id
+    ioSite ID,                  -- ioSite id
+    siteAtom ID,                    -- ioSite tied atom id
+    ioApp ID,                   -- ioApp id
+    ioAppID ID,                 -- ioApp.ID Entity id
+    atom ID,
     no NO,                      -- outer atom no
 ) 
 RETURNS ret (
@@ -217,7 +218,9 @@ RETURNS ret (
         WITH IOAppAtom as a ID=id DEL;
     }
     ELSE {
-        VAR appID ID = ID(Duo new KEY i=outer, x=appIDPhrase);
+        VAR ioSiteAtom ID = ID(Duo new KEY i=ioSite, x=siteAtom);
+        VAR ioSiteAtomApp ID = a.id FROM IOSiteAtomApp as a WHERE a.ioSiteAtom=ioSiteAtom AND a.ioApp=ioApp;
+        VAR appID ID = ID(Duo new Key i=ioSiteAtomApp, x=ioAppID);
         SET id = -a.id FROM IOAppAtom as a WHERE a.appID=appID AND a.no=no;
         IF id IS NULL {
             WITH IOAppAtom as a ID to id KEY(appID, atom) SET a.no=no;
@@ -227,8 +230,10 @@ RETURNS ret (
 }
 
 BIZ QUERY GetIOAtoms (
-    outer ID,
-    appIDPhrase ID,
+    ioSite ID,                  -- ioSite id
+    siteAtom ID,                -- ioSite tied atom id
+    ioApp ID,                   -- ioApp id
+    ioAppID ID,                 -- ioApp.ID entity id
 )
 PAGE (
     atom ID ASC,
@@ -236,7 +241,9 @@ PAGE (
     atomEx EX,
     no NO,
 ) {
-    VAR appID ID = ID(Duo KEY i=outer, x=appIDPhrase);
+    VAR ioSiteAtom ID = ID(Duo new KEY i=ioSite, x=siteAtom);
+    VAR ioSiteAtomApp ID = a.id FROM IOSiteAtomApp as a WHERE a.ioSiteAtom=ioSiteAtom AND a.ioApp=ioApp;
+    VAR appID ID = ID(Duo new Key i=ioSiteAtomApp, x=ioAppID);
     PAGE SELECT a.atom, c.no as atomNo, c.ex as atomEx, a.no
         FROM IOAppAtom as a
             JOIN Atom as c ON c.id=a.atom

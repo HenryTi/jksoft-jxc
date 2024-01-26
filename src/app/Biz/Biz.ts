@@ -40,7 +40,7 @@ enum EnumEntity {
     ioSite,
 };
 
-interface Group {
+export interface BizGroup {
     name: string;
     caption: string;
     entities: [Entity[], string?, string?, string?][];
@@ -77,8 +77,9 @@ export class Biz {
     readonly ioApps: EntityIOApp[] = [];
     readonly ioSites: EntityIOSite[] = [];
 
-    readonly groups: Group[] = [];
+    readonly groups: BizGroup[] = [];
     readonly _refresh = atom(false);
+    readonly errorLogs: string[];
 
     bizConsole: EntityConsole;
     hasEntity: boolean;
@@ -86,9 +87,11 @@ export class Biz {
     private ids: { [id: number]: Entity | BizBud } = {};
     atomBuilder: AtomsBuilder;
 
-    constructor(uqApp: UqApp, bizSchema: any) {
+    constructor(uqApp: UqApp, bizSchema: any, errorLogs: any) {
         this.uqApp = uqApp;
         this.uq = uqApp.uq;
+        this.errorLogs = errorLogs;
+
         this.buildEntities(bizSchema);
     }
 

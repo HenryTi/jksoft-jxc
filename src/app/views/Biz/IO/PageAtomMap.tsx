@@ -1,17 +1,26 @@
 import { useUqApp } from "app";
-import { EntityAtom, IOAppID } from "app/Biz";
+import { EntityIOApp, EntityIOSite, IOAppID } from "app/Biz";
 import { ButtonRight, ButtonRightAdd, PageQueryMore } from "app/coms";
-import { ViewAtom, getAtomWithProps, useSelectAtom } from "app/hooks";
+import { useSelectAtom } from "app/hooks";
+import { AtomPhrase } from "app/tool";
 import { FormEvent, useState } from "react";
-import { useQuery } from "react-query";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { FA, List } from "tonwa-com";
+import { ParamGetIOAtoms } from "uqs/UqDefault";
 
-export function PageAtomMap({ outerId, ioAppID }: { outerId: number; ioAppID: IOAppID; }) {
+interface Props {
+    header: JSX.Element;
+    ioSite: EntityIOSite;
+    ioApp: EntityIOApp;
+    atom: AtomPhrase;
+    ioAppID: IOAppID;
+}
+export function PageAtomMap({ header, ioSite, ioApp, atom, ioAppID }: Props) {
     const { uq, biz } = useUqApp();
     const modal = useModal();
     const selectAtom = useSelectAtom();
     const entity = ioAppID.atoms[0];
+    /*
     const { data: { outer } } = useQuery(['getAtom in AtomMap', outerId], async () => {
         let promises = [
             getAtomWithProps(biz, biz.uq, outerId),
@@ -19,9 +28,26 @@ export function PageAtomMap({ outerId, ioAppID }: { outerId: number; ioAppID: IO
         let [outer] = await Promise.all(promises);
         return { outer };
     });
-    async function getIOAtoms(param: any, pageStart: any, pageSize: number): Promise<any[]> {
+    */
+    const param: ParamGetIOAtoms = {
+        ioSite: ioSite.id,
+        siteAtom: atom.id,                  // the site atom id
+        ioApp: ioApp.id,
+        ioAppID: ioAppID.id,
+    }
+    async function getIOAtoms(param: ParamGetIOAtoms, pageStart: any, pageSize: number): Promise<any[]> {
         let ret = await uq.GetIOAtoms.page(param, pageStart, pageSize);
         return ret.$page;
+    }
+    async function saveIOAtom(no: string, atom: number) {
+        let retSave = await uq.SaveIOAtom.submit({
+            id: undefined,
+            no,
+            atom,
+            ...param,
+        });
+        let { id: retSaveId } = retSave;
+        return retSaveId;
     }
     const [items, setItems] = useState([]);
     async function onAdd() {
@@ -31,14 +57,7 @@ export function PageAtomMap({ outerId, ioAppID }: { outerId: number; ioAppID: IO
             if (atomValue === undefined) break;
             let ret = await modal.open(<PageEdit atomValue={atomValue} no={undefined} />);
             if (ret === undefined) break;
-            let retSave = await uq.SaveIOAtom.submit({
-                id: undefined,
-                outer: outerId,
-                appIDPhrase: ioAppID.id,
-                no: ret,
-                atom: atomValue.id,
-            });
-            let { id: retSaveId } = retSave;
+            let retSaveId = await saveIOAtom(ret, atomValue.id);
             if (retSaveId === undefined) {
                 // error
                 debugger;
@@ -68,14 +87,7 @@ export function PageAtomMap({ outerId, ioAppID }: { outerId: number; ioAppID: IO
             let atomValue = { id: atom, no: atomNo, ex: atomEx };
             let ret = await modal.open(<PageEdit atomValue={atomValue} no={no} />);
             if (ret === undefined) return;
-            let retSave = await uq.SaveIOAtom.submit({
-                id,
-                outer: outerId,
-                appIDPhrase: ioAppID.id,
-                no: ret,
-                atom: atomValue.id,
-            });
-            let { id: retSaveId } = retSave;
+            let retSaveId = await saveIOAtom(ret, atomValue.id);
             if (retSaveId === undefined) return;
             let index = items.findIndex(v => v.id === retSaveId);
             if (index >= 0) {
@@ -103,9 +115,9 @@ export function PageAtomMap({ outerId, ioAppID }: { outerId: number; ioAppID: IO
         </div>;
     }
     return <PageQueryMore
-        header={`${outer.ex} ${entity.caption ?? entity.name}`}
+        header={header}
         query={getIOAtoms}
-        param={{ outer: outerId, appIDPhrase: ioAppID.id }}
+        param={param}
         sortField="atom"
         ViewItem={ViewItem}
         right={<ButtonRightAdd onClick={onAdd} />}

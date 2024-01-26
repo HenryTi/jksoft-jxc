@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Jan 23 2024 21:07:42 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Thu Jan 25 2024 12:09:15 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1271,8 +1271,10 @@ export interface ResultSetIOSiteAtomAppKey {
 
 export interface ParamSaveIOAtom {
 	id: number;
-	outer: number;
-	appIDPhrase: number;
+	ioSite: number;
+	siteAtom: number;
+	ioApp: number;
+	ioAppID: number;
 	atom: number;
 	no: string;
 }
@@ -1284,8 +1286,10 @@ export interface ResultSaveIOAtom {
 }
 
 export interface ParamGetIOAtoms {
-	outer: number;
-	appIDPhrase: number;
+	ioSite: number;
+	siteAtom: number;
+	ioApp: number;
+	ioAppID: number;
 }
 export interface ReturnGetIOAtoms$page {
 	atom: number;
@@ -4907,11 +4911,19 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "outer",
+                "name": "ioSite",
                 "type": "id"
             },
             {
-                "name": "appIDPhrase",
+                "name": "siteAtom",
+                "type": "id"
+            },
+            {
+                "name": "ioApp",
+                "type": "id"
+            },
+            {
+                "name": "ioAppID",
                 "type": "id"
             },
             {
@@ -4943,11 +4955,19 @@ export const uqSchema={
         "sys": true,
         "fields": [
             {
-                "name": "outer",
+                "name": "ioSite",
                 "type": "id"
             },
             {
-                "name": "appIDPhrase",
+                "name": "siteAtom",
+                "type": "id"
+            },
+            {
+                "name": "ioApp",
+                "type": "id"
+            },
+            {
+                "name": "ioAppID",
                 "type": "id"
             }
         ],

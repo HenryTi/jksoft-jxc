@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
 import { ViewNotifyCount } from "app/tool";
 import { FA, Sep } from "tonwa-com";
-import { Center, centers } from "../center";
+import { CenterItem, centers } from "../center";
 import { File, Folder } from "app/Biz";
 import { Accordion, AccordionItem } from "react-bootstrap";
 import React, { useState } from "react";
@@ -26,8 +26,12 @@ export function ViewConsole() {
     const { biz } = uqApp;
     const { editing, sheet, atom, report, assign, tie, io, me, setting } = centers;
     const baseArr = [io, me, setting];
-    const { bizConsole } = biz;
-    let arr: Center[];
+    const { bizConsole, errorLogs } = biz;
+    if (errorLogs !== undefined) {
+        return <ViewBizLogErrors errorLogs={errorLogs} />;
+    }
+
+    let arr: CenterItem[];
     let viewFolder: any, viewEditing: any;
     if (bizConsole === undefined) {
         arr = [sheet, atom, report, assign, tie, ...baseArr];
@@ -40,7 +44,7 @@ export function ViewConsole() {
             <Sep />
         </>;
     }
-    function ViewFolderLink({ center }: { center: Center; }) {
+    function ViewFolderLink({ center }: { center: CenterItem; }) {
         const { caption, icon, iconColor, path, phrase } = center;
         function onClick() {
             uqApp.clearNotifyCount(phrase);
@@ -187,4 +191,14 @@ function ViewFile({ file }: { file: File; }) {
             <FA name="angle-right" className="text-secondary" />
         </div>
     </Link>
+}
+
+function ViewBizLogErrors({ errorLogs }: { errorLogs: string[]; }) {
+    return <div className="p-3">
+        <div className="mb-3 ">
+            <FA name="exclamation-circle" className="me-3 text-danger" />
+            <span className="text-primary">业务代码编译错误</span>
+        </div>
+        <div>{errorLogs.map((v, index) => <pre key={index}>{v}</pre>)}</div>
+    </div>;
 }

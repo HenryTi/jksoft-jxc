@@ -59,6 +59,8 @@ IN inTest (
     }
 }
 
+OUT out货主 ON 货主接口.jkscm.outtest;
+
 OUT OutTest (
     a int,
     b dec,  
