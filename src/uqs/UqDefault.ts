@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri Jan 26 2024 17:11:27 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Tue Jan 30 2024 10:03:56 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1171,6 +1171,7 @@ export interface IOSiteAtomApp extends ID {
 	ioApp: number;
 	appUrl: string;
 	appKey: string;
+	appPassword: string;
 	valid: number;
 }
 
@@ -1180,6 +1181,7 @@ export interface IOSiteAtomAppInActs extends ID {
 	ioApp: number | ID;
 	appUrl: string;
 	appKey: string;
+	appPassword: string;
 	valid: number;
 }
 
@@ -1237,22 +1239,10 @@ export interface ReturnGetIOAtomAppsRet {
 	siteAtomApp: number;
 	appUrl: string;
 	appKey: string;
+	appPassword: string;
 }
 export interface ResultGetIOAtomApps {
 	ret: ReturnGetIOAtomAppsRet[];
-}
-
-export interface ParamSetIOSiteAtomApp {
-	ioSite: number;
-	atom: number;
-	ioApp: number;
-	valid: number;
-}
-export interface ReturnSetIOSiteAtomAppRet {
-	id: number;
-}
-export interface ResultSetIOSiteAtomApp {
-	ret: ReturnSetIOSiteAtomAppRet[];
 }
 
 export interface ParamSetIOSiteAtomAppUrl {
@@ -1260,13 +1250,6 @@ export interface ParamSetIOSiteAtomAppUrl {
 	url: string;
 }
 export interface ResultSetIOSiteAtomAppUrl {
-}
-
-export interface ParamSetIOSiteAtomAppKey {
-	ioSiteAtomApp: number;
-	key: string;
-}
-export interface ResultSetIOSiteAtomAppKey {
 }
 
 export interface ParamGetIOEndPointConfigs {
@@ -1429,9 +1412,7 @@ export interface UqExt extends Uq {
 	IOAppAtom: UqID<any>;
 	GetIOSiteAtoms: UqQuery<ParamGetIOSiteAtoms, ResultGetIOSiteAtoms>;
 	GetIOAtomApps: UqQuery<ParamGetIOAtomApps, ResultGetIOAtomApps>;
-	SetIOSiteAtomApp: UqAction<ParamSetIOSiteAtomApp, ResultSetIOSiteAtomApp>;
 	SetIOSiteAtomAppUrl: UqAction<ParamSetIOSiteAtomAppUrl, ResultSetIOSiteAtomAppUrl>;
-	SetIOSiteAtomAppKey: UqAction<ParamSetIOSiteAtomAppKey, ResultSetIOSiteAtomAppKey>;
 	GetIOEndPointConfigs: UqQuery<ParamGetIOEndPointConfigs, ResultGetIOEndPointConfigs>;
 	SetIOEndPointConfig: UqAction<ParamSetIOEndPointConfig, ResultSetIOEndPointConfig>;
 	SaveIOAtom: UqAction<ParamSaveIOAtom, ResultSaveIOAtom>;
@@ -4657,6 +4638,11 @@ export const uqSchema={
                 "size": 400
             },
             {
+                "name": "appPassword",
+                "type": "char",
+                "size": 30
+            },
+            {
                 "name": "valid",
                 "type": "tinyint"
             }
@@ -4842,42 +4828,11 @@ export const uqSchema={
                         "name": "appKey",
                         "type": "char",
                         "size": 400
-                    }
-                ]
-            }
-        ]
-    },
-    "setiositeatomapp": {
-        "name": "SetIOSiteAtomApp",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "ioSite",
-                "type": "id"
-            },
-            {
-                "name": "atom",
-                "type": "id"
-            },
-            {
-                "name": "ioApp",
-                "type": "id"
-            },
-            {
-                "name": "valid",
-                "type": "tinyint"
-            }
-        ],
-        "jsoned": true,
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
+                    },
                     {
-                        "name": "id",
-                        "type": "id"
+                        "name": "appPassword",
+                        "type": "char",
+                        "size": 50
                     }
                 ]
             }
@@ -4895,25 +4850,6 @@ export const uqSchema={
             },
             {
                 "name": "url",
-                "type": "char",
-                "size": 200
-            }
-        ],
-        "jsoned": true,
-        "returns": [] as any
-    },
-    "setiositeatomappkey": {
-        "name": "SetIOSiteAtomAppKey",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "ioSiteAtomApp",
-                "type": "id"
-            },
-            {
-                "name": "key",
                 "type": "char",
                 "size": 200
             }

@@ -35,6 +35,7 @@ ID IOSiteAtomApp (
     KEY ioApp ID,               -- IOApp entity id
     appUrl CHAR(200),           -- app url
     appKey CHAR(400),           -- app key
+    appPassword CHAR(30),       -- app password
     valid TINYINT DEFAULT 1,    -- 0: invalid, 1: valid
 );
 
@@ -85,15 +86,16 @@ RETURNS ret (
     siteAtomApp ID,
     appUrl CHAR(200),           -- app url
     appKey CHAR(400),           -- app key
+    appPassword CHAR(50),
 ) {
     VAR ioSiteAtom ID = ID(Duo Key i=ioSite, x=atom);
-    INTO ret SELECT b.i as ioSite, b.x as atom, a.ioApp, a.id as siteAtomApp, a.appUrl, a.appKey
+    INTO ret SELECT b.i as ioSite, b.x as atom, a.ioApp, a.id as siteAtomApp, a.appUrl, a.appKey, a.appPassword
         FROM IOSiteAtomApp as a
             JOIN Duo as b ON b.id=a.ioSiteAtom
         WHERE a.ioSiteAtom=ioSiteAtom;
 }
 
-Biz AC SetIOSiteAtomApp (
+PROC SetIOSiteAtomApp (
     ioSite ID,
     atom ID,
     ioApp ID,                   -- IOApp entity id
@@ -120,11 +122,12 @@ Biz AC SetIOSiteAtomAppUrl (
     WITH IOSiteAtomApp ID=ioSiteAtomApp SET appUrl=url;
 }
 
-Biz AC SetIOSiteAtomAppKey (
+PROC SetIOSiteAtomAppKey (
     ioSiteAtomApp ID,
     key CHAR(200),
+    password CHAR(50),
 ) {
-    WITH IOSiteAtomApp ID=ioSiteAtomApp SET appKey=key;
+    WITH IOSiteAtomApp ID=ioSiteAtomApp SET appKey=key, appPassword=password;
 }
 
 Biz QUERY GetIOEndPointConfigs(
@@ -148,16 +151,36 @@ Biz AC SetIOEndPointConfig(
     WITH IOEndPoint as a KEY(siteAtomApp, appIO) SET a.config=config;
 }
 
+PROC IOGetAppPassword (
+    siteAtomApp ID,
+    ioName CHAR(200),
+)
+RETURNS ret (
+    endPoint ID,
+    appPassword CHAR(50),
+) {
+    INTO ret SELECT a.id as endPoint, b.appPassword
+        FROM IOEndPoint as a
+            JOIN IOSiteAtomApp as b on b.id=a.siteAtomApp
+            JOIN BizPhrase as c ON c.id=a.appIO
+            JOIN BizPhrase as d ON d.id=c.base
+        WHERE a.siteAtomApp=siteAtomApp AND c.name=CONCAT(d.name, '.', ioName);
+}
+
 PROC ProcessIOIn (
     batchNumber INT,            -- 批处理数量，默认1
+)
+RETURNS ret (
+    sql CHAR(200),
+    queueId ID,
 ) {
     IF batchNumber IS NULL {
         SET batchNumber=1;
     }
-    VAR i INT = 0, p BIGINT = 0, id ID=0, sql CHAR(500), site ID, inout ID;
+    VAR i INT = 0, id ID=0, sql CHAR(500), site ID, inout ID, json JSON;
     WHILE i<batchNumber {
         SET inout=null;
-        SET id=b.id, site=e.base, inout=c.appIO
+        SET id=b.id, site=e.base, inout=c.appIO, json=b.value
             FROM IOInOut as a 
                 JOIN IOQueue as b ON a.i=1 AND b.id=a.x
                 JOIN IOEndPoint as c ON c.id=b.endPoint
@@ -168,9 +191,10 @@ PROC ProcessIOIn (
             LIMIT 1;
         IF inout IS NULL { BREAK; }
         TRANS START;
-        SET sql = CONCAT('call `$site`.`', site, '.', inout, '`(?);');
-        ExecSql sql USING id;
+        SET sql = CONCAT('call `$site`.`', site, '.', inout, '`(?,?);');
+        ExecSql sql USING id, json;
         TRANS COMMIT;
+        INTO ret SELECT CONCAT('call `$site`.`', site, '.', inout, '`') as sql, id as queueId;
         SET i=i+1;
     }
 }
@@ -212,15 +236,31 @@ PROC ProcessIOOutDone (
     TRANS COMMIT;
 }
 
-PROC SaveIOQueue(
+PROC SaveIOInQueue(
     endPoint ID,
     value JSON,
     orgId ID,                   -- 防止重复
+)
+RETURNS ret (
+    queue ID,
+    reason CHAR(200),
 ) {
-    VAR id ID;
-    IF NOT EXISTS(SELECT a.id FROM IOQueue as a WHERE a.endPoint=endPoint AND a.orgId=orgId) {
-        WITH IOQueue ID to id KEY(endPoint) SET value=value, orgId=orgId;
+    VAR id ID, reason CHAR(200);
+    IF orgId<=0 {
+        SET orgId=NULL;
     }
+    IF EXISTS(SELECT a.id FROM IOEndPoint as a WHERE a.id=endPoint) {
+        IF orgId IS NULL 
+            OR NOT EXISTS(SELECT a.id FROM IOQueue as a WHERE a.endPoint=endPoint AND a.orgId=orgId) 
+        {
+            WITH IOQueue ID to id KEY(endPoint) SET value=value, orgId=orgId;
+            WITH IOInOut I=1 X=id;
+        }
+    }
+    ELSE {
+        SET reason=CONCAT('endPoint not exists:', endPoint);
+    }
+    INTO ret SELECT id as queue, reason;
 }
 
 BIZ ACT SaveIOAtom (

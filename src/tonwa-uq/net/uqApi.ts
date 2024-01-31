@@ -130,6 +130,14 @@ export class UqApi extends ApiBase {
         let ret = await this.download('compile/source/' + name);
         return ret;
     }
+    async appKey(ioSite: number, atom: number, app: number, valid: 0 | 1) {
+        return await this.post('compile/app-key', {
+            ioSite,
+            atom,
+            app,
+            valid,
+        });
+    }
 }
 
 export abstract class CenterApiBase extends ApiBase {

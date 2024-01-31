@@ -9,12 +9,14 @@ import { Page, useModal } from "tonwa-app";
 import { CheckAsync, FA, Sep, wait } from "tonwa-com";
 import { PageAtomMap } from "./PageAtomMap";
 import { ReturnGetIOEndPointConfigsRet } from "uqs/UqDefault";
+import md5 from "md5";
 
 interface IOApp {
     siteAtomApp: number;
     ioApp: number;
     appUrl: string;
     appKey: string;
+    appPassword: string;
 }
 
 const cnRowCols = ' row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3 ';
@@ -59,7 +61,8 @@ function TopItem({ label, children }: { label: string; children: React.ReactNode
 }
 
 function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; }) {
-    const { uq } = useUqApp();
+    const uqApp = useUqApp();
+    const { uq } = uqApp;
     const modal = useModal();
     const { caption, name, tie, apps } = ioSite;
     const { data } = useQuery([], async () => {
@@ -74,12 +77,17 @@ function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; 
     function ViewApp({ appEntity, appVal: initAppVal }: { appEntity: EntityIOApp; appVal: IOApp; }) {
         const [appVal, setAppVal] = useState(initAppVal);
         async function onCheckChanged(name: string, checked: boolean) {
+            const { uqMan } = uqApp;
+            let { uqApi } = uqMan;
+            await uqApi.appKey(ioSite.id, atom.id, appEntity.id, checked === true ? 1 : 0);
+            /*
             await uq.SetIOSiteAtomApp.submit({
                 ioSite: ioSite.id,
                 atom: atom.id,
                 ioApp: appEntity.id,
                 valid: checked === true ? 1 : 0,
             });
+            */
             if (checked === true) {
                 setAppVal({ ioApp: appEntity.id, ...appVal });
             }
@@ -93,7 +101,7 @@ function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; 
         const { id, caption, name } = appEntity;
         let vContent: any, vRight: any, cnContent: string, onContentClick: () => void;
         if (appVal !== undefined) {
-            vContent = <div className="pt-2 small">url:- <br />key:-</div>;
+            vContent = <div className="pt-2 small">url:{appVal.appUrl ?? '-'} <br />key:{appVal.appKey}</div>;
             vRight = <FA name="pencil" className="px-3 py-2 text-info" />;
             cnContent = ' cursor-pointer ';
             onContentClick = onEdit;
@@ -146,7 +154,7 @@ function PageApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; ioSite
             <Sep />
         </>;
     }
-    function ViewIO({ value }: { value: any; }) {
+    function ViewIO({ value, inTest }: { value: any; inTest?: () => Promise<void> }) {
         const [config, setConfig] = useState(data[value.id]?.config);
         async function onOutClick() {
             let newConfig = { "a": 1 }
@@ -165,13 +173,60 @@ function PageApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; ioSite
             <LabelRowEdit label={label} labelSize={labelSize}
                 onEditClick={onOutClick} required={false} error={undefined}>
                 <div>{JSON.stringify(value)}</div>
-                <div>{vConfig}</div>
+                <div>
+                    {vConfig}
+                    <button className="btn btn-sm btn-link" onClick={inTest}>测试</button>
+                </div>
             </LabelRowEdit>
             <Sep />
         </>;
     }
     function ViewIn({ value }: { value: any }) {
-        return <ViewIO value={value} />;
+        async function inTest() {
+            try {
+                const inData = {
+                    a: 1,
+                    b: 2.0,
+                    c: '2024-1-30',
+                    d: 'ddd',
+                    arr: [
+                        {
+                            d1: 1,
+                            d2: 2.3,
+                            d3: '2024-1-28',
+                            d4: 'b8b8',
+                        }
+                    ]
+                };
+                const stamp = Date.now();
+                const str = stamp + JSON.stringify(inData) + appVal.appPassword;
+                const token = md5(str);
+                let body = {
+                    act: 'intest',
+                    stamp,
+                    appKey: appVal.appKey,
+                    uiq: undefined as any,
+                    token,
+                    data: inData,
+                };
+                let ret = await fetch('http://localhost:3015/api', {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(body),
+                });
+                let retText = await ret.json();
+                alert(JSON.stringify(retText));
+            }
+            catch (err) {
+                console.error(err);
+                debugger;
+            }
+        }
+        return <ViewIO value={value} inTest={inTest} />;
     }
     function ViewOut({ value }: { value: any }) {
         return <ViewIO value={value} />;
@@ -201,7 +256,7 @@ function PageApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; ioSite
         <Sep />
         <LabelRowEdit label="appKey" labelSize={labelSize} onEditClick={onEditClick}
             required={false} error={undefined}>
-            {appVal.appKey}
+            {appVal.appKey}  password:{appVal.appPassword}
         </LabelRowEdit>
         <Sep />
         <div>
