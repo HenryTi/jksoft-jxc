@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Jan 30 2024 10:03:56 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Wed Jan 31 2024 12:27:11 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1240,6 +1240,7 @@ export interface ReturnGetIOAtomAppsRet {
 	appUrl: string;
 	appKey: string;
 	appPassword: string;
+	valid: number;
 }
 export interface ResultGetIOAtomApps {
 	ret: ReturnGetIOAtomAppsRet[];
@@ -4833,6 +4834,10 @@ export const uqSchema={
                         "name": "appPassword",
                         "type": "char",
                         "size": 50
+                    },
+                    {
+                        "name": "valid",
+                        "type": "tinyint"
                     }
                 ]
             }

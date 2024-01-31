@@ -87,9 +87,10 @@ RETURNS ret (
     appUrl CHAR(200),           -- app url
     appKey CHAR(400),           -- app key
     appPassword CHAR(50),
+    valid TINYINT,
 ) {
     VAR ioSiteAtom ID = ID(Duo Key i=ioSite, x=atom);
-    INTO ret SELECT b.i as ioSite, b.x as atom, a.ioApp, a.id as siteAtomApp, a.appUrl, a.appKey, a.appPassword
+    INTO ret SELECT b.i as ioSite, b.x as atom, a.ioApp, a.id as siteAtomApp, a.appUrl, a.appKey, a.appPassword, a.valid
         FROM IOSiteAtomApp as a
             JOIN Duo as b ON b.id=a.ioSiteAtom
         WHERE a.ioSiteAtom=ioSiteAtom;

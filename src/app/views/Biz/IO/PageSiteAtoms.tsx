@@ -5,18 +5,22 @@ import { LabelRowEdit, ViewAtom, useSelectAtom } from "app/hooks";
 import { AtomPhrase, UseQueryOptions } from "app/tool";
 import React, { useState } from "react";
 import { useQuery } from "react-query";
-import { Page, useModal } from "tonwa-app";
-import { CheckAsync, FA, Sep, wait } from "tonwa-com";
+import { Page, PageConfirm, useModal } from "tonwa-app";
+import { ButtonAsync, FA, Sep } from "tonwa-com";
 import { PageAtomMap } from "./PageAtomMap";
-import { ReturnGetIOEndPointConfigsRet } from "uqs/UqDefault";
+import { ReturnGetIOAtomAppsRet, ReturnGetIOEndPointConfigsRet } from "uqs/UqDefault";
 import md5 from "md5";
 
-interface IOApp {
+interface AppVal {
     siteAtomApp: number;
     ioApp: number;
     appUrl: string;
     appKey: string;
     appPassword: string;
+}
+interface IOApp {
+    entity: EntityIOApp;
+    val: AppVal;
 }
 
 const cnRowCols = ' row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3 ';
@@ -24,7 +28,7 @@ const cnItem = ' p-3 cursor-pointer border rounded-2 bg-white ';
 export function PageSiteAtoms({ ioSite }: { ioSite: EntityIOSite; }) {
     const { uq } = useUqApp();
     const modal = useModal();
-    const { caption, name, tie, apps } = ioSite;
+    const { caption, name, tie } = ioSite;
     const selectAtom = useSelectAtom();
     const none = <div className='m-3 small text-muted'>[无]</div>;
     function ViewItem({ value: { id, no, ex } }: { value: { id: number; no: string; ex: string; } }) {
@@ -65,58 +69,82 @@ function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; 
     const { uq } = uqApp;
     const modal = useModal();
     const { caption, name, tie, apps } = ioSite;
-    const { data } = useQuery([], async () => {
+    const { data } = useQuery(['GetIOAtomApps'], async () => {
         let { ret } = await uq.GetIOAtomApps.query({ ioSite: ioSite.id, atom: atom.id });
-        const coll: { [app: number]: IOApp } = {};
-        for (let r of ret) {
-            coll[r.ioApp] = r;
+        const coll: { [app: number]: ReturnGetIOAtomAppsRet } = {};
+        for (let r of ret) coll[r.ioApp] = r;
+        const appsChecked: IOApp[] = [], appsUnchecked: IOApp[] = [];
+        for (let app of apps) {
+            let appVal = coll[app.id];
+            if (appVal !== undefined && appVal.valid === 1) {
+                appsChecked.push({
+                    entity: app,
+                    val: appVal,
+                });
+            }
+            else appsUnchecked.push({
+                entity: app,
+                val: undefined
+            });
         }
-        return coll;
+        return { appsChecked, appsUnchecked };
     }, UseQueryOptions);
 
-    function ViewApp({ appEntity, appVal: initAppVal }: { appEntity: EntityIOApp; appVal: IOApp; }) {
-        const [appVal, setAppVal] = useState(initAppVal);
-        async function onCheckChanged(name: string, checked: boolean) {
+    const { appsChecked: initChecked, appsUnchecked: initUnchecked } = data;
+    const [appsChecked, setAppsChecked] = useState(initChecked);
+    const [appsUnchecked, setAppsUnchecked] = useState(initUnchecked);
+    function ViewAppChecked({ value }: { value: IOApp; }) {
+        const { entity: appEntity, val: appVal } = value;
+        async function onEdit() {
+            let ret = await modal.open(<PageApp ioSite={ioSite} atom={atom} ioApp={value} />);
+            if (ret !== false) return;
             const { uqMan } = uqApp;
             let { uqApi } = uqMan;
-            await uqApi.appKey(ioSite.id, atom.id, appEntity.id, checked === true ? 1 : 0);
-            /*
-            await uq.SetIOSiteAtomApp.submit({
-                ioSite: ioSite.id,
-                atom: atom.id,
-                ioApp: appEntity.id,
-                valid: checked === true ? 1 : 0,
-            });
-            */
-            if (checked === true) {
-                setAppVal({ ioApp: appEntity.id, ...appVal });
+            await uqApi.appKey(ioSite.id, atom.id, appEntity.id, 0);
+            value.val = undefined;
+            let index = appsChecked.findIndex(v => v === value);
+            if (index >= 0) {
+                appsChecked.splice(index, 1);
+                setAppsUnchecked([...appsChecked]);
             }
-            else {
-                setAppVal(undefined);
-            }
-        }
-        async function onEdit() {
-            let ret = await modal.open(<PageApp ioSite={ioSite} atom={atom} appEntity={appEntity} appVal={appVal} />);
+            setAppsUnchecked([value, ...appsUnchecked]);
         }
         const { id, caption, name } = appEntity;
-        let vContent: any, vRight: any, cnContent: string, onContentClick: () => void;
-        if (appVal !== undefined) {
-            vContent = <div className="pt-2 small">url:{appVal.appUrl ?? '-'} <br />key:{appVal.appKey}</div>;
-            vRight = <FA name="pencil" className="px-3 py-2 text-info" />;
-            cnContent = ' cursor-pointer ';
-            onContentClick = onEdit;
-        }
-        const vCheck = <CheckAsync className="d-flex" onCheckChanged={onCheckChanged} defaultChecked={appVal !== undefined}> </CheckAsync>;
-        return <div key={id} className="border-bottom d-flex">
-            <div className="ps-3 py-2">
-                {vCheck}
+        return <div key={id} className="border-bottom d-flex px-3 py-2 cursor-pointer">
+            <div className={'flex-fill '} onClick={onEdit}>
+                <div>{caption ?? name}</div>
+                <div className="pt-2 small text-secondary">appKey:{appVal.appKey}</div>
             </div>
-            <div className={'py-2 flex-fill d-flex ' + cnContent} onClick={onContentClick}>
-                <div className="flex-fill">
-                    <div>{caption ?? name}</div>
-                    {vContent}
-                </div>
-                {vRight}
+            <FA name="angle-right" className="px-3 py-2 text-info" />
+        </div>;
+    }
+    function ViewAppUnchecked({ value }: { value: IOApp; }) {
+        const { entity: appEntity } = value;
+        async function onConnect() {
+            const { uqMan } = uqApp;
+            let { uqApi } = uqMan;
+            let { siteAtomApp } = await uqApi.appKey(ioSite.id, atom.id, appEntity.id, 1);
+            value.val = {
+                siteAtomApp,
+                ioApp: appEntity.id,
+                appUrl: undefined,
+                appKey: undefined,
+                appPassword: undefined,
+            };
+            setAppsChecked([value, ...appsChecked]);
+            let index = appsUnchecked.findIndex(v => v === value);
+            if (index >= 0) {
+                appsUnchecked.splice(index, 1);
+                setAppsUnchecked([...appsUnchecked]);
+            }
+        }
+        const { id, caption, name } = appEntity;
+        return <div key={id} className="border-bottom d-flex px-3 py-2">
+            <div className="flex-fill">
+                <div>{caption ?? name}</div>
+            </div>
+            <div>
+                <ButtonAsync className="btn btn-sm btn-link" onClick={onConnect}>连接</ButtonAsync>
             </div>
         </div>;
     }
@@ -125,21 +153,35 @@ function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; 
             <TopItem label="外连类型"><span>{caption ?? name}</span></TopItem>
             <TopItem label={tie.caption ?? tie.name}><ViewAtom value={atom} /></TopItem>
         </div>
-        <div className="">
-            {apps.map(v => <ViewApp key={v.id} appEntity={v} appVal={data[v.id]} />)}
+        <div className="mt-3">
+            <div className="tonwa-bg-gray-1 small px-3 pt-2 pb-1 text-secondary border-bottom">已连App</div>
+            {
+                appsChecked.length > 0 ?
+                    appsChecked.map(v => <ViewAppChecked key={v.entity.id} value={v} />)
+                    :
+                    < div className="small px-3 py-2 text-warning">[无连接]</div>
+            }
         </div>
-    </Page>;
+        {
+            appsUnchecked.length > 0 &&
+            <div className="mt-3">
+                <div className="tonwa-bg-gray-1 small px-3 pt-2 pb-1 text-secondary border-bottom">待连App</div>
+                {appsUnchecked.map(v => <ViewAppUnchecked key={v.entity.id} value={v} />)}
+            </div>
+        }
+    </Page >;
 }
 
-function PageApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; ioSite: EntityIOSite; appEntity: EntityIOApp; appVal: IOApp; }) {
+function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: EntityIOSite; ioApp: IOApp }) {
     const { uq } = useUqApp();
     const modal = useModal();
     const { caption, name, tie } = ioSite;
-    const { IDs, ins, outs } = appEntity;
+    let { entity: appEntity, val: appVal } = ioApp;
     const { siteAtomApp } = appVal;
-    const { data } = useQuery([], async () => {
-        let ret = await uq.GetIOEndPointConfigs.query({ siteAtomApp });
+    const { IDs, ins, outs } = appEntity;
+    const { data } = useQuery(['GetIOEndPointConfigs'], async () => {
         const coll: { [appIO: number]: ReturnGetIOEndPointConfigsRet } = {};
+        let ret = await uq.GetIOEndPointConfigs.query({ siteAtomApp });
         for (let row of ret.ret) {
             coll[row.appIO] = row;
         }
@@ -209,7 +251,9 @@ function PageApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; ioSite
                     token,
                     data: inData,
                 };
-                let ret = await fetch('http://localhost:3015/api', {
+                let url = 'http://localhost:3015/api';
+                // let url = 'https://jiekeapp.cn/api';
+                let ret = await fetch(url, {
                     method: 'POST',
                     mode: 'cors',
                     cache: 'no-cache',
@@ -240,6 +284,13 @@ function PageApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; ioSite
         return <div className={cnItem} onClick={onAtom}>
             {header}
         </div>
+    }
+
+    async function onStopConnect() {
+        let ret = await modal.open(<PageConfirm header="确认" message={'删除连接会导致数据接口停止工作'} yes="确认删除" no="不删除" />);
+        if (ret === true) {
+            modal.close(false);
+        }
     }
     return <Page header="App">
         <div className="tonwa-bg-gray-1">
@@ -276,6 +327,10 @@ function PageApp({ atom, ioSite, appEntity, appVal }: { atom: AtomPhrase; ioSite
                     <ViewIOAppID value={v} />
                 </div>)}
             </div>
+        </div>
+        <div className="p-3 d-flex">
+            <div className="flex-fill" />
+            <button className="btn btn-link" onClick={onStopConnect}>取消连接</button>
         </div>
     </Page>;
 }
