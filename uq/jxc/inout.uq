@@ -33,9 +33,14 @@ ID IOSiteAtomApp (
     id,
     KEY ioSiteAtom ID,          -- DUO(IOSite entity id, tied atom)
     KEY ioApp ID,               -- IOApp entity id
-    appUrl CHAR(200),           -- app url
-    appKey CHAR(400),           -- app key
-    appPassword CHAR(30),       -- app password
+    -- appUrl CHAR(200),           -- app url
+    -- appKey CHAR(400),           -- app key
+    -- appPassword CHAR(30),       -- app password
+    inKey CHAR(400),            -- in key
+    inPassword CHAR(30),        -- in password
+    outUrl CHAR(200),           -- out url
+    outKey CHAR(400),           -- out key
+    outPassword CHAR(30),       -- out password
     valid TINYINT DEFAULT 1,    -- 0: invalid, 1: valid
 );
 
@@ -84,13 +89,17 @@ RETURNS ret (
     atom ID,                    -- atom
     ioApp ID,                   -- IOApp entity id
     siteAtomApp ID,
-    appUrl CHAR(200),           -- app url
-    appKey CHAR(400),           -- app key
-    appPassword CHAR(50),
+    inKey CHAR(400),           -- app key
+    inPassword CHAR(50),
+    outUrl CHAR(200),           -- out url
+    outKey CHAR(400),           -- out key
+    outPassword CHAR(30),       -- out password
     valid TINYINT,
 ) {
     VAR ioSiteAtom ID = ID(Duo Key i=ioSite, x=atom);
-    INTO ret SELECT b.i as ioSite, b.x as atom, a.ioApp, a.id as siteAtomApp, a.appUrl, a.appKey, a.appPassword, a.valid
+    INTO ret SELECT b.i as ioSite, b.x as atom, a.ioApp, a.id as siteAtomApp
+        , a.inKey, a.inPassword
+        , a.outUrl, a.outKey, a.outPassword, a.valid
         FROM IOSiteAtomApp as a
             JOIN Duo as b ON b.id=a.ioSiteAtom
         WHERE a.ioSiteAtom=ioSiteAtom;
@@ -116,11 +125,14 @@ RETURNS ret (
     INTO ret SELECT id;
 }
 
-Biz AC SetIOSiteAtomAppUrl (
+Biz AC SetIOSiteAtomAppOut (
     ioSiteAtomApp ID,
-    url CHAR(200),
+    outUrl CHAR(200),
+    outKey CHAR(400),
+    outPassword CHAR(30),
 ) {
-    WITH IOSiteAtomApp ID=ioSiteAtomApp SET appUrl=url;
+    WITH IOSiteAtomApp as a ID=ioSiteAtomApp 
+        SET a.outUrl=outUrl, a.outKey=outKey, a.outPassword=outPassword;
 }
 
 PROC SetIOSiteAtomAppKey (
@@ -128,7 +140,7 @@ PROC SetIOSiteAtomAppKey (
     key CHAR(200),
     password CHAR(50),
 ) {
-    WITH IOSiteAtomApp ID=ioSiteAtomApp SET appKey=key, appPassword=password;
+    WITH IOSiteAtomApp ID=ioSiteAtomApp SET inKey=key, inPassword=password;
 }
 
 Biz QUERY GetIOEndPointConfigs(
@@ -160,7 +172,7 @@ RETURNS ret (
     endPoint ID,
     appPassword CHAR(50),
 ) {
-    INTO ret SELECT a.id as endPoint, b.appPassword
+    INTO ret SELECT a.id as endPoint, b.inPassword as appPassword
         FROM IOEndPoint as a
             JOIN IOSiteAtomApp as b on b.id=a.siteAtomApp
             JOIN BizPhrase as c ON c.id=a.appIO
@@ -204,13 +216,20 @@ PROC ProcessIOOut (
     batchNumber INT,            -- 批处理数量，默认1
 )
 RETURNS ret (
-    * IOQueue,
+    id ID,
+    value JSON,
+    outUrl CHAR(200),
+    outKey CHAR(400),
+    outPassword CHAR(30),
 ) {
     IF batchNumber IS NULL {
         SET batchNumber=1;
     }
-    INTO ret SELECT * b
-        FROM IOInOut as a JOIN IOQueue as b ON a.i=0 AND b.id=a.x
+    INTO ret SELECT b.id, b.value, d.outUrl, d.outKey, d.outPassword
+        FROM IOInOut as a 
+            JOIN IOQueue as b ON a.i=0 AND b.id=a.x
+            JOIN IOEndPoint as c ON c.id=b.endPoint
+            JOIN IOSiteAtomApp as d ON d.id=c.siteAtomApp
         ORDER BY a.x ASC
         LIMIT batchNumber;
 }

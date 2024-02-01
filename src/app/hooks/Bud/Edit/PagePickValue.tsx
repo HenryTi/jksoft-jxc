@@ -19,13 +19,6 @@ export function PagePickValue<T extends string | number>({ label, value, type, o
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     async function onSubmit(data: any) {
         let { value } = data;
-        /*
-        if (value !== undefined) {
-            switch (type) {
-                case 'date': value = getDays(value); break;
-            }
-        }
-        */
         closeModal(value);
     }
     const formRows: FormRow[] = [

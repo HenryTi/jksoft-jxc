@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Jan 31 2024 12:27:11 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Wed Jan 31 2024 22:53:45 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1169,9 +1169,11 @@ export enum EnumIOState {
 export interface IOSiteAtomApp extends ID {
 	ioSiteAtom: number;
 	ioApp: number;
-	appUrl: string;
-	appKey: string;
-	appPassword: string;
+	inKey: string;
+	inPassword: string;
+	outUrl: string;
+	outKey: string;
+	outPassword: string;
 	valid: number;
 }
 
@@ -1179,9 +1181,11 @@ export interface IOSiteAtomAppInActs extends ID {
 	ID?: UqID<any>;
 	ioSiteAtom: number | ID;
 	ioApp: number | ID;
-	appUrl: string;
-	appKey: string;
-	appPassword: string;
+	inKey: string;
+	inPassword: string;
+	outUrl: string;
+	outKey: string;
+	outPassword: string;
 	valid: number;
 }
 
@@ -1237,20 +1241,24 @@ export interface ReturnGetIOAtomAppsRet {
 	atom: number;
 	ioApp: number;
 	siteAtomApp: number;
-	appUrl: string;
-	appKey: string;
-	appPassword: string;
+	inKey: string;
+	inPassword: string;
+	outUrl: string;
+	outKey: string;
+	outPassword: string;
 	valid: number;
 }
 export interface ResultGetIOAtomApps {
 	ret: ReturnGetIOAtomAppsRet[];
 }
 
-export interface ParamSetIOSiteAtomAppUrl {
+export interface ParamSetIOSiteAtomAppOut {
 	ioSiteAtomApp: number;
-	url: string;
+	outUrl: string;
+	outKey: string;
+	outPassword: string;
 }
-export interface ResultSetIOSiteAtomAppUrl {
+export interface ResultSetIOSiteAtomAppOut {
 }
 
 export interface ParamGetIOEndPointConfigs {
@@ -1413,7 +1421,7 @@ export interface UqExt extends Uq {
 	IOAppAtom: UqID<any>;
 	GetIOSiteAtoms: UqQuery<ParamGetIOSiteAtoms, ResultGetIOSiteAtoms>;
 	GetIOAtomApps: UqQuery<ParamGetIOAtomApps, ResultGetIOAtomApps>;
-	SetIOSiteAtomAppUrl: UqAction<ParamSetIOSiteAtomAppUrl, ResultSetIOSiteAtomAppUrl>;
+	SetIOSiteAtomAppOut: UqAction<ParamSetIOSiteAtomAppOut, ResultSetIOSiteAtomAppOut>;
 	GetIOEndPointConfigs: UqQuery<ParamGetIOEndPointConfigs, ResultGetIOEndPointConfigs>;
 	SetIOEndPointConfig: UqAction<ParamSetIOEndPointConfig, ResultSetIOEndPointConfig>;
 	SaveIOAtom: UqAction<ParamSaveIOAtom, ResultSaveIOAtom>;
@@ -4629,17 +4637,27 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "appUrl",
-                "type": "char",
-                "size": 200
-            },
-            {
-                "name": "appKey",
+                "name": "inKey",
                 "type": "char",
                 "size": 400
             },
             {
-                "name": "appPassword",
+                "name": "inPassword",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "outUrl",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "outKey",
+                "type": "char",
+                "size": 400
+            },
+            {
+                "name": "outPassword",
                 "type": "char",
                 "size": 30
             },
@@ -4821,19 +4839,29 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "appUrl",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "appKey",
+                        "name": "inKey",
                         "type": "char",
                         "size": 400
                     },
                     {
-                        "name": "appPassword",
+                        "name": "inPassword",
                         "type": "char",
                         "size": 50
+                    },
+                    {
+                        "name": "outUrl",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "outKey",
+                        "type": "char",
+                        "size": 400
+                    },
+                    {
+                        "name": "outPassword",
+                        "type": "char",
+                        "size": 30
                     },
                     {
                         "name": "valid",
@@ -4843,8 +4871,8 @@ export const uqSchema={
             }
         ]
     },
-    "setiositeatomappurl": {
-        "name": "SetIOSiteAtomAppUrl",
+    "setiositeatomappout": {
+        "name": "SetIOSiteAtomAppOut",
         "type": "action",
         "private": false,
         "sys": true,
@@ -4854,9 +4882,19 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "url",
+                "name": "outUrl",
                 "type": "char",
                 "size": 200
+            },
+            {
+                "name": "outKey",
+                "type": "char",
+                "size": 400
+            },
+            {
+                "name": "outPassword",
+                "type": "char",
+                "size": 30
             }
         ],
         "jsoned": true,
