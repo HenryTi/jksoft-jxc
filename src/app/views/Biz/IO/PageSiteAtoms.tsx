@@ -101,12 +101,12 @@ function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; 
         async function onConnect() {
             const { uqMan } = uqApp;
             let { uqApi } = uqMan;
-            let { siteAtomApp } = await uqApi.appKey(ioSite.id, atom.id, appEntity.id, 1);
+            let { siteAtomApp, appKey, appPassword } = await uqApi.appKey(ioSite.id, atom.id, appEntity.id, 1);
             value.val = {
                 siteAtomApp,
                 ioApp: appEntity.id,
-                inKey: undefined,
-                inPassword: undefined,
+                inKey: appKey,
+                inPassword: appPassword,
                 outUrl: undefined,
                 outKey: undefined,
                 outPassword: undefined,

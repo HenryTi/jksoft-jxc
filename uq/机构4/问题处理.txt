@@ -101,3 +101,53 @@ IOAPP jkscm '倢科SCM' {
         }
     };
 }
+
+-- 机构2：
+In in收货单 (
+    a int,
+    b dec,  
+    c date, 
+    d char,
+    e ID,  
+    detail (
+            d1 int, 
+            d2 dec, 
+            d3 date,
+            d4 char,
+            d5 ID,
+        )
+) {
+    USE SHEET sheetId 收货单;
+    Biz Sheet sheetId SET i=e;
+    For detail {
+--        Biz Sheet sheetId Detail 收货单明细 SET i=d5, value=d2, price=d1, amount=d1*d2;
+    }
+}
+
+-- 机构4：
+IOAPP bz机构2 '机构2业务管理' {
+    ID bz货品 to 器械|药品;
+    ID bz供应商信息 TO 供应商信息;
+    /*
+    IN in收货单 (
+        a int,
+        b dec,  
+        c date, 
+        d char,
+        e ID, 
+        detail ( 
+                d1 int, 
+                d2 dec,
+                d3 date,
+                d4 char,
+                d5 ID,
+            )
+        );
+        */
+        IN in收货单 {
+        e: e ID bz供应商信息;
+        detail: detail2 {
+            d5: k ID bz货品;
+        }
+    };
+}

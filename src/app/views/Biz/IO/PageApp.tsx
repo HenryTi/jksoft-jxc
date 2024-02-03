@@ -207,7 +207,7 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
                 required={false} error={undefined}>
                 {appVal.inKey}  password:{appVal.inPassword}
             </LabelRowEdit>
-            <Sep />
+            <Sep className="border-dark-subtle border-2" />
             {ins.map((v, index) => <ViewIn key={index} value={v} />)}
         </div>
         <div>
@@ -226,7 +226,7 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
                 required={false} error={undefined}>
                 {appVal.outPassword}
             </LabelRowEdit>
-            <Sep />
+            <Sep className="border-dark-subtle border-2" />
             {outs.map((v, index) => <ViewOut key={index} value={v} />)}
         </div>
         <div className="tonwa-bg-gray-1 small text-secondary px-3 pt-2 pb-1 border-bottom mt-3">
