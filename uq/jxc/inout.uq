@@ -1,9 +1,17 @@
+ENUM EnumIODoneType (
+    pending = 0,
+    done = 1,
+    error = 2,
+    errorDeliver = 21,
+    errorID = 31,
+);
+
 ID IOQueue (
     id MINUTE,
     KEY endPoint ID, -- IOEndPoint,
     KEY id,
     value JSON,
-    done TINYINT DEFAULT 0,         -- 0: 未处理，1：已完成，-1: 出错
+    done ENUM EnumIODoneType DEFAULT EnumIODoneType.pending,
     orgId ID,                       -- 防止重复，暂不处理
     INDEX endPoint_orgId(endPoint, orgId) UNIQUE,
 );
@@ -20,22 +28,10 @@ IDX IODone (
     INDEX endPoint_id(endPoint, id) UNIQUE,
 );
 
-ENUM EnumIOState (
-    ok                  = 0,
-    stopped             = 1,
-    errSqlProc          = 11,
-    errOutConnection    = 21,
-    errID               = 31,
-    errUnknown          = 999,
-);
-
 ID IOSiteAtomApp (
     id,
     KEY ioSiteAtom ID,          -- DUO(IOSite entity id, tied atom)
     KEY ioApp ID,               -- IOApp entity id
-    -- appUrl CHAR(200),           -- app url
-    -- appKey CHAR(400),           -- app key
-    -- appPassword CHAR(30),       -- app password
     inKey CHAR(400),            -- in key
     inPassword CHAR(30),        -- in password
     outUrl CHAR(200),           -- out url
@@ -44,13 +40,18 @@ ID IOSiteAtomApp (
     valid TINYINT DEFAULT 1,    -- 0: invalid, 1: valid
 );
 
+IDX IOApp (
+    id,
+    connect JSON,                -- {connectType: 1|2}
+);
+
 ID IOEndPoint (
     id,
     KEY siteAtomApp ID,         -- IOSiteAtomApp,
     KEY appIO ID,               -- IOApp.IO bud id
-    config JSON,                -- BizOut 对应的 config
-    cur BIGINT DEFAULT 0,       -- 当前已经处理完成指针，指向IOQUeue
-    state ENUM EnumIOState DEFAULT EnumIOState.ok,     -- 当前处理完成状态。如果不是0=正常，则停止等待。
+    -- config JSON,                -- BizOut 对应的 config {to: other end act name}
+    -- cur BIGINT DEFAULT 0,       -- 当前已经处理完成指针，指向IOQUeue
+    -- state ENUM EnumIOState DEFAULT EnumIOState.ok,     -- 当前处理完成状态。如果不是0=正常，则停止等待。
 );
 
 -- Duo AppID (IOAtomSiteApp, appID);
@@ -122,6 +123,9 @@ RETURNS ret (
     ELSE {
         WITH IOSiteAtomApp as a KEY(ioSiteAtom, ioApp) SET a.valid=valid;
     }
+    IF valid=1 {
+
+    }
     INTO ret SELECT id;
 }
 
@@ -143,41 +147,30 @@ PROC SetIOSiteAtomAppKey (
     WITH IOSiteAtomApp ID=ioSiteAtomApp SET inKey=key, inPassword=password;
 }
 
-Biz QUERY GetIOEndPointConfigs(
-    siteAtomApp ID,             -- IOSiteAtomApp,
-)
-RETURNS ret (
-    id ID,
-    appIO ID,                   -- IOApp.IO bud id
-    config JSON,                -- BizOut 对应的 config
-) {
-    INTO ret SELECT a.id, a.appIO, a.config
-        FROM IOEndPoint as a
-        WHERE a.siteAtomApp=siteAtomApp;
-}
-
-Biz AC SetIOEndPointConfig(
-    siteAtomApp ID,
-    appIO ID,
-    config JSON,
-) {
-    WITH IOEndPoint as a KEY(siteAtomApp, appIO) SET a.config=config;
-}
-
-PROC IOGetAppPassword (
+PROC IOGetAppIn (
     siteAtomApp ID,
     ioName CHAR(200),
 )
 RETURNS ret (
     endPoint ID,
-    appPassword CHAR(50),
+    inPassword CHAR(50),
 ) {
-    INTO ret SELECT a.id as endPoint, b.inPassword as appPassword
+    VAR endPoint ID, inPassword CHAR(50), appIO ID, ioApp ID;
+    SET appIO=c.id, ioApp=a.ioApp
+        FROM IOSiteAtomApp as a
+            JOIN BizPhrase as b ON b.id=a.ioApp
+            JOIN BizPhrase as c ON c.base=b.id
+        WHERE a.id=siteAtomApp AND c.name=CONCAT(b.name, '.', ioName);
+    SET inPassword=a.inPassword
+        FROM IOSiteAtomApp as a
+        WHERE a.id=siteAtomApp;
+    SET endPoint=a.id
         FROM IOEndPoint as a
-            JOIN IOSiteAtomApp as b on b.id=a.siteAtomApp
-            JOIN BizPhrase as c ON c.id=a.appIO
-            JOIN BizPhrase as d ON d.id=c.base
-        WHERE a.siteAtomApp=siteAtomApp AND c.name=CONCAT(d.name, '.', ioName);
+        WHERE a.siteAtomApp=siteAtomApp AND a.appIO=appIO;
+    IF endPoint IS NULL {
+        SET endPoint=ID(IOEndPoint new KEY siteAtomApp=siteAtomApp, appIO=appIO);
+    }
+    INTO ret SELECT endPoint as endPoint, inPassword as inPassword;
 }
 
 PROC ProcessIOIn (
@@ -218,27 +211,32 @@ PROC ProcessIOOut (
 RETURNS ret (
     id ID,
     value JSON,
+    outName Char(100),
     outUrl CHAR(200),
     outKey CHAR(400),
     outPassword CHAR(30),
+    outConnect JSON,
 ) {
     IF batchNumber IS NULL {
         SET batchNumber=1;
     }
-    INTO ret SELECT b.id, b.value, d.outUrl, d.outKey, d.outPassword
+    INTO ret SELECT b.id, b.value, e.name as outName, d.outUrl, d.outKey, d.outPassword, f.connect as outConnect
         FROM IOInOut as a 
             JOIN IOQueue as b ON a.i=0 AND b.id=a.x
             JOIN IOEndPoint as c ON c.id=b.endPoint
             JOIN IOSiteAtomApp as d ON d.id=c.siteAtomApp
+            JOIN BizPhrase as e ON e.id=c.appIO
+            JOIN IOApp as f ON f.id=d.ioApp
         ORDER BY a.x ASC
         LIMIT batchNumber;
 }
 
 PROC ProcessIOOutDone (
     id ID,
+    doneType ENum EnumIODoneType,
     result JSON,
 ) {
-    VAR done ID, endPoint ID;
+    VAR endPoint ID;
     SET endPoint=(SELECT a.endPoint FROM IOQueue as a WHERE a.id=id);
     IF endPoint IS NULL {
         RETURN;
@@ -246,12 +244,14 @@ PROC ProcessIOOutDone (
     TRANS START;
     IF result IS NOT NULL {
         WITH IODone ID=id SET endPoint=endPoint, result=result;
-        SET done=2;
+        IF doneType is NULL {
+            SET doneType = EnumIODoneType.error;
+        }
     }
     ELSE {
-        SET done=1;
+        SET doneType=EnumIODoneType.done;
     }
-    WITH IOQueue ID=id SET done=done;
+    WITH IOQueue ID=id SET done=doneType;
     WITH IOInOut I=0 X=id DEL;
     TRANS COMMIT;
 }

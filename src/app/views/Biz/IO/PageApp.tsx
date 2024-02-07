@@ -7,7 +7,6 @@ import { useQuery } from "react-query";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { Sep } from "tonwa-com";
 import { PageAtomMap } from "./PageAtomMap";
-import { ReturnGetIOEndPointConfigsRet } from "uqs/UqDefault";
 import md5 from "md5";
 
 export interface AppVal {
@@ -34,6 +33,7 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
     const [appVal, setAppVal] = useState(appValInit);
     const { siteAtomApp } = appVal;
     const { IDs, ins, outs } = appEntity;
+    /*
     const { data } = useQuery(['GetIOEndPointConfigs'], async () => {
         const coll: { [appIO: number]: ReturnGetIOEndPointConfigsRet } = {};
         let ret = await uq.GetIOEndPointConfigs.query({ siteAtomApp });
@@ -42,6 +42,7 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
         }
         return coll;
     }, UseQueryOptions);
+    */
     const labelSize = 1;
 
     async function onSetOutValue(label: string, name: string, maxLength: number) {
@@ -69,6 +70,7 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
             <Sep />
         </>;
     }
+    /*
     function ViewIO({ value, inTest }: { value: any; inTest?: () => Promise<void> }) {
         const [config, setConfig] = useState(data[value.id]?.config);
         async function onOutClick() {
@@ -96,6 +98,7 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
             <Sep />
         </>;
     }
+    */
     function ViewIn({ value }: { value: any }) {
         async function inTest() {
             try {
@@ -154,13 +157,17 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
         </>;
     }
     function ViewOut({ value }: { value: any }) {
-        const [config, setConfig] = useState(data[value.id]?.config);
+        // const [config, setConfig] = useState(data[value.id]?.config);
         async function onOutClick() {
+            alert('nothing to do');
+            /*
             let newConfig = { "a": 1 }
             await uq.SetIOEndPointConfig.submit({ siteAtomApp, appIO: value.id, config: JSON.stringify(newConfig) });
             setConfig(newConfig);
+            */
         }
         const label = <span>{value.name}</span>;
+        /*
         let vConfig: any;
         if (config === undefined) {
             vConfig = <>无设置</>;
@@ -168,10 +175,11 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
         else {
             vConfig = <>{JSON.stringify(config)}</>;
         }
+        */
         return <>
             <LabelRowEdit label={label} labelSize={labelSize}
                 onEditClick={onOutClick} required={false} error={undefined}>
-                {vConfig}
+                vConfig = nothing
             </LabelRowEdit>
             <Sep />
         </>;

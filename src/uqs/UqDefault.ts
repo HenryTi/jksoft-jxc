@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Jan 31 2024 22:53:45 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Tue Feb 06 2024 19:22:17 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1142,10 +1142,18 @@ export interface ResultGetSiteSetting {
 	budsCheck: ReturnGetSiteSettingBudsCheck[];
 }
 
+export enum EnumIODoneType {
+	pending = 0,
+	done = 1,
+	error = 2,
+	errorDeliver = 21,
+	errorID = 31
+}
+
 export interface IOQueue extends ID {
 	endPoint: number;
 	value: any;
-	done: number;
+	done: any;
 	orgId: number;
 }
 
@@ -1153,17 +1161,8 @@ export interface IOQueueInActs extends ID {
 	ID?: UqID<any>;
 	endPoint: number | ID;
 	value: any;
-	done: number;
+	done: any;
 	orgId: number | ID;
-}
-
-export enum EnumIOState {
-	ok = 0,
-	stopped = 1,
-	errSqlProc = 11,
-	errOutConnection = 21,
-	errID = 31,
-	errUnknown = 999
 }
 
 export interface IOSiteAtomApp extends ID {
@@ -1192,18 +1191,12 @@ export interface IOSiteAtomAppInActs extends ID {
 export interface IOEndPoint extends ID {
 	siteAtomApp: number;
 	appIO: number;
-	config: any;
-	cur: number;
-	state: any;
 }
 
 export interface IOEndPointInActs extends ID {
 	ID?: UqID<any>;
 	siteAtomApp: number | ID;
 	appIO: number | ID;
-	config: any;
-	cur: number;
-	state: any;
 }
 
 export interface IOAppAtom extends ID {
@@ -1259,26 +1252,6 @@ export interface ParamSetIOSiteAtomAppOut {
 	outPassword: string;
 }
 export interface ResultSetIOSiteAtomAppOut {
-}
-
-export interface ParamGetIOEndPointConfigs {
-	siteAtomApp: number;
-}
-export interface ReturnGetIOEndPointConfigsRet {
-	id: number;
-	appIO: number;
-	config: any;
-}
-export interface ResultGetIOEndPointConfigs {
-	ret: ReturnGetIOEndPointConfigsRet[];
-}
-
-export interface ParamSetIOEndPointConfig {
-	siteAtomApp: number;
-	appIO: number;
-	config: any;
-}
-export interface ResultSetIOEndPointConfig {
 }
 
 export interface ParamSaveIOAtom {
@@ -1422,8 +1395,6 @@ export interface UqExt extends Uq {
 	GetIOSiteAtoms: UqQuery<ParamGetIOSiteAtoms, ResultGetIOSiteAtoms>;
 	GetIOAtomApps: UqQuery<ParamGetIOAtomApps, ResultGetIOAtomApps>;
 	SetIOSiteAtomAppOut: UqAction<ParamSetIOSiteAtomAppOut, ResultSetIOSiteAtomAppOut>;
-	GetIOEndPointConfigs: UqQuery<ParamGetIOEndPointConfigs, ResultGetIOEndPointConfigs>;
-	SetIOEndPointConfig: UqAction<ParamSetIOEndPointConfig, ResultSetIOEndPointConfig>;
 	SaveIOAtom: UqAction<ParamSaveIOAtom, ResultSaveIOAtom>;
 	GetIOAtoms: UqQuery<ParamGetIOAtoms, ResultGetIOAtoms>;
 }
@@ -4565,6 +4536,19 @@ export const uqSchema={
             }
         ]
     },
+    "enumiodonetype": {
+        "name": "EnumIODoneType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "pending": 0,
+            "done": 1,
+            "error": 2,
+            "errorDeliver": 21,
+            "errorID": 31
+        }
+    },
     "ioqueue": {
         "name": "IOQueue",
         "type": "id",
@@ -4586,7 +4570,7 @@ export const uqSchema={
             },
             {
                 "name": "done",
-                "type": "tinyint"
+                "type": "enum"
             },
             {
                 "name": "orgId",
@@ -4602,20 +4586,6 @@ export const uqSchema={
         "global": false,
         "idType": 3,
         "isMinute": true
-    },
-    "enumiostate": {
-        "name": "EnumIOState",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "ok": 0,
-            "stopped": 1,
-            "errSqlProc": 11,
-            "errOutConnection": 21,
-            "errID": 31,
-            "errUnknown": 999
-        }
     },
     "iositeatomapp": {
         "name": "IOSiteAtomApp",
@@ -4698,18 +4668,6 @@ export const uqSchema={
             {
                 "name": "appIO",
                 "type": "id"
-            },
-            {
-                "name": "config",
-                "type": "json"
-            },
-            {
-                "name": "cur",
-                "type": "bigint"
-            },
-            {
-                "name": "state",
-                "type": "enum"
             }
         ],
         "keys": [
@@ -4895,59 +4853,6 @@ export const uqSchema={
                 "name": "outPassword",
                 "type": "char",
                 "size": 30
-            }
-        ],
-        "jsoned": true,
-        "returns": [] as any
-    },
-    "getioendpointconfigs": {
-        "name": "GetIOEndPointConfigs",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "siteAtomApp",
-                "type": "id"
-            }
-        ],
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "appIO",
-                        "type": "id"
-                    },
-                    {
-                        "name": "config",
-                        "type": "json"
-                    }
-                ]
-            }
-        ]
-    },
-    "setioendpointconfig": {
-        "name": "SetIOEndPointConfig",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "siteAtomApp",
-                "type": "id"
-            },
-            {
-                "name": "appIO",
-                "type": "id"
-            },
-            {
-                "name": "config",
-                "type": "json"
             }
         ],
         "jsoned": true,
