@@ -1,4 +1,4 @@
-ENUM EnumIODoneType (
+ENUM #EnumIODoneType (
     pending = 0,
     done = 1,
     error = 2,
@@ -6,9 +6,9 @@ ENUM EnumIODoneType (
     errorID = 31,
 );
 
-ID IOQueue (
+ID #IOQueue (
     id MINUTE,
-    KEY endPoint ID, -- IOEndPoint,
+    KEY endPoint ID, -- IOEndPoint = DUO(siteAtomApp, appIO),
     KEY id,
     value JSON,
     done ENUM EnumIODoneType DEFAULT EnumIODoneType.pending,
@@ -21,14 +21,17 @@ IX IOInOut (
     x,                              -- 待处理的IOQueue id
 );
 
-IDX IODone (
+IDX IOError (
     id,
-    endPoint ID, -- IOEndPoint,
+    -- endPoint ID, -- IOEndPoint,
+    siteAtomApp ID,
+    appIO ID,
     result JSON,
-    INDEX endPoint_id(endPoint, id) UNIQUE,
+    -- INDEX endPoint_id(endPoint, id) UNIQUE,
+    INDEX siteAtomApp_id(siteAtomApp, id) UNIQUE,
 );
 
-ID IOSiteAtomApp (
+ID #IOSiteAtomApp (
     id,
     KEY ioSiteAtom ID,          -- DUO(IOSite entity id, tied atom)
     KEY ioApp ID,               -- IOApp entity id
@@ -45,17 +48,16 @@ IDX IOApp (
     connect JSON,                -- {connectType: 1|2}
 );
 
-ID IOEndPoint (
+/*
+ID #IOEndPoint (
     id,
     KEY siteAtomApp ID,         -- IOSiteAtomApp,
     KEY appIO ID,               -- IOApp.IO bud id
-    -- config JSON,                -- BizOut 对应的 config {to: other end act name}
-    -- cur BIGINT DEFAULT 0,       -- 当前已经处理完成指针，指向IOQUeue
-    -- state ENUM EnumIOState DEFAULT EnumIOState.ok,     -- 当前处理完成状态。如果不是0=正常，则停止等待。
 );
+*/
 
 -- Duo AppID (IOAtomSiteApp, appID);
-ID IOAppAtom (
+ID #IOAppAtom (
     id,                         -- IO atom id
     KEY appID ID,               -- Duo AppID (IOAtomSiteApp, pharse IOApp.ID)
     KEY atom ID,                -- tonwa uq atom id
@@ -167,10 +169,11 @@ RETURNS ret (
         FROM IOSiteAtomApp as a
         WHERE a.id=siteAtomApp;
     SET endPoint=a.id
-        FROM IOEndPoint as a
-        WHERE a.siteAtomApp=siteAtomApp AND a.appIO=appIO;
+        FROM Duo as a -- IOEndPoint as a
+        WHERE a.i=siteAtomApp AND a.x=appIO;
     IF endPoint IS NULL {
-        SET endPoint=ID(IOEndPoint new KEY siteAtomApp=siteAtomApp, appIO=appIO);
+        -- SET endPoint=ID(IOEndPoint new KEY siteAtomApp=siteAtomApp, appIO=appIO);
+        SET endPoint=ID(Duo new KEY i=siteAtomApp, x=appIO);
     }
     INTO ret SELECT endPoint as endPoint, inPassword as inPassword;
     TRANS COMMIT;
@@ -189,23 +192,26 @@ RETURNS ret (
     }
     VAR i INT = 0, id ID=0, sql CHAR(500), site ID, inout ID, json JSON;
     WHILE i<batchNumber {
+        TRANS START;
         SET inout=null;
-        SET id=b.id, site=e.base, inout=c.appIO, json=b.value
+        SET id=b.id, site=e.base, inout=c.x, json=b.value
             FROM IOInOut as a 
                 JOIN IOQueue as b ON a.i=1 AND b.id=a.x
-                JOIN IOEndPoint as c ON c.id=b.endPoint
-                JOIN IOSiteAtomApp as d ON d.id=c.siteAtomApp
+                -- JOIN IOEndPoint as c ON c.id=b.endPoint
+                JOIN Duo as c ON c.id=b.endPoint
+                JOIN IOSiteAtomApp as d ON d.id=c.i
                 JOIN BizPhrase as e ON e.id=d.ioApp
             WHERE a.x>id
             ORDER BY a.x ASC 
             LIMIT 1;
-        IF inout IS NULL { BREAK; }
-        TRANS START;
-        SET sql = CONCAT('call `$site`.`', site, '.', inout, '`(?,?);');
-        ExecSql sql USING id, json;
+        IF inout IS NOT NULL {
+            SET sql = CONCAT('call `$site`.`', site, '.', inout, '`(?,?);');
+            ExecSql sql USING id, json;
+            INTO ret SELECT CONCAT('call `$site`.`', site, '.', inout, '`') as sql, id as queueId;
+            SET i=i+1;
+        }
         TRANS COMMIT;
-        INTO ret SELECT CONCAT('call `$site`.`', site, '.', inout, '`') as sql, id as queueId;
-        SET i=i+1;
+        IF inout IS NULL { BREAK; }
     }
 }
 
@@ -229,9 +235,10 @@ RETURNS ret (
     INTO ret SELECT b.id, b.value, e.name as outName, d.outUrl, d.outKey, d.outPassword, f.connect as outConnect
         FROM IOInOut as a 
             JOIN IOQueue as b ON a.i=0 AND b.id=a.x
-            JOIN IOEndPoint as c ON c.id=b.endPoint
-            JOIN IOSiteAtomApp as d ON d.id=c.siteAtomApp
-            JOIN BizPhrase as e ON e.id=c.appIO
+            -- JOIN IOEndPoint as c ON c.id=b.endPoint
+            JOIN Duo as c ON c.id=b.endPoint
+            JOIN IOSiteAtomApp as d ON d.id=c.i -- siteAtomApp
+            JOIN BizPhrase as e ON e.id=c.x -- appIO
             JOIN IOApp as f ON f.id=d.ioApp
         ORDER BY a.x ASC
         LIMIT batchNumber;
@@ -244,14 +251,15 @@ PROC ProcessIOOutDone ver 0.2 (
     result JSON,
 ) {
     TRANS Rollback On Error;
-    VAR endPoint ID;
-    SET endPoint=(SELECT a.endPoint FROM IOQueue as a WHERE a.id=id);
-    IF endPoint IS NULL {
+    -- VAR endPoint ID;
+    VAR siteAtomApp ID, appIO ID;
+    SET siteAtomApp=b.i, appIO=b.x FROM IOQueue as a JOIN Duo as b ON b.id=a.endPoint WHERE a.id=id;
+    IF siteAtomApp IS NULL {
         RETURN;
     }
     TRANS START;
     IF result IS NOT NULL {
-        WITH IODone ID=id SET endPoint=endPoint, result=result;
+        WITH IOError as a ID=id SET a.siteAtomApp=siteAtomApp, a.appIO=appIO, a.result=result;
         IF doneType is NULL {
             SET doneType = EnumIODoneType.error;
         }
@@ -279,7 +287,8 @@ RETURNS ret (
     IF orgId<=0 {
         SET orgId=NULL;
     }
-    IF EXISTS(SELECT a.id FROM IOEndPoint as a WHERE a.id=endPoint) {
+    -- IF EXISTS(SELECT a.id FROM IOEndPoint as a WHERE a.id=endPoint) {
+    IF EXISTS(SELECT a.id FROM Duo as a WHERE a.id=endPoint) {
         IF orgId IS NULL 
             OR NOT EXISTS(SELECT a.id FROM IOQueue as a WHERE a.endPoint=endPoint AND a.orgId=orgId) 
         {
@@ -341,5 +350,33 @@ PAGE (
             JOIN Atom as c ON c.id=a.atom
         WHERE a.appID=appID AND a.atom>$pageStart
         ORDER BY a.atom ASC
+        LIMIT $pageSize;
+}
+
+BIZ QUERY GetIOErrorCount (
+    siteAtomApp ID,
+)
+RETURNS ret (
+    errorCount INT,
+) {
+    INTO ret SELECT COUNT(*) as errorCount
+        FROM IOError as a
+        WHERE a.siteAtomApp=siteAtomApp
+        LIMIT 10;
+}
+
+BIZ QUERY GetIOError (
+    siteAtomApp ID,
+)
+PAGE (
+    id ID DESC,
+    siteAtomApp ID,
+    appIO ID,
+    result JSON,
+) {
+    PAGE SELECT a.id, a.siteAtomApp, a.appIO, a.result
+        FROM IOError as a
+        WHERE a.siteAtomApp=siteAtomApp AND a.id<$pageStart
+        ORDER BY a.id DESC
         LIMIT $pageSize;
 }

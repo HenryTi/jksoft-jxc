@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Feb 06 2024 19:22:17 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Mon Feb 12 2024 23:23:43 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -32,10 +32,6 @@ export enum EnumID {
 	Sheet = 'sheet',
 	Detail = 'detail',
 	Pend = 'pend',
-	IOQueue = 'ioqueue',
-	IOSiteAtomApp = 'iositeatomapp',
-	IOEndPoint = 'ioendpoint',
-	IOAppAtom = 'ioappatom',
 }
 
 export interface $phrase extends ID {
@@ -1142,76 +1138,6 @@ export interface ResultGetSiteSetting {
 	budsCheck: ReturnGetSiteSettingBudsCheck[];
 }
 
-export enum EnumIODoneType {
-	pending = 0,
-	done = 1,
-	error = 2,
-	errorDeliver = 21,
-	errorID = 31
-}
-
-export interface IOQueue extends ID {
-	endPoint: number;
-	value: any;
-	done: any;
-	orgId: number;
-}
-
-export interface IOQueueInActs extends ID {
-	ID?: UqID<any>;
-	endPoint: number | ID;
-	value: any;
-	done: any;
-	orgId: number | ID;
-}
-
-export interface IOSiteAtomApp extends ID {
-	ioSiteAtom: number;
-	ioApp: number;
-	inKey: string;
-	inPassword: string;
-	outUrl: string;
-	outKey: string;
-	outPassword: string;
-	valid: number;
-}
-
-export interface IOSiteAtomAppInActs extends ID {
-	ID?: UqID<any>;
-	ioSiteAtom: number | ID;
-	ioApp: number | ID;
-	inKey: string;
-	inPassword: string;
-	outUrl: string;
-	outKey: string;
-	outPassword: string;
-	valid: number;
-}
-
-export interface IOEndPoint extends ID {
-	siteAtomApp: number;
-	appIO: number;
-}
-
-export interface IOEndPointInActs extends ID {
-	ID?: UqID<any>;
-	siteAtomApp: number | ID;
-	appIO: number | ID;
-}
-
-export interface IOAppAtom extends ID {
-	appID: number;
-	atom: number;
-	no?: string;
-}
-
-export interface IOAppAtomInActs extends ID {
-	ID?: UqID<any>;
-	appID: number | ID;
-	atom: number | ID;
-	no?: string;
-}
-
 export interface ParamGetIOSiteAtoms {
 	ioSite: number;
 }
@@ -1286,6 +1212,29 @@ export interface ResultGetIOAtoms {
 	$page: ReturnGetIOAtoms$page[];
 }
 
+export interface ParamGetIOErrorCount {
+	siteAtomApp: number;
+}
+export interface ReturnGetIOErrorCountRet {
+	errorCount: number;
+}
+export interface ResultGetIOErrorCount {
+	ret: ReturnGetIOErrorCountRet[];
+}
+
+export interface ParamGetIOError {
+	siteAtomApp: number;
+}
+export interface ReturnGetIOError$page {
+	id: number;
+	siteAtomApp: number;
+	appIO: number;
+	result: any;
+}
+export interface ResultGetIOError {
+	$page: ReturnGetIOError$page[];
+}
+
 
 
 export interface ParamActs {
@@ -1300,10 +1249,6 @@ export interface ParamActs {
 	sheet?: SheetInActs[];
 	detail?: DetailInActs[];
 	pend?: PendInActs[];
-	iOQueue?: IOQueueInActs[];
-	iOSiteAtomApp?: IOSiteAtomAppInActs[];
-	iOEndPoint?: IOEndPointInActs[];
-	iOAppAtom?: IOAppAtomInActs[];
 }
 
 
@@ -1388,15 +1333,13 @@ export interface UqExt extends Uq {
 	Detail: UqID<any>;
 	Pend: UqID<any>;
 	GetSiteSetting: UqQuery<ParamGetSiteSetting, ResultGetSiteSetting>;
-	IOQueue: UqID<any>;
-	IOSiteAtomApp: UqID<any>;
-	IOEndPoint: UqID<any>;
-	IOAppAtom: UqID<any>;
 	GetIOSiteAtoms: UqQuery<ParamGetIOSiteAtoms, ResultGetIOSiteAtoms>;
 	GetIOAtomApps: UqQuery<ParamGetIOAtomApps, ResultGetIOAtomApps>;
 	SetIOSiteAtomAppOut: UqAction<ParamSetIOSiteAtomAppOut, ResultSetIOSiteAtomAppOut>;
 	SaveIOAtom: UqAction<ParamSaveIOAtom, ResultSaveIOAtom>;
 	GetIOAtoms: UqQuery<ParamGetIOAtoms, ResultGetIOAtoms>;
+	GetIOErrorCount: UqQuery<ParamGetIOErrorCount, ResultGetIOErrorCount>;
+	GetIOError: UqQuery<ParamGetIOError, ResultGetIOError>;
 }
 
 
@@ -4536,193 +4479,6 @@ export const uqSchema={
             }
         ]
     },
-    "enumiodonetype": {
-        "name": "EnumIODoneType",
-        "type": "enum",
-        "private": false,
-        "sys": true,
-        "values": {
-            "pending": 0,
-            "done": 1,
-            "error": 2,
-            "errorDeliver": 21,
-            "errorID": 31
-        }
-    },
-    "ioqueue": {
-        "name": "IOQueue",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "endPoint",
-                "type": "id"
-            },
-            {
-                "name": "value",
-                "type": "json"
-            },
-            {
-                "name": "done",
-                "type": "enum"
-            },
-            {
-                "name": "orgId",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "endPoint",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
-    "iositeatomapp": {
-        "name": "IOSiteAtomApp",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "ioSiteAtom",
-                "type": "id"
-            },
-            {
-                "name": "ioApp",
-                "type": "id"
-            },
-            {
-                "name": "inKey",
-                "type": "char",
-                "size": 400
-            },
-            {
-                "name": "inPassword",
-                "type": "char",
-                "size": 30
-            },
-            {
-                "name": "outUrl",
-                "type": "char",
-                "size": 200
-            },
-            {
-                "name": "outKey",
-                "type": "char",
-                "size": 400
-            },
-            {
-                "name": "outPassword",
-                "type": "char",
-                "size": 30
-            },
-            {
-                "name": "valid",
-                "type": "tinyint"
-            }
-        ],
-        "keys": [
-            {
-                "name": "ioSiteAtom",
-                "type": "id"
-            },
-            {
-                "name": "ioApp",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "ioendpoint": {
-        "name": "IOEndPoint",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "siteAtomApp",
-                "type": "id"
-            },
-            {
-                "name": "appIO",
-                "type": "id"
-            }
-        ],
-        "keys": [
-            {
-                "name": "siteAtomApp",
-                "type": "id"
-            },
-            {
-                "name": "appIO",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
-    "ioappatom": {
-        "name": "IOAppAtom",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "appID",
-                "type": "id"
-            },
-            {
-                "name": "atom",
-                "type": "id"
-            },
-            {
-                "name": "no",
-                "type": "char",
-                "size": 30
-            }
-        ],
-        "keys": [
-            {
-                "name": "appID",
-                "type": "id"
-            },
-            {
-                "name": "atom",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
-    },
     "getiositeatoms": {
         "name": "GetIOSiteAtoms",
         "type": "query",
@@ -4954,6 +4710,65 @@ export const uqSchema={
                     }
                 ],
                 "order": "asc"
+            }
+        ]
+    },
+    "getioerrorcount": {
+        "name": "GetIOErrorCount",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "siteAtomApp",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "errorCount",
+                        "type": "int"
+                    }
+                ]
+            }
+        ]
+    },
+    "getioerror": {
+        "name": "GetIOError",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "siteAtomApp",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "siteAtomApp",
+                        "type": "id"
+                    },
+                    {
+                        "name": "appIO",
+                        "type": "id"
+                    },
+                    {
+                        "name": "result",
+                        "type": "json"
+                    }
+                ],
+                "order": "desc"
             }
         ]
     },
