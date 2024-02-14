@@ -23,10 +23,11 @@ IX IOInOut (
 
 IDX IOError (
     id,
-    -- endPoint ID, -- IOEndPoint,
     siteAtomApp ID,
     appIO ID,
+    inOut TINYINT DEFAULT 0,        -- 0: out, 1: in
     result JSON,
+    times SMALLINT DEFAULT 1,
     -- INDEX endPoint_id(endPoint, id) UNIQUE,
     INDEX siteAtomApp_id(siteAtomApp, id) UNIQUE,
 );
@@ -35,12 +36,14 @@ ID #IOSiteAtomApp (
     id,
     KEY ioSiteAtom ID,          -- DUO(IOSite entity id, tied atom)
     KEY ioApp ID,               -- IOApp entity id
+    site ID,                    -- owner site
     inKey CHAR(400),            -- in key
     inPassword CHAR(30),        -- in password
     outUrl CHAR(200),           -- out url
     outKey CHAR(400),           -- out key
     outPassword CHAR(30),       -- out password
     valid TINYINT DEFAULT 1,    -- 0: invalid, 1: valid
+    INDEX site_id(site, id) UNIQUE,
 );
 
 IDX IOApp (
@@ -120,10 +123,10 @@ RETURNS ret (
     VAR id ID, ioSiteAtom ID;
     SET ioSiteAtom=ID(Duo new Key i=ioSite, x=atom);
     IF id IS NULL {
-        WITH IOSiteAtomApp as a ID to id KEY(ioSiteAtom, ioApp) SET a.valid=valid;
+        WITH IOSiteAtomApp as a ID to id KEY(ioSiteAtom, ioApp) SET a.valid=valid, a.site=$site;
     }
     ELSE {
-        WITH IOSiteAtomApp as a KEY(ioSiteAtom, ioApp) SET a.valid=valid;
+        WITH IOSiteAtomApp as a KEY(ioSiteAtom, ioApp) SET a.valid=valid, a.site=$site;
     }
     IF valid=1 {
 
@@ -259,13 +262,19 @@ PROC ProcessIOOutDone ver 0.2 (
     }
     TRANS START;
     IF result IS NOT NULL {
-        WITH IOError as a ID=id SET a.siteAtomApp=siteAtomApp, a.appIO=appIO, a.result=result;
+        IF EXISTS(SELECT a.id FROM IOError as a WHERE a.id=id) {
+            WITH IOError as a ID=id SET a.result=result, a.times=a.times+1;
+        }
+        ELSE {
+            WITH IOError as a ID=id SET a.siteAtomApp=siteAtomApp, a.appIO=appIO, a.result=result, a.inOut=0;
+        }
         IF doneType is NULL {
             SET doneType = EnumIODoneType.error;
         }
     }
     ELSE {
         SET doneType=EnumIODoneType.done;
+        WITH IOError ID=id DEL;
     }
     WITH IOQueue ID=id SET done=doneType;
     WITH IOInOut I=0 X=id DEL;
@@ -353,16 +362,24 @@ PAGE (
         LIMIT $pageSize;
 }
 
-BIZ QUERY GetIOErrorCount (
-    siteAtomApp ID,
+BIZ QUERY GetIOErrorCounts (
+    -- siteAtomApp ID,
 )
 RETURNS ret (
+    siteAtomApp ID,
+    ioSite ID,
+    ioAtom ID,
+    ioApp ID,
     errorCount INT,
 ) {
-    INTO ret SELECT COUNT(*) as errorCount
-        FROM IOError as a
-        WHERE a.siteAtomApp=siteAtomApp
-        LIMIT 10;
+    INTO ret SELECT a.id as siteAtomApp, 
+        b.i as ioSite,
+        b.x as ioAtom,
+        a.ioApp as ioApp,
+        (SELECT COUNT(*) FROM (SELECT y.id FROM IOError as y WHERE y.siteAtomApp=a.id LIMIT 1) as x) as errorCount
+        FROM IOSiteAtomApp as a 
+            JOIN Duo as b ON b.id=a.ioSiteAtom
+        WHERE a.site=$site;
 }
 
 BIZ QUERY GetIOError (
@@ -373,10 +390,22 @@ PAGE (
     siteAtomApp ID,
     appIO ID,
     result JSON,
+    times SMALLINT,
+    done ENUM EnumIODoneType,
 ) {
-    PAGE SELECT a.id, a.siteAtomApp, a.appIO, a.result
+    PAGE SELECT a.id, a.siteAtomApp, a.appIO, a.result, a.times, c.done
         FROM IOError as a
+            JOIN IOSiteAtomApp as b ON b.id=a.siteAtomApp AND b.site=$site
+            JOIN IOQueue as c ON c.id=a.id
         WHERE a.siteAtomApp=siteAtomApp AND a.id<$pageStart
         ORDER BY a.id DESC
         LIMIT $pageSize;
+}
+
+Biz AC IORetry (
+    id ID,
+) {
+    VAR inOut TINYINT;
+    SET inOut=a.inOut FROM IOError as a WHERE a.id=id;
+    WITH IOInOut I=inOut X=id;
 }

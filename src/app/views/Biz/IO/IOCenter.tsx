@@ -6,6 +6,8 @@ import { FA, LMR, List } from "tonwa-com";
 import { PageIODef, PageIOList, pathDef } from "./IODef";
 import { Page, useModal } from "tonwa-app";
 import { PageSiteAtoms } from "./PageSiteAtoms";
+import { useQuery } from "react-query";
+import { UseQueryOptions } from "app/tool";
 
 const pathList = `${centers.io.path}/list`;
 const fs = ' ';
@@ -31,9 +33,29 @@ function PageIOCenter() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const modal = useModal();
-    function ViewIOSite({ value: { caption, name } }: { value: EntityIOSite; }) {
+    const { data } = useQuery([], async () => {
+        let { ret } = await uq.GetIOErrorCounts.query({});
+        const coll: { [ioSite: number]: number } = {};
+        for (let row of ret) {
+            const { ioSite, errorCount, siteAtomApp } = row;
+            coll[ioSite] = errorCount;
+        }
+        return coll;
+    }, UseQueryOptions);
+    function ViewIOSite({ value: { id, caption, name } }: { value: EntityIOSite; }) {
+        let errorCount = data[id];
         return <LMR className="py-2 align-items-center">
-            <FA name="exchange" className="mx-4 text-primary" />
+            <div className="position-relative mx-4">
+                <FA name="exchange" className="text-primary" fixWidth={true} />
+                {
+                    errorCount > 0 ?
+                        <span className="position-absolute top-0 start-100 translate-middle p-1 text-danger">
+                            <FA name="exclamation-circle" />
+                        </span>
+                        :
+                        null
+                }
+            </div>
             <span>{caption ?? name}</span>
             <FA name="angle-right" className="mx-4" />
         </LMR>;

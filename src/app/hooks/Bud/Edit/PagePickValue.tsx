@@ -1,11 +1,10 @@
 import { FormRow, FormRowsView } from "app/coms";
-import { getDays } from "app/tool";
 import { useForm, RegisterOptions } from "react-hook-form";
 import { Page, PickProps, UqAppBase, uqAppModal, useModal } from "tonwa-app";
 
 export async function pickValue(uqApp: UqAppBase, pickProps: PickProps, options: RegisterOptions) {
     const { label, value, type } = pickProps;
-    const { openModal, closeModal } = uqAppModal(uqApp);
+    const { openModal } = uqAppModal(uqApp);
     let ret = await openModal(<PagePickValue label={label} value={value as any} type={type} options={options} />); //, '修改' + label);
     return ret;
 }

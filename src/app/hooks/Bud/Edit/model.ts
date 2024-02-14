@@ -41,11 +41,11 @@ export interface EditBudProps {
     value: BudValue;
     budEditing: IBudEditing;
     labelSize?: 0 | 1 | 2;
-    // bizBud: BizBud;
     flag?: JSX.Element;             // 重要字段标志
     readonly?: boolean;
     options?: RegisterOptions;
     onChanged?: (bizBud: BizBud, value: string | number | BudCheckValue) => Promise<void> | void;
+    popup?: boolean;                // if popup===false, input control, no open modal
 }
 
 export interface EditBudTemplateProps extends EditBudProps {
@@ -59,6 +59,7 @@ export interface EditProps extends IEditing {
     onEditClick: () => void;
     readonly?: boolean;
     flag?: JSX.Element;             // 重要的，label上做标识
+    popup?: boolean;
 }
 
 export type ViewValueEdit = (props: EditProps) => JSX.Element;

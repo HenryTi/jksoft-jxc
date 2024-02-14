@@ -14,7 +14,7 @@ export function useBizAtomView(options: OptionsUseBizAtom & { bottom?: any; }) {
 }
 
 function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { bottom?: any; }) {
-    const { NOLabel, exLabel, id, bottom } = options;
+    const { NOLabel, exLabel, id, bottom, popup } = options;
     const { getAtom, saveField, saveBud, entity: entityAtom } = useBizAtom(options)
     const [state, setState] = useState<{
         main: any,
@@ -63,6 +63,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
                     flag={flag}
                     labelSize={2}
                     budEditing={budEditing} value={prop as any}
+                    popup={popup}
                 />
                 <Sep />
             </div>;

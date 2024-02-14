@@ -1,6 +1,6 @@
-import { BizBud, EntityAtom, EntityAtomID } from "app/Biz";
+import { EntityAtom, EntityAtomID } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { BudEditing, EditBudInline, ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom, useSelectAtom } from "app/hooks";
+import { ViewSpecBaseOnly, ViewSpecNoAtom, useSelectAtom } from "app/hooks";
 import { RowCols } from "app/hooks/tool";
 import { HTMLInputTypeAttribute, ReactNode, useState } from "react";
 import {
@@ -8,7 +8,7 @@ import {
     , RegisterOptions, UseFormRegister
     , FieldError, UseFormSetError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";
-import { BudValue, IDView } from "tonwa-app";
+import { IDView } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { BizPhraseType, EnumAtom } from "uqs/UqDefault";
 
@@ -267,18 +267,6 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     const { entityAtom, atom, options } = row as FormAtom;
     if (entityAtom !== undefined) {
         const { value } = options;
-        /*
-        <div className="ms-2">
-        <ViewSpec id={options.value} noLabel={true} />
-        </div>
-        */
-        /*
-        <ViewSpecBaseOnly id={value} />
-        <RowCols>
-            <ViewSpecNoAtom id={value} />
-        </RowCols>
-            <ViewSpec id={options.value} noLabel={true} />
-        */
         let { name } = row as FormAtom;
         function onChange(target: { name: string; type: 'number'; value: string; }) {
             options.onChange?.({ target });

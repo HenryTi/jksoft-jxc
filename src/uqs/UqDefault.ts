@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Feb 12 2024 23:23:43 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Tue Feb 13 2024 22:58:31 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1212,14 +1212,17 @@ export interface ResultGetIOAtoms {
 	$page: ReturnGetIOAtoms$page[];
 }
 
-export interface ParamGetIOErrorCount {
-	siteAtomApp: number;
+export interface ParamGetIOErrorCounts {
 }
-export interface ReturnGetIOErrorCountRet {
+export interface ReturnGetIOErrorCountsRet {
+	siteAtomApp: number;
+	ioSite: number;
+	ioAtom: number;
+	ioApp: number;
 	errorCount: number;
 }
-export interface ResultGetIOErrorCount {
-	ret: ReturnGetIOErrorCountRet[];
+export interface ResultGetIOErrorCounts {
+	ret: ReturnGetIOErrorCountsRet[];
 }
 
 export interface ParamGetIOError {
@@ -1230,9 +1233,17 @@ export interface ReturnGetIOError$page {
 	siteAtomApp: number;
 	appIO: number;
 	result: any;
+	times: number;
+	done: any;
 }
 export interface ResultGetIOError {
 	$page: ReturnGetIOError$page[];
+}
+
+export interface ParamIORetry {
+	id: number;
+}
+export interface ResultIORetry {
 }
 
 
@@ -1338,8 +1349,9 @@ export interface UqExt extends Uq {
 	SetIOSiteAtomAppOut: UqAction<ParamSetIOSiteAtomAppOut, ResultSetIOSiteAtomAppOut>;
 	SaveIOAtom: UqAction<ParamSaveIOAtom, ResultSaveIOAtom>;
 	GetIOAtoms: UqQuery<ParamGetIOAtoms, ResultGetIOAtoms>;
-	GetIOErrorCount: UqQuery<ParamGetIOErrorCount, ResultGetIOErrorCount>;
+	GetIOErrorCounts: UqQuery<ParamGetIOErrorCounts, ResultGetIOErrorCounts>;
 	GetIOError: UqQuery<ParamGetIOError, ResultGetIOError>;
+	IORetry: UqAction<ParamIORetry, ResultIORetry>;
 }
 
 
@@ -4713,21 +4725,32 @@ export const uqSchema={
             }
         ]
     },
-    "getioerrorcount": {
-        "name": "GetIOErrorCount",
+    "getioerrorcounts": {
+        "name": "GetIOErrorCounts",
         "type": "query",
         "private": false,
         "sys": true,
-        "fields": [
-            {
-                "name": "siteAtomApp",
-                "type": "id"
-            }
-        ],
+        "fields": [] as any,
         "returns": [
             {
                 "name": "ret",
                 "fields": [
+                    {
+                        "name": "siteAtomApp",
+                        "type": "id"
+                    },
+                    {
+                        "name": "ioSite",
+                        "type": "id"
+                    },
+                    {
+                        "name": "ioAtom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "ioApp",
+                        "type": "id"
+                    },
                     {
                         "name": "errorCount",
                         "type": "int"
@@ -4766,11 +4789,33 @@ export const uqSchema={
                     {
                         "name": "result",
                         "type": "json"
+                    },
+                    {
+                        "name": "times",
+                        "type": "smallint"
+                    },
+                    {
+                        "name": "done",
+                        "type": "enum"
                     }
                 ],
                 "order": "desc"
             }
         ]
+    },
+    "ioretry": {
+        "name": "IORetry",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [] as any
     },
     "$biz": {
         "$user": {

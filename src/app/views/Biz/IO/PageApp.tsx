@@ -5,9 +5,10 @@ import { AtomPhrase, UseQueryOptions } from "app/tool";
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { Page, PageConfirm, useModal } from "tonwa-app";
-import { Sep } from "tonwa-com";
+import { FA, Sep } from "tonwa-com";
 import { PageAtomMap } from "./PageAtomMap";
 import md5 from "md5";
+import { PageIOError } from "./PageIOError";
 
 export interface AppVal {
     siteAtomApp: number;
@@ -33,16 +34,6 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
     const [appVal, setAppVal] = useState(appValInit);
     const { siteAtomApp } = appVal;
     const { IDs, ins, outs } = appEntity;
-    /*
-    const { data } = useQuery(['GetIOEndPointConfigs'], async () => {
-        const coll: { [appIO: number]: ReturnGetIOEndPointConfigsRet } = {};
-        let ret = await uq.GetIOEndPointConfigs.query({ siteAtomApp });
-        for (let row of ret.ret) {
-            coll[row.appIO] = row;
-        }
-        return coll;
-    }, UseQueryOptions);
-    */
     const labelSize = 1;
 
     async function onSetOutValue(label: string, name: string, maxLength: number) {
@@ -70,35 +61,7 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
             <Sep />
         </>;
     }
-    /*
-    function ViewIO({ value, inTest }: { value: any; inTest?: () => Promise<void> }) {
-        const [config, setConfig] = useState(data[value.id]?.config);
-        async function onOutClick() {
-            let newConfig = { "a": 1 }
-            await uq.SetIOEndPointConfig.submit({ siteAtomApp, appIO: value.id, config: JSON.stringify(newConfig) });
-            setConfig(newConfig);
-        }
-        const label = <span>{value.name}</span>;
-        let vConfig: any;
-        if (config === undefined) {
-            vConfig = <>无设置</>;
-        }
-        else {
-            vConfig = <>{JSON.stringify(config)}</>;
-        }
-        return <>
-            <LabelRowEdit label={label} labelSize={labelSize}
-                onEditClick={onOutClick} required={false} error={undefined}>
-                <div>{JSON.stringify(value)}</div>
-                <div>
-                    {vConfig}
-                    <button className="btn btn-sm btn-link" onClick={inTest}>测试</button>
-                </div>
-            </LabelRowEdit>
-            <Sep />
-        </>;
-    }
-    */
+
     function ViewIn({ value }: { value: any }) {
         async function inTest() {
             try {
@@ -160,22 +123,8 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
         // const [config, setConfig] = useState(data[value.id]?.config);
         async function onOutClick() {
             alert('nothing to do');
-            /*
-            let newConfig = { "a": 1 }
-            await uq.SetIOEndPointConfig.submit({ siteAtomApp, appIO: value.id, config: JSON.stringify(newConfig) });
-            setConfig(newConfig);
-            */
         }
         const label = <span>{value.name}</span>;
-        /*
-        let vConfig: any;
-        if (config === undefined) {
-            vConfig = <>无设置</>;
-        }
-        else {
-            vConfig = <>{JSON.stringify(config)}</>;
-        }
-        */
         return <>
             <LabelRowEdit label={label} labelSize={labelSize}
                 onEditClick={onOutClick} required={false} error={undefined}>
@@ -200,6 +149,9 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
         if (ret === true) {
             modal.close(false);
         }
+    }
+    function onShowError() {
+        modal.open(<PageIOError siteAtomApp={siteAtomApp} />);
     }
     return <Page header="App">
         <div className="tonwa-bg-gray-1">
@@ -247,6 +199,12 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
                 </div>)}
             </div>
         </div>
+
+        <div className="px-3 pt-2 pb-1 border-top border-bottom mt-3 d-flex align-items-center cursor-pointer" onClick={onShowError}>
+            <div className="flex-fill">连接错误</div>
+            <FA name="angle-right" />
+        </div>
+
         <div className="p-3 d-flex">
             <div className="flex-fill" />
             <button className="btn btn-link" onClick={onStopConnect}>取消连接</button>

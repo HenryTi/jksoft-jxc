@@ -4,19 +4,8 @@ import { useAtomValue } from "jotai";
 import { Pencil } from "app/hooks/tool";
 
 export function InlineEdit(props: EditProps) {
-    let { children, onEditClick, readonly, error, required } = props;
+    let { children, onEditClick, readonly, error, required, popup } = props;
     let err = useAtomValue(error);
-    let right: any = <span className="p-2">&nbsp;</span>;
-    if (onEditClick !== null) {
-        if (readonly !== true) {
-            right = <div onClick={onEditClick} className="cursor-pointer pb-2 pt-1 align-self-start">
-                <Pencil />
-            </div>;
-        }
-    }
-    function onClick() {
-        setAtomValue(error, undefined);
-    }
     let cn = ' bg-light ';
     let vErr: any;
     if (required === true) {
@@ -29,11 +18,31 @@ export function InlineEdit(props: EditProps) {
             {err}
         </span>;
     }
-    return <div>
-        <div className={'d-flex align-items-center border rounded ' + cn} onClick={onClick}>
+    let content: any;
+    if (popup === false && onEditClick === null) {
+        content = <div className={'border rounded pe-1 ' + cn}>
+            {children}
+        </div>;
+    }
+    else {
+        let right: any = <span className="p-2">&nbsp;</span>;
+        if (onEditClick !== null) {
+            if (readonly !== true) {
+                right = <div onClick={onEditClick} className="cursor-pointer pb-2 pt-1 align-self-start">
+                    <Pencil />
+                </div>;
+            }
+        }
+        function onClick() {
+            setAtomValue(error, undefined);
+        }
+        content = <div className={'d-flex align-items-center border rounded ' + cn} onClick={onClick}>
             <div className="flex-fill py-0 ps-2">{children}</div>
             {right}
-        </div>
+        </div>;
+    }
+    return <div>
+        {content}
         {vErr}
     </div>;
 }

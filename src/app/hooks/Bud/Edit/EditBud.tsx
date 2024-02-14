@@ -7,7 +7,7 @@ import { BizBud, EnumBudType } from "app/Biz";
 import { EditBudProps, EditBudTemplateProps, IBudEditing } from "./model";
 import { LabelRowEdit as LabelRowEditHere } from "./LabelRowEdit";
 import { atom } from "jotai";
-import { getAtomValue, setAtomValue } from "tonwa-com";
+import { setAtomValue } from "tonwa-com";
 import { InlineEdit } from "./InlineEdit";
 
 export function EditBudLabelRow(editProps: EditBudProps) {

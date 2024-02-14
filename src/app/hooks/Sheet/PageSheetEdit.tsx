@@ -143,7 +143,7 @@ function PageStore({ store }: { store: SheetStore; }) {
     function MainOnlyEdit() {
         let btnSubmit = <ButtonSubmit onClick={onSubmit} />;
         return <>
-            <ViewMain main={main} />
+            <ViewMain main={main} popup={false} />
             <LMR className="px-3 py-3 border-top">
                 {btnSubmit}
                 {
@@ -193,7 +193,7 @@ function PageStore({ store }: { store: SheetStore; }) {
                 vDetail = <ViewBinDivs divStore={divStore} editable={editable} />;
             }
             return <>
-                <ViewMain main={main} />
+                <ViewMain main={main} popup={false} />
                 {vDetail}
                 <LMR className="px-3 py-3 border-top tonwa-bg-gray-1">
                     {btnSubmit}
