@@ -7,6 +7,7 @@ import { contentFromDays, getDays } from "app/tool";
 import { EditBudTemplateProps } from "./model";
 import { ViewBudEmpty } from "../../tool";
 import { RegisterOptions, useForm } from "react-hook-form";
+import { Spinner, SpinnerSmall, wait } from "tonwa-com";
 
 type ConvertToBudValue = (value: any) => { value: any; int: number; dec: number; str: string; };
 type FromBudValue = (value: any) => any;
@@ -89,18 +90,32 @@ interface InputProps {
 
 function Input({ value, options, type, onEdited }: InputProps) {
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
+    const [waiting, setWaiting] = useState(false);
+    const cn = 'form-control border-0 ';
     async function onBlur(evt: React.FocusEvent<HTMLInputElement>) {
         let nv = evt.currentTarget.value;
         if (nv.trim() === '') nv = undefined;
         if (nv !== value) {
+            setWaiting(true);
+            await wait(2000);
             await onEdited?.(nv);
+            setWaiting(false);
         }
     }
-    return <input type={type} className="form-control border-0" placeholder="-"
-        defaultValue={value}
-        {...register('noname', options)}
-        onBlur={onBlur}
-    />;
+    let vWaiting: any;
+    if (waiting === true) {
+        vWaiting = <div className={cn + ' position-absolute start-0 top-0 opacity-50 '}>
+            <SpinnerSmall />
+        </div>;
+    }
+    return <div className="position-relative">
+        <input type={type} className={cn} placeholder="-" disabled={waiting}
+            defaultValue={value}
+            {...register('noname', options)}
+            onBlur={onBlur}
+        />
+        {vWaiting}
+    </div>;
 }
 
 export function EditBudString(props: EditBudTemplateProps) {

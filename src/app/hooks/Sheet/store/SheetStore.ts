@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { ParamSaveDetail, ReturnGetPendRetSheet, UqExt } from "uqs/UqDefault";
 import { WritableAtom, atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
-import { PickFunc, RearPickResultType } from "../binPick/useBinPicks";
+import { PickFunc, RearPickResultType, ReturnUseBinPicks } from "../binPick/useBinPicks";
 import { Calc, Formulas } from "app/hooks/Calc";
 import { OwnerColl, budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
@@ -50,7 +50,12 @@ export class SheetMain extends BaseObject {
         const { id } = row;
         if (id > 0) return;
         const pickResults = await pick(this.sheetStore, RearPickResultType.scalar);
+        return await this.startFromPickResults(pickResults);
+    }
+
+    async startFromPickResults(pickResults: ReturnUseBinPicks) {
         if (pickResults === undefined) return;
+        const row = this.valRow;
         const { i, x, buds: mainProps } = this.entityMain;
         const formulas: Formulas = [];
         function getFormulaText(text: string) {

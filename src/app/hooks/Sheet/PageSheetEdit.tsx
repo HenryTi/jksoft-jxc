@@ -8,50 +8,96 @@ import { useCoreDetailAdd } from "./binEdit";
 import { NavigateFunction, useLocation, useNavigate, useParams } from "react-router-dom";
 import { UqApp, useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { EntitySheet } from "app/Biz";
-import { PickFunc, useBinPicks } from "./binPick/useBinPicks";
+import { PageBinPicks, PickFunc, RearPickResultType, ReturnUseBinPicks, useBinPicks } from "./binPick";
 import { ButtonAsyncIcon } from "app/tool/ButtonAsyncIcon";
 
 let locationState = 1;
+export function PageSheetNew() {
+    const uqApp = useUqApp();
+    const modal = useModal();
+    const { uq, biz } = uqApp;
+    const { sheet: entityId62, id } = useParams();
+    const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
+    // const sheetId = from62(id);
+    const [sheetId, setSheetId] = useState(undefined);
+    const { current: sheetStore } = useRef(new SheetStore(
+        uq,
+        biz,
+        entitySheet,
+        undefined
+    ));
+    const navigate = useNavigate();
+    const pick = useBinPicks(entitySheet.main);
+    const startCallback = useCallback(async function () {
+        // let sheetStore = ;
+        // await sheetStore.load();
+        // await startSheetStore(uqApp, navigate, sheetStore, pick);
+        // let ret = await modal.open(<PageBinPicks sheetStore={sheetStore} rearPickResultType={RearPickResultType.array} />);
+        /*
+        if (ret === undefined) {
+            setSheetStore(null);
+            return;
+        }
+        */
+        // setSheetStore(sheetStore);
+    }, []);
+    useEffectOnce(() => {
+        startCallback();
+    });
+    async function onPicked(results: ReturnUseBinPicks) {
+        let ret = await sheetStore.main.startFromPickResults(results);
+        if (ret === undefined) {
+            if (sheetStore.main.no === undefined) {
+                // 还没有创建单据
+                if (navigate !== undefined) {
+                    setTimeout(() => {
+                        navigate(-1);
+                    }, 100);
+                }
+            }
+            return; // 已有单据，不需要pick. 或者没有创建新单据
+        }
+        let { id, no } = ret;
+        if (id > 0) {
+            let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
+            if (data) {
+                const { id: entityId } = sheetStore.entitySheet;
+                data.addItem({
+                    id,
+                    no,
+                    entityId,
+                });
+            }
+            setSheetId(id);
+        }
+    }
+    if (sheetId === undefined) {
+        return <PageBinPicks sheetStore={sheetStore} rearPickResultType={RearPickResultType.array} onPicked={onPicked} />;
+        // return <PageSpinner header="..." />;
+    }
+    return <PageStore store={sheetStore} />;
+}
+
 export function PageSheetEdit() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const { sheet: entityId62, id } = useParams();
     const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
     const sheetId = from62(id);
-    const [sheetStore, setSheetStore] = useState<SheetStore>();
-    const location = useLocation();
-    const navigate = useNavigate();
-    const pick = useBinPicks(entitySheet.main);
-    /*
-    useEffect(() => {
-        // 重新开始新建一个单据
-        if (!location.state) return;
-        let sheetStore = new SheetStore(
-            uq,
-            biz,
-            entitySheet,
-            undefined,
-        );
-        setSheetStore(sheetStore);
-        startSheetStore(uqApp, navigate, sheetStore, pick);
-    }, [location.state]);
-    */
+    const { current: sheetStore } = useRef(new SheetStore(
+        uq,
+        biz,
+        entitySheet,
+        sheetId
+    ));
+    const startCallback = useCallback(async function () {
+        await sheetStore.load();
+    }, []);
     useEffectOnce(() => {
-        (async function () {
-            let sheetStore = new SheetStore(
-                uq,
-                biz,
-                entitySheet,
-                id === undefined ? undefined : sheetId
-            );
-            await sheetStore.load();
-            await startSheetStore(uqApp, navigate, sheetStore, pick);
-            setSheetStore(sheetStore);
-        })()
+        startCallback();
     });
-    if (sheetStore === undefined) return <PageSpinner header="..." />;
     return <PageStore store={sheetStore} />;
 }
 
@@ -85,7 +131,6 @@ async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetSt
 function PageStore({ store }: { store: SheetStore; }) {
     const { uq, caption, main, detail, divStore } = store;
     const uqApp = useUqApp();
-    // divStore.namedResults = undefined;
     const pick = useBinPicks(main.entityMain);
     const { openModal, closeModal } = useModal();
     const navigate = useNavigate();

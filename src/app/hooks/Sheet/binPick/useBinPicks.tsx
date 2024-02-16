@@ -1,12 +1,14 @@
 import { BinPick, EntityBin } from "app/Biz";
 import { BizPhraseType } from "uqs/UqDefault";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { usePickFromAtom } from "./fromAtom";
 import { usePickFromSpec } from "./fromSpec";
 import { usePickFromPend } from "./fromPend";
 import { usePickFromQuery } from "./fromQuery";
 import { SheetStore } from "../store";
 import { NamedResults, PickResult } from "../NamedResults";
+import { Page, useModal } from "tonwa-app";
+import { useEffectOnce } from "tonwa-com";
 
 export interface ReturnUseBinPicks {
     namedResults: NamedResults;
@@ -62,7 +64,7 @@ export function useBinPicks(bin: EntityBin) {
         const { divStore } = sheetStore;
         let { main } = sheetStore;
         namedResults = {
-            '%sheet': new Proxy(main.valRow, main.entityMain.proxyHandler()), // sheetStore.main.valRow, // sheetBinRow ?? {},
+            '%sheet': new Proxy(main.valRow, main.entityMain.proxyHandler()),
         };
         let pickResult: PickResult;
         for (const binPick of binPicks) {
@@ -103,4 +105,3 @@ export function useBinPicks(bin: EntityBin) {
         return ret;
     }, []);
 }
-
