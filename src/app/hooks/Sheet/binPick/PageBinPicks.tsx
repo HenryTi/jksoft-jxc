@@ -18,7 +18,6 @@ interface Props {
 }
 
 export function PageBinPicks({ sheetStore, rearPickResultType, onPicked }: Props) {
-    const modal = useModal();
     const pickFromAtom = usePickFromAtom();
     const pickFromSpec = usePickFromSpec();
     const pickFromPend = usePickFromPend();
@@ -31,8 +30,9 @@ export function PageBinPicks({ sheetStore, rearPickResultType, onPicked }: Props
         '%sheet': new Proxy(main.valRow, main.entityMain.proxyHandler()),
     });
     let [rearPickResult, setRearPickResult] = useState(undefined);
+    let [cur, setCur] = useState(0);
 
-    async function onPick(binPick: BinPick) {
+    async function onPick(binPick: BinPick, index: number) {
         let pickResult: any;
         const { name, pick } = binPick;
         const { bizPhraseType } = pick;
@@ -50,10 +50,14 @@ export function PageBinPicks({ sheetStore, rearPickResultType, onPicked }: Props
                 break;
         }
         if (pickResult === undefined) return;
-        setNamedResult({ ...namedResults, [name]: pickResult });
         namedResults[name] = pickResult;
+        for (let i = index + 1; i < binPicks.length; i++) {
+            namedResults[binPicks[i].name] = undefined;
+        }
+        setNamedResult({ ...namedResults });
+        setCur(index + 1);
     }
-    async function onPickRear(binPick: BinPick) {
+    async function onPickRear(binPick: BinPick, index: number) {
         if (sheetStore === undefined) debugger;
         const { divStore } = sheetStore;
         let pickResult: PickResult[] | PickResult;
@@ -73,9 +77,42 @@ export function PageBinPicks({ sheetStore, rearPickResultType, onPicked }: Props
                 pickResult = await pickFromPend(divStore, namedResults, rearPick);
         }
         setRearPickResult(pickResult);
+        setCur(binPicks.length);
     }
 
-    function ViewBinPick({ binPick, onPick }: { binPick: BinPick; onPick: (binPick: BinPick) => Promise<void> }) {
+    function ViewBinPick({ binPick, onPick, index }: { binPick: BinPick; onPick: (binPick: BinPick, index: number) => Promise<void>; index: number; }) {
+        let vPencil = <div className="ms-3">
+            <FA name="pencil" fixWidth={true} className="small text-info" />
+        </div>;
+        let onClick: () => Promise<void>;
+        let cn: string;
+        let vContent: any;
+        if (index < cur) {
+            vContent = <>
+                <div className="text-secondary flex-fill">
+                    {JSON.stringify(namedResults[binPick.name]) ?? <span className="text-secondary">-</span>}
+                </div>
+                {vPencil}
+            </>;
+            onClick = async () => await onPick(binPick, index);
+            cn = ' cursor-pointer';
+        }
+        else if (index === cur) {
+            vContent = <>
+                <div className="text-secondary flex-fill">
+                    请选择
+                </div>
+                {vPencil}
+            </>;
+            onClick = async () => await onPick(binPick, index);
+            cn = ' cursor-pointer';
+        }
+        else {
+            vContent = <>
+                <small className="text-secondary">-</small>
+            </>;
+            cn = '';
+        }
         return <>
             <div className="container">
                 <div className="row">
@@ -83,14 +120,9 @@ export function PageBinPicks({ sheetStore, rearPickResultType, onPicked }: Props
                         <FA name="angle-double-right" fixWidth={true} className="small me-2 text-warning" />
                         <span className="text-secondary">{binPick.name}</span>
                     </div>
-                    <div className="col py-2 cursor-pointer" onClick={async () => await onPick(binPick)}>
+                    <div className={'col py-2 ' + cn} onClick={onClick}>
                         <div className="d-flex">
-                            <div className="text-secondary flex-fill">
-                                {JSON.stringify(namedResults[binPick.name]) ?? <span className="text-secondary">-</span>}
-                            </div>
-                            <div className="ms-3">
-                                <FA name="pencil" fixWidth={true} className="small text-info" />
-                            </div>
+                            {vContent}
                         </div>
                     </div>
                 </div>
@@ -114,11 +146,11 @@ export function PageBinPicks({ sheetStore, rearPickResultType, onPicked }: Props
     return <Page header={header}>
         <div className="p-3 tonwa-bg-gray-2">选择待处理业务</div>
         <Sep />
-        {binPicks.map(v => {
+        {binPicks.map((v, index) => {
             const { name } = v;
-            return <ViewBinPick key={name} binPick={v} onPick={onPick} />;
+            return <ViewBinPick key={name} binPick={v} onPick={onPick} index={index} />;
         })}
-        <ViewBinPick binPick={rearPick} onPick={onPickRear} />
+        <ViewBinPick binPick={rearPick} onPick={onPickRear} index={binPicks.length} />
         <div className="p-3">
             <button className="btn btn-primary" onClick={onStart} disabled={rearPickResult === undefined}>开始</button>
         </div>
