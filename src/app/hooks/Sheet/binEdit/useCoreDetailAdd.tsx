@@ -1,13 +1,14 @@
 import { useCallback } from "react";
-import { CoreDetail, Row, Section } from "../store";
+import { CoreDetail, Row, Section, SheetStore } from "../store";
 import { RearPickResultType, useBinPicks } from "../binPick";
 import { useRowEdit } from "./rowEdit";
 import { BinEditing } from "../store";
 import { PickResult } from "../NamedResults";
 
-export function useCoreDetailAdd(coreDetail: CoreDetail) {
+export function useCoreDetailAdd(sheetStore: SheetStore) {
     const rowEdit = useRowEdit();
-    const { entityBin, sheetStore } = coreDetail;
+    const { detail: coreDetail } = sheetStore;
+    const entityBin = coreDetail?.entityBin;
     const pick = useBinPicks(entityBin);
     async function addNewDirect() {
         let ret = await pick(sheetStore);

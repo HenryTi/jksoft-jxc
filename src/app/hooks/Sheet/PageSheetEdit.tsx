@@ -29,23 +29,24 @@ export function PageSheetNew() {
         undefined
     ));
     const navigate = useNavigate();
-    const pick = useBinPicks(entitySheet.main);
-    const startCallback = useCallback(async function () {
-        // let sheetStore = ;
-        // await sheetStore.load();
-        // await startSheetStore(uqApp, navigate, sheetStore, pick);
-        // let ret = await modal.open(<PageBinPicks sheetStore={sheetStore} rearPickResultType={RearPickResultType.array} />);
-        /*
-        if (ret === undefined) {
-            setSheetStore(null);
-            return;
-        }
-        */
-        // setSheetStore(sheetStore);
-    }, []);
-    useEffectOnce(() => {
-        startCallback();
-    });
+    const addDetail = useCoreDetailAdd(sheetStore);
+    //const pick = useBinPicks(entitySheet.main);
+    //const startCallback = useCallback(async function () {
+    // let sheetStore = ;
+    // await sheetStore.load();
+    // await startSheetStore(uqApp, navigate, sheetStore, pick);
+    // let ret = await modal.open(<PageBinPicks sheetStore={sheetStore} rearPickResultType={RearPickResultType.array} />);
+    /*
+    if (ret === undefined) {
+        setSheetStore(null);
+        return;
+    }
+    */
+    // setSheetStore(sheetStore);
+    //}, []);
+    //useEffectOnce(() => {
+    //    startCallback();
+    //});
     async function onPicked(results: ReturnUseBinPicks) {
         let ret = await sheetStore.main.startFromPickResults(results);
         if (ret === undefined) {
@@ -72,9 +73,10 @@ export function PageSheetNew() {
             }
             setSheetId(id);
         }
+        await addDetail();
     }
     if (sheetId === undefined) {
-        return <PageBinPicks sheetStore={sheetStore} rearPickResultType={RearPickResultType.array} onPicked={onPicked} />;
+        return <PageBinPicks sheetStore={sheetStore} onPicked={onPicked} />;
         // return <PageSpinner header="..." />;
     }
     return <PageStore store={sheetStore} />;
@@ -199,7 +201,7 @@ function PageStore({ store }: { store: SheetStore; }) {
     }
 
     function MainDetailEdit() {
-        const addNew = useCoreDetailAdd(detail);
+        const addNew = useCoreDetailAdd(store);
         const start = useCallback(async function () {
             startSheetStore(uqApp, navigate, store, pick);
         }, []);

@@ -7,8 +7,6 @@ import { usePickFromPend } from "./fromPend";
 import { usePickFromQuery } from "./fromQuery";
 import { SheetStore } from "../store";
 import { NamedResults, PickResult } from "../NamedResults";
-import { Page, useModal } from "tonwa-app";
-import { useEffectOnce } from "tonwa-com";
 
 export interface ReturnUseBinPicks {
     namedResults: NamedResults;
@@ -35,6 +33,7 @@ export function useBinPicks(bin: EntityBin) {
 
     async function pickRear(sheetStore: SheetStore, rearPickResultType: RearPickResultType) {
         if (sheetStore === undefined) debugger;
+        if (bin === undefined) return;
         const { divStore } = sheetStore;
         const { rearPick } = bin;
         let pickResult: PickResult[] | PickResult;

@@ -8,16 +8,18 @@ import { usePickFromQuery } from "./fromQuery";
 import { SheetStore } from "../store";
 import { NamedResults, PickResult } from "../NamedResults";
 import { Page, useModal } from "tonwa-app";
-import { FA, Sep, useEffectOnce } from "tonwa-com";
+import { FA, Sep, SpinnerSmall, useEffectOnce } from "tonwa-com";
 import { RearPickResultType, ReturnUseBinPicks } from "./useBinPicks";
+import { ViewAtomId } from "app/hooks";
 
 interface Props {
     sheetStore: SheetStore;
-    rearPickResultType: RearPickResultType;
+    // rearPickResultType: RearPickResultType;
     onPicked: (results: ReturnUseBinPicks) => Promise<void>;
 }
 
-export function PageBinPicks({ sheetStore, rearPickResultType, onPicked }: Props) {
+export function PageBinPicks({ sheetStore, onPicked }: Props) {
+    const rearPickResultType = RearPickResultType.scalar;
     const pickFromAtom = usePickFromAtom();
     const pickFromSpec = usePickFromSpec();
     const pickFromPend = usePickFromPend();
@@ -77,50 +79,70 @@ export function PageBinPicks({ sheetStore, rearPickResultType, onPicked }: Props
                 pickResult = await pickFromPend(divStore, namedResults, rearPick);
         }
         setRearPickResult(pickResult);
-        setCur(binPicks.length);
+        setCur(binPicks.length + 1);
+        setNamedResult({ ...namedResults, [binPick.name]: pickResult });
     }
 
     function ViewBinPick({ binPick, onPick, index }: { binPick: BinPick; onPick: (binPick: BinPick, index: number) => Promise<void>; index: number; }) {
+        let [isPicking, setIsPicking] = useState(false);
         let vPencil = <div className="ms-3">
             <FA name="search" fixWidth={true} className="small text-info" />
         </div>;
-        let onClick: () => Promise<void>;
+        async function onClick() {
+            if (index > cur) return;
+            if (isPicking === true) return;
+            setIsPicking(true);
+            await onPick(binPick, index);
+            setIsPicking(false);
+        }
         let cnLabel: string, cnAngle: string, iconPrefix: string;
         let cn: string;
         let vContent: any;
         if (index < cur) {
-            vContent = <>
+            let val = namedResults[binPick.name];
+            let vVal: any;
+            if (val === undefined) {
+                vVal = <span className="text-secondary">-</span>;
+            }
+            else {
+                switch (typeof val) {
+                    case 'object':
+                        vVal = <ViewAtomId id={val.id} />;
+                        break;
+                    default:
+                        vVal = val;
+                        break;
+                }
+            }
+            vContent = <div className="d-flex">
                 <div className="text-secondary flex-fill">
-                    {JSON.stringify(namedResults[binPick.name]) ?? <span className="text-secondary">-</span>}
+                    {vVal}
                 </div>
                 {vPencil}
-            </>;
-            onClick = async () => await onPick(binPick, index);
+            </div>;
             cn = ' cursor-pointer ';
             cnLabel = '';
             cnAngle = ' text-success ';
             iconPrefix = 'check-circle-o';
         }
         else if (index === cur) {
-            vContent = <>
-                <div className="text-secondary flex-fill">
-                    <FA name="search" className="ms-1 text-primary" size="lg" />
-                </div>
-            </>;
-            onClick = async () => await onPick(binPick, index);
+            vContent = <div className="text-secondary flex-fill">
+                <FA name="search" className="text-primary" size="lg" />
+            </div>;
             cn = ' cursor-pointer';
             cnLabel = ' text-primary fw-bold ';
             cnAngle = ' text-primary ';
-            iconPrefix = 'angle-right';
+            iconPrefix = 'hand-o-right';
         }
         else {
-            vContent = <>
-                <small className="text-secondary">-</small>
-            </>;
+            vContent = <small className="text-secondary">-</small>;
             cn = '';
             cnLabel = ' text-secondary small ';
             cnAngle = ' text-secondary small ';
             iconPrefix = 'angle-right';
+        }
+        if (isPicking === true) {
+            vContent = <SpinnerSmall />;
         }
         return <>
             <div className="container">
@@ -130,9 +152,7 @@ export function PageBinPicks({ sheetStore, rearPickResultType, onPicked }: Props
                         <span className={cnLabel}>{binPick.name}</span>
                     </div>
                     <div className={'col py-2 ' + cn} onClick={onClick}>
-                        <div className="d-flex">
-                            {vContent}
-                        </div>
+                        {vContent}
                     </div>
                 </div>
             </div>
@@ -168,7 +188,7 @@ export function PageBinPicks({ sheetStore, rearPickResultType, onPicked }: Props
             <ViewBinPick binPick={rearPick} onPick={onPickRear} index={binPicks.length} />
         </div>
         <div className="p-3">
-            <button className="btn btn-primary" onClick={onStart} disabled={rearPickResult === undefined}>
+            <button className="btn btn-primary" onClick={onStart} disabled={cur <= binPicks.length}>
                 下一步 <FA name="arrow-right ms-2" />
             </button>
         </div>
