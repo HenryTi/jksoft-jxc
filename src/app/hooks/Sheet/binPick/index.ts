@@ -1,2 +1,2 @@
 export * from './useBinPicks';
-export * from './PageBinPicks';
+export * from './ViewBinPicks';

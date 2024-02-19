@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
 import { useState } from "react";
-import { PageBinPicks, ReturnUseBinPicks } from "./binPick";
+import { ViewBinPicks, ReturnUseBinPicks } from "./binPick";
 import { PageStore } from "./PageStore";
 import { useSheet } from "./useSheet";
 
@@ -76,34 +76,45 @@ export function PageSheetNew() {
         }
         await addDetail();
     }
+    const { header, back, buttons: { submit, discard, exit } } = returnUseSheet;
     if (sheetId === undefined) {
-        const { header, back, buttons: { submit, discard, exit } } = returnUseSheet;
         const { main } = sheetStore;
         let d = new Date().toISOString();
         let index = d.indexOf('T');
         main.no = `${d.substring(0, index)}-0000`;
         submit.disabled = true;
         discard.hidden = true;
-        return <Page header={header} back={back}>
-            <div className="tonwa-bg-gray-1">
+        if (sheetStore.isPend() === true) {
+            const subCaption = '批选待处理';
+            let vSelectBatch = <div className="px-3 py-3 d-flex border-bottom">
+                <button className="btn btn-outline-primary" onClick={onPick}>
+                    {subCaption}
+                </button>
+            </div>;
+            return <Page header={header} back={back}>
+                <div className="tonwa-bg-gray-1">
+                    {toolbar}
+                    {vSelectBatch}
+                    <ViewMain main={main} popup={false} readOnly={true} />
+                    <div className="px-3 py-3 border-top border-bottom my-3 bg-white">
+                        <small className="text-secondary text-opacity-50">无明细</small>
+                    </div>
+                </div>
+            </Page>;
+            function onPick() {
+                modal.open(<Page header={header + ' - ' + subCaption}>
+                    <ViewBinPicks subHeader={'批选条件'} sheetStore={sheetStore} onPicked={onPicked} />
+                </Page>);
+            }
+        }
+        else {
+            return <Page header={header + ' - 开单'} back={back}>
                 {toolbar}
-                <div className="px-3 py-3 d-flex border-bottom">
-                    <button className="btn btn-outline-primary" onClick={onPick}>
-                        批选待处理
-                    </button>
-                </div>
-                <ViewMain main={main} popup={false} readOnly={true} />
-                <div className="px-3 py-3 border-top border-bottom my-3 bg-white">
-                    <small className="text-secondary text-opacity-50">无明细</small>
-                </div>
-            </div>
-        </Page>;
-        function onPick() {
-            modal.open(<PageBinPicks sheetStore={sheetStore} onPicked={onPicked} />);
+                <ViewBinPicks subHeader={'开单条件'} sheetStore={sheetStore} onPicked={onPicked} />
+            </Page>;
         }
     }
     else {
-        const { buttons: { submit, discard, exit } } = returnUseSheet;
         submit.disabled = false;
         discard.hidden = false;
         return <PageStore store={sheetStore} toolbar={toolbar} />;

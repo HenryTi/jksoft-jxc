@@ -86,7 +86,7 @@ export function PageStore({ store, toolbar }: { store: SheetStore; toolbar: JSX.
             data.removeItem<{ id: number; }>(v => v.id === id) as any;
         }
     }
-    async function onRemoveSheet() {
+    async function onDiscardSheet() {
         let message = `${caption} ${main.no} 真的要作废吗？`;
         let ret = await openModal(<PageConfirm header="确认" message={message} yes="单据作废" no="不作废" />);
         if (ret === true) {
@@ -105,7 +105,7 @@ export function PageStore({ store, toolbar }: { store: SheetStore; toolbar: JSX.
             <LMR className="px-3 py-3 border-top">
                 {btnSubmit}
                 {
-                    editable === true && <>{id && <ButtonDelete onClick={onRemoveSheet} />}</>
+                    editable === true && <>{id && <ButtonDiscard onClick={onDiscardSheet} />}</>
                 }
             </LMR>
         </>;
@@ -158,7 +158,7 @@ export function PageStore({ store, toolbar }: { store: SheetStore; toolbar: JSX.
                     {
                         editable === true && <>
                             <ButtonDetail onClick={onAddRow} />
-                            {id && <ButtonDelete onClick={onRemoveSheet} />}
+                            {id && <ButtonDiscard onClick={onDiscardSheet} />}
                         </>
                     }
                 </LMR>
@@ -180,6 +180,6 @@ function ButtonDetail({ onClick }: { onClick: () => Promise<void> }) {
     return <ButtonAsyncIcon onClick={onClick} className="btn-outline-primary" icon="plus">明细</ButtonAsyncIcon>;
 }
 
-function ButtonDelete({ onClick }: { onClick: () => Promise<void> }) {
+function ButtonDiscard({ onClick }: { onClick: () => Promise<void> }) {
     return <ButtonAsyncIcon onClick={onClick} className="btn-outline-warning" icon="trash-o">作废</ButtonAsyncIcon>;
 }

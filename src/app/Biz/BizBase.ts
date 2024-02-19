@@ -29,7 +29,6 @@ export class BizBase {
     }
 
     fromSchema(schema: any) {
-        if (this._name === '验收单明细') debugger;
         for (let i in schema) {
             this.fromSwitch(i, schema[i]);
         }

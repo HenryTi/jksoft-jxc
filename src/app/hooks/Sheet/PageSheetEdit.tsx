@@ -32,7 +32,7 @@ export function PageSheetEdit() {
     });
     return <PageStore store={sheetStore} toolbar={toolbar} />;
 }
-/*
+
 async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetStore: SheetStore, pick: PickFunc) {
     let ret = await sheetStore.start(pick);
     if (ret === undefined) {
@@ -59,4 +59,3 @@ async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetSt
         }
     }
 }
-*/

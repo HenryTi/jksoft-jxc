@@ -13,11 +13,12 @@ import { RearPickResultType, ReturnUseBinPicks } from "./useBinPicks";
 import { ViewAtomId } from "app/hooks";
 
 interface Props {
+    subHeader?: string;
     sheetStore: SheetStore;
     onPicked: (results: ReturnUseBinPicks) => Promise<void>;
 }
 
-export function PageBinPicks({ sheetStore, onPicked }: Props) {
+export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     const rearPickResultType = RearPickResultType.scalar;
     const pickFromAtom = usePickFromAtom();
     const pickFromSpec = usePickFromSpec();
@@ -26,7 +27,6 @@ export function PageBinPicks({ sheetStore, onPicked }: Props) {
     const { main, entitySheet, divStore } = sheetStore;
     const { binPicks, rearPick } = main.entityMain;
     const { caption, name } = entitySheet;
-    const header = caption ?? name;
     const [namedResults, setNamedResult] = useState<{ [name: string]: any }>({
         '%sheet': new Proxy(main.valRow, main.entityMain.proxyHandler()),
     });
@@ -171,10 +171,10 @@ export function PageBinPicks({ sheetStore, onPicked }: Props) {
         };
         await onPicked(ret);
     }
-    return <Page header="批选待处理" back="close">
+    return <>
         <div className="border rounded-3 mt-3">
-            <div className="tonwa-bg-gray-2 small py-3 px-3 text-secondary">
-                查询条件
+            <div className="tonwa-bg-gray-2 small py-1 px-3 text-secondary">
+                {subHeader}
             </div>
             <Sep />
             {binPicks.map((v, index) => {
@@ -185,8 +185,8 @@ export function PageBinPicks({ sheetStore, onPicked }: Props) {
         </div>
         <div className="p-3">
             <button className="btn btn-primary" onClick={onStart} disabled={cur <= binPicks.length}>
-                下一步 <FA name="arrow-right ms-2" />
+                <FA name="arrow-right me-2" />下一步
             </button>
         </div>
-    </Page>;
+    </>;
 }
