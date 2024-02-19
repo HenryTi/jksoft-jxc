@@ -13,8 +13,8 @@ interface ViewDivProps {
 }
 
 export function ViewBinDivs({ divStore, editable }: { divStore: DivStore; editable: boolean; }) {
-    const { valDivs: valDiv } = divStore;
-    const divs = useAtomValue(valDiv.atomValDivs);
+    const { valDivs } = divStore;
+    const divs = useAtomValue(valDivs.atomValDivs);
     if (divs.length === 0) {
         return <div className="tonwa-bg-gray-1">
             <div className="mt-3 small text-body-tertiary p-3 bg-white border-top">
@@ -90,7 +90,7 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
         }
         btn = <DivRow />;
     }
-    else {
+    else if (valueBud !== undefined) {
         let { caption, name } = valueBud;
         btn = <div className={cnBtn}>
             <div className="text-end">
@@ -98,6 +98,11 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
                 {value}
             </div>
             {vDel}
+        </div>;
+    }
+    else {
+        btn = <div className={cnBtn}>
+            valueBue === undefined
         </div>;
     }
     async function onAddSub() {

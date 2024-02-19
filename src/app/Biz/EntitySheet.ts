@@ -1,6 +1,6 @@
 import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
-import { BizBud, BizBudSpecBase, EnumBudType } from "./BizBud";
+import { BizBud, BizBudBinValue, BizBudSpecBase, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
@@ -299,7 +299,7 @@ export class EntityBin extends Entity {
             case 'i': this.i = val; break;
             case 'x': this.x = val; break;
             case 'pend': this.fromPend(val); break;
-            case 'value': this.fromValue(val); break;
+            case 'value': this.fromBinValue(val); break;
             case 'price': this.fromPrice(val); break;
             case 'amount': this.fromAmount(val); break;
         }
@@ -311,6 +311,18 @@ export class EntityBin extends Entity {
 
     private fromValue(prop: any) {
         this.value = this.fromProp(prop);
+    }
+    protected fromBinValue(prop: any) {
+        if (prop === undefined) debugger;
+        let { id, name, values } = prop;
+        let bizBud = new BizBudBinValue(this.biz, id, name, this);
+        this.buildBud(bizBud, prop);
+        if (values !== undefined) {
+            for (let val of values) {
+                bizBud.values.push(this.fromProp(val));
+            }
+        }
+        this.value = bizBud;
     }
 
     private fromPrice(prop: any) {

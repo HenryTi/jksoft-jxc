@@ -1,28 +1,30 @@
 import { useQueryMore } from "app/coms";
+import { useCallback, useMemo } from "react";
 import { Page } from "tonwa-app";
 import { wait } from "tonwa-com";
 
-let row = 1;
+let rowId = 1;
 
 interface Row {
     id: number; name: string;
 }
 export function PageTest() {
+    const memoRowId = useMemo(() => rowId, []);
     const { view } = useQueryMore<any, Row>({
         param: undefined,
         sortField: 'id',
         pageStart: undefined,
         pageSize: undefined,
         pageMoreSize: undefined,
-        query: async function (param: any, pageStart: any, pageSize: number) {
+        query: useCallback(async function (param: any, pageStart: any, pageSize: number) {
             await wait(2000);
             let ret: Row[] = [];
             for (let i = 0; i < pageSize; i++) {
-                if (row > 100) break;
-                ret.push({ id: row++, name: 'dddd' });
+                if (rowId > memoRowId + 100) break;
+                ret.push({ id: rowId++, name: 'dddd' });
             }
             return ret;
-        },
+        }, []),
         ViewItem,
         getKey: (v) => v.id,
     });

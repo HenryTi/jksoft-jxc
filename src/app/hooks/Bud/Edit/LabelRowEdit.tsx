@@ -3,7 +3,7 @@ import { EditProps } from "./model";
 import { Pencil } from "app/hooks/tool";
 
 export function LabelRowEdit(props: EditProps) {
-    let { label, flag, children, onEditClick, readonly, popup } = props;
+    let { label, flag, children, onEditClick, readOnly, popup } = props;
     let vLabel: any;
     if (flag !== undefined) {
         vLabel = <>
@@ -21,7 +21,7 @@ export function LabelRowEdit(props: EditProps) {
     else {
         let right: any = <span className="p-3">&nbsp;</span>;
         if (onEditClick !== null) {
-            if (readonly !== true) {
+            if (readOnly !== true) {
                 right = <div onClick={onEditClick} className="cursor-pointer py-2 px-1">
                     <Pencil />
                 </div>;

@@ -395,6 +395,10 @@ export class SheetStore extends KeyIdObject {
         this.detail.setRowValues(details);
     }
 
+    hasId() {
+        return this.main.valRow?.id !== undefined;
+    }
+
     // whole sheet or row detail
     private async loadBinData(binId: number) {
         let { main, details, props } = await this.uq.GetSheet.query({ id: binId });

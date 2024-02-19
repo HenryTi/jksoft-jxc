@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import { Pencil } from "app/hooks/tool";
 
 export function InlineEdit(props: EditProps) {
-    let { children, onEditClick, readonly, error, required, popup } = props;
+    let { children, onEditClick, readOnly, error, required, popup } = props;
     let err = useAtomValue(error);
     let cn = ' bg-light ';
     let vErr: any;
@@ -27,7 +27,7 @@ export function InlineEdit(props: EditProps) {
     else {
         let right: any = <span className="p-2">&nbsp;</span>;
         if (onEditClick !== null) {
-            if (readonly !== true) {
+            if (readOnly !== true) {
                 right = <div onClick={onEditClick} className="cursor-pointer pb-2 pt-1 align-self-start">
                     <Pencil />
                 </div>;

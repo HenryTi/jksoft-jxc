@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { List, Sep, Spinner, SpinnerSmall, getAtomValue, setAtomValue, useEffectOnce } from "tonwa-com";
 import { isPromise, UqQuery } from "tonwa-uq";
 import { ModalContext, Page, PageProps, Scroller } from "tonwa-app";
@@ -41,11 +41,7 @@ export function useQueryMore<P = any, R = any>(props: PropsQueryMore<P, R>): Ret
         const observer = new IntersectionObserver(
             entries => {
                 if (entries[0].isIntersecting) {
-                    // console.log('load');
                     moreItems.load();
-                    setTimeout(() => {
-                        observerTarget.current.scrollIntoView();
-                    }, 50);
                 }
             },
             { threshold: 1 }
@@ -73,16 +69,13 @@ export function useQueryMore<P = any, R = any>(props: PropsQueryMore<P, R>): Ret
         <div>
             {items?.map((v, index) => {
                 let key = getKey === undefined ? index : getKey(v);
-                if (index === 0) {
-                    return <ViewItem key={key} value={v} />;
-                }
-                return <>
-                    {sep}
-                    <ViewItem key={key} value={v} />
-                </>
+                let content = <ViewItem value={v} />;
+                let s: any;
+                if (index > 0) s = sep;
+                return <React.Fragment key={key}>{s}{content}</React.Fragment>;
             })}
         </div>
-        {isLoading && <div className="text-center py-2"><SpinnerSmall /></div>}
+        {isLoading && <Loading elObserver={observerTarget.current} />}
         {error && <p>Error: {error.message}</p>}
         <div ref={observerTarget}></div>
     </>;
@@ -90,6 +83,13 @@ export function useQueryMore<P = any, R = any>(props: PropsQueryMore<P, R>): Ret
         view,
         items: moreItems,
     };
+}
+
+function Loading({ elObserver }: { elObserver: HTMLElement }) {
+    useEffect(() => {
+        elObserver.scrollIntoView();
+    });
+    return <div className="text-center py-2"><SpinnerSmall /></div>;
 }
 
 let id = 1;

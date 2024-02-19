@@ -34,7 +34,39 @@ export enum EnumSysRole {
     owner = 2,
 }
 
+abstract class LocalValue<T> {
+    readonly name: string;
+    value: T;
+    constructor(name: string) {
+        this.name = name;
+        let ret = localStorage.getItem(this.name);
+        this.value = this.fromString(ret);
+    }
+
+    protected abstract fromString(v: string): T;
+    protected abstract toString(): string;
+    set(v: T) {
+        this.value = v;
+        let r = this.toString();
+        localStorage.setItem(this.name, r);
+    }
+    remove() {
+        localStorage.removeItem(this.name);
+    }
+}
+class LocalNumber extends LocalValue<number> {
+    protected override fromString(v: string): number {
+        let r = Number(v);
+        if (Number.isNaN(r) === true) return;
+        return r;
+    }
+    protected override toString(): string {
+        return String(this.value);
+    }
+}
+
 export class UqSites {
+    private readonly localSiteId: LocalNumber;
     readonly uqMan: UqMan;
     private mySitesColl: { [unit: number]: UserSite };
     userSite0: UserSite;        // the root uq unit = 0;
@@ -43,6 +75,7 @@ export class UqSites {
 
     constructor(uqMan: UqMan) {
         this.uqMan = uqMan;
+        this.localSiteId = new LocalNumber('localSiteId');
     }
 
     async login() {
@@ -91,6 +124,7 @@ export class UqSites {
     }
 
     async setSite(site: number): Promise<void> {
+        this.localSiteId.set(site);
         let act: Action = this.uqMan.entities['$setsite'] as any;
         await act.submit({ site });
         await this.reloadMyRoles();
@@ -131,6 +165,11 @@ export class UqSites {
             mySite.isOwner = ((admin & 2) === 2);
             mySite.entity = entity;
             mySite.assigned = assigned;
+
+            if (mySite.id === this.localSiteId.value) {
+                userSiteDef = mySite;
+                break;
+            }
             if (userSiteDef === undefined && mySite !== this.userSite0) {
                 userSiteDef = mySite;
             }

@@ -1,4 +1,4 @@
-import { BizBud } from "./BizBud";
+import { BizBud, BizBudBinValue } from "./BizBud";
 import { BizBase } from "./BizBase";
 import { Biz } from "./Biz";
 import { EntitySelf } from "./AtomsBuilder";
@@ -146,10 +146,7 @@ export class Entity extends BizBase {
         });
     }
 
-    protected fromProp(prop: any) {
-        if (prop === undefined) debugger;
-        let { id, name, dataType } = prop;
-        let bizBud = new BizBud(this.biz, id, name, dataType, this);
+    protected buildBud(bizBud: BizBud, prop: any) {
         let { budDataType } = bizBud;
         if (budDataType === undefined) {
             debugger;
@@ -157,6 +154,14 @@ export class Entity extends BizBase {
         }
         budDataType.fromSchema(prop);
         bizBud.fromSchema(prop);
+        return bizBud;
+    }
+
+    protected fromProp(prop: any) {
+        if (prop === undefined) debugger;
+        let { id, name, dataType } = prop;
+        let bizBud = new BizBud(this.biz, id, name, dataType, this);
+        this.buildBud(bizBud, prop);
         return bizBud;
     }
 

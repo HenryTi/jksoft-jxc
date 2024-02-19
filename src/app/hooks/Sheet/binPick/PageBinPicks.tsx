@@ -14,7 +14,6 @@ import { ViewAtomId } from "app/hooks";
 
 interface Props {
     sheetStore: SheetStore;
-    // rearPickResultType: RearPickResultType;
     onPicked: (results: ReturnUseBinPicks) => Promise<void>;
 }
 
@@ -172,10 +171,7 @@ export function PageBinPicks({ sheetStore, onPicked }: Props) {
         };
         await onPicked(ret);
     }
-    return <Page header={header}>
-        <div className="p-3 tonwa-bg-gray-2">查询待处理业务</div>
-        <Sep />
-
+    return <Page header="批选待处理" back="close">
         <div className="border rounded-3 mt-3">
             <div className="tonwa-bg-gray-2 small py-3 px-3 text-secondary">
                 查询条件

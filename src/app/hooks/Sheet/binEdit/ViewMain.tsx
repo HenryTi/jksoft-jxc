@@ -8,7 +8,7 @@ import { BudCheckEditValue, BudCheckValue } from "tonwa-app";
 import React from "react";
 import { LabelBox, RowCols } from "app/hooks/tool";
 
-export function ViewMain({ main, popup }: { main: SheetMain; popup: boolean; }) {
+export function ViewMain({ main, popup, readOnly }: { main: SheetMain; popup: boolean; readOnly?: boolean; }) {
     const { no, entityMain, _valRow: _binRow, budEditings } = main;
     const { i: budI, x: budX } = entityMain;
     const binRow = useAtomValue(_binRow);
@@ -22,7 +22,7 @@ export function ViewMain({ main, popup }: { main: SheetMain; popup: boolean; }) 
         let { id, caption, name } = bizBud;
         let value = buds[id];
         propRow.push(<LabelBox key={id} label={caption ?? name} required={required} title={value as any}>
-            <EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} popup={popup} />
+            <EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} popup={popup} readOnly={readOnly} />
         </LabelBox>);
         if (i === length - 1) break;
         if (i % 4 === 3) {

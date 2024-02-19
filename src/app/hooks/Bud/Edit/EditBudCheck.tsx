@@ -9,7 +9,7 @@ import { ViewBudEmpty } from "../../tool";
 export function EditBudCheck(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
     const modal = useModal();
-    const { id, readonly, labelSize, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
+    const { id, readOnly, labelSize, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
     const { bizBud } = budEditing;
     const { budDataType, caption, name, ui } = bizBud;
     const { options: { items } } = budDataType as BudCheck;
@@ -21,7 +21,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
     }
     const [checks, setChecks] = useState(initCheckValue);
     let cn = 'me-4 ';
-    if (readonly === true) cn += 'text-light invisible ';
+    if (readOnly === true) cn += 'text-light invisible ';
     async function onCheckChanged(item: OptionsItem, checked: boolean) {
         const { id: budPhrase } = bizBud;
         const optionsItemPhrase = item.id;
@@ -93,7 +93,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
                 return <CheckAsync key={index}
                     className={cn}
                     onCheckChanged={onChange}
-                    disabled={readonly}
+                    disabled={readOnly}
                     value={value}
                     defaultChecked={checks[id]}>
                     {caption ?? name}
@@ -103,7 +103,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
     }
 
     return <ValueEdit label={caption ?? name}
-        readonly={readonly}
+        readOnly={readOnly}
         labelSize={labelSize}
         flag={flag}
         onEditClick={onEditClick}

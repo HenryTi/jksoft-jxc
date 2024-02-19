@@ -14,7 +14,7 @@ type FromBudValue = (value: any) => any;
 function EditBudValue(props: EditBudTemplateProps & { type: string; step?: string; convertToBudValue: ConvertToBudValue; fromBudValue?: FromBudValue; }) {
     const { uq } = useUqApp();
     const { openModal } = useModal();
-    const { id, readonly, labelSize, flag, value: initValue, budEditing
+    const { id, readOnly, labelSize, flag, value: initValue, budEditing
         , type, step, convertToBudValue, options, fromBudValue
         , ViewValueEdit: ValueEdit, onChanged, popup } = props;
     const budInitValue = fromBudValue === undefined ? initValue as string | number : fromBudValue(initValue);
@@ -37,13 +37,13 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
     if (popup === false) {
         return <ValueEdit label={label}
             labelSize={labelSize}
-            readonly={readonly}
+            readOnly={readOnly}
             flag={flag}
             onEditClick={null}
             popup={popup}
             {...budEditing}
         >
-            <Input value={budInitValue} options={options} type={type} onEdited={valueEdited} />
+            <Input value={budInitValue} options={options} type={type} onEdited={valueEdited} readOnly={readOnly} />
         </ValueEdit>;
     }
     else {
@@ -73,7 +73,7 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
         }
         return <ValueEdit label={label}
             labelSize={labelSize}
-            readonly={readonly}
+            readOnly={readOnly}
             flag={flag}
             onEditClick={onEditClick}
             {...budEditing}
@@ -86,9 +86,10 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
 interface InputProps {
     value: string | number; options: RegisterOptions; type: string;
     onEdited: (v: any) => Promise<void>;
+    readOnly: boolean;
 }
 
-function Input({ value, options, type, onEdited }: InputProps) {
+function Input({ value, options, type, onEdited, readOnly }: InputProps) {
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [waiting, setWaiting] = useState(false);
     const cn = 'form-control border-0 ';
@@ -110,7 +111,7 @@ function Input({ value, options, type, onEdited }: InputProps) {
     }
     return <div className="position-relative">
         <input type={type} className={cn} placeholder="-" disabled={waiting}
-            defaultValue={value}
+            defaultValue={value} readOnly={readOnly}
             {...register('noname', options)}
             onBlur={onBlur}
         />

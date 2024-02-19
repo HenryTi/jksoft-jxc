@@ -237,7 +237,6 @@ export class BizBud extends BizBase {
     }
 
     protected fromSwitch(i: string, val: any) {
-        // this.budDataType.fromSwitch(this.entity, i, val);
         switch (i) {
             default:
                 super.fromSwitch(i, val);
@@ -255,6 +254,36 @@ export class BizBud extends BizBase {
             case 'setType':
                 break;
         }
+    }
+}
+
+export class BizBudBinValue extends BizBud {
+    values: BizBud[] = [];
+    constructor(biz: Biz, id: number, name: string, entity: Entity) {
+        super(biz, id, name, EnumBudType.dec, entity);
+    }
+    protected fromSwitch(i: string, val: any) {
+        switch (i) {
+            default:
+                super.fromSwitch(i, val);
+                break;
+            case 'values':
+                this.values = (val as any[]).map(v => this.fromProp(v));
+                break;
+        }
+    }
+
+    private fromProp(prop: any) {
+        let { id, name, dataType } = prop;
+        let bizBud = new BizBud(this.biz, id, name, dataType, this.entity);
+        let { budDataType } = bizBud;
+        if (budDataType === undefined) {
+            debugger;
+            return;
+        }
+        budDataType.fromSchema(prop);
+        bizBud.fromSchema(prop);
+        return bizBud;
     }
 }
 

@@ -14,7 +14,7 @@ export class Scroller {
 }
 
 export interface PageBackProps {
-    back?: 'close' | 'back' | 'none';
+    back?: 'close' | 'back' | 'none' | string;
     onBack?: () => void;
 }
 
@@ -30,7 +30,6 @@ export interface PageFooterProps {
 
 export interface PageContentProps {
     children?: React.ReactNode;
-    contentClassName?: string;
 
     onScroll?: (e: any) => void;
     onScrollTop?: (scroller: Scroller) => Promise<boolean>;

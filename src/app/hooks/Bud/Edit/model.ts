@@ -42,7 +42,7 @@ export interface EditBudProps {
     budEditing: IBudEditing;
     labelSize?: 0 | 1 | 2;
     flag?: JSX.Element;             // 重要字段标志
-    readonly?: boolean;
+    readOnly?: boolean;
     options?: RegisterOptions;
     onChanged?: (bizBud: BizBud, value: string | number | BudCheckValue) => Promise<void> | void;
     popup?: boolean;                // if popup===false, input control, no open modal
@@ -57,7 +57,7 @@ export interface EditProps extends IEditing {
     labelSize?: 0 | 1 | 2;
     children: React.ReactNode;
     onEditClick: () => void;
-    readonly?: boolean;
+    readOnly?: boolean;
     flag?: JSX.Element;             // 重要的，label上做标识
     popup?: boolean;
 }
