@@ -2,25 +2,27 @@ import { SheetStore } from "./store";
 import { from62 } from "tonwa-com";
 import { useNavigate, useParams } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { EntitySheet } from "app/Biz";
 import { ToolButton, Toolbar } from "./Toolbar";
 
-export function useSheet() {
+export function useSheetStore() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const { sheet: entityId62, id } = useParams();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
-    const { name, caption } = entitySheet;
     const sheetId = from62(id);
+    /*
+    const { name, caption } = entitySheet;
     const sheetStore = new SheetStore(
         uq,
         biz,
         entitySheet,
         sheetId
     );
-
+    */
+    /*
     async function onSubmit() {
     }
 
@@ -53,5 +55,21 @@ export function useSheet() {
         header: caption ?? name,
         back: 'file-text-o',
     }), []);
-    return ret;
+    */
+    const refSheetStore = useRef(new SheetStore(
+        uq,
+        biz,
+        entitySheet,
+        sheetId
+    ));
+    return refSheetStore.current;
+}
+
+export function useSheetHeader(sheetStore: SheetStore) {
+    const { entitySheet } = sheetStore;
+    const { name, caption } = entitySheet;
+    return {
+        header: caption ?? name,
+        back: 'file-text-o',
+    }
 }

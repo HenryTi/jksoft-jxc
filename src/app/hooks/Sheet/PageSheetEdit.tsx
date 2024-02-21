@@ -6,7 +6,8 @@ import { PageMoreCacheData } from "app/coms";
 import { useCallback } from "react";
 import { PickFunc } from "./binPick";
 import { PageStore } from "./PageStore";
-import { useSheet } from "./useSheet";
+import { useSheetHeader, useSheetStore } from "./useSheetStore";
+import { useToolbar } from "./useToolbar";
 
 let locationState = 1;
 export function PageSheetEdit() {
@@ -23,7 +24,8 @@ export function PageSheetEdit() {
         sheetId
     ));
     */
-    const { sheetStore, toolbar } = useSheet();
+    const sheetStore = useSheetStore();
+    const { toolbar } = useToolbar(sheetStore);
     const startCallback = useCallback(async function () {
         await sheetStore.load();
     }, []);

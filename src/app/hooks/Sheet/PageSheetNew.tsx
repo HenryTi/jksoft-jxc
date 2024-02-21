@@ -7,7 +7,8 @@ import { PageMoreCacheData } from "app/coms";
 import { useState } from "react";
 import { ViewBinPicks, ReturnUseBinPicks } from "./binPick";
 import { PageStore } from "./PageStore";
-import { useSheet } from "./useSheet";
+import { useSheetHeader, useSheetStore } from "./useSheetStore";
+import { useToolbar } from "./useToolbar";
 
 export function PageSheetNew() {
     /*
@@ -26,8 +27,10 @@ export function PageSheetNew() {
     const modal = useModal();
     const uqApp = useUqApp();
     const [sheetId, setSheetId] = useState(undefined);
-    const returnUseSheet = useSheet();
-    const { sheetStore, toolbar } = returnUseSheet;
+    const sheetStore = useSheetStore();
+    //const { sheetStore, toolbar } = returnUseSheet;
+    const returnUseToolbar = useToolbar(sheetStore);
+    const { header, back } = useSheetHeader(sheetStore);
 
     const navigate = useNavigate();
     const addDetail = useCoreDetailAdd(sheetStore);
@@ -76,14 +79,14 @@ export function PageSheetNew() {
         }
         await addDetail();
     }
-    const { header, back, buttons: { submit, discard, exit } } = returnUseSheet;
+    const { btnSubmit, btnDiscard, btnExit, toolbar } = returnUseToolbar;
     if (sheetId === undefined) {
         const { main } = sheetStore;
         let d = new Date().toISOString();
         let index = d.indexOf('T');
         main.no = `${d.substring(0, index)}-0000`;
-        submit.disabled = true;
-        discard.hidden = true;
+        btnSubmit.disabled = true;
+        btnDiscard.hidden = true;
         if (sheetStore.isPend() === true) {
             const subCaption = '批选待处理';
             let vSelectBatch = <div className="px-3 py-3 d-flex border-bottom">
@@ -115,8 +118,8 @@ export function PageSheetNew() {
         }
     }
     else {
-        submit.disabled = false;
-        discard.hidden = false;
+        btnSubmit.disabled = false;
+        btnDiscard.hidden = false;
         return <PageStore store={sheetStore} toolbar={toolbar} />;
     }
 }

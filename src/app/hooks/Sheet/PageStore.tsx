@@ -11,6 +11,7 @@ import { PageMoreCacheData } from "app/coms";
 import { useCallback, useRef, useState } from "react";
 import { PickFunc, useBinPicks } from "./binPick";
 import { ButtonAsyncIcon } from "app/tool/ButtonAsyncIcon";
+import { useSheetHeader } from "./useSheetStore";
 
 let locationState = 1;
 
@@ -42,7 +43,8 @@ async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetSt
 }
 
 export function PageStore({ store, toolbar }: { store: SheetStore; toolbar: JSX.Element; }) {
-    const { uq, caption, main, detail, divStore } = store;
+    const { uq, main, detail, divStore } = store;
+    const { header, back } = useSheetHeader(store);
     const uqApp = useUqApp();
     const pick = useBinPicks(main.entityMain);
     const { openModal, closeModal } = useModal();
@@ -63,11 +65,11 @@ export function PageStore({ store, toolbar }: { store: SheetStore; toolbar: JSX.
         uqApp.autoRefresh?.();
         let ret = await openModal<boolean>(<Page header="提交成功" back="none">
             <div className="p-3">
-                {caption} <b>{main.no}</b> 已提交 {JSON.stringify(checkPend)} {JSON.stringify(checkBin)}
+                {header} <b>{main.no}</b> 已提交 {JSON.stringify(checkPend)} {JSON.stringify(checkBin)}
             </div>
             <div className="border-top p-3">
                 <button className="btn btn-outline-primary" onClick={closeModal}>返回</button>
-                <button className="ms-3 btn btn-outline-secondary" onClick={() => closeModal(true)}>新建{caption}</button>
+                <button className="ms-3 btn btn-outline-secondary" onClick={() => closeModal(true)}>新建{header}</button>
             </div>
         </Page>);
         if (ret === true) {
@@ -87,7 +89,7 @@ export function PageStore({ store, toolbar }: { store: SheetStore; toolbar: JSX.
         }
     }
     async function onDiscardSheet() {
-        let message = `${caption} ${main.no} 真的要作废吗？`;
+        let message = `${header} ${main.no} 真的要作废吗？`;
         let ret = await openModal(<PageConfirm header="确认" message={message} yes="单据作废" no="不作废" />);
         if (ret === true) {
             await store.discard();
@@ -166,7 +168,7 @@ export function PageStore({ store, toolbar }: { store: SheetStore; toolbar: JSX.
         }
     }
 
-    return <Page header={caption}>
+    return <Page header={header} back={back}>
         {toolbar}
         {detail === undefined ? <MainOnlyEdit /> : <MainDetailEdit />}
     </Page>
