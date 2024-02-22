@@ -24,7 +24,7 @@ export function ViewBinDivs({ divStore, editable }: { divStore: DivStore; editab
     }
     return <div className="tonwa-bg-gray-1">
         {divs.map(v => {
-            return <div key={v.id} className="mb-3 border-top border-bottom border-2 border-primary-subtle">
+            return <div key={v.id} className="mb-3 border-top border-bottom border-primary-subtle">
                 <ViewDiv divStore={divStore} valDiv={v} editable={editable} />
             </div>;
         })}

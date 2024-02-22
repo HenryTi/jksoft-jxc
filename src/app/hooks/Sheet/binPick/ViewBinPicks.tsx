@@ -171,22 +171,30 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         };
         await onPicked(ret);
     }
+    let viewBinPicks: any;
+    let viewBinPicksNext: any;
+    if (binPicks !== undefined) {
+        viewBinPicks = <>
+            {binPicks.map((v, index) => {
+                const { name } = v;
+                return <ViewBinPick key={name} binPick={v} onPick={onPick} index={index} />;
+            })}
+            <ViewBinPick binPick={rearPick} onPick={onPickRear} index={binPicks.length} />
+        </>;
+        viewBinPicksNext = <div className="p-3">
+            <button className="btn btn-primary" onClick={onStart} disabled={cur <= binPicks.length}>
+                <FA name="arrow-right me-2" />下一步
+            </button>
+        </div>;
+    }
     return <>
         <div className="border rounded-3 mt-3">
             <div className="tonwa-bg-gray-2 small py-1 px-3 text-secondary">
                 {subHeader}
             </div>
             <Sep />
-            {binPicks.map((v, index) => {
-                const { name } = v;
-                return <ViewBinPick key={name} binPick={v} onPick={onPick} index={index} />;
-            })}
-            <ViewBinPick binPick={rearPick} onPick={onPickRear} index={binPicks.length} />
+            {viewBinPicks}
         </div>
-        <div className="p-3">
-            <button className="btn btn-primary" onClick={onStart} disabled={cur <= binPicks.length}>
-                <FA name="arrow-right me-2" />下一步
-            </button>
-        </div>
+        {viewBinPicksNext}
     </>;
 }

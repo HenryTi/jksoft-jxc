@@ -35,13 +35,13 @@ export function ViewMain({ main, popup, readOnly }: { main: SheetMain; popup: bo
         setAtomValue(_binRow, { ...binRow });
     }
 
-    let cnBlock = ' d-flex border-bottom border-secondary-subtle bg-white container mt-2 ';
+    let cnBlock = ' d-flex border-bottom border-secondary-subtle bg-white container ';
     let viewProps: any;
     if (length > 0) {
         let viewRowArr = propRowArr.map((row, index) => <React.Fragment key={index}>
             {row}
         </React.Fragment>);
-        viewProps = <div className={cnBlock}>
+        viewProps = <div className={cnBlock + ' mt-2 '}>
             <div className={'flex-fill py-2 '}>
                 <RowCols>
                     {viewRowArr}

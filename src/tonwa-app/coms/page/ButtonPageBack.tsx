@@ -38,6 +38,7 @@ export function ButtonPageBack(props: PageBackProps) {
         return <Back Back={BackNav} />;
     }
     */
+    if (back === null) return null;
     if (back === undefined) {
         return <BackNav icon='angle-left' />;
         // <BackContent icon={back} onClick={undefined} />;

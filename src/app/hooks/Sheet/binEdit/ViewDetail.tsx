@@ -144,7 +144,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
             </RowCols>
         </div>
         <div className={'d-flex justify-content-end pt-2 '}>
-            <div className="border-top border-secondary-subtle border-2 d-flex ps-2 pt-2 pb-1 align-items-center">
+            <div className="border-top border-secondary-subtle d-flex ps-2 pt-2 pb-1 align-items-center">
                 {vPrice}
                 {vAmount}
                 <ViewValue caption={'数量'} value={<span className="fw-bold">{value}</span>} />

@@ -4,11 +4,14 @@ import { useCoreDetailAdd } from "./binEdit";
 import { useNavigate } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ViewBinPicks, ReturnUseBinPicks } from "./binPick";
-import { PageStore } from "./PageStore";
 import { useSheetHeader, useSheetStore } from "./useSheetStore";
-import { useToolbar } from "./useToolbar";
+import { ToolButton, HeaderSheet, buttonDefs } from "./HeaderSheet";
+import { SheetStore } from "./store";
+import { PageSheet } from "./PageSheet";
+import { WritableAtom, atom, useAtomValue } from "jotai";
+import { setAtomValue } from "tonwa-com";
 
 export function PageSheetNew() {
     /*
@@ -24,16 +27,24 @@ export function PageSheetNew() {
         undefined
     ));
     */
+    const { current: atomSheetId } = useRef(atom(undefined as number)); // useState(undefined);
+    const store = useSheetStore();
+    const sheetId = useAtomValue(atomSheetId);
+    //const { sheetStore, toolbar } = returnUseSheet;
+
+    if (sheetId !== undefined) return <PageSheet store={store} />;
+    return <SheetNew store={store} atomSheetId={atomSheetId} />;
+}
+
+function SheetNew({ store, atomSheetId }: { store: SheetStore; atomSheetId: WritableAtom<number, any, any> }) {
     const modal = useModal();
     const uqApp = useUqApp();
-    const [sheetId, setSheetId] = useState(undefined);
-    const sheetStore = useSheetStore();
-    //const { sheetStore, toolbar } = returnUseSheet;
-    const returnUseToolbar = useToolbar(sheetStore);
-    const { header, back } = useSheetHeader(sheetStore);
-
     const navigate = useNavigate();
-    const addDetail = useCoreDetailAdd(sheetStore);
+    const addDetail = useCoreDetailAdd(store);
+    const { header, back } = useSheetHeader(store);
+    let btnSubmit = new ToolButton(buttonDefs.submit);
+    let btnExit = new ToolButton(buttonDefs.exit, async () => navigate(-1), false);
+    // let btnExit = new ToolButton(buttonDefs.edit, async () => navigate(-1));
     //const pick = useBinPicks(entitySheet.main);
     //const startCallback = useCallback(async function () {
     // let sheetStore = ;
@@ -52,9 +63,9 @@ export function PageSheetNew() {
     //    startCallback();
     //});
     async function onPicked(results: ReturnUseBinPicks) {
-        let ret = await sheetStore.main.startFromPickResults(results);
+        let ret = await store.main.startFromPickResults(results);
         if (ret === undefined) {
-            if (sheetStore.hasId() === false) {
+            if (store.hasId() === false) {
                 // 还没有创建单据
                 if (navigate !== undefined) {
                     setTimeout(() => {
@@ -68,58 +79,53 @@ export function PageSheetNew() {
         if (id > 0) {
             let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
             if (data) {
-                const { id: entityId } = sheetStore.entitySheet;
+                const { id: entityId } = store.entitySheet;
                 data.addItem({
                     id,
                     no,
                     entityId,
                 });
             }
-            setSheetId(id);
+            // setSheetId(id);
+            setAtomValue(atomSheetId, id);
         }
         await addDetail();
     }
-    const { btnSubmit, btnDiscard, btnExit, toolbar } = returnUseToolbar;
-    if (sheetId === undefined) {
-        const { main } = sheetStore;
-        let d = new Date().toISOString();
-        let index = d.indexOf('T');
-        main.no = `${d.substring(0, index)}-0000`;
-        btnSubmit.disabled = true;
-        btnDiscard.hidden = true;
-        if (sheetStore.isPend() === true) {
-            const subCaption = '批选待处理';
-            let vSelectBatch = <div className="px-3 py-3 d-flex border-bottom">
-                <button className="btn btn-outline-primary" onClick={onPick}>
-                    {subCaption}
-                </button>
-            </div>;
-            return <Page header={header} back={back}>
-                <div className="tonwa-bg-gray-1">
-                    {toolbar}
-                    {vSelectBatch}
-                    <ViewMain main={main} popup={false} readOnly={true} />
-                    <div className="px-3 py-3 border-top border-bottom my-3 bg-white">
-                        <small className="text-secondary text-opacity-50">无明细</small>
-                    </div>
+    const { main } = store;
+    let d = new Date().toISOString();
+    let index = d.indexOf('T');
+    main.no = `${d.substring(0, index)}-0000`;
+    setAtomValue(btnSubmit.atomDisabled, true);
+    // let toolbar = <Toolbar groups={[[btnSubmit], null, [btnExit]]} />;
+    let toolHeader = <HeaderSheet store={store} toolGroups={[[btnSubmit], null, [btnExit]]} />;
+    if (store.isPend() === true) {
+        const subCaption = '批选待处理';
+        let vSelectBatch = <div className="px-3 py-3 d-flex border-bottom">
+            <button className="btn btn-outline-primary" onClick={onPick}>
+                {subCaption}
+            </button>
+        </div>;
+        return <Page header={toolHeader} back={null}>
+            <div className="tonwa-bg-gray-1">
+                {vSelectBatch}
+                <ViewMain main={main} popup={false} readOnly={true} />
+                <div className="px-3 py-3 border-top border-bottom my-3 bg-white">
+                    <small className="text-secondary text-opacity-50">无明细</small>
                 </div>
-            </Page>;
-            function onPick() {
-                modal.open(<Page header={header + ' - ' + subCaption}>
-                    <ViewBinPicks subHeader={'批选条件'} sheetStore={sheetStore} onPicked={onPicked} />
-                </Page>);
-            }
-        }
-        else {
-            return <Page header={header + ' - 开单'} back={back}>
-                {toolbar}
-                <ViewBinPicks subHeader={'开单条件'} sheetStore={sheetStore} onPicked={onPicked} />
-            </Page>;
+            </div>
+        </Page>;
+        function onPick() {
+            modal.open(<Page header={header + ' - ' + subCaption}>
+                <ViewBinPicks subHeader={'批选条件'} sheetStore={store} onPicked={onPicked} />
+            </Page>);
         }
     }
+    else if (store.main.entityMain.binPicks !== undefined) {
+        return <Page header={toolHeader} back={null}>
+            <ViewBinPicks subHeader={'开单条件'} sheetStore={store} onPicked={onPicked} />
+        </Page>;
+    }
     else {
-        btnSubmit.disabled = false;
-        btnDiscard.hidden = false;
-        return <PageStore store={sheetStore} toolbar={toolbar} />;
+        return <PageSheet store={store} />;
     }
 }

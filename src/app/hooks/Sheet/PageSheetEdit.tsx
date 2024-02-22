@@ -5,9 +5,10 @@ import { UqApp, useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
 import { useCallback } from "react";
 import { PickFunc } from "./binPick";
-import { PageStore } from "./PageStore";
-import { useSheetHeader, useSheetStore } from "./useSheetStore";
-import { useToolbar } from "./useToolbar";
+import { useSheetStore } from "./useSheetStore";
+import { Page, PageSpinner } from "tonwa-app";
+import { PageSheet } from "./PageSheet";
+import { useAtomValue } from "jotai";
 
 let locationState = 1;
 export function PageSheetEdit() {
@@ -25,14 +26,23 @@ export function PageSheetEdit() {
     ));
     */
     const sheetStore = useSheetStore();
-    const { toolbar } = useToolbar(sheetStore);
+    const loaded = useAtomValue(sheetStore.atomLoaded);
     const startCallback = useCallback(async function () {
         await sheetStore.load();
     }, []);
     useEffectOnce(() => {
         startCallback();
     });
-    return <PageStore store={sheetStore} toolbar={toolbar} />;
+    if (loaded === false) return <PageSpinner />;
+    return <PageSheet store={sheetStore} />;
+    /*
+    let { view, toolbar } = useSheetView(sheetStore);
+    return <Page header={header} back={back}>
+        {toolbar}
+        {view}
+    </Page>
+    */
+    // return <PageStore store={sheetStore} toolbar={toolbar} />;
 }
 
 async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetStore: SheetStore, pick: PickFunc) {

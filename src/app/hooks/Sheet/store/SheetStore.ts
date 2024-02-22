@@ -353,6 +353,7 @@ export class SheetStore extends KeyIdObject {
     readonly idOnUrl: number;
     pendColl: { [pend: number]: WritableAtom<Section[], any, any> };
     readonly divStore: DivStore;
+    readonly atomLoaded = atom(false);
 
     constructor(uq: UqExt, biz: Biz, entitySheet: EntitySheet, id: number) {
         super();
@@ -388,6 +389,7 @@ export class SheetStore extends KeyIdObject {
         if (this.detail !== undefined) {
             this.detail.addRowValues(details);
         }
+        setAtomValue(this.atomLoaded, true);
     }
 
     async reloadRow(binId: number) {
