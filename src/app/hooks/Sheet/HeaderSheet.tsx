@@ -23,45 +23,65 @@ export abstract class ToolItem/* implements ToolButtonDef*/ {
         this.atomHidden = atom(hidden ?? false);
     }
 
-    abstract get Render(): () => JSX.Element;
-}
-
-class ToolButton extends ToolItem {
     readonly Render = (): JSX.Element => {
-        const { caption, icon, className } = this.def;
         const { atomHidden, atomDisabled, onAct } = this;
         const hidden = useAtomValue(atomHidden);
         const disabled = useAtomValue(atomDisabled);
         if (hidden === true) return null;
+        return this.render(disabled);
+    }
+
+    protected abstract render(disabled: boolean): JSX.Element;
+}
+
+class ToolButton extends ToolItem {
+    protected render(disabled: boolean): JSX.Element {
+        const { caption, icon, className } = this.def;
         let vIcon: any;
         if (icon !== undefined) {
             vIcon = <FA name={icon} className="me-2" />;
         }
         return <ButtonAsync
             className={(className ?? btn + ' btn-outline-primary') + ' me-3'}
-            disabled={disabled} onClick={onAct as any}>
+            disabled={disabled} onClick={this.onAct as any}>
             {vIcon}{caption}
         </ButtonAsync>;
     }
 }
 
+class ToolIcon extends ToolItem {
+    protected render(disabled: boolean): JSX.Element {
+        const { caption, icon, className } = this.def;
+        let vIcon = <FA name={icon ?? 'question'} fixWidth={true} />;
+        return <div className={className + ' me-3 cursor-pointer '} title={caption}
+            onClick={this.onAct as any}>
+            {vIcon}
+        </div>;
+    }
+}
+
 type ButtonDef = (onAct: OnAct, disabled?: boolean, hidden?: boolean) => ToolItem;
 
-function buildDef(def: Def) {
+function buttonDef(def: Def) {
     return function (onAct: OnAct, disabled?: boolean, hidden?: boolean): ToolItem {
         return new ToolButton(def, onAct, disabled, hidden);
+    }
+}
+function iconDef(def: Def) {
+    return function (onAct: OnAct, disabled?: boolean, hidden?: boolean): ToolItem {
+        return new ToolIcon(def, onAct, disabled, hidden);
     }
 }
 const btn = ' btn ';
 const btnSm = ' btn btn-sm ';
 export const buttonDefs: { [name: string]: ButtonDef } = {
-    submit: buildDef({ caption: '提交', icon: 'send-o', className: btn + ' btn-success' }),
-    batchSelect: buildDef({ caption: '批选待处理', icon: 'print', className: btn + ' btn-primary' }),
-    print: buildDef({ caption: '打印', icon: 'print' }),
-    addDetail: buildDef({ caption: '新增明细', icon: 'list-ul', className: btn + ' btn-primary' }),
-    test: buildDef({ caption: '测试', icon: undefined }),
-    discard: buildDef({ caption: '作废', icon: 'trash-o' }),
-    exit: buildDef({ caption: '退出', icon: 'external-link', className: btnSm + ' btn-outline-light' }),
+    submit: buttonDef({ caption: '提交', icon: 'send-o', className: btn + ' btn-success' }),
+    batchSelect: buttonDef({ caption: '批选待处理', icon: 'print', className: btn + ' btn-primary' }),
+    print: buttonDef({ caption: '打印', icon: 'print' }),
+    addDetail: buttonDef({ caption: '新增明细', icon: 'list-ul', className: btn + ' btn-primary' }),
+    test: buttonDef({ caption: '测试', icon: undefined }),
+    discard: buttonDef({ caption: '作废', icon: 'trash-o' }),
+    exit: iconDef({ caption: '退出', icon: 'times', className: ' px-2 ' }),
 }
 
 function Group({ group }: { group: ToolItem[]; }) {
@@ -69,7 +89,7 @@ function Group({ group }: { group: ToolItem[]; }) {
     return <>{group.map((v, index) => <v.Render key={index} />)}</>;
 }
 
-function Toolbar({ groups }: { groups: ToolButton[][] }) {
+function Toolbar({ groups }: { groups: ToolItem[][] }) {
     let vGroups: any[] = [];
     let len = groups.length;
     let i = 0;
@@ -96,7 +116,7 @@ function Toolbar({ groups }: { groups: ToolButton[][] }) {
     </div>;
 }
 
-export function headerSheet({ store, toolGroups, headerGroup }: { store: SheetStore; toolGroups: ToolButton[][]; headerGroup?: ToolButton[]; }) {
+export function headerSheet({ store, toolGroups, headerGroup }: { store: SheetStore; toolGroups: ToolItem[][]; headerGroup?: ToolItem[]; }) {
     const { header: headerContent, back } = useSheetHeader(store);
     return {
         header: <div className="py-2 px-3">
