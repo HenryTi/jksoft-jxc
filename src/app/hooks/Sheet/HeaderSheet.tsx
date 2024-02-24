@@ -75,12 +75,12 @@ function iconDef(def: Def) {
 const btn = ' btn ';
 const btnSm = ' btn btn-sm ';
 export const buttonDefs: { [name: string]: ButtonDef } = {
-    submit: buttonDef({ caption: '提交', icon: 'send-o', className: btn + ' btn-success' }),
-    batchSelect: buttonDef({ caption: '批选待处理', icon: 'print', className: btn + ' btn-primary' }),
-    print: buttonDef({ caption: '打印', icon: 'print' }),
-    addDetail: buttonDef({ caption: '新增明细', icon: 'list-ul', className: btn + ' btn-primary' }),
+    submit: buttonDef({ caption: '提交', /*icon: 'send-o', */className: btn + ' btn-success' }),
+    batchSelect: buttonDef({ caption: '批选', /*icon: 'print', */className: btn + ' btn-primary' }),
+    print: buttonDef({ caption: '打印', /*icon: 'print'*/ }),
+    addDetail: buttonDef({ caption: '明细', icon: 'plus', className: btn + ' btn-primary' }),
     test: buttonDef({ caption: '测试', icon: undefined }),
-    discard: buttonDef({ caption: '作废', icon: 'trash-o' }),
+    discard: buttonDef({ caption: '作废', /*icon: 'trash-o'*/ }),
     exit: iconDef({ caption: '退出', icon: 'times', className: ' px-2 ' }),
 }
 
