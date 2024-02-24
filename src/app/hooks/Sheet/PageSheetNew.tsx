@@ -7,7 +7,7 @@ import { PageMoreCacheData } from "app/coms";
 import { useRef, useState } from "react";
 import { ViewBinPicks, ReturnUseBinPicks } from "./binPick";
 import { useSheetHeader, useSheetStore } from "./useSheetStore";
-import { ToolButton, HeaderSheet, buttonDefs } from "./HeaderSheet";
+import { headerSheet, buttonDefs, ToolItem } from "./headerSheet";
 import { SheetStore } from "./store";
 import { PageSheet } from "./PageSheet";
 import { WritableAtom, atom, useAtomValue } from "jotai";
@@ -42,8 +42,8 @@ function SheetNew({ store, atomSheetId }: { store: SheetStore; atomSheetId: Writ
     const navigate = useNavigate();
     const addDetail = useCoreDetailAdd(store);
     const { header, back } = useSheetHeader(store);
-    let btnSubmit = new ToolButton(buttonDefs.submit);
-    let btnExit = new ToolButton(buttonDefs.exit, async () => navigate(-1), false);
+    let btnSubmit = buttonDefs.submit(undefined);
+    let btnExit = buttonDefs.exit(async () => navigate(-1), false);
     // let btnExit = new ToolButton(buttonDefs.edit, async () => navigate(-1));
     //const pick = useBinPicks(entitySheet.main);
     //const startCallback = useCallback(async function () {
@@ -97,17 +97,21 @@ function SheetNew({ store, atomSheetId }: { store: SheetStore; atomSheetId: Writ
     main.no = `${d.substring(0, index)}-0000`;
     setAtomValue(btnSubmit.atomDisabled, true);
     // let toolbar = <Toolbar groups={[[btnSubmit], null, [btnExit]]} />;
-    let toolHeader = <HeaderSheet store={store} toolGroups={[[btnSubmit], null, [btnExit]]} />;
+    const group0: ToolItem[] = [btnSubmit];
+    let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
     if (store.isPend() === true) {
+        group0.unshift(buttonDefs.batchSelect(onPick));
         const subCaption = '批选待处理';
+        /*
         let vSelectBatch = <div className="px-3 py-3 d-flex border-bottom">
             <button className="btn btn-outline-primary" onClick={onPick}>
                 {subCaption}
             </button>
         </div>;
-        return <Page header={toolHeader} back={null}>
+        */
+        let footer = <div className="px-3 py-2">footer</div>;
+        return <Page header={pageHeader} back={null} top={top} footer={footer} right={right}>
             <div className="tonwa-bg-gray-1">
-                {vSelectBatch}
                 <ViewMain main={main} popup={false} readOnly={true} />
                 <div className="px-3 py-3 border-top border-bottom my-3 bg-white">
                     <small className="text-secondary text-opacity-50">无明细</small>
@@ -121,7 +125,7 @@ function SheetNew({ store, atomSheetId }: { store: SheetStore; atomSheetId: Writ
         }
     }
     else if (store.main.entityMain.binPicks !== undefined) {
-        return <Page header={toolHeader} back={null}>
+        return <Page header={pageHeader} back={null} top={top} right={right}>
             <ViewBinPicks subHeader={'开单条件'} sheetStore={store} onPicked={onPicked} />
         </Page>;
     }

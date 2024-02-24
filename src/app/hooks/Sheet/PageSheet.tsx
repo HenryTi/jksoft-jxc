@@ -10,16 +10,15 @@ import { UqApp, useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
 import { useCallback, useRef, useState } from "react";
 import { PickFunc, useBinPicks } from "./binPick";
-import { ButtonAsyncIcon } from "app/tool/ButtonAsyncIcon";
 import { useSheetHeader } from "./useSheetStore";
-import { ToolButton, HeaderSheet, buttonDefs } from "./HeaderSheet";
+import { headerSheet, buttonDefs } from "./headerSheet";
 
 export function PageSheet({ store }: { store: SheetStore; }) {
     // const { header, back } = useSheetHeader(store);
-    let { header, view } = useSheetView(store);
+    let { header, top, view, right } = useSheetView(store);
     // btnSubmit.disabled = true;
     // btnDiscard.hidden = false;
-    return <Page header={header} back={null}>
+    return <Page header={header} back={null} top={top} right={right}>
         {view}
     </Page>
 }
@@ -113,15 +112,19 @@ function useSheetView(store: SheetStore) {
     async function onExit() {
         navigate(-1);
     }
+    function onPrint() {
+        alert('正在实现中...');
+    }
 
     let { id } = useAtomValue(main._valRow);
+    let btnPrint = buttonDefs.print(onPrint);
+    let btnExit = buttonDefs.exit(onExit, false);
+    let headerGroup = [btnExit];
 
     function MainOnlyEdit() {
-        let btnSubmit = new ToolButton(buttonDefs.submit, onSubmit);
-        let btnDiscard = new ToolButton(buttonDefs.discard, onDiscardSheet, true, editable === false);
-        let btnExit = new ToolButton(buttonDefs.exit, onExit, false);
-        // let btnSubmitOld = <ButtonSubmit onClick={onSubmit} />;
-        let toolGroups = [[btnSubmit], null, [btnDiscard, btnExit]];
+        let btnSubmit = buttonDefs.submit(onSubmit);
+        let btnDiscard = buttonDefs.discard(onDiscardSheet, true, editable === false);
+        let toolGroups = [[btnPrint, btnSubmit], null, [btnDiscard]];
         return {
             toolGroups,
             view: <ViewMain main={main} popup={false} />
@@ -164,10 +167,10 @@ function useSheetView(store: SheetStore) {
             submitDisabled = disabled;
             // btnSubmitOld = <ButtonSubmit onClick={onSubmit} disabled={disabled} />;
         }
-        let btnSubmit = new ToolButton(buttonDefs.submit, onSubmit, submitDisabled, submitHidden);
-        let btnDiscard = new ToolButton(buttonDefs.discard, onDiscardSheet, false, editable === false);
-        let btnExit = new ToolButton(buttonDefs.exit, onExit, false);
-        let toolGroups = [[btnSubmit], null, [btnDiscard, btnExit]];
+        let btnSubmit = buttonDefs.submit(onSubmit, submitDisabled, submitHidden);
+        let btnAddDetail = buttonDefs.addDetail(onAddRow);
+        let btnDiscard = buttonDefs.discard(onDiscardSheet, false, editable === false);
+        let toolGroups = [[btnAddDetail, btnPrint, btnSubmit], null, [btnDiscard]];
         // let toolbar = <Toolbar groups={[[btnSubmit], null, [btnDiscard, btnExit]]} />;
         if (id === 0) {
             return {
@@ -210,7 +213,7 @@ function useSheetView(store: SheetStore) {
 
     const { toolGroups, view } = (detail === undefined ? MainOnlyEdit() : MainDetailEdit());
     return {
-        header: <HeaderSheet store={store} toolGroups={toolGroups} />,
+        ...headerSheet({ store, toolGroups, headerGroup }),
         view: view,
     };
 }

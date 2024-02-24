@@ -14,7 +14,7 @@ const scrollEdgeGap = 30;
 
 export function PageBase(props: PageProps) {
     const uqApp = useUqAppBase();
-    let { children, header, back, right, footer, onClosed, hideScroll } = props;
+    let { children, header, back, right, top, footer, onClosed, hideScroll } = props;
     const divRef = useRef<HTMLDivElement>();
     const { pathname } = document.location;
     useEffectOnce(() => {
@@ -86,10 +86,17 @@ export function PageBase(props: PageProps) {
     }
     return <div ref={divRef} className="tonwa-page">
         <Suspense fallback={<PageSpinner />}>
-            <div className='z-3 tonwa-page-header position-sticky top-0'>
-                <div className='container px-0'>
-                    {header}
+            <div className='z-3 position-sticky top-0'>
+                <div className="tonwa-page-header">
+                    <div className='container px-0'>
+                        {header}
+                    </div>
                 </div>
+                {top && <div className="tonwa-page-content">
+                    <div className='container px-0'>
+                        {top}
+                    </div>
+                </div>}
             </div>
             <div className='tonwa-page-content flex-fill d-flex'>
                 <div className='container px-0 d-flex flex-column'>

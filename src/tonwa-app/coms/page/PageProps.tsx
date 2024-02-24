@@ -25,6 +25,7 @@ export interface PageHeaderProps extends PageBackProps {
 }
 
 export interface PageFooterProps {
+    top?: JSX.Element;
     footer?: JSX.Element;
 }
 

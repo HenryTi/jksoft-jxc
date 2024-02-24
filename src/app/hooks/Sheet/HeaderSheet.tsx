@@ -3,87 +3,75 @@ import { WritableAtom, atom, useAtomValue } from "jotai";
 import { useSheetHeader } from "./useSheetStore";
 import { SheetStore } from "./store";
 
-interface ToolButtonDef {
-    name: string;
+interface Def {
     caption: string;
     icon?: string;
     className?: string;
 }
 
-export class ToolButton implements ToolButtonDef {
-    readonly name: string;
-    caption: string;
-    icon?: string;
-    className?: string;
+type OnAct = () => void | Promise<void>;
+
+export abstract class ToolItem/* implements ToolButtonDef*/ {
+    protected readonly def: Def;
+    protected readonly onAct: OnAct;
     readonly atomDisabled: WritableAtom<boolean, any, any>;
     readonly atomHidden: WritableAtom<boolean, any, any>;
-    act: () => Promise<void>;
-    constructor(def: ToolButtonDef, act: () => Promise<void> = undefined, disabled: boolean = true, hidden: boolean = false) {
-        const { name, caption, icon, className } = def;
-        this.name = name;
-        if (caption === undefined) this.caption = caption;
-        if (icon === undefined) this.icon = icon;
-        if (className === undefined) this.className = this.className;
-        this.act = act;
-        this.atomDisabled = atom(disabled);
-        this.atomHidden = atom(hidden);
+    constructor(def: Def, onAct: OnAct, disabled?: boolean, hidden?: boolean) {
+        this.def = def;
+        this.onAct = onAct;
+        this.atomDisabled = atom(disabled ?? false);
+        this.atomHidden = atom(hidden ?? false);
     }
+
+    abstract get Render(): () => JSX.Element;
 }
 
-export const buttonDefs: { [name: string]: ToolButtonDef } = {
-    submit: { name: 'submit', caption: '提交', icon: 'send-o' },
-    test: { name: 'test', caption: '测试', },
-    discard: { name: 'discard', caption: '作废', icon: 'trash-o', },
-    exit: { name: 'exit', caption: '退出', icon: 'external-link', },
-}
-
-function useToolbar(groups: ToolButton[][]) {
-    for (let group of groups) {
-        if (!group) continue;
-        for (let btn of group) {
-            const { name } = btn;
-            let bt = buttonDefs[name];
-            if (bt === undefined) continue;
-            const { caption, icon, className } = btn;
-            if (caption === undefined) btn.caption = bt.caption;
-            if (icon === undefined) btn.icon = bt.icon;
-            if (className === undefined) btn.className = bt.className;
+class ToolButton extends ToolItem {
+    readonly Render = (): JSX.Element => {
+        const { caption, icon, className } = this.def;
+        const { atomHidden, atomDisabled, onAct } = this;
+        const hidden = useAtomValue(atomHidden);
+        const disabled = useAtomValue(atomDisabled);
+        if (hidden === true) return null;
+        let vIcon: any;
+        if (icon !== undefined) {
+            vIcon = <FA name={icon} className="me-2" />;
         }
+        return <ButtonAsync
+            className={(className ?? btn + ' btn-outline-primary') + ' me-3'}
+            disabled={disabled} onClick={onAct as any}>
+            {vIcon}{caption}
+        </ButtonAsync>;
     }
 }
 
-function ViewButton({ toolButton, cnBtn, cnGap }: { toolButton: ToolButton; cnBtn: string; cnGap: string; }) {
-    if (toolButton === undefined) return null;
-    const { caption, icon, className, atomHidden, atomDisabled, act } = toolButton;
-    const hidden = useAtomValue(atomHidden);
-    const disabled = useAtomValue(atomDisabled);
-    if (hidden === true) return null;
-    let vIcon: any;
-    if (icon !== undefined) {
-        vIcon = <FA name={icon} className="me-2" />;
+type ButtonDef = (onAct: OnAct, disabled?: boolean, hidden?: boolean) => ToolItem;
+
+function buildDef(def: Def) {
+    return function (onAct: OnAct, disabled?: boolean, hidden?: boolean): ToolItem {
+        return new ToolButton(def, onAct, disabled, hidden);
     }
-    return <ButtonAsync
-        className={(className ?? ('btn btn-sm ' + cnBtn)) + cnGap}
-        disabled={disabled} onClick={act}>
-        {vIcon}{caption}
-    </ButtonAsync>;
+}
+const btn = ' btn ';
+const btnSm = ' btn btn-sm ';
+export const buttonDefs: { [name: string]: ButtonDef } = {
+    submit: buildDef({ caption: '提交', icon: 'send-o', className: btn + ' btn-success' }),
+    batchSelect: buildDef({ caption: '批选待处理', icon: 'print', className: btn + ' btn-primary' }),
+    print: buildDef({ caption: '打印', icon: 'print' }),
+    addDetail: buildDef({ caption: '新增明细', icon: 'list-ul', className: btn + ' btn-primary' }),
+    test: buildDef({ caption: '测试', icon: undefined }),
+    discard: buildDef({ caption: '作废', icon: 'trash-o' }),
+    exit: buildDef({ caption: '退出', icon: 'external-link', className: btnSm + ' btn-outline-light' }),
+}
+
+function Group({ group }: { group: ToolItem[]; }) {
+    if (group === undefined) return null;
+    return <>{group.map((v, index) => <v.Render key={index} />)}</>;
 }
 
 function Toolbar({ groups }: { groups: ToolButton[][] }) {
-    useToolbar(groups);
-    function Group({ group, cnGap, cnBtn }: { group: ToolButton[]; cnGap: string; cnBtn: string; }) {
-        return <div className="me-2">
-            {
-                group.map((v, index) =>
-                    <ViewButton key={v.name} toolButton={v} cnBtn={cnBtn} cnGap={cnGap} />
-                )
-            }
-        </div>;
-    }
     let vGroups: any[] = [];
     let len = groups.length;
-    let cnGap = ' me-1 ';
-    let cnBtn = ' btn-primary ';
     let i = 0;
     for (; i < len; i++) {
         let g = groups[i];
@@ -93,26 +81,31 @@ function Toolbar({ groups }: { groups: ToolButton[][] }) {
             break;
         }
         else {
-            vGroups.push(<Group key={i} group={g} cnGap={cnGap} cnBtn={cnBtn} />);
+            vGroups.push(<div key={i} className="me-2">
+                <Group group={g} />
+            </div>);
         }
     }
-    cnGap = ' ms-1 ';
-    cnBtn = ' btn-outline-primary ';
     for (; i < len; i++) {
-        vGroups.push(<Group key={i} group={groups[i]} cnGap={cnGap} cnBtn={cnBtn} />);
+        vGroups.push(<div className="ms-2" key={i}>
+            <Group group={groups[i]} />
+        </div>);
     }
-    return <div className={'d-flex py-1 px-2 bg-white '}>
+    return <div className={'d-flex py-3 ps-3 bg-white border-bottom border-primary border-2'}>
         {vGroups}
     </div>;
 }
 
-export function HeaderSheet({ store, toolGroups }: { store: SheetStore; toolGroups: ToolButton[][] }) {
-    const { header, back } = useSheetHeader(store);
-    return <div className="border-bottom border-primary">
-        <div className={' text-center py-2 border-2 border-bottom border-primary-subtle bg-primary-subtle '}>
-            <FA name={back} className="me-3 text-info" />
-            <span className="text-primary fw-bold">{header}</span>
-        </div>
-        <Toolbar groups={toolGroups} />
-    </div>;
+export function headerSheet({ store, toolGroups, headerGroup }: { store: SheetStore; toolGroups: ToolButton[][]; headerGroup?: ToolButton[]; }) {
+    const { header: headerContent, back } = useSheetHeader(store);
+    return {
+        header: <div className="py-2 px-3">
+            <FA name={back} className="me-3" />
+            <span className="">{headerContent}</span>
+        </div>,
+        right: <div className="">
+            <Group group={headerGroup} />
+        </div>,
+        top: <Toolbar groups={toolGroups} />,
+    }
 }
