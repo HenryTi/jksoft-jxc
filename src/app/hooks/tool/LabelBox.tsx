@@ -54,7 +54,7 @@ export function LabelBox({ label, children, required, title, colon, editable }: 
         :
         children;
 
-    let cnLabelContainer = ` ${cnCombo.cnColLabel} text-secondary text-end d-flex align-items-center flex-row justify-content-end small `;
+    let cnLabelContainer = ` ${cnCombo.cnColLabel} text-secondary text-end d-flex align-items-center flex-row justify-content-end `; //  small
     let cnLabel = ' text-nowrap text-truncate ';
     return <div className="col">
         <div className="row gx-0">

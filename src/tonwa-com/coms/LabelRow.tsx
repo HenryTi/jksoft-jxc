@@ -8,7 +8,7 @@ type ContainerType = (props: ContainerProps) => JSX.Element;
 
 // const defaultLeftSize = 3;
 // const 
-const defaultLabelClassName = ' py-1 tonwa-bg-gray-1 border-end small text-secondary ';
+const defaultLabelClassName = ' py-1 tonwa-bg-gray-1 border-end text-secondary '; // small 
 const defaultMidClassName = ' border-end ';
 function DefaultLabelContainer({ children }: ContainerProps) {
     return <>
