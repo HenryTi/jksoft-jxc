@@ -2,6 +2,7 @@ import { ButtonAsync, FA, wait } from "tonwa-com";
 import { WritableAtom, atom, useAtomValue } from "jotai";
 import { useSheetHeader } from "./useSheetStore";
 import { SheetStore } from "./store";
+import React from "react";
 
 interface Def {
     caption: string;
@@ -42,7 +43,7 @@ class ToolButton extends ToolItem {
             vIcon = <FA name={icon} className="me-2" />;
         }
         return <ButtonAsync
-            className={(className ?? btn + ' btn-outline-primary') + ' me-3'}
+            className={(className ?? btn + ' btn-outline-primary')}
             disabled={disabled} onClick={this.onAct as any}>
             {vIcon}{caption}
         </ButtonAsync>;
@@ -53,7 +54,7 @@ class ToolIcon extends ToolItem {
     protected render(disabled: boolean): JSX.Element {
         const { caption, icon, className } = this.def;
         let vIcon = <FA name={icon ?? 'question'} fixWidth={true} />;
-        return <div className={className + ' me-3 cursor-pointer '} title={caption}
+        return <div className={className + ' cursor-pointer '} title={caption}
             onClick={this.onAct as any}>
             {vIcon}
         </div>;
@@ -86,7 +87,10 @@ export const buttonDefs: { [name: string]: ButtonDef } = {
 
 function Group({ group }: { group: ToolItem[]; }) {
     if (group === undefined) return null;
-    return <>{group.map((v, index) => <v.Render key={index} />)}</>;
+    return <>{group.map((v, index) => {
+        if (index === 0) return <v.Render key={index} />;
+        return <React.Fragment key={index}><span className="d-inline-block me-3" /><v.Render /></React.Fragment>;
+    })}</>;
 }
 
 function Toolbar({ groups }: { groups: ToolItem[][] }) {
@@ -111,7 +115,7 @@ function Toolbar({ groups }: { groups: ToolItem[][] }) {
             <Group group={groups[i]} />
         </div>);
     }
-    return <div className={'d-flex py-3 ps-3 bg-white border-bottom border-primary border-2'}>
+    return <div className={'d-flex py-3 px-3 bg-white border-bottom border-primary border-2'}>
         {vGroups}
     </div>;
 }
