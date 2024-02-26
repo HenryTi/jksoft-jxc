@@ -1,7 +1,9 @@
 const date19700101 = Date.parse('1970-1-1');
 const milliseconds = 1000 * 60 * 60 * 24;
+
+// 2024-02-25: 重大bug。这里不应该有后面的+1
 export function getDays(date: string) {
-    return Math.floor((Date.parse(date) - date19700101) / milliseconds) + 1;
+    return Math.floor((Date.parse(date) - date19700101) / milliseconds); // + 1;
 }
 export function fromDays(days: number) {
     return new Date(date19700101 + days * milliseconds);

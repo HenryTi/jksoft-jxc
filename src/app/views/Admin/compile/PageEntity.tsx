@@ -11,7 +11,7 @@ import { Grammar, highlight } from "prismjs";
 import './code-editor-style.css'
 import Editor from 'react-simple-code-editor';
 import { editorStyle, uqGrammar } from './grammar';
-import { FormRow, FormRowsView, Band } from 'app/coms';
+import { FormRow, FormRowsView, Band, ToolItem, Toolbar, ToolElement, ToolButton } from 'app/coms';
 import { atom, useAtomValue } from 'jotai';
 
 class Nav {
@@ -73,7 +73,7 @@ class Nav {
         const View = () => {
             if (this.subs.length === 0 && this.supers.length === 0) return null;
             useAtomValue(this.changed);
-            return <div className="tonwa-bg-gray-3 d-flex flex-wrap align-items-center">
+            return <div className="d-flex flex-wrap align-items-center border-bottom border-primary-subtle">
                 {this.supers.map(v => this.VSuper(v))}
                 {this.VCur()}
                 {this.subs.map((v, index) => {
@@ -218,22 +218,40 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
         style.textDecoration = 'line-through';
         style.color = 'lightgray';
     }
-    return <Page header={pageCaption} hideScroll={true}>
+    //const breadcrumb = new ToolElement(nav.showView());
+    const groups: ToolItem[][] = [
+        // [breadcrumb],
+        [
+            new ToolButton({ caption: '提交', icon: 'send-o', className: 'btn btn-primary' }, onSubmit),
+        ],
+        null,
+        [
+            new ToolButton({ caption: '改名' }, onRename),
+            new ToolButton({ caption: '删除' }, onDel),
+        ]
+    ];
+    const top = <div>
+        {nav.showView()}
+        {deleted === false && <Toolbar groups={groups} />}
+    </div>;
+    /*
+        {
+            deleted === false &&
+            <div className="text-secondary tonwa-bg-gray-2 d-flex align-items-center px-1 border-bottom">
+                <ButtonAsync overtime={5} className={btnClassName('btn-primary')}
+                    disabled={submitDisabled}
+                    onClick={onSubmit}>
+                    提交
+                </ButtonAsync>
+                <div className="flex-grow-1"></div>
+                <button className={btnClassName('btn-outline-primary')} onClick={onRename}>改名</button>
+                <button className={btnClassName('btn-outline-primary')} onClick={onDel}>删除</button>
+            </div>
+        }
+        {nav.showView()}
+    */
+    return <Page header={pageCaption} hideScroll={true} top={top}>
         <div className="d-flex flex-column">
-            {
-                deleted === false &&
-                <div className="text-secondary tonwa-bg-gray-2 d-flex align-items-center px-1 border-bottom">
-                    <ButtonAsync overtime={5} className={btnClassName('btn-primary')}
-                        disabled={submitDisabled}
-                        onClick={onSubmit}>
-                        提交
-                    </ButtonAsync>
-                    <div className="flex-grow-1"></div>
-                    <button className={btnClassName('btn-outline-primary')} onClick={onRename}>改名</button>
-                    <button className={btnClassName('btn-outline-primary')} onClick={onDel}>删除</button>
-                </div>
-            }
-            {nav.showView()}
             <div className="border-info rounded flex-grow-1">
                 <div className="container_editor_area w-100">
                     <Editor className="container__editor"

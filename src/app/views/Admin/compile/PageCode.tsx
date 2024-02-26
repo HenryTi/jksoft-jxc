@@ -8,6 +8,7 @@ import { Grammar, highlight } from 'prismjs';
 import { editorStyle, uqGrammar } from './grammar';
 import { PageAdmin } from './PageAdmin';
 import { ButtonAsyncIcon } from 'app/tool/ButtonAsyncIcon';
+import { ToolItem, Toolbar } from 'app/coms';
 
 export function PageCode() {
     const uqApp = useUqApp();
