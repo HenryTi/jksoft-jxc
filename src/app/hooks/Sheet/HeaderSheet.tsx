@@ -5,7 +5,7 @@ import { ItemDef, ToolGroup, ToolItem, Toolbar, toolButtonDef, toolIconDef } fro
 
 const btn = ' btn ';
 const btnSm = ' btn btn-sm ';
-export const buttonDefs: { [name: string]: ItemDef } = {
+export const buttonDefs: { [name: string]: ItemDef<any> } = {
     submit: toolButtonDef({ caption: '提交', /*icon: 'send-o', */className: btn + ' btn-success' }),
     batchSelect: toolButtonDef({ caption: '批选', /*icon: 'print', */className: btn + ' btn-primary' }),
     print: toolButtonDef({ caption: '打印', /*icon: 'print'*/ }),

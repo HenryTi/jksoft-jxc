@@ -77,15 +77,15 @@ export class ToolElement extends ToolItem {
 
 export type ItemOnAct = () => void | Promise<void>;
 
-export type ItemDef = (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean) => ToolItem;
+export type ItemDef<T extends ToolItem> = (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean) => T;
 
 export function toolButtonDef(def: ToolItemDef) {
-    return function (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean): ToolItem {
+    return function (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean): ToolButton {
         return new ToolButton(def, onAct, disabled, hidden);
     }
 }
 export function toolIconDef(def: ToolItemDef) {
-    return function (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean): ToolItem {
+    return function (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean): ToolIcon {
         return new ToolIcon(def, onAct, disabled, hidden);
     }
 }
