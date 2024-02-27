@@ -583,6 +583,7 @@ export class EntitySheet extends Entity {
         if (this.search !== undefined) {
             let search: { bin: EntityBin; buds: BizBud[]; }[] = [];
             for (let i in this.search) {
+                let s = this.search[i];
                 let id = Number(i);
                 let bin: EntityBin;
                 if (this.main.id === id) {
@@ -596,7 +597,17 @@ export class EntitySheet extends Entity {
                         }
                     }
                 }
-                search.push({ bin, buds: (this.search[i] as unknown as number[]).map(v => this.budFromId(bin, v)) });
+                let buds: BizBud[];
+                if (s === undefined) {
+                    buds = [];
+                }
+                else if (Array.isArray(s) === true) {
+                    buds = (s as unknown as number[]).map(v => this.budFromId(bin, v));
+                }
+                else if (typeof (s) === 'number') {
+                    buds = [this.budFromId(bin, s as unknown as number)];
+                }
+                search.push({ bin, buds });
             }
             this.search = search;
         }

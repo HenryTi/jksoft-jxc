@@ -46,6 +46,9 @@ Biz ACT SaveBudValue ver 0.2 (
         IF int IS NOT NULL {
             WITH IxBudInt as a I=id X=phraseId SET a.value=int;
             IF EXISTS(SELECT a.id FROM BizBud as a WHERE (a.flag & 1)=1) {
+                -- radio 直接调用SaveBudRadio
+                -- check 直接调用SaveBudCheck
+                -- 没有需要运行到这里。这里是错误的。
                 VAR budId ID = ID(Bud New Key base=phraseId, ext=int);
                 WITH IxBud I=budId X=id;
             }
