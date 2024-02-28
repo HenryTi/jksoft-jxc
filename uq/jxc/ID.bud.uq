@@ -47,13 +47,6 @@ ID History (
     INDEX bud_id(bud, id) UNIQUE,
 );
 
--- History 按日汇总，可以重新计算，如果调整了bud。
-IX DailyHistory (
-    i,
-    x date,
-    value VALUE,
-);
-
 FUNC SiteBudId ver 0.4 (
     phrase CHAR(100),
 ) 

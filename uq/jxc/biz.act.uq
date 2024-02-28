@@ -20,14 +20,13 @@ RETURNS ret (
     -- WITH IxAtom i=atomPhrase x=id;
     INTO ret SELECT id;
 }
-Biz ACT SaveBudValue ver 0.2 (
+Biz ACT SaveBudValue ver 0.4 (
     phraseId ID,
     id ID,
     int BIGINT,
     dec VALUE,
     str CHAR(100),
 ) {
-    -- VAR phraseId ID = PhraseId(phrase);
     IF phraseId IS NOT NULL {
         IF id IS NULL {
             SET id=$site;
@@ -68,6 +67,9 @@ Biz ACT SaveBudValue ver 0.2 (
         {
             WITH IxBud I=id X=budId DEL;
         }
+        VAR atomPhrase ID;
+        SET atomPhrase = a.base FROM BizPhrase as a WHERE a.id=phraseId;
+        ProcCall '$site'.CONCAT($site, '.', atomPhrase, 'u') USING $site, id, atomPhrase, phraseId;
     }
 };
 

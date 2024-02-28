@@ -7,38 +7,8 @@ export interface Spec {
     $phrase: string;
 }
 
-export interface SpecBatchValid extends Spec {
-    no: string;
-    效期: Date;
-}
-
-export interface SpecShoe extends Spec {
-    size: string;
-    color: string;
-}
-
-export interface Uom {
-    id: number;
-    no: string;
-    ex: string;
-    atomUom: number;
-}
-
 export interface AtomPhrase extends Atom {
     phrase: string;
-}
-
-export interface AtomSpec {
-    id?: number;
-    atom?: AtomPhrase;
-    uom?: Uom;
-    // atomUom?: number;
-    spec?: Spec;           // keys
-}
-
-export interface AtomUom {
-    atom: number;
-    uom: number;
 }
 
 export interface OriginDetail extends Bin {

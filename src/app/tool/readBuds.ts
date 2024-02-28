@@ -31,11 +31,3 @@ export function readBuds(id: number, props: ReturnGetAtomProps[]) {
     }
     return { main, buds };
 }
-
-export interface AtomUomProps {
-    atomUom: number;
-    uom: number;
-    ex: string;
-    prevEx?: string;
-    ratio?: number;
-}

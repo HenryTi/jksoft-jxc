@@ -7,6 +7,12 @@ ID Atom ver 0.2 (
     ex EX,
 );
 
+IX AtomUnique (
+    i,
+    x NO,
+    atom ID,
+);
+
 ID Spec ver 0.1 (
     id,
     KEY base ID,

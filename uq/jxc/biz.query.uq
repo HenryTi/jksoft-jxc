@@ -138,54 +138,6 @@ PAGE (
         ORDER BY c.id ASC
         LIMIT $pageSize;
 };
-/*
-Biz Query GetPendDetailFromItem (
-    pend Phrase,
-    key CHAR(100),               -- item no or ex
-)
-PAGE (
-    * Bin ASC,
-    pend ID,
-    pendValue VALUE,
-    sheet Phrase,
-    no NO,
-) {
-    PAGE SELECT * b, a.id as pend, a.value as pendValue, BudPhrase(c.base) as sheet, c.no
-        FROM Pend as a
-            JOIN Bin as b ON b.id=a.bin
-            JOIN Bud as b1 ON b1.id=a.bin
-            JOIN Sheet as c ON c.id=b1.base
-            JOIN AtomSpec as d ON d.id=b.i
-            JOIN AtomUom as e ON e.id=d.atomUom
-            JOIN Atom as f ON f.id=e.atom
-        WHERE 1=1 AND a.base=SiteBudId(pend)
-            AND b.id>$pageStart
-            AND SEARCH(f.no, f.ex ON key)
-        ORDER BY b.id ASC
-        LIMIT $pageSize;
-};
-
-Biz Query GetPendDetailFromSheetId (
-    pend Phrase,
-    sheetId ID,               -- origin sheet id
-)
-RETURNS ret (
-    * Bin,
-    pend ID,
-    pendValue VALUE,
-    sheet Phrase,
-    no NO,
-) {
-    INTO ret SELECT * b, a.id as pend, a.value as pendValue, BudPhrase(c.base) as sheet, c.no
-        FROM Pend as a
-            JOIN Bin as b ON b.id=a.bin
-            JOIN Bud as b1 ON b1.id=a.bin
-            JOIN Sheet as c ON c.id=b1.base
-        WHERE 1=1 AND a.base=SiteBudId(pend)
-            AND c.id=sheetId
-        ORDER BY b.id ASC;
-};
-*/
 
 Biz Query GetSiteSheets ver 0.1 (
     from DATE,
