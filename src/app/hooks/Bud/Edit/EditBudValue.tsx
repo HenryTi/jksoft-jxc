@@ -43,7 +43,7 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
             popup={popup}
             {...budEditing}
         >
-            <Input value={budInitValue} options={options} type={type} onEdited={valueEdited} readOnly={readOnly} />
+            <Input value={value} options={options} type={type} onEdited={valueEdited} readOnly={readOnly} />
         </ValueEdit>;
     }
     else {
@@ -51,18 +51,6 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
             let ret = await openModal<number | string>(<PagePickValue label={label} value={value} type={type} options={options} step={step} />);
             if (ret === undefined) return;
             await valueEdited(ret);
-            /*
-            let budValue = convertToBudValue(ret);
-            if (id !== undefined) {
-                await uq.SaveBudValue.submit({
-                    phraseId: bizBud.id,
-                    id,
-                    ...budValue
-                });
-            }
-            setValue(ret);
-            onChanged?.(bizBud, budValue.value);
-            */
         }
         let content: any = value;
         if (value === undefined) content = <ViewBudEmpty />;
@@ -98,7 +86,7 @@ function Input({ value, options, type, onEdited, readOnly }: InputProps) {
         if (nv.trim() === '') nv = undefined;
         if (nv !== value) {
             setWaiting(true);
-            await wait(2000);
+            // await wait(2000);
             await onEdited?.(nv);
             setWaiting(false);
         }

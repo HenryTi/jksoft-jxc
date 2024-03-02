@@ -5,6 +5,7 @@ import { BudGroup, Entity } from "./Entity";
 
 export abstract class EntityAtomID extends Entity {
     readonly subClasses: EntityAtomID[] = [];
+    uniques: string[];
 
     getRefEntities(): Entity[] { return this.subClasses; }
 
@@ -12,13 +13,13 @@ export abstract class EntityAtomID extends Entity {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'extends': this.fromExtends(val); break;
+            case 'uniques': this.uniques = val; break;
         }
     }
 
     protected override buildBudsGroups() {
         const ancestorSelfs = this.biz.atomBuilder.getAncestorSelfs(this);
         const ancestorSelfs0 = ancestorSelfs[0];
-        // const { buds, groups } = ancestorSelfs0;
         this.buildBudsGroupsFromSelf(ancestorSelfs0);
 
         let len = ancestorSelfs.length;

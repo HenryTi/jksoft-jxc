@@ -1,11 +1,11 @@
 import * as jsonpack from 'jsonpack';
 import { useForm } from "react-hook-form";
-import { Entity } from "app/Biz";
+import { Entity, EntityAtom } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import { Page, useModal } from "tonwa-app";
+import { Modal, Page, useModal } from "tonwa-app";
 import { ButtonAsync, FA, Spinner, getAtomValue, setAtomValue, useEffectOnce } from 'tonwa-com';
 import { Grammar, highlight } from "prismjs";
 import './code-editor-style.css'
@@ -13,6 +13,7 @@ import Editor from 'react-simple-code-editor';
 import { editorStyle, uqGrammar } from './grammar';
 import { FormRow, FormRowsView, Band, ToolItem, Toolbar, ToolElement, ToolButton } from 'app/coms';
 import { atom, useAtomValue } from 'jotai';
+import { BizPhraseType } from 'uqs/UqDefault';
 
 class Nav {
     readonly supers: Entity[] = [];
@@ -94,7 +95,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
     const uqApp = useUqApp();
     const { uq, uqMan, biz } = uqApp;
     const { uqApi } = uqMan;
-    const { openModal, closeModal } = useModal();
+    const modal = useModal();
     const [entity, setEntity] = useState(orgEntity);
     const { id, caption, name } = entity;
     const query = useCallback(async (id: number) => {
@@ -129,7 +130,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
     }
     async function onSubmit() {
         // const { current: textAreaLog } = refTextAreaLog;
-        openModal(<PageLogs entity={entity} code={code} />);
+        modal.open(<PageLogs entity={entity} code={code} />);
         let newEntity = biz.entityFromId(entity.id);
         setPageCaption(newEntity.caption ?? newEntity.name);
         setSumitDisabled(true);
@@ -153,7 +154,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
                     setError('name', { message: `重名，或者其它实体引用了${name}` }, { shouldFocus: true })
                 }
                 else {
-                    closeModal(true);
+                    modal.close(true);
                     entity.setName(newName);
                     setPageCaption(caption ?? newName);
                     biz.refresh();
@@ -178,7 +179,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
                 </div>
             </Page>;
         }
-        if (await openModal(<PageChangeName />) === true) {
+        if (await modal.open(<PageChangeName />) === true) {
             let { ret } = await uq.GetEntityCode.query({ id });
             setCode(ret[0]?.code);
         }
@@ -187,7 +188,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
         function PageDel() {
             async function onDeleted() {
                 let ret = await uqApi.delEntity(id);
-                closeModal(ret);
+                modal.close(ret);
             }
             return <Page header={`删除 - ${entity.name}`}>
                 <div className='p-3'>
@@ -195,7 +196,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
                 </div>
             </Page>;
         }
-        let { hasError, logs } = await openModal(<PageDel />);
+        let { hasError, logs } = await modal.open(<PageDel />);
         let msg: string;
         if (hasError === true) {
             // refTextAreaLog.current.value = logs === undefined ? '删除出错' : logs.join('\n');
@@ -207,7 +208,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
             // refTextAreaLog.current.value = '成功删除';
             msg = '成功删除';
         }
-        openModal(<Page header="删除">
+        modal.open(<Page header="删除">
             <pre className="p-3">
                 {msg}
             </pre>
@@ -220,7 +221,6 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
     }
     //const breadcrumb = new ToolElement(nav.showView());
     const groups: ToolItem[][] = [
-        // [breadcrumb],
         [
             new ToolButton({ caption: '提交', icon: 'send-o', className: 'btn btn-primary' }, onSubmit),
         ],
@@ -230,26 +230,16 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
             new ToolButton({ caption: '删除' }, onDel),
         ]
     ];
+    let ret = buildEntityButton(modal, entity);
+    if (ret !== undefined) {
+        let [r0, r1] = ret;
+        if (r0 !== undefined) groups[0].push(...r0);
+        if (r1 !== undefined) groups[2].push(...r1);
+    }
     const top = <div>
         {nav.showView()}
         {deleted === false && <Toolbar groups={groups} />}
     </div>;
-    /*
-        {
-            deleted === false &&
-            <div className="text-secondary tonwa-bg-gray-2 d-flex align-items-center px-1 border-bottom">
-                <ButtonAsync overtime={5} className={btnClassName('btn-primary')}
-                    disabled={submitDisabled}
-                    onClick={onSubmit}>
-                    提交
-                </ButtonAsync>
-                <div className="flex-grow-1"></div>
-                <button className={btnClassName('btn-outline-primary')} onClick={onRename}>改名</button>
-                <button className={btnClassName('btn-outline-primary')} onClick={onDel}>删除</button>
-            </div>
-        }
-        {nav.showView()}
-    */
     return <Page header={pageCaption} hideScroll={true} top={top}>
         <div className="d-flex flex-column">
             <div className="border-info rounded flex-grow-1">
@@ -269,6 +259,37 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
             </div>
         </div>
     </Page>
+}
+
+function buildEntityButton(modal: Modal, entity: Entity): ToolItem[][] {
+    switch (entity.bizPhraseType) {
+        default: return;
+        case BizPhraseType.atom: return buildAtomButton(modal, entity as EntityAtom);
+    }
+}
+
+function buildAtomButton(modal: Modal, entity: EntityAtom): ToolItem[][] {
+    const { uniques } = entity;
+    if (uniques === undefined) return;
+    return [[new ToolButton({ caption: '对照表', }, onMap),]];
+    function onMap() {
+        modal.open(<PageUniques entity={entity} />);
+    }
+}
+
+function PageUniques({ entity }: { entity: EntityAtom; }) {
+    const { uniques } = entity;
+    return <Page header="对照表生成">
+        <div className="tonwa-bg-gray-2 p-3">对照表用于对接数据</div>
+        {uniques.map(v => {
+            function onBuildMap() {
+                alert(v);
+            }
+            return <div key={v} className="p-3 border-bottom">
+                <button className="btn btn-outline-primary" onClick={onBuildMap}>生成{v}对照表</button>
+            </div>
+        })}
+    </Page>;
 }
 
 function PageLogs({ entity, code }: { entity: Entity, code: string; }) {

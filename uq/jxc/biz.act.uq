@@ -67,9 +67,9 @@ Biz ACT SaveBudValue ver 0.4 (
         {
             WITH IxBud I=id X=budId DEL;
         }
-        VAR atomPhrase ID;
-        SET atomPhrase = a.base FROM BizPhrase as a WHERE a.id=phraseId;
-        ProcCall '$site'.CONCAT($site, '.', atomPhrase, 'u') USING $site, id, atomPhrase, phraseId;
+        -- VAR atomPhrase ID;
+        -- SET atomPhrase = a.base FROM BizPhrase as a WHERE a.id=phraseId;
+        ProcCall '$site'.CONCAT($site, '.', phraseId, 'bu') USING id;
     }
 };
 

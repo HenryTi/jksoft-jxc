@@ -17,7 +17,7 @@ ID #IOQueue (
 );
 
 IX IOInOut (
-    i TINY,                         -- 0: out, 1: in
+    i TINY,                         -- 0: out, 1: in, 2: atom unique
     x,                              -- 待处理的IOQueue id
 );
 

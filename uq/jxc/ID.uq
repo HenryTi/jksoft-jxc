@@ -7,10 +7,11 @@ ID Atom ver 0.2 (
     ex EX,
 );
 
-IX AtomUnique (
+IX AtomUnique ver 0.5 (
     i,
     x NO,
     atom ID,
+    INDEX i_atom(i, atom) UNIQUE,
 );
 
 ID Spec ver 0.1 (

@@ -87,7 +87,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
                     {buildVPropRows(home.buds)}
                 </div>
             </Tab>
-            {arr.map(v => {
+            {arr.map((v, index) => {
                 const { id, name, caption, buds } = v;
                 if (id === undefined) debugger;
                 const vId = String(id);
