@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Feb 13 2024 22:58:31 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Sat Mar 02 2024 21:52:19 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1246,6 +1246,26 @@ export interface ParamIORetry {
 export interface ResultIORetry {
 }
 
+export interface ParamBuildAtomUnique {
+	phrase: number;
+	start: number;
+	batchNumber: number;
+}
+export interface ReturnBuildAtomUniqueRet {
+	batchDone: number;
+	lastId: number;
+}
+export interface ReturnBuildAtomUniqueDupTable {
+	unique: number;
+	i: number;
+	x: string;
+	atom: number;
+}
+export interface ResultBuildAtomUnique {
+	ret: ReturnBuildAtomUniqueRet[];
+	DupTable: ReturnBuildAtomUniqueDupTable[];
+}
+
 
 
 export interface ParamActs {
@@ -1352,6 +1372,7 @@ export interface UqExt extends Uq {
 	GetIOErrorCounts: UqQuery<ParamGetIOErrorCounts, ResultGetIOErrorCounts>;
 	GetIOError: UqQuery<ParamGetIOError, ResultGetIOError>;
 	IORetry: UqAction<ParamIORetry, ResultIORetry>;
+	BuildAtomUnique: UqAction<ParamBuildAtomUnique, ResultBuildAtomUnique>;
 }
 
 
@@ -4816,6 +4837,64 @@ export const uqSchema={
         ],
         "jsoned": true,
         "returns": [] as any
+    },
+    "buildatomunique": {
+        "name": "BuildAtomUnique",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "phrase",
+                "type": "id"
+            },
+            {
+                "name": "start",
+                "type": "id"
+            },
+            {
+                "name": "batchNumber",
+                "type": "int"
+            }
+        ],
+        "jsoned": true,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "batchDone",
+                        "type": "int"
+                    },
+                    {
+                        "name": "lastId",
+                        "type": "id"
+                    }
+                ]
+            },
+            {
+                "name": "DupTable",
+                "fields": [
+                    {
+                        "name": "unique",
+                        "type": "id"
+                    },
+                    {
+                        "name": "i",
+                        "type": "id"
+                    },
+                    {
+                        "name": "x",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "atom",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
     },
     "$biz": {
         "$user": {

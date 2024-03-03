@@ -402,3 +402,31 @@ Biz AC IORetry (
     SET inOut=a.inOut FROM IOError as a WHERE a.id=id;
     WITH IOInOut I=inOut X=id;
 }
+
+Biz AC BuildAtomUnique(
+    phrase ID,              -- atom phrase id
+    start ID,               -- start id, from 0
+    batchNumber INT,        -- default 30,
+)
+RETURNS ret (
+    batchDone INT,          -- < batchNumber, then all done
+    lastId ID,
+)
+RETURNS DupTable (
+    unique ID,
+    i ID,                   -- bud(unique, key)
+    x NO,
+    atom ID,                -- 
+)
+{
+    IF start IS NULL {
+        SET start = 0;
+    }
+    VAR done INT = 0, lastId ID;
+    FOR (VAR id ID OF SELECT a.id FROM Atom as a WHERE a.base=phrase AND a.id>start ORDER BY a.id ASC LIMIT batchNumber) {
+        ProcCall '$site'.CONCAT($site, '.', phrase, 'u') USING id;
+        SET done = done+1;
+        SET lastId = id;
+    }
+    INTO ret SELECT done as batchDone, lastId;
+}

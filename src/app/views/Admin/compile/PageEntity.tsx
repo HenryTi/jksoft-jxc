@@ -1,12 +1,12 @@
 import * as jsonpack from 'jsonpack';
 import { useForm } from "react-hook-form";
-import { Entity, EntityAtom } from "app/Biz";
+import { Entity, EntityAtom, EntityAtomID } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { Modal, Page, useModal } from "tonwa-app";
-import { ButtonAsync, FA, Spinner, getAtomValue, setAtomValue, useEffectOnce } from 'tonwa-com';
+import { ButtonAsync, FA, List, Spinner, getAtomValue, setAtomValue, useEffectOnce } from 'tonwa-com';
 import { Grammar, highlight } from "prismjs";
 import './code-editor-style.css'
 import Editor from 'react-simple-code-editor';
@@ -273,22 +273,61 @@ function buildAtomButton(modal: Modal, entity: EntityAtom): ToolItem[][] {
     if (uniques === undefined) return;
     return [[new ToolButton({ caption: '对照表', }, onMap),]];
     function onMap() {
-        modal.open(<PageUniques entity={entity} />);
+        modal.open(<PageUnique entity={entity} />);
     }
 }
 
-function PageUniques({ entity }: { entity: EntityAtom; }) {
-    const { uniques } = entity;
-    return <Page header="对照表生成">
-        <div className="tonwa-bg-gray-2 p-3">对照表用于对接数据</div>
-        {uniques.map(v => {
-            function onBuildMap() {
-                alert(v);
+function PageUnique({ entity }: { entity: EntityAtom; }) {
+    const { uq } = useUqApp();
+    const [doing, setDoing] = useState(false);
+    const [done, setDone] = useState(false);
+    const { current: atomJob } = useRef(atom({ count: 0, dup: [] as any[] }));
+    const { count, dup } = useAtomValue(atomJob);
+    // const [count, setCount] = useState(0);
+    // const [dup, setDup] = useState(undefined);
+    const build = useCallback(async () => {
+        async function iterate(ent: EntityAtomID, callback: (e: EntityAtomID) => Promise<void>) {
+            await callback(ent);
+            for (let sub of ent.subClasses) {
+                await iterate(sub, callback);
             }
-            return <div key={v} className="p-3 border-bottom">
-                <button className="btn btn-outline-primary" onClick={onBuildMap}>生成{v}对照表</button>
+        }
+        await iterate(entity, async (e) => {
+            for (let start = 0; ;) {
+                const results = await uq.BuildAtomUnique.submitReturns({ phrase: e.id, start, batchNumber: 1 });
+                const { ret: [{ batchDone, lastId }], DupTable } = results;
+                if (batchDone === 0) break;
+                const { count, dup } = getAtomValue(atomJob);
+                setAtomValue(atomJob, {
+                    count: count + batchDone,
+                    dup: [...dup, ...DupTable],
+                });
+                start = lastId;
+            }
+        });
+    }, []);
+
+    const onBuildMap = async () => {
+        setDoing(true);
+        await build();
+        setDone(true);
+    };
+    return <Page header="对照表生成">
+        <div className="tonwa-bg-gray-2 p-3">
+            对照表用于对接数据
+            {
+                doing === false &&
+                <button className="btn btn-outline-primary ms-3" onClick={onBuildMap}>开始生成对照表</button>
+            }
+        </div>
+        <div className="p-3">已完成 {count} 项</div>
+        {dup.length > 0 && <div className="py-3">
+            <div className="px-3 tonwa-bg-gray-1 small py-2 border-bottom">问题列表</div>
+            <div className="px-3 py-3">
+                {JSON.stringify(dup)}
             </div>
-        })}
+        </div>}
+        {done === true && <div className="p-3 text-danger">全部完成</div>}
     </Page>;
 }
 
