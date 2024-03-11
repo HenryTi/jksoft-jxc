@@ -11,7 +11,7 @@ import { PageMoreCacheData } from "app/coms";
 import { useCallback, useRef, useState } from "react";
 import { PickFunc, useBinPicks } from "./binPick";
 import { ButtonAsyncIcon } from "app/tool/ButtonAsyncIcon";
-
+/*
 export function useViewStore({ store }: { store: SheetStore; }) {
     const { uq, caption, main, detail, divStore } = store;
     const uqApp = useUqApp();
@@ -19,7 +19,6 @@ export function useViewStore({ store }: { store: SheetStore; }) {
     const { openModal, closeModal } = useModal();
     const navigate = useNavigate();
     const [editable, setEditable] = useState(true);
-    // const submitState = useAtomValue(divStore.atomSubmitState);
 
     async function onSubmit() {
         if (main.trigger() === false) return;
@@ -98,14 +97,6 @@ function MainOnlyEdit({ store: { main } }: { store: SheetStore; }) {
     return <>
         <ViewMain main={main} popup={false} />
     </>;
-    /*
-        <LMR className="px-3 py-3 border-top">
-        {btnSubmit}
-        {
-            editable === true && <>{id && <ButtonDiscard onClick={onDiscard} />}</>
-        }
-    </LMR>
-    */
 }
 
 function MainDetailEdit({ store, viewDetail }: { store: SheetStore; viewDetail: JSX.Element; }) {
@@ -128,39 +119,10 @@ function MainDetailEdit({ store, viewDetail }: { store: SheetStore; viewDetail: 
         let ret = await addNew();
     }
     let sections = useAtomValue(detail._sections);
-    /*
-    let btnSubmit: any; // , cnAdd: string;
-    if (sections.length === 0 && submitState === SubmitState.hide) {
-        // cnAdd = 'btn btn-primary me-3';
-    }
-    else {
-        let disabled = (sections.length === 0 && submitState === SubmitState.none) || submitState === SubmitState.disable;
-        btnSubmit = <ButtonSubmit onClick={onSubmit} disabled={disabled} />;
-        // cnAdd = 'btn btn-outline-primary me-3';
-    }
-    if (id === 0) {
-        return <div className="p-3">
-            <button className="btn btn-primary" onClick={startInputDetail}>开始录单</button>
-        </div>;
-    }
-    else {
-        */
     return <>
         <ViewMain main={main} popup={false} />
         {viewDetail}
     </>;
-    /*
-        <LMR className="px-3 py-3 border-top tonwa-bg-gray-1">
-        {btnSubmit}
-        {
-            editable === true && <>
-                <ButtonDetail onClick={onAddRow} />
-                {id && <ButtonDiscard onClick={onDiscard} />}
-            </>
-        }
-    </LMR>
-        */
-    // }
 }
 
 function ButtonSubmit({ onClick, disabled }: { onClick: () => Promise<void>; disabled?: boolean; }) {
@@ -203,3 +165,4 @@ async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetSt
         }
     }
 }
+*/

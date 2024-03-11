@@ -5,6 +5,7 @@ ID Atom ver 0.2 (
     KEY id,
     no NO,
     ex EX,
+    INDEX base_no(base, no) UNQIUE,
 );
 
 IX AtomUnique ver 0.5 (
@@ -20,7 +21,7 @@ ID Spec ver 0.1 (
     KEY id,
 );
 
-ID Duo ver 0.1 (
+ID Duo ver 0.3 (
     id MINUTE,
     KEY i ID,
     KEY x ID,

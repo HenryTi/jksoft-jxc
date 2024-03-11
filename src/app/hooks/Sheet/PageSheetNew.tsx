@@ -44,24 +44,6 @@ function SheetNew({ store, atomSheetId }: { store: SheetStore; atomSheetId: Writ
     const { header, back } = useSheetHeader(store);
     let btnSubmit = buttonDefs.submit(undefined);
     let btnExit = buttonDefs.exit(async () => navigate(-1), false);
-    // let btnExit = new ToolButton(buttonDefs.edit, async () => navigate(-1));
-    //const pick = useBinPicks(entitySheet.main);
-    //const startCallback = useCallback(async function () {
-    // let sheetStore = ;
-    // await sheetStore.load();
-    // await startSheetStore(uqApp, navigate, sheetStore, pick);
-    // let ret = await modal.open(<PageBinPicks sheetStore={sheetStore} rearPickResultType={RearPickResultType.array} />);
-    /*
-    if (ret === undefined) {
-        setSheetStore(null);
-        return;
-    }
-    */
-    // setSheetStore(sheetStore);
-    //}, []);
-    //useEffectOnce(() => {
-    //    startCallback();
-    //});
     async function onPicked(results: ReturnUseBinPicks) {
         let ret = await store.main.startFromPickResults(results);
         if (ret === undefined) {
@@ -102,13 +84,6 @@ function SheetNew({ store, atomSheetId }: { store: SheetStore; atomSheetId: Writ
     if (store.isPend() === true) {
         group0.unshift(buttonDefs.batchSelect(onPick));
         const subCaption = '批选待处理';
-        /*
-        let vSelectBatch = <div className="px-3 py-3 d-flex border-bottom">
-            <button className="btn btn-outline-primary" onClick={onPick}>
-                {subCaption}
-            </button>
-        </div>;
-        */
         let footer = <div className="px-3 py-2">footer</div>;
         return <Page header={pageHeader} back={null} top={top} footer={footer} right={right}>
             <div className="tonwa-bg-gray-1">
@@ -126,7 +101,7 @@ function SheetNew({ store, atomSheetId }: { store: SheetStore; atomSheetId: Writ
     }
     else if (store.main.entityMain.binPicks !== undefined) {
         return <Page header={pageHeader} back={null} top={top} right={right}>
-            <ViewBinPicks subHeader={'开单条件'} sheetStore={store} onPicked={onPicked} />
+            <ViewBinPicks subHeader="开单" sheetStore={store} onPicked={onPicked} />
         </Page>;
     }
     else {

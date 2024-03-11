@@ -3,10 +3,10 @@ import { useCallback } from "react";
 import { useModal } from "tonwa-app";
 import { NamedResults, PickResult } from "../NamedResults";
 import { usePageParams } from "./PageParams";
-import { PagePend } from "../binEdit";
 import { PagePendProps } from "../binEdit/model";
 import { PendProxyHander, ValRow } from "../tool";
 import { DivStore } from "../store";
+import { PagePend } from "./PagePend";
 
 export function usePickFromPend() {
     const modal = useModal();

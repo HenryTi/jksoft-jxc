@@ -2,8 +2,8 @@ import { Page, useModal } from "tonwa-app";
 import { useState } from "react";
 import { FA, List, Sep } from "tonwa-com";
 import { PendRow } from "../store";
-import { PagePendProps } from "./model";
-import { ViewPendRow } from "./ViewPendRow";
+import { PagePendProps } from "../binEdit/model";
+import { ViewPendRow } from "../binEdit/ViewPendRow";
 import { ValRow } from "../tool";
 
 export function PagePend(props: PagePendProps) {

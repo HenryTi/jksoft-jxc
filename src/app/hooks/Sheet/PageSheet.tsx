@@ -129,14 +129,6 @@ function useSheetView(store: SheetStore) {
             toolGroups,
             view: <ViewMain main={main} popup={false} />
         };
-        /*
-            <LMR className="px-3 py-3 border-top">
-            {btnSubmitOld}
-            {
-                editable === true && <>{id && <ButtonDiscard onClick={onDiscardSheet} />}</>
-            }
-        </LMR>
-        */
     }
 
     function MainDetailEdit() {
@@ -197,17 +189,6 @@ function useSheetView(store: SheetStore) {
                     {vDetail}
                 </>
             };
-            /*
-            <LMR className="px-3 py-3 border-top tonwa-bg-gray-1">
-                {btnSubmitOld}
-                {
-                    editable === true && <>
-                        <ButtonDetail onClick={onAddRow} />
-                        {id && <ButtonDiscard onClick={onDiscardSheet} />}
-                    </>
-                }
-            </LMR>
-            */
         }
     }
 
@@ -217,16 +198,3 @@ function useSheetView(store: SheetStore) {
         view: view,
     };
 }
-/*
-function ButtonSubmit({ onClick, disabled }: { onClick: () => Promise<void>; disabled?: boolean; }) {
-    return <ButtonAsyncIcon onClick={onClick} disabled={disabled} icon="send-o">提交</ButtonAsyncIcon>
-}
-
-function ButtonDetail({ onClick }: { onClick: () => Promise<void> }) {
-    return <ButtonAsyncIcon onClick={onClick} className="btn-outline-primary" icon="plus">明细</ButtonAsyncIcon>;
-}
-
-function ButtonDiscard({ onClick }: { onClick: () => Promise<void> }) {
-    return <ButtonAsyncIcon onClick={onClick} className="btn-outline-warning" icon="trash-o">作废</ButtonAsyncIcon>;
-}
-*/

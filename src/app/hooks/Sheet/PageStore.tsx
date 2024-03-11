@@ -12,7 +12,7 @@ import { useCallback, useRef, useState } from "react";
 import { PickFunc, useBinPicks } from "./binPick";
 import { ButtonAsyncIcon } from "app/tool/ButtonAsyncIcon";
 import { useSheetHeader } from "./useSheetStore";
-
+/*
 let locationState = 1;
 
 async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetStore: SheetStore, pick: PickFunc) {
@@ -185,3 +185,4 @@ function ButtonDetail({ onClick }: { onClick: () => Promise<void> }) {
 function ButtonDiscard({ onClick }: { onClick: () => Promise<void> }) {
     return <ButtonAsyncIcon onClick={onClick} className="btn-outline-warning" icon="trash-o">作废</ButtonAsyncIcon>;
 }
+*/

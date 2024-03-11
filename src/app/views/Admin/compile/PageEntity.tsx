@@ -315,19 +315,32 @@ function PageUnique({ entity }: { entity: EntityAtom; }) {
     return <Page header="对照表生成">
         <div className="tonwa-bg-gray-2 p-3">
             对照表用于对接数据
-            {
-                doing === false &&
-                <button className="btn btn-outline-primary ms-3" onClick={onBuildMap}>开始生成对照表</button>
-            }
         </div>
-        <div className="p-3">已完成 {count} 项</div>
+        {
+            done === false ?
+                <div className="p-3">
+                    {
+                        doing === true ?
+                            <>
+                                <FA name="spinner" className="me-3 text-info" spin={true} />
+                                生成 {count} 项
+                            </>
+                            :
+                            <button className="btn btn-outline-primary" onClick={onBuildMap}>生成对照表</button>
+                    }
+                </div>
+                :
+                <div className="p-3 text-success">
+                    <FA name="check-circle-o" className="me-3" size="lg" />
+                    共{count}项全部完成
+                </div>
+        }
         {dup.length > 0 && <div className="py-3">
             <div className="px-3 tonwa-bg-gray-1 small py-2 border-bottom">问题列表</div>
             <div className="px-3 py-3">
                 {JSON.stringify(dup)}
             </div>
         </div>}
-        {done === true && <div className="p-3 text-danger">全部完成</div>}
     </Page>;
 }
 

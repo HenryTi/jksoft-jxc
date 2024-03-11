@@ -235,7 +235,9 @@ RETURNS budIds (
                 KEY(id, budName) 
                 SET a.type=budType, a.memo=budMemo;
         }
-        WITH BizResource IXX=budId I=0 X=0 SET res=budCaption;
+        IF budCaption IS NOT NULL {
+            WITH BizResource IXX=budId I=0 X=0 SET res=budCaption;
+        }
         WITH XBiz ID=budId;
         WITH BizBud as a ID=budId 
             SET a.type=dataType
@@ -285,7 +287,9 @@ RETURNS ret (
             KEY(base, name) 
             SET a.type=type, a.memo=memo;
     }
-    WITH BizResource IXX=id I=0 X=0 SET res=caption;
+    IF caption IS NOT NULL {
+        WITH BizResource IXX=id I=0 X=0 SET res=caption;
+    }
     WITH XBiz ID=id;
     WITH BizBud as a ID=id 
         SET a.type=dataType
