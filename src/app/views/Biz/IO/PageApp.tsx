@@ -3,12 +3,12 @@ import { EntityIOApp, EntityIOSite, IOAppID } from "app/Biz";
 import { LabelRowEdit, PagePickValue, ViewAtom } from "app/hooks";
 import { AtomPhrase, UseQueryOptions } from "app/tool";
 import React, { useState } from "react";
-import { useQuery } from "react-query";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { FA, Sep } from "tonwa-com";
 import { PageAtomMap } from "./PageAtomMap";
 import md5 from "md5";
 import { PageIOError } from "./PageIOError";
+import { useQuery } from "react-query";
 
 export interface AppVal {
     siteAtomApp: number;
@@ -32,9 +32,19 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
     const { caption, name, tie } = ioSite;
     let { entity: appEntity, val: appValInit } = ioApp;
     const [appVal, setAppVal] = useState(appValInit);
+    // const [hasError, setHasError] = useState(false);
     const { siteAtomApp } = appVal;
     const { IDs, ins, outs } = appEntity;
     const labelSize = 1;
+
+    let { data: hasError } = useQuery(['GetIOError'], async () => {
+        const { $page } = await uq.GetIOError.page({ siteAtomApp }, undefined, 1);
+        // setHasError($page.length > 0);
+        if ($page.length > 0) {
+            console.error($page);
+        }
+        return $page.length > 0;
+    }, UseQueryOptions);
 
     async function onSetOutValue(label: string, name: string, maxLength: number) {
         let ret = await modal.open(<PagePickValue label={label} type="text" value={(appVal as any)[name]} options={{ maxLength, }} />);
@@ -153,7 +163,18 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
     function onShowError() {
         modal.open(<PageIOError siteAtomApp={siteAtomApp} />);
     }
-    return <Page header="App">
+    let errorLink = hasError !== true ?
+        null
+        :
+        <div className="px-3 py-2 border-top border-bottom mt-3 d-flex align-items-center cursor-pointer" onClick={onShowError}>
+            <div className="flex-fill">
+                <FA name="exclamation-circle" className="me-3 text-danger" size="lg" />
+                连接错误
+            </div>
+            <FA name="angle-right" />
+        </div>;
+
+    return <Page header="IOApp">
         <div className="tonwa-bg-gray-1">
             <TopItem label="外连类型"><span>{caption ?? name}</span></TopItem>
             <TopItem label="外连App"><span>{appEntity.caption ?? appEntity.name}</span></TopItem>
@@ -168,7 +189,9 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
                 {appVal.inKey}  password:{appVal.inPassword}
             </LabelRowEdit>
             <Sep className="border-dark-subtle border-2" />
-            {ins.map((v, index) => <ViewIn key={index} value={v} />)}
+            <div className="d-none">
+                {ins.map((v, index) => <ViewIn key={index} value={v} />)}
+            </div>
         </div>
         <div>
             <HeaderIO label="出口" />
@@ -199,15 +222,10 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
                 </div>)}
             </div>
         </div>
-
-        <div className="px-3 pt-2 pb-1 border-top border-bottom mt-3 d-flex align-items-center cursor-pointer" onClick={onShowError}>
-            <div className="flex-fill">连接错误</div>
-            <FA name="angle-right" />
-        </div>
-
+        {errorLink}
         <div className="p-3 d-flex">
             <div className="flex-fill" />
-            <button className="btn btn-link" onClick={onStopConnect}>取消连接</button>
+            <button className="btn btn-link" onClick={onStopConnect}>删除连接</button>
         </div>
     </Page>;
 }

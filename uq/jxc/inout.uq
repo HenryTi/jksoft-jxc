@@ -69,8 +69,10 @@ PAGE (
     no NO,
     ex EX,
     ioSiteAtom ID,
+    errorCount INT,
 ) {
     PAGE SELECT b.id, b.no, b.ex, a.id as ioSiteAtom
+        , (SELECT count(*) FROM IOError as x JOIN IOSiteAtomApp as y ON y.id=x.siteAtomApp WHERE y.ioSiteAtom=a.id LIMIT 1) as errorCount
         FROM Duo as a 
             JOIN Atom as b ON b.id=a.x
             JOIN BizPhrase as c ON c.id=a.i
@@ -201,7 +203,7 @@ RETURNS ret (
             ORDER BY a.x ASC 
             LIMIT 1;
         IF inout IS NOT NULL {
-            SET sql = CONCAT('call `$site`.`', site, '.', inout, '`(?,?);');
+            SET sql = CONCAT('call `$site`.`', site, '.', inout, '`(?,?,?);');
             ExecSql sql USING id, inSite, json;
             INTO ret SELECT CONCAT('call `$site`.`', site, '.', inout, '`') as sql, id as queueId;
             SET i=i+1;

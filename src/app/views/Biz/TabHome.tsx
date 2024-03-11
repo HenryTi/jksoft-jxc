@@ -36,6 +36,6 @@ export function TabHome() {
             {vSiteRight}
         </div>
         <ViewConsole />
-        <button className="btn btn-sm btn-link" onClick={onTest}>test</button>
     </Page>;
+    // <button className="btn btn-sm btn-link" onClick={onTest}>test</button>
 }

@@ -33,7 +33,7 @@ function PageIOCenter() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const modal = useModal();
-    const { data } = useQuery([], async () => {
+    const { data } = useQuery(['GetIOErrorCounts'], async () => {
         let { ret } = await uq.GetIOErrorCounts.query({});
         const coll: { [ioSite: number]: number } = {};
         for (let row of ret) {

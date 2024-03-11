@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Mar 02 2024 21:52:19 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Mon Mar 11 2024 18:50:09 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1146,6 +1146,7 @@ export interface ReturnGetIOSiteAtoms$page {
 	no: string;
 	ex: string;
 	ioSiteAtom: number;
+	errorCount: number;
 }
 export interface ResultGetIOSiteAtoms {
 	$page: ReturnGetIOSiteAtoms$page[];
@@ -4544,6 +4545,10 @@ export const uqSchema={
                     {
                         "name": "ioSiteAtom",
                         "type": "id"
+                    },
+                    {
+                        "name": "errorCount",
+                        "type": "int"
                     }
                 ],
                 "order": "asc"

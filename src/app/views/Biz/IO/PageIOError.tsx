@@ -36,13 +36,4 @@ export function PageIOError({ siteAtomApp }: { siteAtomApp: number }) {
             {view}
         </div>
     </Page>;
-    /*
-    return <PageQueryMore header="连接错误"
-        query={uq.GetIOError}
-        param={{ siteAtomApp }}
-        sortField="id"
-        ViewItem={ViewItem}
-    >
-    </PageQueryMore>;
-    */
 }

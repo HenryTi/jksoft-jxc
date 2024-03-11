@@ -16,9 +16,12 @@ export function PageSiteAtoms({ ioSite }: { ioSite: EntityIOSite; }) {
     const { caption, name, tie } = ioSite;
     const selectAtom = useSelectAtom();
     const none = <div className='m-3 small text-muted'>[无]</div>;
-    function ViewItem({ value: { id, no, ex } }: { value: { id: number; no: string; ex: string; } }) {
+    function ViewItem({ value: { id, no, ex, errorCount } }: { value: { id: number; no: string; ex: string; errorCount: number; } }) {
         return <div className="px-3 py-2">
-            <div>{ex}</div>
+            <div>
+                {errorCount > 0 && <FA name="exclamation-circle" className="me-3 text-danger" />}
+                {ex}
+            </div>
             <div className="text-secondary small">{no}</div>
         </div>;
     }
