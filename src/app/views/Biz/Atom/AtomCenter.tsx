@@ -6,9 +6,9 @@ import {
     OptionsUseBizAtom, pathAtom //, pathAtomEdit, pathAtomList, pathAtomNew, pathAtomView
     , useBizAtomList, useBizAtomNew, useBizAtomView
 } from "app/hooks";
+import { Atom } from "uqs/UqDefault";
 import { UqApp, useUqApp } from "app/UqApp";
 import { Entity } from "app/Biz";
-import { ViewAtom } from "app/hooks";
 import { BI } from "app/coms";
 import { centers } from "app/views/center";
 
@@ -45,6 +45,13 @@ function PageNew() {
 function PageView() {
     let { page } = useBizAtomView(options);
     return page;
+}
+
+function ViewAtom({ value }: { value: Atom; }) {
+    let { no, ex } = value;
+    return <div title={ex + ' ' + no}>
+        <span className="w-8c text-secondary me-3">{no}</span> {ex}
+    </div>;
 }
 
 function PageList() {

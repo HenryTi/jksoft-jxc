@@ -54,6 +54,7 @@ export class Entity extends BizBase {
         } as any;
         for (let g of groups) {
             const { id, name, buds } = g;
+            if (id !== undefined && typeof id !== 'number') debugger;
             let group: BudGroup;
             switch (g.name) {
                 case '-':
