@@ -90,6 +90,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
             {arr.map((v, index) => {
                 const { id, name, caption, buds } = v;
                 if (id === undefined) debugger;
+                if (typeof id !== 'number') debugger;
                 const vId = String(id);
                 return <Tab key={id} eventKey={vId} title={caption ?? name}>
                     <div className={cnColumns2}>
