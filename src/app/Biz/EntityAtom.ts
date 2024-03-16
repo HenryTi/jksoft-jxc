@@ -9,6 +9,14 @@ export abstract class EntityAtomID extends Entity {
 
     getRefEntities(): Entity[] { return this.subClasses; }
 
+    getUniques(): string[] {
+        let us = [...(this.uniques ?? [])];
+        for (let sc of this.subClasses) {
+            us.push(...sc.uniques ?? []);
+        }
+        return us;
+    }
+
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;

@@ -269,7 +269,7 @@ function buildEntityButton(modal: Modal, entity: Entity): ToolItem[][] {
 }
 
 function buildAtomButton(modal: Modal, entity: EntityAtom): ToolItem[][] {
-    const { uniques } = entity;
+    const uniques = entity.getUniques();
     if (uniques === undefined) return;
     return [[new ToolButton({ caption: '对照表', }, onMap),]];
     function onMap() {
