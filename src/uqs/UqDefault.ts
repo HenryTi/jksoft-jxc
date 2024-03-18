@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Mar 11 2024 18:50:09 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Mon Mar 18 2024 14:11:16 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -788,27 +788,6 @@ export enum BizBudFlag {
 	index = 1
 }
 
-export interface ParamGetBizObjects {
-	lang: string;
-	culture: string;
-}
-export interface ReturnGetBizObjectsObjs {
-	id: number;
-	phrase: string;
-	source: string;
-	caption: string;
-}
-export interface ReturnGetBizObjectsBuds {
-	id: number;
-	base: number;
-	phrase: string;
-	caption: string;
-}
-export interface ResultGetBizObjects {
-	objs: ReturnGetBizObjectsObjs[];
-	buds: ReturnGetBizObjectsBuds[];
-}
-
 export interface ParamGetEntityCode {
 	id: number;
 }
@@ -1340,7 +1319,6 @@ export interface UqExt extends Uq {
 	GetSiteSheets: UqQuery<ParamGetSiteSheets, ResultGetSiteSheets>;
 	GetSiteSheetList: UqQuery<ParamGetSiteSheetList, ResultGetSiteSheetList>;
 	SearchAllSheets: UqQuery<ParamSearchAllSheets, ResultSearchAllSheets>;
-	GetBizObjects: UqQuery<ParamGetBizObjects, ResultGetBizObjects>;
 	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
 	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
 	SumFormula: UqID<any>;
@@ -3516,72 +3494,6 @@ export const uqSchema={
         "values": {
             "index": 1
         }
-    },
-    "getbizobjects": {
-        "name": "GetBizObjects",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "lang",
-                "type": "char",
-                "size": 10
-            },
-            {
-                "name": "culture",
-                "type": "char",
-                "size": 10
-            }
-        ],
-        "returns": [
-            {
-                "name": "objs",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "source",
-                        "type": "text"
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            },
-            {
-                "name": "buds",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "char",
-                        "size": 200
-                    },
-                    {
-                        "name": "caption",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
-            }
-        ]
     },
     "getentitycode": {
         "name": "GetEntityCode",

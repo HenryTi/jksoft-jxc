@@ -27,7 +27,7 @@ IX IxBudStr (
 
 -- 从id基于phrase分裂生长的id。比如特定权限id。仅限经理可以见的客户。ID(unit@permit.经理)/contact
 -- IxBud可以表达权限。i=id的权限bud，
-ID Bud (
+ID Bud ver 0.1 (
     id MINUTE,
     KEY base ID,            -- 任何的id，包含site
     KEY ext ID,             -- 可以是任意定义的phrase，无site。也可以是任意的id
@@ -38,7 +38,7 @@ IX IxState ver 0.1 (
     x INDEX,
 );
 
-ID History (
+ID History ver 0.1 (
     id MINUTE,
     bud ID,                 -- 科目 bud@(id, phrase)
     value Value,

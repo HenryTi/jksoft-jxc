@@ -307,9 +307,13 @@ PROC SaveBizIX (
     }
 };
 
-QUERY GetBizObjects(
+QUERY #GetBizObjects(
     lang CHAR(10),
     culture CHAR(10),
+)
+RETURNS ret (
+    uqApiVersion INT,
+    compilingTick INT,
 )
 RETURNS objs (
     id ID,
@@ -326,6 +330,7 @@ RETURNS buds (
 {
     VAR langCode SMALLINT = IFNULL((SELECT a.id FROM BizLang as a WHERE a.lang=lang), 0);
     VAR cultureCode SMALLINT = IFNULL((SELECT a.id FROM BizCulture as a WHERE a.culture=culture), 0);
+    INTO ret SELECT a.uqApiVersion, a.compilingTick FROM $site as a WHERE a.id=$site;
     INTO objs SELECT a.id, a.name as phrase, b.source
         , (SELECT r.res
             FROM BizResource AS r
