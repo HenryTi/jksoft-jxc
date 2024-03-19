@@ -28,7 +28,7 @@ function DefaultRightContainer({ children }: ContainerProps) {
 
 export interface LabelRowPropsBase {
     className?: string;
-    labelSize?: 0 | 1 | 2 | 3;
+    labelSize?: 0 | 1 | 2;
     labelAlign?: 'start' | 'center' | 'end';
     labelClassName?: string;
     LabelContainer?: ContainerType;
@@ -46,7 +46,6 @@ export interface LabelRowProps extends LabelRowPropsBase {
 
 const cnRowStart = ' row mx-0 gx-0 ';
 const cnCol = [
-    ['', '', ''],
     [cnRowStart, ' col-3 col-sm-2 ', ' col-9 col-sm-10 '],
     [cnRowStart, ' col-4 col-sm-3 ', ' col-8 col-sm-9 '],
     [cnRowStart, ' col-5 ', ' col-7 '],

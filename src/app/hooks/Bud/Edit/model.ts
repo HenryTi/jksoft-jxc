@@ -11,7 +11,7 @@ export interface EditBudValue {
 export interface ViewBudRowProps {
     name: string;
     label: string | JSX.Element;
-    labelSize?: 0 | 1 | 2 | 3;
+    labelSize?: 0 | 1 | 2;
     readonly?: boolean;
     type: 'string' | 'number' | 'text';
 }
