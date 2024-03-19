@@ -5,19 +5,27 @@ interface CnCombo {
     cnColLabel: string;
     cnColContent: string;
 }
+/*
 const cnCombo: CnCombo = {
     cnRowCols: ' gx-0 row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-3 ',
     cnColLabel: ' col-4 ',
-    cnColContent: ' col-8 ',
-}
-/*
-const cnCombo: CnCombo = {
-    cnRowCols: ' gx-0 row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 ',
-    cnColLabel: ' col-5 ',
-    cnColContent: ' col-7 ',
+    cnColContent: ' col-8 ps-1 py-1 ',
 }
 */
-// const cnRowCols = ' gx-0 row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-3 ';
+const cnCombo: CnCombo = {
+    cnRowCols: ' row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-3 ',
+    cnColLabel: '',
+    cnColContent: '',
+}
+
+// let cnGX = ' gx-0 ';
+// let cnLabelContainer = ` ${cnCombo.cnColLabel} text-secondary text-end d-flex align-items-center flex-row justify-content-end `; //  small
+// let cnContent = ' d-flex align-items-center border-bottom border-secondary-subtle tonwa-bg-gray-1 pt-1 pb-2 px-2 text-nowrap text-truncate ';
+// let cnLabel = ' text-nowrap text-truncate ';
+let cnGX = ' ';
+let cnLabelContainer = ` ${cnCombo.cnColLabel} text-secondary text-start d-flex align-items-center flex-row justify-content-start `; //  small
+let cnLabel = ' text-nowrap text-truncate ps-2 pb-1';
+let cnContent = ' d-flex align-items-center border-bottom border-secondary-subtle tonwa-bg-gray-1 pt-1 pb-2 px-2 text-nowrap text-truncate ';
 
 export function RowCols({ children, contentClassName }: { children: React.ReactNode; contentClassName?: string }) {
     return <div className={cnCombo.cnRowCols + (contentClassName ?? '')}>
@@ -48,20 +56,18 @@ export function LabelBox({ label, children, required, title, colon, editable }: 
     let vColon: any;
     if (colon === true) vColon = ':';
     let content = editable === false ?
-        <div className="d-flex align-items-center border-bottom border-secondary-subtle tonwa-bg-gray-1 pt-1 pb-2 px-2 text-nowrap text-truncate">
+        <div className={cnContent}>
             {children}
         </div>
         :
         children;
 
-    let cnLabelContainer = ` ${cnCombo.cnColLabel} text-secondary text-end d-flex align-items-center flex-row justify-content-end `; //  small
-    let cnLabel = ' text-nowrap text-truncate ';
     return <div className="col">
-        <div className="row gx-0">
+        <div className={'row ' + cnGX}>
             <div className={cnLabelContainer} title={labelTitle}>
                 <span className={cnLabel}>{vLabel}</span> {vColon}
             </div>
-            <div className={`${cnCombo.cnColContent} ps-1 py-1 text-nowrap text-truncate`} title={title}>
+            <div className={`${cnCombo.cnColContent} text-nowrap text-truncate`} title={title}>
                 {content}
             </div>
         </div>

@@ -46,7 +46,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
     const vFieldRows = <div className={cnColumns2}>
         {
             fieldRows.map((v, index) => <div key={index} className="col">
-                <EditAtomField key={index} {...v} id={id} value={main[v.name]} saveField={saveField} saveBud={saveBud} labelSize={2} />
+                <EditAtomField key={index} {...v} id={id} value={main[v.name]} saveField={saveField} saveBud={saveBud} labelSize={0} />
                 <Sep />
             </div>)
         }

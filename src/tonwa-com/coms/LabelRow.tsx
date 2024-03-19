@@ -28,7 +28,7 @@ function DefaultRightContainer({ children }: ContainerProps) {
 
 export interface LabelRowPropsBase {
     className?: string;
-    labelSize?: 0 | 1 | 2;
+    labelSize?: 0 | 1 | 2 | 3;
     labelAlign?: 'start' | 'center' | 'end';
     labelClassName?: string;
     LabelContainer?: ContainerType;
@@ -44,10 +44,12 @@ export interface LabelRowProps extends LabelRowPropsBase {
     children: ReactNode;
 }
 
+const cnRowStart = ' row mx-0 gx-0 ';
 const cnCol = [
-    [' col-3 col-sm-2 ', ' col-9 col-sm-10 '],
-    [' col-4 col-sm-3 ', ' col-8 col-sm-9 '],
-    [' col-5 ', ' col-7 '],
+    ['', '', ''],
+    [cnRowStart, ' col-3 col-sm-2 ', ' col-9 col-sm-10 '],
+    [cnRowStart, ' col-4 col-sm-3 ', ' col-8 col-sm-9 '],
+    [cnRowStart, ' col-5 ', ' col-7 '],
 ];
 
 export function LabelRow({ className, labelSize, labelAlign, labelClassName, LabelContainer, midClassName, MidContainer, RightContainer, vAlign, to, children }: LabelRowProps) {
@@ -82,9 +84,9 @@ export function LabelRow({ className, labelSize, labelAlign, labelClassName, Lab
     else {
         midEnd = 2;
     }
-    let [cnColLabel, cnColContent] = cnCol[labelSize];
+    let [cnRow, cnColLabel, cnColContent] = cnCol[labelSize];
     let midArr: any[] = arr.slice(1, midEnd);
-    let cn = 'row mx-0 gx-0 ' + (className ?? 'bg-white');
+    let cn = cnRow + (className ?? 'bg-white');
     let content = <div className={cn}>
         <div className={cnColLabel + ` d-flex pe-2 text-nowrap text-truncate ${vAlignClassName} ${cnLabelAlign} ${labelClassName}`}>
             <LabelContainer>{arr[0]}</LabelContainer>
