@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { EntitySpec } from "app/Biz/EntityAtom";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { useCallback } from "react";
-import { Page, useModal } from "tonwa-app";
+import { Page, bootstrapContainer, useModal } from "tonwa-app";
 import { budFormRow } from "../Bud";
 import { useUqApp } from "app/UqApp";
 import { ParamSaveSpec } from "uqs/UqDefault";
@@ -83,7 +83,7 @@ export function usePickSpec() {
                     </Band>
                 </div>
                 <div className="m-3">
-                    <form className="container" onSubmit={handleSubmit(onSubmitForm)}>
+                    <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
                         <FormRowsView rows={formRows} register={register} errors={errors} />
                     </form>
                 </div>

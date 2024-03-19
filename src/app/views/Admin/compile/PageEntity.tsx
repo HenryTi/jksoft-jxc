@@ -5,7 +5,7 @@ import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import { Modal, Page, useModal } from "tonwa-app";
+import { Modal, Page, bootstrapContainer, useModal } from "tonwa-app";
 import { ButtonAsync, FA, List, Spinner, getAtomValue, setAtomValue, useEffectOnce } from 'tonwa-com';
 import { Grammar, highlight } from "prismjs";
 import './code-editor-style.css'
@@ -165,7 +165,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
                 { type: 'submit', label: '提交' }
             ];
             return <Page header="改名">
-                <div className="container border-bottom tonwa-bg-gray-2">
+                <div className={bootstrapContainer + ' border-bottom tonwa-bg-gray-2 '}>
                     <div className="m-3 mb-0">
                         <Band label={'名字'}>
                             <div className="mx-1 fw-bold">{name}</div>
@@ -173,7 +173,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
                     </div>
                 </div>
                 <div className="m-3">
-                    <form className="container" onSubmit={handleSubmit(onSubmitForm)}>
+                    <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
                         <FormRowsView rows={formRows} register={register} errors={errors} />
                     </form>
                 </div>

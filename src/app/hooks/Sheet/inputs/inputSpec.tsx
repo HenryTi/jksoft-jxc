@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { PickResult } from "../NamedResults";
 import { PendInputSpec } from "app/Biz";
-import { Page, useModal } from "tonwa-app";
+import { Page, bootstrapContainer, useModal } from "tonwa-app";
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { useUqApp } from "app/UqApp";
@@ -101,7 +101,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
                 </Band>
             </div>
             <div className="m-3">
-                <form className="container" onSubmit={handleSubmit(onSubmitForm)}>
+                <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
                     <FormRowsView rows={formRows} register={register} errors={errors} />
                 </form>
             </div>

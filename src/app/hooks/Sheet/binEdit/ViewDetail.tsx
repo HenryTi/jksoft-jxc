@@ -11,6 +11,7 @@ import { ViewBud } from "../../Bud";
 import { BinEditing } from "../store";
 import { Pencil, RowCols } from "app/hooks/tool";
 import { ValRow } from "../tool";
+import { bootstrapContainer } from "tonwa-app";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -135,7 +136,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     }
 
     return <div className="py-2 border-bottom border-secondary">
-        <div className="container">
+        <div className={bootstrapContainer}>
             <RowCols>
                 <ViewIdField bud={budI} value={i} />
                 <BinOwnedBuds bizBud={budI} valRow={valRow} />

@@ -1,6 +1,6 @@
 import { BizBud, PickParam } from "app/Biz";
 import { NamedResults } from "../NamedResults";
-import { Page, useModal } from "tonwa-app";
+import { Page, bootstrapContainer, useModal } from "tonwa-app";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { ViewBud, budFormRow } from "app/hooks";
 import { useForm } from "react-hook-form";
@@ -76,7 +76,7 @@ function PageParams({ header, valueParams, inputParams }: PageParamsProps) {
                 <ViewBud bud={bizBud} value={value} noLabel={true} />
             </Band>
         })}
-        <form className="container my-3" onSubmit={handleSubmit(onSubmitForm)}>
+        <form className={bootstrapContainer + ' my-3 '} onSubmit={handleSubmit(onSubmitForm)}>
             <FormRowsView rows={formRows} register={register} errors={errors} />
         </form>
     </Page>;

@@ -58,6 +58,7 @@
     display: flex;
 }
 
+/*
 @media (min-width: 576px) {
     .tonwa-band-container {
         max-width: 540px;
@@ -87,3 +88,4 @@
         max-width: 1320px;
     }
 }
+*/

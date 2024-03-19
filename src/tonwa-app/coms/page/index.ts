@@ -1,5 +1,5 @@
 export * from './PageProps';
-export { Page } from './Page';
+export { Page, bootstrapContainer } from './Page';
 export * from './PageTabs';
 export * from './PageTabsLayout';
 export * from './PageSpinner';

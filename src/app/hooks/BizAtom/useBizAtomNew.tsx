@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Page, useModal } from "tonwa-app";
+import { Page, bootstrapContainer, useModal } from "tonwa-app";
 import { FormRow, FormRowsView } from "app/coms";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -107,7 +107,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
             let ret = await actSave(entity, no, data);
             afterSubmit?.({ ...data, ...ret, no });
         }
-        return <form onSubmit={handleSubmit(onSubmit)} className="container my-3 pe-5">
+        return <form onSubmit={handleSubmit(onSubmit)} className={bootstrapContainer + ' my-3 pe-5 '}>
             <FormRowsView rows={formRows} {...{ register, errors }} />
         </form>;
     }

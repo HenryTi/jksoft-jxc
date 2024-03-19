@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { FA } from "tonwa-com";
 import { User } from "tonwa-uq";
 import { roleT } from "./res";
-import { Page, SelectUser, ViewUser, useModal } from "tonwa-app";
+import { Page, SelectUser, ViewUser, bootstrapContainer, useModal } from "tonwa-app";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { ChangeEvent, useState } from "react";
 
@@ -40,7 +40,7 @@ function PageInputAssigned({ user, assigned }: { user: User; assigned: string; }
     }
     return <Page header="用户">
         <div className="p-3">
-            <form className="container" onSubmit={handleSubmit(onSubmit)}>
+            <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmit)}>
                 <Band label={'用户'}>
                     <ViewUser user={user} />
                 </Band>

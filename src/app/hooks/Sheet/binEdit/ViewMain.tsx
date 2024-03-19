@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "../ViewSheetTime";
 import { BizBud } from "app/Biz";
 import { FA, setAtomValue } from "tonwa-com";
-import { BudCheckEditValue, BudCheckValue } from "tonwa-app";
+import { BudCheckEditValue, BudCheckValue, bootstrapContainer } from "tonwa-app";
 import React from "react";
 import { LabelBox, RowCols } from "app/hooks/tool";
 
@@ -35,7 +35,7 @@ export function ViewMain({ main, popup, readOnly }: { main: SheetMain; popup: bo
         setAtomValue(_binRow, { ...binRow });
     }
 
-    let cnBlock = ' d-flex border-bottom border-secondary-subtle bg-white container ';
+    let cnBlock = ' d-flex border-bottom border-secondary-subtle bg-white ' + bootstrapContainer;
     let viewProps: any;
     if (length > 0) {
         let viewRowArr = propRowArr.map((row, index) => <React.Fragment key={index}>

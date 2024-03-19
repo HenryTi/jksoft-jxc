@@ -12,6 +12,8 @@ import { useEffectOnce } from "tonwa-com";
 const scrollTimeGap = 100;
 const scrollEdgeGap = 30;
 
+// const bootstrapContainer = ' container ';
+export const bootstrapContainer = ' container-fluid ';
 export function PageBase(props: PageProps) {
     const uqApp = useUqAppBase();
     let { children, header, back, right, top, footer, onClosed, hideScroll } = props;
@@ -88,23 +90,23 @@ export function PageBase(props: PageProps) {
         <Suspense fallback={<PageSpinner />}>
             <div className='z-3 position-sticky top-0'>
                 <div className="tonwa-page-header">
-                    <div className='container px-0'>
+                    <div className={bootstrapContainer + ' px-0 '}>
                         {header}
                     </div>
                 </div>
                 {top && <div className="tonwa-page-content">
-                    <div className='container px-0'>
+                    <div className={bootstrapContainer + ' px-0 '}>
                         {top}
                     </div>
                 </div>}
             </div>
             <div className='tonwa-page-content flex-fill d-flex'>
-                <div className='container px-0 d-flex flex-column'>
+                <div className={bootstrapContainer + ' px-0 d-flex flex-column '}>
                     {children}
                 </div>
             </div>
             <div className='tonwa-page-footer position-sticky bottom-0'>
-                <div className='container px-0'>
+                <div className={bootstrapContainer + ' px-0 '}>
                     {footer}
                 </div>
             </div>

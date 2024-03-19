@@ -1,4 +1,4 @@
-import { Page, useModal } from "tonwa-app";
+import { Page, bootstrapContainer, useModal } from "tonwa-app";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Band, FormRowsView } from "app/coms";
@@ -81,11 +81,11 @@ function ModalInputRow({ binEditing }: { binEditing: BinEditing; }) {
         </Band>;
     }
     return <Page header="输入明细" right={right}>
-        <div className="py-1 tonwa-bg-gray-2 mb-3 container">
+        <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + bootstrapContainer}>
             <ViewIdField bud={budI} value={binDetail.i} />
             <ViewIdField bud={budX} value={binDetail.x} />
         </div>
-        <form className="container" onSubmit={handleSubmit(onSubmit)}>
+        <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmit)}>
             <FormRowsView rows={formRows} register={register} errors={errors} />
         </form>
     </Page>;

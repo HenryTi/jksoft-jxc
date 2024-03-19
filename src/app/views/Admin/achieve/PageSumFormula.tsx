@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useUqApp } from "app/UqApp";
 import { FormRow, FormRowsView } from "app/coms";
 import { useQuery } from "react-query";
-import { IDView, Page, PropEdit, useModal } from "tonwa-app";
+import { IDView, Page, PropEdit, bootstrapContainer, useModal } from "tonwa-app";
 import { BandCom, BandContainerContext, BandDecimal, BandString, ButtonAsync, FA, List, Sep } from "tonwa-com";
 import { EnumAtom, SumFormula, SumFormulaType } from "uqs/UqDefault";
 import React, { useState } from "react";
@@ -177,7 +177,7 @@ function PageAddFormula({ postAtom, postLabel, header, onSubmit }: PageAddFormul
     ];
     const { register, handleSubmit, formState: { errors }, clearErrors, setValue } = useForm({ mode: 'onBlur' });
     return <Page header={header + label.formula}>
-        <form onSubmit={handleSubmit(onSubmit)} className="container my-3 pe-5">
+        <form onSubmit={handleSubmit(onSubmit)} className={bootstrapContainer + ' my-3 pe-5 '}>
             <FormRowsView rows={formRows} setValue={setValue} clearErrors={clearErrors} {...{ register, errors }} />
         </form>
     </Page>;
@@ -195,7 +195,7 @@ function PageViewFormula({ value, arr, onInvalid, onValueChanged }: {
     }
     const { caption } = value;
     return <Page header={caption ?? label.formula}>
-        <PropEdit className="container" values={value} onValuesChanged={onValuesChanged} labelSize={3} >
+        <PropEdit className={bootstrapContainer} values={value} onValuesChanged={onValuesChanged} labelSize={3} >
             <BandString label={label.caption} name="caption" placeholder="公式标题" />
             <Sep />
             {

@@ -7,7 +7,7 @@ import { usePickFromPend } from "./fromPend";
 import { usePickFromQuery } from "./fromQuery";
 import { SheetStore } from "../store";
 import { NamedResults, PickResult } from "../NamedResults";
-import { Page, useModal } from "tonwa-app";
+import { Page, bootstrapContainer, useModal } from "tonwa-app";
 import { FA, Sep, SpinnerSmall, useEffectOnce } from "tonwa-com";
 import { RearPickResultType, ReturnUseBinPicks } from "./useBinPicks";
 import { ViewAtomId } from "app/hooks";
@@ -144,7 +144,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
             vContent = <SpinnerSmall />;
         }
         return <>
-            <div className="container">
+            <div className={bootstrapContainer}>
                 <div className="row">
                     <div className="col-3 py-2 tonwa-bg-gray-1">
                         <FA name={iconPrefix} fixWidth={true} className={'me-2 ' + cnAngle} />

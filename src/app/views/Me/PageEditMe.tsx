@@ -1,5 +1,5 @@
 import { useT, FA, BandString, Sep, BandCom, LabelRow, ContainerProps, LabelRowProps } from "tonwa-com";
-import { Page, PropEdit, LabelRowEdit } from "tonwa-app";
+import { Page, PropEdit, LabelRowEdit, bootstrapContainer } from "tonwa-app";
 import { appT, ResApp } from '../../res';
 import { useUqApp } from "app/UqApp";
 import { Link } from "react-router-dom";
@@ -44,7 +44,7 @@ export function PageEditMe() {
             <Sep />
             <LabelRowEdit {...temp} label={"a"} value={1} type="number" />
             <Sep />
-            <PropEdit className="container" values={user} onValuesChanged={onValuesChanged} labelSize={3} >
+            <PropEdit className={bootstrapContainer} values={user} onValuesChanged={onValuesChanged} labelSize={3} >
                 <BandString label="别名" name="nick" placeholder="好的别名更方便记忆" />
                 <Sep />
                 <BandCom label={tChangePassword} toEdit={pathChangePassword}>
