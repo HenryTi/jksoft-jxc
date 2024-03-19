@@ -1,5 +1,5 @@
+import dayjs from "dayjs";
 import { Atom, Getter, WritableAtom, atom } from "jotai";
-import moment from "moment";
 import { useState } from "react";
 import { env, getAtomValue, setAtomValue } from "tonwa-com";
 
@@ -176,7 +176,7 @@ class WeekPeriod extends Period {
             + (mt === mf ? '' : `${mt + 1}月`) + `${dt}日`;
     }
     getGrainSize(date: Date) {
-        return moment(date).format("MM-DD");
+        return dayjs(date).format("MM-DD");
     }
 }
 
@@ -228,7 +228,7 @@ class MonthPeriod extends Period {
         return caption;
     }
     getGrainSize(date: Date) {
-        return moment(date).format("MM-DD");
+        return dayjs(date).format("MM-DD");
     }
 }
 
@@ -286,7 +286,7 @@ class YearPeriod extends Period {
         return caption;
     }
     getGrainSize(date: Date) {
-        return moment(date).add(1, 'M').format("MM");
+        return dayjs(date).add(1, 'M').format("MM");
     }
 }
 

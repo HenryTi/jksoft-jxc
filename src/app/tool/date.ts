@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 
 const date19700101 = Date.parse('1970-1-1');
 const milliseconds = 1000 * 60 * 60 * 24;
@@ -23,6 +23,6 @@ export function contentFromDays(days: number) {
     let ret = `${year}-${month}-${day}`;
     return ret;
     */
-    let ret = moment(date).format('YYYY-MM-DD');
+    let ret = dayjs(date).format('YYYY-MM-DD');
     return ret;
 }
