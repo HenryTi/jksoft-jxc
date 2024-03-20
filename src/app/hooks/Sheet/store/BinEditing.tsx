@@ -20,7 +20,9 @@ abstract class BinFields extends BudsFields {
         for (let i in this.fieldColl) {
             let f = this.fieldColl[i];
             let { name, bud, valueSet, valueSetType, required } = f;
-            this.fieldColl[name] = f;
+            if (name !== i) {
+                this.fieldColl[name] = f;
+            }
             let { ui, budDataType: { min, max } } = bud;
             let { show } = ui;
             if (show === true) continue;

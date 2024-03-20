@@ -24,9 +24,8 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     const pickFromSpec = usePickFromSpec();
     const pickFromPend = usePickFromPend();
     const [pickFromQueryScalar, pickFromQuery] = usePickFromQuery();
-    const { main, entitySheet, divStore } = sheetStore;
+    const { main, divStore } = sheetStore;
     const { binPicks, rearPick } = main.entityMain;
-    const { caption, name } = entitySheet;
     const [namedResults, setNamedResult] = useState<{ [name: string]: any }>({
         '%sheet': new Proxy(main.valRow, main.entityMain.proxyHandler()),
     });
@@ -57,6 +56,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         }
         setNamedResult({ ...namedResults });
         setCur(index + 1);
+        divStore.setReload();
     }
     async function onPickRear(binPick: BinPick, index: number) {
         if (sheetStore === undefined) debugger;
@@ -80,6 +80,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         setRearPickResult(pickResult);
         setCur(binPicks.length + 1);
         setNamedResult({ ...namedResults, [binPick.name]: pickResult });
+        divStore.setReload();
     }
 
     function ViewBinPick({ binPick, onPick, index }: { binPick: BinPick; onPick: (binPick: BinPick, index: number) => Promise<void>; index: number; }) {
@@ -136,8 +137,8 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         else {
             vContent = <small className="text-secondary">-</small>;
             cn = '';
-            cnLabel = ' text-secondary small ';
-            cnAngle = ' text-secondary small ';
+            cnLabel = ' text-secondary ';
+            cnAngle = ' text-secondary ';
             iconPrefix = 'angle-right';
         }
         if (isPicking === true) {

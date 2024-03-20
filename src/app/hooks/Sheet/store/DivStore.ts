@@ -76,6 +76,10 @@ export class DivStore {
         }
     }
 
+    setReload() {
+        this.pendLoadState = PendLoadState.none;
+    }
+
     async loadPendId(pendId: number): Promise<void> {
         if (this.pendColl === undefined) this.pendColl = {};
         const {

@@ -4,7 +4,7 @@ import { OwnedBuds, RowCols } from "app/hooks/tool";
 import { ViewPendRowEdit } from "./ViewPendRowEdit";
 import { PendBandProps } from "./model";
 import { BudValue } from "tonwa-app";
-import { theme } from "tonwa-com";
+import { Sep, theme } from "tonwa-com";
 
 export function ViewPendRow({
     value: pendRow
@@ -37,8 +37,9 @@ export function ViewPendRow({
     }
     let rowContent = <div className="d-flex py-1">
         <div className={'flex-grow ' + theme.bootstrapContainer}>
+            <ViewSpec id={i} bold={true} noLabel={true} />
+            <Sep className="my-1" />
             <RowCols>
-                <ViewSpec id={i} />
                 <OwnedBuds values={ownedBudsValues} />
                 <ViewPropArr className="col" arr={mid} />
                 <ViewPropArr className="col" arr={cols} />

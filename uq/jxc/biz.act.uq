@@ -436,10 +436,17 @@ Biz ACT RemoveDraft (
 ) {
     VAR me ID = Me();
     IF EXISTS(SELECT a.i FROM IxState as a WHERE a.i=me AND a.x=id) {
+        /-mysql
+        DELETE a FROM ixbud as a WHERE a.i=id;
+        DELETE a FROM ixbudint as a WHERE a.i=id;
+        DELETE a FROM ixbuddec as a WHERE a.i=id;
+        DELETE a FROM ixbudstr as a WHERE a.i=id;
+        DELETE a FROM bin as a WHERE a.i=id;
+        DELETE a FROM bin as a JOIN bud as a1 ON a1.id=a.id WHERE a1.base=id;
+        -/
         WITH IxState I=me X=id DEL;
         WITH Sheet ID=id DEL;
     }
-
 };
 
 Biz QUERY GetMyDrafts ver 0.2 (
@@ -464,6 +471,20 @@ Biz AC DeleteMyDrafts ver 0.5 (
     VAR me ID = Me();
     SET @me=me;
     /-mysql
+    DELETE a FROM ixbud as a 
+        JOIN sheet as b ON b.id=a.i JOIN ixstate as c ON c.i=@me AND c.x=b.id;
+    DELETE a FROM ixbudint as a 
+        JOIN sheet as b ON b.id=a.i JOIN ixstate as c ON c.i=@me AND c.x=b.id;
+    DELETE a FROM ixbuddec as a 
+        JOIN sheet as b ON b.id=a.i JOIN ixstate as c ON c.i=@me AND c.x=b.id;
+    DELETE a FROM ixbudstr as a 
+        JOIN sheet as b ON b.id=a.i JOIN ixstate as c ON c.i=@me AND c.x=b.id;
+    DELETE a FROM bin as a
+        JOIN sheet as b ON b.id=a.id JOIN ixstate as c ON c.i=@me AND c.x=b.id;
+    DELETE a FROM bin as a 
+        JOIN bud as a1 ON a1.id=a.id
+        JOIN sheet as b ON b.id=a1.base
+        JOIN ixstate as c ON c.i=@me AND c.x=b.id;
     DELETE a FROM sheet as a JOIN ixstate as b ON b.i=@me AND b.x=a.id;
     -/
     WITH IxState as a I=me

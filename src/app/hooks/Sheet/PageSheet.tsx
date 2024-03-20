@@ -1,23 +1,20 @@
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { SheetStore, SubmitState } from "./store";
-import { ButtonAsync, FA, LMR, from62, setAtomValue, to62, useEffectOnce } from "tonwa-com";
+import { to62 } from "tonwa-com";
 import { ViewBinDivs, ViewMain } from "./binEdit";
 import { ViewDetail } from "./binEdit";
 import { useAtomValue } from "jotai";
 import { useCoreDetailAdd } from "./binEdit";
-import { NavigateFunction, useLocation, useNavigate, useParams } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import { UqApp, useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { PickFunc, useBinPicks } from "./binPick";
 import { useSheetHeader } from "./useSheetStore";
 import { headerSheet, buttonDefs } from "./headerSheet";
 
 export function PageSheet({ store }: { store: SheetStore; }) {
-    // const { header, back } = useSheetHeader(store);
     let { header, top, view, right } = useSheetView(store);
-    // btnSubmit.disabled = true;
-    // btnDiscard.hidden = false;
     return <Page header={header} back={null} top={top} right={right}>
         {view}
     </Page>
@@ -91,8 +88,6 @@ function useSheetView(store: SheetStore) {
         }
     }
 
-    // btnSubmit.act = onSubmit;
-
     function removeSheetFromCache() {
         let { valRow: { id } } = main;
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
@@ -121,7 +116,7 @@ function useSheetView(store: SheetStore) {
     let btnExit = buttonDefs.exit(onExit, false);
     let headerGroup = [btnExit];
 
-    function MainOnlyEdit() {
+    function mainOnlyEdit() {
         let btnSubmit = buttonDefs.submit(onSubmit);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, true, editable === false);
         let toolGroups = [[btnPrint, btnSubmit], null, [btnDiscard]];
@@ -131,7 +126,7 @@ function useSheetView(store: SheetStore) {
         };
     }
 
-    function MainDetailEdit() {
+    function mainDetailEdit() {
         const addNew = useCoreDetailAdd(store);
         const start = useCallback(async function () {
             startSheetStore(uqApp, navigate, store, pick);
@@ -148,22 +143,18 @@ function useSheetView(store: SheetStore) {
 
         let sections = useAtomValue(detail._sections);
         let submitDisabled: boolean = true, submitHidden: boolean;
-        // let btnSubmitOld: any; // , cnAdd: string;
         if (sections.length === 0 && submitState === SubmitState.hide) {
-            // cnAdd = 'btn btn-primary me-3';
             submitHidden = true;
         }
         else {
             submitHidden = false;
             let disabled = (sections.length === 0 && submitState === SubmitState.none) || submitState === SubmitState.disable;
             submitDisabled = disabled;
-            // btnSubmitOld = <ButtonSubmit onClick={onSubmit} disabled={disabled} />;
         }
         let btnSubmit = buttonDefs.submit(onSubmit, submitDisabled, submitHidden);
         let btnAddDetail = buttonDefs.addDetail(onAddRow);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, false, editable === false);
         let toolGroups = [[btnAddDetail, btnPrint, btnSubmit], null, [btnDiscard]];
-        // let toolbar = <Toolbar groups={[[btnSubmit], null, [btnDiscard, btnExit]]} />;
         if (id === 0) {
             return {
                 toolGroups,
@@ -172,27 +163,23 @@ function useSheetView(store: SheetStore) {
                 </div>
             };
         }
-        else {
-            const { divStore } = store;
-            const { binDiv } = divStore;
-            let vDetail: any;
-            if (binDiv.div === undefined) {
-                vDetail = <ViewDetail detail={detail} editable={editable} />;
-            }
-            else {
-                vDetail = <ViewBinDivs divStore={divStore} editable={editable} />;
-            }
-            return {
-                toolGroups,
-                view: <>
-                    <ViewMain main={main} popup={false} />
-                    {vDetail}
-                </>
-            };
-        }
+        const { divStore } = store;
+        const { binDiv } = divStore;
+        return {
+            toolGroups,
+            view: <>
+                <ViewMain main={main} popup={false} />
+                {
+                    binDiv.div === undefined ?
+                        <ViewDetail detail={detail} editable={editable} />
+                        :
+                        <ViewBinDivs divStore={divStore} editable={editable} />
+                }
+            </>
+        };
     }
 
-    const { toolGroups, view } = (detail === undefined ? MainOnlyEdit() : MainDetailEdit());
+    const { toolGroups, view } = (detail === undefined ? mainOnlyEdit() : mainDetailEdit());
     return {
         ...headerSheet({ store, toolGroups, headerGroup }),
         view: view,

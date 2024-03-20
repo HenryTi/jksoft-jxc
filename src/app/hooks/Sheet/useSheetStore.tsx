@@ -9,52 +9,9 @@ export function useSheetStore() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const { sheet: entityId62, id } = useParams();
-    // const navigate = useNavigate();
     const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
     const sheetId = from62(id);
-    /*
-    const { name, caption } = entitySheet;
-    const sheetStore = new SheetStore(
-        uq,
-        biz,
-        entitySheet,
-        sheetId
-    );
-    */
-    /*
-    async function onSubmit() {
-    }
 
-    async function onDiscard() {
-
-    }
-
-    async function onExit() {
-        navigate(-1);
-    }
-
-    const btnSubmit: ToolButton = { caption: '提交', icon: 'send-o', act: onSubmit };
-    const btnDiscard: ToolButton = { caption: '作废', act: onDiscard };
-    const btnExit: ToolButton = { caption: '退出', act: onExit };
-    const groups: ToolButton[][] = [
-        [btnSubmit,],
-        null,
-        [btnDiscard, btnExit,]
-    ];
-    const toolbar = <Toolbar groups={groups} />;
-    const ret = useMemo(() => ({
-        sheetStore,
-        toolbar,
-        groups,
-        buttons: {
-            submit: btnSubmit,
-            discard: btnDiscard,
-            exit: btnExit,
-        },
-        header: caption ?? name,
-        back: 'file-text-o',
-    }), []);
-    */
     const refSheetStore = useRef(new SheetStore(
         uq,
         biz,

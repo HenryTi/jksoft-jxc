@@ -87,7 +87,18 @@ export function arrFromJsonArr(entity: Entity, arr: any[]) {
 // table pend
 export function arrFromJsonMid(entity: Entity, mid: any) {
     let ret: Prop[] = [];
-    const { budColl } = entity;
+    const { budColl, buds } = entity;
+    // 按buds的顺序处理。暂不知道buds是否包含继承来的
+    for (let bud of buds) {
+        if (bud === undefined) {
+            debugger;
+            continue;
+        }
+        let value = mid[bud.id];
+        if (value === null) continue;
+        ret.push({ name: undefined, bud, value });
+    }
+    /*
     for (let i in mid) {
         let bud = budColl[i];
         if (bud === undefined) continue;
@@ -95,6 +106,7 @@ export function arrFromJsonMid(entity: Entity, mid: any) {
         if (value === null) continue;
         ret.push({ name: bud.name, bud, value });
     }
+    */
     return ret;
 }
 

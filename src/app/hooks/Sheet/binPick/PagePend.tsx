@@ -81,7 +81,7 @@ export function PagePend(props: PagePendProps) {
             <List items={pendRows}
                 ViewItem={ViewItemPendRow} className=""
                 onItemSelect={onItemSelectFunc}
-                sep={<Sep sep={5} />}
+                sep={<Sep sep={2} />}
                 none={<div className="p-3 small text-secondary tonwa-bg-gray-2 border-bottom">
                     <FA name="times-circle" className="me-3 text-danger" size="lg" />
                     无内容

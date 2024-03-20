@@ -26,7 +26,7 @@ export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable:
         </div>;
     }
     return <div>
-        <div className="pt-2 pb-1 px-3 tonwa-bg-gray-1">{caption ?? '明细'}</div>
+        <div className="pt-2 pb-1 px-3 tonwa-bg-gray-1 border-top border-secondary">{caption ?? '明细'}</div>
         {content}
     </div>
 }
@@ -95,7 +95,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     let cnEdit = editable === true ? 'cursor-pointer' : 'text-light';
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
         if (bud === undefined) return null;
-        return <ViewSpec id={value} />;
+        return <ViewSpec id={value} bold={false} />;
     }
     let vPrice: any;
     if (budPrice !== undefined) {

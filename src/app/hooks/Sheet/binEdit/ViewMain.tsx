@@ -36,13 +36,13 @@ export function ViewMain({ main, popup, readOnly }: { main: SheetMain; popup: bo
         setAtomValue(_binRow, { ...binRow });
     }
 
-    let cnBlock = ' d-flex border-bottom border-secondary-subtle bg-white ' + theme.bootstrapContainer;
+    let cnBlock = ' d-flex bg-white ' + theme.bootstrapContainer;
     let viewProps: any;
     if (length > 0) {
         let viewRowArr = propRowArr.map((row, index) => <React.Fragment key={index}>
             {row}
         </React.Fragment>);
-        viewProps = <div className={cnBlock + ' mt-2 '}>
+        viewProps = <div className={cnBlock + ' pt-2 border-top border-secondary '}>
             <div className={'flex-fill py-2 '}>
                 <RowCols>
                     {viewRowArr}
@@ -61,7 +61,7 @@ export function ViewMain({ main, popup, readOnly }: { main: SheetMain; popup: bo
     }
 
     return <div className="tonwa-bg-gray-1">
-        <div className={cnBlock + ' border-top '}>
+        <div className={cnBlock}>
             <div className={'flex-fill py-3'}>
                 <RowCols>
                     <LabelBox label="单据编号" editable={false}>

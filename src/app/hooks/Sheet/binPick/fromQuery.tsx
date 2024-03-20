@@ -164,7 +164,7 @@ export function usePickFromQuery(): [
                             onItemSelect={onItemSelect}
                             onItemClick={onItemClick}
                             itemBan={itemBan}
-                            sep={<Sep className="border-secondary" />} />
+                            sep={<Sep className="border-bottom" />} />
                     </div>
                     {btnOk}
                 </div>

@@ -67,11 +67,12 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
     return content;
 }
 
-export function ViewSpec({ id, uiType, noLabel }: { id: number; uiType?: ViewBudUIType; noLabel?: boolean; }) {
+export function ViewSpec({ id, uiType, noLabel, bold }: { id: number; uiType?: ViewBudUIType; noLabel?: boolean; bold?: boolean; }) {
     function ViewAtom({ no, ex, entity }: { no: string; ex: string; entity?: EntityAtomID; }) {
         let title = '编号: ' + no;
+        let vContent = <>{bold === true ? <b>{ex}</b> : ex}<small className="ms-3">{no}</small></>
         if (noLabel === true) {
-            return <span title={title}>{ex}</span>;
+            return <span title={title}>{vContent}</span>;
         }
         let label: any;
         if (entity !== undefined) {
@@ -79,7 +80,7 @@ export function ViewSpec({ id, uiType, noLabel }: { id: number; uiType?: ViewBud
             label = caption ?? name;
         }
         return <LabelBox label={label} title={'编号: ' + no} /*colon={true}*/>
-            {label}{ex}
+            {vContent}
         </LabelBox>;
     }
     return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={uiType} noLabel={noLabel} />

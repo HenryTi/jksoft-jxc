@@ -23,7 +23,7 @@ export interface BudGroups {
 export class Entity extends BizBase {
     // readonly selfProps: BizBud[] = [];       // 本 Atom 定义的
     readonly budColl: { [key: string | number]: BizBud; } = {};           // 包括全部继承来的
-    readonly buds: BizBud[] = [];
+    readonly buds: BizBud[] = [];                       // 是否包含继承的？
     budGroups: BudGroups;
 
     // subEntities 有3种不同情况:
