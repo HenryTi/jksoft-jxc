@@ -7,13 +7,13 @@ import { ModalContext, useModal, useUqAppBase } from "../../UqAppBase";
 import { PageProps, Scroller } from "./PageProps";
 import { ButtonPageBack } from "./ButtonPageBack";
 import { PageSpinner } from "./PageSpinner";
-import { useEffectOnce } from "tonwa-com";
+import { theme, useEffectOnce } from "tonwa-com";
 
 const scrollTimeGap = 100;
 const scrollEdgeGap = 30;
 
-// const bootstrapContainer = ' container ';
-export const bootstrapContainer = ' container-fluid ';
+// const theme.bootstrapContainer = ' container ';
+// export const theme.bootstrapContainer = ' container-fluid ';
 export function PageBase(props: PageProps) {
     const uqApp = useUqAppBase();
     let { children, header, back, right, top, footer, onClosed, hideScroll } = props;
@@ -86,27 +86,27 @@ export function PageBase(props: PageProps) {
             {right}
         </div>;
     }
-    return <div ref={divRef} className="tonwa-page">
+    return <div ref={divRef} className={'tonwa-page ' + theme.small}>
         <Suspense fallback={<PageSpinner />}>
             <div className='z-3 position-sticky top-0'>
                 <div className="tonwa-page-header">
-                    <div className={bootstrapContainer + ' px-0 '}>
+                    <div className={theme.bootstrapContainer + ' px-0 '}>
                         {header}
                     </div>
                 </div>
                 {top && <div className="tonwa-page-content">
-                    <div className={bootstrapContainer + ' px-0 '}>
+                    <div className={theme.bootstrapContainer + ' px-0 '}>
                         {top}
                     </div>
                 </div>}
             </div>
             <div className='tonwa-page-content flex-fill d-flex'>
-                <div className={bootstrapContainer + ' px-0 d-flex flex-column '}>
+                <div className={theme.bootstrapContainer + ' px-0 d-flex flex-column '}>
                     {children}
                 </div>
             </div>
             <div className='tonwa-page-footer position-sticky bottom-0'>
-                <div className={bootstrapContainer + ' px-0 '}>
+                <div className={theme.bootstrapContainer + ' px-0 '}>
                     {footer}
                 </div>
             </div>

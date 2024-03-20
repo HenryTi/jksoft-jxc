@@ -3,7 +3,8 @@ import { EntityIOApp, EntityIOSite, IOAppID } from "app/Biz";
 import { LabelRowEdit, PagePickValue, ViewAtom } from "app/hooks";
 import { AtomPhrase, UseQueryOptions } from "app/tool";
 import React, { useState } from "react";
-import { Page, PageConfirm, bootstrapContainer, useModal } from "tonwa-app";
+import { Page, PageConfirm, useModal } from "tonwa-app";
+import { theme } from "tonwa-com";
 import { FA, Sep } from "tonwa-com";
 import { PageAtomMap } from "./PageAtomMap";
 import md5 from "md5";
@@ -215,7 +216,7 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: Ent
         <div className="tonwa-bg-gray-1 small text-secondary px-3 pt-2 pb-1 border-bottom mt-3">
             对照表
         </div>
-        <div className={bootstrapContainer + ' py-3 '}>
+        <div className={theme.bootstrapContainer + ' py-3 '}>
             <div className={cnRowCols}>
                 {IDs.map(v => <div className="col" key={v.id}>
                     <ViewIOAppID value={v} />

@@ -2,7 +2,8 @@ import { DivEditing, UseInputsProps } from "../store";
 import { FA } from "tonwa-com";
 import { ValRow, btnNext, cnNextClassName } from "../tool";
 import { UqApp } from "app";
-import { Modal, Page, bootstrapContainer, useModal } from "tonwa-app";
+import { Modal, Page, useModal } from "tonwa-app";
+import { theme } from "tonwa-com";
 import { FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
 import { ChangeEvent, useState } from "react";
@@ -66,7 +67,7 @@ function PageInput({ divEditing }: { divEditing: DivEditing; }) {
     }
     return <Page header={binDiv.ui?.caption}>
         <div className="my-3">
-            <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
+            <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
                 <FormRowsView rows={formRows} register={register} errors={errors} setValue={setValue} />
             </form>
         </div>

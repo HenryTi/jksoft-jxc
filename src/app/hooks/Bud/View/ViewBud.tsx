@@ -43,7 +43,7 @@ export function ViewBud({ bud, value, uiType, noLabel }: { bud: BizBud; value: a
         return <div className="col">{content}</div>;
     }
     //return <div className="col"><small className="text-secondary me-2">{caption ?? name}</small>{content}</div>
-    return <LabelBox label={caption ?? name} colon={true}>{content}</LabelBox>;
+    return <LabelBox label={caption ?? name} className="mt-1 mb-2" /*colon={true}*/>{content}</LabelBox>;
 }
 
 function ViewAtomInBud({ value }: { value: any; }) {

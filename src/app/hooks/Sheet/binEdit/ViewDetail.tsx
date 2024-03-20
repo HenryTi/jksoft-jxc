@@ -4,14 +4,14 @@ import { FA, LMR, Sep } from "tonwa-com";
 import { ViewSpec } from "app/hooks/View";
 import React from "react";
 import { useCoreDetailEdit } from "./useCoreDetailEdit";
-import { BinRow, BizBud } from "app/Biz";
+import { BizBud } from "app/Biz";
 import { OwnedBuds } from "../../tool/tool";
 import { useRowEdit } from "./rowEdit";
 import { ViewBud } from "../../Bud";
 import { BinEditing } from "../store";
 import { Pencil, RowCols } from "app/hooks/tool";
 import { ValRow } from "../tool";
-import { bootstrapContainer } from "tonwa-app";
+import { theme } from "tonwa-com";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -136,7 +136,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     }
 
     return <div className="py-2 border-bottom border-secondary">
-        <div className={bootstrapContainer}>
+        <div className={theme.bootstrapContainer}>
             <RowCols>
                 <ViewIdField bud={budI} value={i} />
                 <BinOwnedBuds bizBud={budI} valRow={valRow} />

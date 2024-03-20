@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
-import { FA } from "tonwa-com";
 import { Form, Submit } from "tonwa-com";
-import { Page, bootstrapContainer } from "../page";
+import { theme } from "tonwa-com";
+import { Page } from "../page";
 import { Band, BandContainerContext, BandContainerProps, BandContentType, BandFieldErrors, BandMemos, BandTemplateProps, useBand, useBandContainer, VBandContainerContext } from "tonwa-com";
 import { useModal } from "../../UqAppBase";
 import { Pencil } from "app/hooks/tool";
@@ -92,7 +92,7 @@ function ValueEditPage({ detail }: { detail: DetailContext; }) {
     }
     let values = detail.getValues();
     return <Page header={label} back="close">
-        <Form className={bootstrapContainer + ' px-3 py-3 '} values={values} BandTemplate={ValueEditBandTemplate}>
+        <Form className={theme.bootstrapContainer + ' px-3 py-3 '} values={values} BandTemplate={ValueEditBandTemplate}>
             <Band>
                 {content}
             </Band>

@@ -4,7 +4,7 @@ import { FA } from "tonwa-com";
 import { useInputs } from "../inputs";
 import { ViewBud, ViewBudUIType, ViewSpecBaseOnly } from "app/hooks";
 import { RowCols } from "app/hooks/tool";
-import { bootstrapContainer } from "tonwa-app";
+import { theme } from "tonwa-com";
 
 interface ViewDivProps {
     divStore: DivStore;
@@ -136,11 +136,11 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
             {vContent}
         </div>;
     }
-    let cn: string = bootstrapContainer + ' d-flex py-2 border-bottom ';
+    let cn: string = theme.bootstrapContainer + ' d-flex py-2 border-bottom ';
     if (level < divLevels) cn += 'tonwa-bg-gray-' + (divLevels - level);
     else cn += 'bg-white';
     return <div className={cn}>
-        <div className={'flex-fill ' + bootstrapContainer}>
+        <div className={'flex-fill ' + theme.bootstrapContainer}>
             {vIBase}
             <RowCols>
                 {valDiv.getBudsValArr().map(([bud, value]) => {

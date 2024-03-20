@@ -34,7 +34,7 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
                         let content: any = budDataType.valueToContent(values[i]);
                         let band: any;
                         //if (noLabel !== true) {
-                        band = <LabelBox key={id} label={caption ?? name} colon={true}>
+                        band = <LabelBox key={id} label={caption ?? name} /*colon={true}*/>
                             {content}
                         </LabelBox>;
                         //}
@@ -78,7 +78,7 @@ export function ViewSpec({ id, uiType, noLabel }: { id: number; uiType?: ViewBud
             const { caption, name } = entity;
             label = caption ?? name;
         }
-        return <LabelBox label={label} title={'编号: ' + no} colon={true}>
+        return <LabelBox label={label} title={'编号: ' + no} /*colon={true}*/>
             {label}{ex}
         </LabelBox>;
     }
@@ -96,7 +96,7 @@ export function ViewBudSpec({ id, bud, noLabel }: { id: number; bud: BizBud; noL
             const { caption, name } = bud;
             label = caption ?? name; // <small className="text-secondary me-2">{caption ?? name}</small>;
         }
-        return <LabelBox title={title} label={label} colon={true}>
+        return <LabelBox title={title} label={label} /*colon={true}*/>
             {ex}
         </LabelBox>;
     }
@@ -112,8 +112,7 @@ export function ViewSpecBaseOnly({ id }: { id: number; }) {
     if (atom === undefined) return null;
     const { value: atomValue, entity } = atom;
     if (atomValue === undefined) return null;
-    // const { caption, name } = entity;
-    let label: any = undefined; // = <small className="text-secondary me-2">{caption ?? name}</small>;
+    let label: any = undefined;
     const { no, ex } = atomValue;
     return <div title={'编号: ' + no} className="mb-1">
         {label} {ex}

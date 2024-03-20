@@ -1,10 +1,9 @@
-import { useCallback } from "react";
 import { PickResult } from "../NamedResults";
 import { PendInputSpec } from "app/Biz";
-import { Page, bootstrapContainer, useModal } from "tonwa-app";
+import { Page } from "tonwa-app";
+import { theme } from "tonwa-com";
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { useUqApp } from "app/UqApp";
 import { ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
@@ -101,7 +100,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
                 </Band>
             </div>
             <div className="m-3">
-                <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
+                <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
                     <FormRowsView rows={formRows} register={register} errors={errors} />
                 </form>
             </div>

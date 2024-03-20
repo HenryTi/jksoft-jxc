@@ -3,7 +3,8 @@ import { Prop, VNamedBud } from "../tool";
 import { OwnedBuds, RowCols } from "app/hooks/tool";
 import { ViewPendRowEdit } from "./ViewPendRowEdit";
 import { PendBandProps } from "./model";
-import { BudValue, bootstrapContainer } from "tonwa-app";
+import { BudValue } from "tonwa-app";
+import { theme } from "tonwa-com";
 
 export function ViewPendRow({
     value: pendRow
@@ -35,7 +36,7 @@ export function ViewPendRow({
         ownedBudsValues = ownedBudsValuesColl[iBud.id];
     }
     let rowContent = <div className="d-flex py-1">
-        <div className={'flex-grow ' + bootstrapContainer}>
+        <div className={'flex-grow ' + theme.bootstrapContainer}>
             <RowCols>
                 <ViewSpec id={i} />
                 <OwnedBuds values={ownedBudsValues} />

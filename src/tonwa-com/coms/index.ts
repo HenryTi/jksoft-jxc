@@ -11,3 +11,4 @@ export * from './EasyDate';
 export * from './IconText';
 export * from './DropDownActions';
 export * from './LabelRow';
+export * from './Theme';

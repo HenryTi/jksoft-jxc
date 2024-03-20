@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { FA } from "tonwa-com";
-import { bootstrapContainer } from "./Page";
+import { theme } from "tonwa-com";
 
 interface PageTabsLayoutProps {
     tabs: { to: string; caption: string; icon: string }[];
@@ -14,7 +14,7 @@ export function PageTabsLayout({ tabs }: PageTabsLayoutProps) {
         return 'flex-fill mx-1 text-center py-1 ' +
             (isActive === true ? 'text-primary' : 'text-secondary');
     }
-    let vTabs = <div className={' d-flex ' + bootstrapContainer}>
+    let vTabs = <div className={' d-flex ' + theme.bootstrapContainer}>
         {tabs.map(v => {
             const { to, caption, icon } = v;
             return <NavLink key={caption} to={to} className={tabClassName} replace={true} >

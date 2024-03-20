@@ -1,6 +1,7 @@
 import { FormRow, FormRowsView } from "app/coms";
 import { useForm, RegisterOptions } from "react-hook-form";
-import { Page, PickProps, UqAppBase, bootstrapContainer, uqAppModal, useModal } from "tonwa-app";
+import { Page, PickProps, UqAppBase, uqAppModal, useModal } from "tonwa-app";
+import { theme } from "tonwa-com";
 
 export async function pickValue(uqApp: UqAppBase, pickProps: PickProps, options: RegisterOptions) {
     const { label, value, type } = pickProps;
@@ -26,7 +27,7 @@ export function PagePickValue<T extends string | number>({ label, value, type, o
     ];
     return <Page header={label}>
         <div className="px-5 py-3">
-            <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmit)}>
+            <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmit)}>
                 <FormRowsView rows={formRows} register={register} errors={errors} />
             </form>
         </div>
