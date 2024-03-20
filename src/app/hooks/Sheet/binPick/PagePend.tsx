@@ -72,17 +72,20 @@ export function PagePend(props: PagePendProps) {
             关闭
         </button>;
     }
-    return <Page header={caption}>
-        <List items={pendRows}
-            ViewItem={ViewItemPendRow} className=""
-            onItemSelect={onItemSelectFunc}
-            sep={<Sep sep={5} />}
-            none={<div className="p-3 small text-secondary tonwa-bg-gray-2 border-bottom">
-                <FA name="times-circle" className="me-3 text-danger" size="lg" />
-                无内容
-            </div>} />
-        <div className="p-3">
-            {btnFinish}
+    const footer = <div className="px-3 py-2">
+        {btnFinish}
+    </div>
+
+    return <Page header={caption} footer={footer}>
+        <div className="bg-white">
+            <List items={pendRows}
+                ViewItem={ViewItemPendRow} className=""
+                onItemSelect={onItemSelectFunc}
+                sep={<Sep sep={5} />}
+                none={<div className="p-3 small text-secondary tonwa-bg-gray-2 border-bottom">
+                    <FA name="times-circle" className="me-3 text-danger" size="lg" />
+                    无内容
+                </div>} />
         </div>
     </Page>;
 }

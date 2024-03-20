@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { RearPickResultType } from "./useBinPicks";
 import { Page, useModal } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
-import { FA, List } from "tonwa-com";
+import { FA, List, Sep } from "tonwa-com";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "./PageParams";
 import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "../tool";
@@ -136,10 +136,10 @@ export function usePickFromQuery(): [
                 const { no, ex } = picked;
                 let vFirst: any;
                 if (ex !== undefined) {
-                    vFirst = <>{ex} &nbsp; &nbsp; <small className="text-secondary">{no}</small></>;
+                    vFirst = <><b>{ex}</b> &nbsp; &nbsp; <small className="text-secondary">{no}</small></>;
                 }
                 else if (no !== undefined) {
-                    vFirst = <>{no}</>;
+                    vFirst = <b>{no}</b>;
                 }
                 if (vFirst !== undefined) {
                     vFirst = <div className={cnFirst}>
@@ -148,7 +148,7 @@ export function usePickFromQuery(): [
                 }
                 return <div>
                     {vFirst}
-                    <RowCols contentClassName="py-2">
+                    <RowCols contentClassName="py-2 px-3">
                         {propArr.map((v, index) => {
                             return <VNamedBud key={index} {...v} />;
                         })}
@@ -163,7 +163,8 @@ export function usePickFromQuery(): [
                             className=""
                             onItemSelect={onItemSelect}
                             onItemClick={onItemClick}
-                            itemBan={itemBan} />
+                            itemBan={itemBan}
+                            sep={<Sep className="border-secondary" />} />
                     </div>
                     {btnOk}
                 </div>

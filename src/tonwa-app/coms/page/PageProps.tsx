@@ -42,7 +42,6 @@ export interface PageTemplateProps {
     Header?: (props: PageProps) => JSX.Element;
     Footer?: (props: PageProps) => JSX.Element;
     Content?: (props: PageProps) => JSX.Element;
-    contentClassName?: string;
     Error?: (props: PageProps) => JSX.Element;
     errorPosition?: 'above-header' | 'under-header';
 }
