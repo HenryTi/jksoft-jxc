@@ -5,7 +5,7 @@ import { PageCode } from './PageCode';
 import { useUqApp } from "app/UqApp";
 import { BizGroup, Entity } from "app/Biz";
 import { PageEntity } from "./PageEntity";
-import { FA } from "tonwa-com";
+import { FA, theme } from "tonwa-com";
 import { useAtomValue } from "jotai";
 import { centers } from "app/views/center";
 import { ViewSite } from "app/views/Site";
@@ -66,7 +66,7 @@ export function useBuildViewBiz() {
                 return [<ViewEntityItem key={id} value={v} icon={icon} />];
             })
         }
-        return <div className="bg-white py-2">
+        return <div className={' bg-white py-2 ' + theme.bootstrapContainer}>
             <div className={rowCols}>
                 {content}
             </div>
