@@ -37,8 +37,8 @@ export function useBinPicks(bin: EntityBin) {
         const { divStore } = sheetStore;
         const { rearPick } = bin;
         let pickResult: PickResult[] | PickResult;
-        const { bizPhraseType } = rearPick;
-        switch (bizPhraseType) {
+        const { fromPhraseType } = rearPick;
+        switch (fromPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom:
                 pickResult = await pickFromAtom(divStore, namedResults, rearPick as PickAtom);
@@ -67,10 +67,10 @@ export function useBinPicks(bin: EntityBin) {
         };
         let pickResult: PickResult;
         for (const binPick of binPicks) {
-            const { name, bizPhraseType } = binPick;
+            const { name, fromPhraseType } = binPick;
             // const { bizPhraseType } = pick;
-            if (bizPhraseType === undefined) break;
-            switch (bizPhraseType) {
+            if (fromPhraseType === undefined) break;
+            switch (fromPhraseType) {
                 default: debugger; break;
                 case BizPhraseType.atom:
                     pickResult = await pickFromAtom(divStore, namedResults, binPick as PickAtom);

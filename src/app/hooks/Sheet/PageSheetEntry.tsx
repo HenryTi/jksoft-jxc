@@ -57,8 +57,14 @@ function useStartingNO(store: SheetStore) {
 }
 
 function PageSheetDirect({ store }: { store: SheetStore; }) {
-    useStartingNO(store);
+    // no pick, directly create NO
+    // useStartingNO(store);
     const { caption } = store;
+    useEffectOnce(() => {
+
+    });
+    return <PageSpinner header={caption + ' 创建中...'} />
+    /*
     return <Page header={caption}>
         <div className="tonwa-bg-gray-1">
             <ViewMain store={store} popup={false} readOnly={true} />
@@ -67,6 +73,7 @@ function PageSheetDirect({ store }: { store: SheetStore; }) {
             </div>
         </div>
     </Page>;
+    */
 }
 
 function useOnPicked(store: SheetStore) {
@@ -126,15 +133,24 @@ function PageStartPicks({ store }: { store: SheetStore; }) {
 }
 
 function PageStartPend({ store }: { store: SheetStore; }) {
-    const modal = useModal();
+    // const modal = useModal();
     const onPicked = useOnPicked(store);
     const { caption } = store;
+    const subCaption = '批选待处理';
+    return <Page header={caption + ' - ' + subCaption}>
+        <ViewBinPicks subHeader={'批选条件'} sheetStore={store} onPicked={onPicked} />
+    </Page>
+    /*
     useStartingNO(store);
     const { btnSubmit, btnExit } = useButtons();
     const group0: ToolItem[] = [btnSubmit];
     function onPick() {
+        async function onPendParamsPicked(results: ReturnUseBinPicks) {
+            await onPicked(results);
+            modal.close();
+        }
         modal.open(<Page header={caption + ' - ' + subCaption}>
-            <ViewBinPicks subHeader={'批选条件'} sheetStore={store} onPicked={onPicked} />
+            <ViewBinPicks subHeader={'批选条件'} sheetStore={store} onPicked={onPendParamsPicked} />
         </Page>);
     }
     group0.unshift(buttonDefs.batchSelect(onPick));
@@ -149,4 +165,5 @@ function PageStartPend({ store }: { store: SheetStore; }) {
             </div>
         </div>
     </Page>;
+    */
 }

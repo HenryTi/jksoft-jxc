@@ -37,8 +37,8 @@ export function useBinPicks(bin: EntityBin) {
         const { divStore } = sheetStore;
         const { rearPick } = bin;
         let pickResult: PickResult[] | PickResult;
-        const { bizPhraseType } = rearPick;
-        switch (bizPhraseType) {
+        const { fromPhraseType } = rearPick;
+        switch (fromPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom:
                 pickResult = await pickFromAtom(divStore, namedResults, rearPick);

@@ -34,10 +34,10 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
 
     async function onPick(binPick: BinPick, index: number) {
         let pickResult: any;
-        const { name, bizPhraseType } = binPick;
+        const { name, fromPhraseType } = binPick;
         // const { bizPhraseType } = pick;
-        if (bizPhraseType === undefined) return;
-        switch (bizPhraseType) {
+        if (fromPhraseType === undefined) return;
+        switch (fromPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom:
                 pickResult = await pickFromAtom(divStore, namedResults, binPick as PickAtom);
@@ -62,8 +62,8 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         if (sheetStore === undefined) debugger;
         const { divStore } = sheetStore;
         let pickResult: PickResult[] | PickResult;
-        const { bizPhraseType } = rearPick;
-        switch (bizPhraseType) {
+        const { fromPhraseType } = rearPick;
+        switch (fromPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom:
                 pickResult = await pickFromAtom(divStore, namedResults, rearPick as PickAtom);
@@ -149,7 +149,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
                 <div className="row">
                     <div className="col-3 py-2 tonwa-bg-gray-1">
                         <FA name={iconPrefix} fixWidth={true} className={'me-2 ' + cnAngle} />
-                        <span className={cnLabel}>{binPick.name}</span>
+                        <span className={cnLabel}>{binPick.caption ?? binPick.name}</span>
                     </div>
                     <div className={'col py-2 ' + cn} onClick={onClick}>
                         {vContent}

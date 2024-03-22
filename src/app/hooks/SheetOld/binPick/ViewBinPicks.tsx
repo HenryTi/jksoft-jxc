@@ -34,10 +34,10 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
 
     async function onPick(binPick: BinPick, index: number) {
         let pickResult: any;
-        const { name, bizPhraseType } = binPick;
+        const { name, fromPhraseType } = binPick;
         // const { bizPhraseType } = pick;
-        if (bizPhraseType === undefined) return;
-        switch (bizPhraseType) {
+        if (fromPhraseType === undefined) return;
+        switch (fromPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom:
                 pickResult = await pickFromAtom(divStore, namedResults, binPick);
@@ -62,8 +62,8 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         if (sheetStore === undefined) debugger;
         const { divStore } = sheetStore;
         let pickResult: PickResult[] | PickResult;
-        const { bizPhraseType } = rearPick;
-        switch (bizPhraseType) {
+        const { fromPhraseType } = rearPick;
+        switch (fromPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom:
                 pickResult = await pickFromAtom(divStore, namedResults, rearPick);

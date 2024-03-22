@@ -437,12 +437,12 @@ Biz ACT RemoveDraft (
     VAR me ID = Me();
     IF EXISTS(SELECT a.i FROM IxState as a WHERE a.i=me AND a.x=id) {
         /-mysql
-        DELETE a FROM ixbud as a WHERE a.i=id;
-        DELETE a FROM ixbudint as a WHERE a.i=id;
-        DELETE a FROM ixbuddec as a WHERE a.i=id;
-        DELETE a FROM ixbudstr as a WHERE a.i=id;
-        DELETE a FROM bin as a WHERE a.i=id;
-        DELETE a FROM bin as a JOIN bud as a1 ON a1.id=a.id WHERE a1.base=id;
+        DELETE a FROM ixbud as a WHERE a.i=_id;
+        DELETE a FROM ixbudint as a WHERE a.i=_id;
+        DELETE a FROM ixbuddec as a WHERE a.i=_id;
+        DELETE a FROM ixbudstr as a WHERE a.i=_id;
+        DELETE a FROM bin as a WHERE a.id=_id;
+        DELETE a FROM bin as a JOIN bud as a1 ON a1.id=a.id WHERE a1.base=_id;
         -/
         WITH IxState I=me X=id DEL;
         WITH Sheet ID=id DEL;

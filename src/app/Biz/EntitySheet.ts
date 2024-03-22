@@ -1,6 +1,6 @@
 import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
-import { BizBud, BizBudBinValue, BizBudSpecBase, EnumBudType } from "./BizBud";
+import { BizBud, BizBudBinValue, BizBudSpecBase, BudAtom, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
@@ -344,7 +344,18 @@ export class EntityBin extends Entity {
         bud.fromSchema(prop);
         bud.budDataType.fromSchema(prop);
         bud.scan();
+        this.buildPickAtomFromBud(bud);
         return bud;
+    }
+
+    private buildPickAtomFromBud(bud: BizBud) {
+        if (bud.defaultValue !== undefined) return;
+        if (this.binPicks === undefined) this.binPicks = [];
+        let pickAtom = new PickAtom(this.biz, bud.id, bud.name + '$pick', this);
+        const { bizAtom } = bud.budDataType as BudAtom;
+        pickAtom.from = [bizAtom];
+        pickAtom.ui = bud.ui;
+        this.binPicks.push(pickAtom);
     }
 
     private buildPick(v: any): BinPick {
@@ -415,15 +426,17 @@ export class EntityBin extends Entity {
         super.scan();
         if (this.binPicks !== undefined) {
             this.binPicks = this.binPicks.map(v => this.buildPick(v as any));
-            let pLast = this.binPicks.length - 1;
-            this.rearPick = this.binPicks[pLast];
-            this.binPicks.splice(pLast, 1);
         }
         if (this.i !== undefined) {
             this.i = this.buildBudPickable(this.i as any);
         }
         if (this.x !== undefined) {
             this.x = this.buildBudPickable(this.x as any);
+        }
+        if (this.binPicks !== undefined) {
+            let pLast = this.binPicks.length - 1;
+            this.rearPick = this.binPicks[pLast];
+            this.binPicks.splice(pLast, 1);
         }
         let div = this.div;
         this.div = new BinDiv(this, undefined);

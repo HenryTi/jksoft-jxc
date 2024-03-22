@@ -64,10 +64,10 @@ export class SheetMain extends BaseObject {
             return parts[0];
         }
         if (i !== undefined) {
-            formulas.push(['i', getFormulaText(i.defaultValue)]);
+            formulas.push(['i', getFormulaText(i.defaultValue ?? 'i$pick')]);
         }
         if (x !== undefined) {
-            formulas.push(['x', getFormulaText(x.defaultValue)]);
+            formulas.push(['x', getFormulaText(x.defaultValue ?? 'x$pick')]);
         }
         for (let mp of mainProps) {
             formulas.push([mp.name, getFormulaText(mp.defaultValue)]);
@@ -94,17 +94,21 @@ export class SheetMain extends BaseObject {
     async createIfNotExists() {
         const row = this.valRow;
         let { id: sheetId, i, x } = row;
-        if (sheetId > 0) return {
-            id: sheetId,
-            no: this.no,
-            i,
-            x,
-        };
+        if (sheetId > 0) {
+            setAtomValue(this.sheetStore.atomLoaded, true);
+            return {
+                id: sheetId,
+                no: this.no,
+                i,
+                x,
+            };
+        }
         let ret = await this.sheetStore.saveSheet(this.valRow);
         let { id, no } = ret;
         row.id = id;
         setAtomValue(this._valRow, { ...row });
         this.no = no;
+        setAtomValue(this.sheetStore.atomLoaded, true);
         return Object.assign(ret, { i, ...row });
     }
 
