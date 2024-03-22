@@ -145,19 +145,30 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
             vContent = <SpinnerSmall />;
         }
         return <>
-            <div className={theme.bootstrapContainer}>
-                <div className="row">
-                    <div className="col-3 py-2 tonwa-bg-gray-1">
-                        <FA name={iconPrefix} fixWidth={true} className={'me-2 ' + cnAngle} />
-                        <span className={cnLabel}>{binPick.caption ?? binPick.name}</span>
-                    </div>
-                    <div className={'col py-2 ' + cn} onClick={onClick}>
-                        {vContent}
-                    </div>
-                </div>
-            </div>
+            <LR label={<>
+                <FA name={iconPrefix} fixWidth={true} className={'me-2 ' + cnAngle} />
+                <div className="flex-fill" />
+                <span className={cnLabel}>{binPick.caption ?? binPick.name}</span>
+            </>} cn={cn} onClick={onClick}>
+                {vContent}
+            </LR>
             <Sep />
         </>;
+    }
+
+    function LR({ children, label, cn, onClick }: { children: React.ReactNode; label: JSX.Element; cn: string; onClick: () => void }) {
+        const py = ' py-3 ';
+        let cnLabel = ' col-3 ' + (label ? 'col-3 tonwa-bg-gray-1 d-flex align-items-center border-end ' + py : '');
+        return <div className={theme.bootstrapContainer}>
+            <div className="row">
+                <div className={cnLabel}>
+                    {label}
+                </div>
+                <div className={' col ' + py + (cn ?? '')} onClick={onClick}>
+                    {children}
+                </div>
+            </div>
+        </div>;
     }
     async function onStart() {
         if (rearPickResult === undefined) return;
@@ -182,15 +193,22 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
             })}
             <ViewBinPick binPick={rearPick} onPick={onPickRear} index={binPicks.length} />
         </>;
+        /*
         viewBinPicksNext = <div className="p-3">
             <button className="btn btn-primary" onClick={onStart} disabled={cur <= binPicks.length}>
                 <FA name="arrow-right me-2" />下一步
             </button>
         </div>;
+        */
+        viewBinPicksNext = <LR cn={undefined} onClick={undefined} label={null}>
+            <button className="btn btn-primary" onClick={onStart} disabled={cur <= binPicks.length}>
+                <FA name="arrow-right me-2" />下一步
+            </button>
+        </LR>;
     }
     return <>
         <div className="border rounded-3 mt-3">
-            <div className="tonwa-bg-gray-2 small py-1 px-3 text-secondary">
+            <div className="tonwa-bg-gray-2 py-1 px-3 text-secondary">
                 {subHeader}
             </div>
             <Sep />
