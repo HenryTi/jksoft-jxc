@@ -4,7 +4,7 @@ import { BinDiv, BinField, BinRow, BizBud, BudAtom, BudDec, BudRadio, BudsFields
 import { Calc, Formulas } from "../../Calc";
 import { ValRow } from "../tool";
 import { DivStore, ValDiv } from ".";
-import { NamedResults } from "../NamedResults";
+import { NamedResults } from "./NamedResults";
 import { getDays } from "app/tool";
 
 abstract class BinFields extends BudsFields {

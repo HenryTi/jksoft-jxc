@@ -1,7 +1,7 @@
 import { BinPick, PickPend } from "app/Biz";
 import { useCallback } from "react";
 import { useModal } from "tonwa-app";
-import { NamedResults, PickResult } from "../NamedResults";
+import { NamedResults, PickResult } from "../store";
 import { usePageParams } from "./PageParams";
 import { PagePendProps } from "../binEdit/model";
 import { PendProxyHander, ValRow } from "../tool";
@@ -13,9 +13,9 @@ export function usePickFromPend() {
     const pickParam = usePageParams();
     return useCallback(
         async function pickFromPend(divStore: DivStore, namedResults: NamedResults, binPick: BinPick): Promise<PickResult[]> {
-            let { name, caption, pick, pickParams, bin } = binPick;
-            let pickBase = pick as PickPend;
-            let entityPend = pickBase.from;
+            let { name, caption, from: entityPend, pickParams, bin } = binPick as PickPend;
+            // let pickBase = pick as PickPend;
+            // let entityPend = pickBase.from;
             const pendProxyHander = new PendProxyHander(entityPend);
             const { params: queryParams } = entityPend;
 

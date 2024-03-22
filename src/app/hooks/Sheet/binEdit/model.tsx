@@ -1,5 +1,4 @@
 import { PendRow } from "../store";
-import { NamedResults } from "../NamedResults";
 import { DivStore } from "../store";
 
 let rowId = 1;

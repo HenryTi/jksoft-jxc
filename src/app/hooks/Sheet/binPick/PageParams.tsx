@@ -1,5 +1,5 @@
 import { BizBud, PickParam } from "app/Biz";
-import { NamedResults } from "../NamedResults";
+import { NamedResults } from "../store";
 import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";

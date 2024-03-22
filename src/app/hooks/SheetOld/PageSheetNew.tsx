@@ -14,24 +14,9 @@ import { WritableAtom, atom, useAtomValue } from "jotai";
 import { setAtomValue } from "tonwa-com";
 
 export function PageSheetNew() {
-    /*
-    const uqApp = useUqApp();
-    const { uq, biz } = uqApp;
-    const { sheet: entityId62, id } = useParams();
-    const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
-    // const sheetId = from62(id);
-    const { current: sheetStore } = useRef(new SheetStore(
-        uq,
-        biz,
-        entitySheet,
-        undefined
-    ));
-    */
-    const { current: atomSheetId } = useRef(atom(undefined as number)); // useState(undefined);
+    const { current: atomSheetId } = useRef(atom(undefined as number));
     const store = useSheetStore();
     const sheetId = useAtomValue(atomSheetId);
-    //const { sheetStore, toolbar } = returnUseSheet;
-
     if (sheetId !== undefined) return <PageSheet store={store} />;
     return <SheetNew store={store} atomSheetId={atomSheetId} />;
 }
@@ -78,7 +63,6 @@ function SheetNew({ store, atomSheetId }: { store: SheetStore; atomSheetId: Writ
     let index = d.indexOf('T');
     main.no = `${d.substring(0, index)}-0000`;
     setAtomValue(btnSubmit.atomDisabled, true);
-    // let toolbar = <Toolbar groups={[[btnSubmit], null, [btnExit]]} />;
     const group0: ToolItem[] = [btnSubmit];
     let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
     if (store.isPend() === true) {

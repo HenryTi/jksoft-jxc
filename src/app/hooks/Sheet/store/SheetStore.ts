@@ -7,11 +7,11 @@ import { useParams } from "react-router-dom";
 import { ParamSaveDetail, ReturnGetPendRetSheet, UqExt } from "uqs/UqDefault";
 import { WritableAtom, atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
-import { PickFunc, RearPickResultType, ReturnUseBinPicks } from "../binPick/useBinPicks";
+import { PickFunc, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
 import { OwnerColl, budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
-import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "../tool";
+import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "./tool";
 import { DivStore } from "./DivStore";
 
 abstract class KeyIdObject {
@@ -350,26 +350,31 @@ export class SheetStore extends KeyIdObject {
     readonly detail: CoreDetail;
     readonly detailExs: ExDetail[] = [];
     readonly caption: string;
-    readonly idOnUrl: number;
+    readonly backIcon = 'file-text-o';
+    readonly isPend: boolean;
+    // readonly idOnUrl: number;
     pendColl: { [pend: number]: WritableAtom<Section[], any, any> };
     readonly divStore: DivStore;
     readonly atomLoaded = atom(false);
 
-    constructor(uq: UqExt, biz: Biz, entitySheet: EntitySheet, id: number) {
+    constructor(uq: UqExt, biz: Biz, entitySheet: EntitySheet) {
         super();
         this.uq = uq;
         this.biz = biz;
         this.entitySheet = entitySheet;
         this.main = new SheetMain(this);
+        /*
         if (id > 0) {
             this.idOnUrl = id;
             this.main.setId(id);
         }
+        */
         const { details } = this.entitySheet;
         let len = details.length;
         if (len > 0) {
             const { bin: detail, caption } = details[0];
             this.detail = new CoreDetail(this, detail, caption);
+            this.isPend = this.detail.entityBin.pend !== undefined;
         }
         for (let i = 1; i < len; i++) {
             const { bin: detail, caption } = details[i];
@@ -379,10 +384,10 @@ export class SheetStore extends KeyIdObject {
         this.divStore = new DivStore(this, this.detail.entityBin);
     }
 
-    async load() {
-        let { id } = this.main.valRow;
-        if (id === undefined || id === 0) return;
-        let { main, details } = await this.loadBinData(id);
+    async load(sheetId: number) {
+        // let { id } = this.main.valRow;
+        // if (id === undefined || id === 0) return;
+        let { main, details } = await this.loadBinData(sheetId);
         if (main === undefined) return;
         this.main.setValue(main);
         this.divStore.load(details);
@@ -399,10 +404,6 @@ export class SheetStore extends KeyIdObject {
 
     hasId() {
         return this.main.valRow?.id !== undefined;
-    }
-
-    isPend() {
-        return this.detail?.entityBin.pend !== undefined;
     }
 
     // whole sheet or row detail
@@ -599,21 +600,19 @@ export class SheetStore extends KeyIdObject {
         return id;
     }
 }
-
+/*
 export function useSheetStore() {
     const { uq, biz } = useUqApp();
     const { sheet: entityId62, id } = useParams();
     const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
     const sheetId = from62(id);
-    const refSheetStore = useRef<SheetStore>();
-    if (refSheetStore.current === undefined) {
-        refSheetStore.current = new SheetStore(
-            uq,
-            biz,
-            entitySheet,
-            id === undefined ? undefined : sheetId
-        );
-    }
-    useQuery([entityId62, id], async () => refSheetStore.current.load(), UseQueryOptions);
-    return refSheetStore.current;
+    const { current: sheetStore } = useRef<SheetStore>(new SheetStore(
+        uq,
+        biz,
+        entitySheet,
+        id === undefined ? undefined : sheetId
+    ));
+    useQuery([entityId62, id], async () => sheetStore.load(), UseQueryOptions);
+    return sheetStore;
 }
+*/

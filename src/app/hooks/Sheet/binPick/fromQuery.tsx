@@ -7,7 +7,7 @@ import { FA, List, Sep } from "tonwa-com";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "./PageParams";
 import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "../tool";
-import { NamedResults, PickResult } from "../NamedResults";
+import { NamedResults, PickResult } from "../store";
 import { RowCols } from "app/hooks/tool";
 
 export function usePickFromQuery(): [
@@ -22,9 +22,9 @@ export function usePickFromQuery(): [
         , binPick: BinPick
         , pickResultType: RearPickResultType)
         : Promise<PickResult | PickResult[]> {
-        let { name, caption, pick, pickParams } = binPick;
-        let pickBase = pick as PickQuery;
-        let { query } = pickBase;
+        let { name, caption, query, pickParams } = binPick as PickQuery;
+        // let pickBase = pick as PickQuery;
+        // let { query } = pickBase;
         const header = caption ?? query.caption ?? name;
         let retParam = await pickParam({
             header,

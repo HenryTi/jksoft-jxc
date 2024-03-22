@@ -10,6 +10,7 @@ import { Atom, Sheet } from "uqs/UqDefault";
 import { Bin, ViewNotifyCount } from "app/tool";
 import { centers } from "app/views/center";
 
+const pathSheet = 'sheet';
 function PageSheetCenter() {
     const modal = useModal();
     const uqApp = useUqApp();
@@ -31,7 +32,7 @@ function PageSheetCenter() {
             }
         }
         return <Link
-            to={`/sheet/${to62(entityId)}`}
+            to={`/${pathSheet}/${to62(entityId)}`}
         >
             <div className="px-3 py-2 align-items-center d-flex">
                 <BI name="card-list" className="fs-larger me-3 text-primary" />
@@ -82,7 +83,7 @@ function PageSheetCenter() {
                 {right}
             </div>;
         }
-        return <Link to={`/sheet/${to62(entitySheet.id)}/${to62(id)}`}>
+        return <Link to={`/${pathSheet}/${to62(entitySheet.id)}/${to62(id)}`}>
             <div className="d-flex px-3 py-3">
                 <FA name="file" className="me-3 text-danger" />
                 <span className="d-inline-block w-min-8c">{sheetCaption}</span>

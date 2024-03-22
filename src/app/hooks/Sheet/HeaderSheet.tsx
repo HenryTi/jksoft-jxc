@@ -1,5 +1,5 @@
 import { FA } from "tonwa-com";
-import { useSheetHeader } from "./useSheetStore";
+// import { useSheetHeader } from "./useSheetStore";
 import { SheetStore } from "./store";
 import { ItemDef, ToolGroup, ToolItem, Toolbar, toolButtonDef, toolIconDef } from "app/coms";
 
@@ -16,11 +16,12 @@ export const buttonDefs: { [name: string]: ItemDef<any> } = {
 }
 
 export function headerSheet({ store, toolGroups, headerGroup }: { store: SheetStore; toolGroups: ToolItem[][]; headerGroup?: ToolItem[]; }) {
-    const { header: headerContent, back } = useSheetHeader(store);
+    const { caption, backIcon } = store;
+    // const { header: headerContent, back } = useSheetHeader(store);
     return {
         header: <div className="py-2 px-3">
-            <FA name={back} className="me-3" />
-            <span className="">{headerContent}</span>
+            <FA name={backIcon} className="me-3" />
+            <span className="">{caption}</span>
         </div>,
         right: <div className="">
             <ToolGroup group={headerGroup} />

@@ -8,7 +8,7 @@ import { InputDivProps, inputDiv } from "./inputDiv";
 import { useUqApp } from "app";
 import { useModal } from "tonwa-app";
 import { PendProxyHander, ValRow } from "../tool";
-import { NamedResults } from "../NamedResults";
+import { NamedResults } from "../store";
 import { getAtomValue } from "tonwa-com";
 
 export function useInputs() {

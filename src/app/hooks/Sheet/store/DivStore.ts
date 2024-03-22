@@ -3,9 +3,9 @@ import { BinDiv, EntityBin } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
 import { OwnerColl, budValuesFromProps } from "../../tool";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
-import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "../tool";
+import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { NamedResults } from "../NamedResults";
+import { NamedResults } from "./NamedResults";
 import { ValDiv, ValDivs } from './ValDiv';
 
 enum PendLoadState {

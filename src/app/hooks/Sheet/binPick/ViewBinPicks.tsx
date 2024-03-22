@@ -6,7 +6,7 @@ import { usePickFromSpec } from "./fromSpec";
 import { usePickFromPend } from "./fromPend";
 import { usePickFromQuery } from "./fromQuery";
 import { SheetStore } from "../store";
-import { PickResult } from "../NamedResults";
+import { PickResult } from "../store";
 import { theme } from "tonwa-com";
 import { FA, Sep, SpinnerSmall } from "tonwa-com";
 import { RearPickResultType, ReturnUseBinPicks } from "./useBinPicks";
@@ -34,8 +34,8 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
 
     async function onPick(binPick: BinPick, index: number) {
         let pickResult: any;
-        const { name, pick } = binPick;
-        const { bizPhraseType } = pick;
+        const { name, bizPhraseType } = binPick;
+        // const { bizPhraseType } = pick;
         if (bizPhraseType === undefined) return;
         switch (bizPhraseType) {
             default: debugger; break;
@@ -62,8 +62,8 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         if (sheetStore === undefined) debugger;
         const { divStore } = sheetStore;
         let pickResult: PickResult[] | PickResult;
-        const { pick } = rearPick;
-        switch (pick.bizPhraseType) {
+        const { bizPhraseType } = rearPick;
+        switch (bizPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom:
                 pickResult = await pickFromAtom(divStore, namedResults, rearPick);

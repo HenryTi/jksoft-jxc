@@ -3,7 +3,7 @@ import { CoreDetail, Row, Section, SheetStore } from "../store";
 import { RearPickResultType, useBinPicks } from "../binPick";
 import { useRowEdit } from "./rowEdit";
 import { BinEditing } from "../store";
-import { PickResult } from "../NamedResults";
+import { PickResult } from "../store";
 
 export function useCoreDetailAdd(sheetStore: SheetStore) {
     const rowEdit = useRowEdit();

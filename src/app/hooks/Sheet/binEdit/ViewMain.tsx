@@ -1,7 +1,7 @@
-import { SheetMain } from "../store";
+import { SheetMain, SheetStore } from "../store";
 import { EditBudInline, ViewSpecR } from "app/hooks";
 import { useAtomValue } from "jotai";
-import { ViewSheetTime } from "../ViewSheetTime";
+import { ViewSheetTime } from "../../ViewSheetTime";
 import { BizBud } from "app/Biz";
 import { setAtomValue } from "tonwa-com";
 import { theme } from "tonwa-com";
@@ -9,7 +9,8 @@ import { BudCheckValue } from "tonwa-app";
 import React from "react";
 import { LabelBox, RowCols } from "app/hooks/tool";
 
-export function ViewMain({ main, popup, readOnly }: { main: SheetMain; popup: boolean; readOnly?: boolean; }) {
+export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup: boolean; readOnly?: boolean; }) {
+    const { main } = store;
     const { no, entityMain, _valRow: _binRow, budEditings } = main;
     const { i: budI, x: budX } = entityMain;
     const binRow = useAtomValue(_binRow);

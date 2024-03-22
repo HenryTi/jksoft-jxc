@@ -1,4 +1,4 @@
-import { pathAssign, pathAtom, pathReport, pathTie } from "app/hooks";
+import { pathAssign, pathAtom, pathReport, pathSheet, pathSE, pathTie, } from "app/hooks";
 import { to62 } from "tonwa-com";
 import { BizPhraseType } from "uqs/UqDefault";
 
@@ -29,7 +29,13 @@ const sheet: CenterItem = {
     path: 'sheet-center',
     caption: '单据中心',
     icon: 'file-o',
-    getPath: (id: number) => `sheet/${to62(id)}`,
+    getPath: pathSheet, // (id: number) => `sheet/${to62(id)}`,
+};
+const se: CenterItem = {
+    path: 'se-center',
+    caption: '新单据中心',
+    icon: 'file-o',
+    getPath: pathSE, // (id: number) => `sheet/${to62(id)}`,
 };
 
 const report: CenterItem = {
@@ -85,5 +91,5 @@ const compile: CenterItem = {
     caption: '设计',
 };
 export const centers: { [name: string]: CenterItem } = {
-    editing, atom, sheet, report, assign, tie, io, me, setting, user, achieve, compile
+    editing, atom, se, sheet, report, assign, tie, io, me, setting, user, achieve, compile
 }

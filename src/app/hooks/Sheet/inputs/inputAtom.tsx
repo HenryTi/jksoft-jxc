@@ -1,5 +1,4 @@
-import { useCallback } from "react";
-import { PickResult } from "../NamedResults";
+import { PickResult } from "../store";
 import { PendInputAtom } from "app/Biz";
 import { InputProps } from "./inputBase";
 

@@ -7,7 +7,7 @@ export abstract class EntityAtomID extends Entity {
     readonly subClasses: EntityAtomID[] = [];
     uniques: string[];
 
-    getRefEntities(): Entity[] { return this.subClasses; }
+    getRefEntities(arrEntity: Entity[]) { arrEntity.push(... this.subClasses); }
 
     getUniques(): string[] {
         let us = [...(this.uniques ?? [])];

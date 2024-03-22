@@ -62,7 +62,9 @@ export function useBuildViewBiz() {
         else {
             content = entitys.flatMap((v, index) => {
                 const { name, id } = v;
-                if (name[0] === '$') return [];
+                if (name[0] === '$') {
+                    if (name !== '$console') return []
+                }
                 return [<ViewEntityItem key={id} value={v} icon={icon} />];
             })
         }

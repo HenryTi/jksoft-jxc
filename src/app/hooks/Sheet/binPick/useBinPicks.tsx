@@ -6,7 +6,7 @@ import { usePickFromSpec } from "./fromSpec";
 import { usePickFromPend } from "./fromPend";
 import { usePickFromQuery } from "./fromQuery";
 import { SheetStore } from "../store";
-import { NamedResults, PickResult } from "../NamedResults";
+import { NamedResults, PickResult } from "../store";
 
 export interface ReturnUseBinPicks {
     namedResults: NamedResults;
@@ -37,8 +37,8 @@ export function useBinPicks(bin: EntityBin) {
         const { divStore } = sheetStore;
         const { rearPick } = bin;
         let pickResult: PickResult[] | PickResult;
-        const { pick } = rearPick;
-        switch (pick.bizPhraseType) {
+        const { bizPhraseType } = rearPick;
+        switch (bizPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom:
                 pickResult = await pickFromAtom(divStore, namedResults, rearPick);
@@ -67,8 +67,8 @@ export function useBinPicks(bin: EntityBin) {
         };
         let pickResult: PickResult;
         for (const binPick of binPicks) {
-            const { name, pick } = binPick;
-            const { bizPhraseType } = pick;
+            const { name, bizPhraseType } = binPick;
+            // const { bizPhraseType } = pick;
             if (bizPhraseType === undefined) break;
             switch (bizPhraseType) {
                 default: debugger; break;

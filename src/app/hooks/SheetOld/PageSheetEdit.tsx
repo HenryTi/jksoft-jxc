@@ -10,21 +10,7 @@ import { Page, PageSpinner } from "tonwa-app";
 import { PageSheet } from "./PageSheet";
 import { useAtomValue } from "jotai";
 
-let locationState = 1;
 export function PageSheetEdit() {
-    // const uqApp = useUqApp();
-    // const { uq, biz } = uqApp;
-    /*
-    const { sheet: entityId62, id } = useParams();
-    const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
-    const sheetId = from62(id);
-    const { current: sheetStore } = useRef(new SheetStore(
-        uq,
-        biz,
-        entitySheet,
-        sheetId
-    ));
-    */
     const sheetStore = useSheetStore();
     const loaded = useAtomValue(sheetStore.atomLoaded);
     const startCallback = useCallback(async function () {
@@ -35,14 +21,6 @@ export function PageSheetEdit() {
     });
     if (loaded === false) return <PageSpinner />;
     return <PageSheet store={sheetStore} />;
-    /*
-    let { view, toolbar } = useSheetView(sheetStore);
-    return <Page header={header} back={back}>
-        {toolbar}
-        {view}
-    </Page>
-    */
-    // return <PageStore store={sheetStore} toolbar={toolbar} />;
 }
 
 async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetStore: SheetStore, pick: PickFunc) {

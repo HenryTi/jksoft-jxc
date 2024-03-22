@@ -9,12 +9,14 @@ import { routeAssignCenter } from "./Assign";
 import { routeTieCenter } from "./Tie";
 import { routeEditingCenter } from "./Editing";
 import { routeIOCenter } from "./IO";
+import { routeSECenter } from "./SE";
 
 export const pathHome = 'home';
 export function routeApp() {
     const routes = <>
         {routeEditingCenter()}
         {routeAtomCenter()}
+        {routeSECenter()}
         {routeSheetCenter()}
         {routeReportCenter()}
         {routeAssignCenter()}

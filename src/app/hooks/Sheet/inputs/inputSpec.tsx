@@ -1,4 +1,4 @@
-import { PickResult } from "../NamedResults";
+import { PickResult } from "../store";
 import { PendInputSpec } from "app/Biz";
 import { Page } from "tonwa-app";
 import { theme } from "tonwa-com";
