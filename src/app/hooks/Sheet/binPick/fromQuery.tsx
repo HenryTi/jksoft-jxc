@@ -11,15 +11,15 @@ import { NamedResults, PickResult } from "../store";
 import { RowCols } from "app/hooks/tool";
 
 export function usePickFromQuery(): [
-    (namedResults: NamedResults, binPick: BinPick) => Promise<PickResult>,
-    (namedResults: NamedResults, binPick: BinPick, lastPickResultType: RearPickResultType) => Promise<PickResult[]>,
+    (namedResults: NamedResults, binPick: PickQuery) => Promise<PickResult>,
+    (namedResults: NamedResults, binPick: PickQuery, lastPickResultType: RearPickResultType) => Promise<PickResult[]>,
 ] {
     const { uq, biz } = useUqApp();
     const modal = useModal();
     const pickParam = usePageParams();
     const pickFromQueryBase = useCallback(async function (
         namedResults: NamedResults
-        , binPick: BinPick
+        , binPick: PickQuery
         , pickResultType: RearPickResultType)
         : Promise<PickResult | PickResult[]> {
         let { name, caption, query, pickParams } = binPick as PickQuery;
@@ -173,13 +173,13 @@ export function usePickFromQuery(): [
     }, []);
     const pickFromQueryScalar = useCallback(async function (
         namedResults: NamedResults
-        , binPick: BinPick)
+        , binPick: PickQuery)
         : Promise<PickResult> {
         return await pickFromQueryBase(namedResults, binPick, RearPickResultType.scalar) as PickResult;
     }, []);
     const pickFromQuery = useCallback(async function (
         namedResults: NamedResults
-        , binPick: BinPick
+        , binPick: PickQuery
         , lastPickResultType: RearPickResultType)
         : Promise<PickResult[]> {
         return await pickFromQueryBase(namedResults, binPick, lastPickResultType) as PickResult[];

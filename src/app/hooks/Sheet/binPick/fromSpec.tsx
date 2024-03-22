@@ -8,10 +8,8 @@ import { DivStore } from "../store";
 
 export function usePickFromSpec() {
     const returnUsePickSpec = usePickSpec();
-    return useCallback(async function pickFromSpec(divStore: DivStore, namedResults: NamedResults, binPick: BinPick): Promise<PickResult> {
-        let { pickParams, from } = binPick as PickSpec;
-        // let pickBase = pick as PickSpec;
-        // let { from } = pickBase;
+    return useCallback(async function pickFromSpec(divStore: DivStore, namedResults: NamedResults, binPick: PickSpec): Promise<PickResult> {
+        let { pickParams, from } = binPick;
         let retAtom = namedResults[pickParams[0]?.bud] as Atom;
         const viewTop = <div>
             <ViewAtom value={retAtom} />

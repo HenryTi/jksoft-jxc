@@ -1,4 +1,4 @@
-import { BinPick } from "app/Biz";
+import { BinPick, PickAtom, PickPend, PickQuery, PickSpec } from "app/Biz";
 import { BizPhraseType } from "uqs/UqDefault";
 import { useState } from "react";
 import { usePickFromAtom } from "./fromAtom";
@@ -40,13 +40,13 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         switch (bizPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom:
-                pickResult = await pickFromAtom(divStore, namedResults, binPick);
+                pickResult = await pickFromAtom(divStore, namedResults, binPick as PickAtom);
                 break;
             case BizPhraseType.spec:
-                pickResult = await pickFromSpec(divStore, namedResults, binPick);
+                pickResult = await pickFromSpec(divStore, namedResults, binPick as PickSpec);
                 break;
             case BizPhraseType.query:
-                pickResult = await pickFromQueryScalar(namedResults, binPick);
+                pickResult = await pickFromQueryScalar(namedResults, binPick as PickQuery);
                 break;
         }
         if (pickResult === undefined) return;
@@ -66,16 +66,16 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         switch (bizPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom:
-                pickResult = await pickFromAtom(divStore, namedResults, rearPick);
+                pickResult = await pickFromAtom(divStore, namedResults, rearPick as PickAtom);
                 break;
             case BizPhraseType.spec:
-                pickResult = await pickFromSpec(divStore, namedResults, rearPick);
+                pickResult = await pickFromSpec(divStore, namedResults, rearPick as PickSpec);
                 break;
             case BizPhraseType.query:
-                pickResult = await pickFromQuery(namedResults, rearPick, rearPickResultType);
+                pickResult = await pickFromQuery(namedResults, rearPick as PickQuery, rearPickResultType);
                 break;
             case BizPhraseType.pend:
-                pickResult = await pickFromPend(divStore, namedResults, rearPick);
+                pickResult = await pickFromPend(divStore, namedResults, rearPick as PickPend);
         }
         setRearPickResult(pickResult);
         setCur(binPicks.length + 1);

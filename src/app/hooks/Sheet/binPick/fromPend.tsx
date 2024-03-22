@@ -12,8 +12,8 @@ export function usePickFromPend() {
     const modal = useModal();
     const pickParam = usePageParams();
     return useCallback(
-        async function pickFromPend(divStore: DivStore, namedResults: NamedResults, binPick: BinPick): Promise<PickResult[]> {
-            let { name, caption, from: entityPend, pickParams, bin } = binPick as PickPend;
+        async function pickFromPend(divStore: DivStore, namedResults: NamedResults, binPick: PickPend): Promise<PickResult[]> {
+            let { name, caption, from: entityPend, pickParams, bin } = binPick;
             // let pickBase = pick as PickPend;
             // let entityPend = pickBase.from;
             const pendProxyHander = new PendProxyHander(entityPend);
