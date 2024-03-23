@@ -76,6 +76,7 @@ export class Biz {
     readonly outs: EntityOut[] = [];
     readonly ioApps: EntityIOApp[] = [];
     readonly ioSites: EntityIOSite[] = [];
+    readonly ioSheets: EntitySheet[] = [];
 
     readonly groups: BizGroup[] = [];
     readonly _refresh = atom(false);
@@ -177,6 +178,19 @@ export class Biz {
                 bizEntity.fromSchema(schema);
             }
         }
+
+        let sheets: EntitySheet[] = [];
+        for (let sheet of this.sheets) {
+            if (sheet.io === true) {
+                this.ioSheets.push(sheet);
+            }
+            else {
+                sheets.push(sheet);
+            }
+        }
+        this.sheets.splice(0);
+        this.sheets.push(...sheets);
+
         const typeSeq: EnumEntity[] = [
             EnumEntity.title,
             EnumEntity.assign,
@@ -274,6 +288,7 @@ export class Biz {
                         [this.outs, '发送', 'user-o'],
                         [this.ioSites, '外连机构', 'user-o'],
                         [this.ioApps, '外连应用', 'user-o'],
+                        [this.ioSheets, '接口单据', 'file']
                     ]
             },
         );
@@ -303,30 +318,11 @@ export class Biz {
             }
             group.hasEntity = hasEntity;
         }
-        // this.buildSysEntities();
         this.hasEntity = allHasEntity;
         this.atomBuilder = undefined;
         this.refresh();
     }
 
-    /*
-    private buildSysEntities() {
-        const sysEntitys: { name: string; caption: string; }[] = [
-            { name: '$ioouter', caption: '接口机构' },
-            // obsolete
-            { name: '$ioapp', caption: '接口App' },
-        ];
-        for (let se of sysEntitys) {
-            const { name, caption } = se;
-            let entity = this.entities[name];
-            let { ui } = entity;
-            if (ui === undefined) {
-                entity.ui = ui = {};
-            }
-            ui.caption = caption;
-        }
-    }
-    */
     refresh() {
         setAtomValue(this._refresh, !getAtomValue(this._refresh));
     }

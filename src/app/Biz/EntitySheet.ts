@@ -560,6 +560,7 @@ export class EntityPend extends Entity {
 }
 
 export class EntitySheet extends Entity {
+    io: boolean;
     main: EntityBin;
     coreDetail: EntityBin;
     readonly details: {
@@ -576,10 +577,15 @@ export class EntitySheet extends Entity {
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
+            case 'io': this.fromIO(val); break;
             case 'main': this.fromMain(val); break;
             case 'details': this.fromDetails(val); break;
             case 'search': this.search = val; break;
         }
+    }
+
+    private fromIO(io: any) {
+        this.io = io;
     }
 
     private fromMain(main: any) {
