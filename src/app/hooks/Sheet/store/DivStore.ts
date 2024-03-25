@@ -20,7 +20,7 @@ export enum SubmitState {
     enable,
 }
 export class DivStore {
-    private valColl: { [id: number]: ValDiv };
+    private valDivColl: { [id: number]: ValDiv };
     private pendLoadState: PendLoadState;
     readonly sheetStore: SheetStore;
     readonly entityBin: EntityBin;
@@ -36,7 +36,7 @@ export class DivStore {
         this.entityBin = entityBin;
         this.binDiv = entityBin.div;
         this.valDivs = new ValDiv(entityBin.div, undefined);
-        this.valColl = {};
+        this.valDivColl = {};
         this.pendLoadState = PendLoadState.none;
         this.atomSubmitState = atom((get) => {
             const { atomValDivs } = this.valDivs;
@@ -45,7 +45,7 @@ export class DivStore {
             let hasValue = false;
             if (valDivs.length === 0) return SubmitState.none;
             for (let valDiv of valDivs) {
-                const { atomValue, atomValRow } = valDiv;
+                const { atomSum: atomValue, atomValRow } = valDiv;
                 let value = get(atomValue);
                 let valRow = get(atomValRow);
                 if (value !== undefined) hasValue = true;
@@ -160,7 +160,7 @@ export class DivStore {
         let vds = getAtomValue(this.valDivs.atomValDivs);
         for (let vd of vds) {
             if (has(vd, valDiv) === true) {
-                let { atomValRow, atomValue } = vd;
+                let { atomValRow, atomSum: atomValue } = vd;
                 let value = getAtomValue(atomValue);
                 let valRow = getAtomValue(atomValRow);
                 let { pend } = valRow;
@@ -176,10 +176,10 @@ export class DivStore {
     }
 
     async delValRow(id: number) {
-        let val = this.valColl[id];
+        let val = this.valDivColl[id];
         let valRow = getAtomValue(val.atomValRow);
         const { origin } = valRow;
-        let valDiv = this.valColl[origin];
+        let valDiv = this.valDivColl[origin];
         let atomValDivs: WritableAtom<ValDiv[], any, any>;
         if (valDiv === undefined) {
             // top div
@@ -230,7 +230,7 @@ export class DivStore {
 
     private setVal(valRow: ValRow, trigger: boolean): ValDiv {
         let { id, origin } = valRow;
-        let valDiv = this.valColl[id];
+        let valDiv = this.valDivColl[id];
         if (valDiv === undefined) {
             let parentValDivs: ValDivs;
             let binDiv: BinDiv;
@@ -239,7 +239,7 @@ export class DivStore {
                 binDiv = this.binDiv;
             }
             else {
-                let parentValDiv = this.valColl[origin];
+                let parentValDiv = this.valDivColl[origin];
                 binDiv = this.binDiv;
                 if (parentValDiv === undefined) {
                     parentValDivs = this.valDivs;
@@ -249,7 +249,7 @@ export class DivStore {
                     let level = 0;
                     for (let p = parentValDiv; p !== undefined; level++) {
                         const { origin: pOrigin } = getAtomValue(p.atomValRow);
-                        p = this.valColl[pOrigin];
+                        p = this.valDivColl[pOrigin];
                     }
                     for (let i = 0; i < level; i++) {
                         binDiv = binDiv.div;
@@ -276,7 +276,7 @@ export class DivStore {
         }
         let divs = getAtomValue(atomValDivs);
         let subVal = new ValDiv(binDiv, valRow);
-        this.valColl[id] = subVal;
+        this.valDivColl[id] = subVal;
         divs.push(subVal);
         if (trigger === true) {
             setAtomValue(atomValDivs, [...divs]);
@@ -285,7 +285,7 @@ export class DivStore {
     }
 
     setValColl(valDiv: ValDiv) {
-        this.valColl[valDiv.id] = valDiv;
+        this.valDivColl[valDiv.id] = valDiv;
     }
 
     async getPendRow(pend: number) {

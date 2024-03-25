@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai";
 import { CoreDetail, Row, Section } from "../store";
-import { FA, LMR, Sep } from "tonwa-com";
+import { FA, LMR, Sep, Spinner, SpinnerSmall } from "tonwa-com";
 import { ViewSpec } from "app/hooks/View";
 import React from "react";
 import { useCoreDetailEdit } from "./useCoreDetailEdit";
@@ -70,9 +70,16 @@ function ViewSection({ section, editable }: { section: Section; editable: boolea
 
 function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     const rowEdit = useRowEdit();
-    const { valRow, section: { coreDetail: { entityBin } } } = row;
+    const { valRow, section: { coreDetail: { entityBin } }, atomLoading } = row;
     const { i: budI, x: budX, price: budPrice, amount: budAmount, buds: props } = entityBin;
     let { i, x, value, price, amount, buds } = valRow
+
+    const loading = useAtomValue(atomLoading);
+    if (loading === true) {
+        return <div className="px-3 py-2">
+            <SpinnerSmall />
+        </div>;
+    }
     async function onEdit() {
         if (editable === false) return;
         const binEditing = new BinEditing(entityBin, valRow);
@@ -85,8 +92,8 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
     }
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
         return <div className="me-4">
-            <small className="text-secondary me-2">{caption} :</small>
-            {value}
+            <span className="text-body-tertiary me-2">{caption} :</span>
+            <span className="text-dark">{value}</span>
         </div>;
     }
     if (value === undefined) {
@@ -148,7 +155,7 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
             <div className="border-top border-secondary-subtle d-flex ps-2 pt-2 pb-1 align-items-center">
                 {vPrice}
                 {vAmount}
-                <ViewValue caption={'数量'} value={<span className="fw-bold">{value}</span>} />
+                <ViewValue caption={'数量'} value={<span className="fw-bold fs-larger text-primary">{value}</span>} />
                 <div className={cnEdit} onClick={onEdit}>
                     <Pencil />
                 </div>

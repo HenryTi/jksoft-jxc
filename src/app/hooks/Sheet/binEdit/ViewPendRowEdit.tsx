@@ -33,7 +33,7 @@ export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowE
     }
     if (valDiv !== undefined) {
         function Doing() {
-            const value = useAtomValue(valDiv.atomValue);
+            const value = useAtomValue(valDiv.atomSum);
             return <div>
                 <div className="d-flex">
                     <ViewCheck icon="check-square" iconColor="text-primary" onClick={onEdit} />

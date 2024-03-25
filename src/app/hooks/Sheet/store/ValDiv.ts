@@ -4,11 +4,7 @@ import { ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 
 export class ValDivs {
-    readonly atomValDivs: WritableAtom<ValDiv[], any, any>;
-    constructor() {
-        this.atomValDivs = atom<ValDiv[]>([]);
-    }
-
+    readonly atomValDivs = atom([] as ValDiv[]);
     addValDiv(valDiv: ValDiv) {
         let { atomValDivs } = this;
         let valDivs = getAtomValue(atomValDivs);
@@ -20,13 +16,36 @@ export class ValDivs {
 export class ValDiv extends ValDivs {
     readonly binDiv: BinDiv;
     readonly atomValRow: WritableAtom<ValRow, any, any>;
-    readonly atomValue: WritableAtom<number, any, any>;
-    id: number;
+    // readonly atomValue: WritableAtom<number, any, any>;
     iBase: number;
     xBase: number;
+    readonly atomSum = atom(get => {
+        if (this.binDiv.div !== undefined) {
+            let valDivs = get(this.atomValDivs);
+            let sum = 0, len = valDivs.length;
+            for (let i = 0; i < len; i++) {
+                let valDiv = valDivs[i];
+                let v: number = 0;
+                try {
+                    let { atomSum: atomValue } = valDiv;
+                    if (atomValue !== undefined) v = get(atomValue);
+                }
+                catch (err) {
+                    console.error(err);
+                    debugger;
+                }
+                sum += v;
+            };
+            return sum;
+        }
+        let valRow = get(this.atomValRow);
+        return valRow?.value;
+    });
+
     constructor(binDiv: BinDiv, valRow: ValRow) {
         super();
         this.binDiv = binDiv;
+        /*
         if (binDiv.div !== undefined) {
             this.atomValue = atom(
                 get => {
@@ -51,18 +70,26 @@ export class ValDiv extends ValDivs {
                 }
             )
         }
-        if (valRow !== undefined) {
-            const { value, id } = valRow;
-            this.atomValRow = atom<any>(valRow);
-            this.id = id;
-            if (this.atomValue === undefined) {
-                this.atomValue = atom(value ?? 0);
-            }
+        */
+        // if (valRow !== undefined) {
+        // const { value, id } = valRow;
+        this.atomValRow = atom<any>(valRow);
+        // this.id = id;
+        /*
+        if (this.atomValue === undefined) {
+            this.atomValue = atom(value ?? 0);
         }
+        */
+        // }
     }
 
-    setId(id: number) {
-        this.id = id;
+    get id(): number {
+        let valRow = getAtomValue(this.atomValRow);
+        return valRow?.id;
+    }
+
+    set id(id: number) {
+        // this.id = id;
         let valRow = getAtomValue(this.atomValRow);
         valRow.id = id;
         setAtomValue(this.atomValRow, { ...valRow });
@@ -76,7 +103,7 @@ export class ValDiv extends ValDivs {
     setValue(value: number) {
         let valRow = getAtomValue(this.atomValRow);
         valRow.value = value;
-        setAtomValue(this.atomValue, value);
+        // setAtomValue(this.atomValue, value);
     }
 
     setIXBase(valRow: ValRow) {
@@ -91,18 +118,5 @@ export class ValDiv extends ValDivs {
                 this.xBase = x;
             }
         }
-    }
-
-    getBudsValArr(): [BizBud, any][] {
-        const { binBuds } = this.binDiv;
-        const { valueBud } = binBuds;
-        let valRow = getAtomValue(this.atomValRow);
-        let ret: [BizBud, any][] = [];
-        for (let field of this.binDiv.binBuds.fields) {
-            let { bud } = field;
-            if (bud === valueBud) continue;
-            ret.push([bud, field.getValue(valRow)]);
-        }
-        return ret;
     }
 }

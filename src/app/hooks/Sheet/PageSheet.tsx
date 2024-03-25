@@ -1,8 +1,8 @@
 import { Page, PageConfirm, useModal } from "tonwa-app";
-import { SheetStore, SubmitState } from "./store";
-import { to62 } from "tonwa-com";
-import { ViewBinDivs, ViewMain } from "./binEdit";
-import { ViewDetail } from "./binEdit";
+import { DivStore, SheetStore, SubmitState } from "./store";
+import { theme, to62 } from "tonwa-com";
+import { ViewDiv, ViewMain } from "./binEdit";
+// import { ViewDetail } from "./binEdit";
 import { useAtomValue } from "jotai";
 import { useCoreDetailAdd } from "./binEdit";
 import { NavigateFunction, useNavigate } from "react-router-dom";
@@ -141,13 +141,32 @@ function useSheetView(store: SheetStore) {
             view: <>
                 <ViewMain store={store} popup={false} />
                 {
-                    binDiv.div === undefined ?
+                    /*binDiv.div === undefined ?
                         <ViewDetail detail={detail} editable={editable} />
-                        :
-                        <ViewBinDivs divStore={divStore} editable={editable} />
+                        :*/
+                    <ViewBinDivs divStore={divStore} editable={editable} />
                 }
             </>
         };
+
+        function ViewBinDivs({ divStore, editable }: { divStore: DivStore; editable: boolean; }) {
+            const { valDivs } = divStore;
+            const divs = useAtomValue(valDivs.atomValDivs);
+            if (divs.length === 0) {
+                return <div className="tonwa-bg-gray-1">
+                    <div className="mt-3 small text-body-tertiary p-3 bg-white border-top">
+                        无明细
+                    </div>
+                </div>;
+            }
+            return <div className={' tonwa-bg-gray-1 '}>
+                {divs.map(v => {
+                    return <div key={v.id} className="mb-3 border-top border-bottom border-primary-subtle">
+                        <ViewDiv divStore={divStore} valDiv={v} editable={editable} />
+                    </div>;
+                })}
+            </div>;
+        }
     }
 
     const { toolGroups, view } = (detail === undefined ? mainOnlyEdit() : mainDetailEdit());

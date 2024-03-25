@@ -32,19 +32,23 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
                     binEditing.setValue('value', 1, undefined);
                 }
                 const { origin, pend, pendValue } = rowProps;
-                let row = await sec.addRowProps(Object.assign(
+                let row = new Row(sec);
+                row.setLoading(true);
+                await sec.addRowProps(row, Object.assign(
                     {},
                     // rowProps, 这是多选明细，不应该加这里。在前面rowStore.init已经处理了字段带入
                     valRow as any,
                     { origin, pend, pendValue },
                 ));
-                await coreDetail.sheetStore.reloadRow(row.valRow.id);
+                await coreDetail.sheetStore.reloadRow(row);
+                row.setLoading(false);
             }
         }
         else {
             // 直接跳出输入界面，开始编辑
             let section = new Section(coreDetail);
             let row = new Row(section);
+            row.setLoading(true);
             coreDetail.addSection(section);
             const binEditing = new BinEditing(entityBin, row.valRow);
             binEditing.setNamedParams(namedResults);
@@ -52,8 +56,9 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
             if (ret === true) {
                 Object.assign(row.valRow, binEditing.valRow);
                 await row.addToSection();
-                await coreDetail.sheetStore.reloadRow(row.valRow.id);
+                await coreDetail.sheetStore.reloadRow(row);
             }
+            row.setLoading(false);
         }
     }
     return useCallback(addNewDirect, []);

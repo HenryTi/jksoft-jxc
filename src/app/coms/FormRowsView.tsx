@@ -83,7 +83,7 @@ export function BandInput(props: BandInputProps) {
 }
 
 export function Band({ label, labelClassName, children, className }: BandProps) {
-    labelClassName = labelClassName ?? 'form-label col-md-2 col-sm-3 col-4 text-end small text-secondary mt-1';
+    labelClassName = labelClassName ?? 'form-label col-md-2 col-sm-3 col-4 text-end text-body-tertiary mt-1';
     return <div className={label === null ? 'd-none' : 'row ' + (className ?? 'mb-3')}>
         <label className={labelClassName}>{label}</label>
         <div className={'col'} >
@@ -214,7 +214,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
                     const { label, value } = v;
                     return <label key={index} className={cnCheckInput}>
                         <input className="form-check-input me-1"
-                            defaultChecked={value === defaultValue}
+                            defaultChecked={value === options?.value}
                             readOnly={readOnly}
                             value={value}
                             type="radio" {...register(name)}

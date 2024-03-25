@@ -1,4 +1,4 @@
-import React, { MouseEvent, useRef, useState } from "react";
+import React, { MouseEvent, MouseEventHandler, useRef, useState } from "react";
 import { Route } from "react-router-dom";
 import { IDView, Page, useModal } from "tonwa-app";
 import { PageCode } from './PageCode';
@@ -32,26 +32,30 @@ export function useBuildViewBiz() {
     }
     function ViewEntityItem({ value, icon }: { value: Entity; icon: string; }) {
         const { id, caption, name } = value;
-        function onEntity() {
+        function onEntity(e: MouseEvent) {
             openModal(<PageEntity entity={value} />);
+            e.preventDefault();
         }
         let content: any;
         if (caption === undefined || caption === name) {
-            content = <div>{name}</div>;
+            content = name;
         }
         else {
-            content = <div>
+            content = <>
                 <div className="small text-secondary">{name}</div>
                 <div>{caption}</div>
-            </div>
+            </>
         }
+        // <FA name={icon} className="mt-1 me-2 text-success" />
+        // className="px-2 py-2 border border-secondary-subtle shadow-sm mx-2 my-1 rounded cursor-pointer link-primary bg-white d-flex"
+        const cnLink = 'link-offset-2 link-offset-3-hover link-underline link-underline-opacity-75-hover';
         return <div key={id} className="col">
-            <div
-                className="px-2 py-2 border border-secondary-subtle shadow-sm mx-2 my-1 rounded cursor-pointer link-primary bg-white d-flex"
+            <a
+                className={cnLink}
+                href="#"
                 onClick={onEntity}>
-                <FA name={icon} className="mt-1 me-2 text-success" />
-                {content}
-            </div>
+                <div className="py-2">{content}</div>
+            </a>
         </div>
     }
     function ViewEntitys({ entitys, icon }: { entitys: Entity[]; icon: string; }) {
@@ -100,7 +104,10 @@ export function useBuildViewBiz() {
             if (arr.length === 0) return null;
             let top: any;
             if (entities.length > 1) {
-                top = <div className="px-3 pt-1 pb-1 border-bottom small">{caption}</div>;
+                top = <div className="px-3 pt-1 pb-1 border-bottom">
+                    <FA name={icon} className="me-3 text-success" />
+                    {caption}
+                </div>;
             }
             return <div key={index}>
                 {top}

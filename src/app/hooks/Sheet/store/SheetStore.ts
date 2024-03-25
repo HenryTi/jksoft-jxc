@@ -9,9 +9,9 @@ import { WritableAtom, atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
 import { PickFunc, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
-import { OwnerColl, budValuesFromProps } from "../../tool";
+import { budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
-import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "./tool";
+import { ValRow } from "./tool";
 import { DivStore } from "./DivStore";
 
 abstract class KeyIdObject {
@@ -230,12 +230,17 @@ export class ExDetail extends DetailBase {
 }
 
 export class Row extends BaseObject {
+    readonly atomLoading = atom(false);
     readonly section: Section;
     readonly valRow: ValRow = { buds: {} } as any;
 
     constructor(section: Section) {
         super(section.sheetStore);
         this.section = section;
+    }
+
+    setLoading(loading: boolean) {
+        setAtomValue(this.atomLoading, loading);
     }
 
     private async save() {
@@ -273,18 +278,18 @@ export class Row extends BaseObject {
         this.section.rowChanged();
     }
 
-    setValue(row: ValRow) {
+    setValue(valRow: ValRow) {
         let { i, x, value, price, amount } = this.section.coreDetail.entityBin;
-        this.valRow.id = row.id;
-        if (i !== undefined) this.valRow.i = row.i;
-        if (x !== undefined) this.valRow.x = row.x;
-        if (value !== undefined) this.valRow.value = row.value;
-        if (price !== undefined) this.valRow.price = row.price;
-        if (amount !== undefined) this.valRow.amount = row.amount;
-        this.valRow.origin = row.origin;
-        this.valRow.buds = row.buds;
-        this.valRow.pend = row.pend;
-        this.valRow.owned = row.owned;
+        this.valRow.id = valRow.id;
+        if (i !== undefined) this.valRow.i = valRow.i;
+        if (x !== undefined) this.valRow.x = valRow.x;
+        if (value !== undefined) this.valRow.value = valRow.value;
+        if (price !== undefined) this.valRow.price = valRow.price;
+        if (amount !== undefined) this.valRow.amount = valRow.amount;
+        this.valRow.origin = valRow.origin;
+        this.valRow.buds = valRow.buds;
+        this.valRow.pend = valRow.pend;
+        this.valRow.owned = valRow.owned;
     }
 }
 
@@ -323,11 +328,9 @@ export class Section extends BaseObject {
         if (changed === true) this.rowChanged();
     }
 
-    async addRowProps(valRow: ValRow) {
-        let row = new Row(this);
+    async addRowProps(row: Row, valRow: ValRow) {
         row.setValue(valRow);
         await row.addToSection();
-        return row;
     }
 
     delRow(row: Row) {
@@ -367,12 +370,6 @@ export class SheetStore extends KeyIdObject {
         this.biz = biz;
         this.entitySheet = entitySheet;
         this.main = new SheetMain(this);
-        /*
-        if (id > 0) {
-            this.idOnUrl = id;
-            this.main.setId(id);
-        }
-        */
         const { details } = this.entitySheet;
         let len = details.length;
         if (len > 0) {
@@ -401,7 +398,8 @@ export class SheetStore extends KeyIdObject {
         setAtomValue(this.atomLoaded, true);
     }
 
-    async reloadRow(binId: number) {
+    async reloadRow(row: Row) {
+        const { id: binId } = row.valRow;
         let { details } = await this.loadBinData(binId);
         this.detail.setRowValues(details);
     }

@@ -10,7 +10,7 @@ import { useUqApp } from "app";
 import { PageMoreCacheData, ToolItem } from "app/coms";
 import { buttonDefs, headerSheet } from "./headerSheet";
 import { ViewBinPicks } from "./binPick";
-import { ViewMain } from "./binEdit";
+import { ViewMain, useCoreDetailAdd } from "./binEdit";
 
 export function pathSE(phrase: number | string) {
     function sheetInPath(phrase: number | string) {
@@ -135,10 +135,15 @@ function PageStartPicks({ store }: { store: SheetStore; }) {
 function PageStartPend({ store }: { store: SheetStore; }) {
     // const modal = useModal();
     const onPicked = useOnPicked(store);
+    const addNew = useCoreDetailAdd(store);
     const { caption } = store;
     const subCaption = '批选待处理';
+    const onPend = useCallback(async (results: ReturnUseBinPicks) => {
+        await onPicked(results);
+        await addNew();
+    }, []);
     return <Page header={caption + ' - ' + subCaption}>
-        <ViewBinPicks subHeader={'批选条件'} sheetStore={store} onPicked={onPicked} />
+        <ViewBinPicks subHeader={'批选条件'} sheetStore={store} onPicked={onPend} />
     </Page>
     /*
     useStartingNO(store);
