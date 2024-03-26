@@ -5,12 +5,11 @@ import { ViewDiv, ViewMain } from "./binEdit";
 // import { ViewDetail } from "./binEdit";
 import { useAtomValue } from "jotai";
 import { useCoreDetailAdd } from "./binEdit";
-import { NavigateFunction, useNavigate } from "react-router-dom";
-import { UqApp, useUqApp } from "app/UqApp";
+import { useNavigate } from "react-router-dom";
+import { useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
 import { useCallback, useState } from "react";
 import { PickFunc, useBinPicks } from "./binPick";
-// import { useSheetHeader } from "./useSheetStore";
 import { headerSheet, buttonDefs } from "./headerSheet";
 
 export function PageSheet({ store }: { store: SheetStore; }) {
@@ -133,7 +132,7 @@ function useSheetView(store: SheetStore) {
             };
         }
         const { divStore } = store;
-        const { binDiv } = divStore;
+        // const { binDiv } = divStore;
         return {
             toolGroups,
             view: <>

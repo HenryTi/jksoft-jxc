@@ -21,8 +21,8 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
                 return;
             }
             for (let rowProps of pickResult as PickResult[]) {
-                let sec = new Section(coreDetail);
-                coreDetail.addSection(sec);
+                //let sec = new Section(coreDetail);
+                //coreDetail.addSection(sec);
 
                 namedResults[binPick.name] = rowProps;
                 let binEditing = new BinEditing(entityBin);
@@ -42,26 +42,27 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
                     { origin, pend, pendValue },
                 ));
                 */
-                await coreDetail.sheetStore.reloadRow(valRow);
+                await sheetStore.reloadRow(valRow);
                 // row.setLoading(false);
             }
         }
         else {
             // 直接跳出输入界面，开始编辑
-            let section = new Section(coreDetail);
-            let row = new Row(section);
-            row.setLoading(true);
-            coreDetail.addSection(section);
-            const binEditing = new BinEditing(entityBin, row.valRow);
+            //let section = new Section(coreDetail);
+            //let row = new Row(section);
+            //row.setLoading(true);
+            //coreDetail.addSection(section);
+            //const binEditing = new BinEditing(entityBin, row.valRow);
+            const binEditing = new BinEditing(entityBin);
             binEditing.setNamedParams(namedResults);
             let ret = await rowEdit(binEditing);
             if (ret === true) {
                 const { valRow } = binEditing;
-                Object.assign(row.valRow, valRow);
-                await row.addToSection();
-                await coreDetail.sheetStore.reloadRow(valRow);
+                // Object.assign(row.valRow, valRow);
+                // await row.addToSection();
+                await sheetStore.reloadRow(valRow);
             }
-            row.setLoading(false);
+            // row.setLoading(false);
         }
     }
     return useCallback(addNewDirect, []);
