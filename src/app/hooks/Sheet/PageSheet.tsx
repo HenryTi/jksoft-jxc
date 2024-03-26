@@ -29,6 +29,8 @@ function useSheetView(store: SheetStore) {
     const navigate = useNavigate();
     const [editable, setEditable] = useState(true);
     const submitState = useAtomValue(divStore.atomSubmitState);
+    const addNew = useCoreDetailAdd(store);
+    const start = useStartSheetStore(store, pick);
 
     async function onSubmit() {
         if (main.trigger() === false) return;
@@ -98,10 +100,6 @@ function useSheetView(store: SheetStore) {
     }
 
     function mainDetailEdit() {
-        const addNew = useCoreDetailAdd(store);
-        const start = useCallback(async function () {
-            startSheetStore(uqApp, navigate, store, pick);
-        }, []);
         async function startInputDetail() {
             let ret = await start();
             if (ret === undefined) {
@@ -109,7 +107,7 @@ function useSheetView(store: SheetStore) {
             }
         }
         async function onAddRow() {
-            let ret = await addNew();
+            await addNew();
         }
 
         let sections = useAtomValue(detail._sections);
@@ -176,29 +174,34 @@ function useSheetView(store: SheetStore) {
     };
 }
 
-async function startSheetStore(uqApp: UqApp, navigate: NavigateFunction, sheetStore: SheetStore, pick: PickFunc) {
-    let ret = await sheetStore.start(pick);
-    if (ret === undefined) {
-        if (sheetStore.main.no === undefined) {
-            // 还没有创建单据
-            if (navigate !== undefined) {
-                setTimeout(() => {
-                    navigate(-1);
-                }, 100);
+function useStartSheetStore(sheetStore: SheetStore, pick: PickFunc) {
+    const uqApp = useUqApp();
+    const navigate = useNavigate();
+    async function startSheetStore() {
+        let ret = await sheetStore.start(pick);
+        if (ret === undefined) {
+            if (sheetStore.main.no === undefined) {
+                // 还没有创建单据
+                if (navigate !== undefined) {
+                    setTimeout(() => {
+                        navigate(-1);
+                    }, 100);
+                }
+            }
+            return; // 已有单据，不需要pick. 或者没有创建新单据
+        }
+        let { id, no } = ret;
+        if (id > 0) {
+            let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
+            if (data) {
+                const { id: entityId } = sheetStore.entitySheet;
+                data.addItem({
+                    id,
+                    no,
+                    entityId,
+                });
             }
         }
-        return; // 已有单据，不需要pick. 或者没有创建新单据
     }
-    let { id, no } = ret;
-    if (id > 0) {
-        let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
-        if (data) {
-            const { id: entityId } = sheetStore.entitySheet;
-            data.addItem({
-                id,
-                no,
-                entityId,
-            });
-        }
-    }
+    return useCallback(startSheetStore, []);
 }

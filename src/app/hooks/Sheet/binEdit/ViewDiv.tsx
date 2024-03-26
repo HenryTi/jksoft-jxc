@@ -1,10 +1,13 @@
 import { useAtomValue } from "jotai";
-import { DivStore, UseInputsProps, ValDiv } from "../store";
-import { FA } from "tonwa-com";
+import { BinEditing, DivStore, UseInputsProps, ValDiv } from "../store";
+import { FA, setAtomValue } from "tonwa-com";
 import { useInputs } from "../inputs";
 import { ViewBud, ViewBudUIType, ViewSpecBaseOnly } from "app/hooks";
-import { RowCols } from "app/hooks/tool";
+import { OwnedBuds, RowCols } from "app/hooks/tool";
 import { theme } from "tonwa-com";
+import { BizBud } from "app/Biz";
+import { BinOwnedBuds } from "./BinOwnedBuds";
+import { useRowEdit } from "./rowEdit";
 
 interface ViewDivProps {
     divStore: DivStore;
@@ -13,26 +16,6 @@ interface ViewDivProps {
     className?: string;
 }
 
-/*
-export function ViewBinDivs({ divStore, editable }: { divStore: DivStore; editable: boolean; }) {
-    const { valDivs } = divStore;
-    const divs = useAtomValue(valDivs.atomValDivs);
-    if (divs.length === 0) {
-        return <div className="tonwa-bg-gray-1">
-            <div className="mt-3 small text-body-tertiary p-3 bg-white border-top">
-                无明细
-            </div>
-        </div>;
-    }
-    return <div className="tonwa-bg-gray-1">
-        {divs.map(v => {
-            return <div key={v.id} className="mb-3 border-top border-bottom border-primary-subtle">
-                <ViewDiv divStore={divStore} valDiv={v} editable={editable} />
-            </div>;
-        })}
-    </div>;
-}
-*/
 export function ViewDiv({ divStore, valDiv, editable, className }: ViewDivProps) {
     return <>
         <ViewRow divStore={divStore} valDiv={valDiv} editable={editable} className={className} />
@@ -52,13 +35,14 @@ function ViewDivs({ divStore, valDiv, editable, className }: ViewDivProps) {
 const marginRightStyle = { marginRight: "-1em" };
 function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     const inputs = useInputs();
+    const rowEdit = useRowEdit();
     const { atomValRow, atomValDivs, atomSum: atomValue, binDiv } = valDiv;
     const { binBuds, level, entityBin, div } = binDiv;
-    const { divLevels } = entityBin;
+    const { divLevels, price: priceBud, amount: amountBud } = entityBin;
     const { hasIBase, valueBud, fields } = binBuds;
     const valRow = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);
-    const { pend, id, pendValue } = valRow;
+    const { pend, id, pendValue, price, amount } = valRow;
     let btn: any;
     let vDel = <div className="px-3 cursor-pointer text-warning" onClick={onDelSub} style={marginRightStyle}>
         <FA name="times" fixWidth={true} />
@@ -87,14 +71,35 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
         }
         btn = <DivRow />;
     }
-    else if (valueBud !== undefined) {
-        let { caption, name } = valueBud;
-        btn = <div className={cnBtn}>
-            <div className="text-end">
+    else if (valueBud !== undefined || priceBud !== undefined || amountBud !== undefined) {
+        function PAV({ bud, className, val, onClick }: { bud: BizBud; className: string; val: number; onClick?: () => void }) {
+            let { caption, name } = bud;
+            return <div className="text-end ms-3" onClick={onClick}>
                 <div className={theme.labelColor}>{caption ?? name}</div>
-                <div className={theme.value}>{value}</div>
+                <div className={className}>{val}</div>
             </div>
-            {vDel}
+        }
+        async function onEdit() {
+            if (editable === false) return;
+            const binEditing = new BinEditing(entityBin, valRow);
+            // binEditing.setValues(binDetail);
+            let ret = await rowEdit(binEditing);
+            if (ret === true) {
+                // Object.assign(valRow, binEditing.valRow);
+                // await row.changed();
+                const { valRow } = binEditing;
+                await divStore.saveDetail(binDiv, valRow);
+                setAtomValue(atomValRow, valRow);
+            }
+        }
+        let { value: cnValue, price: cnPrice, amount: cnAmount } = theme;
+        btn = <div className={cnBtn}>
+            <div className="d-flex align-items-start flex-row">
+                {amountBud && <PAV bud={amountBud} className={cnAmount} val={amount} />}
+                {priceBud && <PAV bud={priceBud} className={cnPrice} val={price} />}
+                {valueBud && <PAV bud={valueBud} className={cnValue + ' cursor-pointer '} val={value} onClick={onEdit} />}
+                {vDel}
+            </div>
         </div>;
     }
     else {
@@ -138,10 +143,13 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     return <div className={cn}>
         {vIBase}
         <RowCols contentClassName="flex-fill">
+            <BinOwnedBuds bizBud={entityBin.i} valRow={valRow} />
             {
                 fields.map(field => {
                     const { bud } = field;
                     if (bud === valueBud) return null;
+                    if (bud === priceBud) return null;
+                    if (bud === amountBud) return null;
                     const { id } = bud;
                     let value = field.getValue(valRow);
                     if (value === null || value === undefined) return null;

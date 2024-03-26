@@ -12,6 +12,7 @@ import { BinEditing } from "../store";
 import { Pencil, RowCols } from "app/hooks/tool";
 import { ValRow } from "../tool";
 import { theme } from "tonwa-com";
+import { BinOwnedBuds } from "./BinOwnedBuds";
 
 export function ViewDetail({ detail, editable }: { detail: CoreDetail; editable: boolean; }) {
     const sections = useAtomValue(detail._sections);
@@ -162,13 +163,4 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
             </div>
         </div >
     </div>;
-}
-
-// atom field owns buds
-export function BinOwnedBuds({ bizBud, valRow, noLabel }: { bizBud: BizBud, valRow: ValRow; noLabel?: boolean; }) {
-    let { owned } = valRow;
-    if (owned === undefined) return null;
-    if (bizBud === undefined) return null;
-    let values = owned[bizBud.id];
-    return <OwnedBuds values={values} noLabel={noLabel} />;
 }

@@ -398,8 +398,8 @@ export class SheetStore extends KeyIdObject {
         setAtomValue(this.atomLoaded, true);
     }
 
-    async reloadRow(row: Row) {
-        const { id: binId } = row.valRow;
+    async reloadRow(valRow: ValRow) {
+        const { id: binId } = valRow;
         let { details } = await this.loadBinData(binId);
         this.detail.setRowValues(details);
     }

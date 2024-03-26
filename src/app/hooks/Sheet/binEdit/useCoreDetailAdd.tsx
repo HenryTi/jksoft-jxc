@@ -32,6 +32,7 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
                     binEditing.setValue('value', 1, undefined);
                 }
                 const { origin, pend, pendValue } = rowProps;
+                /*
                 let row = new Row(sec);
                 row.setLoading(true);
                 await sec.addRowProps(row, Object.assign(
@@ -40,8 +41,9 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
                     valRow as any,
                     { origin, pend, pendValue },
                 ));
-                await coreDetail.sheetStore.reloadRow(row);
-                row.setLoading(false);
+                */
+                await coreDetail.sheetStore.reloadRow(valRow);
+                // row.setLoading(false);
             }
         }
         else {
@@ -54,9 +56,10 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
             binEditing.setNamedParams(namedResults);
             let ret = await rowEdit(binEditing);
             if (ret === true) {
-                Object.assign(row.valRow, binEditing.valRow);
+                const { valRow } = binEditing;
+                Object.assign(row.valRow, valRow);
                 await row.addToSection();
-                await coreDetail.sheetStore.reloadRow(row);
+                await coreDetail.sheetStore.reloadRow(valRow);
             }
             row.setLoading(false);
         }

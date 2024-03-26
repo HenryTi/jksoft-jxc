@@ -7,9 +7,9 @@ import { ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
 import { ChangeEvent, useState } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
-import { BinOwnedBuds } from "../ViewDetail";
 import { BinEditing } from "../../store";
 import { RowCols } from "app/hooks/tool";
+import { BinOwnedBuds } from "../BinOwnedBuds";
 
 export function useRowEdit() {
     const modal = useModal();
