@@ -95,12 +95,12 @@ export class ValDiv extends ValDivs {
 
     getBudsValArr(): [BizBud, any][] {
         const { binBuds } = this.binDiv;
-        const { valueBud } = binBuds;
+        const { fields } = binBuds;
         let valRow = getAtomValue(this.atomValRow);
         let ret: [BizBud, any][] = [];
-        for (let field of this.binDiv.binBuds.fields) {
+        for (let field of fields) {
             let { bud } = field;
-            if (bud === valueBud) continue;
+            // if (bud === budValue) continue;
             ret.push([bud, field.getValue(valRow)]);
         }
         return ret;

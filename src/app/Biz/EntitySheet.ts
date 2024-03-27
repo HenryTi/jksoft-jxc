@@ -208,17 +208,28 @@ class FieldRadioBud extends FieldBud {
 export class BudsFields {
     protected readonly fieldColl: { [name: string]: BinField } = {};
     readonly entityBin: EntityBin;
-    readonly fields: BinField[];
     readonly hasIBase: boolean;
     readonly hasXBase: boolean;
-    readonly valueBud: BizBud;
+    readonly budI: BizBud;
+    readonly budX: BizBud;
+    readonly budPrice: BizBud;
+    readonly budAmount: BizBud;
+    readonly budValue: BizBud;
+
+    readonly allFields: BinField[];
+    readonly fields: BinField[];
+    readonly fieldI: BinField;
+    readonly fieldX: BinField;
+    readonly fieldPrice: BinField;
+    readonly fieldAmount: BinField;
     readonly fieldValue: BinField;
+
     constructor(bin: EntityBin, buds: BizBud[]) {
         this.entityBin = bin;
+        this.allFields = [];
         this.fields = [];
-
-        const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, buds: budArr } = bin;
-
+        const { i: budI, x: budX, value: budValue, price: budPrice, amount: budAmount, buds: budArr } = bin;
+        /*
         function fieldOfBud(bud: BizBud): new (bud: BizBud) => BinField {
             if (budArr.findIndex(v => v === bud) >= 0) {
                 switch (bud.budDataType.type) {
@@ -230,27 +241,67 @@ export class BudsFields {
             }
             if (bud === iBud) return FieldI;
             if (bud === xBud) return FieldX;
-            if (bud === valueBud) return FieldValue;
-            if (bud === priceBud) return FieldPrice;
-            if (bud === amountBud) return FieldAmount;
+            if (bud === budValue) return FieldValue;
+            if (bud === budPrice) return FieldPrice;
+            if (bud === budAmount) return FieldAmount;
             // debugger; .i will not list here
             return undefined;
         }
-
+        */
         for (let bud of buds) {
-            switch (bud.name) {
-                case '.i': this.hasIBase = true; continue;
-                case '.x': this.hasXBase = true; continue;
-                case 'value':
-                    this.valueBud = bud;
-                    break;
+            if (bud.name[0] === '.') {
+                switch (bud.name) {
+                    case '.i': this.hasIBase = true; continue;
+                    case '.x': this.hasXBase = true; continue;
+                }
             }
+
+            let field: BinField;
+            if (bud === budI) {
+                this.budI = bud;
+                this.fieldI = field = new FieldI(bud);
+            }
+            else if (bud === budX) {
+                this.budX = bud;
+                this.fieldX = field = new FieldX(bud);
+            }
+            else if (bud === budValue) {
+                this.budValue = bud;
+                this.fieldValue = field = new FieldValue(bud);
+            }
+            else if (bud === budPrice) {
+                this.budPrice = bud;
+                this.fieldPrice = field = new FieldPrice(bud);
+            }
+            else if (bud === budAmount) {
+                this.budAmount = bud;
+                this.fieldAmount = field = new FieldAmount(bud);
+            }
+            else if (budArr.findIndex(v => v === bud) >= 0) {
+                let BF: (new (bud: BizBud) => BinField);
+                switch (bud.budDataType.type) {
+                    default: BF = FieldBud; break;
+                    case EnumBudType.date: BF = FieldDateBud; break;
+                    case EnumBudType.check: BF = FieldCheckBud; break;
+                    case EnumBudType.radio: BF = FieldRadioBud; break;
+                }
+                field = new BF(bud);
+                this.fields.push(field);
+            }
+            else {
+                debugger;
+                throw Error('should not be here');
+            }
+
+            /*
+            if (bud === budValue) this.budValue = budValue
             let Field = fieldOfBud(bud);
             if (Field === undefined) continue;
-            let field = new Field(bud);
+            field = new Field(bud);
+            */
             this.fieldColl[field.name] = field;
-            this.fields.push(field);
-            if (bud === this.valueBud) this.fieldValue = field;
+            this.allFields.push(field);
+            // if (bud === this.budValue) this.fieldValue = field;
         }
     }
 }

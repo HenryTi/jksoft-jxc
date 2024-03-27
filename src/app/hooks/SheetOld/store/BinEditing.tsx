@@ -65,7 +65,7 @@ abstract class BinFields extends BudsFields {
 
     // init formula only valid in init
     stopInitFormula() {
-        for (let field of this.fields) {
+        for (let field of this.allFields) {
             if (field.valueSetType === ValueSetType.init) {
                 this.calc.stopFormula(field.name);
             }
@@ -138,7 +138,7 @@ abstract class BinFields extends BudsFields {
     get results() { return this.calc.results; }
 
     isInputNeeded(): boolean {
-        for (let field of this.fields) {
+        for (let field of this.allFields) {
             const { bud, valueSetType } = field;
             const { ui } = bud;
             let { show } = ui;
@@ -158,7 +158,7 @@ abstract class BinFields extends BudsFields {
     buildFormRows(filterOnForm: boolean = false): FormRow[] {
         let ret: FormRow[] = [];
         const { results: calcResults } = this.calc;
-        for (let field of this.fields) {
+        for (let field of this.allFields) {
             const { name, bud, valueSetType, required, onForm } = field;
             if (filterOnForm === true) {
                 if (onForm === false) continue;

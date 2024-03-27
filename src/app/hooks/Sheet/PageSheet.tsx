@@ -27,7 +27,7 @@ function useSheetView(store: SheetStore) {
     const { openModal, closeModal } = useModal();
     const navigate = useNavigate();
     const [editable, setEditable] = useState(true);
-    const submitState = useAtomValue(divStore.atomSubmitState);
+    let submitState = useAtomValue(divStore.atomSubmitState);
     const addNew = useCoreDetailAdd(store);
     const start = useStartSheetStore(store, pick);
 
@@ -108,7 +108,6 @@ function useSheetView(store: SheetStore) {
         async function onAddRow() {
             await addNew();
         }
-
         let sections = useAtomValue(detail._sections);
         let submitDisabled: boolean = true, submitHidden: boolean;
         if (sections.length === 0 && submitState === SubmitState.hide) {
@@ -138,9 +137,6 @@ function useSheetView(store: SheetStore) {
             view: <>
                 <ViewMain store={store} popup={false} />
                 {
-                    /*binDiv.div === undefined ?
-                        <ViewDetail detail={detail} editable={editable} />
-                        :*/
                     <ViewBinDivs divStore={divStore} editable={editable} />
                 }
             </>
@@ -169,7 +165,7 @@ function useSheetView(store: SheetStore) {
     const { toolGroups, view } = (detail === undefined ? mainOnlyEdit() : mainDetailEdit());
     return {
         ...headerSheet({ store, toolGroups, headerGroup }),
-        view: view,
+        view,
     };
 }
 

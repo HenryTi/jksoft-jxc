@@ -395,7 +395,13 @@ export class SheetStore extends KeyIdObject {
         if (this.detail !== undefined) {
             this.detail.addRowValues(details);
         }
-        setAtomValue(this.atomLoaded, true);
+        try {
+            setAtomValue(this.atomLoaded, true);
+        }
+        catch (e) {
+            console.error(e);
+            debugger;
+        }
     }
 
     async setValRow(valRow: ValRow) {

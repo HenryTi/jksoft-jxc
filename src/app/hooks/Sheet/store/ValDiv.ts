@@ -5,6 +5,31 @@ import { getAtomValue, setAtomValue } from "tonwa-com";
 
 export class ValDivs {
     readonly atomValDivs = atom([] as ValDiv[]);
+    readonly atomSum = atom(get => {
+        let valDivs = get(this.atomValDivs);
+        let sum = 0, len = valDivs.length;
+        for (let i = 0; i < len; i++) {
+            let valDiv = valDivs[i];
+            let v: number = 0;
+            try {
+                let { binDiv: { level, entityBin: { divLevels } } } = valDiv;
+                if (level === divLevels) {
+                    const { atomValue } = valDiv;
+                    v = get(atomValue);
+                }
+                else {
+                    const { atomSum } = valDiv;
+                    v = get(atomSum);
+                }
+            }
+            catch (err) {
+                console.error(err);
+                debugger;
+            }
+            sum += v;
+        };
+        return sum;
+    });
     addValDiv(valDiv: ValDiv) {
         let { atomValDivs } = this;
         let valDivs = getAtomValue(atomValDivs);
@@ -18,25 +43,7 @@ export class ValDiv extends ValDivs {
     readonly atomValRow: WritableAtom<ValRow, any, any>;
     iBase: number;
     xBase: number;
-    readonly atomSum = atom(get => {
-        if (this.binDiv.div !== undefined) {
-            let valDivs = get(this.atomValDivs);
-            let sum = 0, len = valDivs.length;
-            for (let i = 0; i < len; i++) {
-                let valDiv = valDivs[i];
-                let v: number = 0;
-                try {
-                    let { atomSum: atomValue } = valDiv;
-                    if (atomValue !== undefined) v = get(atomValue);
-                }
-                catch (err) {
-                    console.error(err);
-                    debugger;
-                }
-                sum += v;
-            };
-            return sum;
-        }
+    readonly atomValue = atom(get => {
         let valRow = get(this.atomValRow);
         return valRow?.value;
     });

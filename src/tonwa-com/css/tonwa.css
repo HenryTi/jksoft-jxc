@@ -462,6 +462,10 @@
     border-radius: 0.5rem;
 }
 
+.tonwa-bg-gray-0 {
+    background-color: white;
+}
+
 .tonwa-bg-gray-1 {
     background-color: #f5f5f5;
 }

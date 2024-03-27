@@ -59,7 +59,7 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     const { atomValRow, atomValDivs, atomValue, binDiv } = valDiv;
     const { binBuds, level, entityBin, div } = binDiv;
     const { divLevels } = entityBin;
-    const { hasIBase, valueBud } = binBuds;
+    const { hasIBase, budValue: valueBud } = binBuds;
     const val = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);
     const { pend, id } = val;

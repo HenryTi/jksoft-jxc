@@ -2,7 +2,7 @@ import { useAtomValue } from "jotai";
 import { BinEditing, DivStore, UseInputsProps, ValDiv } from "../store";
 import { FA, setAtomValue } from "tonwa-com";
 import { useInputs } from "../inputs";
-import { ViewBud, ViewBudUIType, ViewSpec, ViewSpecBaseOnly } from "app/hooks";
+import { ViewBud, ViewBudSpec, ViewBudUIType, ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks";
 import { OwnedBuds, RowCols } from "app/hooks/tool";
 import { theme } from "tonwa-com";
 import { BizBud } from "app/Biz";
@@ -27,58 +27,117 @@ function ViewDivs({ divStore, valDiv, editable, className }: ViewDivProps) {
     const divs = useAtomValue(valDiv.atomValDivs);
     return <>
         {divs.map(v => {
-            return <ViewDiv key={v.id} divStore={divStore} valDiv={v} editable={editable} />;
+            return <ViewDiv key={v.id} divStore={divStore} valDiv={v} editable={editable} className={className} />;
         })}
     </>;
 }
 
-const marginRightStyle = { marginRight: "-1em" };
-function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
+function ViewRow(props: ViewDivProps) {
+    const { valDiv, divStore } = props;
     const inputs = useInputs();
     const rowEdit = useRowEdit();
-    const { atomValRow, atomValDivs, atomSum: atomValue, binDiv } = valDiv;
+    const { atomValRow, atomValDivs, atomSum, atomValue, binDiv } = valDiv;
     const { binBuds, level, entityBin, div } = binDiv;
-    const { i: budI, divLevels, price: priceBud, amount: amountBud } = entityBin;
-    const { hasIBase, valueBud, fields } = binBuds;
+    const { divLevels } = entityBin;
+    const { hasIBase, budValue, fields, budPrice, budAmount, budI } = binBuds;
     const valRow = useAtomValue(atomValRow);
+    const sum = useAtomValue(atomSum);
     const value = useAtomValue(atomValue);
     const { pend, id, pendValue, price, amount } = valRow;
-    let btn: any;
-    let vDel = <div className="px-3 cursor-pointer text-warning" onClick={onDelSub} style={marginRightStyle}>
+    const divs = useAtomValue(atomValDivs);
+    async function onDelSub() {
+        if (level < divLevels) {
+            alert('实现中...');
+            return;
+        }
+        await divStore.delValRow(id);
+    }
+    let vDel = <div className="px-3 cursor-pointer text-warning" onClick={onDelSub}>
         <FA name="times" fixWidth={true} />
     </div>;
     const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end align-items-end';
-    if (div !== undefined) {
-        function DivRow() {
-            const divs = useAtomValue(atomValDivs);
-            let pendOverflow: any;
-            if (level === 0 && value > pendValue) {
-                pendOverflow = <div className="flex-fill">
-                    <FA name="exclamation-circle" className="text-danger me-1" fixWidth={true} />
-                    <span className="">{pendValue}</span>
-                </div>;
-                // <span className="me-1">待处理</span>
-            }
-            return <div className={cnBtn}>
-                {divs.length === 0 ? vDel : <div className="d-flex text-end flex-column align-items-end">
-                    {pendOverflow}
-                    <div className={theme.sum}>{value}</div>
-                </div>}
-                <div className="px-3 cursor-pointer text-primary" onClick={onAddSub} style={marginRightStyle}>
-                    <FA name="plus" fixWidth={true} />
-                </div>
+    let cn: string = theme.bootstrapContainer + ' gx-0 ';
+    let { value: cnValue, price: cnPrice, amount: cnAmount } = theme;
+    let vIBase: any;
+    if (hasIBase === true) {
+        let { iBase } = valDiv;
+        vIBase = iBase !== undefined ? <div className="py-2 fw-bold">
+            <ViewSpecBaseOnly id={iBase} />
+        </div> : null;
+    }
+    return <div className={'d-flex border-bottom py-2 tonwa-bg-gray-' + (divLevels - level)}>
+        {
+            div === undefined ? <ViewRowLeaf {...props} /> : <ViewRowStem {...props} />
+        }
+    </div>;
+
+    function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
+        if (bud === undefined) return null;
+        return <ViewSpecNoAtom id={value} noLabel={true} />;
+    }
+
+    function ViewRowStem({ divStore, valDiv, editable }: ViewDivProps) {
+        let pendOverflow: any;
+        if (level === 0 && sum > pendValue) {
+            pendOverflow = <div className="flex-fill">
+                <FA name="exclamation-circle" className="text-danger me-1" fixWidth={true} />
+                <span className="">{pendValue}</span>
             </div>;
         }
-        btn = <DivRow />;
+        async function onAddSub() {
+            const pendRow = await divStore.getPendRow(pend);
+            let props: UseInputsProps = {
+                divStore,
+                pendRow,
+                valDiv,
+                binDiv: binBuds.binDiv.div,
+                namedResults: {},
+            };
+            let ret = await inputs(props);
+            if (ret === undefined) return;
+            valDiv.addValDiv(ret);
+        }
+        function ViewFields() {
+            return fields.map(field => {
+                const { bud } = field;
+                return <ViewBud key={bud.id} bud={bud} value={field.getValue(valRow)} uiType={ViewBudUIType.inDiv} />;
+            })
+        }
+        let left = <div className="d-flex px-5 pt-2 cursor-pointer text-primary align-items-center" onClick={onAddSub}>
+            <FA name="plus" fixWidth={true} />
+        </div>;
+        return <>
+            {left}
+            <div className="flex-fill">
+                {vIBase}
+                <div className={cn}>
+                    <RowCols contentClassName="flex-fill">
+                        <ViewIdField bud={budI} value={valRow.i} />
+                        <BinOwnedBuds bizBud={entityBin.i} valRow={valRow} />
+                        <ViewFields />
+                    </RowCols>
+                </div >
+            </div>
+            <div className={cnBtn}>
+                {divs.length === 0 ? vDel : <div className="d-flex text-end flex-column align-items-end">
+                    {pendOverflow}
+                    <div className={theme.sum}>{sum}</div>
+                </div>}
+                {vDel}
+            </div>
+        </>;
     }
-    else if (valueBud !== undefined || priceBud !== undefined || amountBud !== undefined) {
+
+    function ViewRowLeaf({ divStore, valDiv, editable }: ViewDivProps) {
         function PAV({ bud, className, val, onClick }: { bud: BizBud; className: string; val: number; onClick?: () => void }) {
+            if (bud === undefined) return null;
             let { caption, name } = bud;
             return <div className="d-flex ms-3 align-items-end text-end text-nowrap" onClick={onClick}>
                 <div className={theme.labelColor + ' me-2 '}>{caption ?? name}</div>
                 <div className={className + ' w-min-3c '}>{val}</div>
             </div>
         }
+        // div === undefined
         async function onEdit() {
             if (editable === false) return;
             const binEditing = new BinEditing(entityBin, valRow);
@@ -92,80 +151,42 @@ function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
                 setAtomValue(atomValRow, valRow);
             }
         }
-        let { value: cnValue, price: cnPrice, amount: cnAmount } = theme;
-        btn = <div className={cnBtn}>
-            <div className="d-flex align-items-end flex-column">
-                {amountBud && <PAV bud={amountBud} className={cnAmount} val={amount} />}
-                {priceBud && <PAV bud={priceBud} className={cnPrice} val={price} />}
-                {valueBud && <PAV bud={valueBud} className={cnValue + ' cursor-pointer '} val={value} onClick={onEdit} />}
-            </div>
-            {vDel}
+        let left = <div className="px-5">
+            <FA name="" fixWidth={true} />
         </div>;
-    }
-    else {
-        btn = <div className={cnBtn}>
-            valueBue === undefined
-        </div>;
-    }
-    async function onAddSub() {
-        const pendRow = await divStore.getPendRow(pend);
-        let props: UseInputsProps = {
-            divStore,
-            pendRow,
-            valDiv,
-            binDiv: binBuds.binDiv.div,
-            namedResults: {},
-        };
-        let ret = await inputs(props);
-        if (ret === undefined) return;
-        valDiv.addValDiv(ret);
-    }
-    async function onDelSub() {
-        await divStore.delValRow(id);
-    }
-    let vIBase: any;
-    if (hasIBase === true) {
-        let { iBase } = valDiv;
-        let vContent: any;
-        if (iBase === undefined) {
-            vContent = 'I Base';
-        }
-        else {
-            vContent = <ViewSpecBaseOnly id={iBase} />;
-        }
-        vIBase = <div className="">
-            {vContent}
-        </div>;
-    }
-    let cn: string = theme.bootstrapContainer + ' d-flex py-2 border-bottom ';
-    if (level < divLevels) cn += 'tonwa-bg-gray-' + (divLevels - level);
-    else cn += 'bg-white';
-    function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
-        if (bud === undefined) return null;
-        return <ViewSpec id={value} bold={false} noLabel={true} />;
-    }
-    return <div>
-        <div className="px-3 py-2 bg-white border-bottom">
-            <ViewIdField bud={budI} value={valRow.i} />
-        </div>
-        <div className={cn}>
-            {vIBase}
-            <RowCols contentClassName="flex-fill">
-                <BinOwnedBuds bizBud={entityBin.i} valRow={valRow} />
+        return <>
+            {left}
+            <div className="flex-fill">
                 {
-                    fields.map(field => {
-                        const { bud } = field;
-                        if (bud === valueBud) return null;
-                        if (bud === priceBud) return null;
-                        if (bud === amountBud) return null;
-                        const { id } = bud;
-                        let value = field.getValue(valRow);
-                        if (value === null || value === undefined) return null;
-                        return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} />;
-                    })
+                    budI &&
+                    <div className="px-3 py-2 bg-white border-bottom">
+                        <ViewIdField bud={budI} value={valRow.i} />
+                    </div>
                 }
-            </RowCols>
-            {btn}
-        </div >
-    </div>;
+                <div className={cn + ' bg-white '}>
+                    {vIBase}
+                    <RowCols contentClassName="flex-fill">
+                        <BinOwnedBuds bizBud={entityBin.i} valRow={valRow} />
+                        {
+                            fields.map(field => {
+                                const { bud } = field;
+                                const { id } = bud;
+                                let value = field.getValue(valRow);
+                                if (value === null || value === undefined) return null;
+                                return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} />;
+                            })
+                        }
+                    </RowCols>
+                </div>
+            </div>
+            <div className={cnBtn}>
+                <div className="d-flex align-items-end flex-column">
+                    <PAV bud={budAmount} className={cnAmount} val={amount} />
+                    <PAV bud={budPrice} className={cnPrice} val={price} />
+                    <PAV bud={budValue} className={cnValue + ' cursor-pointer '} val={value} onClick={onEdit} />
+                </div>
+                {vDel}
+            </div>
+        </>;
+    }
 }

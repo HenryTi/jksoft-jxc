@@ -72,7 +72,7 @@ export function useBuildViewBiz() {
                 return [<ViewEntityItem key={id} value={v} icon={icon} />];
             })
         }
-        return <div className={' bg-white py-2 ' + theme.bootstrapContainer}>
+        return <div className={' bg-white py-2 ps-5 ' + theme.bootstrapContainer}>
             <div className={rowCols}>
                 {content}
             </div>
@@ -86,10 +86,10 @@ export function useBuildViewBiz() {
             let { uqApi } = uqMan;
             await uqApi.source(name);
         }
-        return <div className="mb-4">
+        return <div className="">
             {
                 hasEntity === true &&
-                <div className="tonwa-bg-gray-2 px-3 pb-2 pt-2 small d-flex">
+                <div className="tonwa-bg-gray-2 px-3 pb-2 pt-2 d-flex border-top">
                     <b className="flex-grow-1">{groupCaption}</b>
                     <a className="" href="#" onClick={onDownload}><FA name="download" /></a>
                 </div>
@@ -98,18 +98,18 @@ export function useBuildViewBiz() {
         </div>;
     }
     function ViewEntitiesGroup({ entities }: { entities: [Entity[], string?, string?, string?][] }) {
-        return <div>{entities.map((v, index) => {
+        return <div className="">{entities.map((v, index) => {
             let [arr, caption, icon] = v;
             if (caption === undefined) return null;
             if (arr.length === 0) return null;
             let top: any;
             if (entities.length > 1) {
-                top = <div className="px-3 pt-1 pb-1 border-bottom">
+                top = <div className="px-3 pt-1 bg-white">
                     <FA name={icon} className="me-3 text-success" />
                     {caption}
                 </div>;
             }
-            return <div key={index}>
+            return <div key={index} className="border-top">
                 {top}
                 <ViewEntitys entitys={arr} icon={icon} />
             </div>
@@ -125,7 +125,7 @@ export function useBuildViewBiz() {
             <FA name="bars" />
         </button>,
         view: <div className="">
-            <div className="tonwa-bg-gray-1">{
+            <div className="">{
                 biz.hasEntity === false ?
                     <div className="small text-secondary p-3">
                         <FA name="hand-paper-o" className="me-3 text-info" />暂无代码

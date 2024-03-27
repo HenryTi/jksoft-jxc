@@ -45,7 +45,7 @@ export class DivStore {
             let hasValue = false;
             if (valDivs.length === 0) return SubmitState.none;
             for (let valDiv of valDivs) {
-                const { atomSum: atomValue, atomValRow } = valDiv;
+                const { atomValue, atomValRow } = valDiv;
                 let value = get(atomValue);
                 let valRow = get(atomValRow);
                 if (value !== undefined) hasValue = true;
