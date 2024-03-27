@@ -1,4 +1,4 @@
-import { BinDiv, BizBud } from "app/Biz";
+import { BinDiv } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
 import { ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
@@ -16,7 +16,6 @@ export class ValDivs {
 export class ValDiv extends ValDivs {
     readonly binDiv: BinDiv;
     readonly atomValRow: WritableAtom<ValRow, any, any>;
-    // readonly atomValue: WritableAtom<number, any, any>;
     iBase: number;
     xBase: number;
     readonly atomSum = atom(get => {
@@ -45,42 +44,7 @@ export class ValDiv extends ValDivs {
     constructor(binDiv: BinDiv, valRow: ValRow) {
         super();
         this.binDiv = binDiv;
-        /*
-        if (binDiv.div !== undefined) {
-            this.atomValue = atom(
-                get => {
-                    let valDivs = get(this.atomValDivs);
-                    let sum = 0, len = valDivs.length;
-                    for (let i = 0; i < len; i++) {
-                        let valDiv = valDivs[i];
-                        let v: number = 0;
-                        try {
-                            let { atomValue } = valDiv;
-                            if (atomValue !== undefined) v = get(atomValue);
-                        }
-                        catch (err) {
-                            console.error(err);
-                            debugger;
-                        }
-                        sum += v;
-                    };
-                    return sum;
-                },
-                (get, set, newVal) => {
-                }
-            )
-        }
-        */
-        // if (valRow !== undefined) {
-        // const { value, id } = valRow;
         this.atomValRow = atom<any>(valRow);
-        // this.id = id;
-        /*
-        if (this.atomValue === undefined) {
-            this.atomValue = atom(value ?? 0);
-        }
-        */
-        // }
     }
 
     get id(): number {
@@ -89,7 +53,6 @@ export class ValDiv extends ValDivs {
     }
 
     set id(id: number) {
-        // this.id = id;
         let valRow = getAtomValue(this.atomValRow);
         valRow.id = id;
         setAtomValue(this.atomValRow, { ...valRow });

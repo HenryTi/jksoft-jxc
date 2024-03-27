@@ -398,10 +398,11 @@ export class SheetStore extends KeyIdObject {
         setAtomValue(this.atomLoaded, true);
     }
 
-    async reloadRow(valRow: ValRow) {
+    async setValRow(valRow: ValRow) {
         const { id: binId } = valRow;
         let { details } = await this.loadBinData(binId);
         this.detail.setRowValues(details);
+        this.divStore.setValRow(valRow);
     }
 
     hasId() {

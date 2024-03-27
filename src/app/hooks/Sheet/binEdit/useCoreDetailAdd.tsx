@@ -42,7 +42,10 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
                     { origin, pend, pendValue },
                 ));
                 */
-                await sheetStore.reloadRow(valRow);
+                if (valRow.id !== undefined) debugger;
+                let id = await sheetStore.saveDetail(entityBin, entityBin.buds, valRow);
+                valRow.id = id;
+                await sheetStore.setValRow(valRow);
                 // row.setLoading(false);
             }
         }
@@ -60,7 +63,10 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
                 const { valRow } = binEditing;
                 // Object.assign(row.valRow, valRow);
                 // await row.addToSection();
-                await sheetStore.reloadRow(valRow);
+                if (valRow.id !== undefined) debugger;
+                let id = await sheetStore.saveDetail(entityBin, entityBin.buds, valRow);
+                valRow.id = id;
+                await sheetStore.setValRow(valRow);
             }
             // row.setLoading(false);
         }
