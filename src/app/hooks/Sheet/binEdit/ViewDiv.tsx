@@ -45,8 +45,7 @@ function ViewRow(props: ViewDivProps) {
     const value = useAtomValue(atomValue);
     const { pend, id, pendValue, price, amount } = valRow;
     const divs = useAtomValue(atomValDivs);
-    const widthLeft = `${(divLevels + 1) * 1 + 1}rem`;
-    const styleLeft = { paddingLeft: `${(level + 1) * 1}rem`, width: widthLeft, minWidth: widthLeft, maxWidth: widthLeft };
+    const styleLeft = { paddingLeft: `${(level - 1) * 2 + 1}rem`, paddingRight: `1rem` };
     async function onDelSub() {
         if (level < divLevels) {
             alert('实现中...');
@@ -67,6 +66,31 @@ function ViewRow(props: ViewDivProps) {
             <ViewSpecBaseOnly id={iBase} noVisible={true} />
         </div> : null;
     }
+    let left: any;
+    if (level > 0) {
+        left = <div className="d-flex pt-2 cursor-pointer text-primary"
+            onClick={onAddSub}
+            style={styleLeft}>
+            <FA name="plus" fixWidth={true} />
+        </div>;
+    }
+    else {
+        left = <div className="ps-3" />;
+    }
+    async function onAddSub() {
+        const pendRow = await divStore.getPendRow(pend);
+        let props: UseInputsProps = {
+            divStore,
+            pendRow,
+            valDiv,
+            binDiv: binBuds.binDiv.div,
+            namedResults: {},
+        };
+        let ret = await inputs(props);
+        if (ret === undefined) return;
+        valDiv.addValDiv(ret);
+    }
+
     return <div className={'d-flex border-bottom py-2 tonwa-bg-gray-' + (divLevels - level)}>
         {
             div === undefined ? <ViewRowLeaf {...props} /> : <ViewRowStem {...props} />
@@ -86,30 +110,12 @@ function ViewRow(props: ViewDivProps) {
                 <span className="">{pendValue}</span>
             </div>;
         }
-        async function onAddSub() {
-            const pendRow = await divStore.getPendRow(pend);
-            let props: UseInputsProps = {
-                divStore,
-                pendRow,
-                valDiv,
-                binDiv: binBuds.binDiv.div,
-                namedResults: {},
-            };
-            let ret = await inputs(props);
-            if (ret === undefined) return;
-            valDiv.addValDiv(ret);
-        }
         function ViewFields() {
             return fields.map(field => {
                 const { bud } = field;
                 return <ViewBud key={bud.id} bud={bud} value={field.getValue(valRow)} uiType={ViewBudUIType.inDiv} />;
             })
         }
-        let left = <div className="d-flex pt-2 cursor-pointer text-primary align-items-center"
-            onClick={onAddSub}
-            style={styleLeft}>
-            <FA name="plus" fixWidth={true} />
-        </div>;
         return <>
             {left}
             <div className="flex-fill">
@@ -155,9 +161,6 @@ function ViewRow(props: ViewDivProps) {
                 setAtomValue(atomValRow, valRow);
             }
         }
-        let left = <div className="" style={styleLeft}>
-            <FA name="" fixWidth={true} />
-        </div>;
         return <>
             {left}
             <div className="flex-fill">
