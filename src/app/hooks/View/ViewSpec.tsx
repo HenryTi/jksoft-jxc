@@ -4,6 +4,7 @@ import { useUqApp } from "app/UqApp";
 import { ViewBudUIType } from "..";
 import React from "react";
 import { LabelBox } from "../tool";
+import { theme } from "tonwa-com";
 
 export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
     id: number;
@@ -108,15 +109,15 @@ export function ViewSpecNoAtom({ id, uiType, noLabel }: { id: number; uiType?: V
     return <ViewSpecBase id={id} ViewAtom={undefined} uiType={uiType} noLabel={noLabel} />
 }
 
-export function ViewSpecBaseOnly({ id }: { id: number; }) {
+export function ViewSpecBaseOnly({ id, noVisible }: { id: number; noVisible?: boolean; }) {
     const { atom } = useGetSpec(id);
     if (atom === undefined) return null;
-    const { value: atomValue, entity } = atom;
+    const { value: atomValue } = atom;
     if (atomValue === undefined) return null;
     let label: any = undefined;
     const { no, ex } = atomValue;
     return <div title={'编号: ' + no} className="mb-1">
-        {label} {ex}
+        {label} {ex} {noVisible === true ? <span className={'ms-3 ' + theme.labelColor}>{no}</span> : null}
     </div>;
 }
 

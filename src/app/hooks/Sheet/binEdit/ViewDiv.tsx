@@ -45,6 +45,8 @@ function ViewRow(props: ViewDivProps) {
     const value = useAtomValue(atomValue);
     const { pend, id, pendValue, price, amount } = valRow;
     const divs = useAtomValue(atomValDivs);
+    const widthLeft = `${(divLevels + 1) * 1 + 1}rem`;
+    const styleLeft = { paddingLeft: `${(level + 1) * 1}rem`, width: widthLeft, minWidth: widthLeft, maxWidth: widthLeft };
     async function onDelSub() {
         if (level < divLevels) {
             alert('实现中...');
@@ -61,8 +63,8 @@ function ViewRow(props: ViewDivProps) {
     let vIBase: any;
     if (hasIBase === true) {
         let { iBase } = valDiv;
-        vIBase = iBase !== undefined ? <div className="py-2 fw-bold">
-            <ViewSpecBaseOnly id={iBase} />
+        vIBase = iBase !== undefined ? <div className="pb-1 fw-bold">
+            <ViewSpecBaseOnly id={iBase} noVisible={true} />
         </div> : null;
     }
     return <div className={'d-flex border-bottom py-2 tonwa-bg-gray-' + (divLevels - level)}>
@@ -103,7 +105,9 @@ function ViewRow(props: ViewDivProps) {
                 return <ViewBud key={bud.id} bud={bud} value={field.getValue(valRow)} uiType={ViewBudUIType.inDiv} />;
             })
         }
-        let left = <div className="d-flex px-5 pt-2 cursor-pointer text-primary align-items-center" onClick={onAddSub}>
+        let left = <div className="d-flex pt-2 cursor-pointer text-primary align-items-center"
+            onClick={onAddSub}
+            style={styleLeft}>
             <FA name="plus" fixWidth={true} />
         </div>;
         return <>
@@ -121,22 +125,22 @@ function ViewRow(props: ViewDivProps) {
             <div className={cnBtn}>
                 {divs.length === 0 ? vDel : <div className="d-flex text-end flex-column align-items-end">
                     {pendOverflow}
-                    <div className={theme.sum}>{sum}</div>
+                    <PAV bud={entityBin.value} val={sum} className={theme.sum} />
                 </div>}
                 {vDel}
             </div>
         </>;
     }
 
+    function PAV({ bud, className, val, onClick }: { bud: BizBud; className?: string; val: number; onClick?: () => void }) {
+        if (bud === undefined) return null;
+        let { caption, name } = bud;
+        return <div className="d-flex ms-3 align-items-end text-end text-nowrap" onClick={onClick}>
+            <div className={theme.labelColor + ' me-2 '}>{caption ?? name}</div>
+            <div className={(className ?? '') + ' w-min-3c '}>{val}</div>
+        </div>
+    }
     function ViewRowLeaf({ divStore, valDiv, editable }: ViewDivProps) {
-        function PAV({ bud, className, val, onClick }: { bud: BizBud; className: string; val: number; onClick?: () => void }) {
-            if (bud === undefined) return null;
-            let { caption, name } = bud;
-            return <div className="d-flex ms-3 align-items-end text-end text-nowrap" onClick={onClick}>
-                <div className={theme.labelColor + ' me-2 '}>{caption ?? name}</div>
-                <div className={className + ' w-min-3c '}>{val}</div>
-            </div>
-        }
         // div === undefined
         async function onEdit() {
             if (editable === false) return;
@@ -151,7 +155,7 @@ function ViewRow(props: ViewDivProps) {
                 setAtomValue(atomValRow, valRow);
             }
         }
-        let left = <div className="px-5">
+        let left = <div className="" style={styleLeft}>
             <FA name="" fixWidth={true} />
         </div>;
         return <>

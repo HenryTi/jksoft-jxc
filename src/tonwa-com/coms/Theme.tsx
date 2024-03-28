@@ -19,10 +19,10 @@ class ThemeValues implements Theme {
     labelBoxV: LabelBoxCss = labelBoxCssV;
     small = ' small ';
     labelColor = labelCss.color;
-    sum = ' fw-bold fs-larger text-black ';
+    sum = ' fs-larger text-info ';
     value = ' fw-bold fs-larger text-primary ';
-    price = ' fs-larger text-dark ';
-    amount = ' fs-larger text-dark ';
+    price = ' text-dark ';
+    amount = ' text-dark ';
 }
 
 export interface LabelBoxCss {
