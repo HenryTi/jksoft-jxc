@@ -3,7 +3,7 @@ import { BinEditing, DivStore, UseInputsProps, ValDiv } from "../store";
 import { FA, setAtomValue } from "tonwa-com";
 import { useInputs } from "../inputs";
 import { ViewBud, ViewBudSpec, ViewBudUIType, ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks";
-import { OwnedBuds, RowCols } from "app/hooks/tool";
+import { OwnedBuds, RowCols, RowColsSm } from "app/hooks/tool";
 import { theme } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { BinOwnedBuds } from "./BinOwnedBuds";
@@ -62,7 +62,7 @@ function ViewRow(props: ViewDivProps) {
     let vIBase: any;
     if (hasIBase === true) {
         let { iBase } = valDiv;
-        vIBase = iBase !== undefined ? <div className="pb-1 fw-bold">
+        vIBase = iBase !== undefined ? <div className="fw-bold">
             <ViewSpecBaseOnly id={iBase} noVisible={true} />
         </div> : null;
     }
@@ -91,7 +91,7 @@ function ViewRow(props: ViewDivProps) {
         valDiv.addValDiv(ret);
     }
 
-    return <div className={'d-flex border-bottom py-2 tonwa-bg-gray-' + (divLevels - level)}>
+    return <div className={'d-flex border-bottom py-1 tonwa-bg-gray-' + (divLevels - level)}>
         {
             div === undefined ? <ViewRowLeaf {...props} /> : <ViewRowStem {...props} />
         }
@@ -121,11 +121,11 @@ function ViewRow(props: ViewDivProps) {
             <div className="flex-fill">
                 {vIBase}
                 <div className={cn}>
-                    <RowCols contentClassName="flex-fill">
+                    <RowColsSm contentClassName="flex-fill">
                         <ViewIdField bud={budI} value={valRow.i} />
                         <BinOwnedBuds bizBud={entityBin.i} valRow={valRow} />
                         <ViewFields />
-                    </RowCols>
+                    </RowColsSm>
                 </div >
             </div>
             <div className={cnBtn}>
@@ -172,7 +172,7 @@ function ViewRow(props: ViewDivProps) {
                 }
                 <div className={cn + ' bg-white '}>
                     {vIBase}
-                    <RowCols contentClassName="flex-fill">
+                    <RowColsSm contentClassName="flex-fill">
                         <BinOwnedBuds bizBud={entityBin.i} valRow={valRow} />
                         {
                             fields.map(field => {
@@ -183,7 +183,7 @@ function ViewRow(props: ViewDivProps) {
                                 return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} />;
                             })
                         }
-                    </RowCols>
+                    </RowColsSm>
                 </div>
             </div>
             <div className={cnBtn}>

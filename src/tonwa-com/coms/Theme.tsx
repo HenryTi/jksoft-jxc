@@ -28,6 +28,7 @@ class ThemeValues implements Theme {
 export interface LabelBoxCss {
     colon: boolean;
     cnRowCols: string;
+    cnRowColsSm: string;
     cnColLabel: string;
     cnColContent: string;
     cnGX: string;
@@ -37,9 +38,11 @@ export interface LabelBoxCss {
 }
 
 const cnRows = '  row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6 ';
+const cnRowsSm = '  row row-cols-2 row-cols-sm-4 row-cols-md-4 row-cols-lg-6 row-cols-xl-8 row-cols-xxl-12 ';
 const labelBoxCssH: LabelBoxCss = {
     colon: true,
     cnRowCols: ' gx-0 ' + cnRows,
+    cnRowColsSm: ' gx-0 ' + cnRowsSm,
     cnColLabel: ' col-4 ',
     cnColContent: ' col-8 ps-1 py-1 ',
     cnGX: ' gx-0 ',
@@ -51,11 +54,12 @@ const labelBoxCssH: LabelBoxCss = {
 const labelBoxCssV: LabelBoxCss = {
     colon: false,
     cnRowCols: cnRows,
+    cnRowColsSm: cnRowsSm,
     cnColLabel: '',
     cnColContent: ' text-dark ',
     cnGX: ' ',
     cnLabelContainer: ` ${labelCss.color} text-start d-flex align-items-center flex-row justify-content-start `, //  small
-    cnLabel: ' text-nowrap text-truncate pb-1',
+    cnLabel: ' text-nowrap text-truncate ',
     cnReadonly: ' d-flex align-items-center border tonwa-bg-gray-1 rounded pt-1 pb-2 px-2 text-nowrap text-truncate ',
 }
 

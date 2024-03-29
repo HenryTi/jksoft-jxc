@@ -7,6 +7,12 @@ export function RowCols({ children, contentClassName }: { children: React.ReactN
     </div>;
 }
 
+export function RowColsSm({ children, contentClassName }: { children: React.ReactNode; contentClassName?: string; }) {
+    return <div className={theme.labelBox.cnRowColsSm + (contentClassName ?? '')}>
+        {children}
+    </div>;
+}
+
 interface LabelBoxProps {
     label: string | JSX.Element; children: React.ReactNode; required?: boolean;
     title?: string;
