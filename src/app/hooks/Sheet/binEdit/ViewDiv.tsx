@@ -81,6 +81,7 @@ function ViewRow(props: ViewDivProps) {
         </div> : null;
     }
     let left: any;
+    /*
     if (level > 0) {
         left = <div className="d-flex pt-2 cursor-pointer text-primary align-self-end"
             onClick={onAddSub}
@@ -91,6 +92,7 @@ function ViewRow(props: ViewDivProps) {
     else {
         left = <div className="ps-3" />;
     }
+    */
     async function onAddSub() {
         const pendRow = await divStore.getPendRow(pend);
         let props: UseInputsProps = {
@@ -105,7 +107,7 @@ function ViewRow(props: ViewDivProps) {
         valDiv.addValDiv(ret);
     }
 
-    return <div className={'d-flex border-bottom py-2 tonwa-bg-gray-' + (divLevels - level)}>
+    return <div className={'d-flex border-bottom ps-3 py-2 tonwa-bg-gray-' + (divLevels - level)}>
         {div === undefined ? <ViewRowLeaf /> : <ViewRowStem />}
     </div>;
 
@@ -146,7 +148,6 @@ function ViewRow(props: ViewDivProps) {
             <ViewIdField bud={budI} value={valRow.i} />
             <BinOwnedBuds bizBud={entityBin.i} valRow={valRow} />
             <ViewFields />
-            {viewPivot}
         </>;
         let viewContent: any, viewRight: any;
         if (viewPivot === undefined) {
@@ -163,7 +164,7 @@ function ViewRow(props: ViewDivProps) {
 
                 viewRight = <div className={cnBtn}>
                     {viewRightValue}
-                    {btnDel}
+                    {/*btnDel*/}
                 </div>;
                 if (level === 0) {
                     viewRight = <div className="d-flex flex-column align-items-end">
@@ -171,7 +172,7 @@ function ViewRow(props: ViewDivProps) {
                             {btnEdit}
                             {btnDel}
                         </div>
-                        <div className="pe-3">
+                        <div className="me-3">
                             {viewRightValue}
                         </div>
                     </div>;
@@ -181,14 +182,15 @@ function ViewRow(props: ViewDivProps) {
         else {
             viewContent = <div className="d-flex">
                 {content}
+                {viewPivot}
             </div>;
             const { value: budValue } = entityBin;
             viewRight = <>
-                <div className="text-end ms-2">
+                <div className="text-end me-3">
                     <div className={labelColor}>{budValue.caption ?? budValue.name}</div>
                     <div className={cnValue}>{sum}</div>
                 </div>
-                {btnDel}
+                {/*btnDel*/}
             </>;
         }
         return <>
@@ -250,12 +252,12 @@ function ViewRow(props: ViewDivProps) {
                 </div>
             </div>
             <div className={cnBtn}>
-                <div className="d-flex align-items-end flex-column">
+                <div className="d-flex align-items-end flex-column me-3">
                     <PAV bud={budAmount} className={cnAmount} val={amount} />
                     <PAV bud={budPrice} className={cnPrice} val={price} />
                     <PAV bud={budValue} className={cnValue + ' cursor-pointer '} val={value} onClick={onEdit} />
                 </div>
-                {btnDel}
+                {/*btnDel*/}
             </div>
         </>;
     }
