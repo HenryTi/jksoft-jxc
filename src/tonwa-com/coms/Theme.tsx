@@ -10,6 +10,8 @@ export interface Theme {
     small: string;
     labelColor: string;
     value: string;
+    pend: string;
+    pendOver: string;
 }
 
 class ThemeValues implements Theme {
@@ -23,6 +25,8 @@ class ThemeValues implements Theme {
     value = ' fw-bold fs-larger text-primary ';
     price = ' text-dark ';
     amount = ' text-dark ';
+    pend = ' text-info ';
+    pendOver = ' text-danger ';
 }
 
 export interface LabelBoxCss {

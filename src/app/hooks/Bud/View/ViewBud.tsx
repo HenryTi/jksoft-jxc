@@ -43,7 +43,39 @@ export function ViewBud({ bud, value, uiType, noLabel }: { bud: BizBud; value: a
     if (noLabel === true) {
         return <div className="col">{content}</div>;
     }
-    return <LabelBox label={caption ?? name} className="my-1">{content}</LabelBox>;
+    return <LabelBox label={caption ?? name} className="">{content}</LabelBox>;
+}
+
+export function budContent(bud: BizBud, value: any) {
+    let content: any;
+    const { name, caption, budDataType } = bud;
+    if (value === undefined) {
+        content = <>&nbsp;</>;
+    }
+    else {
+        let type = budDataType?.type;
+        if (type === EnumBudType.atom) {
+            return `atom:${value}`; // atom(bud, value, uiType, noLabel);
+        }
+        switch (type) {
+            default:
+            case EnumBudType.dec:
+            case EnumBudType.none:
+            case EnumBudType.int:
+                content = <>{value}</>; break;
+            case EnumBudType.char:
+            case EnumBudType.str:
+                content = <span title={value}>{value}</span>; break;
+            case EnumBudType.radio: content = radio(bud, value); break;
+            case EnumBudType.check: content = check(bud, value); break;
+            case EnumBudType.intof: content = intof(bud, value); break;
+            case EnumBudType.pick: content = pick(bud, value); break;
+            case EnumBudType.ID: content = ID(bud, value); break;
+            case EnumBudType.date: content = date(bud, value); break;
+            case EnumBudType.datetime: content = datetime(bud, value); break;
+        }
+    }
+    return content;
 }
 
 function ViewAtomInBud({ value }: { value: any; }) {

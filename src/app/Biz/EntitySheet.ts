@@ -326,6 +326,7 @@ export class EntityBin extends Entity {
     value: BizBud;
     price: BizBud;
     amount: BizBud;
+    pivot: BinDiv;
 
     // 在代码界面上显示需要。本entity引用的entities
     override getRefEntities(arrEntity: Entity[]) {
@@ -358,6 +359,7 @@ export class EntityBin extends Entity {
             case 'value': this.fromBinValue(val); break;
             case 'price': this.fromPrice(val); break;
             case 'amount': this.fromAmount(val); break;
+            case 'pivot': this.pivot = true as any; break;
         }
     }
 
@@ -495,8 +497,8 @@ export class EntityBin extends Entity {
         this.scanDiv(this.div, div);
     }
 
-    private scanDiv(binDiv: BinDiv, div: any) {
-        let { inputs, div: subDiv, buds, ui } = div;
+    private scanDiv(binDiv: BinDiv, parent: BinDiv) {
+        let { inputs, div: subDiv, buds, ui } = parent;
         binDiv.ui = ui;
         binDiv.inputs = this.scanInputs(inputs);
         binDiv.buds = this.scanBinBuds(buds);
@@ -505,6 +507,9 @@ export class EntityBin extends Entity {
             ++this.divLevels;
             let subBinDiv = binDiv.div = new BinDiv(this, binDiv);
             this.scanDiv(subBinDiv, subDiv);
+        }
+        else if (this.pivot !== undefined) {
+            this.pivot = binDiv;
         }
     }
 

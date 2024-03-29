@@ -2,7 +2,7 @@ import { useAtomValue } from "jotai";
 import { BinEditing, DivStore, UseInputsProps, ValDiv } from "../store";
 import { FA, setAtomValue } from "tonwa-com";
 import { useInputs } from "../inputs";
-import { ViewBud, ViewBudSpec, ViewBudUIType, ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks";
+import { ViewBud, ViewBudSpec, ViewBudUIType, ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom, budContent } from "app/hooks";
 import { OwnedBuds, RowCols, RowColsSm } from "app/hooks/tool";
 import { theme } from "tonwa-com";
 import { BizBud } from "app/Biz";
@@ -16,24 +16,28 @@ interface ViewDivProps {
     className?: string;
 }
 
-export function ViewDiv({ divStore, valDiv, editable, className }: ViewDivProps) {
+export function ViewDiv(props: ViewDivProps) {
+    const { valDiv } = props;
+    const { binDiv } = valDiv;
+    const { entityBin } = binDiv;
+    if (entityBin.pivot === binDiv) return null;
     return <>
-        <ViewRow divStore={divStore} valDiv={valDiv} editable={editable} className={className} />
-        <ViewDivs divStore={divStore} valDiv={valDiv} editable={editable} />
+        <ViewRow {...props} />
+        <ViewDivs {...props} />
     </>
 }
 
-function ViewDivs({ divStore, valDiv, editable, className }: ViewDivProps) {
-    const divs = useAtomValue(valDiv.atomValDivs);
+function ViewDivs(props: ViewDivProps) {
+    const { valDiv } = props;
+    const { atomValDivs } = valDiv;
+    const divs = useAtomValue(atomValDivs);
     return <>
-        {divs.map(v => {
-            return <ViewDiv key={v.id} divStore={divStore} valDiv={v} editable={editable} className={className} />;
-        })}
+        {divs.map(v => <ViewDiv key={v.id} {...props} valDiv={v} />)}
     </>;
 }
 
 function ViewRow(props: ViewDivProps) {
-    const { valDiv, divStore } = props;
+    const { valDiv, divStore, editable } = props;
     const inputs = useInputs();
     const rowEdit = useRowEdit();
     const { atomValRow, atomValDivs, atomSum, atomValue, binDiv } = valDiv;
@@ -53,12 +57,22 @@ function ViewRow(props: ViewDivProps) {
         }
         await divStore.delValRow(id);
     }
-    let vDel = <div className="px-3 cursor-pointer text-warning" onClick={onDelSub}>
-        <FA name="times" fixWidth={true} />
+    function onEdit() {
+        alert('实现中...');
+    }
+    let btnEdit = <div className="px-1 cursor-pointer text-primary align-self-end" onClick={onEdit}>
+        <FA name="pencil-square-o" fixWidth={true} size="lg" />
+    </div>;
+    let btnDel = <div className="px-1 cursor-pointer text-success align-self-end" onClick={onDelSub}>
+        <FA name="times" fixWidth={true} size="lg" />
     </div>;
     const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end align-items-end';
-    let cn: string = theme.bootstrapContainer + ' gx-0 ';
-    let { value: cnValue, price: cnPrice, amount: cnAmount } = theme;
+    let {
+        value: cnValue, sum: cnSum, price: cnPrice, amount: cnAmount
+        , pend: cnPend, pendOver: cnPendOver
+        , labelColor, bootstrapContainer
+    } = theme;
+    let cn: string = bootstrapContainer + ' gx-0 ';
     let vIBase: any;
     if (hasIBase === true) {
         let { iBase } = valDiv;
@@ -68,7 +82,7 @@ function ViewRow(props: ViewDivProps) {
     }
     let left: any;
     if (level > 0) {
-        left = <div className="d-flex pt-2 cursor-pointer text-primary"
+        left = <div className="d-flex pt-2 cursor-pointer text-primary align-self-end"
             onClick={onAddSub}
             style={styleLeft}>
             <FA name="plus" fixWidth={true} />
@@ -91,10 +105,8 @@ function ViewRow(props: ViewDivProps) {
         valDiv.addValDiv(ret);
     }
 
-    return <div className={'d-flex border-bottom py-1 tonwa-bg-gray-' + (divLevels - level)}>
-        {
-            div === undefined ? <ViewRowLeaf {...props} /> : <ViewRowStem {...props} />
-        }
+    return <div className={'d-flex border-bottom py-2 tonwa-bg-gray-' + (divLevels - level)}>
+        {div === undefined ? <ViewRowLeaf /> : <ViewRowStem />}
     </div>;
 
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
@@ -102,12 +114,26 @@ function ViewRow(props: ViewDivProps) {
         return <ViewSpecNoAtom id={value} noLabel={true} />;
     }
 
-    function ViewRowStem({ divStore, valDiv, editable }: ViewDivProps) {
-        let pendOverflow: any;
-        if (level === 0 && sum > pendValue) {
-            pendOverflow = <div className="flex-fill">
-                <FA name="exclamation-circle" className="text-danger me-1" fixWidth={true} />
-                <span className="">{pendValue}</span>
+    function ViewRowStem() {
+        const { pivot } = entityBin;
+        let viewPivot: any;
+        if (pivot !== undefined && pivot === binDiv.div) {
+            viewPivot = <ViewPivotDiv divStore={divStore} valDiv={valDiv} editable={editable} />;
+        }
+        let viewPend: any;
+        if (level === 0) {
+            let icon: string, color: string;
+            if (sum > pendValue) {
+                icon = 'exclamation-circle';
+                color = cnPendOver;
+            }
+            else {
+                icon = 'hand-right-o';
+                color = cnPend;
+            }
+            viewPend = <div className="flex-fill d-flex align-items-center">
+                <FA name={icon} className={color + ' me-2 '} />
+                <span className={'w-min-2c ' + color}>{pendValue}</span>
             </div>;
         }
         function ViewFields() {
@@ -116,37 +142,74 @@ function ViewRow(props: ViewDivProps) {
                 return <ViewBud key={bud.id} bud={bud} value={field.getValue(valRow)} uiType={ViewBudUIType.inDiv} />;
             })
         }
+        let content = <>
+            <ViewIdField bud={budI} value={valRow.i} />
+            <BinOwnedBuds bizBud={entityBin.i} valRow={valRow} />
+            <ViewFields />
+            {viewPivot}
+        </>;
+        let viewContent: any, viewRight: any;
+        if (viewPivot === undefined) {
+            viewContent = <div className={cn}>
+                <RowColsSm contentClassName="flex-fill">
+                    {content}
+                </RowColsSm>
+            </div>;
+            if (divs.length > 0) {
+                let viewRightValue = <div className="d-flex text-end flex-column align-items-end">
+                    {viewPend}
+                    <PAV bud={entityBin.value} val={sum} className={cnSum} />
+                </div>
+
+                viewRight = <div className={cnBtn}>
+                    {viewRightValue}
+                    {btnDel}
+                </div>;
+                if (level === 0) {
+                    viewRight = <div className="d-flex flex-column align-items-end">
+                        <div className="flex-fill d-flex mb-1 me-1">
+                            {btnEdit}
+                            {btnDel}
+                        </div>
+                        <div className="pe-3">
+                            {viewRightValue}
+                        </div>
+                    </div>;
+                }
+            }
+        }
+        else {
+            viewContent = <div className="d-flex">
+                {content}
+            </div>;
+            const { value: budValue } = entityBin;
+            viewRight = <>
+                <div className="text-end ms-2">
+                    <div className={labelColor}>{budValue.caption ?? budValue.name}</div>
+                    <div className={cnValue}>{sum}</div>
+                </div>
+                {btnDel}
+            </>;
+        }
         return <>
             {left}
             <div className="flex-fill">
                 {vIBase}
-                <div className={cn}>
-                    <RowColsSm contentClassName="flex-fill">
-                        <ViewIdField bud={budI} value={valRow.i} />
-                        <BinOwnedBuds bizBud={entityBin.i} valRow={valRow} />
-                        <ViewFields />
-                    </RowColsSm>
-                </div >
+                {viewContent}
             </div>
-            <div className={cnBtn}>
-                {divs.length === 0 ? vDel : <div className="d-flex text-end flex-column align-items-end">
-                    {pendOverflow}
-                    <PAV bud={entityBin.value} val={sum} className={theme.sum} />
-                </div>}
-                {vDel}
-            </div>
+            {viewRight}
         </>;
     }
 
     function PAV({ bud, className, val, onClick }: { bud: BizBud; className?: string; val: number; onClick?: () => void }) {
         if (bud === undefined) return null;
         let { caption, name } = bud;
-        return <div className="d-flex ms-3 align-items-end text-end text-nowrap" onClick={onClick}>
-            <div className={theme.labelColor + ' me-2 '}>{caption ?? name}</div>
-            <div className={(className ?? '') + ' w-min-3c '}>{val}</div>
+        return <div className="d-flex ms-3 align-items-center text-end text-nowrap" onClick={onClick}>
+            <div className={labelColor + ' me-2 '}>{caption ?? name}</div>
+            <div className={(className ?? '') + ' w-min-2c '}>{val}</div>
         </div>
     }
-    function ViewRowLeaf({ divStore, valDiv, editable }: ViewDivProps) {
+    function ViewRowLeaf() {
         // div === undefined
         async function onEdit() {
             if (editable === false) return;
@@ -192,8 +255,39 @@ function ViewRow(props: ViewDivProps) {
                     <PAV bud={budPrice} className={cnPrice} val={price} />
                     <PAV bud={budValue} className={cnValue + ' cursor-pointer '} val={value} onClick={onEdit} />
                 </div>
-                {vDel}
+                {btnDel}
             </div>
         </>;
+    }
+}
+
+function ViewPivotDiv({ valDiv }: ViewDivProps) {
+    const divs = useAtomValue(valDiv.atomValDivs);
+    const { labelColor, value: cnValue } = theme;
+    return <>
+        {divs.map(v => <ViewPivot key={v.id} valDiv={v} />)}
+    </>;
+    function ViewPivot({ valDiv }: { valDiv: ValDiv }) {
+        const { binDiv, atomValRow, atomValue } = valDiv;
+        const { binBuds } = binDiv;
+        const { fields } = binBuds;
+        const valRow = useAtomValue(atomValRow);
+        const valueValue = useAtomValue(atomValue);
+        return <div className="text-end mx-2">
+            <div>
+                {
+                    fields.map(field => {
+                        const { bud } = field;
+                        const { id } = bud;
+                        let value = field.getValue(valRow);
+                        if (value === null || value === undefined) return null;
+                        return <span key={id} className={labelColor}>
+                            {budContent(bud, value)}
+                        </span>;
+                    })
+                }
+            </div>
+            <div className={cnValue}>{valueValue}</div>
+        </div>;
     }
 }
