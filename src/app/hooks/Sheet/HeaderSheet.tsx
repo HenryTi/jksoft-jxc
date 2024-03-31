@@ -9,7 +9,8 @@ interface ButtonDefs {
     submit: ItemDef<any>;
     batchSelect: ItemDef<any>;
     print: ItemDef<any>;
-    addDetail: ItemDef<any>;
+    addDetail: ItemDef<any>;    // 直接输入明细
+    addPend: ItemDef<any>;      // 选待处理
     test: ItemDef<any>;
     discard: ItemDef<any>;
     exit: ItemDef<any>;
@@ -19,6 +20,7 @@ export const buttonDefs: ButtonDefs = {
     batchSelect: toolButtonDef({ caption: '批选', /*icon: 'print', */className: btn + ' btn-primary' }),
     print: toolButtonDef({ caption: '打印', /*icon: 'print'*/ }),
     addDetail: toolButtonDef({ caption: '明细', icon: 'plus', className: btn + ' btn-primary' }),
+    addPend: toolButtonDef({ caption: '待办', icon: 'plus', className: btn + ' btn-primary' }),
     test: toolButtonDef({ caption: '测试', icon: undefined }),
     discard: toolButtonDef({ caption: '作废', /*icon: 'trash-o'*/ }),
     exit: toolIconDef({ caption: '退出', icon: 'times', className: ' px-2 ' }),

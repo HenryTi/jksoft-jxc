@@ -13,14 +13,6 @@ import { PickFunc, useBinPicks } from "./binPick";
 import { headerSheet, buttonDefs } from "./headerSheet";
 
 export function PageSheet({ store }: { store: SheetStore; }) {
-    let { header, top, view, right } = useSheetView(store);
-    return <Page header={header} back={null} top={top} right={right}>
-        {view}
-    </Page>;
-}
-
-let locationState = 1;
-function useSheetView(store: SheetStore) {
     const { uq, main, detail, divStore, caption } = store;
     const uqApp = useUqApp();
     const pick = useBinPicks(main.entityMain);
@@ -87,15 +79,12 @@ function useSheetView(store: SheetStore) {
     let btnPrint = buttonDefs.print(onPrint);
     let btnExit = buttonDefs.exit(onExit, false);
     let headerGroup = [btnExit];
-
+    let toolGroups: any[][], view: any;
     function mainOnlyEdit() {
         let btnSubmit = buttonDefs.submit(onSubmit);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, true, editable === false);
-        let toolGroups = [[btnPrint, btnSubmit], null, [btnDiscard]];
-        return {
-            toolGroups,
-            view: <ViewMain store={store} popup={false} />
-        };
+        toolGroups = [[btnPrint, btnSubmit], null, [btnDiscard]];
+        view = <ViewMain store={store} popup={false} />;
     }
 
     function mainDetailEdit() {
@@ -108,39 +97,34 @@ function useSheetView(store: SheetStore) {
         async function onAddRow() {
             await addNew();
         }
-        let sections = useAtomValue(detail._sections);
+        //let sections = useAtomValue(detail._sections);
         let submitDisabled: boolean = true, submitHidden: boolean;
-        if (sections.length === 0 && submitState === SubmitState.hide) {
-            submitHidden = true;
-        }
-        else {
-            submitHidden = false;
-            let disabled = (sections.length === 0 && submitState === SubmitState.none) || submitState === SubmitState.disable;
-            submitDisabled = disabled;
-        }
+        //if (sections.length === 0 && submitState === SubmitState.hide) {
+        //    submitHidden = true;
+        //}
+        //else {
+        submitHidden = false;
+        let disabled = (/*sections.length === 0 && */submitState === SubmitState.none) || submitState === SubmitState.disable;
+        submitDisabled = disabled;
+        //}
         let btnSubmit = buttonDefs.submit(onSubmit, submitDisabled, submitHidden);
-        let btnAddDetail = buttonDefs.addDetail(onAddRow);
+        let btnAddDetail = detail.entityBin.pend === undefined ?
+            buttonDefs.addDetail(onAddRow) : buttonDefs.addPend(onAddRow);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, false, editable === false);
-        let toolGroups = [[btnAddDetail, btnPrint, btnSubmit], null, [btnDiscard]];
+        toolGroups = [[btnAddDetail, btnPrint, btnSubmit], null, [btnDiscard]];
         if (id === 0) {
-            return {
-                toolGroups,
-                view: <div className="p-3">
-                    <button className="btn btn-primary" onClick={startInputDetail}>开始录单</button>
-                </div>
-            };
+            view = <div className="p-3">
+                <button className="btn btn-primary" onClick={startInputDetail}>开始录单</button>
+            </div>;
         }
         const { divStore } = store;
         // const { binDiv } = divStore;
-        return {
-            toolGroups,
-            view: <>
-                <ViewMain store={store} popup={false} />
-                {
-                    <ViewBinDivs divStore={divStore} editable={editable} />
-                }
-            </>
-        };
+        view = <>
+            <ViewMain store={store} popup={false} />
+            {
+                <ViewBinDivs divStore={divStore} editable={editable} />
+            }
+        </>;
 
         function ViewBinDivs({ divStore, editable }: { divStore: DivStore; editable: boolean; }) {
             const { valDivs } = divStore;
@@ -162,12 +146,22 @@ function useSheetView(store: SheetStore) {
         }
     }
 
-    const { toolGroups, view } = (detail === undefined ? mainOnlyEdit() : mainDetailEdit());
+    if (detail === undefined) mainOnlyEdit();
+    else mainDetailEdit();
+    const { header, top, right } = headerSheet({ store, toolGroups, headerGroup });
+    /*
     return {
         ...headerSheet({ store, toolGroups, headerGroup }),
         view,
     };
+    */
+    // let { header, top, view, right } = useSheetView(store);
+    return <Page header={header} back={null} top={top} right={right}>
+        {view}
+    </Page>;
 }
+
+let locationState = 1;
 
 function useStartSheetStore(sheetStore: SheetStore, pick: PickFunc) {
     const uqApp = useUqApp();

@@ -41,6 +41,7 @@ export class ValDivs {
 export class ValDiv extends ValDivs {
     readonly binDiv: BinDiv;
     readonly atomValRow: WritableAtom<ValRow, any, any>;
+    readonly atomDeleted = atom(false);
     iBase: number;
     xBase: number;
     readonly atomValue = atom(get => {

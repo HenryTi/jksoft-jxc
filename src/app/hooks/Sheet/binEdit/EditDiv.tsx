@@ -8,91 +8,34 @@ import { theme } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { BinOwnedBuds } from "./BinOwnedBuds";
 import { useRowEdit } from "./rowEdit";
-import { useModal } from "tonwa-app";
-import { EditDiv } from "./EditDiv";
+import { Page } from "tonwa-app";
+
+export function EditDiv({ divStore, valDiv }: { divStore: DivStore; valDiv: ValDiv; }) {
+    const { sheetStore, binDiv, entityBin } = divStore;
+    const { entitySheet, main } = sheetStore;
+    return <Page header={`${(entitySheet.caption ?? entitySheet.name)} - ${main.no}`}>
+        <ViewDiv divStore={divStore} valDiv={valDiv} />
+    </Page>
+}
+
 
 interface ViewDivProps {
     divStore: DivStore;
     valDiv: ValDiv;
-    editable: boolean;
-    className?: string;
 }
 
-export function ViewDiv(props: ViewDivProps) {
-    const modal = useModal();
+function ViewDiv(props: ViewDivProps) {
     const { valDiv } = props;
-    const { binDiv, atomDeleted, atomValDivs } = valDiv;
-    const { entityBin } = binDiv;
+    const { atomValDivs } = valDiv;
     const divs = useAtomValue(atomValDivs);
-    const deleted = useAtomValue(atomDeleted);
-    if (entityBin.pivot === binDiv) return null;
-
-    async function onDelSub() {
-        if (deleted === true) {
-            setAtomValue(atomDeleted, false);
-        }
-        else {
-            setAtomValue(atomDeleted, true);
-        }
-        /*
-        if (level < divLevels) {
-            alert('实现中...');
-            return;
-        }
-        await divStore.delValRow(id);
-        */
-    }
-    function onEdit() {
-        modal.open(<EditDiv divStore={props.divStore} valDiv={valDiv} />);
-    }
-    let cnBtnDiv = ' px-1 cursor-pointer text-primary mt-n2 ';
-    let btnEdit: any, iconDel: string, colorDel: string, memoDel: any;
-    if (deleted === true) {
-        iconDel = 'undo';
-        colorDel = 'text-secondary opacity-100 ';
-        memoDel = <span className="text-info me-3">恢复</span>;
-    }
-    else {
-        iconDel = 'times';
-        colorDel = 'text-success';
-        let iconEdit: string, colorEdit: string;
-        if (divs.length === 0) {
-            iconEdit = 'plus';
-            colorEdit = ' text-success ';
-        }
-        else {
-            iconEdit = 'pencil-square-o';
-            colorEdit = ' text-primary ';
-        }
-        btnEdit = <div className={cnBtnDiv + colorEdit} onClick={onEdit}>
-            <FA name={iconEdit} fixWidth={true} size="lg" />
-        </div>;
-    }
-    let btnDel = <>
-        <div className={cnBtnDiv + colorDel} onClick={onDelSub}>
-            <FA name={iconDel} fixWidth={true} size="lg" />
-            {memoDel}
-        </div>
-    </>;
-
-    if (deleted === true) {
-        return <div className="">
-            <div className="mt-2 d-flex justify-content-end">
-                {btnDel}
-            </div>
-            <div className="text-body-tetiary opacity-50 text-decoration-line-through">
-                <ViewRow {...props} />
-            </div>
-        </div>;
-    }
     return <>
-        <ViewRow {...props} buttons={<>{btnEdit}{btnDel}</>} />
+        <ViewRow {...props} />
         {divs.map(v => <ViewDiv key={v.id} {...props} valDiv={v} />)}
     </>
 }
 
-function ViewRow(props: ViewDivProps & { buttons?: any; }) {
-    const { valDiv, divStore, editable, buttons } = props;
+function ViewRow(props: ViewDivProps) {
+    const { valDiv, divStore } = props;
     const inputs = useInputs();
     const rowEdit = useRowEdit();
     const { atomValRow, atomValDivs, atomSum, atomValue, binDiv, atomDeleted } = valDiv;
@@ -105,7 +48,7 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
     const { pend, id, pendValue, price, amount } = valRow;
     const divs = useAtomValue(atomValDivs);
     const styleLeft = { paddingLeft: `${(level - 1) * 2 + 1}rem`, paddingRight: `1rem` };
-    const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end align-items-end';
+    const cnBtn = ' w-min-8c w-max-8c d-flex justify-content-end align-items-end ';
     let {
         value: cnValue, sum: cnSum, price: cnPrice, amount: cnAmount
         , pend: cnPend, pendOver: cnPendOver
@@ -156,11 +99,6 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
     }
 
     function ViewRowStem() {
-        const { pivot } = entityBin;
-        let viewPivot: any;
-        if (pivot !== undefined && pivot === binDiv.div) {
-            viewPivot = <ViewPivotDiv divStore={divStore} valDiv={valDiv} editable={editable} />;
-        }
         let viewPend: any;
         if (level === 0) {
             let icon: string, color: string;
@@ -189,38 +127,28 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
             <ViewFields />
         </>;
         let viewContent: any, viewRight: any;
-        if (viewPivot === undefined) {
-            viewContent = <div className={cn}>
-                <RowColsSm contentClassName="flex-fill">
-                    {content}
-                </RowColsSm>
-            </div>;
-            if (divs.length > 0) {
-                let viewRightValue = <div className="d-flex text-end flex-column align-items-end">
-                    {viewPend}
-                    <PAV bud={entityBin.value} val={sum} className={cnSum} />
-                </div>
+        // if (viewPivot === undefined) {
+        viewContent = <div className={cn}>
+            <RowColsSm contentClassName="flex-fill">
+                {content}
+            </RowColsSm>
+        </div>;
+        if (divs.length > 0) {
+            let viewRightValue = <div className="d-flex text-end flex-column align-items-end me-3">
+                {viewPend}
+                <PAV bud={entityBin.value} val={sum} className={cnSum} />
+            </div>
 
-                viewRight = <div className={cnBtn}>
-                    {viewRightValue}
-                    {/*btnDel*/}
-                </div>;
-                if (level === 0) {
-                    viewRight = <div className="d-flex flex-column align-items-end">
-                        <div className="flex-fill d-flex mb-1 me-1">
-                            {buttons}
-                        </div>
-                        <div className="me-3">
-                            {viewRightValue}
-                        </div>
-                    </div>;
-                }
-            }
+            viewRight = <div className={cnBtn}>
+                {viewRightValue}
+            </div>;
+        }
+        /*
         }
         else {
-            viewContent = <div className="d-flex">
-                {content}
-                {viewPivot}
+            viewContent = <div>
+                <div className="d-flex">{content}</div>
+                <div className="d-flex bg-white border-top">{viewPivot}</div>
             </div>;
             const { value: budValue } = entityBin;
             viewRight = <>
@@ -228,9 +156,9 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
                     <div className={labelColor}>{budValue.caption ?? budValue.name}</div>
                     <div className={cnValue}>{sum}</div>
                 </div>
-                {/*btnDel*/}
             </>;
         }
+        */
         return <>
             {left}
             <div className="flex-fill">
@@ -252,7 +180,6 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
     function ViewRowLeaf() {
         // div === undefined
         async function onEdit() {
-            if (editable === false) return;
             const binEditing = new BinEditing(entityBin, valRow);
             // binEditing.setValues(binDetail);
             let ret = await rowEdit(binEditing);
