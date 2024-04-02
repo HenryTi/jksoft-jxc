@@ -1,9 +1,9 @@
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { DivStore, SheetStore, SubmitState } from "./store";
-import { theme, to62 } from "tonwa-com";
+import { getAtomValue, theme, to62 } from "tonwa-com";
 import { ViewDiv, ViewMain } from "./binEdit";
 // import { ViewDetail } from "./binEdit";
-import { useAtomValue } from "jotai";
+import { atom, useAtomValue } from "jotai";
 import { useCoreDetailAdd } from "./binEdit";
 import { useNavigate } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
@@ -25,6 +25,7 @@ export function PageSheet({ store }: { store: SheetStore; }) {
 
     async function onSubmit() {
         if (main.trigger() === false) return;
+        if (divStore.trigger() === false) return;
         setEditable(false);
         let { checkPend, checkBin } = await uq.SubmitSheet.submitReturns({ id: main.valRow.id });
         if (checkPend.length + checkBin.length > 0) {
@@ -98,14 +99,18 @@ export function PageSheet({ store }: { store: SheetStore; }) {
             await addNew();
         }
         //let sections = useAtomValue(detail._sections);
-        let submitDisabled: boolean = true, submitHidden: boolean;
+        let submitHidden: boolean;
         //if (sections.length === 0 && submitState === SubmitState.hide) {
         //    submitHidden = true;
         //}
         //else {
         submitHidden = false;
         let disabled = (/*sections.length === 0 && */submitState === SubmitState.none) || submitState === SubmitState.disable;
-        submitDisabled = disabled;
+        // submitDisabled = disabled;
+        let submitDisabled = atom(get => {
+            submitState = get(divStore.atomSubmitState);
+            return submitState === SubmitState.none || submitState === SubmitState.disable;
+        });
         //}
         let btnSubmit = buttonDefs.submit(onSubmit, submitDisabled, submitHidden);
         let btnAddDetail = detail.entityBin.pend === undefined ?
@@ -129,20 +134,19 @@ export function PageSheet({ store }: { store: SheetStore; }) {
         function ViewBinDivs({ divStore, editable }: { divStore: DivStore; editable: boolean; }) {
             const { valDivs } = divStore;
             const divs = useAtomValue(valDivs.atomValDivs);
-            if (divs.length === 0) {
-                return <div className="tonwa-bg-gray-1">
+            return <div className="tonwa-bg-gray-1 pt-3">
+                {divs.length === 0 ?
                     <div className="mt-3 small text-body-tertiary p-3 bg-white border-top">
                         无明细
                     </div>
-                </div>;
-            }
-            return <div className={' tonwa-bg-gray-1 '}>
-                {divs.map(v => {
-                    return <div key={v.id} className="mb-3 border-top border-bottom border-primary-subtle">
-                        <ViewDiv divStore={divStore} valDiv={v} editable={editable} />
-                    </div>;
-                })}
-            </div>;
+                    :
+                    divs.map(v => {
+                        const { id } = v;
+                        return <div key={id} className="mb-3 border-top border-bottom border-primary-subtle">
+                            <ViewDiv divStore={divStore} valDiv={v} editable={editable} />
+                        </div>;
+                    })}
+            </div>
         }
     }
 

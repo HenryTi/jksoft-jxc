@@ -1,5 +1,5 @@
 import { ButtonAsync, FA } from "tonwa-com";
-import { WritableAtom, atom, useAtomValue } from "jotai";
+import { Atom, WritableAtom, atom, useAtomValue } from "jotai";
 import React from "react";
 
 export interface ToolItemDef {
@@ -17,14 +17,22 @@ export abstract class ToolItem {
 export abstract class ToolActItem extends ToolItem {
     protected readonly def: ToolItemDef;
     protected readonly onAct: OnAct;
-    readonly atomDisabled: WritableAtom<boolean, any, any>;
-    readonly atomHidden: WritableAtom<boolean, any, any>;
-    constructor(def: ToolItemDef, onAct: OnAct, disabled?: boolean, hidden?: boolean) {
+    readonly atomDisabled: Atom<any>;
+    readonly atomHidden: Atom<any>;
+    constructor(def: ToolItemDef, onAct: OnAct, disabled?: boolean | Atom<any>, hidden?: boolean | Atom<any>) {
         super();
         this.def = def;
         this.onAct = onAct;
-        this.atomDisabled = atom(disabled ?? false);
-        this.atomHidden = atom(hidden ?? false);
+        this.atomDisabled = this.atomBoolean(disabled);
+        this.atomHidden = this.atomBoolean(hidden);
+    }
+
+    private atomBoolean(v: boolean | Atom<any>) {
+        switch (typeof (v)) {
+            case 'boolean': return atom(v);
+            case 'undefined': return atom(false);
+            default: return atom(get => get(v));
+        }
     }
 
     readonly Render = (): JSX.Element => {
@@ -77,15 +85,15 @@ export class ToolElement extends ToolItem {
 
 export type ItemOnAct = () => void | Promise<void>;
 
-export type ItemDef<T extends ToolItem> = (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean) => T;
+export type ItemDef<T extends ToolItem> = (onAct: ItemOnAct, disabled?: boolean | Atom<any>, hidden?: boolean | Atom<any>) => T;
 
 export function toolButtonDef(def: ToolItemDef) {
-    return function (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean): ToolButton {
+    return function (onAct: ItemOnAct, disabled?: boolean | Atom<any>, hidden?: boolean | Atom<any>): ToolButton {
         return new ToolButton(def, onAct, disabled, hidden);
     }
 }
 export function toolIconDef(def: ToolItemDef) {
-    return function (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean): ToolIcon {
+    return function (onAct: ItemOnAct, disabled?: boolean | Atom<any>, hidden?: boolean | Atom<any>): ToolIcon {
         return new ToolIcon(def, onAct, disabled, hidden);
     }
 }

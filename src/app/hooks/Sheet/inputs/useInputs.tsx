@@ -7,14 +7,14 @@ import { DivEditing, UseInputsProps, ValDiv } from "../store";
 import { InputDivProps, inputDiv } from "./inputDiv";
 import { useUqApp } from "app";
 import { useModal } from "tonwa-app";
-import { PendProxyHander, ValRow } from "../tool";
+import { PendProxyHander, ValRow, mergeValRow } from "../tool";
 import { NamedResults } from "../store";
 import { getAtomValue } from "tonwa-com";
 
 export function useInputs() {
     const uqApp = useUqApp();
     const modal = useModal();
-    return useCallback(async function (props: UseInputsProps): Promise<ValDiv> {
+    return useCallback(async function (props: UseInputsProps, skipInputs: boolean = false): Promise<ValDiv> {
         let { divStore, pendRow, binDiv, valDiv } = props;
         let { entityBin } = divStore;
         let { rearPick } = entityBin;
@@ -31,7 +31,7 @@ export function useInputs() {
         }
         for (let p = binDiv; p !== undefined; p = p.div) {
             const { inputs } = p;
-            if (inputs !== undefined) {
+            if (inputs !== undefined && skipInputs !== true) {
                 for (let input of inputs) {
                     const { bizPhraseType } = input;
                     let retInput: any = undefined;
@@ -70,9 +70,11 @@ export function useInputs() {
                 uqApp,
                 namedResults,
             }
-            let retValRow: ValRow = await inputDiv(inputDivProps);
-            if (retValRow === undefined) return;
-            mergeValRow(valRow, retValRow);
+            if (skipInputs !== true) {
+                let retValRow: ValRow = await inputDiv(inputDivProps);
+                if (retValRow === undefined) return;
+                mergeValRow(valRow, retValRow);
+            }
             let origin = valDiv === undefined ? pendRow.origin : valDiv.id;
             valRow.origin = origin;
             valRow.pend = pendRow.pend;
@@ -92,20 +94,4 @@ export function useInputs() {
         }
         return ret;
     }, []);
-}
-
-function mergeValRow(dest: ValRow, src: ValRow) {
-    if (src === undefined) return;
-    const { id, i, x, value, price, amount, buds, owned, pend, pendValue, origin } = src;
-    dest.id = id;
-    dest.i = i;
-    dest.x = x;
-    dest.value = value;
-    dest.price = price;
-    dest.amount = amount;
-    if (buds !== undefined) Object.assign(dest.buds, buds);
-    if (owned !== undefined) Object.assign(dest.owned, owned);
-    dest.pend = pend;
-    dest.pendValue = pendValue;
-    dest.origin = origin;
 }

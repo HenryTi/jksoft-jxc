@@ -76,7 +76,7 @@ function ViewRow(props: ViewDivProps) {
     }
     */
     async function onAddSub() {
-        const pendRow = await divStore.getPendRow(pend);
+        const pendRow = await divStore.loadPendRow(pend);
         let props: UseInputsProps = {
             divStore,
             pendRow,
@@ -172,6 +172,10 @@ function ViewRow(props: ViewDivProps) {
     function PAV({ bud, className, val, onClick }: { bud: BizBud; className?: string; val: number; onClick?: () => void }) {
         if (bud === undefined) return null;
         let { caption, name } = bud;
+        if (Number.isNaN(val) === true) {
+            debugger;
+            val = 0;
+        }
         return <div className="d-flex ms-3 align-items-center text-end text-nowrap" onClick={onClick}>
             <div className={labelColor + ' me-2 '}>{caption ?? name}</div>
             <div className={(className ?? '') + ' w-min-2c '}>{val}</div>

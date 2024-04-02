@@ -584,11 +584,13 @@ export const predefinedPendFields = [
 
 export class EntityPend extends Entity {
     predefined: { [name: string]: BizBud };
-    predefinedFields: string[];
+    // predefinedFields: string[];
     i: BizBud;
     x: BizBud;
     params: BizBud[];
     private cols: BizBud[];
+    hasPrice: boolean;
+    hasAmount: boolean;
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -600,8 +602,15 @@ export class EntityPend extends Entity {
             case 'cols': this.cols = val; break;
             case 'i': this.i = val; break;
             case 'x': this.x = val; break;
-            case 'predefinedFields': this.predefinedFields = val; break;
+            case 'predefinedFields': this.setPredefinedFields(val); break;
+            // this.predefinedFields = val;
+            //break;
         }
+    }
+
+    private setPredefinedFields(predefinedFields: string[]) {
+        this.hasPrice = predefinedFields.findIndex(v => v === 'price') >= 0;
+        this.hasAmount = predefinedFields.findIndex(v => v === 'amount') >= 0;
     }
 
     scan(): void {

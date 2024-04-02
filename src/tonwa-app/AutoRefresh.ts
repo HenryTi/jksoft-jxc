@@ -1,6 +1,6 @@
 import { UqAppBase } from "./UqAppBase";
 
-const gaps = [10, 3, 3, 3, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10, 10, 15, 15, 15, 30, 30, 60];
+const gaps = [10, 4, 8, 8, 16, 16, 32, 32, 60];
 
 export class AutoRefresh {
     private readonly uqApp: UqAppBase;

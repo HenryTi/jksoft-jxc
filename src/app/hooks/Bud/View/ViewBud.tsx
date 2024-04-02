@@ -43,7 +43,7 @@ export function ViewBud({ bud, value, uiType, noLabel }: { bud: BizBud; value: a
     if (noLabel === true) {
         return <div className="col">{content}</div>;
     }
-    return <LabelBox label={caption ?? name} className="">{content}</LabelBox>;
+    return <LabelBox label={caption ?? name} className="mb-1">{content}</LabelBox>;
 }
 
 export function budContent(bud: BizBud, value: any) {

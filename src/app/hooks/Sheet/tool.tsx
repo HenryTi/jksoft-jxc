@@ -152,3 +152,19 @@ export interface ValRow extends BinRow {
 
 export const btnNext = <>下一步 <FA name="arrow-right" className="ms-2" /></>;
 export const cnNextClassName: string = "btn btn-primary";
+
+export function mergeValRow(dest: ValRow, src: ValRow) {
+    if (src === undefined) return;
+    const { id, i, x, value, price, amount, buds, owned, pend, pendValue, origin } = src;
+    dest.id = id;
+    dest.i = i;
+    dest.x = x;
+    dest.value = value;
+    dest.price = price;
+    dest.amount = amount;
+    if (buds !== undefined) Object.assign(dest.buds, buds);
+    if (owned !== undefined) Object.assign(dest.owned, owned);
+    dest.pend = pend;
+    dest.pendValue = pendValue;
+    dest.origin = origin;
+}

@@ -36,6 +36,19 @@ export class ValDivs {
         valDivs.push(valDiv);
         setAtomValue(atomValDivs, [...valDivs]);
     }
+    removePend(pendId: number) {
+        let valDivs = getAtomValue(this.atomValDivs);
+        let len = valDivs.length;
+        for (let i = 0; i < len; i++) {
+            let valDiv = valDivs[i];
+            let valRow = getAtomValue(valDiv.atomValRow);
+            if (valRow.pend === pendId) {
+                valDivs.splice(i, 1);
+                break;
+            }
+        }
+        setAtomValue(this.atomValDivs, [...valDivs]);
+    }
 }
 
 export class ValDiv extends ValDivs {
@@ -64,6 +77,11 @@ export class ValDiv extends ValDivs {
         let valRow = getAtomValue(this.atomValRow);
         valRow.id = id;
         setAtomValue(this.atomValRow, { ...valRow });
+    }
+
+    get pend(): number {
+        let valRow = getAtomValue(this.atomValRow);
+        return valRow?.pend;
     }
 
     setValRow(valRow: any) {

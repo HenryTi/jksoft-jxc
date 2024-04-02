@@ -10,6 +10,7 @@ import { BinOwnedBuds } from "./BinOwnedBuds";
 import { useRowEdit } from "./rowEdit";
 import { useModal } from "tonwa-app";
 import { EditDiv } from "./EditDiv";
+import { ViewPendRow } from "./ViewPendRow";
 
 interface ViewDivProps {
     divStore: DivStore;
@@ -20,20 +21,23 @@ interface ViewDivProps {
 
 export function ViewDiv(props: ViewDivProps) {
     const modal = useModal();
-    const { valDiv } = props;
-    const { binDiv, atomDeleted, atomValDivs } = valDiv;
+    const { divStore, valDiv } = props;
+    const { binDiv, atomDeleted, atomValRow, atomValDivs } = valDiv;
     const { entityBin } = binDiv;
     const divs = useAtomValue(atomValDivs);
+    const valRow = useAtomValue(atomValRow);
     const deleted = useAtomValue(atomDeleted);
+    const inputs = useInputs();
     if (entityBin.pivot === binDiv) return null;
+    const { pend, id } = valRow;
 
     async function onDelSub() {
-        if (deleted === true) {
-            setAtomValue(atomDeleted, false);
+        if (id < 0) {
+            // 候选还没有输入行内容
+            divStore.removePend(pend);
+            return;
         }
-        else {
-            setAtomValue(atomDeleted, true);
-        }
+        setAtomValue(atomDeleted, !deleted);
         /*
         if (level < divLevels) {
             alert('实现中...');
@@ -42,23 +46,41 @@ export function ViewDiv(props: ViewDivProps) {
         await divStore.delValRow(id);
         */
     }
-    function onEdit() {
-        modal.open(<EditDiv divStore={props.divStore} valDiv={valDiv} />);
+    async function onEdit() {
+        if (id < 0) {
+            // 候选还没有输入行内容
+            let pendRow = divStore.getPendRow(pend);
+            const useInputsProps: UseInputsProps = {
+                divStore,
+                binDiv: divStore.binDiv,
+                valDiv,
+                pendRow,
+                namedResults: {},
+            }
+            let retValDiv = await inputs(useInputsProps, false);
+            if (retValDiv === undefined) return;
+            divStore.replaceValDiv(valDiv, retValDiv);
+            return;
+        }
+        await modal.open(<EditDiv divStore={divStore} valDiv={valDiv} />);
     }
-    let cnBtnDiv = ' px-1 cursor-pointer text-primary mt-n2 ';
+    async function onDelThoroughly() {
+        alert('彻底删除尚未实现');
+    }
+    let cnBtnDiv = ' px-1 cursor-pointer text-primary mt-n1 ';
     let btnEdit: any, iconDel: string, colorDel: string, memoDel: any;
     if (deleted === true) {
         iconDel = 'undo';
         colorDel = 'text-secondary opacity-100 ';
-        memoDel = <span className="text-info me-3">恢复</span>;
+        memoDel = <span className="text-info me-1">恢复</span>;
     }
     else {
-        iconDel = 'times';
+        iconDel = 'trash-o';
         colorDel = 'text-success';
         let iconEdit: string, colorEdit: string;
         if (divs.length === 0) {
             iconEdit = 'plus';
-            colorEdit = ' text-success ';
+            colorEdit = ' text-primary ';
         }
         else {
             iconEdit = 'pencil-square-o';
@@ -77,16 +99,26 @@ export function ViewDiv(props: ViewDivProps) {
 
     if (deleted === true) {
         return <div className="">
-            <div className="mt-2 d-flex justify-content-end">
+            <div className="mt-1 d-flex justify-content-end">
                 {btnDel}
+                <div className={cnBtnDiv + ' text-warning '} onClick={onDelThoroughly}>
+                    <FA name="times" fixWidth={true} size="lg" />
+                    <span className="text-info me-3">彻底删除</span>
+                </div>
             </div>
             <div className="text-body-tetiary opacity-50 text-decoration-line-through">
                 <ViewRow {...props} />
             </div>
         </div>;
     }
+
+    const buttons = <>{btnEdit}{btnDel}</>;
+    if (id < 0) {
+        return <ViewPendRow divStore={divStore} value={divStore.getPendRow(pend)} viewButtons={<>{buttons}<div className="me-n3" /></>} />;
+    }
+
     return <>
-        <ViewRow {...props} buttons={<>{btnEdit}{btnDel}</>} />
+        <ViewRow {...props} buttons={buttons} />
         {divs.map(v => <ViewDiv key={v.id} {...props} valDiv={v} />)}
     </>
 }
@@ -100,11 +132,13 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
     const { divLevels } = entityBin;
     const { hasIBase, budValue, fields, budPrice, budAmount, budI } = binBuds;
     const valRow = useAtomValue(atomValRow);
-    const sum = useAtomValue(atomSum);
+    let sum = useAtomValue(atomSum);
+    if (Number.isNaN(sum) === true) {
+        sum = 0;
+    }
     const value = useAtomValue(atomValue);
-    const { pend, id, pendValue, price, amount } = valRow;
+    const { pend, pendValue, price, amount } = valRow;
     const divs = useAtomValue(atomValDivs);
-    const styleLeft = { paddingLeft: `${(level - 1) * 2 + 1}rem`, paddingRight: `1rem` };
     const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end align-items-end';
     let {
         value: cnValue, sum: cnSum, price: cnPrice, amount: cnAmount
@@ -133,7 +167,7 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
     }
     */
     async function onAddSub() {
-        const pendRow = await divStore.getPendRow(pend);
+        const pendRow = await divStore.loadPendRow(pend);
         let props: UseInputsProps = {
             divStore,
             pendRow,
@@ -244,6 +278,10 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
     function PAV({ bud, className, val, onClick }: { bud: BizBud; className?: string; val: number; onClick?: () => void }) {
         if (bud === undefined) return null;
         let { caption, name } = bud;
+        if (Number.isNaN(val) === true) {
+            debugger;
+            val = 0;
+        }
         return <div className="d-flex ms-3 align-items-center text-end text-nowrap" onClick={onClick}>
             <div className={labelColor + ' me-2 '}>{caption ?? name}</div>
             <div className={(className ?? '') + ' w-min-2c '}>{val}</div>
@@ -312,7 +350,14 @@ function ViewPivotDiv({ valDiv }: ViewDivProps) {
         const { binBuds } = binDiv;
         const { fields } = binBuds;
         const valRow = useAtomValue(atomValRow);
-        const valueValue = useAtomValue(atomValue);
+        let valueValue = useAtomValue(atomValue);
+        if (valueValue === undefined) {
+            valueValue = 0;
+        }
+        else if (Number.isNaN(valueValue) === true) {
+            debugger;
+            valueValue = 0;
+        }
         return <div className="text-end mx-2">
             <div>
                 {

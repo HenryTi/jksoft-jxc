@@ -6,19 +6,36 @@ import { PendBandProps } from "./model";
 import { BudValue } from "tonwa-app";
 import { Sep, theme } from "tonwa-com";
 
+export function ViewPendRowCandidate({
+    value: pendRow
+    , divStore
+    // , hasPrice, hasAmount 
+}: PendBandProps) {
+    const { entityBin } = divStore;
+    const { div } = entityBin;
+    let rowContent = <ViewPendRow divStore={divStore} value={pendRow} />;
+
+    if (div.div === undefined) return rowContent;
+    return <ViewPendRowEdit pendRow={pendRow}
+        pendContent={rowContent}
+        divStore={divStore}
+        namedResults={undefined} />;
+}
+
 export function ViewPendRow({
     value: pendRow
     , divStore
-    , hasPrice, hasAmount }: PendBandProps) {
+    , viewButtons
+}: PendBandProps & { viewButtons?: any; }) {
     const { entityBin, ownerColl } = divStore;
     const { div, pend: entityPend } = entityBin;
-    let { i: iBud } = entityPend;
+    let { i: iBud, hasPrice, hasAmount } = entityPend;
 
     const { detail: { id, i, price, amount }, value, mid, cols } = pendRow;
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
         return <div className="d-flex text-end align-items-center pt-1 pb-2">
-            <span className="me-3 small text-secondary">{caption}</span>
-            <span className="w-min-4c">{value}</span>
+            <span className={' me-3 ' + theme.labelColor}>{caption}</span>
+            <span className="w-min-3c">{value}</span>
         </div>;
     }
     const digits = 2;
@@ -35,26 +52,25 @@ export function ViewPendRow({
     if (ownedBudsValuesColl !== undefined) {
         ownedBudsValues = ownedBudsValuesColl[iBud.id];
     }
-    let rowContent = <div className="d-flex py-1">
-        <div className={'flex-grow ' + theme.bootstrapContainer}>
-            <ViewSpec id={i} bold={true} noLabel={true} />
-            <Sep className="my-1" />
-            <RowCols>
+    return <div className="py-2 bg-white">
+        <div className="d-flex px-3">
+            <div className="flex-fill">
+                <ViewSpec id={i} bold={true} noLabel={true} />
+            </div>
+            {viewButtons}
+        </div>
+        <Sep className="my-1" />
+        <div className="d-flex px-3">
+            <RowCols contentClassName=" flex-fill ">
                 <OwnedBuds values={ownedBudsValues} />
                 <ViewPropArr className="col" arr={mid} />
                 <ViewPropArr className="col" arr={cols} />
             </RowCols>
+            <div className="w-min-10c d-flex flex-column align-items-end">
+                {hasPrice === true && <ViewValue caption={'单价'} value={price?.toFixed(digits)} />}
+                {hasAmount === true && <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />}
+                <ViewValue caption={'数量'} value={<span className="fw-bold">{value}</span>} />
+            </div >
         </div>
-        <div className="w-min-10c d-flex flex-column align-items-end">
-            {hasPrice === true && <ViewValue caption={'单价'} value={price?.toFixed(digits)} />}
-            {hasAmount === true && <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />}
-            <ViewValue caption={'数量'} value={<span className="fw-bold">{value}</span>} />
-        </div >
     </div>;
-
-    if (div.div === undefined) return rowContent;
-    return <ViewPendRowEdit pendRow={pendRow}
-        pendContent={rowContent}
-        divStore={divStore}
-        namedResults={undefined} />;
 }

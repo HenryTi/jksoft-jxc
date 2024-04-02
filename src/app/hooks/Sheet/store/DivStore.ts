@@ -48,6 +48,7 @@ export class DivStore {
                 const { atomValue, atomValRow } = valDiv;
                 let value = get(atomValue);
                 let valRow = get(atomValRow);
+                if (valRow.id < 0) return SubmitState.disable;
                 if (value !== undefined) hasValue = true;
                 if (value > valRow.pendValue) return SubmitState.disable;
             }
@@ -288,11 +289,16 @@ export class DivStore {
         this.valDivColl[valDiv.id] = valDiv;
     }
 
-    async getPendRow(pend: number) {
+    getPendRow(pend: number) {
         let ret = this.pendRows?.find(v => v.pend === pend);
+        return ret;
+    }
+
+    async loadPendRow(pend: number) {
+        let ret = this.getPendRow(pend);
         if (ret === undefined) {
             await this.loadPendId(pend);
-            ret = this.pendRows.find(v => v.pend === pend);
+            ret = this.getPendRow(pend);
         }
         return ret;
     }
@@ -301,6 +307,32 @@ export class DivStore {
         const { buds } = binDiv;
         let retId = await this.sheetStore.saveDetail(binDiv.entityBin, buds, valRow);
         return retId;
+    }
+
+    replaceValDiv(valDiv: ValDiv, newValDiv: ValDiv) {
+        const { atomValDivs } = this.valDivs;
+        let valDivs = getAtomValue(atomValDivs);
+        let { length } = valDivs;
+        for (let i = 0; i < length; i++) {
+            if (valDiv === valDivs[i]) {
+                valDivs.splice(i, 1, newValDiv);
+                setAtomValue(atomValDivs, [...valDivs]);
+                break;
+            }
+        }
+        let pend = valDiv.pend;
+        let atomValDiv = this.pendColl[pend];
+        setAtomValue(atomValDiv, newValDiv);
+    }
+
+    removePend(pendId: number) {
+        this.valDivs.removePend(pendId);
+        setAtomValue(this.pendColl[pendId], undefined);
+    }
+
+    trigger(): boolean {
+        // 检查div是不是有值
+        return true;
     }
 }
 

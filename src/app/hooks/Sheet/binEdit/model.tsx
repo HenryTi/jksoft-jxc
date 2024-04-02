@@ -22,7 +22,7 @@ export interface PagePendProps extends PendProps {
 
 export interface PendBandProps extends PendProps {
     value: PendRow;
-    hasPrice: boolean;
-    hasAmount: boolean;
+    // hasPrice: boolean;
+    // hasAmount: boolean;
 }
 

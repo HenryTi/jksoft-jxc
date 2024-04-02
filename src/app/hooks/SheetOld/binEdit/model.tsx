@@ -1,6 +1,7 @@
 import { PendRow } from "../store";
 import { NamedResults } from "../NamedResults";
 import { DivStore } from "../store";
+import { EntityBin } from "app/Biz";
 
 let rowId = 1;
 

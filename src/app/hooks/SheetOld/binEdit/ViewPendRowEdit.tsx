@@ -63,7 +63,7 @@ export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowE
 }
 
 function ViewCheck({ icon, iconColor, onClick }: { icon: string; iconColor: string; onClick: () => void; }) {
-    return <div className="z-3 position-relative cursor-pointer px-2 py-3 text-center align-self-end text-info" onClick={onClick}>
+    return <div className="z-2 position-relative cursor-pointer px-2 py-3 text-center align-self-end text-info" onClick={onClick}>
         <FA name={icon} fixWidth={true} size="lg" className={iconColor + ' mx-1 '} />
     </div>
 }

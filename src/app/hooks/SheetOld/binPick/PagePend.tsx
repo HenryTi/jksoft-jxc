@@ -3,21 +3,21 @@ import { useState } from "react";
 import { FA, List, Sep } from "tonwa-com";
 import { PendRow } from "../store";
 import { PagePendProps } from "../binEdit/model";
-import { ViewPendRow } from "../binEdit/ViewPendRow";
+import { ViewPendRowCandidate } from "../binEdit/ViewPendRow";
 import { ValRow } from "../tool";
 
 export function PagePend(props: PagePendProps) {
     let { divStore, caption } = props;
     let { entityBin: { pend: entityPend, div: div }, pendRows } = divStore;
     const modal = useModal();
-    let { name: pendName, predefinedFields } = entityPend;
+    let { name: pendName, hasPrice, hasAmount } = entityPend;
     let [selectedItems, setSelectedItems] = useState<{ [id: number]: PendRow; }>({});
 
     if (caption === undefined) {
         caption = entityPend.caption ?? pendName;
     }
-    let hasPrice = predefinedFields.findIndex(v => v === 'price') >= 0;
-    let hasAmount = predefinedFields.findIndex(v => v === 'amount') >= 0;
+    // let hasPrice = predefinedFields.findIndex(v => v === 'price') >= 0;
+    // let hasAmount = predefinedFields.findIndex(v => v === 'amount') >= 0;
     function onClick() {
         let pendRows = Object.values(selectedItems).sort((a, b) => {
             let aPend = a.pend, bPend = b.pend;
@@ -42,7 +42,7 @@ export function PagePend(props: PagePendProps) {
         modal.close(ret);
     }
     function ViewItemPendRow({ value: pendRow }: { value: PendRow }) {
-        return <ViewPendRow value={pendRow} hasPrice={hasPrice} hasAmount={hasAmount} {...props} />;
+        return <ViewPendRowCandidate value={pendRow} hasPrice={hasPrice} hasAmount={hasAmount} {...props} />;
     }
     function onItemSelect(item: PendRow, isSelected: boolean) {
         const { pend } = item;
