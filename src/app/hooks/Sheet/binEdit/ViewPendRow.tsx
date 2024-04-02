@@ -2,18 +2,21 @@ import { ViewSpec } from "app/hooks/View";
 import { Prop, VNamedBud } from "../tool";
 import { OwnedBuds, RowCols } from "app/hooks/tool";
 import { ViewPendRowEdit } from "./ViewPendRowEdit";
-import { PendBandProps } from "./model";
 import { BudValue } from "tonwa-app";
-import { Sep, theme } from "tonwa-com";
+import { Sep, getAtomValue, theme } from "tonwa-com";
+import { DivStore, PendRow } from "../store";
+
+interface PendProps {
+    divStore: DivStore;
+    pendRow: PendRow;
+}
 
 export function ViewPendRowCandidate({
-    value: pendRow
-    , divStore
-    // , hasPrice, hasAmount 
-}: PendBandProps) {
+    pendRow, divStore
+}: PendProps) {
     const { entityBin } = divStore;
     const { div } = entityBin;
-    let rowContent = <ViewPendRow divStore={divStore} value={pendRow} />;
+    let rowContent = <ViewPendRow divStore={divStore} pendRow={pendRow} showPendValue={true} />;
 
     if (div.div === undefined) return rowContent;
     return <ViewPendRowEdit pendRow={pendRow}
@@ -23,15 +26,13 @@ export function ViewPendRowCandidate({
 }
 
 export function ViewPendRow({
-    value: pendRow
-    , divStore
-    , viewButtons
-}: PendBandProps & { viewButtons?: any; }) {
+    pendRow, divStore, viewButtons, showPendValue
+}: PendProps & { viewButtons?: any; showPendValue?: boolean }) {
     const { entityBin, ownerColl } = divStore;
     const { div, pend: entityPend } = entityBin;
     let { i: iBud, hasPrice, hasAmount } = entityPend;
 
-    const { detail: { id, i, price, amount }, value, mid, cols } = pendRow;
+    const { pend: pendId, detail: { id, i, price, amount }, value, mid, cols } = pendRow;
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
         return <div className="d-flex text-end align-items-center pt-1 pb-2">
             <span className={' me-3 ' + theme.labelColor}>{caption}</span>
@@ -52,6 +53,21 @@ export function ViewPendRow({
     if (ownedBudsValuesColl !== undefined) {
         ownedBudsValues = ownedBudsValuesColl[iBud.id];
     }
+    let viewPendValue: any;
+    if (showPendValue === true) {
+        let atomValDiv = divStore.pendColl[pendId];
+        if (atomValDiv !== undefined) {
+            let valDiv = getAtomValue(atomValDiv);
+            if (valDiv !== undefined) {
+                const { atomSum } = valDiv;
+                const pendValue = getAtomValue(atomSum);
+                viewPendValue = <ViewValue
+                    caption={'已处理'}
+                    value={<span className="fw-bold fs-larger text-primary">{pendValue}</span>}
+                />;
+            }
+        }
+    }
     return <div className="py-2 bg-white">
         <div className="d-flex px-3">
             <div className="flex-fill">
@@ -69,7 +85,8 @@ export function ViewPendRow({
             <div className="w-min-10c d-flex flex-column align-items-end">
                 {hasPrice === true && <ViewValue caption={'单价'} value={price?.toFixed(digits)} />}
                 {hasAmount === true && <ViewValue caption={'金额'} value={amount?.toFixed(digits)} />}
-                <ViewValue caption={'数量'} value={<span className="fw-bold">{value}</span>} />
+                <ViewValue caption={'数量'} value={<span className="fw-bold fs-larger">{value}</span>} />
+                {viewPendValue}
             </div >
         </div>
     </div>;

@@ -114,7 +114,7 @@ export function ViewDiv(props: ViewDivProps) {
 
     const buttons = <>{btnEdit}{btnDel}</>;
     if (id < 0) {
-        return <ViewPendRow divStore={divStore} value={divStore.getPendRow(pend)} viewButtons={<>{buttons}<div className="me-n3" /></>} />;
+        return <ViewPendRow divStore={divStore} pendRow={divStore.getPendRow(pend)} viewButtons={<>{buttons}<div className="me-n3" /></>} />;
     }
 
     return <>

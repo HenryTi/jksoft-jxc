@@ -42,7 +42,7 @@ export function PagePend(props: PagePendProps) {
         modal.close(ret);
     }
     function ViewItemPendRow({ value: pendRow }: { value: PendRow }) {
-        return <ViewPendRowCandidate value={pendRow} divStore={divStore} />;
+        return <ViewPendRowCandidate pendRow={pendRow} divStore={divStore} />;
     }
     function onItemSelect(item: PendRow, isSelected: boolean) {
         const { pend } = item;
@@ -61,7 +61,7 @@ export function PagePend(props: PagePendProps) {
             btnFinish = <button className="btn btn-primary" onClick={onClick}>选入</button>;
         }
         else {
-            btnFinish = <button className="btn btn-outline-primary" onClick={() => modal.close([])}>
+            btnFinish = <button className="btn btn-primary" onClick={() => modal.close([])}>
                 下一步
                 <FA name="angle-right" className="ms-2" />
             </button>;
