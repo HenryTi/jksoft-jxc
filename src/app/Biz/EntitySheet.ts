@@ -1,12 +1,13 @@
 import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
-import { BizBud, BizBudBinValue, BizBudSpecBase, BudAtom, EnumBudType } from "./BizBud";
+import { BizBud, BizBudBinValue, BizBudSpecBase, BudAtom, BudRadio, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
 import { UI } from "app/ui";
 import { BudValue } from "tonwa-app";
 import { contentFromDays } from "app/tool";
+import { OptionsItem } from ".";
 
 export interface PickParam {
     name: string;
@@ -86,10 +87,12 @@ export class BinDiv {
     readonly entityBin: EntityBin;
     readonly parent: BinDiv;
     readonly level: number;
-    binBuds: BinBuds;
+    binDivBuds: BinDivBuds;
     inputs: PendInput[];
     buds: BizBud[];
     div: BinDiv;
+    key: BizBud;
+    format: [BizBud, boolean, OptionsItem][];
     ui: Partial<UI>;
     constructor(entityBin: EntityBin, parent: BinDiv) {
         this.entityBin = entityBin;
@@ -206,7 +209,7 @@ class FieldRadioBud extends FieldBud {
 }
 
 export class BudsFields {
-    protected readonly fieldColl: { [name: string]: BinField } = {};
+    readonly fieldColl: { [name: string]: BinField } = {};
     readonly entityBin: EntityBin;
     readonly hasIBase: boolean;
     readonly hasXBase: boolean;
@@ -224,30 +227,13 @@ export class BudsFields {
     readonly fieldAmount: BinField;
     readonly fieldValue: BinField;
 
+    keyField: BinField;
+
     constructor(bin: EntityBin, buds: BizBud[]) {
         this.entityBin = bin;
         this.allFields = [];
         this.fields = [];
         const { i: budI, x: budX, value: budValue, price: budPrice, amount: budAmount, buds: budArr } = bin;
-        /*
-        function fieldOfBud(bud: BizBud): new (bud: BizBud) => BinField {
-            if (budArr.findIndex(v => v === bud) >= 0) {
-                switch (bud.budDataType.type) {
-                    default: return FieldBud;
-                    case EnumBudType.date: return FieldDateBud;
-                    case EnumBudType.check: return FieldCheckBud;
-                    case EnumBudType.radio: return FieldRadioBud;
-                }
-            }
-            if (bud === iBud) return FieldI;
-            if (bud === xBud) return FieldX;
-            if (bud === budValue) return FieldValue;
-            if (bud === budPrice) return FieldPrice;
-            if (bud === budAmount) return FieldAmount;
-            // debugger; .i will not list here
-            return undefined;
-        }
-        */
         for (let bud of buds) {
             if (bud.name[0] === '.') {
                 switch (bud.name) {
@@ -293,24 +279,21 @@ export class BudsFields {
                 throw Error('should not be here');
             }
 
-            /*
-            if (bud === budValue) this.budValue = budValue
-            let Field = fieldOfBud(bud);
-            if (Field === undefined) continue;
-            field = new Field(bud);
-            */
             this.fieldColl[field.name] = field;
             this.allFields.push(field);
-            // if (bud === this.budValue) this.fieldValue = field;
         }
     }
 }
 
-export class BinBuds extends BudsFields {
+export class BinDivBuds extends BudsFields {
     readonly binDiv: BinDiv;
     constructor(binDiv: BinDiv) {
-        super(binDiv.entityBin, binDiv.buds);
+        const { buds, key } = binDiv;
+        super(binDiv.entityBin, buds);
         this.binDiv = binDiv;
+        if (key !== undefined) {
+            this.keyField = this.fieldColl[key.name];
+        }
     }
 }
 
@@ -497,12 +480,23 @@ export class EntityBin extends Entity {
         this.scanDiv(this.div, div);
     }
 
-    private scanDiv(binDiv: BinDiv, parent: BinDiv) {
-        let { inputs, div: subDiv, buds, ui } = parent;
+    private scanDiv(binDiv: BinDiv, source: BinDiv) {
+        let { inputs, div: subDiv, buds, ui, key, format } = source;
         binDiv.ui = ui;
         binDiv.inputs = this.scanInputs(inputs);
         binDiv.buds = this.scanBinBuds(buds);
-        binDiv.binBuds = new BinBuds(binDiv);
+        if (key !== undefined) {
+            binDiv.key = this.budColl[key as unknown as number];
+        }
+        if (format !== undefined) {
+            const { entityBin } = binDiv;
+            binDiv.format = (format as any[][]).map(([budId, withLabel, optionItemId]) => {
+                let bud = entityBin.budColl[budId];
+                let item = (bud.budDataType as BudRadio).options.coll[optionItemId];
+                return [bud, withLabel === 1, item]
+            });
+        }
+        binDiv.binDivBuds = new BinDivBuds(binDiv);
         if (subDiv !== undefined) {
             ++this.divLevels;
             let subBinDiv = binDiv.div = new BinDiv(this, binDiv);

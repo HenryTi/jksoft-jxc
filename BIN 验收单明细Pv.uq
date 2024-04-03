@@ -7,27 +7,34 @@ BIN 验收单明细Pv {
     };
     I.base; 
     Div '批次' {
-      Input spec SPEC 器械批次 Base=Pend.i; 
-      I '器械批次' 器械批次  { 
-        : 规格型号; 
-        : 单位; 
-        : 产地; 
-        : 生产厂商; 
-        : 包装; 
-        : 货品大类; 
-      }= spec;
-      PIVOT '验收' {
-          -- Prop 外观质量情况 Radio 外观质量情况 required; 
-          -- Prop 验收结论评定 radio 验收结论评定;
-          -- Prop 检验报告书 <edit:pop> radio 有无;
-          Prop 验收结论 Radio 验收结论 required; 
-          Value '验收数量' := pend.value >=0 <=pend.value;       
-          Amount '金额'  = Value * Price;    
-      }
-          Prop 抽检数量 dec(4);
-          Prop 抽检结论 <edit:pop> radio 是否合格;
-          Prop 查验结果 <edit:pop> radio 是否合格; 
-          Price '单价' := pend.price;
+        Input spec SPEC 器械批次 Base=Pend.i; 
+        I '器械批次' 器械批次  { 
+            : 规格型号; 
+            : 单位; 
+            : 产地; 
+            : 生产厂商; 
+            : 包装; 
+            : 货品大类; 
+        }= spec;
+        PIVOT {
+        -- Div '验收' {
+            KEY 验收 radio 验收情况;
+            Value '验收数量' := pend.value >=0 <=pend.value;
+            Amount '金额'  = Value * Price;
+            Price '单价' := pend.price;
+            FORMAT 验收结论&!合格, 验收结论!合格, 不合格原因;
+
+            Prop 入库建议 <edit:pop> radio 入库建议;
+            Prop 实际数量 := pend.value; 
+            Prop 抽检数量 dec(4);
+            Prop 实际件数 dec(2);
+            Prop 合格证明 <edit:pop> radio 有无;          
+            Prop 检验报告书 <edit:pop> radio 有无;
+            Prop 外观质量情况 Radio 外观质量情况 required;
+            prop 验收结论 <edit:pop> radio 验收结论;   
+            Prop 抽检结论 <edit:pop> radio 抽检结论;
+            Prop 不合格原因 <edit:pop> radio 不合格原因;
+        }   
     }
     Prop {      
       客户 atom 客户信息 = pend.客户;

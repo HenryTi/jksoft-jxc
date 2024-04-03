@@ -167,8 +167,8 @@ export class DivStore {
                 let { pend } = valRow;
                 let pendRow = this.pendRows?.find(v => v.pend === pend);
                 if (pendRow === undefined) {
-                    debugger;
-                    return 0;
+                    // debugger;
+                    return undefined;
                 }
                 return pendRow.value - value;
             }

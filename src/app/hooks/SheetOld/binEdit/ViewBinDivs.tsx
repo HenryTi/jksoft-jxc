@@ -57,7 +57,7 @@ const marginRightStyle = { marginRight: "-1em" };
 function ViewRow({ divStore, valDiv, editable }: ViewDivProps) {
     const inputs = useInputs();
     const { atomValRow, atomValDivs, atomValue, binDiv } = valDiv;
-    const { binBuds, level, entityBin, div } = binDiv;
+    const { binDivBuds: binBuds, level, entityBin, div } = binDiv;
     const { divLevels } = entityBin;
     const { hasIBase, budValue: valueBud } = binBuds;
     const val = useAtomValue(atomValRow);

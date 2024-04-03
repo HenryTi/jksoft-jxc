@@ -7,7 +7,7 @@ import { DivStore, ValDiv } from ".";
 import { NamedResults } from "./NamedResults";
 import { getDays } from "app/tool";
 
-abstract class BinFields extends BudsFields {
+export abstract class FieldsEditing extends BudsFields {
     private readonly calc: Calc;
     private readonly requiredFields: BinField[] = [];
     readonly valRow: ValRow = { buds: {} } as any;
@@ -49,6 +49,7 @@ abstract class BinFields extends BudsFields {
     }
 
     setNamedParams(namedResults: { [name: string]: any }) {
+        if (namedResults === undefined) return;
         this.calc.addValues(undefined, namedResults);
         const { results } = this.calc;
         for (let i in this.fieldColl) {
@@ -234,7 +235,7 @@ function budRadios(budDataType: BudRadio): { label: string; value: string | numb
     return ret;
 }
 
-export class DivEditing extends BinFields {
+export class DivEditing extends FieldsEditing {
     readonly divStore: DivStore;
     // readonly pendLeft: number;
     constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, valDiv: ValDiv, initBinRow?: BinRow) {
@@ -267,7 +268,7 @@ export class DivEditing extends BinFields {
 }
 
 // 跟当前行相关的编辑，计算，状态
-export class BinEditing extends BinFields {
+export class BinEditing extends FieldsEditing {
     constructor(bin: EntityBin, initValRow?: ValRow) {
         const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, buds: budArr } = bin;
         let buds: BizBud[] = [];

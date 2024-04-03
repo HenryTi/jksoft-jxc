@@ -98,12 +98,12 @@ export class ValDiv extends ValDivs {
     setIXBase(valRow: ValRow) {
         let { i, x } = valRow;
         if (i !== undefined) {
-            if (this.binDiv.binBuds.hasIBase === true) {
+            if (this.binDiv.binDivBuds.hasIBase === true) {
                 this.iBase = i;
             }
         }
         if (x !== undefined) {
-            if (this.binDiv.binBuds.hasXBase === true) {
+            if (this.binDiv.binDivBuds.hasXBase === true) {
                 this.xBase = x;
             }
         }

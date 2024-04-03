@@ -150,11 +150,7 @@ abstract class BinFields extends BudsFields {
         }
         return false;
     }
-    /*
-    getDefaultValue(field: BinField): number {
-        return field.getValue(this.valRow);
-    }
-    */
+
     buildFormRows(filterOnForm: boolean = false): FormRow[] {
         let ret: FormRow[] = [];
         const { results: calcResults } = this.calc;
@@ -236,12 +232,10 @@ function budRadios(budDataType: BudRadio): { label: string; value: string | numb
 
 export class DivEditing extends BinFields {
     readonly divStore: DivStore;
-    // readonly pendLeft: number;
     constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, valDiv: ValDiv, initBinRow?: BinRow) {
         super(divStore.entityBin, binDiv.buds, initBinRow);
         this.divStore = divStore;
         this.setNamedParams(namedResults);
-        // this.pendLeft = 
         if (this.fieldValue !== undefined) {
             let pendLeft = divStore.getPendLeft(valDiv);
             if (pendLeft !== undefined) {
@@ -249,21 +243,6 @@ export class DivEditing extends BinFields {
             }
         }
     }
-    /*
-    get pendLeft() {
-        return this.divStore.getPendLeft();
-    }
-    */
-    /*
-    getDefaultValue(field: BinField): number {
-        if (field.name === 'value') {
-            if (this.pendLeft !== undefined) {
-                return this.pendLeft;
-            }
-        }
-        return field.getValue(this.valRow);
-    }
-    */
 }
 
 // 跟当前行相关的编辑，计算，状态

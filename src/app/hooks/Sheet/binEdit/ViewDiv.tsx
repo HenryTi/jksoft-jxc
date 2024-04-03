@@ -9,7 +9,7 @@ import { BizBud } from "app/Biz";
 import { BinOwnedBuds } from "./BinOwnedBuds";
 import { useRowEdit } from "./rowEdit";
 import { useModal } from "tonwa-app";
-import { EditDiv } from "./EditDiv";
+import { PageEditDiv } from "./EditDiv";
 import { ViewPendRow } from "./ViewPendRow";
 
 interface ViewDivProps {
@@ -62,7 +62,7 @@ export function ViewDiv(props: ViewDivProps) {
             divStore.replaceValDiv(valDiv, retValDiv);
             return;
         }
-        await modal.open(<EditDiv divStore={divStore} valDiv={valDiv} />);
+        await modal.open(<PageEditDiv divStore={divStore} valDiv={valDiv} />);
     }
     async function onDelThoroughly() {
         alert('彻底删除尚未实现');
@@ -128,7 +128,7 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
     const inputs = useInputs();
     const rowEdit = useRowEdit();
     const { atomValRow, atomValDivs, atomSum, atomValue, binDiv, atomDeleted } = valDiv;
-    const { binBuds, level, entityBin, div } = binDiv;
+    const { binDivBuds: binBuds, level, entityBin, div } = binDiv;
     const { divLevels } = entityBin;
     const { hasIBase, budValue, fields, budPrice, budAmount, budI } = binBuds;
     const valRow = useAtomValue(atomValRow);
@@ -318,8 +318,8 @@ function ViewPivotDiv({ valDiv }: ViewDivProps) {
     </>;
     function ViewPivot({ valDiv }: { valDiv: ValDiv }) {
         const { binDiv, atomValRow, atomValue } = valDiv;
-        const { binBuds } = binDiv;
-        const { fields } = binBuds;
+        const { binDivBuds: binBuds, format } = binDiv;
+        const { fields, keyField, fieldColl } = binBuds;
         const valRow = useAtomValue(atomValRow);
         let valueValue = useAtomValue(atomValue);
         if (valueValue === undefined) {
@@ -329,21 +329,47 @@ function ViewPivotDiv({ valDiv }: ViewDivProps) {
             debugger;
             valueValue = 0;
         }
-        return <div className="text-end ms-3">
-            <div>
-                {
-                    fields.map(field => {
-                        const { bud } = field;
-                        const { id } = bud;
-                        let value = field.getValue(valRow);
-                        if (value === null || value === undefined) return null;
-                        return <span key={id} className={labelColor}>
-                            {budContent(bud, value)}
-                        </span>;
-                    })
+        const { bud } = keyField;
+        const { id } = bud;
+        let value = keyField.getValue(valRow);
+        if (value === null || value === undefined) return null;
+        let keyLabel = <span key={id} className={labelColor}>
+            {budContent(bud, value)}
+        </span>
+        let viewFormat: any;
+        if (format !== undefined) {
+            viewFormat = format.map(([bud, withLabel, item]) => {
+                let field = fieldColl[bud.name];
+                let value = field.getValue(valRow);
+                if (value === null || value === undefined) return null;
+                if (item !== undefined) {
+                    if (value === item.value) return null;
                 }
-            </div>
+                return <span key={bud.id}>
+                    {withLabel && <span className={labelColor + ' small '}>{bud.caption ?? bud.name}:</span>}
+                    {budContent(bud, value)};
+                </span>;
+            })
+        }
+        /*
+        {
+            fields.map(field => {
+                if (field === keyField) return null;
+                const { bud } = field;
+                const { id } = bud;
+                let value = field.getValue(valRow);
+                if (value === null || value === undefined) return null;
+                return <span key={id} className={labelColor}>
+                    {bud.caption ?? bud.name}:
+                    {budContent(bud, value)};
+                </span>;
+            })
+        }
+        */
+        return <div className="text-end ms-3">
+            <div>{keyLabel}</div>
             <div className={cnValue}>{valueValue}</div>
+            <div className="w-max-8c">{viewFormat}</div>
         </div>;
     }
 }

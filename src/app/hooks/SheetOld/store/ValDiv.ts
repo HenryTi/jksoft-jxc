@@ -82,19 +82,19 @@ export class ValDiv extends ValDivs {
     setIXBase(valRow: ValRow) {
         let { i, x } = valRow;
         if (i !== undefined) {
-            if (this.binDiv.binBuds.hasIBase === true) {
+            if (this.binDiv.binDivBuds.hasIBase === true) {
                 this.iBase = i;
             }
         }
         if (x !== undefined) {
-            if (this.binDiv.binBuds.hasXBase === true) {
+            if (this.binDiv.binDivBuds.hasXBase === true) {
                 this.xBase = x;
             }
         }
     }
 
     getBudsValArr(): [BizBud, any][] {
-        const { binBuds } = this.binDiv;
+        const { binDivBuds: binBuds } = this.binDiv;
         const { fields } = binBuds;
         let valRow = getAtomValue(this.atomValRow);
         let ret: [BizBud, any][] = [];
