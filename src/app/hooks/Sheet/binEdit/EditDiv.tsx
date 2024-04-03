@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai";
 import { BinEditing, DivStore, UseInputsProps, ValDiv } from "../store";
-import { FA, setAtomValue } from "tonwa-com";
+import { FA, getAtomValue, setAtomValue } from "tonwa-com";
 import { useInputs } from "../inputs";
 import { ViewBud, ViewBudSpec, ViewBudUIType, ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom, budContent } from "app/hooks";
 import { OwnedBuds, RowCols, RowColsSm } from "app/hooks/tool";
@@ -26,11 +26,43 @@ interface ViewDivProps {
 
 function ViewDiv(props: ViewDivProps) {
     const { valDiv } = props;
-    const { atomValDivs } = valDiv;
+    const { atomValDivs, binDiv } = valDiv;
+    const { level, entityBin, div } = binDiv;
+    const { divLevels } = entityBin;
+    const inputs = useInputs();
     const divs = useAtomValue(atomValDivs);
+    let viewDivs: any;
+    if (divs.length > 0) {
+        async function onAddNew() {
+            const { divStore } = props;
+            const { atomValRow } = valDiv;
+            const valRow = getAtomValue(atomValRow);
+            let pendRow = await divStore.loadPendRow(valRow.pend);
+            let ret = await inputs({
+                divStore,
+                pendRow,
+                namedResults: {},
+                binDiv: div,
+                valDiv,
+            });
+            console.log(ret);
+            setAtomValue(atomValDivs, [...divs, ret]);
+        }
+        let bg = divLevels - level - 1;
+        let borderTop = bg > 0 ? 'border-top' : '';
+        let borderBottom = level === 0 ? 'border-bottom' : '';
+        viewDivs = <div className="ms-4 border-start">
+            {
+                divs.map(v => <ViewDiv key={v.id} {...props} valDiv={v} />)
+            }
+            <div className={` ps-3 py-2 tonwa-bg-gray-${bg} ${borderTop} ${borderBottom} cursor-pointer`} onClick={onAddNew}>
+                <FA name="plus" size="lg" className="me-2 text-success" /> {div?.ui?.caption}
+            </div>
+        </div>;
+    }
     return <>
         <ViewRow {...props} />
-        {divs.map(v => <ViewDiv key={v.id} {...props} valDiv={v} />)}
+        {viewDivs}
     </>
 }
 
@@ -62,19 +94,6 @@ function ViewRow(props: ViewDivProps) {
             <ViewSpecBaseOnly id={iBase} noVisible={true} />
         </div> : null;
     }
-    let left: any;
-    /*
-    if (level > 0) {
-        left = <div className="d-flex pt-2 cursor-pointer text-primary align-self-end"
-            onClick={onAddSub}
-            style={styleLeft}>
-            <FA name="plus" fixWidth={true} />
-        </div>;
-    }
-    else {
-        left = <div className="ps-3" />;
-    }
-    */
     async function onAddSub() {
         const pendRow = await divStore.loadPendRow(pend);
         let props: UseInputsProps = {
@@ -160,7 +179,6 @@ function ViewRow(props: ViewDivProps) {
         }
         */
         return <>
-            {left}
             <div className="flex-fill">
                 {vIBase}
                 {viewContent}
@@ -196,7 +214,6 @@ function ViewRow(props: ViewDivProps) {
             }
         }
         return <>
-            {left}
             <div className="flex-fill">
                 {
                     budI &&

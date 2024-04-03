@@ -153,33 +153,6 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
             <ViewSpecBaseOnly id={iBase} noVisible={true} />
         </div> : null;
     }
-    let left: any;
-    /*
-    if (level > 0) {
-        left = <div className="d-flex pt-2 cursor-pointer text-primary align-self-end"
-            onClick={onAddSub}
-            style={styleLeft}>
-            <FA name="plus" fixWidth={true} />
-        </div>;
-    }
-    else {
-        left = <div className="ps-3" />;
-    }
-    */
-    async function onAddSub() {
-        const pendRow = await divStore.loadPendRow(pend);
-        let props: UseInputsProps = {
-            divStore,
-            pendRow,
-            valDiv,
-            binDiv: binBuds.binDiv.div,
-            namedResults: {},
-        };
-        let ret = await inputs(props);
-        if (ret === undefined) return;
-        valDiv.addValDiv(ret);
-    }
-
     return <div className={'d-flex border-bottom ps-3 py-2 tonwa-bg-gray-' + (divLevels - level)}>
         {div === undefined ? <ViewRowLeaf /> : <ViewRowStem />}
     </div>;
@@ -258,7 +231,7 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
             </div>;
             const { value: budValue } = entityBin;
             viewRight = <>
-                <div className="text-end me-3">
+                <div className="text-end mx-3">
                     <div className={labelColor}>{budValue.caption ?? budValue.name}</div>
                     <div className={cnValue}>{sum}</div>
                 </div>
@@ -266,7 +239,6 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
             </>;
         }
         return <>
-            {left}
             <div className="flex-fill">
                 {vIBase}
                 {viewContent}
@@ -303,7 +275,6 @@ function ViewRow(props: ViewDivProps & { buttons?: any; }) {
             }
         }
         return <>
-            {left}
             <div className="flex-fill">
                 {
                     budI &&
@@ -358,7 +329,7 @@ function ViewPivotDiv({ valDiv }: ViewDivProps) {
             debugger;
             valueValue = 0;
         }
-        return <div className="text-end mx-2">
+        return <div className="text-end ms-3">
             <div>
                 {
                     fields.map(field => {
