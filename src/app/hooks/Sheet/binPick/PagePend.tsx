@@ -56,16 +56,18 @@ export function PagePend(props: PagePendProps) {
     }
     let onItemSelectFunc: any, btnFinish: any;
     if (pendRows.length > 0) {
+        /*
         if (div.div === undefined) {
             onItemSelectFunc = onItemSelect;
             btnFinish = <button className="btn btn-primary" onClick={onClick}>选入</button>;
         }
         else {
-            btnFinish = <button className="btn btn-primary" onClick={() => modal.close([])}>
-                下一步
-                <FA name="angle-right" className="ms-2" />
-            </button>;
-        }
+        */
+        btnFinish = <button className="btn btn-primary" onClick={() => modal.close([])}>
+            下一步
+            <FA name="angle-right" className="ms-2" />
+        </button>;
+        //}
     }
     else {
         btnFinish = <button className="btn btn-outline-info" onClick={() => modal.close([])}>

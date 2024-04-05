@@ -100,6 +100,9 @@ ENUM BudDataType (
     char = 31,                  -- varchar(100)
     str = 32,                   -- varchar(100)
     date = 41,
+
+    optionItem = 81,            -- options item
+    arr = 99,                   -- array
 );
 
 ENUM BizBudFlag (
@@ -210,6 +213,7 @@ RETURNS budIds (
     SET @id=id;
     /-mysql
     DELETE a FROM xbiz as a JOIN bizphrase as b ON b.id=a.id WHERE b.base=@Id;
+    DELETE b FROM bizphrase as a JOIN bizbud as b ON b.id=a.id WHERE a.base=@id;
     -/
     /*
     FOR (VAR budId ID OF SELECT a.id as budId FROM BizPhrase as a WHERE a.base=id) {

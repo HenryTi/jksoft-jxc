@@ -1,13 +1,13 @@
 import { useAtomValue } from "jotai";
 import { BinEditing, DivEditing, DivStore, UseInputsProps, ValDiv } from "../store";
 import { FA, Sep, getAtomValue, setAtomValue } from "tonwa-com";
-import { useInputs } from "../inputs";
+import { useDivNew } from "./divDivNew";
 import { ViewBud, ViewBudSpec, ViewBudUIType, ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom, budContent } from "app/hooks";
 import { OwnedBuds, RowCols, RowColsSm } from "app/hooks/tool";
 import { theme } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { BinOwnedBuds } from "./BinOwnedBuds";
-import { useRowEdit } from "./rowEdit";
+import { useRowEdit } from "./useRowEdit";
 import { Page, useModal } from "tonwa-app";
 import { ValRow } from "../tool";
 
@@ -30,7 +30,7 @@ function EditDiv(props: EditDivProps) {
     const { atomValDivs, binDiv, atomDeleted } = valDiv;
     const { level, entityBin, div } = binDiv;
     const { divLevels, pivot } = entityBin;
-    const inputs = useInputs();
+    const divInputs = useDivNew();
     const divs = useAtomValue(atomValDivs);
     const deleted = useAtomValue(atomDeleted);
     let bg = divLevels - level - 1;
@@ -51,7 +51,7 @@ function EditDiv(props: EditDivProps) {
             const { atomValRow } = valDiv;
             const valRow = getAtomValue(atomValRow);
             let pendRow = await divStore.loadPendRow(valRow.pend);
-            let ret = await inputs({
+            let ret = await divInputs({
                 divStore,
                 pendRow,
                 namedResults: {},
@@ -229,15 +229,15 @@ function EditRow(props: EditDivProps & { buttons?: any; deleted?: boolean; }) {
         async function onEdit() {
             const editing = new DivEditing(divStore, undefined, binDiv, valDiv, valRow);
             let ret = await rowEdit(editing);
-            if (ret === true) {
-                const { valRow } = editing;
-                if (isPivotKeyDuplicate(valRow) === true) {
-                    alert('Pivot key duplicate');
-                    return;
-                }
-                await divStore.saveDetail(binDiv, valRow);
-                setAtomValue(atomValRow, valRow);
+            if (ret !== true) return;
+            const { valRow: newValRow } = editing;
+            if (isPivotKeyDuplicate(newValRow) === true) {
+                alert('Pivot key duplicate');
+                return;
             }
+            await divStore.saveDetail(binDiv, newValRow);
+            setAtomValue(atomValRow, newValRow);
+
             function isPivotKeyDuplicate(valRow: ValRow) {
                 const { key } = binDiv;
                 if (key === undefined) return false;

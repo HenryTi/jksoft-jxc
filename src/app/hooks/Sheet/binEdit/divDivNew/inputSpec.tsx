@@ -1,4 +1,4 @@
-import { PickResult } from "../store";
+import { PickResult } from "../../store";
 import { PendInputSpec } from "app/Biz";
 import { Page } from "tonwa-app";
 import { theme } from "tonwa-com";
@@ -10,7 +10,7 @@ import { getDays } from "app/tool";
 import { budFormRow } from "app/hooks/Bud";
 import { Calc } from "app/hooks/Calc";
 import { ViewAtomId } from "app/hooks/BizAtom";
-import { PendProxyHander, btnNext, cnNextClassName } from "../tool";
+import { PendProxyHander, btnNext, cnNextClassName } from "../../tool";
 import { InputProps } from "./inputBase";
 
 

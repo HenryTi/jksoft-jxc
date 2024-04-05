@@ -3,15 +3,15 @@ import { inputAtom } from "./inputAtom";
 import { inputSpec } from "./inputSpec";
 import { useCallback } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
-import { DivEditing, UseInputsProps, ValDiv } from "../store";
+import { DivEditing, UseInputsProps, ValDiv } from "../../store";
 import { InputDivProps, inputDiv } from "./inputDiv";
 import { useUqApp } from "app";
 import { useModal } from "tonwa-app";
-import { PendProxyHander, ValRow, mergeValRow } from "../tool";
-import { NamedResults } from "../store";
+import { PendProxyHander, ValRow, mergeValRow } from "../../tool";
+import { NamedResults } from "../../store";
 import { getAtomValue } from "tonwa-com";
 
-export function useInputs() {
+export function useDivNew() {
     const uqApp = useUqApp();
     const modal = useModal();
     return useCallback(async function (props: UseInputsProps, skipInputs: boolean = false): Promise<ValDiv> {
@@ -23,12 +23,16 @@ export function useInputs() {
         };
         let ret: ValDiv, parent: ValDiv;
         let valRow: ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
-        if (valDiv !== undefined) {
-            let { atomValRow } = valDiv;
-            let valDivRow = getAtomValue(atomValRow);
-            mergeValRow(valRow, valDivRow);
-            valRow.id = undefined;
+        if (valDiv === undefined) {
+            debugger;
+            console.error('valDiv impossible to be undefined')
         }
+
+        let { atomValRow } = valDiv;
+        let valDivRow = getAtomValue(atomValRow);
+        mergeValRow(valRow, valDivRow);
+        valRow.id = undefined;
+
         for (let p = binDiv; p !== undefined; p = p.div) {
             const { inputs } = p;
             if (inputs !== undefined && skipInputs !== true) {

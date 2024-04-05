@@ -1,7 +1,7 @@
 import { BizBud, BudRadio, EnumBudType } from "app/Biz";
 import { ViewBudSpec, ViewSpecNoAtom } from "app/hooks";
 import { contentFromDays } from "app/tool";
-import { LabelBox, ViewBudEmpty } from "../../tool";
+import { LabelBox, ViewBudEmpty } from "../tool";
 
 export enum ViewBudUIType {
     notInDiv = 0,

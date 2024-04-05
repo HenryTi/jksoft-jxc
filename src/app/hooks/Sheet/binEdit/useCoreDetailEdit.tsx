@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+/*
 import { CoreDetail, Row, Section } from "../store";
 
 export function useCoreDetailEdit(coreDetail: CoreDetail) {
@@ -6,3 +7,4 @@ export function useCoreDetailEdit(coreDetail: CoreDetail) {
     }
     return useCallback(edit, []);
 }
+*/

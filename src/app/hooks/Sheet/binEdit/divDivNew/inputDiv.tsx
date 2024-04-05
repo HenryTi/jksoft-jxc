@@ -1,6 +1,6 @@
-import { DivEditing, UseInputsProps } from "../store";
+import { DivEditing, UseInputsProps } from "../../store";
 import { FA } from "tonwa-com";
-import { ValRow, btnNext, cnNextClassName } from "../tool";
+import { ValRow, btnNext, cnNextClassName } from "../../tool";
 import { UqApp } from "app";
 import { Modal, Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";

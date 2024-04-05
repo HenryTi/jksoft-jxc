@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import { CoreDetail, Row, Section, SheetStore } from "../store";
+import { SheetStore } from "../store";
 import { RearPickResultType, useBinPicks } from "../binPick";
-import { useRowEdit } from "./rowEdit";
+import { useRowEdit } from "./useRowEdit";
 import { BinEditing } from "../store";
 import { PickResult } from "../store";
 

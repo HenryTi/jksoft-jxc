@@ -1,9 +1,8 @@
-import { FA, getAtomValue, setAtomValue } from "tonwa-com";
+import { FA, setAtomValue } from "tonwa-com";
 import { useAtomValue } from "jotai";
-import { useInputs } from "../inputs";
-import { DivEditProps, DivEditing, UseInputsProps, ValDiv } from "../store";
+import { DivEditProps, ValDiv } from "../store";
 import { useModal } from "tonwa-app";
-import { ValRow, mergeValRow } from "../tool";
+import { ValRow } from "../tool";
 
 export interface ViewPendRowEditProps extends DivEditProps {
     pendContent: any;
@@ -11,7 +10,6 @@ export interface ViewPendRowEditProps extends DivEditProps {
 
 export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowEditProps) {
     const modal = useModal();
-    const inputs = useInputs();
     let { pend: pendId } = pendRow;
     let atomValDiv = divStore.pendColl[pendId];
     let valDiv = useAtomValue(atomValDiv);

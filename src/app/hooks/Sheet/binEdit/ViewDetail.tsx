@@ -1,16 +1,15 @@
 import { useAtomValue } from "jotai";
+/*
 import { CoreDetail, Row, Section } from "../store";
 import { FA, LMR, Sep, Spinner, SpinnerSmall } from "tonwa-com";
 import { ViewSpec } from "app/hooks/View";
 import React from "react";
 import { useCoreDetailEdit } from "./useCoreDetailEdit";
 import { BizBud } from "app/Biz";
-import { OwnedBuds } from "../../tool/tool";
-import { useRowEdit } from "./rowEdit";
+import { useRowEdit } from "./useRowEdit";
 import { ViewBud } from "../../Bud";
 import { BinEditing } from "../store";
 import { Pencil, RowCols } from "app/hooks/tool";
-import { ValRow } from "../tool";
 import { theme } from "tonwa-com";
 import { BinOwnedBuds } from "./BinOwnedBuds";
 
@@ -164,3 +163,4 @@ function ViewRow({ row, editable }: { row: Row; editable: boolean; }) {
         </div >
     </div>;
 }
+*/

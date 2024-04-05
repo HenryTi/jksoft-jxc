@@ -1,14 +1,14 @@
 import { useAtomValue } from "jotai";
-import { BinEditing, DivStore, UseInputsProps, ValDiv } from "../store";
-import { FA, getAtomValue, setAtomValue } from "tonwa-com";
-import { useInputs } from "../inputs";
-import { ViewBud, ViewBudUIType, ViewSpecBaseOnly, ViewSpecNoAtom, budContent } from "app/hooks";
-import { OwnedBuds, RowCols, RowColsSm } from "app/hooks/tool";
-import { theme } from "tonwa-com";
-import { BizBud, BudDataType, EnumBudType } from "app/Biz";
-import { BinOwnedBuds } from "./BinOwnedBuds";
-import { useRowEdit } from "./rowEdit";
+import { theme, FA, setAtomValue } from "tonwa-com";
 import { useModal } from "tonwa-app";
+import { BizBud } from "../../../Biz";
+import { ViewSpecBaseOnly, ViewSpecNoAtom } from "../../View";
+import { ViewBud, ViewBudUIType, budContent } from "../../Bud";
+import { RowColsSm } from "../../tool";
+import { BinEditing, DivEditing, DivStore, UseInputsProps, ValDiv } from "../store";
+import { useDivNew } from "./divDivNew";
+import { BinOwnedBuds } from "./BinOwnedBuds";
+import { useRowEdit } from "./useRowEdit";
 import { PageEditDiv } from "./EditDiv";
 import { ViewPendRow } from "./ViewPendRow";
 
@@ -28,7 +28,8 @@ export function ViewDiv(props: ViewDivProps) {
     const divs = useAtomValue(atomValDivs);
     const valRow = useAtomValue(atomValRow);
     const deleted = useAtomValue(atomDeleted);
-    const inputs = useInputs();
+    const divInputs = useDivNew();
+    const rowEdit = useRowEdit();
     if (entityBin.pivot === binDiv) return null;
     const { pend, id } = valRow;
 
@@ -51,7 +52,7 @@ export function ViewDiv(props: ViewDivProps) {
                 pendRow,
                 namedResults: {},
             }
-            let retValDiv = await inputs(useInputsProps, false);
+            let retValDiv = await divInputs(useInputsProps, false);
             if (retValDiv === undefined) return;
             divStore.replaceValDiv(valDiv, retValDiv);
             return;
@@ -59,16 +60,24 @@ export function ViewDiv(props: ViewDivProps) {
         if (divs.length === 0) {
             // 无Div明细
             try {
-                let pendRow = await divStore.loadPendRow(pend);
-                let ret = await inputs({
+                // let pendRow = await divStore.loadPendRow(pend);
+                const editing = new DivEditing(divStore, undefined, binDiv, valDiv, valRow);
+                let ret = await rowEdit(editing);
+                if (ret !== true) return;
+                /*
+                let ret = await divInputs({
                     divStore,
                     pendRow,
                     namedResults: {},
                     binDiv,
                     valDiv,
                 });
-                if (ret === undefined) return;
-                setAtomValue(atomValDivs, [...divs, ret]);
+                */
+                // if (ret === undefined) return;
+                const { valRow: newValRow } = editing;
+                await divStore.saveDetail(binDiv, newValRow);
+                setAtomValue(atomValRow, newValRow);
+                // setAtomValue(atomValDivs, [...divs, ret]);
                 return;
             }
             catch (e) {

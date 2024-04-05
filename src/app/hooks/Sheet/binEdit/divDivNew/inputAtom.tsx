@@ -1,4 +1,4 @@
-import { PickResult } from "../store";
+import { PickResult } from "../../store";
 import { PendInputAtom } from "app/Biz";
 import { InputProps } from "./inputBase";
 

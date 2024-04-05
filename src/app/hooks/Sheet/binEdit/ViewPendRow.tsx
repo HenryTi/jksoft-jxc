@@ -11,14 +11,12 @@ interface PendProps {
     pendRow: PendRow;
 }
 
-export function ViewPendRowCandidate({
-    pendRow, divStore
-}: PendProps) {
+export function ViewPendRowCandidate({ pendRow, divStore }: PendProps) {
     const { entityBin } = divStore;
     const { div } = entityBin;
     let rowContent = <ViewPendRow divStore={divStore} pendRow={pendRow} showPendValue={true} />;
 
-    if (div.div === undefined) return rowContent;
+    // if (div.div === undefined) return rowContent;
     return <ViewPendRowEdit pendRow={pendRow}
         pendContent={rowContent}
         divStore={divStore}

@@ -1,5 +1,5 @@
 import { PendInput } from "app/Biz";
-import { DivEditProps } from "../store";
+import { DivEditProps } from "../../store";
 import { Modal } from "tonwa-app";
 import { UqApp } from "app";
 

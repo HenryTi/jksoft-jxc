@@ -146,7 +146,7 @@ export interface PendRow {
     cols: any[];
 }
 
-abstract class DetailBase extends BaseObject {
+class Detail extends BaseObject {
     readonly entityBin: EntityBin;
     readonly caption: string;
     constructor(sheetStore: SheetStore, entityBin: EntityBin, caption: string) {
@@ -155,80 +155,82 @@ abstract class DetailBase extends BaseObject {
         this.caption = caption ?? entityBin.caption;
     }
 
-    abstract addRowValues(rowValues: any): void;
+    // abstract addRowValues(rowValues: any): void;
 }
 
-export class CoreDetail extends DetailBase {
-    readonly _sections = atom<Section[]>([]);
-    origin: {
-        main: SheetMain;
-        rows: Row[];
-    }
+// export class CoreDetail extends Detail {
+/*
+readonly _sections = atom<Section[]>([]);
+origin: {
+    main: SheetMain;
+    rows: Row[];
+}
 
-    addRowValues(rowValues: any[]) {
-        const sections = getAtomValue(this._sections);
-        for (let rowValue of rowValues) {
-            this.addRowValue(sections, rowValue);
-        }
-        setAtomValue(this._sections, [...sections]);
+addRowValues(rowValues: any[]) {
+    const sections = getAtomValue(this._sections);
+    for (let rowValue of rowValues) {
+        this.addRowValue(sections, rowValue);
     }
+    setAtomValue(this._sections, [...sections]);
+}
 
-    setRowValues(rowValues: any[]) {
-        const sections = getAtomValue(this._sections);
-        for (let section of sections) {
-            section.setRowValues(rowValues);
-        }
+setRowValues(rowValues: any[]) {
+    const sections = getAtomValue(this._sections);
+    for (let section of sections) {
+        section.setRowValues(rowValues);
     }
+}
 
-    private addRowValue(sections: Section[], rowValue: ValRow) {
-        const { i, x, value, pend } = rowValue;
-        if (i === undefined || value === undefined) return;
-        let detailSection: Section;
-        if (x) {
-            let index = sections.findIndex(v => v.i === i);
-            if (index < 0) {
-                detailSection = new Section(this);
-                detailSection.i = i;
-                sections.push(detailSection);
-            }
-            else {
-                detailSection = sections[index];
-            }
-        }
-        else {
+private addRowValue(sections: Section[], rowValue: ValRow) {
+    const { i, x, value, pend } = rowValue;
+    if (i === undefined || value === undefined) return;
+    let detailSection: Section;
+    if (x) {
+        let index = sections.findIndex(v => v.i === i);
+        if (index < 0) {
             detailSection = new Section(this);
+            detailSection.i = i;
             sections.push(detailSection);
         }
-        let row = new Row(detailSection);
-        row.setValue(rowValue);
-        detailSection.addRow(row);
-        this.sheetStore.addPendRow(pend, row);
-        return row;
-    }
-
-    addSection(detailSection: Section) {
-        const sections = getAtomValue(this._sections);
-        setAtomValue(this._sections, [...sections, detailSection]);
-    }
-
-    async delEmptySection(section: Section) {
-        if (section.isEmpty === false) return;
-        let sections = getAtomValue(this._sections);
-        let index = sections.findIndex(v => v === section);
-        if (index >= 0) {
-            sections.splice(index, 1);
-            setAtomValue(this._sections, [...sections]);
+        else {
+            detailSection = sections[index];
         }
     }
+    else {
+        detailSection = new Section(this);
+        sections.push(detailSection);
+    }
+    let row = new Row(detailSection);
+    row.setValue(rowValue);
+    detailSection.addRow(row);
+    this.sheetStore.addPendRow(pend, row);
+    return row;
 }
 
+addSection(detailSection: Section) {
+    const sections = getAtomValue(this._sections);
+    setAtomValue(this._sections, [...sections, detailSection]);
+}
+
+async delEmptySection(section: Section) {
+    if (section.isEmpty === false) return;
+    let sections = getAtomValue(this._sections);
+    let index = sections.findIndex(v => v === section);
+    if (index >= 0) {
+        sections.splice(index, 1);
+        setAtomValue(this._sections, [...sections]);
+    }
+}
+*/
+// }
+
 // 多余的Detail，只能手工输入
-export class ExDetail extends DetailBase {
+export class ExDetail extends Detail {
     addRowValues(rowValues: any) {
         return;
     }
 }
-
+/*
 export class Row extends BaseObject {
     readonly atomLoading = atom(false);
     readonly section: Section;
@@ -348,19 +350,18 @@ export class Section extends BaseObject {
         setAtomValue(this._rows, [...rows]);
     }
 }
-
+*/
 export class SheetStore extends KeyIdObject {
     readonly uq: UqExt;
     readonly biz: Biz;
     readonly entitySheet: EntitySheet;
     readonly main: SheetMain;
-    readonly detail: CoreDetail;
+    readonly detail: Detail;
     readonly detailExs: ExDetail[] = [];
     readonly caption: string;
     readonly backIcon = 'file-text-o';
     readonly isPend: boolean;
-    // readonly idOnUrl: number;
-    pendColl: { [pend: number]: WritableAtom<Section[], any, any> };
+    // pendColl: { [pend: number]: WritableAtom<Section[], any, any> };
     readonly divStore: DivStore;
     readonly atomLoaded = atom(false);
 
@@ -374,7 +375,7 @@ export class SheetStore extends KeyIdObject {
         let len = details.length;
         if (len > 0) {
             const { bin: detail, caption } = details[0];
-            this.detail = new CoreDetail(this, detail, caption);
+            this.detail = new Detail(this, detail, caption);
             this.isPend = this.detail.entityBin.pend !== undefined;
         }
         for (let i = 1; i < len; i++) {
@@ -392,9 +393,11 @@ export class SheetStore extends KeyIdObject {
         if (main === undefined) return;
         this.main.setValue(main);
         this.divStore.load(details);
+        /*
         if (this.detail !== undefined) {
             this.detail.addRowValues(details);
         }
+        */
         try {
             setAtomValue(this.atomLoaded, true);
         }
@@ -407,7 +410,7 @@ export class SheetStore extends KeyIdObject {
     async setValRow(valRow: ValRow) {
         const { id: binId } = valRow;
         let { details } = await this.loadBinData(binId);
-        this.detail.setRowValues(details);
+        // this.detail.setRowValues(details);
         this.divStore.setValRow(valRow);
     }
 
@@ -448,7 +451,7 @@ export class SheetStore extends KeyIdObject {
     async saveProp(id: number, bud: number, int: number, dec: number, str: string) {
         await this.uq.SaveBudValue.submit({ phraseId: bud, id, int, dec, str });
     }
-
+    /*
     addPendRow(pend: number, row: Row) {
         if (this.pendColl === undefined) return;
         let _sections = this.pendColl[pend];
@@ -473,7 +476,7 @@ export class SheetStore extends KeyIdObject {
         sections.push(section);
         setAtomValue(_sections, [...sections]);
     }
-
+    
     addBinDetail(valRow: ValRow) {
         let { pend } = valRow;
         let _sections = this.pendColl[pend];
@@ -507,6 +510,7 @@ export class SheetStore extends KeyIdObject {
             break;
         }
     }
+    */
     /*
     async loadPend(entityPend: EntityPend, params: any): Promise<{ pendRows: PendRow[]; ownerColl: OwnerColl; }> {
         let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId: undefined }, undefined, 100);
