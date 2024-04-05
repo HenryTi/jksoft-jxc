@@ -176,6 +176,16 @@ export class DivStore {
         return undefined;
     }
 
+    async delValDiv(valDiv: ValDiv) {
+        const { binDiv, atomValRow } = valDiv;
+        if (binDiv.div === undefined) {
+            let valRow = getAtomValue(atomValRow);
+            await this.delValRow(valRow.id);
+            return;
+        }
+        alert('彻底删除单据分拆行正在实现中...');
+    }
+
     async delValRow(id: number) {
         let val = this.valDivColl[id];
         let valRow = getAtomValue(val.atomValRow);
@@ -333,6 +343,27 @@ export class DivStore {
     trigger(): boolean {
         // 检查div是不是有值
         return true;
+    }
+
+    getParentValDiv(valDiv: ValDiv): ValDiv {
+        const { atomValDivs } = this.valDivs;
+        let valDivs = getAtomValue(atomValDivs);
+        for (let vd of valDivs) {
+            let ret = this.getParentDivInternal(vd, valDiv);
+            if (ret !== undefined) return ret;
+        }
+        return undefined;
+    }
+
+    private getParentDivInternal(valDivParent: ValDiv, valDiv: ValDiv): ValDiv {
+        const { atomValDivs } = valDivParent;
+        let valDivs = getAtomValue(atomValDivs);
+        for (let vd of valDivs) {
+            if (vd === valDiv) return valDivParent;
+            let ret = this.getParentDivInternal(vd, valDiv);
+            if (ret !== undefined) return ret;
+        }
+        return undefined;
     }
 }
 

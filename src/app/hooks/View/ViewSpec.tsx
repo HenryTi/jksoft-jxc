@@ -4,13 +4,13 @@ import { useUqApp } from "app/UqApp";
 import { ViewBudUIType } from "..";
 import React from "react";
 import { LabelBox } from "../tool";
-import { theme } from "tonwa-com";
 
-export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
+export function ViewSpecBase({ id, ViewAtom, uiType, noLabel, bold }: {
     id: number;
-    ViewAtom: (props: { no: string; ex: string; entity?: EntityAtomID; }) => JSX.Element;
+    ViewAtom: (props: { no: string; ex: string; entity?: EntityAtomID; bold: boolean; noLabel: boolean; }) => JSX.Element;
     uiType?: ViewBudUIType;
     noLabel?: boolean;
+    bold?: boolean;
 }) {
     const { atom, specs } = useGetSpec(id);
     if (atom === undefined) return null;
@@ -19,7 +19,7 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
     if (atomValue !== undefined) {
         if (ViewAtom !== undefined) {
             const { no, ex } = atomValue;
-            viewAtom = <ViewAtom no={no} ex={ex} entity={entity} />;
+            viewAtom = <ViewAtom no={no} ex={ex} entity={entity} bold={bold} noLabel={noLabel} />;
         }
     }
     function ViewSpecs() {
@@ -68,23 +68,24 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel }: {
     return content;
 }
 
-export function ViewSpec({ id, uiType, noLabel, bold }: { id: number; uiType?: ViewBudUIType; noLabel?: boolean; bold?: boolean; }) {
-    function ViewAtom({ no, ex, entity }: { no: string; ex: string; entity?: EntityAtomID; }) {
-        let title = '编号: ' + no;
-        let vContent = <>{bold === true ? <b>{ex}</b> : ex}<small className="ms-3">{no}</small></>
-        if (noLabel === true) {
-            return <span title={title}>{vContent}</span>;
-        }
-        let label: any;
-        if (entity !== undefined) {
-            const { caption, name } = entity;
-            label = caption ?? name;
-        }
-        return <LabelBox label={label} title={'编号: ' + no} /*colon={true}*/>
-            {vContent}
-        </LabelBox>;
+function ViewAtom({ no, ex, entity, bold, noLabel }: { no: string; ex: string; entity?: EntityAtomID; bold: boolean; noLabel: boolean; }) {
+    let title = '编号: ' + no;
+    let vContent = <>{bold === true ? <b>{ex}</b> : ex}<small className="ms-3">{no}</small></>
+    if (noLabel === true) {
+        return <span title={title}>{vContent}</span>;
     }
-    return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={uiType} noLabel={noLabel} />
+    let label: any;
+    if (entity !== undefined) {
+        const { caption, name } = entity;
+        label = caption ?? name;
+    }
+    return <LabelBox label={label} title={'编号: ' + no} /*colon={true}*/>
+        {vContent}
+    </LabelBox>;
+}
+
+export function ViewSpec({ id, uiType, noLabel, bold }: { id: number; uiType?: ViewBudUIType; noLabel?: boolean; bold?: boolean; }) {
+    return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={uiType} noLabel={noLabel} bold={bold} />
 }
 
 export function ViewBudSpec({ id, bud, noLabel }: { id: number; bud: BizBud; noLabel?: boolean; }) {
@@ -109,16 +110,15 @@ export function ViewSpecNoAtom({ id, uiType, noLabel }: { id: number; uiType?: V
     return <ViewSpecBase id={id} ViewAtom={undefined} uiType={uiType} noLabel={noLabel} />
 }
 
-export function ViewSpecBaseOnly({ id, noVisible }: { id: number; noVisible?: boolean; }) {
-    const { atom } = useGetSpec(id);
+export function ViewSpecBaseOnly({ id, noVisible, bold }: { id: number; noVisible?: boolean; bold?: boolean }) {
+    const { atom, } = useGetSpec(id);
     if (atom === undefined) return null;
-    const { value: atomValue } = atom;
-    if (atomValue === undefined) return null;
-    let label: any = undefined;
-    const { no, ex } = atomValue;
-    return <div title={'编号: ' + no} className="mb-1">
-        {label} {ex} {noVisible === true ? <span className={'ms-3 ' + theme.labelColor}>{no}</span> : null}
-    </div>;
+    const { value, entity } = atom;
+    if (value === undefined) return null;
+    if (ViewAtom !== undefined) {
+        const { no, ex } = value;
+        return <ViewAtom no={no} ex={ex} entity={entity} bold={bold} noLabel={!noVisible} />;
+    }
 }
 
 export function ViewSpecR({ id }: { id: number; }) {

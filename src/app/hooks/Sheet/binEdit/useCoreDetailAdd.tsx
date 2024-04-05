@@ -42,6 +42,9 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
                     { origin, pend, pendValue },
                 ));
                 */
+                valRow.origin = origin;
+                valRow.pend = pend;
+                valRow.pendValue = pendValue;
                 if (valRow.id !== undefined) debugger;
                 let id = await sheetStore.saveDetail(entityBin, entityBin.buds, valRow);
                 valRow.id = id;

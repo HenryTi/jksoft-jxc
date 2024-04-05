@@ -8,10 +8,11 @@ import { theme } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { BinOwnedBuds } from "./BinOwnedBuds";
 import { useRowEdit } from "./rowEdit";
-import { Page } from "tonwa-app";
+import { Page, useModal } from "tonwa-app";
+import { ValRow } from "../tool";
 
 export function PageEditDiv({ divStore, valDiv }: { divStore: DivStore; valDiv: ValDiv; }) {
-    const { sheetStore, binDiv, entityBin } = divStore;
+    const { sheetStore } = divStore;
     const { entitySheet, main } = sheetStore;
     return <Page header={`${(entitySheet.caption ?? entitySheet.name)} - ${main.no}`}>
         <EditDiv divStore={divStore} valDiv={valDiv} />
@@ -24,12 +25,14 @@ interface EditDivProps {
 }
 
 function EditDiv(props: EditDivProps) {
-    const { valDiv } = props;
-    const { atomValDivs, binDiv } = valDiv;
+    const modal = useModal();
+    const { divStore, valDiv } = props;
+    const { atomValDivs, binDiv, atomDeleted } = valDiv;
     const { level, entityBin, div } = binDiv;
     const { divLevels, pivot } = entityBin;
     const inputs = useInputs();
     const divs = useAtomValue(atomValDivs);
+    const deleted = useAtomValue(atomDeleted);
     let bg = divLevels - level - 1;
     let borderTop = ''; // bg > 0 ? 'border-top' : '';
     let cdAddBottom: string;
@@ -45,7 +48,6 @@ function EditDiv(props: EditDivProps) {
     let viewDivs: any;
     if (divs.length > 0) {
         async function onAddNew() {
-            const { divStore } = props;
             const { atomValRow } = valDiv;
             const valRow = getAtomValue(atomValRow);
             let pendRow = await divStore.loadPendRow(valRow.pend);
@@ -69,20 +71,47 @@ function EditDiv(props: EditDivProps) {
         </div>;
     }
     async function onDel() {
-        alert('删除');
+        setAtomValue(atomDeleted, !deleted);
+        if (level === 0) {
+            modal.close();
+            return;
+        }
     }
-    let buttons = <div className="cursor-pointer px-2 text-body-secondary" onClick={onDel}>
-        <FA className="" name="trash-o" />
-    </div>;
+    async function onDelThoroughly() {
+        await divStore.delValDiv(valDiv);
+    }
+
+    function btn(onClick: () => void, icon: string, iconColor: string, caption: string, captionColor: string) {
+        return <div className={'cursor-pointer px-2 ' + iconColor} onClick={onClick}>
+            <FA className="me-1" name={icon} fixWidth={true} />
+            <span className={captionColor}>{caption}</span>
+        </div>
+    }
+
+    function btnDel(icon: string, caption?: string) {
+        return btn(onDel, icon, ' text-body-secondary ', caption, '');
+    }
+
+    if (deleted === true) {
+        return <div className="d-flex border-bottom">
+            <div className="flex-fill text-body-tetiary opacity-50 text-decoration-line-through">
+                <EditRow {...props} deleted={deleted} />
+            </div>
+            <div className="w-min-6c text-end pt-2">
+                {btnDel('undo', '恢复')}
+                {btn(onDelThoroughly, 'times', ' text-warning ', '删除', 'text-info')}
+            </div>
+        </div>;
+    }
 
     return <div className={cnDivBottom}>
-        <EditRow {...props} buttons={buttons} />
+        <EditRow {...props} buttons={btnDel('trash-o')} />
         {viewDivs}
     </div>
 }
 
-function EditRow(props: EditDivProps & { buttons: any; }) {
-    const { valDiv, divStore, buttons } = props;
+function EditRow(props: EditDivProps & { buttons?: any; deleted?: boolean; }) {
+    const { valDiv, divStore, buttons, deleted } = props;
     const rowEdit = useRowEdit();
     const { atomValRow, atomValDivs, atomSum, atomValue, binDiv, atomDeleted } = valDiv;
     const { binDivBuds: binBuds, level, entityBin, div } = binDiv;
@@ -198,16 +227,32 @@ function EditRow(props: EditDivProps & { buttons: any; }) {
     function ViewRowLeaf() {
         // div === undefined
         async function onEdit() {
-            // const binEditing = new BinEditing(entityBin, valRow);
             const editing = new DivEditing(divStore, undefined, binDiv, valDiv, valRow);
-            // binEditing.setValues(binDetail);
             let ret = await rowEdit(editing);
             if (ret === true) {
-                // Object.assign(valRow, binEditing.valRow);
-                // await row.changed();
                 const { valRow } = editing;
+                if (isPivotKeyDuplicate(valRow) === true) {
+                    alert('Pivot key duplicate');
+                    return;
+                }
                 await divStore.saveDetail(binDiv, valRow);
                 setAtomValue(atomValRow, valRow);
+            }
+            function isPivotKeyDuplicate(valRow: ValRow) {
+                const { key } = binDiv;
+                if (key === undefined) return false;
+                const { id: keyId } = key;
+                const keyValue = valRow.buds[keyId];
+                const valDivParent = divStore.getParentValDiv(valDiv);
+                const { atomValDivs } = valDivParent;
+                const valDivs = getAtomValue(atomValDivs);
+                for (let vd of valDivs) {
+                    if (vd === valDiv) continue;
+                    const { atomValRow } = vd;
+                    const vr = getAtomValue(atomValRow);
+                    if (keyValue === vr.buds[keyId]) return true;
+                }
+                return false;
             }
         }
         return <>
@@ -241,13 +286,16 @@ function EditRow(props: EditDivProps & { buttons: any; }) {
                     <PAV bud={budValue} className={cnValue + ' cursor-pointer '} val={value} onClick={onEdit} />
                 </div>
             </div>
-            <div className="d-flex flex-column align-items-end w-min-2c">
-                <div className="cursor-pointer px-2 py-1 mt-n2" onClick={onEdit}>
-                    <FA className="text-primary" name="pencil-square-o" size="lg" />
+            {
+                deleted !== true &&
+                <div className="d-flex flex-column align-items-end w-min-2c">
+                    <div className="cursor-pointer px-2 py-1 mt-n2" onClick={onEdit}>
+                        <FA className="text-primary" name="pencil-square-o" size="lg" />
+                    </div>
+                    <div className="flex-fill" />
+                    {buttons}
                 </div>
-                <div className="flex-fill" />
-                {buttons}
-            </div>
+            }
         </>;
     }
 }

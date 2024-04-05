@@ -1,8 +1,7 @@
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { DivStore, SheetStore, SubmitState } from "./store";
-import { getAtomValue, theme, to62 } from "tonwa-com";
+import { to62 } from "tonwa-com";
 import { ViewDiv, ViewMain } from "./binEdit";
-// import { ViewDetail } from "./binEdit";
 import { atom, useAtomValue } from "jotai";
 import { useCoreDetailAdd } from "./binEdit";
 import { useNavigate } from "react-router-dom";
@@ -98,20 +97,12 @@ export function PageSheet({ store }: { store: SheetStore; }) {
         async function onAddRow() {
             await addNew();
         }
-        //let sections = useAtomValue(detail._sections);
         let submitHidden: boolean;
-        //if (sections.length === 0 && submitState === SubmitState.hide) {
-        //    submitHidden = true;
-        //}
-        //else {
         submitHidden = false;
-        let disabled = (/*sections.length === 0 && */submitState === SubmitState.none) || submitState === SubmitState.disable;
-        // submitDisabled = disabled;
         let submitDisabled = atom(get => {
             submitState = get(divStore.atomSubmitState);
             return submitState === SubmitState.none || submitState === SubmitState.disable;
         });
-        //}
         let btnSubmit = buttonDefs.submit(onSubmit, submitDisabled, submitHidden);
         let btnAddDetail = detail.entityBin.pend === undefined ?
             buttonDefs.addDetail(onAddRow) : buttonDefs.addPend(onAddRow);
@@ -123,12 +114,9 @@ export function PageSheet({ store }: { store: SheetStore; }) {
             </div>;
         }
         const { divStore } = store;
-        // const { binDiv } = divStore;
         view = <>
             <ViewMain store={store} popup={false} />
-            {
-                <ViewBinDivs divStore={divStore} editable={editable} />
-            }
+            <ViewBinDivs divStore={divStore} editable={editable} />
         </>;
 
         function ViewBinDivs({ divStore, editable }: { divStore: DivStore; editable: boolean; }) {
@@ -153,13 +141,6 @@ export function PageSheet({ store }: { store: SheetStore; }) {
     if (detail === undefined) mainOnlyEdit();
     else mainDetailEdit();
     const { header, top, right } = headerSheet({ store, toolGroups, headerGroup });
-    /*
-    return {
-        ...headerSheet({ store, toolGroups, headerGroup }),
-        view,
-    };
-    */
-    // let { header, top, view, right } = useSheetView(store);
     return <Page header={header} back={null} top={top} right={right}>
         {view}
     </Page>;
