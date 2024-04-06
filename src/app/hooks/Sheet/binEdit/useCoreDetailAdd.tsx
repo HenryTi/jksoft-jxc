@@ -21,9 +21,6 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
                 return;
             }
             for (let rowProps of pickResult as PickResult[]) {
-                //let sec = new Section(coreDetail);
-                //coreDetail.addSection(sec);
-
                 namedResults[binPick.name] = rowProps;
                 let binEditing = new BinEditing(entityBin);
                 binEditing.setNamedParams(namedResults);
@@ -32,16 +29,6 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
                     binEditing.setValue('value', 1, undefined);
                 }
                 const { origin, pend, pendValue } = rowProps;
-                /*
-                let row = new Row(sec);
-                row.setLoading(true);
-                await sec.addRowProps(row, Object.assign(
-                    {},
-                    // rowProps, 这是多选明细，不应该加这里。在前面rowStore.init已经处理了字段带入
-                    valRow as any,
-                    { origin, pend, pendValue },
-                ));
-                */
                 valRow.origin = origin;
                 valRow.pend = pend;
                 valRow.pendValue = pendValue;
@@ -49,7 +36,6 @@ export function useCoreDetailAdd(sheetStore: SheetStore) {
                 let id = await sheetStore.saveDetail(entityBin, entityBin.buds, valRow);
                 valRow.id = id;
                 await sheetStore.setValRow(valRow);
-                // row.setLoading(false);
             }
         }
         else {

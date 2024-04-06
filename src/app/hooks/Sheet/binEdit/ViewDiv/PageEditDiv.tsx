@@ -1,15 +1,17 @@
 import { useAtomValue } from "jotai";
-import { BinEditing, DivEditing, DivStore, UseInputsProps, ValDiv } from "../store";
+import { BinEditing, DivEditing, DivStore, UseInputsProps, ValDiv } from "../../store";
 import { FA, Sep, getAtomValue, setAtomValue } from "tonwa-com";
-import { useDivNew } from "./divDivNew";
+import { useDivNew } from "../divNew";
 import { ViewBud, ViewBudSpec, ViewBudUIType, ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom, budContent } from "app/hooks";
 import { OwnedBuds, RowCols, RowColsSm } from "app/hooks/tool";
 import { theme } from "tonwa-com";
 import { BizBud } from "app/Biz";
-import { BinOwnedBuds } from "./BinOwnedBuds";
-import { useRowEdit } from "./useRowEdit";
+import { BinOwnedBuds } from "../BinOwnedBuds";
+import { useRowEdit } from "../useRowEdit";
 import { Page, useModal } from "tonwa-app";
-import { ValRow } from "../tool";
+import { ValRow } from "../../tool";
+import { ViewDivUndo } from "./ViewDivUndo";
+import { ViewRow } from "./ViewRow";
 
 export function PageEditDiv({ divStore, valDiv }: { divStore: DivStore; valDiv: ValDiv; }) {
     const { sheetStore } = divStore;
@@ -93,6 +95,10 @@ function EditDiv(props: EditDivProps) {
     }
 
     if (deleted === true) {
+        //let viewRow = <ViewRow {...props} deleted={deleted} />
+        let viewRow = <ViewRow {...props} />;
+        return <ViewDivUndo divStore={divStore} valDiv={valDiv} viewRow={viewRow} />;
+        /*
         return <div className="d-flex border-bottom">
             <div className="flex-fill text-body-tetiary opacity-50 text-decoration-line-through">
                 <EditRow {...props} deleted={deleted} />
@@ -102,10 +108,11 @@ function EditDiv(props: EditDivProps) {
                 {btn(onDelThoroughly, 'times', ' text-warning ', '删除', 'text-info')}
             </div>
         </div>;
+        */
     }
 
     return <div className={cnDivBottom}>
-        <EditRow {...props} buttons={btnDel('trash-o')} />
+        <ViewRow {...props} buttons={btnDel('trash-o')} />
         {viewDivs}
     </div>
 }

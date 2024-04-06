@@ -131,7 +131,7 @@ export function PageSheet({ store }: { store: SheetStore; }) {
                     divs.map(v => {
                         const { id } = v;
                         return <div key={id} className="mb-3 border-top border-bottom border-primary-subtle">
-                            <ViewDiv divStore={divStore} valDiv={v} editable={editable} />
+                            <ViewDiv divStore={divStore} valDiv={v} />
                         </div>;
                     })}
             </div>

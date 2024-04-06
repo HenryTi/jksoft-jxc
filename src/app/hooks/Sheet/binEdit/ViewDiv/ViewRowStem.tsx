@@ -1,0 +1,113 @@
+import { useAtomValue } from "jotai";
+import { theme, FA, setAtomValue } from "tonwa-com";
+import { useModal } from "tonwa-app";
+import { BizBud } from "../../../../Biz";
+import { ViewSpecBaseOnly, ViewSpecNoAtom } from "../../../View";
+import { ViewBud, ViewBudUIType, budContent } from "../../../Bud";
+import { RowColsSm } from "../../../tool";
+import { BinEditing, DivEditing, DivStore, UseInputsProps, ValDiv } from "../../store";
+import { useDivNew } from "../divNew";
+import { BinOwnedBuds } from "../BinOwnedBuds";
+import { useRowEdit } from "../useRowEdit";
+import { PageEditDiv } from "./PageEditDiv";
+import { ViewPendRow } from "../ViewPendRow";
+import { PAV, ViewDivProps, ViewIdField, cn, cnBtn } from "./tool";
+import { ViewPivotDiv } from "./ViewPivotDiv";
+
+export function ViewRowStem(props: ViewDivProps & { vIBase: any; buttons?: any; }) {
+    const { valDiv, divStore, vIBase, buttons } = props;
+    const { atomValRow, atomValDivs, atomSum, atomValue, binDiv } = valDiv;
+    const { binDivBuds: binBuds, level, entityBin, div } = binDiv;
+    const { fields, budI } = binBuds;
+    const valRow = useAtomValue(atomValRow);
+    let sum = useAtomValue(atomSum);
+    const divs = useAtomValue(atomValDivs);
+    const { pendValue } = valRow;
+    let {
+        value: cnValue, sum: cnSum
+        , pend: cnPend, pendOver: cnPendOver
+        , labelColor
+    } = theme;
+
+    const { pivot } = entityBin;
+    let viewPivot: any;
+    if (pivot !== undefined && pivot === binDiv.div) {
+        viewPivot = <ViewPivotDiv divStore={divStore} valDiv={valDiv} />;
+    }
+    let viewPend: any;
+    if (level === 0) {
+        let icon: string, color: string;
+        if (sum > pendValue) {
+            icon = 'exclamation-circle';
+            color = cnPendOver;
+        }
+        else {
+            icon = 'hand-right-o';
+            color = cnPend;
+        }
+        viewPend = <div className="flex-fill d-flex align-items-center">
+            <FA name={icon} className={color + ' me-2 '} />
+            <span className={'w-min-2c ' + color}>{pendValue}</span>
+        </div>;
+    }
+    function ViewFields() {
+        return fields.map(field => {
+            const { bud } = field;
+            return <ViewBud key={bud.id} bud={bud} value={field.getValue(valRow)} uiType={ViewBudUIType.inDiv} />;
+        })
+    }
+    let content = <>
+        <ViewIdField bud={budI} value={valRow.i} />
+        <BinOwnedBuds bizBud={entityBin.i} valRow={valRow} />
+        <ViewFields />
+    </>;
+    let viewContent: any, viewRight: any;
+    if (viewPivot === undefined) {
+        viewContent = <div className={cn}>
+            <RowColsSm contentClassName="flex-fill">
+                {content}
+            </RowColsSm>
+        </div>;
+        if (divs.length > 0) {
+            let viewRightValue = <div className="d-flex text-end flex-column align-items-end">
+                {viewPend}
+                <PAV bud={entityBin.value} val={sum} className={cnSum} />
+            </div>
+
+            viewRight = <div className={cnBtn}>
+                {viewRightValue}
+            </div>;
+            if (level === 0) {
+                viewRight = <div className="d-flex flex-column align-items-end">
+                    <div className="flex-fill d-flex mb-1 me-1">
+                        {buttons}
+                    </div>
+                    <div className="me-3">
+                        {viewRightValue}
+                    </div>
+                </div>;
+            }
+        }
+    }
+    else {
+        viewContent = <div className="d-flex">
+            {content}
+            {viewPivot}
+        </div>;
+        const { value: budValue } = entityBin;
+        viewRight = <>
+            <div className="text-end mx-3">
+                <div className={labelColor}>{budValue.caption ?? budValue.name}</div>
+                <div className={cnValue}>{sum}</div>
+            </div>
+            {/*btnDel*/}
+        </>;
+    }
+    return <>
+        <div className="flex-fill">
+            {vIBase}
+            {viewContent}
+        </div>
+        {viewRight}
+    </>;
+}
