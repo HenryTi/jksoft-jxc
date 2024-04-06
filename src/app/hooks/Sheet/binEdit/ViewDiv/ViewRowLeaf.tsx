@@ -1,33 +1,28 @@
 import { useAtomValue } from "jotai";
-import { theme, FA, setAtomValue } from "tonwa-com";
-import { useModal } from "tonwa-app";
-import { BizBud } from "../../../../Biz";
-import { ViewSpecBaseOnly, ViewSpecNoAtom } from "../../../View";
-import { ViewBud, ViewBudUIType, budContent } from "../../../Bud";
+import { theme, setAtomValue, getAtomValue } from "tonwa-com";
+import { ViewSpecBaseOnly } from "../../../View";
+import { ViewBud, ViewBudUIType } from "../../../Bud";
 import { RowColsSm } from "../../../tool";
-import { BinEditing, DivEditing, DivStore, UseInputsProps, ValDiv } from "../../store";
-import { useDivNew } from "../divNew";
+import { BinEditing } from "../../store";
 import { BinOwnedBuds } from "../BinOwnedBuds";
 import { useRowEdit } from "../useRowEdit";
-import { PageEditDiv } from "./PageEditDiv";
-import { ViewPendRow } from "../ViewPendRow";
 import { PAV, ViewDivProps, cn, cnBtn } from "./tool";
 
 export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
     // div === undefined
     const { valDiv, divStore, vIBase, buttons } = props;
     const rowEdit = useRowEdit();
-    const { atomValRow, atomValue, binDiv } = valDiv;
+    const { atomValRow, atomValue, binDiv, atomDeleted } = valDiv;
     const { binDivBuds: binBuds, entityBin } = binDiv;
     const { budValue, fields, budPrice, budAmount, budI } = binBuds;
     const valRow = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);
+    const deleted = getAtomValue(atomDeleted);
     const { price, amount } = valRow;
     let {
         value: cnValue, price: cnPrice, amount: cnAmount
     } = theme;
     async function onEdit() {
-        // if (editable === false) return;
         const binEditing = new BinEditing(entityBin, valRow);
         let ret = await rowEdit(binEditing);
         if (ret === true) {
@@ -36,7 +31,10 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
             setAtomValue(atomValRow, valRow);
         }
     }
-    // <ViewIdField bud={budI} value={valRow.i} />
+    let viewValue = deleted === true ?
+        <PAV bud={budValue} className={cnValue} val={value} />
+        :
+        <PAV bud={budValue} className={cnValue + ' cursor-pointer '} val={value} onClick={onEdit} />
     return <>
         <div className="flex-fill">
             {
@@ -65,7 +63,7 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
             <div className="d-flex align-items-end flex-column me-3">
                 <PAV bud={budAmount} className={cnAmount} val={amount} />
                 <PAV bud={budPrice} className={cnPrice} val={price} />
-                <PAV bud={budValue} className={cnValue + ' cursor-pointer '} val={value} onClick={onEdit} />
+                {viewValue}
             </div>
         </div>
         <div className="d-flex align-items-start">

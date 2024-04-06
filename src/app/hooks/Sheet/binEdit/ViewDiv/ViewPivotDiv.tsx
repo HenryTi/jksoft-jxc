@@ -1,18 +1,8 @@
 import { useAtomValue } from "jotai";
-import { theme, FA, setAtomValue } from "tonwa-com";
-import { useModal } from "tonwa-app";
-import { BizBud } from "../../../../Biz";
-import { ViewSpecBaseOnly, ViewSpecNoAtom } from "../../../View";
-import { ViewBud, ViewBudUIType, budContent } from "../../../Bud";
-import { RowColsSm } from "../../../tool";
-import { BinEditing, DivEditing, DivStore, UseInputsProps, ValDiv } from "../../store";
-import { useDivNew } from "../divNew";
-import { BinOwnedBuds } from "../BinOwnedBuds";
-import { useRowEdit } from "../useRowEdit";
-import { PageEditDiv } from "./PageEditDiv";
-import { ViewPendRow } from "../ViewPendRow";
+import { theme } from "tonwa-com";
+import { budContent } from "../../../Bud";
+import { ValDiv } from "../../store";
 import { ViewDivProps } from "./tool";
-import { ViewRow } from "./ViewRow";
 
 export function ViewPivotDiv({ valDiv }: ViewDivProps) {
     const divs = useAtomValue(valDiv.atomValDivs);
@@ -49,9 +39,9 @@ export function ViewPivotDiv({ valDiv }: ViewDivProps) {
                 if (item !== undefined) {
                     if (value === item.value) return null;
                 }
-                return <span key={bud.id}>
+                return <span key={bud.id} className="ms-2">
                     {withLabel && <span className={labelColor + ' small '}>{bud.caption ?? bud.name}:</span>}
-                    {budContent(bud, value)};
+                    {budContent(bud, value)}
                 </span>;
             })
         }

@@ -1,12 +1,7 @@
 import { useAtomValue } from "jotai";
-import { BinEditing, DivEditing, DivStore, UseInputsProps, ValDiv } from "../../store";
-import { FA, Sep, getAtomValue, setAtomValue } from "tonwa-com";
+import { DivEditing, DivStore, ValDiv } from "../../store";
+import { FA, getAtomValue, setAtomValue } from "tonwa-com";
 import { useDivNew } from "../divNew";
-import { ViewBud, ViewBudSpec, ViewBudUIType, ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom, budContent } from "app/hooks";
-import { OwnedBuds, RowCols, RowColsSm } from "app/hooks/tool";
-import { theme } from "tonwa-com";
-import { BizBud } from "app/Biz";
-import { BinOwnedBuds } from "../BinOwnedBuds";
 import { useRowEdit } from "../useRowEdit";
 import { Page, useModal } from "tonwa-app";
 import { ValRow } from "../../tool";
@@ -29,10 +24,11 @@ interface EditDivProps {
 function EditDiv(props: EditDivProps) {
     const modal = useModal();
     const { divStore, valDiv } = props;
-    const { atomValDivs, binDiv, atomDeleted } = valDiv;
+    const { atomValDivs, binDiv, atomDeleted, atomValRow } = valDiv;
     const { level, entityBin, div } = binDiv;
     const { divLevels, pivot } = entityBin;
     const divInputs = useDivNew();
+    const valRow = useAtomValue(atomValRow);
     const divs = useAtomValue(atomValDivs);
     const deleted = useAtomValue(atomDeleted);
     let bg = divLevels - level - 1;
@@ -79,10 +75,6 @@ function EditDiv(props: EditDivProps) {
             return;
         }
     }
-    async function onDelThoroughly() {
-        await divStore.delValDiv(valDiv);
-    }
-
     function btn(onClick: () => void, icon: string, iconColor: string, caption: string, captionColor: string) {
         return <div className={'cursor-pointer px-2 ' + iconColor} onClick={onClick}>
             <FA className="me-1" name={icon} fixWidth={true} />
@@ -95,28 +87,65 @@ function EditDiv(props: EditDivProps) {
     }
 
     if (deleted === true) {
-        //let viewRow = <ViewRow {...props} deleted={deleted} />
-        let viewRow = <ViewRow {...props} />;
-        return <ViewDivUndo divStore={divStore} valDiv={valDiv} viewRow={viewRow} />;
-        /*
-        return <div className="d-flex border-bottom">
-            <div className="flex-fill text-body-tetiary opacity-50 text-decoration-line-through">
-                <EditRow {...props} deleted={deleted} />
-            </div>
-            <div className="w-min-6c text-end pt-2">
-                {btnDel('undo', '恢复')}
-                {btn(onDelThoroughly, 'times', ' text-warning ', '删除', 'text-info')}
-            </div>
-        </div>;
-        */
+        return <ViewDivUndo divStore={divStore} valDiv={valDiv} />;
+    }
+
+    let buttons: any;
+    if (level === divLevels) {
+        function Buttons() {
+            const rowEdit = useRowEdit();
+            async function onEdit() {
+                const { atomValRow } = valDiv;
+                const editing = new DivEditing(divStore, undefined, binDiv, valDiv, valRow);
+                let ret = await rowEdit(editing);
+                if (ret !== true) return;
+                const { valRow: newValRow } = editing;
+                if (isPivotKeyDuplicate(newValRow) === true) {
+                    alert('Pivot key duplicate');
+                    return;
+                }
+                await divStore.saveDetail(binDiv, newValRow);
+                setAtomValue(atomValRow, newValRow);
+
+                function isPivotKeyDuplicate(valRow: ValRow) {
+                    const { key } = binDiv;
+                    if (key === undefined) return false;
+                    const { id: keyId } = key;
+                    const keyValue = valRow.buds[keyId];
+                    const valDivParent = divStore.getParentValDiv(valDiv);
+                    const { atomValDivs } = valDivParent;
+                    const valDivs = getAtomValue(atomValDivs);
+                    for (let vd of valDivs) {
+                        if (vd === valDiv) continue;
+                        const { atomValRow } = vd;
+                        const vr = getAtomValue(atomValRow);
+                        if (keyValue === vr.buds[keyId]) return true;
+                    }
+                    return false;
+                }
+            }
+            return <>
+                <div className="d-flex flex-column align-items-end w-min-2c">
+                    <div className="cursor-pointer px-2 py-1 mt-n2" onClick={onEdit}>
+                        <FA className="text-primary" name="pencil-square-o" size="lg" />
+                    </div>
+                    <div className="flex-fill" />
+                    {btnDel('trash-o')}
+                </div>
+            </>;
+        }
+        buttons = <Buttons />;
+    }
+    else {
+        buttons = btnDel('trash-o');
     }
 
     return <div className={cnDivBottom}>
-        <ViewRow {...props} buttons={btnDel('trash-o')} />
+        <ViewRow {...props} buttons={buttons} hidePivot={true} />
         {viewDivs}
     </div>
 }
-
+/*
 function EditRow(props: EditDivProps & { buttons?: any; deleted?: boolean; }) {
     const { valDiv, divStore, buttons, deleted } = props;
     const rowEdit = useRowEdit();
@@ -337,3 +366,4 @@ function EditPivotDiv({ valDiv }: EditDivProps) {
         </div>;
     }
 }
+*/

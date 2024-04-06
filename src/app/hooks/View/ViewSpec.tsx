@@ -113,11 +113,11 @@ export function ViewSpecNoAtom({ id, uiType, noLabel }: { id: number; uiType?: V
 export function ViewSpecBaseOnly({ id, noVisible, bold }: { id: number; noVisible?: boolean; bold?: boolean }) {
     const { atom, } = useGetSpec(id);
     if (atom === undefined) return null;
-    const { value, entity } = atom;
+    const { value } = atom;
     if (value === undefined) return null;
     if (ViewAtom !== undefined) {
         const { no, ex } = value;
-        return <ViewAtom no={no} ex={ex} entity={entity} bold={bold} noLabel={!noVisible} />;
+        return <ViewAtom no={no} ex={ex} bold={bold} noLabel={!noVisible} />;
     }
 }
 

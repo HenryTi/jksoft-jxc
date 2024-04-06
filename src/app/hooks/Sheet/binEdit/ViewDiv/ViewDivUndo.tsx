@@ -1,31 +1,30 @@
-import { FA, setAtomValue } from "tonwa-com";
-import { DivStore, ValDiv } from "../../store";
-import { useModal } from "tonwa-app";
-import { useAtomValue } from "jotai";
+import { FA, setAtomValue, wait } from "tonwa-com";
+import { ViewRow } from "./ViewRow";
+import { ViewDivProps } from "./tool";
+import { useCallback, useRef, useState } from "react";
 
-interface Props {
-    divStore: DivStore;
-    valDiv: ValDiv;
-    viewRow: JSX.Element;
-}
-
-export function ViewDivUndo(props: Props) {
-    const modal = useModal();
-    const { divStore, valDiv, viewRow } = props;
-    const { atomValDivs, binDiv, atomDeleted } = valDiv;
-    const { level, entityBin, div } = binDiv;
-    const deleted = useAtomValue(atomDeleted);
-
-    async function onDel() {
-        setAtomValue(atomDeleted, !deleted);
-        if (level === 0) {
-            modal.close();
-            return;
+export function ViewDivUndo(props: ViewDivProps) {
+    const { divStore, valDiv } = props;
+    const { atomDeleted } = valDiv;
+    let [deleting, setDeleting] = useState(0);
+    const refCanceled = useRef(false);
+    const onRestore = async function () {
+        setAtomValue(atomDeleted, false);
+    };
+    const onDelThoroughly = useCallback(async function onDelThoroughly() {
+        // 延迟一段时间删除的代码，还蛮难写的，以后再说
+        let delay = 200;
+        for (let i = delay; i >= 0; i--) {
+            await wait(10);
+            if (refCanceled.current === true) {
+                refCanceled.current = false;
+                setDeleting(0);
+                return;
+            }
+            setDeleting(i);
         }
-    }
-    async function onDelThoroughly() {
         await divStore.delValDiv(valDiv);
-    }
+    }, []);
 
     function btn(onClick: () => void, icon: string, iconColor: string, caption: string, captionColor: string) {
         return <div className={'cursor-pointer px-2 ' + iconColor} onClick={onClick}>
@@ -34,18 +33,33 @@ export function ViewDivUndo(props: Props) {
         </div>
     }
 
-    function btnDel(icon: string, caption?: string) {
-        return btn(onDel, icon, ' text-body-secondary ', caption, '');
+    function viewIsDeleting() {
+        if (deleting === 0) return null;
+        function onCancelDel() {
+            refCanceled.current = true;
+        }
+        return <div className="bg-tonwa-gray-2 border-start d-flex flex-column align-items-center w-min-6c">
+            <div className="my-2">
+                <FA name='spinner' spin={true} className="me-2" /> {(deleting / 100).toFixed(1)}秒
+            </div>
+            {btn(onCancelDel, 'times', ' text-secondary ', '取消', '')}
+        </div>;
+    }
+
+    function viewRestore() {
+        if (deleting !== 0) return null;
+        return <div className="d-flex flex-column align-items-end w-min-6c text-end pt-2">
+            {btn(onRestore, 'undo', ' text-warning ', '恢复', 'text-info')}
+            {btn(onDelThoroughly, 'times', ' text-body-tertiary ', '删除', '')}
+        </div>;
     }
 
     // <EditRow {...props} deleted={deleted} />
     return <div className="d-flex border-bottom">
         <div className="flex-fill text-body-tetiary opacity-50 text-decoration-line-through">
-            {viewRow}
+            <ViewRow {...props} hidePivot={true} />
         </div>
-        <div className="w-min-6c text-end pt-2">
-            {btnDel('undo', '恢复')}
-            {btn(onDelThoroughly, 'times', ' text-warning ', '删除', 'text-info')}
-        </div>
+        {viewRestore()}
+        {viewIsDeleting()}
     </div>;
 }

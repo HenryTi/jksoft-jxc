@@ -1,22 +1,14 @@
 import { useAtomValue } from "jotai";
 import { theme, FA, setAtomValue } from "tonwa-com";
-import { useModal } from "tonwa-app";
-import { BizBud } from "../../../../Biz";
-import { ViewSpecBaseOnly, ViewSpecNoAtom } from "../../../View";
 import { ViewBud, ViewBudUIType, budContent } from "../../../Bud";
 import { RowColsSm } from "../../../tool";
-import { BinEditing, DivEditing, DivStore, UseInputsProps, ValDiv } from "../../store";
-import { useDivNew } from "../divNew";
 import { BinOwnedBuds } from "../BinOwnedBuds";
-import { useRowEdit } from "../useRowEdit";
-import { PageEditDiv } from "./PageEditDiv";
-import { ViewPendRow } from "../ViewPendRow";
-import { PAV, ViewDivProps, ViewIdField, cn, cnBtn } from "./tool";
+import { PAV, ViewDivProps, ViewIdField, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
 
-export function ViewRowStem(props: ViewDivProps & { vIBase: any; buttons?: any; }) {
-    const { valDiv, divStore, vIBase, buttons } = props;
-    const { atomValRow, atomValDivs, atomSum, atomValue, binDiv } = valDiv;
+export function ViewRowStem(props: ViewDivProps & { vIBase: any; }) {
+    const { valDiv, divStore, vIBase, buttons, hidePivot } = props;
+    const { atomValRow, atomValDivs, atomSum, binDiv } = valDiv;
     const { binDivBuds: binBuds, level, entityBin, div } = binDiv;
     const { fields, budI } = binBuds;
     const valRow = useAtomValue(atomValRow);
@@ -31,7 +23,7 @@ export function ViewRowStem(props: ViewDivProps & { vIBase: any; buttons?: any; 
 
     const { pivot } = entityBin;
     let viewPivot: any;
-    if (pivot !== undefined && pivot === binDiv.div) {
+    if (pivot !== undefined && pivot === binDiv.div && hidePivot !== true) {
         viewPivot = <ViewPivotDiv divStore={divStore} valDiv={valDiv} />;
     }
     let viewPend: any;
@@ -74,19 +66,14 @@ export function ViewRowStem(props: ViewDivProps & { vIBase: any; buttons?: any; 
                 <PAV bud={entityBin.value} val={sum} className={cnSum} />
             </div>
 
-            viewRight = <div className={cnBtn}>
-                {viewRightValue}
+            viewRight = <div className="d-flex flex-column align-items-end">
+                <div className="flex-fill d-flex mb-1 me-1">
+                    {buttons}
+                </div>
+                <div className="me-3">
+                    {viewRightValue}
+                </div>
             </div>;
-            if (level === 0) {
-                viewRight = <div className="d-flex flex-column align-items-end">
-                    <div className="flex-fill d-flex mb-1 me-1">
-                        {buttons}
-                    </div>
-                    <div className="me-3">
-                        {viewRightValue}
-                    </div>
-                </div>;
-            }
         }
     }
     else {
@@ -100,7 +87,7 @@ export function ViewRowStem(props: ViewDivProps & { vIBase: any; buttons?: any; 
                 <div className={labelColor}>{budValue.caption ?? budValue.name}</div>
                 <div className={cnValue}>{sum}</div>
             </div>
-            {/*btnDel*/}
+            {buttons}
         </>;
     }
     return <>

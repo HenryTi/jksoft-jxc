@@ -1,24 +1,20 @@
 import { useAtomValue } from "jotai";
-import { theme, FA, setAtomValue } from "tonwa-com";
+import { FA, setAtomValue } from "tonwa-com";
 import { useModal } from "tonwa-app";
-import { BizBud } from "../../../../Biz";
-import { ViewSpecBaseOnly, ViewSpecNoAtom } from "../../../View";
-import { ViewBud, ViewBudUIType, budContent } from "../../../Bud";
-import { RowColsSm } from "../../../tool";
-import { BinEditing, DivEditing, DivStore, UseInputsProps, ValDiv } from "../../store";
+import { DivEditing, UseInputsProps } from "../../store";
 import { useDivNew } from "../divNew";
-import { BinOwnedBuds } from "../BinOwnedBuds";
 import { useRowEdit } from "../useRowEdit";
 import { PageEditDiv } from "./PageEditDiv";
 import { ViewPendRow } from "../ViewPendRow";
 import { ViewDivProps } from "./tool";
 import { ViewRow } from "./ViewRow";
+import { ViewDivUndo } from "./ViewDivUndo";
 
 export function ViewDiv(props: ViewDivProps) {
     const modal = useModal();
     const { divStore, valDiv } = props;
     const { binDiv, atomDeleted, atomValRow, atomValDivs } = valDiv;
-    const { entityBin } = binDiv;
+    const { entityBin, level } = binDiv;
     const divs = useAtomValue(atomValDivs);
     const valRow = useAtomValue(atomValRow);
     const deleted = useAtomValue(atomDeleted);
@@ -54,24 +50,12 @@ export function ViewDiv(props: ViewDivProps) {
         if (divs.length === 0) {
             // 无Div明细
             try {
-                // let pendRow = await divStore.loadPendRow(pend);
                 const editing = new DivEditing(divStore, undefined, binDiv, valDiv, valRow);
                 let ret = await rowEdit(editing);
                 if (ret !== true) return;
-                /*
-                let ret = await divInputs({
-                    divStore,
-                    pendRow,
-                    namedResults: {},
-                    binDiv,
-                    valDiv,
-                });
-                */
-                // if (ret === undefined) return;
                 const { valRow: newValRow } = editing;
                 await divStore.saveDetail(binDiv, newValRow);
                 setAtomValue(atomValRow, newValRow);
-                // setAtomValue(atomValDivs, [...divs, ret]);
                 return;
             }
             catch (e) {
@@ -80,9 +64,6 @@ export function ViewDiv(props: ViewDivProps) {
             }
         }
         await modal.open(<PageEditDiv divStore={divStore} valDiv={valDiv} />);
-    }
-    async function onDelThoroughly() {
-        await divStore.delValDiv(valDiv);
     }
     let cnBtnDiv = ' px-1 cursor-pointer text-primary ';
     let btnEdit: any, iconDel: string, colorDel: string, memoDel: any;
@@ -115,18 +96,7 @@ export function ViewDiv(props: ViewDivProps) {
     </>;
 
     if (deleted === true) {
-        return <div className="d-flex">
-            <div className="flex-fill text-body-tetiary opacity-50 text-decoration-line-through">
-                <ViewRow {...props} />
-            </div>
-            <div className="w-min-6c text-end pt-2 me-2">
-                {btnDel}
-                <div className={cnBtnDiv + ' text-warning mt-2'} onClick={onDelThoroughly}>
-                    <FA name="times" fixWidth={true} />
-                    <span className="text-info ms-1">删除</span>
-                </div>
-            </div>
-        </div>;
+        return <ViewDivUndo divStore={divStore} valDiv={valDiv} />;
     }
 
     let buttons = <>{btnEdit}{btnDel}</>;
@@ -139,6 +109,7 @@ export function ViewDiv(props: ViewDivProps) {
     if (divs.length === 0) {
         return <ViewRow {...props} buttons={buttons} />;
     }
+    if (level > 0) buttons = undefined;
     return <>
         <ViewRow {...props} buttons={buttons} />
         {divs.map(v => <ViewDiv key={v.id} {...props} valDiv={v} />)}
