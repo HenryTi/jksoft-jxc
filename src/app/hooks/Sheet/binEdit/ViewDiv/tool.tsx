@@ -6,7 +6,7 @@ import { theme } from "tonwa-com";
 export interface ViewDivProps {
     divStore: DivStore;
     valDiv: ValDiv;
-    // editable: boolean;
+    readonly?: boolean;
     hidePivot?: boolean;
     className?: string;
     buttons?: any;

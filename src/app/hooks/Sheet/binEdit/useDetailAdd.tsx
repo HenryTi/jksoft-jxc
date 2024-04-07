@@ -5,23 +5,23 @@ import { useRowEdit } from "./useRowEdit";
 import { BinEditing } from "../store";
 import { PickResult } from "../store";
 
-export function useCoreDetailAdd(sheetStore: SheetStore) {
+export function useDetailAdd(sheetStore: SheetStore) {
     const rowEdit = useRowEdit();
-    const { detail: coreDetail } = sheetStore;
-    const entityBin = coreDetail?.entityBin;
+    const { detail } = sheetStore;
+    const entityBin = detail?.entityBin;
     const pick = useBinPicks(entityBin);
     async function addNewDirect() {
         let ret = await pick(sheetStore);
         if (ret === undefined) return;
-        let { namedResults, rearBinPick: binPick, rearResult: pickResult, rearPickResultType: lastPickResultType } = ret;
-        if (lastPickResultType === RearPickResultType.array) {
+        let { namedResults, rearBinPick, rearResult, rearPickResultType } = ret;
+        if (rearPickResultType === RearPickResultType.array) {
             // 直接选入行集，待修改
-            if (coreDetail === undefined) {
+            if (detail === undefined) {
                 alert('Pick Pend on main not implemented');
                 return;
             }
-            for (let rowProps of pickResult as PickResult[]) {
-                namedResults[binPick.name] = rowProps;
+            for (let rowProps of rearResult as PickResult[]) {
+                namedResults[rearBinPick.name] = rowProps;
                 let binEditing = new BinEditing(entityBin);
                 binEditing.setNamedParams(namedResults);
                 let { valRow } = binEditing;

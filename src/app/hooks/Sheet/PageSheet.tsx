@@ -3,7 +3,7 @@ import { DivStore, SheetStore, SubmitState } from "./store";
 import { to62 } from "tonwa-com";
 import { ViewDiv, ViewMain } from "./binEdit";
 import { atom, useAtomValue } from "jotai";
-import { useCoreDetailAdd } from "./binEdit";
+import { useDetailAdd } from "./binEdit";
 import { useNavigate } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
 import { PageMoreCacheData } from "app/coms";
@@ -11,7 +11,7 @@ import { useCallback, useState } from "react";
 import { PickFunc, useBinPicks } from "./binPick";
 import { headerSheet, buttonDefs } from "./headerSheet";
 
-export function PageSheet({ store }: { store: SheetStore; }) {
+export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean }) {
     const { uq, main, detail, divStore, caption } = store;
     const uqApp = useUqApp();
     const pick = useBinPicks(main.entityMain);
@@ -19,7 +19,7 @@ export function PageSheet({ store }: { store: SheetStore; }) {
     const navigate = useNavigate();
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(divStore.atomSubmitState);
-    const addNew = useCoreDetailAdd(store);
+    const addNew = useDetailAdd(store);
     const start = useStartSheetStore(store, pick);
 
     async function onSubmit() {
@@ -84,7 +84,7 @@ export function PageSheet({ store }: { store: SheetStore; }) {
         let btnSubmit = buttonDefs.submit(onSubmit);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, true, editable === false);
         toolGroups = [[btnPrint, btnSubmit], null, [btnDiscard]];
-        view = <ViewMain store={store} popup={false} />;
+        view = <ViewMain store={store} popup={false} readOnly={readonly} />;
     }
 
     function mainDetailEdit() {
@@ -115,7 +115,7 @@ export function PageSheet({ store }: { store: SheetStore; }) {
         }
         const { divStore } = store;
         view = <>
-            <ViewMain store={store} popup={false} />
+            <ViewMain store={store} popup={false} readOnly={readonly} />
             <ViewBinDivs divStore={divStore} editable={editable} />
         </>;
 
@@ -131,7 +131,7 @@ export function PageSheet({ store }: { store: SheetStore; }) {
                     divs.map(v => {
                         const { id } = v;
                         return <div key={id} className="mb-3 border-top border-bottom border-primary-subtle">
-                            <ViewDiv divStore={divStore} valDiv={v} />
+                            <ViewDiv divStore={divStore} valDiv={v} readonly={readonly} />
                         </div>;
                     })}
             </div>
@@ -140,7 +140,8 @@ export function PageSheet({ store }: { store: SheetStore; }) {
 
     if (detail === undefined) mainOnlyEdit();
     else mainDetailEdit();
-    const { header, top, right } = headerSheet({ store, toolGroups, headerGroup });
+    let { header, top, right } = headerSheet({ store, toolGroups, headerGroup });
+    if (readonly === true) top = undefined;
     return <Page header={header} back={null} top={top} right={right}>
         {view}
     </Page>;

@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { Page, PageSpinner, useModal } from "tonwa-app";
+import { Page, PageSpinner } from "tonwa-app";
 import { from62, setAtomValue, to62, useEffectOnce } from "tonwa-com";
 import { ReturnUseBinPicks, SheetStore, useSheetStore } from "./store";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,7 +10,7 @@ import { useUqApp } from "app";
 import { PageMoreCacheData, ToolItem } from "app/coms";
 import { buttonDefs, headerSheet } from "./headerSheet";
 import { ViewBinPicks } from "./binPick";
-import { ViewMain, useCoreDetailAdd } from "./binEdit";
+import { useDetailAdd } from "./binEdit";
 
 export function pathSE(phrase: number | string) {
     function sheetInPath(phrase: number | string) {
@@ -135,7 +135,7 @@ function PageStartPicks({ store }: { store: SheetStore; }) {
 function PageStartPend({ store }: { store: SheetStore; }) {
     // const modal = useModal();
     const onPicked = useOnPicked(store);
-    const addNew = useCoreDetailAdd(store);
+    const addNew = useDetailAdd(store);
     const { caption } = store;
     const subCaption = '批选待处理';
     const onPend = useCallback(async (results: ReturnUseBinPicks) => {

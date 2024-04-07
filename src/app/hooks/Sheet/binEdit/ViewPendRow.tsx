@@ -32,7 +32,7 @@ export function ViewPendRow({
 
     const { pend: pendId, detail: { id, i, price, amount }, value, mid, cols } = pendRow;
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
-        return <div className="d-flex text-end align-items-center pt-1 pb-2">
+        return <div className="d-flex text-end align-items-center pb-1">
             <span className={' me-3 ' + theme.labelColor}>{caption}</span>
             <span className="w-min-3c">{value}</span>
         </div>;
@@ -66,7 +66,7 @@ export function ViewPendRow({
             }
         }
     }
-    return <div className="py-2 bg-white">
+    return <div className="py-2 bg-white flex-fill">
         <div className="d-flex px-3">
             <div className="flex-fill">
                 <ViewSpec id={i} bold={true} noLabel={true} />

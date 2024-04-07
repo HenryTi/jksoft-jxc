@@ -15,7 +15,6 @@ export function ViewPendRowEdit({ pendRow, pendContent, divStore }: ViewPendRowE
     let valDiv = useAtomValue(atomValDiv);
     async function onEdit() {
         setAtomValue(valDiv.atomDeleted, false);
-        modal.close();
     }
     function ViewItem({ icon, color, onSelectChanged }: { icon: string; color: string; onSelectChanged: () => Promise<void> | void }) {
         /*

@@ -12,7 +12,7 @@ import { ViewDivUndo } from "./ViewDivUndo";
 
 export function ViewDiv(props: ViewDivProps) {
     const modal = useModal();
-    const { divStore, valDiv } = props;
+    const { divStore, valDiv, readonly } = props;
     const { binDiv, atomDeleted, atomValRow, atomValDivs } = valDiv;
     const { entityBin, level } = binDiv;
     const divs = useAtomValue(atomValDivs);
@@ -99,7 +99,8 @@ export function ViewDiv(props: ViewDivProps) {
         return <ViewDivUndo divStore={divStore} valDiv={valDiv} />;
     }
 
-    let buttons = <>{btnEdit}{btnDel}</>;
+    let buttons: any;
+    if (readonly !== true) buttons = <>{btnEdit}{btnDel}</>;
     if (id < 0) {
         let pendRow = divStore.getPendRow(pend);
         buttons = <>{buttons}<div className="me-n3" /></>;
