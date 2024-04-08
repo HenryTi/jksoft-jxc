@@ -724,7 +724,7 @@ RETURNS props (
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN Bin as b ON b.id=a.origin
     ;
-
+    /*
     INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
         FROM details as s
             JOIN IxBudInt as a ON a.i=s.id;
@@ -752,7 +752,7 @@ RETURNS props (
         FROM main as s
             JOIN IxBud as a ON a.i=s.id
             JOIN Bud as b ON b.id=a.x;
-
+*/
     VAR procName CHAR(200) = CONCAT($site, '.', sheetPhrase, 'gs');
     IF routine_exists('$site', procName) {
         VAR sql CHAR(500) = CONCAT('call `$site`.`', procName, '`(?);');

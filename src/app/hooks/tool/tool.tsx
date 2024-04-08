@@ -27,11 +27,20 @@ export function budValuesFromProps(props: PropData[]) {
             case 0: debugger; break;
             case 1: budValues[phrase] = value[0]; break;
             case 2:
+                let v1 = value[1];
                 let checks = budValues[phrase] as BudCheckValue;
                 if (checks === undefined) {
-                    budValues[phrase] = checks = [];
+                    budValues[phrase] = checks = [v1];
                 }
-                checks.push(value[1]);
+                else {
+                    // 可能重复，去重。具体为什么会重复，随后再找原因
+                    if (checks.findIndex(v => v === v1) < 0) {
+                        checks.push(v1);
+                    }
+                    else {
+                        debugger;
+                    }
+                }
                 break;
         }
     }
