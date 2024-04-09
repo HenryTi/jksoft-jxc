@@ -48,7 +48,7 @@ export function ViewRowStem(props: ViewDivProps & { vIBase: any; }) {
         })
     }
     let budValueColl = divStore.sheetStore.budsColl[valRow.i];
-    // if (budValueColl === undefined) debugger;
+    if (budValueColl === undefined) debugger;
     let content = <>
         <ViewIdField bud={budI} value={valRow.i} />
         <ViewShowBuds bud={entityBin.i} budValueColl={budValueColl} />

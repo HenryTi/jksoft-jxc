@@ -36,7 +36,7 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
         :
         <PAV bud={budValue} className={cnValue + ' cursor-pointer '} val={value} onClick={onEdit} />
     let budValueColl = divStore.sheetStore.budsColl[valRow.i];
-    // if (budValueColl === undefined) debugger;
+    if (budValueColl === undefined) debugger;
     return <>
         <div className="flex-fill">
             {

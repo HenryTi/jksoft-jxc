@@ -69,7 +69,6 @@ export function ViewPendRow({
         }
     }
     const budValueColl = divStore.sheetStore.budsColl[i];
-    // if (budValueColl === undefined) debugger;
     // if (iBud === undefined) debugger;
     return <div className="py-2 bg-white flex-fill">
         <div className="d-flex px-3">

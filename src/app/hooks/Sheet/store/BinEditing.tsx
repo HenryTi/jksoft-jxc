@@ -92,7 +92,7 @@ export abstract class FieldsEditing extends BudsFields {
     }
 
     private setFieldOrBudValue(name: string, value: number | string) {
-        console.log('setFieldOrBudValue name=', name, 'value=', value);
+        // console.log('setFieldOrBudValue name=', name, 'value=', value);
         let field = this.fieldColl[name];
         if (field === undefined) {
             return;

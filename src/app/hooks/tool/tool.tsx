@@ -101,6 +101,7 @@ export function OwnedBuds({ values, noLabel }: { values: [number, BudValue][]; n
 }
 
 export function ViewShowBuds({ budValueColl, bud, noLabel }: { budValueColl: BudValueColl; bud: BizBud; noLabel?: boolean; }) {
+    if (budValueColl === undefined) return null;
     if (bud === undefined) return null;
     const { fieldShows } = bud;
     if (fieldShows === undefined) return null;
