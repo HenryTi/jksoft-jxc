@@ -2,9 +2,8 @@ import { useAtomValue } from "jotai";
 import { theme, setAtomValue, getAtomValue } from "tonwa-com";
 import { ViewSpecBaseOnly } from "../../../View";
 import { ViewBud, ViewBudUIType } from "../../../Bud";
-import { RowColsSm } from "../../../tool";
+import { RowColsSm, ViewShowBuds } from "../../../tool";
 import { BinEditing } from "../../store";
-import { BinOwnedBuds } from "../BinOwnedBuds";
 import { useRowEdit } from "../useRowEdit";
 import { PAV, ViewDivProps, cn, cnBtn } from "./tool";
 
@@ -37,7 +36,7 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
         :
         <PAV bud={budValue} className={cnValue + ' cursor-pointer '} val={value} onClick={onEdit} />
     let budValueColl = divStore.sheetStore.budsColl[valRow.i];
-    if (budValueColl === undefined) debugger;
+    // if (budValueColl === undefined) debugger;
     return <>
         <div className="flex-fill">
             {
@@ -49,7 +48,7 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
             <div className={cn + ' bg-white '}>
                 {vIBase}
                 <RowColsSm contentClassName="flex-fill">
-                    <BinOwnedBuds bizBud={entityBin.i} budValueColl={budValueColl} />
+                    <ViewShowBuds bud={entityBin.i} budValueColl={budValueColl} />
                     {
                         fields.map(field => {
                             const { bud } = field;

@@ -1,8 +1,7 @@
 import { useAtomValue } from "jotai";
 import { theme, FA, setAtomValue } from "tonwa-com";
 import { ViewBud, ViewBudUIType, budContent } from "../../../Bud";
-import { RowColsSm } from "../../../tool";
-import { BinOwnedBuds } from "../BinOwnedBuds";
+import { RowColsSm, ViewShowBuds } from "../../../tool";
 import { PAV, ViewDivProps, ViewIdField, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
 
@@ -49,10 +48,10 @@ export function ViewRowStem(props: ViewDivProps & { vIBase: any; }) {
         })
     }
     let budValueColl = divStore.sheetStore.budsColl[valRow.i];
-    if (budValueColl === undefined) debugger;
+    // if (budValueColl === undefined) debugger;
     let content = <>
         <ViewIdField bud={budI} value={valRow.i} />
-        <BinOwnedBuds bizBud={entityBin.i} budValueColl={budValueColl} />
+        <ViewShowBuds bud={entityBin.i} budValueColl={budValueColl} />
         <ViewFields />
     </>;
     let viewContent: any, viewRight: any;

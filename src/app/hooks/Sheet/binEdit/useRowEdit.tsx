@@ -8,8 +8,7 @@ import { ChangeEvent, useState } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { BinEditing, FieldsEditing } from "../store";
-import { RowCols } from "app/hooks/tool";
-import { BinOwnedBuds } from "./BinOwnedBuds";
+import { RowCols, ViewShowBuds } from "app/hooks/tool";
 
 export function useRowEdit() {
     const modal = useModal();
@@ -76,7 +75,7 @@ function ModalInputRow({ binEditing }: { binEditing: FieldsEditing; }) {
                 <ViewSpecNoAtom id={value} />
             </RowCols>
             <RowCols>
-                <BinOwnedBuds bizBud={bud} budValueColl={sheetStore.budsColl[value]} noLabel={false} />
+                <ViewShowBuds bud={bud} budValueColl={sheetStore.budsColl[value]} noLabel={false} />
             </RowCols>
         </Band>;
     }

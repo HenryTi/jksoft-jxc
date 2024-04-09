@@ -76,13 +76,13 @@ export function ViewDiv(props: ViewDivProps) {
         iconDel = 'trash-o';
         colorDel = 'text-success';
         let iconEdit: string, colorEdit: string;
-        if (divs.length === 0) {
+        if (id < 0) {
             iconEdit = 'plus';
             colorEdit = ' text-primary ';
         }
         else {
             iconEdit = 'pencil-square-o';
-            colorEdit = ' text-primary ';
+            colorEdit = ' text-success ';
         }
         btnEdit = <div className={cnBtnDiv + colorEdit} onClick={onEdit}>
             <FA name={iconEdit} fixWidth={true} size="lg" />

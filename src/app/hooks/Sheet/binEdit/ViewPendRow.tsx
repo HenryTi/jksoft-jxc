@@ -68,6 +68,9 @@ export function ViewPendRow({
             }
         }
     }
+    const budValueColl = divStore.sheetStore.budsColl[i];
+    // if (budValueColl === undefined) debugger;
+    // if (iBud === undefined) debugger;
     return <div className="py-2 bg-white flex-fill">
         <div className="d-flex px-3">
             <div className="flex-fill">
@@ -78,7 +81,7 @@ export function ViewPendRow({
         <Sep className="my-1" />
         <div className="d-flex px-3">
             <RowCols contentClassName=" flex-fill ">
-                <ViewShowBuds budValueColl={divStore.sheetStore.budsColl[i]} bud={iBud} />
+                <ViewShowBuds budValueColl={budValueColl} bud={iBud} />
                 <ViewPropArr className="col" arr={mid} />
                 <ViewPropArr className="col" arr={cols} />
             </RowCols>

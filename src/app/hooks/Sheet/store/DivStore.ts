@@ -57,12 +57,8 @@ export class DivStore {
 
     async loadPend(params: any): Promise<void> {
         if (this.pendLoadState !== PendLoadState.none) return;
-        this.pendRows = undefined;
         this.pendLoadState = PendLoadState.loading;
-        const pendRows
-            // ownerColl
-            // } 
-            = await this.loadPendInternal(params, undefined);
+        this.pendRows = await this.loadPendInternal(params, undefined);
         this.pendLoadState = PendLoadState.loaded;
         // this.pendRows = pendRows;
         // this.ownerColl = ownerColl;

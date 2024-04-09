@@ -8,7 +8,7 @@ import { ValRow } from "../tool";
 
 export function PagePend(props: PagePendProps) {
     let { divStore, caption } = props;
-    let { entityBin: { pend: entityPend, div: div }, pendRows } = divStore;
+    let { entityBin: { pend: entityPend }, pendRows } = divStore;
     const modal = useModal();
     let { name: pendName, hasPrice, hasAmount } = entityPend;
     let [selectedItems, setSelectedItems] = useState<{ [id: number]: PendRow; }>({});
