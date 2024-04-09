@@ -95,3 +95,50 @@ BIN 收货单明细 {
           --生产许可或备案证号=%生产许可或备案证号;
     }
 }
+
+PEND 入库接口账 '入库接口' { 
+    S '单据';
+    SI '委托方';
+    SX '客户';
+    Value '数量';
+    price '单价'; 
+    Prop { 
+        通知单号 char;
+        通知单行号 int;
+        委托方信息 Atom;
+        客户信息 Atom;
+        货品 Atom 货品信息
+        {
+          : 规格型号; 
+          : 单位; 
+          : 产地; 
+          : 生产厂商; 
+          : 包装; 
+          : 货品大类;
+        };
+        批号 char;
+        生产日期 date;
+        有效期至 date;
+        到货日期 date;
+        入库类型 radio 入库类型;
+        物流中心 Atom; 
+    };
+    QUERY (
+        param1 Atom, 
+        param2 Atom, 
+        param3 Atom, 
+        --param4 char,
+    ) {
+        VAR a ID = 1;     
+        FROM
+            COLUMN ( 
+            )
+            WHERE 1=1 
+            --and %物流中心=param1 
+            --and %委托方信息=param2 
+            --and %客户信息=param3 
+            --and %通知单号 like param4
+            ;
+        ; 
+    }
+} 

@@ -1,10 +1,10 @@
 import { ViewSpec } from "app/hooks/View";
 import { Prop, VNamedBud } from "../tool";
-import { OwnedBuds, RowCols, ViewShowBuds } from "app/hooks/tool";
+import { RowCols, ViewShowBuds } from "app/hooks/tool";
 import { ViewPendRowEdit } from "./ViewPendRowEdit";
-import { BudValue } from "tonwa-app";
 import { Sep, getAtomValue, theme } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
+import { BizBud } from "app/Biz";
 
 interface PendProps {
     divStore: DivStore;
@@ -26,11 +26,11 @@ export function ViewPendRowCandidate({ pendRow, divStore }: PendProps) {
 export function ViewPendRow({
     pendRow, divStore, viewButtons, showPendValue
 }: PendProps & { viewButtons?: any; showPendValue?: boolean }) {
-    const { entityBin, sheetStore: { budsColl: ownerColl } } = divStore;
-    const { div, pend: entityPend } = entityBin;
+    const { entityBin } = divStore;
+    const { pend: entityPend, rearPick } = entityBin;
     let { i: iBud, hasPrice, hasAmount } = entityPend;
-
     const { pend: pendId, detail: { id, i, price, amount }, value, mid, cols } = pendRow;
+
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
         return <div className="d-flex text-end align-items-center pb-1">
             <span className={' me-3 ' + theme.labelColor}>{caption}</span>
@@ -46,13 +46,6 @@ export function ViewPendRow({
             })}
         </>;
     }
-    /*
-    let ownedBudsValuesColl = ownerColl[id];
-    let ownedBudsValues: [number, BudValue][];
-    if (ownedBudsValuesColl !== undefined) {
-        ownedBudsValues = ownedBudsValuesColl[iBud.id];
-    }
-    */
     let viewPendValue: any;
     if (showPendValue === true) {
         let atomValDiv = divStore.pendColl[pendId];

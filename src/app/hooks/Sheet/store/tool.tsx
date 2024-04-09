@@ -46,7 +46,7 @@ export function pickedFromJsonArr(entity: Entity, propArr: Prop[], picked: Picke
     }
 }
 
-export function arrFromJsonArr(entity: Entity, arr: any[]) {
+export function arrFromJsonArr(entity: Entity, arr: any[], hiddenBuds: Set<number>) {
     let propArr: Prop[] = [];
     const { biz } = entity;
     for (let v of arr) {
@@ -78,6 +78,7 @@ export function arrFromJsonArr(entity: Entity, arr: any[]) {
                 value = v[2];
                 break;
         }
+        if (hiddenBuds.has(bud.id) === true) continue;
         let prop: Prop = { name, bud, value };
         propArr.push(prop);
     }
@@ -85,7 +86,7 @@ export function arrFromJsonArr(entity: Entity, arr: any[]) {
 }
 
 // table pend
-export function arrFromJsonMid(entity: Entity, mid: any) {
+export function arrFromJsonMid(entity: Entity, mid: any, hiddenBuds: Set<number>) {
     let ret: Prop[] = [];
     const { budColl, buds } = entity;
     // 按buds的顺序处理。暂不知道buds是否包含继承来的
@@ -96,6 +97,7 @@ export function arrFromJsonMid(entity: Entity, mid: any) {
         }
         let value = mid[bud.id];
         if (value === null) continue;
+        if (hiddenBuds.has(bud.id) === true) continue;
         ret.push({ name: undefined, bud, value });
     }
     /*

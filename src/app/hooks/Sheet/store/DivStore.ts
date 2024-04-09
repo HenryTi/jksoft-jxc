@@ -99,7 +99,7 @@ export class DivStore {
     }
 
     private async loadPendInternal(params: any, pendId: number) {
-        let { pend: entityPend } = this.entityBin;
+        let { pend: entityPend, rearPick } = this.entityBin;
         if (entityPend === undefined) debugger;
         let ret = await this.sheetStore.uqGetPend(entityPend, params, pendId);
         let { $page, retSheet, props: showBuds } = ret;
@@ -110,6 +110,7 @@ export class DivStore {
             collSheet[v.id] = v;
         };
         let pendRows: PendRow[] = [];
+        let hiddenBuds: Set<number> = (rearPick?.hiddenBuds) ?? new Set();
         // build pendColl;
         for (let v of $page) {
             let { id, pend, pendValue, mid, cols } = v;
@@ -117,9 +118,9 @@ export class DivStore {
             this.pendColl[pend] = atom(undefined as ValDiv);
             let propArr: Prop[];
             if (cols !== undefined) {
-                propArr = arrFromJsonArr(entityPend, cols);
+                propArr = arrFromJsonArr(entityPend, cols, hiddenBuds);
             }
-            let midArr = arrFromJsonMid(entityPend, mid);
+            let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);
             let pendRow: PendRow = {
                 pend,
                 detail: { ...v, buds: {}, owned: undefined },

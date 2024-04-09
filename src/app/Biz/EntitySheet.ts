@@ -18,7 +18,7 @@ export interface PickParam {
 export abstract class BinPick extends BizBud {
     readonly bin: EntityBin;
     pickParams: PickParam[];
-    // pick: PickBase;
+    hiddenBuds: Set<number>;
     constructor(biz: Biz, id: number, name: string, bin: EntityBin) {
         super(biz, id, name, EnumBudType.pick, bin);
         this.bin = bin;
@@ -28,13 +28,6 @@ export abstract class BinPick extends BizBud {
     getRefEntities(arrEntity: Entity[]) { return; }
 }
 
-/*
-export abstract class PickBase {
-    bizPhraseType: BizPhraseType;
-    // 代码编辑页面用。所有相关的entities
-    abstract getRefEntities(): Entity[];
-}
-*/
 export class PickQuery extends BinPick {
     readonly fromPhraseType = BizPhraseType.query;
     query: EntityQuery;
@@ -395,7 +388,7 @@ export class EntityBin extends Entity {
     }
 
     private buildPick(v: any): BinPick {
-        const { id, name, from, caption, params } = v;
+        const { id, name, from, caption, params, hidden } = v;
         let arr = (from as string[]).map(v => this.biz.entities[v]);
         // let ret = new BinPick(this.biz, id, name, this);
         let entity = arr[0];
@@ -436,8 +429,13 @@ export class EntityBin extends Entity {
         }
         binPick.pickParams = params;
         binPick.ui = { caption };
-        // binPick.bizPhraseType = bizPhraseType;
-        // ret.pick = binPick;
+        if (hidden !== undefined) {
+            binPick.hiddenBuds = new Set();
+            const { hiddenBuds } = binPick;
+            for (let h of (hidden as number[])) {
+                hiddenBuds.add(h);
+            }
+        }
         return binPick;
     }
 
