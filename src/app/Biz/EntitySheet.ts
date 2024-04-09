@@ -336,8 +336,8 @@ export class EntityBin extends Entity {
             case 'picks': this.binPicks = val; break;
             case 'inputs': break;   // is a must
             case 'div': this.div = val; break;
-            case 'i': this.i = val; break;
-            case 'x': this.x = val; break;
+            case 'i': this.i = val; this.budColl[this.i.id] = this.i; break;
+            case 'x': this.x = val; this.budColl[this.x.id] = this.x; break;
             case 'pend': this.fromPend(val); break;
             case 'value': this.fromBinValue(val); break;
             case 'price': this.fromPrice(val); break;

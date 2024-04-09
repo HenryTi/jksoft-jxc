@@ -1,7 +1,7 @@
 import { PendRow, SheetStore } from "./SheetStore";
 import { BinDiv, EntityBin } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
-import { OwnerColl, budValuesFromProps } from "../../tool";
+import { BudsColl, budValuesFromProps } from "../../tool";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "../tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
@@ -27,7 +27,7 @@ export class DivStore {
     readonly binDiv: BinDiv;
     pendColl: { [pend: number]: WritableAtom<ValDiv, any, any> };
     pendRows: PendRow[];
-    ownerColl: OwnerColl;
+    ownerColl: BudsColl;
     readonly valDivs: ValDivs;
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
 
@@ -105,7 +105,7 @@ export class DivStore {
         if (entityPend === undefined) debugger;
         let ret = await this.sheetStore.uqGetPend(entityPend, params, pendId);
         let { $page, retSheet, props: showBuds } = ret;
-        const { ownerColl } = budValuesFromProps(showBuds);
+        const ownerColl = budValuesFromProps(showBuds);
         let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
         for (let v of retSheet) {
             collSheet[v.id] = v;

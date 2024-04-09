@@ -30,9 +30,8 @@ export function useRowEdit() {
 function ModalInputRow({ binEditing }: { binEditing: FieldsEditing; }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
-    const { entityBin } = binEditing;
+    const { entityBin, valRow: binDetail, sheetStore } = binEditing;
     const { i: budI, x: budX } = entityBin;
-    const { valRow: binDetail } = binEditing;
     const [submitable, setSubmitable] = useState(binEditing.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;
@@ -77,7 +76,7 @@ function ModalInputRow({ binEditing }: { binEditing: FieldsEditing; }) {
                 <ViewSpecNoAtom id={value} />
             </RowCols>
             <RowCols>
-                <BinOwnedBuds bizBud={bud} valRow={binDetail} noLabel={false} />
+                <BinOwnedBuds bizBud={bud} budValueColl={sheetStore.budsColl[value]} noLabel={false} />
             </RowCols>
         </Band>;
     }

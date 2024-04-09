@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Mar 18 2024 14:11:16 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Mon Apr 08 2024 12:01:33 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -538,7 +538,6 @@ export interface ReturnGetSheetProps {
 	id: number;
 	phrase: number;
 	value: any;
-	owner: number;
 }
 export interface ResultGetSheet {
 	main: ReturnGetSheetMain[];
@@ -781,7 +780,9 @@ export enum BudDataType {
 	dec = 21,
 	char = 31,
 	str = 32,
-	date = 41
+	date = 41,
+	optionItem = 81,
+	arr = 99
 }
 
 export enum BizBudFlag {
@@ -2847,10 +2848,6 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "json"
-                    },
-                    {
-                        "name": "owner",
-                        "type": "id"
                     }
                 ]
             }
@@ -3483,7 +3480,9 @@ export const uqSchema={
             "dec": 21,
             "char": 31,
             "str": 32,
-            "date": 41
+            "date": 41,
+            "optionItem": 81,
+            "arr": 99
         }
     },
     "bizbudflag": {

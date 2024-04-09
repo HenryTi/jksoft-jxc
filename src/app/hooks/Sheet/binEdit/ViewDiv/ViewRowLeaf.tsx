@@ -15,6 +15,7 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
     const { atomValRow, atomValue, binDiv, atomDeleted } = valDiv;
     const { binDivBuds: binBuds, entityBin } = binDiv;
     const { budValue, fields, budPrice, budAmount, budI } = binBuds;
+    const { sheetStore } = divStore;
     const valRow = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);
     const deleted = getAtomValue(atomDeleted);
@@ -23,7 +24,7 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
         value: cnValue, price: cnPrice, amount: cnAmount
     } = theme;
     async function onEdit() {
-        const binEditing = new BinEditing(entityBin, valRow);
+        const binEditing = new BinEditing(sheetStore, entityBin, valRow);
         let ret = await rowEdit(binEditing);
         if (ret === true) {
             const { valRow } = binEditing;
@@ -35,6 +36,8 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
         <PAV bud={budValue} className={cnValue} val={value} />
         :
         <PAV bud={budValue} className={cnValue + ' cursor-pointer '} val={value} onClick={onEdit} />
+    let budValueColl = divStore.sheetStore.budsColl[valRow.i];
+    if (budValueColl === undefined) debugger;
     return <>
         <div className="flex-fill">
             {
@@ -46,7 +49,7 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
             <div className={cn + ' bg-white '}>
                 {vIBase}
                 <RowColsSm contentClassName="flex-fill">
-                    <BinOwnedBuds bizBud={entityBin.i} valRow={valRow} />
+                    <BinOwnedBuds bizBud={entityBin.i} budValueColl={budValueColl} />
                     {
                         fields.map(field => {
                             const { bud } = field;

@@ -48,9 +48,11 @@ export function ViewRowStem(props: ViewDivProps & { vIBase: any; }) {
             return <ViewBud key={bud.id} bud={bud} value={field.getValue(valRow)} uiType={ViewBudUIType.inDiv} />;
         })
     }
+    let budValueColl = divStore.sheetStore.budsColl[valRow.i];
+    if (budValueColl === undefined) debugger;
     let content = <>
         <ViewIdField bud={budI} value={valRow.i} />
-        <BinOwnedBuds bizBud={entityBin.i} valRow={valRow} />
+        <BinOwnedBuds bizBud={entityBin.i} budValueColl={budValueColl} />
         <ViewFields />
     </>;
     let viewContent: any, viewRight: any;

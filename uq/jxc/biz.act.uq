@@ -696,7 +696,8 @@ RETURNS props (
     id ID,
     phrase ID,
     value JSON,
-    owner ID,           -- show 字段的主字段。其它字段为0
+    -- owner ID,           -- show 字段的主字段。其它字段为0
+    (id, phrase) KEY,
 )
 {
     VAR maySheetId ID, detail ID, sheetPhrase ID;
@@ -724,35 +725,34 @@ RETURNS props (
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN Bin as b ON b.id=a.origin
     ;
-    /*
-    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value -- , 0 as owner
         FROM details as s
             JOIN IxBudInt as a ON a.i=s.id;
-    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value -- , 0 as owner
         FROM details as s
             JOIN IxBudDec as a ON a.i=s.id;
-    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value -- , 0 as owner
         FROM details as s
             JOIN IxBudStr as a ON a.i=s.id;
-    INTO props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value, 0 as owner
+    INTO props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value -- , 0 as owner
         FROM details as s
             JOIN IxBud as a ON a.i=s.id
             JOIN Bud as b ON b.id=a.x;
 
-    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value -- , 0 as owner
         FROM main as s
             JOIN IxBudInt as a ON a.i=s.id;
-    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value -- , 0 as owner
         FROM main as s
             JOIN IxBudDec as a ON a.i=s.id;
-    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value, 0 as owner
+    INTO props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value -- , 0 as owner
         FROM main as s
             JOIN IxBudStr as a ON a.i=s.id;
-    INTO props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value, 0 as owner
+    INTO props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value -- , 0 as owner
         FROM main as s
             JOIN IxBud as a ON a.i=s.id
             JOIN Bud as b ON b.id=a.x;
-*/
+
     VAR procName CHAR(200) = CONCAT($site, '.', sheetPhrase, 'gs');
     IF routine_exists('$site', procName) {
         VAR sql CHAR(500) = CONCAT('call `$site`.`', procName, '`(?);');

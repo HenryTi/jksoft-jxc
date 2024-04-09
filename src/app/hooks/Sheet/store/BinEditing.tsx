@@ -3,7 +3,9 @@ import { FormRow } from "app/coms";
 import { BinDiv, BinField, BinRow, BizBud, BudAtom, BudDec, BudRadio, BudsFields, EntityBin, EnumBudType, ValueSetType } from "app/Biz";
 import { Calc, Formulas } from "../../Calc";
 import { ValRow } from "../tool";
-import { DivStore, ValDiv } from ".";
+import { DivStore } from "./DivStore";
+import { SheetStore } from "./SheetStore";
+import { ValDiv } from "./ValDiv";
 import { NamedResults } from "./NamedResults";
 import { getDays } from "app/tool";
 
@@ -11,10 +13,12 @@ export abstract class FieldsEditing extends BudsFields {
     private readonly calc: Calc;
     private readonly requiredFields: BinField[] = [];
     readonly valRow: ValRow = { buds: {} } as any;
+    readonly sheetStore: SheetStore;
     onDel: () => Promise<void>;
 
-    constructor(bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
+    constructor(sheetStore: SheetStore, bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
         super(bin, buds);
+        this.sheetStore = sheetStore;
         let requiredFields = this.requiredFields;
         const formulas: Formulas = [];
         for (let i in this.fieldColl) {
@@ -239,7 +243,7 @@ export class DivEditing extends FieldsEditing {
     readonly divStore: DivStore;
     // readonly pendLeft: number;
     constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, valDiv: ValDiv, initBinRow?: BinRow) {
-        super(divStore.entityBin, binDiv.buds, initBinRow);
+        super(divStore.sheetStore, divStore.entityBin, binDiv.buds, initBinRow);
         this.divStore = divStore;
         this.setNamedParams(namedResults);
         // this.pendLeft = 
@@ -269,7 +273,7 @@ export class DivEditing extends FieldsEditing {
 
 // 跟当前行相关的编辑，计算，状态
 export class BinEditing extends FieldsEditing {
-    constructor(bin: EntityBin, initValRow?: ValRow) {
+    constructor(sheetStore: SheetStore, bin: EntityBin, initValRow?: ValRow) {
         const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, buds: budArr } = bin;
         let buds: BizBud[] = [];
         if (iBud !== undefined) buds.push(iBud);
@@ -278,6 +282,6 @@ export class BinEditing extends FieldsEditing {
         if (priceBud !== undefined) buds.push(priceBud);
         if (amountBud !== undefined) buds.push(amountBud);
         if (budArr !== undefined) buds.push(...budArr);
-        super(bin, buds, initValRow);
+        super(sheetStore, bin, buds, initValRow);
     }
 }

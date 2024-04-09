@@ -1,6 +1,6 @@
 import { ViewSpec } from "app/hooks/View";
 import { Prop, VNamedBud } from "../tool";
-import { OwnedBuds, RowCols } from "app/hooks/tool";
+import { OwnedBuds, RowCols, ViewShowBuds } from "app/hooks/tool";
 import { ViewPendRowEdit } from "./ViewPendRowEdit";
 import { BudValue } from "tonwa-app";
 import { Sep, getAtomValue, theme } from "tonwa-com";
@@ -26,7 +26,7 @@ export function ViewPendRowCandidate({ pendRow, divStore }: PendProps) {
 export function ViewPendRow({
     pendRow, divStore, viewButtons, showPendValue
 }: PendProps & { viewButtons?: any; showPendValue?: boolean }) {
-    const { entityBin, ownerColl } = divStore;
+    const { entityBin, sheetStore: { budsColl: ownerColl } } = divStore;
     const { div, pend: entityPend } = entityBin;
     let { i: iBud, hasPrice, hasAmount } = entityPend;
 
@@ -46,11 +46,13 @@ export function ViewPendRow({
             })}
         </>;
     }
+    /*
     let ownedBudsValuesColl = ownerColl[id];
     let ownedBudsValues: [number, BudValue][];
     if (ownedBudsValuesColl !== undefined) {
         ownedBudsValues = ownedBudsValuesColl[iBud.id];
     }
+    */
     let viewPendValue: any;
     if (showPendValue === true) {
         let atomValDiv = divStore.pendColl[pendId];
@@ -76,7 +78,7 @@ export function ViewPendRow({
         <Sep className="my-1" />
         <div className="d-flex px-3">
             <RowCols contentClassName=" flex-fill ">
-                <OwnedBuds values={ownedBudsValues} />
+                <ViewShowBuds budValueColl={divStore.sheetStore.budsColl[i]} bud={iBud} />
                 <ViewPropArr className="col" arr={mid} />
                 <ViewPropArr className="col" arr={cols} />
             </RowCols>

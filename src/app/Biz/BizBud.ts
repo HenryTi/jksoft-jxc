@@ -197,11 +197,16 @@ export class BudPickable extends BudDataNumber {
     }
 }
 
+interface FieldShow {
+    owner: BizBud;
+    items: { entity: Entity; bud: BizBud; }[];
+}
 export class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budDataType: BudDataType;
     defaultValue: string;
     atomParams: { [param: string]: string }; // only for BizBudAtom
+    fieldShows: FieldShow[];
     constructor(biz: Biz, id: number, name: string, dataType: EnumBudType, entity: Entity) {
         super(biz, id, name, 'bud');
         this.entity = entity;
@@ -231,6 +236,7 @@ export class BizBud extends BizBase {
     scan() {
         this.budDataType.scan(this.biz, this);
         this.biz.addBudIds(this);
+        this.fieldShows = this.scanFieldShows(this.fieldShows);
     }
     valueToContent(value: any) {
         return this.budDataType.valueToContent(value);
@@ -243,6 +249,7 @@ export class BizBud extends BizBase {
                 break;
             case 'value': this.defaultValue = val; break;
             case 'params': this.atomParams = val; break;
+            case 'fieldShows': this.fieldShows = val; break;
             case 'props':
             case 'min':
             case 'max':
@@ -254,6 +261,23 @@ export class BizBud extends BizBase {
             case 'setType':
                 break;
         }
+    }
+
+    private scanFieldShows(val: any) {
+        if (val === undefined) return;
+        let ret: FieldShow[] = [];
+        for (let [owerId, items] of val) {
+            ret.push({
+                owner: this.entity.budColl[owerId],
+                items: items.map((item: [number, number]) => {
+                    const [entityId, budId] = item;
+                    let entity = this.biz.entityFromId(entityId);
+                    let bud = entity.budColl[budId];
+                    return { entity, bud };
+                }),
+            })
+        }
+        return ret;
     }
 }
 

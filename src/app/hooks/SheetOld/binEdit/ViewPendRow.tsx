@@ -1,6 +1,6 @@
 import { ViewSpec } from "app/hooks/View";
 import { Prop, VNamedBud } from "../tool";
-import { OwnedBuds, RowCols } from "app/hooks/tool";
+import { OwnedBuds, RowCols, ViewShowBuds } from "app/hooks/tool";
 import { ViewPendRowEdit } from "./ViewPendRowEdit";
 import { PendBandProps } from "./model";
 import { BudValue } from "tonwa-app";
@@ -70,7 +70,7 @@ export function ViewPendRow({
     value: pendRow
     , divStore
     , hasPrice, hasAmount }: PendBandProps) {
-    const { entityBin, ownerColl } = divStore;
+    const { entityBin } = divStore;
     const { div, pend: entityPend } = entityBin;
     let { i: iBud } = entityPend;
 
@@ -90,17 +90,19 @@ export function ViewPendRow({
             })}
         </>;
     }
+    /*
     let ownedBudsValuesColl = ownerColl[id];
     let ownedBudsValues: [number, BudValue][];
     if (ownedBudsValuesColl !== undefined) {
         ownedBudsValues = ownedBudsValuesColl[iBud.id];
     }
+    */
     return <div className="d-flex py-1">
         <div className={'flex-grow ' + theme.bootstrapContainer}>
             <ViewSpec id={i} bold={true} noLabel={true} />
             <Sep className="my-1" />
             <RowCols>
-                <OwnedBuds values={ownedBudsValues} />
+                <ViewShowBuds budValueColl={null} bud={iBud} />
                 <ViewPropArr className="col" arr={mid} />
                 <ViewPropArr className="col" arr={cols} />
             </RowCols>

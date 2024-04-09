@@ -87,10 +87,12 @@ export class Entity extends BizBase {
         this.buds.push(...buds);
         this.budGroups = this.cloneBudGroups(groups);
         for (let bud of buds) {
-            bud.scan();
             const { id, name } = bud;
             this.budColl[id] = bud;
             this.budColl[name] = bud;
+        }
+        for (let bud of buds) {
+            bud.scan();
         }
     }
 

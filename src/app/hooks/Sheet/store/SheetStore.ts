@@ -9,7 +9,7 @@ import { WritableAtom, atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
 import { PickFunc, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
-import { budValuesFromProps } from "../../tool";
+import { BudsColl, budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
 import { ValRow } from "./tool";
 import { DivStore } from "./DivStore";
@@ -362,6 +362,7 @@ export class SheetStore extends KeyIdObject {
     readonly backIcon = 'file-text-o';
     readonly isPend: boolean;
     // pendColl: { [pend: number]: WritableAtom<Section[], any, any> };
+    readonly budsColl: BudsColl = {};
     readonly divStore: DivStore;
     readonly atomLoaded = atom(false);
 
@@ -387,24 +388,11 @@ export class SheetStore extends KeyIdObject {
     }
 
     async load(sheetId: number) {
-        // let { id } = this.main.valRow;
-        // if (id === undefined || id === 0) return;
         let { main, details } = await this.loadBinData(sheetId);
         if (main === undefined) return;
         this.main.setValue(main);
         this.divStore.load(details);
-        /*
-        if (this.detail !== undefined) {
-            this.detail.addRowValues(details);
-        }
-        */
-        try {
-            setAtomValue(this.atomLoaded, true);
-        }
-        catch (e) {
-            console.error(e);
-            debugger;
-        }
+        setAtomValue(this.atomLoaded, true);
     }
 
     async setValRow(valRow: ValRow) {
@@ -421,16 +409,17 @@ export class SheetStore extends KeyIdObject {
     // whole sheet or row detail
     private async loadBinData(binId: number) {
         let { main, details, props } = await this.uq.GetSheet.query({ id: binId });
-        const { budColl, ownerColl } = budValuesFromProps(props);
+        const budsColl = budValuesFromProps(props);
+        Object.assign(this.budsColl, budsColl);
         let mainRow = main[0];
         if (mainRow !== undefined) {
-            (mainRow as any).buds = budColl[binId] ?? {};
-            (mainRow as any).owned = ownerColl[binId] ?? {};
+            (mainRow as any).buds = budsColl[binId] ?? {};
+            // (mainRow as any).owned = ownerColl[binId] ?? {};
         }
         for (let row of details) {
             const { id } = row;
-            (row as any).buds = budColl[id] ?? {};
-            (row as any).owned = ownerColl[id] ?? {};
+            (row as any).buds = budsColl[id] ?? {};
+            // (row as any).owned = ownerColl[id] ?? {};
         }
         return { main: mainRow, details };
     }

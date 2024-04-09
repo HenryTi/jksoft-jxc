@@ -9,7 +9,7 @@ import { WritableAtom, atom } from "jotai";
 import { from62, getAtomValue, setAtomValue } from "tonwa-com";
 import { PickFunc, RearPickResultType, ReturnUseBinPicks } from "../binPick/useBinPicks";
 import { Calc, Formulas } from "app/hooks/Calc";
-import { OwnerColl, budValuesFromProps } from "../../tool";
+import { BudsColl, budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
 import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "../tool";
 import { DivStore } from "./DivStore";
@@ -408,16 +408,16 @@ export class SheetStore extends KeyIdObject {
     // whole sheet or row detail
     private async loadBinData(binId: number) {
         let { main, details, props } = await this.uq.GetSheet.query({ id: binId });
-        const { budColl, ownerColl } = budValuesFromProps(props);
+        const ownerColl = budValuesFromProps(props);
         let mainRow = main[0];
         if (mainRow !== undefined) {
-            (mainRow as any).buds = budColl[binId] ?? {};
-            (mainRow as any).owned = ownerColl[binId] ?? {};
+            (mainRow as any).buds = ownerColl[binId] ?? {};
+            // (mainRow as any).owned = ownerColl[binId] ?? {};
         }
         for (let row of details) {
             const { id } = row;
-            (row as any).buds = budColl[id] ?? {};
-            (row as any).owned = ownerColl[id] ?? {};
+            (row as any).buds = ownerColl[id] ?? {};
+            // (row as any).owned = ownerColl[id] ?? {};
         }
         return { main: mainRow, details };
     }
