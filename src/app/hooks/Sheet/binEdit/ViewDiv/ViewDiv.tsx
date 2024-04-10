@@ -107,7 +107,7 @@ export function ViewDiv(props: ViewDivProps) {
     if (id < 0) {
         let pendRow = divStore.getPendRow(pend);
         return <div className="d-flex">
-            <div className="d-flex flex-fill opacity-25">
+            <div className="d-flex flex-fill opacity-75">
                 <ViewPendRow divStore={divStore} pendRow={pendRow} />
             </div>
             <div className="d-flex w-min-4c mt-2 align-items-start">

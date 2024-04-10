@@ -1,8 +1,7 @@
 import { ViewSpec } from "app/hooks/View";
 import { Prop, VNamedBud } from "../tool";
 import { RowCols, ViewShowBuds } from "app/hooks/tool";
-import { ViewPendRowEdit } from "./ViewPendRowEdit";
-import { Sep, getAtomValue, theme } from "tonwa-com";
+import { getAtomValue, theme } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
 
 export interface PendProps {
