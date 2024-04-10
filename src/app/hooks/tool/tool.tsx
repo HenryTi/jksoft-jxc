@@ -50,7 +50,8 @@ export function budValuesFromProps(props: PropData[]) {
                         checks.push(v1);
                     }
                     else {
-                        debugger;
+                        console.error('budValuesFromProps duplicate ', v1);
+                        // debugger;
                     }
                 }
                 break;
@@ -110,6 +111,7 @@ export function ViewShowBuds({ budValueColl, bud, noLabel }: { budValueColl: Bud
     return <>{
         fieldShows.map((fieldShow, index) => {
             let { owner, items } = fieldShow;
+            if (items === undefined) return null;
             // let bizBud = biz.budFromId(budId);
             return <React.Fragment key={index}>
                 {
