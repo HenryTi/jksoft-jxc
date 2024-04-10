@@ -65,37 +65,7 @@ export function ViewDiv(props: ViewDivProps) {
         }
         await modal.open(<PageEditDiv divStore={divStore} valDiv={valDiv} />);
     }
-    /*
-    let cnBtnDiv = ' px-1 cursor-pointer text-primary ';
-    let btnEdit: any, iconDel: string, colorDel: string, memoDel: any;
-    if (deleted === true) {
-        iconDel = 'undo';
-        colorDel = 'text-secondary ';
-        memoDel = '恢复';
-    }
-    else {
-        iconDel = 'trash-o';
-        colorDel = 'text-secondary';
-        let iconEdit: string, colorEdit: string;
-        if (id < 0) {
-            iconEdit = 'plus';
-            colorEdit = ' text-primary ';
-        }
-        else {
-            iconEdit = 'pencil-square-o';
-            colorEdit = ' text-success ';
-        }
-        btnEdit = <div className={cnBtnDiv + colorEdit} onClick={onEdit}>
-            <FA name={iconEdit} fixWidth={true} size="lg" />
-        </div>;
-    }
-    let btnDel = <>
-        <div className={cnBtnDiv + colorDel} onClick={onDelSub}>
-            <FA name={iconDel} fixWidth={true} />
-            {memoDel && <span className="ms-1">{memoDel}</span>}
-        </div>
-    </>;
-    */
+
     if (deleted === true) {
         return <ViewDivUndo divStore={divStore} valDiv={valDiv} />;
     }
@@ -106,8 +76,8 @@ export function ViewDiv(props: ViewDivProps) {
     }
     if (id < 0) {
         let pendRow = divStore.getPendRow(pend);
-        return <div className="d-flex">
-            <div className="d-flex flex-fill opacity-75">
+        return <div className="d-flex bg-white">
+            <div className="d-flex flex-fill">
                 <ViewPendRow divStore={divStore} pendRow={pendRow} />
             </div>
             <div className="d-flex w-min-4c mt-2 align-items-start">
@@ -139,7 +109,7 @@ function twoButtons(id: number, deleted: boolean, onDel: () => void, onEdit: () 
         let iconEdit: string, colorEdit: string;
         if (id < 0) {
             iconEdit = 'plus';
-            colorEdit = ' text-primary ';
+            colorEdit = ' text-danger ';
         }
         else {
             iconEdit = 'pencil-square-o';
