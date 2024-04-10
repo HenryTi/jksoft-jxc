@@ -12,18 +12,7 @@ import { buttonDefs, headerSheet } from "./headerSheet";
 import { ViewBinPicks } from "./binPick";
 import { useDetailAdd } from "./binEdit";
 
-export function pathSE(phrase: number | string) {
-    function sheetInPath(phrase: number | string) {
-        if (typeof phrase === 'string') {
-            if (phrase !== ':sheet') debugger;
-            return phrase;
-        }
-        return to62(phrase);
-    }
-    return `se/${sheetInPath(phrase)}`;
-}
-
-export function PageSEEdit() {
+export function PageSheetEdit() {
     const store = useSheetStore();
     const loaded = useAtomValue(store.atomLoaded);
     const { id } = useParams();
@@ -36,7 +25,7 @@ export function PageSEEdit() {
     return <PageSheet store={store} />;
 }
 
-export function PageSENew() {
+export function PageSheetNew() {
     const store = useSheetStore();
     const loaded = useAtomValue(store.atomLoaded);
     if (loaded === true) {
@@ -128,12 +117,11 @@ function PageStartPicks({ store }: { store: SheetStore; }) {
     const group0: ToolItem[] = [btnSubmit];
     let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
     return <Page header={pageHeader} back={null} top={top} right={right}>
-        <ViewBinPicks subHeader="开单" sheetStore={store} onPicked={onPicked} />
+        <ViewBinPicks subHeader="新开单据" sheetStore={store} onPicked={onPicked} />
     </Page>;
 }
 
 function PageStartPend({ store }: { store: SheetStore; }) {
-    // const modal = useModal();
     const onPicked = useOnPicked(store);
     const addNew = useDetailAdd(store);
     const { caption } = store;

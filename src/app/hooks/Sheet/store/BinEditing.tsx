@@ -2,12 +2,12 @@ import { RegisterOptions } from "react-hook-form";
 import { FormRow } from "app/coms";
 import { BinDiv, BinField, BinRow, BizBud, BudAtom, BudDec, BudRadio, BudsFields, EntityBin, EnumBudType, ValueSetType } from "app/Biz";
 import { Calc, Formulas } from "../../Calc";
-import { ValRow } from "../tool";
 import { DivStore } from "./DivStore";
 import { SheetStore } from "./SheetStore";
 import { ValDiv } from "./ValDiv";
 import { NamedResults } from "./NamedResults";
 import { getDays } from "app/tool";
+import { ValRow } from "./tool";
 
 export abstract class FieldsEditing extends BudsFields {
     private readonly calc: Calc;

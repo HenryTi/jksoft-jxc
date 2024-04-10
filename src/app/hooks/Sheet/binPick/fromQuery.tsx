@@ -6,8 +6,7 @@ import { useUqApp } from "app/UqApp";
 import { FA, List, Sep } from "tonwa-com";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "./PageParams";
-import { Picked, Prop, VNamedBud, pickedFromJsonArr } from "../tool";
-import { NamedResults, PickResult } from "../store";
+import { NamedResults, PickResult, Picked, Prop, VNamedBud, pickedFromJsonArr } from "../store";
 import { RowCols } from "app/hooks/tool";
 
 export function usePickFromQuery(): [
@@ -23,8 +22,6 @@ export function usePickFromQuery(): [
         , pickResultType: RearPickResultType)
         : Promise<PickResult | PickResult[]> {
         let { name, caption, query, pickParams } = binPick as PickQuery;
-        // let pickBase = pick as PickQuery;
-        // let { query } = pickBase;
         const header = caption ?? query.caption ?? name;
         let retParam = await pickParam({
             header,
@@ -115,21 +112,23 @@ export function usePickFromQuery(): [
             let onItemSelect: any, onItemClick: any;
             let cnViewItem = 'd-flex flex-wrap ';
             let cnFirst: string;
-            let btnOk: any, vTop: any;
+            let btnOk: any; // , vTop: any;
             if (pickResultType === RearPickResultType.array) {
                 onItemSelect = onMultipleClick;
                 cnFirst = 'my-2 ';
                 btnOk = <button className="btn btn-primary m-3" onClick={onPick}>选入</button>;
-                vTop = <div className="tonwa-bg-gray-2 p-3 border-bottom">已选：{vSelected}</div>;
+                // vTop = <div className="tonwa-bg-gray-2 p-3 border-bottom">已选：{vSelected}</div>;
             }
             else {
                 onItemClick = onSingleClick;
                 cnViewItem += 'ps-3 ';
                 cnFirst = 'py-2 px-3 border-bottom ';
-                vTop = <div className="tonwa-bg-gray-2 p-3 border-bottom text-info">
-                    <FA name="hand-o-down" className="me-3 text-danger" />
-                    请选择
-                </div>;
+                /*
+                    vTop = <div className="tonwa-bg-gray-2 p-3 border-bottom text-info">
+                        <FA name="hand-o-down" className="me-3 text-danger" />
+                        请选择
+                    </div>;
+                */
             }
             function ViewItem({ value: picked }: { value: Picked }) {
                 let propArr: Prop[] = picked.$ as any;
@@ -148,26 +147,20 @@ export function usePickFromQuery(): [
                 }
                 return <div>
                     {vFirst}
-                    <RowCols contentClassName="py-2 px-3">
+                    <RowCols contentClassName="py-2">
                         {propArr.map((v, index) => {
                             return <VNamedBud key={index} {...v} />;
                         })}
                     </RowCols>
                 </div>
             }
-            return <Page header={header} >
-                <div>
-                    {vTop}
-                    <div>
-                        <List items={pickedArr} ViewItem={ViewItem}
-                            className=""
-                            onItemSelect={onItemSelect}
-                            onItemClick={onItemClick}
-                            itemBan={itemBan}
-                            sep={<Sep className="border-bottom" />} />
-                    </div>
-                    {btnOk}
-                </div>
+            return <Page header={header} footer={btnOk}>
+                <List items={pickedArr} ViewItem={ViewItem}
+                    className=""
+                    onItemSelect={onItemSelect}
+                    onItemClick={onItemClick}
+                    itemBan={itemBan}
+                    sep={<Sep className="border-bottom" />} />
             </Page>
         }
     }, []);

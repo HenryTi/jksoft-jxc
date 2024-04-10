@@ -143,7 +143,7 @@ export interface PendRow {
     detail: BinRow;
     value: number;
     mid: any[];
-    cols: any[];
+    // cols: any[];
 }
 
 class Detail extends BaseObject {
@@ -440,98 +440,7 @@ export class SheetStore extends KeyIdObject {
     async saveProp(id: number, bud: number, int: number, dec: number, str: string) {
         await this.uq.SaveBudValue.submit({ phraseId: bud, id, int, dec, str });
     }
-    /*
-    addPendRow(pend: number, row: Row) {
-        if (this.pendColl === undefined) return;
-        let _sections = this.pendColl[pend];
-        if (_sections === undefined) {
-            debugger;
-        }
-        let sections = getAtomValue(_sections);
-        let { id: rowId } = row.valRow;
-        for (let section of sections) {
-            const { _rows } = section;
-            let rows = getAtomValue(_rows);
-            if (rows.findIndex(v => v.valRow.id === rowId) >= 0) {
-                setAtomValue(_rows, [...rows]);
-                return;
-            }
-        }
-        let { section } = row;
-        if (section === undefined) {
-            section = new Section(this.detail);
-            section.addRow(row);
-        }
-        sections.push(section);
-        setAtomValue(_sections, [...sections]);
-    }
-    
-    addBinDetail(valRow: ValRow) {
-        let { pend } = valRow;
-        let _sections = this.pendColl[pend];
-        if (_sections === undefined) {
-            debugger;
-        }
-        let section: Section = new Section(this.detail);
-        let row: Row = new Row(section);
-        Object.assign(row.valRow, valRow);
-        const { _rows } = section;
-        let rows = getAtomValue(_rows);
-        rows.push(row);
-        setAtomValue(_rows, [...rows]);
-        let sections = getAtomValue(_sections);
-        sections.push(section);
-        setAtomValue(_sections, [...sections]);
-        console.log('addBinDetail', sections, rows);
-    }
 
-    delPendRow(row: Row) {
-        let pend = row.valRow.pend;
-        let _sections = this.pendColl[pend];
-        if (_sections === undefined) return;
-        let sections = getAtomValue(_sections);
-        for (let section of sections) {
-            const { _rows } = section;
-            let rows = getAtomValue(_rows);
-            let p = rows.findIndex(v => v.valRow.pend === pend);
-            if (p < 0) continue;
-            rows.splice(p, 1);
-            break;
-        }
-    }
-    */
-    /*
-    async loadPend(entityPend: EntityPend, params: any): Promise<{ pendRows: PendRow[]; ownerColl: OwnerColl; }> {
-        let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId: undefined }, undefined, 100);
-        this.pendColl = {};
-        let { $page, retSheet, props: showBuds } = ret;
-        const { ownerColl, budColl } = budValuesFromProps(showBuds);
-        let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
-        for (let v of retSheet) {
-            collSheet[v.id] = v;
-        };
-        let pendRows: PendRow[] = [];
-        // build pendColl;
-        for (let v of $page) {
-            let { id, pend, pendValue, mid, cols } = v;
-            if (pendValue === undefined || pendValue <= 0) continue;
-            this.pendColl[pend] = atom([]);
-            let propArr: Prop[] = arrFromJsonArr(entityPend, cols);
-            let midArr = arrFromJsonMid(entityPend, mid);
-            let pendRow: PendRow = {
-                pend,
-                // sheet: { ...collSheet[v.sheet], buds: {}, owned: undefined },
-                detail: { ...v, buds: {}, owned: undefined },
-                origin: id,
-                value: pendValue,
-                mid: midArr,
-                cols: propArr,
-            };
-            pendRows.push(pendRow);
-        }
-        return { pendRows, ownerColl };
-    }
-    */
     async uqGetPend(entityPend: EntityPend, params: any, pendId: number) {
         let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
         return ret;

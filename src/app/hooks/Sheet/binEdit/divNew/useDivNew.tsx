@@ -7,7 +7,7 @@ import { DivEditing, UseInputsProps, ValDiv } from "../../store";
 import { InputDivProps, inputDiv } from "./inputDiv";
 import { useUqApp } from "app";
 import { useModal } from "tonwa-app";
-import { PendProxyHander, ValRow, mergeValRow } from "../../tool";
+import { PendProxyHander, ValRow, mergeValRow } from "../../store";
 import { NamedResults } from "../../store";
 import { getAtomValue } from "tonwa-com";
 

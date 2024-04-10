@@ -1,21 +1,24 @@
 import { ViewSpec } from "app/hooks/View";
-import { Prop, VNamedBud } from "../tool";
+// import { Prop, VNamedBud } from "../tool";
 import { RowCols, ViewShowBuds } from "app/hooks/tool";
 import { getAtomValue, theme } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
+import { Prop, VNamedBud } from "../store/tool";
 
 export interface PendProps {
     divStore: DivStore;
     pendRow: PendRow;
 }
 
+// 如果 Pend 有I和X，主体显示这个
+// 否则，尝试显示 origin bin 的 i
 export function ViewPendRow({
     pendRow, divStore, showPendValue
 }: PendProps & { showPendValue?: boolean }) {
     const { entityBin } = divStore;
     const { pend: entityPend } = entityBin;
     let { i: iBud, hasPrice, hasAmount } = entityPend;
-    const { pend: pendId, detail: { id, i, price, amount }, value, mid, cols } = pendRow;
+    const { pend: pendId, detail: { id, i, price, amount }, value, mid/*, cols*/ } = pendRow;
 
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
         return <div className="d-flex text-end align-items-center">
@@ -24,7 +27,7 @@ export function ViewPendRow({
         </div>;
     }
     const digits = 2;
-    function ViewPropArr({ className, arr }: { className?: string; arr: Prop[]; }) {
+    function ViewPropArr({ arr }: { arr: Prop[]; }) {
         if (arr === undefined || arr.length === 0) return null;
         return <>
             {arr.map((v, index) => {
@@ -49,6 +52,7 @@ export function ViewPendRow({
     }
     const budValueColl = divStore.sheetStore.budsColl[i];
     // if (iBud === undefined) debugger;
+    // <ViewPropArr className="col" arr={cols} />
     return <>
         <div className="py-2 bg-white flex-fill ps-3">
             <div className="flex-fill">
@@ -57,8 +61,7 @@ export function ViewPendRow({
             <div className="d-flex">
                 <RowCols contentClassName=" flex-fill ">
                     <ViewShowBuds budValueColl={budValueColl} bud={iBud} />
-                    <ViewPropArr className="col" arr={mid} />
-                    <ViewPropArr className="col" arr={cols} />
+                    <ViewPropArr arr={mid} />
                 </RowCols>
             </div>
         </div>

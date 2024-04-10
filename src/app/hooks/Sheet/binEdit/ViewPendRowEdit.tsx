@@ -1,7 +1,7 @@
 import { FA, getAtomValue, setAtomValue } from "tonwa-com";
 import { useAtomValue } from "jotai";
-import { ValDiv } from "../store";
-import { ValRow } from "../tool";
+import { ValDiv, ValRow } from "../store";
+// import { ValRow } from "../tool";
 import { PendProps, ViewPendRow } from "./ViewPendRow";
 
 export function ViewPendRowEdit(props: PendProps) {

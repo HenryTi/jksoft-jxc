@@ -1,10 +1,9 @@
 import { useAtomValue } from "jotai";
-import { DivEditing, DivStore, ValDiv } from "../../store";
+import { DivEditing, DivStore, ValDiv, ValRow } from "../../store";
 import { FA, getAtomValue, setAtomValue } from "tonwa-com";
 import { useDivNew } from "../divNew";
 import { useRowEdit } from "../useRowEdit";
 import { Page, useModal } from "tonwa-app";
-import { ValRow } from "../../tool";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { ViewRow } from "./ViewRow";
 

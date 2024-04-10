@@ -5,6 +5,8 @@ import { BudGroup, Entity } from "./Entity";
 
 export abstract class EntityAtomID extends Entity {
     readonly subClasses: EntityAtomID[] = [];
+    titleBuds: BizBud[];
+    primeBuds: BizBud[];
     uniques: string[];
 
     getRefEntities(arrEntity: Entity[]) { arrEntity.push(... this.subClasses); }
@@ -20,6 +22,8 @@ export abstract class EntityAtomID extends Entity {
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
+            case ':&': this.titleBuds = val; break;
+            case ':': this.primeBuds = val; break;
             case 'extends': this.fromExtends(val); break;
             case 'uniques': this.uniques = val; break;
         }
@@ -86,6 +90,17 @@ export abstract class EntityAtomID extends Entity {
         let superClass = this.biz.atomBuilder.initSuperClass(this, extendsId);
         if (superClass === undefined) debugger;
         superClass.subClasses.push(this);
+    }
+
+    private idArrToBudArr(ids: number[]): BizBud[] {
+        if (ids === undefined) return;
+        return ids.map(v => this.budColl[v]);
+    }
+
+    scan() {
+        super.scan();
+        this.titleBuds = this.idArrToBudArr(this.titleBuds as unknown as number[]);
+        this.primeBuds = this.idArrToBudArr(this.primeBuds as unknown as number[]);
     }
 }
 

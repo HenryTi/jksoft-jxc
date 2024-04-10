@@ -3,7 +3,7 @@ import { BinDiv, EntityBin } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
 import { BudsColl, budValuesFromProps } from "../../tool";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
-import { ValRow, Prop, arrFromJsonArr, arrFromJsonMid } from "./tool";
+import { ValRow, /*Prop, arrFromJsonArr, */arrFromJsonMid } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { NamedResults } from "./NamedResults";
 import { ValDiv, ValDivs } from './ValDiv';
@@ -116,10 +116,12 @@ export class DivStore {
             let { id, pend, pendValue, mid, cols } = v;
             if (pendValue === undefined || pendValue <= 0) continue;
             this.pendColl[pend] = atom(undefined as ValDiv);
+            /*
             let propArr: Prop[];
             if (cols !== undefined) {
                 propArr = arrFromJsonArr(entityPend, cols, hiddenBuds);
             }
+            */
             let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);
             let pendRow: PendRow = {
                 pend,
@@ -127,7 +129,7 @@ export class DivStore {
                 origin: id,
                 value: pendValue,
                 mid: midArr,
-                cols: propArr,
+                // cols: propArr,
             };
             pendRows.push(pendRow);
         }

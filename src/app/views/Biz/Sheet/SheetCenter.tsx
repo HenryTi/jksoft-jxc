@@ -4,13 +4,13 @@ import { Link, Route } from "react-router-dom";
 import { IDView, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { EntitySheet } from "app/Biz";
 import { FA, List, to62, wait } from "tonwa-com";
-import { PageSheetEdit, PageSheetNew, ViewSheetTime } from "app/hooks";
+import { ViewSheetTime } from "app/hooks";
 import { useCallback, useState } from "react";
 import { Atom, Sheet } from "uqs/UqDefault";
 import { Bin, ViewNotifyCount } from "app/tool";
 import { centers } from "app/views/center";
+import { PageSheetEdit, PageSheetNew } from "app/hooks";
 
-const pathSheet = 'sheet';
 function PageSheetCenter() {
     const modal = useModal();
     const uqApp = useUqApp();
@@ -32,7 +32,7 @@ function PageSheetCenter() {
             }
         }
         return <Link
-            to={`/${pathSheet}/${to62(entityId)}`}
+            to={`/${sheet}/${to62(entityId)}`}
         >
             <div className="px-3 py-2 align-items-center d-flex">
                 <BI name="card-list" className="fs-larger me-3 text-primary" />
@@ -83,7 +83,7 @@ function PageSheetCenter() {
                 {right}
             </div>;
         }
-        return <Link to={`/${pathSheet}/${to62(entitySheet.id)}/${to62(id)}`}>
+        return <Link to={`/${sheet}/${to62(entitySheet.id)}/${to62(id)}`}>
             <div className="d-flex px-3 py-3">
                 <FA name="file" className="me-3 text-danger" />
                 <span className="d-inline-block w-min-8c">{sheetCaption}</span>
@@ -125,10 +125,24 @@ function PageSheetCenter() {
         </PageQueryMore>;
 }
 
+
+const sheet = 'sheet';
+
+export function pathSheet(phrase: number | string) {
+    function sheetInPath(phrase: number | string) {
+        if (typeof phrase === 'string') {
+            if (phrase !== ':sheet') debugger;
+            return phrase;
+        }
+        return to62(phrase);
+    }
+    return `${sheet}/${sheetInPath(phrase)}`;
+}
+
 export function routeSheetCenter() {
     return <>
         <Route path={centers.sheet.path} element={<PageSheetCenter />} />
-        <Route path={'sheet/:sheet/:id'} element={<PageSheetEdit />} />
-        <Route path={'sheet/:sheet'} element={<PageSheetNew />} />
+        <Route path={`${sheet}/:sheet/:id`} element={<PageSheetEdit />} />
+        <Route path={`${sheet}/:sheet`} element={<PageSheetNew />} />
     </>;
 }

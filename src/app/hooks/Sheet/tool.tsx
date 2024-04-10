@@ -1,7 +1,7 @@
 import { BinRow, BizBud, Entity, EntityPend, predefinedPendFields } from "app/Biz";
 import { ViewBud } from "app/hooks/Bud";
 import { FA } from "tonwa-com";
-
+/*
 export interface Prop<T = any> {
     name: string;
     bud: BizBud;
@@ -98,15 +98,13 @@ export function arrFromJsonMid(entity: Entity, mid: any) {
         if (value === null) continue;
         ret.push({ name: undefined, bud, value });
     }
-    /*
-    for (let i in mid) {
-        let bud = budColl[i];
-        if (bud === undefined) continue;
-        let value = mid[i];
-        if (value === null) continue;
-        ret.push({ name: bud.name, bud, value });
-    }
-    */
+    // for (let i in mid) {
+    //    let bud = budColl[i];
+    //    if (bud === undefined) continue;
+    //    let value = mid[i];
+    //    if (value === null) continue;
+    //    ret.push({ name: bud.name, bud, value });
+    //}
     return ret;
 }
 
@@ -168,3 +166,4 @@ export function mergeValRow(dest: ValRow, src: ValRow) {
     dest.pendValue = pendValue;
     dest.origin = origin;
 }
+*/

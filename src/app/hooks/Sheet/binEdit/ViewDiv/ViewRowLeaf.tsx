@@ -32,7 +32,7 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
         }
     }
     let budValueColl = divStore.sheetStore.budsColl[valRow.i];
-    if (budValueColl === undefined) debugger;
+    // if (budValueColl === undefined) debugger;
     return <>
         <div className="flex-fill">
             {

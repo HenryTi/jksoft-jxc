@@ -10,7 +10,7 @@ import { getDays } from "app/tool";
 import { budFormRow } from "app/hooks/Bud";
 import { Calc } from "app/hooks/Calc";
 import { ViewAtomId } from "app/hooks/BizAtom";
-import { PendProxyHander, btnNext, cnNextClassName } from "../../tool";
+import { PendProxyHander, btnNext, cnNextClassName } from "../../store";
 import { InputProps } from "./inputBase";
 
 
