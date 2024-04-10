@@ -65,16 +65,17 @@ export function ViewDiv(props: ViewDivProps) {
         }
         await modal.open(<PageEditDiv divStore={divStore} valDiv={valDiv} />);
     }
+    /*
     let cnBtnDiv = ' px-1 cursor-pointer text-primary ';
     let btnEdit: any, iconDel: string, colorDel: string, memoDel: any;
     if (deleted === true) {
         iconDel = 'undo';
-        colorDel = 'text-secondary opacity-100 ';
+        colorDel = 'text-secondary ';
         memoDel = '恢复';
     }
     else {
         iconDel = 'trash-o';
-        colorDel = 'text-success';
+        colorDel = 'text-secondary';
         let iconEdit: string, colorEdit: string;
         if (id < 0) {
             iconEdit = 'plus';
@@ -94,22 +95,23 @@ export function ViewDiv(props: ViewDivProps) {
             {memoDel && <span className="ms-1">{memoDel}</span>}
         </div>
     </>;
-
+    */
     if (deleted === true) {
         return <ViewDivUndo divStore={divStore} valDiv={valDiv} />;
     }
 
     let buttons: any;
-    if (readonly !== true) buttons = <>{btnEdit}{btnDel}</>;
+    if (readonly !== true && level === 0) {
+        buttons = twoButtons(id, deleted, onDelSub, onEdit);
+    }
     if (id < 0) {
         let pendRow = divStore.getPendRow(pend);
-        buttons = <>{buttons}<div className="me-n3" /></>;
         return <div className="d-flex">
-            <div className="flex-fill opacity-25">
+            <div className="d-flex flex-fill opacity-25">
                 <ViewPendRow divStore={divStore} pendRow={pendRow} />
             </div>
             <div className="d-flex w-min-4c mt-2 align-items-start">
-                {buttons}
+                {buttons}<div className="me-n3" />
             </div>
         </div>;
     }
@@ -117,10 +119,42 @@ export function ViewDiv(props: ViewDivProps) {
     if (divs.length === 0) {
         return <ViewRow {...props} buttons={buttons} />;
     }
-    if (level > 0) buttons = undefined;
     return <>
         <ViewRow {...props} buttons={buttons} />
         {divs.map(v => <ViewDiv key={v.id} {...props} valDiv={v} />)}
-    </>
+    </>;
+}
+
+function twoButtons(id: number, deleted: boolean, onDel: () => void, onEdit: () => void) {
+    let cnBtnDiv = ' px-1 cursor-pointer text-primary ';
+    let btnEdit: any, iconDel: string, colorDel: string, memoDel: any;
+    if (deleted === true) {
+        iconDel = 'undo';
+        colorDel = 'text-secondary ';
+        memoDel = '恢复';
+    }
+    else {
+        iconDel = 'trash-o';
+        colorDel = 'text-secondary';
+        let iconEdit: string, colorEdit: string;
+        if (id < 0) {
+            iconEdit = 'plus';
+            colorEdit = ' text-primary ';
+        }
+        else {
+            iconEdit = 'pencil-square-o';
+            colorEdit = ' text-success ';
+        }
+        btnEdit = <div className={cnBtnDiv + colorEdit} onClick={onEdit}>
+            <FA name={iconEdit} fixWidth={true} size="lg" />
+        </div>;
+    }
+    let btnDel = <>
+        <div className={cnBtnDiv + colorDel} onClick={onDel}>
+            <FA name={iconDel} fixWidth={true} />
+            {memoDel && <span className="ms-1">{memoDel}</span>}
+        </div>
+    </>;
+    return <>{btnEdit}{btnDel}</>;
 }
 

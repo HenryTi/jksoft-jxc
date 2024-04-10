@@ -3,10 +3,10 @@ import { useCallback } from "react";
 import { useModal } from "tonwa-app";
 import { NamedResults, PickResult } from "../store";
 import { usePageParams } from "./PageParams";
-import { PagePendProps } from "../binEdit/model";
 import { PendProxyHander, ValRow } from "../tool";
 import { DivStore } from "../store";
 import { PagePend } from "./PagePend";
+import { PendProps } from "../binEdit/ViewPendRow";
 
 export function usePickFromPend() {
     const modal = useModal();
@@ -35,13 +35,7 @@ export function usePickFromPend() {
             }
             await divStore.loadPend(retParam);
 
-            let props: PagePendProps = {
-                caption,
-                divStore,
-                search: [],
-            };
-
-            let inputed = await modal.open<ValRow[]>(<PagePend {...props} />);
+            let inputed = await modal.open<ValRow[]>(<PagePend divStore={divStore} caption={caption} />);
             if (inputed === undefined) return;
             // 如果有inputs，直接已经输入进了。就不用返回了。
             if (bin.div.inputs !== undefined) return;

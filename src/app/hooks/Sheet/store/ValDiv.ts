@@ -33,8 +33,20 @@ export class ValDivs {
     addValDiv(valDiv: ValDiv) {
         let { atomValDivs } = this;
         let valDivs = getAtomValue(atomValDivs);
-        valDivs.push(valDiv);
-        setAtomValue(atomValDivs, [...valDivs]);
+        let { atomValRow } = valDiv;
+        let valRow = getAtomValue(atomValRow);
+        let { id } = valRow;
+        let index = valDivs.findIndex(v => {
+            let ivr = getAtomValue(v.atomValRow);
+            return (ivr.id === id);
+        });
+        if (index >= 0) {
+            valDivs.splice(index, 1, valDiv);
+        }
+        else {
+            valDivs.push(valDiv);
+            setAtomValue(atomValDivs, [...valDivs]);
+        }
     }
     removePend(pendId: number) {
         let valDivs = getAtomValue(this.atomValDivs);

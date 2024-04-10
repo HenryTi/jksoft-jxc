@@ -375,13 +375,10 @@ export class DivStore {
     }
 }
 
-export interface DivEditProps {
+export interface UseInputsProps {
     divStore: DivStore;
     pendRow: PendRow;
     namedResults: NamedResults;
-}
-
-export interface UseInputsProps extends DivEditProps {
     binDiv: BinDiv;
     valDiv: ValDiv;
 }

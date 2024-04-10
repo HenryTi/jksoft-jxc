@@ -31,10 +31,6 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
             setAtomValue(atomValRow, valRow);
         }
     }
-    let viewValue = deleted === true ?
-        <PAV bud={budValue} className={cnValue} val={value} />
-        :
-        <PAV bud={budValue} className={cnValue + ' cursor-pointer '} val={value} onClick={onEdit} />
     let budValueColl = divStore.sheetStore.budsColl[valRow.i];
     if (budValueColl === undefined) debugger;
     return <>
@@ -65,7 +61,7 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
             <div className="d-flex align-items-end flex-column me-3">
                 <PAV bud={budAmount} className={cnAmount} val={amount} />
                 <PAV bud={budPrice} className={cnPrice} val={price} />
-                {viewValue}
+                <PAV bud={budValue} className={cnValue} val={value} />
             </div>
         </div>
         <div className="d-flex align-items-start">

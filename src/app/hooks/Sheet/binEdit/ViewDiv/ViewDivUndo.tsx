@@ -50,7 +50,7 @@ export function ViewDivUndo(props: ViewDivProps) {
         if (deleting !== 0) return null;
         return <div className="d-flex flex-column align-items-end w-min-6c text-end pt-2">
             {btn(onRestore, 'undo', ' text-warning ', '恢复', 'text-info')}
-            {btn(onDelThoroughly, 'times', ' text-body-tertiary ', '删除', '')}
+            {btn(onDelThoroughly, 'times', ' text-body-tertiary ', '清理', '')}
         </div>;
     }
 
