@@ -370,6 +370,7 @@ export class EntityBin extends Entity {
     private buildBudPickable(prop: any): BizBud {
         const { id, name } = prop;
         let bud = new BizBud(this.biz, id, name, EnumBudType.atom, this);
+        this.budColl[id] = bud;
         bud.fromSchema(prop);
         bud.budDataType.fromSchema(prop);
         bud.scan();
@@ -604,12 +605,28 @@ export class EntityPend extends Entity {
 
     scan(): void {
         super.scan();
+        if (this.i !== undefined) {
+            this.i = this.buildBudFromProp(this.i);
+        }
+        if (this.x !== undefined) {
+            this.x = this.buildBudFromProp(this.x);
+        }
         if (this.cols !== undefined) {
             for (let bud of this.cols) {
                 if (bud === undefined) continue;
                 this.budColl[bud.id] = bud;
             }
         }
+    }
+
+    private buildBudFromProp(prop: any): BizBud {
+        const { id, name } = prop;
+        let bud = new BizBud(this.biz, id, name, EnumBudType.atom, this);
+        this.budColl[id] = bud;
+        bud.fromSchema(prop);
+        bud.budDataType.fromSchema(prop);
+        bud.scan();
+        return bud;
     }
 }
 

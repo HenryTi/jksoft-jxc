@@ -29,7 +29,7 @@ RETURNS props (
     id ID,
     phrase ID,
     value JSON,
-    owner ID,           -- show 字段的主字段。其它字段为0
+    (id, phrase) KEY,
 ) {
     IF pendId IS NOT NULL {
             PAGE SELECT t1.id AS pend, e.id AS sheet, t1.bin AS id, b.i AS i

@@ -1,6 +1,6 @@
 import { ViewSpec } from "app/hooks/View";
 // import { Prop, VNamedBud } from "../tool";
-import { RowCols, ViewShowBuds } from "app/hooks/tool";
+import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { getAtomValue, theme } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
 import { Prop, VNamedBud } from "../store/tool";
@@ -55,8 +55,9 @@ export function ViewPendRow({
     // <ViewPropArr className="col" arr={cols} />
     return <>
         <div className="py-2 bg-white flex-fill ps-3">
-            <div className="flex-fill">
+            <div className="flex-fill d-flex align-items-center">
                 <ViewSpec id={i} bold={true} noLabel={true} />
+                <ViewAtomTitles budValueColl={budValueColl} bud={iBud} />
             </div>
             <div className="d-flex">
                 <RowCols contentClassName=" flex-fill ">

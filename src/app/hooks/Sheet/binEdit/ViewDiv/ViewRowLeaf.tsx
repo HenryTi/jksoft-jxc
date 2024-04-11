@@ -2,49 +2,37 @@ import { useAtomValue } from "jotai";
 import { theme, setAtomValue, getAtomValue } from "tonwa-com";
 import { ViewSpecBaseOnly } from "../../../View";
 import { ViewBud, ViewBudUIType } from "../../../Bud";
-import { RowColsSm, ViewShowBuds } from "../../../tool";
+import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../../../tool";
 import { BinEditing } from "../../store";
 import { useRowEdit } from "../useRowEdit";
 import { PAV, ViewDivProps, cn, cnBtn } from "./tool";
 
 export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
-    // div === undefined
     const { valDiv, divStore, vIBase, buttons } = props;
-    const rowEdit = useRowEdit();
-    const { atomValRow, atomValue, binDiv, atomDeleted } = valDiv;
+    const { atomValRow, atomValue, binDiv } = valDiv;
     const { binDivBuds: binBuds, entityBin } = binDiv;
+    const { i: iBud } = entityBin;
     const { budValue, fields, budPrice, budAmount, budI } = binBuds;
-    const { sheetStore } = divStore;
     const valRow = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);
-    const deleted = getAtomValue(atomDeleted);
     const { price, amount } = valRow;
     let {
         value: cnValue, price: cnPrice, amount: cnAmount
     } = theme;
-    async function onEdit() {
-        const binEditing = new BinEditing(sheetStore, entityBin, valRow);
-        let ret = await rowEdit(binEditing);
-        if (ret === true) {
-            const { valRow } = binEditing;
-            await divStore.saveDetail(binDiv, valRow);
-            setAtomValue(atomValRow, valRow);
-        }
-    }
     let budValueColl = divStore.sheetStore.budsColl[valRow.i];
-    // if (budValueColl === undefined) debugger;
     return <>
         <div className="flex-fill">
             {
                 budI &&
                 <div className="mb-1">
                     <ViewSpecBaseOnly id={valRow.i} noVisible={false} bold={true} />
+                    <ViewAtomTitles budValueColl={budValueColl} bud={iBud} />
                 </div>
             }
             <div className={cn + ' bg-white '}>
                 {vIBase}
                 <RowColsSm contentClassName="flex-fill">
-                    <ViewShowBuds bud={entityBin.i} budValueColl={budValueColl} />
+                    <ViewShowBuds bud={iBud} budValueColl={budValueColl} />
                     {
                         fields.map(field => {
                             const { bud } = field;

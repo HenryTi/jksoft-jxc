@@ -40,14 +40,8 @@ export abstract class BudDataType {
     valueToContent(value: string | number) {
         return value;
     }
-    /*
-    fromSwitch(entity: Entity, i: string, val: any) {
-        switch (i) {
-            case 'min': this.min = val; break;
-            case 'max': this.max = val; break;
-        }
-    }
-    */
+    getTitleBuds(): BizBud[] { return; }
+    getPrimeBuds(): BizBud[] { return; }
 }
 
 abstract class BudDataNumber extends BudDataType {
@@ -75,15 +69,6 @@ export class BudArr extends BudDataString {
         }
         this.props = undefined;
     }
-    /*
-    override fromSwitch(entity: Entity, i: string, val: any) {
-        switch (i) {
-            case 'props':
-                this.buds = entity.fromProps(val);
-                break;
-        }
-    }
-    */
 }
 export class BudInt extends BudDataNumber {
     readonly type = EnumBudType.int;
@@ -116,22 +101,9 @@ export class BudAtom extends BudDataNumber {
     override scan(biz: Biz, bud: BizBud) {
         this.bizAtom = biz.entities[this.atom] as EntityAtom;
     }
+    getTitleBuds(): BizBud[] { return this.bizAtom.titleBuds; }
+    getPrimeBuds(): BizBud[] { return this.bizAtom.primeBuds; }
 }
-/*
-export class BudID extends BudDataNumber {
-    readonly type = EnumBudType.ID;
-    private IDName: string;
-    ID: ID;
-    fromSchema(schema: any) {
-        this.IDName = schema.ID;
-    }
-    override scan(biz: Biz, bud: BizBud) {
-        if (this.IDName !== undefined) {
-            this.ID = (biz.uqApp.uq as any)[this.IDName] as ID;
-        }
-    }
-}
-*/
 export class BudIDIO extends BudDataNumber {
     readonly type = EnumBudType.ID;
     private atom: number;
@@ -197,16 +169,15 @@ export class BudPickable extends BudDataNumber {
     }
 }
 
-interface FieldShow {
-    owner: BizBud;
-    items: { entity: Entity; bud: BizBud; }[];
-}
+//type FieldShow = { entity: Entity; bud: BizBud; };
+// type FieldShow = BizBud;
+
 export class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budDataType: BudDataType;
     defaultValue: string;
     atomParams: { [param: string]: string }; // only for BizBudAtom
-    fieldShows: FieldShow[];
+    fieldShows: BizBud[];
     constructor(biz: Biz, id: number, name: string, dataType: EnumBudType, entity: Entity) {
         super(biz, id, name, 'bud');
         this.entity = entity;
@@ -241,7 +212,8 @@ export class BizBud extends BizBase {
     valueToContent(value: any) {
         return this.budDataType.valueToContent(value);
     }
-
+    getTitleBuds(): BizBud[] { return this.budDataType.getTitleBuds(); }
+    getPrimeBuds(): BizBud[] { return this.budDataType.getPrimeBuds(); }
     protected fromSwitch(i: string, val: any) {
         switch (i) {
             default:
@@ -265,17 +237,17 @@ export class BizBud extends BizBase {
 
     private scanFieldShows(val: any) {
         if (val === undefined) return;
-        let ret: FieldShow[] = [];
-        for (let [owerId, items] of val) {
-            ret.push({
-                owner: this.entity.budColl[owerId],
-                items: items.map((item: [number, number]) => {
-                    const [entityId, budId] = item;
-                    let entity = this.biz.entityFromId(entityId);
-                    let bud = entity.budColl[budId];
-                    return { entity, bud };
-                }),
-            })
+        let ret: BizBud[] = [];
+        for (let items of val) {
+            //for (let item of items) {
+            for (let item of items) {
+                // const [entityId, budId] = item;
+                let bud = this.biz.budFromId(item);
+                // let entity = this.biz.entityFromId(budId);
+                // let bud = entity.budColl[budId];
+                // ret.push({ entity, bud });
+                ret.push(bud);
+            }
         }
         return ret;
     }

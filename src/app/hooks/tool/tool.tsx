@@ -1,7 +1,7 @@
 import { useUqApp } from "app/UqApp";
 import { BudCheckValue, BudValue } from "tonwa-app";
-import { ViewBud } from "../Bud";
-import { FA } from "tonwa-com";
+import { ViewBud, budContent } from "../Bud";
+import { FA, theme } from "tonwa-com";
 import React from "react";
 import { BizBud, EntityAtomID } from "app/Biz";
 
@@ -27,9 +27,7 @@ export interface BudValueColl {
 
 export function budValuesFromProps(props: PropData[]) {
     const budsColl: BudsColl = {};
-    // const ownerColl: OwnerColl = {};
     for (let { id, phrase, value/*, owner*/ } of props) {
-        // if (owner !== 0) continue;
         let budValues = budsColl[id];
         if (budValues === undefined) {
             budsColl[id] = budValues = {};
@@ -57,22 +55,6 @@ export function budValuesFromProps(props: PropData[]) {
                 break;
         }
     }
-    /*
-    for (let { id, phrase, owner } of props) {
-        if (owner === 0) continue;
-        let ownerValues = ownerColl[id];
-        if (ownerValues === undefined) {
-            ownerColl[id] = ownerValues = {};
-        }
-        let owned = ownerValues[owner];
-        if (owned === undefined) {
-            owned = [];
-            ownerValues[owner] = owned;
-        }
-        owned.push([phrase, budColl[id][phrase]]);
-    }
-    return { budColl, ownerColl };
-    */
     return budsColl;
 }
 
@@ -104,36 +86,43 @@ export function OwnedBuds({ values, noLabel }: { values: [number, BudValue][]; n
 export function ViewShowBuds({ budValueColl, bud, noLabel }: { budValueColl: BudValueColl; bud: BizBud; noLabel?: boolean; }) {
     if (budValueColl === undefined) return null;
     if (bud === undefined) return null;
-    const { fieldShows } = bud;
-    if (fieldShows === undefined) return null;
-    // return <>{bud.id}</>;
-    // const { biz } = useUqApp();
+    let { fieldShows } = bud;
+    if (fieldShows === undefined) {
+        fieldShows = bud.getPrimeBuds();
+        if (fieldShows === undefined) return null;
+    }
     return <>{
         fieldShows.map((fieldShow, index) => {
-            let { owner, items } = fieldShow;
-            if (items === undefined) return null;
-            // let bizBud = biz.budFromId(budId);
-            return <React.Fragment key={index}>
-                {
-                    items.map(({ entity, bud }) => {
-                        /*
-                        let content: any;
-                        if (bizBud === undefined) {
-                            content = <>
-                                <div className="w-min-4c me-3 small text-secondary">bud</div>
-                                <FA name="question-circle-o" className="text-danger me-2" /> {budId}
-                            </>;
-                        }
-                        else {
-                            content = <ViewBud bud={bizBud} value={budValue} noLabel={noLabel} />;
-                        }
-                        */
-                        let { id } = bud;
-                        let value = budValueColl[id];
-                        return <ViewBud key={id} bud={bud} value={value} noLabel={noLabel} />;
-                    })
-                }
-            </React.Fragment>;
+            //const { entity, bud } = fieldShow;
+            const bud = fieldShow;
+            let { id } = bud;
+            let value = budValueColl[id];
+            return <ViewBud key={index} bud={bud} value={value} noLabel={noLabel} />;
         })}
     </>;
+}
+
+export function ViewAtomTitles({ budValueColl, bud, noLabel }: { budValueColl: BudValueColl; bud: BizBud; noLabel?: boolean; }) {
+    if (budValueColl === undefined) return null;
+    if (bud === undefined) return null;
+    let buds = bud.getTitleBuds();
+    if (buds === undefined) return null;
+    const { labelColor } = theme;
+    return <>{
+        buds.map(v => {
+            let { id } = v;
+            let value = budValueColl[id];
+            let vLabel: any;
+            let vContent = budContent(v, value);
+            if (noLabel !== true) {
+                vLabel = <small className={'ms-3 me-1 ' + labelColor}>{v.caption ?? v.name}</small>;
+            }
+            else {
+                vContent = <span className="ms-3">{vContent}</span>;
+            }
+            return <React.Fragment key={id}>
+                {vLabel}{vContent}
+            </React.Fragment>;
+        })
+    }</>;
 }
