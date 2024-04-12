@@ -8,7 +8,7 @@ import { ChangeEvent, useState } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { BinEditing, FieldsEditing } from "../store";
-import { RowCols, ViewShowBuds } from "app/hooks/tool";
+import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
 export function useRowEdit() {
     const modal = useModal();
@@ -69,13 +69,15 @@ function ModalInputRow({ binEditing }: { binEditing: FieldsEditing; }) {
     function ViewIdField({ bud, value }: { bud: BizBud; value: number; }) {
         if (bud === undefined) return null;
         const { caption, name } = bud;
+        const budValueColl = sheetStore.budsColl[value];
         return <Band label={caption ?? name} className="border-bottom py-2">
-            <ViewSpecBaseOnly id={value} />
+            <ViewSpecBaseOnly id={value} bold={true} />
+            <ViewAtomTitles budValueColl={budValueColl} bud={bud} />
             <RowCols>
                 <ViewSpecNoAtom id={value} />
             </RowCols>
             <RowCols>
-                <ViewShowBuds bud={bud} budValueColl={sheetStore.budsColl[value]} noLabel={false} />
+                <ViewShowBuds bud={bud} budValueColl={budValueColl} noLabel={false} />
             </RowCols>
         </Band>;
     }
