@@ -116,8 +116,8 @@ export function VNamedBud({ name, value, bud }: { name: string; value: any; bud:
     let caption: string;
     if (bud === undefined) caption = name;
     else {
-        const { name: bn, ui: { caption: bc } } = bud;
-        caption = bc ?? bn;
+        const { name: bn, ui } = bud;
+        caption = ui?.caption ?? bn;
     }
     return <ViewBud bud={bud} value={value} />;
 }

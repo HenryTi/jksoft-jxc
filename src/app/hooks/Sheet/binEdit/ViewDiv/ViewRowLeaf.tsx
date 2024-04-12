@@ -1,10 +1,8 @@
 import { useAtomValue } from "jotai";
-import { theme, setAtomValue, getAtomValue } from "tonwa-com";
+import { theme } from "tonwa-com";
 import { ViewSpecBaseOnly } from "../../../View";
 import { ViewBud, ViewBudUIType } from "../../../Bud";
 import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../../../tool";
-import { BinEditing } from "../../store";
-import { useRowEdit } from "../useRowEdit";
 import { PAV, ViewDivProps, cn, cnBtn } from "./tool";
 
 export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {

@@ -1,9 +1,10 @@
-import { ViewSpec } from "app/hooks/View";
+import { ViewSpec, ViewSpecBase, ViewSpecBaseOnly } from "app/hooks/View";
 // import { Prop, VNamedBud } from "../tool";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { getAtomValue, theme } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
 import { Prop, VNamedBud } from "../store/tool";
+import { useGetSpec } from "app/hooks/Uq";
 
 export interface PendProps {
     divStore: DivStore;
@@ -51,16 +52,22 @@ export function ViewPendRow({
         }
     }
     const budValueColl = divStore.sheetStore.budsColl[i];
-    // if (iBud === undefined) debugger;
-    // <ViewPropArr className="col" arr={cols} />
+    function ViewSpecAtom({ id }: { id: number; }) {
+        const { atom, specs } = useGetSpec(id);
+        if (atom === undefined) return null;
+        const { value: atomValue, entity } = atom;
+        const { no, ex } = atomValue;
+        return <><b>{ex}</b> <span className="ms-3">{no}</span></>
+    }
     return <>
         <div className="py-2 bg-white flex-fill ps-3">
             <div className="flex-fill d-flex align-items-center">
-                <ViewSpec id={i} bold={true} noLabel={true} />
+                <ViewSpecAtom id={i} />
                 <ViewAtomTitles budValueColl={budValueColl} bud={iBud} />
             </div>
             <div className="d-flex">
                 <RowCols contentClassName=" flex-fill ">
+                    <ViewSpecBase id={i} ViewAtom={undefined} />
                     <ViewShowBuds budValueColl={budValueColl} bud={iBud} />
                     <ViewPropArr arr={mid} />
                 </RowCols>

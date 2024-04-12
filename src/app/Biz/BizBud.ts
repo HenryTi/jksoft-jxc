@@ -24,6 +24,7 @@ export enum EnumBudType {
     date = 41,
     datetime = 42,
 
+    optionItem = 81,            // options item
     arr = 99,
 };
 
@@ -78,14 +79,17 @@ export class BudDec extends BudDataNumber {
     fraction: number;
     override scan(biz: Biz, bud: BizBud) {
         const { ui } = bud;
-        if (ui !== undefined) {
-            this.fraction = ui.fraction;
-        }
+        this.fraction = ui?.fraction;
     }
     valueToContent(value: number) {
         if (this.fraction === undefined) return value;
         if (value === undefined) return;
         return value.toFixed(this.fraction);
+    }
+    fromSchema(schema: any) {
+        super.fromSchema(schema);
+        let { ui } = schema;
+        this.fraction = ui?.fraction;
     }
 }
 export class BudString extends BudDataString {

@@ -42,7 +42,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     let content: any;
     let label = caption ?? name;
     let cnRadio: string;
-    if (ui.edit === 'pop') {
+    if (ui?.edit === 'pop') {
         cnRadio = ' w-25 my-2 ';
         onEditClick = async function () {
             function onReturn() {

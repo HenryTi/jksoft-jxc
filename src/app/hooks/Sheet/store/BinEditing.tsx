@@ -1,5 +1,5 @@
 import { RegisterOptions } from "react-hook-form";
-import { FormRow } from "app/coms";
+import { Band, FormRow } from "app/coms";
 import { BinDiv, BinField, BinRow, BizBud, BudAtom, BudDec, BudRadio, BudsFields, EntityBin, EnumBudType, ValueSetType } from "app/Biz";
 import { Calc, Formulas } from "../../Calc";
 import { DivStore } from "./DivStore";
@@ -8,6 +8,8 @@ import { ValDiv } from "./ValDiv";
 import { NamedResults } from "./NamedResults";
 import { getDays } from "app/tool";
 import { ValRow } from "./tool";
+import { ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
+import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
 export abstract class FieldsEditing extends BudsFields {
     private readonly calc: Calc;
@@ -28,8 +30,7 @@ export abstract class FieldsEditing extends BudsFields {
                 this.fieldColl[name] = f;
             }
             let { ui, budDataType: { min, max } } = bud;
-            let { show } = ui;
-            if (show === true) continue;
+            if (ui?.show === true) continue;
             if (valueSet !== undefined) {
                 formulas.push([name, valueSet]);
                 if (valueSetType === ValueSetType.init) {
@@ -146,8 +147,7 @@ export abstract class FieldsEditing extends BudsFields {
         for (let field of this.allFields) {
             const { bud, valueSetType } = field;
             const { ui } = bud;
-            let { show } = ui;
-            if (show === true) continue;
+            if (ui?.show === true) continue;
             switch (valueSetType) {
                 case ValueSetType.none:
                 case ValueSetType.init: return true;
@@ -155,11 +155,6 @@ export abstract class FieldsEditing extends BudsFields {
         }
         return false;
     }
-    /*
-    getDefaultValue(field: BinField): number {
-        return field.getValue(this.valRow);
-    }
-    */
     buildFormRows(filterOnForm: boolean = false): FormRow[] {
         let ret: FormRow[] = [];
         const { results: calcResults } = this.calc;
@@ -168,9 +163,11 @@ export abstract class FieldsEditing extends BudsFields {
             if (filterOnForm === true) {
                 if (onForm === false) continue;
             }
+            if ((field === this.fieldI || field === this.fieldX) && valueSetType === ValueSetType.equ) {
+                continue;
+            }
             const { caption, budDataType, ui } = bud;
-            let { show } = ui;
-            if (show === true) continue;
+            if (ui?.show === true) continue;
             let options: RegisterOptions = {
                 value: field.getValue(this.valRow), // this.getDefaultValue(field),
                 disabled: valueSetType === ValueSetType.equ,
@@ -200,8 +197,8 @@ export abstract class FieldsEditing extends BudsFields {
                     const { fraction } = budDataType as BudDec;
                     if (fraction !== undefined) {
                         step = String(1 / Math.pow(10, fraction));
-                        formRow.step = step;
                     }
+                    formRow.step = step;
                     formRow.options.valueAsNumber = true;
                     if (min !== undefined) {
                         formRow.options.min = calcResults[`${name}.min`];
@@ -227,6 +224,33 @@ export abstract class FieldsEditing extends BudsFields {
         }
         return ret;
     }
+
+    private viewIdField(bud: BizBud, value: number) {
+        const { caption, name } = bud;
+        const budValueColl = this.sheetStore.budsColl[value];
+        return <Band label={caption ?? name} className="border-bottom py-2">
+            <ViewSpecBaseOnly id={value} bold={true} />
+            <ViewAtomTitles budValueColl={budValueColl} bud={bud} />
+            <RowCols>
+                <ViewSpecNoAtom id={value} />
+            </RowCols>
+            <RowCols>
+                <ViewShowBuds bud={bud} budValueColl={budValueColl} noLabel={false} />
+            </RowCols>
+        </Band>;
+    }
+
+    viewI() {
+        if (this.fieldI === undefined) return null;
+        let value = this.fieldI.getValue(this.valRow);
+        return this.viewIdField(this.budI, value);
+    }
+
+    viewX() {
+        if (this.fieldX === undefined) return null;
+        let value = this.fieldX.getValue(this.valRow);
+        return this.viewIdField(this.budX, value);
+    }
 }
 
 function budRadios(budDataType: BudRadio): { label: string; value: string | number }[] {
@@ -241,12 +265,10 @@ function budRadios(budDataType: BudRadio): { label: string; value: string | numb
 
 export class DivEditing extends FieldsEditing {
     readonly divStore: DivStore;
-    // readonly pendLeft: number;
     constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, valDiv: ValDiv, initBinRow?: BinRow) {
         super(divStore.sheetStore, divStore.entityBin, binDiv.buds, initBinRow);
         this.divStore = divStore;
         this.setNamedParams(namedResults);
-        // this.pendLeft = 
         if (this.fieldValue !== undefined) {
             let pendLeft = divStore.getPendLeft(valDiv);
             if (pendLeft !== undefined) {
@@ -254,21 +276,6 @@ export class DivEditing extends FieldsEditing {
             }
         }
     }
-    /*
-    get pendLeft() {
-        return this.divStore.getPendLeft();
-    }
-    */
-    /*
-    getDefaultValue(field: BinField): number {
-        if (field.name === 'value') {
-            if (this.pendLeft !== undefined) {
-                return this.pendLeft;
-            }
-        }
-        return field.getValue(this.valRow);
-    }
-    */
 }
 
 // 跟当前行相关的编辑，计算，状态

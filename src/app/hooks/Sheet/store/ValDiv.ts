@@ -104,7 +104,6 @@ export class ValDiv extends ValDivs {
     setValue(value: number) {
         let valRow = getAtomValue(this.atomValRow);
         valRow.value = value;
-        // setAtomValue(this.atomValue, value);
     }
 
     setIXBase(valRow: ValRow) {

@@ -44,7 +44,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
     let onEditClick: () => void;
     let content: any;
     let label = caption ?? name;
-    if (ui.edit === 'pop') {
+    if (ui?.edit === 'pop') {
         cn += ' w-25 my-1';
         onEditClick = async function () {
             function onReturn() {

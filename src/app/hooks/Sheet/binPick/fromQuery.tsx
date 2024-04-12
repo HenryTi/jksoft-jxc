@@ -145,9 +145,9 @@ export function usePickFromQuery(): [
                         {vFirst}
                     </div>;
                 }
-                return <div>
+                return <div >
                     {vFirst}
-                    <RowCols contentClassName="py-2">
+                    <RowCols contentClassName="py-2 px-3">
                         {propArr.map((v, index) => {
                             return <VNamedBud key={index} {...v} />;
                         })}

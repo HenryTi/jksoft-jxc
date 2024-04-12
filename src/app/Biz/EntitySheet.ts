@@ -140,7 +140,7 @@ export abstract class BinField {
     abstract getValue(binRow: BinRow): any;
     abstract setValue(binRow: BinRow, v: any): void;
     abstract get onForm(): boolean;
-    get required(): boolean { return this.bud.ui.required; }
+    get required(): boolean { return this.bud.ui?.required; }
 }
 
 class FieldI extends BinField {

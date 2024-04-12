@@ -23,7 +23,7 @@ export class BudEditing implements IBudEditing {
     constructor(bizBud: BizBud, required: boolean = undefined) {
         this.bizBud = bizBud;
         this.required = required === undefined ?
-            this.bizBud.ui.required
+            this.bizBud.ui?.required
             : required;
     }
 

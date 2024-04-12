@@ -17,7 +17,6 @@ export async function inputDiv(props: InputDivProps): Promise<ValRow> {
     const { modal, divStore, binDiv, valRow, namedResults, pendRow, valDiv } = props;
     let divEditing = new DivEditing(divStore, namedResults, binDiv, valDiv, valRow);
     if (divEditing.isInputNeeded() === true) {
-        // divEditing.pendValue = pendRow.value;
         if (await modal.open(<PageInput divEditing={divEditing} />) !== true) return;
     }
     return divEditing.valRow;
@@ -64,11 +63,17 @@ function PageInput({ divEditing }: { divEditing: DivEditing; }) {
         }
         modal.close(true);
     }
-    return <Page header={binDiv.ui?.caption}>
-        <div className="my-3">
-            <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
-                <FormRowsView rows={formRows} register={register} errors={errors} setValue={setValue} />
-            </form>
-        </div>
+    let vi = divEditing.viewI();
+    let vx = divEditing.viewX();
+    return <Page header={binDiv.ui?.caption ?? '输入明细'}>
+        {
+            (vi || vx) && <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + theme.bootstrapContainer}>
+                {vi}
+                {vx}
+            </div>
+        }
+        <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
+            <FormRowsView rows={formRows} register={register} errors={errors} setValue={setValue} />
+        </form>
     </Page>
 }

@@ -137,7 +137,7 @@ function ViewFolderContent({ folder, active }: { folder: Folder; active: Active;
     </Accordion>;
 }
 
-function Folder({ icon, iconColor, caption, phrase }: FolderProps) {
+function FolderHeader({ icon, iconColor, caption, phrase }: FolderProps) {
     return <div className="d-flex align-items-center">
         <FA name={icon} className={(iconColor ?? 'text-info') + " ms-1 me-4"} fixWidth={true} size={iconSize} />
         <span className={fs}>{caption}</span>
@@ -163,7 +163,7 @@ function ViewFolder({ folder, index, active }: { folder: Folder; index: string, 
     });
     return <AccordionItem eventKey={index} className="">
         <Accordion.Header>
-            <Folder phrase={0} caption={ui.caption}
+            <FolderHeader phrase={0} caption={ui.caption}
                 icon={ui.icon} iconColor={ui.iconColor} />
         </Accordion.Header>
         <Accordion.Body className="ps-5 pe-0 text-dark">

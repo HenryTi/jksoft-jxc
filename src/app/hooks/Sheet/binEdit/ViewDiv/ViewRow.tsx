@@ -6,9 +6,9 @@ import { ViewRowStem } from "./ViewRowStem";
 export function ViewRow(props: ViewDivProps) {
     const { valDiv } = props;
     const { binDiv } = valDiv;
-    const { binDivBuds: binBuds, level, entityBin, div } = binDiv;
+    const { binDivBuds, level, entityBin, div } = binDiv;
     const { divLevels } = entityBin;
-    const { hasIBase } = binBuds;
+    const { hasIBase } = binDivBuds;
     let vIBase: any;
     if (hasIBase === true) {
         let { iBase } = valDiv;
