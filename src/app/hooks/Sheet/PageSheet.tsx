@@ -130,7 +130,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
                     :
                     divs.map(v => {
                         const { id } = v;
-                        const cn = 'mb-3 border-top border-bottom ' + (id < 0 ? 'border-warning' : 'border-primary-subtle');
+                        const cn = 'border-top border-bottom ' + (id < 0 ? 'border-warning' : 'border-primary-subtle');
                         return <div key={id} className={cn}>
                             <ViewDiv divStore={divStore} valDiv={v} readonly={readonly} />
                         </div>;

@@ -108,21 +108,18 @@ export function ViewAtomTitles({ budValueColl, bud, noLabel }: { budValueColl: B
     let buds = bud.getTitleBuds();
     if (buds === undefined) return null;
     const { labelColor } = theme;
-    return <>{
+    return <><span className="me-3" />{
         buds.map(v => {
             let { id } = v;
             let value = budValueColl[id];
             let vLabel: any;
             let vContent = budContent(v, value);
             if (noLabel !== true) {
-                vLabel = <small className={'ms-3 me-1 ' + labelColor}>{v.caption ?? v.name}</small>;
+                vLabel = <><small className={labelColor}>{v.caption ?? v.name}</small>: </>;
             }
-            else {
-                vContent = <span className="ms-3">{vContent}</span>;
-            }
-            return <React.Fragment key={id}>
+            return <span key={id} className="text-nowrap me-3">
                 {vLabel}{vContent}
-            </React.Fragment>;
+            </span>;
         })
     }</>;
 }
