@@ -106,8 +106,9 @@ PROC ProcSaveBudRadio (
     optionsItemPhrase ID,
 ) {
     -- 自动清除原来的，添加现在的
-    -- VAR budPhraseId ID = PhraseId(budPhrase);
-    -- VAR optionsItemId ID = PhraseId(optionsItemPhrase);
+    WITH IxBudInt I=id X=budPhrase DEL;
+    WITH IxBudDec I=id X=budPhrase DEL;
+    WITH IxBudStr I=id X=budPhrase DEL;
     FOR (VAR x ID OF SELECT a.x
         FROM IxBud as a 
             JOIN Bud as b ON b.id=a.x 
@@ -890,21 +891,6 @@ RETURNS props VIRTUAL (
         IF type IS NULL {
             BREAK;
         }
-        /*
-        SET jval = '{}';
-        SET jval = JSON_ARRAY_APPEND(jval, '$', (
-            SELECT JSON_ARRAYAGG(JSON_ARRAY(a.x, a.value))
-                FROM IxBudInt as a WHERE a.i=id
-        ));
-        SET jval = JSON_ARRAY_APPEND(jval, '$', (
-            SELECT JSON_ARRAYAGG(JSON_ARRAY(a.x, a.value))
-            FROM IxBudDec as a WHERE a.i=id
-        ));
-        SET jval = JSON_ARRAY_APPEND(jval, '$', (
-            SELECT JSON_ARRAYAGG(JSON_ARRAY(a.x, a.value))
-            FROM IxBudStr as a WHERE a.i=id
-        ));
-        */
         INTO props SELECT id, phrase, (
                 SELECT JSON_ARRAYAGG(JSON_ARRAY(arr.x, arr.value)) FROM (
                     SELECT a.x, a.value FROM IxBudInt as a WHERE a.i=id

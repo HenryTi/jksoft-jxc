@@ -27,7 +27,7 @@ export interface BudValueColl {
 
 export function budValuesFromProps(props: PropData[]) {
     const budsColl: BudsColl = {};
-    for (let { id, phrase, value/*, owner*/ } of props) {
+    for (let { id, phrase, value } of props) {
         let budValues = budsColl[id];
         if (budValues === undefined) {
             budsColl[id] = budValues = {};

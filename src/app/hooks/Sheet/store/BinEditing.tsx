@@ -209,6 +209,11 @@ export abstract class FieldsEditing extends BudsFields {
                     break;
                 case EnumBudType.radio:
                     formRow.radios = budRadios(budDataType as BudRadio);
+                    // 从数据库getsheet返回的是array
+                    let optionsValue = options.value;
+                    if (Array.isArray(optionsValue) === true) {
+                        options.value = optionsValue[0];
+                    }
                     break;
                 case EnumBudType.check:
                     debugger; // impossible
