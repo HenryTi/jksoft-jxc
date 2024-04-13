@@ -26,18 +26,18 @@ export function EditBudRadio(props: EditBudTemplateProps) {
         initCheckValue[initValue as number] = true;;
     }
     const [value, setValue] = useState(initCheckValue);
-    let checks: BudCheckEditValue = initCheckValue;
+    let checks: BudCheckEditValue = value;
     let radios: [item: number, caption: string, value: string | number, defaultCheck: boolean,][] = []
-    let hasChecked = false;
+    let checked = false;
     for (let item of items) {
         let { id: itemId, name, caption, value } = item;
         let c: boolean = checks[itemId];
         if (c === true) {
-            hasChecked = true;
+            checked = true;
         }
         radios.push([itemId, caption ?? name, value, c]);
     }
-    if (hasChecked === false) {
+    if (checked === false) {
         // (radios[0])[3] = true;
     }
 
