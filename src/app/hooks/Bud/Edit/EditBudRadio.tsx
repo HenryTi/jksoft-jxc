@@ -17,10 +17,13 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     if (initValue === undefined) {
         // initCheckValue[items[0].id] = true;
     }
-    else {
+    else if (Array.isArray(initValue) === true) {
         for (let v of initValue as BudCheckValue) {
             initCheckValue[v] = true;
         }
+    }
+    else {
+        initCheckValue[initValue as number] = true;;
     }
     const [value, setValue] = useState(initCheckValue);
     let checks: BudCheckEditValue = initCheckValue;

@@ -117,8 +117,8 @@ PROC ProcSaveBudRadio (
         WITH IxBud I=id X=x DEL;
     }
     IF optionsItemPhrase > 0 {
-        VAR budId ID = ID(Bud new KEY base=budPhrase,ext=optionsItemPhrase);
-        WITH IxBud I=id X=budId;
+        -- VAR budId ID = ID(Bud new KEY base=budPhrase,ext=optionsItemPhrase);
+        WITH IxBudInt I=id X=budPhrase SET value=optionsItemPhrase;
     }
 };
 

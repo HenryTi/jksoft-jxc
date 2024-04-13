@@ -1,4 +1,4 @@
-import { EntitySheet, EntityBin, Biz, EnumBudType, EntityPend, BinRow, BizBud } from "app/Biz";
+import { EntitySheet, EntityBin, Biz, EntityPend, BinRow, BizBud } from "app/Biz";
 import { ParamSaveDetail, UqExt } from "uqs/UqDefault";
 import { atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
@@ -204,7 +204,6 @@ export class SheetStore extends KeyIdObject {
     async setValRow(valRow: ValRow) {
         const { id: binId } = valRow;
         let { details } = await this.loadBinData(binId);
-        // this.detail.setRowValues(details);
         this.divStore.setValRow(valRow);
     }
 
@@ -220,12 +219,10 @@ export class SheetStore extends KeyIdObject {
         let mainRow = main[0];
         if (mainRow !== undefined) {
             (mainRow as any).buds = budsColl[binId] ?? {};
-            // (mainRow as any).owned = ownerColl[binId] ?? {};
         }
         for (let row of details) {
             const { id } = row;
             (row as any).buds = budsColl[id] ?? {};
-            // (row as any).owned = ownerColl[id] ?? {};
         }
         return { main: mainRow, details };
     }
@@ -263,18 +260,6 @@ export class SheetStore extends KeyIdObject {
             let { id, budDataType } = bud;
             let value = (budsValues as any)[id];
             if (value === undefined) continue;
-            /*
-            let type: 'int' | 'dec' | 'str';
-            switch (budDataType.type) {
-                default:
-                case EnumBudType.atom:
-                case EnumBudType.int: type = 'int'; break;
-                case EnumBudType.dec: type = 'dec'; break;
-                case EnumBudType.str:
-                case EnumBudType.char: type = 'str'; break;
-            }
-            if (type === undefined) continue;
-            */
             propArr.push([id, value, budDataType.type]);
         }
         return propArr;
@@ -319,19 +304,3 @@ export class SheetStore extends KeyIdObject {
         return id;
     }
 }
-/*
-export function useSheetStore() {
-    const { uq, biz } = useUqApp();
-    const { sheet: entityId62, id } = useParams();
-    const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
-    const sheetId = from62(id);
-    const { current: sheetStore } = useRef<SheetStore>(new SheetStore(
-        uq,
-        biz,
-        entitySheet,
-        id === undefined ? undefined : sheetId
-    ));
-    useQuery([entityId62, id], async () => sheetStore.load(), UseQueryOptions);
-    return sheetStore;
-}
-*/

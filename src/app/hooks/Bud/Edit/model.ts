@@ -45,7 +45,6 @@ export interface EditBudProps {
     readOnly?: boolean;
     options?: RegisterOptions;
     onChanged?: (bizBud: BizBud, value: string | number | BudCheckValue) => Promise<void> | void;
-    popup?: boolean;                // if popup===false, input control, no open modal
 }
 
 export interface EditBudTemplateProps extends EditBudProps {

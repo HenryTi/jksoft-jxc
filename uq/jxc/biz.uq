@@ -70,7 +70,7 @@ VALUES
 ;
 
 IX BizResource (
-    ixx,
+    ii,
     i,                              -- id
     x,                              -- lang/culture
     res CHAR(100),
@@ -204,7 +204,7 @@ RETURNS budIds (
             SET a.type=type, a.memo=memo;
     }
     IF caption IS NOT NULL {
-        WITH BizResource IXX=id I=0 X=0 SET res=caption;
+        WITH BizResource II=id I=0 X=0 SET res=caption;
     }
     WITH BizObject as a ID=id SET a.source=source;
     WITH XBiz ID=id;
@@ -241,7 +241,7 @@ RETURNS budIds (
                 SET a.type=budType, a.memo=budMemo;
         }
         IF budCaption IS NOT NULL {
-            WITH BizResource IXX=budId I=0 X=0 SET res=budCaption;
+            WITH BizResource II=budId I=0 X=0 SET res=budCaption;
         }
         WITH XBiz ID=budId;
         WITH BizBud as a ID=budId 
@@ -293,7 +293,7 @@ RETURNS ret (
             SET a.type=type, a.memo=memo;
     }
     IF caption IS NOT NULL {
-        WITH BizResource IXX=id I=0 X=0 SET res=caption;
+        WITH BizResource II=id I=0 X=0 SET res=caption;
     }
     WITH XBiz ID=id;
     WITH BizBud as a ID=id 
@@ -339,7 +339,7 @@ RETURNS buds (
     INTO objs SELECT a.id, a.name as phrase, b.source
         , (SELECT r.res
             FROM BizResource AS r
-            WHERE r.ixx=a.id AND (r.i=0 AND r.x=0 or r.i=langCode AND r.x=0 or r.i=langCode AND r.x=cultureCode)
+            WHERE r.ii=a.id AND (r.i=0 AND r.x=0 or r.i=langCode AND r.x=0 or r.i=langCode AND r.x=cultureCode)
             ORDER BY r.i DESC, r.x desc
             LIMIT 1) as caption
         FROM BizPhrase as a 
@@ -350,7 +350,7 @@ RETURNS buds (
     INTO buds SELECT a.id, a.base, a.name as phrase
         , (SELECT r.res
             FROM BizResource AS r
-            WHERE r.ixx=a.id AND (r.i=0 AND r.x=0 or r.i=langCode AND r.x=0 or r.i=langCode AND r.x=cultureCode)
+            WHERE r.ii=a.id AND (r.i=0 AND r.x=0 or r.i=langCode AND r.x=0 or r.i=langCode AND r.x=cultureCode)
             ORDER BY r.i DESC, r.x desc
             LIMIT 1) as caption
         FROM BizPhrase as a

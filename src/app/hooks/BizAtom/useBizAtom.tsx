@@ -48,7 +48,6 @@ export interface OptionsUseBizAtom {
     exLabel?: string;
     entityAtom?: EntityAtom;
     header?: string;
-    popup?: boolean;                // popup=false, then edit in inputbox
 }
 
 export interface UseBizAtomReturn {

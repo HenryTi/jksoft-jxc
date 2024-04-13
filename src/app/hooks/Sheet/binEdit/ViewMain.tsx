@@ -24,7 +24,7 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
         let { id, caption, name } = bizBud;
         let value = buds[id];
         propRow.push(<LabelBox key={id} label={caption ?? name} required={required} title={value as any} className="mb-2">
-            <EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} popup={popup} readOnly={readOnly} />
+            <EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} readOnly={readOnly} />
         </LabelBox>);
         if (i === length - 1) break;
         if (i % 4 === 3) {

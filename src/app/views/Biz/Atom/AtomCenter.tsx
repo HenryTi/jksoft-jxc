@@ -34,7 +34,6 @@ const options: OptionsUseBizAtom = {
     atomName: 'atom' as any,
     NOLabel: undefined,
     exLabel: undefined,
-    popup: false,
 }
 
 function PageNew() {

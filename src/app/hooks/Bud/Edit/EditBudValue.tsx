@@ -16,7 +16,7 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
     const { openModal } = useModal();
     const { id, readOnly, labelSize, flag, value: initValue, budEditing
         , type, step, convertToBudValue, options, fromBudValue
-        , ViewValueEdit: ValueEdit, onChanged, popup } = props;
+        , ViewValueEdit: ValueEdit, onChanged } = props;
     const budInitValue = fromBudValue === undefined ? initValue as string | number : fromBudValue(initValue);
     const [value, setValue] = useState<string | number>(budInitValue);
     const { bizBud } = budEditing;
@@ -34,13 +34,12 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
         setValue(v);
         onChanged?.(bizBud, budValue.value);
     }
-    if (popup === false) {
+    if (ui?.edit === 'pop') {
         return <ValueEdit label={label}
             labelSize={labelSize}
             readOnly={readOnly}
             flag={flag}
             onEditClick={null}
-            popup={popup}
             {...budEditing}
         >
             <Input value={value} options={options} type={type} onEdited={valueEdited} readOnly={readOnly} />
@@ -54,10 +53,12 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
         }
         let content: any = value;
         if (value === undefined) content = <ViewBudEmpty />;
-        const { format } = ui;
-        if (format !== undefined) {
-            let f: string = format;
-            content = f.replace('{value}', value ? String(value) : '?');
+        if (ui !== undefined) {
+            const { format } = ui;
+            if (format !== undefined) {
+                let f: string = format;
+                content = f.replace('{value}', value ? String(value) : '?');
+            }
         }
         return <ValueEdit label={label}
             labelSize={labelSize}
@@ -142,9 +143,11 @@ export function EditBudDec(props: EditBudTemplateProps) {
         }
     }
     let step: string = '0.000001';
-    let { fraction } = ui;
-    if (fraction !== undefined) {
-        step = String(1 / Math.pow(10, fraction));
+    if (ui !== undefined) {
+        let { fraction } = ui;
+        if (fraction !== undefined) {
+            step = String(1 / Math.pow(10, fraction));
+        }
     }
     return <EditBudValue {...props} type="number" step={step} convertToBudValue={convertToBudValue} />;
 }
