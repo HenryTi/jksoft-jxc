@@ -35,7 +35,7 @@ export function ViewPendRowEdit(props: PendProps) {
         async function onAddNew() {
             let valRow: ValRow = { id: -pendId, buds: {}, owned: {}, pend: pendId };
             let retValDiv = new ValDiv(divStore.binDiv, valRow);
-            divStore.valDivs.addValDiv(retValDiv);
+            divStore.rootValDiv.addValDiv(retValDiv);
             setAtomValue(atomValDiv, retValDiv);
         }
         return <ViewItem icon="square-o" color="text-body-tertiary" onSelectChanged={onAddNew} />
@@ -51,7 +51,7 @@ export function ViewPendRowEdit(props: PendProps) {
             setAtomValue(atomDeleted, false);
         }
         function onDelThoroughly() {
-            divStore.valDivs.removePend(-id);
+            divStore.rootValDiv.removePend(-id);
             setAtomValue(atomValDiv, undefined);
         }
         function onNothing() {

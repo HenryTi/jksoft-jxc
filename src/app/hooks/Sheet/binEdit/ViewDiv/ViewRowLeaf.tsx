@@ -4,9 +4,10 @@ import { ViewSpecBaseOnly } from "../../../View";
 import { ViewBud, ViewBudUIType } from "../../../Bud";
 import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../../../tool";
 import { PAV, ViewDivProps, cn, cnBtn } from "./tool";
+import { ViewIBase } from "./ViewIBase";
 
-export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
-    const { valDiv, divStore, vIBase, buttons } = props;
+export function ViewRowLeaf(props: ViewDivProps) {
+    const { valDiv, divStore, buttons } = props;
     const { atomValRow, atomValue, binDiv } = valDiv;
     const { binDivBuds: binBuds, entityBin } = binDiv;
     const { i: iBud } = entityBin;
@@ -28,7 +29,7 @@ export function ViewRowLeaf(props: ViewDivProps & { vIBase: any; }) {
                 </div>
             }
             <div className={cn + ' bg-white '}>
-                {vIBase}
+                <ViewIBase valDiv={valDiv} />
                 <RowColsSm contentClassName="flex-fill">
                     <ViewShowBuds bud={iBud} budValueColl={budValueColl} />
                     {

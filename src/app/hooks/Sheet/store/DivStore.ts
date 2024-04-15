@@ -27,18 +27,18 @@ export class DivStore {
     readonly binDiv: BinDiv;
     readonly pendColl: { [pend: number]: WritableAtom<ValDiv, any, any> } = {};
     pendRows: PendRow[];
-    readonly valDivs: ValDivs;
+    readonly rootValDiv: ValDiv;
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
 
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
         this.sheetStore = sheetStore;
         this.entityBin = entityBin;
         this.binDiv = entityBin.div;
-        this.valDivs = new ValDiv(entityBin.div, undefined);
+        this.rootValDiv = new ValDiv(entityBin.div, undefined);
         this.valDivColl = {};
         this.pendLoadState = PendLoadState.none;
         this.atomSubmitState = atom((get) => {
-            const { atomValDivs } = this.valDivs;
+            const { atomValDivs } = this.rootValDiv;
             if (atomValDivs === undefined) return SubmitState.none;
             let valDivs = get(atomValDivs);
             let hasValue = false;
@@ -60,9 +60,7 @@ export class DivStore {
         this.pendLoadState = PendLoadState.loading;
         this.pendRows = await this.loadPendInternal(params, undefined);
         this.pendLoadState = PendLoadState.loaded;
-        // this.pendRows = pendRows;
-        // this.ownerColl = ownerColl;
-        const { atomValDivs } = this.valDivs;
+        const { atomValDivs } = this.rootValDiv;
         if (atomValDivs !== undefined) {
             let valDivs = getAtomValue(atomValDivs);
             for (let valDiv of valDivs) {
@@ -77,25 +75,13 @@ export class DivStore {
     }
 
     async loadPendId(pendId: number): Promise<void> {
-        const // {
-            pendRows
-                // ownerColl
-                // } 
-                = await this.loadPendInternal({}, pendId);
+        const pendRows = await this.loadPendInternal({}, pendId);
         if (this.pendRows === undefined) {
             this.pendRows = pendRows;
         }
         else {
             this.pendRows.push(...pendRows);
         }
-        /*
-        if (this.ownerColl === undefined) {
-            this.ownerColl = ownerColl;
-        }
-        else {
-            Object.assign(this.ownerColl, ownerColl);
-        }
-        */
     }
 
     private async loadPendInternal(params: any, pendId: number) {
@@ -111,17 +97,10 @@ export class DivStore {
         };
         let pendRows: PendRow[] = [];
         let hiddenBuds: Set<number> = (rearPick?.hiddenBuds) ?? new Set();
-        // build pendColl;
         for (let v of $page) {
             let { id, pend, pendValue, mid, cols } = v;
             if (pendValue === undefined || pendValue <= 0) continue;
             this.pendColl[pend] = atom(undefined as ValDiv);
-            /*
-            let propArr: Prop[];
-            if (cols !== undefined) {
-                propArr = arrFromJsonArr(entityPend, cols, hiddenBuds);
-            }
-            */
             let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);
             let pendRow: PendRow = {
                 pend,
@@ -129,21 +108,14 @@ export class DivStore {
                 origin: id,
                 value: pendValue,
                 mid: midArr,
-                // cols: propArr,
             };
             pendRows.push(pendRow);
         }
-        return pendRows; // {
-        // pendRows
-        // ownerColl,
-        //}
+        return pendRows;
     }
 
     load(valRows: ValRow[]) {
-        this.setValRows(valRows, false);
-    }
-
-    setValRows(valRows: ValRow[], trigger: boolean) {
+        const trigger = false;
         for (let valRow of valRows) {
             this.setValRowInternal(valRow, trigger);
         }
@@ -159,7 +131,7 @@ export class DivStore {
             }
             return false;
         }
-        let vds = getAtomValue(this.valDivs.atomValDivs);
+        let vds = getAtomValue(this.rootValDiv.atomValDivs);
         for (let vd of vds) {
             if (has(vd, valDiv) === true) {
                 let { atomValRow, atomSum: atomValue } = vd;
@@ -190,7 +162,7 @@ export class DivStore {
     private getOwnerAtomValDivs(valRow: ValRow) {
         const { div } = this.binDiv;
         if (div === undefined) {
-            return this.valDivs.atomValDivs;
+            return this.rootValDiv.atomValDivs;
         }
         const { origin } = valRow;
         let valDiv = this.valDivColl[origin];
@@ -254,7 +226,7 @@ export class DivStore {
         if (subDiv === undefined) {
             valDiv = new ValDiv(binDiv, valRow);
             this.valDivColl[id] = valDiv;
-            this.valDivs.addValDiv(valDiv);
+            this.rootValDiv.addValDiv(valDiv);
             const { pend } = valRow;
             if (pend !== undefined) {
                 this.pendColl[pend] = atom(valDiv);
@@ -262,13 +234,13 @@ export class DivStore {
             return valDiv;
         }
         let parentValDivs: ValDivs;
-        if (origin === undefined) {
-            parentValDivs = this.valDivs;
+        if (origin === undefined || origin < 0) {
+            parentValDivs = this.rootValDiv;
         }
         else {
             let parentValDiv = this.valDivColl[origin];
             if (parentValDiv === undefined) {
-                parentValDivs = this.valDivs;
+                parentValDivs = this.rootValDiv;
             }
             else {
                 // 获取层级值
@@ -330,7 +302,7 @@ export class DivStore {
     }
 
     replaceValDiv(valDiv: ValDiv, newValDiv: ValDiv) {
-        const { atomValDivs } = this.valDivs;
+        const { atomValDivs } = this.rootValDiv;
         let valDivs = getAtomValue(atomValDivs);
         let { length } = valDivs;
         for (let i = 0; i < length; i++) {
@@ -346,7 +318,7 @@ export class DivStore {
     }
 
     removePend(pendId: number) {
-        this.valDivs.removePend(pendId);
+        this.rootValDiv.removePend(pendId);
         setAtomValue(this.pendColl[pendId], undefined);
     }
 
@@ -356,7 +328,7 @@ export class DivStore {
     }
 
     getParentValDiv(valDiv: ValDiv): ValDiv {
-        const { atomValDivs } = this.valDivs;
+        const { atomValDivs } = this.rootValDiv;
         let valDivs = getAtomValue(atomValDivs);
         for (let vd of valDivs) {
             let ret = this.getParentDivInternal(vd, valDiv);

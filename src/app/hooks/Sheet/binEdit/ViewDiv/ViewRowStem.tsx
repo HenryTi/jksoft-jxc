@@ -4,16 +4,17 @@ import { ViewBud, ViewBudUIType, budContent } from "../../../Bud";
 import { RowColsSm, ViewShowBuds } from "../../../tool";
 import { PAV, ViewDivProps, ViewIdField, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
+import { ViewIBase } from "./ViewIBase";
 
-export function ViewRowStem(props: ViewDivProps & { vIBase: any; }) {
-    const { valDiv, divStore, vIBase, buttons, hidePivot } = props;
+export function ViewRowStem(props: ViewDivProps) {
+    const { valDiv, divStore, buttons, hidePivot } = props;
     const { atomValRow, atomValDivs, atomSum, binDiv } = valDiv;
     const { binDivBuds: binBuds, level, entityBin, div } = binDiv;
     const { fields, budI } = binBuds;
     const valRow = useAtomValue(atomValRow);
     let sum = useAtomValue(atomSum);
     const divs = useAtomValue(atomValDivs);
-    const { pendValue } = valRow;
+    const { i: iValue, pendValue } = valRow;
     let {
         value: cnValue, sum: cnSum
         , pend: cnPend, pendOver: cnPendOver
@@ -25,7 +26,7 @@ export function ViewRowStem(props: ViewDivProps & { vIBase: any; }) {
     if (pivot !== undefined && pivot === binDiv.div && hidePivot !== true) {
         viewPivot = <ViewPivotDiv divStore={divStore} valDiv={valDiv} />;
     }
-    let viewPend: any;
+    let viewPendValue: any;
     if (level === 0) {
         let icon: string, color: string;
         if (sum > pendValue) {
@@ -36,22 +37,21 @@ export function ViewRowStem(props: ViewDivProps & { vIBase: any; }) {
             icon = 'hand-right-o';
             color = cnPend;
         }
-        viewPend = <div className="flex-fill d-flex align-items-center">
+        viewPendValue = <div className="flex-fill d-flex align-items-center">
             <FA name={icon} className={color + ' me-2 '} />
             <span className={'w-min-2c ' + color}>{pendValue}</span>
         </div>;
     }
-    function ViewFields() {
-        return fields.map(field => {
-            const { bud } = field;
-            return <ViewBud key={bud.id} bud={bud} value={field.getValue(valRow)} uiType={ViewBudUIType.inDiv} />;
-        })
-    }
-    let budValueColl = divStore.sheetStore.budsColl[valRow.i];
+    let budValueColl = divStore.sheetStore.budsColl[iValue];
     let content = <>
-        <ViewIdField bud={budI} value={valRow.i} />
+        <ViewIdField bud={budI} value={iValue} />
         <ViewShowBuds bud={entityBin.i} budValueColl={budValueColl} />
-        <ViewFields />
+        {
+            fields.map(field => {
+                const { bud } = field;
+                return <ViewBud key={bud.id} bud={bud} value={field.getValue(valRow)} uiType={ViewBudUIType.inDiv} />;
+            })
+        }
     </>;
     let viewContent: any, viewRight: any;
     if (viewPivot === undefined) {
@@ -61,17 +61,13 @@ export function ViewRowStem(props: ViewDivProps & { vIBase: any; }) {
             </RowColsSm>
         </div>;
         if (divs.length > 0) {
-            let viewRightValue = <div className="d-flex text-end flex-column align-items-end">
-                {viewPend}
-                <PAV bud={entityBin.value} val={sum} className={cnSum} />
-            </div>
-
             viewRight = <div className="d-flex flex-column align-items-end">
                 <div className="flex-fill d-flex mb-1 me-1">
                     {buttons}
                 </div>
-                <div className="me-3">
-                    {viewRightValue}
+                <div className="d-flex text-end flex-column align-items-end me-3">
+                    {viewPendValue}
+                    <PAV bud={entityBin.value} val={sum} className={cnSum} />
                 </div>
             </div>;
         }
@@ -92,7 +88,7 @@ export function ViewRowStem(props: ViewDivProps & { vIBase: any; }) {
     }
     return <>
         <div className="flex-fill">
-            {vIBase}
+            <ViewIBase valDiv={valDiv} />
             {viewContent}
         </div>
         {viewRight}

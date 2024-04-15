@@ -1,4 +1,3 @@
-import { ViewSpecBaseOnly } from "app/hooks";
 import { ViewDivProps } from "./tool";
 import { ViewRowLeaf } from "./ViewRowLeaf";
 import { ViewRowStem } from "./ViewRowStem";
@@ -6,8 +5,9 @@ import { ViewRowStem } from "./ViewRowStem";
 export function ViewRow(props: ViewDivProps) {
     const { valDiv } = props;
     const { binDiv } = valDiv;
-    const { binDivBuds, level, entityBin, div } = binDiv;
+    const { level, entityBin, div } = binDiv;
     const { divLevels } = entityBin;
+    /*
     const { hasIBase } = binDivBuds;
     let vIBase: any;
     if (hasIBase === true) {
@@ -16,12 +16,13 @@ export function ViewRow(props: ViewDivProps) {
             <ViewSpecBaseOnly id={iBase} noVisible={true} />
         </div> : null;
     }
+    */
     return <div className={'d-flex border-bottom ps-3 py-2 tonwa-bg-gray-' + (divLevels - level)}>
         {
             div === undefined ?
-                <ViewRowLeaf {...props} vIBase={vIBase} />
+                <ViewRowLeaf {...props} />
                 :
-                <ViewRowStem {...props} vIBase={vIBase} />
+                <ViewRowStem {...props} />
         }
     </div>;
 }

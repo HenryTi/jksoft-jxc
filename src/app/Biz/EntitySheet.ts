@@ -204,8 +204,8 @@ class FieldRadioBud extends FieldBud {
 export class BudsFields {
     readonly fieldColl: { [name: string]: BinField } = {};
     readonly entityBin: EntityBin;
-    readonly hasIBase: boolean;
-    readonly hasXBase: boolean;
+    readonly budIBase: BizBud;
+    readonly budXBase: BizBud;
     readonly budI: BizBud;
     readonly budX: BizBud;
     readonly budPrice: BizBud;
@@ -230,8 +230,8 @@ export class BudsFields {
         for (let bud of buds) {
             if (bud.name[0] === '.') {
                 switch (bud.name) {
-                    case '.i': this.hasIBase = true; continue;
-                    case '.x': this.hasXBase = true; continue;
+                    case '.i': this.budIBase = bud; continue;
+                    case '.x': this.budXBase = bud; continue;
                 }
             }
 
@@ -298,6 +298,8 @@ export class EntityBin extends Entity {
     divLevels: number;
     i: BizBud;
     x: BizBud;
+    iBase: BizBud;
+    xBase: BizBud;
     pend: EntityPend;
     value: BizBud;
     price: BizBud;
@@ -330,7 +332,9 @@ export class EntityBin extends Entity {
             case 'inputs': break;   // is a must
             case 'div': this.div = val; break;
             case 'i': this.i = val; this.budColl[this.i.id] = this.i; break;
+            case 'iBase': this.iBase = val; this.budColl[this.iBase.id] = this.iBase; break;
             case 'x': this.x = val; this.budColl[this.x.id] = this.x; break;
+            case 'xBase': this.xBase = val; this.budColl[this.xBase.id] = this.xBase; break;
             case 'pend': this.fromPend(val); break;
             case 'value': this.fromBinValue(val); break;
             case 'price': this.fromPrice(val); break;

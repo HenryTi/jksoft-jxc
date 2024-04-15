@@ -35,17 +35,6 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
         onChanged?.(bizBud, budValue.value);
     }
     if (ui?.edit === 'pop') {
-        return <ValueEdit label={label}
-            labelSize={labelSize}
-            readOnly={readOnly}
-            flag={flag}
-            onEditClick={null}
-            {...budEditing}
-        >
-            <Input value={value} options={options} type={type} onEdited={valueEdited} readOnly={readOnly} />
-        </ValueEdit>;
-    }
-    else {
         async function onEditClick() {
             let ret = await openModal<number | string>(<PagePickValue label={label} value={value} type={type} options={options} step={step} />);
             if (ret === undefined) return;
@@ -68,6 +57,17 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
             {...budEditing}
         >
             {content}
+        </ValueEdit>;
+    }
+    else {
+        return <ValueEdit label={label}
+            labelSize={labelSize}
+            readOnly={readOnly}
+            flag={flag}
+            onEditClick={null}
+            {...budEditing}
+        >
+            <Input value={value} options={options} type={type} onEdited={valueEdited} readOnly={readOnly} />
         </ValueEdit>;
     }
 }

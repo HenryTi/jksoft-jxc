@@ -1,40 +1,44 @@
-BIN 验收单明细Pv { 
-    MAIN 验收单主表; 
     Pick pend '待验收' FROM 待验收账 {
         param param1 = %sheet.I;
         param param2 = %sheet.X; 
         param param3 = %sheet.客户;
     };
-    I.base; 
-    Div '批次' {
-        Input spec SPEC 器械批次 Base=Pend.i; 
-        I '器械批次' 器械批次  { 
+    I.base {
             : 规格型号; 
             : 单位; 
             : 产地; 
             : 生产厂商; 
             : 包装; 
             : 货品大类; 
-        }= spec;
+    }; 
+    Div '批次' {
+        Input spec SPEC 器械批次 Base=Pend.i; 
+        I '器械批次' 器械批次  {
+            : 规格型号; 
+            : 单位; 
+            : 产地; 
+            : 生产厂商; 
+            : 包装; 
+            : 货品大类; 
+        } = spec;
         PIVOT {
-        -- Div '验收' {
+        --Div '验收' {
             KEY 验收 radio 验收情况;
-            Value '验收数量' := pend.value >=0 <=pend.value;
+            Value '验收数量' := pend.value >=0 <=pend.value;   
             Amount '金额'  = Value * Price;
-            Price '单价' := pend.price;
-            FORMAT 验收结论&!合格, 验收结论!合格, 不合格原因;
-
-            Prop 入库建议 <edit:pop> radio 入库建议;
-            Prop 实际数量 := pend.value; 
-            Prop 抽检数量 dec(4);
-            Prop 实际件数 dec(2);
-            Prop 合格证明 <edit:pop> radio 有无;          
-            Prop 检验报告书 <edit:pop> radio 有无;
-            Prop 外观质量情况 Radio 外观质量情况 required;
-            prop 验收结论 <edit:pop> radio 验收结论;   
-            Prop 抽检结论 <edit:pop> radio 抽检结论;
-            Prop 不合格原因 <edit:pop> radio 不合格原因;
-        }   
+            FORMAT 外观质量情况&!合格, 验收结论&!合格, 不合格原因&;
+      Prop 外观质量情况 Radio 外观质量情况 required;
+      prop 验收结论 <edit:pop> radio 验收结论; 
+      Prop 不合格原因 <edit:pop> radio 不合格原因;  
+      }   
+      Prop 入库建议 <edit:pop> radio 入库建议;
+      Prop 实际数量 := pend.value; 
+      Prop 抽检数量 dec(4);
+      Prop 实际件数 dec(2); 
+      Prop 抽检结论 <edit:pop> radio 抽检结论;
+      Prop 合格证明 <edit:pop> radio 有无;          
+      Prop 检验报告书 <edit:pop> radio 有无;
+      Price '单价' := pend.price;
     }
     Prop {      
       客户 atom 客户信息 = pend.客户;

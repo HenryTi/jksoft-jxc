@@ -114,21 +114,16 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             </div>;
         }
         const { divStore } = store;
-        view = <>
-            <ViewMain store={store} popup={false} readOnly={readonly} />
-            <ViewBinDivs divStore={divStore} editable={editable} />
-        </>;
-
-        function ViewBinDivs({ divStore, editable }: { divStore: DivStore; editable: boolean; }) {
-            const { valDivs } = divStore;
-            const divs = useAtomValue(valDivs.atomValDivs);
+        function ViewBinDivs() {
+            const { rootValDiv } = divStore;
+            const valDivs = useAtomValue(rootValDiv.atomValDivs);
             return <div className="tonwa-bg-gray-1 pt-3">
-                {divs.length === 0 ?
+                {valDivs.length === 0 ?
                     <div className="mt-3 small text-body-tertiary p-3 bg-white border-top">
                         无明细
                     </div>
                     :
-                    divs.map(v => {
+                    valDivs.map(v => {
                         const { id } = v;
                         const cn = 'border-top border-bottom ' + (id < 0 ? 'border-warning' : 'border-primary-subtle');
                         return <div key={id} className={cn}>
@@ -137,6 +132,10 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
                     })}
             </div>
         }
+        view = <>
+            <ViewMain store={store} popup={false} readOnly={readonly} />
+            <ViewBinDivs />
+        </>;
     }
 
     if (detail === undefined) mainOnlyEdit();

@@ -8,6 +8,9 @@ import { BudsColl, budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
 import { ValRow } from "./tool";
 import { DivStore } from "./DivStore";
+import { useParams } from "react-router-dom";
+import { useUqApp } from "app/UqApp";
+import { useRef } from "react";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -153,9 +156,6 @@ class Detail extends BaseObject {
 
 // 多余的Detail，只能手工输入
 export class ExDetail extends Detail {
-    addRowValues(rowValues: any) {
-        return;
-    }
 }
 
 export class SheetStore extends KeyIdObject {
@@ -203,7 +203,7 @@ export class SheetStore extends KeyIdObject {
 
     async setValRow(valRow: ValRow) {
         const { id: binId } = valRow;
-        let { details } = await this.loadBinData(binId);
+        await this.loadBinData(binId);
         this.divStore.setValRow(valRow);
     }
 
@@ -303,4 +303,18 @@ export class SheetStore extends KeyIdObject {
         id = retSaveDetail.ret[0].id;
         return id;
     }
+}
+
+export function useSheetStore() {
+    const uqApp = useUqApp();
+    const { uq, biz } = uqApp;
+    const { sheet: entityId62, id } = useParams();
+    const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
+
+    const refSheetStore = useRef(new SheetStore(
+        uq,
+        biz,
+        entitySheet,
+    ));
+    return refSheetStore.current;
 }
