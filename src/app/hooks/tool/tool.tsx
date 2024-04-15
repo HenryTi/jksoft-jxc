@@ -93,7 +93,6 @@ export function ViewShowBuds({ budValueColl, bud, noLabel }: { budValueColl: Bud
     }
     return <>{
         fieldShows.map((fieldShow, index) => {
-            //const { entity, bud } = fieldShow;
             const bud = fieldShow;
             let { id } = bud;
             let value = budValueColl[id];
@@ -112,6 +111,7 @@ export function ViewAtomTitles({ budValueColl, bud, noLabel }: { budValueColl: B
         buds.map(v => {
             let { id } = v;
             let value = budValueColl[id];
+            if (value === undefined) return null;
             let vLabel: any;
             let vContent = budContent(v, value);
             if (noLabel !== true) {

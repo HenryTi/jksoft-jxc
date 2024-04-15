@@ -4,10 +4,11 @@ import { ViewBud, ViewBudUIType, budContent } from "../../../Bud";
 import { RowColsSm, ViewShowBuds } from "../../../tool";
 import { PAV, ViewDivProps, ViewIdField, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
-import { ViewIBase } from "./ViewIBase";
+import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
 
 export function ViewRowStem(props: ViewDivProps) {
     const { valDiv, divStore, buttons, hidePivot } = props;
+    const { sheetStore } = divStore;
     const { atomValRow, atomValDivs, atomSum, binDiv } = valDiv;
     const { binDivBuds: binBuds, level, entityBin, div } = binDiv;
     const { fields, budI } = binBuds;
@@ -42,9 +43,10 @@ export function ViewRowStem(props: ViewDivProps) {
             <span className={'w-min-2c ' + color}>{pendValue}</span>
         </div>;
     }
-    let budValueColl = divStore.sheetStore.budsColl[iValue];
+    let budValueColl = sheetStore.budsColl[iValue];
     let content = <>
         <ViewIdField bud={budI} value={iValue} />
+        <ViewIBaseBuds sheetStore={sheetStore} valDiv={valDiv} />
         <ViewShowBuds bud={entityBin.i} budValueColl={budValueColl} />
         {
             fields.map(field => {
@@ -88,7 +90,7 @@ export function ViewRowStem(props: ViewDivProps) {
     }
     return <>
         <div className="flex-fill">
-            <ViewIBase valDiv={valDiv} />
+            <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />
             {viewContent}
         </div>
         {viewRight}

@@ -286,7 +286,8 @@ export class BizBudBinValue extends BizBud {
         return bizBud;
     }
 }
-
+/*
 export class BizBudSpecBase extends BizBud {
     specBud: BizBud;
 }
+*/

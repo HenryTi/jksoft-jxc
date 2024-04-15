@@ -1,6 +1,6 @@
 import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
-import { BizBud, BizBudBinValue, BizBudSpecBase, BudAtom, BudRadio, EnumBudType } from "./BizBud";
+import { BizBud, BizBudBinValue, BudAtom, BudRadio, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
@@ -371,13 +371,18 @@ export class EntityBin extends Entity {
         this.amount = this.fromProp(prop);
     }
 
-    private buildBudPickable(prop: any): BizBud {
+    private buildAtomBud(prop: any): BizBud {
         const { id, name } = prop;
         let bud = new BizBud(this.biz, id, name, EnumBudType.atom, this);
         this.budColl[id] = bud;
         bud.fromSchema(prop);
         bud.budDataType.fromSchema(prop);
         bud.scan();
+        return bud;
+    }
+
+    private buildBudPickable(prop: any): BizBud {
+        let bud = this.buildAtomBud(prop);
         this.buildPickAtomFromBud(bud);
         return bud;
     }
@@ -469,8 +474,14 @@ export class EntityBin extends Entity {
         if (this.i !== undefined) {
             this.i = this.buildBudPickable(this.i as any);
         }
+        if (this.iBase !== undefined) {
+            this.iBase = this.buildAtomBud(this.iBase as any);
+        }
         if (this.x !== undefined) {
             this.x = this.buildBudPickable(this.x as any);
+        }
+        if (this.xBase !== undefined) {
+            this.xBase = this.buildAtomBud(this.xBase as any);
         }
         if (this.binPicks !== undefined) {
             let pLast = this.binPicks.length - 1;
@@ -522,14 +533,17 @@ export class EntityBin extends Entity {
     private scanBinBuds(buds: any[]) {
         if (buds === undefined) return;
         let ret: BizBud[] = [];
-        let iBaseBud: BizBudSpecBase;
-        let xBaseBud: BizBudSpecBase;
+        // let iBaseBud: BizBudSpecBase;
+        // let xBaseBud: BizBudSpecBase;
         for (let bud of buds) {
             let bizBud: BizBud;
             switch (bud) {
                 default: bizBud = this.budColl[bud]; break;
                 case 'i': bizBud = this.i; break;
+                case '.i': bizBud = this.iBase; break;
                 case 'x': bizBud = this.x; break;
+                case '.x': bizBud = this.xBase; break;
+                /*
                 case '.i':
                 case 'i.':
                     bizBud = iBaseBud = new BizBudSpecBase(this.biz, 0, '.i', EnumBudType.none, this);
@@ -538,6 +552,7 @@ export class EntityBin extends Entity {
                 case 'x.':
                     bizBud = xBaseBud = new BizBudSpecBase(this.biz, 0, '.x', EnumBudType.none, this);
                     break;
+                */
                 case 'value': bizBud = this.value; break;
                 case 'price': bizBud = this.price; break;
                 case 'amount': bizBud = this.amount; break;
@@ -545,8 +560,10 @@ export class EntityBin extends Entity {
             if (bizBud === undefined) debugger;
             ret.push(bizBud);
         }
+        /*
         if (iBaseBud !== undefined) iBaseBud.specBud = this.i;
         if (xBaseBud !== undefined) xBaseBud.specBud = this.x;
+        */
         return ret;
     }
 

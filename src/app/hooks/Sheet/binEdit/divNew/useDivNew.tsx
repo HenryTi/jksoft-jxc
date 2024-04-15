@@ -16,7 +16,7 @@ export function useDivNew() {
     const modal = useModal();
     return useCallback(async function (props: UseInputsProps, skipInputs: boolean = false): Promise<ValDiv> {
         let { divStore, pendRow, binDiv, valDiv } = props;
-        let { entityBin } = divStore;
+        let { entityBin, sheetStore } = divStore;
         let { rearPick } = entityBin;
         let namedResults: NamedResults = {
             [rearPick.name]: new Proxy(pendRow, new PendProxyHander(entityBin.pend)),
@@ -91,7 +91,7 @@ export function useDivNew() {
                 parent = ret = valDiv;
             }
             else {
-                parent.setIXBase(valRow);
+                parent.setIXBase(sheetStore, valRow);
                 parent.addValDiv(valDiv);
                 parent = valDiv;
             }

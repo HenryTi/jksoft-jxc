@@ -2,6 +2,7 @@ import { BinDiv } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
 import { ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
+import { SheetStore } from "./SheetStore";
 
 export class ValDivs {
     readonly atomValDivs = atom([] as ValDiv[]);
@@ -67,7 +68,9 @@ export class ValDiv extends ValDivs {
     readonly binDiv: BinDiv;
     readonly atomValRow: WritableAtom<ValRow, any, any>;
     readonly atomDeleted = atom(false);
+    i: number;
     iBase: number;
+    x: number;
     xBase: number;
     readonly atomValue = atom(get => {
         let valRow = get(this.atomValRow);
@@ -106,16 +109,20 @@ export class ValDiv extends ValDivs {
         valRow.value = value;
     }
 
-    setIXBase(valRow: ValRow) {
-        let { i, x } = valRow;
+    setIXBase(sheetStore: SheetStore, valRow: ValRow) {
+        let { id, i, x } = valRow;
         if (i !== undefined) {
-            if (this.binDiv.binDivBuds.budIBase !== undefined) {
-                this.iBase = i;
+            this.i = i;
+            let { budIBase } = this.binDiv.binDivBuds;
+            if (budIBase !== undefined) {
+                this.iBase = sheetStore.budsColl[id][budIBase.id] as number
             }
         }
         if (x !== undefined) {
-            if (this.binDiv.binDivBuds.budXBase !== undefined) {
-                this.xBase = x;
+            this.x = x;
+            let { budXBase } = this.binDiv.binDivBuds;
+            if (budXBase !== undefined) {
+                this.xBase = sheetStore.budsColl[id][budXBase.id] as number
             }
         }
     }

@@ -7,7 +7,8 @@ import { PAV, ViewDivProps, cn, cnBtn } from "./tool";
 import { ViewIBase } from "./ViewIBase";
 
 export function ViewRowLeaf(props: ViewDivProps) {
-    const { valDiv, divStore, buttons } = props;
+    const { divStore, valDiv, buttons } = props;
+    const { sheetStore } = divStore;
     const { atomValRow, atomValue, binDiv } = valDiv;
     const { binDivBuds: binBuds, entityBin } = binDiv;
     const { i: iBud } = entityBin;
@@ -18,7 +19,7 @@ export function ViewRowLeaf(props: ViewDivProps) {
     let {
         value: cnValue, price: cnPrice, amount: cnAmount
     } = theme;
-    let budValueColl = divStore.sheetStore.budsColl[valRow.i];
+    let budValueColl = sheetStore.budsColl[valRow.i];
     return <>
         <div className="flex-fill">
             {
@@ -29,7 +30,7 @@ export function ViewRowLeaf(props: ViewDivProps) {
                 </div>
             }
             <div className={cn + ' bg-white '}>
-                <ViewIBase valDiv={valDiv} />
+                <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />
                 <RowColsSm contentClassName="flex-fill">
                     <ViewShowBuds bud={iBud} budValueColl={budValueColl} />
                     {

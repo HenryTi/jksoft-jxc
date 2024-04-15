@@ -254,7 +254,7 @@ export class DivStore {
                 }
                 if (binDiv === undefined) debugger;
                 parentValDivs = parentValDiv;
-                parentValDiv.setIXBase(valRow);
+                parentValDiv.setIXBase(this.sheetStore, valRow);
             }
         }
         return this.setSub(binDiv, parentValDivs, valRow, trigger);
