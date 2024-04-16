@@ -8,7 +8,7 @@ import { ValDiv } from "./ValDiv";
 import { NamedResults } from "./NamedResults";
 import { getDays } from "app/tool";
 import { ValRow } from "./tool";
-import { ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
+import { ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
 export abstract class FieldsEditing extends BudsFields {

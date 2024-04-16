@@ -1,6 +1,6 @@
 import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
-import { BizBud, BizBudBinValue, BudAtom, BudRadio, EnumBudType } from "./BizBud";
+import { BizBud, BizBudBinValue, BudAtom, BudDec, BudRadio, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
@@ -104,7 +104,9 @@ export enum ValueSetType {
 export interface BinRow {
     id: number;
     i?: number;
+    iBase?: number;
     x?: number;
+    xBase?: number;
     value?: number;
     price?: number;
     amount?: number;
@@ -155,22 +157,29 @@ class FieldX extends BinField {
     setValue(binRow: BinRow, v: any) { binRow.x = v; }
 }
 
-class FieldValue extends BinField {
+abstract class DecField extends BinField {
     readonly onForm = true;
-    getValue(binRow: BinRow): any { return binRow.value; }
+    protected abstract getDecValue(binRow: BinRow): number;
+    getValue(binRow: BinRow): any {
+        let v = this.getDecValue(binRow);
+        let dt = this.bud.budDataType as BudDec;
+        return dt.valueToContent(v);
+    }
+}
+
+class FieldValue extends DecField {
+    protected override getDecValue(binRow: BinRow): any { return binRow.value; }
     setValue(binRow: BinRow, v: any) { binRow.value = v; }
     get required(): boolean { return true; }
 }
 
-class FieldPrice extends BinField {
-    readonly onForm = true;
-    getValue(binRow: BinRow): any { return binRow.price; }
+class FieldPrice extends DecField {
+    protected override getDecValue(binRow: BinRow): any { return binRow.price; }
     setValue(binRow: BinRow, v: any) { binRow.price = v; }
 }
 
-class FieldAmount extends BinField {
-    readonly onForm = true;
-    getValue(binRow: BinRow): any { return binRow.amount; }
+class FieldAmount extends DecField {
+    protected override getDecValue(binRow: BinRow): any { return binRow.amount; }
     setValue(binRow: BinRow, v: any) { binRow.amount = v; }
 }
 
@@ -230,11 +239,17 @@ export class BudsFields {
         for (let bud of buds) {
             if (bud.name[0] === '.') {
                 switch (bud.name) {
-                    case '.i': this.budIBase = bud; continue;
-                    case '.x': this.budXBase = bud; continue;
+                    default:
+                        debugger;
+                        continue;
+                    case '.i':
+                        this.budIBase = bud;
+                        continue;
+                    case '.x':
+                        this.budXBase = bud;
+                        continue;
                 }
             }
-
             let field: BinField;
             if (bud === budI) {
                 this.budI = bud;

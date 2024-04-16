@@ -7,16 +7,6 @@ export function ViewRow(props: ViewDivProps) {
     const { binDiv } = valDiv;
     const { level, entityBin, div } = binDiv;
     const { divLevels } = entityBin;
-    /*
-    const { hasIBase } = binDivBuds;
-    let vIBase: any;
-    if (hasIBase === true) {
-        let { iBase } = valDiv;
-        vIBase = iBase !== undefined ? <div className="fw-bold">
-            <ViewSpecBaseOnly id={iBase} noVisible={true} />
-        </div> : null;
-    }
-    */
     return <div className={'d-flex border-bottom ps-3 py-2 tonwa-bg-gray-' + (divLevels - level)}>
         {
             div === undefined ?

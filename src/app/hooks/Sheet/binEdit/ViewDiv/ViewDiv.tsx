@@ -51,7 +51,7 @@ export function ViewDiv(props: ViewDivProps) {
             // 无Div明细
             try {
                 const editing = new DivEditing(divStore, undefined, binDiv, valDiv, valRow);
-                let ret = await rowEdit(editing);
+                let ret = await rowEdit(editing, valDiv);
                 if (ret !== true) return;
                 const { valRow: newValRow } = editing;
                 await divStore.saveDetail(binDiv, newValRow);

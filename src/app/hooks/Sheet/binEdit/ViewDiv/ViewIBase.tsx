@@ -22,11 +22,6 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
         <ViewSpecAtom id={i} />
         <ViewAtomTitles budValueColl={budValueColl} bud={budIBase} />
     </>;
-    /*
-    return <div className="fw-bold">
-        <ViewSpecBaseOnly id={i} noVisible={true} />
-    </div>;
-    */
 }
 
 export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, valDiv: ValDiv }) {

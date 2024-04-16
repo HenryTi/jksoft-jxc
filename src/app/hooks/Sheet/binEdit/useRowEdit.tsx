@@ -7,12 +7,13 @@ import { ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
 import { ChangeEvent, useState } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
-import { BinEditing, FieldsEditing } from "../store";
+import { BinEditing, FieldsEditing, ValDiv } from "../store";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
+import { ViewIBase } from "./ViewDiv/ViewIBase";
 
 export function useRowEdit() {
     const modal = useModal();
-    return useCallback(async (binEditing: BinEditing) => {
+    return useCallback(async (binEditing: BinEditing, valDiv: ValDiv) => {
         const { entityBin } = binEditing;
         const { i: budI, x: budX } = entityBin;
         const { atomParams } = budI;
@@ -21,16 +22,16 @@ export function useRowEdit() {
             await modal.open(<Page header={caption ?? name}>
             </Page>);
         }
-        let ret = await modal.open(<ModalInputRow binEditing={binEditing} />);
+        let ret = await modal.open(<ModalInputRow binEditing={binEditing} valDiv={valDiv} />);
         return ret;
     }, []);
 }
 
-function ModalInputRow({ binEditing }: { binEditing: FieldsEditing; }) {
+function ModalInputRow({ binEditing, valDiv }: { binEditing: FieldsEditing; valDiv: ValDiv }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { entityBin, valRow: binDetail, sheetStore } = binEditing;
-    const { i: budI, x: budX } = entityBin;
+    const { i: budI, iBase: budIBase, x: budX, xBase: budXBase } = entityBin;
     const [submitable, setSubmitable] = useState(binEditing.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;
@@ -66,13 +67,13 @@ function ModalInputRow({ binEditing }: { binEditing: FieldsEditing; }) {
             <FA name="trash" fixWidth={true} />
         </ButtonAsync>;
     }
-    function ViewIdField({ bud, value }: { bud: BizBud; value: number; }) {
+    function ViewIdField({ bud, budBase, value, base }: { bud: BizBud; budBase: BizBud; value: number; base: number; }) {
         if (bud === undefined) return null;
         const { caption, name } = bud;
-        const budValueColl = sheetStore.budsColl[value];
+        const budValueColl = sheetStore.budsColl[base ?? value];
         return <Band label={caption ?? name} className="border-bottom py-2">
             <ViewSpecBaseOnly id={value} bold={true} />
-            <ViewAtomTitles budValueColl={budValueColl} bud={bud} />
+            <ViewAtomTitles budValueColl={budValueColl} bud={budBase ?? bud} />
             <RowCols>
                 <ViewSpecNoAtom id={value} />
             </RowCols>
@@ -83,8 +84,8 @@ function ModalInputRow({ binEditing }: { binEditing: FieldsEditing; }) {
     }
     return <Page header="输入明细" right={right}>
         <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + theme.bootstrapContainer}>
-            <ViewIdField bud={budI} value={binDetail.i} />
-            <ViewIdField bud={budX} value={binDetail.x} />
+            <ViewIdField bud={budI} budBase={budIBase} value={binDetail.i} base={valDiv?.iBase} />
+            <ViewIdField bud={budX} budBase={budXBase} value={binDetail.x} base={valDiv?.xBase} />
         </div>
         <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmit)}>
             <FormRowsView rows={formRows} register={register} errors={errors} />

@@ -47,7 +47,7 @@ export function useDetailAdd(sheetStore: SheetStore) {
             //const binEditing = new BinEditing(entityBin, row.valRow);
             const binEditing = new BinEditing(sheetStore, entityBin);
             binEditing.setNamedParams(namedResults);
-            let ret = await rowEdit(binEditing);
+            let ret = await rowEdit(binEditing, undefined);
             if (ret === true) {
                 const { valRow } = binEditing;
                 // Object.assign(row.valRow, valRow);
