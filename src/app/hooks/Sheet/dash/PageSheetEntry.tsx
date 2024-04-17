@@ -1,83 +1,82 @@
-import dayjs from "dayjs";
 import { Page, PageSpinner } from "tonwa-app";
 import { from62, setAtomValue, to62, useEffectOnce } from "tonwa-com";
-import { ReturnUseBinPicks, SheetStore, useSheetStore } from "./store";
-import { useNavigate, useParams } from "react-router-dom";
+import { ReturnUseBinPicks, SheetConsole, SheetStore, useSheetStore } from "../store";
+// import { useNavigate, useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
 import { PageSheet } from "./PageSheet";
 import { useCallback } from "react";
 import { useUqApp } from "app";
 import { PageMoreCacheData, ToolItem } from "app/coms";
-import { buttonDefs, headerSheet } from "./headerSheet";
-import { ViewBinPicks } from "./binPick";
-import { useDetailAdd } from "./binEdit";
+import { buttonDefs, headerSheet } from "../headerSheet";
+import { ViewBinPicks } from "../binPick";
+import { useDetailAdd } from "../binEdit";
+import { EntitySheet } from "app/Biz";
+import { ViewSteps } from "./ViewSteps";
 
-export function PageSheetEdit() {
-    const store = useSheetStore();
+export function PageSheetEdit({ entitySheet, sheetId, sheetConsole }: { entitySheet: EntitySheet; sheetId: number; sheetConsole: SheetConsole; }) {
+    const store = useSheetStore(entitySheet, sheetConsole);
     const loaded = useAtomValue(store.atomLoaded);
-    const { id } = useParams();
-    const sheetId = from62(id);
     useEffectOnce(() => {
         store.load(sheetId);
     });
-
     if (loaded === false) return <PageSpinner />;
     return <PageSheet store={store} />;
 }
 
-export function PageSheetNew() {
-    const store = useSheetStore();
+export function PageSheetNew({ entitySheet, sheetConsole }: { entitySheet: EntitySheet; sheetConsole: SheetConsole; }) {
+    const store = useSheetStore(entitySheet, sheetConsole);
     const loaded = useAtomValue(store.atomLoaded);
     if (loaded === true) {
         return <PageSheet store={store} />;
     }
     if (store.isPend === true) {
+        sheetConsole.steps = {
+            steps: ['录入条件', '批选待处理'],
+            end: "编辑单据",
+            step: 0,
+        };
         return <PageStartPend store={store} />;
     }
     if (store.main.entityMain.binPicks !== undefined) {
+        sheetConsole.steps = {
+            steps: ['录入条件'],
+            end: "编辑单据",
+            step: 0,
+        };
         return <PageStartPicks store={store} />;
     }
     return <PageSheetDirect store={store} />;
 }
 
-function useStartingNO(store: SheetStore) {
-    const { main } = store;
-    main.no = dayjs(new Date()).format('YYYYMMDD0000');
-}
-
 function PageSheetDirect({ store }: { store: SheetStore; }) {
-    // no pick, directly create NO
-    // useStartingNO(store);
     const { caption } = store;
     useEffectOnce(() => {
 
     });
     return <PageSpinner header={caption + ' 创建中...'} />
-    /*
-    return <Page header={caption}>
-        <div className="tonwa-bg-gray-1">
-            <ViewMain store={store} popup={false} readOnly={true} />
-            <div className="px-3 py-3 border-top border-bottom my-3 bg-white">
-                <small className="text-secondary text-opacity-50">无明细</small>
-            </div>
-        </div>
-    </Page>;
-    */
 }
 
 function useOnPicked(store: SheetStore) {
     const uqApp = useUqApp();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
+    const { sheetConsole } = store;
     async function onPicked(results: ReturnUseBinPicks) {
         let ret = await store.main.startFromPickResults(results);
         if (ret === undefined) {
             if (store.hasId() === false) {
                 // 还没有创建单据
+                if (sheetConsole.steps === undefined) {
+                    setTimeout(() => {
+                        sheetConsole.close();
+                    }, 100);
+                }
+                /*
                 if (navigate !== undefined) {
                     setTimeout(() => {
                         navigate(-1);
                     }, 100);
                 }
+                */
             }
             return; // 已有单据，不需要pick. 或者没有创建新单据
         }
@@ -92,19 +91,17 @@ function useOnPicked(store: SheetStore) {
                     entityId,
                 });
             }
-            // setSheetId(id);
-            // setAtomValue(atomSheetId, id);
         }
-        // await addDetail();
     }
     return useCallback(onPicked, []);
 }
 
-function useButtons() {
-    const navigate = useNavigate();
+function useButtons(sheetConsole: SheetConsole) {
+    //const navigate = useNavigate();
     let btnSubmit = buttonDefs.submit(undefined);
     const navBack = useCallback(async () => {
-        navigate(-1);
+        sheetConsole.close();
+        // navigate(-1);
     }, []);
     let btnExit = buttonDefs.exit(navBack, false);
     setAtomValue(btnSubmit.atomDisabled, true);
@@ -112,11 +109,13 @@ function useButtons() {
 }
 
 function PageStartPicks({ store }: { store: SheetStore; }) {
+    const { sheetConsole } = store;
     const onPicked = useOnPicked(store);
-    const { btnSubmit, btnExit } = useButtons();
+    const { btnSubmit, btnExit } = useButtons(sheetConsole);
     const group0: ToolItem[] = [btnSubmit];
     let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
     return <Page header={pageHeader} back={null} top={top} right={right}>
+        <ViewSteps sheetSteps={sheetConsole.steps} />
         <ViewBinPicks subHeader="新开单据" sheetStore={store} onPicked={onPicked} />
     </Page>;
 }
@@ -124,39 +123,14 @@ function PageStartPicks({ store }: { store: SheetStore; }) {
 function PageStartPend({ store }: { store: SheetStore; }) {
     const onPicked = useOnPicked(store);
     const addNew = useDetailAdd(store);
-    const { caption } = store;
+    const { caption, sheetConsole } = store;
     const subCaption = '批选待处理';
     const onPend = useCallback(async (results: ReturnUseBinPicks) => {
         await onPicked(results);
         await addNew();
     }, []);
     return <Page header={caption + ' - ' + subCaption}>
+        <ViewSteps sheetSteps={sheetConsole.steps} />
         <ViewBinPicks subHeader={'批选条件'} sheetStore={store} onPicked={onPend} />
-    </Page>
-    /*
-    useStartingNO(store);
-    const { btnSubmit, btnExit } = useButtons();
-    const group0: ToolItem[] = [btnSubmit];
-    function onPick() {
-        async function onPendParamsPicked(results: ReturnUseBinPicks) {
-            await onPicked(results);
-            modal.close();
-        }
-        modal.open(<Page header={caption + ' - ' + subCaption}>
-            <ViewBinPicks subHeader={'批选条件'} sheetStore={store} onPicked={onPendParamsPicked} />
-        </Page>);
-    }
-    group0.unshift(buttonDefs.batchSelect(onPick));
-    const subCaption = '批选待处理';
-    let footer = <div className="px-3 py-2">footer</div>;
-    let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
-    return <Page header={pageHeader} back={null} top={top} footer={footer} right={right}>
-        <div className="tonwa-bg-gray-1">
-            <ViewMain store={store} popup={false} readOnly={true} />
-            <div className="px-3 py-3 border-top border-bottom my-3 bg-white">
-                <small className="text-secondary text-opacity-50">无明细</small>
-            </div>
-        </div>
     </Page>;
-    */
 }

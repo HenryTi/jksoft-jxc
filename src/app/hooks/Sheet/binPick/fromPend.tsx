@@ -12,8 +12,6 @@ export function usePickFromPend() {
     return useCallback(
         async function (divStore: DivStore, namedResults: NamedResults, binPick: PickPend): Promise<PickResult[]> {
             let { caption, from: entityPend, pickParams, bin } = binPick;
-            // let pickBase = pick as PickPend;
-            // let entityPend = pickBase.from;
             const pendProxyHander = new PendProxyHander(entityPend);
             const { params: queryParams } = entityPend;
 
@@ -33,8 +31,12 @@ export function usePickFromPend() {
             }
             await divStore.loadPend(retParam);
 
+            const { sheetStore: { sheetConsole } } = divStore;
+            const { steps } = sheetConsole;
+            if (steps !== undefined) steps.step = 1;
             let inputed = await modal.open<ValRow[]>(<PagePend divStore={divStore} caption={caption} />);
             if (inputed === undefined) return;
+            sheetConsole.steps = undefined;
             // 如果有inputs，直接已经输入进了。就不用返回了。
             if (bin.div.inputs !== undefined) return;
             function proxy(obj: any) {

@@ -4,12 +4,11 @@ import { Link, Route } from "react-router-dom";
 import { IDView, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { EntitySheet } from "app/Biz";
 import { FA, List, to62, wait } from "tonwa-com";
-import { ViewSheetTime } from "app/hooks";
+import { RouteSheetDash, RouteSheetEdit, RouteSheetNew, ViewSheetTime } from "app/hooks";
 import { useCallback, useState } from "react";
 import { Atom, Sheet } from "uqs/UqDefault";
 import { Bin, ViewNotifyCount } from "app/tool";
 import { centers } from "app/views/center";
-import { PageSheetEdit, PageSheetNew } from "app/hooks";
 
 function PageSheetCenter() {
     const modal = useModal();
@@ -17,7 +16,7 @@ function PageSheetCenter() {
     const { uq, biz } = uqApp;
     const sheetEntities = biz.sheets;
     const query = useCallback(async (param: any, pageStart: any, pageSize: number) => {
-        let { $page } = await uq.GetMyDrafts.page({}, pageStart, pageSize);
+        let { $page } = await uq.GetMyDrafts.page(param, pageStart, pageSize);
         return $page;
     }, []);
     const [visible, setVisible] = useState(true);
@@ -142,7 +141,8 @@ export function pathSheet(phrase: number | string) {
 export function routeSheetCenter() {
     return <>
         <Route path={centers.sheet.path} element={<PageSheetCenter />} />
-        <Route path={`${sheet}/:sheet/:id`} element={<PageSheetEdit />} />
-        <Route path={`${sheet}/:sheet`} element={<PageSheetNew />} />
+        <Route path={`${sheet}/:sheet/:id`} element={<RouteSheetEdit />} />
+        <Route path={`${sheet}/:sheet`} element={<RouteSheetDash />} />
+        <Route path={`${sheet}/:sheet`} element={<RouteSheetNew />} />
     </>;
 }

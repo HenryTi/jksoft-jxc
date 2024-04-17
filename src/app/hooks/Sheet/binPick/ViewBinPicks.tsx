@@ -35,7 +35,6 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     async function onPick(binPick: BinPick, index: number) {
         let pickResult: any;
         const { name, fromPhraseType } = binPick;
-        // const { bizPhraseType } = pick;
         if (fromPhraseType === undefined) return;
         switch (fromPhraseType) {
             default: debugger; break;
@@ -59,7 +58,6 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         divStore.setReload();
     }
     async function onPickRear(binPick: BinPick, index: number) {
-        if (sheetStore === undefined) debugger;
         const { divStore } = sheetStore;
         let pickResult: PickResult[] | PickResult;
         const { fromPhraseType } = rearPick;
@@ -76,6 +74,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
                 break;
             case BizPhraseType.pend:
                 pickResult = await pickFromPend(divStore, namedResults, rearPick as PickPend);
+                break;
         }
         setRearPickResult(pickResult);
         setCur(binPicks.length + 1);
@@ -193,13 +192,6 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
             })}
             <ViewBinPick binPick={rearPick} onPick={onPickRear} index={binPicks.length} />
         </>;
-        /*
-        viewBinPicksNext = <div className="p-3">
-            <button className="btn btn-primary" onClick={onStart} disabled={cur <= binPicks.length}>
-                <FA name="arrow-right me-2" />下一步
-            </button>
-        </div>;
-        */
         viewBinPicksNext = <LR cn={undefined} onClick={undefined} label={null}>
             <button className="btn btn-primary" onClick={onStart} disabled={cur <= binPicks.length}>
                 <FA name="arrow-right me-2" />下一步

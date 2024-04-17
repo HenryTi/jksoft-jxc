@@ -68,7 +68,6 @@ export function useBinPicks(bin: EntityBin) {
         let pickResult: PickResult;
         for (const binPick of binPicks) {
             const { name, fromPhraseType } = binPick;
-            // const { bizPhraseType } = pick;
             if (fromPhraseType === undefined) break;
             switch (fromPhraseType) {
                 default: debugger; break;

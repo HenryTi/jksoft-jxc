@@ -475,6 +475,7 @@ Biz ACT RemoveDraft (
 };
 
 Biz QUERY GetMyDrafts ver 0.2 (
+    entitySheet ID,
 )
 PAGE (
     * Sheet DESC,
@@ -486,34 +487,50 @@ PAGE (
         FROM IxState as a
             JOIN Sheet as b ON a.x=b.id
             JOIN BizPhrase as c ON c.id=b.base
-        WHERE b.id<$pageStart AND a.i=me AND c.base=$site
+        WHERE b.id<$pageStart AND a.i=me AND c.base=$site 
+            AND (entitySheet IS NULL OR b.base=entitySheet)
         ORDER BY b.id DESC
         LIMIT $pageSize;
 };
 
 Biz AC DeleteMyDrafts ver 0.5 (
+    entitySheet ID,
 ) {
     VAR me ID = Me();
     SET @me=me;
+    SET @entity=entitySheet;
     /-mysql
     DELETE a FROM ixbud as a 
-        JOIN sheet as b ON b.id=a.i JOIN ixstate as c ON c.i=@me AND c.x=b.id;
+        JOIN sheet as b ON b.id=a.i JOIN ixstate as c ON c.i=@me AND c.x=b.id
+        WHERE @entity IS NULL OR b.base=@entity;
     DELETE a FROM ixbudint as a 
-        JOIN sheet as b ON b.id=a.i JOIN ixstate as c ON c.i=@me AND c.x=b.id;
+        JOIN sheet as b ON b.id=a.i JOIN ixstate as c ON c.i=@me AND c.x=b.id
+        WHERE @entity IS NULL OR b.base=@entity;
     DELETE a FROM ixbuddec as a 
-        JOIN sheet as b ON b.id=a.i JOIN ixstate as c ON c.i=@me AND c.x=b.id;
+        JOIN sheet as b ON b.id=a.i JOIN ixstate as c ON c.i=@me AND c.x=b.id
+        WHERE @entity IS NULL OR b.base=@entity;
     DELETE a FROM ixbudstr as a 
-        JOIN sheet as b ON b.id=a.i JOIN ixstate as c ON c.i=@me AND c.x=b.id;
+        JOIN sheet as b ON b.id=a.i JOIN ixstate as c ON c.i=@me AND c.x=b.id
+        WHERE @entity IS NULL OR b.base=@entity;
     DELETE a FROM bin as a
-        JOIN sheet as b ON b.id=a.id JOIN ixstate as c ON c.i=@me AND c.x=b.id;
+        JOIN sheet as b ON b.id=a.id JOIN ixstate as c ON c.i=@me AND c.x=b.id
+        WHERE @entity IS NULL OR b.base=@entity;
     DELETE a FROM bin as a 
         JOIN bud as a1 ON a1.id=a.id
         JOIN sheet as b ON b.id=a1.base
-        JOIN ixstate as c ON c.i=@me AND c.x=b.id;
-    DELETE a FROM sheet as a JOIN ixstate as b ON b.i=@me AND b.x=a.id;
+        JOIN ixstate as c ON c.i=@me AND c.x=b.id
+        WHERE @entity IS NULL OR b.base=@entity;
+    DELETE a FROM sheet as a JOIN ixstate as b ON b.i=@me AND b.x=a.id
+        WHERE @entity IS NULL OR a.base=@entity;
     -/
     WITH IxState as a I=me
-        DEL WHERE EXISTS(SELECT b.id FROM Sheet as b JOIN BizPhrase as c ON c.id=b.base WHERE b.id=a.x AND c.base=$site);
+        DEL WHERE EXISTS(
+            SELECT b.id 
+                FROM Sheet as b JOIN BizPhrase as c ON c.id=b.base 
+                WHERE b.id=a.x
+                    AND c.base=$site
+                    AND (entitySheet IS NULL OR b.base=entitySheet)
+        );
 }
 
 Biz Query SearchAtom (

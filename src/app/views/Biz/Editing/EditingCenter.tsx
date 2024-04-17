@@ -17,7 +17,7 @@ function PageEditingCenter() {
     const { uq, biz } = uqApp;
     const sheetEntities = biz.sheets;
     const query = useCallback(async (param: any, pageStart: any, pageSize: number) => {
-        let { $page } = await uq.GetMyDrafts.page({}, pageStart, pageSize);
+        let { $page } = await uq.GetMyDrafts.page(param, pageStart, pageSize);
         return $page;
     }, []);
     const [visible, setVisible] = useState(true);

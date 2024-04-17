@@ -4,3 +4,4 @@ export * from './DivStore';
 export * from './ValDiv';
 export * from './NamedResults';
 export * from "./tool";
+export * from "./SheetConsole";

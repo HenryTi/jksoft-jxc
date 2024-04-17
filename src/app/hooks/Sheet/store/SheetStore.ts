@@ -11,6 +11,7 @@ import { DivStore } from "./DivStore";
 import { useParams } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
 import { useRef } from "react";
+import { SheetConsole } from "./SheetConsole";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -89,7 +90,7 @@ export class SheetMain extends BaseObject {
         return await this.createIfNotExists();
     }
 
-    async createIfNotExists() {
+    private async createIfNotExists() {
         const row = this.valRow;
         let { id: sheetId, i, x } = row;
         if (sheetId > 0) {
@@ -141,7 +142,6 @@ export interface PendRow {
     detail: BinRow;
     value: number;
     mid: any[];
-    // cols: any[];
 }
 
 class Detail extends BaseObject {
@@ -162,6 +162,7 @@ export class SheetStore extends KeyIdObject {
     readonly uq: UqExt;
     readonly biz: Biz;
     readonly entitySheet: EntitySheet;
+    readonly sheetConsole: SheetConsole;
     readonly main: SheetMain;
     readonly detail: Detail;
     readonly detailExs: ExDetail[] = [];
@@ -172,11 +173,14 @@ export class SheetStore extends KeyIdObject {
     readonly divStore: DivStore;
     readonly atomLoaded = atom(false);
 
-    constructor(uq: UqExt, biz: Biz, entitySheet: EntitySheet) {
+    constructor(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
         super();
+        const { biz } = entitySheet;
+        const { uq } = biz;
         this.uq = uq;
         this.biz = biz;
         this.entitySheet = entitySheet;
+        this.sheetConsole = sheetConsole;
         this.main = new SheetMain(this);
         const { details } = this.entitySheet;
         let len = details.length;
@@ -305,16 +309,15 @@ export class SheetStore extends KeyIdObject {
     }
 }
 
-export function useSheetStore() {
+export function useSheetEntity() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const { sheet: entityId62, id } = useParams();
     const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
+    return entitySheet;
+}
 
-    const refSheetStore = useRef(new SheetStore(
-        uq,
-        biz,
-        entitySheet,
-    ));
+export function useSheetStore(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
+    const refSheetStore = useRef(new SheetStore(entitySheet, sheetConsole));
     return refSheetStore.current;
 }

@@ -1,22 +1,19 @@
 import { Page, PageConfirm, useModal } from "tonwa-app";
-import { DivStore, SheetStore, SubmitState } from "./store";
-import { to62 } from "tonwa-com";
-import { ViewDiv, ViewMain } from "./binEdit";
+import { SheetStore, SubmitState } from "../store";
+import { ViewDiv, ViewMain } from "../binEdit";
 import { atom, useAtomValue } from "jotai";
-import { useDetailAdd } from "./binEdit";
-import { useNavigate } from "react-router-dom";
+import { useDetailAdd } from "../binEdit";
 import { useUqApp } from "app/UqApp";
-import { PageMoreCacheData } from "app/coms";
 import { useCallback, useState } from "react";
-import { PickFunc, useBinPicks } from "./binPick";
-import { headerSheet, buttonDefs } from "./headerSheet";
+import { PickFunc, useBinPicks } from "../binPick";
+import { headerSheet, buttonDefs } from "../headerSheet";
 
-export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean }) {
-    const { uq, main, detail, divStore, caption } = store;
+export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean; }) {
+    const { uq, main, detail, divStore, caption, sheetConsole } = store;
     const uqApp = useUqApp();
     const pick = useBinPicks(main.entityMain);
     const { openModal, closeModal } = useModal();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(divStore.atomSubmitState);
     const addNew = useDetailAdd(store);
@@ -26,13 +23,15 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         if (main.trigger() === false) return;
         if (divStore.trigger() === false) return;
         setEditable(false);
-        let { checkPend, checkBin } = await uq.SubmitSheet.submitReturns({ id: main.valRow.id });
+        let sheetId = main.valRow.id;
+        let { checkPend, checkBin } = await uq.SubmitSheet.submitReturns({ id: sheetId });
         if (checkPend.length + checkBin.length > 0) {
             alert('pendOverflow:' + JSON.stringify(checkPend) + JSON.stringify(checkBin));
             return;
         }
-        removeSheetFromCache();
         setEditable(true);
+        // removeSheetFromCache();
+        sheetConsole.removeFromCache(sheetId);
         uqApp.autoRefresh?.();
         let ret = await openModal<boolean>(<Page header="提交成功" back="none">
             <div className="p-3">
@@ -44,14 +43,19 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             </div>
         </Page>);
         if (ret === true) {
+            sheetConsole.restart();
+            /*
             const { entitySheet } = store;
             navigate(`/sheet/${to62(entitySheet.id)}`, { replace: true, state: locationState++ });
+            */
         }
         else {
-            navigate(-1);
+            sheetConsole.close();
+            // navigate(-1);
         }
     }
 
+    /*
     function removeSheetFromCache() {
         let { valRow: { id } } = main;
         let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
@@ -59,17 +63,21 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             data.removeItem<{ id: number; }>(v => v.id === id) as any;
         }
     }
+    */
+
     async function onDiscardSheet() {
         let message = `${caption} ${main.no} 真的要作废吗？`;
         let ret = await openModal(<PageConfirm header="确认" message={message} yes="单据作废" no="不作废" />);
         if (ret === true) {
             await store.discard();
-            removeSheetFromCache();
-            navigate(-1);
+            sheetConsole.discard(main.valRow.id);
+            // removeSheetFromCache();
+            // navigate(-1);
         }
     }
     async function onExit() {
-        navigate(-1);
+        sheetConsole.close();
+        // navigate(-1);
     }
     function onPrint() {
         alert('正在实现中...');
@@ -147,25 +155,31 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     </Page>;
 }
 
-let locationState = 1;
+// let locationState = 1;
 
 function useStartSheetStore(sheetStore: SheetStore, pick: PickFunc) {
     const uqApp = useUqApp();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
+    const { sheetConsole } = sheetStore;
     async function startSheetStore() {
         let ret = await sheetStore.start(pick);
         if (ret === undefined) {
             if (sheetStore.main.no === undefined) {
                 // 还没有创建单据
+                sheetConsole.close();
+                /*
                 if (navigate !== undefined) {
                     setTimeout(() => {
                         navigate(-1);
                     }, 100);
                 }
+                */
             }
             return; // 已有单据，不需要pick. 或者没有创建新单据
         }
         let { id, no } = ret;
+        sheetConsole.onSheetAdded(id, no);
+        /*
         if (id > 0) {
             let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
             if (data) {
@@ -177,6 +191,7 @@ function useStartSheetStore(sheetStore: SheetStore, pick: PickFunc) {
                 });
             }
         }
+        */
     }
     return useCallback(startSheetStore, []);
 }
