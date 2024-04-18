@@ -1,7 +1,6 @@
 import { Page, PageSpinner } from "tonwa-app";
-import { from62, setAtomValue, to62, useEffectOnce } from "tonwa-com";
-import { ReturnUseBinPicks, SheetConsole, SheetStore, useSheetStore } from "../store";
-// import { useNavigate, useParams } from "react-router-dom";
+import { setAtomValue, useEffectOnce } from "tonwa-com";
+import { ReturnUseBinPicks, SheetConsole, SheetStore } from "../store";
 import { useAtomValue } from "jotai";
 import { PageSheet } from "./PageSheet";
 import { useCallback } from "react";
@@ -10,11 +9,10 @@ import { PageMoreCacheData, ToolItem } from "app/coms";
 import { buttonDefs, headerSheet } from "../headerSheet";
 import { ViewBinPicks } from "../binPick";
 import { useDetailAdd } from "../binEdit";
-import { EntitySheet } from "app/Biz";
 import { ViewSteps } from "./ViewSteps";
 
-export function PageSheetEdit({ entitySheet, sheetId, sheetConsole }: { entitySheet: EntitySheet; sheetId: number; sheetConsole: SheetConsole; }) {
-    const store = useSheetStore(entitySheet, sheetConsole);
+export function PageSheetEdit({ store, sheetId }: { store: SheetStore; sheetId: number; }) {
+    // const store = useSheetStore(entitySheet, sheetConsole);
     const loaded = useAtomValue(store.atomLoaded);
     useEffectOnce(() => {
         store.load(sheetId);
@@ -23,8 +21,8 @@ export function PageSheetEdit({ entitySheet, sheetId, sheetConsole }: { entitySh
     return <PageSheet store={store} />;
 }
 
-export function PageSheetNew({ entitySheet, sheetConsole }: { entitySheet: EntitySheet; sheetConsole: SheetConsole; }) {
-    const store = useSheetStore(entitySheet, sheetConsole);
+export function PageSheetNew({ store }: { store: SheetStore; }) {
+    const { sheetConsole } = store;
     const loaded = useAtomValue(store.atomLoaded);
     if (loaded === true) {
         return <PageSheet store={store} />;
@@ -32,7 +30,7 @@ export function PageSheetNew({ entitySheet, sheetConsole }: { entitySheet: Entit
     if (store.isPend === true) {
         sheetConsole.steps = {
             steps: ['录入条件', '批选待处理'],
-            end: "编辑单据",
+            end: "录入单据",
             step: 0,
         };
         return <PageStartPend store={store} />;
@@ -40,7 +38,7 @@ export function PageSheetNew({ entitySheet, sheetConsole }: { entitySheet: Entit
     if (store.main.entityMain.binPicks !== undefined) {
         sheetConsole.steps = {
             steps: ['录入条件'],
-            end: "编辑单据",
+            end: "录入单据",
             step: 0,
         };
         return <PageStartPicks store={store} />;
@@ -110,10 +108,14 @@ function useButtons(sheetConsole: SheetConsole) {
 
 function PageStartPicks({ store }: { store: SheetStore; }) {
     const { sheetConsole } = store;
-    const onPicked = useOnPicked(store);
+    const retUseOnPicked = useOnPicked(store);
     const { btnSubmit, btnExit } = useButtons(sheetConsole);
     const group0: ToolItem[] = [btnSubmit];
     let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
+    async function onPicked(results: ReturnUseBinPicks) {
+        await retUseOnPicked(results);
+        setAtomValue(store.atomLoaded, true);
+    }
     return <Page header={pageHeader} back={null} top={top} right={right}>
         <ViewSteps sheetSteps={sheetConsole.steps} />
         <ViewBinPicks subHeader="新开单据" sheetStore={store} onPicked={onPicked} />
@@ -127,7 +129,10 @@ function PageStartPend({ store }: { store: SheetStore; }) {
     const subCaption = '批选待处理';
     const onPend = useCallback(async (results: ReturnUseBinPicks) => {
         await onPicked(results);
-        await addNew();
+        let added = await addNew();
+        if (added === true) {
+            setAtomValue(store.atomLoaded, true);
+        }
     }, []);
     return <Page header={caption + ' - ' + subCaption}>
         <ViewSteps sheetSteps={sheetConsole.steps} />

@@ -479,11 +479,10 @@ Biz QUERY GetMyDrafts ver 0.2 (
 )
 PAGE (
     * Sheet DESC,
-    phrase Phrase,
 ) {
     VAR me ID = Me();
     -- 获取我正在录入的单据
-    PAGE SELECT * b, c.name as phrase
+    PAGE SELECT * b
         FROM IxState as a
             JOIN Sheet as b ON a.x=b.id
             JOIN BizPhrase as c ON c.id=b.base
@@ -492,6 +491,16 @@ PAGE (
         ORDER BY b.id DESC
         LIMIT $pageSize;
 };
+
+Biz AC SheetPreToDraft (
+    id ID,
+    -- state INT,          -- 1: pre-draft, 仅仅录入条件中保存的单据
+) {
+    VAR me ID = Me();
+    VAR state ID = ID(Bud New KEY base=id,ext=1);
+    WITH IxState I=me X=state DEL;
+    WITH IxState I=me X=id;
+}
 
 Biz AC DeleteMyDrafts ver 0.5 (
     entitySheet ID,

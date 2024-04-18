@@ -14,14 +14,14 @@ export function RouteSheetEdit() {
     const { id } = useParams();
     const sheetId = from62(id);
     const routeConsole = useRef(new RouteConsole(navigate, entitySheet));
-    return <PageSheetEdit entitySheet={entitySheet} sheetId={sheetId} sheetConsole={routeConsole.current} />;
+    return <PageSheetEdit store={routeConsole.current.createSheetStore()} sheetId={sheetId} />;
 }
 
 export function RouteSheetNew() {
     const entitySheet = useSheetEntity();
     const navigate = useNavigate();
     const routeConsole = useRef(new RouteConsole(navigate, entitySheet));
-    return <PageSheetNew entitySheet={entitySheet} sheetConsole={routeConsole.current} />;
+    return <PageSheetNew store={routeConsole.current.createSheetStore()} />;
 }
 
 export function RouteSheetDash() {
@@ -30,15 +30,14 @@ export function RouteSheetDash() {
 }
 
 let locationState = 1;
-class RouteConsole implements SheetConsole {
+class RouteConsole extends SheetConsole {
     private readonly uqApp: UqApp;
     private readonly navigate: NavigateFunction;
-    private readonly entitySheet: EntitySheet;
 
     constructor(navigate: NavigateFunction, entitySheet: EntitySheet) {
+        super(entitySheet);
         this.uqApp = entitySheet.biz.uqApp;
         this.navigate = navigate;
-        this.entitySheet = entitySheet;
     }
     close(): void {
         this.navigate(-1);

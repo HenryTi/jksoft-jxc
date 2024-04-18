@@ -10,15 +10,15 @@ export function useDetailAdd(sheetStore: SheetStore) {
     const { detail } = sheetStore;
     const entityBin = detail?.entityBin;
     const pick = useBinPicks(entityBin);
-    async function addNewDirect() {
+    async function addNewDirect(): Promise<boolean> {
         let ret = await pick(sheetStore);
-        if (ret === undefined) return;
+        if (ret === undefined) return false;
         let { namedResults, rearBinPick, rearResult, rearPickResultType } = ret;
         if (rearPickResultType === RearPickResultType.array) {
             // 直接选入行集，待修改
             if (detail === undefined) {
                 alert('Pick Pend on main not implemented');
-                return;
+                return false;
             }
             for (let rowProps of rearResult as PickResult[]) {
                 namedResults[rearBinPick.name] = rowProps;
@@ -59,6 +59,7 @@ export function useDetailAdd(sheetStore: SheetStore) {
             }
             // row.setLoading(false);
         }
+        return true;
     }
     return useCallback(addNewDirect, []);
 }

@@ -1,6 +1,6 @@
 import { EntitySheet, EntityBin, Biz, EntityPend, BinRow, BizBud } from "app/Biz";
 import { ParamSaveDetail, UqExt } from "uqs/UqDefault";
-import { atom } from "jotai";
+import { Atom, WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { PickFunc, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
@@ -11,7 +11,7 @@ import { DivStore } from "./DivStore";
 import { useParams } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
 import { useRef } from "react";
-import { SheetConsole } from "./SheetConsole";
+import { PickStates, SheetConsole } from "./SheetConsole";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -49,7 +49,9 @@ export class SheetMain extends BaseObject {
         const { id } = row;
         if (id > 0) return;
         const pickResults = await pick(this.sheetStore, RearPickResultType.scalar);
-        return await this.startFromPickResults(pickResults);
+        let ret = await this.startFromPickResults(pickResults);
+        setAtomValue(this.sheetStore.atomLoaded, true);
+        return ret;
     }
 
     async startFromPickResults(pickResults: ReturnUseBinPicks) {
@@ -94,7 +96,7 @@ export class SheetMain extends BaseObject {
         const row = this.valRow;
         let { id: sheetId, i, x } = row;
         if (sheetId > 0) {
-            setAtomValue(this.sheetStore.atomLoaded, true);
+            // setAtomValue(this.sheetStore.atomLoaded, true);
             return {
                 id: sheetId,
                 no: this.no,
@@ -107,7 +109,7 @@ export class SheetMain extends BaseObject {
         row.id = id;
         setAtomValue(this._valRow, { ...row });
         this.no = no;
-        setAtomValue(this.sheetStore.atomLoaded, true);
+        // setAtomValue(this.sheetStore.atomLoaded, true);
         return Object.assign(ret, { i, ...row });
     }
 
@@ -195,6 +197,11 @@ export class SheetStore extends KeyIdObject {
         }
         this.caption = entitySheet.caption ?? entitySheet.name;
         this.divStore = new DivStore(this, this.detail.entityBin);
+        sheetConsole.picks = new PickStates(
+            { '%sheet': new Proxy(this.main.valRow, this.main.entityMain.proxyHandler()) },
+            undefined,
+            0
+        );
     }
 
     async load(sheetId: number) {
@@ -316,8 +323,9 @@ export function useSheetEntity() {
     const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
     return entitySheet;
 }
-
+/*
 export function useSheetStore(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
     const refSheetStore = useRef(new SheetStore(entitySheet, sheetConsole));
     return refSheetStore.current;
 }
+*/

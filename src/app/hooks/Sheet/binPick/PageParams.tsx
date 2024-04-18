@@ -10,7 +10,6 @@ import { useCallback } from "react";
 interface Props {
     header: string;
     namedResults: NamedResults;
-    // divStore: DivStore;
     queryParams: BizBud[];
     pickParams: PickParam[];
 }

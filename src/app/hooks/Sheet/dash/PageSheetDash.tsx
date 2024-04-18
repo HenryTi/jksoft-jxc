@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { IDView, Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
-import { FA, wait } from "tonwa-com";
+import { FA, List, useEffectOnce, wait } from "tonwa-com";
 import { EntitySheet } from "app/Biz";
 import { PageSheetEdit, PageSheetNew } from "./PageSheetEntry";
 import { DashConsole } from "./DashConsole";
@@ -9,20 +9,27 @@ import { Atom, Sheet } from "uqs/UqDefault";
 import { Bin } from "app/tool";
 import { ViewSheetTime } from "app/hooks/ViewSheetTime";
 import { PageSheetList } from "./PageSheetList";
+import { useAtomValue } from "jotai";
 
 export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const modal = useModal();
     const [visible, setVisible] = useState(true);
     const { caption, name, uq, biz } = entitySheet;
-    const sheetConsole = useRef(new DashConsole(modal, entitySheet));
+    const { current: sheetConsole } = useRef(new DashConsole(modal, entitySheet));
+    const myDrafts = useAtomValue(sheetConsole.atomMyDrafts);
+    /*
     const query = useCallback(async (param: any, pageStart: any, pageSize: number) => {
         return sheetConsole.current.loadMyDrafts(param, pageStart, pageSize);
     }, []);
+    */
+    useEffectOnce(() => {
+        sheetConsole.loadMyDrafts();
+    });
     async function onNew() {
-        let ret = await modal.open(<PageSheetNew entitySheet={entitySheet} sheetConsole={sheetConsole.current} />);
+        let ret = await modal.open(<PageSheetNew store={sheetConsole.createSheetStore()} />);
     }
     async function onList() {
-        modal.open(<PageSheetList entitySheet={entitySheet} sheetConsole={sheetConsole.current} />);
+        modal.open(<PageSheetList entitySheet={entitySheet} sheetConsole={sheetConsole} />);
     }
     async function onRemoveDraft() {
         if (await modal.open(<PageConfirm header="单据草稿" message="真的要删除全部单据草稿吗？" yes="删除" no="不删除" />) !== true) return;
@@ -35,7 +42,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         const { id, no, phrase, i } = value;
         const [del, setDel] = useState(0);
         let entitySheetInView = biz.entities[phrase];
-        let sheetCaption: string;
+        // let sheetCaption: string;
         if (entitySheetInView === undefined) {
             sheetCaption = phrase;
         }
@@ -75,7 +82,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         }
         // Link to={`/${sheet}/${to62(entitySheet.id)}/${to62(id)}`}
         function onSheet() {
-            modal.open(<PageSheetEdit sheetId={id} entitySheet={entitySheet} sheetConsole={sheetConsole.current} />);
+            modal.open(<PageSheetEdit sheetId={id} store={sheetConsole.createSheetStore()} />);
         }
         return <div className="d-flex px-3 py-3 align-items-center cursor-pointer" onClick={onSheet}>
             <FA name="file" className="me-3 text-danger" />
@@ -88,13 +95,14 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     }
     if (visible === false) return <PageSpinner />;
     let sheetCaption = caption ?? name;
-    return <PageQueryMore header={sheetCaption + ' - 工作台'}
-        query={query}
-        param={{ entitySheet: entitySheet.id }}
-        sortField={'id'}
-        ViewItem={ViewSheetItem}
-        none={<div className="small text-secondary p-3">[无]</div>}
-    >
+    /*
+    query={query}
+    param={{ entitySheet: entitySheet.id }}
+    sortField={'id'}
+    ViewItem={ViewSheetItem}
+    none={<div className="small text-secondary p-3">[无]</div>}
+    */
+    return <Page header={sheetCaption + ' - 工作台'}>
         <div className="d-flex px-3 py-2 tonwa-bg-gray-1 border-bottom">
             <button className="btn btn-primary" onClick={onNew}>
                 <FA name="file" className="me-2" />
@@ -106,12 +114,17 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
             </button>
         </div>
         <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-1 mt-4 align-items-end">
-            <div className="small text-secondary pb-1 flex-grow-1">
-                草稿
+            <div className="pb-1 flex-grow-1">
+                草稿 <small className="text-secondary ms-3">(最多10份)</small>
             </div>
             <button className="btn btn-sm btn-link" onClick={onRemoveDraft}>
                 全部清除
             </button>
         </div>
-    </PageQueryMore>;
+        <List
+            ViewItem={ViewSheetItem}
+            items={myDrafts as any[]}
+            none={<div className="small text-secondary p-3">[无]</div>}
+        />
+    </Page>;
 }
