@@ -51,7 +51,7 @@ export function PageSheetList() {
     let entity = biz.entityFromId(entityId);
     function ViewItem({ value }: { value: ReturnGetSiteSheetList$page }) {
         return <Link to={pathTo(pathSheetRef, value.id, undefined)}>
-            <ViewItemMain value={value} />
+            <ViewItemMain value={value} isMy={undefined} />
         </Link>;
     }
     return <PageQueryMore header={(entity.caption ?? entity.name)}

@@ -231,7 +231,7 @@ RETURNS ret (
     
     PROC SaveBinBuds(sheetId, props);
 
-    WITH IxState I=me X=sheetId;
+    WITH IxState I=me X=ID(Bud New KEY base=sheetId, ext=1);    -- 1: sheet is in PreDraft
 
     INTO ret SELECT sheetId as id, no;
 };
@@ -466,6 +466,7 @@ Biz ACT RemoveDraft (
         DELETE a FROM ixbudint as a WHERE a.i=_id;
         DELETE a FROM ixbuddec as a WHERE a.i=_id;
         DELETE a FROM ixbudstr as a WHERE a.i=_id;
+        DELETE a FROM ixbudcheck as a WHERE a.i=_id;
         DELETE a FROM bin as a WHERE a.id=_id;
         DELETE a FROM bin as a JOIN bud as a1 ON a1.id=a.id WHERE a1.base=_id;
         -/
@@ -479,20 +480,33 @@ Biz QUERY GetMyDrafts ver 0.2 (
 )
 PAGE (
     * Sheet DESC,
+    * Bin,
+    rowCount INT,
 ) {
     VAR me ID = Me();
+    SET @me=me;
+
+    -- 删去所有的preDraft单据
+    IF exists(SELECT 1 FROM IxState as a JOIN Bud as b ON b.id=a.x WHERE a.i=me AND b.ext=1 LIMIT 1) {
+        /-mysql
+        DELETE a,b FROM ixstate as a JOIN bud as b ON b.id=a.x AND a.i=@me AND b.ext=1;
+        -/
+    }
+
     -- 获取我正在录入的单据
-    PAGE SELECT * b
+    PAGE SELECT * b, * d
+        , (SELECT count(*) FROM Detail as x JOIN Bud as y ON y.id=x.base WHERE y.base=b.id) as rowCount
         FROM IxState as a
             JOIN Sheet as b ON a.x=b.id
             JOIN BizPhrase as c ON c.id=b.base
+            JOIN Bin as d ON d.id=b.id
         WHERE b.id<$pageStart AND a.i=me AND c.base=$site 
             AND (entitySheet IS NULL OR b.base=entitySheet)
         ORDER BY b.id DESC
         LIMIT $pageSize;
 };
 
-Biz AC SheetPreToDraft (
+Biz AC SetSheetPreToDraft (
     id ID,
     -- state INT,          -- 1: pre-draft, 仅仅录入条件中保存的单据
 ) {

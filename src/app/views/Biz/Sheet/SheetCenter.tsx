@@ -27,26 +27,28 @@ function PageSheetCenter() {
         if (coreDetail !== undefined) {
             pendEntityId = coreDetail.pend?.id;
             if (pendEntityId !== undefined) {
-                vNotifyCount = <ViewNotifyCount phrase={pendEntityId} />;
+                vNotifyCount = <div className="position-absolute" style={{ left: '2.5rem', top: '0rem' }}>
+                    <ViewNotifyCount phrase={pendEntityId} />
+                </div>;
             }
         }
         return <Link
             to={`/${sheet}/${to62(entityId)}`}
         >
-            <div className="px-3 py-2 align-items-center d-flex">
-                <BI name="card-list" className="fs-larger me-3 text-primary" />
-                <span className="text-body">{caption ?? name}</span>
+            <div className="px-4 py-2 align-items-center d-flex position-relative">
+                <BI name="card-list" className="fs-larger me-4 text-primary" />
                 {vNotifyCount}
+                <span className="text-body">{caption ?? name}</span>
             </div>
         </Link>
     }
-    function ViewSheetItem({ value }: { value: (Sheet & Bin & { phrase: string; }) }) {
-        const { id, no, phrase, i } = value;
+    function ViewSheetItem({ value }: { value: (Sheet & Bin) }) {
+        const { id, no, base, i } = value;
         const [del, setDel] = useState(0);
-        let entitySheet = biz.entities[phrase];
+        let entitySheet = biz.entityFromId(base);
         let sheetCaption: string;
         if (entitySheet === undefined) {
-            sheetCaption = phrase;
+            sheetCaption = String('Sheet Type ID: ' + base);
         }
         else {
             const { caption, name } = entitySheet;
@@ -98,7 +100,7 @@ function PageSheetCenter() {
     async function onRemoveDraft() {
         if (await modal.open(<PageConfirm header="单据草稿" message="真的要删除全部单据草稿吗？" yes="删除" no="不删除" />) !== true) return;
         setVisible(false);
-        await uq.DeleteMyDrafts.submit({});
+        await uq.DeleteMyDrafts.submit({ entitySheet: undefined });
         await wait(10);
         setVisible(true);
     }

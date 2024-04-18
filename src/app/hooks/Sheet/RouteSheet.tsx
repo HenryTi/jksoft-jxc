@@ -1,7 +1,7 @@
 import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
 import { PageSheetDash } from "./dash";
 import { PageSheetEdit, PageSheetNew } from "./dash";
-import { SheetConsole, SheetSteps, useSheetEntity } from "./store";
+import { SheetConsole, SheetSteps, SheetStore, useSheetEntity } from "./store";
 import { from62, to62 } from "tonwa-com";
 import { useRef } from "react";
 import { EntitySheet } from "app/Biz";
@@ -59,16 +59,24 @@ class RouteConsole extends SheetConsole {
         }
     }
 
-    onSheetAdded(sheetId: number, no: string): void {
-        if (sheetId <= 0) return;
+    async onSheetAdded(store: SheetStore/* sheetId: number, no: string*/): Promise<void> {
+        const { main } = store;
+        const { valRow, no } = main;
+        let { id, i, x, origin, price, value, amount } = valRow;
+        if (id <= 0) return;
         let data = this.uqApp.pageCache.getPrevData<PageMoreCacheData>();
         if (!data) return;
         const { id: entityId } = this.entitySheet;
         data.addItem({
-            id: sheetId,
+            id,
             no,
             entityId,
+            i,
+            x,
+            origin, price, value, amount
         });
+    }
+    sheetRowCountChanged(store: SheetStore) {
     }
 
     get steps() { return undefined as SheetSteps; }

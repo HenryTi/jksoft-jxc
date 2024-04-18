@@ -30,6 +30,7 @@ export function ViewDiv(props: ViewDivProps) {
             return;
         }
         setAtomValue(atomDeleted, !deleted);
+        divStore.sheetStore.notifyRowChange();
     }
     async function onEdit() {
         if (id < 0) {

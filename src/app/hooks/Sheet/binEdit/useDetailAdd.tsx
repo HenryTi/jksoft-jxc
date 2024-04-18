@@ -59,6 +59,7 @@ export function useDetailAdd(sheetStore: SheetStore) {
             }
             // row.setLoading(false);
         }
+        sheetStore.notifyRowChange();
         return true;
     }
     return useCallback(addNewDirect, []);

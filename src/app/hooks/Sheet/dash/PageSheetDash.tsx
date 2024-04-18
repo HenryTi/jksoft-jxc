@@ -4,12 +4,12 @@ import { FA, List, useEffectOnce, wait } from "tonwa-com";
 import { EntitySheet } from "app/Biz";
 import { PageSheetEdit, PageSheetNew } from "./PageSheetEntry";
 import { DashConsole } from "./DashConsole";
-import { PageQueryMore } from "app/coms";
 import { Atom, Sheet } from "uqs/UqDefault";
 import { Bin } from "app/tool";
 import { ViewSheetTime } from "app/hooks/ViewSheetTime";
 import { PageSheetList } from "./PageSheetList";
 import { useAtomValue } from "jotai";
+import { ViewItemMain } from "app/hooks/View";
 
 export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const modal = useModal();
@@ -38,21 +38,23 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         await wait(10);
         setVisible(true);
     }
-    function ViewSheetItem({ value }: { value: (Sheet & Bin & { phrase: string; }) }) {
-        const { id, no, phrase, i } = value;
+    function ViewSheetItem({ value }: { value: (Sheet & Bin & { rowCount: number; }) }) {
+        const { id, no, base, i } = value;
         const [del, setDel] = useState(0);
-        let entitySheetInView = biz.entities[phrase];
+        let entitySheetInView = biz.entityFromId(base);
         // let sheetCaption: string;
         if (entitySheetInView === undefined) {
-            sheetCaption = phrase;
+            sheetCaption = String('Sheet Type ID: ' + base);
         }
         else {
             const { caption, name } = entitySheetInView;
             sheetCaption = caption ?? name;
         }
+        /*
         function ViewTarget({ value }: { value: Atom; }) {
             return <span>{value.ex}</span>;
         }
+        */
         if (entitySheetInView === undefined) {
             async function onDelMyDraft() {
                 setDel(1);
@@ -84,29 +86,30 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         function onSheet() {
             modal.open(<PageSheetEdit sheetId={id} store={sheetConsole.createSheetStore()} />);
         }
-        return <div className="d-flex px-3 py-3 align-items-center cursor-pointer" onClick={onSheet}>
-            <FA name="file" className="me-3 text-danger" />
+        return <div className="d-flex cursor-pointer" onClick={onSheet}>
+            <FA name="file" className="ps-4 pt-3 pe-2 text-info" size="lg" />
+            <div className="flex-fill">
+                <ViewItemMain value={value} isMy={true} />
+            </div>
+        </div>;
+        /*
+        <div className="d-flex px-3 py-3 align-items-center cursor-pointer" onClick={onSheet}>
+            <FA name="file-text-o" className="me-3 text-danger" />
             <div className="w-8c"><ViewSheetTime id={id} /></div>
             <span className="d-inline-block w-min-10c">{no}</span>
             <span className="d-inline-block w-min-8c">
                 <IDView uq={uq} id={i} Template={ViewTarget} />
             </span>
         </div>;
+        */
     }
     if (visible === false) return <PageSpinner />;
     let sheetCaption = caption ?? name;
-    /*
-    query={query}
-    param={{ entitySheet: entitySheet.id }}
-    sortField={'id'}
-    ViewItem={ViewSheetItem}
-    none={<div className="small text-secondary p-3">[无]</div>}
-    */
     return <Page header={sheetCaption + ' - 工作台'}>
         <div className="d-flex px-3 py-2 tonwa-bg-gray-1 border-bottom">
             <button className="btn btn-primary" onClick={onNew}>
                 <FA name="file" className="me-2" />
-                新开{sheetCaption}
+                新开单
             </button>
             <div className="flex-fill" />
             <button className="btn btn-outline-primary" onClick={onList}>

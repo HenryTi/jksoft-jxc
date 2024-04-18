@@ -162,13 +162,45 @@ Biz Query GetSiteSheetList (
 PAGE (
     * SHEET ASC,
     * Bin,
+    rowCount INT,
 ) {
     PAGE SELECT * a, * b
+        , (SELECT count(*) FROM Detail as x JOIN Bud as y ON y.id=x.base WHERE y.base=a.id) as rowCount
         FROM Sheet as a
             JOIN Bin as b ON b.id=a.id
             JOIN BizPhrase as c ON c.id=a.base
             JOIN IxState as d ON d.i=a.id AND d.x=a.base
         WHERE a.base=phrase AND a.id>$pageStart AND c.base=$site
         ORDER BY a.id ASC
+        LIMIT $pageSize;
+};
+
+Biz Query GetMySheetList (
+    phrase ID,
+    from DATE,
+    to DATE,
+    timeZone INT,
+)
+PAGE (
+    * SHEET DESC,
+    * Bin,
+    rowCount INT,
+) {
+    VAR me ID = Me();
+    /*
+    IF dateNear IS NULL {
+        SET dateNear=;
+    }
+    */
+    PAGE SELECT * a, * b
+        , (SELECT count(*) FROM Detail as x JOIN Bud as y ON y.id=x.base WHERE y.base=a.id) as rowCount
+        FROM Sheet as a
+            JOIN Bin as b ON b.id=a.id
+            JOIN BizPhrase as c ON c.id=a.base
+            JOIN IxState as d ON d.i=a.id AND d.x=a.base
+        WHERE a.base=phrase AND a.id<$pageStart AND c.base=$site 
+            AND a.operator=me
+            AND a.id>=uminute_from_time(from, timeZone) AND a.id<uminute_from_time(to, timeZone)
+        ORDER BY a.id DESC
         LIMIT $pageSize;
 };

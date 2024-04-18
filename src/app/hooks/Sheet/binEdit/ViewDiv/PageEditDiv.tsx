@@ -69,6 +69,8 @@ function EditDiv(props: EditDivProps) {
     }
     async function onDel() {
         setAtomValue(atomDeleted, !deleted);
+        const { sheetStore } = divStore;
+        sheetStore.notifyRowChange();
         if (level === 0) {
             modal.close();
             return;

@@ -62,6 +62,15 @@ export class ValDivs {
         }
         setAtomValue(this.atomValDivs, [...valDivs]);
     }
+
+    getRowCount(): number {
+        let rowCount = 0;
+        let valDivs = getAtomValue(this.atomValDivs);
+        for (let valDiv of valDivs) {
+            rowCount += valDiv.getRowCount();
+        }
+        return rowCount;
+    }
 }
 
 export class ValDiv extends ValDivs {
@@ -125,5 +134,11 @@ export class ValDiv extends ValDivs {
                 this.xBase = sheetStore.budsColl[id][budXBase.id] as number
             }
         }
+    }
+
+    getRowCount(): number {
+        // let deleted = getAtomValue(this.atomDeleted);
+        // if (deleted === true) return 0;
+        return super.getRowCount() + 1;
     }
 }

@@ -11,14 +11,14 @@ import { ViewBinPicks } from "../binPick";
 import { useDetailAdd } from "../binEdit";
 import { ViewSteps } from "./ViewSteps";
 
-export function PageSheetEdit({ store, sheetId }: { store: SheetStore; sheetId: number; }) {
+export function PageSheetEdit({ store, sheetId, readonly }: { store: SheetStore; sheetId: number; readonly?: boolean; }) {
     // const store = useSheetStore(entitySheet, sheetConsole);
     const loaded = useAtomValue(store.atomLoaded);
     useEffectOnce(() => {
         store.load(sheetId);
     });
     if (loaded === false) return <PageSpinner />;
-    return <PageSheet store={store} />;
+    return <PageSheet store={store} readonly={readonly} />;
 }
 
 export function PageSheetNew({ store }: { store: SheetStore; }) {
@@ -78,7 +78,9 @@ function useOnPicked(store: SheetStore) {
             }
             return; // 已有单据，不需要pick. 或者没有创建新单据
         }
-        let { id, no } = ret;
+        // let { id, no } = ret;
+        sheetConsole.onSheetAdded(store/*id, no*/);
+        /*
         if (id > 0) {
             let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
             if (data) {
@@ -90,6 +92,7 @@ function useOnPicked(store: SheetStore) {
                 });
             }
         }
+        */
     }
     return useCallback(onPicked, []);
 }
@@ -114,7 +117,8 @@ function PageStartPicks({ store }: { store: SheetStore; }) {
     let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
     async function onPicked(results: ReturnUseBinPicks) {
         await retUseOnPicked(results);
-        setAtomValue(store.atomLoaded, true);
+        await store.setSheetAsDraft();
+        // setAtomValue(store.atomLoaded, true);
     }
     return <Page header={pageHeader} back={null} top={top} right={right}>
         <ViewSteps sheetSteps={sheetConsole.steps} />
@@ -131,7 +135,8 @@ function PageStartPend({ store }: { store: SheetStore; }) {
         await onPicked(results);
         let added = await addNew();
         if (added === true) {
-            setAtomValue(store.atomLoaded, true);
+            await store.setSheetAsDraft();
+            // setAtomValue(store.atomLoaded, true);
         }
     }, []);
     return <Page header={caption + ' - ' + subCaption}>

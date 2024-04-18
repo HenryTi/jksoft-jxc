@@ -177,8 +177,8 @@ function useStartSheetStore(sheetStore: SheetStore, pick: PickFunc) {
             }
             return; // 已有单据，不需要pick. 或者没有创建新单据
         }
-        let { id, no } = ret;
-        sheetConsole.onSheetAdded(id, no);
+        //let { id, no } = ret;
+        sheetConsole.onSheetAdded(sheetStore/*id, no*/);
         /*
         if (id > 0) {
             let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();

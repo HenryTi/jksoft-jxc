@@ -314,6 +314,15 @@ export class SheetStore extends KeyIdObject {
         id = retSaveDetail.ret[0].id;
         return id;
     }
+
+    notifyRowChange() {
+        this.sheetConsole.sheetRowCountChanged(this);
+    }
+
+    async setSheetAsDraft() {
+        await this.uq.SetSheetPreToDraft.submit({ id: this.main.valRow.id });
+        setAtomValue(this.atomLoaded, true);
+    }
 }
 
 export function useSheetEntity() {

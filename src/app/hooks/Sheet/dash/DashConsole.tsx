@@ -6,6 +6,8 @@ import { ReturnGetMyDrafts$page, UqExt } from "uqs/UqDefault";
 import { atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 
+const maxDraftsCount = 10;
+
 export class DashConsole extends SheetConsole {
     private readonly modal: Modal;
     private uq: UqExt;
@@ -25,11 +27,34 @@ export class DashConsole extends SheetConsole {
         this.removeMyDraft(sheetId);
         this.modal.close();
     }
-    onSheetAdded(sheetId: number, no: string): void {
+    async onSheetAdded(store: SheetStore/*sheetId: number, no: string*/): Promise<void> {
+        const { main } = store;
+        const { valRow, no } = main;
+        let { id, i, x, origin, price, value, amount } = valRow;
         let myDrafts = getAtomValue(this.atomMyDrafts);
-        myDrafts.push({
-            id: sheetId, base: this.entitySheet.id, no, operator: undefined,
+        myDrafts.unshift({
+            id, base: this.entitySheet.id, no, operator: undefined
+            , i, x, origin
+            , value, price, amount
+            , rowCount: 0
         });
+        const { length } = myDrafts;
+        if (length > maxDraftsCount) {
+            let arr: number[] = [];
+            for (let i = maxDraftsCount; i < length; i++) arr.push(myDrafts[i].id);
+            await Promise.all(arr.map(v => this.uq.RemoveDraft.submit({ id: v })));
+            myDrafts.splice(maxDraftsCount);
+        }
+        setAtomValue(this.atomMyDrafts, [...myDrafts]);
+    }
+    sheetRowCountChanged(store: SheetStore) {
+        const { main, divStore } = store;
+        const { valRow } = main;
+        let { id } = valRow;
+        let myDrafts = getAtomValue(this.atomMyDrafts);
+        let draft = myDrafts.find(v => v.id === id);
+        if (draft === undefined) return;
+        draft.rowCount = divStore.rootValDiv.getRowCount();
         setAtomValue(this.atomMyDrafts, [...myDrafts]);
     }
     removeFromCache(sheetId: number): void {

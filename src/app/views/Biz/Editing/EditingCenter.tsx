@@ -29,7 +29,9 @@ function PageEditingCenter() {
             pendEntityId = coreDetail.pend?.id;
             if (pendEntityId !== undefined) {
                 vNotifyCount = <div className="position-absolute" style={{ right: "0.3rem", top: "-0.5rem" }}>
-                    <ViewNotifyCount phrase={pendEntityId} />
+                    <div className="ms-3">
+                        <ViewNotifyCount phrase={pendEntityId} />
+                    </div>
                 </div>;
             }
         }
@@ -45,13 +47,13 @@ function PageEditingCenter() {
             </div>
         </Link>
     }
-    function ViewSheetItem({ value }: { value: (Sheet & Bin & { phrase: string; }) }) {
-        const { id, no, phrase, i } = value;
+    function ViewSheetItem({ value }: { value: (Sheet & Bin) }) {
+        const { id, no, base, i } = value;
         const [del, setDel] = useState(0);
-        let entitySheet = biz.entities[phrase];
+        let entitySheet = biz.entityFromId(base);
         let sheetCaption: string;
         if (entitySheet === undefined) {
-            sheetCaption = phrase;
+            sheetCaption = String('Sheet Type ID: ' + base);
         }
         else {
             const { caption, name } = entitySheet;
@@ -103,7 +105,7 @@ function PageEditingCenter() {
     async function onRemoveDraft() {
         if (await modal.open(<PageConfirm header="单据草稿" message="真的要删除全部单据草稿吗？" yes="删除" no="不删除" />) !== true) return;
         setVisible(false);
-        await uq.DeleteMyDrafts.submit({});
+        await uq.DeleteMyDrafts.submit({ entitySheet: undefined });
         await wait(10);
         setVisible(true);
     }

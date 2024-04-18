@@ -13,7 +13,8 @@ export abstract class SheetConsole {
     abstract close(): void;                      // 关闭当前页面
     abstract restart(): void;                    // 关闭并新开单
     abstract discard(sheetId: number): void;     // 废弃当前单据
-    abstract onSheetAdded(sheetId: number, no: string): void;
+    abstract onSheetAdded(store: SheetStore/*sheetId: number, no: string*/): Promise<void>;
+    abstract sheetRowCountChanged(store: SheetStore): void;
     abstract removeFromCache(sheetId: number): void;
     abstract steps: SheetSteps;
     createSheetStore() {

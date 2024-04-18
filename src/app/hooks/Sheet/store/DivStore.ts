@@ -27,14 +27,14 @@ export class DivStore {
     readonly binDiv: BinDiv;
     readonly pendColl: { [pend: number]: WritableAtom<ValDiv, any, any> } = {};
     pendRows: PendRow[];
-    readonly rootValDiv: ValDiv;
+    readonly rootValDiv: ValDivs;
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
 
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
         this.sheetStore = sheetStore;
         this.entityBin = entityBin;
         this.binDiv = entityBin.div;
-        this.rootValDiv = new ValDiv(entityBin.div, undefined);
+        this.rootValDiv = new ValDivs(); // entityBin.div, undefined);
         this.valDivColl = {};
         this.pendLoadState = PendLoadState.none;
         this.atomSubmitState = atom((get) => {
@@ -154,6 +154,7 @@ export class DivStore {
         if (binDiv.div === undefined) {
             let valRow = getAtomValue(atomValRow);
             await this.delValRow(valRow.id);
+            this.sheetStore.notifyRowChange();
             return;
         }
         alert('彻底删除单据分拆行正在实现中...');

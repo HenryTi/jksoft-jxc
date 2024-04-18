@@ -74,7 +74,9 @@ function FolderLink({ path, className, icon, iconColor, onClick, caption, phrase
     return <Link to={path} className={className} onClick={onClick}>
         <FA name={icon ?? 'file'} className={(iconColor ?? 'text-primary') + " me-4"} fixWidth={true} size={iconSize} />
         <span className={fs}>{caption}</span>
-        <ViewNotifyCount phrase={phrase} />
+        <div className="ms-3">
+            <ViewNotifyCount phrase={phrase} />
+        </div>
         <div className="flex-grow-1"></div>
         <FA name="angle-right" className="text-secondary" />
     </Link>
@@ -141,7 +143,9 @@ function FolderHeader({ icon, iconColor, caption, phrase }: FolderProps) {
     return <div className="d-flex align-items-center">
         <FA name={icon} className={(iconColor ?? 'text-info') + " ms-1 me-4"} fixWidth={true} size={iconSize} />
         <span className={fs}>{caption}</span>
-        <ViewNotifyCount phrase={phrase} />
+        <div className="ms-3">
+            <ViewNotifyCount phrase={phrase} />
+        </div>
     </div>
 }
 
