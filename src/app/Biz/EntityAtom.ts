@@ -92,7 +92,7 @@ export abstract class EntityAtomID extends Entity {
         superClass.subClasses.push(this);
     }
 
-    private idArrToBudArr(ids: number[]): BizBud[] {
+    protected idArrToBudArr(ids: number[]): BizBud[] {
         if (ids === undefined) return;
         return ids.map(v => this.budColl[v]);
     }
@@ -137,7 +137,7 @@ abstract class EntityAtomIDWithBase extends EntityAtomID {
 }
 
 export class EntitySpec extends EntityAtomIDWithBase {
-    readonly keyColl: { [key: string]: BizBud; } = {};
+    readonly keyColl: { [key: number]: BizBud; } = {};
     readonly keys: BizBud[] = [];
     ix: boolean;    // 服务器端对应 isIxBase。如果true，不能临时录入，只能选择。
 
@@ -161,16 +161,30 @@ export class EntitySpec extends EntityAtomIDWithBase {
             budDataType.fromSchema(key);
             bizProp.fromSchema(key);
             this.keyColl[bizProp.id] = bizProp;
-            // this.keyColl[bizProp.phrase] = bizProp;
             this.keys.push(bizProp);
         }
     }
 
-    scan() {
-        super.scan();
+    protected override scanBuds(): void {
         for (let bud of this.keys) {
             bud.scan();
         }
+    }
+
+    protected override idArrToBudArr(ids: number[]): BizBud[] {
+        if (ids === undefined) return;
+        return ids.map(v => {
+            let ret = this.budColl[v];
+            if (ret === undefined) {
+                ret = this.keyColl[v];
+            }
+            if (ret === undefined) debugger;
+            return ret;
+        });
+    }
+
+    scan() {
+        super.scan();
     }
 
     getSpecValues(specValue: any): string {

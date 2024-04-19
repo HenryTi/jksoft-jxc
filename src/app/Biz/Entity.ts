@@ -133,6 +133,10 @@ export class Entity extends BizBase {
     scan() {
         this.buildBudsGroups();
         this.scanBudGroups();
+        this.scanBuds();
+    }
+
+    protected scanBuds() {
     }
 
     private scanBudGroups() {

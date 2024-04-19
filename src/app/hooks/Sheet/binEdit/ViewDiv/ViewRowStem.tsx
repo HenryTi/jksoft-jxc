@@ -44,8 +44,8 @@ export function ViewRowStem(props: ViewDivProps) {
         </div>;
     }
     let budValueColl = sheetStore.budsColl[iValue];
+    // <ViewIdField bud={budI} value={iValue} />
     let content = <>
-        <ViewIdField bud={budI} value={iValue} />
         <ViewIBaseBuds sheetStore={sheetStore} valDiv={valDiv} />
         <ViewShowBuds bud={entityBin.i} budValueColl={budValueColl} />
         {

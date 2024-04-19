@@ -120,18 +120,20 @@ export class ValDiv extends ValDivs {
 
     setIXBase(sheetStore: SheetStore, valRow: ValRow) {
         let { id, i, x } = valRow;
+        let coll = sheetStore.budsColl[id];
+        if (coll === undefined) debugger;
         if (i !== undefined) {
             this.i = i;
             let { budIBase } = this.binDiv.binDivBuds;
             if (budIBase !== undefined) {
-                this.iBase = sheetStore.budsColl[id][budIBase.id] as number
+                this.iBase = coll[budIBase.id] as number
             }
         }
         if (x !== undefined) {
             this.x = x;
             let { budXBase } = this.binDiv.binDivBuds;
             if (budXBase !== undefined) {
-                this.xBase = sheetStore.budsColl[id][budXBase.id] as number
+                this.xBase = coll[budXBase.id] as number
             }
         }
     }
