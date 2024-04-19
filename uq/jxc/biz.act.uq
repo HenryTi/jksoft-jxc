@@ -763,6 +763,12 @@ RETURNS props (
     value JSON,
     (id, phrase) KEY,
 )
+RETURNS atoms (
+    id ID,
+    base ID,
+    no NO,
+    ex EX,
+)
 {
     VAR maySheetId ID, detail ID, sheetPhrase ID;
     SET maySheetId = b.base FROM Detail as a JOIN Bud as b ON b.id=a.base WHERE a.id=id;
@@ -789,13 +795,13 @@ RETURNS props (
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN Bin as b ON b.id=a.origin
     ;
-    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value -- , 0 as owner
+    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value -- , 0 as owner
         FROM details as s
-            JOIN IxBudInt as a ON a.i=s.id;
-    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value -- , 0 as owner
+            JOIN IxBudInt as a ON a.i=s.id or a.i=s.i or a.i=s.x;
+    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value -- , 0 as owner
         FROM details as s
             JOIN IxBudDec as a ON a.i=s.id;
-    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value -- , 0 as owner
+    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_QUOTE(a.value) as value -- , 0 as owner
         FROM details as s
             JOIN IxBudStr as a ON a.i=s.id;
     INTO IGNORE props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value -- , 0 as owner
@@ -803,13 +809,13 @@ RETURNS props (
             JOIN IxBud as a ON a.i=s.id
             JOIN Bud as b ON b.id=a.x;
 
-    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value -- , 0 as owner
+    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value -- , 0 as owner
         FROM main as s
-            JOIN IxBudInt as a ON a.i=s.id;
-    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value -- , 0 as owner
+            JOIN IxBudInt as a ON a.i=s.id or a.i=s.i or a.i=s.x;
+    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value -- , 0 as owner
         FROM main as s
             JOIN IxBudDec as a ON a.i=s.id;
-    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_ARRAY(a.value) as value -- , 0 as owner
+    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_QUOTE(a.value) as value -- , 0 as owner
         FROM main as s
             JOIN IxBudStr as a ON a.i=s.id;
     INTO IGNORE props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value -- , 0 as owner
@@ -822,6 +828,12 @@ RETURNS props (
         VAR sql CHAR(500) = CONCAT('call `$site`.`', procName, '`(?);');
         ExecSql sql USING id;
     }
+
+    INTO atoms SELECT DISTINCT a.value as id, b.id as base, c.no, c.ex
+        FROM props as a 
+            JOIN BizBud as b ON b.id=a.phrase
+            JOIN Atom as c ON c.id=a.value
+        WHERE b.type=BudDataType.atom;
 };
 
 Biz Query GetAtom (

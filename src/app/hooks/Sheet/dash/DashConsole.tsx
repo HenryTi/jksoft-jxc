@@ -9,11 +9,11 @@ import { getAtomValue, setAtomValue } from "tonwa-com";
 const maxDraftsCount = 10;
 
 export class DashConsole extends SheetConsole {
-    private readonly modal: Modal;
     private uq: UqExt;
+    readonly atomViewSubmited = atom(undefined as any);
+
     constructor(modal: Modal, entitySheet: EntitySheet) {
-        super(entitySheet);
-        this.modal = modal;
+        super(modal, entitySheet);
         this.uq = entitySheet.uq;
     }
     close(): void {
@@ -78,4 +78,21 @@ export class DashConsole extends SheetConsole {
     }
 
     steps: SheetSteps;
+
+    async onSubmited(store: SheetStore): Promise<void> {
+        const { main } = store;
+        const { no, valRow } = main;
+        const { id } = valRow;
+        this.removeMyDraft(id);
+        let { caption, name } = this.entitySheet;
+        if (caption === undefined) caption = name;
+        let viewSubmited = <div className="px-3 py-2 rounded ms-3 mt-3 border me-auto bg-warning text-primary">
+            {caption} <b>{no}</b> 提交成功!
+        </div>;
+        setAtomValue(this.atomViewSubmited, viewSubmited);
+        setTimeout(() => {
+            setAtomValue(this.atomViewSubmited, undefined);
+        }, 5000);
+        this.modal.close();
+    }
 }

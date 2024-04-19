@@ -7,21 +7,26 @@ import { useRef } from "react";
 import { EntitySheet } from "app/Biz";
 import { PageMoreCacheData } from "app/coms";
 import { UqApp } from "app/UqApp";
+import { Modal, Page, useModal } from "tonwa-app";
 
 export function RouteSheetEdit() {
-    const entitySheet = useSheetEntity();
-    const navigate = useNavigate();
     const { id } = useParams();
     const sheetId = from62(id);
-    const routeConsole = useRef(new RouteConsole(navigate, entitySheet));
-    return <PageSheetEdit store={routeConsole.current.createSheetStore()} sheetId={sheetId} />;
+    let store = useSheetStore();
+    return <PageSheetEdit store={store} sheetId={sheetId} />;
 }
 
 export function RouteSheetNew() {
+    let store = useSheetStore();
+    return <PageSheetNew store={store} />;
+}
+
+function useSheetStore() {
     const entitySheet = useSheetEntity();
     const navigate = useNavigate();
-    const routeConsole = useRef(new RouteConsole(navigate, entitySheet));
-    return <PageSheetNew store={routeConsole.current.createSheetStore()} />;
+    const modal = useModal();
+    const routeConsole = useRef(new RouteConsole(navigate, modal, entitySheet));
+    return routeConsole.current.createSheetStore();
 }
 
 export function RouteSheetDash() {
@@ -34,8 +39,8 @@ class RouteConsole extends SheetConsole {
     private readonly uqApp: UqApp;
     private readonly navigate: NavigateFunction;
 
-    constructor(navigate: NavigateFunction, entitySheet: EntitySheet) {
-        super(entitySheet);
+    constructor(navigate: NavigateFunction, modal: Modal, entitySheet: EntitySheet) {
+        super(modal, entitySheet);
         this.uqApp = entitySheet.biz.uqApp;
         this.navigate = navigate;
     }
@@ -81,4 +86,38 @@ class RouteConsole extends SheetConsole {
 
     get steps() { return undefined as SheetSteps; }
     set steps(value: SheetSteps) { }
+
+    async onSubmited(store: SheetStore): Promise<void> {        // 单据已提交
+        // removeSheetFromCache();
+        const { main } = store;
+        const { valRow, no } = main;
+        this.removeFromCache(valRow.id);
+        let { caption, name } = this.entitySheet;
+        if (caption === undefined) caption = name;
+        this.uqApp.autoRefresh?.();
+        const closeModal = (ret: any) => {
+            this.modal.close(ret);
+        }
+        let ret = await this.modal.open<boolean>(<Page header="提交成功" back="none">
+            <div className="p-3">
+                {caption} <b>{no}</b> 已提交
+            </div>
+            <div className="border-top p-3">
+                <button className="btn btn-outline-primary" onClick={closeModal}>返回</button>
+                <button className="ms-3 btn btn-outline-secondary" onClick={() => closeModal(true)}>新建{caption}</button>
+            </div>
+        </Page>);
+        if (ret === true) {
+            this.restart();
+            /*
+            const { entitySheet } = store;
+            navigate(`/sheet/${to62(entitySheet.id)}`, { replace: true, state: locationState++ });
+            */
+        }
+        else {
+            this.close();
+            // navigate(-1);
+        }
+
+    }
 }

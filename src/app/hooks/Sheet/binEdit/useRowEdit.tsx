@@ -70,15 +70,16 @@ function ModalInputRow({ binEditing, valDiv }: { binEditing: FieldsEditing; valD
     function ViewIdField({ bud, budBase, value, base }: { bud: BizBud; budBase: BizBud; value: number; base: number; }) {
         if (bud === undefined) return null;
         const { caption, name } = bud;
-        const budValueColl = sheetStore.budsColl[base ?? value];
+        const { budsColl, bizAtomColl } = sheetStore;
+        const budValueColl = budsColl[base ?? value];
         return <Band label={caption ?? name} className="border-bottom py-2">
             <ViewSpecBaseOnly id={value} bold={true} />
-            <ViewAtomTitles budValueColl={budValueColl} bud={budBase ?? bud} />
+            <ViewAtomTitles budValueColl={budValueColl} bud={budBase ?? bud} atomColl={bizAtomColl} />
             <RowCols>
                 <ViewSpecNoAtom id={value} />
             </RowCols>
             <RowCols>
-                <ViewShowBuds bud={bud} budValueColl={budValueColl} noLabel={false} />
+                <ViewShowBuds bud={bud} budValueColl={budValueColl} noLabel={false} atomColl={bizAtomColl} />
             </RowCols>
         </Band>;
     }

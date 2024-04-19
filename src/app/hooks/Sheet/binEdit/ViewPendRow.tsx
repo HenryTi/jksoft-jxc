@@ -16,7 +16,7 @@ export interface PendProps {
 export function ViewPendRow({
     pendRow, divStore, showPendValue
 }: PendProps & { showPendValue?: boolean }) {
-    const { entityBin } = divStore;
+    const { sheetStore, entityBin } = divStore;
     const { pend: entityPend } = entityBin;
     let { i: iBud, hasPrice, hasAmount } = entityPend;
     const { pend: pendId, detail: { id, i, price, amount }, value, mid/*, cols*/ } = pendRow;
@@ -51,7 +51,8 @@ export function ViewPendRow({
             }
         }
     }
-    const budValueColl = divStore.sheetStore.budsColl[i];
+    const { budsColl, bizAtomColl } = sheetStore;
+    const budValueColl = budsColl[i];
     function ViewSpecAtom({ id }: { id: number; }) {
         const { atom, specs } = useGetSpec(id);
         if (atom === undefined) return null;
@@ -63,12 +64,12 @@ export function ViewPendRow({
         <div className="py-2 bg-white flex-fill ps-3">
             <div className="flex-fill d-flex align-items-center">
                 <ViewSpecAtom id={i} />
-                <ViewAtomTitles budValueColl={budValueColl} bud={iBud} />
+                <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
             </div>
             <div className="d-flex">
                 <RowCols contentClassName=" flex-fill ">
                     <ViewSpecBase id={i} ViewAtom={undefined} />
-                    <ViewShowBuds budValueColl={budValueColl} bud={iBud} />
+                    <ViewShowBuds budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
                     <ViewPropArr arr={mid} />
                 </RowCols>
             </div>

@@ -10,7 +10,7 @@ export function ViewSteps({ sheetSteps }: { sheetSteps: SheetSteps; }) {
     const cnStep = ' fs-larger ';
     const cnStepColor = '  ';
     const cnStepCurrent = ' fw-bold text-primary ';
-    return <div className="d-flex py-3 px-5 align-items-center text-center justify-content-center">
+    return <div className="d-flex py-3 px-5 align-items-center text-center justify-content-center border-bottom border-primary">
         {steps.map((v, index) => {
             let cn = cnStep, cnBox = cnStepBox;
             if (index === step) {

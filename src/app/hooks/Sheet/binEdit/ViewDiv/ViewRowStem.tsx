@@ -10,8 +10,8 @@ export function ViewRowStem(props: ViewDivProps) {
     const { valDiv, divStore, buttons, hidePivot } = props;
     const { sheetStore } = divStore;
     const { atomValRow, atomValDivs, atomSum, binDiv } = valDiv;
-    const { binDivBuds: binBuds, level, entityBin, div } = binDiv;
-    const { fields, budI } = binBuds;
+    const { binDivBuds: binBuds, level, entityBin } = binDiv;
+    const { fields } = binBuds;
     const valRow = useAtomValue(atomValRow);
     let sum = useAtomValue(atomSum);
     const divs = useAtomValue(atomValDivs);
@@ -43,15 +43,17 @@ export function ViewRowStem(props: ViewDivProps) {
             <span className={'w-min-2c ' + color}>{pendValue}</span>
         </div>;
     }
-    let budValueColl = sheetStore.budsColl[iValue];
+
+    const { budsColl, bizAtomColl } = sheetStore;
+    let budValueColl = budsColl[iValue];
     // <ViewIdField bud={budI} value={iValue} />
     let content = <>
         <ViewIBaseBuds sheetStore={sheetStore} valDiv={valDiv} />
-        <ViewShowBuds bud={entityBin.i} budValueColl={budValueColl} />
+        <ViewShowBuds bud={entityBin.i} budValueColl={budValueColl} atomColl={bizAtomColl} />
         {
             fields.map(field => {
                 const { bud } = field;
-                return <ViewBud key={bud.id} bud={bud} value={field.getValue(valRow)} uiType={ViewBudUIType.inDiv} />;
+                return <ViewBud key={bud.id} bud={bud} value={field.getValue(valRow)} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
             })
         }
     </>;

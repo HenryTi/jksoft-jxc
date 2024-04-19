@@ -30,12 +30,15 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             return;
         }
         setEditable(true);
+
+        await sheetConsole.onSubmited(store);
+        /*
         // removeSheetFromCache();
         sheetConsole.removeFromCache(sheetId);
         uqApp.autoRefresh?.();
         let ret = await openModal<boolean>(<Page header="提交成功" back="none">
             <div className="p-3">
-                {caption} <b>{main.no}</b> 已提交 {JSON.stringify(checkPend)} {JSON.stringify(checkBin)}
+                {caption} <b>{main.no}</b> 已提交
             </div>
             <div className="border-top p-3">
                 <button className="btn btn-outline-primary" onClick={closeModal}>返回</button>
@@ -44,15 +47,12 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         </Page>);
         if (ret === true) {
             sheetConsole.restart();
-            /*
-            const { entitySheet } = store;
-            navigate(`/sheet/${to62(entitySheet.id)}`, { replace: true, state: locationState++ });
-            */
         }
         else {
             sheetConsole.close();
             // navigate(-1);
         }
+        */
     }
 
     /*

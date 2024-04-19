@@ -254,6 +254,7 @@ export interface Uq {
     idObj<T = any>(id: number): Promise<T>;
     idJoins(id: number): Promise<{ ID: ID; main: [string, any]; joins: [string, any[]][]; }>;
     idCache<T = any>(id: number): T;
+    idCacheAdd(atomValue: any): void;
     IDValue<T>(type: string, value: string): T;
     Biz(id: number, act: string): Promise<void>;
     BizSheetAct(id: number, detail: string, act: string): Promise<any[]>;
@@ -1071,7 +1072,11 @@ export class UqMan {
     idCacheDel(id: number) {
         delete this.cache[id];
     }
-
+    protected idCacheAdd = (atomValue: any) => {
+        if (!atomValue) return;
+        const { id } = atomValue;
+        this.cache[id] = atomValue;
+    }
     // 返回可能是数组
     protected idObj = async (id: number) => {
         let obj = this.cache[id];

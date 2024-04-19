@@ -1,16 +1,15 @@
 import { EntitySheet, EntityBin, Biz, EntityPend, BinRow, BizBud } from "app/Biz";
-import { ParamSaveDetail, UqExt } from "uqs/UqDefault";
-import { Atom, WritableAtom, atom } from "jotai";
+import { ParamSaveDetail, UqExt, Atom as BizAtom } from "uqs/UqDefault";
+import { Atom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { PickFunc, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
-import { BudsColl, budValuesFromProps } from "../../tool";
+import { AtomColl, BudsColl, budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
 import { ValRow } from "./tool";
 import { DivStore } from "./DivStore";
 import { useParams } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
-import { useRef } from "react";
 import { PickStates, SheetConsole } from "./SheetConsole";
 
 abstract class KeyIdObject {
@@ -172,6 +171,7 @@ export class SheetStore extends KeyIdObject {
     readonly backIcon = 'file-text-o';
     readonly isPend: boolean;
     readonly budsColl: BudsColl = {};
+    readonly bizAtomColl: AtomColl = {};
     readonly divStore: DivStore;
     readonly atomLoaded = atom(false);
 
@@ -224,9 +224,13 @@ export class SheetStore extends KeyIdObject {
 
     // whole sheet or row detail
     private async loadBinData(binId: number) {
-        let { main, details, props } = await this.uq.GetSheet.query({ id: binId });
+        let { main, details, props, atoms } = await this.uq.GetSheet.query({ id: binId });
         const budsColl = budValuesFromProps(props);
         Object.assign(this.budsColl, budsColl);
+        for (let atom of atoms) {
+            this.bizAtomColl[atom.id] = atom;
+            this.uq.idCacheAdd(atom);
+        }
         let mainRow = main[0];
         if (mainRow !== undefined) {
             (mainRow as any).buds = budsColl[binId] ?? {};

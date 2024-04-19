@@ -2,7 +2,7 @@ import { SheetMain, SheetStore } from "../store";
 import { EditBudInline, ViewSpecR } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "../../ViewSheetTime";
-import { BizBud } from "app/Biz";
+import { BizBud, BudDataType, EnumBudType } from "app/Biz";
 import { setAtomValue } from "tonwa-com";
 import { theme } from "tonwa-com";
 import { BudCheckValue } from "tonwa-app";

@@ -1,9 +1,9 @@
 import { PendRow, SheetStore } from "./SheetStore";
 import { BinDiv, EntityBin } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
-import { BudsColl, budValuesFromProps } from "../../tool";
+import { budValuesFromProps } from "../../tool";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
-import { ValRow, /*Prop, arrFromJsonArr, */arrFromJsonMid } from "./tool";
+import { ValRow, arrFromJsonMid } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { NamedResults } from "./NamedResults";
 import { ValDiv, ValDivs } from './ValDiv';

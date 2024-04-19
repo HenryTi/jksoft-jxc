@@ -1,6 +1,5 @@
 import { SheetStore, ValDiv } from "../../store";
 import { ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
-import { useGetSpec } from "app/hooks/Uq";
 
 export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valDiv: ValDiv }) {
     const { binDiv } = valDiv;
@@ -9,18 +8,14 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     if (budIBase === undefined) return null;
     let { i } = valDiv;
     if (i === undefined) return null;
-    function ViewSpecAtom({ id }: { id: number; }) {
-        const { atom, specs } = useGetSpec(id);
-        if (atom === undefined) return null;
-        const { value: atomValue, entity } = atom;
-        const { no, ex } = atomValue;
-        return <><b>{ex}</b> <span className="ms-3">{no}</span></>
-    }
     let { iBase } = valDiv;
-    let budValueColl = sheetStore.budsColl[iBase];
+    const { budsColl, bizAtomColl } = sheetStore
+    let atomValue = bizAtomColl[iBase];
+    const { no, ex } = atomValue;
+    let budValueColl = budsColl[iBase];
     return <>
-        <ViewSpecAtom id={i} />
-        <ViewAtomTitles budValueColl={budValueColl} bud={budIBase} />
+        <><b>{ex}</b> <span className="ms-3">{no}</span></>
+        <ViewAtomTitles budValueColl={budValueColl} bud={budIBase} atomColl={bizAtomColl} />
     </>;
 }
 
@@ -30,6 +25,7 @@ export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, 
     const { budIBase } = binDivBuds;
     if (budIBase === undefined) return null;
     let { iBase } = valDiv;
-    let budValueColl = sheetStore.budsColl[iBase];
-    return <ViewShowBuds bud={budIBase} budValueColl={budValueColl} />
+    const { budsColl, bizAtomColl } = sheetStore;
+    let budValueColl = budsColl[iBase];
+    return <ViewShowBuds bud={budIBase} budValueColl={budValueColl} atomColl={bizAtomColl} />
 }

@@ -19,27 +19,28 @@ export function ViewRowLeaf(props: ViewDivProps) {
     let {
         value: cnValue, price: cnPrice, amount: cnAmount
     } = theme;
-    let budValueColl = sheetStore.budsColl[valRow.i];
+    const { budsColl, bizAtomColl } = sheetStore;
+    let budValueColl = budsColl[valRow.i];
     return <>
         <div className="flex-fill">
             {
                 budI &&
                 <div className="mb-1">
                     <ViewSpecBaseOnly id={valRow.i} noVisible={false} bold={true} />
-                    <ViewAtomTitles budValueColl={budValueColl} bud={iBud} />
+                    <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
                 </div>
             }
             <div className={cn + ' bg-white '}>
                 <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />
                 <RowColsSm contentClassName="flex-fill">
-                    <ViewShowBuds bud={iBud} budValueColl={budValueColl} />
+                    <ViewShowBuds bud={iBud} budValueColl={budValueColl} atomColl={bizAtomColl} />
                     {
                         fields.map(field => {
                             const { bud } = field;
                             const { id } = bud;
                             let value = field.getValue(valRow);
                             if (value === null || value === undefined) return null;
-                            return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} />;
+                            return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
                         })
                     }
                 </RowColsSm>

@@ -1,14 +1,15 @@
 import { BizBud, BudRadio, EnumBudType } from "app/Biz";
 import { ViewBudSpec, ViewSpecNoAtom } from "app/hooks";
 import { contentFromDays } from "app/tool";
-import { LabelBox, ViewBudEmpty } from "../tool";
+import { AtomColl, LabelBox, ViewBudEmpty } from "../tool";
+import { Atom as BizAtom } from "uqs/UqDefault";
 
 export enum ViewBudUIType {
     notInDiv = 0,
     inDiv = 1,
 }
 
-export function ViewBud({ bud, value, uiType, noLabel }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; }) {
+export function ViewBud({ bud, value, uiType, noLabel, atomColl }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; atomColl?: AtomColl; }) {
     if (value === undefined) return null;
     if (value === null) return null;
     if (bud === undefined) return <>{value}</>;
@@ -20,7 +21,7 @@ export function ViewBud({ bud, value, uiType, noLabel }: { bud: BizBud; value: a
     else {
         let type = budDataType?.type;
         if (type === EnumBudType.atom) {
-            return atom(bud, value, uiType, noLabel);
+            return atom(bud, value, uiType, noLabel, atomColl);
         }
         switch (type) {
             default:
@@ -78,10 +79,21 @@ export function budContent(bud: BizBud, value: any) {
     return content;
 }
 
-function ViewAtomInBud({ value }: { value: any; }) {
-    return <>{value?.ex}</>;
-}
-function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean) {
+function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, atomColl: AtomColl) {
+    let bizAtom: BizAtom = atomColl?.[value];
+    if (bizAtom !== undefined) {
+        let { no, ex } = bizAtom
+        let title = `${ex} ${no}`;
+        if (noLabel === true) {
+            return <span title={title}>{ex}</span>;
+        }
+        let label: any;
+        const { caption, name } = bud;
+        label = caption ?? name;
+        return <LabelBox title={title} label={label} /*colon={true}*/>
+            {ex}
+        </LabelBox>;
+    }
     switch (bud.name) {
         default:
             return <ViewBudSpec id={value} bud={bud} noLabel={noLabel} />;

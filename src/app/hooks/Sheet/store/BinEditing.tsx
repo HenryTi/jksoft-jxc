@@ -232,15 +232,16 @@ export abstract class FieldsEditing extends BudsFields {
 
     private viewIdField(bud: BizBud, value: number) {
         const { caption, name } = bud;
-        const budValueColl = this.sheetStore.budsColl[value];
+        const { budsColl, bizAtomColl } = this.sheetStore;
+        const budValueColl = budsColl[value];
         return <Band label={caption ?? name} className="border-bottom py-2">
             <ViewSpecBaseOnly id={value} bold={true} />
-            <ViewAtomTitles budValueColl={budValueColl} bud={bud} />
+            <ViewAtomTitles budValueColl={budValueColl} bud={bud} atomColl={bizAtomColl} />
             <RowCols>
                 <ViewSpecNoAtom id={value} />
             </RowCols>
             <RowCols>
-                <ViewShowBuds bud={bud} budValueColl={budValueColl} noLabel={false} />
+                <ViewShowBuds bud={bud} budValueColl={budValueColl} noLabel={false} atomColl={bizAtomColl} />
             </RowCols>
         </Band>;
     }
