@@ -35,7 +35,7 @@ export function ViewRowStem(props: ViewDivProps) {
             color = cnPendOver;
         }
         else {
-            icon = 'hand-right-o';
+            icon = 'hand-o-right';
             color = cnPend;
         }
         viewPendValue = <div className="flex-fill d-flex align-items-center">

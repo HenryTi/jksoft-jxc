@@ -82,6 +82,7 @@ export function useDivNew() {
             let origin = valDiv === undefined ? pendRow.origin : valDiv.id;
             valRow.origin = origin;
             valRow.pend = pendRow.pend;
+            valRow.pendValue = pendRow.value;
             // save detail;
             let id = await divStore.saveDetail(p, valRow);
 

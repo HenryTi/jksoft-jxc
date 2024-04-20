@@ -46,10 +46,6 @@ export function ViewPendRowEdit(props: PendProps) {
         const valRow = useAtomValue(atomValRow);
         const deleted = useAtomValue(atomDeleted);
         const { id } = valRow;
-
-        async function onEdit() {
-            setAtomValue(atomDeleted, false);
-        }
         function onDelThoroughly() {
             divStore.rootValDiv.removePend(-id);
             setAtomValue(atomValDiv, undefined);
