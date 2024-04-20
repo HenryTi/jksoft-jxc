@@ -1,16 +1,17 @@
 import { EntitySheet, EntityBin, Biz, EntityPend, BinRow, BizBud } from "app/Biz";
-import { ParamSaveDetail, UqExt, Atom as BizAtom } from "uqs/UqDefault";
-import { Atom, atom } from "jotai";
+import { ParamSaveDetail, UqExt, Atom as BizAtom, ReturnGetPendRetSheet } from "uqs/UqDefault";
+import { Atom, WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { PickFunc, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
 import { AtomColl, BudsColl, budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
-import { ValRow } from "./tool";
+import { ValRow, arrFromJsonMid } from "./tool";
 import { DivStore } from "./DivStore";
 import { useParams } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
 import { PickStates, SheetConsole } from "./SheetConsole";
+import { ValDiv } from "./ValDiv";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -75,16 +76,15 @@ export class SheetMain extends BaseObject {
         let { namedResults, rearBinPick: lastBinPick, rearResult: lastResult } = pickResults;
         const calc = new Calc(formulas, namedResults);
         calc.addValues(lastBinPick.name, lastResult[0]);
-        const { results: calcResults } = calc;
+        // const { results: calcResults } = calc;
         if (i !== undefined) {
-            row.i = calcResults.i as number;
+            row.i = calc.getValue('i') as number; // as number;
         }
         if (x !== undefined) {
-            row.x = calcResults.x as number;
+            row.x = calc.getValue('i') as number; // calcResults.x as number;
         }
         for (let mp of mainProps) {
-            let v = calcResults[mp.name];
-            if (v === undefined) continue;
+            let v = calc.getValue(mp.name);
             row.buds[mp.id] = v;
         }
         setAtomValue(this._valRow, row);
@@ -172,6 +172,7 @@ export class SheetStore extends KeyIdObject {
     readonly isPend: boolean;
     readonly budsColl: BudsColl = {};
     readonly bizAtomColl: AtomColl = {};
+    readonly pendColl: { [pend: number]: WritableAtom<ValDiv, any, any> } = {};
     readonly divStore: DivStore;
     readonly atomLoaded = atom(false);
 
@@ -227,10 +228,7 @@ export class SheetStore extends KeyIdObject {
         let { main, details, props, atoms } = await this.uq.GetSheet.query({ id: binId });
         const budsColl = budValuesFromProps(props);
         Object.assign(this.budsColl, budsColl);
-        for (let atom of atoms) {
-            this.bizAtomColl[atom.id] = atom;
-            this.uq.idCacheAdd(atom);
-        }
+        this.addBizAtoms(atoms);
         let mainRow = main[0];
         if (mainRow !== undefined) {
             (mainRow as any).buds = budsColl[binId] ?? {};
@@ -240,6 +238,44 @@ export class SheetStore extends KeyIdObject {
             (row as any).buds = budsColl[id] ?? {};
         }
         return { main: mainRow, details };
+    }
+
+    async loadPend(params: any, pendId: number) {
+        let { pend: entityPend, rearPick } = this.entitySheet.coreDetail;
+        if (entityPend === undefined) debugger;
+        let ret = await this.uqGetPend(entityPend, params, pendId);
+        let { $page, retSheet, props: showBuds, atoms } = ret;
+        const ownerColl = budValuesFromProps(showBuds);
+        Object.assign(this.budsColl, ownerColl);
+        this.addBizAtoms(atoms);
+        let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
+        for (let v of retSheet) {
+            collSheet[v.id] = v;
+        };
+        let pendRows: PendRow[] = [];
+        let hiddenBuds: Set<number> = (rearPick?.hiddenBuds) ?? new Set();
+        for (let v of $page) {
+            let { id, pend, pendValue, mid, cols } = v;
+            if (pendValue === undefined || pendValue <= 0) continue;
+            this.pendColl[pend] = atom(undefined as ValDiv);
+            let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);
+            let pendRow: PendRow = {
+                pend,
+                detail: { ...v, buds: {}, owned: undefined },
+                origin: id,
+                value: pendValue,
+                mid: midArr,
+            };
+            pendRows.push(pendRow);
+        }
+        return pendRows;
+    }
+
+    private addBizAtoms(bizAtoms: BizAtom[]) {
+        for (let atom of bizAtoms) {
+            this.bizAtomColl[atom.id] = atom;
+            this.uq.idCacheAdd(atom);
+        }
     }
 
     async discard() {

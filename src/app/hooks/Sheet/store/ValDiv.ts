@@ -120,32 +120,47 @@ export class ValDiv extends ValDivs {
 
     setIXBase(sheetStore: SheetStore, valRow: ValRow) {
         let { id, i, x } = valRow;
-        if (id === undefined) {
-            if (i !== undefined) {
-                this.i = i;
-            }
-            if (x !== undefined) {
-                this.x = x;
-            }
+        let coll = sheetStore.budsColl[id];
+        if (coll === undefined) {
+            if (i !== undefined) this.i = i;
+            if (x !== undefined) this.x = x;
         }
         else {
-            let coll = sheetStore.budsColl[id];
-            if (coll === undefined) debugger;
             if (i !== undefined) {
                 this.i = i;
-                let { budIBase } = this.binDiv.binDivBuds;
-                if (budIBase !== undefined) {
-                    this.iBase = coll[budIBase.id] as number
+                if (coll !== undefined) {
+                    let { budIBase } = this.binDiv.binDivBuds;
+                    if (budIBase !== undefined) {
+                        this.iBase = coll[budIBase.id] as number
+                    }
                 }
-            }
-            if (x !== undefined) {
-                this.x = x;
-                let { budXBase } = this.binDiv.binDivBuds;
-                if (budXBase !== undefined) {
-                    this.xBase = coll[budXBase.id] as number
+                if (x !== undefined) {
+                    this.x = x;
+                    let { budXBase } = this.binDiv.binDivBuds;
+                    if (budXBase !== undefined) {
+                        this.xBase = coll[budXBase.id] as number
+                    }
                 }
             }
         }
+    }
+
+    setIBaseFromInput(iBase: number): boolean {
+        let { budIBase } = this.binDiv.binDivBuds;
+        if (budIBase !== undefined) {
+            this.iBase = iBase;
+            return true;
+        }
+        return false;
+    }
+
+    setXBaseFromInput(xBase: number): boolean {
+        let { budXBase } = this.binDiv.binDivBuds;
+        if (budXBase !== undefined) {
+            this.xBase = xBase;
+            return true;
+        }
+        return false;
     }
 
     getRowCount(): number {

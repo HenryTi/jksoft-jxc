@@ -1,7 +1,7 @@
 import { RegisterOptions } from "react-hook-form";
 import { Band, FormRow } from "app/coms";
 import { BinDiv, BinField, BinRow, BizBud, BudAtom, BudDec, BudRadio, BudsFields, EntityBin, EnumBudType, ValueSetType } from "app/Biz";
-import { Calc, Formulas } from "../../Calc";
+import { Calc, CalcIdObj, CalcResult, Formulas } from "../../Calc";
 import { DivStore } from "./DivStore";
 import { SheetStore } from "./SheetStore";
 import { ValDiv } from "./ValDiv";
@@ -16,6 +16,8 @@ export abstract class FieldsEditing extends BudsFields {
     private readonly requiredFields: BinField[] = [];
     readonly valRow: ValRow = { buds: {} } as any;
     readonly sheetStore: SheetStore;
+    iBase: number;
+    xBase: number;
     onDel: () => Promise<void>;
 
     constructor(sheetStore: SheetStore, bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
@@ -59,7 +61,19 @@ export abstract class FieldsEditing extends BudsFields {
         const { results } = this.calc;
         for (let i in this.fieldColl) {
             let field = this.fieldColl[i];
-            field.setValue(this.valRow, results[field.name]);
+            if (i !== field.name) debugger;
+            let result = results[i];
+            if (result === null || typeof result !== 'object') {
+                field.setValue(this.valRow, result);
+            }
+            else {
+                let v = result.id;
+                field.setValue(this.valRow, v);
+                switch (i) {
+                    case 'i': this.iBase = result.base; break;
+                    case 'x': this.xBase = result.base; break;
+                }
+            }
         }
     }
 
@@ -78,7 +92,7 @@ export abstract class FieldsEditing extends BudsFields {
         }
     }
 
-    setValue(name: string, value: number | string, callback: (name: string, value: string | number) => void) {
+    setValue(name: string, value: number | string, callback: (name: string, value: CalcResult) => void) {
         const c = (name: string, value: string | number) => {
             this.setFieldOrBudValue(name, value);
             if (callback !== undefined) {
@@ -89,7 +103,7 @@ export abstract class FieldsEditing extends BudsFields {
             }
         }
         this.setFieldOrBudValue(name, value);
-        this.calc.setValue(name, value, c);
+        this.calc.setValue(name, value, callback);
     }
 
     private setFieldOrBudValue(name: string, value: number | string) {
@@ -113,7 +127,7 @@ export abstract class FieldsEditing extends BudsFields {
     }
 
     onChange(name: string, type: 'text' | 'number' | 'radio' | 'date', valueInputText: string
-        , callback: (name: string, value: string | number) => void) {
+        , callback: (name: string, value: CalcResult) => void) {
         let valueInput: any;
         if (valueInputText.trim().length === 0) {
             valueInput = undefined;
@@ -276,9 +290,11 @@ export class DivEditing extends FieldsEditing {
         this.divStore = divStore;
         this.setNamedParams(namedResults);
         if (this.fieldValue !== undefined) {
-            let pendLeft = divStore.getPendLeft(valDiv);
-            if (pendLeft !== undefined) {
-                this.fieldValue.setValue(this.valRow, pendLeft);
+            if (this.fieldValue.getValue(this.valRow) === undefined) {
+                let pendLeft = divStore.getPendLeft(valDiv);
+                if (pendLeft !== undefined) {
+                    this.fieldValue.setValue(this.valRow, pendLeft);
+                }
             }
         }
     }

@@ -12,7 +12,7 @@ export class Formula {
         return this.runExp(this.exp, nameValues);
     }
 
-    private runExp(exp: jsep.Expression, nameValues: CalcSpace): string | number {
+    private runExp(exp: jsep.Expression, nameValues: CalcSpace): CalcResult {
         switch (exp.type) {
             case 'CallExpression': return this.func(exp as jsep.CallExpression, nameValues);
             case 'BinaryExpression': return this.binary(exp as jsep.BinaryExpression, nameValues);
@@ -50,12 +50,12 @@ export class Formula {
         }
     }
 
-    private identifier(exp: jsep.Identifier, nameValues: CalcSpace): number {
+    private identifier(exp: jsep.Identifier, nameValues: CalcSpace): CalcIdObj {
         const { name } = exp;
         return nameValues.identifier(name) as number;
     }
 
-    private member(exp: jsep.MemberExpression, nameValues: CalcSpace): number {
+    private member(exp: jsep.MemberExpression, nameValues: CalcSpace): CalcIdObj {
         const { object, property } = exp;
         let { type, name: objName } = object as jsep.Identifier;
         if (type !== property.type && type !== 'Identifier') debugger;
@@ -82,12 +82,14 @@ const funcs: { [func: string]: (...params: any[]) => number } = {
 }
 
 export type Formulas = [string, string][];
+export type CalcIdObj = number | { id: number; base?: number; };
+export type CalcResult = number | string | CalcIdObj;
 export class Calc {
     private readonly calcSpace: CalcSpace;
     private readonly formulas: Map<string, Formula>;
-    private _results: { [name: string]: string | number };
+    private _results: { [name: string]: CalcResult; };
 
-    constructor(formulas: [string, string][], values?: { [name: string]: string | number | { [prop: string]: string | number } }) {
+    constructor(formulas: [string, string][], values?: { [name: string]: string | number | { [prop: string]: CalcResult; } }) {
         this.formulas = new Map();
         for (let [name, formulaText] of formulas) {
             if (formulaText === undefined) continue;
@@ -98,11 +100,22 @@ export class Calc {
         this.calcSpace.addValues(undefined, values);
     }
 
-    get results(): { [name: string]: string | number } {
+    get results(): { [name: string]: CalcResult } {
         if (this._results === undefined) {
             this.run(undefined);
         }
         return this._results;
+    }
+
+    getValue(name: string): string | number {
+        if (this._results === undefined) {
+            this.run(undefined);
+        }
+        let v = this._results[name];
+        if (typeof v === 'object') {
+            if (v !== null) return v.id;
+        }
+        return v as number | string;
     }
 
     stopFormula(name: string) {
@@ -114,23 +127,24 @@ export class Calc {
         this._results = undefined;
     }
 
-    private run(callback: (name: string, value: string | number) => void) {
+    private run(callback: (name: string, value: CalcResult) => void) {
         if (this._results === undefined) this._results = {};
         for (let [name, formula] of this.formulas) {
             try {
                 let ret = formula.run(this.calcSpace);
                 if (ret === undefined) continue;
-                this.results[name] = ret;
+                this._results[name] = ret;
                 this.calcSpace.setValue(name, ret as any);
-                if (callback === undefined) continue;
-                callback(name, ret);
+                if (callback !== undefined) {
+                    callback?.(name, typeof ret === 'object' ? ret.id : ret);
+                }
             }
             catch {
             }
         }
     }
 
-    setValue(name: string, value: number | string, callback: (name: string, value: string | number) => void) {
+    setValue(name: string, value: number | string, callback: (name: string, value: CalcResult) => void) {
         this.calcSpace.setValue(name, value as number);
         this.run(callback);
     }

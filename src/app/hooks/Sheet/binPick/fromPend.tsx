@@ -29,9 +29,9 @@ export function usePickFromPend() {
             else {
                 retParam = {};
             }
+            const { sheetStore } = divStore;
+            const { sheetConsole } = sheetStore;
             await divStore.loadPend(retParam);
-
-            const { sheetStore: { sheetConsole } } = divStore;
             const { steps } = sheetConsole;
             if (steps !== undefined) steps.step = 1;
             let inputed = await modal.open<ValRow[]>(<PagePend divStore={divStore} caption={caption} />);

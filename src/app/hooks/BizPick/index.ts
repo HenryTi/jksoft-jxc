@@ -1,2 +1,2 @@
 export * from './usePickAtom';
-export * from './usePickSpec';
+export * from './usePickSpec.old';

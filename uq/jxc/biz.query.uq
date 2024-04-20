@@ -30,7 +30,14 @@ RETURNS props (
     phrase ID,
     value JSON,
     (id, phrase) KEY,
-) {
+)
+RETURNS atoms (
+    id ID,
+    base ID,
+    no NO,
+    ex EX,
+)
+{
     IF pendId IS NOT NULL {
             PAGE SELECT t1.id AS pend, e.id AS sheet, t1.bin AS id, b.i AS i
             , b.x AS x, b.value AS value, b.price AS price, b.amount
@@ -52,18 +59,6 @@ RETURNS props (
         ExecSql sql USING $user,params,$pageStart,$pageSize;
     }
     else {
-        /*
-        PAGE SELECT a.id as pend, d.base as sheet, a.bin as id
-            , b.i, b.x, b.value, b.price, b.amount
-            , a.value as pendValue, a.mid, null as cols
-            FROM Pend as a
-                JOIN Bin as b on b.id=a.bin
-                JOIN BizPhrase as c ON c.id=a.base
-                LEFT JOIN Bud as d ON d.id=b.id
-            WHERE a.base=pend AND c.base=$site
-            ORDER BY a.id ASC
-            LIMIT $pageSize;
-        */
         PAGE SELECT t1.id AS pend, e.id AS sheet, t1.bin AS id, b.i AS i
         , b.x AS x, b.value AS value, b.price AS price, b.amount
         , t1.value AS pendvalue, t1.mid, null AS cols
@@ -84,6 +79,12 @@ RETURNS props (
         FROM (SELECT DISTINCT a.sheet as id FROM $page as a) as s
             JOIN Sheet as b ON b.id=s.id
             JOIN Bin as c ON c.id=b.id;
+
+    INTO atoms SELECT DISTINCT a.value as id, b.id as base, c.no, c.ex
+        FROM props as a 
+            JOIN BizBud as b ON b.id=a.phrase
+            JOIN Atom as c ON c.id=a.value
+        WHERE b.type=BudDataType.atom;
 }
 
 Biz Query GetPendsNotify()

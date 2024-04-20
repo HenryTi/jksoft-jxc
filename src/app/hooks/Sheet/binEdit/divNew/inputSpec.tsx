@@ -27,12 +27,12 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     // const { namedResults } = divStore;
     const { entityPend } = binInput;
     const formulas: [string, string][] = [
-        ['base', binInput.baseExp],
+        ['.i', binInput.baseExp],
     ];
     const calc = new Calc(formulas, namedResults);
     const pendProxyHander = new PendProxyHander(entityPend);
     calc.addValues('pend', new Proxy(pendRow, pendProxyHander));
-    const base = calc.results['base'] as number;
+    const base = calc.results['.i'] as number;
     const viewTop = <ViewAtomId id={base} />;
     const { spec: entitySpec } = binInput;
     const { ix } = entitySpec;
@@ -90,7 +90,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
             };
             let results = await uqApp.uq.SaveSpec.submit(param);
             const { id } = results;
-            let retSpec = Object.assign(data, { id });
+            let retSpec = Object.assign(data, { id, base });
             modal.close(retSpec);
         }
         return <Page header={caption ?? name}>

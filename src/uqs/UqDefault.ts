@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri Apr 19 2024 14:33:24 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sat Apr 20 2024 10:08:42 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -663,10 +663,17 @@ export interface ReturnGetPendProps {
 	phrase: number;
 	value: any;
 }
+export interface ReturnGetPendAtoms {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+}
 export interface ResultGetPend {
 	$page: ReturnGetPend$page[];
 	retSheet: ReturnGetPendRetSheet[];
 	props: ReturnGetPendProps[];
+	atoms: ReturnGetPendAtoms[];
 }
 
 export interface ParamGetPendsNotify {
@@ -3265,6 +3272,29 @@ export const uqSchema={
                     {
                         "name": "value",
                         "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
                     }
                 ]
             }

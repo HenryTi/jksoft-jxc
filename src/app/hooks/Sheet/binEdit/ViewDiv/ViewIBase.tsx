@@ -9,9 +9,10 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     const { binDivBuds, } = binDiv;
     const { budIBase } = binDivBuds;
     if (budIBase === undefined) return null;
-    let { i } = valDiv;
-    if (i === undefined) return null;
+    // let { i } = valDiv;
+    // if (i === undefined) return null;
     let { iBase } = valDiv;
+    if (iBase === undefined) return null;
     const { budsColl, bizAtomColl } = sheetStore
     let bizAtomValue = bizAtomColl[iBase];
     let viewAtom: any;

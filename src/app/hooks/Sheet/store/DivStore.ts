@@ -25,7 +25,7 @@ export class DivStore {
     readonly sheetStore: SheetStore;
     readonly entityBin: EntityBin;
     readonly binDiv: BinDiv;
-    readonly pendColl: { [pend: number]: WritableAtom<ValDiv, any, any> } = {};
+    readonly pendColl: { [pend: number]: WritableAtom<ValDiv, any, any> };
     pendRows: PendRow[];
     readonly rootValDiv: ValDivs;
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
@@ -34,6 +34,7 @@ export class DivStore {
         this.sheetStore = sheetStore;
         this.entityBin = entityBin;
         this.binDiv = entityBin.div;
+        this.pendColl = sheetStore.pendColl;
         this.rootValDiv = new ValDivs(); // entityBin.div, undefined);
         this.valDivColl = {};
         this.pendLoadState = PendLoadState.none;
@@ -58,7 +59,7 @@ export class DivStore {
     async loadPend(params: any): Promise<void> {
         if (this.pendLoadState !== PendLoadState.none) return;
         this.pendLoadState = PendLoadState.loading;
-        this.pendRows = await this.loadPendInternal(params, undefined);
+        this.pendRows = await this.sheetStore.loadPend(params, undefined);
         this.pendLoadState = PendLoadState.loaded;
         const { atomValDivs } = this.rootValDiv;
         if (atomValDivs !== undefined) {
@@ -75,43 +76,13 @@ export class DivStore {
     }
 
     async loadPendId(pendId: number): Promise<void> {
-        const pendRows = await this.loadPendInternal({}, pendId);
+        const pendRows = await this.sheetStore.loadPend({}, pendId);
         if (this.pendRows === undefined) {
             this.pendRows = pendRows;
         }
         else {
             this.pendRows.push(...pendRows);
         }
-    }
-
-    private async loadPendInternal(params: any, pendId: number) {
-        let { pend: entityPend, rearPick } = this.entityBin;
-        if (entityPend === undefined) debugger;
-        let ret = await this.sheetStore.uqGetPend(entityPend, params, pendId);
-        let { $page, retSheet, props: showBuds } = ret;
-        const ownerColl = budValuesFromProps(showBuds);
-        Object.assign(this.sheetStore.budsColl, ownerColl);
-        let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
-        for (let v of retSheet) {
-            collSheet[v.id] = v;
-        };
-        let pendRows: PendRow[] = [];
-        let hiddenBuds: Set<number> = (rearPick?.hiddenBuds) ?? new Set();
-        for (let v of $page) {
-            let { id, pend, pendValue, mid, cols } = v;
-            if (pendValue === undefined || pendValue <= 0) continue;
-            this.pendColl[pend] = atom(undefined as ValDiv);
-            let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);
-            let pendRow: PendRow = {
-                pend,
-                detail: { ...v, buds: {}, owned: undefined },
-                origin: id,
-                value: pendValue,
-                mid: midArr,
-            };
-            pendRows.push(pendRow);
-        }
-        return pendRows;
     }
 
     load(valRows: ValRow[]) {

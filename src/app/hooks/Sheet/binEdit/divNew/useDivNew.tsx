@@ -16,24 +16,26 @@ export function useDivNew() {
     const modal = useModal();
     return useCallback(async function (props: UseInputsProps, skipInputs: boolean = false): Promise<ValDiv> {
         let { divStore, pendRow, binDiv, valDiv } = props;
-        let { entityBin, sheetStore } = divStore;
+        let { entityBin } = divStore;
         let { rearPick } = entityBin;
         let namedResults: NamedResults = {
             [rearPick.name]: new Proxy(pendRow, new PendProxyHander(entityBin.pend)),
         };
-        let ret: ValDiv, parent: ValDiv;
-        let valRow: ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
-        if (valDiv === undefined) {
-            debugger;
-            console.error('valDiv impossible to be undefined')
-        }
-
-        let { atomValRow } = valDiv;
-        let valDivRow = getAtomValue(atomValRow);
-        mergeValRow(valRow, valDivRow);
-        valRow.id = undefined;
+        let ret: ValDiv, parents: ValDiv[] = [], parent: ValDiv;
 
         for (let p = binDiv; p !== undefined; p = p.div) {
+            let valRow: ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
+            if (valDiv === undefined) {
+                debugger;
+                console.error('valDiv impossible to be undefined')
+            }
+
+            let iBase: number, xBase: number;
+            let { atomValRow } = valDiv;
+            let valDivRow = getAtomValue(atomValRow);
+            mergeValRow(valRow, valDivRow);
+            valRow.id = undefined;                          // 新输入行
+
             const { inputs } = p;
             if (inputs !== undefined && skipInputs !== true) {
                 for (let input of inputs) {
@@ -64,6 +66,9 @@ export function useDivNew() {
                     namedResults[input.name] = retInput;
                 }
                 let divEditing = new DivEditing(divStore, namedResults, binDiv.div, valDiv, valRow);
+                let { iBase: iBaseNew, xBase: xBaseNew } = divEditing;
+                if (iBaseNew !== undefined) iBase = iBaseNew;
+                if (xBaseNew !== undefined) xBase = xBaseNew;
                 mergeValRow(valRow, divEditing.valRow);
             }
             const inputDivProps: InputDivProps = {
@@ -85,6 +90,7 @@ export function useDivNew() {
             valRow.pendValue = pendRow.value;
             // save detail;
             let id = await divStore.saveDetail(p, valRow);
+            valRow.id = id;
 
             valDiv = new ValDiv(p, { ...valRow, id, pend: pendRow.pend, origin });
             divStore.setValColl(valDiv);
@@ -92,9 +98,20 @@ export function useDivNew() {
                 parent = ret = valDiv;
             }
             else {
-                parent.setIXBase(sheetStore, valRow);
+                // parent.setIXBase(sheetStore, valRow);
                 parent.addValDiv(valDiv);
                 parent = valDiv;
+            }
+            parents.push(parent);
+            if (iBase !== undefined) {
+                for (let p of parents) {
+                    if (p.setIBaseFromInput(iBase) === true) break;
+                }
+            }
+            if (xBase !== undefined) {
+                for (let p of parents) {
+                    if (p.setXBaseFromInput(xBase) === true) break;
+                }
             }
         }
         return ret;

@@ -1,10 +1,11 @@
+import { CalcIdObj } from "./Calc";
+
 export class CalcSpace {
     private readonly roots: object[] = [];
     private readonly namedValues: { [name: string]: object | string | number } = {};
     addValues(name: string, values: object) {
         if (name === undefined) {
             this.roots.push(values);
-            // Object.assign(this.namedValues, values);
             return;
         }
         this.namedValues[name] = values;
@@ -14,22 +15,27 @@ export class CalcSpace {
         this.namedValues[name] = value;
     }
 
-    identifier(name: string): string | number {
+    identifier(name: string): CalcIdObj {
         let ret = this.getObj(name);
+        return ret;
+        /*
         if (ret === undefined) return;
         if (typeof ret === 'object') {
             return (ret as any).id;
         }
         return ret;
+        */
     }
 
-    member(name0: string, name1: string): string | number {
+    member(name0: string, name1: string): CalcIdObj {
         let obj = this.getObj(name0); // this.namedValues[name0];
-        if (typeof obj !== 'object') return;
+        if (obj === null || typeof obj !== 'object') return;
         let ret = (obj as any)[name1];
-        // let ret = obj[name1];
+        return ret;
+        /*
         if (typeof ret === 'object') return ret.id;
         return ret;
+        */
     }
 
     private getObj(name: string): any {
