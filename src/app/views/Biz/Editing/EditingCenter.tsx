@@ -1,7 +1,7 @@
 import { useUqApp } from "app/UqApp";
 import { BI, PageQueryMore } from "app/coms";
 import { Link, Route } from "react-router-dom";
-import { IDView, PageConfirm, PageSpinner, useModal } from "tonwa-app";
+import { IDView, Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { EntitySheet } from "app/Biz";
 import { FA, List, to62, wait } from "tonwa-com";
 import { useCallback, useState } from "react";
@@ -112,29 +112,31 @@ function PageEditingCenter() {
     return visible === false ?
         <PageSpinner />
         :
-        <PageQueryMore header={centers.editing.caption}
-            query={query}
-            param={{}}
-            sortField={'id'}
-            ViewItem={ViewSheetItem}
-            none={<div className="small text-secondary p-3">[无]</div>}
+        <Page header={centers.editing.caption}
         >
             <List items={sheetEntities} ViewItem={ViewSheetType} />
+        </Page>;
+    /*
             <Link to={`/sheet/search`}>
                 <div className="px-1 py-2 align-items-center d-flex border-bottom">
                     <FA name="search" className="mx-4 my-2 text-warning" />
                     单据搜索
                 </div>
             </Link>
-            <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-2 align-items-end">
-                <div className="small text-secondary pb-1 flex-grow-1">
-                    我的草稿
-                </div>
-                <button className="btn btn-sm btn-link" onClick={onRemoveDraft}>
-                    清除草稿
-                </button>
-            </div>
-        </PageQueryMore>;
+        query={query}
+        param={{}}
+        sortField={'id'}
+        ViewItem={ViewSheetItem}
+        none={<div className="small text-secondary p-3">[无]</div>}
+        <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-2 align-items-end">
+        <div className="small text-secondary pb-1 flex-grow-1">
+            我的草稿
+        </div>
+        <button className="btn btn-sm btn-link" onClick={onRemoveDraft}>
+            清除草稿
+        </button>
+    </div>
+    */
 }
 
 export function routeEditingCenter() {

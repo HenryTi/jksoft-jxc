@@ -10,6 +10,7 @@ import { getDays } from "app/tool";
 import { ValRow } from "./tool";
 import { ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
+import { getAtomValue } from "tonwa-com";
 
 export abstract class FieldsEditing extends BudsFields {
     private readonly calc: Calc;
@@ -243,6 +244,35 @@ export abstract class FieldsEditing extends BudsFields {
         }
         return ret;
     }
+}
+
+function budRadios(budDataType: BudRadio): { label: string; value: string | number }[] {
+    let ret: { label: string; value: string | number }[] = [];
+    let { options } = budDataType;
+    for (let option of options.items) {
+        let { id, name, caption } = option;
+        ret.push({ label: caption ?? name, value: id });
+    }
+    return ret;
+}
+
+export class DivEditing extends FieldsEditing {
+    readonly divStore: DivStore;
+    readonly valDiv: ValDiv;
+    constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, valDiv: ValDiv, initBinRow?: BinRow) {
+        super(divStore.sheetStore, divStore.entityBin, binDiv.buds, initBinRow);
+        this.divStore = divStore;
+        this.valDiv = valDiv;
+        this.setNamedParams(namedResults);
+        if (this.fieldValue !== undefined) {
+            if (this.fieldValue.getValue(this.valRow) === undefined) {
+                let pendLeft = divStore.getPendLeft(valDiv);
+                if (pendLeft !== undefined) {
+                    this.fieldValue.setValue(this.valRow, pendLeft);
+                }
+            }
+        }
+    }
 
     private viewIdField(bud: BizBud, value: number) {
         const { caption, name } = bud;
@@ -260,43 +290,45 @@ export abstract class FieldsEditing extends BudsFields {
         </Band>;
     }
 
-    viewI() {
-        if (this.fieldI === undefined) return null;
-        let value = this.fieldI.getValue(this.valRow);
-        return this.viewIdField(this.budI, value);
-    }
-
-    viewX() {
-        if (this.fieldX === undefined) return null;
-        let value = this.fieldX.getValue(this.valRow);
-        return this.viewIdField(this.budX, value);
-    }
-}
-
-function budRadios(budDataType: BudRadio): { label: string; value: string | number }[] {
-    let ret: { label: string; value: string | number }[] = [];
-    let { options } = budDataType;
-    for (let option of options.items) {
-        let { id, name, caption } = option;
-        ret.push({ label: caption ?? name, value: id });
-    }
-    return ret;
-}
-
-export class DivEditing extends FieldsEditing {
-    readonly divStore: DivStore;
-    constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, valDiv: ValDiv, initBinRow?: BinRow) {
-        super(divStore.sheetStore, divStore.entityBin, binDiv.buds, initBinRow);
-        this.divStore = divStore;
-        this.setNamedParams(namedResults);
-        if (this.fieldValue !== undefined) {
-            if (this.fieldValue.getValue(this.valRow) === undefined) {
-                let pendLeft = divStore.getPendLeft(valDiv);
-                if (pendLeft !== undefined) {
-                    this.fieldValue.setValue(this.valRow, pendLeft);
-                }
+    viewI(): any {
+        if (this.fieldI !== undefined) {
+            let value = this.fieldI.getValue(this.valRow);
+            return this.viewIdField(this.budI, value);
+        }
+        /*
+        // 从本级开始，循环寻找上一级div 的 I
+        if (this.fieldI !== undefined) debugger;
+        for (let p = this.valDiv; p !== undefined; p = this.divStore.getParentValDiv(p)) {
+            let { binDivBuds } = p.binDiv;
+            let { budI } = binDivBuds;
+            if (budI !== undefined) {
+                let valRow = getAtomValue(p.atomValRow);
+                let value = binDivBuds.fieldI.getValue(valRow);
+                return this.viewIdField(budI, value);
             }
         }
+        return null;
+        */
+    }
+
+    viewX(): any {
+        if (this.fieldX !== undefined) {
+            let value = this.fieldX.getValue(this.valRow);
+            return this.viewIdField(this.budX, value);
+        }
+        /*
+        // 从本级开始，循环寻找上一级div 的 I
+        for (let p = this.valDiv; p !== undefined; p = this.divStore.getParentValDiv(p)) {
+            let { binDivBuds } = p.binDiv;
+            let { budX } = binDivBuds;
+            if (budX !== undefined) {
+                let valRow = getAtomValue(p.atomValRow);
+                let value = binDivBuds.fieldX.getValue(valRow);
+                return this.viewIdField(budX, value);
+            }
+        }
+        return null;
+        */
     }
 }
 

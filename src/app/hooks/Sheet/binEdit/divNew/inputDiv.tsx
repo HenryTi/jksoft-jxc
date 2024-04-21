@@ -65,6 +65,13 @@ function PageInput({ divEditing }: { divEditing: DivEditing; }) {
     }
     let vi = divEditing.viewI();
     let vx = divEditing.viewX();
+
+    function ViewInputTop() {
+        return <div className="tonwa-bg-gray-1 p-3 border-bottom">
+            ViewInputTop
+        </div>
+    }
+
     return <Page header={binDiv.ui?.caption ?? '输入明细'}>
         {
             (vi || vx) && <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + theme.bootstrapContainer}>

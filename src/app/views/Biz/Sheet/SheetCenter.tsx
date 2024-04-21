@@ -1,7 +1,7 @@
 import { useUqApp } from "app/UqApp";
 import { BI, PageQueryMore } from "app/coms";
 import { Link, Route } from "react-router-dom";
-import { IDView, PageConfirm, PageSpinner, useModal } from "tonwa-app";
+import { IDView, Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { EntitySheet } from "app/Biz";
 import { FA, List, to62, wait } from "tonwa-com";
 import { RouteSheetDash, RouteSheetEdit, RouteSheetNew, ViewSheetTime } from "app/hooks";
@@ -107,23 +107,25 @@ function PageSheetCenter() {
     return visible === false ?
         <PageSpinner />
         :
-        <PageQueryMore header={centers.sheet.caption}
-            query={query}
-            param={{}}
-            sortField={'id'}
-            ViewItem={ViewSheetItem}
-            none={<div className="small text-secondary p-3">[无]</div>}
+        <Page header={centers.sheet.caption}
         >
             <List items={sheetEntities} ViewItem={ViewSheetType} />
-            <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-1 mt-4 align-items-end">
-                <div className="small text-secondary pb-1 flex-grow-1">
-                    单据草稿
-                </div>
-                <button className="btn btn-sm btn-link" onClick={onRemoveDraft}>
-                    全部清除
-                </button>
-            </div>
-        </PageQueryMore>;
+        </Page>;
+    /*
+        query={query}
+        param={{}}
+        sortField={'id'}
+        ViewItem={ViewSheetItem}
+        none={<div className="small text-secondary p-3">[无]</div>}
+        <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-1 mt-4 align-items-end">
+        <div className="small text-secondary pb-1 flex-grow-1">
+            单据草稿
+        </div>
+        <button className="btn btn-sm btn-link" onClick={onRemoveDraft}>
+            全部清除
+        </button>
+    </div>
+    */
 }
 
 
@@ -141,8 +143,8 @@ export function pathSheet(phrase: number | string) {
 }
 
 export function routeSheetCenter() {
+    <Route path={centers.sheet.path} element={<PageSheetCenter />} />
     return <>
-        <Route path={centers.sheet.path} element={<PageSheetCenter />} />
         <Route path={`${sheet}/:sheet/:id`} element={<RouteSheetEdit />} />
         <Route path={`${sheet}/:sheet`} element={<RouteSheetDash />} />
         <Route path={`${sheet}/:sheet`} element={<RouteSheetNew />} />

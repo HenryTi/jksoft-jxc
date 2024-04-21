@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Apr 20 2024 10:08:42 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sun Apr 21 2024 11:28:57 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -780,10 +780,16 @@ export interface ParamSearchAllSheets {
 }
 export interface ReturnSearchAllSheets$page {
 	id: number;
+	base: number;
 	no: string;
-	phrase: number;
 	operator: number;
-	buds: any;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	rowCount: number;
 }
 export interface ResultSearchAllSheets {
 	$page: ReturnSearchAllSheets$page[];
@@ -3641,24 +3647,55 @@ export const uqSchema={
                 "fields": [
                     {
                         "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
                         "type": "id"
                     },
                     {
                         "name": "no",
                         "type": "char",
-                        "size": 30
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "id"
+                        "size": 20
                     },
                     {
                         "name": "operator",
                         "type": "id"
                     },
                     {
-                        "name": "buds",
-                        "type": "json"
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "i",
+                        "type": "id"
+                    },
+                    {
+                        "name": "x",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "amount",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "price",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "rowCount",
+                        "type": "int"
                     }
                 ],
                 "order": "desc"

@@ -6,7 +6,6 @@ import { PageSheetEdit, PageSheetNew } from "./PageSheetEntry";
 import { DashConsole } from "./DashConsole";
 import { Atom, Sheet } from "uqs/UqDefault";
 import { Bin } from "app/tool";
-import { ViewSheetTime } from "app/hooks/ViewSheetTime";
 import { PageSheetList } from "./PageSheetList";
 import { useAtomValue } from "jotai";
 import { ViewItemMain } from "app/hooks/View";
@@ -108,13 +107,13 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     let sheetCaption = caption ?? name;
     return <Page header={sheetCaption + ' - 工作台'}>
         <div className="d-flex px-3 py-2 tonwa-bg-gray-1 border-bottom">
-            <button className="btn btn-primary" onClick={onNew}>
+            <button className="btn btn-primary me-3" onClick={onNew}>
                 <FA name="file" className="me-2" />
                 新开单
             </button>
             <div className="flex-fill" />
             <button className="btn btn-outline-primary" onClick={onList}>
-                已提交
+                已归档
             </button>
         </div>
         {viewSubmited}

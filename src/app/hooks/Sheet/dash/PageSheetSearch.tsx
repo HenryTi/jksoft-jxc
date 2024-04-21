@@ -1,12 +1,13 @@
 import { BizBud, EntitySheet } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
-import { BudEditing, EditBudInline, OnBudChanged, PageRefId } from "app/hooks";
-import { IDViewUserSite } from "app/tool";
-import { ChangeEvent, useMemo, useRef, useState } from "react";
-import { BudCheckEditValue, BudCheckValue, Page, useModal } from "tonwa-app";
-import { ButtonAsync, EasyTime, FA, SearchBox, Sep } from "tonwa-com";
+import { ChangeEvent, useRef, useState } from "react";
+import { BudCheckValue, Page, useModal } from "tonwa-app";
+import { ButtonAsync, FA, SearchBox, Sep, theme } from "tonwa-com";
 import { User } from "tonwa-uq";
+import { ViewSheetItem } from "./ViewSheetItem";
+import { SheetConsole } from "../store";
+import { BudEditing, EditBudInline, OnBudChanged } from "app/hooks";
 
 export function PageSearch() {
     const modal = useModal();
@@ -37,7 +38,7 @@ function SearchSheetLink({ sheet }: { sheet: EntitySheet }) {
     const modal = useModal();
     const { caption, name } = sheet;
     function onSearch() {
-        modal.open(<PageSearchSheet sheet={sheet} />);
+        modal.open(<PageSheetSearch sheetConsole={undefined} />);
     }
     return <SearchLink caption={caption ?? name} iconColor="text-info" textColor="text-primary" onClick={onSearch} />;
 }
@@ -53,11 +54,15 @@ function PageSearchAll() {
             paramDetail: undefined,
         });
     }
+    function ViewItem({ value }: { value: any; }) {
+        let sheetConsole = undefined;
+        return <ViewSheetItem value={value} sheetConsole={sheetConsole} />;
+    }
     return <PageQueryMore
         query={uq.SearchAllSheets}
         param={searchParam}
         sortField="id"
-        ViewItem={SheetItem}
+        ViewItem={ViewItem}
         header="全部单据搜索">
         <div className="tonwa-bg-gray-2 border-bottom">
             <SearchBox onSearch={onSearch} placeholder="单据编号" className="mx-3 my-3" />
@@ -70,46 +75,50 @@ interface SearchSheetParam {
     x: number;
     buds: [number, any][];
 }
-export function PageSearchSheet({ sheet }: { sheet: EntitySheet; }) {
+export function PageSheetSearch({ sheetConsole }: { sheetConsole: SheetConsole; }) {
     const { uq } = useUqApp();
-    let { name, caption, search } = sheet;
+    let { entitySheet } = sheetConsole;
+    let { name, caption, search } = entitySheet;
     if (caption === undefined) caption = name;
     const { current: paramValues } = useRef<any>({});
     const [searchParam, setSearchParam] = useState<{ no: string; paramMain: any; paramDetail: any; phrase: number; }>(undefined);
     async function onSearch() {
         let paramMain: Partial<SearchSheetParam>;
         let paramDetail: Partial<SearchSheetParam>;
-        for (let { bin, buds: budsSearch } of search) {
-            let i: number;
-            let x: number;
-            let buds: [number, any][] = [];
-            for (let bud of budsSearch) {
-                const { id } = bud;
-                const { i: iBud, x: xBud } = bin;
-                let val = paramValues[id];
-                if (val === undefined) continue;
-                if (typeof val === 'string') {
-                    if ((val as string).trim().length === 0) continue;
+        if (search !== undefined) {
+            for (let { bin, buds: budsSearch } of search) {
+                let i: number;
+                let x: number;
+                let buds: [number, any][] = [];
+                for (let bud of budsSearch) {
+                    const { id } = bud;
+                    const { i: iBud, x: xBud } = bin;
+                    let val = paramValues[id];
+                    if (val === undefined) continue;
+                    if (typeof val === 'string') {
+                        if ((val as string).trim().length === 0) continue;
+                    }
+                    if (id === iBud.id) i = val;
+                    else if (id === xBud?.id) x = val;
+                    else buds.push([id, val]);
                 }
-                if (id === iBud.id) i = val;
-                else if (id === xBud?.id) x = val;
-                else buds.push([id, val]);
-            }
-            if (buds.length === 0) buds = undefined;
-            let ret = { i, x, buds };
-            if (bin === sheet.main) {
-                paramMain = ret;
-            }
-            else {
-                paramDetail = ret;
+                if (buds.length === 0) buds = undefined;
+                let ret = { i, x, buds };
+                if (bin === entitySheet.main) {
+                    paramMain = ret;
+                }
+                else {
+                    paramDetail = ret;
+                }
             }
         }
-        setSearchParam({
+        let param = {
             no: paramValues.no?.trim(),
-            phrase: sheet.id,
+            phrase: entitySheet.id,
             paramMain,
             paramDetail,
-        });
+        };
+        setSearchParam(param);
     }
     function onBudChanged(bud: BizBud, value: string | number | BudCheckValue) {
         paramValues[bud.id] = value as any;
@@ -120,9 +129,9 @@ export function PageSearchSheet({ sheet }: { sheet: EntitySheet; }) {
         paramValues['no'] = no;
     }
     let vSearchNo = <div key="$no" className="col-3">
-        <div className="small text-secondary-subtle">{caption}编号</div>
+        <div className="text-success">单据编号</div>
         <div className="py-1">
-            <input type="text" className="form-control border-secondary-subtle py-2" onChange={onNoChange} />
+            <input type="text" className="form-control border-secondary py-2" onChange={onNoChange} />
         </div>
     </div>;
     let budArr: BizBud[] = [];
@@ -131,18 +140,23 @@ export function PageSearchSheet({ sheet }: { sheet: EntitySheet; }) {
         for (let { bin, buds } of search) {
             budArr.push(...buds);
         }
-        vBudParams = <ViewParams vSearchNo={vSearchNo} budArr={budArr} onBudChanged={onBudChanged} />;
+        vBudParams = <ViewParams budArr={budArr} onBudChanged={onBudChanged} />;
     }
-
+    function ViewItem({ value }: { value: any; }) {
+        return <ViewSheetItem value={value} sheetConsole={sheetConsole} />;
+    }
     return <PageQueryMore
         query={uq.SearchAllSheets}
         param={searchParam}
         sortField="id"
-        ViewItem={SheetItem}
+        ViewItem={ViewItem}
         header={caption + '搜索'}>
-        <div className="tonwa-bg-gray-2 border-bottom">
+        <div className={' tonwa-bg-gray-2 border-bottom pt-3 ' + theme.bootstrapContainer}>
+            <div className="row">
+                {vSearchNo}
+            </div>
             {vBudParams}
-            <ButtonAsync className="mx-3 my-3 btn btn-primary" onClick={onSearch}>
+            <ButtonAsync className="my-3 btn btn-primary" onClick={onSearch}>
                 <FA name="search" className="me-2" />
                 搜索
             </ButtonAsync>
@@ -150,10 +164,10 @@ export function PageSearchSheet({ sheet }: { sheet: EntitySheet; }) {
     </PageQueryMore>
 }
 
-function ViewParams({ vSearchNo, budArr, onBudChanged }: { vSearchNo: any; budArr: BizBud[]; onBudChanged: OnBudChanged; }) {
+function ViewParams({ budArr, onBudChanged }: { budArr: BizBud[]; onBudChanged: OnBudChanged; }) {
     let budEditings = budArr.map(v => new BudEditing(v, false));
     let { length } = budEditings;
-    let propRow: any[] = [vSearchNo];
+    let propRow: any[] = [];
     const propRowArr: any[][] = [propRow];
     for (let i = 0; i < length; i++) {
         let budEditing = budEditings[i];
@@ -161,7 +175,7 @@ function ViewParams({ vSearchNo, budArr, onBudChanged }: { vSearchNo: any; budAr
         const cn = required === true ? ' text-primary ' : ' text-secodary ';
         let { id, caption, name } = bizBud;
         propRow.push(<div key={id} className="col-3">
-            <div className={'small ' + cn}>{caption ?? name}</div>
+            <div className={cn}>{caption ?? name}</div>
             <div className="py-1"><EditBudInline budEditing={budEditing} id={undefined} value={undefined} onChanged={onBudChanged} /></div>
         </div>);
         if (i === length - 1) break;
@@ -177,11 +191,12 @@ function ViewParams({ vSearchNo, budArr, onBudChanged }: { vSearchNo: any; budAr
         </div>);
     }
 
-    return <div className="mx-3">
+    return <div>
         {viewRowArr}
     </div>;
 }
 
+/*
 function SheetItem({ value }: { value: any; }) {
     const modal = useModal();
     const { biz, uq } = useUqApp();
@@ -204,6 +219,7 @@ function SheetItem({ value }: { value: any; }) {
         </div>
     </div>;
 }
+*/
 
 function ViewUserAssigned({ user, assigned }: { user: User; assigned: string; }): JSX.Element {
     if (!user) return <div>user is empty</div>;

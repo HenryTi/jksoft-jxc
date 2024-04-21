@@ -1,4 +1,4 @@
-import { BizBud, BudRadio } from "app/Biz";
+import { BizBud, BudRadio, OptionsItem } from "app/Biz";
 import { RadioAsync } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { EditBudTemplateProps } from "./model";
@@ -28,12 +28,13 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     const [value, setValue] = useState(initCheckValue);
     let checks: BudCheckEditValue = value;
     let radios: [item: number, caption: string, value: string | number, defaultCheck: boolean,][] = []
-    let checked = false;
+    let checked = false, checkedItem: OptionsItem;
     for (let item of items) {
         let { id: itemId, name, caption, value } = item;
         let c: boolean = checks[itemId];
         if (c === true) {
             checked = true;
+            checkedItem = item;
         }
         radios.push([itemId, caption ?? name, value, c]);
     }
@@ -45,7 +46,16 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     let content: any;
     let label = caption ?? name;
     let cnRadio: string;
-    if (ui?.edit === 'pop') {
+    if (readOnly === true) {
+        if (checkedItem === undefined) {
+            content = '/';
+        }
+        else {
+            const { caption, name } = checkedItem;
+            content = caption ?? name;
+        }
+    }
+    else if (ui?.edit === 'pop') {
         cnRadio = ' w-25 my-2 ';
         onEditClick = async function () {
             function onReturn() {
@@ -84,7 +94,10 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     }
 
     function Radio() {
-        return <RadioAsync name={name} items={radios} onCheckChanged={onCheckChanged} classNameRadio={cnRadio} />
+        return <RadioAsync name={name} items={radios}
+            onCheckChanged={onCheckChanged}
+            classNameRadio={cnRadio}
+        />
     }
 
     async function onCheckChanged(item: number | string) {

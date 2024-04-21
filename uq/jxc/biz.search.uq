@@ -5,11 +5,16 @@ Biz QUERY SearchAllSheets(
     paramDetail JSON,
 ) 
 PAGE (
+    * SHEET DESC,
+    * Bin,
+    rowCount INT,
+    /*
     id ID DESC,
     no NO,
     phrase ID,
     operator ID,
     buds JSON,
+    */
 ) {
     JSONTABLE tblParamMain (
         bud ID PATH '$[0]', 
@@ -28,8 +33,9 @@ PAGE (
     VAR dx BIGINT = JSON_EXTRACT(paramDetail, '$.x');
     VAR dBuds JSON = JSON_EXTRACT(paramDetail, '$.buds');
 
-    PAGE SELECT a.id, a.no, b.id as phrase, a.operator
-        , '[]' as buds
+    PAGE SELECT -- a.id, a.no, b.id as phrase, a.operator, '[]' as buds
+        * a, * c
+        , (SELECT count(*) FROM Detail as x JOIN Bud as y ON y.id=x.base WHERE y.base=a.id) as rowCount
         FROM Sheet as a
             JOIN BizPhrase as b ON b.id=a.base AND b.base=$site
             JOIN Bin as c ON c.id=a.id

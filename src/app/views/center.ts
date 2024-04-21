@@ -32,7 +32,6 @@ const sheet: CenterItem = {
     icon: 'file-o',
     getPath: pathSheet, // (id: number) => `sheet/${to62(id)}`,
 };
-
 const report: CenterItem = {
     path: 'report',
     caption: '报表中心',
@@ -85,6 +84,19 @@ const compile: CenterItem = {
     path: "compile",
     caption: '设计',
 };
-export const centers: { [name: string]: CenterItem } = {
+export const centers: {
+    editing: CenterItem,
+    atom: CenterItem,
+    sheet: CenterItem,
+    report: CenterItem,
+    assign: CenterItem,
+    tie: CenterItem,
+    io: CenterItem,
+    me: CenterItem,
+    setting: CenterItem,
+    user: CenterItem,
+    achieve: CenterItem,
+    compile: CenterItem,
+} = {
     editing, atom, sheet, report, assign, tie, io, me, setting, user, achieve, compile
 }

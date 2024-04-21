@@ -21,30 +21,44 @@ export function ViewRowLeaf(props: ViewDivProps) {
     } = theme;
     const { budsColl, bizAtomColl } = sheetStore;
     let budValueColl = budsColl[valRow.i];
+    let viewAtomMain: any;
+    const { binDivBuds, } = binDiv;
+    const { budIBase } = binDivBuds;
+    if (budIBase === undefined) {
+        if (budI !== undefined) {
+            viewAtomMain = <div className="mb-1">
+                <ViewSpecBaseOnly id={valRow.i} noVisible={false} bold={true} />
+                <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
+            </div>;
+        }
+    }
+    else {
+        viewAtomMain = <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />;
+    }
+    /*
+    {
+        budI &&
+        <div className="mb-1">
+            <ViewSpecBaseOnly id={valRow.i} noVisible={false} bold={true} />
+            <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
+        </div>
+    }
+    */
     return <>
-        <div className="flex-fill">
-            {
-                budI &&
-                <div className="mb-1">
-                    <ViewSpecBaseOnly id={valRow.i} noVisible={false} bold={true} />
-                    <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
-                </div>
-            }
-            <div className={cn + ' bg-white '}>
-                <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />
-                <RowColsSm contentClassName="flex-fill">
-                    <ViewShowBuds bud={iBud} budValueColl={budValueColl} atomColl={bizAtomColl} />
-                    {
-                        fields.map(field => {
-                            const { bud } = field;
-                            const { id } = bud;
-                            let value = field.getValue(valRow);
-                            if (value === null || value === undefined) return null;
-                            return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
-                        })
-                    }
-                </RowColsSm>
-            </div>
+        <div className={cn + ' flex-fill bg-white '}>
+            {viewAtomMain}
+            <RowColsSm contentClassName="flex-fill">
+                <ViewShowBuds bud={iBud} budValueColl={budValueColl} atomColl={bizAtomColl} />
+                {
+                    fields.map(field => {
+                        const { bud } = field;
+                        const { id } = bud;
+                        let value = field.getValue(valRow);
+                        if (value === null || value === undefined) return null;
+                        return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
+                    })
+                }
+            </RowColsSm>
         </div>
         <div className={cnBtn}>
             <div className="d-flex align-items-end flex-column me-3">

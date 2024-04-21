@@ -105,8 +105,8 @@ export class BudAtom extends BudDataNumber {
     override scan(biz: Biz, bud: BizBud) {
         this.bizAtom = biz.entities[this.atom] as EntityAtom;
     }
-    getTitleBuds(): BizBud[] { return this.bizAtom.titleBuds; }
-    getPrimeBuds(): BizBud[] { return this.bizAtom.primeBuds; }
+    getTitleBuds(): BizBud[] { return this.bizAtom?.titleBuds; }
+    getPrimeBuds(): BizBud[] { return this.bizAtom?.primeBuds; }
 }
 export class BudIDIO extends BudDataNumber {
     readonly type = EnumBudType.ID;
