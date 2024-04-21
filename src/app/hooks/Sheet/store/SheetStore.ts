@@ -81,7 +81,7 @@ export class SheetMain extends BaseObject {
             row.i = calc.getValue('i') as number; // as number;
         }
         if (x !== undefined) {
-            row.x = calc.getValue('i') as number; // calcResults.x as number;
+            row.x = calc.getValue('x') as number; // calcResults.x as number;
         }
         for (let mp of mainProps) {
             let v = calc.getValue(mp.name);
