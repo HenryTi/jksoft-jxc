@@ -39,7 +39,7 @@ export function ViewDiv(props: ViewDivProps) {
             const useInputsProps: UseInputsProps = {
                 divStore,
                 binDiv: divStore.binDiv,
-                valDiv,
+                val0Div: valDiv,
                 pendRow,
                 namedResults: {},
             }

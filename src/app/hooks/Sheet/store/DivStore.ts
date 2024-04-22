@@ -326,5 +326,6 @@ export interface UseInputsProps {
     pendRow: PendRow;
     namedResults: NamedResults;
     binDiv: BinDiv;
-    valDiv: ValDiv;
+    val0Div: ValDiv;        // 0 层的 valDiv
+    // valDivParent: ValDiv;
 }

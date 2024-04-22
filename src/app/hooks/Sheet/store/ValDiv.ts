@@ -77,9 +77,9 @@ export class ValDiv extends ValDivs {
     readonly binDiv: BinDiv;
     readonly atomValRow: WritableAtom<ValRow, any, any>;
     readonly atomDeleted = atom(false);
-    i: number;
+    iValue: number;
     iBase: number;
-    x: number;
+    xValue: number;
     xBase: number;
     readonly atomValue = atom(get => {
         let valRow = get(this.atomValRow);
@@ -122,12 +122,12 @@ export class ValDiv extends ValDivs {
         let { id, i, x } = valRow;
         let coll = sheetStore.budsColl[id];
         if (coll === undefined) {
-            if (i !== undefined) this.i = i;
-            if (x !== undefined) this.x = x;
+            if (i !== undefined) this.iValue = i;
+            if (x !== undefined) this.xValue = x;
         }
         else {
             if (i !== undefined) {
-                this.i = i;
+                this.iValue = i;
                 if (coll !== undefined) {
                     let { budIBase } = this.binDiv.binDivBuds;
                     if (budIBase !== undefined) {
@@ -135,7 +135,7 @@ export class ValDiv extends ValDivs {
                     }
                 }
                 if (x !== undefined) {
-                    this.x = x;
+                    this.xValue = x;
                     let { budXBase } = this.binDiv.binDivBuds;
                     if (budXBase !== undefined) {
                         this.xBase = coll[budXBase.id] as number
@@ -145,10 +145,28 @@ export class ValDiv extends ValDivs {
         }
     }
 
+    setIValueFromInput(iValue: number): boolean {
+        let { budI } = this.binDiv.binDivBuds;
+        if (budI !== undefined) {
+            this.iValue = iValue;
+            return true;
+        }
+        return false;
+    }
+
     setIBaseFromInput(iBase: number): boolean {
         let { budIBase } = this.binDiv.binDivBuds;
         if (budIBase !== undefined) {
             this.iBase = iBase;
+            return true;
+        }
+        return false;
+    }
+
+    setXValueFromInput(xValue: number): boolean {
+        let { budX } = this.binDiv.binDivBuds;
+        if (budX !== undefined) {
+            this.xValue = xValue;
             return true;
         }
         return false;

@@ -53,7 +53,7 @@ function EditDiv(props: EditDivProps) {
                 pendRow,
                 namedResults: {},
                 binDiv: div,
-                valDiv,
+                val0Div: valDiv,
             });
             if (ret === undefined) return;
             setAtomValue(atomValDivs, [...divs, ret]);

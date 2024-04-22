@@ -1,30 +1,35 @@
-import { DivEditing, UseInputsProps, ValRow, btnNext, cnNextClassName } from "../../store";
-import { FA } from "tonwa-com";
+import { DivEditing, UseInputsProps, ValDiv, ValRow, btnNext, cnNextClassName } from "../../store";
+import { FA, getAtomValue } from "tonwa-com";
 import { UqApp } from "app";
 import { Modal, Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
-import { FormRowsView } from "app/coms";
+import { Band, FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
 import { ChangeEvent, useState } from "react";
+import { BizBud } from "app/Biz";
+import { ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
+import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
 export interface InputDivProps extends UseInputsProps {
     uqApp: UqApp;
     modal: Modal;
     valRow: ValRow;
+    parents: ValDiv[];
 }
 
 export async function inputDiv(props: InputDivProps): Promise<ValRow> {
-    const { modal, divStore, binDiv, valRow, namedResults, pendRow, valDiv } = props;
+    const { modal, divStore, binDiv, valRow, namedResults, pendRow, val0Div: valDiv, parents } = props;
     let divEditing = new DivEditing(divStore, namedResults, binDiv, valDiv, valRow);
     if (divEditing.isInputNeeded() === true) {
-        if (await modal.open(<PageInput divEditing={divEditing} />) !== true) return;
+        if (await modal.open(<PageInput divEditing={divEditing} parents={parents} />) !== true) return;
     }
     return divEditing.valRow;
 }
 
-function PageInput({ divEditing }: { divEditing: DivEditing; }) {
+function PageInput({ divEditing, parents }: { divEditing: DivEditing; parents: ValDiv[]; }) {
     const modal = useModal();
-    const { divStore: { binDiv } } = divEditing;
+    const { divStore } = divEditing;
+    const { binDiv, sheetStore } = divStore;
     const { register, setValue, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [submitable, setSubmitable] = useState(divEditing.submitable);
     let formRows = divEditing.buildFormRows();
@@ -63,13 +68,53 @@ function PageInput({ divEditing }: { divEditing: DivEditing; }) {
         }
         modal.close(true);
     }
-    let vi = divEditing.viewI();
-    let vx = divEditing.viewX();
+    let vi: any = undefined;
+    let vx: any = undefined;
+    for (let i = parents.length - 1; i >= 0; i--) {
+        let p = parents[i];
+        let { binDivBuds } = p.binDiv;
+        let { budI, budIBase } = binDivBuds;
+        if (budI !== undefined) {
+            vi = viewIdField(budI, p.iValue);
+            break;
+        }
+        else if (budIBase !== undefined) {
+            vi = viewIdField(budIBase, p.iBase);
+            break;
+        }
+    }
 
-    function ViewInputTop() {
-        return <div className="tonwa-bg-gray-1 p-3 border-bottom">
-            ViewInputTop
-        </div>
+    for (let i = parents.length - 1; i >= 0; i--) {
+        let p = parents[i];
+        let { binDivBuds } = p.binDiv;
+        let { budX, budXBase } = binDivBuds;
+        if (budX !== undefined) {
+            vi = viewIdField(budX, p.xValue);
+            break;
+        }
+        else if (budXBase !== undefined) {
+            vi = viewIdField(budXBase, p.xBase);
+            break;
+        }
+    }
+
+    function viewIdField(bud: BizBud, value: number) {
+        let { caption, name } = bud;
+        const { budsColl, bizAtomColl } = sheetStore;
+        const budValueColl = budsColl[value];
+        if (caption === undefined) {
+            if (name[0] !== '.') caption = name;
+        }
+        return <Band label={caption} className="border-bottom py-2">
+            <ViewSpecBaseOnly id={value} bold={true} />
+            <ViewAtomTitles budValueColl={budValueColl} bud={bud} atomColl={bizAtomColl} />
+            <RowCols>
+                <ViewSpecNoAtom id={value} />
+            </RowCols>
+            <RowCols>
+                <ViewShowBuds bud={bud} budValueColl={budValueColl} noLabel={false} atomColl={bizAtomColl} />
+            </RowCols>
+        </Band>;
     }
 
     return <Page header={binDiv.ui?.caption ?? '输入明细'}>
@@ -84,3 +129,48 @@ function PageInput({ divEditing }: { divEditing: DivEditing; }) {
         </form>
     </Page>
 }
+
+/*
+viewI(): any {
+    if (this.fieldI !== undefined) {
+        let value = this.fieldI.getValue(this.valRow);
+        return this.viewIdField(this.budI, value);
+    }
+    return <div>I div level: {this.val0Div.binDiv.level}</div>;
+*/
+/*
+// 从本级开始，循环寻找上一级div 的 I
+if (this.fieldI !== undefined) debugger;
+for (let p = this.valDiv; p !== undefined; p = this.divStore.getParentValDiv(p)) {
+    let { binDivBuds } = p.binDiv;
+    let { budI } = binDivBuds;
+    if (budI !== undefined) {
+        let valRow = getAtomValue(p.atomValRow);
+        let value = binDivBuds.fieldI.getValue(valRow);
+        return this.viewIdField(budI, value);
+    }
+}
+return null;
+*/
+// }
+/*
+viewX(): any {
+    if (this.fieldX !== undefined) {
+        let value = this.fieldX.getValue(this.valRow);
+        return this.viewIdField(this.budX, value);
+    }
+*/
+/*
+// 从本级开始，循环寻找上一级div 的 I
+for (let p = this.valDiv; p !== undefined; p = this.divStore.getParentValDiv(p)) {
+    let { binDivBuds } = p.binDiv;
+    let { budX } = binDivBuds;
+    if (budX !== undefined) {
+        let valRow = getAtomValue(p.atomValRow);
+        let value = binDivBuds.fieldX.getValue(valRow);
+        return this.viewIdField(budX, value);
+    }
+}
+return null;
+*/
+// }
