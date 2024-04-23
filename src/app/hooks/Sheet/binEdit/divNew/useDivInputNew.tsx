@@ -21,20 +21,18 @@ export function useDivInputNew() {
         let namedResults: NamedResults = {
             [rearPick.name]: new Proxy(pendRow, new PendProxyHander(entityBin.pend)),
         };
+        let valRowInit: ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
+        let divEditingFromPend = new DivEditing(divStore, namedResults, binDiv, val0Div, valRowInit);
+        let valRow = divEditingFromPend.valRow; // : ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
         let ret: ValDivBase, parents: ValDivBase[] = [], parent: ValDivBase;
         let valDiv: ValDivBase = val0Div;
         for (let p = binDiv; p !== undefined; p = p.subBinDiv) {
-            let valRow: ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
             if (valDiv === undefined) {
                 debugger;
                 console.error('valDiv impossible to be undefined')
             }
 
             let iValue: number, iBase: number, xValue: number, xBase: number;
-            let { atomValRow } = valDiv;
-            let valDivRow = getAtomValue(atomValRow);
-            mergeValRow(valRow, valDivRow);
-            valRow.id = undefined;                          // 新输入行
 
             const { inputs } = p;
             if (inputs !== undefined && skipInputs !== true) {
@@ -73,23 +71,25 @@ export function useDivInputNew() {
                 if (xBaseNew !== undefined) xBase = xBaseNew;
                 mergeValRow(valRow, divEditing.valRow);
             }
+            let origin = valDiv === undefined ? pendRow.origin : valDiv.id;
+            valRow.origin = origin;
+            valRow.pend = pendRow.pend;
+            valRow.pendValue = pendRow.value;
             const inputDivProps: InputDivProps = {
                 ...props,
                 binDiv: p,
-                valRow: valRow,
+                valRow,
                 modal,
-                //uqApp,
                 namedResults,
-                // parents,
             }
             if (iBase !== undefined) {
-                for (let p of parents) {
-                    if (p.setIBaseFromInput(iBase) === true) break;
+                for (let parent of parents) {
+                    if (parent.setIBaseFromInput(iBase) === true) break;
                 }
             }
             if (xBase !== undefined) {
-                for (let p of parents) {
-                    if (p.setXBaseFromInput(xBase) === true) break;
+                for (let parent of parents) {
+                    if (parent.setXBaseFromInput(xBase) === true) break;
                 }
             }
             if (skipInputs !== true) {
@@ -97,10 +97,6 @@ export function useDivInputNew() {
                 if (retValRow === undefined) return;
                 mergeValRow(valRow, retValRow);
             }
-            let origin = valDiv === undefined ? pendRow.origin : valDiv.id;
-            valRow.origin = origin;
-            valRow.pend = pendRow.pend;
-            valRow.pendValue = pendRow.value;
             // save detail;
             let id = await divStore.saveDetail(p, valRow);
             valRow.id = id;
@@ -138,6 +134,11 @@ export function useDivInputNew() {
                     if (p.setXValueFromInput(xValue) === true) break;
                 }
             }
+            valRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
+            let { atomValRow } = valDiv;
+            let valDivRow = getAtomValue(atomValRow);
+            mergeValRow(valRow, valDivRow);
+            valRow.id = undefined;                          // 新输入行
         }
         return ret;
     }, []);

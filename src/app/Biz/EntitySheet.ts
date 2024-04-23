@@ -199,6 +199,7 @@ class FieldDateBud extends FieldBud {
         let v = binRow.buds[this.bud.id];
         return contentFromDays(v as number);
     }
+    getUIValue(value: any) { return contentFromDays(value as number); }
 }
 
 class FieldCheckBud extends FieldBud {

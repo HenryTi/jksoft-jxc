@@ -28,7 +28,7 @@ export async function inputDiv(props: InputDivProps): Promise<ValRow> {
 
 function PageInput({ divEditing }: { divEditing: DivEditing; }) {
     const modal = useModal();
-    const { divStore, val0Div } = divEditing;
+    const { divStore, val0Div, valRow } = divEditing;
     const { binDiv, sheetStore } = divStore;
     const { register, setValue, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [submitable, setSubmitable] = useState(divEditing.submitable);
@@ -70,7 +70,22 @@ function PageInput({ divEditing }: { divEditing: DivEditing; }) {
     }
     let vi: any = undefined;
     let vx: any = undefined;
+    let { binDivBuds } = binDiv;
+    let { budI, budIBase, budX, budXBase } = binDivBuds;
+    if (budI !== undefined) {
+        vi = viewIdField(budI, valRow.i);
+    }
+    else if (budIBase !== undefined) {
+        // vi = viewIdField(budIBase, p.iBase);
+    }
+    if (budX !== undefined) {
+        vx = viewIdField(budX, valRow.x);
+    }
+    else if (budIBase !== undefined) {
+        // vx = viewIdField(budX, valRow.x);
+    }
 
+    /*
     for (let p = val0Div; p !== undefined; p = p.parent) {
         let { binDivBuds } = p.binDiv;
         let { budI, budIBase } = binDivBuds;
@@ -96,7 +111,7 @@ function PageInput({ divEditing }: { divEditing: DivEditing; }) {
             break;
         }
     }
-
+    */
     function viewIdField(bud: BizBud, value: number) {
         let { caption, name } = bud;
         const { budsColl, bizAtomColl } = sheetStore;
@@ -127,48 +142,3 @@ function PageInput({ divEditing }: { divEditing: DivEditing; }) {
         </form>
     </Page>
 }
-
-/*
-viewI(): any {
-    if (this.fieldI !== undefined) {
-        let value = this.fieldI.getValue(this.valRow);
-        return this.viewIdField(this.budI, value);
-    }
-    return <div>I div level: {this.val0Div.binDiv.level}</div>;
-*/
-/*
-// 从本级开始，循环寻找上一级div 的 I
-if (this.fieldI !== undefined) debugger;
-for (let p = this.valDiv; p !== undefined; p = this.divStore.getParentValDiv(p)) {
-    let { binDivBuds } = p.binDiv;
-    let { budI } = binDivBuds;
-    if (budI !== undefined) {
-        let valRow = getAtomValue(p.atomValRow);
-        let value = binDivBuds.fieldI.getValue(valRow);
-        return this.viewIdField(budI, value);
-    }
-}
-return null;
-*/
-// }
-/*
-viewX(): any {
-    if (this.fieldX !== undefined) {
-        let value = this.fieldX.getValue(this.valRow);
-        return this.viewIdField(this.budX, value);
-    }
-*/
-/*
-// 从本级开始，循环寻找上一级div 的 I
-for (let p = this.valDiv; p !== undefined; p = this.divStore.getParentValDiv(p)) {
-    let { binDivBuds } = p.binDiv;
-    let { budX } = binDivBuds;
-    if (budX !== undefined) {
-        let valRow = getAtomValue(p.atomValRow);
-        let value = binDivBuds.fieldX.getValue(valRow);
-        return this.viewIdField(budX, value);
-    }
-}
-return null;
-*/
-// }

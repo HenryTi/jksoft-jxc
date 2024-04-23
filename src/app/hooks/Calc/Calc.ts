@@ -136,7 +136,7 @@ export class Calc {
                 this._results[name] = ret;
                 this.calcSpace.setValue(name, ret as any);
                 if (callback !== undefined) {
-                    callback?.(name, typeof ret === 'object' ? ret.id : ret);
+                    callback(name, typeof ret === 'object' ? ret.id : ret);
                 }
             }
             catch {
