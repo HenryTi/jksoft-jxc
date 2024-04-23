@@ -1,10 +1,10 @@
-import { SheetStore, ValDiv } from "../../store";
+import { SheetStore, ValDiv, ValDivBase } from "../../store";
 import { ViewAtomTitles, ViewBudEmpty, ViewShowBuds } from "app/hooks/tool";
 import { IDView } from "tonwa-app";
 import { Atom as BizAtom } from "uqs/UqDefault";
 import { useUqApp } from "app/UqApp";
 
-export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valDiv: ValDiv }) {
+export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valDiv: ValDivBase }) {
     const { binDiv } = valDiv;
     const { binDivBuds, } = binDiv;
     const { budIBase } = binDivBuds;
@@ -40,7 +40,7 @@ function ViewAtomId({ id }: { id: number; }) {
     return <IDView uq={uq} id={id} Template={ViewAtom} />;
 }
 
-export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, valDiv: ValDiv }) {
+export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, valDiv: ValDivBase }) {
     const { binDiv } = valDiv;
     const { binDivBuds } = binDiv;
     const { budIBase } = binDivBuds;

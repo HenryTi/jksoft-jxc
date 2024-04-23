@@ -54,7 +54,7 @@ export class DashConsole extends SheetConsole {
         let myDrafts = getAtomValue(this.atomMyDrafts);
         let draft = myDrafts.find(v => v.id === id);
         if (draft === undefined) return;
-        draft.rowCount = divStore.rootValDiv.getRowCount();
+        draft.rowCount = divStore.valDivsRoot.getRowCount();
         setAtomValue(this.atomMyDrafts, [...myDrafts]);
     }
     removeFromCache(sheetId: number): void {
@@ -86,13 +86,18 @@ export class DashConsole extends SheetConsole {
         this.removeMyDraft(id);
         let { caption, name } = this.entitySheet;
         if (caption === undefined) caption = name;
+        /*
         let viewSubmited = <div className="px-3 py-2 rounded ms-3 mt-3 border me-auto bg-warning text-primary">
             {caption} <b>{no}</b> 提交成功!
         </div>;
+        */
+        let viewSubmited = <>{caption} <b>{no}</b> 提交成功!</>;
         setAtomValue(this.atomViewSubmited, viewSubmited);
+        /*
         setTimeout(() => {
             setAtomValue(this.atomViewSubmited, undefined);
         }, 5000);
+        */
         this.modal.close();
     }
 }

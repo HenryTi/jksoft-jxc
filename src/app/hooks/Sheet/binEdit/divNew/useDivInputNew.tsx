@@ -3,7 +3,7 @@ import { inputAtom } from "./inputAtom";
 import { inputSpec } from "./inputSpec";
 import { useCallback } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
-import { DivEditing, UseInputsProps, ValDiv } from "../../store";
+import { DivEditing, UseInputsProps, ValDiv, ValDivBase, ValDivRoot } from "../../store";
 import { InputDivProps, inputDiv } from "./inputDiv";
 import { useUqApp } from "app";
 import { useModal } from "tonwa-app";
@@ -11,19 +11,19 @@ import { PendProxyHander, ValRow, mergeValRow } from "../../store";
 import { NamedResults } from "../../store";
 import { getAtomValue } from "tonwa-com";
 
-export function useDivNew() {
+export function useDivInputNew() {
     const uqApp = useUqApp();
     const modal = useModal();
-    return useCallback(async function (props: UseInputsProps, skipInputs: boolean = false): Promise<ValDiv> {
-        let { divStore, pendRow, binDiv, val0Div: valDiv } = props;
+    return useCallback(async function (props: UseInputsProps, skipInputs: boolean = false): Promise<ValDivBase> {
+        let { divStore, pendRow, binDiv, val0Div } = props;
         let { entityBin } = divStore;
         let { rearPick } = entityBin;
         let namedResults: NamedResults = {
             [rearPick.name]: new Proxy(pendRow, new PendProxyHander(entityBin.pend)),
         };
-        let ret: ValDiv, parents: ValDiv[] = [], parent: ValDiv;
-
-        for (let p = binDiv; p !== undefined; p = p.div) {
+        let ret: ValDivBase, parents: ValDivBase[] = [], parent: ValDivBase;
+        let valDiv: ValDivBase = val0Div;
+        for (let p = binDiv; p !== undefined; p = p.subBinDiv) {
             let valRow: ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
             if (valDiv === undefined) {
                 debugger;
@@ -65,7 +65,7 @@ export function useDivNew() {
                     if (retInput === undefined) return;
                     namedResults[input.name] = retInput;
                 }
-                let divEditing = new DivEditing(divStore, namedResults, binDiv.div, valDiv, valRow);
+                let divEditing = new DivEditing(divStore, namedResults, binDiv.subBinDiv, valDiv, valRow);
                 let { iValue: iValueNew, iBase: iBaseNew, xValue: xValueNew, xBase: xBaseNew } = divEditing;
                 if (iValueNew !== undefined) iValue = iValueNew;
                 if (iBaseNew !== undefined) iBase = iBaseNew;
@@ -78,9 +78,9 @@ export function useDivNew() {
                 binDiv: p,
                 valRow: valRow,
                 modal,
-                uqApp,
+                //uqApp,
                 namedResults,
-                parents,
+                // parents,
             }
             if (iBase !== undefined) {
                 for (let p of parents) {
@@ -104,16 +104,28 @@ export function useDivNew() {
             // save detail;
             let id = await divStore.saveDetail(p, valRow);
             valRow.id = id;
-
-            valDiv = new ValDiv(p, { ...valRow, id, pend: pendRow.pend, origin });
+            if (parent === undefined) {
+                let vd = new ValDivRoot(p, valRow);
+                divStore.replaceValDiv(valDiv, vd);
+                valDiv = vd;
+            }
+            else {
+                let vd = new ValDiv(parent, valRow);
+                parent.addValDiv(vd, true);
+                valDiv = vd;
+            }
+            // valDiv = parent === undefined ?  : new ValDiv(parent, valRow);
+            //valDiv = new ValDiv(parent, p, { ...valRow, id, pend: pendRow.pend, origin });
             divStore.setValColl(valDiv);
+            parent = ret = valDiv;
             if (ret === undefined) {
-                parent = ret = valDiv;
+                // parent = 
+                ret = valDiv;
             }
             else {
                 // parent.setIXBase(sheetStore, valRow);
-                parent.addValDiv(valDiv);
-                parent = valDiv;
+                // parent.addValDiv(valDiv);
+                // parent = valDiv;
             }
             parents.push(parent);
             if (iValue !== undefined) {

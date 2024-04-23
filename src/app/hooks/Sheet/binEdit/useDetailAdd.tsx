@@ -35,7 +35,7 @@ export function useDetailAdd(sheetStore: SheetStore) {
                 if (valRow.id !== undefined) debugger;
                 let id = await sheetStore.saveDetail(entityBin, entityBin.buds, valRow);
                 valRow.id = id;
-                await sheetStore.setValRow(valRow);
+                await sheetStore.reloadValRow(valRow);
             }
         }
         else {
@@ -55,7 +55,7 @@ export function useDetailAdd(sheetStore: SheetStore) {
                 if (valRow.id !== undefined) debugger;
                 let id = await sheetStore.saveDetail(entityBin, entityBin.buds, valRow);
                 valRow.id = id;
-                await sheetStore.setValRow(valRow);
+                await sheetStore.reloadValRow(valRow);
             }
             // row.setLoading(false);
         }

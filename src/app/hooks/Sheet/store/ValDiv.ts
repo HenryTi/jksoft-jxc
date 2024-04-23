@@ -4,8 +4,8 @@ import { ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { SheetStore } from "./SheetStore";
 
-export class ValDivs {
-    readonly atomValDivs = atom([] as ValDiv[]);
+export class ValDivsBase<T extends ValDivBase> {
+    readonly atomValDivs = atom([] as T[]);
     readonly atomSum = atom(get => {
         let valDivs = get(this.atomValDivs);
         let sum = 0, len = valDivs.length;
@@ -31,7 +31,7 @@ export class ValDivs {
         };
         return sum;
     });
-    addValDiv(valDiv: ValDiv) {
+    addValDiv(valDiv: T, trigger: boolean) {
         let { atomValDivs } = this;
         let valDivs = getAtomValue(atomValDivs);
         let { atomValRow } = valDiv;
@@ -71,9 +71,24 @@ export class ValDivs {
         }
         return rowCount;
     }
+
+    delValRow(id: number) {
+        let divs = getAtomValue(this.atomValDivs);
+        let p = divs.findIndex(v => v.id === id);
+        if (p >= 0) {
+            divs.splice(p, 1);
+            setAtomValue(this.atomValDivs, [...divs]);
+        }
+    }
 }
 
-export class ValDiv extends ValDivs {
+export class ValDivsRoot extends ValDivsBase<ValDivRoot> {
+}
+
+export class ValDivs extends ValDivsBase<ValDiv> {
+}
+
+export abstract class ValDivBase extends ValDivs {
     readonly binDiv: BinDiv;
     readonly atomValRow: WritableAtom<ValRow, any, any>;
     readonly atomDeleted = atom(false);
@@ -107,6 +122,8 @@ export class ValDiv extends ValDivs {
         let valRow = getAtomValue(this.atomValRow);
         return valRow?.pend;
     }
+
+    abstract get parent(): ValDivBase;
 
     setValRow(valRow: any) {
         if (this.id !== valRow.id) debugger;
@@ -185,5 +202,18 @@ export class ValDiv extends ValDivs {
         // let deleted = getAtomValue(this.atomDeleted);
         // if (deleted === true) return 0;
         return super.getRowCount() + 1;
+    }
+}
+
+export class ValDivRoot extends ValDivBase {
+    readonly rootFlag = 1;
+    readonly parent: ValDivBase = undefined;
+}
+
+export class ValDiv extends ValDivBase {
+    readonly parent: ValDivBase;
+    constructor(parent: ValDivBase, valRow: ValRow) {
+        super(parent.binDiv, valRow);
+        this.parent = parent;
     }
 }

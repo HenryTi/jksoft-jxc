@@ -1,11 +1,11 @@
 import { BizBud } from "app/Biz";
-import { DivStore, ValDiv } from "../../store";
+import { DivStore, ValDiv, ValDivBase } from "../../store";
 import { ViewSpecNoAtom } from "app/hooks";
 import { theme } from "tonwa-com";
 
 export interface ViewDivProps {
     divStore: DivStore;
-    valDiv: ValDiv;
+    valDiv: ValDivBase;
     readonly?: boolean;
     hidePivot?: boolean;
     className?: string;
@@ -29,6 +29,6 @@ export function PAV({ bud, className, val, onClick }: { bud: BizBud; className?:
     }
     return <div className="d-flex ms-3 align-items-center text-end text-nowrap" onClick={onClick}>
         <div className={theme.labelColor + ' me-2 '}>{caption ?? name}</div>
-        <div className={(className ?? '') + ' w-min-2c '}>{val}</div>
+        <div className={(className ?? '') + ' w-min-3c '}>{bud.valueToUI(val)}</div>
     </div>
 }

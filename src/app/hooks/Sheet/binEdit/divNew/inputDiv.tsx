@@ -1,4 +1,4 @@
-import { DivEditing, UseInputsProps, ValDiv, ValRow, btnNext, cnNextClassName } from "../../store";
+import { DivEditing, UseInputsProps, ValDiv, ValDivBase, ValRow, btnNext, cnNextClassName } from "../../store";
 import { FA, getAtomValue } from "tonwa-com";
 import { UqApp } from "app";
 import { Modal, Page, useModal } from "tonwa-app";
@@ -11,24 +11,24 @@ import { ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
 export interface InputDivProps extends UseInputsProps {
-    uqApp: UqApp;
+    //uqApp: UqApp;
     modal: Modal;
     valRow: ValRow;
-    parents: ValDiv[];
+    // parents: ValDivBase[];
 }
 
 export async function inputDiv(props: InputDivProps): Promise<ValRow> {
-    const { modal, divStore, binDiv, valRow, namedResults, pendRow, val0Div: valDiv, parents } = props;
+    const { modal, divStore, binDiv, valRow, namedResults, pendRow, val0Div: valDiv } = props;
     let divEditing = new DivEditing(divStore, namedResults, binDiv, valDiv, valRow);
     if (divEditing.isInputNeeded() === true) {
-        if (await modal.open(<PageInput divEditing={divEditing} parents={parents} />) !== true) return;
+        if (await modal.open(<PageInput divEditing={divEditing} />) !== true) return;
     }
     return divEditing.valRow;
 }
 
-function PageInput({ divEditing, parents }: { divEditing: DivEditing; parents: ValDiv[]; }) {
+function PageInput({ divEditing }: { divEditing: DivEditing; }) {
     const modal = useModal();
-    const { divStore } = divEditing;
+    const { divStore, val0Div } = divEditing;
     const { binDiv, sheetStore } = divStore;
     const { register, setValue, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [submitable, setSubmitable] = useState(divEditing.submitable);
@@ -70,8 +70,8 @@ function PageInput({ divEditing, parents }: { divEditing: DivEditing; parents: V
     }
     let vi: any = undefined;
     let vx: any = undefined;
-    for (let i = parents.length - 1; i >= 0; i--) {
-        let p = parents[i];
+
+    for (let p = val0Div; p !== undefined; p = p.parent) {
         let { binDivBuds } = p.binDiv;
         let { budI, budIBase } = binDivBuds;
         if (budI !== undefined) {
@@ -84,8 +84,7 @@ function PageInput({ divEditing, parents }: { divEditing: DivEditing; parents: V
         }
     }
 
-    for (let i = parents.length - 1; i >= 0; i--) {
-        let p = parents[i];
+    for (let p = val0Div; p !== undefined; p = p.parent) {
         let { binDivBuds } = p.binDiv;
         let { budX, budXBase } = binDivBuds;
         if (budX !== undefined) {
@@ -116,7 +115,6 @@ function PageInput({ divEditing, parents }: { divEditing: DivEditing; parents: V
             </RowCols>
         </Band>;
     }
-
     return <Page header={binDiv.ui?.caption ?? '输入明细'}>
         {
             (vi || vx) && <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + theme.bootstrapContainer}>

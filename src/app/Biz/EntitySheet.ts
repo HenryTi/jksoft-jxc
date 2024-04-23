@@ -83,7 +83,7 @@ export class BinDiv {
     binDivBuds: BinDivBuds;
     inputs: PendInput[];
     buds: BizBud[];
-    div: BinDiv;
+    subBinDiv: BinDiv;
     key: BizBud;
     format: [BizBud, boolean, OptionsItem][];
     ui: Partial<UI>;
@@ -142,6 +142,7 @@ export abstract class BinField {
     abstract getValue(binRow: BinRow): any;
     abstract setValue(binRow: BinRow, v: any): void;
     abstract get onForm(): boolean;
+    getUIValue(value: any) { return value; }
     get required(): boolean { return this.bud.ui?.required; }
 }
 
@@ -164,6 +165,10 @@ abstract class DecField extends BinField {
         let v = this.getDecValue(binRow);
         let dt = this.bud.budDataType as BudDec;
         return dt.valueToContent(v);
+    }
+    getUIValue(value: any) {
+        let dt = this.bud.budDataType as BudDec;
+        return dt.valueToContent(value);
     }
 }
 
@@ -510,7 +515,7 @@ export class EntityBin extends Entity {
     }
 
     private scanDiv(binDiv: BinDiv, source: BinDiv) {
-        let { inputs, div: subDiv, buds, ui, key, format } = source;
+        let { inputs, subBinDiv: subDiv, buds, ui, key, format } = source;
         binDiv.ui = ui;
         binDiv.inputs = this.scanInputs(inputs);
         binDiv.buds = this.scanBinBuds(buds);
@@ -528,7 +533,7 @@ export class EntityBin extends Entity {
         binDiv.binDivBuds = new BinDivBuds(binDiv);
         if (subDiv !== undefined) {
             ++this.divLevels;
-            let subBinDiv = binDiv.div = new BinDiv(this, binDiv);
+            let subBinDiv = binDiv.subBinDiv = new BinDiv(this, binDiv);
             this.scanDiv(subBinDiv, subDiv);
         }
         else if (this.pivot !== undefined) {

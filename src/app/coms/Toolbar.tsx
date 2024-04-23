@@ -98,15 +98,16 @@ export function toolIconDef(def: ToolItemDef) {
     }
 }
 
-export function ToolGroup({ group }: { group: ToolItem[]; }) {
+export function ToolGroup({ group }: { group: ToolItem[] | JSX.Element; }) {
     if (group === undefined) return null;
+    if (Array.isArray(group) === false) return group;
     return <>{group.map((v, index) => {
         if (index === 0) return <v.Render key={index} />;
         return <React.Fragment key={index}><span className="d-inline-block me-3" /><v.Render /></React.Fragment>;
     })}</>;
 }
 
-export function Toolbar({ groups }: { groups: ToolItem[][] }) {
+export function Toolbar({ groups }: { groups: (ToolItem[] | JSX.Element)[] }) {
     let vGroups: any[] = [];
     let len = groups.length;
     let i = 0;
@@ -116,6 +117,9 @@ export function Toolbar({ groups }: { groups: ToolItem[][] }) {
             vGroups.push(<div key={i} className="flex-fill" />);
             i++
             break;
+        }
+        else if (Array.isArray(g) === false) {
+            vGroups.push(<React.Fragment key={i}>{g}</React.Fragment>);
         }
         else {
             vGroups.push(<div key={i} className="me-2">

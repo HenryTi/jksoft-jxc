@@ -1,6 +1,6 @@
 import { FA, getAtomValue, setAtomValue } from "tonwa-com";
 import { useAtomValue } from "jotai";
-import { ValDiv, ValRow } from "../store";
+import { ValDiv, ValDivRoot, ValRow } from "../store";
 // import { ValRow } from "../tool";
 import { PendProps, ViewPendRow } from "./ViewPendRow";
 
@@ -34,8 +34,8 @@ export function ViewPendRowEdit(props: PendProps) {
     function ViewNoDiv() {
         async function onAddNew() {
             let valRow: ValRow = { id: -pendId, buds: {}, owned: {}, pend: pendId };
-            let retValDiv = new ValDiv(divStore.binDiv, valRow);
-            divStore.rootValDiv.addValDiv(retValDiv);
+            let retValDiv = new ValDivRoot(divStore.binDiv, valRow);
+            divStore.valDivsRoot.addValDiv(retValDiv, true);
             setAtomValue(atomValDiv, retValDiv);
         }
         return <ViewItem icon="square-o" color="text-body-tertiary" onSelectChanged={onAddNew} />
@@ -47,7 +47,7 @@ export function ViewPendRowEdit(props: PendProps) {
         const deleted = useAtomValue(atomDeleted);
         const { id } = valRow;
         function onDelThoroughly() {
-            divStore.rootValDiv.removePend(-id);
+            divStore.valDivsRoot.removePend(-id);
             setAtomValue(atomValDiv, undefined);
         }
         function onNothing() {

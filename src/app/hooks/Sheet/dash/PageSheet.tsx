@@ -7,21 +7,24 @@ import { useUqApp } from "app/UqApp";
 import { useCallback, useState } from "react";
 import { PickFunc, useBinPicks } from "../binPick";
 import { headerSheet, buttonDefs } from "../headerSheet";
+import { ViewReaction } from "app/hooks/View/ViewReaction";
+import { FA, setAtomValue } from "tonwa-com";
+import { ToolItem } from "app/coms";
 
 export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean; }) {
-    const { uq, main, detail, divStore, caption, sheetConsole } = store;
-    const uqApp = useUqApp();
+    const { uq, main, detail, divStore, caption, sheetConsole, atomReaction } = store;
     const pick = useBinPicks(main.entityMain);
-    const { openModal, closeModal } = useModal();
-    // const navigate = useNavigate();
+    const modal = useModal();
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(divStore.atomSubmitState);
     const addNew = useDetailAdd(store);
     const start = useStartSheetStore(store, pick);
 
     async function onSubmit() {
-        if (main.trigger() === false) return;
-        if (divStore.trigger() === false) return;
+        if (main.trigger() === false || divStore.trigger() === false) {
+            setAtomValue(atomReaction, <><FA name="bell-o" className="text-danger me-2" />请检查数据！</>);
+            return;
+        }
         setEditable(false);
         let sheetId = main.valRow.id;
         let { checkPend, checkBin } = await uq.SubmitSheet.submitReturns({ id: sheetId });
@@ -67,7 +70,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
 
     async function onDiscardSheet() {
         let message = `${caption} ${main.no} 真的要作废吗？`;
-        let ret = await openModal(<PageConfirm header="确认" message={message} yes="单据作废" no="不作废" />);
+        let ret = await modal.open(<PageConfirm header="确认" message={message} yes="单据作废" no="不作废" />);
         if (ret === true) {
             await store.discard();
             sheetConsole.discard(main.valRow.id);
@@ -87,11 +90,12 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     let btnPrint = buttonDefs.print(onPrint);
     let btnExit = buttonDefs.exit(onExit, false);
     let headerGroup = [btnExit];
-    let toolGroups: any[][], view: any;
+    let toolGroups: (ToolItem[] | JSX.Element)[], view: any;
+    let reaction = <ViewReaction atomContent={atomReaction} />;
     function mainOnlyEdit() {
         let btnSubmit = buttonDefs.submit(onSubmit);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, true, editable === false);
-        toolGroups = [[btnPrint, btnSubmit], null, [btnDiscard]];
+        toolGroups = [[btnPrint, btnSubmit], reaction, null, [btnDiscard]];
         view = <ViewMain store={store} popup={false} readOnly={readonly} />;
     }
 
@@ -115,7 +119,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         let btnAddDetail = detail.entityBin.pend === undefined ?
             buttonDefs.addDetail(onAddRow) : buttonDefs.addPend(onAddRow);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, false, editable === false);
-        toolGroups = [[btnAddDetail, btnPrint, btnSubmit], null, [btnDiscard]];
+        toolGroups = [[btnAddDetail, btnPrint, btnSubmit], reaction, null, [btnDiscard]];
         if (id === 0) {
             view = <div className="p-3">
                 <button className="btn btn-primary" onClick={startInputDetail}>开始录单</button>
@@ -123,7 +127,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         }
         const { divStore } = store;
         function ViewBinDivs() {
-            const { rootValDiv } = divStore;
+            const { valDivsRoot: rootValDiv } = divStore;
             const valDivs = useAtomValue(rootValDiv.atomValDivs);
             return <div className="tonwa-bg-gray-1 pt-3">
                 {valDivs.length === 0 ?
@@ -150,7 +154,10 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     else mainDetailEdit();
     let { header, top, right } = headerSheet({ store, toolGroups, headerGroup });
     if (readonly === true) top = undefined;
-    return <Page header={header} back={null} top={top} right={right}>
+    return <Page header={header} back={null}
+        top={top}
+        right={right}
+    >
         {view}
     </Page>;
 }

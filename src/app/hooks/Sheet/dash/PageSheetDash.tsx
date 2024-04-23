@@ -9,6 +9,7 @@ import { Bin } from "app/tool";
 import { PageSheetList } from "./PageSheetList";
 import { useAtomValue } from "jotai";
 import { ViewItemMain } from "app/hooks/View";
+import { ViewReaction } from "app/hooks/View/ViewReaction";
 
 export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const modal = useModal();
@@ -16,7 +17,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const { caption, name, uq, biz } = entitySheet;
     const { current: sheetConsole } = useRef(new DashConsole(modal, entitySheet));
     const myDrafts = useAtomValue(sheetConsole.atomMyDrafts);
-    const viewSubmited = useAtomValue(sheetConsole.atomViewSubmited);
+    // const viewSubmited = useAtomValue(sheetConsole.atomViewSubmited);
     /*
     const query = useCallback(async (param: any, pageStart: any, pageSize: number) => {
         return sheetConsole.current.loadMyDrafts(param, pageStart, pageSize);
@@ -116,7 +117,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
                 已归档
             </button>
         </div>
-        {viewSubmited}
+        <ViewReaction atomContent={sheetConsole.atomViewSubmited} className="ms-3 mt-3 me-auto" />
         <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-1 mt-4 align-items-end">
             <div className="pb-1 flex-grow-1">
                 草稿 <small className="text-secondary ms-3">(最多10份)</small>

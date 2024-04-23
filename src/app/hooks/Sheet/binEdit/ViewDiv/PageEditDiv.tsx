@@ -1,13 +1,13 @@
 import { useAtomValue } from "jotai";
-import { DivEditing, DivStore, ValDiv, ValRow } from "../../store";
+import { DivEditing, DivStore, ValDiv, ValDivBase, ValRow } from "../../store";
 import { FA, getAtomValue, setAtomValue } from "tonwa-com";
-import { useDivNew } from "../divNew";
+import { useDivInputNew } from "../divNew";
 import { useRowEdit } from "../useRowEdit";
 import { Page, useModal } from "tonwa-app";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { ViewRow } from "./ViewRow";
 
-export function PageEditDiv({ divStore, valDiv }: { divStore: DivStore; valDiv: ValDiv; }) {
+export function PageEditDiv({ divStore, valDiv }: { divStore: DivStore; valDiv: ValDivBase; }) {
     const { sheetStore } = divStore;
     const { entitySheet, main } = sheetStore;
     return <Page header={`${(entitySheet.caption ?? entitySheet.name)} - ${main.no}`}>
@@ -17,16 +17,16 @@ export function PageEditDiv({ divStore, valDiv }: { divStore: DivStore; valDiv: 
 
 interface EditDivProps {
     divStore: DivStore;
-    valDiv: ValDiv;
+    valDiv: ValDivBase;
 }
 
 function EditDiv(props: EditDivProps) {
     const modal = useModal();
     const { divStore, valDiv } = props;
     const { atomValDivs, binDiv, atomDeleted, atomValRow } = valDiv;
-    const { level, entityBin, div } = binDiv;
+    const { level, entityBin, subBinDiv: div } = binDiv;
     const { divLevels, pivot } = entityBin;
-    const divInputs = useDivNew();
+    const divInputNew = useDivInputNew();
     const valRow = useAtomValue(atomValRow);
     const divs = useAtomValue(atomValDivs);
     const deleted = useAtomValue(atomDeleted);
@@ -48,7 +48,7 @@ function EditDiv(props: EditDivProps) {
             const { atomValRow } = valDiv;
             const valRow = getAtomValue(atomValRow);
             let pendRow = await divStore.loadPendRow(valRow.pend);
-            let ret = await divInputs({
+            let ret = await divInputNew({
                 divStore,
                 pendRow,
                 namedResults: {},

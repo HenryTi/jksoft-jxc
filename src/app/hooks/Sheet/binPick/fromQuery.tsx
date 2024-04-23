@@ -111,18 +111,18 @@ export function usePickFromQuery(): [
             }
             let onItemSelect: any, onItemClick: any;
             let cnViewItem = 'd-flex flex-wrap ';
-            let cnFirst: string;
+            let cnItem: string;
             let btnOk: any; // , vTop: any;
             if (pickResultType === RearPickResultType.array) {
                 onItemSelect = onMultipleClick;
-                cnFirst = 'my-2 ';
+                cnItem = ' my-2 ';
                 btnOk = <button className="btn btn-primary m-3" onClick={onPick}>选入</button>;
                 // vTop = <div className="tonwa-bg-gray-2 p-3 border-bottom">已选：{vSelected}</div>;
             }
             else {
                 onItemClick = onSingleClick;
                 cnViewItem += 'ps-3 ';
-                cnFirst = 'py-2 px-3 border-bottom ';
+                cnItem = 'py-2 px-3 border-bottom ';
                 /*
                     vTop = <div className="tonwa-bg-gray-2 p-3 border-bottom text-info">
                         <FA name="hand-o-down" className="me-3 text-danger" />
@@ -141,13 +141,13 @@ export function usePickFromQuery(): [
                     vFirst = <b>{no}</b>;
                 }
                 if (vFirst !== undefined) {
-                    vFirst = <div className={cnFirst}>
+                    vFirst = <div className="mb-1">
                         {vFirst}
                     </div>;
                 }
-                return <div >
+                return <div className={cnItem}>
                     {vFirst}
-                    <RowCols contentClassName="py-2 px-3">
+                    <RowCols contentClassName="">
                         {propArr.map((v, index) => {
                             return <VNamedBud key={index} {...v} />;
                         })}

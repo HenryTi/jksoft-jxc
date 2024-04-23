@@ -24,7 +24,7 @@ export function ViewRowStem(props: ViewDivProps) {
 
     const { pivot } = entityBin;
     let viewPivot: any;
-    if (pivot !== undefined && pivot === binDiv.div && hidePivot !== true) {
+    if (pivot !== undefined && pivot === binDiv.subBinDiv && hidePivot !== true) {
         viewPivot = <ViewPivotDiv divStore={divStore} valDiv={valDiv} />;
     }
     let viewPendValue: any;

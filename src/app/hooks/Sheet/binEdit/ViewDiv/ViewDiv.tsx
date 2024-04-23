@@ -1,8 +1,8 @@
 import { useAtomValue } from "jotai";
 import { FA, setAtomValue } from "tonwa-com";
 import { useModal } from "tonwa-app";
-import { DivEditing, UseInputsProps } from "../../store";
-import { useDivNew } from "../divNew";
+import { DivEditing, UseInputsProps, ValDivRoot } from "../../store";
+import { useDivInputNew } from "../divNew";
 import { useRowEdit } from "../useRowEdit";
 import { PageEditDiv } from "./PageEditDiv";
 import { ViewPendRow } from "../ViewPendRow";
@@ -18,7 +18,7 @@ export function ViewDiv(props: ViewDivProps) {
     const divs = useAtomValue(atomValDivs);
     const valRow = useAtomValue(atomValRow);
     const deleted = useAtomValue(atomDeleted);
-    const divInputs = useDivNew();
+    const divInputNew = useDivInputNew();
     const rowEdit = useRowEdit();
     if (entityBin.pivot === binDiv) return null;
     const { pend, id } = valRow;
@@ -43,9 +43,13 @@ export function ViewDiv(props: ViewDivProps) {
                 pendRow,
                 namedResults: {},
             }
-            let retValDiv = await divInputs(useInputsProps, false);
+            let retValDiv = await divInputNew(useInputsProps, false);
             if (retValDiv === undefined) return;
-            divStore.replaceValDiv(valDiv, retValDiv);
+            if (retValDiv.parent !== undefined) {
+                // retValDiv must be root
+                debugger;
+            }
+            divStore.replaceValDiv(valDiv, retValDiv as ValDivRoot);
             return;
         }
         if (divs.length === 0) {

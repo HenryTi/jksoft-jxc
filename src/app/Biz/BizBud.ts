@@ -82,9 +82,9 @@ export class BudDec extends BudDataNumber {
         this.fraction = ui?.fraction;
     }
     valueToContent(value: number) {
-        if (this.fraction === undefined) return value;
         if (value === undefined) return;
-        return value.toFixed(this.fraction);
+        // if (this.fraction === undefined) return value;
+        return value.toFixed(this.fraction ?? 2);
     }
     fromSchema(schema: any) {
         super.fromSchema(schema);
@@ -213,7 +213,7 @@ export class BizBud extends BizBase {
         this.biz.addBudIds(this);
         this.fieldShows = this.scanFieldShows(this.fieldShows);
     }
-    valueToContent(value: any) {
+    valueToUI(value: any) {
         return this.budDataType.valueToContent(value);
     }
     getTitleBuds(): BizBud[] { return this.budDataType.getTitleBuds(); }

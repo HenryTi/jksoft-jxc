@@ -11,7 +11,7 @@ import { DivStore } from "./DivStore";
 import { useParams } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
 import { PickStates, SheetConsole } from "./SheetConsole";
-import { ValDiv } from "./ValDiv";
+import { ValDiv, ValDivRoot } from "./ValDiv";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -172,9 +172,10 @@ export class SheetStore extends KeyIdObject {
     readonly isPend: boolean;
     readonly budsColl: BudsColl = {};
     readonly bizAtomColl: AtomColl = {};
-    readonly pendColl: { [pend: number]: WritableAtom<ValDiv, any, any> } = {};
+    readonly pendColl: { [pend: number]: WritableAtom<ValDivRoot, any, any> } = {};
     readonly divStore: DivStore;
     readonly atomLoaded = atom(false);
+    readonly atomReaction = atom(undefined as any);
 
     constructor(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
         super();
@@ -213,10 +214,10 @@ export class SheetStore extends KeyIdObject {
         setAtomValue(this.atomLoaded, true);
     }
 
-    async setValRow(valRow: ValRow) {
+    async reloadValRow(valRow: ValRow) {
         const { id: binId } = valRow;
         await this.loadBinData(binId);
-        this.divStore.setValRow(valRow);
+        this.divStore.setValRowRoot(valRow, true);
     }
 
     hasId() {
@@ -225,10 +226,10 @@ export class SheetStore extends KeyIdObject {
 
     // whole sheet or row detail
     private async loadBinData(binId: number) {
-        let { main, details, props, atoms } = await this.uq.GetSheet.query({ id: binId });
+        let { main, details, props, atoms: bizAtoms } = await this.uq.GetSheet.query({ id: binId });
         const budsColl = budValuesFromProps(props);
         Object.assign(this.budsColl, budsColl);
-        this.addBizAtoms(atoms);
+        this.addBizAtoms(bizAtoms);
         let mainRow = main[0];
         if (mainRow !== undefined) {
             (mainRow as any).buds = budsColl[binId] ?? {};
@@ -257,7 +258,7 @@ export class SheetStore extends KeyIdObject {
         for (let v of $page) {
             let { id, pend, pendValue, mid, cols } = v;
             if (pendValue === undefined || pendValue <= 0) continue;
-            this.pendColl[pend] = atom(undefined as ValDiv);
+            this.pendColl[pend] = atom(undefined as ValDivRoot);
             let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);
             let pendRow: PendRow = {
                 pend,

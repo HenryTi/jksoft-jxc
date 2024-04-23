@@ -26,7 +26,7 @@ export const buttonDefs: ButtonDefs = {
     exit: toolIconDef({ caption: '退出', icon: 'times', className: ' px-2 ' }),
 }
 
-export function headerSheet({ store, toolGroups, headerGroup }: { store: SheetStore; toolGroups: ToolItem[][]; headerGroup?: ToolItem[]; }) {
+export function headerSheet({ store, toolGroups, headerGroup }: { store: SheetStore; toolGroups: (ToolItem[] | JSX.Element)[]; headerGroup?: ToolItem[]; }) {
     const { caption, backIcon } = store;
     // const { header: headerContent, back } = useSheetHeader(store);
     return {

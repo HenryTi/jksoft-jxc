@@ -62,7 +62,7 @@ export function ViewPendRow({
     }
     return <>
         <div className="py-2 bg-white flex-fill ps-3">
-            <div className="flex-fill d-flex align-items-center">
+            <div className="flex-fill">
                 <ViewSpecAtom id={i} />
                 <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
             </div>

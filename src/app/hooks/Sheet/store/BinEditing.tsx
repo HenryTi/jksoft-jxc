@@ -7,7 +7,7 @@ import {
 import { Calc, CalcResult, Formulas } from "../../Calc";
 import { DivStore } from "./DivStore";
 import { SheetStore } from "./SheetStore";
-import { ValDiv } from "./ValDiv";
+import { ValDiv, ValDivBase, ValDivRoot } from "./ValDiv";
 import { NamedResults } from "./NamedResults";
 import { getDays } from "app/tool";
 import { ValRow } from "./tool";
@@ -98,20 +98,23 @@ export abstract class FieldsEditing extends BudsFields {
     }
 
     setValue(name: string, value: number | string, callback: (name: string, value: CalcResult) => void) {
-        const c = (name: string, value: string | number) => {
+        let c = (name: string, value: CalcResult) => {
             this.setFieldOrBudValue(name, value);
             if (callback !== undefined) {
                 let field = this.fieldColl[name];
                 // 针对 bud date，需要做days到DATE的转换
-                let uiValue = field.getValue(this.valRow);
+                // bud dec, 小数转换
+                let uiValue = field.getUIValue(value);
                 callback(name, uiValue);
             }
         }
         this.setFieldOrBudValue(name, value);
-        this.calc.setValue(name, value, callback);
+        // this.calc.setValue(name, value, callback);
+        // c 的主要作用，是做了 value 转换。比如 计算的amount做了小数点转换
+        this.calc.setValue(name, value, c);
     }
 
-    private setFieldOrBudValue(name: string, value: number | string) {
+    private setFieldOrBudValue(name: string, value: CalcResult) {
         // console.log('setFieldOrBudValue name=', name, 'value=', value);
         let field = this.fieldColl[name];
         if (field === undefined) {
@@ -262,8 +265,8 @@ function budRadios(budDataType: BudRadio): { label: string; value: string | numb
 
 export class DivEditing extends FieldsEditing {
     readonly divStore: DivStore;
-    readonly val0Div: ValDiv;          // 0 层的valDiv
-    constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, val0Div: ValDiv, initBinRow?: BinRow) {
+    readonly val0Div: ValDivBase;          // 0 层的valDiv
+    constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, val0Div: ValDivBase, initBinRow?: BinRow) {
         super(divStore.sheetStore, divStore.entityBin, binDiv.buds, initBinRow);
         this.divStore = divStore;
         this.val0Div = val0Div;
