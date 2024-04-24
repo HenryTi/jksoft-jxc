@@ -270,11 +270,14 @@ function budRadios(budDataType: BudRadio): { label: string; value: string | numb
 
 export class DivEditing extends FieldsEditing {
     readonly divStore: DivStore;
+    readonly valDiv: ValDiv;
     // readonly val0Div: ValDivBase;          // 0 层的valDiv
-    constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, valDiv: ValDivBase, initBinRow?: BinRow) {
-        super(divStore.sheetStore, divStore.entityBin, binDiv.buds, initBinRow);
+    //constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, valDiv: ValDivBase, initBinRow?: BinRow) {
+    constructor(divStore: DivStore, valDiv: ValDivBase, namedResults?: NamedResults) {
+        const { binDiv, valRow } = valDiv;
+        super(divStore.sheetStore, divStore.entityBin, binDiv.buds, valRow);
         this.divStore = divStore;
-        // this.val0Div = val0Div;
+        this.valDiv = valDiv;
         this.setNamedParams(namedResults);
         this.setValueDefault(valDiv);
     }

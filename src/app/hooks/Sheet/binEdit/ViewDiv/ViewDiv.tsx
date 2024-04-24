@@ -1,8 +1,8 @@
 import { useAtomValue } from "jotai";
 import { FA, setAtomValue } from "tonwa-com";
 import { useModal } from "tonwa-app";
-import { DivEditing, UseInputDivsProps, ValDivRoot } from "../../store";
-import { useInputDivs } from "../divNew";
+import { DivEditing, ValDivRoot } from "../../store";
+import { UseEditDivsProps, useEditDivs } from "../divNew";
 import { useRowEdit } from "../useRowEdit";
 import { PageEditDiv } from "./PageEditDiv";
 import { ViewPendRow } from "../ViewPendRow";
@@ -18,7 +18,7 @@ export function ViewDiv(props: ViewDivProps) {
     const divs = useAtomValue(atomValDivs);
     const valRow = useAtomValue(atomValRow);
     const deleted = useAtomValue(atomDeleted);
-    const inputDivs = useInputDivs();
+    const editDivs = useEditDivs();
     const rowEdit = useRowEdit();
     if (entityBin.pivot === binDiv) return null;
     const { pend, id } = valRow;
@@ -36,15 +36,15 @@ export function ViewDiv(props: ViewDivProps) {
         if (id < 0) {
             // 候选还没有输入行内容
             let pendRow = divStore.getPendRow(pend);
-            const useInputsProps: UseInputDivsProps = {
+            const useInputsProps: UseEditDivsProps = {
                 divStore,
-                binDiv: divStore.binDivRoot,
+                // binDiv: divStore.binDivRoot,
                 valDiv: valDiv,
                 pendRow,
                 namedResults: {},
                 skipInputs: false,
             }
-            let retValDiv = await inputDivs(useInputsProps);
+            let retValDiv = await editDivs(useInputsProps);
             if (retValDiv === undefined) return;
             if (retValDiv.parent !== undefined) {
                 // retValDiv must be root
@@ -54,9 +54,9 @@ export function ViewDiv(props: ViewDivProps) {
             return;
         }
         if (divs.length === 0) {
-            // 无Div明细
+            // 无Div明细, 叶div
             try {
-                const editing = new DivEditing(divStore, undefined, binDiv, valDiv, valRow);
+                const editing = new DivEditing(divStore, valDiv);
                 let ret = await rowEdit(editing, valDiv);
                 if (ret !== true) return;
                 const { valRow: newValRow } = editing;
@@ -92,11 +92,12 @@ export function ViewDiv(props: ViewDivProps) {
         </div>;
     }
 
+    let viewRow = <ViewRow {...props} buttons={buttons} />;
     if (divs.length === 0) {
-        return <ViewRow {...props} buttons={buttons} />;
+        return viewRow;
     }
     return <>
-        <ViewRow {...props} buttons={buttons} />
+        {viewRow}
         {divs.map(v => <ViewDiv key={v.id} {...props} valDiv={v} />)}
     </>;
 }

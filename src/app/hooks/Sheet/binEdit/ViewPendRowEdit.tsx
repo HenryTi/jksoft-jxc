@@ -7,7 +7,7 @@ import { PendProps, ViewPendRow } from "./ViewPendRow";
 export function ViewPendRowEdit(props: PendProps) {
     const { pendRow, divStore } = props;
     let { pend: pendId } = pendRow;
-    let atomValDiv = divStore.pendColl[pendId];
+    let atomValDiv = divStore.valDivsOnPend[pendId];
     let valDiv = useAtomValue(atomValDiv);
     if (valDiv === undefined) {
         return ViewNoDiv();

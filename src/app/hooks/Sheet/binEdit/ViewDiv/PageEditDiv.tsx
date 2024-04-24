@@ -1,12 +1,13 @@
 import { useAtomValue } from "jotai";
-import { DivEditing, DivStore, ValDiv, ValDivBase, ValRow } from "../../store";
+import { DivEditing, DivStore, ValDiv, ValDivBase, ValDivRoot, ValRow } from "../../store";
 import { FA, getAtomValue, setAtomValue } from "tonwa-com";
-import { useInputDivs } from "../divNew";
+import { useEditDivs } from "../divNew";
 import { useRowEdit } from "../useRowEdit";
 import { Page, useModal } from "tonwa-app";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { ViewRow } from "./ViewRow";
 
+// 编辑div任意层
 export function PageEditDiv({ divStore, valDiv }: { divStore: DivStore; valDiv: ValDivBase; }) {
     const { sheetStore } = divStore;
     const { entitySheet, main } = sheetStore;
@@ -26,7 +27,7 @@ function EditDiv(props: EditDivProps) {
     const { atomValDivs, binDiv, atomDeleted, atomValRow } = valDiv;
     const { level, entityBin, subBinDiv: div } = binDiv;
     const { divLevels, pivot } = entityBin;
-    const inputDivs = useInputDivs();
+    const editDivs = useEditDivs();
     const valRow = useAtomValue(atomValRow);
     const divs = useAtomValue(atomValDivs);
     const deleted = useAtomValue(atomDeleted);
@@ -48,11 +49,10 @@ function EditDiv(props: EditDivProps) {
             const { atomValRow } = valDiv;
             const valRow = getAtomValue(atomValRow);
             let pendRow = await divStore.loadPendRow(valRow.pend);
-            let ret = await inputDivs({
+            let ret = await editDivs({
                 divStore,
                 pendRow,
                 namedResults: {},
-                binDiv: div,
                 valDiv,
                 skipInputs: true,
             });
@@ -98,7 +98,7 @@ function EditDiv(props: EditDivProps) {
             const rowEdit = useRowEdit();
             async function onEdit() {
                 const { atomValRow } = valDiv;
-                const editing = new DivEditing(divStore, undefined, binDiv, valDiv, valRow);
+                const editing = new DivEditing(divStore, valDiv);
                 let ret = await rowEdit(editing, valDiv);
                 if (ret !== true) return;
                 const { valRow: newValRow } = editing;

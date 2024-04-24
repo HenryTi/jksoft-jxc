@@ -3,58 +3,91 @@ import { inputAtom } from "./inputAtom";
 import { inputSpec } from "./inputSpec";
 import { useCallback } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
-import { DivEditing, UseInputDivsProps, ValDiv, ValDivBase, ValDivRoot } from "../../store";
-import { PageInput } from "./PageInputDiv";
+import { DivEditing, DivStore, PendRow, ValDiv, ValDivBase, ValDivRoot } from "../../store";
+import { PageEditDiv } from "./PageEditDiv";
 import { UqApp, useUqApp } from "app";
 import { Modal, useModal } from "tonwa-app";
 import { PendProxyHander, ValRow, mergeValRow } from "../../store";
 import { NamedResults } from "../../store";
 import { getAtomValue } from "tonwa-com";
 
-export function useInputDivs() {
+export interface UseEditDivsProps {
+    divStore: DivStore;
+    pendRow: PendRow;
+    namedResults: NamedResults;
+    // binDiv: BinDiv;          // 当前binDiv的下层
+    valDiv: ValDivBase;         // 当前需要edit的valDiv, 如果新建，则先创建空的valDiv. 所以也不需要返回
+    // valDivParent: ValDiv;
+    skipInputs: boolean;
+}
+
+// 参数：valDiv，改变这个。不需要返回
+export function useEditDivs() {
     const uqApp = useUqApp();
     const modal = useModal();
-    return useCallback(async function (props: UseInputDivsProps): Promise<ValDivBase> {
-        let { divStore, pendRow, binDiv, valDiv: val0Div } = props;
+    return useCallback(async function (props: UseEditDivsProps): Promise<ValDivBase> {
+        let { divStore, pendRow, valDiv } = props;
         let { entityBin } = divStore;
-        let { rearPick } = entityBin;
+        let { rearPick, pend: entityPend } = entityBin;
         let namedResults: NamedResults = {
-            [rearPick.name]: new Proxy(pendRow, new PendProxyHander(entityBin.pend)),
+            [rearPick.name]: new Proxy(pendRow, new PendProxyHander(entityPend)),
         };
+        /*
+        let binDiv = val0Div.binDiv;
         let valRowInit: ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
-        let divEditingFromPend = new DivEditing(divStore, namedResults, binDiv, val0Div, valRowInit);
+        let divEditingFromPend = new DivEditing(divStore, val0Div, namedResults); //, binDiv, val0Div, valRowInit);
         let { valRow } = divEditingFromPend; // : ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
         let ret: ValDivBase, parents: ValDivBase[] = [], parent: ValDivBase;
         let valDiv: ValDivBase = val0Div;
+        */
         let runInputDivProps: RunInputDivProps = { props, uqApp, modal, namedResults };
-        for (let p = binDiv; p !== undefined; p = p.subBinDiv) {
-            valDiv = await runInputDiv(runInputDivProps, p, valDiv);
+        for (; ;) {
+            let hasInput = await runInputDiv(runInputDivProps, valDiv);
+            if (hasInput !== true) return;
+            let { binDiv } = valDiv;
+            // 无下级，退出
+            if (binDiv.subBinDiv === undefined) {
+                // 仅仅表示有值
+                return valDiv;
+            }
+            let valRow: ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
+            /*
+            这里肯定已经是下一级了
+            if (parent === undefined) {
+                valDiv = new ValDivRoot(binDiv, valRow);
+            }
+            else {
+            */
+            // 新建一级
+            let p = new ValDiv(valDiv, valRow);
+            valDiv.addValDiv(p, true);
+            valDiv = p;
+            // }
         }
-        return ret;
     }, []);
 }
 
 interface RunInputDivProps {
     uqApp: UqApp;
     modal: Modal;
-    props: UseInputDivsProps;
+    props: UseEditDivsProps;
     namedResults: NamedResults;
 }
 
-async function runInputDiv(runInputDivProps: RunInputDivProps, p: BinDiv, valDivParent: ValDiv) {
+async function runInputDiv(runInputDivProps: RunInputDivProps, valDiv: ValDiv) {
     let { uqApp, modal, props, namedResults } = runInputDivProps;
-    let { divStore, pendRow, binDiv, valDiv: val0Div, skipInputs } = props;
-    let valDiv: ValDiv;
+    let { divStore, pendRow, valDiv: val0Div, skipInputs } = props;
+    let { binDiv } = valDiv;
     let valRow: ValRow;
     let iValue: number, iBase: number, xValue: number, xBase: number;
-    if (await runInputs(runInputDivProps, p.inputs, valDiv, valRow) === false) return;
+    if (await runInputs(runInputDivProps, binDiv.inputs, valDiv, valRow) === false) return;
     let origin = valDiv === undefined ? pendRow.origin : valDiv.id;
     valRow.origin = origin;
     valRow.pend = pendRow.pend;
     valRow.pendValue = pendRow.value;
-    const inputDivsProps: UseInputDivsProps = {
+    const inputDivsProps: UseEditDivsProps = {
         ...props,
-        binDiv: p,
+        // binDiv: p,
         // valRow,
         // modal,
         namedResults,
@@ -73,10 +106,10 @@ async function runInputDiv(runInputDivProps: RunInputDivProps, p: BinDiv, valDiv
     */
     if (skipInputs !== true) {
         async function inputDiv(): Promise<ValRow> {
-            const { divStore, binDiv, namedResults, valDiv: valDiv } = inputDivsProps;
-            let divEditing = new DivEditing(divStore, namedResults, binDiv, valDiv, valRow);
+            const { divStore, namedResults, valDiv: valDiv } = inputDivsProps;
+            let divEditing = new DivEditing(divStore, valDiv, namedResults);
             if (divEditing.isInputNeeded() === true) {
-                if (await modal.open(<PageInput divEditing={divEditing} />) !== true) return;
+                if (await modal.open(<PageEditDiv divEditing={divEditing} />) !== true) return;
             }
             return divEditing.valRow;
         }
@@ -86,7 +119,7 @@ async function runInputDiv(runInputDivProps: RunInputDivProps, p: BinDiv, valDiv
         mergeValRow(valRow, retValRow);
     }
     // save detail;
-    let id = await divStore.saveDetail(p, valRow);
+    let id = await divStore.saveDetail(binDiv, valRow);
     valRow.id = id;
     /*
     if (parent === undefined) {
@@ -123,19 +156,20 @@ async function runInputDiv(runInputDivProps: RunInputDivProps, p: BinDiv, valDiv
             if (p.setXValueFromInput(xValue) === true) break;
         }
     }
-    */
     valRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
     let { atomValRow } = valDiv;
     let valDivRow = getAtomValue(atomValRow);
     mergeValRow(valRow, valDivRow);
     valRow.id = undefined;                          // 新输入行
-    return valDiv;
+    // return valDiv;
+    */
+    return true;
 }
 
 async function runInputs(runInputDivProps: RunInputDivProps, inputs: PendInput[], valDiv: ValDiv, valRow: ValRow) {
     if (inputs === undefined) return;
     let { uqApp, modal, props, namedResults } = runInputDivProps;
-    let { divStore, pendRow, binDiv, valDiv: val0Div, skipInputs } = props;
+    let { divStore, pendRow, valDiv: val0Div, skipInputs } = props;
     if (skipInputs == true) return;
     for (let input of inputs) {
         const { bizPhraseType } = input;
@@ -164,7 +198,7 @@ async function runInputs(runInputDivProps: RunInputDivProps, inputs: PendInput[]
         if (retInput === undefined) return false;
         namedResults[input.name] = retInput;
     }
-    let divEditing = new DivEditing(divStore, namedResults, binDiv.subBinDiv, valDiv, valRow);
+    let divEditing = new DivEditing(divStore, valDiv, namedResults);
     /*
     let { iValue: iValueNew, iBase: iBaseNew, xValue: xValueNew, xBase: xBaseNew } = divEditing;
     if (iValueNew !== undefined) iValue = iValueNew;

@@ -25,7 +25,7 @@ export class DivStore {
     readonly sheetStore: SheetStore;
     readonly entityBin: EntityBin;
     readonly binDivRoot: BinDiv;
-    readonly pendColl: { [pend: number]: WritableAtom<ValDivRoot, any, any> };
+    readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> };
     pendRows: PendRow[];
     readonly valDivsRoot: ValDivsRoot;
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
@@ -34,7 +34,7 @@ export class DivStore {
         this.sheetStore = sheetStore;
         this.entityBin = entityBin;
         this.binDivRoot = entityBin.binDivRoot;
-        this.pendColl = sheetStore.pendColl;
+        this.valDivsOnPend = sheetStore.valDivsOnPend;
         this.valDivsRoot = new ValDivsRoot(); // entityBin.div, undefined);
         this.valDivColl = {};
         this.pendLoadState = PendLoadState.none;
@@ -149,7 +149,7 @@ export class DivStore {
         if (valDiv === undefined) {
             // top div
             const { pend } = valRow;
-            let _valDiv = this.pendColl[pend];
+            let _valDiv = this.valDivsOnPend[pend];
             setAtomValue(_valDiv, undefined);
         }
         await this.sheetStore.delDetail(id);
@@ -183,10 +183,10 @@ export class DivStore {
     }
 
     private setPend(pend: number, val: ValDivRoot) {
-        if (this.pendColl === undefined) return;
-        let valAtom = this.pendColl[pend];
+        if (this.valDivsOnPend === undefined) return;
+        let valAtom = this.valDivsOnPend[pend];
         if (valAtom === undefined) {
-            this.pendColl[pend] = atom(val);
+            this.valDivsOnPend[pend] = atom(val);
         }
         else {
             let atomValue = getAtomValue(valAtom);
@@ -208,7 +208,7 @@ export class DivStore {
         this.valDivsRoot.addValDiv(valDiv, trigger);
         const { pend } = valRow;
         if (pend !== undefined) {
-            this.pendColl[pend] = atom(valDiv);
+            this.valDivsOnPend[pend] = atom(valDiv);
         }
         return valDiv;
         /*
@@ -353,13 +353,13 @@ export class DivStore {
             }
         }
         let pend = valDiv.pend;
-        let atomValDiv = this.pendColl[pend];
+        let atomValDiv = this.valDivsOnPend[pend];
         setAtomValue(atomValDiv, newValDiv);
     }
 
     removePend(pendId: number) {
         this.valDivsRoot.removePend(pendId);
-        setAtomValue(this.pendColl[pendId], undefined);
+        setAtomValue(this.valDivsOnPend[pendId], undefined);
     }
 
     trigger(): boolean {
@@ -387,14 +387,4 @@ export class DivStore {
         }
         return undefined;
     }
-}
-
-export interface UseInputDivsProps {
-    divStore: DivStore;
-    pendRow: PendRow;
-    namedResults: NamedResults;
-    binDiv: BinDiv;
-    valDiv: ValDivBase;         // 当前需要input的valDiv
-    // valDivParent: ValDiv;
-    skipInputs: boolean;
 }

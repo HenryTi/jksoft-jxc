@@ -1,17 +1,17 @@
+import { useParams } from "react-router-dom";
+import { WritableAtom, atom } from "jotai";
+import { getAtomValue, setAtomValue } from "tonwa-com";
 import { EntitySheet, EntityBin, Biz, EntityPend, BinRow, BizBud } from "app/Biz";
 import { ParamSaveDetail, UqExt, Atom as BizAtom, ReturnGetPendRetSheet } from "uqs/UqDefault";
-import { Atom, WritableAtom, atom } from "jotai";
-import { getAtomValue, setAtomValue } from "tonwa-com";
-import { PickFunc, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
+import { PickFunc, PickStates, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
 import { AtomColl, BudsColl, budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
 import { ValRow, arrFromJsonMid } from "./tool";
 import { DivStore, SubmitState } from "./DivStore";
-import { useParams } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
-import { PickStates, SheetConsole } from "./SheetConsole";
-import { ValDiv, ValDivRoot } from "./ValDiv";
+import { SheetConsole } from "./SheetConsole";
+import { ValDivRoot } from "./ValDiv";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -170,7 +170,7 @@ export class SheetStore extends KeyIdObject {
     readonly isPend: boolean;
     readonly budsColl: BudsColl = {};
     readonly bizAtomColl: AtomColl = {};
-    readonly pendColl: { [pend: number]: WritableAtom<ValDivRoot, any, any> } = {};
+    readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> } = {};
     readonly divStore: DivStore;
     readonly atomLoaded = atom(false);
     readonly atomReaction = atom(undefined as any);
@@ -266,7 +266,7 @@ export class SheetStore extends KeyIdObject {
         for (let v of $page) {
             let { id, pend, pendValue, mid, cols } = v;
             if (pendValue === undefined || pendValue <= 0) continue;
-            this.pendColl[pend] = atom(undefined as ValDivRoot);
+            this.valDivsOnPend[pend] = atom(undefined as ValDivRoot);
             let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);
             let pendRow: PendRow = {
                 pend,

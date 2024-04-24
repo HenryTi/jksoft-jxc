@@ -38,7 +38,7 @@ export function ViewPendRow({
     }
     let viewPendValue: any;
     if (showPendValue === true) {
-        let atomValDiv = divStore.pendColl[pendId];
+        let atomValDiv = divStore.valDivsOnPend[pendId];
         if (atomValDiv !== undefined) {
             let valDiv = getAtomValue(atomValDiv);
             if (valDiv !== undefined) {

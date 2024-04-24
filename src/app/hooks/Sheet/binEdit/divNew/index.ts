@@ -1,3 +1,3 @@
-export * from './useInputDivs';
+export * from './useEditDivs';
 export * from './inputAtom';
 export * from './inputSpec';

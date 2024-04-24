@@ -1,5 +1,4 @@
-import { WritableAtom, atom } from "jotai";
-import { NamedResults, PickResult } from "./NamedResults";
+import { PickStates } from "./NamedResults";
 import { SheetStore } from "./SheetStore";
 import { EntitySheet } from "app/Biz";
 import { Modal } from "tonwa-app";
@@ -32,15 +31,4 @@ export interface SheetSteps {
     steps: string[];
     step: number;
     end: string;
-}
-
-export class PickStates {
-    readonly atomPickedResults: WritableAtom<NamedResults, any, any>;
-    readonly atomRearPickResult: WritableAtom<PickResult, any, any>;
-    readonly atomCur: WritableAtom<number, any, any>;
-    constructor(namedResults: NamedResults, rearPickResult: PickResult, cur: number) {
-        this.atomPickedResults = atom(namedResults);
-        this.atomRearPickResult = atom(rearPickResult);
-        this.atomCur = atom(cur);
-    }
 }

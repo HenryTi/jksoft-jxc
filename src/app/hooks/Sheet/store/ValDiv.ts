@@ -125,6 +125,11 @@ export abstract class ValDivBase extends ValDivs {
 
     abstract get parent(): ValDivBase;
 
+    get valRow(): ValRow {
+        let valRow = getAtomValue(this.atomValRow);
+        return valRow;
+    }
+
     setValRow(valRow: any) {
         if (this.id !== valRow.id) debugger;
         setAtomValue(this.atomValRow, valRow);
