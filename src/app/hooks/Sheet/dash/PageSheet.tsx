@@ -3,7 +3,7 @@ import { SheetStore, SubmitState } from "../store";
 import { ViewDiv, ViewMain } from "../binEdit";
 import { atom, useAtomValue } from "jotai";
 import { useDetailAdd } from "../binEdit";
-import { useUqApp } from "app/UqApp";
+// import { useUqApp } from "app/UqApp";
 import { useCallback, useState } from "react";
 import { PickFunc, useBinPicks } from "../binPick";
 import { headerSheet, buttonDefs } from "../headerSheet";
