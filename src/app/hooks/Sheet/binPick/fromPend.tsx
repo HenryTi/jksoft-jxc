@@ -38,7 +38,7 @@ export function usePickFromPend() {
             if (inputed === undefined) return;
             sheetConsole.steps = undefined;
             // 如果有inputs，直接已经输入进了。就不用返回了。
-            if (bin.div.inputs !== undefined) return;
+            if (bin.binDivRoot.inputs !== undefined) return;
             function proxy(obj: any) {
                 return new Proxy(obj, pendProxyHander);
             }

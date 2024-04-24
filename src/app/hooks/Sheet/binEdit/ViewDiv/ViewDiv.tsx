@@ -1,8 +1,8 @@
 import { useAtomValue } from "jotai";
 import { FA, setAtomValue } from "tonwa-com";
 import { useModal } from "tonwa-app";
-import { DivEditing, UseInputsProps, ValDivRoot } from "../../store";
-import { useDivInputNew } from "../divNew";
+import { DivEditing, UseInputDivsProps, ValDivRoot } from "../../store";
+import { useInputDivs } from "../divNew";
 import { useRowEdit } from "../useRowEdit";
 import { PageEditDiv } from "./PageEditDiv";
 import { ViewPendRow } from "../ViewPendRow";
@@ -18,7 +18,7 @@ export function ViewDiv(props: ViewDivProps) {
     const divs = useAtomValue(atomValDivs);
     const valRow = useAtomValue(atomValRow);
     const deleted = useAtomValue(atomDeleted);
-    const divInputNew = useDivInputNew();
+    const inputDivs = useInputDivs();
     const rowEdit = useRowEdit();
     if (entityBin.pivot === binDiv) return null;
     const { pend, id } = valRow;
@@ -36,14 +36,15 @@ export function ViewDiv(props: ViewDivProps) {
         if (id < 0) {
             // 候选还没有输入行内容
             let pendRow = divStore.getPendRow(pend);
-            const useInputsProps: UseInputsProps = {
+            const useInputsProps: UseInputDivsProps = {
                 divStore,
-                binDiv: divStore.binDiv,
-                val0Div: valDiv,
+                binDiv: divStore.binDivRoot,
+                valDiv: valDiv,
                 pendRow,
                 namedResults: {},
+                skipInputs: false,
             }
-            let retValDiv = await divInputNew(useInputsProps, false);
+            let retValDiv = await inputDivs(useInputsProps);
             if (retValDiv === undefined) return;
             if (retValDiv.parent !== undefined) {
                 // retValDiv must be root

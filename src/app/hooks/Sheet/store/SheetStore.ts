@@ -7,7 +7,7 @@ import { Calc, Formulas } from "app/hooks/Calc";
 import { AtomColl, BudsColl, budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
 import { ValRow, arrFromJsonMid } from "./tool";
-import { DivStore } from "./DivStore";
+import { DivStore, SubmitState } from "./DivStore";
 import { useParams } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
 import { PickStates, SheetConsole } from "./SheetConsole";
@@ -21,25 +21,25 @@ abstract class KeyIdObject {
     }
 }
 
-abstract class BaseObject extends KeyIdObject {
+abstract class BinStore extends KeyIdObject {
     readonly sheetStore: SheetStore;
-    constructor(sheetStore: SheetStore) {
+    readonly entityBin: EntityBin;
+    constructor(sheetStore: SheetStore, entityBin: EntityBin) {
         super();
         this.sheetStore = sheetStore;
+        this.entityBin = entityBin;
     }
 }
 
-export class SheetMain extends BaseObject {
+export class SheetMain extends BinStore {
     readonly budEditings: BudEditing[];
-    readonly entityMain: EntityBin;
     readonly _valRow = atom<ValRow>({ buds: {} } as ValRow);
     get valRow() { return getAtomValue(this._valRow) }
     no: string;
 
     constructor(sheetStore: SheetStore) {
-        super(sheetStore);
-        let { main } = sheetStore.entitySheet;
-        this.entityMain = main;
+        const { main } = sheetStore.entitySheet;
+        super(sheetStore, main);
         this.budEditings = main.buds.map(v => new BudEditing(v));
     }
 
@@ -48,7 +48,7 @@ export class SheetMain extends BaseObject {
         const row = this.valRow;
         const { id } = row;
         if (id > 0) return;
-        const pickResults = await pick(this.sheetStore, RearPickResultType.scalar);
+        const pickResults = await pick(this.sheetStore, this.entityBin, RearPickResultType.scalar);
         let ret = await this.startFromPickResults(pickResults);
         setAtomValue(this.sheetStore.atomLoaded, true);
         return ret;
@@ -57,7 +57,7 @@ export class SheetMain extends BaseObject {
     async startFromPickResults(pickResults: ReturnUseBinPicks) {
         if (pickResults === undefined) return;
         const row = this.valRow;
-        const { i, x, buds: mainProps } = this.entityMain;
+        const { i, x, buds: mainProps } = this.entityBin;
         const formulas: Formulas = [];
         function getFormulaText(text: string) {
             if (text === undefined) return;
@@ -145,12 +145,10 @@ export interface PendRow {
     mid: any[];
 }
 
-class Detail extends BaseObject {
-    readonly entityBin: EntityBin;
+class Detail extends BinStore {
     readonly caption: string;
     constructor(sheetStore: SheetStore, entityBin: EntityBin, caption: string) {
-        super(sheetStore);
-        this.entityBin = entityBin;
+        super(sheetStore, entityBin);
         this.caption = caption ?? entityBin.caption;
     }
 }
@@ -165,8 +163,8 @@ export class SheetStore extends KeyIdObject {
     readonly entitySheet: EntitySheet;
     readonly sheetConsole: SheetConsole;
     readonly main: SheetMain;
-    readonly detail: Detail;
-    readonly detailExs: ExDetail[] = [];
+    // readonly detail: Detail;
+    // readonly detailExs: ExDetail[] = [];
     readonly caption: string;
     readonly backIcon = 'file-text-o';
     readonly isPend: boolean;
@@ -176,6 +174,7 @@ export class SheetStore extends KeyIdObject {
     readonly divStore: DivStore;
     readonly atomLoaded = atom(false);
     readonly atomReaction = atom(undefined as any);
+    readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
 
     constructor(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
         super();
@@ -187,6 +186,8 @@ export class SheetStore extends KeyIdObject {
         this.sheetConsole = sheetConsole;
         this.main = new SheetMain(this);
         const { details } = this.entitySheet;
+        let detail = details[0];
+        /*
         let len = details.length;
         if (len > 0) {
             const { bin: detail, caption } = details[0];
@@ -197,13 +198,20 @@ export class SheetStore extends KeyIdObject {
             const { bin: detail, caption } = details[i];
             this.detailExs.push(new ExDetail(this, detail, caption));
         }
+        */
         this.caption = entitySheet.caption ?? entitySheet.name;
-        this.divStore = new DivStore(this, this.detail.entityBin);
+        if (detail !== undefined) {
+            this.divStore = new DivStore(this, detail.bin);
+        }
         sheetConsole.picks = new PickStates(
-            { '%sheet': new Proxy(this.main.valRow, this.main.entityMain.proxyHandler()) },
+            { '%sheet': new Proxy(this.main.valRow, this.main.entityBin.proxyHandler()) },
             undefined,
             0
         );
+        this.atomSubmitState = atom((get) => {
+            if (this.divStore === undefined) return SubmitState.enable;
+            return get(this.divStore.atomSubmitState);
+        }, null);
     }
 
     async load(sheetId: number) {
@@ -318,7 +326,7 @@ export class SheetStore extends KeyIdObject {
     }
 
     async saveSheet(valRow: ValRow) {
-        let propArr = this.getPropArr(valRow, this.main.entityMain.buds);
+        let propArr = this.getPropArr(valRow, this.main.entityBin.buds);
         let { id: sheetId, i, x } = valRow;
         const { uq, entitySheet } = this;
         let ret = await uq.SaveSheet.submit({
@@ -373,9 +381,3 @@ export function useSheetEntity() {
     const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
     return entitySheet;
 }
-/*
-export function useSheetStore(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
-    const refSheetStore = useRef(new SheetStore(entitySheet, sheetConsole));
-    return refSheetStore.current;
-}
-*/

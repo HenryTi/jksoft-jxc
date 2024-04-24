@@ -229,7 +229,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
 
     const { items } = row as FormSelect;
     if (items !== undefined) {
-        const { name, multiple, default: defaultValue, placeHolder, options, readOnly } = row as FormSelect;
+        const { name, multiple, placeHolder, options, readOnly } = row as FormSelect;
         let error = errors[name];
         let cnInput = 'form-select ';
         if (error) cnInput += 'is-invalid';
@@ -238,22 +238,22 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
             if (options.required === true) {
                 options.validate = v => {
                     let ret = v !== n;
-                    console.error('select ' + v + ' ret ' + ret);
+                    // console.error('select ' + v + ' ret ' + ret);
                     return ret;
                 }
             }
         }
         return <Band label={label} labelClassName={labelClassName}>
-            <select multiple={multiple} className={cnInput} {...register(name, options)}>
+            <select multiple={multiple} className={cnInput} {...register(name, options)} defaultValue={options.value}>
                 {
-                    defaultValue === undefined &&
-                    <option selected={true} disabled={true} value={n}>
+                    options.value === undefined &&
+                    <option value={n}>
                         {placeHolder ?? '请选择' + label}
                     </option>
                 }
                 {items.map((v, index) => {
                     const { label, value } = v;
-                    return <option key={index} value={value} selected={defaultValue === value}>{label}</option>
+                    return <option key={index} value={value}>{label}</option>
                 })}
             </select>
             {

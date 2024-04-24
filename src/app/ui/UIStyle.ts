@@ -4,7 +4,7 @@ export interface UIStyle {
     icon: string;
     iconColor: string;
     format: string;
-    edit: 'pop';
+    edit: 'pop' | 'dropdown' | 'radio';
     fraction: number;
     show: boolean;
     required: boolean;

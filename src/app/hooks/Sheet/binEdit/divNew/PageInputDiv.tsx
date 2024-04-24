@@ -1,7 +1,6 @@
-import { DivEditing, UseInputsProps, ValDiv, ValDivBase, ValRow, btnNext, cnNextClassName } from "../../store";
-import { FA, getAtomValue } from "tonwa-com";
-import { UqApp } from "app";
-import { Modal, Page, useModal } from "tonwa-app";
+import { DivEditing, btnNext, cnNextClassName } from "../../store";
+import { FA } from "tonwa-com";
+import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band, FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
@@ -10,26 +9,10 @@ import { BizBud } from "app/Biz";
 import { ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
-export interface InputDivProps extends UseInputsProps {
-    //uqApp: UqApp;
-    modal: Modal;
-    valRow: ValRow;
-    // parents: ValDivBase[];
-}
-
-export async function inputDiv(props: InputDivProps): Promise<ValRow> {
-    const { modal, divStore, binDiv, valRow, namedResults, pendRow, val0Div: valDiv } = props;
-    let divEditing = new DivEditing(divStore, namedResults, binDiv, valDiv, valRow);
-    if (divEditing.isInputNeeded() === true) {
-        if (await modal.open(<PageInput divEditing={divEditing} />) !== true) return;
-    }
-    return divEditing.valRow;
-}
-
-function PageInput({ divEditing }: { divEditing: DivEditing; }) {
+export function PageInput({ divEditing }: { divEditing: DivEditing; }) {
     const modal = useModal();
-    const { divStore, val0Div, valRow } = divEditing;
-    const { binDiv, sheetStore } = divStore;
+    const { divStore, valRow } = divEditing;
+    const { binDivRoot: binDiv, sheetStore } = divStore;
     const { register, setValue, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [submitable, setSubmitable] = useState(divEditing.submitable);
     let formRows = divEditing.buildFormRows();

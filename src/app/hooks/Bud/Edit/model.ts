@@ -59,6 +59,7 @@ export interface EditProps extends IEditing {
     readOnly?: boolean;
     flag?: JSX.Element;             // 重要的，label上做标识
     popup?: boolean;
+    noBorder?: boolean;
 }
 
 export type ViewValueEdit = (props: EditProps) => JSX.Element;

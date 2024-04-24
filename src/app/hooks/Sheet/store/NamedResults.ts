@@ -1,4 +1,4 @@
-import { BinPick } from "app/Biz";
+import { BinPick, EntityBin } from "app/Biz";
 import { SheetStore } from "./SheetStore";
 
 export type PickResult = { [prop: string]: any };
@@ -18,4 +18,4 @@ export enum RearPickResultType {
     array,
 }
 
-export type PickFunc = (sheetStore: SheetStore, rearPickResultType: RearPickResultType) => Promise<ReturnUseBinPicks>;
+export type PickFunc = (sheetStore: SheetStore, bin: EntityBin, rearPickResultType: RearPickResultType) => Promise<ReturnUseBinPicks>;

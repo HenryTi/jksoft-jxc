@@ -20,9 +20,9 @@ export enum RearPickResultType {
     array,
 }
 
-export type PickFunc = (sheetStore: SheetStore, rearPickResultType: RearPickResultType) => Promise<ReturnUseBinPicks>;
+export type PickFunc = (sheetStore: SheetStore, bin: EntityBin, rearPickResultType: RearPickResultType) => Promise<ReturnUseBinPicks>;
 
-export function useBinPicks(bin: EntityBin) {
+export function useBinPicks() {
     const pickFromAtom = usePickFromAtom();
     const pickFromSpec = usePickFromSpec();
     const pickFromPend = usePickFromPend();
@@ -31,7 +31,7 @@ export function useBinPicks(bin: EntityBin) {
     let { current: namedResults } = refNamedResults;
     const refPicked = useRef<ReturnUseBinPicks>(undefined);
 
-    async function pickRear(sheetStore: SheetStore, rearPickResultType: RearPickResultType) {
+    async function pickRear(sheetStore: SheetStore, bin: EntityBin, rearPickResultType: RearPickResultType) {
         if (sheetStore === undefined) debugger;
         if (bin === undefined) return;
         const { divStore } = sheetStore;
@@ -56,14 +56,14 @@ export function useBinPicks(bin: EntityBin) {
     }
 
     // if no detailSection add new, else edit
-    return useCallback(async function (sheetStore: SheetStore, rearPickResultType: RearPickResultType = RearPickResultType.array) {
+    return useCallback(async function (sheetStore: SheetStore, bin: EntityBin, rearPickResultType: RearPickResultType = RearPickResultType.array) {
         if (bin === undefined) return;
         const { binPicks, rearPick } = bin;
         if (binPicks === undefined) return;
         const { divStore } = sheetStore;
         let { main } = sheetStore;
         namedResults = {
-            '%sheet': new Proxy(main.valRow, main.entityMain.proxyHandler()),
+            '%sheet': new Proxy(main.valRow, main.entityBin.proxyHandler()),
         };
         let pickResult: PickResult;
         for (const binPick of binPicks) {
@@ -93,7 +93,7 @@ export function useBinPicks(bin: EntityBin) {
         };
         refPicked.current = ret;
 
-        let rearPickResult = await pickRear(sheetStore, rearPickResultType);
+        let rearPickResult = await pickRear(sheetStore, bin, rearPickResultType);
         if (rearPickResult === undefined) return undefined;
 
         let rearResult: PickResult[] = Array.isArray(rearPickResult) === false ?

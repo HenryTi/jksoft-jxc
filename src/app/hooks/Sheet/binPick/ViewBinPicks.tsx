@@ -26,7 +26,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     const pickFromPend = usePickFromPend();
     const [pickFromQueryScalar, pickFromQuery] = usePickFromQuery();
     const { main, divStore, sheetConsole } = sheetStore;
-    const { binPicks, rearPick } = main.entityMain;
+    const { binPicks, rearPick } = main.entityBin;
     /*
     const [namedResults, setNamedResult] = useState<{ [name: string]: any }>({
         '%sheet': new Proxy(main.valRow, main.entityMain.proxyHandler()),

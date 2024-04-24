@@ -24,7 +24,7 @@ export class DivStore {
     private pendLoadState: PendLoadState;
     readonly sheetStore: SheetStore;
     readonly entityBin: EntityBin;
-    readonly binDiv: BinDiv;
+    readonly binDivRoot: BinDiv;
     readonly pendColl: { [pend: number]: WritableAtom<ValDivRoot, any, any> };
     pendRows: PendRow[];
     readonly valDivsRoot: ValDivsRoot;
@@ -33,7 +33,7 @@ export class DivStore {
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
         this.sheetStore = sheetStore;
         this.entityBin = entityBin;
-        this.binDiv = entityBin.div;
+        this.binDivRoot = entityBin.binDivRoot;
         this.pendColl = sheetStore.pendColl;
         this.valDivsRoot = new ValDivsRoot(); // entityBin.div, undefined);
         this.valDivColl = {};
@@ -92,7 +92,7 @@ export class DivStore {
         }
     }
 
-    getPendLeft(valDiv: ValDivBase): number {
+    getPendLeft(valDiv: ValDiv): number {
         if (valDiv === undefined) return undefined;
         function has(valDivs: ValDivs, valDiv: ValDivBase) {
             let vds = getAtomValue(valDivs.atomValDivs);
@@ -132,7 +132,7 @@ export class DivStore {
     }
 
     private getOwnerAtomValDivs(valRow: ValRow) {
-        const { subBinDiv: div } = this.binDiv;
+        const { subBinDiv: div } = this.binDivRoot;
         if (div === undefined) {
             return this.valDivsRoot; // .atomValDivs;
         }
@@ -203,7 +203,7 @@ export class DivStore {
             valDiv.setValRow(valRow);
             return valDiv;
         }
-        valDiv = new ValDivRoot(this.binDiv, valRow);
+        valDiv = new ValDivRoot(this.binDivRoot, valRow);
         this.valDivColl[id] = valDiv;
         this.valDivsRoot.addValDiv(valDiv, trigger);
         const { pend } = valRow;
@@ -389,11 +389,12 @@ export class DivStore {
     }
 }
 
-export interface UseInputsProps {
+export interface UseInputDivsProps {
     divStore: DivStore;
     pendRow: PendRow;
     namedResults: NamedResults;
     binDiv: BinDiv;
-    val0Div: ValDivBase;        // 0 层的 valDiv
+    valDiv: ValDivBase;         // 当前需要input的valDiv
     // valDivParent: ValDiv;
+    skipInputs: boolean;
 }

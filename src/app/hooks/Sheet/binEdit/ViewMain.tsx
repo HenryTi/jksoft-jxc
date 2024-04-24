@@ -11,7 +11,7 @@ import { LabelBox, RowCols } from "app/hooks/tool";
 
 export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup: boolean; readOnly?: boolean; }) {
     const { main } = store;
-    const { no, entityMain, _valRow: _binRow, budEditings } = main;
+    const { no, entityBin: entityMain, _valRow: _binRow, budEditings } = main;
     const { i: budI, x: budX } = entityMain;
     const binRow = useAtomValue(_binRow);
     const { id: idBin, i, x, buds } = binRow;

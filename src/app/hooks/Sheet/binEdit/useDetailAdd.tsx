@@ -7,19 +7,19 @@ import { PickResult } from "../store";
 
 export function useDetailAdd(sheetStore: SheetStore) {
     const rowEdit = useRowEdit();
-    const { detail } = sheetStore;
-    const entityBin = detail?.entityBin;
-    const pick = useBinPicks(entityBin);
+    const pick = useBinPicks();
     async function addNewDirect(): Promise<boolean> {
-        let ret = await pick(sheetStore);
+        const { divStore } = sheetStore;
+        if (divStore === undefined) {
+            alert('Pick Pend on main not implemented');
+            return false;
+        }
+        const entityBin = divStore?.entityBin;
+        let ret = await pick(sheetStore, entityBin);
         if (ret === undefined) return false;
         let { namedResults, rearBinPick, rearResult, rearPickResultType } = ret;
         if (rearPickResultType === RearPickResultType.array) {
             // 直接选入行集，待修改
-            if (detail === undefined) {
-                alert('Pick Pend on main not implemented');
-                return false;
-            }
             for (let rowProps of rearResult as PickResult[]) {
                 namedResults[rearBinPick.name] = rowProps;
                 let binEditing = new BinEditing(sheetStore, entityBin);

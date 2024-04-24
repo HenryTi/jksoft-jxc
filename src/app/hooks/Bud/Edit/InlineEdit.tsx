@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import { Pencil } from "app/hooks/tool";
 
 export function InlineEdit(props: EditProps) {
-    let { children, onEditClick, readOnly, error, required, popup } = props;
+    let { children, onEditClick, readOnly, error, required, popup, noBorder } = props;
     let err = useAtomValue(error);
     let cn = ' bg-light ';
     let vErr: any;
@@ -19,7 +19,10 @@ export function InlineEdit(props: EditProps) {
         </span>;
     }
     let content: any;
-    if (popup === false && onEditClick === null) {
+    if (noBorder === true) {
+        content = children;
+    }
+    else if (popup === false && onEditClick === null) {
         content = <div className={'border rounded pe-1 ' + cn}>
             {children}
         </div>;

@@ -34,7 +34,7 @@ export function ViewPendRowEdit(props: PendProps) {
     function ViewNoDiv() {
         async function onAddNew() {
             let valRow: ValRow = { id: -pendId, buds: {}, owned: {}, pend: pendId };
-            let retValDiv = new ValDivRoot(divStore.binDiv, valRow);
+            let retValDiv = new ValDivRoot(divStore.binDivRoot, valRow);
             divStore.valDivsRoot.addValDiv(retValDiv, true);
             setAtomValue(atomValDiv, retValDiv);
         }

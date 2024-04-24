@@ -35,7 +35,7 @@ export function PageSheetNew({ store }: { store: SheetStore; }) {
         };
         return <PageStartPend store={store} />;
     }
-    if (store.main.entityMain.binPicks !== undefined) {
+    if (store.main.entityBin.binPicks !== undefined) {
         sheetConsole.steps = {
             steps: ['录入条件'],
             end: "录入单据",

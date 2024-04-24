@@ -3,7 +3,7 @@ import { EditProps } from "./model";
 import { Pencil } from "app/hooks/tool";
 
 export function LabelRowEdit(props: EditProps) {
-    let { label, flag, children, onEditClick, readOnly, popup } = props;
+    let { label, flag, children, onEditClick, readOnly, popup, noBorder } = props;
     let vLabel: any;
     if (flag !== undefined) {
         vLabel = <>
@@ -27,14 +27,19 @@ export function LabelRowEdit(props: EditProps) {
                 </div>;
             }
         }
-        content = <>
-            <div className="ms-2 py-2 position-relative flex-fill">
-                <div className="form-control border-0">
-                    {children}
+        if (noBorder === true) {
+            content = children;
+        }
+        else {
+            content = <>
+                <div className="ms-2 py-2 position-relative flex-fill">
+                    <div className="form-control border-0">
+                        {children}
+                    </div>
                 </div>
-            </div>
-            {right}
-        </>;
+                {right}
+            </>;
+        }
     }
     return <LabelRow {...props}>
         {vLabel}

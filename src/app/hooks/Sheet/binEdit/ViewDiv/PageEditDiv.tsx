@@ -1,7 +1,7 @@
 import { useAtomValue } from "jotai";
 import { DivEditing, DivStore, ValDiv, ValDivBase, ValRow } from "../../store";
 import { FA, getAtomValue, setAtomValue } from "tonwa-com";
-import { useDivInputNew } from "../divNew";
+import { useInputDivs } from "../divNew";
 import { useRowEdit } from "../useRowEdit";
 import { Page, useModal } from "tonwa-app";
 import { ViewDivUndo } from "./ViewDivUndo";
@@ -26,7 +26,7 @@ function EditDiv(props: EditDivProps) {
     const { atomValDivs, binDiv, atomDeleted, atomValRow } = valDiv;
     const { level, entityBin, subBinDiv: div } = binDiv;
     const { divLevels, pivot } = entityBin;
-    const divInputNew = useDivInputNew();
+    const inputDivs = useInputDivs();
     const valRow = useAtomValue(atomValRow);
     const divs = useAtomValue(atomValDivs);
     const deleted = useAtomValue(atomDeleted);
@@ -48,12 +48,13 @@ function EditDiv(props: EditDivProps) {
             const { atomValRow } = valDiv;
             const valRow = getAtomValue(atomValRow);
             let pendRow = await divStore.loadPendRow(valRow.pend);
-            let ret = await divInputNew({
+            let ret = await inputDivs({
                 divStore,
                 pendRow,
                 namedResults: {},
                 binDiv: div,
-                val0Div: valDiv,
+                valDiv,
+                skipInputs: true,
             });
             if (ret === undefined) return;
             setAtomValue(atomValDivs, [...divs, ret]);

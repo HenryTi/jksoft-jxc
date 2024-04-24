@@ -11,8 +11,6 @@ import { ValDiv, ValDivBase, ValDivRoot } from "./ValDiv";
 import { NamedResults } from "./NamedResults";
 import { getDays } from "app/tool";
 import { ValRow } from "./tool";
-import { ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
-import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
 export abstract class FieldsEditing extends BudsFields {
     private readonly calc: Calc;
@@ -134,7 +132,7 @@ export abstract class FieldsEditing extends BudsFields {
         return ret;
     }
 
-    onChange(name: string, type: 'text' | 'number' | 'radio' | 'date', valueInputText: string
+    onChange(name: string, type: 'text' | 'number' | 'radio' | 'date' | 'select-one', valueInputText: string
         , callback: (name: string, value: CalcResult) => void) {
         let valueInput: any;
         if (valueInputText.trim().length === 0) {
@@ -153,6 +151,7 @@ export abstract class FieldsEditing extends BudsFields {
                 case 'text':
                     valueInput = valueInputText;
                     break;
+                case 'select-one':
                 case 'radio':
                     valueInput = Number(valueInputText);
                     break;
@@ -230,7 +229,13 @@ export abstract class FieldsEditing extends BudsFields {
                     }
                     break;
                 case EnumBudType.radio:
-                    formRow.radios = budRadios(budDataType as BudRadio);
+                    let radioItems = budRadios(budDataType as BudRadio);
+                    switch (ui?.edit) {
+                        case 'pop':
+                        case 'dropdown':
+                        default: formRow.items = radioItems; break;
+                        case 'radio': formRow.radios = radioItems; break;
+                    }
                     // 从数据库getsheet返回的是array
                     let optionsValue = options.value;
                     if (Array.isArray(optionsValue) === true) {
@@ -265,20 +270,21 @@ function budRadios(budDataType: BudRadio): { label: string; value: string | numb
 
 export class DivEditing extends FieldsEditing {
     readonly divStore: DivStore;
-    readonly val0Div: ValDivBase;          // 0 层的valDiv
-    constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, val0Div: ValDivBase, initBinRow?: BinRow) {
+    // readonly val0Div: ValDivBase;          // 0 层的valDiv
+    constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, valDiv: ValDivBase, initBinRow?: BinRow) {
         super(divStore.sheetStore, divStore.entityBin, binDiv.buds, initBinRow);
         this.divStore = divStore;
-        this.val0Div = val0Div;
+        // this.val0Div = val0Div;
         this.setNamedParams(namedResults);
-        if (this.fieldValue !== undefined) {
-            if (this.fieldValue.getValue(this.valRow) === undefined) {
-                let pendLeft = divStore.getPendLeft(val0Div);
-                if (pendLeft !== undefined) {
-                    this.fieldValue.setValue(this.valRow, pendLeft);
-                }
-            }
-        }
+        this.setValueDefault(valDiv);
+    }
+
+    private setValueDefault(valDiv: ValDivBase) {
+        if (this.fieldValue === undefined) return;
+        if (this.fieldValue.getValue(this.valRow) !== undefined) return;
+        let pendLeft = this.divStore.getPendLeft(valDiv);
+        if (pendLeft === undefined) return;
+        this.fieldValue.setValue(this.valRow, pendLeft);
     }
 }
 

@@ -12,12 +12,13 @@ import { FA, setAtomValue } from "tonwa-com";
 import { ToolItem } from "app/coms";
 
 export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean; }) {
-    const { uq, main, detail, divStore, caption, sheetConsole, atomReaction } = store;
-    const pick = useBinPicks(main.entityMain);
+    const { uq, main, divStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
+    const pick = useBinPicks();
     const modal = useModal();
     const [editable, setEditable] = useState(true);
-    let submitState = useAtomValue(divStore.atomSubmitState);
+    let submitState = useAtomValue(atomSubmitState);
     const addNew = useDetailAdd(store);
+    // main.entityBin, 
     const start = useStartSheetStore(store, pick);
 
     async function onSubmit() {
@@ -92,6 +93,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     let headerGroup = [btnExit];
     let toolGroups: (ToolItem[] | JSX.Element)[], view: any;
     let reaction = <ViewReaction atomContent={atomReaction} />;
+
     function mainOnlyEdit() {
         let btnSubmit = buttonDefs.submit(onSubmit);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, true, editable === false);
@@ -100,6 +102,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     }
 
     function mainDetailEdit() {
+        const { entityBin } = divStore;
         async function startInputDetail() {
             let ret = await start();
             if (ret === undefined) {
@@ -112,11 +115,11 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         let submitHidden: boolean;
         submitHidden = false;
         let submitDisabled = atom(get => {
-            submitState = get(divStore.atomSubmitState);
+            submitState = get(atomSubmitState);
             return submitState === SubmitState.none || submitState === SubmitState.disable;
         });
         let btnSubmit = buttonDefs.submit(onSubmit, submitDisabled, submitHidden);
-        let btnAddDetail = detail.entityBin.pend === undefined ?
+        let btnAddDetail = entityBin.pend === undefined ?
             buttonDefs.addDetail(onAddRow) : buttonDefs.addPend(onAddRow);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, false, editable === false);
         toolGroups = [[btnAddDetail, btnPrint, btnSubmit], reaction, null, [btnDiscard]];
@@ -125,7 +128,6 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
                 <button className="btn btn-primary" onClick={startInputDetail}>开始录单</button>
             </div>;
         }
-        const { divStore } = store;
         function ViewBinDivs() {
             const { valDivsRoot: rootValDiv } = divStore;
             const valDivs = useAtomValue(rootValDiv.atomValDivs);
@@ -150,7 +152,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         </>;
     }
 
-    if (detail === undefined) mainOnlyEdit();
+    if (divStore === undefined) mainOnlyEdit();
     else mainDetailEdit();
     let { header, top, right } = headerSheet({ store, toolGroups, headerGroup });
     if (readonly === true) top = undefined;
@@ -165,7 +167,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
 // let locationState = 1;
 
 function useStartSheetStore(sheetStore: SheetStore, pick: PickFunc) {
-    const uqApp = useUqApp();
+    // const uqApp = useUqApp();
     // const navigate = useNavigate();
     const { sheetConsole } = sheetStore;
     async function startSheetStore() {

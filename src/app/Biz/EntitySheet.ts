@@ -315,7 +315,7 @@ export class EntityBin extends Entity {
     main: EntityBin;
     binPicks: BinPick[];
     rearPick: BinPick;          // endmost pick
-    div: BinDiv;
+    binDivRoot: BinDiv;
     divLevels: number;
     i: BizBud;
     x: BizBud;
@@ -351,7 +351,7 @@ export class EntityBin extends Entity {
             case 'main': this.main = this.biz.entityFromId<EntityBin>(val); break;
             case 'picks': this.binPicks = val; break;
             case 'inputs': break;   // is a must
-            case 'div': this.div = val; break;
+            case 'div': this.binDivRoot = val; break;
             case 'i': this.i = val; this.budColl[this.i.id] = this.i; break;
             case 'iBase': this.iBase = val; this.budColl[this.iBase.id] = this.iBase; break;
             case 'x': this.x = val; this.budColl[this.x.id] = this.x; break;
@@ -509,14 +509,14 @@ export class EntityBin extends Entity {
             this.rearPick = this.binPicks[pLast];
             this.binPicks.splice(pLast, 1);
         }
-        let div = this.div;
-        this.div = new BinDiv(this, undefined);
+        let divSchema = this.binDivRoot;
+        this.binDivRoot = new BinDiv(this, undefined);
         this.divLevels = 0;
-        this.scanDiv(this.div, div);
+        this.scanDiv(this.binDivRoot as any, divSchema);
     }
 
-    private scanDiv(binDiv: BinDiv, source: BinDiv) {
-        let { inputs, subBinDiv: subDiv, buds, ui, key, format } = source;
+    private scanDiv(binDiv: BinDiv, divSchema: any) {
+        let { inputs, div: subDivSchema, buds, ui, key, format } = divSchema;
         binDiv.ui = ui;
         binDiv.inputs = this.scanInputs(inputs);
         binDiv.buds = this.scanBinBuds(buds);
@@ -532,10 +532,10 @@ export class EntityBin extends Entity {
             });
         }
         binDiv.binDivBuds = new BinDivBuds(binDiv);
-        if (subDiv !== undefined) {
+        if (subDivSchema !== undefined) {
             ++this.divLevels;
             let subBinDiv = binDiv.subBinDiv = new BinDiv(this, binDiv);
-            this.scanDiv(subBinDiv, subDiv);
+            this.scanDiv(subBinDiv, subDivSchema);
         }
         else if (this.pivot !== undefined) {
             this.pivot = binDiv;
