@@ -129,8 +129,15 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             </div>;
         }
         function ViewBinDivs() {
-            const { valDivsRoot: rootValDiv } = divStore;
-            const valDivs = useAtomValue(rootValDiv.atomValDivs);
+            const { valDivsRoot } = divStore;
+            const valDivs = useAtomValue(valDivsRoot.atomValDivs);
+            let length = valDivs.length;
+            for (let i = 0; i < length; i++) {
+                let valDiv = valDivs[i];
+                let { valRow } = valDiv;
+                if (valRow.id === undefined) debugger;
+                if (valDiv.id === undefined) debugger;
+            }
             return <div className="tonwa-bg-gray-1 pt-3">
                 {valDivs.length === 0 ?
                     <div className="mt-3 small text-body-tertiary p-3 bg-white border-top">
@@ -139,6 +146,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
                     :
                     valDivs.map(v => {
                         const { id } = v;
+                        if (id === undefined) debugger;
                         const cn = 'border-top border-bottom ' + (id < 0 ? 'border-warning' : 'border-primary-subtle');
                         return <div key={id} className={cn}>
                             <ViewDiv divStore={divStore} valDiv={v} readonly={readonly} />

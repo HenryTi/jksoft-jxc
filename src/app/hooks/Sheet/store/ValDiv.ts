@@ -104,7 +104,9 @@ export abstract class ValDivBase extends ValDivs {
     constructor(binDiv: BinDiv, valRow: ValRow) {
         super();
         this.binDiv = binDiv;
-        this.atomValRow = atom<any>(valRow);
+        let vt: ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
+        this.internalMergeValRow(vt, valRow)
+        this.atomValRow = atom<any>(vt);
     }
 
     get id(): number {
@@ -203,22 +205,101 @@ export abstract class ValDivBase extends ValDivs {
         return false;
     }
 
+    setIXBaseFromInput({ iValue, iBase, xValue, xBase }: {
+        iValue: number;
+        iBase: number;
+        xValue: number;
+        xBase: number;
+    }) {
+        if (iValue !== undefined) {
+            if (this.binDiv.binDivBuds.budI !== undefined) {
+                this.iValue = iValue;
+            }
+            if (iBase !== undefined) {
+                for (let p: ValDivBase = this; p !== undefined; p = p.parent) {
+                    const { binDivBuds } = p.binDiv;
+                    if (binDivBuds.budIBase !== undefined) {
+                        p.iBase = iBase;
+                        break;
+                    }
+                }
+            }
+        }
+        if (xValue !== undefined) {
+            if (this.binDiv.binDivBuds.budX !== undefined) {
+                this.xValue = xValue;
+            }
+            for (let p: ValDivBase = this; p !== undefined; p = p.parent) {
+                const { binDivBuds } = p.binDiv;
+                if (binDivBuds.budXBase !== undefined) {
+                    p.xBase = xBase;
+                    break;
+                }
+            }
+        }
+    }
+
     getRowCount(): number {
         // let deleted = getAtomValue(this.atomDeleted);
         // if (deleted === true) return 0;
         return super.getRowCount() + 1;
+    }
+
+    private internalMergeValRow(dest: ValRow, src: ValRow) {
+        if (src === undefined) return;
+        const { id, i, x, value, price, amount, buds, owned, pend, pendValue, origin } = src;
+        if (id !== undefined) dest.id = id;
+        if (i !== undefined) dest.i = i;
+        if (x !== undefined) dest.x = x;
+        if (value !== undefined) dest.value = value;
+        if (price !== undefined) dest.price = price;
+        if (amount !== undefined) dest.amount = amount;
+        if (buds !== undefined) Object.assign(dest.buds, buds);
+        if (owned !== undefined) Object.assign(dest.owned, owned);
+        if (pend !== undefined) dest.pend = pend;
+        if (pendValue !== undefined) dest.pendValue = pendValue;
+        if (origin !== undefined) dest.origin = origin;
+    }
+
+    mergeValRow(src: ValRow) {
+        if (src === undefined) return;
+        let dest = getAtomValue(this.atomValRow);
+        this.internalMergeValRow(dest, src);
+        setAtomValue(this.atomValRow, { ...dest });
+    }
+
+    protected abstract cloneObj(): ValDivBase;
+
+    clone(): ValDivBase {
+        let ret = this.cloneObj();
+        setAtomValue(ret.atomValDivs, [...getAtomValue(this.atomValDivs)]);
+        ret.iValue = this.iValue;
+        ret.iBase = this.iBase;
+        ret.xValue = this.xValue;
+        ret.xBase = this.xBase;
+        return ret;
     }
 }
 
 export class ValDivRoot extends ValDivBase {
     readonly rootFlag = 1;
     readonly parent: ValDivBase = undefined;
+
+    protected cloneObj() {
+        let ret = new ValDivRoot(this.binDiv, this.valRow);
+        return ret;
+    }
 }
 
 export class ValDiv extends ValDivBase {
     readonly parent: ValDivBase;
     constructor(parent: ValDivBase, valRow: ValRow) {
-        super(parent.binDiv, valRow);
+        super(parent.binDiv.subBinDiv, valRow);
         this.parent = parent;
+    }
+
+    protected cloneObj() {
+        let ret = new ValDiv(this.parent, this.valRow);
+        return ret;
     }
 }

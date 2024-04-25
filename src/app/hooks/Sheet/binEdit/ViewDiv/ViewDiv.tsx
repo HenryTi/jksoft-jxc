@@ -36,21 +36,25 @@ export function ViewDiv(props: ViewDivProps) {
         if (id < 0) {
             // 候选还没有输入行内容
             let pendRow = divStore.getPendRow(pend);
+            let valDivClone = valDiv.clone() as ValDivRoot;
+            let { valRow } = valDivClone;
+            valDivClone.id = undefined;
+            valRow.id = undefined;
+            valRow.origin = pendRow.origin;
+            valRow.pend = pendRow.pend;
+            valRow.pendValue = pendRow.value;
+            valDivClone.setValRow(valRow);
             const useInputsProps: UseEditDivsProps = {
                 divStore,
                 // binDiv: divStore.binDivRoot,
-                valDiv: valDiv,
+                valDiv: valDivClone,
                 pendRow,
                 namedResults: {},
                 skipInputs: false,
             }
-            let retValDiv = await editDivs(useInputsProps);
-            if (retValDiv === undefined) return;
-            if (retValDiv.parent !== undefined) {
-                // retValDiv must be root
-                debugger;
-            }
-            divStore.replaceValDiv(valDiv, retValDiv as ValDivRoot);
+            let retHasValue = await editDivs(useInputsProps);
+            if (retHasValue !== true) return;
+            divStore.replaceValDiv(valDiv, valDivClone);
             return;
         }
         if (divs.length === 0) {

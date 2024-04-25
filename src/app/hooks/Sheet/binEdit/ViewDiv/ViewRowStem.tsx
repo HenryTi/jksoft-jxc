@@ -40,7 +40,7 @@ export function ViewRowStem(props: ViewDivProps) {
         }
         viewPendValue = <div className="flex-fill d-flex align-items-center">
             <FA name={icon} className={color + ' me-2 '} />
-            <span className={'w-min-2c ' + color}>{pendValue}</span>
+            <span className={'w-min-2c w-min-3c ' + color}>{pendValue}</span>
         </div>;
     }
 

@@ -66,7 +66,7 @@ export class DivStore {
             let valDivs = getAtomValue(atomValDivs);
             for (let valDiv of valDivs) {
                 let valRow = getAtomValue(valDiv.atomValRow);
-                this.setPend(valRow.pend, valDiv);
+                this.setPend(valRow.pend, valDiv, false);
             }
         }
     }
@@ -92,7 +92,7 @@ export class DivStore {
         }
     }
 
-    getPendLeft(valDiv: ValDiv): number {
+    getPendLeft(valDiv: ValDivBase): number {
         if (valDiv === undefined) return undefined;
         function has(valDivs: ValDivs, valDiv: ValDivBase) {
             let vds = getAtomValue(valDivs.atomValDivs);
@@ -169,12 +169,6 @@ export class DivStore {
         this.setValRowInternal(parentValDiv, valRow, true);
     }
 
-    setValRowRoot(valRow: ValRow, trigger: boolean) {
-        const { pend } = valRow;
-        let val = this.setValRoot(valRow, trigger);
-        this.setPend(pend, val);
-    }
-
     private setValRowInternal(parentValDiv: ValDiv, valRow: ValRow, trigger: boolean) {
         if (parentValDiv === undefined) debugger;
         const { pend } = valRow;
@@ -182,22 +176,19 @@ export class DivStore {
         // this.setPend(pend, val);
     }
 
-    private setPend(pend: number, val: ValDivRoot) {
-        if (this.valDivsOnPend === undefined) return;
+    private setPend(pend: number, val: ValDivRoot, trigger: boolean) {
+        if (pend === undefined) return;
         let valAtom = this.valDivsOnPend[pend];
-        if (valAtom === undefined) {
+        if (valAtom === undefined || trigger !== true) {
             this.valDivsOnPend[pend] = atom(val);
         }
         else {
-            let atomValue = getAtomValue(valAtom);
-            if (atomValue === undefined) {
-                setAtomValue(valAtom, val);
-            }
+            setAtomValue(valAtom, val);
         }
     }
 
-    private setValRoot(valRow: ValRow, trigger: boolean): ValDivRoot {
-        let { id/*, origin*/ } = valRow;
+    private addRootDiv(valRow: ValRow, trigger: boolean) {
+        let { id } = valRow;
         let valDiv = this.valDivColl[id] as ValDivRoot;
         if (valDiv !== undefined) {
             valDiv.setValRow(valRow);
@@ -207,10 +198,25 @@ export class DivStore {
         this.valDivColl[id] = valDiv;
         this.valDivsRoot.addValDiv(valDiv, trigger);
         const { pend } = valRow;
-        if (pend !== undefined) {
-            this.valDivsOnPend[pend] = atom(valDiv);
-        }
+        this.setPend(pend, valDiv, trigger);
         return valDiv;
+    }
+
+    setValRowRoot(valRow: ValRow, trigger: boolean) {
+        let { origin } = valRow;
+        if (origin !== undefined) {
+            let valDivOrigin = this.valDivColl[origin];
+            if (valDivOrigin === undefined) {
+                this.addRootDiv(valRow, trigger);
+            }
+            else {
+                this.setVal(valDivOrigin, valRow, trigger);
+            }
+        }
+        else {
+            this.addRootDiv(valRow, trigger);
+        }
+
         /*
         let parentValDivs: ValDivs;
         if (origin === undefined || origin < 0) {
@@ -339,6 +345,10 @@ export class DivStore {
         const { buds } = binDiv;
         let retId = await this.sheetStore.saveDetail(binDiv.entityBin, buds, valRow);
         return retId;
+    }
+
+    async reloadBinProps(bin: number) {
+        await this.sheetStore.reloadBinProps(bin);
     }
 
     replaceValDiv(valDiv: ValDivBase, newValDiv: ValDivRoot) {

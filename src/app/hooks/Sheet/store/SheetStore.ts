@@ -224,8 +224,12 @@ export class SheetStore extends KeyIdObject {
 
     async reloadValRow(valRow: ValRow) {
         const { id: binId } = valRow;
+        let { details } = await this.loadBinData(binId);
+        this.divStore.load(details);
+    }
+
+    async reloadBinProps(binId: number) {
         await this.loadBinData(binId);
-        this.divStore.setValRowRoot(valRow, true);
     }
 
     hasId() {

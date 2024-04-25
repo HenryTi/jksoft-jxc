@@ -1,13 +1,13 @@
 import { RegisterOptions } from "react-hook-form";
-import { Band, FormRow } from "app/coms";
+import { FormRow } from "app/coms";
 import {
-    BinDiv, BinField, BinRow, BizBud, BudAtom, BudDec, BudRadio
+    BinField, BinRow, BizBud, BudAtom, BudDec, BudRadio
     , BudsFields, EntityBin, EnumBudType, ValueSetType
 } from "app/Biz";
 import { Calc, CalcResult, Formulas } from "../../Calc";
 import { DivStore } from "./DivStore";
 import { SheetStore } from "./SheetStore";
-import { ValDiv, ValDivBase, ValDivRoot } from "./ValDiv";
+import { ValDivBase } from "./ValDiv";
 import { NamedResults } from "./NamedResults";
 import { getDays } from "app/tool";
 import { ValRow } from "./tool";
@@ -270,7 +270,7 @@ function budRadios(budDataType: BudRadio): { label: string; value: string | numb
 
 export class DivEditing extends FieldsEditing {
     readonly divStore: DivStore;
-    readonly valDiv: ValDiv;
+    readonly valDiv: ValDivBase;
     // readonly val0Div: ValDivBase;          // 0 层的valDiv
     //constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, valDiv: ValDivBase, initBinRow?: BinRow) {
     constructor(divStore: DivStore, valDiv: ValDivBase, namedResults?: NamedResults) {
