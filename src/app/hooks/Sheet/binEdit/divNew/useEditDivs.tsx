@@ -4,7 +4,7 @@ import { inputSpec } from "./inputSpec";
 import { useCallback } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
 import { DivEditing, DivStore, PendRow, ValDiv, ValDivBase } from "../../store";
-import { PageEditDiv } from "./PageEditDiv";
+import { PageInputDiv } from "./PageInputDiv";
 import { UqApp, useUqApp } from "app";
 import { Modal, useModal } from "tonwa-app";
 import { PendProxyHander, ValRow, mergeValRow } from "../../store";
@@ -61,7 +61,7 @@ export function useEditDivs() {
             else {
             */
             // 新建一级
-
+            /*
             let newValRow = {
                 ...valDiv.valRow,
                 id: undefined as number,
@@ -72,6 +72,8 @@ export function useEditDivs() {
             let p = new ValDiv(valDiv, newValRow);
             valDiv.addValDiv(p, true);
             valDiv = p;
+            */
+            valDiv = valDiv.createValDivSub(pendRow);
             // }
         }
     }, []);
@@ -115,7 +117,7 @@ async function runInputDiv(runInputDivProps: RunInputDivProps, valDiv: ValDivBas
     let divEditing = new DivEditing(divStore, valDiv, namedResults);
     if (skipInputs !== true) {
         if (divEditing.isInputNeeded() === true) {
-            if (await modal.open(<PageEditDiv divEditing={divEditing} />) !== true) return;
+            if (await modal.open(<PageInputDiv divEditing={divEditing} />) !== true) return;
         }
     }
     valDiv.mergeValRow(divEditing.valRow);

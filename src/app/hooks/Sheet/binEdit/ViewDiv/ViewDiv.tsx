@@ -4,7 +4,7 @@ import { useModal } from "tonwa-app";
 import { DivEditing, ValDivRoot } from "../../store";
 import { UseEditDivsProps, useEditDivs } from "../divNew";
 import { useRowEdit } from "../useRowEdit";
-import { PageEditDiv } from "./PageEditDiv";
+import { PageEditDivRoot } from "./PageEditDivRoot";
 import { ViewPendRow } from "../ViewPendRow";
 import { ViewDivProps } from "./tool";
 import { ViewRow } from "./ViewRow";
@@ -73,7 +73,7 @@ export function ViewDiv(props: ViewDivProps) {
                 alert('error');
             }
         }
-        await modal.open(<PageEditDiv divStore={divStore} valDiv={valDiv} />);
+        await modal.open(<PageEditDivRoot divStore={divStore} valDiv={valDiv} />);
     }
 
     if (deleted === true) {

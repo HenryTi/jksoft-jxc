@@ -9,7 +9,7 @@ import { BizBud } from "app/Biz";
 import { ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
-export function PageEditDiv({ divEditing }: { divEditing: DivEditing; }) {
+export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
     const modal = useModal();
     const { divStore, valRow } = divEditing;
     const { binDivRoot: binDiv, sheetStore } = divStore;

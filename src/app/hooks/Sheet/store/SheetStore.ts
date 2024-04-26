@@ -187,13 +187,12 @@ export class SheetStore extends KeyIdObject {
         this.main = new SheetMain(this);
         const { details } = this.entitySheet;
         let detail = details[0];
-        /*
         let len = details.length;
         if (len > 0) {
-            const { bin: detail, caption } = details[0];
-            this.detail = new Detail(this, detail, caption);
-            this.isPend = this.detail.entityBin.pend !== undefined;
+            const { bin } = details[0];
+            this.isPend = bin.pend !== undefined;
         }
+        /*
         for (let i = 1; i < len; i++) {
             const { bin: detail, caption } = details[i];
             this.detailExs.push(new ExDetail(this, detail, caption));

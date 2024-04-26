@@ -8,7 +8,7 @@ import { ViewDivUndo } from "./ViewDivUndo";
 import { ViewRow } from "./ViewRow";
 
 // 编辑div任意层
-export function PageEditDiv({ divStore, valDiv }: { divStore: DivStore; valDiv: ValDivBase; }) {
+export function PageEditDivRoot({ divStore, valDiv }: { divStore: DivStore; valDiv: ValDivBase; }) {
     const { sheetStore } = divStore;
     const { entitySheet, main } = sheetStore;
     return <Page header={`${(entitySheet.caption ?? entitySheet.name)} - ${main.no}`}>
@@ -49,15 +49,18 @@ function EditDiv(props: EditDivProps) {
             const { atomValRow } = valDiv;
             const valRow = getAtomValue(atomValRow);
             let pendRow = await divStore.loadPendRow(valRow.pend);
+            // let valDivNew = new ValDiv(valDiv, )
+            let valDivNew = valDiv.createValDivSub(pendRow);
             let ret = await editDivs({
                 divStore,
                 pendRow,
                 namedResults: {},
-                valDiv,
-                skipInputs: true,
+                valDiv: valDivNew,
+                skipInputs: false,
             });
-            if (ret === undefined) return;
-            setAtomValue(atomValDivs, [...divs, ret]);
+            if (ret !== true) return;
+            // setAtomValue(atomValDivs, [...divs, ret]);
+            valDiv.setValDivs([...divs, valDiv]);
         }
         viewDivs = <div className="ms-4 border-start">
             {
@@ -103,28 +106,11 @@ function EditDiv(props: EditDivProps) {
                 if (ret !== true) return;
                 const { valRow: newValRow } = editing;
                 if (isPivotKeyDuplicate(newValRow) === true) {
-                    alert('Pivot key duplicate');
+                    alert('Pivot key duplicate'); // 这个界面要改
                     return;
                 }
                 await divStore.saveDetail(binDiv, newValRow);
                 setAtomValue(atomValRow, newValRow);
-
-                function isPivotKeyDuplicate(valRow: ValRow) {
-                    const { key } = binDiv;
-                    if (key === undefined) return false;
-                    const { id: keyId } = key;
-                    const keyValue = valRow.buds[keyId];
-                    const valDivParent = divStore.getParentValDiv(valDiv);
-                    const { atomValDivs } = valDivParent;
-                    const valDivs = getAtomValue(atomValDivs);
-                    for (let vd of valDivs) {
-                        if (vd === valDiv) continue;
-                        const { atomValRow } = vd;
-                        const vr = getAtomValue(atomValRow);
-                        if (keyValue === vr.buds[keyId]) return true;
-                    }
-                    return false;
-                }
             }
             return <>
                 <div className="d-flex flex-column align-items-end w-min-2c">
@@ -140,6 +126,23 @@ function EditDiv(props: EditDivProps) {
     }
     else {
         buttons = btnDel('trash-o');
+    }
+    // 增加内容的时候，会用到pivot key duplicate
+    function isPivotKeyDuplicate(valRow: ValRow) {
+        const { key } = binDiv;
+        if (key === undefined) return false;
+        const { id: keyId } = key;
+        const keyValue = valRow.buds[keyId];
+        const valDivParent = divStore.getParentValDiv(valDiv);
+        const { atomValDivs } = valDivParent;
+        const valDivs = getAtomValue(atomValDivs);
+        for (let vd of valDivs) {
+            if (vd === valDiv) continue;
+            const { atomValRow } = vd;
+            const vr = getAtomValue(atomValRow);
+            if (keyValue === vr.buds[keyId]) return true;
+        }
+        return false;
     }
 
     return <div className={cnDivBottom}>

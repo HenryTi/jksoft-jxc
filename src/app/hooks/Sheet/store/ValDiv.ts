@@ -2,7 +2,7 @@ import { BinDiv } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
 import { ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { SheetStore } from "./SheetStore";
+import { PendRow, SheetStore } from "./SheetStore";
 
 export class ValDivsBase<T extends ValDivBase> {
     readonly atomValDivs = atom([] as T[]);
@@ -46,7 +46,8 @@ export class ValDivsBase<T extends ValDivBase> {
         }
         else {
             valDivs.push(valDiv);
-            setAtomValue(atomValDivs, [...valDivs]);
+            // setAtomValue(atomValDivs, [...valDivs]);
+            this.setValDivs([...valDivs]);
         }
     }
     removePend(pendId: number) {
@@ -60,7 +61,8 @@ export class ValDivsBase<T extends ValDivBase> {
                 break;
             }
         }
-        setAtomValue(this.atomValDivs, [...valDivs]);
+        // setAtomValue(this.atomValDivs, [...valDivs]);
+        this.setValDivs([...valDivs]);
     }
 
     getRowCount(): number {
@@ -77,8 +79,13 @@ export class ValDivsBase<T extends ValDivBase> {
         let p = divs.findIndex(v => v.id === id);
         if (p >= 0) {
             divs.splice(p, 1);
-            setAtomValue(this.atomValDivs, [...divs]);
+            // setAtomValue(this.atomValDivs, [...divs]);
+            this.setValDivs([...divs]);
         }
+    }
+
+    setValDivs(valDivs: ValDivBase[]) {
+        setAtomValue(this.atomValDivs, valDivs);
     }
 }
 
@@ -277,6 +284,20 @@ export abstract class ValDivBase extends ValDivs {
         ret.iBase = this.iBase;
         ret.xValue = this.xValue;
         ret.xBase = this.xBase;
+        return ret;
+    }
+
+    createValDivSub(pendRow: PendRow) {
+        const { pend, value } = pendRow;
+        let valRowSub = {
+            ...this.valRow,
+            id: undefined as number,
+            origin: this.id,
+            pend,
+            pendValue: value
+        };
+        let ret = new ValDiv(this, valRowSub);
+        this.addValDiv(ret, true);
         return ret;
     }
 }

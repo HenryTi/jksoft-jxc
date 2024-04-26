@@ -47,6 +47,13 @@ export function ViewRowStem(props: ViewDivProps) {
     const { budsColl, bizAtomColl } = sheetStore;
     let budValueColl = budsColl[iValue];
     // <ViewIdField bud={budI} value={iValue} />
+    let fieldsSet = new Set<number>();
+    for (let f of fields) {
+        const { id } = f.bud;
+        if (id === undefined) debugger;
+        if (fieldsSet.has(id) === true) debugger;
+        fieldsSet.add(id);
+    }
     let content = <>
         <ViewIBaseBuds sheetStore={sheetStore} valDiv={valDiv} />
         <ViewShowBuds bud={entityBin.i} budValueColl={budValueColl} atomColl={bizAtomColl} />
@@ -65,6 +72,7 @@ export function ViewRowStem(props: ViewDivProps) {
             </RowColsSm>
         </div>;
         if (divs.length > 0) {
+            /*
             viewRight = <div className="d-flex flex-column align-items-end">
                 <div className="flex-fill d-flex mb-1 me-1">
                     {buttons}
@@ -74,6 +82,16 @@ export function ViewRowStem(props: ViewDivProps) {
                     <PAV bud={entityBin.value} val={sum} className={cnSum} />
                 </div>
             </div>;
+            */
+            viewRight = <>
+                <div className="d-flex text-end flex-column align-items-end me-3">
+                    {viewPendValue}
+                    <PAV bud={entityBin.value} val={sum} className={cnSum} />
+                </div>
+                <div className="">
+                    {buttons}
+                </div>
+            </>;
         }
     }
     else {
