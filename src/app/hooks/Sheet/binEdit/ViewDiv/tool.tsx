@@ -12,7 +12,6 @@ export interface ViewDivProps {
     buttons?: any;
 }
 
-export const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end align-items-end';
 export let cn: string = theme.bootstrapContainer + ' gx-0 ';
 
 export function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
@@ -27,7 +26,7 @@ export function PAV({ bud, className, val, onClick }: { bud: BizBud; className?:
         debugger;
         val = 0;
     }
-    return <div className="d-flex ms-3 align-items-center text-end text-nowrap" onClick={onClick}>
+    return <div className="d-flex align-items-center text-end text-nowrap" onClick={onClick}>
         <div className={theme.labelColor + ' me-2 '}>{caption ?? name}</div>
         <div className={(className ?? '') + ' w-min-3c '}>{bud.valueToUI(val)}</div>
     </div>

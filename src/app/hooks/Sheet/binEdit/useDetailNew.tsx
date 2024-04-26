@@ -5,16 +5,16 @@ import { useRowEdit } from "./useRowEdit";
 import { BinEditing } from "../store";
 import { PickResult } from "../store";
 
-export function useDetailAdd(sheetStore: SheetStore) {
+export function useDetailNew(sheetStore: SheetStore) {
     const rowEdit = useRowEdit();
     const pick = useBinPicks();
-    async function addNewDirect(): Promise<boolean> {
+    return useCallback(async function (): Promise<boolean> {
         const { divStore } = sheetStore;
         if (divStore === undefined) {
             alert('Pick Pend on main not implemented');
             return false;
         }
-        const entityBin = divStore?.entityBin;
+        const { entityBin, binDivRoot } = divStore;
         let ret = await pick(sheetStore, entityBin);
         if (ret === undefined) return false;
         let { namedResults, rearBinPick, rearResult, rearPickResultType } = ret;
@@ -33,9 +33,9 @@ export function useDetailAdd(sheetStore: SheetStore) {
                 valRow.pend = pend;
                 valRow.pendValue = pendValue;
                 if (valRow.id !== undefined) debugger;
-                let id = await sheetStore.saveDetail(entityBin, entityBin.buds, valRow);
+                let id = await divStore.saveDetail(binDivRoot, valRow);
                 valRow.id = id;
-                await sheetStore.reloadValRow(valRow);
+                await divStore.reloadValRow(valRow);
             }
         }
         else {
@@ -53,14 +53,13 @@ export function useDetailAdd(sheetStore: SheetStore) {
                 // Object.assign(row.valRow, valRow);
                 // await row.addToSection();
                 if (valRow.id !== undefined) debugger;
-                let id = await sheetStore.saveDetail(entityBin, entityBin.buds, valRow);
+                let id = await divStore.saveDetail(binDivRoot, valRow);
                 valRow.id = id;
-                await sheetStore.reloadValRow(valRow);
+                await divStore.reloadValRow(valRow);
             }
             // row.setLoading(false);
         }
         sheetStore.notifyRowChange();
         return true;
-    }
-    return useCallback(addNewDirect, []);
+    }, []);
 }

@@ -9,6 +9,7 @@ import { ViewPendRow } from "../ViewPendRow";
 import { ViewDivProps } from "./tool";
 import { ViewRow } from "./ViewRow";
 import { ViewDivUndo } from "./ViewDivUndo";
+import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
 
 export function ViewDiv(props: ViewDivProps) {
     const modal = useModal();
@@ -80,23 +81,32 @@ export function ViewDiv(props: ViewDivProps) {
         return <ViewDivUndo divStore={divStore} valDiv={valDiv} />;
     }
 
-    let buttons: any;
+    let buttons = divRightButtons(id, deleted, onDelSub, onEdit);
+    let viewDivRightButtons: any;
     if (readonly !== true && level === 0) {
-        buttons = twoButtons(id, deleted, onDelSub, onEdit);
+        let { tops, bottoms } = buttons;
+        viewDivRightButtons = <ViewDivRightButtons tops={tops} bottoms={bottoms} />;
     }
+    else {
+        viewDivRightButtons = <ViewDivRightButtons tops={undefined} bottoms={undefined} />;
+    }
+
     if (id < 0) {
         let pendRow = divStore.getPendRow(pend);
         return <div className="d-flex bg-white">
             <div className="d-flex flex-fill">
                 <ViewPendRow divStore={divStore} pendRow={pendRow} />
             </div>
-            <div className="d-flex w-min-4c mt-2 align-items-start">
-                {buttons}<div className="me-n3" />
-            </div>
+            {viewDivRightButtons}
         </div>;
+        /*
+        <div className="d-flex w-min-4c mt-2 align-items-start">
+            {buttons}<div className="me-n3" />
+        </div>
+        */
     }
 
-    let viewRow = <ViewRow {...props} buttons={buttons} />;
+    let viewRow = <ViewRow {...props} buttons={viewDivRightButtons} />;
     if (divs.length === 0) {
         return viewRow;
     }
@@ -106,6 +116,58 @@ export function ViewDiv(props: ViewDivProps) {
     </>;
 }
 
+function divRightButtons(id: number, deleted: boolean, onDel: () => void, onEdit: () => void)
+    : { tops: DivRightButton[]; bottoms: DivRightButton[]; } {
+    let tops: DivRightButton[], bottoms: DivRightButton[];
+    // let cnBtnDiv = ' px-1 cursor-pointer text-primary ';
+    let btnEdit: DivRightButton, iconDel: string, colorDel: string, memoDel: any;
+    if (deleted === true) {
+        iconDel = 'undo';
+        colorDel = 'text-secondary ';
+        memoDel = '恢复';
+    }
+    else {
+        iconDel = 'trash-o';
+        colorDel = 'text-secondary';
+        let iconEdit: string, colorEdit: string;
+        if (id < 0) {
+            iconEdit = 'plus';
+            colorEdit = ' text-danger ';
+        }
+        else {
+            iconEdit = 'pencil-square-o';
+            colorEdit = ' text-success ';
+        }
+        /*
+        btnEdit = <div className={cnBtnDiv + colorEdit} onClick={onEdit}>
+            <FA name={iconEdit} fixWidth={true} size="lg" />
+        </div>;
+        */
+        tops = [{
+            icon: iconEdit,
+            color: colorEdit,
+            onClick: onEdit,
+        }];
+    }
+    let btnDel: DivRightButton = {
+        icon: iconDel,
+        color: colorDel,
+        onClick: onDel,
+        label: memoDel,
+    };
+    bottoms = [btnDel];
+    /*<>
+        <div className={cnBtnDiv + colorDel} onClick={onDel}>
+            <FA name={iconDel} fixWidth={true} />
+            {memoDel && <span className="ms-1">{memoDel}</span>}
+        </div>
+    </>;
+    */
+    // return <>{btnEdit}{btnDel}</>;
+    return { tops, bottoms };
+}
+
+/*
 function twoButtons(id: number, deleted: boolean, onDel: () => void, onEdit: () => void) {
     let cnBtnDiv = ' px-1 cursor-pointer text-primary ';
     let btnEdit: any, iconDel: string, colorDel: string, memoDel: any;
@@ -138,4 +200,4 @@ function twoButtons(id: number, deleted: boolean, onDel: () => void, onEdit: () 
     </>;
     return <>{btnEdit}{btnDel}</>;
 }
-
+*/

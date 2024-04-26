@@ -7,7 +7,7 @@ export function ViewRow(props: ViewDivProps) {
     const { binDiv } = valDiv;
     const { level, entityBin, subBinDiv: div } = binDiv;
     const { divLevels } = entityBin;
-    return <div className={'d-flex border-bottom ps-3 py-2 tonwa-bg-gray-' + (divLevels - level)}>
+    return <div className={'d-flex border-bottom tonwa-bg-gray-' + (divLevels - level)}>
         {
             div === undefined ?
                 <ViewRowLeaf {...props} />

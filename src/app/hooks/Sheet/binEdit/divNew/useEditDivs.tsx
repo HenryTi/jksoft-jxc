@@ -73,7 +73,9 @@ export function useEditDivs() {
             valDiv.addValDiv(p, true);
             valDiv = p;
             */
-            valDiv = valDiv.createValDivSub(pendRow);
+            let valDivNew = valDiv.createValDivSub(pendRow);
+            valDiv.addValDiv(valDivNew, true);
+            valDiv = valDivNew;
             // }
         }
     }, []);

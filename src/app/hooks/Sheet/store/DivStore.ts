@@ -351,6 +351,12 @@ export class DivStore {
         await this.sheetStore.reloadBinProps(bin);
     }
 
+    async reloadValRow(valRow: ValRow) {
+        const { id: binId } = valRow;
+        let { details } = await this.sheetStore.loadBinData(binId);
+        this.load(details);
+    }
+
     replaceValDiv(valDiv: ValDivBase, newValDiv: ValDivRoot) {
         const { atomValDivs } = this.valDivsRoot;
         let valDivs = getAtomValue(atomValDivs);

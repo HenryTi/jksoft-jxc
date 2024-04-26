@@ -14,6 +14,7 @@ export interface Theme {
     pendOver: string;
 }
 
+const valueColor = ' text-info ';
 class ThemeValues implements Theme {
     bootstrapContainer: string = ' container-fluid ';
     labelBox: LabelBoxCss = labelBoxCssV;
@@ -21,12 +22,14 @@ class ThemeValues implements Theme {
     labelBoxV: LabelBoxCss = labelBoxCssV;
     small = ' small ';
     labelColor = labelCss.color;
-    sum = ' fs-larger text-info ';
-    value = ' fw-bold fs-larger text-primary ';
-    price = ' text-dark ';
-    amount = ' text-dark ';
-    pend = ' text-info ';
+    sum = valueColor;
+    sumBold = ' fw-bold ' + valueColor;
+    value = ' fw-bold ' + valueColor;
+    price = valueColor;
+    amount = valueColor;
+    pend = ' text-success ';
     pendOver = ' text-danger ';
+    pendValue = valueColor;
 }
 
 export interface LabelBoxCss {

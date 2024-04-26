@@ -3,7 +3,7 @@ import { theme } from "tonwa-com";
 import { ViewSpecBaseOnly } from "../../../View";
 import { ViewBud, ViewBudUIType } from "../../../Bud";
 import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../../../tool";
-import { PAV, ViewDivProps, cn, cnBtn } from "./tool";
+import { PAV, ViewDivProps, cn } from "./tool";
 import { ViewIBase } from "./ViewIBase";
 
 export function ViewRowLeaf(props: ViewDivProps) {
@@ -44,8 +44,9 @@ export function ViewRowLeaf(props: ViewDivProps) {
         </div>
     }
     */
+    // const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end align-items-end';
     return <>
-        <div className={cn + ' flex-fill bg-white '}>
+        <div className={cn + ' flex-fill bg-white px-2 py-2 px-lg-3 '}>
             {viewAtomMain}
             <RowColsSm contentClassName="flex-fill">
                 <ViewShowBuds bud={iBud} budValueColl={budValueColl} atomColl={bizAtomColl} />
@@ -60,15 +61,11 @@ export function ViewRowLeaf(props: ViewDivProps) {
                 }
             </RowColsSm>
         </div>
-        <div className={cnBtn}>
-            <div className="d-flex align-items-end flex-column me-3">
-                <PAV bud={budAmount} className={cnAmount} val={amount} />
-                <PAV bud={budPrice} className={cnPrice} val={price} />
-                <PAV bud={budValue} className={cnValue} val={value} />
-            </div>
+        <div className="d-flex flex-column justify-content-end align-items-end px-2 py-2 px-lg-3 border-start">
+            <PAV bud={budAmount} className={cnAmount} val={amount} />
+            <PAV bud={budPrice} className={cnPrice} val={price} />
+            <PAV bud={budValue} className={cnValue} val={value} />
         </div>
-        <div className="d-flex align-items-start">
-            {buttons}
-        </div>
+        {buttons}
     </>;
 }

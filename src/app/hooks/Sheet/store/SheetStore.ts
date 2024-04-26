@@ -221,12 +221,6 @@ export class SheetStore extends KeyIdObject {
         setAtomValue(this.atomLoaded, true);
     }
 
-    async reloadValRow(valRow: ValRow) {
-        const { id: binId } = valRow;
-        let { details } = await this.loadBinData(binId);
-        this.divStore.load(details);
-    }
-
     async reloadBinProps(binId: number) {
         await this.loadBinData(binId);
     }
@@ -236,7 +230,7 @@ export class SheetStore extends KeyIdObject {
     }
 
     // whole sheet or row detail
-    private async loadBinData(binId: number) {
+    async loadBinData(binId: number) {
         let { main, details, props, atoms: bizAtoms } = await this.uq.GetSheet.query({ id: binId });
         const budsColl = budValuesFromProps(props);
         Object.assign(this.budsColl, budsColl);

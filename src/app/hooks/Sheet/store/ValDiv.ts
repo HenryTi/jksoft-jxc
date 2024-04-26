@@ -297,7 +297,7 @@ export abstract class ValDivBase extends ValDivs {
             pendValue: value
         };
         let ret = new ValDiv(this, valRowSub);
-        this.addValDiv(ret, true);
+        // this.addValDiv(ret, true); // 操作完成后再加
         return ret;
     }
 }

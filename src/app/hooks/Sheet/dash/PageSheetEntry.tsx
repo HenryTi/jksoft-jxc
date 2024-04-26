@@ -8,7 +8,7 @@ import { useUqApp } from "app";
 import { ToolItem } from "app/coms";
 import { buttonDefs, headerSheet } from "../headerSheet";
 import { ViewBinPicks } from "../binPick";
-import { useDetailAdd } from "../binEdit";
+import { useDetailNew } from "../binEdit";
 import { ViewSteps } from "./ViewSteps";
 
 export function PageSheetEdit({ store, sheetId, readonly }: { store: SheetStore; sheetId: number; readonly?: boolean; }) {
@@ -55,7 +55,7 @@ function PageSheetDirect({ store }: { store: SheetStore; }) {
 }
 
 function useOnPicked(store: SheetStore) {
-    const uqApp = useUqApp();
+    // const uqApp = useUqApp();
     // const navigate = useNavigate();
     const { sheetConsole } = store;
     async function onPicked(results: ReturnUseBinPicks) {
@@ -128,12 +128,12 @@ function PageStartPicks({ store }: { store: SheetStore; }) {
 
 function PageStartPend({ store }: { store: SheetStore; }) {
     const onPicked = useOnPicked(store);
-    const addNew = useDetailAdd(store);
+    const detailNew = useDetailNew(store);
     const { caption, sheetConsole } = store;
     const subCaption = '批选待处理';
     const onPend = useCallback(async (results: ReturnUseBinPicks) => {
         await onPicked(results);
-        let added = await addNew();
+        let added = await detailNew();
         if (added === true) {
             await store.setSheetAsDraft();
             // setAtomValue(store.atomLoaded, true);

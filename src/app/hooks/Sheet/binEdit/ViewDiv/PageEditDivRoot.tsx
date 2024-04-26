@@ -6,6 +6,7 @@ import { useRowEdit } from "../useRowEdit";
 import { Page, useModal } from "tonwa-app";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { ViewRow } from "./ViewRow";
+import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
 
 // 编辑div任意层
 export function PageEditDivRoot({ divStore, valDiv }: { divStore: DivStore; valDiv: ValDivBase; }) {
@@ -24,12 +25,12 @@ interface EditDivProps {
 function EditDiv(props: EditDivProps) {
     const modal = useModal();
     const { divStore, valDiv } = props;
-    const { atomValDivs, binDiv, atomDeleted, atomValRow } = valDiv;
+    const { atomValDivs, binDiv, atomDeleted } = valDiv;
     const { level, entityBin, subBinDiv: div } = binDiv;
     const { divLevels, pivot } = entityBin;
     const editDivs = useEditDivs();
-    const valRow = useAtomValue(atomValRow);
     const divs = useAtomValue(atomValDivs);
+    const rowEdit = useRowEdit();
     const deleted = useAtomValue(atomDeleted);
     let bg = divLevels - level - 1;
     let borderTop = ''; // bg > 0 ? 'border-top' : '';
@@ -59,14 +60,19 @@ function EditDiv(props: EditDivProps) {
                 skipInputs: false,
             });
             if (ret !== true) return;
+            if (isPivotKeyDuplicate(valDivNew) === true) {
+                alert('Pivot key duplicate'); // 这个界面要改
+                return;
+            }
+            valDiv.addValDiv(valDivNew, true);
             // setAtomValue(atomValDivs, [...divs, ret]);
-            valDiv.setValDivs([...divs, valDiv]);
+            // valDiv.setValDivs([...divs, valDiv]);
         }
         viewDivs = <div className="ms-4 border-start">
             {
                 divs.map(v => <EditDiv key={v.id} {...props} valDiv={v} />)
             }
-            <div className={` ps-3 py-2 tonwa-bg-gray-${bg} ${borderTop} ${cdAddBottom} cursor-pointer text-success`} onClick={onAddNew}>
+            <div className={` ps-3 py-2 tonwa-bg-gray-${bg} ${borderTop} ${cdAddBottom} cursor-pointer text-primary`} onClick={onAddNew}>
                 <FA name="plus" size="lg" className="me-2" /> {div?.ui?.caption}
             </div>
         </div>;
@@ -80,63 +86,51 @@ function EditDiv(props: EditDivProps) {
             return;
         }
     }
-    function btn(onClick: () => void, icon: string, iconColor: string, caption: string, captionColor: string) {
-        return <div className={'cursor-pointer px-2 ' + iconColor} onClick={onClick}>
-            <FA className="me-1" name={icon} fixWidth={true} />
-            <span className={captionColor}>{caption}</span>
-        </div>
-    }
-
-    function btnDel(icon: string, caption?: string) {
-        return btn(onDel, icon, ' text-body-secondary ', caption, '');
-    }
+    const btnDel: DivRightButton = { onClick: onDel, icon: 'trash-o', color: ' text-body-secondary ' }
 
     if (deleted === true) {
         return <ViewDivUndo divStore={divStore} valDiv={valDiv} />;
     }
 
-    let buttons: any;
+    let tops: DivRightButton[], bottoms: DivRightButton[];
     if (level === divLevels) {
-        function Buttons() {
-            const rowEdit = useRowEdit();
-            async function onEdit() {
-                const { atomValRow } = valDiv;
-                const editing = new DivEditing(divStore, valDiv);
-                let ret = await rowEdit(editing, valDiv);
-                if (ret !== true) return;
-                const { valRow: newValRow } = editing;
-                if (isPivotKeyDuplicate(newValRow) === true) {
-                    alert('Pivot key duplicate'); // 这个界面要改
-                    return;
-                }
-                await divStore.saveDetail(binDiv, newValRow);
-                setAtomValue(atomValRow, newValRow);
+        async function onEdit() {
+            const { atomValRow } = valDiv;
+            const editing = new DivEditing(divStore, valDiv);
+            let ret = await rowEdit(editing, valDiv);
+            if (ret !== true) return;
+            const { valRow: newValRow } = editing;
+            if (isPivotKeyDuplicate(valDiv, newValRow) === true) {
+                alert('Pivot key duplicate'); // 这个界面要改
+                return;
             }
-            return <>
-                <div className="d-flex flex-column align-items-end w-min-2c">
-                    <div className="cursor-pointer px-2 py-1 mt-n2" onClick={onEdit}>
-                        <FA className="text-primary" name="pencil-square-o" size="lg" />
-                    </div>
-                    <div className="flex-fill" />
-                    {btnDel('trash-o')}
-                </div>
-            </>;
+            await divStore.saveDetail(binDiv, newValRow);
+            setAtomValue(atomValRow, newValRow);
         }
-        buttons = <Buttons />;
+        tops = [{
+            icon: 'pencil-square-o',
+            color: 'text-primary',
+            onClick: onEdit,
+        }];
+        bottoms = [btnDel];
     }
     else {
-        buttons = btnDel('trash-o');
+        bottoms = [{ ...btnDel, className: ' mb-2 ' }];
     }
+
+    let viewDivRightButtons = <ViewDivRightButtons tops={tops} bottoms={bottoms} />;
+
     // 增加内容的时候，会用到pivot key duplicate
-    function isPivotKeyDuplicate(valRow: ValRow) {
+    function isPivotKeyDuplicate(valDiv: ValDivBase, valRow?: ValRow) {
+        const { binDiv, parent } = valDiv;
         const { key } = binDiv;
         if (key === undefined) return false;
         const { id: keyId } = key;
+        valRow = valRow ?? valDiv.valRow;
         const keyValue = valRow.buds[keyId];
-        const valDivParent = divStore.getParentValDiv(valDiv);
-        const { atomValDivs } = valDivParent;
-        const valDivs = getAtomValue(atomValDivs);
-        for (let vd of valDivs) {
+        const { atomValDivs } = parent;
+        const parentValDivs = getAtomValue(atomValDivs);
+        for (let vd of parentValDivs) {
             if (vd === valDiv) continue;
             const { atomValRow } = vd;
             const vr = getAtomValue(atomValRow);
@@ -146,7 +140,7 @@ function EditDiv(props: EditDivProps) {
     }
 
     return <div className={cnDivBottom}>
-        <ViewRow {...props} buttons={buttons} hidePivot={true} />
+        <ViewRow {...props} buttons={viewDivRightButtons} hidePivot={true} />
         {viewDivs}
     </div>
 }

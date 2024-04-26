@@ -2,6 +2,7 @@ import { FA, setAtomValue, wait } from "tonwa-com";
 import { ViewRow } from "./ViewRow";
 import { ViewDivProps } from "./tool";
 import { useCallback, useRef, useState } from "react";
+import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
 
 export function ViewDivUndo(props: ViewDivProps) {
     const { divStore, valDiv } = props;
@@ -26,6 +27,8 @@ export function ViewDivUndo(props: ViewDivProps) {
         await divStore.delValDiv(valDiv);
     }, []);
 
+    const bottoms: DivRightButton[] = [];
+
     function btn(onClick: () => void, icon: string, iconColor: string, caption: string, captionColor: string) {
         return <div className={'cursor-pointer px-2 ' + iconColor} onClick={onClick}>
             <FA className="me-1" name={icon} fixWidth={true} />
@@ -33,33 +36,50 @@ export function ViewDivUndo(props: ViewDivProps) {
         </div>
     }
 
-    function viewIsDeleting() {
-        if (deleting === 0) return null;
-        function onCancelDel() {
-            refCanceled.current = true;
-        }
-        return <div className="bg-tonwa-gray-2 border-start d-flex flex-column align-items-center w-min-6c">
-            <div className="my-2">
-                <FA name='spinner' spin={true} className="me-2" /> {(deleting / 100).toFixed(1)}秒
-            </div>
-            {btn(onCancelDel, 'times', ' text-secondary ', '取消', '')}
-        </div>;
-    }
-
-    function viewRestore() {
-        if (deleting !== 0) return null;
+    // function viewRestore() {
+    if (deleting === 0) {
+        bottoms.push(
+            {
+                icon: 'undo',
+                color: ' text-warning ',
+                label: '恢复',
+                // labelColor: 'text-info',
+                onClick: onRestore,
+            },
+            {
+                icon: 'times',
+                color: ' text-body-tertiary ',
+                label: '清除',
+                onClick: onDelThoroughly
+            }
+        )
+        /*
         return <div className="d-flex flex-column align-items-end w-min-6c text-end pt-2">
             {btn(onRestore, 'undo', ' text-warning ', '恢复', 'text-info')}
             {btn(onDelThoroughly, 'times', ' text-body-tertiary ', '清理', '')}
         </div>;
+        */
+    }
+    else {
+        function onCancelDel() {
+            refCanceled.current = true;
+        }
+        bottoms.push({
+            icon: 'times',
+            color: ' text-secondary ',
+            label: '取消',
+            onClick: onCancelDel,
+        });
     }
 
+    // {viewRestore()}
+    // {viewIsDeleting()}
     // <EditRow {...props} deleted={deleted} />
+
     return <div className="d-flex border-bottom">
         <div className="flex-fill text-body-tetiary opacity-50 text-decoration-line-through">
             <ViewRow {...props} hidePivot={true} />
         </div>
-        {viewRestore()}
-        {viewIsDeleting()}
+        <ViewDivRightButtons tops={undefined} bottoms={bottoms} />
     </div>;
 }
