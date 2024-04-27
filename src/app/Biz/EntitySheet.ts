@@ -57,12 +57,19 @@ export abstract class BinInput extends BizBud {
 export class BinInputSpec extends BinInput {
     spec: EntitySpec;
     baseExp: string;
+    baseBud: BizBud;        // 以后不允许表达式。只能是bud id
     build(val: any): void {
         super.build(val);
         const { spec, base } = val;
         this.spec = this.biz.entityFromId(spec) as EntitySpec;
         this.bizPhraseType = this.spec.bizPhraseType;
-        this.baseExp = base;
+        let baseBud = this.biz.budFromId(base);
+        if (baseBud !== undefined) {
+            this.baseBud = baseBud;
+        }
+        else {
+            this.baseExp = base;
+        }
     }
 }
 
@@ -188,10 +195,13 @@ class FieldAmount extends DecField {
     setValue(binRow: BinRow, v: any) { binRow.amount = v; }
 }
 
-class FieldBud extends BinField {
-    readonly onForm = true;
+abstract class FieldBudAbstract extends BinField {
+    abstract get onForm(): boolean;
     getValue(binRow: BinRow): any { return binRow.buds[this.bud.id]; }
     setValue(binRow: BinRow, v: any) { binRow.buds[this.bud.id] = v; }
+}
+class FieldBud extends FieldBudAbstract {
+    readonly onForm = true;
 }
 
 class FieldDateBud extends FieldBud {
@@ -216,6 +226,14 @@ class FieldRadioBud extends FieldBud {
     }
 }
 
+class FieldIBase extends FieldBudAbstract {
+    readonly onForm = false;
+}
+
+class FieldXBase extends FieldBudAbstract {
+    readonly onForm = false;
+}
+
 export class BudsFields {
     readonly fieldColl: { [name: string]: BinField } = {};
     readonly entityBin: EntityBin;
@@ -229,6 +247,8 @@ export class BudsFields {
 
     readonly allFields: BinField[];
     readonly fields: BinField[];
+    readonly fieldIBase: BinField;
+    readonly fieldXBase: BinField;
     readonly fieldI: BinField;
     readonly fieldX: BinField;
     readonly fieldPrice: BinField;
@@ -241,8 +261,9 @@ export class BudsFields {
         this.entityBin = bin;
         this.allFields = [];
         this.fields = [];
-        const { i: budI, x: budX, value: budValue, price: budPrice, amount: budAmount, buds: budArr } = bin;
+        const { i: budI, x: budX, value: budValue, price: budPrice, amount: budAmount, buds: budArr, iBase, xBase } = bin;
         for (let bud of buds) {
+            /*
             if (bud.name[0] === '.') {
                 switch (bud.name) {
                     default:
@@ -256,8 +277,17 @@ export class BudsFields {
                         continue;
                 }
             }
+            */
             let field: BinField;
-            if (bud === budI) {
+            if (bud === iBase) {
+                this.budIBase = bud;
+                this.fieldIBase = field = new FieldIBase(bud);
+            }
+            else if (bud === xBase) {
+                this.budXBase = bud;
+                this.fieldXBase = field = new FieldXBase(bud);
+            }
+            else if (bud === budI) {
                 this.budI = bud;
                 this.fieldI = field = new FieldI(bud);
             }

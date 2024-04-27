@@ -1,10 +1,10 @@
-import { ViewSpec, ViewSpecBase, ViewSpecBaseOnly } from "app/hooks/View";
+// import { ViewSpec, ViewSpecBase, ViewSpecBaseOnly } from "app/hooks/View";
 // import { Prop, VNamedBud } from "../tool";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { getAtomValue, theme } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
 import { Prop, VNamedBud } from "../store/tool";
-import { useGetSpec } from "app/hooks/Uq";
+// import { useGetSpec } from "app/hooks/Uq";
 
 export interface PendProps {
     divStore: DivStore;
@@ -54,10 +54,11 @@ export function ViewPendRow({
     const { budsColl, bizAtomColl } = sheetStore;
     const budValueColl = budsColl[i];
     function ViewSpecAtom({ id }: { id: number; }) {
-        const { atom, specs } = useGetSpec(id);
-        if (atom === undefined) return null;
-        const { value: atomValue, entity } = atom;
-        const { no, ex } = atomValue;
+        //const { atom, specs } = useGetSpec(id);
+        let bizAtom = divStore.sheetStore.bizAtomColl[id];
+        if (bizAtom === undefined) return null;
+        // const { value: atomValue, entity } = bizAtom;
+        const { no, ex } = bizAtom;
         return <><b>{ex}</b> <span className="ms-3">{no}</span></>
     }
     return <>
@@ -68,7 +69,7 @@ export function ViewPendRow({
             </div>
             <div className="d-flex">
                 <RowCols contentClassName=" flex-fill ">
-                    <ViewSpecBase id={i} ViewAtom={undefined} />
+                    {/*<ViewSpecBase id={i} ViewAtom={undefined} />*/}
                     <ViewShowBuds budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
                     <ViewPropArr arr={mid} />
                 </RowCols>

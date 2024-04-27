@@ -50,7 +50,7 @@ export function ViewDiv(props: ViewDivProps) {
                 // binDiv: divStore.binDivRoot,
                 valDiv: valDivClone,
                 pendRow,
-                namedResults: {},
+                // namedResults: {},
                 skipInputs: false,
             }
             let retHasValue = await editDivs(useInputsProps);
@@ -83,12 +83,14 @@ export function ViewDiv(props: ViewDivProps) {
 
     let buttons = divRightButtons(id, deleted, onDelSub, onEdit);
     let viewDivRightButtons: any;
-    if (readonly !== true && level === 0) {
-        let { tops, bottoms } = buttons;
-        viewDivRightButtons = <ViewDivRightButtons tops={tops} bottoms={bottoms} />;
-    }
-    else {
-        viewDivRightButtons = <ViewDivRightButtons tops={undefined} bottoms={undefined} />;
+    if (readonly !== true) {
+        if (level === 0) {
+            let { tops, bottoms } = buttons;
+            viewDivRightButtons = <ViewDivRightButtons tops={tops} bottoms={bottoms} />;
+        }
+        else {
+            viewDivRightButtons = <ViewDivRightButtons tops={undefined} bottoms={undefined} />;
+        }
     }
 
     if (id < 0) {

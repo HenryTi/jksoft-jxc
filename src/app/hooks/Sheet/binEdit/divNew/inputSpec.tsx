@@ -26,7 +26,7 @@ export interface PropsInputSpec extends InputProps<BinInputSpec> {
 export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     const { binInput, pendRow, uqApp, modal, namedResults, divStore, valDiv } = props;
     const { sheetStore } = divStore;
-    const { entityPend } = binInput;
+    const { entityPend, baseBud } = binInput;
     const formulas: [string, string][] = [
         ['.i', binInput.baseExp],
     ];
@@ -34,7 +34,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     const pendProxyHander = new PendProxyHander(entityPend);
     calc.addValues('pend', new Proxy(pendRow, pendProxyHander));
     const base = calc.results['.i'] as number;
-    const viewTop = <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} />;
+    const viewTop = <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} baseBud={baseBud} />;
     // <ViewAtomId id={base} />;
     const { spec: entitySpec } = binInput;
     const { ix } = entitySpec;
@@ -95,14 +95,15 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
             let retSpec = Object.assign(data, { id, base });
             modal.close(retSpec);
         }
+        const { bootstrapContainer } = theme;
         return <Page header={caption ?? name}>
-            <div className="pt-3 tonwa-bg-gray-2">
+            <div className={bootstrapContainer + ' pt-3 tonwa-bg-gray-2 '}>
                 <Band>
                     <div className="mx-3">{viewTop}</div>
                 </Band>
             </div>
             <div className="m-3">
-                <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
+                <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
                     <FormRowsView rows={formRows} register={register} errors={errors} />
                 </form>
             </div>

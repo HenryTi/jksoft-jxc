@@ -27,22 +27,9 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     const [pickFromQueryScalar, pickFromQuery] = usePickFromQuery();
     const { main, divStore, sheetConsole } = sheetStore;
     const { binPicks, rearPick } = main.entityBin;
-    /*
-    const [namedResults, setNamedResult] = useState<{ [name: string]: any }>({
-        '%sheet': new Proxy(main.valRow, main.entityMain.proxyHandler()),
-    });
-    */
     const { picks } = sheetConsole;
     const { atomPickedResults, atomRearPickResult, atomCur } = picks;
     let namedResults = getAtomValue(atomPickedResults);
-    /*
-    let namedResults: NamedResults = {
-        '%sheet': new Proxy(main.valRow, main.entityMain.proxyHandler()),
-    };// getAtomValue(atomPickedResults);
-    */
-    // namedResults['%sheet'] = new Proxy(main.valRow, main.entityMain.proxyHandler());
-    // let [rearPickResult, setRearPickResult] = useState(undefined);
-    // let [cur, setCur] = useState(0);
     let rearPickResult = useAtomValue(atomRearPickResult);
     let cur = useAtomValue(atomCur);
 
@@ -149,7 +136,6 @@ function ViewBinPick({ binPick, onPick, index, cur, sheetStore }: {
     onPick: (binPick: BinPick, index: number) => Promise<void>;
     cur: number;
     index: number;
-    // namedResults: NamedResults;
     sheetStore: SheetStore;
 }) {
     let namedResults = useAtomValue(sheetStore.sheetConsole.picks.atomPickedResults);

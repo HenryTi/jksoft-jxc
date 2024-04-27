@@ -13,7 +13,7 @@ import { NamedResults } from "../../store";
 export interface UseEditDivsProps {
     divStore: DivStore;
     pendRow: PendRow;
-    namedResults: NamedResults;
+    // namedResults: NamedResults;
     // binDiv: BinDiv;          // 当前binDiv的下层
     valDiv: ValDivBase;         // 当前需要edit的valDiv, 如果新建，则先创建空的valDiv. 所以也不需要返回
     // valDivParent: ValDiv;
@@ -39,6 +39,9 @@ export function useEditDivs() {
         let ret: ValDivBase, parents: ValDivBase[] = [], parent: ValDivBase;
         let valDiv: ValDivBase = val0Div;
         */
+        let divEditingFromPend = new DivEditing(divStore, valDiv, namedResults); //, binDiv, val0Div, valRowInit);
+        valDiv.setValRow(divEditingFromPend.valRow);
+
         let runInputDivProps: RunInputDivProps = { props, uqApp, modal, namedResults };
         for (; ;) {
             let retIsInputed = await runInputDiv(runInputDivProps, valDiv);
@@ -74,6 +77,8 @@ export function useEditDivs() {
             valDiv = p;
             */
             let valDivNew = valDiv.createValDivSub(pendRow);
+            let divEditing = new DivEditing(divStore, valDiv, namedResults); //, binDiv, val0Div, valRowInit);
+            valDiv.setValRow(divEditing.valRow);
             valDiv.addValDiv(valDivNew, true);
             valDiv = valDivNew;
             // }
@@ -195,6 +200,7 @@ async function runInputs(runInputDivProps: RunInputDivProps, /*inputs: PendInput
             case BizPhraseType.atom:
                 retInput = await inputAtom({
                     ...props,
+                    namedResults,
                     valDiv,
                     uqApp,
                     modal,
@@ -204,6 +210,7 @@ async function runInputs(runInputDivProps: RunInputDivProps, /*inputs: PendInput
             case BizPhraseType.spec:
                 retInput = await inputSpec({
                     ...props,
+                    namedResults,
                     valDiv,
                     uqApp,
                     modal,

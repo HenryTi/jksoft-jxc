@@ -7,7 +7,7 @@ import { ViewPivotDiv } from "./ViewPivotDiv";
 import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
 
 export function ViewRowStem(props: ViewDivProps) {
-    const { valDiv, divStore, buttons, hidePivot } = props;
+    const { valDiv, divStore, buttons, hidePivot, readonly } = props;
     const { sheetStore } = divStore;
     const { atomValRow, atomValDivs, atomSum, binDiv } = valDiv;
     const { binDivBuds: binBuds, level, entityBin } = binDiv;
@@ -28,7 +28,7 @@ export function ViewRowStem(props: ViewDivProps) {
         viewPivot = <ViewPivotDiv divStore={divStore} valDiv={valDiv} />;
     }
     let viewPendValue: any;
-    if (level === 0) {
+    if (readonly !== true && level === 0) {
         let icon: string, color: string;
         if (sum > pendValue) {
             icon = 'exclamation-circle';

@@ -53,7 +53,7 @@ export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, 
     return <ViewShowBuds bud={budIBase} budValueColl={budValueColl} atomColl={bizAtomColl} />
 }
 
-export function ViewIBaseFromId({ sheetStore, valDiv, iBase }: { sheetStore: SheetStore, valDiv: ValDivBase; iBase: number; }) {
+export function ViewIBaseFromId({ sheetStore, valDiv, iBase, baseBud }: { sheetStore: SheetStore, valDiv: ValDivBase; iBase: number; baseBud: BizBud; }) {
     // let { i } = valDiv;
     // if (i === undefined) return null;
     let budIBase: BizBud;
@@ -63,6 +63,7 @@ export function ViewIBaseFromId({ sheetStore, valDiv, iBase }: { sheetStore: She
         budIBase = binDivBuds.budIBase;
         if (budIBase !== undefined) {
             valDiv = p;
+            iBase = valDiv.iBase;
             break;
         }
     }

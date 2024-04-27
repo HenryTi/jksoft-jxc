@@ -46,8 +46,7 @@ export class ValDivsBase<T extends ValDivBase> {
         }
         else {
             valDivs.push(valDiv);
-            // setAtomValue(atomValDivs, [...valDivs]);
-            this.setValDivs([...valDivs]);
+            if (trigger === true) this.setValDivs([...valDivs]);
         }
     }
     removePend(pendId: number) {
@@ -141,6 +140,13 @@ export abstract class ValDivBase extends ValDivs {
 
     setValRow(valRow: any) {
         if (this.id !== valRow.id) debugger;
+        let { budIBase, budXBase } = this.binDiv.binDivBuds;
+        if (budIBase !== undefined) {
+            this.iBase = valRow.buds[budIBase.id];
+        }
+        if (budXBase !== undefined) {
+            this.xBase = valRow.buds[budXBase.id];
+        }
         setAtomValue(this.atomValRow, valRow);
     };
 
@@ -148,7 +154,7 @@ export abstract class ValDivBase extends ValDivs {
         let valRow = getAtomValue(this.atomValRow);
         valRow.value = value;
     }
-
+    /*
     setIXBase(sheetStore: SheetStore, valRow: ValRow) {
         let { id, i, x } = valRow;
         let coll = sheetStore.budsColl[id];
@@ -175,7 +181,7 @@ export abstract class ValDivBase extends ValDivs {
             }
         }
     }
-
+    */
     setIValueFromInput(iValue: number): boolean {
         let { budI } = this.binDiv.binDivBuds;
         if (budI !== undefined) {

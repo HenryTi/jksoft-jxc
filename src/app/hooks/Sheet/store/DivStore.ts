@@ -164,17 +164,17 @@ export class DivStore {
         }
         */
     }
-
+    /*
     setValRow(parentValDiv: ValDiv, valRow: ValRow) {
         this.setValRowInternal(parentValDiv, valRow, true);
     }
-
     private setValRowInternal(parentValDiv: ValDiv, valRow: ValRow, trigger: boolean) {
         if (parentValDiv === undefined) debugger;
         const { pend } = valRow;
         let val = this.setVal(parentValDiv, valRow, trigger);
         // this.setPend(pend, val);
     }
+    */
 
     private setPend(pend: number, val: ValDivRoot, trigger: boolean) {
         if (pend === undefined) return;
@@ -203,18 +203,29 @@ export class DivStore {
     }
 
     setValRowRoot(valRow: ValRow, trigger: boolean) {
+        let valDiv: ValDivBase;
         let { origin } = valRow;
         if (origin !== undefined) {
             let valDivOrigin = this.valDivColl[origin];
             if (valDivOrigin === undefined) {
-                this.addRootDiv(valRow, trigger);
+                valDiv = this.addRootDiv(valRow, trigger);
             }
             else {
-                this.setVal(valDivOrigin, valRow, trigger);
+                valDiv = this.setVal(valDivOrigin, valRow, trigger);
             }
         }
         else {
-            this.addRootDiv(valRow, trigger);
+            valDiv = this.addRootDiv(valRow, trigger);
+        }
+        let { binDiv } = valDiv;
+        let { binDivBuds: { budIBase, budXBase } } = binDiv;
+        if (budIBase !== undefined) {
+            let bizAtom = this.sheetStore.bizAtomColl[budIBase.id];
+            if (bizAtom !== undefined) valDiv.iBase = bizAtom.id;
+        }
+        if (budXBase !== undefined) {
+            let bizAtom = this.sheetStore.bizAtomColl[budXBase.id];
+            if (bizAtom !== undefined) valDiv.xBase = bizAtom.id;
         }
 
         /*
@@ -299,9 +310,11 @@ export class DivStore {
             }
         }
         */
+        /*
         for (let p = parentValDiv; p !== undefined; p = p.parent) {
             p.setIXBase(this.sheetStore, valRow);
         }
+        */
         let valDivSub = new ValDiv(parentValDiv, valRow); // this.setSub(parentValDiv, valRow);
         this.valDivColl[id] = valDivSub;
         parentValDiv.addValDiv(valDivSub, trigger);

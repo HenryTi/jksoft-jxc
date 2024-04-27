@@ -55,7 +55,7 @@ function EditDiv(props: EditDivProps) {
             let ret = await editDivs({
                 divStore,
                 pendRow,
-                namedResults: {},
+                // namedResults: {},
                 valDiv: valDivNew,
                 skipInputs: false,
             });
