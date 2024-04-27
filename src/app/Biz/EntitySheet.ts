@@ -47,14 +47,14 @@ export class PickPend extends BinPick {
     getRefEntities(arrEntity: Entity[]) { arrEntity.push(this.from); }
 }
 
-export abstract class PendInput extends BizBud {
+export abstract class BinInput extends BizBud {
     entityPend: EntityPend;
     build(val: any): void {
         this.ui = val.ui;
     }
 }
 
-export class PendInputSpec extends PendInput {
+export class BinInputSpec extends BinInput {
     spec: EntitySpec;
     baseExp: string;
     build(val: any): void {
@@ -66,7 +66,7 @@ export class PendInputSpec extends PendInput {
     }
 }
 
-export class PendInputAtom extends PendInput {
+export class BinInputAtom extends BinInput {
     atom: EntityAtom;
     build(val: any): void {
         super.build(val);
@@ -81,7 +81,7 @@ export class BinDiv {
     readonly parent: BinDiv;
     readonly level: number;
     binDivBuds: BinDivBuds;
-    inputs: PendInput[];
+    inputs: BinInput[];
     buds: BizBud[];
     subBinDiv: BinDiv;
     key: BizBud;
@@ -470,14 +470,14 @@ export class EntityBin extends Entity {
         return binPick;
     }
 
-    private buildInput(v: any): PendInput {
+    private buildInput(v: any): BinInput {
         const { id, name, spec, atom } = v;
-        let input: PendInput;
+        let input: BinInput;
         if (spec !== undefined) {
-            input = new PendInputSpec(this.biz, id, name, undefined, this);
+            input = new BinInputSpec(this.biz, id, name, undefined, this);
         }
         else if (atom !== undefined) {
-            input = new PendInputAtom(this.biz, id, name, undefined, this);
+            input = new BinInputAtom(this.biz, id, name, undefined, this);
         }
         else {
             debugger;

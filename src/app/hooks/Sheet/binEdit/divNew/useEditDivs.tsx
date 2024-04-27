@@ -1,4 +1,4 @@
-import { PendInputAtom, PendInputSpec } from "app/Biz";
+import { BinInputAtom, BinInputSpec } from "app/Biz";
 import { inputAtom } from "./inputAtom";
 import { inputSpec } from "./inputSpec";
 import { useCallback } from "react";
@@ -195,17 +195,19 @@ async function runInputs(runInputDivProps: RunInputDivProps, /*inputs: PendInput
             case BizPhraseType.atom:
                 retInput = await inputAtom({
                     ...props,
+                    valDiv,
                     uqApp,
                     modal,
-                    binInput: input as PendInputAtom,
+                    binInput: input as BinInputAtom,
                 });
                 break;
             case BizPhraseType.spec:
                 retInput = await inputSpec({
                     ...props,
+                    valDiv,
                     uqApp,
                     modal,
-                    binInput: input as PendInputSpec,
+                    binInput: input as BinInputSpec,
                 });
                 break;
         }

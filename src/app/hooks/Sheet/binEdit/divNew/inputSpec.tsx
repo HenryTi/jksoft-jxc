@@ -1,5 +1,5 @@
 import { PickResult } from "../../store";
-import { PendInputSpec } from "app/Biz";
+import { BinInputSpec } from "app/Biz";
 import { Page } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { useForm } from "react-hook-form";
@@ -9,12 +9,13 @@ import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
 import { budFormRow } from "app/hooks/Bud";
 import { Calc } from "app/hooks/Calc";
-import { ViewAtomId } from "app/hooks/BizAtom";
+// import { ViewAtomId } from "app/hooks/BizAtom";
 import { PendProxyHander, btnNext, cnNextClassName } from "../../store";
 import { InputProps } from "./inputBase";
+import { ViewIBaseFromId } from "../ViewDiv/ViewIBase";
 
 
-export interface PropsInputSpec extends InputProps<PendInputSpec> {
+export interface PropsInputSpec extends InputProps<BinInputSpec> {
     // base: number;
     // entitySpec: EntitySpec;
     // viewTop: any;
@@ -23,8 +24,8 @@ export interface PropsInputSpec extends InputProps<PendInputSpec> {
 };
 
 export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
-    const { binInput, pendRow, uqApp, modal, namedResults } = props;
-    // const { namedResults } = divStore;
+    const { binInput, pendRow, uqApp, modal, namedResults, divStore, valDiv } = props;
+    const { sheetStore } = divStore;
     const { entityPend } = binInput;
     const formulas: [string, string][] = [
         ['.i', binInput.baseExp],
@@ -33,7 +34,8 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     const pendProxyHander = new PendProxyHander(entityPend);
     calc.addValues('pend', new Proxy(pendRow, pendProxyHander));
     const base = calc.results['.i'] as number;
-    const viewTop = <ViewAtomId id={base} />;
+    const viewTop = <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} />;
+    // <ViewAtomId id={base} />;
     const { spec: entitySpec } = binInput;
     const { ix } = entitySpec;
     if (ix === true) {

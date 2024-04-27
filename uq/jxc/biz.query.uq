@@ -85,6 +85,12 @@ RETURNS atoms (
             JOIN BizBud as b ON b.id=a.phrase
             JOIN Atom as c ON c.id=a.value
         WHERE b.type=BudDataType.atom;
+    INTO atoms SELECT DISTINCT c.id as id, c.base as base, c.no, c.ex
+        FROM $page as a JOIN Atom as c ON c.id=a.i;
+        -- WHERE c.id in (); -- b.type=BudDataType.atom;
+    INTO atoms SELECT DISTINCT c.id as id, c.base as base, c.no, c.ex
+        FROM $page as a JOIN Atom as c ON c.id=a.x;
+        -- WHERE c.id in (); -- b.type=BudDataType.atom;
 }
 
 Biz Query GetPendsNotify()

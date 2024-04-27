@@ -1,10 +1,11 @@
-import { PendInput } from "app/Biz";
+import { BinInput } from "app/Biz";
 import { Modal } from "tonwa-app";
 import { UqApp } from "app";
-import { DivStore, NamedResults, PendRow } from "../../store";
+import { DivStore, NamedResults, PendRow, ValDivBase } from "../../store";
 
-export interface InputProps<T extends PendInput = any> {
+export interface InputProps<T extends BinInput = any> {
     divStore: DivStore;
+    valDiv: ValDivBase;
     pendRow: PendRow;
     namedResults: NamedResults;
     binInput: T;
