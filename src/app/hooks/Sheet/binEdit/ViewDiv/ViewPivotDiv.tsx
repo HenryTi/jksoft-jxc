@@ -13,7 +13,7 @@ export function ViewPivotDiv({ valDiv }: ViewDivProps) {
     function ViewPivot({ valDiv }: { valDiv: ValDiv }) {
         const { binDiv, atomValRow, atomValue } = valDiv;
         const { binDivBuds: binBuds, format } = binDiv;
-        const { keyField, fieldColl } = binBuds;
+        const { keyField, coll } = binBuds;
         const valRow = useAtomValue(atomValRow);
         let valueValue = useAtomValue(atomValue);
         if (valueValue === undefined) {
@@ -23,9 +23,9 @@ export function ViewPivotDiv({ valDiv }: ViewDivProps) {
             debugger;
             valueValue = 0;
         }
-        const { bud } = keyField;
+        const bud = keyField;
         const { id } = bud;
-        let value = keyField.getValue(valRow);
+        let value = binBuds.getBudValue(keyField, valRow);
         if (value === null || value === undefined) return null;
         let keyLabel = <span key={id} className={labelColor}>
             {budContent(bud, value)}
@@ -33,7 +33,7 @@ export function ViewPivotDiv({ valDiv }: ViewDivProps) {
         let viewFormat: any;
         if (format !== undefined) {
             viewFormat = format.map(([bud, withLabel, item]) => {
-                let field = fieldColl[bud.name];
+                let field = coll[bud.id];
                 let value = field.getValue(valRow);
                 if (value === null || value === undefined) return null;
                 if (item !== undefined) {

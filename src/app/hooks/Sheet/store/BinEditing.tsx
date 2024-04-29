@@ -1,8 +1,9 @@
 import { RegisterOptions } from "react-hook-form";
 import { FormRow } from "app/coms";
 import {
-    BinField, BinRow, BizBud, BudAtom, BudDec, BudRadio
-    , BudsFields, EntityBin, EnumBudType, ValueSetType
+    BinRow, BizBud, BudAtom, BudDec, BudRadio
+    , EntityBin, EnumBudType, ValueSetType,
+    BinValues
 } from "app/Biz";
 import { Calc, CalcResult, Formulas } from "../../Calc";
 import { DivStore } from "./DivStore";
@@ -12,11 +13,16 @@ import { NamedResults } from "./NamedResults";
 import { getDays } from "app/tool";
 import { ValRow } from "./tool";
 
-export abstract class FieldsEditing extends BudsFields {
+export abstract class FieldsEditing /*extends BinBudsFields */ {
     private readonly calc: Calc;
-    private readonly requiredFields: BinField[] = [];
+    private readonly requiredFields: BizBud[] = [];
+
+    readonly entityBin: EntityBin;
+    readonly fieldColl: { [name: string]: BizBud } = {};
+
     readonly valRow: ValRow = { buds: {} } as any;
     readonly sheetStore: SheetStore;
+    readonly binValues: BinValues;
     iValue: number;
     iBase: number;
     xValue: number;
@@ -24,13 +30,19 @@ export abstract class FieldsEditing extends BudsFields {
     onDel: () => Promise<void>;
 
     constructor(sheetStore: SheetStore, bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
-        super(bin, buds);
+        // super(bin, buds);
         this.sheetStore = sheetStore;
         let requiredFields = this.requiredFields;
+        this.binValues = new BinValues(bin, buds);
+        // this.allFields = buds;
+        // this.fields = bin.buds;
         const formulas: Formulas = [];
         for (let i in this.fieldColl) {
             let f = this.fieldColl[i];
-            let { name, bud, valueSet, valueSetType, required } = f;
+            // let { name, bud } = f;
+            let bud = f;
+            const { name } = bud;
+            let { required, valueSet, valueSetType } = bud;
             if (name !== i) {
                 this.fieldColl[name] = f;
             }
@@ -58,6 +70,8 @@ export abstract class FieldsEditing extends BudsFields {
         }
     }
 
+    get allFields() { return this.binValues.allFields; }
+
     setNamedParams(namedResults: { [name: string]: any }) {
         if (namedResults === undefined) return;
         this.calc.addValues(undefined, namedResults);
@@ -67,11 +81,11 @@ export abstract class FieldsEditing extends BudsFields {
             if (i !== field.name) debugger;
             let result = results[i];
             if (result === null || typeof result !== 'object') {
-                field.setValue(this.valRow, result);
+                this.binValues.setBudValue(field, this.valRow, result);
             }
             else {
                 let v = result.id;
-                field.setValue(this.valRow, v);
+                this.binValues.setBudValue(field, this.valRow, v);
                 switch (i) {
                     case 'i': this.iValue = result.id; this.iBase = result.base; break;
                     case 'x': this.xValue = result.id; this.xBase = result.base; break;
@@ -89,6 +103,7 @@ export abstract class FieldsEditing extends BudsFields {
     // init formula only valid in init
     stopInitFormula() {
         for (let field of this.allFields) {
+            //if (field.bud.valueSetType === ValueSetType.init) {
             if (field.valueSetType === ValueSetType.init) {
                 this.calc.stopFormula(field.name);
             }
@@ -118,13 +133,13 @@ export abstract class FieldsEditing extends BudsFields {
         if (field === undefined) {
             return;
         }
-        field.setValue(this.valRow, value);
+        this.binValues.setBudValue(field, this.valRow, value);
     }
 
     get submitable(): boolean {
         let ret = true;
         for (let field of this.requiredFields) {
-            let v = field.getValue(this.valRow); // this.calc.results[field.name];
+            let v = this.binValues.getBudValue(field, this.valRow); // this.calc.results[field.name];
             if (v === undefined) {
                 return false;
             }
@@ -166,7 +181,9 @@ export abstract class FieldsEditing extends BudsFields {
 
     isInputNeeded(): boolean {
         for (let field of this.allFields) {
-            const { bud, valueSetType } = field;
+            //const { bud } = field;
+            const bud = field;
+            const { valueSetType } = bud;
             const { ui } = bud;
             if (ui?.show === true) continue;
             switch (valueSetType) {
@@ -180,17 +197,22 @@ export abstract class FieldsEditing extends BudsFields {
         let ret: FormRow[] = [];
         const { results: calcResults } = this.calc;
         for (let field of this.allFields) {
-            const { name, bud, valueSetType, required, onForm } = field;
+            //const { name, bud } = field;
+            const bud = field;
+            const { name, onForm, required } = bud;
             if (filterOnForm === true) {
                 if (onForm === false) continue;
             }
-            if ((field === this.fieldI || field === this.fieldX) && valueSetType === ValueSetType.equ) {
+            const { valueSetType } = bud;
+            //if ((field === this.fieldI || field === this.fieldX) 
+            if ((this.binValues.has(field) === true || this.binValues.has(field) === true)
+                && valueSetType === ValueSetType.equ) {
                 continue;
             }
             const { caption, budDataType, ui } = bud;
             if (ui?.show === true) continue;
             let options: RegisterOptions = {
-                value: field.getValue(this.valRow), // this.getDefaultValue(field),
+                value: this.binValues.getBudValue(field, this.valRow), // this.getDefaultValue(field),
                 disabled: valueSetType === ValueSetType.equ,
                 required,
             };
@@ -204,7 +226,7 @@ export abstract class FieldsEditing extends BudsFields {
             const { type, min, max } = budDataType;
             switch (type) {
                 case EnumBudType.atom:
-                    formRow.default = field.getValue(this.valRow);
+                    formRow.default = this.binValues.getBudValue(field, this.valRow);
                     formRow.atom = null;
                     formRow.readOnly = true;
                     formRow.entityAtom = (budDataType as BudAtom).bizAtom;
@@ -283,11 +305,12 @@ export class DivEditing extends FieldsEditing {
     }
 
     private setValueDefault(valDiv: ValDivBase) {
-        if (this.fieldValue === undefined) return;
-        if (this.fieldValue.getValue(this.valRow) !== undefined) return;
+        const { value } = this.entityBin;
+        if (value === undefined) return;
+        if (this.binValues.getBudValue(value, this.valRow) !== undefined) return;
         let pendLeft = this.divStore.getPendLeft(valDiv);
         if (pendLeft === undefined) return;
-        this.fieldValue.setValue(this.valRow, pendLeft);
+        this.binValues.setBudValue(value, this.valRow, pendLeft);
     }
 }
 

@@ -3,13 +3,16 @@ import { FA, List, Sep, setAtomValue } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
 import { ViewPendRowEdit } from "../binEdit/ViewPendRowEdit";
 import { ViewSteps } from "../dash/ViewSteps";
+import { LabelBox, RowCols } from "app/hooks/tool";
+import { EditBudInline, LabelRowEdit } from "app/hooks";
+import { ValueSetType } from "app/Biz";
 
 export function PagePend(props: { divStore: DivStore; caption: string; }) {
     let { divStore, caption } = props;
     let { entityBin: { pend: entityPend }, pendRows, sheetStore } = divStore;
     const { sheetConsole: { steps }, atomLoaded } = sheetStore;
     const modal = useModal();
-    let { name: pendName } = entityPend;
+    let { name: pendName, params } = entityPend;
 
     if (caption === undefined) {
         caption = entityPend.caption ?? pendName;
@@ -56,8 +59,31 @@ export function PagePend(props: { divStore: DivStore; caption: string; }) {
         footer = <div className={cnFooter}><BtnClose /></div>;
     }
 
+    function ViewParams() {
+        let { length } = params;
+        let viewParams: any[] = [];
+        let { budEditings } = divStore;
+        for (let i = 0; i < length; i++) {
+            let param = params[i];
+            let budEditing = budEditings[i];
+            const { required } = budEditing;
+            const { caption, name, id } = param;
+            const readOnly = false;
+            function onBudChanged() {
+
+            }
+            viewParams.push(<LabelBox key={id} label={caption ?? name} required={required} className="mb-2">
+                <EditBudInline budEditing={budEditing} id={id} value={undefined} onChanged={onBudChanged} readOnly={readOnly} />
+            </LabelBox>);
+        }
+        return <div className="border-bottom">
+            <RowCols>{viewParams}</RowCols>
+        </div>
+    }
+
     return <Page header={caption} footer={footer}>
         <ViewSteps sheetSteps={steps} />
+        <ViewParams />
         <div className="bg-white">
             <List items={pendRows}
                 ViewItem={ViewItemPendRow} className=""

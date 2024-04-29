@@ -7,6 +7,7 @@ import { ValRow, arrFromJsonMid } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { NamedResults } from "./NamedResults";
 import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsRoot } from './ValDiv';
+import { BudEditing } from "app/hooks";
 
 enum PendLoadState {
     none,
@@ -29,6 +30,7 @@ export class DivStore {
     pendRows: PendRow[];
     readonly valDivsRoot: ValDivsRoot;
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
+    readonly budEditings: BudEditing[];
 
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
         this.sheetStore = sheetStore;
@@ -54,6 +56,7 @@ export class DivStore {
             }
             return hasValue === true ? SubmitState.enable : SubmitState.hide;
         }, null);
+        this.budEditings = this.entityBin.pend?.params.map(v => new BudEditing(v));
     }
 
     async loadPend(params: any): Promise<void> {

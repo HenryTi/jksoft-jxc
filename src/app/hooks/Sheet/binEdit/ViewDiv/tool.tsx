@@ -28,6 +28,6 @@ export function PAV({ bud, className, val, onClick }: { bud: BizBud; className?:
     }
     return <div className="d-flex align-items-center text-end text-nowrap" onClick={onClick}>
         <div className={theme.labelColor + ' me-2 '}>{caption ?? name}</div>
-        <div className={(className ?? '') + ' w-min-3c '}>{bud.valueToUI(val)}</div>
+        <div className={(className ?? '') + ' w-min-3c '}>{bud.getUIValue(val)}</div>
     </div>
 }

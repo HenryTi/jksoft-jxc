@@ -31,8 +31,9 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel, bold }: {
                 function buildBands(buds: BizBud[], values: (string | number)[]) {
                     let { length: len } = buds;
                     for (let i = 0; i < len; i++) {
-                        let { id, caption, name, budDataType } = buds[i];
-                        let content: any = budDataType.valueToContent(values[i]);
+                        let bud = buds[i];
+                        let { id, caption, name } = bud
+                        let content: any = bud.getUIValue(values[i]);
                         let band: any;
                         //if (noLabel !== true) {
                         band = <LabelBox key={id} label={caption ?? name} /*colon={true}*/>
@@ -164,7 +165,7 @@ export function ViewSpecPropsH({ phrase, props: propValues }: VPProps) {
         const { caption, name, id } = bud;
         return <div key={id} className="w-min-6c me-2">
             <div className="small text-secondary w-min-3c me-1">{caption ?? name}:</div>
-            <div>{bud.budDataType.valueToContent(value)}</div>
+            <div>{bud.getUIValue(value)}</div>
         </div>;
     }
     return <ViewSpecProps phrase={phrase} props={propValues} className="d-flex" buildProp={buildProp} />;
@@ -175,7 +176,7 @@ export function ViewSpecPropsV({ phrase, props: propValues }: VPProps) {
         const { caption, name, id } = bud;
         return <span key={id} className="d-inline-block me-3">
             <span className="small text-secondary w-min-3c me-1">{caption ?? name}:</span>
-            {bud.budDataType.valueToContent(value)}
+            {bud.getUIValue(value)}
         </span>;
     }
     return <ViewSpecProps phrase={phrase} props={propValues} className="d-block" buildProp={buildProp} />;

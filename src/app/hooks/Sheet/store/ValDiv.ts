@@ -154,34 +154,7 @@ export abstract class ValDivBase extends ValDivs {
         let valRow = getAtomValue(this.atomValRow);
         valRow.value = value;
     }
-    /*
-    setIXBase(sheetStore: SheetStore, valRow: ValRow) {
-        let { id, i, x } = valRow;
-        let coll = sheetStore.budsColl[id];
-        if (coll === undefined) {
-            if (i !== undefined) this.iValue = i;
-            if (x !== undefined) this.xValue = x;
-        }
-        else {
-            if (i !== undefined) {
-                this.iValue = i;
-                if (coll !== undefined) {
-                    let { budIBase } = this.binDiv.binDivBuds;
-                    if (budIBase !== undefined) {
-                        this.iBase = coll[budIBase.id] as number
-                    }
-                }
-                if (x !== undefined) {
-                    this.xValue = x;
-                    let { budXBase } = this.binDiv.binDivBuds;
-                    if (budXBase !== undefined) {
-                        this.xBase = coll[budXBase.id] as number
-                    }
-                }
-            }
-        }
-    }
-    */
+
     setIValueFromInput(iValue: number): boolean {
         let { budI } = this.binDiv.binDivBuds;
         if (budI !== undefined) {
@@ -253,8 +226,6 @@ export abstract class ValDivBase extends ValDivs {
     }
 
     getRowCount(): number {
-        // let deleted = getAtomValue(this.atomDeleted);
-        // if (deleted === true) return 0;
         return super.getRowCount() + 1;
     }
 

@@ -40,7 +40,7 @@ export function ViewRowStem(props: ViewDivProps) {
         }
         viewPendValue = <div className="d-flex align-items-center">
             <FA name={icon} className={color + ' me-2 '} />
-            <span className={'w-min-2c w-min-3c ' + cnPendValue}>{budValue.valueToUI(pendValue)}</span>
+            <span className={'w-min-2c w-min-3c ' + cnPendValue}>{budValue.getUIValue(pendValue)}</span>
         </div>;
     }
 
@@ -49,7 +49,7 @@ export function ViewRowStem(props: ViewDivProps) {
     // <ViewIdField bud={budI} value={iValue} />
     let fieldsSet = new Set<number>();
     for (let f of fields) {
-        const { id } = f.bud;
+        const { id } = f;
         if (id === undefined) debugger;
         if (fieldsSet.has(id) === true) debugger;
         fieldsSet.add(id);
@@ -59,8 +59,9 @@ export function ViewRowStem(props: ViewDivProps) {
         <ViewShowBuds bud={budI} budValueColl={budValueColl} atomColl={bizAtomColl} />
         {
             fields.map(field => {
-                const { bud } = field;
-                return <ViewBud key={bud.id} bud={bud} value={field.getValue(valRow)} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
+                //const { bud } = field;
+                const bud = field;
+                return <ViewBud key={bud.id} bud={bud} value={binBuds.getBudValue(field, valRow)} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
             })
         }
     </>;

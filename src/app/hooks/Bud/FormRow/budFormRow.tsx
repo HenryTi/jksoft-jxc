@@ -1,11 +1,11 @@
 import { BizBud, BudAtom, EnumBudType } from "app/Biz";
-import { EnumAtom } from "uqs/UqDefault";
+import { FormRow } from "app/coms";
 
-export function budFormRow(bud: BizBud, required: boolean = false) {
-    const { name, budDataType, caption, defaultValue } = bud;
+export function budFormRow(bud: BizBud, required: boolean = false): FormRow {
+    const { name, budDataType, caption, valueSet } = bud;
     const options = {
         required,
-        value: defaultValue,
+        value: valueSet,
     }
     switch (budDataType.type) {
         default:
@@ -19,6 +19,6 @@ export function budFormRow(bud: BizBud, required: boolean = false) {
         case EnumBudType.date:
             return { name, label: caption ?? name, type: 'date', options };
         case EnumBudType.atom:
-            return { name, label: caption ?? name, atom: (budDataType as BudAtom).bizAtom?.name as EnumAtom };
+            return { name, label: caption ?? name, atom: undefined as any, entityAtom: (budDataType as BudAtom).bizAtom };
     }
 }

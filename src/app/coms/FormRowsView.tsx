@@ -266,10 +266,10 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
 
     const { entityAtom, atom, options } = row as FormAtom;
     if (entityAtom !== undefined) {
-        const { value } = options;
+        let value = options?.value;
         let { name } = row as FormAtom;
         function onChange(target: { name: string; type: 'number'; value: string; }) {
-            options.onChange?.({ target });
+            options?.onChange?.({ target });
         }
         let error: FieldError = errors[name] as FieldError;
         if (entityAtom.bizPhraseType === BizPhraseType.spec) {
@@ -333,7 +333,7 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
     error: FieldError;
     // setError: UseFormSetError<any>;
     clearErrors: UseFormClearErrors<any>;
-    inputProps: UseFormRegisterReturn,
+    inputProps: UseFormRegisterReturn;
     onChange: (props: { name: string; value: string, type: 'number' }) => void;
 }) {
     const uqApp = useUqApp();

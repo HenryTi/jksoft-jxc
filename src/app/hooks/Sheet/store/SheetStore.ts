@@ -10,8 +10,9 @@ import { BudEditing } from "../../Bud";
 import { ValRow, arrFromJsonMid } from "./tool";
 import { DivStore, SubmitState } from "./DivStore";
 import { useUqApp } from "app/UqApp";
-import { SheetConsole } from "./SheetConsole";
+//import { SheetConsole } from "./SheetConsole";
 import { ValDivRoot } from "./ValDiv";
+import { Modal } from "tonwa-app";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -65,13 +66,13 @@ export class SheetMain extends BinStore {
             return parts[0];
         }
         if (i !== undefined) {
-            formulas.push(['i', getFormulaText(i.defaultValue ?? 'i$pick')]);
+            formulas.push(['i', getFormulaText(i.valueSet ?? 'i$pick')]);
         }
         if (x !== undefined) {
-            formulas.push(['x', getFormulaText(x.defaultValue ?? 'x$pick')]);
+            formulas.push(['x', getFormulaText(x.valueSet ?? 'x$pick')]);
         }
         for (let mp of mainProps) {
-            formulas.push([mp.name, getFormulaText(mp.defaultValue)]);
+            formulas.push([mp.name, getFormulaText(mp.valueSet)]);
         }
         let { namedResults, rearBinPick: lastBinPick, rearResult: lastResult } = pickResults;
         const calc = new Calc(formulas, namedResults);
@@ -377,4 +378,34 @@ export function useSheetEntity() {
     const { sheet: entityId62, id } = useParams();
     const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
     return entitySheet;
+}
+
+export abstract class SheetConsole {
+    protected readonly modal: Modal;
+    readonly entitySheet: EntitySheet;
+
+    constructor(modal: Modal, entitySheet: EntitySheet) {
+        this.modal = modal;
+        this.entitySheet = entitySheet;
+    }
+
+    abstract close(): void;                      // 关闭当前页面
+    abstract restart(): void;                    // 关闭并新开单
+    abstract onSubmited(store: SheetStore): Promise<void>;        // 单据已提交
+    abstract discard(sheetId: number): void;     // 废弃当前单据
+    abstract onSheetAdded(store: SheetStore/*sheetId: number, no: string*/): Promise<void>;
+    abstract sheetRowCountChanged(store: SheetStore): void;
+    abstract removeFromCache(sheetId: number): void;
+    abstract steps: SheetSteps;
+    createSheetStore() {
+        return new SheetStore(this.entitySheet, this);
+    }
+
+    picks: PickStates;
+}
+
+export interface SheetSteps {
+    steps: string[];
+    step: number;
+    end: string;
 }

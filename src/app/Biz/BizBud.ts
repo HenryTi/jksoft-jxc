@@ -37,7 +37,7 @@ export abstract class BudDataType {
         this.max = schema.max;
     }
     scan(biz: Biz, bud: BizBud) { }
-    valueToContent(value: string | number) {
+    getUIValue(value: string | number) {
         return value;
     }
     getTitleBuds(): BizBud[] { return; }
@@ -80,7 +80,7 @@ export class BudDec extends BudDataNumber {
         const { ui } = bud;
         this.fraction = ui?.fraction;
     }
-    valueToContent(value: number) {
+    override getUIValue(value: number) {
         if (value === undefined) return;
         // if (this.fraction === undefined) return value;
         return value.toFixed(this.fraction ?? 2);
@@ -140,7 +140,7 @@ export class BudCheck extends BudOptions {
 }
 export class BudDate extends BudDataNumber {
     type = EnumBudType.date;
-    valueToContent(value: string | number) {
+    override getUIValue(value: string | number) {
         let v = value as number;
         return contentFromDays(v);
     }
@@ -174,13 +174,23 @@ export class BudPickable extends BudDataNumber {
 
 //type FieldShow = { entity: Entity; bud: BizBud; };
 // type FieldShow = BizBud;
+export enum ValueSetType {
+    none,
+    init,
+    equ,
+    show,
+}
 
 export class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budDataType: BudDataType;
-    defaultValue: string;
+    // defaultValue: string;
     atomParams: { [param: string]: string }; // only for BizBudAtom
     fieldShows: BizBud[];
+    valueSet: string;
+    valueSetType: ValueSetType;
+    onForm: boolean;            // default: true
+
     constructor(biz: Biz, id: number, name: string, dataType: EnumBudType, entity: Entity) {
         super(biz, id, name, 'bud');
         this.entity = entity;
@@ -212,9 +222,10 @@ export class BizBud extends BizBase {
         this.biz.addBudIds(this);
         this.fieldShows = this.scanFieldShows(this.fieldShows);
     }
-    valueToUI(value: any) {
-        return this.budDataType.valueToContent(value);
+    getUIValue(value: any) {
+        return this.budDataType.getUIValue(value);
     }
+    get required(): boolean { return this.ui?.required; }
     getTitleBuds(): BizBud[] { return this.budDataType.getTitleBuds(); }
     getPrimeBuds(): BizBud[] { return this.budDataType.getPrimeBuds(); }
     protected fromSwitch(i: string, val: any) {
@@ -222,7 +233,7 @@ export class BizBud extends BizBase {
             default:
                 super.fromSwitch(i, val);
                 break;
-            case 'value': this.defaultValue = val; break;
+            case 'value': this.setDefault(val); break;
             case 'params': this.atomParams = val; break;
             case 'fieldShows': this.fieldShows = val; break;
             case 'props':
@@ -253,6 +264,24 @@ export class BizBud extends BizBase {
             }
         }
         return ret;
+    }
+
+    private setDefault(defaultValue: string) {
+        if (defaultValue !== undefined) {
+            let p = defaultValue.indexOf('\n');
+            if (p > 0) {
+                let suffix = defaultValue.substring(p + 1);
+                this.valueSet = defaultValue.substring(0, p);
+                this.valueSetType = ValueSetType[suffix as keyof typeof ValueSetType];
+            }
+            else {
+                this.valueSetType = ValueSetType.equ;
+                this.valueSet = defaultValue;
+            }
+        }
+        else {
+            this.valueSetType = ValueSetType.none;
+        }
     }
 }
 

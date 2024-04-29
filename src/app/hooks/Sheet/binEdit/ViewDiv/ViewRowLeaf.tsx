@@ -52,9 +52,10 @@ export function ViewRowLeaf(props: ViewDivProps) {
                 <ViewShowBuds bud={iBud} budValueColl={budValueColl} atomColl={bizAtomColl} />
                 {
                     fields.map(field => {
-                        const { bud } = field;
+                        // const { bud } = field;
+                        const bud = field;
                         const { id } = bud;
-                        let value = field.getValue(valRow);
+                        let value = binBuds.getBudValue(field, valRow);
                         if (value === null || value === undefined) return null;
                         return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
                     })

@@ -67,34 +67,6 @@ export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
     else if (budIBase !== undefined) {
         // vx = viewIdField(budX, valRow.x);
     }
-
-    /*
-    for (let p = val0Div; p !== undefined; p = p.parent) {
-        let { binDivBuds } = p.binDiv;
-        let { budI, budIBase } = binDivBuds;
-        if (budI !== undefined) {
-            vi = viewIdField(budI, p.iValue);
-            break;
-        }
-        else if (budIBase !== undefined) {
-            vi = viewIdField(budIBase, p.iBase);
-            break;
-        }
-    }
-
-    for (let p = val0Div; p !== undefined; p = p.parent) {
-        let { binDivBuds } = p.binDiv;
-        let { budX, budXBase } = binDivBuds;
-        if (budX !== undefined) {
-            vi = viewIdField(budX, p.xValue);
-            break;
-        }
-        else if (budXBase !== undefined) {
-            vi = viewIdField(budXBase, p.xBase);
-            break;
-        }
-    }
-    */
     function viewIdField(bud: BizBud, value: number) {
         let { caption, name } = bud;
         const { budsColl, bizAtomColl } = sheetStore;
