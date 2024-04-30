@@ -240,13 +240,39 @@ class BinAmount extends BinBudValue {
     setValue(binRow: BinRow, value: any) { binRow.amount = value; }
 }
 
-export class BinValues {
+export abstract class BudValuesBase<T> {
+    allFields: BizBud[]; // BinField[];         // 传进来的buds
+    fields: BizBud[]; // BinField[];            // bin的buds
+    abstract has(bud: BizBud): boolean;
+    abstract getBudValue(bud: BizBud, binRow: T): any;
+    abstract setBudValue(bud: BizBud, binRow: T, value: any): void;
+}
+
+export class BudValues extends BudValuesBase<any> {
+    readonly coll: { [budId: number]: BizBud; } = {};
+    constructor(buds: BizBud[]) {
+        super();
+        this.allFields = buds;
+        this.fields = buds;
+        for (let bud of buds) this.coll[bud.id] = bud;
+    }
+
+    has(bud: BizBud): boolean {
+        return this.coll[bud.id] !== undefined;
+    }
+    getBudValue(bud: BizBud, binRow: any): any {
+        return binRow[bud.id];
+    }
+    setBudValue(bud: BizBud, binRow: any, value: any): void {
+        binRow[bud.id] = value;
+    }
+}
+
+export class BinRowValues extends BudValuesBase<BinRow> {
     // private readonly collGet: { [budId: number]: (binRow: BinRow) => any; } = {};
     // private readonly collSet: { [budId: number]: (binRow: BinRow, value: any) => void; } = {};
     readonly coll: { [budId: number]: BinBudValue; } = {};
     readonly entityBin: EntityBin;
-    readonly allFields: BizBud[]; // BinField[];         // 传进来的buds
-    readonly fields: BizBud[]; // BinField[];            // bin的buds
     readonly budI: BizBud;
     readonly budIBase: BizBud;
     readonly budX: BizBud;
@@ -256,6 +282,7 @@ export class BinValues {
     readonly budPrice: BizBud;
 
     constructor(bin: EntityBin, buds: BizBud[]) {
+        super();
         this.entityBin = bin;
         const { i, iBase, x, xBase, value, price, amount } = bin;
         this.allFields = [];
@@ -427,7 +454,7 @@ export class BinBudsFields {
     }
 }
 */
-export class BinDivBuds extends BinValues /*extends BinBudsFields*/ {
+export class BinDivBuds extends BinRowValues /*extends BinBudsFields*/ {
     readonly binDiv: BinDiv;
     keyField: BizBud; // BinField;
 

@@ -7,7 +7,7 @@ import { ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
 import { ChangeEvent, useState } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
-import { BinEditing, FieldsEditing, ValDiv, ValDivBase } from "../store";
+import { BinEditing, BinBudsEditing, ValDiv, ValDivBase } from "../store";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
 export function useRowEdit() {
@@ -26,10 +26,10 @@ export function useRowEdit() {
     }, []);
 }
 
-function ModalInputRow({ binEditing, valDiv }: { binEditing: FieldsEditing; valDiv: ValDivBase }) {
+function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; valDiv: ValDivBase }) {
     const { closeModal } = useModal();
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
-    const { entityBin, valRow: binDetail, sheetStore } = binEditing;
+    const { entityBin, values: binDetail, sheetStore } = binEditing;
     const { i: budI, iBase: budIBase, x: budX, xBase: budXBase } = entityBin;
     const [submitable, setSubmitable] = useState(binEditing.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {

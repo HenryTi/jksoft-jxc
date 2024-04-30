@@ -11,7 +11,7 @@ import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
 export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
     const modal = useModal();
-    const { divStore, valRow } = divEditing;
+    const { divStore, values: valRow } = divEditing;
     const { binDivRoot: binDiv, sheetStore } = divStore;
     const { register, setValue, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [submitable, setSubmitable] = useState(divEditing.submitable);

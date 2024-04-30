@@ -1,16 +1,16 @@
 import { Page, useModal } from "tonwa-app";
-import { FA, List, Sep, setAtomValue } from "tonwa-com";
-import { DivStore, PendRow } from "../store";
+import { FA, List, Sep, setAtomValue, theme } from "tonwa-com";
+import { BudsEditing, DivStore, PendRow } from "../store";
 import { ViewPendRowEdit } from "../binEdit/ViewPendRowEdit";
 import { ViewSteps } from "../dash/ViewSteps";
 import { LabelBox, RowCols } from "app/hooks/tool";
 import { EditBudInline, LabelRowEdit } from "app/hooks";
-import { ValueSetType } from "app/Biz";
+import { BizBud, PickPend, ValueSetType } from "app/Biz";
 
-export function PagePend(props: { divStore: DivStore; caption: string; }) {
-    let { divStore, caption } = props;
+export function PagePend(props: { divStore: DivStore; caption: string; pickPend: PickPend; }) {
+    let { divStore, caption, pickPend } = props;
     let { entityBin: { pend: entityPend }, pendRows, sheetStore } = divStore;
-    const { sheetConsole: { steps }, atomLoaded } = sheetStore;
+    const { sheetConsole: { steps }, atomLoaded, bizAtomColl } = sheetStore;
     const modal = useModal();
     let { name: pendName, params } = entityPend;
 
@@ -60,8 +60,16 @@ export function PagePend(props: { divStore: DivStore; caption: string; }) {
     }
 
     function ViewParams() {
-        let { length } = params;
-        let viewParams: any[] = [];
+        // let { length } = params;
+        let paramsInput: BizBud[] = [];
+        let { pickParams } = pickPend;
+        for (let bud of params) {
+            if (pickParams.findIndex(v => v.name === bud.name) >= 0) continue;
+            // if (bud.valueSetType === ValueSetType.equ) continue;
+            paramsInput.push(bud);
+        }
+        let budsEditing = new BudsEditing(paramsInput);
+        /*
         let { budEditings } = divStore;
         for (let i = 0; i < length; i++) {
             let param = params[i];
@@ -76,8 +84,16 @@ export function PagePend(props: { divStore: DivStore; caption: string; }) {
                 <EditBudInline budEditing={budEditing} id={id} value={undefined} onChanged={onBudChanged} readOnly={readOnly} />
             </LabelBox>);
         }
-        return <div className="border-bottom">
-            <RowCols>{viewParams}</RowCols>
+        */
+        return <div className={'border-bottom border-primary py-2 tonwa-bg-gray-2 ' + theme.bootstrapContainer}>
+            <RowCols>
+                {budsEditing.buildEditBuds()/*viewParams*/}
+                <div className="d-flex align-items-end mb-2">
+                    <button className="btn btn-outline-primary" onClick={() => alert('正在实现中...')}>
+                        <FA name="search" /> 查询
+                    </button>
+                </div>
+            </RowCols>
         </div>
     }
 

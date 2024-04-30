@@ -99,7 +99,7 @@ function EditDiv(props: EditDivProps) {
             const editing = new DivEditing(divStore, valDiv);
             let ret = await rowEdit(editing, valDiv);
             if (ret !== true) return;
-            const { valRow: newValRow } = editing;
+            const { values: newValRow } = editing;
             if (isPivotKeyDuplicate(valDiv, newValRow) === true) {
                 alert('Pivot key duplicate'); // 这个界面要改
                 return;

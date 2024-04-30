@@ -34,7 +34,7 @@ export function usePickFromPend() {
             await divStore.loadPend(retParam);
             const { steps } = sheetConsole;
             if (steps !== undefined) steps.step = 1;
-            let inputed = await modal.open<ValRow[]>(<PagePend divStore={divStore} caption={caption} />);
+            let inputed = await modal.open<ValRow[]>(<PagePend divStore={divStore} caption={caption} pickPend={binPick} />);
             if (inputed === undefined) return;
             sheetConsole.steps = undefined;
             // 如果有inputs，直接已经输入进了。就不用返回了。

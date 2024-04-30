@@ -24,7 +24,7 @@ export function useDetailNew(sheetStore: SheetStore) {
                 namedResults[rearBinPick.name] = rowProps;
                 let binEditing = new BinEditing(sheetStore, entityBin);
                 binEditing.setNamedParams(namedResults);
-                let { valRow } = binEditing;
+                let { values: valRow } = binEditing;
                 if (valRow.value === undefined) {
                     binEditing.setValue('value', 1, undefined);
                 }
@@ -49,7 +49,7 @@ export function useDetailNew(sheetStore: SheetStore) {
             binEditing.setNamedParams(namedResults);
             let ret = await rowEdit(binEditing, undefined);
             if (ret === true) {
-                const { valRow } = binEditing;
+                const { values: valRow } = binEditing;
                 // Object.assign(row.valRow, valRow);
                 // await row.addToSection();
                 if (valRow.id !== undefined) debugger;

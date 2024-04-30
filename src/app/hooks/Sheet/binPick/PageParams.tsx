@@ -1,9 +1,9 @@
 import { BizBud, PickParam } from "app/Biz";
-import { NamedResults } from "../store";
+import { BudsEditing, NamedResults } from "../store";
 import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { ViewBud, budFormRow } from "app/hooks";
+import { ViewBud } from "app/hooks";
 import { useForm } from "react-hook-form";
 import { useCallback } from "react";
 
@@ -41,9 +41,10 @@ export function usePageParams() {
             }
             return retParam;
         }
+        let paramBudsEditing = new BudsEditing(inputParams);
         return await modal.open(<PageParams header={header}
             valueParams={valueParams}
-            inputParams={inputParams} />);
+            inputParams={paramBudsEditing} />);
     }, []);
 }
 
@@ -51,13 +52,14 @@ export function usePageParams() {
 interface PageParamsProps {
     header: string;
     valueParams: [PickParam, BizBud, any][];
-    inputParams: BizBud[];
+    inputParams: BudsEditing;
 }
 function PageParams({ header, valueParams, inputParams }: PageParamsProps) {
     const modal = useModal();
     const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     let formRows: FormRow[] = [
-        ...inputParams.map(v => budFormRow(v, false)),
+        ...inputParams.buildFormRows(),
+        // inputParams.map(v => budFormRow(v, false)),
         { type: 'submit', label: '查找', options: {}, className: undefined }
     ];
     function onSubmitForm(data: any) {

@@ -1,25 +1,25 @@
 import { useAtomValue } from "jotai";
-import { theme, FA, setAtomValue } from "tonwa-com";
-import { ViewBud, ViewBudUIType, budContent } from "../../../Bud";
+import { theme, FA } from "tonwa-com";
+// import { ViewBud, ViewBudUIType, budContent } from "../../../Bud";
 import { RowColsSm, ViewShowBuds } from "../../../tool";
-import { PAV, ViewDivProps, ViewIdField, cn } from "./tool";
+import { PAV, ViewDivProps, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
 import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
+import { DivEditing } from "../../store";
 
 export function ViewRowStem(props: ViewDivProps) {
     const { valDiv, divStore, buttons, hidePivot, readonly } = props;
     const { sheetStore } = divStore;
     const { atomValRow, atomValDivs, atomSum, binDiv } = valDiv;
-    const { binDivBuds: binBuds, level, entityBin } = binDiv;
-    const { fields } = binBuds;
+    const { /*binDivBuds: binBuds, */ level, entityBin } = binDiv;
+    // const { fields } = binBuds;
     const valRow = useAtomValue(atomValRow);
     let sum = useAtomValue(atomSum);
     const divs = useAtomValue(atomValDivs);
     const { i: iValue, pendValue } = valRow;
     let {
-        value: cnValue, sum: cnSum, sumBold: cnSumBold
+        sum: cnSum, sumBold: cnSumBold
         , pend: cnPend, pendOver: cnPendOver, pendValue: cnPendValue
-        , labelColor
     } = theme;
 
     const { pivot, i: budI, value: budValue } = entityBin;
@@ -47,6 +47,7 @@ export function ViewRowStem(props: ViewDivProps) {
     const { budsColl, bizAtomColl } = sheetStore;
     let budValueColl = budsColl[iValue];
     // <ViewIdField bud={budI} value={iValue} />
+    /*
     let fieldsSet = new Set<number>();
     for (let f of fields) {
         const { id } = f;
@@ -54,15 +55,19 @@ export function ViewRowStem(props: ViewDivProps) {
         if (fieldsSet.has(id) === true) debugger;
         fieldsSet.add(id);
     }
+    */
+    const divEditing = new DivEditing(divStore, valDiv);
     let content = <>
         <ViewIBaseBuds sheetStore={sheetStore} valDiv={valDiv} />
         <ViewShowBuds bud={budI} budValueColl={budValueColl} atomColl={bizAtomColl} />
         {
+            divEditing.buildViewBuds(bizAtomColl)
+            /*
             fields.map(field => {
-                //const { bud } = field;
                 const bud = field;
                 return <ViewBud key={bud.id} bud={bud} value={binBuds.getBudValue(field, valRow)} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
             })
+            */
         }
     </>;
     function ViewRight() {

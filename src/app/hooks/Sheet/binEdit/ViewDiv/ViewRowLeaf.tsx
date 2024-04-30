@@ -5,6 +5,7 @@ import { ViewBud, ViewBudUIType } from "../../../Bud";
 import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../../../tool";
 import { PAV, ViewDivProps, cn } from "./tool";
 import { ViewIBase } from "./ViewIBase";
+import { DivEditing } from "../../store";
 
 export function ViewRowLeaf(props: ViewDivProps) {
     const { divStore, valDiv, buttons } = props;
@@ -12,7 +13,7 @@ export function ViewRowLeaf(props: ViewDivProps) {
     const { atomValRow, atomValue, binDiv } = valDiv;
     const { binDivBuds: binBuds, entityBin } = binDiv;
     const { i: iBud } = entityBin;
-    const { budValue, fields, budPrice, budAmount, budI } = binBuds;
+    const { budValue, budPrice, budAmount, budI } = binBuds;
     const valRow = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);
     const { price, amount } = valRow;
@@ -45,20 +46,24 @@ export function ViewRowLeaf(props: ViewDivProps) {
     }
     */
     // const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end align-items-end';
+    const divEditing = new DivEditing(divStore, valDiv);
     return <>
         <div className={cn + ' flex-fill bg-white px-2 py-2 px-lg-3 '}>
             {viewAtomMain}
             <RowColsSm contentClassName="flex-fill">
                 <ViewShowBuds bud={iBud} budValueColl={budValueColl} atomColl={bizAtomColl} />
                 {
+                    divEditing.buildViewBuds(bizAtomColl)
+                    /*
                     fields.map(field => {
-                        // const { bud } = field;
+                        // const {bud} = field;
                         const bud = field;
-                        const { id } = bud;
-                        let value = binBuds.getBudValue(field, valRow);
-                        if (value === null || value === undefined) return null;
-                        return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
+                const {id} = bud;
+                let value = binBuds.getBudValue(field, valRow);
+                if (value === null || value === undefined) return null;
+                return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
                     })
+                    */
                 }
             </RowColsSm>
         </div>

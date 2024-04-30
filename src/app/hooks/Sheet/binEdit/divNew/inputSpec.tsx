@@ -1,4 +1,4 @@
-import { PickResult } from "../../store";
+import { BudsEditing, PickResult } from "../../store";
 import { BinInputSpec } from "app/Biz";
 import { Page } from "tonwa-app";
 import { theme } from "tonwa-com";
@@ -7,7 +7,6 @@ import { Band, FormRow, FormRowsView } from "app/coms";
 import { ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
-import { budFormRow } from "app/hooks/Bud";
 import { Calc } from "app/hooks/Calc";
 // import { ViewAtomId } from "app/hooks/BizAtom";
 import { PendProxyHander, btnNext, cnNextClassName } from "../../store";
@@ -37,6 +36,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     const viewTop = <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} baseBud={baseBud} />;
     // <ViewAtomId id={base} />;
     const { spec: entitySpec } = binInput;
+    let budsEditing: BudsEditing;
     const { ix } = entitySpec;
     if (ix === true) {
         let { ret } = await uqApp.uq.GetSpecsFromBase.query({ base });
@@ -54,6 +54,10 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         }*/
     }
     else {
+        const { keys, buds: props } = entitySpec;
+        let buds = [...keys];
+        if (props !== undefined) buds.push(...props);
+        budsEditing = new BudsEditing(buds)
         let ret = await modal.open(<PagePickSpec />);
         return ret;
     }
@@ -65,8 +69,9 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         const submitClassName: string = cnNextClassName;
 
         let formRows: FormRow[] = [
-            ...keys.map(v => budFormRow(v, true)),
-            ...(props ?? []).map(v => budFormRow(v)),
+            // ...keys.map(v => budFormRow(v, true)),
+            // ...(props ?? []).map(v => budFormRow(v)),
+            ...budsEditing.buildFormRows(),
             { type: 'submit', label: submitCaption, options: {}, className: submitClassName }
         ];
         const onSubmitForm = async (data: any) => {

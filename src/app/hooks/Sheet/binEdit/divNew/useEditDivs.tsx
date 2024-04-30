@@ -40,7 +40,7 @@ export function useEditDivs() {
         let valDiv: ValDivBase = val0Div;
         */
         let divEditingFromPend = new DivEditing(divStore, valDiv, namedResults); //, binDiv, val0Div, valRowInit);
-        valDiv.setValRow(divEditingFromPend.valRow);
+        valDiv.setValRow(divEditingFromPend.values);
 
         let runInputDivProps: RunInputDivProps = { props, uqApp, modal, namedResults };
         for (; ;) {
@@ -78,7 +78,7 @@ export function useEditDivs() {
             */
             let valDivNew = valDiv.createValDivSub(pendRow);
             let divEditing = new DivEditing(divStore, valDiv, namedResults); //, binDiv, val0Div, valRowInit);
-            valDiv.setValRow(divEditing.valRow);
+            valDiv.setValRow(divEditing.values);
             valDiv.addValDiv(valDivNew, true);
             valDiv = valDivNew;
             // }
@@ -127,7 +127,7 @@ async function runInputDiv(runInputDivProps: RunInputDivProps, valDiv: ValDivBas
             if (await modal.open(<PageInputDiv divEditing={divEditing} />) !== true) return;
         }
     }
-    valDiv.mergeValRow(divEditing.valRow);
+    valDiv.mergeValRow(divEditing.values);
     // save detail;
     let { valRow } = valDiv;
     let id = await divStore.saveDetail(binDiv, valRow);

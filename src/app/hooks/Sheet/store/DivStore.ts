@@ -8,6 +8,7 @@ import { getAtomValue, setAtomValue } from "tonwa-com";
 import { NamedResults } from "./NamedResults";
 import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsRoot } from './ValDiv';
 import { BudEditing } from "app/hooks";
+import { DivEditing } from "./BinEditing";
 
 enum PendLoadState {
     none,

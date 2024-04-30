@@ -3,7 +3,9 @@ import { FormRow } from "app/coms";
 import {
     BinRow, BizBud, BudAtom, BudDec, BudRadio
     , EntityBin, EnumBudType, ValueSetType,
-    BinValues
+    BinRowValues,
+    BudValues,
+    BudValuesBase
 } from "app/Biz";
 import { Calc, CalcResult, Formulas } from "../../Calc";
 import { DivStore } from "./DivStore";
@@ -12,40 +14,37 @@ import { ValDivBase } from "./ValDiv";
 import { NamedResults } from "./NamedResults";
 import { getDays } from "app/tool";
 import { ValRow } from "./tool";
+import { BudEditing, EditBudInline, ViewBud, ViewBudUIType } from "app/hooks";
+import { AtomColl, LabelBox } from "app/hooks/tool";
+import { EditBudAtom } from "app/hooks/Bud/Edit/EditBudAtom";
 
-export abstract class FieldsEditing /*extends BinBudsFields */ {
-    private readonly calc: Calc;
+export abstract class BudsEditingBase<R, B extends BudValuesBase<R>> /*extends BinBudsFields */ {
     private readonly requiredFields: BizBud[] = [];
+    protected readonly calc: Calc;
+    protected budValues: B;
+    readonly namedBuds: { [name: string]: BizBud } = {};
+    protected readonly formulas: Formulas;
+    abstract get values(): R;
 
-    readonly entityBin: EntityBin;
-    readonly fieldColl: { [name: string]: BizBud } = {};
-
-    readonly valRow: ValRow = { buds: {} } as any;
-    readonly sheetStore: SheetStore;
-    readonly binValues: BinValues;
-    iValue: number;
-    iBase: number;
-    xValue: number;
-    xBase: number;
-    onDel: () => Promise<void>;
-
-    constructor(sheetStore: SheetStore, bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
+    constructor(buds: BizBud[], initBinRow?: any) {
         // super(bin, buds);
-        this.sheetStore = sheetStore;
         let requiredFields = this.requiredFields;
-        this.binValues = new BinValues(bin, buds);
         // this.allFields = buds;
         // this.fields = bin.buds;
         const formulas: Formulas = [];
-        for (let i in this.fieldColl) {
-            let f = this.fieldColl[i];
+        this.formulas = formulas;
+        for (let bud of buds) {
+            // let f = f  this.fieldColl[i];
             // let { name, bud } = f;
-            let bud = f;
+            let f = bud;
             const { name } = bud;
             let { required, valueSet, valueSetType } = bud;
+            this.namedBuds[name] = f;
+            /*
             if (name !== i) {
                 this.fieldColl[name] = f;
             }
+            */
             let { ui, budDataType: { min, max } } = bud;
             if (ui?.show === true) continue;
             if (valueSet !== undefined) {
@@ -64,41 +63,33 @@ export abstract class FieldsEditing /*extends BinBudsFields */ {
                 formulas.push([name + '.max', max]);
             }
         }
-        this.calc = new Calc(formulas, this.valRow as any);
-        if (initBinRow !== undefined) {
-            this.setValues(initBinRow);
-        }
+        this.calc = this.createCalc();
     }
 
-    get allFields() { return this.binValues.allFields; }
+    protected abstract createCalc(): Calc;
+
+    get allFields() { return this.budValues.allFields; }
 
     setNamedParams(namedResults: { [name: string]: any }) {
         if (namedResults === undefined) return;
         this.calc.addValues(undefined, namedResults);
         const { results } = this.calc;
-        for (let i in this.fieldColl) {
-            let field = this.fieldColl[i];
+        for (let i in this.namedBuds) {
+            let field = this.namedBuds[i];
             if (i !== field.name) debugger;
             let result = results[i];
             if (result === null || typeof result !== 'object') {
-                this.binValues.setBudValue(field, this.valRow, result);
+                this.budValues.setBudValue(field, this.values, result);
             }
             else {
                 let v = result.id;
-                this.binValues.setBudValue(field, this.valRow, v);
-                switch (i) {
-                    case 'i': this.iValue = result.id; this.iBase = result.base; break;
-                    case 'x': this.xValue = result.id; this.xBase = result.base; break;
-                }
+                this.budValues.setBudValue(field, this.values, v);
+                this.setBudObjectValue(field, result);
             }
         }
     }
 
-    private setValues(binRow: BinRow) {
-        Object.assign(this.valRow, binRow);
-        let obj = new Proxy(binRow, this.entityBin.proxyHandler());
-        this.calc.addValues(undefined, obj);
-    }
+    protected setBudObjectValue(bud: BizBud, valObj: object) { }
 
     // init formula only valid in init
     stopInitFormula() {
@@ -114,7 +105,7 @@ export abstract class FieldsEditing /*extends BinBudsFields */ {
         let c = (name: string, value: CalcResult) => {
             this.setFieldOrBudValue(name, value);
             if (callback !== undefined) {
-                let field = this.fieldColl[name];
+                let field = this.namedBuds[name];
                 // 针对 bud date，需要做days到DATE的转换
                 // bud dec, 小数转换
                 let uiValue = field.getUIValue(value);
@@ -129,17 +120,17 @@ export abstract class FieldsEditing /*extends BinBudsFields */ {
 
     private setFieldOrBudValue(name: string, value: CalcResult) {
         // console.log('setFieldOrBudValue name=', name, 'value=', value);
-        let field = this.fieldColl[name];
+        let field = this.namedBuds[name];
         if (field === undefined) {
             return;
         }
-        this.binValues.setBudValue(field, this.valRow, value);
+        this.budValues.setBudValue(field, this.values, value);
     }
 
     get submitable(): boolean {
         let ret = true;
         for (let field of this.requiredFields) {
-            let v = this.binValues.getBudValue(field, this.valRow); // this.calc.results[field.name];
+            let v = this.budValues.getBudValue(field, this.values); // this.calc.results[field.name];
             if (v === undefined) {
                 return false;
             }
@@ -193,26 +184,28 @@ export abstract class FieldsEditing /*extends BinBudsFields */ {
         }
         return false;
     }
-    buildFormRows(filterOnForm: boolean = false): FormRow[] {
+
+    // bud.onForm===false
+    buildFormRows(excludeOnFormFalse: boolean = false): FormRow[] {
         let ret: FormRow[] = [];
         const { results: calcResults } = this.calc;
         for (let field of this.allFields) {
             //const { name, bud } = field;
             const bud = field;
             const { name, onForm, required } = bud;
-            if (filterOnForm === true) {
+            if (excludeOnFormFalse === true) {
                 if (onForm === false) continue;
             }
             const { valueSetType } = bud;
             //if ((field === this.fieldI || field === this.fieldX) 
-            if ((this.binValues.has(field) === true || this.binValues.has(field) === true)
+            if ((this.budValues.has(field) === true || this.budValues.has(field) === true)
                 && valueSetType === ValueSetType.equ) {
                 continue;
             }
             const { caption, budDataType, ui } = bud;
             if (ui?.show === true) continue;
             let options: RegisterOptions = {
-                value: this.binValues.getBudValue(field, this.valRow), // this.getDefaultValue(field),
+                value: this.budValues.getBudValue(field, this.values), // this.getDefaultValue(field),
                 disabled: valueSetType === ValueSetType.equ,
                 required,
             };
@@ -226,7 +219,7 @@ export abstract class FieldsEditing /*extends BinBudsFields */ {
             const { type, min, max } = budDataType;
             switch (type) {
                 case EnumBudType.atom:
-                    formRow.default = this.binValues.getBudValue(field, this.valRow);
+                    formRow.default = this.budValues.getBudValue(field, this.values);
                     formRow.atom = null;
                     formRow.readOnly = true;
                     formRow.entityAtom = (budDataType as BudAtom).bizAtom;
@@ -278,6 +271,86 @@ export abstract class FieldsEditing /*extends BinBudsFields */ {
         }
         return ret;
     }
+
+    buildViewBuds(bizAtomColl: AtomColl) {
+        return this.budValues.fields.map(field => {
+            // const { bud } = field;
+            const bud = field;
+            const { id } = bud;
+            let value = this.budValues.getBudValue(field, this.values);
+            if (value === null || value === undefined) return null;
+            return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
+        })
+    }
+
+    buildEditBuds() {
+        let { fields } = this.budValues;
+        let budEditings = fields.map(v => new BudEditing(v));
+        return budEditings.map(field => {
+            const { bizBud: bud } = field;
+            const { caption, name } = bud;
+            let value = this.budValues.getBudValue(bud, this.values);
+            function onBudChanged() {
+                alert('changed');
+            }
+            return <LabelBox key={bud.id} label={caption ?? name} className="mb-2">
+                <EditBudInline budEditing={field} id={0} value={value} onChanged={onBudChanged} readOnly={false} />
+            </LabelBox>;
+            // return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
+        })
+    }
+}
+
+export class BudsEditing extends BudsEditingBase<any, BudValues> {
+    readonly values: any = {} as any;
+
+    constructor(buds: BizBud[], initValues?: any) {
+        super(buds, initValues);
+        this.budValues = new BudValues(buds);
+    }
+
+    protected createCalc(): Calc {
+        return new Calc(this.formulas, this.values as any);
+    }
+}
+
+export abstract class BinBudsEditing extends BudsEditingBase<BinRow, BinRowValues> {
+    readonly values: ValRow = { buds: {} } as any;
+    readonly entityBin: EntityBin;
+    readonly sheetStore: SheetStore;
+    // protected binRowValues: BinRowValues;
+    iValue: number;
+    iBase: number;
+    xValue: number;
+    xBase: number;
+    onDel: () => Promise<void>;
+
+    constructor(sheetStore: SheetStore, bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
+        super(buds, initBinRow);
+        this.sheetStore = sheetStore;
+        this.entityBin = bin;
+        this.budValues = new BinRowValues(bin, buds);
+        if (initBinRow !== undefined) {
+            this.setValues(initBinRow);
+        }
+    }
+
+    protected createCalc(): Calc {
+        return new Calc(this.formulas, this.values as any);
+    }
+
+    private setValues(binRow: BinRow) {
+        Object.assign(this.values, binRow);
+        let obj = new Proxy(binRow, this.entityBin.proxyHandler());
+        this.calc.addValues(undefined, obj);
+    }
+
+    protected override setBudObjectValue(bud: BizBud, result: { id: number; base: number; }) {
+        switch (bud.name) {
+            case 'i': this.iValue = result.id; this.iBase = result.base; break;
+            case 'x': this.xValue = result.id; this.xBase = result.base; break;
+        }
+    }
 }
 
 function budRadios(budDataType: BudRadio): { label: string; value: string | number }[] {
@@ -290,11 +363,9 @@ function budRadios(budDataType: BudRadio): { label: string; value: string | numb
     return ret;
 }
 
-export class DivEditing extends FieldsEditing {
+export class DivEditing extends BinBudsEditing {
     readonly divStore: DivStore;
     readonly valDiv: ValDivBase;
-    // readonly val0Div: ValDivBase;          // 0 层的valDiv
-    //constructor(divStore: DivStore, namedResults: NamedResults, binDiv: BinDiv, valDiv: ValDivBase, initBinRow?: BinRow) {
     constructor(divStore: DivStore, valDiv: ValDivBase, namedResults?: NamedResults) {
         const { binDiv, valRow } = valDiv;
         super(divStore.sheetStore, divStore.entityBin, binDiv.buds, valRow);
@@ -305,17 +376,17 @@ export class DivEditing extends FieldsEditing {
     }
 
     private setValueDefault(valDiv: ValDivBase) {
-        const { value } = this.entityBin;
-        if (value === undefined) return;
-        if (this.binValues.getBudValue(value, this.valRow) !== undefined) return;
+        const { budValue } = this.budValues;
+        if (budValue === undefined) return;
+        if (this.budValues.getBudValue(budValue, this.values) !== undefined) return;
         let pendLeft = this.divStore.getPendLeft(valDiv);
         if (pendLeft === undefined) return;
-        this.binValues.setBudValue(value, this.valRow, pendLeft);
+        this.budValues.setBudValue(budValue, this.values, pendLeft);
     }
 }
 
 // 跟当前行相关的编辑，计算，状态
-export class BinEditing extends FieldsEditing {
+export class BinEditing extends BinBudsEditing {
     constructor(sheetStore: SheetStore, bin: EntityBin, initValRow?: ValRow) {
         const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, buds: budArr } = bin;
         let buds: BizBud[] = [];

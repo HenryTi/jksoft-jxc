@@ -2,7 +2,7 @@ import { EntitySpec, PickSpec } from "app/Biz";
 import { ViewAtom } from "app/hooks/BizAtom";
 import { Atom } from "uqs/UqDefault";
 import { useCallback } from "react";
-import { NamedResults, PickResult } from "../store";
+import { BudsEditing, NamedResults, PickResult } from "../store";
 import { DivStore } from "../store";
 import { useUqApp } from "app/UqApp";
 import { useModal } from "tonwa-app";
@@ -13,7 +13,6 @@ import { theme } from "tonwa-com";
 import { ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
-import { budFormRow } from "app/hooks/Bud";
 
 export interface PropsPickSpec {
     base: number;
@@ -46,6 +45,7 @@ export function usePickFromSpec() {
         //        async function pickSpec(propsPickSpec: PropsPickSpec): Promise<{ retSpec: { id: number; }; retViewTop?: any; }> {
         // const { base, entitySpec, viewTop } = propsPickSpec;
         const { ix } = entitySpec;
+        let budsEditing: BudsEditing;
         if (ix === true) {
             let { ret } = await uq.GetSpecsFromBase.query({ base });
             let retSpec: any;
@@ -58,6 +58,10 @@ export function usePickFromSpec() {
             return retSpec;
         }
         else {
+            const { keys, buds: props } = entitySpec;
+            let buds = [...keys];
+            if (props !== undefined) buds.push(...props);
+            budsEditing = new BudsEditing(buds)
             let ret = await modal.open(<PagePickSpec />);
             return ret;
         }
@@ -69,8 +73,9 @@ export function usePickFromSpec() {
             const submitClassName: string = undefined;
 
             let formRows: FormRow[] = [
-                ...keys.map(v => budFormRow(v, true)),
-                ...(props ?? []).map(v => budFormRow(v)),
+                // ...keys.map(v => budFormRow(v, true)),
+                // ...(props ?? []).map(v => budFormRow(v)),
+                ...budsEditing.buildFormRows(),
                 { type: 'submit', label: submitCaption, options: {}, className: submitClassName }
             ];
             const onSubmitForm = async (data: any) => {
