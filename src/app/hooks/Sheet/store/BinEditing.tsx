@@ -16,7 +16,7 @@ import { getDays } from "app/tool";
 import { ValRow } from "./tool";
 import { BudEditing, EditBudInline, ViewBud, ViewBudUIType } from "app/hooks";
 import { AtomColl, LabelBox } from "app/hooks/tool";
-import { EditBudAtom } from "app/hooks/Bud/Edit/EditBudAtom";
+import { BudCheckValue } from "tonwa-app";
 
 export abstract class BudsEditingBase<R, B extends BudValuesBase<R>> /*extends BinBudsFields */ {
     private readonly requiredFields: BizBud[] = [];
@@ -101,7 +101,7 @@ export abstract class BudsEditingBase<R, B extends BudValuesBase<R>> /*extends B
         }
     }
 
-    setValue(name: string, value: number | string, callback: (name: string, value: CalcResult) => void) {
+    setNamedValue(name: string, value: number | string, callback: (name: string, value: CalcResult) => void) {
         let c = (name: string, value: CalcResult) => {
             this.setFieldOrBudValue(name, value);
             if (callback !== undefined) {
@@ -163,7 +163,7 @@ export abstract class BudsEditingBase<R, B extends BudValuesBase<R>> /*extends B
                     break;
             }
         }
-        this.setValue(name, valueInput, (name, value) => {
+        this.setNamedValue(name, valueInput, (name, value) => {
             callback(name, value);
         });
     }
@@ -290,19 +290,20 @@ export abstract class BudsEditingBase<R, B extends BudValuesBase<R>> /*extends B
             const { bizBud: bud } = field;
             const { caption, name } = bud;
             let value = this.budValues.getBudValue(bud, this.values);
-            function onBudChanged() {
-                alert('changed');
+            const onBudChanged = (bizBud: BizBud, newValue: string | number | BudCheckValue) => {
+                this.setBudValue(bizBud, newValue);
             }
             return <LabelBox key={bud.id} label={caption ?? name} className="mb-2">
                 <EditBudInline budEditing={field} id={0} value={value} onChanged={onBudChanged} readOnly={false} />
             </LabelBox>;
-            // return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
         })
     }
+
+    protected abstract setBudValue(bud: BizBud, value: any): void;
 }
 
-export class BudsEditing extends BudsEditingBase<any, BudValues> {
-    readonly values: any = {} as any;
+export class BudsEditing extends BudsEditingBase<{ [id: number]: any }, BudValues> {
+    readonly values: { [id: number]: any } = {};
 
     constructor(buds: BizBud[], initValues?: any) {
         super(buds, initValues);
@@ -311,6 +312,10 @@ export class BudsEditing extends BudsEditingBase<any, BudValues> {
 
     protected createCalc(): Calc {
         return new Calc(this.formulas, this.values as any);
+    }
+
+    protected setBudValue(bud: BizBud, value: any) {
+        this.values[bud.id] = value;
     }
 }
 
@@ -350,6 +355,10 @@ export abstract class BinBudsEditing extends BudsEditingBase<BinRow, BinRowValue
             case 'i': this.iValue = result.id; this.iBase = result.base; break;
             case 'x': this.xValue = result.id; this.xBase = result.base; break;
         }
+    }
+
+    protected setBudValue(bud: BizBud, value: any) {
+        this.budValues.setBudValue(bud, this.values, value);
     }
 }
 

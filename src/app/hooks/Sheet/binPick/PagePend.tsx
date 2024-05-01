@@ -1,18 +1,20 @@
 import { Page, useModal } from "tonwa-app";
-import { FA, List, Sep, setAtomValue, theme } from "tonwa-com";
-import { BudsEditing, DivStore, PendRow } from "../store";
+import { ButtonAsync, FA, List, Sep, setAtomValue, theme } from "tonwa-com";
+import { PendRow } from "../store";
 import { ViewPendRowEdit } from "../binEdit/ViewPendRowEdit";
 import { ViewSteps } from "../dash/ViewSteps";
-import { LabelBox, RowCols } from "app/hooks/tool";
-import { EditBudInline, LabelRowEdit } from "app/hooks";
-import { BizBud, PickPend, ValueSetType } from "app/Biz";
+import { RowCols } from "app/hooks/tool";
+import { PickPendStore } from "../store/PickPendStore";
+import { useAtomValue } from "jotai";
 
-export function PagePend(props: { divStore: DivStore; caption: string; pickPend: PickPend; }) {
-    let { divStore, caption, pickPend } = props;
-    let { entityBin: { pend: entityPend }, pendRows, sheetStore } = divStore;
+export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
+    let { divStore, pickPend } = pendStore;
+    let { caption } = pickPend;
+    let { entityBin: { pend: entityPend }, atomPendRows, sheetStore } = divStore;
     const { sheetConsole: { steps }, atomLoaded, bizAtomColl } = sheetStore;
     const modal = useModal();
-    let { name: pendName, params } = entityPend;
+    let pendRows = useAtomValue(atomPendRows);
+    let { name: pendName } = entityPend;
 
     if (caption === undefined) {
         caption = entityPend.caption ?? pendName;
@@ -59,39 +61,19 @@ export function PagePend(props: { divStore: DivStore; caption: string; pickPend:
         footer = <div className={cnFooter}><BtnClose /></div>;
     }
 
-    function ViewParams() {
-        // let { length } = params;
-        let paramsInput: BizBud[] = [];
-        let { pickParams } = pickPend;
-        for (let bud of params) {
-            if (pickParams.findIndex(v => v.name === bud.name) >= 0) continue;
-            // if (bud.valueSetType === ValueSetType.equ) continue;
-            paramsInput.push(bud);
-        }
-        let budsEditing = new BudsEditing(paramsInput);
-        /*
-        let { budEditings } = divStore;
-        for (let i = 0; i < length; i++) {
-            let param = params[i];
-            let budEditing = budEditings[i];
-            const { required } = budEditing;
-            const { caption, name, id } = param;
-            const readOnly = false;
-            function onBudChanged() {
+    async function onSearch() {
+        await pendStore.searchPend();
+    }
 
-            }
-            viewParams.push(<LabelBox key={id} label={caption ?? name} required={required} className="mb-2">
-                <EditBudInline budEditing={budEditing} id={id} value={undefined} onChanged={onBudChanged} readOnly={readOnly} />
-            </LabelBox>);
-        }
-        */
+    function ViewParams() {
+        let { paramsEditing } = pendStore;
         return <div className={'border-bottom border-primary py-2 tonwa-bg-gray-2 ' + theme.bootstrapContainer}>
             <RowCols>
-                {budsEditing.buildEditBuds()/*viewParams*/}
+                {paramsEditing.buildEditBuds()}
                 <div className="d-flex align-items-end mb-2">
-                    <button className="btn btn-outline-primary" onClick={() => alert('正在实现中...')}>
+                    <ButtonAsync className="btn btn-outline-primary" onClick={onSearch}>
                         <FA name="search" /> 查询
-                    </button>
+                    </ButtonAsync>
                 </div>
             </RowCols>
         </div>

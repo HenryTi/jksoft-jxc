@@ -1,14 +1,12 @@
 import { PendRow, SheetStore } from "./SheetStore";
-import { BinDiv, EntityBin } from "app/Biz";
+import { BinDiv, EntityBin, PickPend } from "app/Biz";
 import { WritableAtom, atom } from "jotai";
-import { budValuesFromProps } from "../../tool";
-import { ReturnGetPendRetSheet } from "uqs/UqDefault";
-import { ValRow, arrFromJsonMid } from "./tool";
+import { ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { NamedResults } from "./NamedResults";
 import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsRoot } from './ValDiv';
 import { BudEditing } from "app/hooks";
-import { DivEditing } from "./BinEditing";
+import { PickPendStore } from "./PickPendStore";
+import { NamedResults } from "./NamedResults";
 
 enum PendLoadState {
     none,
@@ -22,16 +20,18 @@ export enum SubmitState {
     enable,
 }
 export class DivStore {
+    private readonly cachePendRows: { [id: number]: PendRow } = {};
     private valDivColl: { [id: number]: ValDivBase };
     private pendLoadState: PendLoadState;
     readonly sheetStore: SheetStore;
     readonly entityBin: EntityBin;
     readonly binDivRoot: BinDiv;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> };
-    pendRows: PendRow[];
+    readonly atomPendRows = atom(undefined as PendRow[]);
     readonly valDivsRoot: ValDivsRoot;
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
     readonly budEditings: BudEditing[];
+    readonly pickPendStores: { [id: number]: PickPendStore; } = {};
 
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
         this.sheetStore = sheetStore;
@@ -63,7 +63,8 @@ export class DivStore {
     async loadPend(params: any): Promise<void> {
         if (this.pendLoadState !== PendLoadState.none) return;
         this.pendLoadState = PendLoadState.loading;
-        this.pendRows = await this.sheetStore.loadPend(params, undefined);
+
+        let pendRows = await this.sheetStore.loadPend(params, undefined);
         this.pendLoadState = PendLoadState.loaded;
         const { atomValDivs } = this.valDivsRoot;
         if (atomValDivs !== undefined) {
@@ -73,6 +74,12 @@ export class DivStore {
                 this.setPend(valRow.pend, valDiv, false);
             }
         }
+        setAtomValue(this.atomPendRows, pendRows);
+    }
+
+    async searchPend(params: any): Promise<void> {
+        this.pendLoadState = PendLoadState.none;
+        await this.loadPend(params);
     }
 
     setReload() {
@@ -80,13 +87,19 @@ export class DivStore {
     }
 
     async loadPendId(pendId: number): Promise<void> {
-        const pendRows = await this.sheetStore.loadPend({}, pendId);
-        if (this.pendRows === undefined) {
-            this.pendRows = pendRows;
+        const retPendRows = await this.sheetStore.loadPend({}, pendId);
+        let pendRows = getAtomValue(this.atomPendRows);
+        if (pendRows === undefined) {
+            pendRows = retPendRows;
         }
         else {
-            this.pendRows.push(...pendRows);
+            pendRows.push(...retPendRows);
         }
+        setAtomValue(this.atomPendRows, pendRows);
+    }
+
+    cachePendRow(pendRow: PendRow) {
+        this.cachePendRows[pendRow.pend] = pendRow;
     }
 
     load(valRows: ValRow[]) {
@@ -107,13 +120,14 @@ export class DivStore {
             return false;
         }
         let vds = getAtomValue(this.valDivsRoot.atomValDivs);
+        let pendRows = getAtomValue(this.atomPendRows);
         for (let vd of vds) {
             if (has(vd, valDiv) === true) {
                 let { atomValRow, atomSum: atomValue } = vd;
                 let value = getAtomValue(atomValue);
                 let valRow = getAtomValue(atomValRow);
                 let { pend } = valRow;
-                let pendRow = this.pendRows?.find(v => v.pend === pend);
+                let pendRow = pendRows?.find(v => v.pend === pend);
                 if (pendRow === undefined) {
                     // debugger;
                     return undefined;
@@ -159,26 +173,7 @@ export class DivStore {
         await this.sheetStore.delDetail(id);
         let atomValDivs = this.getOwnerAtomValDivs(valRow);
         atomValDivs.delValRow(id);
-        /*
-        let divs = getAtomValue(atomValDivs);
-        let p = divs.findIndex(v => v.id === id);
-        if (p >= 0) {
-            divs.splice(p, 1);
-            setAtomValue(atomValDivs, [...divs]);
-        }
-        */
     }
-    /*
-    setValRow(parentValDiv: ValDiv, valRow: ValRow) {
-        this.setValRowInternal(parentValDiv, valRow, true);
-    }
-    private setValRowInternal(parentValDiv: ValDiv, valRow: ValRow, trigger: boolean) {
-        if (parentValDiv === undefined) debugger;
-        const { pend } = valRow;
-        let val = this.setVal(parentValDiv, valRow, trigger);
-        // this.setPend(pend, val);
-    }
-    */
 
     private setPend(pend: number, val: ValDivRoot, trigger: boolean) {
         if (pend === undefined) return;
@@ -231,42 +226,6 @@ export class DivStore {
             let bizAtom = this.sheetStore.bizAtomColl[budXBase.id];
             if (bizAtom !== undefined) valDiv.xBase = bizAtom.id;
         }
-
-        /*
-        let parentValDivs: ValDivs;
-        if (origin === undefined || origin < 0) {
-            parentValDivs = this.rootValDiv;
-        }
-        else {
-            let parentValDiv = this.valDivColl[origin];
-            if (parentValDiv === undefined) {
-                parentValDivs = this.rootValDiv;
-            }
-            else {
-                // 获取层级值
-                let level = 0;
-                for (let p = parentValDiv; p !== undefined; level++) {
-                    const { origin: pOrigin } = getAtomValue(p.atomValRow);
-                    p = this.valDivColl[pOrigin];
-                }
-                for (let i = 0; i < level; i++) {
-                    binDiv = binDiv.subBinDiv;
-                }
-                if (binDiv === undefined) debugger;
-                parentValDivs = parentValDiv;
-                parentValDiv.setIXBase(this.sheetStore, valRow);
-            }
-        }
-        let valDivSub = new ValDiv(parentValDiv, valRow); // this.setSub(parentValDiv, valRow);
-        this.valDivColl[id] = valDivSub;
-        const { atomValDivs } = parentValDiv ?? this.rootValDiv; //valDivs;
-        let divs = getAtomValue(atomValDivs);
-        divs.push(valDivSub);
-        if (trigger === true) {
-            setAtomValue(atomValDivs, [...divs]);
-        }
-        return valDivSub;
-        */
     }
 
     private setVal(parentValDiv: ValDivBase, valRow: ValRow, trigger: boolean): ValDivBase {
@@ -276,77 +235,23 @@ export class DivStore {
             valDiv.setValRow(valRow);
             return valDiv;
         }
-        // let binDiv = this.binDiv;
-        /*
-        let { subBinDiv: subBinDiv } = binDiv;
-        if (subBinDiv === undefined) {
-            valDiv = new ValDiv(parentValDiv, valRow);
-            this.valDivColl[id] = valDiv;
-            this.rootValDiv.addValDiv(valDiv, trigger);
-            const { pend } = valRow;
-            if (pend !== undefined) {
-                this.pendColl[pend] = atom(valDiv);
-            }
-            return valDiv;
-        }
-        let parentValDivs: ValDivs;
-        if (origin === undefined || origin < 0) {
-            parentValDivs = this.rootValDiv;
-        }
-        else {
-            let parentValDiv = this.valDivColl[origin];
-            if (parentValDiv === undefined) {
-                parentValDivs = this.rootValDiv;
-            }
-            else {
-                // 获取层级值
-                let level = 0;
-                for (let p = parentValDiv; p !== undefined; level++) {
-                    const { origin: pOrigin } = getAtomValue(p.atomValRow);
-                    p = this.valDivColl[pOrigin];
-                }
-                for (let i = 0; i < level; i++) {
-                    binDiv = binDiv.subBinDiv;
-                }
-                if (binDiv === undefined) debugger;
-                parentValDivs = parentValDiv;
-                parentValDiv.setIXBase(this.sheetStore, valRow);
-            }
-        }
-        */
-        /*
-        for (let p = parentValDiv; p !== undefined; p = p.parent) {
-            p.setIXBase(this.sheetStore, valRow);
-        }
-        */
         let valDivSub = new ValDiv(parentValDiv, valRow); // this.setSub(parentValDiv, valRow);
         this.valDivColl[id] = valDivSub;
         parentValDiv.addValDiv(valDivSub, trigger);
-        /*
-        const { atomValDivs } = parentValDiv ?? this.rootValDiv; //valDivs;
-        let divs = getAtomValue(atomValDivs);
-        divs.push(valDivSub);
-        if (trigger === true) {
-            setAtomValue(atomValDivs, [...divs]);
-        }
-        */
         return valDivSub;
     }
-    /*
-    private setSub(parentValDiv: ValDiv, valRow: ValRow) {
-        let { id } = valRow;
-        let subVal = 
-        this.valDivColl[id] = subVal;
-        return subVal;
-    }
-    */
+
     setValColl(valDiv: ValDivBase) {
         this.valDivColl[valDiv.id] = valDiv;
     }
 
     getPendRow(pend: number) {
-        let ret = this.pendRows?.find(v => v.pend === pend);
+        return this.cachePendRows[pend];
+        /*
+        let pendRows = getAtomValue(this.atomPendRows);
+        let ret = pendRows?.find(v => v.pend === pend);
         return ret;
+        */
     }
 
     async loadPendRow(pend: number) {
@@ -419,5 +324,14 @@ export class DivStore {
             if (ret !== undefined) return ret;
         }
         return undefined;
+    }
+
+    getPickPendStore(pickPend: PickPend, namedResults: NamedResults) {
+        let { id } = pickPend;
+        let pps = this.pickPendStores[id];
+        if (pps === undefined) {
+            this.pickPendStores[id] = pps = new PickPendStore(this, pickPend, namedResults);
+        }
+        return pps;
     }
 }

@@ -5,6 +5,7 @@ import { NamedResults, PendProxyHander, PickResult, ValRow } from "../store";
 import { usePageParams } from "./PageParams";
 import { DivStore } from "../store";
 import { PagePend } from "./PagePend";
+import { PickPendStore } from "../store/PickPendStore";
 
 export function usePickFromPend() {
     const modal = useModal();
@@ -13,6 +14,7 @@ export function usePickFromPend() {
         async function (divStore: DivStore, namedResults: NamedResults, binPick: PickPend): Promise<PickResult[]> {
             let { caption, from: entityPend, pickParams, bin } = binPick;
             const pendProxyHander = new PendProxyHander(entityPend);
+            /*
             const { params: queryParams } = entityPend;
 
             let retParam: any;
@@ -29,12 +31,14 @@ export function usePickFromPend() {
             else {
                 retParam = {};
             }
+            */
             const { sheetStore } = divStore;
             const { sheetConsole } = sheetStore;
-            await divStore.loadPend(retParam);
             const { steps } = sheetConsole;
             if (steps !== undefined) steps.step = 1;
-            let inputed = await modal.open<ValRow[]>(<PagePend divStore={divStore} caption={caption} pickPend={binPick} />);
+            let pendStore = divStore.getPickPendStore(binPick, namedResults);
+            await pendStore.searchPend();
+            let inputed = await modal.open<ValRow[]>(<PagePend pendStore={pendStore} />);
             if (inputed === undefined) return;
             sheetConsole.steps = undefined;
             // 如果有inputs，直接已经输入进了。就不用返回了。

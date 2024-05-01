@@ -124,6 +124,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
             return <option key={index} value={item}>{caption}</option>;
         });
         return <select onChange={onSelectChange} defaultValue={defaultValue} className="form-select" >
+            <option value={0} className="text-secondary small">--不选--</option>
             {viewOptions}
         </select>;
     }
@@ -131,7 +132,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     async function onCheckChanged(item: number | string) {
         const { id: budPhrase } = bizBud;
         const optionsItemPhrase = item as number;
-        if (id !== undefined) {
+        if (id !== undefined && id !== 0) {
             await uq.SaveBudRadio.submit({
                 budPhrase,
                 id,

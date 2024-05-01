@@ -26,7 +26,7 @@ export function useDetailNew(sheetStore: SheetStore) {
                 binEditing.setNamedParams(namedResults);
                 let { values: valRow } = binEditing;
                 if (valRow.value === undefined) {
-                    binEditing.setValue('value', 1, undefined);
+                    binEditing.setNamedValue('value', 1, undefined);
                 }
                 const { origin, pend, pendValue } = rowProps;
                 valRow.origin = origin;

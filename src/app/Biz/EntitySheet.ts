@@ -829,8 +829,8 @@ export class EntityPend extends Entity {
     }
 
     private buildBudFromProp(prop: any): BizBud {
-        const { id, name } = prop;
-        let bud = new BizBud(this.biz, id, name, EnumBudType.atom, this);
+        const { id, name, dataType } = prop;
+        let bud = new BizBud(this.biz, id, name, dataType, this);
         this.budColl[id] = bud;
         bud.fromSchema(prop);
         bud.budDataType.fromSchema(prop);

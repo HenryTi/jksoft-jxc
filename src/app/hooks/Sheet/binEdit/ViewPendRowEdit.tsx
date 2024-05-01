@@ -36,6 +36,7 @@ export function ViewPendRowEdit(props: PendProps) {
             let valRow: ValRow = { id: -pendId, buds: {}, owned: {}, pend: pendId };
             let retValDiv = new ValDivRoot(divStore.binDivRoot, valRow);
             divStore.valDivsRoot.addValDiv(retValDiv, true);
+            divStore.cachePendRow(pendRow);
             setAtomValue(atomValDiv, retValDiv);
         }
         return <ViewItem icon="square-o" color="text-body-tertiary" onSelectChanged={onAddNew} />
