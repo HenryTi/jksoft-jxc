@@ -82,7 +82,7 @@ const achieve: CenterItem = {
 };
 const compile: CenterItem = {
     path: "compile",
-    caption: '设计',
+    caption: '业务脚本',
 };
 export const centers: {
     editing: CenterItem,

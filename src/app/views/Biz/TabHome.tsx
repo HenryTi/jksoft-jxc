@@ -14,7 +14,7 @@ export function TabHome() {
     let vSiteRight: any, vDesign: any;
     if (errorLogs === undefined) {
         vDesign = <Permit>
-            <Link to="/biz" className="ms-4">设计</Link>
+            <Link to="/biz" className="ms-4">业务脚本</Link>
         </Permit>;
     }
     if (mySites.length > 1 || userSite.isAdmin === true) {
