@@ -19,6 +19,7 @@ export class EntityPermit extends Entity {
     }
 
     scan() {
+        super.scan();
         const { entities } = this.biz;
         this.permits = this.permitNames.map(v => entities[v] as EntityPermit);
         this.permitNames = undefined;

@@ -23,6 +23,7 @@ export class EntityAssign extends Entity {
     }
 
     scan(): void {
+        super.scan();
         this.titles = (this.titles as unknown as [number, number][]).map(
             ([t0, t1]) => {
                 let bizEntity = this.biz.entityFromId(t0);

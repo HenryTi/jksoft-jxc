@@ -9,7 +9,6 @@ import { EntityTie } from './EntityTie';
 import { EntityRole } from './EntityPermit';
 import { EntityOptions } from './EntityOptions';
 import { from62, getAtomValue, setAtomValue } from 'tonwa-com';
-import { atom } from 'jotai';
 import { EntityReport } from './EntityReport';
 import { EntityQuery } from './EntityQuery';
 import { EntityAssign } from './EntityAssign';
@@ -79,13 +78,13 @@ export class Biz {
     readonly ioSheets: EntitySheet[] = [];
 
     readonly groups: BizGroup[] = [];
-    readonly _refresh = atom(false);
     readonly errorLogs: string[];
+    entityWithUser: Entity[];
+    private readonly ids: { [id: number]: Entity | BizBud } = {};
 
     bizConsole: EntityConsole;
     hasEntity: boolean;
     entities: { [name: string]: Entity } = {};
-    private ids: { [id: number]: Entity | BizBud } = {};
     atomBuilder: AtomsBuilder;
 
     constructor(uqApp: UqApp, bizSchema: any, errorLogs: any) {
@@ -118,6 +117,7 @@ export class Biz {
     buildEntities(bizSchema: any) {
         if (bizSchema === undefined) return;
         this.atomBuilder = new AtomsBuilder(this);
+        this.entityWithUser = [];
         const builders: { [type in EnumEntity]: (id: number, name: string, type: string) => Entity } = {
             [EnumEntity.sheet]: this.buildSheet,
             [EnumEntity.bin]: this.buildBin,
@@ -150,7 +150,6 @@ export class Biz {
         let { biz } = bizSchema;
         let arr: { [entity in EnumEntity]?: [Entity, any][]; } = {};
         this.entities = {};
-        this.ids = {};
         for (let schema of biz) {
             if (schema === undefined) debugger;
             let { id, name, phrase, type, caption } = schema;
@@ -320,11 +319,6 @@ export class Biz {
         }
         this.hasEntity = allHasEntity;
         this.atomBuilder = undefined;
-        this.refresh();
-    }
-
-    refresh() {
-        setAtomValue(this._refresh, !getAtomValue(this._refresh));
     }
 
     addBudIds(bizBud: BizBud) {
@@ -346,7 +340,6 @@ export class Biz {
                 }
             }
         }
-        this.refresh();
     }
 
     private buildSheet = (id: number, name: string, type: string): Entity => {

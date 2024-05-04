@@ -124,6 +124,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
         setCode('');
         let data = await query(newEntity.id);
         setCode(data.code ?? '');
+        // modal.open(<PageEntity entity={newEntity} />)
     }
     function onCodeChange(code: string) {
         setCode(code);
@@ -149,17 +150,6 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
             const onSubmitForm = async (data: any) => {
                 alert('改名有问题，以后再实现');
                 return;
-                let { name: newName } = data;
-                let { hasError, logs } = await uqApi.renameEntity(id, newName);
-                if (hasError === true) {
-                    setError('name', { message: `重名，或者其它实体引用了${name}` }, { shouldFocus: true })
-                }
-                else {
-                    modal.close(true);
-                    entity.setName(newName);
-                    setPageCaption(caption ?? newName);
-                    biz.refresh();
-                }
             }
             let formRows: FormRow[] = [
                 { name: 'name', label: '新名字', type: 'text', options: { maxLength: 150 } },

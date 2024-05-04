@@ -13,7 +13,7 @@ function PageSiteAdmin() {
     const { uq, uqSites } = useUqApp();
     const { openModal } = useModal();
     const { site } = useParams();
-    const { user, achieve, compile } = centers;
+    const { users, achieve, compile } = centers;
     function Cmd({ onClick, content, icon, iconColor }: { onClick?: () => void; content: any; icon?: string; iconColor?: string }) {
         return <LMR className="px-3 py-2 align-items-center" onClick={onClick}>
             <BI name={icon ?? 'cog'} className={' fs-x-large me-3 my-1 ' + (iconColor ?? ' text-primary ')} />
@@ -51,7 +51,7 @@ function PageSiteAdmin() {
     }
     const cmds = [
         { label: achieve.caption, path: achieve.path },
-        { label: user.caption, path: user.path },
+        { label: users.caption, path: users.path },
         { label: compile.caption, path: compile.path },
     ];
     //{ label: <CaptionAtom atom={EnumAtom.UomI} />, path: pathAtomList(gUomI.name) },

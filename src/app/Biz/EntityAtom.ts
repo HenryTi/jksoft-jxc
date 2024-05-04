@@ -166,6 +166,7 @@ export class EntitySpec extends EntityAtomIDWithBase {
     }
 
     protected override scanBuds(): void {
+        super.scanBuds();
         for (let bud of this.keys) {
             bud.scan();
         }

@@ -883,6 +883,7 @@ export class EntitySheet extends Entity {
     }
 
     scan(): void {
+        super.scan();
         if (this.search !== undefined) {
             let search: { bin: EntityBin; buds: BizBud[]; }[] = [];
             for (let i in this.search) {

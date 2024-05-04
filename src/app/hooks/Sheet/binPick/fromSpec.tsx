@@ -2,7 +2,7 @@ import { EntitySpec, PickSpec } from "app/Biz";
 import { ViewAtom } from "app/hooks/BizAtom";
 import { Atom } from "uqs/UqDefault";
 import { useCallback } from "react";
-import { BudsEditing, NamedResults, PickResult } from "../store";
+import { NamedResults, PickResult } from "../store";
 import { DivStore } from "../store";
 import { useUqApp } from "app/UqApp";
 import { useModal } from "tonwa-app";
@@ -13,6 +13,7 @@ import { theme } from "tonwa-com";
 import { ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
+import { BudsEditing } from "app/hooks/BudsEditing";
 
 export interface PropsPickSpec {
     base: number;

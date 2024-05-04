@@ -67,14 +67,20 @@ const me: CenterItem = {
     iconColor: 'text-warning',
 };
 const setting: CenterItem = {
-    caption: '操作设置',
+    caption: '权限设置',
     path: 'act-setting',
     icon: 'cog',
     iconColor: 'text-info',
 };
-const user: CenterItem = {
+const users: CenterItem = {
     caption: '用户管理',
-    path: 'admin-user',
+    path: 'users',
+    icon: 'users',
+    iconColor: 'text-info',
+};
+const userSum: CenterItem = {
+    caption: '用户业绩',
+    path: 'user-sum',
 };
 const achieve: CenterItem = {
     caption: '业绩设置',
@@ -93,10 +99,11 @@ export const centers: {
     tie: CenterItem,
     io: CenterItem,
     me: CenterItem,
+    users: CenterItem,
     setting: CenterItem,
-    user: CenterItem,
+    userSum: CenterItem,
     achieve: CenterItem,
     compile: CenterItem,
 } = {
-    editing, atom, sheet, report, assign, tie, io, me, setting, user, achieve, compile
+    editing, atom, sheet, report, assign, tie, io, me, setting, users, userSum, achieve, compile
 }

@@ -4,10 +4,10 @@ import { centers } from "../center";
 
 export const pathAdmin = 'admin';
 function PageAdmin() {
-    const { user, achieve } = centers;
+    const { userSum, achieve } = centers;
     const cmds = [
         { label: achieve.caption, path: achieve.path },
-        { label: user.caption, path: user.path },
+        { label: userSum.caption, path: userSum.path },
     ];
     return <Page header="管理员">
         {cmds.map((v, index) => {

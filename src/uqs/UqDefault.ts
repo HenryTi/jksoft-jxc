@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Apr 21 2024 11:28:57 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Fri May 03 2024 23:25:15 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1305,6 +1305,41 @@ export interface ResultBuildAtomUnique {
 	DupTable: ReturnBuildAtomUniqueDupTable[];
 }
 
+export interface ParamGetUsers {
+}
+export interface ReturnGetUsers$page {
+	userSite: number;
+	user: number;
+	admin: number;
+	assigned: string;
+	tonwaUser: number;
+	tuName: string;
+	tuNick: string;
+	tuIcon: string;
+	timeZone: number;
+}
+export interface ResultGetUsers {
+	$page: ReturnGetUsers$page[];
+}
+
+export interface ParamGetUserBuds {
+	userId: number;
+}
+export interface ReturnGetUserBudsBuds {
+	bud: number;
+	value: string;
+}
+export interface ResultGetUserBuds {
+	buds: ReturnGetUserBudsBuds[];
+}
+
+export interface ParamSaveUserBuds {
+	id: number;
+	budsArr: any;
+}
+export interface ResultSaveUserBuds {
+}
+
 
 
 export interface ParamActs {
@@ -1413,6 +1448,9 @@ export interface UqExt extends Uq {
 	GetIOError: UqQuery<ParamGetIOError, ResultGetIOError>;
 	IORetry: UqAction<ParamIORetry, ResultIORetry>;
 	BuildAtomUnique: UqAction<ParamBuildAtomUnique, ResultBuildAtomUnique>;
+	GetUsers: UqQuery<ParamGetUsers, ResultGetUsers>;
+	GetUserBuds: UqQuery<ParamGetUserBuds, ResultGetUserBuds>;
+	SaveUserBuds: UqAction<ParamSaveUserBuds, ResultSaveUserBuds>;
 }
 
 
@@ -5086,6 +5124,106 @@ export const uqSchema={
                 ]
             }
         ]
+    },
+    "getusers": {
+        "name": "GetUsers",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "userSite",
+                        "type": "id"
+                    },
+                    {
+                        "name": "user",
+                        "type": "id"
+                    },
+                    {
+                        "name": "admin",
+                        "type": "int"
+                    },
+                    {
+                        "name": "assigned",
+                        "type": "char",
+                        "size": 100
+                    },
+                    {
+                        "name": "tonwaUser",
+                        "type": "id"
+                    },
+                    {
+                        "name": "tuName",
+                        "type": "char",
+                        "size": 100
+                    },
+                    {
+                        "name": "tuNick",
+                        "type": "char",
+                        "size": 100
+                    },
+                    {
+                        "name": "tuIcon",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "timeZone",
+                        "type": "int"
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "getuserbuds": {
+        "name": "GetUserBuds",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "userId",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "buds",
+                "fields": [
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            }
+        ]
+    },
+    "saveuserbuds": {
+        "name": "SaveUserBuds",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "budsArr",
+                "type": "json"
+            }
+        ],
+        "returns": [] as any
     },
     "$biz": {
         "$user": {

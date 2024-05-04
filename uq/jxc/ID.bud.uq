@@ -40,6 +40,7 @@ ID Bud ver 0.1 (
     KEY ext ID,             -- 可以是任意定义的phrase，无site。也可以是任意的id
 );
 
+-- I: me or me bud
 IX IxState ver 0.1 (
     i,                     -- UserSite
     x INDEX,

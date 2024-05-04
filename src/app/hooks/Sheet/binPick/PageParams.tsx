@@ -1,9 +1,9 @@
 import { BizBud, PickParam } from "app/Biz";
-import { BudsEditing, NamedResults } from "../store";
+import { NamedResults } from "../store";
 import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { ViewBud } from "app/hooks";
+import { BudsEditing, ViewBud } from "app/hooks";
 import { useForm } from "react-hook-form";
 import { useCallback } from "react";
 

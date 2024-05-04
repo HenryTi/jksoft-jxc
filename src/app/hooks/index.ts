@@ -9,3 +9,4 @@ export * from './View';
 export * from './Calc';
 export * from './Tie';
 export * from "./ViewSheetTime";
+export * from "./BudsEditing";

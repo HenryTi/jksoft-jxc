@@ -22,7 +22,6 @@ export function useBuildViewBiz() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
     const { openModal } = useModal();
-    const refresh = useAtomValue(biz._refresh);
     const { compile } = centers;
     const { uq, uqSites } = uqApp;
     let { userSite } = uqSites;

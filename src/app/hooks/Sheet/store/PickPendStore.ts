@@ -1,7 +1,7 @@
 import { BizBud, EnumBudType, PickPend } from "app/Biz";
 import { DivStore } from "./DivStore";
-import { BudsEditing } from "./BinEditing";
 import { NamedResults, PickResult } from "./NamedResults";
+import { BudsEditing } from "app/hooks/BudsEditing";
 
 export class PickPendStore {
     readonly divStore: DivStore;

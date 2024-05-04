@@ -7,7 +7,7 @@
 }
 
 .fs-larger {
-    font-size: larger;
+    font-size: larger !important;
 }
 
 .fs-x-large {

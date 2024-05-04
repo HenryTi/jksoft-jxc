@@ -25,6 +25,7 @@ export class Entity extends BizBase {
     readonly budColl: { [key: string | number]: BizBud; } = {};           // 包括全部继承来的
     readonly buds: BizBud[] = [];                       // 是否包含继承的？
     budGroups: BudGroups;
+    user: BizBud[];
 
     // subEntities 有3种不同情况:
     // 1. Atom 里面 extends 的sub
@@ -43,7 +44,13 @@ export class Entity extends BizBase {
                 this.biz.atomBuilder.initBuds(this, buds);
                 break;
             case 'groups': this.fromGroups(val); break;
+            case 'user': this.fromUser(val); break;
         }
+    }
+
+    protected fromUser(val: any[]) {
+        this.user = this.fromProps(val);
+        this.biz.entityWithUser.push(this);
     }
 
     protected fromGroups(groups: any[]) {
@@ -137,6 +144,11 @@ export class Entity extends BizBase {
     }
 
     protected scanBuds() {
+        if (this.user !== undefined) {
+            for (let bud of this.user) {
+                bud.scan();
+            }
+        }
     }
 
     private scanBudGroups() {
