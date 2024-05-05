@@ -18,6 +18,11 @@ PAGE (
         WHERE a.id>$pageStart AND a.site=$site
         ORDER BY a.id ASC
         LIMIT $pageSize;
+    /*
+    INTO buds SELECT b.userSite, a.x as bud, a.value FROM IxBudInt as a JOIN $page as b ON b.userSite=a.i;
+    INTO buds SELECT b.userSite, a.x as bud, a.value FROM IxBudStr as a JOIN $page as b ON b.userSite=a.i;
+    INTO buds SELECT b.userSite, a.x as bud, a.value FROM IxBudDec as a JOIN $page as b ON b.userSite=a.i;
+    */
 }
 
 Biz Query GetUserBuds (
@@ -27,6 +32,9 @@ RETURNS buds (
     bud ID,
     value CHAR(200),
 ) {
+    IF userId IS NULL {
+        SET userId=ME();
+    }
     INTO buds SELECT a.x as bud, a.value FROM IxBudInt as a WHERE a.i=userId;
     INTO buds SELECT a.x as bud, a.value FROM IxBudStr as a WHERE a.i=userId;
     INTO buds SELECT a.x as bud, a.value FROM IxBudDec as a WHERE a.i=userId;

@@ -327,7 +327,8 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
 }
 
 function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, entityAtom, onChange }: {
-    row: FormAtom; label: string | JSX.Element;
+    row: FormAtom;
+    label: string | JSX.Element;
     entityAtom: EntityAtom;
     setValue: UseFormSetValue<any>;
     error: FieldError;
@@ -364,7 +365,7 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
         content = <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>;
     }
     else {
-        content = <IDView uq={uq} id={id} Template={ViewAtom} />;
+        content = <IDView uq={uq} id={Number(id)} Template={ViewAtom} />;
     }
     let cnInput = 'form-control ';
     if (readOnly !== true) {

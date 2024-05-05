@@ -12,10 +12,11 @@ export function PageUsers() {
     const { users } = centers;
     const usersStore = useUsersStore();
     async function onItemClick(item: any) {
+        await usersStore.loadUserBuds(item.userSite);
         modal.open(<PageUser user={item} usersStore={usersStore} />);
     }
     return <PageQueryMore header={users.caption}
-        query={usersStore.getUsers}
+        query={usersStore.getUserBuds}
         param={{}}
         sortField="id"
         ViewItem={ViewUserItem}

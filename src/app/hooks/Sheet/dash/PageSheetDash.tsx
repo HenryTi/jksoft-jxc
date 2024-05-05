@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { IDView, Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { FA, List, useEffectOnce, wait } from "tonwa-com";
-import { EntitySheet } from "app/Biz";
+import { Entity, EntitySheet } from "app/Biz";
 import { PageSheetEdit, PageSheetNew } from "./PageSheetEntry";
 import { DashConsole } from "./DashConsole";
 import { Atom, Sheet } from "uqs/UqDefault";
@@ -10,6 +10,7 @@ import { PageSheetList } from "./PageSheetList";
 import { useAtomValue } from "jotai";
 import { ViewItemMain } from "app/hooks/View";
 import { ViewReaction } from "app/hooks/View/ViewReaction";
+import { ViewBud } from "app/hooks";
 
 export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const modal = useModal();
@@ -17,14 +18,13 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const { caption, name, uq, biz } = entitySheet;
     const { current: sheetConsole } = useRef(new DashConsole(modal, entitySheet));
     const myDrafts = useAtomValue(sheetConsole.atomMyDrafts);
-    // const viewSubmited = useAtomValue(sheetConsole.atomViewSubmited);
-    /*
-    const query = useCallback(async (param: any, pageStart: any, pageSize: number) => {
-        return sheetConsole.current.loadMyDrafts(param, pageStart, pageSize);
-    }, []);
-    */
     useEffectOnce(() => {
-        sheetConsole.loadMyDrafts();
+        (async () => {
+            Promise.all([
+                biz.loadUserDefaults(),
+                sheetConsole.loadMyDrafts()
+            ]);
+        })();
     });
     async function onNew() {
         let ret = await modal.open(<PageSheetNew store={sheetConsole.createSheetStore()} />);
@@ -105,6 +105,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         */
     }
     if (visible === false) return <PageSpinner />;
+
     let sheetCaption = caption ?? name;
     return <Page header={sheetCaption + ' - 工作台'}>
         <div className="d-flex px-3 py-2 tonwa-bg-gray-1 border-bottom">
@@ -118,6 +119,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
             </button>
         </div>
         <ViewReaction atomContent={sheetConsole.atomViewSubmited} className="ms-3 mt-3 me-auto" />
+        <ViewUserDefaults entity={entitySheet} />
         <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-1 mt-4 align-items-end">
             <div className="pb-1 flex-grow-1">
                 草稿 <small className="text-secondary ms-3">(最多10份)</small>
@@ -132,4 +134,15 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
             none={<div className="small text-secondary p-3">[无]</div>}
         />
     </Page>;
+}
+
+function ViewUserDefaults({ entity }: { entity: Entity; }) {
+    let { biz, user } = entity;
+    let { userDefaults } = biz;
+    if (userDefaults === undefined) return null;
+    return <div className="px-3 pt-3 row row-cols-6">
+        {user.map(v => {
+            return <ViewBud key={v.id} bud={v} value={userDefaults[v.id]} />;
+        })}
+    </div>;
 }

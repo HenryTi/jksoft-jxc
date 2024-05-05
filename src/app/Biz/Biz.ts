@@ -86,6 +86,7 @@ export class Biz {
     hasEntity: boolean;
     entities: { [name: string]: Entity } = {};
     atomBuilder: AtomsBuilder;
+    userDefaults: { [bud: number]: string; };
 
     constructor(uqApp: UqApp, bizSchema: any, errorLogs: any) {
         this.uqApp = uqApp;
@@ -450,5 +451,15 @@ export class Biz {
         let bizEntity = new EntityIOSite(this, id, name, type);
         this.ioSites.push(bizEntity);
         return bizEntity;
+    }
+
+    async loadUserDefaults() {
+        if (this.userDefaults === undefined) {
+            let { buds } = await this.uq.GetUserBuds.query({ userId: undefined });
+            this.userDefaults = {};
+            for (let { bud, value } of buds) {
+                this.userDefaults[bud] = value;
+            }
+        }
     }
 }

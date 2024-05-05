@@ -3,9 +3,9 @@ import { FormRow } from "app/coms";
 import {
     BinRow, BizBud, BudAtom, BudDec, BudRadio
     , EntityBin, EnumBudType, ValueSetType,
-    BinRowValues,
-    BudValues,
-    BudValuesBase
+    BinRowValuesTool,
+    BudValuesTool,
+    BudValuesToolBase
 } from "app/Biz";
 import { Calc, CalcResult, Formulas } from "../../Calc";
 import { DivStore } from "./DivStore";
@@ -19,7 +19,7 @@ import { AtomColl, LabelBox } from "app/hooks/tool";
 import { BudCheckValue } from "tonwa-app";
 import { BudsEditingBase } from "app/hooks/BudsEditing";
 
-export abstract class BinBudsEditing extends BudsEditingBase<BinRow, BinRowValues> {
+export abstract class BinBudsEditing extends BudsEditingBase<BinRow, BinRowValuesTool> {
     readonly values: ValRow = { buds: {} } as any;
     readonly entityBin: EntityBin;
     readonly sheetStore: SheetStore;
@@ -34,7 +34,7 @@ export abstract class BinBudsEditing extends BudsEditingBase<BinRow, BinRowValue
         super(buds, initBinRow);
         this.sheetStore = sheetStore;
         this.entityBin = bin;
-        this.budValues = new BinRowValues(bin, buds);
+        this.budValuesTool = new BinRowValuesTool(bin, buds);
         if (initBinRow !== undefined) {
             this.setValues(initBinRow);
         }
@@ -58,7 +58,7 @@ export abstract class BinBudsEditing extends BudsEditingBase<BinRow, BinRowValue
     }
 
     protected setBudValue(bud: BizBud, value: any) {
-        this.budValues.setBudValue(bud, this.values, value);
+        this.budValuesTool.setBudValue(bud, this.values, value);
     }
 }
 
@@ -75,12 +75,12 @@ export class DivEditing extends BinBudsEditing {
     }
 
     private setValueDefault(valDiv: ValDivBase) {
-        const { budValue } = this.budValues;
+        const { budValue } = this.budValuesTool;
         if (budValue === undefined) return;
-        if (this.budValues.getBudValue(budValue, this.values) !== undefined) return;
+        if (this.budValuesTool.getBudValue(budValue, this.values) !== undefined) return;
         let pendLeft = this.divStore.getPendLeft(valDiv);
         if (pendLeft === undefined) return;
-        this.budValues.setBudValue(budValue, this.values, pendLeft);
+        this.budValuesTool.setBudValue(budValue, this.values, pendLeft);
     }
 }
 

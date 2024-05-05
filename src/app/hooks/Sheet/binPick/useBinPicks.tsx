@@ -61,9 +61,10 @@ export function useBinPicks() {
         const { binPicks, rearPick } = bin;
         if (binPicks === undefined) return;
         const { divStore } = sheetStore;
-        let { main } = sheetStore;
+        // let { main } = sheetStore;
         namedResults = {
-            '%sheet': new Proxy(main.valRow, main.entityBin.proxyHandler()),
+            '%user': sheetStore.userProxy,
+            '%sheet': sheetStore.mainProxy,
         };
         let pickResult: PickResult;
         for (const binPick of binPicks) {

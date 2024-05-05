@@ -240,7 +240,7 @@ class BinAmount extends BinBudValue {
     setValue(binRow: BinRow, value: any) { binRow.amount = value; }
 }
 
-export abstract class BudValuesBase<T> {
+export abstract class BudValuesToolBase<T> {
     allFields: BizBud[]; // BinField[];         // 传进来的buds
     fields: BizBud[]; // BinField[];            // bin的buds
     abstract has(bud: BizBud): boolean;
@@ -248,7 +248,7 @@ export abstract class BudValuesBase<T> {
     abstract setBudValue(bud: BizBud, binRow: T, value: any): void;
 }
 
-export class BudValues extends BudValuesBase<any> {
+export class BudValuesTool extends BudValuesToolBase<any> {
     readonly coll: { [budId: number]: BizBud; } = {};
     constructor(buds: BizBud[]) {
         super();
@@ -268,7 +268,7 @@ export class BudValues extends BudValuesBase<any> {
     }
 }
 
-export class BinRowValues extends BudValuesBase<BinRow> {
+export class BinRowValuesTool extends BudValuesToolBase<BinRow> {
     // private readonly collGet: { [budId: number]: (binRow: BinRow) => any; } = {};
     // private readonly collSet: { [budId: number]: (binRow: BinRow, value: any) => void; } = {};
     readonly coll: { [budId: number]: BinBudValue; } = {};
@@ -374,87 +374,8 @@ export class BinRowValues extends BudValuesBase<BinRow> {
         else binBud.setValue(binRow, value);
     }
 }
-/*
-export class BinBudsFields {
-    readonly fieldColl: { [name: string]: BinField } = {};
-    readonly entityBin: EntityBin;
-    readonly budIBase: BizBud;
-    readonly budXBase: BizBud;
-    readonly budI: BizBud;
-    readonly budX: BizBud;
-    readonly budPrice: BizBud;
-    readonly budAmount: BizBud;
-    readonly budValue: BizBud;
 
-    readonly allFields: BinField[];
-    readonly fields: BinField[];
-
-    readonly fieldIBase: BinField;
-    readonly fieldXBase: BinField;
-    readonly fieldI: BinField;
-    readonly fieldX: BinField;
-    readonly fieldPrice: BinField;
-    readonly fieldAmount: BinField;
-    readonly fieldValue: BinField;
-
-    constructor(bin: EntityBin, buds: BizBud[]) {
-        this.entityBin = bin;
-        this.allFields = [];
-        this.fields = [];
-        const { i: budI, x: budX, value: budValue, price: budPrice, amount: budAmount, buds: budArr, iBase, xBase } = bin;
-        for (let bud of buds) {
-            let field: BinField;
-            if (bud === iBase) {
-                this.budIBase = bud;
-                this.fieldIBase = field = new FieldIBase(bud);
-            }
-            else if (bud === xBase) {
-                this.budXBase = bud;
-                this.fieldXBase = field = new FieldXBase(bud);
-            }
-            else if (bud === budI) {
-                this.budI = bud;
-                this.fieldI = field = new FieldI(bud);
-            }
-            else if (bud === budX) {
-                this.budX = bud;
-                this.fieldX = field = new FieldX(bud);
-            }
-            else if (bud === budValue) {
-                this.budValue = bud;
-                this.fieldValue = field = new FieldValue(bud);
-            }
-            else if (bud === budPrice) {
-                this.budPrice = bud;
-                this.fieldPrice = field = new FieldPrice(bud);
-            }
-            else if (bud === budAmount) {
-                this.budAmount = bud;
-                this.fieldAmount = field = new FieldAmount(bud);
-            }
-            else if (budArr.findIndex(v => v === bud) >= 0) {
-                let BF: (new (bud: BizBud) => BinField);
-                switch (bud.budDataType.type) {
-                    default: BF = FieldBud; break;
-                    case EnumBudType.date: BF = FieldDateBud; break;
-                    case EnumBudType.check: BF = FieldCheckBud; break;
-                    case EnumBudType.radio: BF = FieldRadioBud; break;
-                }
-                field = new BF(bud);
-                this.fields.push(field);
-            }
-            else {
-                debugger;
-                throw Error('should not be here');
-            }
-
-            this.fieldColl[field.name] = field;
-            this.allFields.push(field);
-        }
-    }
-}
-*/
-export class BinDivBuds extends BinRowValues /*extends BinBudsFields*/ {
+export class BinDivBuds extends BinRowValuesTool /*extends BinBudsFields*/ {
     readonly binDiv: BinDiv;
     keyField: BizBud; // BinField;
 

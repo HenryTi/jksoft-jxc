@@ -1,19 +1,21 @@
 import { ReturnGetUsers$page } from "uqs/UqDefault";
 import { UsersStore } from "./UsersStore";
 import { Image, Page, useModal } from "tonwa-app";
-import { FA, theme } from "tonwa-com";
+import { FA, getAtomValue, setAtomValue, theme } from "tonwa-com";
 import { BizBud, Entity } from "app/Biz";
-import { BudsEditing, LabelRowEdit } from "app/hooks";
+import { BudsEditing, LabelRowEdit, ViewBud } from "app/hooks";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
 import { ViewUser } from "./ViewUser";
 import { ChangeEvent } from "react";
+import { useAtomValue } from "jotai";
 
 export function PageUser({ user, usersStore }: { user: ReturnGetUsers$page; usersStore: UsersStore; }) {
     const modal = useModal();
-    const { uqApp: { biz } } = usersStore;
+    const { uqApp: { biz }, atomUserBuds } = usersStore;
     const { entityWithUser } = biz;
     const { assigned, tuName, tuNick, tuIcon } = user;
+    const userBuds = useAtomValue(atomUserBuds);
     let image: any;
     if (tuIcon !== undefined) image = <Image src={tuIcon} />;
     else {
@@ -23,8 +25,16 @@ export function PageUser({ user, usersStore }: { user: ReturnGetUsers$page; user
         <FAIcon name="hand-o-right" />
         <span className="text-success">全局</span>
     </>;
-    function onEdit(entity: Entity) {
-        modal.open(<PageEditUser user={user} entity={entity} usersStore={usersStore} />)
+    async function onEdit(entity: Entity) {
+        let ret = await modal.open(<PageEditUser user={user} entity={entity} usersStore={usersStore} userBudValues={userBuds} />);
+        if (ret === undefined) return;
+        let namedValues = ret[':user'];
+        let budValues: { [bud: number]: string | number; } = { ...getAtomValue(atomUserBuds) };
+        for (let bud of entity.user) {
+            let { id, name } = bud;
+            budValues[id] = namedValues[name.substring(':user.'.length)];
+        }
+        setAtomValue(atomUserBuds, budValues);
     }
     return <Page header="用户设置">
         <div className="d-flex px-3 py-2 align-items-center tonwa-bg-gray-2 border-bottom border-primary">
@@ -38,7 +48,7 @@ export function PageUser({ user, usersStore }: { user: ReturnGetUsers$page; user
                 </div>
             </div>
         </div>
-        <ViewEntityWithUser entity={biz.bizConsole} caption={vConsoleCaption} onEdit={onEdit} />
+        <ViewEntityWithUser entity={biz.bizConsole} caption={vConsoleCaption} onEdit={onEdit} budValues={userBuds} />
         {
             entityWithUser.map(v => {
                 const { caption, name } = v;
@@ -46,7 +56,7 @@ export function PageUser({ user, usersStore }: { user: ReturnGetUsers$page; user
                     <FAIcon name="file-o" />
                     <span className="text-info">{caption ?? name}</span>
                 </>;
-                return <ViewEntityWithUser key={v.id} entity={v} caption={vCaption} onEdit={onEdit} />;
+                return <ViewEntityWithUser key={v.id} entity={v} caption={vCaption} onEdit={onEdit} budValues={userBuds} />;
             })
         }
     </Page>;
@@ -56,22 +66,32 @@ function FAIcon({ name }: { name: string; }) {
     return <FA name={name} fixWidth={true} className="me-3 fs-larger" />;
 }
 
-function ViewEntityWithUser({ entity, caption, onEdit }: { entity: Entity; caption: string | JSX.Element; onEdit: (entity: Entity) => void; }) {
-    return <div className="border-bottom px-3 py-2 d-flex cursor-pointer" onClick={() => onEdit(entity)}>
-        {caption}
-        <div className="flex-fill" />
-        <div>
+function ViewEntityWithUser({ entity, caption, onEdit, budValues }: {
+    entity: Entity;
+    caption: string | JSX.Element;
+    onEdit: (entity: Entity) => void;
+    budValues: { [bud: number]: string | number; };
+}) {
+    return <div className="border-bottom d-flex">
+        <div className="flex-fill row row-cols-6 ps-3 py-2">
+            <div>{caption}</div>
+            {entity.user.map(v => {
+                let { id } = v;
+                return <ViewBud key={id} bud={v} value={budValues[id]} />;
+            })}
+        </div>
+        <div className="px-3 py-2 cursor-pointer" onClick={() => onEdit(entity)}>
             <FA name="pencil" />
         </div>
     </div>
 }
 
-function PageEditUser({ user, usersStore, entity }: { user: ReturnGetUsers$page; usersStore: UsersStore; entity: Entity; }) {
+function PageEditUser({ user, usersStore, entity, userBudValues }: { user: ReturnGetUsers$page; usersStore: UsersStore; entity: Entity; userBudValues: { [bud: number]: string | number; }; }) {
     const modal = useModal();
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { bootstrapContainer } = theme;
     const { caption, name, user: userBuds } = entity;
-    const budsEditing = new BudsEditing(userBuds);
+    const budsEditing = new BudsEditing(userBuds, userBudValues);
     const inputRows = budsEditing.buildFormRows();
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;

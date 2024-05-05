@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { EntitySheet, EntityBin, Biz, EntityPend, BinRow, BizBud } from "app/Biz";
+import { EntitySheet, EntityBin, Biz, EntityPend, BinRow, BizBud, Entity } from "app/Biz";
 import { ParamSaveDetail, UqExt, Atom as BizAtom, ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { PickFunc, PickStates, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
@@ -96,7 +96,6 @@ export class SheetMain extends BinStore {
         const row = this.valRow;
         let { id: sheetId, i, x } = row;
         if (sheetId > 0) {
-            // setAtomValue(this.sheetStore.atomLoaded, true);
             return {
                 id: sheetId,
                 no: this.no,
@@ -109,7 +108,6 @@ export class SheetMain extends BinStore {
         row.id = id;
         setAtomValue(this._valRow, { ...row });
         this.no = no;
-        // setAtomValue(this.sheetStore.atomLoaded, true);
         return Object.assign(ret, { i, ...row });
     }
 
@@ -164,8 +162,6 @@ export class SheetStore extends KeyIdObject {
     readonly entitySheet: EntitySheet;
     readonly sheetConsole: SheetConsole;
     readonly main: SheetMain;
-    // readonly detail: Detail;
-    // readonly detailExs: ExDetail[] = [];
     readonly caption: string;
     readonly backIcon = 'file-text-o';
     readonly isPend: boolean;
@@ -193,18 +189,15 @@ export class SheetStore extends KeyIdObject {
             const { bin } = details[0];
             this.isPend = bin.pend !== undefined;
         }
-        /*
-        for (let i = 1; i < len; i++) {
-            const { bin: detail, caption } = details[i];
-            this.detailExs.push(new ExDetail(this, detail, caption));
-        }
-        */
         this.caption = entitySheet.caption ?? entitySheet.name;
         if (detail !== undefined) {
             this.divStore = new DivStore(this, detail.bin);
         }
         sheetConsole.picks = new PickStates(
-            { '%sheet': new Proxy(this.main.valRow, this.main.entityBin.proxyHandler()) },
+            {
+                'user': this.userProxy,
+                '%sheet': this.mainProxy
+            },
             undefined,
             0
         );
@@ -369,6 +362,29 @@ export class SheetStore extends KeyIdObject {
     async setSheetAsDraft() {
         await this.uq.SetSheetPreToDraft.submit({ id: this.main.valRow.id });
         setAtomValue(this.atomLoaded, true);
+    }
+
+    get mainProxy() {
+        const { valRow, entityBin } = this.main;
+        return new Proxy(valRow, entityBin.proxyHandler());
+    }
+
+    get userProxy() {
+        return new Proxy(this, new UserProxyHander(this.entitySheet));
+    }
+}
+
+class UserProxyHander implements ProxyHandler<any> {
+    private readonly entity: Entity;
+    constructor(entity: Entity) {
+        this.entity = entity;
+    }
+    get(target: any, p: string | symbol, receiver: any) {
+        const { user, biz: { userDefaults } } = this.entity;
+        let n = ':user.' + (p as string);
+        let userBud = user.find(v => v.name === n);
+        if (userBud === undefined) return;
+        return userDefaults[userBud.id];
     }
 }
 
