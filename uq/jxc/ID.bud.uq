@@ -25,11 +25,16 @@ IX IxBudStr (
     value BudStr,
 );
 
-
 IX IxBudCheck (
     ii,
     i,
     x,
+);
+
+IX IxBudJson (
+    i,
+    x,
+    value JSON,
 );
 
 -- 从id基于phrase分裂生长的id。比如特定权限id。仅限经理可以见的客户。ID(unit@permit.经理)/contact

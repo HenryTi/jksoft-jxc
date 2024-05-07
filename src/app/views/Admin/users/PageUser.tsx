@@ -2,7 +2,7 @@ import { ReturnGetUsers$page } from "uqs/UqDefault";
 import { UsersStore } from "./UsersStore";
 import { Image, Page, useModal } from "tonwa-app";
 import { FA, getAtomValue, setAtomValue, theme } from "tonwa-com";
-import { BizBud, Entity } from "app/Biz";
+import { BizBud, Entity, EnumBudType } from "app/Biz";
 import { BudsEditing, LabelRowEdit, ViewBud } from "app/hooks";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
@@ -29,7 +29,7 @@ export function PageUser({ user, usersStore }: { user: ReturnGetUsers$page; user
         let ret = await modal.open(<PageEditUser user={user} entity={entity} usersStore={usersStore} userBudValues={userBuds} />);
         if (ret === undefined) return;
         let namedValues = ret[':user'];
-        let budValues: { [bud: number]: string | number; } = { ...getAtomValue(atomUserBuds) };
+        let budValues: { [bud: number]: (string | number)[]; } = { ...getAtomValue(atomUserBuds) };
         for (let bud of entity.user) {
             let { id, name } = bud;
             budValues[id] = namedValues[name.substring(':user.'.length)];
@@ -70,7 +70,7 @@ function ViewEntityWithUser({ entity, caption, onEdit, budValues }: {
     entity: Entity;
     caption: string | JSX.Element;
     onEdit: (entity: Entity) => void;
-    budValues: { [bud: number]: string | number; };
+    budValues: { [bud: number]: (string | number)[]; };
 }) {
     return <div className="border-bottom d-flex">
         <div className="flex-fill row row-cols-6 ps-3 py-2">
@@ -86,7 +86,7 @@ function ViewEntityWithUser({ entity, caption, onEdit, budValues }: {
     </div>
 }
 
-function PageEditUser({ user, usersStore, entity, userBudValues }: { user: ReturnGetUsers$page; usersStore: UsersStore; entity: Entity; userBudValues: { [bud: number]: string | number; }; }) {
+function PageEditUser({ user, usersStore, entity, userBudValues }: { user: ReturnGetUsers$page; usersStore: UsersStore; entity: Entity; userBudValues: { [bud: number]: (string | number)[]; }; }) {
     const modal = useModal();
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { bootstrapContainer } = theme;
@@ -111,11 +111,14 @@ function PageEditUser({ user, usersStore, entity, userBudValues }: { user: Retur
         let arr = userBuds.map(v => {
             const { id, name, budDataType } = v;
             let n = name.substring(userPrefix.length + 1);
-            return {
-                bud: id,
-                type: budDataType.type,
-                value: values[n],
+            const { type } = budDataType;
+            let value: any = values[n];
+            switch (typeof value) {
+                case 'boolean':
+                case 'number':
+                case 'string': value = [value]; break;
             }
+            return { bud: id, type, value, }
         });
         await usersStore.saveUserBuds(user.userSite, arr);
         modal.close(data);

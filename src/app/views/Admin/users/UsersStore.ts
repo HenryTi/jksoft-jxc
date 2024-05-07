@@ -12,7 +12,7 @@ export interface UserBudValues extends ReturnGetUsers$page {
 export class UsersStore {
     readonly uqApp: UqApp;
     readonly uq: UqExt;
-    readonly atomUserBuds = atom(undefined as { [bud: number]: string | number });
+    readonly atomUserBuds = atom(undefined as { [bud: number]: (string | number)[] });
 
     constructor(uqApp: UqApp) {
         this.uqApp = uqApp;
@@ -46,9 +46,9 @@ export class UsersStore {
     async loadUserBuds(userId: number) {
         setAtomValue(this.atomUserBuds, undefined);
         let { buds } = await this.uq.GetUserBuds.query({ userId });
-        let coll: { [bud: number]: string | number; } = {};
+        let coll: { [bud: number]: (string | number)[]; } = {};
         for (let { bud, value } of buds) {
-            coll[bud] = value;
+            coll[bud] = JSON.parse(value);
         }
         setAtomValue(this.atomUserBuds, coll);
     }

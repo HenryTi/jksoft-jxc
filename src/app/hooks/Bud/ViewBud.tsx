@@ -13,6 +13,7 @@ export function ViewBud({ bud, value, uiType, noLabel, atomColl }: { bud: BizBud
     if (value === undefined) return null;
     if (value === null) return null;
     if (bud === undefined) return <>{value}</>;
+    if (Array.isArray(value) === true) value = value[0];
     let content: any;
     const { name, caption, budDataType } = bud;
     if (value === undefined) {

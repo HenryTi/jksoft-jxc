@@ -86,7 +86,7 @@ export class Biz {
     hasEntity: boolean;
     entities: { [name: string]: Entity } = {};
     atomBuilder: AtomsBuilder;
-    userDefaults: { [bud: number]: string; };
+    userDefaults: { [bud: number]: string | number | (string | number)[]; };
 
     constructor(uqApp: UqApp, bizSchema: any, errorLogs: any) {
         this.uqApp = uqApp;
