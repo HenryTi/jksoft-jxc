@@ -196,6 +196,7 @@ export class SheetStore extends KeyIdObject {
         sheetConsole.picks = new PickStates(
             {
                 'user': this.userProxy,
+                '%user': this.userProxy,
                 '%sheet': this.mainProxy
             },
             undefined,
@@ -384,7 +385,9 @@ class UserProxyHander implements ProxyHandler<any> {
         let n = ':user.' + (p as string);
         let userBud = user.find(v => v.name === n);
         if (userBud === undefined) return;
-        return userDefaults[userBud.id];
+        let v = userDefaults[userBud.id];
+        if (Array.isArray(v) === true) v = v[0];
+        return v;
     }
 }
 
