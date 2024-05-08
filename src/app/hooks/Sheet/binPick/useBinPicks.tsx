@@ -5,22 +5,8 @@ import { usePickFromAtom } from "./fromAtom";
 import { usePickFromSpec } from "./fromSpec";
 import { usePickFromPend } from "./fromPend";
 import { usePickFromQuery } from "./fromQuery";
-import { SheetStore } from "../store";
+import { RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
 import { NamedResults, PickResult } from "../store";
-
-export interface ReturnUseBinPicks {
-    namedResults: NamedResults;
-    rearBinPick: BinPick;           // rear pick = the endmost pick
-    rearResult: PickResult[];
-    rearPickResultType: RearPickResultType;
-};
-
-export enum RearPickResultType {
-    scalar,
-    array,
-}
-
-export type PickFunc = (sheetStore: SheetStore, bin: EntityBin, rearPickResultType: RearPickResultType) => Promise<ReturnUseBinPicks>;
 
 export function useBinPicks() {
     const pickFromAtom = usePickFromAtom();

@@ -5,11 +5,10 @@ import { usePickFromAtom } from "./fromAtom";
 import { usePickFromSpec } from "./fromSpec";
 import { usePickFromPend } from "./fromPend";
 import { usePickFromQuery } from "./fromQuery";
-import { NamedResults, SheetStore } from "../store";
+import { RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
 import { PickResult } from "../store";
 import { getAtomValue, setAtomValue, theme } from "tonwa-com";
 import { FA, Sep, SpinnerSmall } from "tonwa-com";
-import { RearPickResultType, ReturnUseBinPicks } from "./useBinPicks";
 import { ViewAtomId } from "app/hooks";
 import { useAtomValue } from "jotai";
 

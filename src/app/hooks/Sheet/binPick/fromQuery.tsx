@@ -1,12 +1,11 @@
-import { BinPick, PickQuery } from "app/Biz";
+import { PickQuery } from "app/Biz";
 import { useCallback, useState } from "react";
-import { RearPickResultType } from "./useBinPicks";
 import { Page, useModal } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
-import { FA, List, Sep } from "tonwa-com";
+import { List, Sep } from "tonwa-com";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "./PageParams";
-import { NamedResults, PickResult, Picked, Prop, VNamedBud, pickedFromJsonArr } from "../store";
+import { NamedResults, PickResult, Picked, Prop, RearPickResultType, VNamedBud, pickedFromJsonArr } from "../store";
 import { RowCols } from "app/hooks/tool";
 
 export function usePickFromQuery(): [

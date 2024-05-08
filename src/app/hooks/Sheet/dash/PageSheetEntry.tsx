@@ -1,6 +1,6 @@
 import { Page, PageSpinner } from "tonwa-app";
 import { setAtomValue, useEffectOnce } from "tonwa-com";
-import { ReturnUseBinPicks, SheetConsole, SheetStore } from "../store";
+import { RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetStore } from "../store";
 import { useAtomValue } from "jotai";
 import { PageSheet } from "./PageSheet";
 import { useCallback } from "react";
@@ -27,7 +27,21 @@ export function PageSheetNew({ store }: { store: SheetStore; }) {
     if (loaded === true) {
         return <PageSheet store={store} />;
     }
-    if (store.isPend === true) {
+    const { main, isPend } = store;
+    const { entityBin } = main;
+    const { binPicks } = entityBin;
+    if (binPicks === undefined || binPicks.length === 0) {
+        if (isPend === true) {
+            sheetConsole.steps = {
+                steps: ['批选待处理'],
+                end: "录入单据",
+                step: 0,
+            };
+            return <PageDirectPend store={store} />;
+        }
+        return <PageSheetDirect store={store} />;
+    }
+    if (isPend === true) {
         sheetConsole.steps = {
             steps: ['录入条件', '批选待处理'],
             end: "录入单据",
@@ -136,11 +150,38 @@ function PageStartPend({ store }: { store: SheetStore; }) {
         let added = await detailNew();
         if (added === true) {
             await store.setSheetAsDraft();
-            // setAtomValue(store.atomLoaded, true);
         }
     }, []);
     return <Page header={caption + ' - ' + subCaption}>
         <ViewSteps sheetSteps={sheetConsole.steps} />
         <ViewBinPicks subHeader={'批选条件'} sheetStore={store} onPicked={onPend} />
+    </Page>;
+}
+
+function PageDirectPend({ store }: { store: SheetStore; }) {
+    const onPicked = useOnPicked(store);
+    const detailNew = useDetailNew(store);
+    const { caption, sheetConsole } = store;
+    const subCaption = '批选待处理';
+    useEffectOnce(() => {
+        (async function () {
+            let results: ReturnUseBinPicks = {
+                namedResults: {
+                    '%user': store.userProxy,
+                    'user': store.userProxy,
+                },
+                rearBinPick: undefined,
+                rearResult: [],
+                rearPickResultType: RearPickResultType.scalar,
+            };
+            await onPicked(results);
+            let added = await detailNew();
+            if (added === true) {
+                await store.setSheetAsDraft();
+            }
+        })();
+    });
+    return <Page header={caption + ' - ' + subCaption}>
+        <ViewSteps sheetSteps={sheetConsole.steps} />
     </Page>;
 }

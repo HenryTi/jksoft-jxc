@@ -76,8 +76,9 @@ export class SheetMain extends BinStore {
         }
         let { namedResults, rearBinPick: lastBinPick, rearResult: lastResult } = pickResults;
         const calc = new Calc(formulas, namedResults);
-        calc.addValues(lastBinPick.name, lastResult[0]);
-        // const { results: calcResults } = calc;
+        if (lastBinPick !== undefined) {
+            calc.addValues(lastBinPick.name, lastResult[0]);
+        }
         if (i !== undefined) {
             row.i = calc.getValue('i') as number; // as number;
         }

@@ -1,11 +1,11 @@
 import { Page, PageConfirm, useModal } from "tonwa-app";
-import { SheetStore, SubmitState } from "../store";
+import { PickFunc, SheetStore, SubmitState } from "../store";
 import { ViewDiv, ViewMain } from "../binEdit";
 import { atom, useAtomValue } from "jotai";
 import { useDetailNew } from "../binEdit";
 // import { useUqApp } from "app/UqApp";
 import { useCallback, useState } from "react";
-import { PickFunc, useBinPicks } from "../binPick";
+import { useBinPicks } from "../binPick";
 import { headerSheet, buttonDefs } from "../headerSheet";
 import { ViewReaction } from "app/hooks/View/ViewReaction";
 import { FA, setAtomValue } from "tonwa-com";

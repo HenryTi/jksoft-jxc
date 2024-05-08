@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import { SheetStore } from "../store";
-import { RearPickResultType, useBinPicks } from "../binPick";
+import { RearPickResultType, SheetStore } from "../store";
+import { useBinPicks } from "../binPick";
 import { useRowEdit } from "./useRowEdit";
 import { BinEditing } from "../store";
 import { PickResult } from "../store";
