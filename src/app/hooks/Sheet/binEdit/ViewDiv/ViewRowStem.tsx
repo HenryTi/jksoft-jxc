@@ -1,6 +1,5 @@
 import { useAtomValue } from "jotai";
 import { theme, FA } from "tonwa-com";
-// import { ViewBud, ViewBudUIType, budContent } from "../../../Bud";
 import { RowColsSm, ViewShowBuds } from "../../../tool";
 import { PAV, ViewDivProps, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
@@ -11,8 +10,7 @@ export function ViewRowStem(props: ViewDivProps) {
     const { valDiv, divStore, buttons, hidePivot, readonly } = props;
     const { sheetStore } = divStore;
     const { atomValRow, atomValDivs, atomSum, binDiv } = valDiv;
-    const { /*binDivBuds: binBuds, */ level, entityBin } = binDiv;
-    // const { fields } = binBuds;
+    const { level, entityBin } = binDiv;
     const valRow = useAtomValue(atomValRow);
     let sum = useAtomValue(atomSum);
     const divs = useAtomValue(atomValDivs);
@@ -40,7 +38,7 @@ export function ViewRowStem(props: ViewDivProps) {
         }
         viewPendValue = <div className="d-flex align-items-center">
             <FA name={icon} className={color + ' me-2 '} />
-            <span className={'w-min-2c w-min-3c ' + cnPendValue}>{budValue.getUIValue(pendValue)}</span>
+            <span className={'w-min-2c w-min-3c ' + cnPendValue}>{budValue?.getUIValue(pendValue)}</span>
         </div>;
     }
 

@@ -119,7 +119,7 @@ function check(bud: BizBud, value: any) {
     if (value === null) return <ViewBudEmpty />;
     let { options } = bud.budDataType as BudRadio;
     let vArr: any[] = [];
-    let vals = value as number[];
+    let vals = Array.isArray(value) === true ? value as number[] : [value];
     for (let v of vals) {
         let op = options.coll[v];
         if (op === undefined) continue;

@@ -458,7 +458,7 @@ export class Biz {
             let { buds } = await this.uq.GetUserBuds.query({ userId: undefined });
             this.userDefaults = {};
             for (let { bud, value } of buds) {
-                this.userDefaults[bud] = value;
+                this.userDefaults[bud] = JSON.parse(value);
             }
         }
     }

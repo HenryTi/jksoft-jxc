@@ -36,28 +36,21 @@ export function useDetailNew(sheetStore: SheetStore) {
                 let id = await divStore.saveDetail(binDivRoot, valRow);
                 valRow.id = id;
                 await divStore.reloadValRow(valRow);
+                divStore.setValRowRoot(valRow, true);
             }
         }
         else {
             // 直接跳出输入界面，开始编辑
-            //let section = new Section(coreDetail);
-            //let row = new Row(section);
-            //row.setLoading(true);
-            //coreDetail.addSection(section);
-            //const binEditing = new BinEditing(entityBin, row.valRow);
             const binEditing = new BinEditing(sheetStore, entityBin);
             binEditing.setNamedParams(namedResults);
             let ret = await rowEdit(binEditing, undefined);
             if (ret === true) {
                 const { values: valRow } = binEditing;
-                // Object.assign(row.valRow, valRow);
-                // await row.addToSection();
                 if (valRow.id !== undefined) debugger;
                 let id = await divStore.saveDetail(binDivRoot, valRow);
                 valRow.id = id;
                 await divStore.reloadValRow(valRow);
             }
-            // row.setLoading(false);
         }
         sheetStore.notifyRowChange();
         return true;

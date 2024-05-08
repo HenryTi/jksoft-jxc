@@ -102,8 +102,7 @@ export class DivStore {
         this.cachePendRows[pendRow.pend] = pendRow;
     }
 
-    load(valRows: ValRow[]) {
-        const trigger = false;
+    load(valRows: ValRow[], trigger: boolean) {
         for (let valRow of valRows) {
             this.setValRowRoot(valRow, trigger);
         }
@@ -229,7 +228,7 @@ export class DivStore {
     }
 
     private setVal(parentValDiv: ValDivBase, valRow: ValRow, trigger: boolean): ValDivBase {
-        let { id/*, origin*/ } = valRow;
+        let { id } = valRow;
         let valDiv = this.valDivColl[id];
         if (valDiv !== undefined) {
             valDiv.setValRow(valRow);
@@ -241,17 +240,8 @@ export class DivStore {
         return valDivSub;
     }
 
-    setValColl(valDiv: ValDivBase) {
-        this.valDivColl[valDiv.id] = valDiv;
-    }
-
     getPendRow(pend: number) {
         return this.cachePendRows[pend];
-        /*
-        let pendRows = getAtomValue(this.atomPendRows);
-        let ret = pendRows?.find(v => v.pend === pend);
-        return ret;
-        */
     }
 
     async loadPendRow(pend: number) {
@@ -276,7 +266,7 @@ export class DivStore {
     async reloadValRow(valRow: ValRow) {
         const { id: binId } = valRow;
         let { details } = await this.sheetStore.loadBinData(binId);
-        this.load(details);
+        this.load(details, true);
     }
 
     replaceValDiv(valDiv: ValDivBase, newValDiv: ValDivRoot) {

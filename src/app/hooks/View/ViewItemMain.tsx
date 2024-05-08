@@ -6,7 +6,6 @@ import { Bin } from "app/tool";
 
 export function ViewItemMain({ value, isMy }: { value: Sheet & Bin & { rowCount: number; }; isMy: boolean; }) {
     const { id, no, i, x, operator, rowCount } = value;
-    // <small className="text-secondary me-1">编号</small>
     let vNo: any, vRowCount: any;
     if (rowCount) {
         vNo = <b>{no}</b>;

@@ -211,7 +211,7 @@ export class SheetStore extends KeyIdObject {
         let { main, details } = await this.loadBinData(sheetId);
         if (main === undefined) return;
         this.main.setValue(main);
-        this.divStore.load(details);
+        this.divStore.load(details, false);
         setAtomValue(this.atomLoaded, true);
     }
 
