@@ -769,7 +769,10 @@ RETURNS atoms (
     no NO,
     ex EX,
 )
-{
+RETURNS specs (
+    spec ID,
+    atom ID,
+) {
     VAR maySheetId ID, detail ID, sheetPhrase ID;
     SET maySheetId = b.base FROM Detail as a JOIN Bud as b ON b.id=a.base WHERE a.id=id;
     IF maySheetId IS NOT NULL {
@@ -795,30 +798,30 @@ RETURNS atoms (
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN Bin as b ON b.id=a.origin
     ;
-    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value -- , 0 as owner
+    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value
         FROM details as s
             JOIN IxBudInt as a ON a.i=s.id or a.i=s.i or a.i=s.x;
-    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value -- , 0 as owner
+    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value
         FROM details as s
             JOIN IxBudDec as a ON a.i=s.id;
-    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_QUOTE(a.value) as value -- , 0 as owner
+    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_QUOTE(a.value) as value
         FROM details as s
             JOIN IxBudStr as a ON a.i=s.id;
-    INTO IGNORE props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value -- , 0 as owner
+    INTO IGNORE props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value
         FROM details as s
             JOIN IxBud as a ON a.i=s.id
             JOIN Bud as b ON b.id=a.x;
 
-    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value -- , 0 as owner
+    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value
         FROM main as s
             JOIN IxBudInt as a ON a.i=s.id or a.i=s.i or a.i=s.x;
-    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value -- , 0 as owner
+    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value
         FROM main as s
             JOIN IxBudDec as a ON a.i=s.id;
-    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_QUOTE(a.value) as value -- , 0 as owner
+    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_QUOTE(a.value) as value
         FROM main as s
             JOIN IxBudStr as a ON a.i=s.id;
-    INTO IGNORE props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value -- , 0 as owner
+    INTO IGNORE props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value
         FROM main as s
             JOIN IxBud as a ON a.i=s.id
             JOIN Bud as b ON b.id=a.x;
@@ -829,11 +832,30 @@ RETURNS atoms (
         ExecSql sql USING id;
     }
 
+    INTO specs SELECT DISTINCT a.i as spec, e.id as atom
+        FROM details as a JOIN Spec as c ON c.id=a.i
+            JOIN Bud as d ON d.id=c.base
+            JOIN Atom as e on e.id=d.base;
+    INTO specs SELECT DISTINCT a.x as spec, e.id as atom
+        FROM details as a JOIN Spec as c ON c.id=a.x
+            JOIN Bud as d ON d.id=c.base
+            JOIN Atom as e on e.id=d.base;
+
     INTO atoms SELECT DISTINCT a.value as id, b.id as base, c.no, c.ex
         FROM props as a 
             JOIN BizBud as b ON b.id=a.phrase
             JOIN Atom as c ON c.id=a.value
         WHERE b.type=BudDataType.atom;
+
+    INTO atoms SELECT DISTINCT e.id as id, e.base as base, e.no, e.ex
+        FROM specs as a JOIN Atom as e on e.id=a.atom;
+
+    INTO props SELECT DISTINCT a.spec as id, b.x as phrase, CAST(b.value AS JSON) as value
+        FROM specs as a JOIN IxBudInt as b ON b.i=a.spec;
+    INTO props SELECT DISTINCT a.spec as id, b.x as phrase, CAST(b.value AS JSON) as value
+        FROM specs as a JOIN IxBudDec as b ON b.i=a.spec;
+    INTO props SELECT DISTINCT a.spec as id, b.x as phrase, CAST(b.value AS JSON) as value
+        FROM specs as a JOIN IxBudStr as b ON b.i=a.spec;
 };
 
 Biz Query GetAtom (

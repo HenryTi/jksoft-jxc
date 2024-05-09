@@ -63,8 +63,10 @@ export class Formula {
         return nameValues.member(objName, propName) as number;
     }
 
-    private literal(exp: jsep.Literal): number {
-        return Number(exp.value);
+    private literal(exp: jsep.Literal): number | string {
+        let { value } = exp;
+        let ret = Number(value);
+        return Number.isNaN(ret) === true ? String(value) : ret;
     }
 
     private func(exp: jsep.CallExpression, nameValues: CalcSpace): number {

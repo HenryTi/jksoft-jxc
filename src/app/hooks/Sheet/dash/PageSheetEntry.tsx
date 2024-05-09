@@ -61,9 +61,25 @@ export function PageSheetNew({ store }: { store: SheetStore; }) {
 }
 
 function PageSheetDirect({ store }: { store: SheetStore; }) {
+    const onPicked = useOnPicked(store);
     const { caption } = store;
     useEffectOnce(() => {
-
+        (async function () {
+            let results: ReturnUseBinPicks = {
+                namedResults: {
+                    '%user': store.userProxy,
+                    'user': store.userProxy,
+                },
+                rearBinPick: undefined,
+                rearResult: [],
+                rearPickResultType: RearPickResultType.scalar,
+            };
+            await onPicked(results);
+            // let added = await detailNew();
+            //if (added === true) {
+            await store.setSheetAsDraft();
+            //}
+        })();
     });
     return <PageSpinner header={caption + ' 创建中...'} />
 }

@@ -2,10 +2,10 @@ import { useParams } from "react-router-dom";
 import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { EntitySheet, EntityBin, Biz, EntityPend, BinRow, BizBud, Entity } from "app/Biz";
-import { ParamSaveDetail, UqExt, Atom as BizAtom, ReturnGetPendRetSheet } from "uqs/UqDefault";
+import { ParamSaveDetail, UqExt, Atom as BizAtom, ReturnGetPendRetSheet, ReturnGetPendProps } from "uqs/UqDefault";
 import { PickFunc, PickStates, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
-import { AtomColl, BudsColl, budValuesFromProps } from "../../tool";
+import { AtomColl, BudsColl, SpecColl, budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
 import { ValRow, arrFromJsonMid } from "./tool";
 import { DivStore, SubmitState } from "./DivStore";
@@ -168,6 +168,7 @@ export class SheetStore extends KeyIdObject {
     readonly isPend: boolean;
     readonly budsColl: BudsColl = {};
     readonly bizAtomColl: AtomColl = {};
+    readonly bizSpecColl: SpecColl = {};
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> } = {};
     readonly divStore: DivStore;
     readonly atomLoaded = atom(false);
@@ -227,10 +228,11 @@ export class SheetStore extends KeyIdObject {
 
     // whole sheet or row detail
     async loadBinData(binId: number) {
-        let { main, details, props, atoms: bizAtoms } = await this.uq.GetSheet.query({ id: binId });
+        let { main, details, props, atoms: bizAtoms, specs } = await this.uq.GetSheet.query({ id: binId });
         const budsColl = budValuesFromProps(props);
         Object.assign(this.budsColl, budsColl);
         this.addBizAtoms(bizAtoms);
+        this.addBizSpecs(specs, props);
         let mainRow = main[0];
         if (mainRow !== undefined) {
             (mainRow as any).buds = budsColl[binId] ?? {};
@@ -246,10 +248,11 @@ export class SheetStore extends KeyIdObject {
         let { pend: entityPend, rearPick } = this.entitySheet.coreDetail;
         if (entityPend === undefined) debugger;
         let ret = await this.uqGetPend(entityPend, params, pendId);
-        let { $page, retSheet, props: showBuds, atoms } = ret;
+        let { $page, retSheet, props: showBuds, atoms, specs } = ret;
         const ownerColl = budValuesFromProps(showBuds);
         Object.assign(this.budsColl, ownerColl);
         this.addBizAtoms(atoms);
+        this.addBizSpecs(specs, showBuds);
         let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
         for (let v of retSheet) {
             collSheet[v.id] = v;
@@ -275,8 +278,26 @@ export class SheetStore extends KeyIdObject {
 
     private addBizAtoms(bizAtoms: BizAtom[]) {
         for (let atom of bizAtoms) {
-            this.bizAtomColl[atom.id] = atom;
+            const { id } = atom;
+            this.bizAtomColl[id] = atom;
             this.uq.idCacheAdd(atom);
+        }
+    }
+
+    private addBizSpecs(bizSpecs: { spec: number; atom: number; }[], props: ReturnGetPendProps[]) {
+        for (let bizSpec of bizSpecs) {
+            const { spec, atom } = bizSpec;
+            this.bizSpecColl[spec] = {
+                atom: this.bizAtomColl[atom],
+                buds: [],
+            }
+        }
+        for (let { id, phrase, value } of props) {
+            let bizSpec = this.bizSpecColl[id];
+            if (bizSpec === undefined) continue;
+            let bud = this.biz.budFromId(phrase);
+            if (bud === undefined) debugger;
+            bizSpec.buds.push(bud);
         }
     }
 

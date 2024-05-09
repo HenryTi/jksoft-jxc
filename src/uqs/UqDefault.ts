@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon May 06 2024 13:44:50 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Thu May 09 2024 19:23:12 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -559,12 +559,17 @@ export interface ReturnGetSheetAtoms {
 	no: string;
 	ex: string;
 }
+export interface ReturnGetSheetSpecs {
+	spec: number;
+	atom: number;
+}
 export interface ResultGetSheet {
 	main: ReturnGetSheetMain[];
 	details: ReturnGetSheetDetails[];
 	origins: ReturnGetSheetOrigins[];
 	props: ReturnGetSheetProps[];
 	atoms: ReturnGetSheetAtoms[];
+	specs: ReturnGetSheetSpecs[];
 }
 
 export interface ParamGetAtom {
@@ -669,11 +674,16 @@ export interface ReturnGetPendAtoms {
 	no: string;
 	ex: string;
 }
+export interface ReturnGetPendSpecs {
+	spec: number;
+	atom: number;
+}
 export interface ResultGetPend {
 	$page: ReturnGetPend$page[];
 	retSheet: ReturnGetPendRetSheet[];
 	props: ReturnGetPendProps[];
 	atoms: ReturnGetPendAtoms[];
+	specs: ReturnGetPendSpecs[];
 }
 
 export interface ParamGetPendsNotify {
@@ -1327,7 +1337,7 @@ export interface ParamGetUserBuds {
 }
 export interface ReturnGetUserBudsBuds {
 	bud: number;
-	value: string;
+	value: any;
 }
 export interface ResultGetUserBuds {
 	buds: ReturnGetUserBudsBuds[];
@@ -3024,6 +3034,19 @@ export const uqSchema={
                         "size": 200
                     }
                 ]
+            },
+            {
+                "name": "specs",
+                "fields": [
+                    {
+                        "name": "spec",
+                        "type": "id"
+                    },
+                    {
+                        "name": "atom",
+                        "type": "id"
+                    }
+                ]
             }
         ]
     },
@@ -3339,6 +3362,19 @@ export const uqSchema={
                         "name": "ex",
                         "type": "char",
                         "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "specs",
+                "fields": [
+                    {
+                        "name": "spec",
+                        "type": "id"
+                    },
+                    {
+                        "name": "atom",
+                        "type": "id"
                     }
                 ]
             }
@@ -5201,8 +5237,7 @@ export const uqSchema={
                     },
                     {
                         "name": "value",
-                        "type": "char",
-                        "size": 200
+                        "type": "json"
                     }
                 ]
             }

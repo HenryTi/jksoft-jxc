@@ -4,6 +4,8 @@ import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { getAtomValue, theme } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
 import { Prop, VNamedBud } from "../store/tool";
+import { ViewBud } from "app/hooks";
+import { ViewSepcBuds, ViewSpecAtom } from "../views";
 // import { useGetSpec } from "app/hooks/Uq";
 
 export interface PendProps {
@@ -19,7 +21,7 @@ export function ViewPendRow({
     const { sheetStore, entityBin } = divStore;
     const { pend: entityPend } = entityBin;
     let { i: iBud, hasPrice, hasAmount } = entityPend;
-    const { pend: pendId, detail: { id, i, price, amount }, value, mid/*, cols*/ } = pendRow;
+    const { pend: pendId, detail: { id, i, price, amount }, value, mid } = pendRow;
 
     function ViewValue({ caption, value }: { caption: string; value: string | number | JSX.Element; }) {
         return <div className="d-flex text-end align-items-center">
@@ -53,23 +55,15 @@ export function ViewPendRow({
     }
     const { budsColl, bizAtomColl } = sheetStore;
     const budValueColl = budsColl[i];
-    function ViewSpecAtom({ id }: { id: number; }) {
-        //const { atom, specs } = useGetSpec(id);
-        let bizAtom = divStore.sheetStore.bizAtomColl[id];
-        if (bizAtom === undefined) return null;
-        // const { value: atomValue, entity } = bizAtom;
-        const { no, ex } = bizAtom;
-        return <><b>{ex}</b> <span className="ms-3">{no}</span></>
-    }
     return <>
         <div className="py-2 bg-white flex-fill ps-3">
             <div className="flex-fill">
-                <ViewSpecAtom id={i} />
+                <ViewSpecAtom id={i} sheetStore={sheetStore} />
                 <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
             </div>
             <div className="d-flex">
                 <RowCols contentClassName=" flex-fill ">
-                    {/*<ViewSpecBase id={i} ViewAtom={undefined} />*/}
+                    <ViewSepcBuds id={i} sheetStore={sheetStore} />
                     <ViewShowBuds budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
                     <ViewPropArr arr={mid} />
                 </RowCols>

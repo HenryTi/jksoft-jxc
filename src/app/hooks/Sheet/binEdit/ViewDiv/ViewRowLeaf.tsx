@@ -6,6 +6,7 @@ import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../../../tool";
 import { PAV, ViewDivProps, cn } from "./tool";
 import { ViewIBase } from "./ViewIBase";
 import { DivEditing } from "../../store";
+import { ViewSepcBuds, ViewSpecAtom } from "../../views";
 
 export function ViewRowLeaf(props: ViewDivProps) {
     const { divStore, valDiv, buttons } = props;
@@ -16,19 +17,20 @@ export function ViewRowLeaf(props: ViewDivProps) {
     const { budValue, budPrice, budAmount, budI } = binBuds;
     const valRow = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);
-    const { price, amount } = valRow;
+    const { i, price, amount } = valRow;
     let {
         value: cnValue, price: cnPrice, amount: cnAmount
     } = theme;
-    const { budsColl, bizAtomColl } = sheetStore;
-    let budValueColl = budsColl[valRow.i];
+    const { budsColl, bizAtomColl, bizSpecColl } = sheetStore;
+    let budValueColl = budsColl[i];
     let viewAtomMain: any;
     const { binDivBuds, } = binDiv;
     const { budIBase } = binDivBuds;
     if (budIBase === undefined) {
         if (budI !== undefined) {
             viewAtomMain = <div className="mb-1">
-                <ViewSpecBaseOnly id={valRow.i} noVisible={false} bold={true} />
+                {/*<ViewSpecBaseOnly id={i} noVisible={false} bold={true} />*/}
+                <ViewSpecAtom id={i} sheetStore={sheetStore} />
                 <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
             </div>;
         }
@@ -36,35 +38,15 @@ export function ViewRowLeaf(props: ViewDivProps) {
     else {
         viewAtomMain = <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />;
     }
-    /*
-    {
-        budI &&
-        <div className="mb-1">
-            <ViewSpecBaseOnly id={valRow.i} noVisible={false} bold={true} />
-            <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
-        </div>
-    }
-    */
     // const cnBtn = 'w-min-8c w-max-8c d-flex justify-content-end align-items-end';
     const divEditing = new DivEditing(divStore, valDiv);
     return <>
         <div className={cn + ' flex-fill bg-white px-2 py-2 px-lg-3 '}>
             {viewAtomMain}
             <RowColsSm contentClassName="flex-fill">
+                <ViewSepcBuds id={i} sheetStore={sheetStore} />
                 <ViewShowBuds bud={iBud} budValueColl={budValueColl} atomColl={bizAtomColl} />
-                {
-                    divEditing.buildViewBuds(bizAtomColl)
-                    /*
-                    fields.map(field => {
-                        // const {bud} = field;
-                        const bud = field;
-                const {id} = bud;
-                let value = binBuds.getBudValue(field, valRow);
-                if (value === null || value === undefined) return null;
-                return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
-                    })
-                    */
-                }
+                {divEditing.buildViewBuds(bizAtomColl)}
             </RowColsSm>
         </div>
         <div className="d-flex flex-column justify-content-end align-items-end px-2 py-2 px-lg-3 border-start">

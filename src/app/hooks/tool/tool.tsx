@@ -27,6 +27,13 @@ export interface AtomColl {
     [id: number]: BizAtom;
 }
 
+export interface SpecColl {
+    [id: number]: {
+        atom: BizAtom;
+        buds: BizBud[];
+    }
+}
+
 export function budValuesFromProps(props: PropData[]) {
     const budsColl: BudsColl = {};
     for (let { id, phrase, value } of props) {

@@ -37,6 +37,10 @@ RETURNS atoms (
     no NO,
     ex EX,
 )
+RETURNS specs (
+    spec ID,
+    atom ID,
+)
 {
     IF pendId IS NOT NULL {
             PAGE SELECT t1.id AS pend, e.id AS sheet, t1.bin AS id, b.i AS i
@@ -85,12 +89,29 @@ RETURNS atoms (
             JOIN BizBud as b ON b.id=a.phrase
             JOIN Atom as c ON c.id=a.value
         WHERE b.type=BudDataType.atom;
+
     INTO atoms SELECT DISTINCT c.id as id, c.base as base, c.no, c.ex
         FROM $page as a JOIN Atom as c ON c.id=a.i;
-        -- WHERE c.id in (); -- b.type=BudDataType.atom;
+    INTO specs SELECT DISTINCT a.i as spec, e.id as atom
+        FROM $page as a JOIN Spec as c ON c.id=a.i
+            JOIN Bud as d ON d.id=c.base
+            JOIN Atom as e on e.id=d.base;
     INTO atoms SELECT DISTINCT c.id as id, c.base as base, c.no, c.ex
         FROM $page as a JOIN Atom as c ON c.id=a.x;
-        -- WHERE c.id in (); -- b.type=BudDataType.atom;
+    INTO specs SELECT DISTINCT a.x as spec, e.id as atom
+        FROM $page as a JOIN Spec as c ON c.id=a.x
+            JOIN Bud as d ON d.id=c.base
+            JOIN Atom as e on e.id=d.base;
+
+    INTO atoms SELECT DISTINCT e.id as id, e.base as base, e.no, e.ex
+        FROM specs as a JOIN Atom as e on e.id=a.atom;
+
+    INTO props SELECT DISTINCT a.spec as id, b.x as phrase, CAST(b.value AS JSON) as value
+        FROM specs as a JOIN IxBudInt as b ON b.i=a.spec;
+    INTO props SELECT DISTINCT a.spec as id, b.x as phrase, CAST(b.value AS JSON) as value
+        FROM specs as a JOIN IxBudDec as b ON b.i=a.spec;
+    INTO props SELECT DISTINCT a.spec as id, b.x as phrase, CAST(b.value AS JSON) as value
+        FROM specs as a JOIN IxBudStr as b ON b.i=a.spec;
 }
 
 Biz Query GetPendsNotify()

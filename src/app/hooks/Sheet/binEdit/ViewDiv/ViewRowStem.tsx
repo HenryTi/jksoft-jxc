@@ -1,10 +1,11 @@
 import { useAtomValue } from "jotai";
 import { theme, FA } from "tonwa-com";
-import { RowColsSm, ViewShowBuds } from "../../../tool";
+import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../../../tool";
 import { PAV, ViewDivProps, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
 import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
 import { DivEditing } from "../../store";
+import { ViewSpecAtom } from "../../views";
 
 export function ViewRowStem(props: ViewDivProps) {
     const { valDiv, divStore, buttons, hidePivot, readonly } = props;
@@ -44,29 +45,11 @@ export function ViewRowStem(props: ViewDivProps) {
 
     const { budsColl, bizAtomColl } = sheetStore;
     let budValueColl = budsColl[iValue];
-    // <ViewIdField bud={budI} value={iValue} />
-    /*
-    let fieldsSet = new Set<number>();
-    for (let f of fields) {
-        const { id } = f;
-        if (id === undefined) debugger;
-        if (fieldsSet.has(id) === true) debugger;
-        fieldsSet.add(id);
-    }
-    */
     const divEditing = new DivEditing(divStore, valDiv);
     let content = <>
         <ViewIBaseBuds sheetStore={sheetStore} valDiv={valDiv} />
         <ViewShowBuds bud={budI} budValueColl={budValueColl} atomColl={bizAtomColl} />
-        {
-            divEditing.buildViewBuds(bizAtomColl)
-            /*
-            fields.map(field => {
-                const bud = field;
-                return <ViewBud key={bud.id} bud={bud} value={binBuds.getBudValue(field, valRow)} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
-            })
-            */
-        }
+        {divEditing.buildViewBuds(bizAtomColl)}
     </>;
     function ViewRight() {
         let cn = viewPivot !== undefined ? cnSumBold : cnSum;
@@ -88,24 +71,6 @@ export function ViewRowStem(props: ViewDivProps) {
         </div>;
         if (divs.length > 0) {
             viewRight = <ViewRight />;
-            /*
-            viewRight = <div className="d-flex flex-column align-items-end">
-                <div className="flex-fill d-flex mb-1 me-1">
-                    {buttons}
-                </div>
-                <div className="d-flex text-end flex-column align-items-end me-3">
-                    {viewPendValue}
-                    <PAV bud={entityBin.value} val={sum} className={cnSum} />
-                </div>
-            </div>;
-            viewRight = <>
-                <div className="d-flex text-end flex-column align-items-end me-3">
-                    {viewPendValue}
-                    <PAV bud={entityBin.value} val={sum} className={cnSum} />
-                </div>
-                {buttons}
-            </>;
-            */
         }
     }
     else {
@@ -114,24 +79,17 @@ export function ViewRowStem(props: ViewDivProps) {
             {viewPivot}
         </div>;
         viewRight = <ViewRight />;
-
-        /*
-        const { value: budValue } = entityBin;
-        viewRight = <>
-            <PAV bud={budValue} val={sum} className={cnSum} />
-            {buttons}
+    }
+    function ViewI() {
+        return <>
+            <ViewSpecAtom id={iValue} sheetStore={sheetStore} />
+            <ViewAtomTitles budValueColl={budValueColl} bud={budI} atomColl={bizAtomColl} />
         </>;
-        */
-        /*
-        <div className="text-end mx-3">
-            <div className={labelColor}>{budValue.caption ?? budValue.name}</div>
-            <div className={cnValue}>{sum}</div>
-        </div>
-        */
     }
     return <>
         <div className="flex-fill px-2 py-2 px-lg-3">
             <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />
+            <ViewI />
             {viewContent}
         </div>
         {viewRight}
