@@ -38,7 +38,9 @@ export class PickPendStore {
             let { id, name, budDataType } = param;
             let pickParam = pickParams?.find(v => v.name === name);
             if (pickParam !== undefined) {
-                let { bud, prop } = pickParam;
+                let { valueSet, valueSetType } = pickParam;
+                debugger;
+                /*
                 let namedResult = this.namedResults[bud] as PickResult;
                 if (namedResult === undefined) {
                     paramValue = this.paramsEditing.values[id];
@@ -47,6 +49,7 @@ export class PickPendStore {
                     if (prop === undefined) prop = 'id';
                     paramValue = namedResult[prop];
                 }
+                */
             }
             else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {
                 paramValue = this.paramsEditing.values[id];

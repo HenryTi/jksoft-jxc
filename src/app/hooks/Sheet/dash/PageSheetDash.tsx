@@ -1,15 +1,14 @@
-import { useCallback, useRef, useState } from "react";
-import { IDView, Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
+import { useRef, useState } from "react";
+import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { FA, List, useEffectOnce, wait } from "tonwa-com";
 import { Entity, EntitySheet } from "app/Biz";
 import { PageSheetEdit, PageSheetNew } from "./PageSheetEntry";
 import { DashConsole } from "./DashConsole";
-import { Atom, Sheet } from "uqs/UqDefault";
+import { Sheet } from "uqs/UqDefault";
 import { Bin } from "app/tool";
 import { PageSheetList } from "./PageSheetList";
 import { useAtomValue } from "jotai";
-import { ViewItemMain } from "app/hooks/View";
-import { ViewReaction } from "app/hooks/View/ViewReaction";
+import { ViewReaction, ViewItemMain } from "app/hooks/View";
 import { ViewBud } from "app/hooks";
 
 export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
@@ -43,7 +42,6 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         const { id, no, base, i } = value;
         const [del, setDel] = useState(0);
         let entitySheetInView = biz.entityFromId(base);
-        // let sheetCaption: string;
         if (entitySheetInView === undefined) {
             sheetCaption = String('Sheet Type ID: ' + base);
         }
@@ -51,11 +49,6 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
             const { caption, name } = entitySheetInView;
             sheetCaption = caption ?? name;
         }
-        /*
-        function ViewTarget({ value }: { value: Atom; }) {
-            return <span>{value.ex}</span>;
-        }
-        */
         if (entitySheetInView === undefined) {
             async function onDelMyDraft() {
                 setDel(1);
@@ -93,16 +86,6 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
                 <ViewItemMain value={value} isMy={true} />
             </div>
         </div>;
-        /*
-        <div className="d-flex px-3 py-3 align-items-center cursor-pointer" onClick={onSheet}>
-            <FA name="file-text-o" className="me-3 text-danger" />
-            <div className="w-8c"><ViewSheetTime id={id} /></div>
-            <span className="d-inline-block w-min-10c">{no}</span>
-            <span className="d-inline-block w-min-8c">
-                <IDView uq={uq} id={i} Template={ViewTarget} />
-            </span>
-        </div>;
-        */
     }
     if (visible === false) return <PageSpinner />;
 

@@ -445,8 +445,29 @@ export abstract class SheetConsole {
     picks: PickStates;
 }
 
-export interface SheetSteps {
-    steps: string[];
-    step: number;
-    end: string;
+export class SheetSteps {
+    readonly steps: string[];
+    readonly end: string;
+    private _step: number;
+    get step(): number { return this._step; }
+
+    constructor(steps: string[], end: string) {
+        this.steps = steps;
+        this.end = end;
+        this._step = 0;
+    }
+
+    next() {
+        this._step++;
+        if (this._step > this.steps.length) {
+            debugger;
+        }
+    }
+
+    prev() {
+        this._step--;
+        if (this._step < 0) {
+            debugger;
+        }
+    }
 }

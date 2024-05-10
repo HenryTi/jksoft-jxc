@@ -2,40 +2,19 @@ import { PickPend } from "app/Biz";
 import { useCallback } from "react";
 import { useModal } from "tonwa-app";
 import { NamedResults, PendProxyHander, PickResult, ValRow } from "../store";
-import { usePageParams } from "./PageParams";
 import { DivStore } from "../store";
 import { PagePend } from "./PagePend";
-import { PickPendStore } from "../store/PickPendStore";
 
 export function usePickFromPend() {
     const modal = useModal();
-    const pickParam = usePageParams();
     return useCallback(
         async function (divStore: DivStore, namedResults: NamedResults, binPick: PickPend): Promise<PickResult[]> {
-            let { caption, from: entityPend, pickParams, bin } = binPick;
+            let { from: entityPend, bin } = binPick;
             const pendProxyHander = new PendProxyHander(entityPend);
-            /*
-            const { params: queryParams } = entityPend;
-
-            let retParam: any;
-            if (queryParams !== undefined) {
-                const header = caption;
-                retParam = await pickParam({
-                    header,
-                    namedResults,
-                    queryParams,
-                    pickParams,
-                });
-                if (retParam === undefined) return;
-            }
-            else {
-                retParam = {};
-            }
-            */
             const { sheetStore } = divStore;
             const { sheetConsole } = sheetStore;
-            const { steps } = sheetConsole;
-            if (steps !== undefined) steps.step = 1;
+            // const { steps } = sheetConsole;
+            // if (steps !== undefined) steps.step = 1;
             let pendStore = divStore.getPickPendStore(binPick, namedResults);
             await pendStore.searchPend();
             let inputed = await modal.open<ValRow[]>(<PagePend pendStore={pendStore} />);

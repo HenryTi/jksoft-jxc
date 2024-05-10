@@ -11,7 +11,7 @@ export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
     let { divStore, pickPend } = pendStore;
     let { caption } = pickPend;
     let { entityBin: { pend: entityPend }, atomPendRows, sheetStore } = divStore;
-    const { sheetConsole: { steps }, atomLoaded, bizAtomColl } = sheetStore;
+    const { sheetConsole: { steps }, atomLoaded } = sheetStore;
     const modal = useModal();
     let pendRows = useAtomValue(atomPendRows);
     let { name: pendName } = entityPend;
@@ -25,6 +25,7 @@ export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
     let onItemSelectFunc: any, btnFinish: any;
     function BtnNext() {
         function onNext() {
+            steps.next();
             modal.close([]);
         }
         return <button className="btn btn-primary" onClick={onNext}>
@@ -38,6 +39,7 @@ export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
         function onClose() {
             let ret: any = undefined;
             if (steps !== undefined) {
+                steps.prev();
                 setAtomValue(atomLoaded, false);
             }
             else {

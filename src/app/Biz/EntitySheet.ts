@@ -8,10 +8,12 @@ import { UI } from "app/ui";
 import { BudValue } from "tonwa-app";
 import { OptionsItem } from ".";
 
-export interface PickParam {
+export class PickParam extends BizBud {
+    /*
     name: string;
     bud: string;
     prop: string;       // prop of bud
+    */
 }
 
 export abstract class BinPick extends BizBud {
@@ -112,101 +114,7 @@ export interface BinRow {
     buds?: { [bud: number]: string | number };
     owned?: { [bud: number]: [number, BudValue][] };
 };
-/*
-export abstract class BinField {
-    readonly name: string;
-    readonly bud: BizBud;
-    // readonly valueSet: string;
-    // readonly valueSetType: ValueSetType;
-    constructor(bud: BizBud) {
-        this.name = bud.name;
-        this.bud = bud;
-    }
-    abstract getValue(binRow: BinRow): any;
-    abstract setValue(binRow: BinRow, v: any): void;
-}
 
-class FieldI extends BinField {
-    readonly onForm = false;
-    getValue(binRow: BinRow): any { return binRow.i; }
-    setValue(binRow: BinRow, v: any) { binRow.i = v; }
-}
-
-class FieldX extends BinField {
-    readonly onForm = false;
-    getValue(binRow: BinRow): any { return binRow.x; }
-    setValue(binRow: BinRow, v: any) { binRow.x = v; }
-}
-
-abstract class DecField extends BinField {
-    readonly onForm = true;
-    protected abstract getDecValue(binRow: BinRow): number;
-    getValue(binRow: BinRow): any {
-        let v = this.getDecValue(binRow);
-        let dt = this.bud.budDataType as BudDec;
-        return dt.getUIValue(v);
-    }
-    getUIValue(value: any) {
-        let dt = this.bud.budDataType as BudDec;
-        return dt.getUIValue(value);
-    }
-}
-
-class FieldValue extends DecField {
-    protected override getDecValue(binRow: BinRow): any { return binRow.value; }
-    setValue(binRow: BinRow, v: any) { binRow.value = v; }
-    get required(): boolean { return true; }
-}
-
-class FieldPrice extends DecField {
-    protected override getDecValue(binRow: BinRow): any { return binRow.price; }
-    setValue(binRow: BinRow, v: any) { binRow.price = v; }
-}
-
-class FieldAmount extends DecField {
-    protected override getDecValue(binRow: BinRow): any { return binRow.amount; }
-    setValue(binRow: BinRow, v: any) { binRow.amount = v; }
-}
-
-abstract class FieldBudAbstract extends BinField {
-    abstract get onForm(): boolean;
-    getValue(binRow: BinRow): any { return binRow.buds[this.bud.id]; }
-    setValue(binRow: BinRow, v: any) { binRow.buds[this.bud.id] = v; }
-}
-class FieldBud extends FieldBudAbstract {
-    readonly onForm = true;
-}
-
-class FieldDateBud extends FieldBud {
-    getValue(binRow: BinRow): any {
-        let v = binRow.buds[this.bud.id];
-        return contentFromDays(v as number);
-    }
-    getUIValue(value: any) { return contentFromDays(value as number); }
-}
-
-class FieldCheckBud extends FieldBud {
-    getValue(binRow: BinRow): any {
-        let v = binRow.buds[this.bud.id];
-        return v;
-    }
-}
-
-class FieldRadioBud extends FieldBud {
-    getValue(binRow: BinRow): any {
-        let v = binRow.buds[this.bud.id];
-        return v;
-    }
-}
-
-class FieldIBase extends FieldBudAbstract {
-    readonly onForm = false;
-}
-
-class FieldXBase extends FieldBudAbstract {
-    readonly onForm = false;
-}
-*/
 abstract class BinBudValue {
     readonly bud: BizBud;
     constructor(bud: BizBud) {
@@ -269,8 +177,6 @@ export class BudValuesTool extends BudValuesToolBase<any> {
 }
 
 export class BinRowValuesTool extends BudValuesToolBase<BinRow> {
-    // private readonly collGet: { [budId: number]: (binRow: BinRow) => any; } = {};
-    // private readonly collSet: { [budId: number]: (binRow: BinRow, value: any) => void; } = {};
     readonly coll: { [budId: number]: BinBudValue; } = {};
     readonly entityBin: EntityBin;
     readonly budI: BizBud;
@@ -338,26 +244,6 @@ export class BinRowValuesTool extends BudValuesToolBase<BinRow> {
             }
         }
     }
-    /*
-    getIValue(binRow: BinRow): number { return binRow.i; }
-    setIValue(binRow: BinRow, value: number) { binRow.i = value; }
-    getIBaseValue(binRow: BinRow): number { return binRow.buds[this.entityBin.iBase.id] as number; }
-    setIBaseValue(binRow: BinRow, value: number) { binRow.buds[this.entityBin.iBase.id] = value; }
-
-    getXValue(binRow: BinRow): number { return binRow.x; }
-    setXValue(binRow: BinRow, value: number) { binRow.x = value; }
-    getXBaseValue(binRow: BinRow): number { return binRow.buds[this.entityBin.xBase.id] as number; }
-    setXBaseValue(binRow: BinRow, value: number) { binRow.buds[this.entityBin.xBase.id] = value; }
-
-    getValueValue(binRow: BinRow): number { return binRow.value; }
-    setValueValue(binRow: BinRow, value: number) { binRow.value = value; }
-
-    getPriceValue(binRow: BinRow): number { return binRow.price; }
-    setPriceValue(binRow: BinRow, value: number) { binRow.price = value; }
-
-    getAmountValue(binRow: BinRow): number { return binRow.amount; }
-    setAmountValue(binRow: BinRow, value: number) { binRow.amount = value; }
-    */
     has(bud: BizBud) {
         let binBud = this.coll[bud.id];
         return binBud !== undefined;
@@ -534,7 +420,7 @@ export class EntityBin extends Entity {
             case BizPhraseType.query: binPick = buildPickQuery(); break;
             case BizPhraseType.pend: binPick = buildPickPend(); break;
         }
-        binPick.pickParams = params;
+        binPick.pickParams = this.buildPickParams(params);
         binPick.ui = { caption };
         if (hidden !== undefined) {
             binPick.hiddenBuds = new Set();
@@ -544,6 +430,18 @@ export class EntityBin extends Entity {
             }
         }
         return binPick;
+    }
+
+    private buildPickParams(params: any[]): PickParam[] {
+        if (params === undefined) return;
+        let pickParams: PickParam[] = [];
+        for (let param of params) {
+            const { name, dataType } = param;
+            let pickParam = new PickParam(this.biz, 0, name, dataType, this);
+            pickParam.fromSchema(param);
+            pickParams.push(pickParam);
+        }
+        return pickParams;
     }
 
     private buildInput(v: any): BinInput {
@@ -634,8 +532,6 @@ export class EntityBin extends Entity {
     private scanBinBuds(buds: any[]) {
         if (buds === undefined) return;
         let ret: BizBud[] = [];
-        // let iBaseBud: BizBudSpecBase;
-        // let xBaseBud: BizBudSpecBase;
         for (let bud of buds) {
             let bizBud: BizBud;
             switch (bud) {
@@ -644,16 +540,6 @@ export class EntityBin extends Entity {
                 case '.i': bizBud = this.iBase; break;
                 case 'x': bizBud = this.x; break;
                 case '.x': bizBud = this.xBase; break;
-                /*
-                case '.i':
-                case 'i.':
-                    bizBud = iBaseBud = new BizBudSpecBase(this.biz, 0, '.i', EnumBudType.none, this);
-                    break;
-                case '.x':
-                case 'x.':
-                    bizBud = xBaseBud = new BizBudSpecBase(this.biz, 0, '.x', EnumBudType.none, this);
-                    break;
-                */
                 case 'value': bizBud = this.value; break;
                 case 'price': bizBud = this.price; break;
                 case 'amount': bizBud = this.amount; break;
@@ -661,10 +547,6 @@ export class EntityBin extends Entity {
             if (bizBud === undefined) debugger;
             ret.push(bizBud);
         }
-        /*
-        if (iBaseBud !== undefined) iBaseBud.specBud = this.i;
-        if (xBaseBud !== undefined) xBaseBud.specBud = this.x;
-        */
         return ret;
     }
 

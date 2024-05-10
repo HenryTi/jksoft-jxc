@@ -23,12 +23,15 @@ export function usePageParams() {
             let { name, budDataType } = param;
             let pickParam = pickParams?.find(v => v.name === name);
             if (pickParam !== undefined) {
-                let { bud, prop } = pickParam;
+                let { /*bud, prop*/ valueSet, valueSetType } = pickParam;
+                debugger;
+                /*
                 let namedResult = namedResults[bud] as NamedResults;
                 if (namedResult === undefined) debugger;
                 if (prop === undefined) prop = 'id';
                 let v = namedResult[prop];
                 valueParams.push([pickParam, param, v]);
+                */
             }
             else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {
                 inputParams.push(param);

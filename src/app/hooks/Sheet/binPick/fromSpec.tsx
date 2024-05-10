@@ -29,7 +29,8 @@ export function usePickFromSpec() {
     // const returnUsePickSpec = usePickSpec();
     return useCallback(async function (divStore: DivStore, namedResults: NamedResults, binPick: PickSpec): Promise<PickResult> {
         let { pickParams, from } = binPick;
-        let retAtom = namedResults[pickParams[0]?.bud] as Atom;
+        debugger;
+        let retAtom: Atom; // = namedResults[pickParams[0]?.bud] as Atom;
         const viewTop = <div>
             <ViewAtom value={retAtom} />
         </div>;

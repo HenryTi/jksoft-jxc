@@ -120,14 +120,15 @@ export class BudIDIO extends BudDataNumber {
     }
 }
 abstract class BudOptions extends BudDataType {
-    private optionsName: string;
+    //private optionsName: string;
     options: EntityOptions;
     get dataType(): 'string' | 'number' { return; }
     override scan(biz: Biz, bud: BizBud) {
-        this.options = biz.entities[this.optionsName] as EntityOptions;
+        this.options = biz.entityFromId(this.options as unknown as number);
+        // biz.entities[this.optionsName] as EntityOptions;
     }
     fromSchema(schema: any) {
-        this.optionsName = schema.options;
+        this.options = schema.options;
     }
 }
 export class BudIntOf extends BudOptions {
@@ -173,8 +174,6 @@ export class BudPickable extends BudDataNumber {
     }
 }
 
-//type FieldShow = { entity: Entity; bud: BizBud; };
-// type FieldShow = BizBud;
 export enum ValueSetType {
     none,
     init,
@@ -185,7 +184,6 @@ export enum ValueSetType {
 export class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budDataType: BudDataType;
-    // defaultValue: string;
     atomParams: { [param: string]: string }; // only for BizBudAtom
     fieldShows: BizBud[];
     valueSet: string;

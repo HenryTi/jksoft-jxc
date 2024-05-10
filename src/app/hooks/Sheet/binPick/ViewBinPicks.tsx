@@ -26,7 +26,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     const [pickFromQueryScalar, pickFromQuery] = usePickFromQuery();
     const { main, divStore, sheetConsole } = sheetStore;
     const { binPicks, rearPick } = main.entityBin;
-    const { picks } = sheetConsole;
+    const { picks, steps } = sheetConsole;
     const { atomPickedResults, atomRearPickResult, atomCur } = picks;
     let namedResults = getAtomValue(atomPickedResults);
     let rearPickResult = useAtomValue(atomRearPickResult);
@@ -94,6 +94,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
             rearPickResultType: rearPickResultType,
         };
         await onPicked(ret);
+        steps.next();
     }
     let viewBinPicks: any;
     let viewBinPicksNext: any;

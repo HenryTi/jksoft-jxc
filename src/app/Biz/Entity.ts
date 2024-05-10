@@ -1,4 +1,4 @@
-import { BizBud, BizBudBinValue } from "./BizBud";
+import { BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
 import { Biz } from "./Biz";
 import { EntitySelf } from "./AtomsBuilder";
