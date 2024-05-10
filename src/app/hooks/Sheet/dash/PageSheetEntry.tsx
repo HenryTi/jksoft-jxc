@@ -1,6 +1,6 @@
 import { Page, PageSpinner } from "tonwa-app";
 import { setAtomValue, useEffectOnce } from "tonwa-com";
-import { RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetStore } from "../store";
+import { RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetSteps, SheetStore } from "../store";
 import { useAtomValue } from "jotai";
 import { PageSheet } from "./PageSheet";
 import { useCallback } from "react";
@@ -21,6 +21,15 @@ export function PageSheetEdit({ store, sheetId, readonly }: { store: SheetStore;
     return <PageSheet store={store} readonly={readonly} />;
 }
 
+const stepPick = '录入条件';
+const stepPend = '批选待处理';
+function sheetSteps(steps: string[]): SheetSteps {
+    return {
+        steps,
+        end: "录入单据",
+        step: 0,
+    }
+};
 export function PageSheetNew({ store }: { store: SheetStore; }) {
     const { sheetConsole } = store;
     const loaded = useAtomValue(store.atomLoaded);
@@ -29,32 +38,20 @@ export function PageSheetNew({ store }: { store: SheetStore; }) {
     }
     const { main, isPend } = store;
     const { entityBin } = main;
-    const { binPicks } = entityBin;
-    if (binPicks === undefined || binPicks.length === 0) {
+    const { binPicks, rearPick } = entityBin;
+    if (rearPick === undefined && (binPicks === undefined || binPicks.length === 0)) {
         if (isPend === true) {
-            sheetConsole.steps = {
-                steps: ['批选待处理'],
-                end: "录入单据",
-                step: 0,
-            };
+            sheetConsole.steps = sheetSteps([stepPend]);
             return <PageDirectPend store={store} />;
         }
         return <PageSheetDirect store={store} />;
     }
     if (isPend === true) {
-        sheetConsole.steps = {
-            steps: ['录入条件', '批选待处理'],
-            end: "录入单据",
-            step: 0,
-        };
+        sheetConsole.steps = sheetSteps([stepPick, stepPend]);
         return <PageStartPend store={store} />;
     }
-    if (store.main.entityBin.binPicks !== undefined) {
-        sheetConsole.steps = {
-            steps: ['录入条件'],
-            end: "录入单据",
-            step: 0,
-        };
+    if (binPicks !== undefined) {
+        sheetConsole.steps = sheetSteps([stepPick]);
         return <PageStartPicks store={store} />;
     }
     return <PageSheetDirect store={store} />;
