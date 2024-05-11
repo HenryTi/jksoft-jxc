@@ -138,9 +138,11 @@ export class Entity extends BizBase {
     }
 
     scan() {
+        if (this.scaned === true) return;
         this.buildBudsGroups();
         this.scanBudGroups();
         this.scanBuds();
+        this.scaned = true;
     }
 
     protected scanBuds() {

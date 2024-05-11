@@ -2,6 +2,7 @@ import { getDays } from 'app/tool';
 import jsep from 'jsep';
 import { CalcSpace } from './CalcSpace';
 
+jsep.addIdentifierChar("%");
 export class Formula {
     private readonly exp: jsep.Expression;
     constructor(formula: string) {

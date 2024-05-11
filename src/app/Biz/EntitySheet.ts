@@ -9,11 +9,48 @@ import { BudValue } from "tonwa-app";
 import { OptionsItem } from ".";
 
 export class PickParam extends BizBud {
-    /*
-    name: string;
+    // name: string;
     bud: string;
     prop: string;       // prop of bud
-    */
+
+    protected fromSwitch(i: string, val: any): void {
+        switch (i) {
+            default:
+                super.fromSwitch(i, val);
+                break;
+            case 'value':
+                this.fromVal(val);
+                break;
+        }
+    }
+
+    private fromVal(val: string) {
+        let [v, s] = val.split('\n');
+        if (v[0] === '%') {
+            let [bud, prop] = v.split('.');
+            this.bud = bud;
+            this.prop = prop;
+            return;
+        }
+        switch (v) {
+            default:
+                if (v.includes('(') === true) {
+                    if (v.includes('CURDATE') === true) break;
+                    debugger;
+                    break;
+                }
+                this.bud = v;
+                break;
+            case '_si':
+                this.bud = '%sheet';
+                this.prop = 'i';
+                break;
+            case '_sx':
+                this.bud = '%sheet';
+                this.prop = 'x';
+                break;
+        }
+    }
 }
 
 export abstract class BinPick extends BizBud {

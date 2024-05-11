@@ -4,6 +4,7 @@ import { EntityAtomID } from "./EntityAtom";
 import { UIStyle } from "app/ui";
 
 export class BizBase {
+    protected scaned: boolean;
     readonly biz: Biz;
     readonly uq: UqExt;
     readonly type: string;

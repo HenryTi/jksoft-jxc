@@ -217,9 +217,11 @@ export class BizBud extends BizBase {
         this.budDataType = budDataType;
     }
     scan() {
+        if (this.scaned === true) return;
         this.budDataType.scan(this.biz, this);
         this.biz.addBudIds(this);
         this.fieldShows = this.scanFieldShows(this.fieldShows);
+        this.scaned = true;
     }
     getUIValue(value: any) {
         return this.budDataType.getUIValue(value);
@@ -313,8 +315,3 @@ export class BizBudBinValue extends BizBud {
         return bizBud;
     }
 }
-/*
-export class BizBudSpecBase extends BizBud {
-    specBud: BizBud;
-}
-*/
