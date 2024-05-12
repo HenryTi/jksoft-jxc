@@ -23,6 +23,7 @@ export function ViewDiv(props: ViewDivProps) {
     const rowEdit = useRowEdit();
     if (entityBin.pivot === binDiv) return null;
     const { pend, id } = valRow;
+    const { sheetStore } = divStore;
 
     async function onDelSub() {
         if (id < 0) {
@@ -31,12 +32,12 @@ export function ViewDiv(props: ViewDivProps) {
             return;
         }
         setAtomValue(atomDeleted, !deleted);
-        divStore.sheetStore.notifyRowChange();
+        sheetStore.notifyRowChange();
     }
     async function onEdit() {
         if (id < 0) {
             // 候选还没有输入行内容
-            let pendRow = divStore.getPendRow(pend);
+            let pendRow = sheetStore.getPendRow(pend);
             let valDivClone = valDiv.clone() as ValDivRoot;
             let { valRow } = valDivClone;
             valDivClone.id = undefined;
@@ -94,7 +95,7 @@ export function ViewDiv(props: ViewDivProps) {
     }
 
     if (id < 0) {
-        let pendRow = divStore.getPendRow(pend);
+        let pendRow = sheetStore.getPendRow(pend);
         return <div className="d-flex bg-white">
             <div className="d-flex flex-fill">
                 <ViewPendRow divStore={divStore} pendRow={pendRow} />
@@ -158,48 +159,5 @@ function divRightButtons(id: number, deleted: boolean, onDel: () => void, onEdit
         label: memoDel,
     };
     bottoms = [btnDel];
-    /*<>
-        <div className={cnBtnDiv + colorDel} onClick={onDel}>
-            <FA name={iconDel} fixWidth={true} />
-            {memoDel && <span className="ms-1">{memoDel}</span>}
-        </div>
-    </>;
-    */
-    // return <>{btnEdit}{btnDel}</>;
     return { tops, bottoms };
 }
-
-/*
-function twoButtons(id: number, deleted: boolean, onDel: () => void, onEdit: () => void) {
-    let cnBtnDiv = ' px-1 cursor-pointer text-primary ';
-    let btnEdit: any, iconDel: string, colorDel: string, memoDel: any;
-    if (deleted === true) {
-        iconDel = 'undo';
-        colorDel = 'text-secondary ';
-        memoDel = '恢复';
-    }
-    else {
-        iconDel = 'trash-o';
-        colorDel = 'text-secondary';
-        let iconEdit: string, colorEdit: string;
-        if (id < 0) {
-            iconEdit = 'plus';
-            colorEdit = ' text-danger ';
-        }
-        else {
-            iconEdit = 'pencil-square-o';
-            colorEdit = ' text-success ';
-        }
-        btnEdit = <div className={cnBtnDiv + colorEdit} onClick={onEdit}>
-            <FA name={iconEdit} fixWidth={true} size="lg" />
-        </div>;
-    }
-    let btnDel = <>
-        <div className={cnBtnDiv + colorDel} onClick={onDel}>
-            <FA name={iconDel} fixWidth={true} />
-            {memoDel && <span className="ms-1">{memoDel}</span>}
-        </div>
-    </>;
-    return <>{btnEdit}{btnDel}</>;
-}
-*/
