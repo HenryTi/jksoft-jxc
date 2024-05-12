@@ -20,7 +20,6 @@ export enum SubmitState {
     enable,
 }
 export class DivStore {
-    private readonly cachePendRows: { [id: number]: PendRow } = {};
     private valDivColl: { [id: number]: ValDivBase };
     private pendLoadState: PendLoadState;
     readonly sheetStore: SheetStore;
@@ -97,11 +96,11 @@ export class DivStore {
         }
         setAtomValue(this.atomPendRows, pendRows);
     }
-
+    /*
     cachePendRow(pendRow: PendRow) {
         this.cachePendRows[pendRow.pend] = pendRow;
     }
-
+    */
     load(valRows: ValRow[], trigger: boolean) {
         for (let valRow of valRows) {
             this.setValRowRoot(valRow, trigger);
@@ -240,15 +239,11 @@ export class DivStore {
         return valDivSub;
     }
 
-    getPendRow(pend: number) {
-        return this.cachePendRows[pend];
-    }
-
     async loadPendRow(pend: number) {
-        let ret = this.getPendRow(pend);
+        let ret = this.sheetStore.getPendRow(pend);
         if (ret === undefined) {
             await this.loadPendId(pend);
-            ret = this.getPendRow(pend);
+            ret = this.sheetStore.getPendRow(pend);
         }
         return ret;
     }

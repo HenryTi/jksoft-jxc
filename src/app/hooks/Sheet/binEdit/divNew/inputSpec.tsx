@@ -28,14 +28,17 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     const { sheetStore } = divStore;
     const { entityPend, baseBud } = binInput;
     const formulas: [string, string][] = [
-        ['.i', binInput.baseExp],
+        ['.i', binInput.baseExp ?? binInput.baseBud.valueSet],
     ];
     const calc = new Calc(formulas, namedResults);
     const pendProxyHander = new PendProxyHander(entityPend);
     calc.addValues('pend', new Proxy(pendRow, pendProxyHander));
     const base = calc.results['.i'] as number;
+    if (base === undefined) {
+        debugger;
+        throw Error('input spec must have base');
+    }
     const viewTop = <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} baseBud={baseBud} />;
-    // <ViewAtomId id={base} />;
     const { spec: entitySpec } = binInput;
     let budsEditing: BudsEditing;
     const { ix } = entitySpec;
@@ -49,10 +52,6 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
             case 1: retSpec = ret[0]; break;
         }
         return retSpec;
-        /*{
-            retSpec,
-            retViewTop: viewTop,
-        }*/
     }
     else {
         const { keys, buds: props } = entitySpec;
@@ -70,8 +69,6 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         const submitClassName: string = cnNextClassName;
 
         let formRows: FormRow[] = [
-            // ...keys.map(v => budFormRow(v, true)),
-            // ...(props ?? []).map(v => budFormRow(v)),
             ...budsEditing.buildFormRows(),
             { type: 'submit', label: submitCaption, options: {}, className: submitClassName }
         ];

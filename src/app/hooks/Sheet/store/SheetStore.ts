@@ -158,6 +158,8 @@ export class ExDetail extends Detail {
 }
 
 export class SheetStore extends KeyIdObject {
+    private readonly cachePendRows: { [id: number]: PendRow } = {};
+
     readonly uq: UqExt;
     readonly biz: Biz;
     readonly entitySheet: EntitySheet;
@@ -174,6 +176,7 @@ export class SheetStore extends KeyIdObject {
     readonly atomLoaded = atom(false);
     readonly atomReaction = atom(undefined as any);
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
+
 
     constructor(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
         super();
@@ -272,8 +275,13 @@ export class SheetStore extends KeyIdObject {
                 mid: midArr,
             };
             pendRows.push(pendRow);
+            this.cachePendRows[pend] = pendRow;
         }
         return pendRows;
+    }
+
+    getPendRow(pend: number) {
+        return this.cachePendRows[pend];
     }
 
     private addBizAtoms(bizAtoms: BizAtom[]) {
