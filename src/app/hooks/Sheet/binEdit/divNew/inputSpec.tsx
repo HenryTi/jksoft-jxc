@@ -9,7 +9,7 @@ import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
 import { Calc } from "app/hooks/Calc";
 // import { ViewAtomId } from "app/hooks/BizAtom";
-import { PendProxyHander, btnNext, cnNextClassName } from "../../store";
+import { PendProxyHandler, btnNext, cnNextClassName } from "../../store";
 import { InputProps } from "./inputBase";
 import { ViewIBaseFromId } from "../ViewDiv/ViewIBase";
 import { BudsEditing } from "app/hooks/BudsEditing";
@@ -31,7 +31,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         ['.i', binInput.baseExp ?? binInput.baseBud.valueSet],
     ];
     const calc = new Calc(formulas, namedResults);
-    const pendProxyHander = new PendProxyHander(entityPend);
+    const pendProxyHander = new PendProxyHandler(entityPend);
     calc.addValues('pend', new Proxy(pendRow, pendProxyHander));
     const base = calc.results['.i'] as number;
     if (base === undefined) {

@@ -173,7 +173,7 @@ export abstract class BudsEditingBase<R, B extends BudValuesToolBase<R>> /*exten
             const { ui } = bud;
             if (ui?.show === true) continue;
             switch (valueSetType) {
-                case ValueSetType.none:
+                case ValueSetType.none: break;
                 case ValueSetType.init: return true;
             }
         }

@@ -25,7 +25,7 @@ export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
     let onItemSelectFunc: any, btnFinish: any;
     function BtnNext() {
         function onNext() {
-            steps.next();
+            steps?.next();
             modal.close([]);
         }
         return <button className="btn btn-primary" onClick={onNext}>

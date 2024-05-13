@@ -123,7 +123,7 @@ export function VNamedBud({ name, value, bud }: { name: string; value: any; bud:
 }
 
 const sheetFields = ['si', 'sx', 'svalue', 'sprice', 'samount'];
-export class PendProxyHander implements ProxyHandler<any> {
+export class PendProxyHandler implements ProxyHandler<any> {
     private readonly entityPend: EntityPend;
     constructor(entityPend: EntityPend) {
         this.entityPend = entityPend;

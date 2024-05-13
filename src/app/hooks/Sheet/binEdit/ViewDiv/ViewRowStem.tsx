@@ -11,7 +11,8 @@ export function ViewRowStem(props: ViewDivProps) {
     const { valDiv, divStore, buttons, hidePivot, readonly } = props;
     const { sheetStore } = divStore;
     const { atomValRow, atomValDivs, atomSum, binDiv } = valDiv;
-    const { level, entityBin } = binDiv;
+    const { level, entityBin, binDivBuds } = binDiv;
+    const { budIBase } = binDivBuds;
     const valRow = useAtomValue(atomValRow);
     let sum = useAtomValue(atomSum);
     const divs = useAtomValue(atomValDivs);
@@ -27,20 +28,22 @@ export function ViewRowStem(props: ViewDivProps) {
         viewPivot = <ViewPivotDiv divStore={divStore} valDiv={valDiv} />;
     }
     let viewPendValue: any;
-    if (readonly !== true && level === 0) {
-        let icon: string, color: string;
-        if (sum > pendValue) {
-            icon = 'exclamation-circle';
-            color = cnPendOver;
+    if (level === 0) {
+        if (readonly !== true) {
+            let icon: string, color: string;
+            if (sum > pendValue) {
+                icon = 'exclamation-circle';
+                color = cnPendOver;
+            }
+            else {
+                icon = 'th-large'; //'hand-o-right';
+                color = cnPend;
+            }
+            viewPendValue = <div className="d-flex align-items-center">
+                <FA name={icon} className={color + ' me-2 '} />
+                <span className={'w-min-2c w-min-3c ' + cnPendValue}>{budValue?.getUIValue(pendValue)}</span>
+            </div>;
         }
-        else {
-            icon = 'th-large'; //'hand-o-right';
-            color = cnPend;
-        }
-        viewPendValue = <div className="d-flex align-items-center">
-            <FA name={icon} className={color + ' me-2 '} />
-            <span className={'w-min-2c w-min-3c ' + cnPendValue}>{budValue?.getUIValue(pendValue)}</span>
-        </div>;
     }
 
     const { budsColl, bizAtomColl } = sheetStore;
@@ -81,15 +84,17 @@ export function ViewRowStem(props: ViewDivProps) {
         viewRight = <ViewRight />;
     }
     function ViewI() {
+        if (budIBase === undefined) return null;
         return <>
+            <div>level={level} iValue={iValue} iBase={valDiv.iBase}</div>
             <ViewSpecAtom id={iValue} sheetStore={sheetStore} />
             <ViewAtomTitles budValueColl={budValueColl} bud={budI} atomColl={bizAtomColl} />
         </>;
     }
+    // <ViewI />
     return <>
         <div className="flex-fill px-2 py-2 px-lg-3">
             <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />
-            <ViewI />
             {viewContent}
         </div>
         {viewRight}

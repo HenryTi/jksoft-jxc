@@ -27,7 +27,6 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     */
     let budValueColl = budsColl[iBase];
     return <>
-        {/*viewAtom*/}
         <ViewSpecAtom id={iBase} sheetStore={sheetStore} />
         <ViewAtomTitles budValueColl={budValueColl} bud={budIBase} atomColl={bizAtomColl} />
     </>;

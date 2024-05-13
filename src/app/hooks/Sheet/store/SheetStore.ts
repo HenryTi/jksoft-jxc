@@ -263,9 +263,17 @@ export class SheetStore extends KeyIdObject {
         let pendRows: PendRow[] = [];
         let hiddenBuds: Set<number> = (rearPick?.hiddenBuds) ?? new Set();
         for (let v of $page) {
-            let { id, pend, pendValue, mid, cols } = v;
+            let { id, pend, pendValue, mid, cols, i, x } = v;
             if (pendValue === undefined || pendValue <= 0) continue;
             this.valDivsOnPend[pend] = atom(undefined as ValDivRoot);
+            let iSpec = this.bizSpecColl[i];
+            if (iSpec !== undefined) {
+                (v as any).iBase = iSpec.atom.id;
+            }
+            let xSpec = this.bizSpecColl[x];
+            if (xSpec !== undefined) {
+                (v as any).xBase = xSpec.atom.id;
+            }
             let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);
             let pendRow: PendRow = {
                 pend,

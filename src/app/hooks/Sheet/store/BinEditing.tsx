@@ -1,29 +1,18 @@
-import { RegisterOptions } from "react-hook-form";
-import { FormRow } from "app/coms";
 import {
-    BinRow, BizBud, BudAtom, BudDec, BudRadio
-    , EntityBin, EnumBudType, ValueSetType,
-    BinRowValuesTool,
-    BudValuesTool,
-    BudValuesToolBase
+    BinRow, BizBud, EntityBin, BinRowValuesTool,
 } from "app/Biz";
-import { Calc, CalcResult, Formulas } from "../../Calc";
+import { Calc } from "../../Calc";
 import { DivStore } from "./DivStore";
 import { SheetStore } from "./SheetStore";
 import { ValDivBase } from "./ValDiv";
 import { NamedResults } from "./NamedResults";
-import { getDays } from "app/tool";
 import { ValRow } from "./tool";
-import { BudEditing, EditBudInline, ViewBud, ViewBudUIType } from "app/hooks";
-import { AtomColl, LabelBox } from "app/hooks/tool";
-import { BudCheckValue } from "tonwa-app";
 import { BudsEditingBase } from "app/hooks/BudsEditing";
 
 export abstract class BinBudsEditing extends BudsEditingBase<BinRow, BinRowValuesTool> {
     readonly values: ValRow = { buds: {} } as any;
     readonly entityBin: EntityBin;
     readonly sheetStore: SheetStore;
-    // protected binRowValues: BinRowValues;
     iValue: number;
     iBase: number;
     xValue: number;
@@ -71,6 +60,17 @@ export class DivEditing extends BinBudsEditing {
         this.divStore = divStore;
         this.valDiv = valDiv;
         this.setNamedParams(namedResults);
+        // 这里先强行设iBase和xBase from pend
+        if (namedResults !== undefined) {
+            let pendValues = namedResults['pend'];
+            if (pendValues !== undefined) {
+                let { i, x, iBase, xBase } = pendValues;
+                this.iValue = i;
+                this.xValue = x;
+                this.iBase = iBase;
+                this.xBase = xBase;
+            }
+        }
         this.setValueDefault(valDiv);
     }
 

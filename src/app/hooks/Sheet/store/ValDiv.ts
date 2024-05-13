@@ -113,6 +113,7 @@ export abstract class ValDivBase extends ValDivs {
         let vt: ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
         this.internalMergeValRow(vt, valRow)
         this.atomValRow = atom<any>(vt);
+        this.setValRowIXBase(vt);
     }
 
     get id(): number {
@@ -138,15 +139,22 @@ export abstract class ValDivBase extends ValDivs {
         return valRow;
     }
 
-    setValRow(valRow: any) {
-        if (this.id !== valRow.id) debugger;
+    private setValRowIXBase(valRow: any) {
         let { budIBase, budXBase } = this.binDiv.binDivBuds;
         if (budIBase !== undefined) {
             this.iBase = valRow.buds[budIBase.id];
+            if (this.iBase === undefined) {
+                this.iBase = valRow.iBase;
+            }
         }
         if (budXBase !== undefined) {
             this.xBase = valRow.buds[budXBase.id];
         }
+    }
+
+    setValRow(valRow: any) {
+        if (this.id !== valRow.id) debugger;
+        this.setValRowIXBase(valRow);
         setAtomValue(this.atomValRow, valRow);
     };
 

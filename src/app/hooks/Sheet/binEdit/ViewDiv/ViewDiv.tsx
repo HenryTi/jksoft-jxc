@@ -21,7 +21,10 @@ export function ViewDiv(props: ViewDivProps) {
     const deleted = useAtomValue(atomDeleted);
     const editDivs = useEditDivs();
     const rowEdit = useRowEdit();
-    if (entityBin.pivot === binDiv) return null;
+    if (entityBin.pivot === binDiv) {
+        // pivot直接在末尾级stem显示value list
+        return null;
+    }
     const { pend, id } = valRow;
     const { sheetStore } = divStore;
 
@@ -48,10 +51,8 @@ export function ViewDiv(props: ViewDivProps) {
             valDivClone.setValRow(valRow);
             const useInputsProps: UseEditDivsProps = {
                 divStore,
-                // binDiv: divStore.binDivRoot,
                 valDiv: valDivClone,
                 pendRow,
-                // namedResults: {},
                 skipInputs: false,
             }
             let retHasValue = await editDivs(useInputsProps);
@@ -102,11 +103,6 @@ export function ViewDiv(props: ViewDivProps) {
             </div>
             {viewDivRightButtons}
         </div>;
-        /*
-        <div className="d-flex w-min-4c mt-2 align-items-start">
-            {buttons}<div className="me-n3" />
-        </div>
-        */
     }
 
     let viewRow = <ViewRow {...props} buttons={viewDivRightButtons} />;
@@ -122,8 +118,7 @@ export function ViewDiv(props: ViewDivProps) {
 function divRightButtons(id: number, deleted: boolean, onDel: () => void, onEdit: () => void)
     : { tops: DivRightButton[]; bottoms: DivRightButton[]; } {
     let tops: DivRightButton[], bottoms: DivRightButton[];
-    // let cnBtnDiv = ' px-1 cursor-pointer text-primary ';
-    let btnEdit: DivRightButton, iconDel: string, colorDel: string, memoDel: any;
+    let iconDel: string, colorDel: string, memoDel: any;
     if (deleted === true) {
         iconDel = 'undo';
         colorDel = 'text-secondary ';
@@ -141,11 +136,6 @@ function divRightButtons(id: number, deleted: boolean, onDel: () => void, onEdit
             iconEdit = 'pencil-square-o';
             colorEdit = ' text-success ';
         }
-        /*
-        btnEdit = <div className={cnBtnDiv + colorEdit} onClick={onEdit}>
-            <FA name={iconEdit} fixWidth={true} size="lg" />
-        </div>;
-        */
         tops = [{
             icon: iconEdit,
             color: colorEdit,
