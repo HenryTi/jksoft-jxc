@@ -26,7 +26,7 @@ export interface PropsInputSpec extends InputProps<BinInputSpec> {
 export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     const { binInput, pendRow, uqApp, modal, namedResults, divStore, valDiv } = props;
     const { sheetStore } = divStore;
-    const { entityPend, baseBud } = binInput;
+    const { entityPend } = binInput;
     const formulas: [string, string][] = [
         ['.i', binInput.baseExp ?? binInput.baseBud.valueSet],
     ];
@@ -38,7 +38,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         debugger;
         throw Error('input spec must have base');
     }
-    const viewTop = <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} baseBud={baseBud} />;
+    const viewTop = <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} />;
     const { spec: entitySpec } = binInput;
     let budsEditing: BudsEditing;
     const { ix } = entitySpec;

@@ -1,4 +1,4 @@
-import { DivEditing, btnNext, cnNextClassName } from "../../store";
+import { DivEditing, ValDiv, ValDivBase, btnNext, cnNextClassName } from "../../store";
 import { FA } from "tonwa-com";
 import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
@@ -8,10 +8,11 @@ import { ChangeEvent, useState } from "react";
 import { BizBud } from "app/Biz";
 import { ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
+import { ViewRowStem } from "../ViewDiv/ViewRowStem";
 
 export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
     const modal = useModal();
-    const { divStore, values: valRow } = divEditing;
+    const { divStore, values: valRow, valDiv } = divEditing;
     const { binDivRoot: binDiv, sheetStore } = divStore;
     const { register, setValue, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [submitable, setSubmitable] = useState(divEditing.submitable);
@@ -85,7 +86,23 @@ export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
             </RowCols>
         </Band>;
     }
+    function ViewTop() {
+        let parentValDivs: ValDivBase[] = [];
+        for (let p = valDiv.parent; p !== undefined; p = p.parent) {
+            parentValDivs.unshift(p);
+        }
+        let len = parentValDivs.length - 1;
+        return <div>
+            {parentValDivs.map((v, index) => {
+                const { id } = v;
+                return <div className={'d-flex mb-3 border-bottom tonwa-bg-gray-' + (len - index)}>
+                    <ViewRowStem key={id} divStore={divStore} valDiv={v} readonly={true} />
+                </div>;
+            })}
+        </div>
+    }
     return <Page header={binDiv.ui?.caption ?? '输入明细'}>
+        <ViewTop />
         {
             (vi || vx) && <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + theme.bootstrapContainer}>
                 {vi}

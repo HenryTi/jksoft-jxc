@@ -12,7 +12,7 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     const { binDivBuds, } = binDiv;
     const { budIBase } = binDivBuds;
     if (budIBase === undefined) return null;
-    let { iBase } = valDiv;
+    let iBase = valDiv.getIBase(sheetStore);
     if (iBase === undefined) return null;
     const { budsColl, bizAtomColl } = sheetStore
     /*
@@ -54,33 +54,14 @@ export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, 
     return <ViewShowBuds bud={budIBase} budValueColl={budValueColl} atomColl={bizAtomColl} />
 }
 
-export function ViewIBaseFromId({ sheetStore, valDiv, iBase, baseBud }: { sheetStore: SheetStore, valDiv: ValDivBase; iBase: number; baseBud: BizBud; }) {
-    let budIBase: BizBud;
-    for (let p = valDiv; p !== undefined; p = p.parent) {
-        const { binDiv } = p;
-        const { binDivBuds } = binDiv;
-        budIBase = binDivBuds.budIBase;
-        if (budIBase !== undefined) {
-            valDiv = p;
-            iBase = valDiv.iBase;
-            break;
-        }
-    }
-    if (budIBase === undefined) return null;
+export function ViewIBaseFromId({ sheetStore, valDiv, iBase }: { sheetStore: SheetStore, valDiv: ValDivBase; iBase: number; }) {
+    let { iBase: budIBase } = valDiv.binDiv.entityBin
     const { budsColl, bizAtomColl } = sheetStore
     let bizAtomValue = bizAtomColl[iBase];
-    let viewAtom: any;
-
-    if (bizAtomValue !== undefined) {
-        viewAtom = <ViewAtom value={bizAtomValue} />;
-    }
-    else {
-        viewAtom = <ViewAtomId id={iBase} />;
-    }
     let budValueColl = budsColl[iBase];
     return <div>
         <div>
-            {viewAtom}
+            <ViewAtom value={bizAtomValue} />
         </div>
         <div>
             <ViewAtomTitles budValueColl={budValueColl} bud={budIBase} atomColl={bizAtomColl} />

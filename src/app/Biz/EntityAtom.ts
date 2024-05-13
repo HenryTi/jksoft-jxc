@@ -45,6 +45,38 @@ export abstract class EntityAtomID extends Entity {
         }
     }
 
+    scanTitlePrime() {
+        const ancestorSelfs = this.biz.atomBuilder.getAncestorSelfs(this);
+        if (ancestorSelfs.length <= 1) return;
+        let titleBuds: BizBud[] = [];
+        let primeBuds: BizBud[] = [];
+        // let uniques: string[] = [];
+        let titleColl: { [id: number]: BizBud } = {};
+        let primeColl: { [id: number]: BizBud } = {};
+        // let uniqueColl: { [u: string]: boolean } = {};
+        for (let ancestor of ancestorSelfs) {
+            let { titleBuds: tbs, primeBuds: pbs } = ancestor.entity as EntityAtom;
+            if (tbs !== undefined) {
+                for (let tb of tbs) {
+                    let { id } = tb;
+                    if (titleColl[id] !== undefined) continue;
+                    titleBuds.push(tb);
+                    titleColl[id] = tb;
+                }
+                this.titleBuds = titleBuds;
+            }
+            if (pbs !== undefined) {
+                for (let pb of pbs) {
+                    let { id } = pb;
+                    if (primeColl[id] !== undefined) continue;
+                    primeBuds.push(pb);
+                    primeColl[id] = pb;
+                }
+                this.primeBuds = primeBuds;
+            }
+        }
+    }
+
     private mergeBudGroups(entitySelf: EntitySelf) {
         const { groups, groupColl } = entitySelf;
         if (groups === undefined) {

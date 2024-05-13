@@ -1,7 +1,7 @@
 import { useAtomValue } from "jotai";
 import { theme, FA } from "tonwa-com";
 import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../../../tool";
-import { PAV, ViewDivProps, cn } from "./tool";
+import { PAV, ViewDivProps, ViewDivRight, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
 import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
 import { DivEditing } from "../../store";
@@ -57,10 +57,10 @@ export function ViewRowStem(props: ViewDivProps) {
     function ViewRight() {
         let cn = viewPivot !== undefined ? cnSumBold : cnSum;
         return <>
-            <div className="d-flex text-end flex-column align-items-end  px-2 py-2 px-lg-3 justify-content-end border-start">
+            <ViewDivRight>
                 {viewPendValue}
                 <PAV bud={budValue} val={sum} className={cn} />
-            </div>
+            </ViewDivRight>
             {buttons}
         </>;
     }

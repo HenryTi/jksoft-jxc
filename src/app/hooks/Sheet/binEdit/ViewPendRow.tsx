@@ -5,7 +5,7 @@ import { getAtomValue, theme } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
 import { Prop, VNamedBud } from "../store/tool";
 import { ViewBud } from "app/hooks";
-import { ViewSepcBuds, ViewSpecAtom } from "../views";
+import { ViewSepcBuds, ViewSpecAtom, ViewSpecAtomTitles } from "../views";
 // import { useGetSpec } from "app/hooks/Uq";
 
 export interface PendProps {
@@ -53,21 +53,23 @@ export function ViewPendRow({
             }
         }
     }
-    let viewBuds: any;
+    let viewBuds: any, viewAtomTitles: any;
     const { budsColl, bizAtomColl, bizSpecColl } = sheetStore;
     const budValueColl = budsColl[i];
     let iBizSpec = bizSpecColl[i];
     if (iBizSpec !== undefined) {
         viewBuds = <ViewSepcBuds id={i} sheetStore={sheetStore} />;
+        viewAtomTitles = <ViewSpecAtomTitles id={i} sheetStore={sheetStore} />;
     }
     else {
         viewBuds = <ViewShowBuds budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />;
+        viewAtomTitles = <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />;
     }
     return <>
         <div className="py-2 bg-white flex-fill ps-3">
             <div className="flex-fill">
                 <ViewSpecAtom id={i} sheetStore={sheetStore} />
-                <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
+                {viewAtomTitles}
             </div>
             <div className="d-flex">
                 <RowCols contentClassName=" flex-fill ">

@@ -31,3 +31,9 @@ export function PAV({ bud, className, val, onClick }: { bud: BizBud; className?:
         <div className={(className ?? '') + ' w-min-3c '}>{bud.getUIValue(val)}</div>
     </div>
 }
+
+export function ViewDivRight({ children }: { children: React.ReactNode; }) {
+    return <div className="d-flex flex-column justify-content-end align-items-end px-2 py-2 px-lg-3 border-start text-end w-max-10c w-min-10c">
+        {children}
+    </div>;
+}

@@ -45,7 +45,8 @@ export interface LabelBoxCss {
 }
 
 const cnRows = '  row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6 ';
-const cnRowsSm = '  row row-cols-2 row-cols-sm-4 row-cols-md-4 row-cols-lg-6 row-cols-xl-8 row-cols-xxl-12 ';
+// const cnRowsSm = '  row row-cols-2 row-cols-sm-4 row-cols-md-4 row-cols-lg-6 row-cols-xl-8 row-cols-xxl-12 ';
+const cnRowsSm = '  row row-cols-2 row-cols-md-3 row-cols-lg-5 row-cols-xl-7 row-cols-xxl-8 ';
 const labelBoxCssH: LabelBoxCss = {
     colon: true,
     cnRowCols: ' gx-0 ' + cnRows,

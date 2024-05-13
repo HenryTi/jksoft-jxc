@@ -216,6 +216,9 @@ export class Biz {
                 bizEntity.scan();
             }
         }
+        for (let [bizEntity] of arr[EnumEntity.atom]) {
+            (bizEntity as EntityAtom).scanTitlePrime();
+        }
         this.atomBuilder.buildRootAtoms();
         this.groups.push(
             {

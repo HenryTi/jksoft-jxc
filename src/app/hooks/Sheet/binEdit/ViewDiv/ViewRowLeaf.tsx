@@ -1,7 +1,7 @@
 import { useAtomValue } from "jotai";
 import { theme } from "tonwa-com";
 import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../../../tool";
-import { PAV, ViewDivProps, cn } from "./tool";
+import { PAV, ViewDivProps, ViewDivRight, cn } from "./tool";
 import { ViewIBase } from "./ViewIBase";
 import { DivEditing } from "../../store";
 import { ViewSepcBuds, ViewSpecAtom } from "../../views";
@@ -50,11 +50,11 @@ export function ViewRowLeaf(props: ViewDivProps) {
                 {divEditing.buildViewBuds(bizAtomColl)}
             </RowColsSm>
         </div>
-        <div className="d-flex flex-column justify-content-end align-items-end px-2 py-2 px-lg-3 border-start">
+        <ViewDivRight>
             <PAV bud={budAmount} className={cnAmount} val={amount} />
             <PAV bud={budPrice} className={cnPrice} val={price} />
             <PAV bud={budValue} className={cnValue} val={value} />
-        </div>
+        </ViewDivRight>
         {buttons}
     </>;
 }

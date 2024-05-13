@@ -127,6 +127,24 @@ export abstract class ValDivBase extends ValDivs {
         setAtomValue(this.atomValRow, { ...valRow });
     }
 
+    getIValue(): number {
+        if (this.iValue !== undefined) return this.iValue;
+        let valRow = getAtomValue(this.atomValRow);
+        let { i } = valRow;
+        if (i !== undefined) return i;
+        let subValDivs = getAtomValue(this.atomValDivs);
+        if (subValDivs.length === 0) return;
+        return subValDivs[0].getIValue();
+    }
+
+    getIBase(sheetStore: SheetStore): number {
+        if (this.iBase !== undefined) return this.iBase;
+        let iValue = this.getIValue();
+        let bizSpec = sheetStore.bizSpecColl[iValue];
+        if (bizSpec === undefined) return;
+        return bizSpec.atom.id;
+    }
+
     get pend(): number {
         let valRow = getAtomValue(this.atomValRow);
         return valRow?.pend;
