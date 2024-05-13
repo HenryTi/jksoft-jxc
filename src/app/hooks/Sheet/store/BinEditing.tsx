@@ -67,7 +67,15 @@ export class DivEditing extends BinBudsEditing {
                 let { i, x, iBase, xBase } = pendValues;
                 this.iValue = i;
                 this.xValue = x;
-                this.iBase = iBase;
+                if (this.iBase === undefined) {
+                    if (iBase === undefined) {
+                        let specValues = namedResults['spec'];
+                        if (specValues !== undefined) {
+                            iBase = specValues.base;
+                        }
+                    }
+                    this.iBase = iBase;
+                }
                 this.xBase = xBase;
             }
         }

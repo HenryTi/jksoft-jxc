@@ -53,8 +53,16 @@ export function ViewPendRow({
             }
         }
     }
-    const { budsColl, bizAtomColl } = sheetStore;
+    let viewBuds: any;
+    const { budsColl, bizAtomColl, bizSpecColl } = sheetStore;
     const budValueColl = budsColl[i];
+    let iBizSpec = bizSpecColl[i];
+    if (iBizSpec !== undefined) {
+        viewBuds = <ViewSepcBuds id={i} sheetStore={sheetStore} />;
+    }
+    else {
+        viewBuds = <ViewShowBuds budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />;
+    }
     return <>
         <div className="py-2 bg-white flex-fill ps-3">
             <div className="flex-fill">
@@ -63,8 +71,7 @@ export function ViewPendRow({
             </div>
             <div className="d-flex">
                 <RowCols contentClassName=" flex-fill ">
-                    <ViewSepcBuds id={i} sheetStore={sheetStore} />
-                    <ViewShowBuds budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
+                    {viewBuds}
                     <ViewPropArr arr={mid} />
                 </RowCols>
             </div>
