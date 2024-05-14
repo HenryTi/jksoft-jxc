@@ -137,9 +137,8 @@ export abstract class ValDivBase extends ValDivs {
         return subValDivs[0].getIValue();
     }
 
-    getIBase(sheetStore: SheetStore): number {
+    getIBase(sheetStore: SheetStore, iValue: number): number {
         if (this.iBase !== undefined) return this.iBase;
-        let iValue = this.getIValue();
         let bizSpec = sheetStore.bizSpecColl[iValue];
         if (bizSpec === undefined) return;
         return bizSpec.atom.id;

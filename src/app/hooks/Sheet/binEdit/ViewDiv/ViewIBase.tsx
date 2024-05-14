@@ -3,7 +3,6 @@ import { RowColsSm, ViewAtomTitles, ViewBudEmpty, ViewShowBuds } from "app/hooks
 import { IDView } from "tonwa-app";
 import { Atom as BizAtom } from "uqs/UqDefault";
 import { useUqApp } from "app/UqApp";
-import { BizBud } from "app/Biz";
 import { theme } from "tonwa-com";
 import { ViewSpecAtom } from "../../views";
 
@@ -12,7 +11,9 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     const { binDivBuds, } = binDiv;
     const { budIBase } = binDivBuds;
     if (budIBase === undefined) return null;
-    let iBase = valDiv.getIBase(sheetStore);
+    let iValue = valDiv.getIValue();
+    let iBase = valDiv.getIBase(sheetStore, iValue);
+    if (iBase === undefined) iBase = iValue;
     if (iBase === undefined) return null;
     const { budsColl, bizAtomColl } = sheetStore
     /*

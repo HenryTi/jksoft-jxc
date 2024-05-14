@@ -1,19 +1,16 @@
-import { DivEditing, ValDiv, ValDivBase, btnNext, cnNextClassName } from "../../store";
+import { DivEditing, ValDivBase, btnNext, cnNextClassName } from "../../store";
 import { FA } from "tonwa-com";
 import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band, FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
 import { ChangeEvent, useState } from "react";
-import { BizBud } from "app/Biz";
-import { ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
-import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { ViewRowStem } from "../ViewDiv/ViewRowStem";
 
 export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
     const modal = useModal();
-    const { divStore, values: valRow, valDiv } = divEditing;
-    const { binDivRoot: binDiv, sheetStore } = divStore;
+    const { divStore, valDiv } = divEditing;
+    const { binDivRoot: binDiv } = divStore;
     const { register, setValue, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [submitable, setSubmitable] = useState(divEditing.submitable);
     let formRows = divEditing.buildFormRows();
@@ -52,6 +49,7 @@ export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
         }
         modal.close(true);
     }
+    /*
     let vi: any = undefined;
     let vx: any = undefined;
     let { binDivBuds } = binDiv;
@@ -86,31 +84,34 @@ export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
             </RowCols>
         </Band>;
     }
+    */
     function ViewTop() {
         let parentValDivs: ValDivBase[] = [];
         for (let p = valDiv.parent; p !== undefined; p = p.parent) {
             parentValDivs.unshift(p);
         }
         let len = parentValDivs.length - 1;
-        return <div>
+        return <Band label={'本行'}>
             {parentValDivs.map((v, index) => {
                 const { id } = v;
-                return <div className={'d-flex mb-3 border-bottom tonwa-bg-gray-' + (len - index)}>
-                    <ViewRowStem key={id} divStore={divStore} valDiv={v} readonly={true} />
+                return <div key={id} className={'d-flex border-bottom tonwa-bg-gray-' + (len - index)}>
+                    <ViewRowStem divStore={divStore} valDiv={v} readonly={true} />
                 </div>;
             })}
-        </div>
+        </Band>
     }
     return <Page header={binDiv.ui?.caption ?? '输入明细'}>
         <ViewTop />
+        <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
+            <FormRowsView rows={formRows} register={register} errors={errors} setValue={setValue} />
+        </form>
+    </Page>
+    /*
         {
             (vi || vx) && <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + theme.bootstrapContainer}>
                 {vi}
                 {vx}
             </div>
         }
-        <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
-            <FormRowsView rows={formRows} register={register} errors={errors} setValue={setValue} />
-        </form>
-    </Page>
+    */
 }

@@ -3,20 +3,17 @@ import { inputAtom } from "./inputAtom";
 import { inputSpec } from "./inputSpec";
 import { useCallback } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
-import { DivEditing, DivStore, PendRow, ValDiv, ValDivBase } from "../../store";
+import { DivEditing, DivStore, PendRow, ValDivBase } from "../../store";
 import { PageInputDiv } from "./PageInputDiv";
 import { UqApp, useUqApp } from "app";
 import { Modal, useModal } from "tonwa-app";
-import { PendProxyHandler, ValRow, mergeValRow } from "../../store";
+import { PendProxyHandler } from "../../store";
 import { NamedResults } from "../../store";
 
 export interface UseEditDivsProps {
     divStore: DivStore;
     pendRow: PendRow;
-    // namedResults: NamedResults;
-    // binDiv: BinDiv;          // 当前binDiv的下层
     valDiv: ValDivBase;         // 当前需要edit的valDiv, 如果新建，则先创建空的valDiv. 所以也不需要返回
-    // valDivParent: ValDiv;
     skipInputs: boolean;
 }
 
@@ -68,12 +65,17 @@ async function runInputDiv(runInputDivProps: RunInputDivProps, valDiv: ValDivBas
     let retInputs = await runInputs(runInputDivProps, valDiv);
     if (retInputs === false) return;
     let divEditing = new DivEditing(divStore, valDiv, namedResults);
+    valDiv.mergeValRow(divEditing.values);
     if (skipInputs !== true) {
         if (divEditing.isInputNeeded() === true) {
-            if (await modal.open(<PageInputDiv divEditing={divEditing} />) !== true) return;
+            if (await modal.open(<PageInputDiv divEditing={divEditing} />) !== true) {
+                return;
+            }
+            else {
+                valDiv.mergeValRow(divEditing.values);
+            }
         }
     }
-    valDiv.mergeValRow(divEditing.values);
     let { valRow } = valDiv;
     let id = await divStore.saveDetail(binDiv, valRow);
     valRow.id = id;
@@ -85,7 +87,7 @@ async function runInputDiv(runInputDivProps: RunInputDivProps, valDiv: ValDivBas
     return true;
 }
 
-async function runInputs(runInputDivProps: RunInputDivProps, /*inputs: PendInput[], */valDiv: ValDivBase) {
+async function runInputs(runInputDivProps: RunInputDivProps, valDiv: ValDivBase) {
     const { binDiv } = valDiv;
     const { inputs } = binDiv;
     if (inputs === undefined) return;

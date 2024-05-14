@@ -858,7 +858,7 @@ RETURNS specs (
         FROM specs as a JOIN IxBudInt as b ON b.i=a.spec;
     INTO IGNORE props SELECT DISTINCT a.spec as id, b.x as phrase, CAST(b.value AS JSON) as value
         FROM specs as a JOIN IxBudDec as b ON b.i=a.spec;
-    INTO IGNORE props SELECT DISTINCT a.spec as id, b.x as phrase, CAST(b.value AS JSON) as value
+    INTO IGNORE props SELECT DISTINCT a.spec as id, b.x as phrase, JSON_QUOTE(b.value) as value
         FROM specs as a JOIN IxBudStr as b ON b.i=a.spec;
 };
 

@@ -59,6 +59,14 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         if (props !== undefined) buds.push(...props);
         budsEditing = new BudsEditing(buds)
         let ret = await modal.open(<PagePickSpec />);
+        if (ret !== undefined) {
+            const { id, base } = ret;
+            const { bizSpecColl, bizAtomColl } = sheetStore;
+            bizSpecColl[id] = {
+                atom: bizAtomColl[base],
+                buds: keys,
+            }
+        }
         return ret;
     }
 
