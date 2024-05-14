@@ -1,8 +1,6 @@
-import { SheetStore, ValDiv, ValDivBase } from "../../store";
-import { RowColsSm, ViewAtomTitles, ViewBudEmpty, ViewShowBuds } from "app/hooks/tool";
-import { IDView } from "tonwa-app";
+import { SheetStore, ValDivBase } from "../../store";
+import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { Atom as BizAtom } from "uqs/UqDefault";
-import { useUqApp } from "app/UqApp";
 import { theme } from "tonwa-com";
 import { ViewSpecAtom } from "../../views";
 
@@ -16,16 +14,6 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     if (iBase === undefined) iBase = iValue;
     if (iBase === undefined) return null;
     const { budsColl, bizAtomColl } = sheetStore
-    /*
-    let bizAtomValue = bizAtomColl[iBase];
-    let viewAtom: any;
-    if (bizAtomValue !== undefined) {
-        viewAtom = <ViewAtom value={bizAtomValue} />;
-    }
-    else {
-        viewAtom = <ViewAtomId id={iBase} />;
-    }
-    */
     let budValueColl = budsColl[iBase];
     return <>
         <ViewSpecAtom id={iBase} sheetStore={sheetStore} />
@@ -36,12 +24,6 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
 function ViewAtom({ value }: { value: BizAtom; }) {
     const { no, ex } = value;
     return <><b>{ex}</b> <span className="ms-3">{no}</span></>;
-}
-
-function ViewAtomId({ id }: { id: number; }) {
-    const { uq } = useUqApp();
-    if (id === undefined) return <ViewBudEmpty />;
-    return <IDView uq={uq} id={id} Template={ViewAtom} />;
 }
 
 export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, valDiv: ValDivBase }) {

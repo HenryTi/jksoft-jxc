@@ -71,7 +71,7 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel, bold }: {
 
 function ViewAtom({ no, ex, entity, bold, noLabel }: { no: string; ex: string; entity?: EntityAtomID; bold: boolean; noLabel: boolean; }) {
     let title = '编号: ' + no;
-    let vContent = <>{bold === true ? <b>{ex}</b> : ex}<span className="ms-3">{no}</span></>
+    let vContent = <>{bold === true ? <b>{ex}</b> : ex}<span className="mx-3">{no}</span></>
     if (noLabel === true) {
         return <span title={title}>{vContent}</span>;
     }

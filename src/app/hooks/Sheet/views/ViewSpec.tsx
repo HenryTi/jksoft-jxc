@@ -12,7 +12,7 @@ export function ViewSpecAtom({ id, sheetStore }: { id: number; sheetStore: Sheet
         bizAtom = bizSpec.atom;
     }
     const { no, ex } = bizAtom;
-    return <><b>{ex}</b> <span className="ms-3">{no}</span></>
+    return <><b>{ex}</b> <span className="mx-3">{no}</span></>
 }
 
 export function ViewSepcBuds({ id, sheetStore }: { id: number; sheetStore: SheetStore; }) {
@@ -43,7 +43,7 @@ export function ViewSpecAtomTitles({ id, sheetStore }: { id: number; sheetStore:
     const budValueColl = budsColl[atomId];
     if (budValueColl === undefined) return null;
     const { labelColor } = theme;
-    return <><span className="me-3" />{
+    return <>{
         bizAtom.titleBuds.map(v => {
             let { id } = v;
             let value = budValueColl[id];

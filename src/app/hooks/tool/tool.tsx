@@ -121,7 +121,7 @@ export function ViewAtomTitles({ budValueColl, bud, noLabel, atomColl }: { budVa
     let buds = bud.getTitleBuds();
     if (buds === undefined) return null;
     const { labelColor } = theme;
-    return <><span className="me-3" />{
+    return <>{
         buds.map(v => {
             let { id } = v;
             let value = budValueColl[id];

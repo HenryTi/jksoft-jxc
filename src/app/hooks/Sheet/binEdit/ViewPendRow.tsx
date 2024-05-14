@@ -1,12 +1,8 @@
-// import { ViewSpec, ViewSpecBase, ViewSpecBaseOnly } from "app/hooks/View";
-// import { Prop, VNamedBud } from "../tool";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { getAtomValue, theme } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
 import { Prop, VNamedBud } from "../store/tool";
-import { ViewBud } from "app/hooks";
 import { ViewSepcBuds, ViewSpecAtom, ViewSpecAtomTitles } from "../views";
-// import { useGetSpec } from "app/hooks/Uq";
 
 export interface PendProps {
     divStore: DivStore;

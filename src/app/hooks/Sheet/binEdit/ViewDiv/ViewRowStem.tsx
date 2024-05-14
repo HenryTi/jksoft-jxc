@@ -1,18 +1,16 @@
 import { useAtomValue } from "jotai";
 import { theme, FA } from "tonwa-com";
-import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../../../tool";
+import { RowColsSm, ViewShowBuds } from "../../../tool";
 import { PAV, ViewDivProps, ViewDivRight, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
 import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
 import { DivEditing } from "../../store";
-import { ViewSpecAtom } from "../../views";
 
 export function ViewRowStem(props: ViewDivProps) {
     const { valDiv, divStore, buttons, hidePivot, readonly } = props;
     const { sheetStore } = divStore;
     const { atomValRow, atomValDivs, atomSum, binDiv } = valDiv;
-    const { level, entityBin, binDivBuds } = binDiv;
-    const { budIBase } = binDivBuds;
+    const { level, entityBin } = binDiv;
     const valRow = useAtomValue(atomValRow);
     let sum = useAtomValue(atomSum);
     const divs = useAtomValue(atomValDivs);
@@ -83,15 +81,6 @@ export function ViewRowStem(props: ViewDivProps) {
         </div>;
         viewRight = <ViewRight />;
     }
-    function ViewI() {
-        if (budIBase === undefined) return null;
-        return <>
-            <div>level={level} iValue={iValue} iBase={valDiv.iBase}</div>
-            <ViewSpecAtom id={iValue} sheetStore={sheetStore} />
-            <ViewAtomTitles budValueColl={budValueColl} bud={budI} atomColl={bizAtomColl} />
-        </>;
-    }
-    // <ViewI />
     return <>
         <div className="flex-fill px-2 py-2 px-lg-3">
             <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />

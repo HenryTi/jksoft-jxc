@@ -18,7 +18,6 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(atomSubmitState);
     const detailNew = useDetailNew(store);
-    // main.entityBin, 
     const start = useStartSheetStore(store, pick);
 
     async function onSubmit() {
@@ -36,38 +35,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         setEditable(true);
 
         await sheetConsole.onSubmited(store);
-        /*
-        // removeSheetFromCache();
-        sheetConsole.removeFromCache(sheetId);
-        uqApp.autoRefresh?.();
-        let ret = await openModal<boolean>(<Page header="提交成功" back="none">
-            <div className="p-3">
-                {caption} <b>{main.no}</b> 已提交
-            </div>
-            <div className="border-top p-3">
-                <button className="btn btn-outline-primary" onClick={closeModal}>返回</button>
-                <button className="ms-3 btn btn-outline-secondary" onClick={() => closeModal(true)}>新建{caption}</button>
-            </div>
-        </Page>);
-        if (ret === true) {
-            sheetConsole.restart();
-        }
-        else {
-            sheetConsole.close();
-            // navigate(-1);
-        }
-        */
     }
-
-    /*
-    function removeSheetFromCache() {
-        let { valRow: { id } } = main;
-        let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
-        if (data) {
-            data.removeItem<{ id: number; }>(v => v.id === id) as any;
-        }
-    }
-    */
 
     async function onDiscardSheet() {
         let message = `${caption} ${main.no} 真的要作废吗？`;
@@ -75,13 +43,10 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         if (ret === true) {
             await store.discard();
             sheetConsole.discard(main.valRow.id);
-            // removeSheetFromCache();
-            // navigate(-1);
         }
     }
     async function onExit() {
         sheetConsole.close();
-        // navigate(-1);
     }
     function onPrint() {
         alert('正在实现中...');
@@ -172,11 +137,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     </Page>;
 }
 
-// let locationState = 1;
-
 function useStartSheetStore(sheetStore: SheetStore, pick: PickFunc) {
-    // const uqApp = useUqApp();
-    // const navigate = useNavigate();
     const { sheetConsole } = sheetStore;
     async function startSheetStore() {
         let ret = await sheetStore.start(pick);
@@ -184,31 +145,10 @@ function useStartSheetStore(sheetStore: SheetStore, pick: PickFunc) {
             if (sheetStore.main.no === undefined) {
                 // 还没有创建单据
                 sheetConsole.close();
-                /*
-                if (navigate !== undefined) {
-                    setTimeout(() => {
-                        navigate(-1);
-                    }, 100);
-                }
-                */
             }
             return; // 已有单据，不需要pick. 或者没有创建新单据
         }
-        //let { id, no } = ret;
-        sheetConsole.onSheetAdded(sheetStore/*id, no*/);
-        /*
-        if (id > 0) {
-            let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
-            if (data) {
-                const { id: entityId } = sheetStore.entitySheet;
-                data.addItem({
-                    id,
-                    no,
-                    entityId,
-                });
-            }
-        }
-        */
+        sheetConsole.onSheetAdded(sheetStore);
     }
     return useCallback(startSheetStore, []);
 }

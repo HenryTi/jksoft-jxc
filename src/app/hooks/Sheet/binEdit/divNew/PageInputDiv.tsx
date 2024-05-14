@@ -91,14 +91,16 @@ export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
             parentValDivs.unshift(p);
         }
         let len = parentValDivs.length - 1;
-        return <Band label={'本行'}>
-            {parentValDivs.map((v, index) => {
-                const { id } = v;
-                return <div key={id} className={'d-flex border-bottom tonwa-bg-gray-' + (len - index)}>
-                    <ViewRowStem divStore={divStore} valDiv={v} readonly={true} />
-                </div>;
-            })}
-        </Band>
+        return <div className={theme.bootstrapContainer}>
+            <Band label={'本行'}>
+                {parentValDivs.map((v, index) => {
+                    const { id } = v;
+                    return <div key={id} className={'d-flex border-bottom tonwa-bg-gray-' + (len - index)}>
+                        <ViewRowStem divStore={divStore} valDiv={v} readonly={true} />
+                    </div>;
+                })}
+            </Band>
+        </div>
     }
     return <Page header={binDiv.ui?.caption ?? '输入明细'}>
         <ViewTop />
