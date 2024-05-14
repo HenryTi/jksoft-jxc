@@ -6,6 +6,7 @@ import { Band, FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
 import { ChangeEvent, useState } from "react";
 import { ViewRowStem } from "../ViewDiv/ViewRowStem";
+import { ViewRowLeaf } from "../ViewDiv/ViewRowLeaf";
 
 export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
     const modal = useModal();
@@ -49,57 +50,30 @@ export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
         }
         modal.close(true);
     }
-    /*
-    let vi: any = undefined;
-    let vx: any = undefined;
-    let { binDivBuds } = binDiv;
-    let { budI, budIBase, budX, budXBase } = binDivBuds;
-    if (budI !== undefined) {
-        vi = viewIdField(budI, valRow.i);
+    function ViewRowContainer({ children, level }: { children: React.ReactNode; level: number; }) {
+        return <div className={'d-flex border-bottom tonwa-bg-gray-' + level}>
+            {children}
+        </div>;
     }
-    else if (budIBase !== undefined) {
-        // vi = viewIdField(budIBase, p.iBase);
-    }
-    if (budX !== undefined) {
-        vx = viewIdField(budX, valRow.x);
-    }
-    else if (budIBase !== undefined) {
-        // vx = viewIdField(budX, valRow.x);
-    }
-    function viewIdField(bud: BizBud, value: number) {
-        let { caption, name } = bud;
-        const { budsColl, bizAtomColl } = sheetStore;
-        const budValueColl = budsColl[value];
-        if (caption === undefined) {
-            if (name[0] !== '.') caption = name;
-        }
-        return <Band label={caption} className="border-bottom py-2">
-            <ViewSpecBaseOnly id={value} bold={true} />
-            <ViewAtomTitles budValueColl={budValueColl} bud={bud} atomColl={bizAtomColl} />
-            <RowCols>
-                <ViewSpecNoAtom id={value} />
-            </RowCols>
-            <RowCols>
-                <ViewShowBuds bud={bud} budValueColl={budValueColl} noLabel={false} atomColl={bizAtomColl} />
-            </RowCols>
-        </Band>;
-    }
-    */
     function ViewTop() {
         let parentValDivs: ValDivBase[] = [];
         for (let p = valDiv.parent; p !== undefined; p = p.parent) {
             parentValDivs.unshift(p);
         }
-        let len = parentValDivs.length - 1;
+        let len = parentValDivs.length;
+        let vContent = len === 0 ?
+            <ViewRowContainer level={0}>
+                <ViewRowLeaf divStore={divStore} valDiv={valDiv} readonly={true} />
+            </ViewRowContainer>
+            :
+            parentValDivs.map((v, index) => {
+                const { id } = v;
+                return <ViewRowContainer key={id} level={(len - 1 - index)}>
+                    <ViewRowStem divStore={divStore} valDiv={v} readonly={true} />
+                </ViewRowContainer>;
+            });
         return <div className={theme.bootstrapContainer}>
-            <Band label={'本行'}>
-                {parentValDivs.map((v, index) => {
-                    const { id } = v;
-                    return <div key={id} className={'d-flex border-bottom tonwa-bg-gray-' + (len - index)}>
-                        <ViewRowStem divStore={divStore} valDiv={v} readonly={true} />
-                    </div>;
-                })}
-            </Band>
+            <Band label={'明细'}>{vContent}</Band>
         </div>
     }
     return <Page header={binDiv.ui?.caption ?? '输入明细'}>
@@ -108,12 +82,4 @@ export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
             <FormRowsView rows={formRows} register={register} errors={errors} setValue={setValue} />
         </form>
     </Page>
-    /*
-        {
-            (vi || vx) && <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + theme.bootstrapContainer}>
-                {vi}
-                {vx}
-            </div>
-        }
-    */
 }

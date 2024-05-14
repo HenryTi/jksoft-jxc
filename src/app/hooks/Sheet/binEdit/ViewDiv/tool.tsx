@@ -1,7 +1,8 @@
 import { BizBud } from "app/Biz";
 import { DivStore, ValDiv, ValDivBase } from "../../store";
 import { ViewSpecNoAtom } from "app/hooks";
-import { theme } from "tonwa-com";
+import { FA, theme } from "tonwa-com";
+import { useAtomValue } from "jotai";
 
 export interface ViewDivProps {
     divStore: DivStore;
@@ -36,4 +37,38 @@ export function ViewDivRight({ children }: { children: React.ReactNode; }) {
     return <div className="d-flex flex-column justify-content-end align-items-end px-2 py-2 px-lg-3 border-start text-end w-max-10c w-min-10c">
         {children}
     </div>;
+}
+
+export function ViewPendValue(props: ViewDivProps) {
+    const { valDiv, readonly } = props;
+    const { atomValRow, atomSum, binDiv, parent } = valDiv;
+    const { level, entityBin } = binDiv;
+    const valRow = useAtomValue(atomValRow);
+    let sum = useAtomValue(atomSum);
+    if (parent === undefined) sum = valRow.value;
+    const { pendValue } = valRow;
+    let {
+        pend: cnPend, pendOver: cnPendOver, pendValue: cnPendValue
+    } = theme;
+
+    const { value: budValue } = entityBin;
+    if (pendValue === undefined) return null;
+    if (level === 0) {
+        if (readonly !== true) {
+            let icon: string, color: string;
+            if (sum > pendValue) {
+                icon = 'exclamation-circle';
+                color = cnPendOver;
+            }
+            else {
+                icon = 'th-large'; //'hand-o-right';
+                color = cnPend;
+            }
+            return <div className="d-flex align-items-center">
+                <FA name={icon} className={color + ' me-2 '} />
+                <span className={'w-min-2c w-min-3c ' + cnPendValue}>{budValue?.getUIValue(pendValue)}</span>
+            </div>;
+        }
+    }
+    return null;
 }

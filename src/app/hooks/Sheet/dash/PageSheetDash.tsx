@@ -5,7 +5,7 @@ import { Entity, EntitySheet } from "app/Biz";
 import { PageSheetEdit, PageSheetNew } from "./PageSheetEntry";
 import { DashConsole } from "./DashConsole";
 import { Sheet } from "uqs/UqDefault";
-import { Bin } from "app/tool";
+import { Bin, ViewNotifyCount } from "app/tool";
 import { PageSheetList } from "./PageSheetList";
 import { useAtomValue } from "jotai";
 import { ViewReaction, ViewItemMain } from "app/hooks/View";
@@ -14,7 +14,7 @@ import { ViewBud } from "app/hooks";
 export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const modal = useModal();
     const [visible, setVisible] = useState(true);
-    const { caption, name, uq, biz } = entitySheet;
+    const { caption, name, uq, biz, coreDetail } = entitySheet;
     const { current: sheetConsole } = useRef(new DashConsole(modal, entitySheet));
     const myDrafts = useAtomValue(sheetConsole.atomMyDrafts);
     useEffectOnce(() => {
@@ -96,7 +96,9 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
                 <FA name="file" className="me-2" />
                 新开单
             </button>
-            <div className="flex-fill" />
+            <div className="flex-fill">
+                <ViewNotifyCount phrase={coreDetail?.pend?.id} />
+            </div>
             <button className="btn btn-outline-primary" onClick={onList}>
                 已归档
             </button>

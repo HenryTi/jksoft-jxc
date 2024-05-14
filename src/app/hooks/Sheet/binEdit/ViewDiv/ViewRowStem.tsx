@@ -1,47 +1,28 @@
 import { useAtomValue } from "jotai";
 import { theme, FA } from "tonwa-com";
 import { RowColsSm, ViewShowBuds } from "../../../tool";
-import { PAV, ViewDivProps, ViewDivRight, cn } from "./tool";
+import { PAV, ViewDivProps, ViewDivRight, ViewPendValue, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
 import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
 import { DivEditing } from "../../store";
 
 export function ViewRowStem(props: ViewDivProps) {
-    const { valDiv, divStore, buttons, hidePivot, readonly } = props;
+    const { valDiv, divStore, buttons, hidePivot } = props;
     const { sheetStore } = divStore;
     const { atomValRow, atomValDivs, atomSum, binDiv } = valDiv;
-    const { level, entityBin } = binDiv;
+    const { entityBin } = binDiv;
     const valRow = useAtomValue(atomValRow);
     let sum = useAtomValue(atomSum);
     const divs = useAtomValue(atomValDivs);
-    const { i: iValue, pendValue } = valRow;
+    const { i: iValue } = valRow;
     let {
         sum: cnSum, sumBold: cnSumBold
-        , pend: cnPend, pendOver: cnPendOver, pendValue: cnPendValue
     } = theme;
 
     const { pivot, i: budI, value: budValue } = entityBin;
     let viewPivot: any;
     if (pivot !== undefined && pivot === binDiv.subBinDiv && hidePivot !== true) {
         viewPivot = <ViewPivotDiv divStore={divStore} valDiv={valDiv} />;
-    }
-    let viewPendValue: any;
-    if (level === 0) {
-        if (readonly !== true) {
-            let icon: string, color: string;
-            if (sum > pendValue) {
-                icon = 'exclamation-circle';
-                color = cnPendOver;
-            }
-            else {
-                icon = 'th-large'; //'hand-o-right';
-                color = cnPend;
-            }
-            viewPendValue = <div className="d-flex align-items-center">
-                <FA name={icon} className={color + ' me-2 '} />
-                <span className={'w-min-2c w-min-3c ' + cnPendValue}>{budValue?.getUIValue(pendValue)}</span>
-            </div>;
-        }
     }
 
     const { budsColl, bizAtomColl } = sheetStore;
@@ -56,7 +37,7 @@ export function ViewRowStem(props: ViewDivProps) {
         let cn = viewPivot !== undefined ? cnSumBold : cnSum;
         return <>
             <ViewDivRight>
-                {viewPendValue}
+                <ViewPendValue {...props} />
                 <PAV bud={budValue} val={sum} className={cn} />
             </ViewDivRight>
             {buttons}

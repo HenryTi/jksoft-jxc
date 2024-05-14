@@ -3,10 +3,11 @@ import { useUqApp } from "app/UqApp";
 import { ViewNotifyCount } from "app/tool";
 import { FA, Sep } from "tonwa-com";
 import { CenterItem, centers } from "../center";
-import { File, Folder } from "app/Biz";
+import { EntitySheet, File, Folder } from "app/Biz";
 import { Accordion, AccordionItem } from "react-bootstrap";
 import React, { useState } from "react";
 import { UI } from "app/ui";
+import { BizPhraseType } from "uqs/UqDefault";
 
 const cn = ' d-flex px-4 py-3 border-bottom align-items-center ';
 const fs = ' ';
@@ -177,7 +178,8 @@ function ViewFolder({ folder, index, active }: { folder: Folder; index: string, 
 }
 
 function ViewFile({ file }: { file: File; }) {
-    const { ui: uiDef, entity: { name, id, type } } = file;
+    const { ui: uiDef, entity } = file;
+    const { name, id, type, bizPhraseType } = entity;
     const centerDef = (centers as any)[type];
     if (centerDef === undefined) return null; //debugger;
     const { icon, iconColor, getPath } = centerDef;
@@ -187,9 +189,19 @@ function ViewFile({ file }: { file: File; }) {
         iconColor: iconColor ?? 'text-primary',
         icon,
     });
+    let vNotifyCount: any;
+    if (bizPhraseType === BizPhraseType.sheet) {
+        let entitySheet = entity as EntitySheet;
+        vNotifyCount = <div className="position-absolute" style={{ right: "0.6rem", top: "-0.5rem" }}>
+            <ViewNotifyCount phrase={entitySheet.coreDetail?.pend?.id} />
+        </div>;
+    }
     return <Link to={to}>
         <div className="d-flex py-2 pe-4 align-items-center text-dark">
-            <FA name={ui.icon} className={ui.iconColor + ' px-1 ms-4 me-4'} size={iconSize} />
+            <div className="position-relative">
+                <FA name={ui.icon} className={ui.iconColor + ' px-1 ms-4 me-4'} size={iconSize} />
+                {vNotifyCount}
+            </div>
             <span className={fs}>{ui.caption}</span>
             <div className="flex-grow-1"></div>
             <FA name="angle-right" className="text-secondary" />

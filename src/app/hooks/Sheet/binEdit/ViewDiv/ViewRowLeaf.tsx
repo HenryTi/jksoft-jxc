@@ -1,7 +1,7 @@
 import { useAtomValue } from "jotai";
 import { theme } from "tonwa-com";
 import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../../../tool";
-import { PAV, ViewDivProps, ViewDivRight, cn } from "./tool";
+import { PAV, ViewDivProps, ViewDivRight, ViewPendValue, cn } from "./tool";
 import { ViewIBase } from "./ViewIBase";
 import { DivEditing } from "../../store";
 import { ViewSepcBuds, ViewSpecAtom } from "../../views";
@@ -19,7 +19,7 @@ export function ViewRowLeaf(props: ViewDivProps) {
     let {
         value: cnValue, price: cnPrice, amount: cnAmount
     } = theme;
-    const { budsColl, bizAtomColl, bizSpecColl } = sheetStore;
+    const { budsColl, bizAtomColl } = sheetStore;
     let budValueColl = budsColl[i];
     let viewAtomMain: any;
     const { budIBase } = binDivBuds;
@@ -51,6 +51,7 @@ export function ViewRowLeaf(props: ViewDivProps) {
             </RowColsSm>
         </div>
         <ViewDivRight>
+            <ViewPendValue {...props} />
             <PAV bud={budAmount} className={cnAmount} val={amount} />
             <PAV bud={budPrice} className={cnPrice} val={price} />
             <PAV bud={budValue} className={cnValue} val={value} />
