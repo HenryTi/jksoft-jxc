@@ -15,21 +15,21 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const modal = useModal();
     const [visible, setVisible] = useState(true);
     const { caption, name, uq, biz, coreDetail } = entitySheet;
-    const { current: sheetConsole } = useRef(new DashConsole(modal, entitySheet));
-    const myDrafts = useAtomValue(sheetConsole.atomMyDrafts);
+    const { current: dashConsole } = useRef(new DashConsole(modal, entitySheet));
+    const myDrafts = useAtomValue(dashConsole.atomMyDrafts);
     useEffectOnce(() => {
         (async () => {
             Promise.all([
                 biz.loadUserDefaults(),
-                sheetConsole.loadMyDrafts()
+                dashConsole.loadMyDrafts()
             ]);
         })();
     });
     async function onNew() {
-        let ret = await modal.open(<PageSheetNew store={sheetConsole.createSheetStore()} />);
+        let ret = await modal.open(<PageSheetNew store={dashConsole.createSheetStore()} />);
     }
     async function onList() {
-        modal.open(<PageSheetList entitySheet={entitySheet} sheetConsole={sheetConsole} />);
+        modal.open(<PageSheetList entitySheet={entitySheet} sheetConsole={dashConsole} />);
     }
     async function onRemoveDraft() {
         if (await modal.open(<PageConfirm header="单据草稿" message="真的要删除全部单据草稿吗？" yes="删除" no="不删除" />) !== true) return;
@@ -43,11 +43,11 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         const [del, setDel] = useState(0);
         let entitySheetInView = biz.entityFromId(base);
         if (entitySheetInView === undefined) {
-            sheetCaption = String('Sheet Type ID: ' + base);
+            pageHeader = String('Sheet Type ID: ' + base);
         }
         else {
             const { caption, name } = entitySheetInView;
-            sheetCaption = caption ?? name;
+            pageHeader = caption ?? name;
         }
         if (entitySheetInView === undefined) {
             async function onDelMyDraft() {
@@ -78,7 +78,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         }
         // Link to={`/${sheet}/${to62(entitySheet.id)}/${to62(id)}`}
         function onSheet() {
-            modal.open(<PageSheetEdit sheetId={id} store={sheetConsole.createSheetStore()} />);
+            modal.open(<PageSheetEdit sheetId={id} store={dashConsole.createSheetStore()} />);
         }
         return <div className="d-flex cursor-pointer" onClick={onSheet}>
             <FA name="file" className="ps-4 pt-3 pe-2 text-info" size="lg" />
@@ -89,8 +89,8 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     }
     if (visible === false) return <PageSpinner />;
 
-    let sheetCaption = caption ?? name;
-    return <Page header={sheetCaption + ' - 工作台'}>
+    let pageHeader = caption ?? name;
+    return <Page header={pageHeader + ' - 工作台'}>
         <div className="d-flex px-3 py-2 tonwa-bg-gray-1 border-bottom">
             <button className="btn btn-primary me-3" onClick={onNew}>
                 <FA name="file" className="me-2" />
@@ -103,7 +103,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
                 已归档
             </button>
         </div>
-        <ViewReaction atomContent={sheetConsole.atomViewSubmited} className="ms-3 mt-3 me-auto" />
+        <ViewReaction atomContent={dashConsole.atomViewSubmited} className="ms-3 mt-3 me-auto" />
         <ViewUserDefaults entity={entitySheet} />
         <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-1 mt-4 align-items-end">
             <div className="pb-1 flex-grow-1">

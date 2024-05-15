@@ -13,6 +13,7 @@ interface PropsMore<P> {
     pageStart?: any;
     pageSize?: number;
     pageMoreSize?: number;
+    noAutoLoad?: boolean;
 }
 
 export interface PropsQueryMore<P, R> extends PropsMore<P> {
@@ -77,7 +78,7 @@ export function useQueryMore<P = any, R = any>(props: PropsQueryMore<P, R>): Ret
         </div>
         {isLoading && <Loading elObserver={observerTarget.current} />}
         {error && <p>Error: {error.message}</p>}
-        <div ref={observerTarget}></div>
+        <div ref={observerTarget} style={{ height: "0.5rem" }} className="border border-danger"></div>
     </>;
     return {
         view,
@@ -96,6 +97,7 @@ let id = 1;
 export abstract class MoreItems<P, R> {
     private readonly props: PropsMore<P>;
     private pageStart: any;
+    private canLoad: boolean;
     id: number;
     atomIsLoading = atom(false);
     atomError = atom(undefined as { message: string; });
@@ -104,6 +106,7 @@ export abstract class MoreItems<P, R> {
 
     constructor(props: PropsMore<P>) {
         this.props = props;
+        this.canLoad = props.noAutoLoad !== true;
         this.id = id++;
     }
 
@@ -133,7 +136,14 @@ export abstract class MoreItems<P, R> {
         setAtomValue(this.atomItems, newItems);
     }
 
+    async startLoad() {
+        this.canLoad = true;
+        setAtomValue(this.atomAllLoaded, false);
+        await this.load();
+    }
+
     async load() {
+        if (this.canLoad === false) return;
         let allLoaded = getAtomValue(this.atomAllLoaded);
         if (allLoaded === true) return;
         let { pageSize, pageMoreSize } = this.props;

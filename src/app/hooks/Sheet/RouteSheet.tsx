@@ -1,12 +1,12 @@
 import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
 import { PageSheetDash } from "./dash";
 import { PageSheetEdit, PageSheetNew } from "./dash";
-import { SheetConsole, SheetSteps, SheetStore, useSheetEntity } from "./store";
+import { SheetConsole, SheetSteps, SheetStore } from "./store";
 import { from62, to62 } from "tonwa-com";
 import { useRef } from "react";
 import { EntitySheet } from "app/Biz";
 import { PageMoreCacheData } from "app/coms";
-import { UqApp } from "app/UqApp";
+import { UqApp, useUqApp } from "app/UqApp";
 import { Modal, Page, useModal } from "tonwa-app";
 
 export function RouteSheetEdit() {
@@ -21,8 +21,16 @@ export function RouteSheetNew() {
     return <PageSheetNew store={store} />;
 }
 
+function useEntitySheet() {
+    const uqApp = useUqApp();
+    const { uq, biz } = uqApp;
+    const { sheet: entityId62, id } = useParams();
+    const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
+    return entitySheet;
+}
+
 function useSheetStore() {
-    const entitySheet = useSheetEntity();
+    const entitySheet = useEntitySheet();
     const navigate = useNavigate();
     const modal = useModal();
     const routeConsole = useRef(new RouteConsole(navigate, modal, entitySheet));
@@ -30,7 +38,7 @@ function useSheetStore() {
 }
 
 export function RouteSheetDash() {
-    const entitySheet = useSheetEntity();
+    const entitySheet = useEntitySheet();
     return <PageSheetDash entitySheet={entitySheet} />;
 }
 

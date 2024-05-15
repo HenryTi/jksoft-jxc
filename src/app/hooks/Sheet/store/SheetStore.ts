@@ -9,24 +9,15 @@ import { AtomColl, BudsColl, SpecColl, budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
 import { ValRow, arrFromJsonMid } from "./tool";
 import { DivStore, SubmitState } from "./DivStore";
-import { useUqApp } from "app/UqApp";
-//import { SheetConsole } from "./SheetConsole";
 import { ValDivRoot } from "./ValDiv";
 import { Modal } from "tonwa-app";
+import { Console, Store } from "app/tool";
 
-abstract class KeyIdObject {
-    private static __keyId = 0;
-    readonly keyId: number;
-    constructor() {
-        this.keyId = ++KeyIdObject.__keyId;
-    }
-}
-
-abstract class BinStore extends KeyIdObject {
+abstract class BinStore extends Store {
     readonly sheetStore: SheetStore;
     readonly entityBin: EntityBin;
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
-        super();
+        super(entityBin.uq);
         this.sheetStore = sheetStore;
         this.entityBin = entityBin;
     }
@@ -157,10 +148,9 @@ class Detail extends BinStore {
 export class ExDetail extends Detail {
 }
 
-export class SheetStore extends KeyIdObject {
+export class SheetStore extends Store {
     private readonly cachePendRows: { [id: number]: PendRow } = {};
 
-    readonly uq: UqExt;
     readonly biz: Biz;
     readonly entitySheet: EntitySheet;
     readonly sheetConsole: SheetConsole;
@@ -179,10 +169,9 @@ export class SheetStore extends KeyIdObject {
 
 
     constructor(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
-        super();
+        super(entitySheet.uq);
         const { biz } = entitySheet;
         const { uq } = biz;
-        this.uq = uq;
         this.biz = biz;
         this.entitySheet = entitySheet;
         this.sheetConsole = sheetConsole;
@@ -429,20 +418,11 @@ class UserProxyHander implements ProxyHandler<any> {
     }
 }
 
-export function useSheetEntity() {
-    const uqApp = useUqApp();
-    const { uq, biz } = uqApp;
-    const { sheet: entityId62, id } = useParams();
-    const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
-    return entitySheet;
-}
-
-export abstract class SheetConsole {
-    protected readonly modal: Modal;
+export abstract class SheetConsole extends Console {
     readonly entitySheet: EntitySheet;
 
     constructor(modal: Modal, entitySheet: EntitySheet) {
-        this.modal = modal;
+        super(entitySheet.uq, modal);
         this.entitySheet = entitySheet;
     }
 

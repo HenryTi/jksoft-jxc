@@ -15,7 +15,7 @@ export function ViewSpecAtom({ id, sheetStore }: { id: number; sheetStore: Sheet
     return <><b>{ex}</b> <span className="mx-3">{no}</span></>
 }
 
-export function ViewSepcBuds({ id, sheetStore }: { id: number; sheetStore: SheetStore; }) {
+export function ViewSpecBuds({ id, sheetStore }: { id: number; sheetStore: SheetStore; }) {
     const { budsColl, bizSpecColl } = sheetStore;
     let bizSpec = bizSpecColl[id];
     if (bizSpec === undefined) return null;

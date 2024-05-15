@@ -1,3 +1,4 @@
+export * from "./RouteReport";
 export * from './useReport';
 export * from './PageHistory';
 export * from './PageRef';
