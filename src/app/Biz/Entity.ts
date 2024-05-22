@@ -171,7 +171,7 @@ export class Entity extends BizBase {
         let { budDataType } = bizBud;
         if (budDataType === undefined) {
             debugger;
-            return;
+            return bizBud;
         }
         budDataType.fromSchema(prop);
         bizBud.fromSchema(prop);

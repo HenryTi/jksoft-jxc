@@ -24,6 +24,8 @@ export enum EnumBudType {
     datetime = 42,
 
     optionItem = 81,            // options item
+    any = 96,
+    unique = 97,
     user = 98,
     arr = 99,
 };
@@ -55,6 +57,9 @@ abstract class BudDataString extends BudDataType {
 
 export class BudNone extends BudDataString {
     readonly type = EnumBudType.none;
+}
+export class BudAny extends BudDataString {
+    readonly type = EnumBudType.any;
 }
 export class BudArr extends BudDataString {
     readonly type = EnumBudType.arr;
@@ -120,12 +125,10 @@ export class BudIDIO extends BudDataNumber {
     }
 }
 abstract class BudOptions extends BudDataType {
-    //private optionsName: string;
     options: EntityOptions;
     get dataType(): 'string' | 'number' { return; }
     override scan(biz: Biz, bud: BizBud) {
         this.options = biz.entityFromId(this.options as unknown as number);
-        // biz.entities[this.optionsName] as EntityOptions;
     }
     fromSchema(schema: any) {
         this.options = schema.options;
@@ -195,7 +198,9 @@ export class BizBud extends BizBase {
         this.entity = entity;
         let budDataType: BudDataType;
         switch (dataType) {
+            default: budDataType = undefined; break;
             case EnumBudType.none: budDataType = new BudNone(); break;
+            case EnumBudType.any: budDataType = new BudAny(); break;
             case EnumBudType.arr: budDataType = new BudArr(); break;
             case EnumBudType.int: budDataType = new BudInt(); break;
             case EnumBudType.dec: budDataType = new BudDec(); break;
@@ -218,7 +223,9 @@ export class BizBud extends BizBase {
     }
     scan() {
         if (this.scaned === true) return;
-        this.budDataType.scan(this.biz, this);
+        if (this.budDataType !== undefined) {
+            this.budDataType.scan(this.biz, this);
+        }
         this.biz.addBudIds(this);
         this.fieldShows = this.scanFieldShows(this.fieldShows);
         this.scaned = true;

@@ -50,10 +50,8 @@ export abstract class EntityAtomID extends Entity {
         if (ancestorSelfs.length <= 1) return;
         let titleBuds: BizBud[] = [];
         let primeBuds: BizBud[] = [];
-        // let uniques: string[] = [];
         let titleColl: { [id: number]: BizBud } = {};
         let primeColl: { [id: number]: BizBud } = {};
-        // let uniqueColl: { [u: string]: boolean } = {};
         for (let ancestor of ancestorSelfs) {
             let { titleBuds: tbs, primeBuds: pbs } = ancestor.entity as EntityAtom;
             if (tbs !== undefined) {

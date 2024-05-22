@@ -232,7 +232,7 @@ export class Biz {
             },
             {
                 name: 'query',
-                caption: '业务查询',
+                caption: '捡取查询',
                 entities: [
                     [this.queries, '捡取查询', 'hand-pointer-o'],
                 ],
@@ -247,13 +247,6 @@ export class Biz {
                     [this.duos, '合成编码', 'code-fork'],
                     [this.titles, '科目', 'flag-o'],
                     [this.assigns, '赋值', 'flag-o']
-                ],
-            },
-            {
-                name: 'query',
-                caption: '捡取查询',
-                entities: [
-                    [this.queries, '捡取查询', 'hand-pointer-o'],
                 ],
             },
             {
