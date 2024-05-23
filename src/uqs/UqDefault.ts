@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu May 09 2024 19:23:12 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Wed May 22 2024 09:18:22 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -328,52 +328,26 @@ export interface ReturnDoQueryRet {
 	ban: number;
 	json: any;
 }
-export interface ResultDoQuery {
-	ret: ReturnDoQueryRet[];
-}
-
-export interface ParamGetReport {
-	reportPhrase: number;
-	atomPhrase: number;
-	atomId: number;
-	dateStart: any;
-	dateEnd: any;
-	params: any;
-}
-export interface ReturnGetReport$page {
+export interface ReturnDoQueryProps {
 	id: number;
 	phrase: number;
+	value: any;
+}
+export interface ReturnDoQueryAtoms {
+	id: number;
+	base: number;
 	no: string;
 	ex: string;
-	value: any;
 }
-export interface ReturnGetReportSpecs {
-	id: number;
-	phrase: number;
-	base: number;
-	value: any;
-	props: any;
+export interface ReturnDoQuerySpecs {
+	spec: number;
+	atom: number;
 }
-export interface ResultGetReport {
-	$page: ReturnGetReport$page[];
-	specs: ReturnGetReportSpecs[];
-}
-
-export interface ParamGetHistory {
-	objId: number;
-	title: number;
-}
-export interface ReturnGetHistory$page {
-	id: number;
-	value: number;
-	ref: number;
-	plusMinus: number;
-	sheetNo: string;
-	sheetPhrase: number;
-	binPhrase: number;
-}
-export interface ResultGetHistory {
-	$page: ReturnGetHistory$page[];
+export interface ResultDoQuery {
+	ret: ReturnDoQueryRet[];
+	props: ReturnDoQueryProps[];
+	atoms: ReturnDoQueryAtoms[];
+	specs: ReturnDoQuerySpecs[];
 }
 
 export interface ParamRemoveDraft {
@@ -780,6 +754,69 @@ export interface ReturnGetMySheetList$page {
 }
 export interface ResultGetMySheetList {
 	$page: ReturnGetMySheetList$page[];
+}
+
+export interface ParamGetReport1 {
+	reportPhrase: number;
+	atomPhrase: number;
+	atomId: number;
+	dateStart: any;
+	dateEnd: any;
+	params: any;
+}
+export interface ReturnGetReport1$page {
+	id: number;
+	phrase: number;
+	no: string;
+	ex: string;
+	value: any;
+}
+export interface ResultGetReport1 {
+	$page: ReturnGetReport1$page[];
+}
+
+export interface ParamGetReport {
+	reportPhrase: number;
+	atomPhrase: number;
+	atomId: number;
+	dateStart: any;
+	dateEnd: any;
+	params: any;
+}
+export interface ReturnGetReport$page {
+	id: number;
+	phrase: number;
+	no: string;
+	ex: string;
+	value: any;
+}
+export interface ReturnGetReportSpecs {
+	id: number;
+	phrase: number;
+	base: number;
+	value: any;
+	props: any;
+}
+export interface ResultGetReport {
+	$page: ReturnGetReport$page[];
+	specs: ReturnGetReportSpecs[];
+}
+
+export interface ParamGetHistory {
+	objId: number;
+	title: number;
+}
+export interface ReturnGetHistory$page {
+	id: number;
+	value: number;
+	ref: number;
+	plusMinus: number;
+	sheetNo: string;
+	sheetPhrase: number;
+	binPhrase: number;
+}
+export interface ResultGetHistory {
+	$page: ReturnGetHistory$page[];
 }
 
 export interface ParamSearchAllSheets {
@@ -1397,8 +1434,6 @@ export interface UqExt extends Uq {
 	DeleteBin: UqAction<ParamDeleteBin, ResultDeleteBin>;
 	SubmitSheet: UqAction<ParamSubmitSheet, ResultSubmitSheet>;
 	DoQuery: UqAction<ParamDoQuery, ResultDoQuery>;
-	GetReport: UqQuery<ParamGetReport, ResultGetReport>;
-	GetHistory: UqQuery<ParamGetHistory, ResultGetHistory>;
 	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
 	GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
 	SetSheetPreToDraft: UqAction<ParamSetSheetPreToDraft, ResultSetSheetPreToDraft>;
@@ -1424,6 +1459,9 @@ export interface UqExt extends Uq {
 	GetSiteSheets: UqQuery<ParamGetSiteSheets, ResultGetSiteSheets>;
 	GetSiteSheetList: UqQuery<ParamGetSiteSheetList, ResultGetSiteSheetList>;
 	GetMySheetList: UqQuery<ParamGetMySheetList, ResultGetMySheetList>;
+	GetReport1: UqQuery<ParamGetReport1, ResultGetReport1>;
+	GetReport: UqQuery<ParamGetReport, ResultGetReport>;
+	GetHistory: UqQuery<ParamGetHistory, ResultGetHistory>;
 	SearchAllSheets: UqQuery<ParamSearchAllSheets, ResultSearchAllSheets>;
 	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
 	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
@@ -2287,43 +2325,9 @@ export const uqSchema={
                         "type": "json"
                     }
                 ]
-            }
-        ]
-    },
-    "getreport": {
-        "name": "GetReport",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "reportPhrase",
-                "type": "id"
             },
             {
-                "name": "atomPhrase",
-                "type": "id"
-            },
-            {
-                "name": "atomId",
-                "type": "id"
-            },
-            {
-                "name": "dateStart",
-                "type": "date"
-            },
-            {
-                "name": "dateEnd",
-                "type": "date"
-            },
-            {
-                "name": "params",
-                "type": "json"
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
+                "name": "props",
                 "fields": [
                     {
                         "name": "id",
@@ -2331,6 +2335,23 @@ export const uqSchema={
                     },
                     {
                         "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
                         "type": "id"
                     },
                     {
@@ -2342,93 +2363,21 @@ export const uqSchema={
                         "name": "ex",
                         "type": "char",
                         "size": 200
-                    },
-                    {
-                        "name": "value",
-                        "type": "json"
                     }
-                ],
-                "order": "asc"
+                ]
             },
             {
                 "name": "specs",
                 "fields": [
                     {
-                        "name": "id",
+                        "name": "spec",
                         "type": "id"
                     },
                     {
-                        "name": "phrase",
+                        "name": "atom",
                         "type": "id"
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "json"
-                    },
-                    {
-                        "name": "props",
-                        "type": "json"
                     }
                 ]
-            }
-        ]
-    },
-    "gethistory": {
-        "name": "GetHistory",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "objId",
-                "type": "id"
-            },
-            {
-                "name": "title",
-                "type": "id"
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
-                    },
-                    {
-                        "name": "ref",
-                        "type": "id"
-                    },
-                    {
-                        "name": "plusMinus",
-                        "type": "tinyint"
-                    },
-                    {
-                        "name": "sheetNo",
-                        "type": "char",
-                        "size": 30
-                    },
-                    {
-                        "name": "sheetPhrase",
-                        "type": "id"
-                    },
-                    {
-                        "name": "binPhrase",
-                        "type": "id"
-                    }
-                ],
-                "order": "desc"
             }
         ]
     },
@@ -3685,6 +3634,210 @@ export const uqSchema={
                     {
                         "name": "rowCount",
                         "type": "int"
+                    }
+                ],
+                "order": "desc"
+            }
+        ]
+    },
+    "getreport1": {
+        "name": "GetReport1",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "reportPhrase",
+                "type": "id"
+            },
+            {
+                "name": "atomPhrase",
+                "type": "id"
+            },
+            {
+                "name": "atomId",
+                "type": "id"
+            },
+            {
+                "name": "dateStart",
+                "type": "date"
+            },
+            {
+                "name": "dateEnd",
+                "type": "date"
+            },
+            {
+                "name": "params",
+                "type": "json"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
+    "getreport": {
+        "name": "GetReport",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "reportPhrase",
+                "type": "id"
+            },
+            {
+                "name": "atomPhrase",
+                "type": "id"
+            },
+            {
+                "name": "atomId",
+                "type": "id"
+            },
+            {
+                "name": "dateStart",
+                "type": "date"
+            },
+            {
+                "name": "dateEnd",
+                "type": "date"
+            },
+            {
+                "name": "params",
+                "type": "json"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ],
+                "order": "asc"
+            },
+            {
+                "name": "specs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    },
+                    {
+                        "name": "props",
+                        "type": "json"
+                    }
+                ]
+            }
+        ]
+    },
+    "gethistory": {
+        "name": "GetHistory",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "objId",
+                "type": "id"
+            },
+            {
+                "name": "title",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "ref",
+                        "type": "id"
+                    },
+                    {
+                        "name": "plusMinus",
+                        "type": "tinyint"
+                    },
+                    {
+                        "name": "sheetNo",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "sheetPhrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "binPhrase",
+                        "type": "id"
                     }
                 ],
                 "order": "desc"

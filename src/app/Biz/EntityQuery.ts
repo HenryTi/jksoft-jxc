@@ -32,4 +32,3 @@ export class EntityQuery extends Entity {
         }
     }
 }
-
