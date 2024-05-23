@@ -1,76 +1,10 @@
 import { useUqApp } from "app/UqApp";
-import { BudCheckValue, BudValue } from "tonwa-app";
+import { BudValue } from "tonwa-app";
 import { ViewBud, budContent } from "../Bud";
 import { FA, theme } from "tonwa-com";
 import React from "react";
-import { BizBud } from "app/Biz";
-import { Atom as BizAtom } from "uqs/UqDefault";
-
-interface PropData {
-    id: number;
-    phrase: number;
-    value: any;
-    //    owner: number;
-}
-
-export interface BudsColl {
-    [row: number]: BudValueColl;
-}
-
-// bud=100, atom.no
-// bud=101, atom.ex
-export interface BudValueColl {
-    [bud: number]: BudValue;
-}
-
-export interface AtomColl {
-    [id: number]: BizAtom;
-}
-
-export interface SpecColl {
-    [id: number]: {
-        atom: BizAtom;
-        buds: BizBud[];
-    }
-}
-
-export function budValuesFromProps(props: PropData[]) {
-    const budsColl: BudsColl = {};
-    for (let { id, phrase, value } of props) {
-        let budValues = budsColl[id];
-        if (budValues === undefined) {
-            budsColl[id] = budValues = {};
-        }
-        if (Array.isArray(value) === false) {
-            budValues[phrase] = value;
-        }
-        else {
-            switch (value.length) {
-                default:
-                case 0: debugger; break;
-                case 1: budValues[phrase] = value[0]; break;
-                case 2:
-                    let v1 = value[1];
-                    let checks = budValues[phrase] as BudCheckValue;
-                    if (checks === undefined) {
-                        budValues[phrase] = checks = [v1];
-                    }
-                    else {
-                        // 可能重复，去重。具体为什么会重复，随后再找原因
-                        if (checks.findIndex(v => v === v1) < 0) {
-                            checks.push(v1);
-                        }
-                        else {
-                            console.error('budValuesFromProps duplicate ', v1);
-                            // debugger;
-                        }
-                    }
-                    break;
-            }
-        }
-    }
-    return budsColl;
-}
+import { BizBud, Entity } from "app/Biz";
+import { AtomColl, BudValueColl } from "app/tool";
 
 // atom field owns buds
 export function OwnedBuds({ values, noLabel, atomColl }: { values: [number, BudValue][]; noLabel?: boolean; atomColl?: AtomColl; }) {
@@ -136,4 +70,115 @@ export function ViewAtomTitles({ budValueColl, bud, noLabel, atomColl }: { budVa
             </span>;
         })
     }</>;
+}
+
+
+export interface Prop<T = any> {
+    name: string;
+    bud: BizBud;
+    value: T;
+}
+export interface Picked { [name: string]: Prop | any; }
+
+export function pickedFromJsonArr(entity: Entity, propArr: Prop[], picked: Picked, arr: any[]) {
+    const { biz } = entity;
+    for (let v of arr) {
+        let { length } = v;
+        let v0 = v[0];
+        let v1 = v[1];
+        let name: string, bud: BizBud, value: any;
+        switch (length) {
+            default: debugger; continue;
+            case 2:
+                if (typeof (v0) === 'string') {
+                    switch (v0) {
+                        case 'no': picked.no = v1; continue;
+                        case 'ex': picked.ex = v1; continue;
+                    }
+                    name = v0;
+                    value = v1
+                }
+                else {
+                    bud = entity.budColl[v0];
+                    name = bud.name;
+                    value = v1;
+                }
+                break;
+            case 3:
+                let bizEntity = biz.entityFromId(v0);
+                bud = bizEntity.budColl[v1];
+                name = bud.name;
+                value = v[2];
+                break;
+        }
+        let prop: Prop = { name, bud, value };
+        picked[name] = prop;
+        propArr.push(prop);
+    }
+}
+
+export function arrFromJsonArr(entity: Entity, arr: any[], hiddenBuds: Set<number>) {
+    let propArr: Prop[] = [];
+    const { biz } = entity;
+    for (let v of arr) {
+        let { length } = v;
+        let v0 = v[0];
+        let v1 = v[1];
+        let name: string, bud: BizBud, value: any;
+        switch (length) {
+            default: debugger; continue;
+            case 2:
+                if (typeof (v0) === 'string') {
+                    switch (v0) {
+                        case 'no': continue;
+                        case 'ex': continue;
+                    }
+                    name = v0;
+                    value = v1
+                }
+                else {
+                    bud = entity.budColl[v0];
+                    name = bud.name;
+                    value = v1;
+                }
+                break;
+            case 3:
+                let bizEntity = biz.entityFromId(v0);
+                bud = bizEntity.budColl[v1];
+                name = bud.name;
+                value = v[2];
+                break;
+        }
+        if (hiddenBuds.has(bud.id) === true) continue;
+        let prop: Prop = { name, bud, value };
+        propArr.push(prop);
+    }
+    return propArr;
+}
+
+// table pend
+export function arrFromJsonMid(entity: Entity, mid: any, hiddenBuds: Set<number>) {
+    let ret: Prop[] = [];
+    const { budColl, buds } = entity;
+    // 按buds的顺序处理。暂不知道buds是否包含继承来的
+    for (let bud of buds) {
+        if (bud === undefined) {
+            debugger;
+            continue;
+        }
+        let value = mid[bud.id];
+        if (value === null) continue;
+        if (hiddenBuds.has(bud.id) === true) continue;
+        ret.push({ name: undefined, bud, value });
+    }
+    /*
+    for (let i in mid) {
+        let bud = budColl[i];
+        if (bud === undefined) continue;
+        let value = mid[i];
+        if (value === null) continue;
+        ret.push({ name: bud.name, bud, value });
+    }
+    */
+    return ret;
 }

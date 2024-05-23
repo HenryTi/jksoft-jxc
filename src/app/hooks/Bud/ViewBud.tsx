@@ -1,7 +1,7 @@
 import { BizBud, BudRadio, EnumBudType } from "app/Biz";
 import { ViewBudSpec, ViewSpecNoAtom } from "app/hooks";
-import { contentFromDays } from "app/tool";
-import { AtomColl, LabelBox, ViewBudEmpty } from "../tool";
+import { AtomColl, contentFromDays } from "app/tool";
+import { LabelBox, ViewBudEmpty } from "../tool";
 import { Atom as BizAtom } from "uqs/UqDefault";
 
 export enum ViewBudUIType {

@@ -34,8 +34,8 @@ export function PageSheetNew({ store }: { store: SheetStore; }) {
         return <PageSheet store={store} />;
     }
     const { main, isPend } = store;
-    const { entityBin } = main;
-    const { binPicks, rearPick } = entityBin;
+    const { entity } = main;
+    const { binPicks, rearPick } = entity;
     if (rearPick === undefined && (binPicks === undefined || binPicks.length === 0)) {
         if (isPend === true) {
             sheetConsole.steps = sheetSteps([stepPend]);

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { usePickFromAtom } from "./fromAtom";
 import { usePickFromSpec } from "./fromSpec";
 import { usePickFromPend } from "./fromPend";
-import { usePickFromQuery } from "./fromQuery";
+import { usePickFromQuery } from "../../Query/fromQuery";
 import { RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
 import { PickResult } from "../store";
 import { getAtomValue, setAtomValue, theme } from "tonwa-com";
@@ -25,7 +25,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     const pickFromPend = usePickFromPend();
     const [pickFromQueryScalar, pickFromQuery] = usePickFromQuery();
     const { main, divStore, sheetConsole } = sheetStore;
-    const { binPicks, rearPick } = main.entityBin;
+    const { binPicks, rearPick } = main.entity;
     const { picks, steps } = sheetConsole;
     const { atomPickedResults, atomRearPickResult, atomCur } = picks;
     let namedResults = getAtomValue(atomPickedResults);

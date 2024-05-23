@@ -4,7 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { usePickFromAtom } from "./fromAtom";
 import { usePickFromSpec } from "./fromSpec";
 import { usePickFromPend } from "./fromPend";
-import { usePickFromQuery } from "./fromQuery";
+import { usePickFromQuery } from "../../Query/fromQuery";
 import { RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
 import { NamedResults, PickResult } from "../store";
 

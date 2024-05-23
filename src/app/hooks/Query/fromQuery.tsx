@@ -4,15 +4,15 @@ import { Page, useModal } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { List, Sep } from "tonwa-com";
 import { filterUndefined } from "app/tool";
-import { usePageParams } from "./PageParams";
-import { NamedResults, PickResult, Picked, Prop, RearPickResultType, VNamedBud, pickedFromJsonArr } from "../store";
-import { RowCols } from "app/hooks/tool";
+import { usePageParams } from "../Sheet/binPick/PageParams";
+import { NamedResults, PickResult, RearPickResultType, VNamedBud/*, Picked, Prop, pickedFromJsonArr*/ } from "../Sheet/store";
+import { Picked, Prop, RowCols } from "app/hooks/tool";
+import { QueryStore } from "app/hooks/Query";
 
 export function usePickFromQuery(): [
     (namedResults: NamedResults, binPick: PickQuery) => Promise<PickResult>,
     (namedResults: NamedResults, binPick: PickQuery, lastPickResultType: RearPickResultType) => Promise<PickResult[]>,
 ] {
-    const { uq, biz } = useUqApp();
     const modal = useModal();
     const pickParam = usePageParams();
     const pickFromQueryBase = useCallback(async function (
@@ -30,9 +30,13 @@ export function usePickFromQuery(): [
         });
         if (retParam === undefined) return;
         retParam = filterUndefined(retParam);
+
+        let queryStore = new QueryStore(query);
+        /*
         let retQuery = await uq.DoQuery.submitReturns({ query: query.id, json: retParam, pageStart: undefined, pageSize: 100 });
+        let { ret: retItems, props, specs, atoms } = retQuery;
         let pickedArr: Picked[] = [];
-        for (let row of retQuery.ret) {
+        for (let row of retItems) {
             let propArr: Prop[] = [];
             let picked: Picked = {
                 $: propArr as any,
@@ -46,6 +50,10 @@ export function usePickFromQuery(): [
             pickedFromJsonArr(query, propArr, picked, row.json);
             pickedArr.push(picked);
         }
+        */
+        let pickedArr: Picked[] = [];
+        pickedArr = await queryStore.query(retParam);
+
         let ret = await modal.open(<PageFromQuery />);
         if (ret === undefined) return;
         function toRet(v: any) {

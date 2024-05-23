@@ -23,12 +23,10 @@ interface ReportRow {
     specs: SpecRow[];
 }
 
-export class ReportStore extends Store {
-    readonly entityReport: EntityReport;
+export class ReportStore extends Store<EntityReport> {
     readonly console: ReportConsole;
     constructor(entityReport: EntityReport, console: ReportConsole) {
-        super(entityReport.uq);
-        this.entityReport = entityReport;
+        super(entityReport);
         this.console = console;
     }
 }

@@ -1,7 +1,7 @@
-import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
+import { Prop, RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { getAtomValue, theme } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
-import { Prop, VNamedBud } from "../store/tool";
+import { VNamedBud } from "../store/tool";
 import { ViewSpecBuds, ViewSpecAtom, ViewSpecAtomTitles } from "../views";
 
 export interface PendProps {

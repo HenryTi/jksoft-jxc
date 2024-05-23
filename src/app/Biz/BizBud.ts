@@ -286,6 +286,7 @@ export class BizBud extends BizBase {
                 this.valueSetType = ValueSetType.equ;
                 this.valueSet = defaultValue;
             }
+            if (this.valueSet.indexOf('`') >= 0) debugger;
         }
         else {
             this.valueSetType = ValueSetType.none;

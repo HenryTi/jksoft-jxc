@@ -11,7 +11,7 @@ import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
 // 编辑div任意层
 export function PageEditDivRoot({ divStore, valDiv }: { divStore: DivStore; valDiv: ValDivBase; }) {
     const { sheetStore } = divStore;
-    const { entitySheet, main } = sheetStore;
+    const { entity: entitySheet, main } = sheetStore;
     return <Page header={`${(entitySheet.caption ?? entitySheet.name)} - ${main.no}`}>
         <EditDiv divStore={divStore} valDiv={valDiv} />
     </Page>

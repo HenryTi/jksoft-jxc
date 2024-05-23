@@ -8,9 +8,9 @@ import {
     BudValuesToolBase
 } from "app/Biz";
 import { Calc, CalcResult, Formulas } from "./Calc";
-import { getDays } from "app/tool";
+import { AtomColl, getDays } from "app/tool";
 import { BudEditing, EditBudInline, ViewBud, ViewBudUIType } from "app/hooks";
-import { AtomColl, LabelBox } from "app/hooks/tool";
+import { LabelBox } from "app/hooks/tool";
 import { BudCheckValue } from "tonwa-app";
 
 export abstract class BudsEditingBase<R, B extends BudValuesToolBase<R>> /*extends BinBudsFields */ {

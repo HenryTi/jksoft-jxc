@@ -5,21 +5,20 @@ import { EntitySheet, EntityBin, Biz, EntityPend, BinRow, BizBud, Entity } from 
 import { ParamSaveDetail, UqExt, Atom as BizAtom, ReturnGetPendRetSheet, ReturnGetPendProps } from "uqs/UqDefault";
 import { PickFunc, PickStates, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
-import { AtomColl, BudsColl, SpecColl, budValuesFromProps } from "../../tool";
+// import { budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
-import { ValRow, arrFromJsonMid } from "./tool";
+import { ValRow } from "./tool";
 import { DivStore, SubmitState } from "./DivStore";
 import { ValDivRoot } from "./ValDiv";
 import { Modal } from "tonwa-app";
 import { Console, Store } from "app/tool";
+import { arrFromJsonMid } from "app/hooks/tool";
 
-abstract class BinStore extends Store {
+abstract class BinStore extends Store<EntityBin> {
     readonly sheetStore: SheetStore;
-    readonly entityBin: EntityBin;
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
-        super(entityBin.uq);
+        super(entityBin);
         this.sheetStore = sheetStore;
-        this.entityBin = entityBin;
     }
 }
 
@@ -30,7 +29,7 @@ export class SheetMain extends BinStore {
     no: string;
 
     constructor(sheetStore: SheetStore) {
-        const { main } = sheetStore.entitySheet;
+        const { main } = sheetStore.entity;
         super(sheetStore, main);
         this.budEditings = main.buds.map(v => new BudEditing(v));
     }
@@ -40,7 +39,7 @@ export class SheetMain extends BinStore {
         const row = this.valRow;
         const { id } = row;
         if (id > 0) return;
-        const pickResults = await pick(this.sheetStore, this.entityBin, RearPickResultType.scalar);
+        const pickResults = await pick(this.sheetStore, this.entity, RearPickResultType.scalar);
         let ret = await this.startFromPickResults(pickResults);
         setAtomValue(this.sheetStore.atomLoaded, true);
         return ret;
@@ -49,7 +48,7 @@ export class SheetMain extends BinStore {
     async startFromPickResults(pickResults: ReturnUseBinPicks) {
         if (pickResults === undefined) return;
         const row = this.valRow;
-        const { i, x, buds: mainProps } = this.entityBin;
+        const { i, x, buds: mainProps } = this.entity;
         const formulas: Formulas = [];
         function getFormulaText(text: string) {
             if (text === undefined) return;
@@ -148,35 +147,24 @@ class Detail extends BinStore {
 export class ExDetail extends Detail {
 }
 
-export class SheetStore extends Store {
+export class SheetStore extends Store<EntitySheet> {
     private readonly cachePendRows: { [id: number]: PendRow } = {};
-
-    readonly biz: Biz;
-    readonly entitySheet: EntitySheet;
     readonly sheetConsole: SheetConsole;
     readonly main: SheetMain;
     readonly caption: string;
     readonly backIcon = 'file-text-o';
     readonly isPend: boolean;
-    readonly budsColl: BudsColl = {};
-    readonly bizAtomColl: AtomColl = {};
-    readonly bizSpecColl: SpecColl = {};
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> } = {};
     readonly divStore: DivStore;
     readonly atomLoaded = atom(false);
     readonly atomReaction = atom(undefined as any);
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
 
-
     constructor(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
-        super(entitySheet.uq);
-        const { biz } = entitySheet;
-        const { uq } = biz;
-        this.biz = biz;
-        this.entitySheet = entitySheet;
+        super(entitySheet);
         this.sheetConsole = sheetConsole;
         this.main = new SheetMain(this);
-        const { details } = this.entitySheet;
+        const { details } = this.entity;
         let detail = details[0];
         let len = details.length;
         if (len > 0) {
@@ -221,30 +209,30 @@ export class SheetStore extends Store {
     // whole sheet or row detail
     async loadBinData(binId: number) {
         let { main, details, props, atoms: bizAtoms, specs } = await this.uq.GetSheet.query({ id: binId });
-        const budsColl = budValuesFromProps(props);
-        Object.assign(this.budsColl, budsColl);
-        this.addBizAtoms(bizAtoms);
-        this.addBizSpecs(specs, props);
+        this.cacheIdAndBuds(props, bizAtoms, specs);
         let mainRow = main[0];
         if (mainRow !== undefined) {
-            (mainRow as any).buds = budsColl[binId] ?? {};
+            (mainRow as any).buds = this.budsColl[binId] ?? {};
         }
         for (let row of details) {
             const { id } = row;
-            (row as any).buds = budsColl[id] ?? {};
+            (row as any).buds = this.budsColl[id] ?? {};
         }
         return { main: mainRow, details };
     }
 
     async loadPend(params: any, pendId: number) {
-        let { pend: entityPend, rearPick } = this.entitySheet.coreDetail;
+        let { pend: entityPend, rearPick } = this.entity.coreDetail;
         if (entityPend === undefined) debugger;
         let ret = await this.uqGetPend(entityPend, params, pendId);
         let { $page, retSheet, props: showBuds, atoms, specs } = ret;
+        this.cacheIdAndBuds(showBuds, atoms, specs);
+        /*
         const ownerColl = budValuesFromProps(showBuds);
         Object.assign(this.budsColl, ownerColl);
         this.addBizAtoms(atoms);
         this.addBizSpecs(specs, showBuds);
+        */
         let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
         for (let v of retSheet) {
             collSheet[v.id] = v;
@@ -279,31 +267,6 @@ export class SheetStore extends Store {
 
     getPendRow(pend: number) {
         return this.cachePendRows[pend];
-    }
-
-    private addBizAtoms(bizAtoms: BizAtom[]) {
-        for (let atom of bizAtoms) {
-            const { id } = atom;
-            this.bizAtomColl[id] = atom;
-            this.uq.idCacheAdd(atom);
-        }
-    }
-
-    private addBizSpecs(bizSpecs: { spec: number; atom: number; }[], props: ReturnGetPendProps[]) {
-        for (let bizSpec of bizSpecs) {
-            const { spec, atom } = bizSpec;
-            this.bizSpecColl[spec] = {
-                atom: this.bizAtomColl[atom],
-                buds: [],
-            }
-        }
-        for (let { id, phrase, value } of props) {
-            let bizSpec = this.bizSpecColl[id];
-            if (bizSpec === undefined) continue;
-            let bud = this.biz.budFromId(phrase);
-            if (bud === undefined) debugger;
-            bizSpec.buds.push(bud);
-        }
     }
 
     async discard() {
@@ -345,9 +308,9 @@ export class SheetStore extends Store {
     }
 
     async saveSheet(valRow: ValRow) {
-        let propArr = this.getPropArr(valRow, this.main.entityBin.buds);
+        let propArr = this.getPropArr(valRow, this.main.entity.buds);
         let { id: sheetId, i, x } = valRow;
-        const { uq, entitySheet } = this;
+        const { uq, entity: entitySheet } = this;
         let ret = await uq.SaveSheet.submit({
             phrase: entitySheet.id,
             no: undefined,
@@ -393,12 +356,12 @@ export class SheetStore extends Store {
     }
 
     get mainProxy() {
-        const { valRow, entityBin } = this.main;
-        return new Proxy(valRow, entityBin.proxyHandler());
+        const { valRow, entity } = this.main;
+        return new Proxy(valRow, entity.proxyHandler());
     }
 
     get userProxy() {
-        return new Proxy(this, new UserProxyHander(this.entitySheet));
+        return new Proxy(this, new UserProxyHander(this.entity));
     }
 }
 
