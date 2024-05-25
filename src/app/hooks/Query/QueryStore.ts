@@ -1,4 +1,4 @@
-import { BizBud, Entity, EntityQuery } from "app/Biz";
+import { EntityQuery } from "app/Biz";
 import { Store } from "app/tool";
 import { Picked, Prop, pickedFromJsonArr } from "../tool";
 
@@ -10,14 +10,16 @@ export class QueryStore extends Store<EntityQuery> {
         let pickedArr: Picked[] = [];
         for (let row of retItems) {
             let propArr: Prop[] = [];
+            const { id, ban } = row;
             let picked: Picked = {
                 $: propArr as any,
-                id: row.id as any,
+                id, //: row.id as any,
+                // ...row,
             };
             picked.ban = {
                 name: 'ban',
                 bud: undefined,
-                value: row.ban,
+                value: ban, // row.ban,
             };
             pickedFromJsonArr(this.entity, propArr, picked, row.json);
             pickedArr.push(picked);

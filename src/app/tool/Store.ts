@@ -31,7 +31,7 @@ export interface SpecColl {
     }
 }
 
-export abstract class Store<E extends Entity> extends KeyIdObject {
+export abstract class Store<E extends Entity = Entity> extends KeyIdObject {
     readonly biz: Biz;
     readonly uq: UqExt;
     readonly entity: E;

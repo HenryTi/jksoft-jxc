@@ -1,13 +1,14 @@
 import { PickQuery } from "app/Biz";
 import { useCallback, useState } from "react";
 import { Page, useModal } from "tonwa-app";
-import { useUqApp } from "app/UqApp";
 import { List, Sep } from "tonwa-com";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "../Sheet/binPick/PageParams";
-import { NamedResults, PickResult, RearPickResultType, VNamedBud/*, Picked, Prop, pickedFromJsonArr*/ } from "../Sheet/store";
+import { NamedResults, PickResult, RearPickResultType, VNamedBud } from "../Sheet/store";
 import { Picked, Prop, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
+import { BizPhraseType } from "uqs/UqDefault";
+import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtom, ViewSpecBuds } from "../View";
 
 export function usePickFromQuery(): [
     (namedResults: NamedResults, binPick: PickQuery) => Promise<PickResult>,
@@ -31,29 +32,15 @@ export function usePickFromQuery(): [
         if (retParam === undefined) return;
         retParam = filterUndefined(retParam);
 
+        // debugger;
+        // retParam['p物流中心'] = 4294984988;
+
         let queryStore = new QueryStore(query);
-        /*
-        let retQuery = await uq.DoQuery.submitReturns({ query: query.id, json: retParam, pageStart: undefined, pageSize: 100 });
-        let { ret: retItems, props, specs, atoms } = retQuery;
-        let pickedArr: Picked[] = [];
-        for (let row of retItems) {
-            let propArr: Prop[] = [];
-            let picked: Picked = {
-                $: propArr as any,
-                id: row.id as any,
-            };
-            picked.ban = {
-                name: 'ban',
-                bud: undefined,
-                value: row.ban,
-            };
-            pickedFromJsonArr(query, propArr, picked, row.json);
-            pickedArr.push(picked);
-        }
-        */
         let pickedArr: Picked[] = [];
         pickedArr = await queryStore.query(retParam);
 
+        const { idFrom } = query;
+        const { arr, bizPhraseType } = idFrom;
         let ret = await modal.open(<PageFromQuery />);
         if (ret === undefined) return;
         function toRet(v: any) {
@@ -119,51 +106,69 @@ export function usePickFromQuery(): [
             let onItemSelect: any, onItemClick: any;
             let cnViewItem = 'd-flex flex-wrap ';
             let cnItem: string;
-            let btnOk: any; // , vTop: any;
+            let btnOk: any;
             if (pickResultType === RearPickResultType.array) {
                 onItemSelect = onMultipleClick;
                 cnItem = ' my-2 ';
                 btnOk = <button className="btn btn-primary m-3" onClick={onPick}>选入</button>;
-                // vTop = <div className="tonwa-bg-gray-2 p-3 border-bottom">已选：{vSelected}</div>;
             }
             else {
                 onItemClick = onSingleClick;
                 cnViewItem += 'ps-3 ';
                 cnItem = 'py-2 px-3 border-bottom ';
-                /*
-                    vTop = <div className="tonwa-bg-gray-2 p-3 border-bottom text-info">
-                        <FA name="hand-o-down" className="me-3 text-danger" />
-                        请选择
-                    </div>;
-                */
             }
-            function ViewItem({ value: picked }: { value: Picked }) {
+            function ViewPropArr({ propArr }: { propArr: Prop[]; }) {
+                return <>
+                    {propArr.map((v, index) => {
+                        return <VNamedBud key={index} {...v} />;
+                    })}
+                </>;
+            }
+            function ViewAtomItem({ value: picked }: { value: Picked }) {
                 let propArr: Prop[] = picked.$ as any;
-                const { no, ex } = picked;
-                let vFirst: any;
-                if (ex !== undefined) {
-                    vFirst = <><b>{ex}</b> &nbsp; &nbsp; <small className="text-secondary">{no}</small></>;
-                }
-                else if (no !== undefined) {
-                    vFirst = <b>{no}</b>;
-                }
-                if (vFirst !== undefined) {
-                    vFirst = <div className="mb-1">
-                        {vFirst}
-                    </div>;
-                }
+                const { id } = picked;
                 return <div className={cnItem}>
-                    {vFirst}
+                    <div>
+                        <ViewSpecAtom id={id} store={queryStore} />
+                        <ViewAtomTitlesOfStore id={id} store={queryStore} />
+                    </div>
                     <RowCols contentClassName="">
-                        {propArr.map((v, index) => {
-                            return <VNamedBud key={index} {...v} />;
-                        })}
+                        <ViewAtomPrimesOfStore id={id} store={queryStore} />
+                        <ViewPropArr propArr={propArr} />
                     </RowCols>
                 </div>
             }
+            function ViewSpecItem({ value: picked }: { value: Picked }) {
+                let propArr: Prop[] = picked.$ as any;
+                const { id: specId } = picked;
+                const { bizSpecColl } = queryStore;
+                const spec = bizSpecColl[specId];
+                const { atom } = spec;
+                const { id } = atom;
+                return <div className={cnItem}>
+                    <div>
+                        <ViewSpecAtom id={id} store={queryStore} />
+                        <ViewAtomTitlesOfStore id={id} store={queryStore} />
+                    </div>
+                    <RowCols contentClassName="">
+                        <ViewAtomPrimesOfStore id={id} store={queryStore} />
+                        <ViewSpecBuds id={specId} store={queryStore} />
+                        <ViewPropArr propArr={propArr} />
+                    </RowCols>
+                </div>
+            }
+            function ViewAnyItem() {
+                return <div>can not show bizPhraseType {bizPhraseType}</div>;
+            }
+
+            let ViewItemFunc: (props: any) => JSX.Element;
+            switch (bizPhraseType) {
+                default: ViewItemFunc = ViewAnyItem; break;
+                case BizPhraseType.atom: ViewItemFunc = ViewAtomItem; break;
+                case BizPhraseType.spec: ViewItemFunc = ViewSpecItem; break;
+            }
             return <Page header={header} footer={btnOk}>
-                <List items={pickedArr} ViewItem={ViewItem}
-                    className=""
+                <List items={pickedArr} ViewItem={ViewItemFunc} className=""
                     onItemSelect={onItemSelect}
                     onItemClick={onItemClick}
                     itemBan={itemBan}

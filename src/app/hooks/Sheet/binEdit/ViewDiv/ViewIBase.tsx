@@ -2,7 +2,7 @@ import { SheetStore, ValDivBase } from "../../store";
 import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { Atom as BizAtom } from "uqs/UqDefault";
 import { theme } from "tonwa-com";
-import { ViewSpecAtom } from "../../views";
+import { ViewSpecAtom } from "app/hooks/View";
 
 export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valDiv: ValDivBase }) {
     const { binDiv } = valDiv;
@@ -16,7 +16,7 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     const { budsColl, bizAtomColl } = sheetStore
     let budValueColl = budsColl[iBase];
     return <>
-        <ViewSpecAtom id={iBase} sheetStore={sheetStore} />
+        <ViewSpecAtom id={iBase} store={sheetStore} />
         <ViewAtomTitles budValueColl={budValueColl} bud={budIBase} atomColl={bizAtomColl} />
     </>;
 }

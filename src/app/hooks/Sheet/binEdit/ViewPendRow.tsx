@@ -2,7 +2,7 @@ import { Prop, RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { getAtomValue, theme } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
 import { VNamedBud } from "../store/tool";
-import { ViewSpecBuds, ViewSpecAtom, ViewSpecAtomTitles } from "../views";
+import { ViewSpecAtom, ViewSpecAtomTitles, ViewSpecBuds } from "app/hooks/View";
 
 export interface PendProps {
     divStore: DivStore;
@@ -54,8 +54,8 @@ export function ViewPendRow({
     const budValueColl = budsColl[i];
     let iBizSpec = bizSpecColl[i];
     if (iBizSpec !== undefined) {
-        viewBuds = <ViewSpecBuds id={i} sheetStore={sheetStore} />;
-        viewAtomTitles = <ViewSpecAtomTitles id={i} sheetStore={sheetStore} />;
+        viewBuds = <ViewSpecBuds id={i} store={sheetStore} />;
+        viewAtomTitles = <ViewSpecAtomTitles id={i} store={sheetStore} />;
     }
     else {
         viewBuds = <ViewShowBuds budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />;
@@ -64,7 +64,7 @@ export function ViewPendRow({
     return <>
         <div className="py-2 bg-white flex-fill ps-3">
             <div className="flex-fill">
-                <ViewSpecAtom id={i} sheetStore={sheetStore} />
+                <ViewSpecAtom id={i} store={sheetStore} />
                 {viewAtomTitles}
             </div>
             <div className="d-flex">
