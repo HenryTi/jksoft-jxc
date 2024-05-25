@@ -208,6 +208,10 @@ export class DivStore {
                 valDiv = this.addRootDiv(valRow, trigger);
             }
             else {
+                if (valDivOrigin.binDiv.subBinDiv === undefined) {
+                    debugger;
+                    return;
+                }
                 valDiv = this.setVal(valDivOrigin, valRow, trigger);
             }
         }

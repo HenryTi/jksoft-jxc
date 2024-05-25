@@ -1,17 +1,17 @@
 import { useAtomValue } from "jotai";
 import { theme } from "tonwa-com";
-import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../../../tool";
+import { RowColsSm } from "../../../tool";
 import { PAV, ViewDivProps, ViewDivRight, ViewPendValue, cn } from "./tool";
 import { ViewIBase } from "./ViewIBase";
 import { DivEditing } from "../../store";
-import { ViewSpecAtom, ViewSpecBuds } from "app/hooks/View";
+import { ViewSpecBuds } from "app/hooks/View";
 
 export function ViewRowLeaf(props: ViewDivProps) {
     const { divStore, valDiv, buttons } = props;
     const { sheetStore } = divStore;
     const { atomValRow, atomValue, binDiv } = valDiv;
-    const { binDivBuds, entityBin } = binDiv;
-    const { i: iBud } = entityBin;
+    const { binDivBuds } = binDiv;
+    // const { i: iBud, iBase } = entityBin;
     const { budValue, budPrice, budAmount, budI } = binDivBuds;
     const valRow = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);
@@ -19,11 +19,12 @@ export function ViewRowLeaf(props: ViewDivProps) {
     let {
         value: cnValue, price: cnPrice, amount: cnAmount
     } = theme;
-    const { budsColl, bizAtomColl } = sheetStore;
-    let budValueColl = budsColl[i];
-    let viewAtomMain: any;
+    const { bizAtomColl } = sheetStore;
+    //let budValueColl = budsColl[i];
+    // let viewAtomMain: any;
+    /*
     const { budIBase } = binDivBuds;
-    if (budIBase === undefined) {
+    if (budIBase === undefined && iBase === undefined) {
         if (budI !== undefined) {
             viewAtomMain = <div className="mb-1">
                 <ViewSpecAtom id={i} store={sheetStore} />
@@ -34,6 +35,8 @@ export function ViewRowLeaf(props: ViewDivProps) {
     else {
         viewAtomMain = <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />;
     }
+    */
+    // viewAtomMain = <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />;
     let viewIBud: any;
     if (budI !== undefined) {
         viewIBud = <>
@@ -44,7 +47,7 @@ export function ViewRowLeaf(props: ViewDivProps) {
     const divEditing = new DivEditing(divStore, valDiv);
     return <>
         <div className={cn + ' flex-fill bg-white px-2 py-2 px-lg-3 '}>
-            {viewAtomMain}
+            <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />
             <RowColsSm contentClassName="flex-fill">
                 {viewIBud}
                 {divEditing.buildViewBuds(bizAtomColl)}
