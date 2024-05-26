@@ -3,12 +3,21 @@ import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { Atom as BizAtom } from "uqs/UqDefault";
 import { theme } from "tonwa-com";
 import { ViewSpecAtom } from "app/hooks/View";
+import { BizBud } from "app/Biz";
 
 export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valDiv: ValDivBase }) {
     const { binDiv } = valDiv;
-    const { binDivBuds, } = binDiv;
-    const { budIBase } = binDivBuds;
-    if (budIBase === undefined) return null;
+    const { binDivBuds, entityBin } = binDiv;
+    const { budIBase: iBaseBudInDiv } = binDivBuds;
+    const { iBase: iBaseBudInBin } = entityBin;
+    let iBud: BizBud;
+    if (iBaseBudInDiv === undefined) {
+        if (iBaseBudInBin !== undefined) return null;
+        iBud = entityBin.i;
+    }
+    else {
+        iBud = iBaseBudInDiv;
+    }
     let iValue = valDiv.getIValue();
     let iBase = valDiv.getIBase(sheetStore, iValue);
     if (iBase === undefined) iBase = iValue;
@@ -17,7 +26,7 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     let budValueColl = budsColl[iBase];
     return <>
         <ViewSpecAtom id={iBase} store={sheetStore} />
-        <ViewAtomTitles budValueColl={budValueColl} bud={budIBase} atomColl={bizAtomColl} />
+        <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
     </>;
 }
 
