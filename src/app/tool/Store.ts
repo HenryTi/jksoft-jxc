@@ -65,10 +65,10 @@ export abstract class Store<E extends Entity = Entity> extends KeyIdObject {
         }
     }
 
-    private addBizSpecs(bizSpecs: { spec: number; atom: number; }[], props: ReturnGetPendProps[]) {
+    private addBizSpecs(bizSpecs: { id: number; atom: number; }[], props: ReturnGetPendProps[]) {
         for (let bizSpec of bizSpecs) {
-            const { spec, atom } = bizSpec;
-            this.bizSpecColl[spec] = {
+            const { id, atom } = bizSpec;
+            this.bizSpecColl[id] = {
                 atom: this.bizAtomColl[atom],
                 buds: [],
             }

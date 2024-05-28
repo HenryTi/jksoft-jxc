@@ -87,6 +87,7 @@ export function usePickFromQuery(): [
             function onSingleClick(item: Picked) {
                 modal.close(item);
             }
+            /*
             let vSelected: any;
             let selectedKeys = Object.keys(selectedItems);
             if (selectedKeys.length === 0) {
@@ -95,6 +96,7 @@ export function usePickFromQuery(): [
             else {
                 vSelected = <>{selectedKeys.map(v => v).join(', ')}</>;
             }
+            */
             function itemBan(item: Picked) {
                 const { ban } = item;
                 if (ban.value > 0) {
@@ -124,10 +126,10 @@ export function usePickFromQuery(): [
                     })}
                 </>;
             }
-            function ViewAtomItem({ value: picked }: { value: Picked }) {
+            function ViewItemAtomContent({ value: picked }: { value: Picked }) {
                 let propArr: Prop[] = picked.$ as any;
                 const { id } = picked;
-                return <div className={cnItem}>
+                return <>
                     <div>
                         <ViewSpecAtom id={id} store={queryStore} />
                         <ViewAtomTitlesOfStore id={id} store={queryStore} />
@@ -136,43 +138,60 @@ export function usePickFromQuery(): [
                         <ViewAtomPrimesOfStore id={id} store={queryStore} />
                         <ViewPropArr propArr={propArr} />
                     </RowCols>
-                </div>
+                </>;
             }
-            function ViewSpecItem({ value: picked }: { value: Picked }) {
-                let propArr: Prop[] = picked.$ as any;
-                const { id: specId } = picked;
-                const { bizSpecColl } = queryStore;
-                const spec = bizSpecColl[specId];
-                const { atom } = spec;
-                const { id } = atom;
+            function ViewItemAtom({ value: picked }: { value: Picked }) {
                 return <div className={cnItem}>
-                    <div>
-                        <ViewSpecAtom id={id} store={queryStore} />
-                        <ViewAtomTitlesOfStore id={id} store={queryStore} />
-                    </div>
-                    <RowCols contentClassName="">
-                        <ViewAtomPrimesOfStore id={id} store={queryStore} />
-                        <ViewSpecBuds id={specId} store={queryStore} />
-                        <ViewPropArr propArr={propArr} />
-                    </RowCols>
+                    <ViewItemAtomContent value={picked} />
                 </div>
             }
-            function ViewAnyItem() {
-                return <div>can not show bizPhraseType {bizPhraseType}</div>;
+            function ViewItemSpec({ value: picked }: { value: Picked }) {
+                const { $specs } = picked;
+                let vSpecs: any;
+                if ($specs !== undefined) {
+                    vSpecs = <div className="ms-4">
+                        {($specs as any[]).map((v, index) => {
+                            let propArr: Prop[] = v.$ as any;
+                            let cn = 'py-1 px-3 ';
+                            if (index > 0) cn += ' border-top';
+                            return <div key={index} className={cn}>
+                                <RowCols contentClassName="">
+                                    <ViewPropArr propArr={propArr} />
+                                </RowCols>
+                            </div>
+                        })}
+                    </div>;
+                }
+                return <div className="pt-2">
+                    <div className="px-3 border-bottom">
+                        <ViewItemAtomContent value={picked} />
+                    </div>
+                    {vSpecs}
+                </div>;
             }
 
-            let ViewItemFunc: (props: any) => JSX.Element;
+            let vList: any;
+            let vSep = <Sep className="border-bottom" />;
             switch (bizPhraseType) {
-                default: ViewItemFunc = ViewAnyItem; break;
-                case BizPhraseType.atom: ViewItemFunc = ViewAtomItem; break;
-                case BizPhraseType.spec: ViewItemFunc = ViewSpecItem; break;
+                default:
+                    vList = <div>can not show bizPhraseType {bizPhraseType}</div>;
+                    ; break;
+                case BizPhraseType.atom:
+                    vList = <List items={pickedArr} ViewItem={ViewItemAtom} className=""
+                        onItemSelect={onItemSelect}
+                        onItemClick={onItemClick}
+                        itemBan={itemBan}
+                        sep={vSep} />
+                    break;
+                case BizPhraseType.spec:
+                    vList = <List items={pickedArr} ViewItem={ViewItemSpec} className=""
+                        sep={vSep} />
+                    break;
             }
+
+
             return <Page header={header} footer={btnOk}>
-                <List items={pickedArr} ViewItem={ViewItemFunc} className=""
-                    onItemSelect={onItemSelect}
-                    onItemClick={onItemClick}
-                    itemBan={itemBan}
-                    sep={<Sep className="border-bottom" />} />
+                {vList}
             </Page>
         }
     }, []);

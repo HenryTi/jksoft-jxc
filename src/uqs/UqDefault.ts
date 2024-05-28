@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri May 24 2024 17:19:09 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Mon May 27 2024 23:05:40 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -327,6 +327,7 @@ export interface ReturnDoQueryRet {
 	id: number;
 	ban: number;
 	json: any;
+	value: number;
 }
 export interface ReturnDoQueryProps {
 	id: number;
@@ -340,8 +341,11 @@ export interface ReturnDoQueryAtoms {
 	ex: string;
 }
 export interface ReturnDoQuerySpecs {
-	spec: number;
+	id: number;
 	atom: number;
+	ban: number;
+	json: any;
+	value: number;
 }
 export interface ResultDoQuery {
 	ret: ReturnDoQueryRet[];
@@ -534,8 +538,9 @@ export interface ReturnGetSheetAtoms {
 	ex: string;
 }
 export interface ReturnGetSheetSpecs {
-	spec: number;
+	id: number;
 	atom: number;
+	json: any;
 }
 export interface ResultGetSheet {
 	main: ReturnGetSheetMain[];
@@ -649,8 +654,9 @@ export interface ReturnGetPendAtoms {
 	ex: string;
 }
 export interface ReturnGetPendSpecs {
-	spec: number;
+	id: number;
 	atom: number;
+	json: any;
 }
 export interface ResultGetPend {
 	$page: ReturnGetPend$page[];
@@ -2323,6 +2329,12 @@ export const uqSchema={
                     {
                         "name": "json",
                         "type": "json"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
                     }
                 ]
             },
@@ -2370,12 +2382,26 @@ export const uqSchema={
                 "name": "specs",
                 "fields": [
                     {
-                        "name": "spec",
+                        "name": "id",
                         "type": "id"
                     },
                     {
                         "name": "atom",
                         "type": "id"
+                    },
+                    {
+                        "name": "ban",
+                        "type": "tinyint"
+                    },
+                    {
+                        "name": "json",
+                        "type": "json"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
                     }
                 ]
             }
@@ -2988,12 +3014,16 @@ export const uqSchema={
                 "name": "specs",
                 "fields": [
                     {
-                        "name": "spec",
+                        "name": "id",
                         "type": "id"
                     },
                     {
                         "name": "atom",
                         "type": "id"
+                    },
+                    {
+                        "name": "json",
+                        "type": "json"
                     }
                 ]
             }
@@ -3318,12 +3348,16 @@ export const uqSchema={
                 "name": "specs",
                 "fields": [
                     {
-                        "name": "spec",
+                        "name": "id",
                         "type": "id"
                     },
                     {
                         "name": "atom",
                         "type": "id"
+                    },
+                    {
+                        "name": "json",
+                        "type": "json"
                     }
                 ]
             }

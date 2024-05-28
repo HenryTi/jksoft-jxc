@@ -374,6 +374,7 @@ RETURNS ret (
     id ID,
     ban TINYINT,
     json JSON,
+    value VALUE,
 )
 RETURNS props (
     id ID,
@@ -389,8 +390,11 @@ RETURNS atoms (
     (id) KEY,
 )
 RETURNS specs (
-    spec ID,
+    id ID,
     atom ID,
+    ban TINYINT,
+    json JSON,
+    value VALUE,
 ) {
     VAR sql CHAR(500) = CONCAT('call `$site`.`', $site, '.', query, 'q`(?,?,?,?);');
     ExecSql sql USING $user, json, pageStart, pageSize;
@@ -710,8 +714,9 @@ RETURNS atoms (
     ex EX,
 )
 RETURNS specs (
-    spec ID,
+    id ID,
     atom ID,
+    json JSON,
 ) {
     VAR maySheetId ID, detail ID, sheetPhrase ID;
     SET maySheetId = b.base FROM Detail as a JOIN Bud as b ON b.id=a.base WHERE a.id=id;
@@ -772,16 +777,10 @@ RETURNS specs (
         ExecSql sql USING id;
     }
 
-    INTO IGNORE specs SELECT DISTINCT a.i as spec, e.id as atom
+    INTO IGNORE specs SELECT DISTINCT a.i as id, e.id as atom, null as json
         FROM details as a JOIN Spec as c ON (c.id=a.i OR c.id=a.x)
             JOIN Bud as d ON d.id=c.base
             JOIN Atom as e on e.id=d.base;
-    /*
-    INTO specs SELECT DISTINCT a.x as spec, e.id as atom
-        FROM details as a JOIN Spec as c ON c.id=a.x
-            JOIN Bud as d ON d.id=c.base
-            JOIN Atom as e on e.id=d.base;
-    */
 
     INTO IGNORE atoms SELECT DISTINCT c.id as id, c.base as base, c.no, c.ex
         FROM details as a JOIN Atom as c ON (c.id=a.i OR c.id=a.x);
@@ -794,12 +793,12 @@ RETURNS specs (
     INTO IGNORE atoms SELECT DISTINCT e.id as id, e.base as base, e.no, e.ex
         FROM specs as a JOIN Atom as e on e.id=a.atom;
 
-    INTO IGNORE props SELECT DISTINCT a.spec as id, b.x as phrase, CAST(b.value AS JSON) as value
-        FROM specs as a JOIN IxBudInt as b ON b.i=a.spec;
-    INTO IGNORE props SELECT DISTINCT a.spec as id, b.x as phrase, CAST(b.value AS JSON) as value
-        FROM specs as a JOIN IxBudDec as b ON b.i=a.spec;
-    INTO IGNORE props SELECT DISTINCT a.spec as id, b.x as phrase, JSON_QUOTE(b.value) as value
-        FROM specs as a JOIN IxBudStr as b ON b.i=a.spec;
+    INTO IGNORE props SELECT DISTINCT a.id as id, b.x as phrase, CAST(b.value AS JSON) as value
+        FROM specs as a JOIN IxBudInt as b ON b.i=a.id;
+    INTO IGNORE props SELECT DISTINCT a.id as id, b.x as phrase, CAST(b.value AS JSON) as value
+        FROM specs as a JOIN IxBudDec as b ON b.i=a.id;
+    INTO IGNORE props SELECT DISTINCT a.id as id, b.x as phrase, JSON_QUOTE(b.value) as value
+        FROM specs as a JOIN IxBudStr as b ON b.i=a.id;
 };
 
 Biz Query GetAtom (
