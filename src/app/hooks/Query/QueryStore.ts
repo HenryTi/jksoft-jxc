@@ -23,7 +23,7 @@ export class QueryStore extends Store<EntityQuery> {
                 bud: undefined,
                 value: ban, // row.ban,
             };
-            pickedFromJsonArr(this.entity, propArr, picked, row.json ?? []);
+            pickedFromJsonArr(this.entity, propArr, picked, row.json);
             pickedArr.push(picked);
             coll[id] = picked;
         }

@@ -1,7 +1,7 @@
 import { PickQuery } from "app/Biz";
 import { useCallback, useState } from "react";
 import { Page, useModal } from "tonwa-app";
-import { List, Sep } from "tonwa-com";
+import { List, Sep, theme } from "tonwa-com";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "../Sheet/binPick/PageParams";
 import { NamedResults, PickResult, RearPickResultType, VNamedBud } from "../Sheet/store";
@@ -140,9 +140,19 @@ export function usePickFromQuery(): [
                     </RowCols>
                 </>;
             }
+            function ViewValue({ value, caption }: { value: number; caption: string; }) {
+                if (value === undefined) return null;
+                return <div className="w-min-8c text-end">
+                    <div className={theme.labelColor}>{caption}</div>
+                    <div>{value}</div>
+                </div>;
+            }
             function ViewItemAtom({ value: picked }: { value: Picked }) {
-                return <div className={cnItem}>
-                    <ViewItemAtomContent value={picked} />
+                return <div className={cnItem + ' d-flex '}>
+                    <div className="flex-fill">
+                        <ViewItemAtomContent value={picked} />
+                    </div>
+                    <ViewValue value={picked.value} caption="数量" />
                 </div>
             }
             function ViewItemSpec({ value: picked }: { value: Picked }) {
@@ -152,19 +162,25 @@ export function usePickFromQuery(): [
                     vSpecs = <div className="ms-4">
                         {($specs as any[]).map((v, index) => {
                             let propArr: Prop[] = v.$ as any;
-                            let cn = 'py-1 px-3 ';
+                            let cn = 'py-1 px-3 d-flex align-items-end ';
                             if (index > 0) cn += ' border-top';
                             return <div key={index} className={cn}>
-                                <RowCols contentClassName="">
-                                    <ViewPropArr propArr={propArr} />
-                                </RowCols>
+                                <div className="flex-fill">
+                                    <RowCols contentClassName="">
+                                        <ViewPropArr propArr={propArr} />
+                                    </RowCols>
+                                </div>
+                                <ViewValue value={v.value} caption="数量" />
                             </div>
                         })}
                     </div>;
                 }
                 return <div className="pt-2">
-                    <div className="px-3 border-bottom">
-                        <ViewItemAtomContent value={picked} />
+                    <div className="px-3 border-bottom d-flex">
+                        <div className="flex-fill">
+                            <ViewItemAtomContent value={picked} />
+                        </div>
+                        <ViewValue value={picked.value} caption="合计" />
                     </div>
                     {vSpecs}
                 </div>;

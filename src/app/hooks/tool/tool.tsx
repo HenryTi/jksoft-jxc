@@ -81,6 +81,7 @@ export interface Prop<T = any> {
 export interface Picked { [name: string]: Prop | any; }
 
 export function pickedFromJsonArr(entity: Entity, propArr: Prop[], picked: Picked, arr: any[]) {
+    if (arr === undefined) return;
     const { biz } = entity;
     for (let v of arr) {
         let { length } = v;
