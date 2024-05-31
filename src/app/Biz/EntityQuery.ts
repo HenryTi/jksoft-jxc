@@ -9,8 +9,12 @@ export interface FromEntity {
     subs: FromEntity[];
 }
 
+export interface IDColumn {
+}
+
 export class EntityQuery extends Entity {
     asc: 'asc' | 'desc';
+    ids: IDColumn[];
     ban: string | true;
     params: BizBud[];
     idFrom: FromEntity;
@@ -25,6 +29,7 @@ export class EntityQuery extends Entity {
             case 'cols': this.cols = val; break;
             case 'idFrom': this.idFrom = val; break;
             case 'from': this.fromEntity = val; break;
+            case 'ids': this.ids = val; break;
         }
     }
 
