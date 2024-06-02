@@ -86,6 +86,7 @@ export function pickedFromJsonArr(entity: Entity, propArr: Prop[], picked: Picke
     for (let v of arr) {
         let { length } = v;
         let v0 = v[0];
+        if (v0 === '$ids') continue;
         let v1 = v[1];
         let name: string, bud: BizBud, value: any;
         switch (length) {

@@ -10,6 +10,7 @@ export interface FromEntity {
 }
 
 export interface IDColumn {
+    alias: string;
 }
 
 export class EntityQuery extends Entity {
@@ -28,7 +29,7 @@ export class EntityQuery extends Entity {
             case 'params': this.params = (val as any[]).map(v => this.fromProp(v)); break;
             case 'ban': this.ban = val; break;
             case 'cols': this.cols = val; break;
-            case 'idFrom': this.idFrom = val; break;
+            // case 'idFrom': this.idFrom = val; break;
             case 'from': this.fromEntity = val; break;
             case 'ids': this.ids = val; break;
             case 'groupByBase': this.groupByBase = val; break;
@@ -51,11 +52,12 @@ export class EntityQuery extends Entity {
         }
 
         this.fromEntity = this.scanFrom(this.fromEntity);
-        if (this.idFrom === undefined) {
+        if (this.ids === undefined || this.ids.length === 0) {
             this.idFrom = this.fromEntity;
         }
         else {
-            this.idFrom = this.getFromEntity(this.idFrom as unknown as string, this.fromEntity);
+            let idFrom = this.ids[this.ids.length - 1];
+            this.idFrom = this.getFromEntity(idFrom.alias as string, this.fromEntity);
         }
     }
 

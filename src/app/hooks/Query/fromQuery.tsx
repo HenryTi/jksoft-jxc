@@ -1,5 +1,5 @@
 import { PickQuery } from "app/Biz";
-import { useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import { Page, useModal } from "tonwa-app";
 import { List, Sep, theme } from "tonwa-com";
 import { filterUndefined } from "app/tool";
@@ -159,21 +159,31 @@ export function usePickFromQuery(): [
                 const { $specs } = picked;
                 let vSpecs: any;
                 if ($specs !== undefined) {
-                    vSpecs = <div className="ms-4">
-                        {($specs as any[]).map((v, index) => {
-                            let propArr: Prop[] = v.$ as any;
-                            let cn = 'py-1 px-3 d-flex align-items-end ';
-                            if (index > 0) cn += ' border-top';
-                            return <div key={index} className={cn}>
-                                <div className="flex-fill">
-                                    <RowCols contentClassName="">
-                                        <ViewPropArr propArr={propArr} />
-                                    </RowCols>
-                                </div>
-                                <ViewValue value={v.value} caption="数量" />
+                    let vList = ($specs as any[]).map((v, index) => {
+                        const { $, id } = v;
+                        let propArr: Prop[] = $ as any;
+                        let cn = 'py-1 px-3 d-flex align-items-end ';
+                        function onCheckChange(evt: ChangeEvent<HTMLInputElement>) {
+                            const { checked } = evt.currentTarget;
+                            onMultipleClick(v, checked);
+                        }
+                        if (index > 0) cn += ' border-top';
+                        return <label className={cn} key={id}>
+                            <input type="checkbox" className="form-check-input mx-3 mb-2 align-self-end"
+                                defaultChecked={selectedItems[id] !== undefined}
+                                onChange={onCheckChange}
+                            />
+                            <div className="flex-fill">
+                                <RowCols contentClassName="">
+                                    <ViewPropArr propArr={propArr} />
+                                </RowCols>
                             </div>
-                        })}
-                    </div>;
+                            <ViewValue value={v.value} caption="数量" />
+                        </label>
+                    });
+                    vSpecs = <div className="">
+                        {vList}
+                    </div>
                 }
                 return <div className="pt-2">
                     <div className="px-3 border-bottom d-flex">
@@ -191,7 +201,7 @@ export function usePickFromQuery(): [
             switch (bizPhraseType) {
                 default:
                     vList = <div>can not show bizPhraseType {bizPhraseType}</div>;
-                    ; break;
+                    break;
                 case BizPhraseType.atom:
                     vList = <List items={pickedArr} ViewItem={ViewItemAtom} className=""
                         onItemSelect={onItemSelect}
@@ -204,7 +214,6 @@ export function usePickFromQuery(): [
                         sep={vSep} />
                     break;
             }
-
 
             return <Page header={header} footer={btnOk}>
                 {vList}
