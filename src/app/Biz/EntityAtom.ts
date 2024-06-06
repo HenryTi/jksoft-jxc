@@ -245,6 +245,41 @@ export class EntitySpec extends EntityAtomIDWithBase {
     }
 }
 
+export class EntityCombo extends EntityAtomID {
+    readonly keyColl: { [key: number]: BizBud; } = {};
+    readonly keys: BizBud[] = [];
+
+    protected override fromSwitch(i: string, val: any) {
+        switch (i) {
+            default: super.fromSwitch(i, val); break;
+            case 'keys': this.fromKeys(val); break;
+        }
+    }
+
+    protected fromKeys(keys: any[]) {
+        for (let key of keys) {
+            let { id, name, dataType } = key;
+            let bizProp = new BizBud(this.biz, id, name, dataType, this);
+            let { budDataType } = bizProp;
+            if (budDataType === undefined) {
+                debugger;
+                continue;
+            }
+            budDataType.fromSchema(key);
+            bizProp.fromSchema(key);
+            this.keyColl[bizProp.id] = bizProp;
+            this.keys.push(bizProp);
+        }
+    }
+
+    protected override scanBuds(): void {
+        super.scanBuds();
+        for (let bud of this.keys) {
+            bud.scan();
+        }
+    }
+}
+
 export class EntityPick extends Entity {
     atoms: EntityAtom[];
     specs: EntitySpec[];

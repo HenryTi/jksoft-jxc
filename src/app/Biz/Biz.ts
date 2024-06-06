@@ -1,7 +1,7 @@
 import { UqApp } from 'app/UqApp';
 import { UqExt } from 'uqs/UqDefault';
 import { Entity } from './Entity';
-import { EntityAtom, EntityDuo, EntityPick, EntitySpec } from './EntityAtom';
+import { EntityAtom, EntityCombo, EntityDuo, EntityPick, EntitySpec } from './EntityAtom';
 import { EntityTree } from './EntityTree';
 import { EntityBin, EntityPend, EntitySheet } from './EntitySheet';
 import { EntityTitle } from './EntityTitle';
@@ -24,6 +24,7 @@ enum EnumEntity {
     atom,
     spec,
     duo,
+    combo,
     query,
     options,
     report,
@@ -55,6 +56,7 @@ export class Biz {
     readonly atomRoots: EntityAtom[] = [];
     readonly specs: EntitySpec[] = [];
     readonly duos: EntityDuo[] = [];
+    readonly combos: EntityCombo[] = [];
 
     readonly sheets: EntitySheet[] = []
     readonly bins: EntityBin[] = [];
@@ -126,6 +128,7 @@ export class Biz {
             [EnumEntity.atom]: this.buildAtom,
             [EnumEntity.spec]: this.buildSpec,
             [EnumEntity.duo]: this.buildDuo,
+            [EnumEntity.combo]: this.buildCombo,
             [EnumEntity.query]: this.buildQuery,
             [EnumEntity.options]: this.buildOptions,
             [EnumEntity.report]: this.buildReport,
@@ -244,7 +247,8 @@ export class Biz {
                     [this.atoms],
                     [this.atomRoots, '基础编码', 'id-card-o'],
                     [this.specs, '细分编码', 'asterisk'],
-                    [this.duos, '合成编码', 'code-fork'],
+                    [this.duos, '双合编码', 'code-fork'],
+                    [this.combos, '合成编码', 'code-fork'],
                     [this.titles, '科目', 'flag-o'],
                     [this.assigns, '赋值', 'flag-o']
                 ],
@@ -365,6 +369,11 @@ export class Biz {
     private buildSpec = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntitySpec(this, id, name, type);
         this.specs.push(bizEntity);
+        return bizEntity;
+    }
+    private buildCombo = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityCombo(this, id, name, type);
+        this.combos.push(bizEntity);
         return bizEntity;
     }
     private buildQuery = (id: number, name: string, type: string): Entity => {
