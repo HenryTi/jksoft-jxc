@@ -39,6 +39,11 @@ function useSheetStore() {
 
 export function RouteSheetDash() {
     const entitySheet = useEntitySheet();
+    if (entitySheet === undefined) {
+        return <Page header="Unknown sheet">
+            <div className="m-3">无单据定义</div>
+        </Page>;
+    }
     return <PageSheetDash entitySheet={entitySheet} />;
 }
 
