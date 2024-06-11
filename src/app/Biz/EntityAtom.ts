@@ -5,6 +5,7 @@ import { BudGroup, Entity } from "./Entity";
 
 export abstract class EntityAtomID extends Entity {
     readonly subClasses: EntityAtomID[] = [];
+    specs: EntitySpec[];
     titleBuds: BizBud[];
     primeBuds: BizBud[];
     uniques: string[];
@@ -17,6 +18,11 @@ export abstract class EntityAtomID extends Entity {
             us.push(...sc.uniques ?? []);
         }
         return us;
+    }
+
+    addSpec(spec: EntitySpec) {
+        if (this.specs === undefined) this.specs = [];
+        this.specs.push(spec);
     }
 
     protected override fromSwitch(i: string, val: any) {
@@ -164,6 +170,13 @@ abstract class EntityAtomIDWithBase extends EntityAtomID {
             case 'base': this.base = val; break;
         }
     }
+
+    override scan() {
+        super.scan();
+        if (this.base !== undefined) {
+            this.base = this.biz.entityFromId(this.base as unknown as number);
+        }
+    }
 }
 
 export class EntitySpec extends EntityAtomIDWithBase {
@@ -216,6 +229,7 @@ export class EntitySpec extends EntityAtomIDWithBase {
 
     scan() {
         super.scan();
+        this.base.addSpec(this);
     }
 
     getSpecValues(specValue: any): string {

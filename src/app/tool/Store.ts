@@ -47,6 +47,10 @@ export abstract class Store<E extends Entity = Entity> extends KeyIdObject {
         this.entity = entity;
     }
 
+    get header() {
+        return this.entity.caption ?? this.entity.name;
+    }
+
     protected cacheIdAndBuds(props: ReturnGetSheetProps[],
         atoms: ReturnGetSheetAtoms[],
         specs: ReturnGetSheetSpecs[],

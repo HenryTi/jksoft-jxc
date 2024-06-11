@@ -202,6 +202,7 @@ export class Biz {
             EnumEntity.atom,
             EnumEntity.spec,
             EnumEntity.duo,
+            EnumEntity.combo,
             EnumEntity.bin,
             EnumEntity.pend,
             EnumEntity.sheet,

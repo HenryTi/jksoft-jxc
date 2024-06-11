@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { BudValue, Page, PageSpinner, ViewSpinner } from "tonwa-app";
+import { BudValue, Page, PageSpinner, ViewSpinner, useModal } from "tonwa-app";
 import { FA, Sep, from62, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { EditBudLabelRow, EditAtomField, BudEditing } from "../Bud";
 import { ViewBudRowProps } from "../Bud";
 import { BizBud } from "app/Biz";
 import { Tabs, Tab } from "react-bootstrap";
+import { PageSpecList } from "./spec";
+import { ViewAtom } from "..";
+import { SpecBaseValue } from "./spec/SpecStore";
 
 export function useBizAtomView(options: OptionsUseBizAtom & { bottom?: any; }) {
     const { id } = useParams();
@@ -16,6 +19,7 @@ export function useBizAtomView(options: OptionsUseBizAtom & { bottom?: any; }) {
 function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { bottom?: any; }) {
     const { NOLabel, exLabel, id, bottom } = options;
     const { getAtom, saveField, saveBud, entity: entityAtom } = useBizAtom(options)
+    const modal = useModal();
     const [state, setState] = useState<{
         main: any,
         buds: { [prop: number]: BudValue; };
@@ -33,7 +37,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
         };
     }
     const { main, buds } = state;
-    let { name, caption, buds: atomProps, budGroups } = entityAtom;
+    let { name, caption, buds: atomProps, budGroups, specs } = entityAtom;
     let lbId = <span className="text-primary fw-normal">
         <FA name="compass" className="text-danger me-1" /> ID
     </span>;
@@ -51,6 +55,26 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
             </div>)
         }
     </div>;
+
+    let vSpecs: any;
+    if (specs !== undefined) {
+        vSpecs = <div className="p-3">{
+            specs.map(v => {
+                let { caption, name } = v;
+                if (caption === undefined) caption = name;
+                function onSpec() {
+                    const baseValue: SpecBaseValue = {
+                        id,
+                        main,
+                        buds
+                    };
+                    modal.open(<PageSpecList entitySpec={v} baseValue={baseValue} />);
+                }
+                return <button key={v.id} className="btn btn-link me-3" onClick={onSpec}>{caption}</button>
+            })}
+        </div>;
+    }
+
     function buildVPropRows(props: BizBud[], flag: JSX.Element = undefined) {
         return props.map(v => {
             if (v === undefined) debugger;
@@ -78,8 +102,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
         const baseTitle = <span>
             <span className="text-danger">*</span>基本
         </span>;
-        // <FA name="star-o" className="small text-danger" />
-        vPropRows = <Tabs className="mt-3 ps-3" id={vAtomId} defaultActiveKey={'+'}>
+        vPropRows = <Tabs className="mt-3 ps-3 mb-1" id={vAtomId} defaultActiveKey={'+'}>
             <Tab eventKey={'+'} title={baseTitle}>
                 <div className={cnColumns2}>
                     {buildVPropRows(must.buds, <span className="text-danger">*</span>)}
@@ -108,6 +131,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
     function View() {
         return <>
             {vFieldRows}
+            {vSpecs}
             {vPropRows}
             {bottom}
         </>;

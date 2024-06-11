@@ -85,7 +85,6 @@ export class EntityQuery extends Entity {
             let ret = this.getFromEntity(alias, sub);
             if (ret !== undefined) return ret;
         }
-        debugger;
         return undefined;
     }
 }
