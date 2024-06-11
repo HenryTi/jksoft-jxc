@@ -137,6 +137,7 @@ export class UqApp extends UqAppBase<UQs> {
                 this.biz = new Biz(this, undefined, logs);
             }
             else {
+                console.log('schemas size: ', schemas.length);
                 let bizSchema = jsonpack.unpack(schemas);
                 this.biz = new Biz(this, bizSchema, undefined);
             }

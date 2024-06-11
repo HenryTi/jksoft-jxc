@@ -138,6 +138,7 @@ Biz Act DelAtom (
 }
 
 Biz Ac SaveSpec ver 0.2 (
+    id ID,
     spec ID,
     base ID,
     keys JSON,              -- {"k1": v1, "k2": v2}
@@ -147,11 +148,11 @@ RETURNS ret (
     id ID,
 ) {
     VAR me ID = Me();
-    VAR id ID;
+    VAR retId ID;
     VAR sql CHAR(500);
-    SET sql=CONCAT('call `$site`.`', $site, '.', spec, '$s`(?,?,?,?,?);');
-    ExecSql sql to id USING $site, me, BudId(base, spec), keys, props;
-    INTO ret SELECT id;
+    SET sql=CONCAT('call `$site`.`', $site, '.', spec, '$s`(?, ?,?,?,?,?);');
+    ExecSql sql to retId USING $site, me, id, BudId(base, spec), keys, props;
+    INTO ret SELECT retId as id;
 }
 
 Biz Query GetSpec (
@@ -163,41 +164,6 @@ RETURNS props (
     value JSON,
 ) {
     PROC ProcGetSpec(id);
-    /*
-    WHILE 1=1 {
-        VAR base ID=b.base, phrase Phrase=c.name, type ENUM BizPhraseType=c.type 
-            FROM Spec as a 
-                JOIN Bud as b ON b.id=a.base 
-                JOIN BizPhrase as c ON c.id=b.ext
-            WHERE a.id=id;
-        IF type IS NULL {
-            BREAK;
-        }
-        INTO ret SELECT phrase as prop, id as value;
-        INTO ret SELECT b.name as prop, a.value
-            FROM IxBudInt as a 
-                JOIN BizPhrase as b on b.id=a.x
-            WHERE a.i=id;
-        INTO ret SELECT b.name as prop, a.value
-            FROM IxBudDec as a 
-                JOIN BizPhrase as b on b.id=a.x
-            WHERE a.i=id;
-        INTO ret SELECT b.name as prop, a.value
-            FROM IxBudStr as a 
-                JOIN BizPhrase as b on b.id=a.x
-            WHERE a.i=id;
-        IF type<>BizPhraseType.spec {
-            BREAK;
-        }
-        SET id=base;
-    }
-    VAR atomPhrase Phrase = b.name
-        FROM Atom as a JOIN BizPhrase as b ON b.id=a.base
-        WHERE a.id=id;
-    INTO ret SELECT atomPhrase as prop, id as value;
-    INTO ret SELECT 'no' as prop, a.no as value FROM Atom as a WHERE a.id=id;
-    INTO ret SELECT 'ex' as prop, a.ex as value FROM Atom as a WHERE a.id=id;
-    */
 };
 
 Biz ACT SaveSheet (
@@ -829,6 +795,27 @@ RETURNS ret (
         null as props
         FROM Spec as a
         WHERE a.base=base;
+}
+
+-- 这是 GetSpecsFromBase 的新版本。之前的base应该有问题。spec base应该是bud of (base, bizphrase)
+Biz Query GetSpecListFromBase ver 0.1 (
+    base ID,
+    phrase ID,
+)
+RETURNS ret (
+    id ID,
+    keys JSON,
+    props JSON,
+) {
+    INTO ret SELECT a.id as id,
+        (SELECT json_arrayagg(json_array(arr.id,arr.value)) FROM (
+            select ix.id, i.value from IxBudInt as i join bizphrase as ix on ix.id=i.x where i.i=a.id
+            union select dx.id, d.value from IxBudDec as d join bizphrase as dx on dx.id=d.x where d.i=a.id
+            union select sx.id, s.value from IxBudStr as s join bizphrase as sx on sx.id=s.x where s.i=a.id
+        ) as arr ) as keys,
+        null as props
+        FROM Spec as a
+        WHERE a.base=BudId(base, phrase);
 }
 
 Biz AC SaveDuoOuterApp (

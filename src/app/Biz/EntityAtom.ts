@@ -182,6 +182,10 @@ abstract class EntityAtomIDWithBase extends EntityAtomID {
 export class EntitySpec extends EntityAtomIDWithBase {
     readonly keyColl: { [key: number]: BizBud; } = {};
     readonly keys: BizBud[] = [];
+    readonly showKeys: BizBud[] = [];
+    readonly showBuds: BizBud[] = [];
+    noBud: BizBud;
+    exBud: BizBud;
     ix: boolean;    // 服务器端对应 isIxBase。如果true，不能临时录入，只能选择。
 
     protected override fromSwitch(i: string, val: any) {
@@ -210,8 +214,21 @@ export class EntitySpec extends EntityAtomIDWithBase {
 
     protected override scanBuds(): void {
         super.scanBuds();
+        const setNoEx = (bud: BizBud) => {
+            switch (bud.name) {
+                default: return false;
+                case 'no': this.noBud = bud; return true;
+                case 'ex': this.exBud = bud; return true;
+            }
+        }
         for (let bud of this.keys) {
             bud.scan();
+            if (setNoEx(bud) == true) continue;
+            this.showKeys.push(bud);
+        }
+        for (let bud of this.buds) {
+            if (setNoEx(bud) == true) continue;
+            this.showBuds.push(bud);
         }
     }
 

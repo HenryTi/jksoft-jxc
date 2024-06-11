@@ -96,13 +96,15 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
                 propValues[name] = data[name];
             }
             const param: ParamSaveSpec = {
+                id: undefined,
                 spec: entityId,
                 base,
                 keys: keyValues,
                 props: propValues,
             };
             let results = await uqApp.uq.SaveSpec.submit(param);
-            const { id } = results;
+            let { id } = results;
+            if (id < 0) id = -id;
             let retSpec = Object.assign(data, { id, base });
             modal.close(retSpec);
         }

@@ -26,7 +26,6 @@ export interface PropsPickSpec {
 export function usePickFromSpec() {
     const { uq } = useUqApp();
     const modal = useModal();
-    // const returnUsePickSpec = usePickSpec();
     return useCallback(async function (divStore: DivStore, namedResults: NamedResults, binPick: PickSpec): Promise<PickResult> {
         let { pickParams, from } = binPick;
         debugger;
@@ -34,18 +33,8 @@ export function usePickFromSpec() {
         const viewTop = <div>
             <ViewAtom value={retAtom} />
         </div>;
-        // const buttonCaption = '提交';
-        // const buttonClassName = 'btn btn-primary';
-
-        //let propsPickSpec:PropsPickSpec = {
         let base = retAtom?.id;
         let entitySpec = from;
-        // viewTop,
-        // buttonCaption,
-        // buttonClassName,
-        //}
-        //        async function pickSpec(propsPickSpec: PropsPickSpec): Promise<{ retSpec: { id: number; }; retViewTop?: any; }> {
-        // const { base, entitySpec, viewTop } = propsPickSpec;
         const { ix } = entitySpec;
         let budsEditing: BudsEditing;
         if (ix === true) {
@@ -75,8 +64,6 @@ export function usePickFromSpec() {
             const submitClassName: string = undefined;
 
             let formRows: FormRow[] = [
-                // ...keys.map(v => budFormRow(v, true)),
-                // ...(props ?? []).map(v => budFormRow(v)),
                 ...budsEditing.buildFormRows(),
                 { type: 'submit', label: submitCaption, options: {}, className: submitClassName }
             ];
@@ -96,13 +83,15 @@ export function usePickFromSpec() {
                     propValues[name] = data[name];
                 }
                 const param: ParamSaveSpec = {
+                    id: undefined,
                     spec: entityId,
                     base,
                     keys: keyValues,
                     props: propValues,
                 };
                 let results = await uq.SaveSpec.submit(param);
-                const { id } = results;
+                let { id } = results;
+                if (id < 0) id = -id;
                 let retSpec = Object.assign({ id, base }, data);
                 modal.close(retSpec);
             }
@@ -128,17 +117,5 @@ export function usePickFromSpec() {
                 <button className="btn btn-primary" onClick={onClick}>确定</button>
             </Page>;
         }
-        /*
-        };
-
-        let ret = await pickSpec({
-            base: retAtom?.id,
-            entitySpec: from,
-            viewTop,
-            buttonCaption,
-            buttonClassName,
-        });
-        return ret;
-        */
     }, []);
 }
