@@ -6,12 +6,7 @@ import { BudValue } from "tonwa-app";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { ParamSaveSpec, Spec } from "uqs/UqDefault";
 import { ViewAtom } from "../ViewAtom";
-
-export interface SpecBaseValue {
-    id: number;
-    main: any;
-    buds: { [prop: number]: BudValue; };
-}
+import { AtomIDValue } from "../AtomIDValue";
 
 export enum EnumSaveSpec {
     errorInput = -1,
@@ -25,9 +20,9 @@ export interface BudValues {
 
 export class SpecStore extends Store<EntitySpec> {
     readonly itemsAtom = atom(undefined as any[]);
-    readonly baseValue: SpecBaseValue;
+    readonly baseValue: AtomIDValue;
 
-    constructor(entitySpec: EntitySpec, baseValue: SpecBaseValue) {
+    constructor(entitySpec: EntitySpec, baseValue: AtomIDValue) {
         super(entitySpec);
         this.baseValue = baseValue;
     }
@@ -99,7 +94,7 @@ export class SpecStore extends Store<EntitySpec> {
     }
 }
 
-export function useSpecStore(spec: EntitySpec, baseValue: SpecBaseValue) {
+export function useSpecStore(spec: EntitySpec, baseValue: AtomIDValue) {
     const ret = useRef(new SpecStore(spec, baseValue));
     return ret.current;
 }

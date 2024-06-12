@@ -5,25 +5,22 @@ import { FA, Sep, from62, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { EditBudLabelRow, EditAtomField, BudEditing } from "../Bud";
 import { ViewBudRowProps } from "../Bud";
-import { BizBud } from "app/Biz";
+import { BizBud, EntityAtomID } from "app/Biz";
 import { Tabs, Tab } from "react-bootstrap";
 import { PageSpecList } from "./spec";
-import { ViewAtom } from "..";
-import { SpecBaseValue } from "./spec/SpecStore";
+import { AtomIDValue } from "./AtomIDValue";
 
 export function useBizAtomView(options: OptionsUseBizAtom & { bottom?: any; }) {
     const { id } = useParams();
     return useBizAtomViewFromId({ ...options, id: from62(id) });
 }
 
+const cnColumns2 = 'gx-0 row row-cols-1 row-cols-md-2 row-cols-lg-3';
+
 function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { bottom?: any; }) {
     const { NOLabel, exLabel, id, bottom } = options;
     const { getAtom, saveField, saveBud, entity: entityAtom } = useBizAtom(options)
-    const modal = useModal();
-    const [state, setState] = useState<{
-        main: any,
-        buds: { [prop: number]: BudValue; };
-    }>(undefined);
+    const [state, setState] = useState<AtomIDValue>(undefined);
     useEffectOnce(() => {
         (async () => {
             let ret = await getAtom(id);
@@ -41,7 +38,6 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
     let lbId = <span className="text-primary fw-normal">
         <FA name="compass" className="text-danger me-1" /> ID
     </span>;
-    const cnColumns2 = 'gx-0 row row-cols-1 row-cols-md-2 row-cols-lg-3';
     const fieldRows: ViewBudRowProps[] = [
         { name: 'id', label: lbId, readonly: true, type: 'number', },
         { name: 'no', label: NOLabel ?? '编号', readonly: true, type: 'string', },
@@ -56,6 +52,30 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
         }
     </div>;
 
+    return {
+        caption,
+        view: <View />,
+        page: <PageView />,
+        obj: main,
+    };
+    function View() {
+        return <>
+            {vFieldRows}
+            <ViewAtomProps entity={entityAtom} value={state} />
+            {bottom}
+        </>;
+    }
+    function PageView() {
+        return <Page header={caption ?? name}>
+            <View />
+        </Page>;
+    }
+}
+
+export function ViewAtomProps({ entity, value }: { entity: EntityAtomID; value: AtomIDValue; }) {
+    const modal = useModal();
+    let { name, caption, buds: atomProps, budGroups, specs } = entity;
+    const { id, buds } = value;
     let vSpecs: any;
     if (specs !== undefined) {
         vSpecs = <div className="p-3">{
@@ -63,12 +83,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
                 let { caption, name } = v;
                 if (caption === undefined) caption = name;
                 function onSpec() {
-                    const baseValue: SpecBaseValue = {
-                        id,
-                        main,
-                        buds
-                    };
-                    modal.open(<PageSpecList entitySpec={v} baseValue={baseValue} />);
+                    modal.open(<PageSpecList entitySpec={v} baseValue={value} />);
                 }
                 return <button key={v.id} className="btn btn-link me-3" onClick={onSpec}>{caption}</button>
             })}
@@ -98,7 +113,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
     }
     else {
         const { home, must, arr } = budGroups;
-        const vAtomId = String(entityAtom.id);
+        const vAtomId = String(entity.id);
         const baseTitle = <span>
             <span className="text-danger">*</span>基本
         </span>;
@@ -122,23 +137,8 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
             })}
         </Tabs>;
     }
-    return {
-        caption,
-        view: <View />,
-        page: <PageView />,
-        obj: main,
-    };
-    function View() {
-        return <>
-            {vFieldRows}
-            {vSpecs}
-            {vPropRows}
-            {bottom}
-        </>;
-    }
-    function PageView() {
-        return <Page header={caption ?? name}>
-            <View />
-        </Page>;
-    }
+    return <>
+        {vSpecs}
+        {vPropRows}
+    </>;
 }

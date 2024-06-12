@@ -6,6 +6,7 @@ import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { UqExt } from "uqs/UqDefault";
 import { useParams } from "react-router-dom";
 import { from62, to62 } from "tonwa-com";
+import { AtomIDValue } from "./AtomIDValue";
 
 function atomInPath(main: string, atomPhraseId: number | string) {
     let p: string;
@@ -57,10 +58,7 @@ export interface UseBizAtomReturn {
     // uom: boolean;
     pathView: string;
     pathList: string;
-    getAtom(id: number): Promise<{
-        main: any;
-        buds: { [bud: number]: BudValue; };
-    }>;
+    getAtom(id: number): Promise<AtomIDValue>;
     saveField: (id: number, name: string, value: string | number) => Promise<void>;
     saveBud: (id: number, bizBud: BizBud, value: string | number) => Promise<void>;
     searchAtoms: QueryMore;
@@ -106,7 +104,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         let { phrase } = main;
         let entityAtom = biz.entityFromId<EntityAtom>(phrase);
         return {
-            ...ret, entityAtom
+            ...ret, entityAtom, id
         };
     }
 

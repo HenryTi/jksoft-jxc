@@ -1,13 +1,15 @@
 import { Page, useModal } from "tonwa-app";
-import { SpecBaseValue, useSpecStore } from "./SpecStore";
+import { useSpecStore } from "./SpecStore";
 import { FA, List, useEffectOnce } from "tonwa-com";
 import { BizBud, EntitySpec } from "app/Biz";
 import { useAtomValue } from "jotai";
 import { PageSpecNew } from "./PageSpecNew";
 import { RowColsSm } from "app/hooks/tool";
 import { ViewBud } from "app/hooks";
+import { PageSpecEdit } from "./PageSpecEdit";
+import { AtomIDValue } from "../AtomIDValue";
 
-export function PageSpecList({ entitySpec, baseValue }: { entitySpec: EntitySpec; baseValue: SpecBaseValue; }) {
+export function PageSpecList({ entitySpec, baseValue }: { entitySpec: EntitySpec; baseValue: AtomIDValue; }) {
     const modal = useModal();
     const store = useSpecStore(entitySpec, baseValue);
     const items = useAtomValue(store.itemsAtom);
@@ -47,10 +49,14 @@ export function PageSpecList({ entitySpec, baseValue }: { entitySpec: EntitySpec
         </div>;
     }
 
+    function onItemClick({ item }: { item: any; }) {
+        modal.open(<PageSpecEdit value={item} store={store} />);
+    }
+
     return <Page header={store.header} right={right}>
         <div className="p-3 tonwa-bg-gray-2">
             {store.topViewAtom()}
         </div>
-        <List items={items} ViewItem={ViewSpecItem} />
+        <List items={items} ViewItem={ViewSpecItem} onItemClick={onItemClick} />
     </Page>;
 }
