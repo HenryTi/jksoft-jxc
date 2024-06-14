@@ -13,7 +13,7 @@ import { BudEditing, EditBudInline, ViewBud, ViewBudUIType } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
 import { BudCheckValue } from "tonwa-app";
 
-export abstract class BudsEditingBase<R, B extends BudValuesToolBase<R>> /*extends BinBudsFields */ {
+export abstract class BudsEditingBase<R, B extends BudValuesToolBase<R>> {
     private readonly requiredFields: BizBud[] = [];
     protected readonly calc: Calc;
     protected budValuesTool: B;
@@ -281,15 +281,15 @@ export abstract class BudsEditingBase<R, B extends BudValuesToolBase<R>> /*exten
     buildEditBuds() {
         let { fields } = this.budValuesTool;
         let budEditings = fields.map(v => new BudEditing(v));
-        return budEditings.map(field => {
-            const { bizBud: bud } = field;
+        return budEditings.map(budEditing => {
+            const { bizBud: bud } = budEditing;
             const { caption, name } = bud;
             let value = this.budValuesTool.getBudValue(bud, this.values);
             const onBudChanged = (bizBud: BizBud, newValue: string | number | BudCheckValue) => {
                 this.setBudValue(bizBud, newValue);
             }
             return <LabelBox key={bud.id} label={caption ?? name} className="mb-2">
-                <EditBudInline budEditing={field} id={0} value={value} onChanged={onBudChanged} readOnly={false} />
+                <EditBudInline budEditing={budEditing} id={0} value={value} onChanged={onBudChanged} readOnly={false} />
             </LabelBox>;
         })
     }

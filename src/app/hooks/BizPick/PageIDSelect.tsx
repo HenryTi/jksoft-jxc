@@ -9,7 +9,7 @@ import { RowMed, IDSelectStore, createIDSelectStore } from "./IDSelectStore";
 
 export function useIDSelect() {
     const { openModal } = useModal();
-    return async function (ID: EntityID, buds?: number[], viewTop?: any) {
+    return async function (ID: EntityID, param: object, buds?: number[], viewTop?: any) {
         let ret = await openModal<AtomPhrase>(<PageIDSelect entity={ID} buds={buds} />);
         return ret;
     }

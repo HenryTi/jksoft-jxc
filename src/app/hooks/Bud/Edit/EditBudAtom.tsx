@@ -11,15 +11,15 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     const { bizBud, error } = budEditing;
     const [value, setValue] = useState<number>(initValue as number);
     const { caption, name, budDataType } = bizBud;
-    const { entityID: bizAtom } = budDataType as BudID;
+    const { entityID } = budDataType as BudID;
     const label = caption ?? name;
-    const selectAtom = useIDSelect();
+    const IDSelect = useIDSelect();
     async function onEditClick() {
-        if (bizAtom === undefined) {
+        if (entityID === undefined) {
             alert('查询字段，必须声明Atom类型');
             return;
         }
-        let ret = await selectAtom(bizAtom);
+        let ret = await IDSelect(entityID, undefined);
         if (ret === undefined) return;
         let atomId = ret === null ? undefined : ret.id;
         if (id !== undefined) {
