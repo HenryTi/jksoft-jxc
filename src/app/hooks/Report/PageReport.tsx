@@ -1,4 +1,4 @@
-import { EntityAtom, EntityDuo, EntityReport, ReportTitle } from "app/Biz";
+import { EntityDuo, EntityID, EntityReport, ReportTitle } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { useCallback } from "react";
@@ -8,8 +8,9 @@ import { FA } from "tonwa-com";
 import { Link } from "react-router-dom";
 import { Period, ViewPeriodHeader, path, usePeriod } from "app/tool";
 import { useAtomValue } from "jotai";
-import { IDView, Page, useModal } from "tonwa-app";
-import { PageAtomSelect, ViewAtom, ViewAtomId } from "../BizAtom";
+import { useModal } from "tonwa-app";
+import { ViewAtomId } from "../BizAtom";
+import { PageIDSelect } from "../BizPick";
 
 interface SpecRow {
     id: number;
@@ -60,7 +61,7 @@ function PageSelect({ entityReport }: { entityReport: EntityReport; }) {
         await modal.open(<PageResult entityReport={entityReport} atomId={atomId} top={top} />)
     }
 
-    return <PageAtomSelect atom={atom as EntityAtom} onSelected={onSelected} />;
+    return <PageIDSelect entity={atom as EntityID} onSelected={onSelected} />;
 }
 
 function PageResult({ entityReport, atomId, top }: { entityReport: EntityReport; atomId: number; top: any }) {

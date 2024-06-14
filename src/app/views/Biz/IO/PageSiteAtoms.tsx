@@ -1,7 +1,7 @@
 import { useUqApp } from "app";
 import { EntityIOSite } from "app/Biz";
 import { ButtonRightAdd, PageQueryMore } from "app/coms";
-import { ViewAtom, useSelectAtom } from "app/hooks";
+import { ViewAtom, useIDSelect } from "app/hooks";
 import { AtomPhrase, UseQueryOptions } from "app/tool";
 import { useState } from "react";
 import { useQuery } from "react-query";
@@ -14,7 +14,7 @@ export function PageSiteAtoms({ ioSite }: { ioSite: EntityIOSite; }) {
     const { uq } = useUqApp();
     const modal = useModal();
     const { caption, name, tie } = ioSite;
-    const selectAtom = useSelectAtom();
+    const selectAtom = useIDSelect();
     const none = <div className='m-3 small text-muted'>[无]</div>;
     function ViewItem({ value: { id, no, ex, errorCount } }: { value: { id: number; no: string; ex: string; errorCount: number; } }) {
         return <div className="px-3 py-2">

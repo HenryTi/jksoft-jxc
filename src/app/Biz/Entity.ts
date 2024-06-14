@@ -2,7 +2,7 @@ import { BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
 import { Biz } from "./Biz";
 import { EntitySelf } from "./AtomsBuilder";
-import { EntityAtomID } from "./EntityAtom";
+import { EntityID } from "./EntityAtom";
 
 export class BudGroup extends BizBase {
     groupName: string;      // not phrase, only name part
@@ -133,7 +133,7 @@ export class Entity extends BizBase {
         let atoms: number[] = val.atoms;
         return {
             caption,
-            atoms: atoms?.map(v => this.biz.entityFromId(v) as EntityAtomID)
+            atoms: atoms?.map(v => this.biz.entityFromId(v) as EntityID)
         };
     }
 

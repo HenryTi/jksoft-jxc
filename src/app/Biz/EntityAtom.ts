@@ -3,8 +3,8 @@ import { IxField } from "./BizBase";
 import { BizBud } from "./BizBud";
 import { BudGroup, Entity } from "./Entity";
 
-export abstract class EntityAtomID extends Entity {
-    readonly subClasses: EntityAtomID[] = [];
+export abstract class EntityID extends Entity {
+    readonly subClasses: EntityID[] = [];
     specs: EntitySpec[];
     titleBuds: BizBud[];
     primeBuds: BizBud[];
@@ -140,7 +140,7 @@ export abstract class EntityAtomID extends Entity {
     }
 }
 
-export class EntityAtom extends EntityAtomID {
+export class EntityAtom extends EntityID {
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
@@ -148,7 +148,7 @@ export class EntityAtom extends EntityAtomID {
     }
 }
 
-export class EntityDuo extends EntityAtomID {
+export class EntityDuo extends EntityID {
     i: IxField;
     x: IxField;
 
@@ -161,8 +161,8 @@ export class EntityDuo extends EntityAtomID {
     }
 }
 
-abstract class EntityAtomIDWithBase extends EntityAtomID {
-    base: EntityAtomID;
+abstract class EntityIDWithBase extends EntityID {
+    base: EntityID;
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -179,20 +179,20 @@ abstract class EntityAtomIDWithBase extends EntityAtomID {
     }
 }
 
-export class EntitySpec extends EntityAtomIDWithBase {
+export class EntitySpec extends EntityIDWithBase {
     readonly keyColl: { [key: number]: BizBud; } = {};
     readonly keys: BizBud[] = [];
     readonly showKeys: BizBud[] = [];
     readonly showBuds: BizBud[] = [];
     noBud: BizBud;
     exBud: BizBud;
-    ix: boolean;    // 服务器端对应 isIxBase。如果true，不能临时录入，只能选择。
+    preset: boolean;    // 如果true，不能临时录入，只能选择。
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'keys': this.fromKeys(val); break;
-            case 'ix': this.ix = val; break;
+            case 'preset': this.preset = val; break;
         }
     }
 
@@ -276,7 +276,7 @@ export class EntitySpec extends EntityAtomIDWithBase {
     }
 }
 
-export class EntityCombo extends EntityAtomID {
+export class EntityCombo extends EntityID {
     readonly keyColl: { [key: number]: BizBud; } = {};
     readonly keys: BizBud[] = [];
 

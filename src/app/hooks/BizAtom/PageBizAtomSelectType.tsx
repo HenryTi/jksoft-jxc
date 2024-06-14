@@ -1,17 +1,17 @@
 import { Page, useModal } from "tonwa-app";
-import { EntityAtom, EntityAtomID } from "app/Biz";
+import { EntityAtom, EntityID } from "app/Biz";
 import { List } from "tonwa-com";
 
 export function PageBizAtomSelectType({ caption, entityAtom }: { caption: string; entityAtom: EntityAtom; }) {
     const { closeModal } = useModal();
     const { subClasses: children } = entityAtom;
-    function ViewItem({ value }: { value: EntityAtomID; }) {
+    function ViewItem({ value }: { value: EntityID; }) {
         const { caption } = value;
         return <div className="px-3 py-2">
             {caption}
         </div>
     }
-    function onItemClick(item: EntityAtomID) {
+    function onItemClick(item: EntityID) {
         closeModal(item);
     }
     return <Page header={`选择${caption}类型`}>

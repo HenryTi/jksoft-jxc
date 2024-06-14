@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { PageQueryMore } from '../../coms';
 import { FA, List } from 'tonwa-com';
-import { EntityAtomID } from 'app/Biz';
+import { EntityID } from 'app/Biz';
 import { Page } from 'tonwa-app';
 import { OptionsUseBizAtom, pathAtom, useBizAtom } from './useBizAtom';
 
@@ -60,7 +60,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     function PageTypes() {
         let caption = entityAtom.caption ?? entityAtom.name;
         const { subClasses: children } = entityAtom;
-        function ViewItem({ value }: { value: EntityAtomID; }) {
+        function ViewItem({ value }: { value: EntityID; }) {
             const { id, caption } = value;
             return <Link to={`../${pathAtom.list(id)}`}>
                 <div className="px-3 py-2">
@@ -68,7 +68,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
                 </div>
             </Link>;
         }
-        function onItemClick(item: EntityAtomID) {
+        function onItemClick(item: EntityID) {
             // closeModal(item);
         }
         return <Page header={`${caption}列表 - 大类`}>

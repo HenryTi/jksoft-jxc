@@ -21,9 +21,20 @@ export function useDetailNew(sheetStore: SheetStore) {
         if (rearPickResultType === RearPickResultType.array) {
             // 直接选入行集，待修改
             for (let rowProps of rearResult as PickResult[]) {
-                namedResults[rearBinPick.name] = rowProps;
                 let binEditing = new BinEditing(sheetStore, entityBin);
-                binEditing.setNamedParams(namedResults);
+                const pickName = rearBinPick.name;
+                switch (pickName) {
+                    default:
+                        namedResults[pickName] = rowProps;
+                        binEditing.setNamedParams(namedResults);
+                        break;
+                    case 'i$pick':
+                        binEditing.setNamedValue('i', rowProps.id, undefined);
+                        break;
+                    case 'x$pick':
+                        binEditing.setNamedValue('x', rowProps.id, undefined);
+                        break;
+                }
                 let { values: valRow } = binEditing;
                 if (valRow.value === undefined) {
                     binEditing.setNamedValue('value', 1, undefined);

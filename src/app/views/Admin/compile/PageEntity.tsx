@@ -1,6 +1,6 @@
 import * as jsonpack from 'jsonpack';
 import { useForm } from "react-hook-form";
-import { Entity, EntityAtom, EntityAtomID } from "app/Biz";
+import { Entity, EntityAtom, EntityID } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import React, { useCallback, useMemo, useRef, useState } from "react";
@@ -277,7 +277,7 @@ function PageUnique({ entity }: { entity: EntityAtom; }) {
     // const [count, setCount] = useState(0);
     // const [dup, setDup] = useState(undefined);
     const build = useCallback(async () => {
-        async function iterate(ent: EntityAtomID, callback: (e: EntityAtomID) => Promise<void>) {
+        async function iterate(ent: EntityID, callback: (e: EntityID) => Promise<void>) {
             await callback(ent);
             for (let sub of ent.subClasses) {
                 await iterate(sub, callback);

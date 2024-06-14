@@ -1,14 +1,5 @@
 import { Atom } from "uqs/UqDefault";
-import { EntityAtom, EntitySheet } from "app/Biz";
-
-export interface PropsAtomSelect {
-    atom: EntityAtom;
-    buds?: number[];
-    loadOnOpen?: boolean;
-    caption?: string;
-    placeholder?: string;
-    onSelected?: (atomId: number) => Promise<void>;
-}
+import { EntityAtom } from "app/Biz";
 
 export interface GAtom {
     name: string;

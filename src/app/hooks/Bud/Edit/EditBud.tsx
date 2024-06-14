@@ -2,7 +2,6 @@ import { EditBudAtom } from "./EditBudAtom";
 import { EditBudRadio } from "./EditBudRadio";
 import { EditBudCheck } from "./EditBudCheck";
 import { EditBudString, EditBudInt, EditBudDec, EditBudDate } from "./EditBudValue";
-import { EditBudIntOf } from "./EditBudIntOf";
 import { BizBud, EnumBudType } from "app/Biz";
 import { EditBudProps, EditBudTemplateProps, IBudEditing } from "./model";
 import { LabelRowEdit as LabelRowEditHere } from "./LabelRowEdit";
@@ -61,8 +60,10 @@ function EditBud(editProps: EditBudTemplateProps) {
             return <EditBudRadio {...editProps} />;
         case EnumBudType.check:
             return <EditBudCheck{...editProps} />;
+        /*
         case EnumBudType.intof:
             return <EditBudIntOf{...editProps} />;
+        */
         case EnumBudType.atom:
             return <EditBudAtom {...editProps} />;
         case EnumBudType.date:

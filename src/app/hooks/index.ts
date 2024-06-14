@@ -1,5 +1,4 @@
 export * from './BizAtom';
-export * from './BudSelect';
 export * from './Bud';
 export * from './Sheet';
 export * from './Assign';

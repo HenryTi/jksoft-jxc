@@ -1,10 +1,10 @@
 import { BizBud, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
-import { EntityAtom, EntityAtomID, EntityDuo } from "./EntityAtom";
+import { EntityAtom, EntityID, EntityDuo } from "./EntityAtom";
 import { EntityTitle } from "./EntityTitle";
 
 export class ReportList extends BizBud {
-    atom: EntityAtomID;
+    atom: EntityID;
 }
 
 export enum ReportJoinType { x = 1, to = 2 };
@@ -69,7 +69,7 @@ export class EntityReport extends Entity {
             else {
                 r.ui = { caption };
             }
-            r.atom = this.biz.entities[atom] as EntityAtomID;
+            r.atom = this.biz.entities[atom] as EntityID;
             return r;
         });
     }

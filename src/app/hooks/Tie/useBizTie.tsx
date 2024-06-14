@@ -1,11 +1,11 @@
-import { EntityAtom, EntityTie } from "app/Biz";
+import { EntityAtom, EntityID, EntityTie } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useParams } from "react-router-dom";
 import { FA, from62, to62 } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { useCallback, useState } from "react";
 import { ReturnGetTies$page } from "uqs/UqDefault";
-import { usePickAtom } from "../BizPick";
+import { usePickID } from "../BizPick";
 import { IxField } from "app/Biz/BizBase";
 
 function tieInPath(phrase: number | string) {
@@ -78,11 +78,11 @@ export function pathTie(phrase: number | string) {
 function ViewItemCom({ value: { id: iId, no, ex, values }, tie }: { value: ReturnGetTies$page; tie: EntityTie; }) {
     const { uq } = useUqApp();
     const { i, x } = tie;
-    const pickAtom = usePickAtom();
+    const pickID = usePickID();
     const [xArr, setXArr] = useState<[number, string, string][]>(values ?? []);
     async function onAdd() {
-        let { retAtom } = await pickAtom(x.atoms[0] as EntityAtom, undefined);
-        let { id, no, ex } = retAtom;
+        let { retID } = await pickID(x.atoms[0] as EntityID, undefined);
+        let { id, no, ex } = retID;
         if (xArr.findIndex(v => v[0] === id) >= 0) return;
         await uq.SaveTie.submit({ tie: tie.id, i: iId, x: id });
         let arr: [number, string, string][] = [...xArr, [id, no, ex]];

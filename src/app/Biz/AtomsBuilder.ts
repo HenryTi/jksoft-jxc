@@ -1,7 +1,7 @@
 import { Biz } from "./Biz";
 import { BizBud } from "./BizBud";
 import { BudGroup, BudGroups, Entity } from "./Entity";
-import { EntityAtomID } from "./EntityAtom";
+import { EntityID } from "./EntityAtom";
 
 export class AtomsBuilder {
     private readonly biz: Biz;
@@ -24,10 +24,10 @@ export class AtomsBuilder {
 
     initSuperClass(entity: Entity, extendsId: number) {
         let self = this.self(entity);
-        return self.superClass = this.biz.entityFromId(extendsId) as EntityAtomID;
+        return self.superClass = this.biz.entityFromId(extendsId) as EntityID;
     }
 
-    getAncestorSelfs(entity: EntityAtomID) {
+    getAncestorSelfs(entity: EntityID) {
         const ancestors: EntitySelf[] = [];
         for (let p = this.self(entity); p !== undefined;) {
             ancestors.unshift(p);
@@ -58,7 +58,7 @@ export class AtomsBuilder {
 
 export class EntitySelf {
     readonly entity: Entity;
-    superClass: EntityAtomID;
+    superClass: EntityID;
     buds: BizBud[];
     groups: BudGroups;
     readonly groupColl: { [name: string]: BudGroup }; // name is the BudGroup name in Entity

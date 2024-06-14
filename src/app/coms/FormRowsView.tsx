@@ -1,6 +1,6 @@
-import { EntityAtom, EntityAtomID } from "app/Biz";
+import { EntityAtom, EntityID } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { ViewSpecBaseOnly, ViewSpecNoAtom, useSelectAtom } from "app/hooks";
+import { ViewSpecBaseOnly, ViewSpecNoAtom, useIDSelect } from "app/hooks";
 import { RowCols } from "app/hooks/tool";
 import { HTMLInputTypeAttribute, ReactNode, useState } from "react";
 import {
@@ -148,7 +148,7 @@ export interface FormAtom extends FormLabelName {
     default?: number;
     atom: EnumAtom;
     options?: RegisterOptions;
-    entityAtom?: EntityAtomID;
+    entityAtom?: EntityID;
 }
 
 export interface FormSubmit extends FormLabel {
@@ -339,7 +339,7 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
 }) {
     const uqApp = useUqApp();
     const { uq } = uqApp;
-    const selectAtom = useSelectAtom();
+    const selectAtom = useIDSelect();
     const { name, default: defaultValue, readOnly } = row;
     const [id, setId] = useState<number>(defaultValue);
     async function onSelectAtom() {

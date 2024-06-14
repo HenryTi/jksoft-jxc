@@ -1,4 +1,4 @@
-import { BizBud, EntityAtomID, EntitySpec } from "app/Biz";
+import { BizBud, EntityID, EntitySpec } from "app/Biz";
 import { useGetSpec } from "../Uq";
 import { useUqApp } from "app/UqApp";
 import { ViewBudUIType } from "..";
@@ -7,7 +7,7 @@ import { LabelBox } from "../tool";
 
 export function ViewSpecBase({ id, ViewAtom, uiType, noLabel, bold }: {
     id: number;
-    ViewAtom: (props: { no: string; ex: string; entity?: EntityAtomID; bold: boolean; noLabel: boolean; }) => JSX.Element;
+    ViewAtom: (props: { no: string; ex: string; entity?: EntityID; bold: boolean; noLabel: boolean; }) => JSX.Element;
     uiType?: ViewBudUIType;
     noLabel?: boolean;
     bold?: boolean;
@@ -69,7 +69,7 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel, bold }: {
     return content;
 }
 
-function ViewAtom({ no, ex, entity, bold, noLabel }: { no: string; ex: string; entity?: EntityAtomID; bold: boolean; noLabel: boolean; }) {
+function ViewAtom({ no, ex, entity, bold, noLabel }: { no: string; ex: string; entity?: EntityID; bold: boolean; noLabel: boolean; }) {
     let title = '编号: ' + no;
     let vContent = <>{bold === true ? <b>{ex}</b> : ex}<span className="mx-3">{no}</span></>
     if (noLabel === true) {
@@ -90,7 +90,7 @@ export function ViewSpec({ id, uiType, noLabel, bold }: { id: number; uiType?: V
 }
 
 export function ViewBudSpec({ id, bud, noLabel }: { id: number; bud: BizBud; noLabel?: boolean; }) {
-    function ViewAtom({ no, ex, entity }: { no: string; ex: string; entity?: EntityAtomID; }) {
+    function ViewAtom({ no, ex, entity }: { no: string; ex: string; entity?: EntityID; }) {
         let title = `${ex} ${no}`;
         if (noLabel === true) {
             return <span title={title}>{ex}</span>;

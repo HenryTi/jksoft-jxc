@@ -37,5 +37,4 @@ export function TabHome() {
         </div>
         <ViewConsole />
     </Page>;
-    <button className="btn btn-sm btn-link" onClick={onTest}>test</button>
 }

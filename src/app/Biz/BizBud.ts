@@ -1,4 +1,4 @@
-import { EntityAtom, EntityPick } from "./EntityAtom";
+import { EntityAtom, EntityID, EntityPick } from "./EntityAtom";
 import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
@@ -11,7 +11,7 @@ export enum EnumBudType {
     atom = 12,                  // atom id
     radio = 13,                 // single radio ids
     check = 14,                 // multiple checks
-    intof = 15,
+    // intof = 15,
     pick = 18,
     ID = 19,
 
@@ -100,18 +100,17 @@ export class BudDec extends BudDataNumber {
 export class BudString extends BudDataString {
     readonly type = EnumBudType.str;
 }
-export class BudAtom extends BudDataNumber {
+export class BudID extends BudDataNumber {
     readonly type = EnumBudType.atom;
-    private atom: string;
-    bizAtom: EntityAtom;
+    entityID: EntityID;
     fromSchema(schema: any) {
-        this.atom = schema.atom;
+        this.entityID = schema.atom as any;
     }
     override scan(biz: Biz, bud: BizBud) {
-        this.bizAtom = biz.entities[this.atom] as EntityAtom;
+        this.entityID = biz.entities[this.entityID as unknown as string] as EntityID;
     }
-    getTitleBuds(): BizBud[] { return this.bizAtom?.titleBuds; }
-    getPrimeBuds(): BizBud[] { return this.bizAtom?.primeBuds; }
+    getTitleBuds(): BizBud[] { return this.entityID?.titleBuds; }
+    getPrimeBuds(): BizBud[] { return this.entityID?.primeBuds; }
 }
 export class BudIDIO extends BudDataNumber {
     readonly type = EnumBudType.ID;
@@ -133,9 +132,6 @@ abstract class BudOptions extends BudDataType {
     fromSchema(schema: any) {
         this.options = schema.options;
     }
-}
-export class BudIntOf extends BudOptions {
-    readonly type = EnumBudType.intof;
 }
 export class BudRadio extends BudOptions {
     readonly type = EnumBudType.radio;
@@ -187,7 +183,7 @@ export enum ValueSetType {
 export class BizBud extends BizBase {
     readonly entity: Entity;
     readonly budDataType: BudDataType;
-    atomParams: { [param: string]: string }; // only for BizBudAtom
+    atomParams: { [param: string]: string }; // only for BizBudID
     fieldShows: BizBud[];
     valueSet: string;
     valueSetType: ValueSetType;
@@ -208,12 +204,12 @@ export class BizBud extends BizBase {
             case EnumBudType.str:
                 budDataType = new BudString(); break;
             case EnumBudType.atom:
-                budDataType = new BudAtom(); break;
+                budDataType = new BudID(); break;
             case EnumBudType.ID:
                 budDataType = new BudIDIO(); break;
             case EnumBudType.pick:
                 budDataType = new BudPickable(); break;
-            case EnumBudType.intof: budDataType = new BudIntOf(); break;
+            // case EnumBudType.intof: budDataType = new BudIntOf(); break;
             case EnumBudType.radio: budDataType = new BudRadio(); break;
             case EnumBudType.check: budDataType = new BudCheck(); break;
             case EnumBudType.date: budDataType = new BudDate(); break;
@@ -241,8 +237,10 @@ export class BizBud extends BizBase {
             default:
                 super.fromSwitch(i, val);
                 break;
-            case 'value': this.setDefault(val); break;
-            case 'params': this.atomParams = val; break;
+            case 'value':
+                this.setDefault(val); break;
+            case 'params':
+                this.atomParams = val; break;
             case 'fieldShows': this.fieldShows = val; break;
             case 'props':
             case 'min':

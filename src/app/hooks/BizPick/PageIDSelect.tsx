@@ -1,32 +1,42 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { useModal } from "tonwa-app";
-import { RowMed, useAtomBudsSearch } from "../BudSelect";
-import { useUqApp } from "app/UqApp";
-import { AtomPhrase, PropsAtomSelect } from "app/tool";
-import { EntityAtom } from "app/Biz";
+import { AtomPhrase } from "app/tool";
+import { EntityID } from "app/Biz";
 import { Atom } from "uqs/UqDefault";
+import { RowMed, IDSelectStore, createIDSelectStore } from "./IDSelectStore";
 
-export function useSelectAtom() {
+export function useIDSelect() {
     const { openModal } = useModal();
-    return async function (atom: EntityAtom, buds?: number[], viewTop?: any) {
-        let ret = await openModal<AtomPhrase>(<PageAtomSelect atom={atom} buds={buds} />);
+    return async function (ID: EntityID, buds?: number[], viewTop?: any) {
+        let ret = await openModal<AtomPhrase>(<PageIDSelect entity={ID} buds={buds} />);
         return ret;
     }
 }
 
-export function PageAtomSelect(props: PropsAtomSelect) {
-    const { buds, loadOnOpen, caption, placeholder, atom, onSelected } = props;
-    const uqApp = useUqApp();
+export interface PropsIDSelect {
+    entity: EntityID;
+    param?: any;
+    buds?: number[];
+    loadOnOpen?: boolean;
+    caption?: string;
+    placeholder?: string;
+    onSelected?: (atomId: number) => Promise<void>;
+}
+
+export function PageIDSelect(props: PropsIDSelect) {
+    const { param, buds, loadOnOpen, caption, placeholder, entity, onSelected } = props;
+    const { current: selectStore } = useRef(createIDSelectStore(entity));
     const { closeModal } = useModal();
     const [searchParam, setSearchParam] = useState(loadOnOpen === false ? undefined : { key: undefined as string });
-    const entityAtomCaption = atom.caption ?? atom.name;
+    const entityAtomCaption = entity.caption ?? entity.name;
     const searchBox = <SearchBox className="px-3 py-2"
         onSearch={onSearch}
         placeholder={placeholder ?? (entityAtomCaption + ' 编号或描述')} />;
     async function onSearch(key: string) {
         setSearchParam({
+            ...param,
             key
         });
     }
@@ -39,9 +49,10 @@ export function PageAtomSelect(props: PropsAtomSelect) {
             closeModal(ret);
         }
     }
-    let atomBudsSearch = useAtomBudsSearch({ entity: atom, buds, });
+    // let atomBudsSearch = useAtomBudsSearch({ entity: atom, buds, });
     async function searchAtoms(param: any, pageStart: any, pageSize: number) {
-        let ret = await atomBudsSearch.search(param, pageStart, pageSize);
+        let ret = await selectStore.search(param, pageStart, pageSize);
+        // let ret = await atomBudsSearch.search(param, pageStart, pageSize);
         return ret;
     }
 

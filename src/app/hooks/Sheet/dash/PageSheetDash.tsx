@@ -26,7 +26,8 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         })();
     });
     async function onNew() {
-        let ret = await modal.open(<PageSheetNew store={dashConsole.createSheetStore()} />);
+        const store = dashConsole.createSheetStore();
+        let ret = await modal.open(<PageSheetNew store={store} />);
     }
     async function onList() {
         modal.open(<PageSheetList entitySheet={entitySheet} sheetConsole={dashConsole} />);

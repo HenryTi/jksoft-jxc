@@ -1,5 +1,5 @@
 import { EntitySpec, PickSpec } from "app/Biz";
-import { ViewAtom } from "app/hooks/BizAtom";
+import { ViewAtom, ViewAtomId } from "app/hooks/BizAtom";
 import { Atom } from "uqs/UqDefault";
 import { useCallback } from "react";
 import { NamedResults, PickResult } from "../store";
@@ -9,11 +9,14 @@ import { useModal } from "tonwa-app";
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { Page } from "tonwa-app";
-import { theme } from "tonwa-com";
+import { List, theme } from "tonwa-com";
 import { ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
 import { BudsEditing } from "app/hooks/BudsEditing";
+import { Calc } from "app/hooks/Calc";
+import { RowColsSm } from "app/hooks/tool";
+import { PagePickSelect, ViewBud } from "app/hooks";
 
 export interface PropsPickSpec {
     base: number;
@@ -28,28 +31,33 @@ export function usePickFromSpec() {
     const modal = useModal();
     return useCallback(async function (divStore: DivStore, namedResults: NamedResults, binPick: PickSpec): Promise<PickResult> {
         let { pickParams, from } = binPick;
-        debugger;
-        let retAtom: Atom; // = namedResults[pickParams[0]?.bud] as Atom;
+        const pickName = binPick.name;
+        const calc = new Calc([[pickName, binPick.baseParam]], namedResults);
+        let base = calc.getValue(pickName) as number;
         const viewTop = <div>
-            <ViewAtom value={retAtom} />
+            <ViewAtomId id={base} />
         </div>;
-        let base = retAtom?.id;
         let entitySpec = from;
-        const { ix } = entitySpec;
+        const { preset, id: specPhrase, keys } = entitySpec;
         let budsEditing: BudsEditing;
-        if (ix === true) {
-            let { ret } = await uq.GetSpecsFromBase.query({ base });
+        if (preset === true) {
+            let retSpec = await modal.open(<PagePickSelect entity={entitySpec} base={base} />);
+            /*
+            let { ret } = await uq.GetSpecListFromBase.query({ base, phrase: specPhrase });
             let retSpec: any;
             switch (ret.length) {
                 default:
-                    return await modal.open(<PagePickSelect />);
-                case 0: retSpec = { id: base }; break;
-                case 1: retSpec = ret[0]; break;
+                    retSpec = await modal.open(<PagePickSelect entity={entitySpec} base={base} />);
+                    break;
+                case 1:
+                    retSpec = ret[0];
+                    break;
             }
+            */
             return retSpec;
         }
         else {
-            const { keys, buds: props } = entitySpec;
+            const { buds: props } = entitySpec;
             let buds = [...keys];
             if (props !== undefined) buds.push(...props);
             budsEditing = new BudsEditing(buds)
@@ -106,15 +114,6 @@ export function usePickFromSpec() {
                         <FormRowsView rows={formRows} register={register} errors={errors} />
                     </form>
                 </div>
-            </Page>;
-        }
-
-        function PagePickSelect() {
-            function onClick() {
-                modal.close({ id: 100 });
-            }
-            return <Page header="选择">
-                <button className="btn btn-primary" onClick={onClick}>确定</button>
             </Page>;
         }
     }, []);

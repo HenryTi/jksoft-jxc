@@ -25,6 +25,7 @@ export function useBuildViewBiz() {
     const { compile } = centers;
     const { uq, uqSites } = uqApp;
     let { userSite } = uqSites;
+    useAtomValue(biz.atomSchemasChanged);
 
     function onCode() {
         openModal(<PageCode />);

@@ -1,6 +1,6 @@
 import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
-import { BizBud, BizBudBinValue, BudAtom, BudDec, BudRadio, EnumBudType } from "./BizBud";
+import { BizBud, BizBudBinValue, BudID, BudDec, BudRadio, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntitySpec } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
@@ -77,6 +77,7 @@ export class PickAtom extends BinPick {
 }
 export class PickSpec extends BinPick {
     readonly fromPhraseType = BizPhraseType.spec;
+    baseParam: string;
     from: EntitySpec;
 }
 export class PickPend extends BinPick {
@@ -402,33 +403,49 @@ export class EntityBin extends Entity {
 
     private buildBudPickable(prop: any): BizBud {
         let bud = this.buildAtomBud(prop);
-        this.buildPickAtomFromBud(bud);
+        this.buildPickIDFromBud(bud);
         return bud;
     }
 
-    private buildPickAtomFromBud(bud: BizBud) {
-        //if (bud.defaultValue !== undefined) return;
+    private buildPickIDFromBud(bud: BizBud) {
         if (bud.valueSet !== undefined) return;
         if (this.binPicks === undefined) this.binPicks = [];
-        let pickAtom = new PickAtom(this.biz, bud.id, bud.name + '$pick', this);
-        const { bizAtom } = bud.budDataType as BudAtom;
-        pickAtom.from = [bizAtom];
-        pickAtom.ui = bud.ui;
-        this.binPicks.push(pickAtom);
+        const { id, name, caption, ui, atomParams } = bud;
+        const budID = bud.budDataType as BudID;
+        const { entityID } = budID;
+        const { bizPhraseType } = entityID;
+        let pickID: BinPick;
+        let pickName = name + '$pick';
+        switch (bizPhraseType) {
+            default:
+                debugger;
+                console.error(`buildPickIDFromBud unknown ${BizPhraseType[bizPhraseType]}`);
+                break;
+            case BizPhraseType.atom:
+                let pickAtom = pickID = new PickAtom(this.biz, id, pickName, this);
+                pickAtom.from = [entityID as EntityAtom];
+                break;
+            case BizPhraseType.spec:
+                let pickSpec = pickID = new PickSpec(this.biz, id, pickName, this);
+                pickSpec.from = entityID as EntitySpec;
+                pickSpec.baseParam = atomParams?.base;
+                break;
+        }
+        if (ui !== undefined) {
+            if (ui.caption === undefined) {
+                ui.caption = caption ?? name;
+            }
+        }
+        pickID.ui = ui;
+        this.binPicks.push(pickID);
     }
 
     private buildPick(v: any): BinPick {
         const { id, name, from, caption, params, hidden } = v;
         let arr = (from as string[]).map(v => this.biz.entities[v]);
-        // let ret = new BinPick(this.biz, id, name, this);
         let entity = arr[0];
         if (entity === undefined) return;
         let { bizPhraseType } = entity;
-        // {
-        //    let pickBase = undefined; // buildPickInput();
-        //    ret.pick = pickBase;
-        //    return ret;
-        // }
         let binPick: BinPick;
         const buildPickAtom = () => {
             let pick = new PickAtom(this.biz, id, name, this);

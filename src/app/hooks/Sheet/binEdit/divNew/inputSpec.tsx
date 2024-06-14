@@ -41,8 +41,8 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     const viewTop = <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} />;
     const { spec: entitySpec } = binInput;
     let budsEditing: BudsEditing;
-    const { ix } = entitySpec;
-    if (ix === true) {
+    const { preset } = entitySpec;
+    if (preset === true) {
         let { ret } = await uqApp.uq.GetSpecsFromBase.query({ base });
         let retSpec: any;
         switch (ret.length) {

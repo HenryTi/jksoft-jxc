@@ -16,6 +16,7 @@ import { BizBud, BudArr, BudIDIO, EnumBudType } from './BizBud';
 import { AtomsBuilder } from './AtomsBuilder';
 import { EntityConsole } from './EntityConsole';
 import { EntityIOApp, EntityIOSite, EntityIn, EntityOut } from './EntityInOut';
+import { atom } from 'jotai';
 
 enum EnumEntity {
     sheet,
@@ -89,6 +90,7 @@ export class Biz {
     entities: { [name: string]: Entity } = {};
     atomBuilder: AtomsBuilder;
     userDefaults: { [bud: number]: string | number | (string | number)[]; };
+    atomSchemasChanged = atom(false);
 
     constructor(uqApp: UqApp, bizSchema: any, errorLogs: any) {
         this.uqApp = uqApp;
@@ -321,6 +323,7 @@ export class Biz {
         }
         this.hasEntity = allHasEntity;
         this.atomBuilder = undefined;
+        setAtomValue(this.atomSchemasChanged, !getAtomValue(this.atomSchemasChanged));
     }
 
     addBudIds(bizBud: BizBud) {

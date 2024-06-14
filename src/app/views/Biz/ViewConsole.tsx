@@ -35,7 +35,7 @@ export function ViewConsole() {
     let arr: CenterItem[];
     let viewFolder: any, viewEditing: any;
     if (bizConsole === undefined) {
-        arr = [atom, report, assign, tie, ...baseArr];
+        arr = [atom, editing, report, assign, tie, ...baseArr];
     }
     else {
         arr = [...baseArr];

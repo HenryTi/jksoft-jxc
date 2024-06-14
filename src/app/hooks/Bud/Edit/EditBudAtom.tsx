@@ -1,8 +1,9 @@
-import { BudAtom } from "app/Biz";
+import { BudID } from "app/Biz";
 import { EditBudTemplateProps } from "./model";
 import { useUqApp } from "app/UqApp";
-import { ViewAtomId, useSelectAtom } from "../../BizAtom";
+import { ViewAtomId } from "../../BizAtom";
 import { useState } from "react";
+import { useIDSelect } from "../../BizPick";
 
 export function EditBudAtom(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
@@ -10,9 +11,9 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     const { bizBud, error } = budEditing;
     const [value, setValue] = useState<number>(initValue as number);
     const { caption, name, budDataType } = bizBud;
-    const { bizAtom } = budDataType as BudAtom;
+    const { entityID: bizAtom } = budDataType as BudID;
     const label = caption ?? name;
-    const selectAtom = useSelectAtom();
+    const selectAtom = useIDSelect();
     async function onEditClick() {
         if (bizAtom === undefined) {
             alert('查询字段，必须声明Atom类型');

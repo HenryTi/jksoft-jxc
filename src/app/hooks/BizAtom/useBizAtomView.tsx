@@ -5,7 +5,7 @@ import { FA, Sep, from62, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { EditBudLabelRow, EditAtomField, BudEditing } from "../Bud";
 import { ViewBudRowProps } from "../Bud";
-import { BizBud, EntityAtomID } from "app/Biz";
+import { BizBud, EntityID } from "app/Biz";
 import { Tabs, Tab } from "react-bootstrap";
 import { PageSpecList } from "./spec";
 import { AtomIDValue } from "./AtomIDValue";
@@ -72,7 +72,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
     }
 }
 
-export function ViewAtomProps({ entity, value }: { entity: EntityAtomID; value: AtomIDValue; }) {
+export function ViewAtomProps({ entity, value }: { entity: EntityID; value: AtomIDValue; }) {
     const modal = useModal();
     let { name, caption, buds: atomProps, budGroups, specs } = entity;
     const { id, buds } = value;

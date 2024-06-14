@@ -1,7 +1,7 @@
 import { RegisterOptions } from "react-hook-form";
 import { FormRow } from "app/coms";
 import {
-    BinRow, BizBud, BudAtom, BudDec, BudRadio
+    BinRow, BizBud, BudID, BudDec, BudRadio
     , EntityBin, EnumBudType, ValueSetType,
     BinRowValuesTool,
     BudValuesTool,
@@ -217,7 +217,7 @@ export abstract class BudsEditingBase<R, B extends BudValuesToolBase<R>> /*exten
                     formRow.default = this.budValuesTool.getBudValue(field, this.values);
                     formRow.atom = null;
                     formRow.readOnly = true;
-                    formRow.entityAtom = (budDataType as BudAtom).bizAtom;
+                    formRow.entityAtom = (budDataType as BudID).entityID;
                     break;
                 case EnumBudType.char:
                 case EnumBudType.str:

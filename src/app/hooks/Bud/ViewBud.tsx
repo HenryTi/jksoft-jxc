@@ -35,7 +35,7 @@ export function ViewBud({ bud, value, uiType, noLabel, atomColl }: { bud: BizBud
                 content = <span title={value}>{value}</span>; break;
             case EnumBudType.radio: content = radio(bud, value); break;
             case EnumBudType.check: content = check(bud, value); break;
-            case EnumBudType.intof: content = intof(bud, value); break;
+            // case EnumBudType.intof: content = intof(bud, value); break;
             case EnumBudType.pick: content = pick(bud, value); break;
             case EnumBudType.ID: content = ID(bud, value); break;
             case EnumBudType.date: content = date(bud, value); break;
@@ -70,7 +70,7 @@ export function budContent(bud: BizBud, value: any) {
                 content = <span title={value}>{value}</span>; break;
             case EnumBudType.radio: content = radio(bud, value); break;
             case EnumBudType.check: content = check(bud, value); break;
-            case EnumBudType.intof: content = intof(bud, value); break;
+            //case EnumBudType.intof: content = intof(bud, value); break;
             case EnumBudType.pick: content = pick(bud, value); break;
             case EnumBudType.ID: content = ID(bud, value); break;
             case EnumBudType.date: content = date(bud, value); break;
@@ -131,11 +131,11 @@ function check(bud: BizBud, value: any) {
     }
     return <>{vArr}</>;
 }
-
+/*
 function intof(bud: BizBud, value: any) {
     return <>intof: {value}</>;
 }
-
+*/
 function pick(bud: BizBud, value: any) {
     return <>pick: {value}</>;
 }
