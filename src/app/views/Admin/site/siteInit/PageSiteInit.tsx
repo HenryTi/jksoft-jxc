@@ -5,15 +5,17 @@ import { Route } from "react-router-dom";
 import { BudValue, Page } from "tonwa-app";
 import { List, Sep } from "tonwa-com";
 import { RegisterOptions } from "react-hook-form";
-import { BudEditing, EditBudLabelRow } from "app/hooks";
+import { BudEditing, EditBudLabelRow, ValuesBudsEditing } from "app/hooks";
 import { UseQueryOptions, readBuds } from "app/tool";
 
 export const pathSiteInit = 'site-init';
 export const captionSiteInit = '初始设置';
 
 interface InitValue {
-    bud: BizBud;
-    value: { bud: number; value: BudValue; }
+    // bud: BizBud;
+    budEditing: BudEditing;
+    //value: { bud: number; value: BudValue; }
+    value: BudValue;
     options: RegisterOptions;
 }
 
@@ -62,33 +64,37 @@ export function PageSiteInit() {
 
     async function getInit() {
         let result = await uq.GetSiteSetting.query({});
-        const { buds } = readBuds(undefined, result as any);
+        const { buds: budsValues } = readBuds(undefined, result as any);
         const siteSetting = biz.entities['sitesetting'] as EntityTitle;
-        const { budColl: bizBuds, buds: props } = siteSetting;
-
-        let ret: InitValue[] = props.map(v => { // }) initBuds.map(v => {
-            const { id, name } = v;
+        const { budColl: bizBuds, buds } = siteSetting;
+        const valuesBudsEditing = new ValuesBudsEditing(buds, budsValues);
+        const budEditings = valuesBudsEditing.createBudEditings();
+        // let ret: InitValue[] = buds.map(v => { // }) initBuds.map(v => {
+        let ret: InitValue[] = budEditings.map(v => {
+            const { bizBud } = v;
+            const { id, name } = bizBud;
             const budPhrase = `${siteSetting.name}.${name}`;
             const options = budOptions[budPhrase];
-            const value = buds[id];
-            const bud = bizBuds[id];
-            return {
-                bud,
+            const value = budsValues[id];
+            // const bud = bizBuds[id];
+            const initValue: InitValue = {
+                budEditing: v,
                 value,
                 options,
-            }
-        }) as any;
+            };
+            return initValue;
+        });
         return ret;
     }
 
     function ViewAssign({ value: item }: { value: InitValue; }) {
-        const { value, options, bud } = item;
+        const { value, options, budEditing } = item;
         let site: number = undefined; // uqApp.uqSites.userSite.siteId;
-        let budEditing = new BudEditing(bud);
+        // let budEditing = new BudEditing(undefined, bud);
         return <EditBudLabelRow
             id={site}
             budEditing={budEditing}
-            value={value?.value}
+            value={value}
             options={options}
         />;
     }

@@ -1,13 +1,13 @@
 import { BizBud, EnumBudType, PickPend } from "app/Biz";
 import { DivStore } from "./DivStore";
 import { NamedResults, PickResult } from "./NamedResults";
-import { BudsEditing } from "app/hooks/BudsEditing";
+import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 
 export class PickPendStore {
     readonly divStore: DivStore;
     readonly pickPend: PickPend;
     readonly namedResults: NamedResults;
-    readonly paramsEditing: BudsEditing;
+    readonly paramsEditing: ValuesBudsEditing;
 
     constructor(divStore: DivStore, pickPend: PickPend, namedResults: NamedResults) {
         this.divStore = divStore;
@@ -25,7 +25,7 @@ export class PickPendStore {
             if (pickParams.findIndex(v => v.name === bud.name) >= 0) continue;
             paramsInput.push(bud);
         }
-        return new BudsEditing(paramsInput);
+        return new ValuesBudsEditing(paramsInput);
     }
 
     async searchPend() {

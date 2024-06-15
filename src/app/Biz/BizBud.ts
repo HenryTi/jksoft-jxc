@@ -103,8 +103,10 @@ export class BudString extends BudDataString {
 export class BudID extends BudDataNumber {
     readonly type = EnumBudType.atom;
     entityID: EntityID;
+    baseFormula: string;
     fromSchema(schema: any) {
         this.entityID = schema.atom as any;
+        this.baseFormula = schema.base;
     }
     override scan(biz: Biz, bud: BizBud) {
         this.entityID = biz.entities[this.entityID as unknown as string] as EntityID;

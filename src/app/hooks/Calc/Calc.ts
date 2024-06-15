@@ -110,6 +110,16 @@ export class Calc {
         return this._results;
     }
 
+    calcFormula(formula: string): string | number {
+        this._results = undefined;
+        let name = '$_$';
+        let fm = new Formula(formula);
+        this.formulas.set(name, fm);
+        let ret = this.getValue(name);
+        this.formulas.delete(name);
+        return ret;
+    }
+
     getValue(name: string): string | number {
         if (this._results === undefined) {
             this.run(undefined);

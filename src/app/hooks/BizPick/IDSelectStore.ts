@@ -16,7 +16,8 @@ export abstract class IDSelectStore<E extends EntityID> extends Store<E> {
 
 class SpecSelectStore extends IDSelectStore<EntitySpec> {
     async search(param: any, pageStart: any, pageSize: number): Promise<any[]> {
-        let { ret } = await this.uq.GetSpecListFromBase.query({ base: param.base, phrase: this.entity.id });
+        let results = await this.uq.GetSpecListFromBase.query({ base: param.base, phrase: this.entity.id });
+        let { ret } = results;
         return ret;
     }
 }

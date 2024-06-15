@@ -13,17 +13,29 @@ import { ValDivRoot } from "./ValDiv";
 import { Modal } from "tonwa-app";
 import { Console, Store } from "app/tool";
 import { arrFromJsonMid } from "app/hooks/tool";
+import { BinEditing } from "./BinEditing";
+import { BudsEditing } from "app/hooks/BudsEditing";
 
 abstract class BinStore extends Store<EntityBin> {
     readonly sheetStore: SheetStore;
+    readonly budsEditing: BudsEditing;
+    readonly budEditings: BudEditing[];
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
         super(entityBin);
         this.sheetStore = sheetStore;
+        this.budsEditing = new BinEditing(sheetStore, entityBin);
+        this.budEditings = this.budsEditing.createBudEditings(); // main.buds.map(v => new BudEditing(undefined, v));
+    }
+
+    onLoaded() {
+        this.budsEditing.setNamedParams({
+            '%user': this.sheetStore.userProxy,
+            '%sheet': this.sheetStore.mainProxy,
+        });
     }
 }
 
 export class SheetMain extends BinStore {
-    readonly budEditings: BudEditing[];
     readonly _valRow = atom<ValRow>({ buds: {} } as ValRow);
     get valRow() { return getAtomValue(this._valRow) }
     no: string;
@@ -31,7 +43,6 @@ export class SheetMain extends BinStore {
     constructor(sheetStore: SheetStore) {
         const { main } = sheetStore.entity;
         super(sheetStore, main);
-        this.budEditings = main.buds.map(v => new BudEditing(v));
     }
 
     // return: true: new sheet created
@@ -42,6 +53,7 @@ export class SheetMain extends BinStore {
         const pickResults = await pick(this.sheetStore, this.entity, RearPickResultType.scalar);
         let ret = await this.startFromPickResults(pickResults);
         setAtomValue(this.sheetStore.atomLoaded, true);
+        this.onLoaded();
         return ret;
     }
 
@@ -196,6 +208,7 @@ export class SheetStore extends Store<EntitySheet> {
         this.main.setValue(main);
         this.divStore.load(details, false);
         setAtomValue(this.atomLoaded, true);
+        this.main.onLoaded();
     }
 
     async reloadBinProps(binId: number) {

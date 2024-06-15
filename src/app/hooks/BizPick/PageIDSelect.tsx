@@ -3,21 +3,23 @@ import { SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { useModal } from "tonwa-app";
 import { AtomPhrase } from "app/tool";
-import { EntityID } from "app/Biz";
-import { Atom } from "uqs/UqDefault";
-import { RowMed, IDSelectStore, createIDSelectStore } from "./IDSelectStore";
+import { BizBud, EntityID, EntitySpec } from "app/Biz";
+import { Atom, BizPhraseType } from "uqs/UqDefault";
+import { RowMed, createIDSelectStore } from "./IDSelectStore";
+import { RowColsSm } from "../tool";
+import { ViewAtomId, ViewBud } from "..";
 
 export function useIDSelect() {
     const { openModal } = useModal();
-    return async function (ID: EntityID, param: object, buds?: number[], viewTop?: any) {
-        let ret = await openModal<AtomPhrase>(<PageIDSelect entity={ID} buds={buds} />);
+    return async function (ID: EntityID, params?: object, buds?: number[], viewTop?: any) {
+        let ret = await openModal<AtomPhrase>(<PageIDSelect entity={ID} params={params} buds={buds} />);
         return ret;
     }
 }
 
 export interface PropsIDSelect {
     entity: EntityID;
-    param?: any;
+    params?: any;
     buds?: number[];
     loadOnOpen?: boolean;
     caption?: string;
@@ -26,27 +28,38 @@ export interface PropsIDSelect {
 }
 
 export function PageIDSelect(props: PropsIDSelect) {
-    const { param, buds, loadOnOpen, caption, placeholder, entity, onSelected } = props;
+    const { params, buds, loadOnOpen, caption, placeholder, entity, onSelected } = props;
     const { current: selectStore } = useRef(createIDSelectStore(entity));
-    const { closeModal } = useModal();
-    const [searchParam, setSearchParam] = useState(loadOnOpen === false ? undefined : { key: undefined as string });
+    const modal = useModal();
+    const [searchParam, setSearchParam] = useState(loadOnOpen === false ? undefined : { ...params, key: undefined as string });
     const entityAtomCaption = entity.caption ?? entity.name;
     const searchBox = <SearchBox className="px-3 py-2"
         onSearch={onSearch}
         placeholder={placeholder ?? (entityAtomCaption + ' 编号或描述')} />;
     async function onSearch(key: string) {
         setSearchParam({
-            ...param,
+            ...params,
             key
         });
     }
-    async function onItemClick(selectedItem: RowMed) {
-        let ret = selectedItem.atom;
+    async function onItemClick(selectedItem: any) {
+        let ret: any;
+        switch (entity.bizPhraseType) {
+            default:
+                debugger;
+                break;
+            case BizPhraseType.atom:
+                ret = selectedItem.atom;
+                break;
+            case BizPhraseType.spec:
+                ret = selectedItem;
+                break;
+        }
         if (onSelected !== undefined) {
             await onSelected(ret.id);
         }
         else {
-            closeModal(ret);
+            modal.close(ret);
         }
     }
     // let atomBudsSearch = useAtomBudsSearch({ entity: atom, buds, });
@@ -56,13 +69,45 @@ export function PageIDSelect(props: PropsIDSelect) {
         return ret;
     }
 
-    function ViewItem({ value }: { value: RowMed }) {
+    function ViewAtomItem({ value }: { value: RowMed }) {
         return <div className="px-3 py-2">
             <ViewAtom value={value.atom} />
         </div>;
     }
+    function ViewSpecItem({ value }: { value: any; }) {
+        const keyValues: [number, number | string][] = value.keys;
+        const { showKeys, showBuds, noBud, exBud } = entity as EntitySpec;
+        function ViewSpecBud({ bud }: { bud: BizBud; }) {
+            if (bud === undefined) return null;
+            const { id } = bud;
+            let val = keyValues.find(kv => kv[0] === id);
+            let v = val[1];
+            return <ViewBud bud={bud} value={v} />;
+        }
+        return <div className="px-3 py-2" key={value.id}>
+            <RowColsSm>
+                <ViewSpecBud bud={noBud} />
+                <ViewSpecBud bud={exBud} />
+                {showKeys.map(v => <ViewSpecBud key={v.id} bud={v} />)}
+                {showBuds.map(v => <ViewSpecBud key={v.id} bud={v} />)}
+            </RowColsSm>
+        </div>;
+    }
+
     function onClear() {
-        closeModal(null);
+        modal.close(null);
+    }
+    let top: any;
+    let ViewItem: ({ value }: { value: any; }) => JSX.Element;
+    switch (entity.bizPhraseType) {
+        default: debugger; break;
+        case BizPhraseType.spec:
+            ViewItem = ViewSpecItem;
+            top = <div className="p-3"><ViewAtomId id={params.base} /></div>;
+            break;
+        case BizPhraseType.atom:
+            ViewItem = ViewAtomItem;
+            break;
     }
     let right = <button className="btn btn-sm me-1 btn-primary" onClick={onClear}>清值</button>
     return <PageQueryMore header={`选择${caption ?? entityAtomCaption}`}
@@ -73,6 +118,7 @@ export function PageIDSelect(props: PropsIDSelect) {
         onItemClick={onItemClick}
         right={right}
     >
+        {top}
         {searchBox}
     </PageQueryMore>;
 }

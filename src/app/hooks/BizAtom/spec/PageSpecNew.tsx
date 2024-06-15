@@ -5,7 +5,7 @@ import { Band, FormRow, FormRowsView } from "app/coms";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
 import { theme } from "tonwa-com";
-import { BudsEditing } from "app/hooks/BudsEditing";
+import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 
 export function PageSpecNew({ store }: { store: SpecStore; }) {
     const modal = useModal();
@@ -15,7 +15,7 @@ export function PageSpecNew({ store }: { store: SpecStore; }) {
     const submitClassName: string = undefined;
     let buds = [...keys];
     if (props !== undefined) buds.push(...props);
-    const budsEditing = new BudsEditing(buds);
+    const budsEditing = new ValuesBudsEditing(buds);
     let formRows: FormRow[] = [
         ...budsEditing.buildFormRows(),
         { type: 'submit', label: submitCaption, options: {}, className: submitClassName }

@@ -12,6 +12,7 @@ export enum ViewBudUIType {
 export function ViewBud({ bud, value, uiType, noLabel, atomColl }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; atomColl?: AtomColl; }) {
     if (value === undefined) return null;
     if (value === null) return null;
+    if (value === '') return null;
     if (bud === undefined) return <>{value}</>;
     if (Array.isArray(value) === true) value = value[0];
     let content: any;
@@ -35,7 +36,6 @@ export function ViewBud({ bud, value, uiType, noLabel, atomColl }: { bud: BizBud
                 content = <span title={value}>{value}</span>; break;
             case EnumBudType.radio: content = radio(bud, value); break;
             case EnumBudType.check: content = check(bud, value); break;
-            // case EnumBudType.intof: content = intof(bud, value); break;
             case EnumBudType.pick: content = pick(bud, value); break;
             case EnumBudType.ID: content = ID(bud, value); break;
             case EnumBudType.date: content = date(bud, value); break;

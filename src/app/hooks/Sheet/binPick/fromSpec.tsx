@@ -13,7 +13,7 @@ import { List, theme } from "tonwa-com";
 import { ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
-import { BudsEditing } from "app/hooks/BudsEditing";
+import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 import { Calc } from "app/hooks/Calc";
 import { RowColsSm } from "app/hooks/tool";
 import { PagePickSelect, ViewBud } from "app/hooks";
@@ -39,7 +39,7 @@ export function usePickFromSpec() {
         </div>;
         let entitySpec = from;
         const { preset, id: specPhrase, keys } = entitySpec;
-        let budsEditing: BudsEditing;
+        let budsEditing: ValuesBudsEditing;
         if (preset === true) {
             let retSpec = await modal.open(<PagePickSelect entity={entitySpec} base={base} />);
             /*
@@ -60,7 +60,7 @@ export function usePickFromSpec() {
             const { buds: props } = entitySpec;
             let buds = [...keys];
             if (props !== undefined) buds.push(...props);
-            budsEditing = new BudsEditing(buds)
+            budsEditing = new ValuesBudsEditing(buds)
             let ret = await modal.open(<PagePickSpec />);
             return ret;
         }

@@ -3,7 +3,7 @@ import { NamedResults } from "../store";
 import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { BudsEditing, ViewBud } from "app/hooks";
+import { ValuesBudsEditing, ViewBud } from "app/hooks";
 import { useForm } from "react-hook-form";
 import { useCallback } from "react";
 
@@ -42,7 +42,7 @@ export function usePageParams() {
             }
             return retParam;
         }
-        let paramBudsEditing = new BudsEditing(inputParams);
+        let paramBudsEditing = new ValuesBudsEditing(inputParams);
         return await modal.open(<PageParams header={header}
             valueParams={valueParams}
             inputParams={paramBudsEditing} />);
@@ -53,7 +53,7 @@ export function usePageParams() {
 interface PageParamsProps {
     header: string;
     valueParams: [PickParam, BizBud, any][];
-    inputParams: BudsEditing;
+    inputParams: ValuesBudsEditing;
 }
 function PageParams({ header, valueParams, inputParams }: PageParamsProps) {
     const modal = useModal();

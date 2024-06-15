@@ -1,45 +1,35 @@
 import { RegisterOptions } from "react-hook-form";
 import { FormRow } from "app/coms";
 import {
-    BinRow, BizBud, BudID, BudDec, BudRadio
-    , EntityBin, EnumBudType, ValueSetType,
-    BinRowValuesTool,
-    BudValuesTool,
+    BizBud, BudID, BudDec, BudRadio, EnumBudType, ValueSetType, BudValuesTool,
     BudValuesToolBase
 } from "app/Biz";
 import { Calc, CalcResult, Formulas } from "./Calc";
-import { AtomColl, getDays } from "app/tool";
-import { BudEditing, EditBudInline, ViewBud, ViewBudUIType } from "app/hooks";
+import { getDays } from "app/tool";
+import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
 import { BudCheckValue } from "tonwa-app";
 
-export abstract class BudsEditingBase<R, B extends BudValuesToolBase<R>> {
+export abstract class BudsEditing<R = any> {
     private readonly requiredFields: BizBud[] = [];
     protected readonly calc: Calc;
-    protected budValuesTool: B;
+    protected budValuesTool: BudValuesToolBase<R>;
+    readonly buds: BizBud[];
     readonly namedBuds: { [name: string]: BizBud } = {};
-    protected readonly formulas: Formulas;
+    // protected readonly formulas: Formulas;
     abstract get values(): R;
+    protected stopRequired: boolean;
 
-    constructor(buds: BizBud[], initBinRow?: any) {
-        // super(bin, buds);
+    constructor(buds: BizBud[]/*, initBinRow?: any*/) {
         let requiredFields = this.requiredFields;
-        // this.allFields = buds;
-        // this.fields = bin.buds;
         const formulas: Formulas = [];
-        this.formulas = formulas;
+        // this.formulas = formulas;
+        this.buds = buds;
         for (let bud of buds) {
-            // let f = f  this.fieldColl[i];
-            // let { name, bud } = f;
             let f = bud;
             const { name } = bud;
             let { required, valueSet, valueSetType } = bud;
             this.namedBuds[name] = f;
-            /*
-            if (name !== i) {
-                this.fieldColl[name] = f;
-            }
-            */
             let { ui, budDataType: { min, max } } = bud;
             if (ui?.show === true) continue;
             if (valueSet !== undefined) {
@@ -58,12 +48,22 @@ export abstract class BudsEditingBase<R, B extends BudValuesToolBase<R>> {
                 formulas.push([name + '.max', max]);
             }
         }
-        this.calc = this.createCalc();
+        this.calc = this.createCalc(formulas);
     }
 
-    protected abstract createCalc(): Calc;
+    // protected abstract createCalc(): Calc;
+    protected createCalc(formulas: Formulas): Calc {
+        return new Calc(formulas, this.values as any);
+    }
+
+    setStopRequired() { this.stopRequired = true; }
 
     get allFields() { return this.budValuesTool.allFields; }
+
+    calcValue(formula: string): number | string {
+        let ret = this.calc.calcFormula(formula);
+        return ret;
+    }
 
     setNamedParams(namedResults: { [name: string]: any }) {
         if (namedResults === undefined) return;
@@ -89,7 +89,6 @@ export abstract class BudsEditingBase<R, B extends BudValuesToolBase<R>> {
     // init formula only valid in init
     stopInitFormula() {
         for (let field of this.allFields) {
-            //if (field.bud.valueSetType === ValueSetType.init) {
             if (field.valueSetType === ValueSetType.init) {
                 this.calc.stopFormula(field.name);
             }
@@ -185,14 +184,12 @@ export abstract class BudsEditingBase<R, B extends BudValuesToolBase<R>> {
         let ret: FormRow[] = [];
         const { results: calcResults } = this.calc;
         for (let field of this.allFields) {
-            //const { name, bud } = field;
             const bud = field;
             const { name, onForm, required } = bud;
             if (excludeOnFormFalse === true) {
                 if (onForm === false) continue;
             }
             const { valueSetType } = bud;
-            //if ((field === this.fieldI || field === this.fieldX) 
             if ((this.budValuesTool.has(field) === true || this.budValuesTool.has(field) === true)
                 && valueSetType === ValueSetType.equ) {
                 continue;
@@ -267,20 +264,9 @@ export abstract class BudsEditingBase<R, B extends BudValuesToolBase<R>> {
         return ret;
     }
 
-    buildViewBuds(bizAtomColl: AtomColl) {
-        return this.budValuesTool.fields.map(field => {
-            // const { bud } = field;
-            const bud = field;
-            const { id } = bud;
-            let value = this.budValuesTool.getBudValue(field, this.values);
-            if (value === null || value === undefined) return null;
-            return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
-        })
-    }
-
     buildEditBuds() {
         let { fields } = this.budValuesTool;
-        let budEditings = fields.map(v => new BudEditing(v));
+        let budEditings = fields.map(v => new BudEditing(this, v));
         return budEditings.map(budEditing => {
             const { bizBud: bud } = budEditing;
             const { caption, name } = bud;
@@ -295,23 +281,29 @@ export abstract class BudsEditingBase<R, B extends BudValuesToolBase<R>> {
     }
 
     protected abstract setBudValue(bud: BizBud, value: any): void;
+
+    createBudEditings() {
+        let required: boolean;
+        if (this.stopRequired) required = false;
+        return this.buds.map(v => new BudEditing(this, v, required));
+    }
 }
 
-export class BudsEditing extends BudsEditingBase<{ [id: number]: any }, BudValuesTool> {
+export class ValuesBudsEditing extends BudsEditing<{ [id: number]: any }> {
     readonly values: { [id: number]: any } = {};
 
     constructor(buds: BizBud[], initValues?: any) {
-        super(buds, initValues);
+        super(buds/*, initValues*/);
         this.budValuesTool = new BudValuesTool(buds);
         if (initValues !== undefined) {
             for (let bud of buds) this.budValuesTool.setBudValue(bud, this.values, initValues[bud.id]);
         }
     }
-
+    /*
     protected createCalc(): Calc {
         return new Calc(this.formulas, this.values as any);
     }
-
+    */
     protected setBudValue(bud: BizBud, value: any) {
         this.values[bud.id] = value;
     }

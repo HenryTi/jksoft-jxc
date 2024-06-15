@@ -32,6 +32,7 @@ export interface IEditing {
 
 export interface IBudEditing extends IEditing {
     bizBud: BizBud;
+    calcValue: (formula: string) => number | string;
 }
 
 export type OnBudChanged = (bud: BizBud, value: string | number | BudCheckValue) => Promise<void> | void;

@@ -9,6 +9,7 @@ import { BizBud, EntityID } from "app/Biz";
 import { Tabs, Tab } from "react-bootstrap";
 import { PageSpecList } from "./spec";
 import { AtomIDValue } from "./AtomIDValue";
+import { ValuesBudsEditing } from "../BudsEditing";
 
 export function useBizAtomView(options: OptionsUseBizAtom & { bottom?: any; }) {
     const { id } = useParams();
@@ -91,10 +92,12 @@ export function ViewAtomProps({ entity, value }: { entity: EntityID; value: Atom
     }
 
     function buildVPropRows(props: BizBud[], flag: JSX.Element = undefined) {
-        return props.map(v => {
+        const valuesBudsEditing = new ValuesBudsEditing(props);
+        const budEditings = valuesBudsEditing.createBudEditings();
+        return budEditings.map(v => {
             if (v === undefined) debugger;
-            let budEditing = new BudEditing(v);
-            let { id: budId } = v;
+            let budEditing = v; // valuesBudsEditing.createBudEditing(v); // new BudEditing(v);
+            let { id: budId } = v.bizBud;
             let prop = buds[budId];
             return <div key={budId} className="col">
                 <EditBudLabelRow

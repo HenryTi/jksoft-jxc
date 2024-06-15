@@ -16,19 +16,11 @@ interface Props {
     ioAppID: IOAppID;
 }
 export function PageAtomMap({ header, ioSite, ioApp, atom, ioAppID }: Props) {
-    const { uq, biz } = useUqApp();
+    const { uq } = useUqApp();
     const modal = useModal();
-    const selectAtom = useIDSelect();
+    const IDSelect = useIDSelect();
     const entity = ioAppID.atoms[0];
-    /*
-    const { data: { outer } } = useQuery(['getAtom in AtomMap', outerId], async () => {
-        let promises = [
-            getAtomWithProps(biz, biz.uq, outerId),
-        ];
-        let [outer] = await Promise.all(promises);
-        return { outer };
-    });
-    */
+
     const param: ParamGetIOAtoms = {
         ioSite: ioSite.id,
         siteAtom: atom.id,                  // the site atom id
@@ -53,7 +45,7 @@ export function PageAtomMap({ header, ioSite, ioApp, atom, ioAppID }: Props) {
     async function onAdd() {
         let itemsAdd = [];
         for (; ;) {
-            let atomValue = await selectAtom(entity);
+            let atomValue = await IDSelect(entity);
             if (atomValue === undefined) break;
             let ret = await modal.open(<PageEdit atomValue={atomValue} no={undefined} />);
             if (ret === undefined) break;

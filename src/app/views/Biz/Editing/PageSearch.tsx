@@ -1,7 +1,7 @@
 import { BizBud, EntitySheet } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
-import { BudEditing, EditBudInline, OnBudChanged, PageRefId } from "app/hooks";
+import { BudEditing, EditBudInline, OnBudChanged, PageRefId, ValuesBudsEditing } from "app/hooks";
 import { IDViewUserSite } from "app/tool";
 import { ChangeEvent, useMemo, useRef, useState } from "react";
 import { BudCheckEditValue, BudCheckValue, Page, useModal } from "tonwa-app";
@@ -151,7 +151,8 @@ export function PageSearchSheet({ sheet }: { sheet: EntitySheet; }) {
 }
 
 function ViewParams({ vSearchNo, budArr, onBudChanged }: { vSearchNo: any; budArr: BizBud[]; onBudChanged: OnBudChanged; }) {
-    let budEditings = budArr.map(v => new BudEditing(v, false));
+    let valuesBudsEditing = new ValuesBudsEditing(budArr);
+    let budEditings = valuesBudsEditing.createBudEditings();
     let { length } = budEditings;
     let propRow: any[] = [vSearchNo];
     const propRowArr: any[][] = [propRow];

@@ -7,7 +7,7 @@ import { ButtonAsync, FA, SearchBox, Sep, theme } from "tonwa-com";
 import { User } from "tonwa-uq";
 import { ViewSheetItem } from "./ViewSheetItem";
 import { SheetConsole } from "../store";
-import { BudEditing, EditBudInline, OnBudChanged } from "app/hooks";
+import { BudEditing, EditBudInline, OnBudChanged, ValuesBudsEditing } from "app/hooks";
 
 export function PageSearch() {
     const modal = useModal();
@@ -165,7 +165,9 @@ export function PageSheetSearch({ sheetConsole }: { sheetConsole: SheetConsole; 
 }
 
 function ViewParams({ budArr, onBudChanged }: { budArr: BizBud[]; onBudChanged: OnBudChanged; }) {
-    let budEditings = budArr.map(v => new BudEditing(v, false));
+    let valuesBudsEditing = new ValuesBudsEditing(budArr);
+    valuesBudsEditing.setStopRequired();
+    let budEditings = valuesBudsEditing.createBudEditings(); // budArr.map(v => new BudEditing(v, false));
     let { length } = budEditings;
     let propRow: any[] = [];
     const propRowArr: any[][] = [propRow];

@@ -3,7 +3,7 @@ import { UsersStore } from "./UsersStore";
 import { Image, Page, useModal } from "tonwa-app";
 import { FA, getAtomValue, setAtomValue, theme } from "tonwa-com";
 import { BizBud, Entity, EnumBudType } from "app/Biz";
-import { BudsEditing, LabelRowEdit, ViewBud } from "app/hooks";
+import { ValuesBudsEditing, LabelRowEdit, ViewBud } from "app/hooks";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
 import { ViewUser } from "./ViewUser";
@@ -91,7 +91,7 @@ function PageEditUser({ user, usersStore, entity, userBudValues }: { user: Retur
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { bootstrapContainer } = theme;
     const { caption, name, user: userBuds } = entity;
-    const budsEditing = new BudsEditing(userBuds, userBudValues);
+    const budsEditing = new ValuesBudsEditing(userBuds, userBudValues);
     const inputRows = budsEditing.buildFormRows();
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;

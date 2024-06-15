@@ -187,8 +187,8 @@ class BinAmount extends BinBudValue {
 }
 
 export abstract class BudValuesToolBase<T> {
-    allFields: BizBud[]; // BinField[];         // 传进来的buds
-    fields: BizBud[]; // BinField[];            // bin的buds
+    allFields: BizBud[];
+    fields: BizBud[];
     abstract has(bud: BizBud): boolean;
     abstract getBudValue(bud: BizBud, binRow: T): any;
     abstract setBudValue(bud: BizBud, binRow: T, value: any): void;

@@ -4,7 +4,6 @@ import { RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetSteps, SheetS
 import { useAtomValue } from "jotai";
 import { PageSheet } from "./PageSheet";
 import { useCallback } from "react";
-import { useUqApp } from "app";
 import { ToolItem } from "app/coms";
 import { buttonDefs, headerSheet } from "../headerSheet";
 import { ViewBinPicks } from "../binPick";
@@ -12,7 +11,6 @@ import { useDetailNew } from "../binEdit";
 import { ViewSteps } from "./ViewSteps";
 
 export function PageSheetEdit({ store, sheetId, readonly }: { store: SheetStore; sheetId: number; readonly?: boolean; }) {
-    // const store = useSheetStore(entitySheet, sheetConsole);
     const loaded = useAtomValue(store.atomLoaded);
     useEffectOnce(() => {
         store.load(sheetId);

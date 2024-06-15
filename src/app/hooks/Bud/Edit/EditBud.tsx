@@ -8,6 +8,7 @@ import { LabelRowEdit as LabelRowEditHere } from "./LabelRowEdit";
 import { atom } from "jotai";
 import { setAtomValue } from "tonwa-com";
 import { InlineEdit } from "./InlineEdit";
+import { BudsEditing } from "app/hooks/BudsEditing";
 
 export function EditBudLabelRow(editProps: EditBudProps) {
     const ValueEdit = LabelRowEditHere
@@ -15,11 +16,13 @@ export function EditBudLabelRow(editProps: EditBudProps) {
 }
 
 export class BudEditing implements IBudEditing {
+    private readonly budsEditing: BudsEditing;
     readonly bizBud: BizBud;
     readonly required: boolean;
     error = atom<string>(undefined as string);
 
-    constructor(bizBud: BizBud, required: boolean = undefined) {
+    constructor(budsEditing: BudsEditing, bizBud: BizBud, required: boolean = undefined) {
+        this.budsEditing = budsEditing;
         this.bizBud = bizBud;
         this.required = required === undefined ?
             this.bizBud.ui?.required
@@ -35,6 +38,10 @@ export class BudEditing implements IBudEditing {
             }
         }
         return ok;
+    }
+
+    calcValue(formula: string) {
+        return this.budsEditing.calcValue(formula);
     }
 }
 
@@ -60,10 +67,6 @@ function EditBud(editProps: EditBudTemplateProps) {
             return <EditBudRadio {...editProps} />;
         case EnumBudType.check:
             return <EditBudCheck{...editProps} />;
-        /*
-        case EnumBudType.intof:
-            return <EditBudIntOf{...editProps} />;
-        */
         case EnumBudType.atom:
             return <EditBudAtom {...editProps} />;
         case EnumBudType.date:

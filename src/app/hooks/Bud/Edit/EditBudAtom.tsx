@@ -4,13 +4,15 @@ import { useUqApp } from "app/UqApp";
 import { ViewAtomId } from "../../BizAtom";
 import { useState } from "react";
 import { useIDSelect } from "../../BizPick";
+import { BizPhraseType } from "uqs/UqDefault";
+import { ViewSpecId } from "app/hooks/BizAtom/spec";
 
 export function EditBudAtom(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
     const { id, readOnly, labelSize, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
     const { bizBud, error } = budEditing;
     const [value, setValue] = useState<number>(initValue as number);
-    const { caption, name, budDataType } = bizBud;
+    const { caption, name, budDataType, atomParams } = bizBud;
     const { entityID } = budDataType as BudID;
     const label = caption ?? name;
     const IDSelect = useIDSelect();
@@ -19,7 +21,13 @@ export function EditBudAtom(props: EditBudTemplateProps) {
             alert('查询字段，必须声明Atom类型');
             return;
         }
-        let ret = await IDSelect(entityID, undefined);
+        let params: any = {};
+        if (atomParams !== undefined) {
+            for (let i in atomParams) {
+                params[i] = budEditing.calcValue(atomParams[i]);
+            }
+        }
+        let ret = await IDSelect(entityID, params);
         if (ret === undefined) return;
         let atomId = ret === null ? undefined : ret.id;
         if (id !== undefined) {
@@ -34,6 +42,12 @@ export function EditBudAtom(props: EditBudTemplateProps) {
         setValue(atomId);
         onChanged?.(bizBud, atomId);
     }
+    let vContent: any;
+    switch (entityID.bizPhraseType) {
+        default: debugger; break;
+        case BizPhraseType.atom: vContent = <ViewAtomId id={value} />; break;
+        case BizPhraseType.spec: vContent = <ViewSpecId id={value} />; break;
+    }
     return <ValueEdit label={label}
         readOnly={readOnly}
         flag={flag}
@@ -41,6 +55,6 @@ export function EditBudAtom(props: EditBudTemplateProps) {
         onEditClick={onEditClick}
         {...budEditing}
     >
-        <ViewAtomId id={value} />
+        {vContent}
     </ValueEdit>;
 }

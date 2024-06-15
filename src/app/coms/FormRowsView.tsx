@@ -339,13 +339,13 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
 }) {
     const uqApp = useUqApp();
     const { uq } = uqApp;
-    const selectAtom = useIDSelect();
+    const IDSelect = useIDSelect();
     const { name, default: defaultValue, readOnly } = row;
     const [id, setId] = useState<number>(defaultValue);
     async function onSelectAtom() {
         // if (readOnly === true) return;
         clearErrors?.(name);
-        let ret = await selectAtom(entityAtom, undefined);
+        let ret = await IDSelect(entityAtom, undefined);
         if (ret === undefined) return;
         const { id } = ret;
         if (setValue !== undefined) {

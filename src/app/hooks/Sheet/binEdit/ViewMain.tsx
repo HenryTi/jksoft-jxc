@@ -1,12 +1,11 @@
-import { SheetMain, SheetStore } from "../store";
+import { SheetStore } from "../store";
 import { EditBudInline, ViewSpecR } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "../../ViewSheetTime";
-import { BizBud, BudDataType, EnumBudType } from "app/Biz";
+import { BizBud } from "app/Biz";
 import { setAtomValue } from "tonwa-com";
 import { theme } from "tonwa-com";
 import { BudCheckValue } from "tonwa-app";
-import React from "react";
 import { LabelBox, RowCols } from "app/hooks/tool";
 
 export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup: boolean; readOnly?: boolean; }) {
@@ -16,8 +15,9 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
     const binRow = useAtomValue(_binRow);
     const { id: idBin, i, x, buds } = binRow;
     let { length } = budEditings;
-    let propRow: any[] = [];
-    const propRowArr: any[][] = [propRow];
+    // let propRow: any[] = [];
+    // const propRowArr: any[][] = [propRow];
+    /*
     for (let i = 0; i < length; i++) {
         let budEditing = budEditings[i];
         const { bizBud, required } = budEditing;
@@ -32,6 +32,7 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
             propRowArr.push(propRow);
         }
     }
+    */
     function onBudChanged(bud: BizBud, value: string | number | BudCheckValue) {
         buds[bud.id] = value as any;
         setAtomValue(_binRow, { ...binRow });
@@ -40,13 +41,23 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
     let cnBlock = ' d-flex bg-white ' + theme.bootstrapContainer;
     let viewProps: any;
     if (length > 0) {
+        /*
         let viewRowArr = propRowArr.map((row, index) => <React.Fragment key={index}>
             {row}
         </React.Fragment>);
+        */
         viewProps = <div className={cnBlock + ' pt-2 border-top border-secondary '}>
             <div className={'flex-fill py-2 '}>
                 <RowCols>
-                    {viewRowArr}
+                    {budEditings.map(v => {
+                        const { bizBud, required } = v;
+                        if (bizBud === budI || bizBud === budX) return null;
+                        let { id, caption, name } = bizBud;
+                        let value = buds[id];
+                        return <LabelBox key={id} label={caption ?? name} required={required} title={value as any} className="mb-2">
+                            <EditBudInline budEditing={v} id={idBin} value={value} onChanged={onBudChanged} readOnly={readOnly} />
+                        </LabelBox>;
+                    })}
                 </RowCols>
             </div>
         </div>

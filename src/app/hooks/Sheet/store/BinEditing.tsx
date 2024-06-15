@@ -1,15 +1,17 @@
 import {
     BinRow, BizBud, EntityBin, BinRowValuesTool,
 } from "app/Biz";
-import { Calc } from "../../Calc";
+// import { Calc } from "../../Calc";
 import { DivStore } from "./DivStore";
 import { SheetStore } from "./SheetStore";
 import { ValDivBase } from "./ValDiv";
 import { NamedResults } from "./NamedResults";
 import { ValRow } from "./tool";
-import { BudsEditingBase } from "app/hooks/BudsEditing";
+import { BudsEditing } from "app/hooks/BudsEditing";
+import { AtomColl } from "app/tool";
+import { ViewBud, ViewBudUIType } from "app/hooks";
 
-export abstract class BinBudsEditing extends BudsEditingBase<BinRow, BinRowValuesTool> {
+export abstract class BinBudsEditing extends BudsEditing<BinRow> {
     readonly values: ValRow = { buds: {} } as any;
     readonly entityBin: EntityBin;
     readonly sheetStore: SheetStore;
@@ -20,7 +22,7 @@ export abstract class BinBudsEditing extends BudsEditingBase<BinRow, BinRowValue
     onDel: () => Promise<void>;
 
     constructor(sheetStore: SheetStore, bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
-        super(buds, initBinRow);
+        super(buds/*, initBinRow*/);
         this.sheetStore = sheetStore;
         this.entityBin = bin;
         this.budValuesTool = new BinRowValuesTool(bin, buds);
@@ -28,11 +30,11 @@ export abstract class BinBudsEditing extends BudsEditingBase<BinRow, BinRowValue
             this.setValues(initBinRow);
         }
     }
-
+    /*
     protected createCalc(): Calc {
         return new Calc(this.formulas, this.values as any);
     }
-
+    */
     private setValues(binRow: BinRow) {
         Object.assign(this.values, binRow);
         let obj = new Proxy(binRow, this.entityBin.proxyHandler());
@@ -83,12 +85,23 @@ export class DivEditing extends BinBudsEditing {
     }
 
     private setValueDefault(valDiv: ValDivBase) {
-        const { budValue } = this.budValuesTool;
+        const { value: budValue } = this.entityBin;
+        // const { budValue } = this.budValuesTool;
         if (budValue === undefined) return;
         if (this.budValuesTool.getBudValue(budValue, this.values) !== undefined) return;
         let pendLeft = this.divStore.getPendLeft(valDiv);
         if (pendLeft === undefined) return;
         this.budValuesTool.setBudValue(budValue, this.values, pendLeft);
+    }
+
+    buildViewBuds(bizAtomColl: AtomColl) {
+        return this.budValuesTool.fields.map(field => {
+            const bud = field;
+            const { id } = bud;
+            let value = this.budValuesTool.getBudValue(field, this.values);
+            if (value === null || value === undefined) return null;
+            return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
+        })
     }
 }
 

@@ -12,7 +12,7 @@ import { Calc } from "app/hooks/Calc";
 import { PendProxyHandler, btnNext, cnNextClassName } from "../../store";
 import { InputProps } from "./inputBase";
 import { ViewIBaseFromId } from "../ViewDiv/ViewIBase";
-import { BudsEditing } from "app/hooks/BudsEditing";
+import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 
 
 export interface PropsInputSpec extends InputProps<BinInputSpec> {
@@ -40,7 +40,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     }
     const viewTop = <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} />;
     const { spec: entitySpec } = binInput;
-    let budsEditing: BudsEditing;
+    let budsEditing: ValuesBudsEditing;
     const { preset } = entitySpec;
     if (preset === true) {
         let { ret } = await uqApp.uq.GetSpecsFromBase.query({ base });
@@ -57,7 +57,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         const { keys, buds: props } = entitySpec;
         let buds = [...keys];
         if (props !== undefined) buds.push(...props);
-        budsEditing = new BudsEditing(buds)
+        budsEditing = new ValuesBudsEditing(buds)
         let ret = await modal.open(<PagePickSpec />);
         if (ret !== undefined) {
             const { id, base } = ret;

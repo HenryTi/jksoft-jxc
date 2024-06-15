@@ -4,7 +4,7 @@ import { WritableAtom, atom } from "jotai";
 import { ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsRoot } from './ValDiv';
-import { BudEditing } from "app/hooks";
+import { BudEditing, ValuesBudsEditing } from "app/hooks";
 import { PickPendStore } from "./PickPendStore";
 import { NamedResults } from "./NamedResults";
 
@@ -34,10 +34,11 @@ export class DivStore {
 
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
         this.sheetStore = sheetStore;
+        const { pend, binDivRoot } = entityBin;
         this.entityBin = entityBin;
-        this.binDivRoot = entityBin.binDivRoot;
+        this.binDivRoot = binDivRoot;
         this.valDivsOnPend = sheetStore.valDivsOnPend;
-        this.valDivsRoot = new ValDivsRoot(); // entityBin.div, undefined);
+        this.valDivsRoot = new ValDivsRoot();
         this.valDivColl = {};
         this.pendLoadState = PendLoadState.none;
         this.atomSubmitState = atom((get) => {
@@ -56,7 +57,10 @@ export class DivStore {
             }
             return hasValue === true ? SubmitState.enable : SubmitState.hide;
         }, null);
-        this.budEditings = this.entityBin.pend?.params.map(v => new BudEditing(v));
+        if (pend !== undefined) {
+            const valuesBudsEditing = new ValuesBudsEditing(pend.params);
+            this.budEditings = valuesBudsEditing.createBudEditings();
+        }
     }
 
     async loadPend(params: any): Promise<void> {
@@ -96,11 +100,7 @@ export class DivStore {
         }
         setAtomValue(this.atomPendRows, pendRows);
     }
-    /*
-    cachePendRow(pendRow: PendRow) {
-        this.cachePendRows[pendRow.pend] = pendRow;
-    }
-    */
+
     load(valRows: ValRow[], trigger: boolean) {
         for (let valRow of valRows) {
             this.setValRowRoot(valRow, trigger);
@@ -150,11 +150,11 @@ export class DivStore {
     private getOwnerAtomValDivs(valRow: ValRow) {
         const { subBinDiv: div } = this.binDivRoot;
         if (div === undefined) {
-            return this.valDivsRoot; // .atomValDivs;
+            return this.valDivsRoot;
         }
         const { origin } = valRow;
         let valDiv = this.valDivColl[origin];
-        return valDiv; // .atomValDivs;
+        return valDiv;
     }
 
     async delValRow(id: number) {
