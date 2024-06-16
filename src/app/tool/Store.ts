@@ -81,7 +81,10 @@ export abstract class Store<E extends Entity = Entity> extends KeyIdObject {
             let bizSpec = this.bizSpecColl[id];
             if (bizSpec === undefined) continue;
             let bud = this.biz.budFromId(phrase);
-            if (bud === undefined) debugger;
+            if (bud === undefined) {
+                // debugger;
+                continue;
+            }
             bizSpec.buds.push(bud);
         }
     }
