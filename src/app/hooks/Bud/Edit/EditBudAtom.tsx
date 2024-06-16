@@ -46,7 +46,7 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     switch (entityID.bizPhraseType) {
         default: debugger; break;
         case BizPhraseType.atom: vContent = <ViewAtomId id={value} />; break;
-        case BizPhraseType.spec: vContent = <ViewSpecId id={value} />; break;
+        case BizPhraseType.fork: vContent = <ViewSpecId id={value} />; break;
     }
     return <ValueEdit label={label}
         readOnly={readOnly}

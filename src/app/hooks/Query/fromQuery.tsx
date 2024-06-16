@@ -209,7 +209,7 @@ export function usePickFromQuery(): [
                         itemBan={itemBan}
                         sep={vSep} />
                     break;
-                case BizPhraseType.spec:
+                case BizPhraseType.fork:
                     vList = <List items={pickedArr} ViewItem={ViewItemSpec} className=""
                         sep={vSep} />
                     break;

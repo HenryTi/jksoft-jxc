@@ -76,7 +76,7 @@ export class PickAtom extends BinPick {
     from: EntityAtom[];
 }
 export class PickSpec extends BinPick {
-    readonly fromPhraseType = BizPhraseType.spec;
+    readonly fromPhraseType = BizPhraseType.fork;
     baseParam: string;
     from: EntitySpec;
 }
@@ -425,7 +425,7 @@ export class EntityBin extends Entity {
                 let pickAtom = pickID = new PickAtom(this.biz, id, pickName, this);
                 pickAtom.from = [entityID as EntityAtom];
                 break;
-            case BizPhraseType.spec:
+            case BizPhraseType.fork:
                 let pickSpec = pickID = new PickSpec(this.biz, id, pickName, this);
                 pickSpec.from = entityID as EntitySpec;
                 pickSpec.baseParam = atomParams?.base;
@@ -470,7 +470,7 @@ export class EntityBin extends Entity {
         switch (bizPhraseType) {
             default: binPick = undefined; break;
             case BizPhraseType.atom: binPick = buildPickAtom(); break;
-            case BizPhraseType.spec: binPick = buildPickSpec(); break;
+            case BizPhraseType.fork: binPick = buildPickSpec(); break;
             case BizPhraseType.query: binPick = buildPickQuery(); break;
             case BizPhraseType.pend: binPick = buildPickPend(); break;
         }

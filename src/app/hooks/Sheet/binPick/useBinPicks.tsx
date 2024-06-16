@@ -29,7 +29,7 @@ export function useBinPicks() {
             case BizPhraseType.atom:
                 pickResult = await pickFromAtom(divStore, namedResults, rearPick as PickAtom);
                 break;
-            case BizPhraseType.spec:
+            case BizPhraseType.fork:
                 pickResult = await pickFromSpec(divStore, namedResults, rearPick as PickSpec);
                 break;
             case BizPhraseType.query:
@@ -61,7 +61,7 @@ export function useBinPicks() {
                 case BizPhraseType.atom:
                     pickResult = await pickFromAtom(divStore, namedResults, binPick as PickAtom);
                     break;
-                case BizPhraseType.spec:
+                case BizPhraseType.fork:
                     pickResult = await pickFromSpec(divStore, namedResults, binPick as PickSpec);
                     break;
                 case BizPhraseType.query:

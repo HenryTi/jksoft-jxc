@@ -23,7 +23,8 @@ enum EnumEntity {
     bin,
     pend,
     atom,
-    spec,
+    spec,       // obselete
+    fork,
     duo,
     combo,
     query,
@@ -128,7 +129,8 @@ export class Biz {
             [EnumEntity.bin]: this.buildBin,
             [EnumEntity.pend]: this.buildPend,
             [EnumEntity.atom]: this.buildAtom,
-            [EnumEntity.spec]: this.buildSpec,
+            [EnumEntity.spec]: this.buildSpec,          // obsolete
+            [EnumEntity.fork]: this.buildSpec,
             [EnumEntity.duo]: this.buildDuo,
             [EnumEntity.combo]: this.buildCombo,
             [EnumEntity.query]: this.buildQuery,

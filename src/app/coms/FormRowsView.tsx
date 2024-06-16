@@ -272,7 +272,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
             options?.onChange?.({ target });
         }
         let error: FieldError = errors[name] as FieldError;
-        if (entityAtom.bizPhraseType === BizPhraseType.spec) {
+        if (entityAtom.bizPhraseType === BizPhraseType.fork) {
             return <Band label={label}>
                 <ViewSpecBaseOnly id={value} />
                 <RowCols>

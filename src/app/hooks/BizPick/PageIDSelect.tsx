@@ -51,7 +51,7 @@ export function PageIDSelect(props: PropsIDSelect) {
             case BizPhraseType.atom:
                 ret = selectedItem.atom;
                 break;
-            case BizPhraseType.spec:
+            case BizPhraseType.fork:
                 ret = selectedItem;
                 break;
         }
@@ -101,7 +101,7 @@ export function PageIDSelect(props: PropsIDSelect) {
     let ViewItem: ({ value }: { value: any; }) => JSX.Element;
     switch (entity.bizPhraseType) {
         default: debugger; break;
-        case BizPhraseType.spec:
+        case BizPhraseType.fork:
             ViewItem = ViewSpecItem;
             top = <div className="p-3"><ViewAtomId id={params.base} /></div>;
             break;

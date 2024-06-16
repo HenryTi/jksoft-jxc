@@ -111,7 +111,7 @@ async function runInputs(runInputDivProps: RunInputDivProps, valDiv: ValDivBase)
                     binInput: input as BinInputAtom,
                 });
                 break;
-            case BizPhraseType.spec:
+            case BizPhraseType.fork:
                 retInput = await inputSpec({
                     ...props,
                     namedResults,

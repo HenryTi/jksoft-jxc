@@ -85,7 +85,7 @@ export interface RowMed {
 
 export function createIDSelectStore(entity: EntityID): IDSelectStore<EntityID> {
     switch (entity.bizPhraseType) {
-        case BizPhraseType.spec: return new SpecSelectStore(entity as EntitySpec, [], undefined);
+        case BizPhraseType.fork: return new SpecSelectStore(entity as EntitySpec, [], undefined);
         case BizPhraseType.atom: return new AtomSelectStore(entity as EntityAtom, [], undefined);
     }
 }
