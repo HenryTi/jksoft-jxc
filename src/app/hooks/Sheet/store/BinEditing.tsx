@@ -88,6 +88,7 @@ export class DivEditing extends BinBudsEditing {
         const { value: budValue } = this.entityBin;
         // const { budValue } = this.budValuesTool;
         if (budValue === undefined) return;
+        if (this.budValuesTool.has(budValue) === false) return;
         if (this.budValuesTool.getBudValue(budValue, this.values) !== undefined) return;
         let pendLeft = this.divStore.getPendLeft(valDiv);
         if (pendLeft === undefined) return;
