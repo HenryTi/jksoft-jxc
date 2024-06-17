@@ -211,7 +211,6 @@ export class BizBud extends BizBase {
                 budDataType = new BudIDIO(); break;
             case EnumBudType.pick:
                 budDataType = new BudPickable(); break;
-            // case EnumBudType.intof: budDataType = new BudIntOf(); break;
             case EnumBudType.radio: budDataType = new BudRadio(); break;
             case EnumBudType.check: budDataType = new BudCheck(); break;
             case EnumBudType.date: budDataType = new BudDate(); break;

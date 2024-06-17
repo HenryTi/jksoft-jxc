@@ -226,10 +226,13 @@ export class Biz {
                 bizEntity.scan();
             }
         }
-        for (let [bizEntity] of arr[EnumEntity.atom]) {
-            (bizEntity as EntityAtom).scanTitlePrime();
+        let entityArrAtom = arr[EnumEntity.atom];
+        if (entityArrAtom !== undefined) {
+            for (let [bizEntity] of arr[EnumEntity.atom]) {
+                (bizEntity as EntityAtom).scanTitlePrime();
+            }
+            this.atomBuilder.buildRootAtoms();
         }
-        this.atomBuilder.buildRootAtoms();
         this.groups.push(
             {
                 name: 'sheet',
