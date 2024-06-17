@@ -1,8 +1,7 @@
-import { EntityReport, ReportList } from "app/Biz";
+import { EntityReport } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { Page } from "tonwa-app";
-import { Link, useParams } from "react-router-dom";
-import { List, from62, to62 } from "tonwa-com";
+import { useParams } from "react-router-dom";
+import { from62, to62 } from "tonwa-com";
 import { PageReport } from "./PageReport";
 // import { useBizAtomSpec } from "app/views/JXC/Atom";
 

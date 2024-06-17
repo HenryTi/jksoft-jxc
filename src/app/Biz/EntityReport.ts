@@ -26,7 +26,8 @@ export class EntityReport extends Entity {
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
-            case 'title': this.fromTitle(val); break;
+            case 'title':
+            case 'book': this.fromTitle(val); break;
             case 'from': this.fromFrom(val); break;
             case 'joins': this.fromJoins(val); break;
             case 'lists': this.fromLists(val); break;

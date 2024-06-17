@@ -304,7 +304,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
         let { name } = row as FormAtom;
         let error: FieldError = errors[name] as FieldError;
         return <ViewFormAtom row={row as FormAtom} label={label} error={error}
-            entityAtom={null}
+            entityAtom={entityAtom as EntityAtom}
             inputProps={register(name, options)}
             setValue={setValue}
             clearErrors={clearErrors}

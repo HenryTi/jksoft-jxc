@@ -9,8 +9,12 @@ export class EntityAssign extends Entity {
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
-            case 'atom': this.fromAtom(val); break;
-            case 'title': this.fromTitle(val); break;
+            case 'atom':
+                this.fromAtom(val);
+                break;
+            case 'title':
+            case 'book':
+                this.fromTitle(val); break;
         }
     }
 
