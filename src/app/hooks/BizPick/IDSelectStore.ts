@@ -1,4 +1,4 @@
-import { BizBud, EntityAtom, EntityID, EntitySpec } from "app/Biz";
+import { BizBud, EntityAtom, EntityID, EntityFork } from "app/Biz";
 import { Store } from "app/tool";
 import { WritableAtom, atom } from "jotai";
 import { Atom, BizPhraseType, ParamSearchAtomBuds } from "uqs/UqDefault";
@@ -14,7 +14,7 @@ export abstract class IDSelectStore<E extends EntityID> extends Store<E> {
     abstract search(param: any, pageStart: any, pageSize: number): Promise<any[]>;
 }
 
-class SpecSelectStore extends IDSelectStore<EntitySpec> {
+class SpecSelectStore extends IDSelectStore<EntityFork> {
     async search(param: any, pageStart: any, pageSize: number): Promise<any[]> {
         let results = await this.uq.GetSpecListFromBase.query({ base: param.base, phrase: this.entity.id });
         let { ret } = results;
@@ -85,7 +85,7 @@ export interface RowMed {
 
 export function createIDSelectStore(entity: EntityID): IDSelectStore<EntityID> {
     switch (entity.bizPhraseType) {
-        case BizPhraseType.fork: return new SpecSelectStore(entity as EntitySpec, [], undefined);
+        case BizPhraseType.fork: return new SpecSelectStore(entity as EntityFork, [], undefined);
         case BizPhraseType.atom: return new AtomSelectStore(entity as EntityAtom, [], undefined);
     }
 }

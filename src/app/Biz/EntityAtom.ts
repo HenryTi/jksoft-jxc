@@ -5,7 +5,7 @@ import { BudGroup, Entity } from "./Entity";
 
 export abstract class EntityID extends Entity {
     readonly subClasses: EntityID[] = [];
-    specs: EntitySpec[];
+    specs: EntityFork[];
     titleBuds: BizBud[];
     primeBuds: BizBud[];
     uniques: string[];
@@ -20,7 +20,7 @@ export abstract class EntityID extends Entity {
         return us;
     }
 
-    addSpec(spec: EntitySpec) {
+    addSpec(spec: EntityFork) {
         if (this.specs === undefined) this.specs = [];
         this.specs.push(spec);
     }
@@ -179,7 +179,7 @@ abstract class EntityIDWithBase extends EntityID {
     }
 }
 
-export class EntitySpec extends EntityIDWithBase {
+export class EntityFork extends EntityIDWithBase {
     readonly keyColl: { [key: number]: BizBud; } = {};
     readonly keys: BizBud[] = [];
     readonly showKeys: BizBud[] = [];
@@ -313,7 +313,7 @@ export class EntityCombo extends EntityID {
 
 export class EntityPick extends Entity {
     atoms: EntityAtom[];
-    specs: EntitySpec[];
+    specs: EntityFork[];
     protected override fromSwitch(i: string, val: any) {
         const { entities } = this.biz;
         function fromArr(items: string[]) {

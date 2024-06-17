@@ -1,5 +1,5 @@
 import { Biz, EntityAtom } from "app/Biz";
-import { EntitySpec } from "app/Biz/EntityAtom";
+import { EntityFork } from "app/Biz/EntityAtom";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import { useQuery } from "react-query";
@@ -10,7 +10,7 @@ interface SpecAtom {
     value: Atom;
 }
 interface SpecItem {
-    entity: EntitySpec;
+    entity: EntityFork;
     id: number;
     keys: (string | number)[];
     props: (string | number)[];
@@ -63,7 +63,7 @@ export async function loadSpec(uq: UqExt, biz: Biz, specId: number): Promise<Spe
             break;
         }
         if (type === 'spec') {
-            let spec: SpecItem = buildSpec(entity as EntitySpec, row);
+            let spec: SpecItem = buildSpec(entity as EntityFork, row);
             specs.push(spec);
         }
     }
@@ -74,7 +74,7 @@ export async function loadSpec(uq: UqExt, biz: Biz, specId: number): Promise<Spe
             value: { id, base, no, ex, },
         }
     }
-    function buildSpec(entity: EntitySpec, row: ReturnGetSpecProps): SpecItem {
+    function buildSpec(entity: EntityFork, row: ReturnGetSpecProps): SpecItem {
         let { keys: keysArr, buds: propsArr } = entity;
         let coll: { [bud: number]: string | number } = {};
         let keys: (string | number)[] = [];

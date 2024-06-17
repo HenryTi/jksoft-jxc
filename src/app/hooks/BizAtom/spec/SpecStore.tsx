@@ -1,4 +1,4 @@
-import { EntitySpec } from "app/Biz";
+import { EntityFork } from "app/Biz";
 import { Store } from "app/tool";
 import { atom } from "jotai";
 import { useRef } from "react";
@@ -18,11 +18,11 @@ export interface BudValues {
     [bud: string]: BudValue;
 }
 
-export class SpecStore extends Store<EntitySpec> {
+export class SpecStore extends Store<EntityFork> {
     readonly itemsAtom = atom(undefined as any[]);
     readonly baseValue: AtomIDValue;
 
-    constructor(entitySpec: EntitySpec, baseValue: AtomIDValue) {
+    constructor(entitySpec: EntityFork, baseValue: AtomIDValue) {
         super(entitySpec);
         this.baseValue = baseValue;
     }
@@ -94,7 +94,7 @@ export class SpecStore extends Store<EntitySpec> {
     }
 }
 
-export function useSpecStore(spec: EntitySpec, baseValue: AtomIDValue) {
+export function useSpecStore(spec: EntityFork, baseValue: AtomIDValue) {
     const ret = useRef(new SpecStore(spec, baseValue));
     return ret.current;
 }

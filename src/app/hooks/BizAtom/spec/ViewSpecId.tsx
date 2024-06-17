@@ -1,4 +1,4 @@
-import { BizBud, EntitySpec } from "app/Biz";
+import { BizBud, EntityFork } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { ViewBudEmpty } from "app/hooks/tool";
 import { useEffect, useState } from "react";
@@ -30,7 +30,7 @@ export function ViewSpecId({ id }: { id: number; }) {
     if (value === null) return <>null</>;
     const { phrase } = value;
     const props = value.value as [number, number | string][];
-    const entitySpec = biz.entityFromId<EntitySpec>(phrase);
+    const entitySpec = biz.entityFromId<EntityFork>(phrase);
     const { noBud, exBud, showKeys } = entitySpec;
     function ViewContent({ bud }: { bud: BizBud; }) {
         return <>{(props.find(v => v[0] === bud.id))[1]}</>;

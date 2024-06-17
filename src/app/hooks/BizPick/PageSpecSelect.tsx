@@ -1,12 +1,12 @@
 import { Page, PageSpinner, useModal } from "tonwa-app";
 import { RowColsSm } from "../tool";
-import { EntitySpec } from "app/Biz";
+import { EntityFork } from "app/Biz";
 import { useState } from "react";
 import { ViewBud } from "..";
 import { List, useEffectOnce } from "tonwa-com";
 import { createIDSelectStore } from "./IDSelectStore";
 
-export function PagePickSelect({ base, entity }: { base: number; entity: EntitySpec; }) {
+export function PagePickSelect({ base, entity }: { base: number; entity: EntityFork; }) {
     const modal = useModal();
     const { keys } = entity;
     const [list, setList] = useState(undefined as any[]);

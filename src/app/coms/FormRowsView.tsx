@@ -1,4 +1,4 @@
-import { EntityAtom, EntityID } from "app/Biz";
+import { EntityAtom, EntityID, EntityFork } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { ViewSpecBaseOnly, ViewSpecNoAtom, useIDSelect } from "app/hooks";
 import { RowCols } from "app/hooks/tool";
@@ -149,6 +149,7 @@ export interface FormAtom extends FormLabelName {
     atom: EnumAtom;
     options?: RegisterOptions;
     entityAtom?: EntityID;
+    params?: any;
 }
 
 export interface FormSubmit extends FormLabel {
@@ -175,6 +176,7 @@ export interface FormRowsViewProps extends FormProps {
 }
 
 export interface FormRowViewProps extends FormProps {
+    params?: any;        // for FORK base only
     row: FormRow;
 }
 
@@ -264,7 +266,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
         </Band>
     }
 
-    const { entityAtom, atom, options } = row as FormAtom;
+    const { entityAtom, atom, options, params } = row as FormAtom;
     if (entityAtom !== undefined) {
         let value = options?.value;
         let { name } = row as FormAtom;
@@ -273,12 +275,23 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
         }
         let error: FieldError = errors[name] as FieldError;
         if (entityAtom.bizPhraseType === BizPhraseType.fork) {
+            // fork???
+            return <ViewFormFork row={row as FormAtom} label={label} error={error}
+                entity={entityAtom as EntityFork}
+                inputProps={register(name, options)}
+                setValue={setValue}
+                clearErrors={clearErrors}
+                onChange={onChange}
+                params={params} />;
+
+            /*
             return <Band label={label}>
                 <ViewSpecBaseOnly id={value} />
                 <RowCols>
                     <ViewSpecNoAtom id={value} />
                 </RowCols>
             </Band>;
+            */
         }
         return <ViewFormAtom row={row as FormAtom} label={label} error={error}
             entityAtom={entityAtom as EntityAtom}
@@ -310,7 +323,6 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
                 inputProps={register(name, newOptions)} defaultValue={options?.value}
                 right={right} />;
         case 'submit':
-            // readOnly={readOnly}
             return <Band>
                 <div className="d-flex">
                     <div className="flex-fill">
@@ -332,7 +344,6 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
     entityAtom: EntityAtom;
     setValue: UseFormSetValue<any>;
     error: FieldError;
-    // setError: UseFormSetError<any>;
     clearErrors: UseFormClearErrors<any>;
     inputProps: UseFormRegisterReturn;
     onChange: (props: { name: string; value: string, type: 'number' }) => void;
@@ -343,7 +354,6 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
     const { name, default: defaultValue, readOnly } = row;
     const [id, setId] = useState<number>(defaultValue);
     async function onSelectAtom() {
-        // if (readOnly === true) return;
         clearErrors?.(name);
         let ret = await IDSelect(entityAtom, undefined);
         if (ret === undefined) return;
@@ -380,6 +390,66 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
     }
     return <Band label={label}>
         <div className={cnInput} onClick={onSelectAtom}>
+            {content} &nbsp;
+            <input name={name} type="hidden" {...inputProps} />
+        </div>
+        {vError}
+    </Band>
+}
+
+function ViewFormFork({ row, label, error, inputProps, clearErrors, setValue, entity, params, onChange }: {
+    row: FormAtom;
+    label: string | JSX.Element;
+    entity: EntityFork;
+    setValue: UseFormSetValue<any>;
+    error: FieldError;
+    clearErrors: UseFormClearErrors<any>;
+    inputProps: UseFormRegisterReturn;
+    params: any;
+    onChange: (props: { name: string; value: string, type: 'number' }) => void;
+}) {
+    const uqApp = useUqApp();
+    const { uq } = uqApp;
+    const IDSelect = useIDSelect();
+    const { name, default: defaultValue, readOnly } = row;
+    const [id, setId] = useState<number>(defaultValue);
+    async function onSelect() {
+        clearErrors?.(name);
+        let ret = await IDSelect(entity, params);
+        if (ret === undefined) return;
+        const { id } = ret;
+        if (setValue !== undefined) {
+            setValue(name, id);
+        }
+        setId(id);
+        onChange?.({ name, value: String(id), type: 'number' });
+    }
+    function ViewAtom({ value }: { value: any }) {
+        const { no, ex } = value;
+        return <>{ex} &nbsp; <small className="text-muted">{no}</small></>;
+    }
+    let content: any;
+    if (id === undefined && entity) {
+        let { placeHolder } = row;
+        if (!placeHolder) placeHolder = '点击选择';
+        content = <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>;
+    }
+    else {
+        content = <IDView uq={uq} id={Number(id)} Template={ViewAtom} />;
+    }
+    let cnInput = 'form-control ';
+    if (readOnly !== true) {
+        cnInput += ' cursor-pointer ';
+    }
+    let vError: any = undefined;
+    if (error) {
+        cnInput += 'is-invalid'
+        vError = <div className="invalid-feedback mt-1">
+            {error.message?.toString()}
+        </div>;
+    }
+    return <Band label={label}>
+        <div className={cnInput} onClick={onSelect}>
             {content} &nbsp;
             <input name={name} type="hidden" {...inputProps} />
         </div>

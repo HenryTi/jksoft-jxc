@@ -1,7 +1,7 @@
 import { Page, useModal } from "tonwa-app";
 import { useSpecStore } from "./SpecStore";
 import { FA, List, useEffectOnce } from "tonwa-com";
-import { BizBud, EntitySpec } from "app/Biz";
+import { BizBud, EntityFork } from "app/Biz";
 import { useAtomValue } from "jotai";
 import { PageSpecNew } from "./PageSpecNew";
 import { RowColsSm } from "app/hooks/tool";
@@ -9,7 +9,7 @@ import { ViewBud } from "app/hooks";
 import { PageSpecEdit } from "./PageSpecEdit";
 import { AtomIDValue } from "../AtomIDValue";
 
-export function PageSpecList({ entitySpec, baseValue }: { entitySpec: EntitySpec; baseValue: AtomIDValue; }) {
+export function PageSpecList({ entitySpec, baseValue }: { entitySpec: EntityFork; baseValue: AtomIDValue; }) {
     const modal = useModal();
     const store = useSpecStore(entitySpec, baseValue);
     const items = useAtomValue(store.itemsAtom);

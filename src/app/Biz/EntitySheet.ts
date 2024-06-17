@@ -2,7 +2,7 @@ import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
 import { BizBud, BizBudBinValue, BudID, BudDec, BudRadio, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
-import { EntityAtom, EntitySpec } from "./EntityAtom";
+import { EntityAtom, EntityFork } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
 import { UI } from "app/ui";
 import { BudValue } from "tonwa-app";
@@ -78,10 +78,10 @@ export class PickAtom extends BinPick {
 export class PickSpec extends BinPick {
     readonly fromPhraseType = BizPhraseType.fork;
     baseParam: string;
-    from: EntitySpec;
+    from: EntityFork;
 }
 export class PickPend extends BinPick {
-    readonly fromPhraseType = BizPhraseType.pend;
+    readonly fromPhraseType = BizPhraseType.pass;
     from: EntityPend;
     getRefEntities(arrEntity: Entity[]) { arrEntity.push(this.from); }
 }
@@ -94,13 +94,13 @@ export abstract class BinInput extends BizBud {
 }
 
 export class BinInputSpec extends BinInput {
-    spec: EntitySpec;
+    spec: EntityFork;
     baseExp: string;
     baseBud: BizBud;        // 以后不允许表达式。只能是bud id
     build(val: any): void {
         super.build(val);
         const { spec, base } = val;
-        this.spec = this.biz.entityFromId(spec) as EntitySpec;
+        this.spec = this.biz.entityFromId(spec) as EntityFork;
         this.bizPhraseType = this.spec.bizPhraseType;
         let baseBud = this.biz.budFromId(base);
         if (baseBud !== undefined) {
@@ -427,7 +427,7 @@ export class EntityBin extends Entity {
                 break;
             case BizPhraseType.fork:
                 let pickSpec = pickID = new PickSpec(this.biz, id, pickName, this);
-                pickSpec.from = entityID as EntitySpec;
+                pickSpec.from = entityID as EntityFork;
                 pickSpec.baseParam = atomParams?.base;
                 break;
         }
@@ -454,7 +454,7 @@ export class EntityBin extends Entity {
         }
         const buildPickSpec = () => {
             let pick = new PickSpec(this.biz, id, name, this);
-            pick.from = entity as EntitySpec;
+            pick.from = entity as EntityFork;
             return pick;
         }
         const buildPickQuery = () => {
@@ -472,7 +472,7 @@ export class EntityBin extends Entity {
             case BizPhraseType.atom: binPick = buildPickAtom(); break;
             case BizPhraseType.fork: binPick = buildPickSpec(); break;
             case BizPhraseType.query: binPick = buildPickQuery(); break;
-            case BizPhraseType.pend: binPick = buildPickPend(); break;
+            case BizPhraseType.pass: binPick = buildPickPend(); break;
         }
         binPick.pickParams = this.buildPickParams(params);
         binPick.ui = { caption };

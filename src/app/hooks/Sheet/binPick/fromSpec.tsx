@@ -1,4 +1,4 @@
-import { EntitySpec, PickSpec } from "app/Biz";
+import { EntityFork, PickSpec } from "app/Biz";
 import { ViewAtom, ViewAtomId } from "app/hooks/BizAtom";
 import { Atom } from "uqs/UqDefault";
 import { useCallback } from "react";
@@ -20,7 +20,7 @@ import { PagePickSelect, ViewBud } from "app/hooks";
 
 export interface PropsPickSpec {
     base: number;
-    entitySpec: EntitySpec;
+    entitySpec: EntityFork;
     viewTop: any;
     buttonCaption: string | JSX.Element;
     buttonClassName: string;

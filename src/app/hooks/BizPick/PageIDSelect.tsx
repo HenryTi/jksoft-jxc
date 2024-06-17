@@ -3,7 +3,7 @@ import { SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { useModal } from "tonwa-app";
 import { AtomPhrase } from "app/tool";
-import { BizBud, EntityID, EntitySpec } from "app/Biz";
+import { BizBud, EntityID, EntityFork } from "app/Biz";
 import { Atom, BizPhraseType } from "uqs/UqDefault";
 import { RowMed, createIDSelectStore } from "./IDSelectStore";
 import { RowColsSm } from "../tool";
@@ -76,7 +76,7 @@ export function PageIDSelect(props: PropsIDSelect) {
     }
     function ViewSpecItem({ value }: { value: any; }) {
         const keyValues: [number, number | string][] = value.keys;
-        const { showKeys, showBuds, noBud, exBud } = entity as EntitySpec;
+        const { showKeys, showBuds, noBud, exBud } = entity as EntityFork;
         function ViewSpecBud({ bud }: { bud: BizBud; }) {
             if (bud === undefined) return null;
             const { id } = bud;

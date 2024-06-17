@@ -1,4 +1,4 @@
-import { BizBud, EntityID, EntitySpec } from "app/Biz";
+import { BizBud, EntityID, EntityFork } from "app/Biz";
 import { useGetSpec } from "../Uq";
 import { useUqApp } from "app/UqApp";
 import { ViewBudUIType } from "..";
@@ -143,7 +143,7 @@ interface VPPropsMore extends VPProps {
 
 function ViewSpecProps({ phrase, props: propValues, className, buildProp }: VPPropsMore) {
     const { biz } = useUqApp();
-    let entity = biz.entityFromId<EntitySpec>(phrase);
+    let entity = biz.entityFromId<EntityFork>(phrase);
     let { keys, buds: props } = entity;
     let keysLen = keys.length;
     let len = propValues.length;

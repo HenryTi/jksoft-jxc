@@ -201,17 +201,18 @@ export abstract class BudsEditing<R = any> {
                 disabled: valueSetType === ValueSetType.equ,
                 required,
             };
-            let formRow = {
+            let formRow: any = {
                 name,
                 label: caption ?? name,
                 type: 'number',
                 options,
                 required,
-            } as any;
+            };
             const { type, min, max } = budDataType;
             switch (type) {
                 case EnumBudType.atom:
                     formRow.default = this.budValuesTool.getBudValue(field, this.values);
+                    formRow.params = { base: 1 };
                     formRow.atom = null;
                     formRow.readOnly = true;
                     formRow.entityAtom = (budDataType as BudID).entityID;

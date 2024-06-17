@@ -1,7 +1,7 @@
 import { UqApp } from 'app/UqApp';
 import { UqExt } from 'uqs/UqDefault';
 import { Entity } from './Entity';
-import { EntityAtom, EntityCombo, EntityDuo, EntityPick, EntitySpec } from './EntityAtom';
+import { EntityAtom, EntityCombo, EntityDuo, EntityPick, EntityFork } from './EntityAtom';
 import { EntityTree } from './EntityTree';
 import { EntityBin, EntityPend, EntitySheet } from './EntitySheet';
 import { EntityTitle } from './EntityTitle';
@@ -21,7 +21,8 @@ import { atom } from 'jotai';
 enum EnumEntity {
     sheet,
     bin,
-    pend,
+    pend,       // obsolete
+    pass,
     atom,
     spec,       // obselete
     fork,
@@ -31,7 +32,8 @@ enum EnumEntity {
     options,
     report,
     permit,
-    title,
+    title,      // obsolete
+    book,
     assign,
     tree,
     tie,
@@ -56,7 +58,7 @@ export class Biz {
     readonly uq: UqExt;
     readonly atoms: EntityAtom[] = [];
     readonly atomRoots: EntityAtom[] = [];
-    readonly specs: EntitySpec[] = [];
+    readonly specs: EntityFork[] = [];
     readonly duos: EntityDuo[] = [];
     readonly combos: EntityCombo[] = [];
 
@@ -128,6 +130,7 @@ export class Biz {
             [EnumEntity.sheet]: this.buildSheet,
             [EnumEntity.bin]: this.buildBin,
             [EnumEntity.pend]: this.buildPend,
+            [EnumEntity.pass]: this.buildPend,
             [EnumEntity.atom]: this.buildAtom,
             [EnumEntity.spec]: this.buildSpec,          // obsolete
             [EnumEntity.fork]: this.buildSpec,
@@ -138,6 +141,7 @@ export class Biz {
             [EnumEntity.report]: this.buildReport,
             [EnumEntity.permit]: this.buildRole,
             [EnumEntity.title]: this.buildTitle,
+            [EnumEntity.book]: this.buildTitle,
             [EnumEntity.assign]: this.buildAssign,
             [EnumEntity.tree]: this.buildTree,
             [EnumEntity.tie]: this.buildTie,
@@ -373,7 +377,7 @@ export class Biz {
         return bizEntity;
     }
     private buildSpec = (id: number, name: string, type: string): Entity => {
-        let bizEntity = new EntitySpec(this, id, name, type);
+        let bizEntity = new EntityFork(this, id, name, type);
         this.specs.push(bizEntity);
         return bizEntity;
     }
