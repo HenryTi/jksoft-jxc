@@ -202,11 +202,13 @@ export class Biz {
 
         const typeSeq: EnumEntity[] = [
             EnumEntity.title,
+            EnumEntity.book,
             EnumEntity.assign,
             EnumEntity.options,
             EnumEntity.permit,
             EnumEntity.atom,
             EnumEntity.spec,
+            EnumEntity.fork,
             EnumEntity.duo,
             EnumEntity.combo,
             EnumEntity.bin,

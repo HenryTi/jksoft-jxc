@@ -375,7 +375,12 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
         content = <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>;
     }
     else {
-        content = <IDView uq={uq} id={Number(id)} Template={ViewAtom} />;
+        if (id === undefined) {
+            content = <>id: undefined</>;
+        }
+        else {
+            content = <IDView uq={uq} id={Number(id)} Template={ViewAtom} />;
+        }
     }
     let cnInput = 'form-control ';
     if (readOnly !== true) {
