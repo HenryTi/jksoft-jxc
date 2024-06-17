@@ -873,7 +873,7 @@ export enum BizPhraseType {
     sheet = 101,
     main = 102,
     detail = 103,
-    pass = 104,
+    pend = 104,
     detailAct = 111,
     query = 151,
     pick = 161,

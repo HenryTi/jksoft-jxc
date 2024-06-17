@@ -81,7 +81,7 @@ export class PickSpec extends BinPick {
     from: EntityFork;
 }
 export class PickPend extends BinPick {
-    readonly fromPhraseType = BizPhraseType.pass;
+    readonly fromPhraseType = BizPhraseType.pend;
     from: EntityPend;
     getRefEntities(arrEntity: Entity[]) { arrEntity.push(this.from); }
 }
@@ -472,7 +472,7 @@ export class EntityBin extends Entity {
             case BizPhraseType.atom: binPick = buildPickAtom(); break;
             case BizPhraseType.fork: binPick = buildPickSpec(); break;
             case BizPhraseType.query: binPick = buildPickQuery(); break;
-            case BizPhraseType.pass: binPick = buildPickPend(); break;
+            case BizPhraseType.pend: binPick = buildPickPend(); break;
         }
         binPick.pickParams = this.buildPickParams(params);
         binPick.ui = { caption };

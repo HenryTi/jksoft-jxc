@@ -72,7 +72,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
             case BizPhraseType.query:
                 pickResult = await pickFromQuery(namedResults, rearPick as PickQuery, rearPickResultType);
                 break;
-            case BizPhraseType.pass:
+            case BizPhraseType.pend:
                 pickResult = await pickFromPend(divStore, namedResults, rearPick as PickPend);
                 break;
         }

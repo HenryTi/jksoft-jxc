@@ -21,8 +21,7 @@ import { atom } from 'jotai';
 enum EnumEntity {
     sheet,
     bin,
-    pend,       // obsolete
-    pass,
+    pend,
     atom,
     spec,       // obselete
     fork,
@@ -130,7 +129,6 @@ export class Biz {
             [EnumEntity.sheet]: this.buildSheet,
             [EnumEntity.bin]: this.buildBin,
             [EnumEntity.pend]: this.buildPend,
-            [EnumEntity.pass]: this.buildPend,
             [EnumEntity.atom]: this.buildAtom,
             [EnumEntity.spec]: this.buildSpec,          // obsolete
             [EnumEntity.fork]: this.buildSpec,
