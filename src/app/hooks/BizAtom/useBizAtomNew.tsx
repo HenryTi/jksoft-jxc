@@ -109,7 +109,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
             afterSubmit?.({ ...data, ...ret, no });
         }
         return <form onSubmit={handleSubmit(onSubmit)} className={theme.bootstrapContainer + ' my-3 pe-5 '}>
-            <FormRowsView rows={formRows} {...{ register, errors }} />
+            <FormRowsView rows={formRows} {...{ register, errors }} context={undefined} />
         </form>;
     }
 }

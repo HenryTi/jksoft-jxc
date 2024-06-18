@@ -45,7 +45,7 @@ function PageInputAssigned({ user, assigned }: { user: User; assigned: string; }
                 <Band label={'用户'}>
                     <ViewUser user={user} />
                 </Band>
-                <FormRowsView rows={formRows} register={register} errors={errors} />
+                <FormRowsView rows={formRows} register={register} errors={errors} context={undefined} />
             </form>
         </div>
     </Page>

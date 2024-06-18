@@ -28,7 +28,7 @@ abstract class BinStore extends Store<EntityBin> {
     }
 
     onLoaded() {
-        this.budsEditing.setNamedParams({
+        this.budsEditing.addNamedParams({
             '%user': this.sheetStore.userProxy,
             '%sheet': this.sheetStore.mainProxy,
         });

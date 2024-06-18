@@ -117,7 +117,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
             </div>
             <div className="m-3">
                 <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
-                    <FormRowsView rows={formRows} register={register} errors={errors} />
+                    <FormRowsView rows={formRows} register={register} errors={errors} context={budsEditing} />
                 </form>
             </div>
         </Page>;

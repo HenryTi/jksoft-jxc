@@ -179,7 +179,7 @@ function PageAddFormula({ postAtom, postLabel, header, onSubmit }: PageAddFormul
     const { register, handleSubmit, formState: { errors }, clearErrors, setValue } = useForm({ mode: 'onBlur' });
     return <Page header={header + label.formula}>
         <form onSubmit={handleSubmit(onSubmit)} className={theme.bootstrapContainer + ' my-3 pe-5 '}>
-            <FormRowsView rows={formRows} setValue={setValue} clearErrors={clearErrors} {...{ register, errors }} />
+            <FormRowsView rows={formRows} setValue={setValue} clearErrors={clearErrors} {...{ register, errors }} context={undefined} />
         </form>
     </Page>;
 }

@@ -133,7 +133,7 @@ function PageEditUser({ user, usersStore, entity, userBudValues }: { user: Retur
         </div>
         <div className="m-3">
             <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
-                <FormRowsView rows={forRows} register={register} errors={errors} />
+                <FormRowsView rows={forRows} register={register} errors={errors} context={undefined} />
             </form>
         </div>
     </Page>;

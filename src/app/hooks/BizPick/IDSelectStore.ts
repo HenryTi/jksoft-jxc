@@ -84,7 +84,9 @@ export interface RowMed {
 }
 
 export function createIDSelectStore(entity: EntityID): IDSelectStore<EntityID> {
+    if (entity === undefined) return undefined;
     switch (entity.bizPhraseType) {
+        default: return undefined;
         case BizPhraseType.fork: return new SpecSelectStore(entity as EntityFork, [], undefined);
         case BizPhraseType.atom: return new AtomSelectStore(entity as EntityAtom, [], undefined);
     }

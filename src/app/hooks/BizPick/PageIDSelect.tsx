@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
-import { useModal } from "tonwa-app";
+import { Page, PageError, useModal } from "tonwa-app";
 import { AtomPhrase } from "app/tool";
 import { BizBud, EntityID, EntityFork } from "app/Biz";
 import { Atom, BizPhraseType } from "uqs/UqDefault";
@@ -32,6 +32,9 @@ export function PageIDSelect(props: PropsIDSelect) {
     const { current: selectStore } = useRef(createIDSelectStore(entity));
     const modal = useModal();
     const [searchParam, setSearchParam] = useState(loadOnOpen === false ? undefined : { ...params, key: undefined as string });
+    if (entity === undefined) {
+        return <PageError>没有定义ATOM或FORK</PageError>;
+    }
     const entityAtomCaption = entity.caption ?? entity.name;
     const searchBox = <SearchBox className="px-3 py-2"
         onSearch={onSearch}
@@ -64,8 +67,11 @@ export function PageIDSelect(props: PropsIDSelect) {
     }
     // let atomBudsSearch = useAtomBudsSearch({ entity: atom, buds, });
     async function searchAtoms(param: any, pageStart: any, pageSize: number) {
+        if (selectStore === undefined) {
+            alert('no ATOM or FORK defined');
+            return [];
+        }
         let ret = await selectStore.search(param, pageStart, pageSize);
-        // let ret = await atomBudsSearch.search(param, pageStart, pageSize);
         return ret;
     }
 

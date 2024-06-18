@@ -65,6 +65,9 @@ async function runInputDiv(runInputDivProps: RunInputDivProps, valDiv: ValDivBas
     let retInputs = await runInputs(runInputDivProps, valDiv);
     if (retInputs === false) return;
     let divEditing = new DivEditing(divStore, valDiv, namedResults);
+    divEditing.addNamedParams({
+        '%sheet': props.divStore.sheetStore.mainProxy,
+    })
     valDiv.mergeValRow(divEditing.values);
     if (skipInputs !== true) {
         if (divEditing.isInputNeeded() === true) {

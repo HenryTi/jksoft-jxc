@@ -1,5 +1,5 @@
 import { Page, useModal } from "tonwa-app";
-import { useSpecStore } from "./SpecStore";
+import { SpecStore, useSpecStore } from "./SpecStore";
 import { FA, List, useEffectOnce } from "tonwa-com";
 import { BizBud, EntityFork } from "app/Biz";
 import { useAtomValue } from "jotai";
@@ -49,8 +49,9 @@ export function PageSpecList({ entitySpec, baseValue }: { entitySpec: EntityFork
         </div>;
     }
 
-    function onItemClick({ item }: { item: any; }) {
-        modal.open(<PageSpecEdit value={item} store={store} />);
+    function onItemClick(item: any) {
+        let itemStore = store; // new SpecStore();
+        modal.open(<PageSpecEdit value={item} store={itemStore} />);
     }
 
     return <Page header={store.header} right={right}>

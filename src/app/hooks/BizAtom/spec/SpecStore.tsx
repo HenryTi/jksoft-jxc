@@ -4,9 +4,10 @@ import { atom } from "jotai";
 import { useRef } from "react";
 import { BudValue } from "tonwa-app";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { ParamSaveSpec, Spec } from "uqs/UqDefault";
+import { BizPhraseType, ParamSaveSpec, Spec } from "uqs/UqDefault";
 import { ViewAtom } from "../ViewAtom";
 import { AtomIDValue } from "../AtomIDValue";
+import { ViewSpecId } from "app/coms/ViewSpecId";
 
 export enum EnumSaveSpec {
     errorInput = -1,
@@ -40,10 +41,11 @@ export class SpecStore extends Store<EntityFork> {
         const exBudId = exBud === undefined ? 0 : exBud.id;
         for (let item of items) {
             const { id, keys } = item;
-            let value: any = { id };
+            let buds: any = {};
+            let value: any = { id, buds };
             for (let [bud, val] of keys) {
                 switch (bud) {
-                    default: value[bud] = val; break;
+                    default: buds[bud] = val; break;
                     case noBudId: value.no = val; break;
                     case exBudId: value.ex = val; break;
                 }
@@ -90,7 +92,12 @@ export class SpecStore extends Store<EntityFork> {
     }
 
     topViewAtom() {
-        return <ViewAtom value={this.baseValue.main} />;
+        switch (this.entity.base.bizPhraseType) {
+            case BizPhraseType.fork:
+                return <ViewSpecId id={this.baseValue.id} />;
+            case BizPhraseType.atom:
+                return <ViewAtom value={this.baseValue.main} />;
+        }
     }
 }
 

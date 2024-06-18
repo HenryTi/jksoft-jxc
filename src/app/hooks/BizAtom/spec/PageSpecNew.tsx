@@ -28,12 +28,19 @@ export function PageSpecNew({ store }: { store: SpecStore; }) {
             switch (budDataType.type) {
                 case EnumBudType.date: v = getDays(v); break;
             }
+            if (budDataType.dataType === 'number') {
+                if (v === '') v = null;
+            }
             keyValues[name] = v;
         }
         const propValues: BudValues = {};
         for (let prop of props) {
-            const { name } = prop;
-            propValues[name] = data[name];
+            const { name, budDataType } = prop;
+            let v = data[name];
+            if (budDataType.dataType === 'number') {
+                if (v === '') v = null;
+            }
+            propValues[name] = v;
         }
         let results = await store.saveSpec(undefined, keyValues, propValues);
         switch (results) {
@@ -58,7 +65,7 @@ export function PageSpecNew({ store }: { store: SpecStore; }) {
         </div>
         <div className="m-3">
             <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
-                <FormRowsView rows={formRows} register={register} errors={errors} />
+                <FormRowsView rows={formRows} register={register} errors={errors} context={budsEditing} />
             </form>
         </div>
     </Page>;

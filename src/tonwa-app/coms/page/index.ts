@@ -4,3 +4,4 @@ export * from './PageTabs';
 export * from './PageTabsLayout';
 export * from './PageSpinner';
 export * from './PageLoader';
+export * from './PageError';

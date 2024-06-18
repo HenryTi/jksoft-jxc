@@ -28,7 +28,7 @@ export function PagePickValue<T extends string | number>({ label, value, type, o
     return <Page header={label}>
         <div className="px-5 py-3">
             <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmit)}>
-                <FormRowsView rows={formRows} register={register} errors={errors} />
+                <FormRowsView rows={formRows} register={register} errors={errors} context={undefined} />
             </form>
         </div>
     </Page>;

@@ -26,7 +26,7 @@ export function useDetailNew(sheetStore: SheetStore) {
                 switch (pickName) {
                     default:
                         namedResults[pickName] = rowProps;
-                        binEditing.setNamedParams(namedResults);
+                        binEditing.addNamedParams(namedResults);
                         break;
                     case 'i$pick':
                         binEditing.setNamedValue('i', rowProps.id, undefined);
@@ -53,7 +53,7 @@ export function useDetailNew(sheetStore: SheetStore) {
         else {
             // 直接跳出输入界面，开始编辑
             const binEditing = new BinEditing(sheetStore, entityBin);
-            binEditing.setNamedParams(namedResults);
+            binEditing.addNamedParams(namedResults);
             let ret = await rowEdit(binEditing, undefined);
             if (ret === true) {
                 const { values: valRow } = binEditing;

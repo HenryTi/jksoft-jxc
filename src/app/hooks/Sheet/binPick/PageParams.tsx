@@ -79,7 +79,7 @@ function PageParams({ header, valueParams, inputParams }: PageParamsProps) {
             </Band>
         })}
         <form className={theme.bootstrapContainer + ' my-3 '} onSubmit={handleSubmit(onSubmitForm)}>
-            <FormRowsView rows={formRows} register={register} errors={errors} />
+            <FormRowsView rows={formRows} register={register} errors={errors} context={inputParams} />
         </form>
     </Page>;
 }

@@ -101,7 +101,7 @@ export function PageSites() {
                 </div>
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="container my-3 pe-5">
-                <FormRowsView rows={formRows} {...{ register, errors }} />
+                <FormRowsView rows={formRows} {...{ register, errors }} context={undefined} />
             </form>
         </Page>;
     }

@@ -79,7 +79,7 @@ export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
     return <Page header={binDiv.ui?.caption ?? '输入明细'}>
         <ViewTop />
         <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
-            <FormRowsView rows={formRows} register={register} errors={errors} setValue={setValue} />
+            <FormRowsView rows={formRows} register={register} errors={errors} setValue={setValue} context={divEditing} />
         </form>
     </Page>
 }

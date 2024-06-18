@@ -88,7 +88,7 @@ function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; val
             <ViewIdField bud={budX} budBase={budXBase} value={binDetail.x} base={valDiv?.xBase} />
         </div>
         <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmit)}>
-            <FormRowsView rows={formRows} register={register} errors={errors} />
+            <FormRowsView rows={formRows} register={register} errors={errors} context={binEditing} />
         </form>
     </Page>;
 }

@@ -1,5 +1,5 @@
 import { RegisterOptions } from "react-hook-form";
-import { FormRow } from "app/coms";
+import { FormContext, FormRow } from "app/coms";
 import {
     BizBud, BudID, BudDec, BudRadio, EnumBudType, ValueSetType, BudValuesTool,
     BudValuesToolBase
@@ -9,21 +9,20 @@ import { getDays } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
 import { BudCheckValue } from "tonwa-app";
+import { Atom } from "jotai";
 
-export abstract class BudsEditing<R = any> {
+export abstract class BudsEditing<R = any> implements FormContext {
     private readonly requiredFields: BizBud[] = [];
     protected readonly calc: Calc;
     protected budValuesTool: BudValuesToolBase<R>;
     readonly buds: BizBud[];
     readonly namedBuds: { [name: string]: BizBud } = {};
-    // protected readonly formulas: Formulas;
     abstract get values(): R;
     protected stopRequired: boolean;
 
     constructor(buds: BizBud[]/*, initBinRow?: any*/) {
         let requiredFields = this.requiredFields;
         const formulas: Formulas = [];
-        // this.formulas = formulas;
         this.buds = buds;
         for (let bud of buds) {
             let f = bud;
@@ -51,7 +50,16 @@ export abstract class BudsEditing<R = any> {
         this.calc = this.createCalc(formulas);
     }
 
-    // protected abstract createCalc(): Calc;
+    getTrigger(name: string): Atom<number> {
+        throw new Error("Method not implemented.");
+    }
+    getParams(name: string): any {
+        let allFields = this.allFields;
+        let field = allFields.find(v => v.name === name);
+        if (field === undefined) return;
+        return { base: this.calcValue(field.atomParams?.base) }
+    }
+
     protected createCalc(formulas: Formulas): Calc {
         return new Calc(formulas, this.values as any);
     }
@@ -65,7 +73,7 @@ export abstract class BudsEditing<R = any> {
         return ret;
     }
 
-    setNamedParams(namedResults: { [name: string]: any }) {
+    addNamedParams(namedResults: { [name: string]: any }) {
         if (namedResults === undefined) return;
         this.calc.addValues(undefined, namedResults);
         const { results } = this.calc;
@@ -197,7 +205,7 @@ export abstract class BudsEditing<R = any> {
             const { caption, budDataType, ui } = bud;
             if (ui?.show === true) continue;
             let options: RegisterOptions = {
-                value: this.budValuesTool.getBudValue(field, this.values), // this.getDefaultValue(field),
+                value: this.budValuesTool.getBudValue(field, this.values),
                 disabled: valueSetType === ValueSetType.equ,
                 required,
             };
@@ -212,7 +220,7 @@ export abstract class BudsEditing<R = any> {
             switch (type) {
                 case EnumBudType.atom:
                     formRow.default = this.budValuesTool.getBudValue(field, this.values);
-                    formRow.params = { base: 1 };
+                    // formRow.params = { base: this.calcValue(field.atomParams?.base) };
                     formRow.atom = null;
                     formRow.readOnly = true;
                     formRow.entityAtom = (budDataType as BudID).entityID;

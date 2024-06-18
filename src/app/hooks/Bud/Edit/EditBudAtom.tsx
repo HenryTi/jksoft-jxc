@@ -5,7 +5,7 @@ import { ViewAtomId } from "../../BizAtom";
 import { useState } from "react";
 import { useIDSelect } from "../../BizPick";
 import { BizPhraseType } from "uqs/UqDefault";
-import { ViewSpecId } from "app/hooks/BizAtom/spec";
+import { ViewSpecId } from "app/coms/ViewSpecId";
 
 export function EditBudAtom(props: EditBudTemplateProps) {
     const { uq } = useUqApp();

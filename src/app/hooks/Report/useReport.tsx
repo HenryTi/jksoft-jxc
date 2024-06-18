@@ -3,10 +3,9 @@ import { useUqApp } from "app/UqApp";
 import { useParams } from "react-router-dom";
 import { from62, to62 } from "tonwa-com";
 import { PageReport } from "./PageReport";
-// import { useBizAtomSpec } from "app/views/JXC/Atom";
 
 export interface OptionsUseSubject {
-    title: string; // EnumTitle;
+    title: string;
     bud: string;
 }
 

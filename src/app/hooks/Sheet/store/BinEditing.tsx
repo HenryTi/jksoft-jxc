@@ -30,11 +30,7 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
             this.setValues(initBinRow);
         }
     }
-    /*
-    protected createCalc(): Calc {
-        return new Calc(this.formulas, this.values as any);
-    }
-    */
+
     private setValues(binRow: BinRow) {
         Object.assign(this.values, binRow);
         let obj = new Proxy(binRow, this.entityBin.proxyHandler());
@@ -61,7 +57,7 @@ export class DivEditing extends BinBudsEditing {
         super(divStore.sheetStore, divStore.entityBin, binDiv.buds, valRow);
         this.divStore = divStore;
         this.valDiv = valDiv;
-        this.setNamedParams(namedResults);
+        this.addNamedParams(namedResults);
         // 这里先强行设iBase和xBase from pend
         if (namedResults !== undefined) {
             let pendValues = namedResults['pend'];
