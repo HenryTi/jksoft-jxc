@@ -91,13 +91,13 @@ export class DivEditing extends BinBudsEditing {
         this.budValuesTool.setBudValue(budValue, this.values, pendLeft);
     }
 
-    buildViewBuds(bizAtomColl: AtomColl) {
+    buildViewBuds(/*bizAtomColl: AtomColl*/) {
         return this.budValuesTool.fields.map(field => {
             const bud = field;
             const { id } = bud;
             let value = this.budValuesTool.getBudValue(field, this.values);
             if (value === null || value === undefined) return null;
-            return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} atomColl={bizAtomColl} />;
+            return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} /*atomColl={bizAtomColl} */ />;
         })
     }
 }

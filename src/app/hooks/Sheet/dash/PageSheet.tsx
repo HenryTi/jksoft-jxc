@@ -21,7 +21,15 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     const start = useStartSheetStore(store, pick);
 
     async function onSubmit() {
-        if (main.trigger() === false || divStore.trigger() === false) {
+        function checkTrigger() {
+            if (main.trigger() === false) return false;
+            if (divStore !== undefined) {
+                if (divStore.trigger() === false) return false;
+            }
+            return true;
+        }
+
+        if (checkTrigger() === false) {
             setAtomValue(atomReaction, <><FA name="bell-o" className="text-danger me-2" />请检查数据！</>);
             return;
         }

@@ -11,7 +11,6 @@ export function ViewRowLeaf(props: ViewDivProps) {
     const { sheetStore } = divStore;
     const { atomValRow, atomValue, binDiv } = valDiv;
     const { binDivBuds } = binDiv;
-    // const { i: iBud, iBase } = entityBin;
     const { budValue, budPrice, budAmount, budI } = binDivBuds;
     const valRow = useAtomValue(atomValRow);
     const value = useAtomValue(atomValue);
@@ -19,30 +18,12 @@ export function ViewRowLeaf(props: ViewDivProps) {
     let {
         value: cnValue, price: cnPrice, amount: cnAmount
     } = theme;
-    const { bizAtomColl } = sheetStore;
-    //let budValueColl = budsColl[i];
-    // let viewAtomMain: any;
-    /*
-    const { budIBase } = binDivBuds;
-    if (budIBase === undefined && iBase === undefined) {
-        if (budI !== undefined) {
-            viewAtomMain = <div className="mb-1">
-                <ViewSpecAtom id={i} store={sheetStore} />
-                <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
-            </div>;
-        }
-    }
-    else {
-        viewAtomMain = <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />;
-    }
-    */
-    // viewAtomMain = <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />;
+    // const { bizAtomColl } = sheetStore;
     let viewIBud: any;
     if (budI !== undefined) {
         viewIBud = <>
             <ViewSpecBuds id={i} store={sheetStore} />
         </>;
-        // <ViewShowBuds bud={budI} budValueColl={budValueColl} atomColl={bizAtomColl} />
     }
     const divEditing = new DivEditing(divStore, valDiv);
     return <>
@@ -50,7 +31,7 @@ export function ViewRowLeaf(props: ViewDivProps) {
             <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />
             <RowColsSm contentClassName="flex-fill">
                 {viewIBud}
-                {divEditing.buildViewBuds(bizAtomColl)}
+                {divEditing.buildViewBuds()}
             </RowColsSm>
         </div>
         <ViewDivRight>

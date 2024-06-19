@@ -206,7 +206,9 @@ export class SheetStore extends Store<EntitySheet> {
         let { main, details } = await this.loadBinData(sheetId);
         if (main === undefined) return;
         this.main.setValue(main);
-        this.divStore.load(details, false);
+        if (this.divStore !== undefined) {
+            this.divStore.load(details, false);
+        }
         setAtomValue(this.atomLoaded, true);
         this.main.onLoaded();
     }

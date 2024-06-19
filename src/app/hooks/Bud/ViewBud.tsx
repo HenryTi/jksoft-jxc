@@ -1,15 +1,16 @@
-import { BizBud, BudRadio, EnumBudType } from "app/Biz";
+import { BizBud, BudID, BudRadio, EnumBudType } from "app/Biz";
 import { ViewBudSpec, ViewSpecNoAtom } from "app/hooks";
-import { AtomColl, contentFromDays } from "app/tool";
+import { Store, contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
-import { Atom as BizAtom } from "uqs/UqDefault";
+import { Atom as BizAtom, BizPhraseType } from "uqs/UqDefault";
+import { ViewSpecId } from "app/coms/ViewSpecId";
 
 export enum ViewBudUIType {
     notInDiv = 0,
     inDiv = 1,
 }
 
-export function ViewBud({ bud, value, uiType, noLabel, atomColl }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; atomColl?: AtomColl; }) {
+export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; store?: Store/* atomColl?: AtomColl;*/ }) {
     if (value === undefined) return null;
     if (value === null) return null;
     if (value === '') return null;
@@ -23,7 +24,7 @@ export function ViewBud({ bud, value, uiType, noLabel, atomColl }: { bud: BizBud
     else {
         let type = budDataType?.type;
         if (type === EnumBudType.atom) {
-            return atom(bud, value, uiType, noLabel, atomColl);
+            return atom(bud, value, uiType, noLabel, store);
         }
         switch (type) {
             default:
@@ -80,8 +81,21 @@ export function budContent(bud: BizBud, value: any) {
     return content;
 }
 
-function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, atomColl: AtomColl) {
-    let bizAtom: BizAtom = atomColl?.[value];
+function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, store: Store) {
+    function view() {
+        switch (bud.name) {
+            default:
+                return <ViewBudSpec id={value} bud={bud} noLabel={noLabel} />;
+            case 'i':
+            case 'x':
+                return <ViewSpecNoAtom id={value} uiType={uiType} noLabel={noLabel} />;
+        }
+    }
+    if (store === undefined) {
+        return view();
+    }
+    const { bizAtomColl } = store;
+    let bizAtom: BizAtom = bizAtomColl[value];
     if (bizAtom !== undefined) {
         let { no, ex } = bizAtom
         let title = `${ex} ${no}`;
@@ -95,13 +109,23 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
             {ex}
         </LabelBox>;
     }
-    switch (bud.name) {
-        default:
-            return <ViewBudSpec id={value} bud={bud} noLabel={noLabel} />;
-        case 'i':
-        case 'x':
-            return <ViewSpecNoAtom id={value} uiType={uiType} noLabel={noLabel} />;
+    const { bizSpecColl } = store;
+    let specValue = bizSpecColl[value];
+    if (specValue !== undefined) {
+        return <div>spec: {specValue.atom.id}</div>
     }
+    else {
+        const { entityID } = bud.budDataType as BudID;
+        if (entityID.bizPhraseType === BizPhraseType.fork) {
+            let label: any;
+            const { caption, name } = bud;
+            label = caption ?? name;
+            return <LabelBox label={label}>
+                <ViewSpecId id={value} />
+            </LabelBox>
+        }
+    }
+    return view();
 }
 
 function radio(bud: BizBud, value: any) {
@@ -131,11 +155,7 @@ function check(bud: BizBud, value: any) {
     }
     return <>{vArr}</>;
 }
-/*
-function intof(bud: BizBud, value: any) {
-    return <>intof: {value}</>;
-}
-*/
+
 function pick(bud: BizBud, value: any) {
     return <>pick: {value}</>;
 }

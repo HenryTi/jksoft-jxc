@@ -4,10 +4,10 @@ import { ViewBud, budContent } from "../Bud";
 import { FA, theme } from "tonwa-com";
 import React from "react";
 import { BizBud, Entity } from "app/Biz";
-import { AtomColl, BudValueColl } from "app/tool";
+import { BudValueColl, Store } from "app/tool";
 
 // atom field owns buds
-export function OwnedBuds({ values, noLabel, atomColl }: { values: [number, BudValue][]; noLabel?: boolean; atomColl?: AtomColl; }) {
+export function OwnedBuds({ values, noLabel, store }: { values: [number, BudValue][]; noLabel?: boolean; store: Store; }) {
     if (values === undefined) return null;
     const { biz } = useUqApp();
     return <>{
@@ -22,7 +22,7 @@ export function OwnedBuds({ values, noLabel, atomColl }: { values: [number, BudV
                 </>;
             }
             else {
-                content = <ViewBud bud={bizBud} value={budValue} noLabel={noLabel} atomColl={atomColl} />;
+                content = <ViewBud bud={bizBud} value={budValue} noLabel={noLabel} store={store} />;
             }
             return <React.Fragment key={budId}>
                 {content}
@@ -31,7 +31,9 @@ export function OwnedBuds({ values, noLabel, atomColl }: { values: [number, BudV
     </>;
 }
 
-export function ViewShowBuds({ budValueColl, bud, noLabel, atomColl }: { budValueColl: BudValueColl; bud: BizBud; atomColl?: AtomColl; noLabel?: boolean; }) {
+export function ViewShowBuds({ bud, id, noLabel, store }: { bud: BizBud; id: number; store: Store; noLabel?: boolean; }) {
+    const { budsColl } = store;
+    const budValueColl = budsColl[id];
     if (budValueColl === undefined) return null;
     if (bud === undefined) return null;
     let { fieldShows } = bud;
@@ -44,12 +46,14 @@ export function ViewShowBuds({ budValueColl, bud, noLabel, atomColl }: { budValu
             const bud = fieldShow;
             let { id } = bud;
             let value = budValueColl[id];
-            return <ViewBud key={index} bud={bud} value={value} noLabel={noLabel} atomColl={atomColl} />;
+            return <ViewBud key={index} bud={bud} value={value} noLabel={noLabel} store={store} />;
         })}
     </>;
 }
 
-export function ViewAtomTitles({ budValueColl, bud, noLabel, atomColl }: { budValueColl: BudValueColl; bud: BizBud; noLabel?: boolean; atomColl: AtomColl; }) {
+export function ViewAtomTitles({ bud, id, noLabel, store }: { id: number; bud: BizBud; noLabel?: boolean; store: Store; }) {
+    const { budsColl } = store;
+    let budValueColl = budsColl[id];
     if (budValueColl === undefined) return null;
     if (bud === undefined) return null;
     let buds = bud.getTitleBuds();

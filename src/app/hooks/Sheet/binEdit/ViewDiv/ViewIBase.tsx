@@ -22,11 +22,11 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     let iBase = valDiv.getIBase(sheetStore, iValue);
     if (iBase === undefined) iBase = iValue;
     if (iBase === undefined) return null;
-    const { budsColl, bizAtomColl } = sheetStore
-    let budValueColl = budsColl[iBase];
+    // const { budsColl, bizAtomColl } = sheetStore
+    // let budValueColl = budsColl[iBase];
     return <>
         <ViewSpecAtom id={iBase} store={sheetStore} />
-        <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />
+        <ViewAtomTitles bud={iBud} id={iBase} store={sheetStore} />
     </>;
 }
 
@@ -41,26 +41,26 @@ export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, 
     const { budIBase } = binDivBuds;
     if (budIBase === undefined) return null;
     let { iBase } = valDiv;
-    const { budsColl, bizAtomColl } = sheetStore;
-    let budValueColl = budsColl[iBase];
-    return <ViewShowBuds bud={budIBase} budValueColl={budValueColl} atomColl={bizAtomColl} />
+    // const { budsColl, bizAtomColl } = sheetStore;
+    // let budValueColl = budsColl[iBase];
+    return <ViewShowBuds bud={budIBase} id={iBase} store={sheetStore} />
 }
 
 export function ViewIBaseFromId({ sheetStore, valDiv, iBase }: { sheetStore: SheetStore, valDiv: ValDivBase; iBase: number; }) {
     let { iBase: budIBase } = valDiv.binDiv.entityBin
-    const { budsColl, bizAtomColl } = sheetStore
+    const { bizAtomColl } = sheetStore
     let bizAtomValue = bizAtomColl[iBase];
-    let budValueColl = budsColl[iBase];
+    // let budValueColl = budsColl[iBase];
     return <div>
         <div>
             <ViewAtom value={bizAtomValue} />
         </div>
         <div>
-            <ViewAtomTitles budValueColl={budValueColl} bud={budIBase} atomColl={bizAtomColl} />
+            <ViewAtomTitles id={iBase} bud={budIBase} store={sheetStore} />
         </div>
         <div className={theme.bootstrapContainer}>
             <RowColsSm contentClassName="flex-fill">
-                <ViewShowBuds bud={budIBase} budValueColl={budValueColl} atomColl={bizAtomColl} />
+                <ViewShowBuds bud={budIBase} id={iBase} store={sheetStore} />
             </RowColsSm>
         </div>
     </div>;

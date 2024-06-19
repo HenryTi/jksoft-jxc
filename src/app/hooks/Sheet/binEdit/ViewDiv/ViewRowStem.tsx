@@ -25,13 +25,13 @@ export function ViewRowStem(props: ViewDivProps) {
         viewPivot = <ViewPivotDiv divStore={divStore} valDiv={valDiv} />;
     }
 
-    const { budsColl, bizAtomColl } = sheetStore;
-    let budValueColl = budsColl[iValue];
+    // const { budsColl, bizAtomColl } = sheetStore;
+    // let budValueColl = budsColl[iValue];
     const divEditing = new DivEditing(divStore, valDiv);
     let content = <>
         <ViewIBaseBuds sheetStore={sheetStore} valDiv={valDiv} />
-        <ViewShowBuds bud={budI} budValueColl={budValueColl} atomColl={bizAtomColl} />
-        {divEditing.buildViewBuds(bizAtomColl)}
+        <ViewShowBuds bud={budI} id={iValue} store={sheetStore} />
+        {divEditing.buildViewBuds()}
     </>;
     function ViewRight() {
         let cn = viewPivot !== undefined ? cnSumBold : cnSum;

@@ -58,8 +58,8 @@ export function ViewPendRow({
         viewAtomTitles = <ViewSpecAtomTitles id={i} store={sheetStore} />;
     }
     else {
-        viewBuds = <ViewShowBuds budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />;
-        viewAtomTitles = <ViewAtomTitles budValueColl={budValueColl} bud={iBud} atomColl={bizAtomColl} />;
+        viewBuds = <ViewShowBuds id={i} bud={iBud} store={sheetStore} />;
+        viewAtomTitles = <ViewAtomTitles id={i} bud={iBud} store={sheetStore} />;
     }
     return <>
         <div className="py-2 bg-white flex-fill ps-3">
