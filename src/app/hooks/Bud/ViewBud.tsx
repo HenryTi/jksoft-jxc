@@ -49,7 +49,7 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
     return <LabelBox label={caption ?? name} className="mb-1">{content}</LabelBox>;
 }
 
-export function budContent(bud: BizBud, value: any) {
+export function budContent(bud: BizBud, value: any, store: Store) {
     let content: any;
     const { name, caption, budDataType } = bud;
     if (value === undefined) {
@@ -58,7 +58,7 @@ export function budContent(bud: BizBud, value: any) {
     else {
         let type = budDataType?.type;
         if (type === EnumBudType.atom) {
-            return `atom:${value}`; // atom(bud, value, uiType, noLabel);
+            return atom(bud, value, ViewBudUIType.notInDiv, true, store);
         }
         switch (type) {
             default:

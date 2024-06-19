@@ -47,7 +47,7 @@ export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: Store;
             let value = budValueColl[id];
             if (value === undefined) return null;
             let vLabel: any;
-            let vContent = budContent(v, value);
+            let vContent = budContent(v, value, store);
             if (noLabel !== true) {
                 vLabel = <><small className={labelColor}>{v.caption ?? v.name}</small>: </>;
             }
@@ -101,7 +101,7 @@ export function ViewSpecAtomTitles({ id, store }: { id: number; store: Store; })
             let value = budValueColl[id];
             if (value === undefined) return null;
             let vLabel: any;
-            let vContent = budContent(v, value);
+            let vContent = budContent(v, value, store);
             if (noLabel !== true) {
                 vLabel = <><small className={labelColor}>{v.caption ?? v.name}</small>: </>;
             }

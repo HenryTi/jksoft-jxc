@@ -4,7 +4,8 @@ import { budContent } from "../../../Bud";
 import { ValDiv } from "../../store";
 import { ViewDivProps } from "./tool";
 
-export function ViewPivotDiv({ valDiv }: ViewDivProps) {
+export function ViewPivotDiv({ valDiv, divStore }: ViewDivProps) {
+    const { sheetStore } = divStore;
     const divs = useAtomValue(valDiv.atomValDivs);
     const { labelColor, value: cnValue } = theme;
     return <>
@@ -28,7 +29,7 @@ export function ViewPivotDiv({ valDiv }: ViewDivProps) {
         let value = binBuds.getBudValue(keyField, valRow);
         if (value === null || value === undefined) return null;
         let keyLabel = <span key={id} className={labelColor}>
-            {budContent(bud, value)}
+            {budContent(bud, value, sheetStore)}
         </span>
         let viewFormat: any;
         if (format !== undefined) {
@@ -41,7 +42,7 @@ export function ViewPivotDiv({ valDiv }: ViewDivProps) {
                 }
                 return <span key={bud.id} className="ms-2">
                     {withLabel && <span className={labelColor + ' small '}>{bud.caption ?? bud.name}:</span>}
-                    {budContent(bud, value)}
+                    {budContent(bud, value, sheetStore)}
                 </span>;
             })
         }

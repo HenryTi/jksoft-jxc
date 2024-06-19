@@ -25,8 +25,6 @@ export function ViewRowStem(props: ViewDivProps) {
         viewPivot = <ViewPivotDiv divStore={divStore} valDiv={valDiv} />;
     }
 
-    // const { budsColl, bizAtomColl } = sheetStore;
-    // let budValueColl = budsColl[iValue];
     const divEditing = new DivEditing(divStore, valDiv);
     let content = <>
         <ViewIBaseBuds sheetStore={sheetStore} valDiv={valDiv} />
