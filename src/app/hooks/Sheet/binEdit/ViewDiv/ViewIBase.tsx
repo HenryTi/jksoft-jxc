@@ -22,8 +22,6 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     let iBase = valDiv.getIBase(sheetStore, iValue);
     if (iBase === undefined) iBase = iValue;
     if (iBase === undefined) return null;
-    // const { budsColl, bizAtomColl } = sheetStore
-    // let budValueColl = budsColl[iBase];
     return <>
         <ViewSpecAtom id={iBase} store={sheetStore} />
         <ViewAtomTitles bud={iBud} id={iBase} store={sheetStore} />
@@ -41,8 +39,6 @@ export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, 
     const { budIBase } = binDivBuds;
     if (budIBase === undefined) return null;
     let { iBase } = valDiv;
-    // const { budsColl, bizAtomColl } = sheetStore;
-    // let budValueColl = budsColl[iBase];
     return <ViewShowBuds bud={budIBase} id={iBase} store={sheetStore} />
 }
 
@@ -50,7 +46,6 @@ export function ViewIBaseFromId({ sheetStore, valDiv, iBase }: { sheetStore: She
     let { iBase: budIBase } = valDiv.binDiv.entityBin
     const { bizAtomColl } = sheetStore
     let bizAtomValue = bizAtomColl[iBase];
-    // let budValueColl = budsColl[iBase];
     return <div>
         <div>
             <ViewAtom value={bizAtomValue} />

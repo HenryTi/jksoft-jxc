@@ -1,8 +1,7 @@
-import { useParams } from "react-router-dom";
 import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { EntitySheet, EntityBin, Biz, EntityPend, BinRow, BizBud, Entity } from "app/Biz";
-import { ParamSaveDetail, UqExt, Atom as BizAtom, ReturnGetPendRetSheet, ReturnGetPendProps } from "uqs/UqDefault";
+import { EntitySheet, EntityBin, EntityPend, BinRow, BizBud, Entity } from "app/Biz";
+import { ParamSaveDetail, ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { PickFunc, PickStates, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
 // import { budValuesFromProps } from "../../tool";
@@ -242,12 +241,6 @@ export class SheetStore extends Store<EntitySheet> {
         let ret = await this.uqGetPend(entityPend, params, pendId);
         let { $page, retSheet, props: showBuds, atoms, specs } = ret;
         this.cacheIdAndBuds(showBuds, atoms, specs);
-        /*
-        const ownerColl = budValuesFromProps(showBuds);
-        Object.assign(this.budsColl, ownerColl);
-        this.addBizAtoms(atoms);
-        this.addBizSpecs(specs, showBuds);
-        */
         let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
         for (let v of retSheet) {
             collSheet[v.id] = v;
@@ -295,10 +288,6 @@ export class SheetStore extends Store<EntitySheet> {
     async start(pick: PickFunc) {
         let ret = await this.main.start(pick);
         if (ret !== undefined) return ret;
-    }
-
-    async saveProp(id: number, bud: number, int: number, dec: number, str: string) {
-        await this.uq.SaveBudValue.submit({ phraseId: bud, id, int, dec, str });
     }
 
     async uqGetPend(entityPend: EntityPend, params: any, pendId: number) {
