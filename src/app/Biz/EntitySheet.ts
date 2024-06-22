@@ -1,6 +1,6 @@
 import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
-import { BizBud, BizBudBinValue, BudID, BudDec, BudRadio, EnumBudType } from "./BizBud";
+import { BizBud, BizBudBinValue, BudID, BudRadio, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntityFork } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
@@ -9,7 +9,6 @@ import { BudValue } from "tonwa-app";
 import { OptionsItem } from ".";
 
 export class PickParam extends BizBud {
-    // name: string;
     bud: string;
     prop: string;       // prop of bud
 

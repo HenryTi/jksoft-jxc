@@ -46,6 +46,7 @@ export class BizBase {
             case 'type': break;
             case 'dataType': break;
             case 'history': break;
+            case 'bin': break;
             case 'phrase': this.phrase = val; break;
             case 'caption':
                 this.ui = { caption: val };

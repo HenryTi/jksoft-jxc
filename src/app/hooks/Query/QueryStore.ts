@@ -8,7 +8,7 @@ export class QueryStore extends Store<EntityQuery> {
         let { ret: retItems, props, specs, atoms } = retQuery;
         this.cacheIdAndBuds(props, atoms, specs);
         let pickedArr: Picked[] = [];
-        let coll: { [atomId: number]: Picked } = {};
+        let coll: { [id: number]: Picked } = {};
         for (let row of retItems) {
             let propArr: Prop[] = [];
             const { id, ban, value } = row;

@@ -4,6 +4,7 @@ import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
 import { EntityOptions } from './EntityOptions';
 import { contentFromDays } from "app/tool";
+import { EntityBin } from "./EntitySheet";
 
 export enum EnumBudType {
     none = 0,
@@ -11,7 +12,7 @@ export enum EnumBudType {
     atom = 12,                  // atom id
     radio = 13,                 // single radio ids
     check = 14,                 // multiple checks
-    // intof = 15,
+    bin = 15,
     pick = 18,
     ID = 19,
 
@@ -114,6 +115,16 @@ export class BudID extends BudDataNumber {
     getTitleBuds(): BizBud[] { return this.entityID?.titleBuds; }
     getPrimeBuds(): BizBud[] { return this.entityID?.primeBuds; }
 }
+export class BudBin extends BudDataNumber {
+    readonly type = EnumBudType.bin;
+    entityBin: EntityBin;
+    fromSchema(schema: any) {
+        this.entityBin = schema.bin as any;
+    }
+    override scan(biz: Biz, bud: BizBud) {
+        this.entityBin = biz.entities[this.entityBin as unknown as string] as EntityBin;
+    }
+}
 export class BudIDIO extends BudDataNumber {
     readonly type = EnumBudType.ID;
     private atom: number;
@@ -207,6 +218,8 @@ export class BizBud extends BizBase {
                 budDataType = new BudString(); break;
             case EnumBudType.atom:
                 budDataType = new BudID(); break;
+            case EnumBudType.bin:
+                budDataType = new BudBin(); break;
             case EnumBudType.ID:
                 budDataType = new BudIDIO(); break;
             case EnumBudType.pick:

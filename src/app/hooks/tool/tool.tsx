@@ -89,6 +89,7 @@ export function pickedFromJsonArr(entity: Entity, propArr: Prop[], picked: Picke
     const { biz } = entity;
     for (let v of arr) {
         let { length } = v;
+        if (length === undefined) continue;
         let v0 = v[0];
         if (v0 === '$ids') continue;
         let v1 = v[1];
