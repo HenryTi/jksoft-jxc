@@ -160,6 +160,7 @@ Biz Query GetSpec (
 )
 RETURNS props (
     id ID,
+    base ID,
     phrase ID,
     value JSON,
 ) {
@@ -882,6 +883,7 @@ PROC ProcGetSpec ver 0.1 (
 )
 RETURNS props VIRTUAL (
     id ID,
+    base ID,                -- Fork parent base ID
     phrase ID,
     value JSON,
 ) {
@@ -895,19 +897,19 @@ RETURNS props VIRTUAL (
         IF type IS NULL {
             BREAK;
         }
-        INTO props SELECT id, phrase, (
+        INTO props SELECT id, base, phrase, (
                 SELECT JSON_ARRAYAGG(JSON_ARRAY(arr.x, arr.value)) FROM (
                     SELECT a.x, a.value FROM IxBudInt as a WHERE a.i=id
                     UNION SELECT a.x, a.value FROM IxBudDec as a WHERE a.i=id
                     UNION SELECT a.x, a.value FROM IxBudStr as a WHERE a.i=id
                 ) as arr
             ) as value;
-        IF type<>BizPhraseType.spec {
+        IF type<>BizPhraseType.fork {
             BREAK;
         }
         SET id=base;
     }
-    INTO props SELECT id, a.base as phrase, JSON_ARRAY(a.no, a.ex) as value
+    INTO props SELECT id, 0 as base, a.base as phrase, JSON_ARRAY(a.no, a.ex) as value
         FROM Atom as a
         WHERE a.id=id;
 }

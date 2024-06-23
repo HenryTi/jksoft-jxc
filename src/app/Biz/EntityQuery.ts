@@ -16,6 +16,7 @@ export interface IDColumn {
 export class EntityQuery extends Entity {
     asc: 'asc' | 'desc';
     ids: IDColumn[];
+    showIds: IDColumn[];
     groupByBase: boolean;
     ban: string | true;
     params: BizBud[];
@@ -32,6 +33,7 @@ export class EntityQuery extends Entity {
             // case 'idFrom': this.idFrom = val; break;
             case 'from': this.fromEntity = val; break;
             case 'ids': this.ids = val; break;
+            case 'showIds': this.showIds = val; break;
             case 'groupByBase': this.groupByBase = val; break;
         }
     }
@@ -86,5 +88,9 @@ export class EntityQuery extends Entity {
             if (ret !== undefined) return ret;
         }
         return undefined;
+    }
+
+    getFromEntityFromAlias(alias: string) {
+        return this.getFromEntity(alias, this.fromEntity);
     }
 }

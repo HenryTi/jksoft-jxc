@@ -1,4 +1,4 @@
-import { PickQuery } from "app/Biz";
+import { IDColumn, PickQuery } from "app/Biz";
 import { ChangeEvent, useCallback, useState } from "react";
 import { Page, useModal } from "tonwa-app";
 import { List, Sep, theme } from "tonwa-com";
@@ -9,6 +9,7 @@ import { Picked, Prop, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
 import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtom, ViewSpecBuds } from "../View";
+import { ViewSpecId } from "app/coms/ViewSpecId";
 
 export function usePickFromQuery(): [
     (namedResults: NamedResults, binPick: PickQuery) => Promise<PickResult>,
@@ -32,14 +33,11 @@ export function usePickFromQuery(): [
         if (retParam === undefined) return;
         retParam = filterUndefined(retParam);
 
-        // debugger;
-        // retParam['p物流中心'] = 4294984988;
-
         let queryStore = new QueryStore(query);
         let pickedArr: Picked[] = [];
         pickedArr = await queryStore.query(retParam);
 
-        const { idFrom } = query;
+        const { ids: idCols, showIds: showIdCols, idFrom } = query;
         const { arr, bizPhraseType } = idFrom;
         let ret = await modal.open(<PageFromQuery />);
         if (ret === undefined) return;
@@ -87,16 +85,6 @@ export function usePickFromQuery(): [
             function onSingleClick(item: Picked) {
                 modal.close(item);
             }
-            /*
-            let vSelected: any;
-            let selectedKeys = Object.keys(selectedItems);
-            if (selectedKeys.length === 0) {
-                vSelected = <small className="text-secondary">[无]</small>;
-            }
-            else {
-                vSelected = <>{selectedKeys.map(v => v).join(', ')}</>;
-            }
-            */
             function itemBan(item: Picked) {
                 const { ban } = item;
                 if (ban.value > 0) {
@@ -127,17 +115,35 @@ export function usePickFromQuery(): [
                 </>;
             }
             function ViewItemAtomContent({ value: picked }: { value: Picked }) {
+                const ids = picked.json as number[];
                 let propArr: Prop[] = picked.$ as any;
-                const { id } = picked;
+                function ViewIdOne({ id, col }: { id: number; col: IDColumn; }) {
+                    let colFromEntity = query.getFromEntityFromAlias(col.alias);
+                    const { bizPhraseType } = colFromEntity;
+                    switch (bizPhraseType) {
+                        default:
+                            return <>unknown bizPhraseType {bizPhraseType}</>
+                        case BizPhraseType.fork:
+                            return <ViewSpecId id={id} />;
+                        case BizPhraseType.atom:
+                            return <>
+                                <div>
+                                    <ViewSpecAtom id={id} store={queryStore} />
+                                    <ViewAtomTitlesOfStore id={id} store={queryStore} />
+                                </div>
+                                <RowCols contentClassName="">
+                                    <ViewAtomPrimesOfStore id={id} store={queryStore} />
+                                    <ViewPropArr propArr={propArr} />
+                                </RowCols>
+                            </>;
+                    }
+                }
                 return <>
-                    <div>
-                        <ViewSpecAtom id={id} store={queryStore} />
-                        <ViewAtomTitlesOfStore id={id} store={queryStore} />
-                    </div>
-                    <RowCols contentClassName="">
-                        <ViewAtomPrimesOfStore id={id} store={queryStore} />
-                        <ViewPropArr propArr={propArr} />
-                    </RowCols>
+                    {ids.map((v, index) => {
+                        let col = idCols[index];
+                        return <ViewIdOne key={v} id={v} col={col} />
+                    })}
+                    <span>[{showIdCols.map(v => v.alias).join(',')}]</span>
                 </>;
             }
             function ViewValue({ value, caption }: { value: number; caption: string; }) {
@@ -152,7 +158,7 @@ export function usePickFromQuery(): [
                     <div className="flex-fill">
                         <ViewItemAtomContent value={picked} />
                     </div>
-                    <ViewValue value={picked.value} caption="数量" />
+                    <ViewValue value={picked.sum} caption="数量" />
                 </div>
             }
             function ViewItemSpec({ value: picked }: { value: Picked }) {
@@ -190,7 +196,7 @@ export function usePickFromQuery(): [
                         <div className="flex-fill">
                             <ViewItemAtomContent value={picked} />
                         </div>
-                        <ViewValue value={picked.value} caption="合计" />
+                        <ViewValue value={picked.sum} caption="合计" />
                     </div>
                     {vSpecs}
                 </div>;

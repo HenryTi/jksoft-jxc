@@ -11,11 +11,12 @@ export class QueryStore extends Store<EntityQuery> {
         let coll: { [id: number]: Picked } = {};
         for (let row of retItems) {
             let propArr: Prop[] = [];
-            const { id, ban, value } = row;
+            const { id, ban, value, json } = row;
             let picked: Picked = {
                 $: propArr as any,
                 id, //: row.id as any,
                 value,
+                sum: 0,
                 // ...row,
             };
             picked.ban = {
@@ -23,7 +24,8 @@ export class QueryStore extends Store<EntityQuery> {
                 bud: undefined,
                 value: ban, // row.ban,
             };
-            pickedFromJsonArr(this.entity, propArr, picked, row.json);
+            picked.json = json;
+            pickedFromJsonArr(this.entity, propArr, picked, json);
             pickedArr.push(picked);
             coll[id] = picked;
         }
@@ -42,12 +44,7 @@ export class QueryStore extends Store<EntityQuery> {
                     });
                 }
             }
-            if (value !== undefined) {
-                let { value: sumValue } = picked;
-                if (sumValue === undefined) sumValue = 0;
-                sumValue += value;
-                picked.value = sumValue;
-            }
+            if (value !== undefined) picked.sum += value;
             let { $specs } = picked;
             if ($specs === undefined) {
                 picked.$specs = $specs = [];

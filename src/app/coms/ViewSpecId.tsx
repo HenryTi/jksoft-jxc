@@ -6,8 +6,9 @@ import { UqExt } from "uqs/UqDefault";
 
 export function ViewSpecId({ id }: { id: number; }) {
     const { uq, biz } = useUqApp();
-    const idValue = cache.get(id);
-    const [value, setValue] = useState(idValue);
+    const idObj = cache.get(id);
+    const idArr = getIdArr(idObj);
+    const [value, setValue] = useState(idArr);
     useEffect(() => {
         (async function () {
             if (id === undefined || id === null) return;
@@ -23,23 +24,40 @@ export function ViewSpecId({ id }: { id: number; }) {
                     if (obj === undefined) obj = null;
                 }
             }
+            else {
+                obj = getIdArr(obj);
+            }
             setValue(obj);
         })();
     }, [id]);
     if (id === undefined || value === undefined) return <ViewBudEmpty />;
     if (value === null) return <>null</>;
-    const { phrase } = value;
-    const props = value.value as [number, number | string][];
-    const entitySpec = biz.entityFromId<EntityFork>(phrase);
-    const { noBud, exBud, showKeys } = entitySpec;
-    function ViewContent({ bud }: { bud: BizBud; }) {
-        return <>{(props.find(v => v[0] === bud.id))[1]}</>;
+
+    function viewFork(value: any) {
+        const { phrase } = value;
+        const props = value.value as [number, number | string][];
+        const entitySpec = biz.entityFromId<EntityFork>(phrase);
+        const { noBud, exBud, showKeys } = entitySpec;
+        let content: any;
+        function viewContent(bud: BizBud) {
+            return <>{(props.find(v => v[0] === bud.id))[1]}</>;
+        }
+        if (exBud !== undefined) content = viewContent(exBud);
+        else if (noBud !== undefined) content = viewContent(noBud);
+        else content = showKeys.map(key => {
+            return (props.find(v => v[0] === key.id))[1];
+        }).join(',');
+        return content;
     }
-    if (exBud !== undefined) return <ViewContent bud={exBud} />;
-    if (noBud !== undefined) return <ViewContent bud={noBud} />;
-    return <>{showKeys.map(key => {
-        return (props.find(v => v[0] === key.id))[1];
-    }).join(',')}</>;
+
+    return <>{
+        value.map((v, index) => {
+            if (index === 0) {
+                return v.value[1];
+            }
+            return <span key={v.id} className="ms-3">{viewFork(v)}</span>;
+        })
+    }</>
 }
 
 const cachePromise: { [id: number]: Promise<any> } = {};
@@ -60,19 +78,32 @@ async function idSpec(uq: UqExt, id: number) {
         }
         if (ret !== undefined) {
             for (let prop of ret.props) {
-                if (prop.id === id) {
+                const { id: forkId } = prop;
+                if (forkId === id) {
                     obj = prop;
-                    break;
                 }
+                cache.add(forkId, prop === undefined ? null : prop);
             }
-            cache.add(id, obj === undefined ? null : obj);
         }
         else {
             cache.add(id, null);
         }
         delete cachePromise[id];
     }
-    return obj;
+    return getIdArr(obj);
+}
+
+function getIdArr(obj: any) {
+    if (obj === undefined) return undefined;
+    let arr: any[] = [obj];
+    for (; ;) {
+        let { base } = obj;
+        if (base === 0) break;
+        obj = cache.get(base);
+        if (obj === undefined) debugger;
+        arr.unshift(obj);
+    }
+    return arr;
 }
 
 class Cache {
