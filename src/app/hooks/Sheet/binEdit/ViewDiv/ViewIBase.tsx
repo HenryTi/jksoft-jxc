@@ -2,7 +2,7 @@ import { SheetStore, ValDivBase } from "../../store";
 import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { Atom as BizAtom } from "uqs/UqDefault";
 import { theme } from "tonwa-com";
-import { ViewSpecAtom } from "app/hooks/View";
+import { ViewSpecAtomBold } from "app/hooks/View";
 import { BizBud } from "app/Biz";
 
 export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valDiv: ValDivBase }) {
@@ -23,7 +23,7 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     if (iBase === undefined) iBase = iValue;
     if (iBase === undefined) return null;
     return <>
-        <ViewSpecAtom id={iBase} store={sheetStore} />
+        <ViewSpecAtomBold id={iBase} store={sheetStore} />
         <ViewAtomTitles bud={iBud} id={iBase} store={sheetStore} />
     </>;
 }

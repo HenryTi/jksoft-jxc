@@ -1,4 +1,4 @@
-import { BinRow, BizBud, Entity, EntityPend, predefinedPendFields } from "app/Biz";
+import { BinRow, BizBud, EntityPend, predefinedPendFields } from "app/Biz";
 import { ViewBud } from "app/hooks/Bud";
 import { FA } from "tonwa-com";
 

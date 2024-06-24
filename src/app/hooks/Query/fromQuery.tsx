@@ -5,10 +5,10 @@ import { List, Sep, theme } from "tonwa-com";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "../Sheet/binPick/PageParams";
 import { NamedResults, PickResult, RearPickResultType, VNamedBud } from "../Sheet/store";
-import { Picked, Prop, RowCols } from "app/hooks/tool";
+import { LabelBox, Picked, Prop, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
-import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtom, ViewSpecBuds } from "../View";
+import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtom, ViewSpecAtomBold, ViewSpecBuds } from "../View";
 import { ViewSpecId } from "app/coms/ViewSpecId";
 
 export function usePickFromQuery(): [
@@ -114,6 +114,34 @@ export function usePickFromQuery(): [
                     })}
                 </>;
             }
+            function ViewShowIds({ ids }: { ids: number[]; }) {
+                if (ids === undefined) return null;
+                return <>{showIdCols.map((v, index) => {
+                    const { ui, alias } = v;
+                    let caption: string;
+                    if (ui === undefined) {
+                        caption = alias;
+                    }
+                    else {
+                        caption = ui.caption ?? alias;
+                    }
+                    function ViewId({ id, col }: { id: number; col: IDColumn; }) {
+                        let colFromEntity = query.getFromEntityFromAlias(col.alias);
+                        const { bizPhraseType } = colFromEntity;
+                        switch (bizPhraseType) {
+                            default:
+                                return <>unknown bizPhraseType {bizPhraseType}</>
+                            case BizPhraseType.fork:
+                                return <ViewSpecId id={id} />;
+                            case BizPhraseType.atom:
+                                return <ViewSpecAtom id={id} store={queryStore} />;
+                        }
+                    }
+                    return <LabelBox key={index} label={caption}>
+                        <ViewId id={ids[index]} col={v} />
+                    </LabelBox>;
+                })}</>;
+            }
             function ViewItemAtomContent({ value: picked }: { value: Picked }) {
                 const ids = picked.json as number[];
                 let propArr: Prop[] = picked.$ as any;
@@ -128,7 +156,7 @@ export function usePickFromQuery(): [
                         case BizPhraseType.atom:
                             return <>
                                 <div>
-                                    <ViewSpecAtom id={id} store={queryStore} />
+                                    <ViewSpecAtomBold id={id} store={queryStore} />
                                     <ViewAtomTitlesOfStore id={id} store={queryStore} />
                                 </div>
                                 <RowCols contentClassName="">
@@ -143,7 +171,6 @@ export function usePickFromQuery(): [
                         let col = idCols[index];
                         return <ViewIdOne key={v} id={v} col={col} />
                     })}
-                    <span>[{showIdCols.map(v => v.alias).join(',')}]</span>
                 </>;
             }
             function ViewValue({ value, caption }: { value: number; caption: string; }) {
@@ -166,7 +193,7 @@ export function usePickFromQuery(): [
                 let vSpecs: any;
                 if ($specs !== undefined) {
                     let vList = ($specs as any[]).map((v, index) => {
-                        const { $, id } = v;
+                        const { $, id, $ids } = v;
                         let propArr: Prop[] = $ as any;
                         let cn = 'py-1 px-3 d-flex align-items-end ';
                         function onCheckChange(evt: ChangeEvent<HTMLInputElement>) {
@@ -181,6 +208,7 @@ export function usePickFromQuery(): [
                             />
                             <div className="flex-fill">
                                 <RowCols contentClassName="">
+                                    <ViewShowIds ids={$ids} />
                                     <ViewPropArr propArr={propArr} />
                                 </RowCols>
                             </div>

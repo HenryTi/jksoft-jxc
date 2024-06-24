@@ -1,6 +1,7 @@
 import { BizPhraseType } from "uqs/UqDefault";
 import { BizBud } from "./BizBud";
 import { Entity } from "./Entity";
+import { UI } from "app/ui";
 
 export interface FromEntity {
     arr: Entity[];
@@ -11,6 +12,7 @@ export interface FromEntity {
 
 export interface IDColumn {
     alias: string;
+    ui: Partial<UI>;
 }
 
 export class EntityQuery extends Entity {

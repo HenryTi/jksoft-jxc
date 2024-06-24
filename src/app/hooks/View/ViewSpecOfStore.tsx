@@ -3,6 +3,18 @@ import { theme } from "tonwa-com";
 import { EntityAtom } from "app/Biz";
 import { Store } from "app/tool";
 
+export function ViewSpecAtomBold({ id, store }: { id: number; store: Store; }) {
+    const { bizAtomColl, bizSpecColl } = store;
+    let bizAtom = bizAtomColl[id];
+    if (bizAtom === undefined) {
+        let bizSpec = bizSpecColl[id];
+        if (bizSpec === undefined) return null;
+        bizAtom = bizSpec.atom;
+    }
+    const { no, ex } = bizAtom;
+    return <><b>{ex}</b> <span className="mx-3">{no}</span></>;
+}
+
 export function ViewSpecAtom({ id, store }: { id: number; store: Store; }) {
     const { bizAtomColl, bizSpecColl } = store;
     let bizAtom = bizAtomColl[id];
@@ -12,7 +24,7 @@ export function ViewSpecAtom({ id, store }: { id: number; store: Store; }) {
         bizAtom = bizSpec.atom;
     }
     const { no, ex } = bizAtom;
-    return <><b>{ex}</b> <span className="mx-3">{no}</span></>
+    return <>{ex ?? no}</>;
 }
 
 export function ViewSpecBuds({ id, store }: { id: number; store: Store; }) {
