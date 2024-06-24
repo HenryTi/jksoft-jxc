@@ -93,6 +93,9 @@ export function pickedFromJsonArr(entity: Entity, propArr: Prop[], picked: Picke
         let v0 = v[0];
         let v1 = v[1];
         let name: string, bud: BizBud, value: any;
+        if (v0 === 0) {
+            continue;
+        }
         switch (length) {
             default: debugger; continue;
             case 2:
