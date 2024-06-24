@@ -66,19 +66,19 @@ export function usePickFromQuery(): [
             function onPick() {
                 let values = Object.values(selectedItems);
                 values.sort((a, b) => {
-                    let aId = a.id, bId = b.id;
+                    let aId = a.$id, bId = b.$id;
                     if (aId === bId) return 0;
                     return aId < bId ? -1 : 1;
                 });
                 modal.close(values);
             }
             function onMultipleClick(item: Picked, isSelected: boolean) {
-                const { id } = item;
+                const { $id } = item;  // $id 是序号
                 if (isSelected === true) {
-                    selectedItems[id] = item;
+                    selectedItems[$id] = item;
                 }
                 else {
-                    delete selectedItems[id];
+                    delete selectedItems[$id];
                 }
                 setSelectedItems({ ...selectedItems });
             }
@@ -193,7 +193,7 @@ export function usePickFromQuery(): [
                 let vSpecs: any;
                 if ($specs !== undefined) {
                     let vList = ($specs as any[]).map((v, index) => {
-                        const { $, id, $ids } = v;
+                        const { $, $id, id, $ids } = v; // $id 是序号
                         let propArr: Prop[] = $ as any;
                         let cn = 'py-1 px-3 d-flex align-items-end ';
                         function onCheckChange(evt: ChangeEvent<HTMLInputElement>) {
@@ -203,7 +203,7 @@ export function usePickFromQuery(): [
                         if (index > 0) cn += ' border-top';
                         return <label className={cn} key={id}>
                             <input type="checkbox" className="form-check-input mx-3 mb-2 align-self-end"
-                                defaultChecked={selectedItems[id] !== undefined}
+                                defaultChecked={selectedItems[$id] !== undefined}
                                 onChange={onCheckChange}
                             />
                             <div className="flex-fill">

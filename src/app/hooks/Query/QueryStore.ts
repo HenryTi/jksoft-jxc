@@ -29,6 +29,7 @@ export class QueryStore extends Store<EntityQuery> {
             pickedArr.push(picked);
             coll[id] = picked;
         }
+        let spec$Id = 1;
         for (let specRow of specs) {
             const { atom, id, ban, value, json } = specRow;
             let picked = coll[atom];
@@ -51,6 +52,7 @@ export class QueryStore extends Store<EntityQuery> {
             }
             let $spec = {
                 $: propArr as any,
+                $id: spec$Id++,  // $id 是序号
                 id,
                 ban,
                 json,
