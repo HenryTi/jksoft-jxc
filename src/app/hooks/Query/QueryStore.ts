@@ -14,7 +14,8 @@ export class QueryStore extends Store<EntityQuery> {
             const { id, ban, value, json } = row;
             let picked: Picked = {
                 $: propArr as any,
-                id, //: row.id as any,
+                $id: id,
+                id: json[0], //: row.id as any,
                 value,
                 sum: 0,
                 // ...row,
@@ -29,7 +30,7 @@ export class QueryStore extends Store<EntityQuery> {
             pickedArr.push(picked);
             coll[id] = picked;
         }
-        let spec$Id = 1;
+        let specSerial = 1;
         for (let specRow of specs) {
             const { atom, id, ban, value, json } = specRow;
             let picked = coll[atom];
@@ -52,7 +53,7 @@ export class QueryStore extends Store<EntityQuery> {
             }
             let $spec = {
                 $: propArr as any,
-                $id: spec$Id++,  // $id 是序号
+                $id: specSerial++,  // $id 是序号
                 id,
                 ban,
                 json,

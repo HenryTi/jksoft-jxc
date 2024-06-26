@@ -66,9 +66,9 @@ export function usePickFromQuery(): [
             function onPick() {
                 let values = Object.values(selectedItems);
                 values.sort((a, b) => {
-                    let aId = a.$id, bId = b.$id;
-                    if (aId === bId) return 0;
-                    return aId < bId ? -1 : 1;
+                    let a$Id = a.$id, b$Id = b.$id;
+                    if (a$Id === b$Id) return 0;
+                    return a$Id < b$Id ? -1 : 1;
                 });
                 modal.close(values);
             }
