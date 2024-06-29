@@ -19,6 +19,11 @@ export class PendProxyHandler implements ProxyHandler<any> {
         this.entityPend = entityPend;
     }
     get(target: any, p: string | symbol, receiver: any) {
+        switch (p) {
+            case 'bin':
+            case 'sheet':
+                return target[p];
+        }
         if (sheetFields.findIndex(v => v === p) >= 0) {
             let k = p.toString().substring(1);
             let ret = target.sheet[k];

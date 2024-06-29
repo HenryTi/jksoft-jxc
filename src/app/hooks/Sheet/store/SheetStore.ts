@@ -141,6 +141,8 @@ export interface SheetRow extends ValRow {
 export interface PendRow {
     pend: number;               // pend id
     origin: number;
+    bin: number;
+    sheet: number;
     detail: BinRow;
     value: number;
     mid: any[];
@@ -248,7 +250,7 @@ export class SheetStore extends Store<EntitySheet> {
         let pendRows: PendRow[] = [];
         let hiddenBuds: Set<number> = (rearPick?.hiddenBuds) ?? new Set();
         for (let v of $page) {
-            let { id, pend, pendValue, mid, cols, i, x } = v;
+            let { id, pend, pendValue, mid, sheet, i, x } = v;
             if (pendValue === undefined || pendValue <= 0) continue;
             this.valDivsOnPend[pend] = atom(undefined as ValDivRoot);
             let iSpec = this.bizSpecColl[i];
@@ -264,6 +266,8 @@ export class SheetStore extends Store<EntitySheet> {
                 pend,
                 detail: { ...v, buds: {}, owned: undefined },
                 origin: id,
+                bin: id,
+                sheet,
                 value: pendValue,
                 mid: midArr,
             };
