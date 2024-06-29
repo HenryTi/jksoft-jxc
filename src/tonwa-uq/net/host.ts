@@ -35,7 +35,15 @@ async function buildDebugHosts(center: string): Promise<Hosts> {
         center += '/';
     }
     let { center: debugCenter, uq, res } = debugHosts;
-    let promises: PromiseLike<string>[] = [debugCenter, uq, res].map(v => localCheck(v));
+    let urls = [debugCenter, uq, res];
+    let promiseColl: { [url: string]: PromiseLike<string>; } = {};
+    for (let url of urls) {
+        let promise = promiseColl[url];
+        if (promise === undefined) {
+            promiseColl[url] = localCheck(url);
+        }
+    }
+    let promises: PromiseLike<string>[] = urls.map(v => promiseColl[v]);
     let [retCenter, retUq, retRes] = await Promise.all(promises);
     if (retCenter !== null) center = `http://${debugCenter}/`;
     let uqDebug: string = undefined;
