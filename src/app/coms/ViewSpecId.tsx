@@ -50,6 +50,15 @@ export function ViewSpecId({ id }: { id: number; }) {
         return content;
     }
 
+    let contents: any[] = [];
+    let { length } = value;
+    for (let i = length - 1; i > 0; i--) {
+        let v = value[i];
+        contents.push(<span key={v.id}>{viewFork(v)}<small className="text-body-tertiary">/</small></span>);
+    }
+    contents.push(value[0].value[1]);
+    return <>{contents}</>;
+    /*
     return <>{
         value.map((v, index) => {
             if (index === 0) {
@@ -58,6 +67,7 @@ export function ViewSpecId({ id }: { id: number; }) {
             return <span key={v.id} className="ms-3">{viewFork(v)}</span>;
         })
     }</>
+    */
 }
 
 const cachePromise: { [id: number]: Promise<any> } = {};

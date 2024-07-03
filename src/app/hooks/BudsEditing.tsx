@@ -174,7 +174,6 @@ export abstract class BudsEditing<R = any> implements FormContext {
 
     isInputNeeded(): boolean {
         for (let field of this.allFields) {
-            //const { bud } = field;
             const bud = field;
             const { valueSetType } = bud;
             const { ui } = bud;
@@ -220,7 +219,6 @@ export abstract class BudsEditing<R = any> implements FormContext {
             switch (type) {
                 case EnumBudType.atom:
                     formRow.default = this.budValuesTool.getBudValue(field, this.values);
-                    // formRow.params = { base: this.calcValue(field.atomParams?.base) };
                     formRow.atom = null;
                     formRow.readOnly = true;
                     formRow.entityAtom = (budDataType as BudID).entityID;
@@ -308,11 +306,6 @@ export class ValuesBudsEditing extends BudsEditing<{ [id: number]: any }> {
             for (let bud of buds) this.budValuesTool.setBudValue(bud, this.values, initValues[bud.id]);
         }
     }
-    /*
-    protected createCalc(): Calc {
-        return new Calc(this.formulas, this.values as any);
-    }
-    */
     protected setBudValue(bud: BizBud, value: any) {
         this.values[bud.id] = value;
     }

@@ -8,7 +8,6 @@ import { ValDivBase } from "./ValDiv";
 import { NamedResults } from "./NamedResults";
 import { ValRow } from "./tool";
 import { BudsEditing } from "app/hooks/BudsEditing";
-import { AtomColl } from "app/tool";
 import { ViewBud, ViewBudUIType } from "app/hooks";
 
 export abstract class BinBudsEditing extends BudsEditing<BinRow> {

@@ -116,6 +116,9 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
     }
     else {
         const { entityID } = bud.budDataType as BudID;
+        if (entityID === undefined) {
+            return view();
+        }
         if (entityID.bizPhraseType === BizPhraseType.fork) {
             let label: any;
             const { caption, name } = bud;

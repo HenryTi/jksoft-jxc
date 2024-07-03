@@ -4,12 +4,13 @@ import { Page, useModal } from "tonwa-app";
 import { List, Sep, theme } from "tonwa-com";
 import { filterUndefined } from "app/tool";
 import { usePageParams } from "../Sheet/binPick/PageParams";
-import { NamedResults, PickResult, RearPickResultType, VNamedBud } from "../Sheet/store";
+import { NamedResults, PickResult, RearPickResultType } from "../Sheet/store";
 import { LabelBox, Picked, Prop, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
-import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtom, ViewSpecAtomBold, ViewSpecBuds } from "../View";
+import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtom, ViewSpecAtomBold } from "../View";
 import { ViewSpecId } from "app/coms/ViewSpecId";
+import { ViewBud } from "../Bud";
 
 export function usePickFromQuery(): [
     (namedResults: NamedResults, binPick: PickQuery) => Promise<PickResult>,
@@ -110,7 +111,8 @@ export function usePickFromQuery(): [
             function ViewPropArr({ propArr }: { propArr: Prop[]; }) {
                 return <>
                     {propArr.map((v, index) => {
-                        return <VNamedBud key={index} {...v} />;
+                        //return <VNamedBud key={index} {...v} />;
+                        return <ViewBud key={index} {...v} store={queryStore} />;
                     })}
                 </>;
             }

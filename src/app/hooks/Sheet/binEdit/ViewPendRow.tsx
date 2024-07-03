@@ -1,8 +1,8 @@
 import { Prop, RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { getAtomValue, theme } from "tonwa-com";
 import { DivStore, PendRow } from "../store";
-import { VNamedBud } from "../store/tool";
 import { ViewSpecAtomBold, ViewSpecAtomTitles, ViewSpecBuds } from "app/hooks/View";
+import { ViewBud } from "app/hooks";
 
 export interface PendProps {
     divStore: DivStore;
@@ -30,7 +30,8 @@ export function ViewPendRow({
         if (arr === undefined || arr.length === 0) return null;
         return <>
             {arr.map((v, index) => {
-                return <VNamedBud key={index} {...v} />;
+                //return <VNamedBud key={index} {...v} />;
+                return <ViewBud key={index} {...v} store={sheetStore} />;
             })}
         </>;
     }
