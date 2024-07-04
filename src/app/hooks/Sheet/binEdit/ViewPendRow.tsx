@@ -30,7 +30,6 @@ export function ViewPendRow({
         if (arr === undefined || arr.length === 0) return null;
         return <>
             {arr.map((v, index) => {
-                //return <VNamedBud key={index} {...v} />;
                 return <ViewBud key={index} {...v} store={sheetStore} />;
             })}
         </>;
@@ -51,8 +50,7 @@ export function ViewPendRow({
         }
     }
     let viewBuds: any, viewAtomTitles: any;
-    const { budsColl, bizAtomColl, bizSpecColl } = sheetStore;
-    const budValueColl = budsColl[i];
+    const { bizSpecColl } = sheetStore;
     let iBizSpec = bizSpecColl[i];
     if (iBizSpec !== undefined) {
         viewBuds = <ViewSpecBuds id={i} store={sheetStore} />;

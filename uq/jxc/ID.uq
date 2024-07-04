@@ -59,7 +59,7 @@ ID Pend ver 0.1 (
     KEY id,
     bin ID,
     mid JSON,               -- 中间值，以数组方式存放
-    value VALUE,            -- 待处理数，到0，就清除
+    value VALUE DEFAULT 0,  -- 待处理数，到0，就清除
 );
 
 -- bin的pend来源。
