@@ -327,6 +327,7 @@ export class EntityBin extends Entity {
     price: BizBud;
     amount: BizBud;
     pivot: BinDiv;
+    directly: boolean;
 
     // 在代码界面上显示需要。本entity引用的entities
     override getRefEntities(arrEntity: Entity[]) {
@@ -514,8 +515,16 @@ export class EntityBin extends Entity {
         return input;
     }
 
+    private setDirectly(bizBud: BizBud, required?: boolean) {
+        if (this.directly === false) return;
+        if (bizBud.required === true || required === true) {
+            if (bizBud.valueSet === undefined) this.directly = false;
+        }
+    }
+
     scan() {
         super.scan();
+        this.directly = true;
         if (this.binPicks !== undefined) {
             this.binPicks = this.binPicks.map(v => this.buildPick(v as any));
         }
@@ -587,18 +596,20 @@ export class EntityBin extends Entity {
         let ret: BizBud[] = [];
         for (let bud of buds) {
             let bizBud: BizBud;
+            let required: boolean = undefined;
             switch (bud) {
                 default: bizBud = this.budColl[bud]; break;
-                case 'i': bizBud = this.i; break;
+                case 'i': bizBud = this.i; required = true; break;
                 case '.i': bizBud = this.iBase; break;
-                case 'x': bizBud = this.x; break;
+                case 'x': bizBud = this.x; required = true; break;
                 case '.x': bizBud = this.xBase; break;
-                case 'value': bizBud = this.value; break;
+                case 'value': bizBud = this.value; required = true; break;
                 case 'price': bizBud = this.price; break;
                 case 'amount': bizBud = this.amount; break;
             }
             if (bizBud === undefined) debugger;
             ret.push(bizBud);
+            this.setDirectly(this.i, required);
         }
         return ret;
     }

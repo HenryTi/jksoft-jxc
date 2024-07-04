@@ -131,6 +131,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             <ViewMain store={store} popup={false} readOnly={readonly} />
             <ViewBinDivs />
         </>;
+        // <div>directly: {entityBin.directly}</div>
     }
 
     if (divStore === undefined) mainOnlyEdit();
