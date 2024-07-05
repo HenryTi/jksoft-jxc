@@ -131,6 +131,9 @@ export class BudBin extends BudDataNumber {
             }
         }
     }
+    getPrimeBuds(): BizBud[] {
+        return this.showBuds;
+    }
 }
 export class BudIDIO extends BudDataNumber {
     readonly type = EnumBudType.ID;

@@ -4,6 +4,7 @@ import { Store, contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
 import { Atom as BizAtom, BizPhraseType } from "uqs/UqDefault";
 import { ViewSpecId } from "app/coms/ViewSpecId";
+import React from "react";
 
 export enum ViewBudUIType {
     notInDiv = 0,
@@ -23,9 +24,6 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
     }
     else {
         let type = budDataType?.type;
-        if (type === EnumBudType.atom) {
-            return atom(bud, value, uiType, noLabel, store);
-        }
         switch (type) {
             default:
             case EnumBudType.dec:
@@ -41,6 +39,10 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
             case EnumBudType.ID: content = ID(bud, value); break;
             case EnumBudType.date: content = date(bud, value); break;
             case EnumBudType.datetime: content = datetime(bud, value); break;
+            case EnumBudType.atom:
+                return atom(bud, value, uiType, noLabel, store);
+            case EnumBudType.bin:
+                return bin(bud, value, store);
         }
     }
     if (noLabel === true) {
@@ -57,9 +59,11 @@ export function budContent(bud: BizBud, value: any, store: Store) {
     }
     else {
         let type = budDataType?.type;
+        /*
         if (type === EnumBudType.atom) {
             return atom(bud, value, ViewBudUIType.notInDiv, true, store);
         }
+        */
         switch (type) {
             default:
             case EnumBudType.dec:
@@ -76,6 +80,10 @@ export function budContent(bud: BizBud, value: any, store: Store) {
             case EnumBudType.ID: content = ID(bud, value); break;
             case EnumBudType.date: content = date(bud, value); break;
             case EnumBudType.datetime: content = datetime(bud, value); break;
+            case EnumBudType.atom:
+                return atom(bud, value, ViewBudUIType.notInDiv, true, store);
+            case EnumBudType.bin:
+                return bin(bud, value, store);
         }
     }
     return content;
@@ -176,4 +184,15 @@ function datetime(bud: BizBud, value: any) {
 
 function ID(bud: BizBud, value: any) {
     return <>ID: {value}</>;
+}
+
+function bin(bud: BizBud, value: any, store: Store) {
+    let showBuds = bud.getPrimeBuds();
+    if (showBuds === undefined) return null;
+    const { budsColl } = store;
+    return <React.Fragment key={bud.id}>{showBuds.map(v => {
+        const { id: showBudId } = v;
+        let val = budsColl[value][showBudId];
+        return <ViewBud key={showBudId} bud={v} value={val} uiType={ViewBudUIType.inDiv} store={store} />;
+    })}</React.Fragment>;
 }

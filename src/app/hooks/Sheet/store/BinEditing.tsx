@@ -1,5 +1,5 @@
 import {
-    BinRow, BizBud, EntityBin, BinRowValuesTool,
+    BinRow, BizBud, EntityBin, BinRowValuesTool
 } from "app/Biz";
 // import { Calc } from "../../Calc";
 import { DivStore } from "./DivStore";
@@ -90,13 +90,13 @@ export class DivEditing extends BinBudsEditing {
         this.budValuesTool.setBudValue(budValue, this.values, pendLeft);
     }
 
-    buildViewBuds(/*bizAtomColl: AtomColl*/) {
+    buildViewBuds() {
         return this.budValuesTool.fields.map(field => {
             const bud = field;
             const { id } = bud;
             let value = this.budValuesTool.getBudValue(field, this.values);
             if (value === null || value === undefined) return null;
-            return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} /*atomColl={bizAtomColl} */ />;
+            return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} />;
         })
     }
 }
