@@ -609,7 +609,7 @@ export class EntityBin extends Entity {
             }
             if (bizBud === undefined) debugger;
             ret.push(bizBud);
-            this.setDirectly(this.i, required);
+            this.setDirectly(bizBud, required);
         }
         return ret;
     }

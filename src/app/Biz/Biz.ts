@@ -89,7 +89,7 @@ export class Biz {
 
     bizConsole: EntityConsole;
     hasEntity: boolean;
-    entities: { [name: string]: Entity } = {};
+    entities: { [name: string | number]: Entity } = {};
     atomBuilder: AtomsBuilder;
     userDefaults: { [bud: number]: string | number | (string | number)[]; };
     atomSchemasChanged = atom(false);
@@ -172,6 +172,7 @@ export class Biz {
             let bizEntity = builder(id, name, type);
             this.ids[id] = bizEntity;
             this.entities[name] = bizEntity;
+            this.entities[id] = bizEntity;
             if (name !== phrase) {
                 this.entities[phrase] = bizEntity;
             }

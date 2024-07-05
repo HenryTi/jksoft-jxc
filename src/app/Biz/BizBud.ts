@@ -89,7 +89,6 @@ export class BudDec extends BudDataNumber {
     }
     override getUIValue(value: number) {
         if (value === undefined) return;
-        // if (this.fraction === undefined) return value;
         return value.toFixed(this.fraction ?? 2);
     }
     fromSchema(schema: any) {
@@ -118,11 +117,19 @@ export class BudID extends BudDataNumber {
 export class BudBin extends BudDataNumber {
     readonly type = EnumBudType.bin;
     entityBin: EntityBin;
+    showBuds: BizBud[];
+
     fromSchema(schema: any) {
         this.entityBin = schema.bin as any;
+        this.showBuds = schema.showBuds as any;
     }
     override scan(biz: Biz, bud: BizBud) {
         this.entityBin = biz.entities[this.entityBin as unknown as string] as EntityBin;
+        if (this.entityBin !== undefined) {
+            if (this.showBuds !== undefined) {
+                this.showBuds = (this.showBuds as unknown as number[]).map(v => this.entityBin.budColl[v]);
+            }
+        }
     }
 }
 export class BudIDIO extends BudDataNumber {
