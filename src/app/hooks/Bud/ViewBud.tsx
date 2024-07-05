@@ -192,7 +192,14 @@ function bin(bud: BizBud, value: any, store: Store) {
     const { budsColl } = store;
     return <React.Fragment key={bud.id}>{showBuds.map(v => {
         const { id: showBudId } = v;
-        let val = budsColl[value][showBudId];
+        let budVals = budsColl[value];
+        let val: any;
+        if (budVals === undefined) {
+            val = `?${showBudId}-${value}?`;
+        }
+        else {
+            val = budVals[showBudId];
+        }
         return <ViewBud key={showBudId} bud={v} value={val} uiType={ViewBudUIType.inDiv} store={store} />;
     })}</React.Fragment>;
 }
