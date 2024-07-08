@@ -15,7 +15,7 @@ import { ViewsRoutes } from './views';
 const pathBase = '';
 const appConfig: AppConfig = {
     version: '1.0.1',
-    center: 'https://tv.jkchemical.com',
+    center: 'https://note.jjol.cn',
     noUnit: true,
     oem: undefined,
     pathBase,

@@ -27,21 +27,10 @@ BIN 验收单明细 {
         Prop 客户 atom 客户信息 = pend.客户;
         Prop 入库类型 radio 入库类型 = pend.入库类型;
         Prop 计划数量 dec(4)=pend.Value;
-        prop 单位体积 dec(6)=0.005;
+        prop 单位体积 dec(6)=0.006;
     }
     ACT {
       Biz Pend -= Value;
-      Biz Pend 待入库账 SET 
-          物流中心=%sheet.I,
-          委托方=%委托方,
-          客户=%客户,
-          入库类型=%入库类型,
-          通知单号=%通知单号,
-          通知单行号=%通知单行号,
-          验收日期=%sheet.验收日期,
-          验收结论=%验收结论
-          ;
-    
         VAR 货位id ID = 1;
         VAR 待分配总数量 dec=Value;
         For(
@@ -51,13 +40,13 @@ BIN 验收单明细 {
             Value(
                 货位总容积=1
             )
-            FROM 货位(as b) as a 
-            WHERE IFNULL((#委托方货位批次库存账.数量((#委托方货位批次(NULL,a.id,NULL)))), 0)=0
+            FROM F货位(as b) as a 
+            WHERE IFNULL((#委托方货位批次库存账.可出数量#委托方货位批次(*,a.id,*)), 0)=0
             ORDER BY 货位ID
         ) {
             var 货位 ID=货位id;
             var 货位容积 dec=货位总容积;
-            var 货位可存放数量 dec=货位总容积/单位体积; -- FLOOR(货位总容积/单位体积);
+            var 货位可存放数量 dec=FLOOR(货位总容积/单位体积);
             var 本次分配数量 DEC =0;
             VAR exit TINYINT = 0;
             
@@ -69,6 +58,8 @@ BIN 验收单明细 {
                 SET 本次分配数量=货位可存放数量;
                 SET 待分配总数量=待分配总数量-本次分配数量;
             }
+            Biz Book 委托方货位批次库存账.可出数量 of (#委托方货位批次(%委托方,货位id,%I)) += 本次分配数量;
+            Biz Book 物流中心器械批次库存账.可出数量 of (#物流中心器械批次(%sheet.I,%I)) += 本次分配数量;
             Biz Pend 待上架任务下发账 = 本次分配数量
                 SET 物流中心=%sheet.I,
                   委托方=%委托方,
@@ -84,4 +75,3 @@ BIN 验收单明细 {
 
     }
 }
-
