@@ -1,6 +1,6 @@
 import * as jsonpack from 'jsonpack';
 import { useForm } from "react-hook-form";
-import { Entity, EntityAtom, EntityID } from "app/Biz";
+import { Entity, EntityAtom, EntityID, EntityQuery } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import React, { useCallback, useMemo, useRef, useState } from "react";
@@ -12,9 +12,10 @@ import { Grammar, highlight } from "prismjs";
 import './code-editor-style.css'
 import Editor from 'react-simple-code-editor';
 import { editorStyle, uqGrammar } from './grammar';
-import { FormRow, FormRowsView, Band, ToolItem, Toolbar, ToolElement, ToolButton } from 'app/coms';
+import { FormRow, FormRowsView, Band, ToolItem, Toolbar, ToolButton } from 'app/coms';
 import { atom, useAtomValue } from 'jotai';
 import { BizPhraseType } from 'uqs/UqDefault';
+import { adminData } from '../adminData';
 
 class Nav {
     readonly supers: Entity[] = [];
@@ -217,6 +218,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
         ],
         null,
         [
+            adminData(modal, entity),
             new ToolButton({ caption: '改名' }, onRename),
             new ToolButton({ caption: '删除' }, onDel),
         ]

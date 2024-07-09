@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Jun 23 2024 15:45:39 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue Jul 09 2024 19:33:14 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -183,6 +183,33 @@ export interface Return$getUnitTimeRet {
 }
 export interface Result$getUnitTime {
 	ret: Return$getUnitTimeRet[];
+}
+
+export interface ParamClearCode {
+}
+export interface ResultClearCode {
+}
+
+export interface ParamClearPend {
+}
+export interface ResultClearPend {
+}
+
+export interface ParamClearBook {
+	bud: number;
+}
+export interface ResultClearBook {
+}
+
+export interface ParamAdminBook {
+	bud: number;
+}
+export interface ReturnAdminBook$page {
+	i: number;
+	value: number;
+}
+export interface ResultAdminBook {
+	$page: ReturnAdminBook$page[];
 }
 
 export interface ParamSaveAtom {
@@ -620,16 +647,6 @@ export interface ResultGetDuos {
 	ret: ReturnGetDuosRet[];
 }
 
-export interface ParamClearCode {
-}
-export interface ResultClearCode {
-}
-
-export interface ParamClearPend {
-}
-export interface ResultClearPend {
-}
-
 export interface ParamGetPend {
 	pendEntity: number;
 	params: any;
@@ -888,7 +905,7 @@ export enum BizPhraseType {
 	out = 700,
 	ioApp = 710,
 	ioSite = 711,
-	title = 901,
+	book = 901,
 	assign = 902,
 	key = 1001,
 	prop = 1011,
@@ -1444,6 +1461,10 @@ export interface UqExt extends Uq {
 	$poked: UqQuery<Param$poked, Result$poked>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
+	ClearCode: UqAction<ParamClearCode, ResultClearCode>;
+	ClearPend: UqAction<ParamClearPend, ResultClearPend>;
+	ClearBook: UqAction<ParamClearBook, ResultClearBook>;
+	AdminBook: UqQuery<ParamAdminBook, ResultAdminBook>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
 	SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
 	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
@@ -1473,8 +1494,6 @@ export interface UqExt extends Uq {
 	SaveDuoOuterApp: UqAction<ParamSaveDuoOuterApp, ResultSaveDuoOuterApp>;
 	DelDuoOuterApp: UqAction<ParamDelDuoOuterApp, ResultDelDuoOuterApp>;
 	GetDuos: UqQuery<ParamGetDuos, ResultGetDuos>;
-	ClearCode: UqAction<ParamClearCode, ResultClearCode>;
-	ClearPend: UqAction<ParamClearPend, ResultClearPend>;
 	GetPend: UqQuery<ParamGetPend, ResultGetPend>;
 	GetPendsNotify: UqQuery<ParamGetPendsNotify, ResultGetPendsNotify>;
 	GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
@@ -1912,6 +1931,68 @@ export const uqSchema={
                         "type": "tinyint"
                     }
                 ]
+            }
+        ]
+    },
+    "clearcode": {
+        "name": "ClearCode",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "jsoned": true,
+        "returns": [] as any
+    },
+    "clearpend": {
+        "name": "ClearPend",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "jsoned": true,
+        "returns": [] as any
+    },
+    "clearbook": {
+        "name": "ClearBook",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "bud",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [] as any
+    },
+    "adminbook": {
+        "name": "AdminBook",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "bud",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "i",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ],
+                "order": "asc"
             }
         ]
     },
@@ -3228,24 +3309,6 @@ export const uqSchema={
             }
         ]
     },
-    "clearcode": {
-        "name": "ClearCode",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [] as any,
-        "jsoned": true,
-        "returns": [] as any
-    },
-    "clearpend": {
-        "name": "ClearPend",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [] as any,
-        "jsoned": true,
-        "returns": [] as any
-    },
     "getpend": {
         "name": "GetPend",
         "type": "query",
@@ -4053,7 +4116,7 @@ export const uqSchema={
             "out": 700,
             "ioApp": 710,
             "ioSite": 711,
-            "title": 901,
+            "book": 901,
             "assign": 902,
             "key": 1001,
             "prop": 1011,

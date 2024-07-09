@@ -4,7 +4,7 @@ import { Entity } from './Entity';
 import { EntityAtom, EntityCombo, EntityDuo, EntityPick, EntityFork } from './EntityAtom';
 import { EntityTree } from './EntityTree';
 import { EntityBin, EntityPend, EntitySheet } from './EntitySheet';
-import { EntityTitle } from './EntityTitle';
+import { EntityBook } from './EntityTitle';
 import { EntityTie } from './EntityTie';
 import { EntityRole } from './EntityPermit';
 import { EntityOptions } from './EntityOptions';
@@ -71,7 +71,7 @@ export class Biz {
 
     readonly ties: EntityTie[] = [];
     readonly trees: EntityTree[] = [];
-    readonly titles: EntityTitle[] = [];
+    readonly titles: EntityBook[] = [];
     readonly reports: EntityReport[] = [];
     readonly assigns: EntityAssign[] = [];
 
@@ -289,7 +289,6 @@ export class Biz {
                 entities:
                     [
                         [this.roles, '许可', 'user-o'],
-                        //[this.permits, '许可', 'user'],
                     ]
             },
             {
@@ -407,7 +406,7 @@ export class Biz {
     }
 
     private buildTitle = (id: number, name: string, type: string): Entity => {
-        let bizEntity = new EntityTitle(this, id, name, type);
+        let bizEntity = new EntityBook(this, id, name, type);
         this.titles.push(bizEntity);
         return bizEntity;
     }

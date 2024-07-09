@@ -1,4 +1,4 @@
-import { BizBud, EntityTitle } from "app/Biz";
+import { BizBud, EntityBook } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
 import { Route } from "react-router-dom";
@@ -65,7 +65,7 @@ export function PageSiteInit() {
     async function getInit() {
         let result = await uq.GetSiteSetting.query({});
         const { buds: budsValues } = readBuds(undefined, result as any);
-        const siteSetting = biz.entities['sitesetting'] as EntityTitle;
+        const siteSetting = biz.entities['sitesetting'] as EntityBook;
         const { budColl: bizBuds, buds } = siteSetting;
         const valuesBudsEditing = new ValuesBudsEditing(buds, budsValues);
         const budEditings = valuesBudsEditing.createBudEditings();

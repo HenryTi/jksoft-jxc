@@ -60,7 +60,6 @@ function PageParams({ header, valueParams, inputParams }: PageParamsProps) {
     const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     let formRows: FormRow[] = [
         ...inputParams.buildFormRows(),
-        // inputParams.map(v => budFormRow(v, false)),
         { type: 'submit', label: '查找', options: {}, className: undefined }
     ];
     function onSubmitForm(data: any) {

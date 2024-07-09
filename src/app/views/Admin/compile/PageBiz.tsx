@@ -3,7 +3,7 @@ import { Route } from "react-router-dom";
 import { IDView, Page, useModal } from "tonwa-app";
 import { PageCode } from './PageCode';
 import { useUqApp } from "app/UqApp";
-import { BizGroup, Entity } from "app/Biz";
+import { BizGroup, Entity, EntityQuery } from "app/Biz";
 import { PageEntity } from "./PageEntity";
 import { FA, theme } from "tonwa-com";
 import { useAtomValue } from "jotai";
@@ -21,21 +21,20 @@ const rowCols = ' gx-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 
 export function useBuildViewBiz() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
-    const { openModal } = useModal();
+    const modal = useModal();
     const { compile } = centers;
     const { uq, uqSites } = uqApp;
     let { userSite } = uqSites;
     useAtomValue(biz.atomSchemasChanged);
 
     function onCode() {
-        openModal(<PageCode />);
+        modal.open(<PageCode />);
     }
-    function ViewEntityItem({ value, icon }: { value: Entity; icon: string; }) {
+    function onEntity(entity: Entity) {
+        modal.open(<PageEntity entity={entity} />);
+    }
+    function ViewEntityItem({ value, icon, onEntity }: { value: Entity; icon: string; onEntity: (entity: Entity) => void; }) {
         const { id, caption, name } = value;
-        function onEntity(e: MouseEvent) {
-            openModal(<PageEntity entity={value} />);
-            e.preventDefault();
-        }
         let content: any;
         if (caption === undefined || caption === name) {
             content = name;
@@ -49,16 +48,21 @@ export function useBuildViewBiz() {
         // <FA name={icon} className="mt-1 me-2 text-success" />
         // className="px-2 py-2 border border-secondary-subtle shadow-sm mx-2 my-1 rounded cursor-pointer link-primary bg-white d-flex"
         const cnLink = 'link-offset-2 link-offset-3-hover link-underline link-underline-opacity-75-hover';
+
+        function onClick(evt: MouseEvent) {
+            onEntity(value);
+            evt.preventDefault();
+        }
         return <div key={id} className="col">
             <a
                 className={cnLink}
                 href="#"
-                onClick={onEntity}>
+                onClick={onClick}>
                 <div className="py-2">{content}</div>
             </a>
         </div>
     }
-    function ViewEntitys({ entitys, icon }: { entitys: Entity[]; icon: string; }) {
+    function ViewEntitys({ entitys, icon, onEntity }: { entitys: Entity[]; icon: string; onEntity: (entity: Entity) => void }) {
         let content: any;
         if (entitys.length === 0) {
             content = <div className="m-1 text-secondary small">无</div>
@@ -69,7 +73,7 @@ export function useBuildViewBiz() {
                 if (name[0] === '$') {
                     if (name !== '$console') return []
                 }
-                return [<ViewEntityItem key={id} value={v} icon={icon} />];
+                return [<ViewEntityItem key={id} value={v} icon={icon} onEntity={onEntity} />];
             })
         }
         return <div className={' bg-white py-2 ps-5 ' + theme.bootstrapContainer}>
@@ -111,11 +115,25 @@ export function useBuildViewBiz() {
             }
             return <div key={index} className="border-top">
                 {top}
-                <ViewEntitys entitys={arr} icon={icon} />
+                <ViewEntitys entitys={arr} icon={icon} onEntity={onEntity} />
             </div>
         })}
         </div>;
     }
+    /*
+    function ViewQueries() {
+        function onQuery(entity: Entity) {
+            modal.open(<PageQuery entityQuery={entity as EntityQuery} />);
+        }
+        return <div className="border-top">
+            <div className="px-3 pt-2 tonwa-bg-gray-1 border-bottom">
+                <FA name="search" className="me-3 text-success" />
+                查询数据
+            </div>
+            <ViewEntitys entitys={biz.queries} icon="search" onEntity={onQuery} />
+        </div>;
+    }
+    */
     return {
         header: <>
             {compile.caption} -

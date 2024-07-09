@@ -24,6 +24,7 @@ export class EntityQuery extends Entity {
     params: BizBud[];
     idFrom: FromEntity;
     fromEntity: FromEntity;
+    value: BizBud;
     private cols: [number, number][];
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -33,6 +34,7 @@ export class EntityQuery extends Entity {
             case 'ban': this.ban = val; break;
             case 'cols': this.cols = val; break;
             // case 'idFrom': this.idFrom = val; break;
+            case 'value': this.value = val; break;
             case 'from': this.fromEntity = val; break;
             case 'ids': this.ids = val; break;
             case 'showIds': this.showIds = val; break;
@@ -42,6 +44,10 @@ export class EntityQuery extends Entity {
 
     scan(): void {
         super.scan();
+
+        for (let p of this.params) {
+            p.scan();
+        }
         for (let col of this.cols) {
             let [eId, bId] = col;
             let entity = this.biz.entityFromId(eId);
@@ -63,6 +69,7 @@ export class EntityQuery extends Entity {
             let idFrom = this.ids[this.ids.length - 1];
             this.idFrom = this.getFromEntity(idFrom.alias as string, this.fromEntity);
         }
+        if (this.value !== undefined) this.value = this.budColl[this.value as undefined as number];
     }
 
     private scanFrom(from: any): FromEntity {

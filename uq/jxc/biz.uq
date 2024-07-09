@@ -28,7 +28,7 @@ ENUM BizPhraseType (
     out = 700,
     ioApp = 710,
     ioSite = 711,
-    title = 901,
+    book = 901,
     assign = 902,
 
     key = 1001,

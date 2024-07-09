@@ -1,7 +1,7 @@
 import { BizBud, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntityID, EntityDuo } from "./EntityAtom";
-import { EntityTitle } from "./EntityTitle";
+import { EntityBook } from "./EntityTitle";
 
 export class ReportList extends BizBud {
     atom: EntityID;
@@ -15,7 +15,7 @@ export interface ReportJoin {
 
 export interface ReportTitle {
     caption: string;
-    entity: EntityTitle;
+    entity: EntityBook;
     bud: BizBud;
 }
 export class EntityReport extends Entity {

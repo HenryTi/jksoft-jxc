@@ -101,8 +101,13 @@ export function toolIconDef(def: ToolItemDef) {
 export function ToolGroup({ group }: { group: ToolItem[] | JSX.Element; }) {
     if (group === undefined) return null;
     if (Array.isArray(group) === false) return group;
+    let first = true;
     return <>{group.map((v, index) => {
-        if (index === 0) return <v.Render key={index} />;
+        if (!v) return null;
+        if (first === true) {
+            first = false;
+            return <v.Render key={index} />;
+        }
         return <React.Fragment key={index}><span className="d-inline-block me-3" /><v.Render /></React.Fragment>;
     })}</>;
 }

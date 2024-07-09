@@ -184,11 +184,6 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
     }
     async function onScrollBottom(scroller: Scroller) {
         return;
-        if (current.isPopFirst === true) return;
-        if (scrolling === true) return;
-        scrolling = true;
-        scrollIntoView('$$bottom');
-        await callQuery(true);
     }
     ItemView = ItemView ?? function ({ value }: { value: R; }) {
         return <div className="px-3 py-2">{JSON.stringify(value)}</div>;

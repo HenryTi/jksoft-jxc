@@ -88,7 +88,7 @@ export function PageCode() {
         openModal(<PageAdmin />);
     }
 
-    return <Page header={'代码'}>
+    return <Page header={'脚本'}>
         <div className="px-3 py-1 tonwa-bg-gray-2 d-flex">
             <ButtonAsyncIcon onClick={onCompile} icon="send-o">提交</ButtonAsyncIcon>
             <div className="flex-grow-1" />
