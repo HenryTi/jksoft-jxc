@@ -172,6 +172,7 @@ export class SheetStore extends Store<EntitySheet> {
     readonly atomLoaded = atom(false);
     readonly atomReaction = atom(undefined as any);
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
+    readonly atomError = atom(undefined as { [id: number]: { pend: number; overValue: number; } | { bin: number; message: string; } });
 
     constructor(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
         super(entitySheet);
@@ -370,6 +371,18 @@ export class SheetStore extends Store<EntitySheet> {
 
     get userProxy() {
         return new Proxy(this, new UserProxyHander(this.entity));
+    }
+
+    setSubmitError(checkPend: { pend: number; overValue: number; }[], checkBin: { bin: number; message: string; }[]) {
+        let error: any = getAtomValue(this.atomError);
+        if (error === undefined) error = {};
+        for (let row of checkPend) {
+            error[row.pend] = row;
+        }
+        for (let row of checkBin) {
+            error[row.bin] = row;
+        }
+        setAtomValue(this.atomError, error);
     }
 }
 

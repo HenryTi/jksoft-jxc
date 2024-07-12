@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Jul 09 2024 19:33:14 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Thu Jul 11 2024 18:54:14 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -334,7 +334,6 @@ export interface ParamSubmitSheet {
 }
 export interface ReturnSubmitSheetCheckPend {
 	pend: number;
-	value: number;
 	overValue: number;
 }
 export interface ReturnSubmitSheetCheckBin {
@@ -2365,12 +2364,6 @@ export const uqSchema={
                     {
                         "name": "pend",
                         "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "dec",
-                        "scale": 6,
-                        "precision": 18
                     },
                     {
                         "name": "overValue",

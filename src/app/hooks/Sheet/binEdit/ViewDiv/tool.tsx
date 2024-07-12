@@ -11,6 +11,7 @@ export interface ViewDivProps {
     hidePivot?: boolean;
     className?: string;
     buttons?: any;
+    index?: number;
 }
 
 export let cn: string = theme.bootstrapContainer + ' gx-0 ';

@@ -37,7 +37,15 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         let sheetId = main.valRow.id;
         let { checkPend, checkBin } = await uq.SubmitSheet.submitReturns({ id: sheetId });
         if (checkPend.length + checkBin.length > 0) {
-            alert('pendOverflow:' + JSON.stringify(checkPend) + JSON.stringify(checkBin));
+            let error: string = '';
+            if (checkPend.length > 0) {
+                error += `checkPend: ${JSON.stringify(checkPend)}\n`;
+            }
+            if (checkBin.length > 0) {
+                error += `checkBin: ${JSON.stringify(checkBin)}\n`;
+            }
+            // alert(error);
+            store.setSubmitError(checkPend, checkBin);
             return;
         }
         setEditable(true);
