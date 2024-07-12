@@ -41,13 +41,15 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud: BizBud; id: num
         fieldShows = bud.getPrimeBuds();
         if (fieldShows === undefined) return null;
     }
-    return <>{
-        fieldShows.map((fieldShow, index) => {
-            const bud = fieldShow;
-            let { id } = bud;
-            let value = budValueColl[id];
-            return <ViewBud key={index} bud={bud} value={value} noLabel={noLabel} store={store} />;
-        })}
+    return <>
+        {
+            fieldShows.map((fieldShow, index) => {
+                const bud = fieldShow;
+                let { id } = bud;
+                let value = budValueColl[id];
+                return <ViewBud key={index} bud={bud} value={value} noLabel={noLabel} store={store} />;
+            })
+        }
     </>;
 }
 

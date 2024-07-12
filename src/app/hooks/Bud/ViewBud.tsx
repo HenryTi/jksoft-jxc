@@ -4,7 +4,6 @@ import { Store, contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
 import { Atom as BizAtom, BizPhraseType } from "uqs/UqDefault";
 import { ViewSpecId } from "app/coms/ViewSpecId";
-import React from "react";
 
 export enum ViewBudUIType {
     notInDiv = 0,
@@ -190,16 +189,29 @@ function bin(bud: BizBud, value: any, store: Store) {
     let showBuds = bud.getPrimeBuds();
     if (showBuds === undefined) return null;
     const { budsColl } = store;
-    return <React.Fragment key={bud.id}>{showBuds.map(v => {
-        const { id: showBudId } = v;
-        let budVals = budsColl[value];
-        let val: any;
-        if (budVals === undefined) {
-            val = `?${showBudId}-${value}?`;
+    let budVals = budsColl[value];
+    if (budVals === undefined) {
+        debugger;
+    }
+    return <>
+        {
+            showBuds.map((v, index) => {
+                if (v === undefined) {
+                    return <div key={index}>showBuds undefined</div>;
+                }
+                if (budVals === undefined) {
+                    let showBudId = v.id
+                    let val = `?${showBudId}-${value}?`;
+                    return <div key={showBudId}>
+                        <div>{v.caption ?? v.name}</div>
+                        {val}
+                    </div>;
+
+                }
+                const { id: showBudId } = v;
+                let val = budVals[showBudId];
+                return <ViewBud key={showBudId} bud={v} value={val} uiType={ViewBudUIType.inDiv} store={store} />;
+            })
         }
-        else {
-            val = budVals[showBudId];
-        }
-        return <ViewBud key={showBudId} bud={v} value={val} uiType={ViewBudUIType.inDiv} store={store} />;
-    })}</React.Fragment>;
+    </>;
 }

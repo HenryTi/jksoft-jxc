@@ -127,7 +127,16 @@ export class BudBin extends BudDataNumber {
         this.entityBin = biz.entities[this.entityBin as unknown as string] as EntityBin;
         if (this.entityBin !== undefined) {
             if (this.showBuds !== undefined) {
-                this.showBuds = (this.showBuds as unknown as number[]).map(v => this.entityBin.budColl[v]);
+                let { main, budColl } = this.entityBin;
+                this.showBuds = (this.showBuds as unknown as number[][]).map(arr => {
+                    let v0 = arr[0];
+                    if (arr.length === 1) return budColl[v0];
+                    if (v0 !== undefined) {
+                        debugger;
+                    }
+                    let budCollMain = main.budColl;
+                    return budCollMain[arr[1]];
+                });
             }
         }
     }
