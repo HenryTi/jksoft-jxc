@@ -1,5 +1,6 @@
 import {
-    BinRow, BizBud, EntityBin, BinRowValuesTool
+    BinRow, BizBud, EntityBin, BinRowValuesTool,
+    ValueSetType
 } from "app/Biz";
 // import { Calc } from "../../Calc";
 import { DivStore } from "./DivStore";
@@ -45,6 +46,23 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
 
     protected setBudValue(bud: BizBud, value: any) {
         this.budValuesTool.setBudValue(bud, this.values, value);
+    }
+
+    buildShowBuds(excludeBuds: { [id: number]: boolean }): any[] {
+        let ret: any[] = [];
+        for (let field of this.allFields) {
+            const bud = field;
+            const { valueSetType } = bud;
+            if (this.budValuesTool.has(field) === true && valueSetType === ValueSetType.equ) {
+                const bud = field;
+                const { id } = bud;
+                if (excludeBuds[id] === true) continue;
+                let value = this.budValuesTool.getBudValue(field, this.values);
+                if (value === null || value === undefined) return null;
+                ret.push(<ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} />);
+            }
+        }
+        return ret;
     }
 }
 

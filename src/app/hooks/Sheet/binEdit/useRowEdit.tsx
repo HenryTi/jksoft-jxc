@@ -8,7 +8,7 @@ import { ChangeEvent, useState } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
 import { BinEditing, BinBudsEditing, ValDiv, ValDivBase } from "../store";
-import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
+import { RowCols, RowColsSm, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
 export function useRowEdit() {
     const modal = useModal();
@@ -69,8 +69,6 @@ function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; val
     function ViewIdField({ bud, budBase, value, base }: { bud: BizBud; budBase: BizBud; value: number; base: number; }) {
         if (bud === undefined) return null;
         const { caption, name } = bud;
-        // const { budsColl, bizAtomColl } = sheetStore;
-        // const budValueColl = budsColl[base ?? value];
         let id = base ?? value;
         return <Band label={caption ?? name} className="border-bottom py-2">
             <ViewSpecBaseOnly id={value} bold={true} />
@@ -83,13 +81,28 @@ function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; val
             </RowCols>
         </Band>;
     }
+
+    let viewShowBuds: any;
+    let excludeBuds: { [id: number]: boolean } = {};
+    if (budI !== undefined) excludeBuds[budI.id] = true;
+    if (budX !== undefined) excludeBuds[budX.id] = true;
+    let showBuds = binEditing.buildShowBuds(excludeBuds);
+    if (showBuds.length > 0) {
+        viewShowBuds = <Band className="mt-2">
+            <RowCols contentClassName="flex-fill">
+                {showBuds}
+            </RowCols>
+        </Band>
+    }
+
     return <Page header="输入明细" right={right}>
         <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + theme.bootstrapContainer}>
             <ViewIdField bud={budI} budBase={budIBase} value={binDetail.i} base={valDiv?.iBase} />
             <ViewIdField bud={budX} budBase={budXBase} value={binDetail.x} base={valDiv?.xBase} />
+            {viewShowBuds}
         </div>
         <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmit)}>
             <FormRowsView rows={formRows} register={register} errors={errors} context={binEditing} />
         </form>
-    </Page>;
+    </Page >;
 }
