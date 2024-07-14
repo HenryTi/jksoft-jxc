@@ -83,10 +83,10 @@ function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; val
     }
 
     let viewShowBuds: any;
-    let excludeBuds: { [id: number]: boolean } = {};
-    if (budI !== undefined) excludeBuds[budI.id] = true;
-    if (budX !== undefined) excludeBuds[budX.id] = true;
-    let showBuds = binEditing.buildShowBuds(excludeBuds);
+    // let excludeBuds: { [id: number]: boolean } = {};
+    // if (budI !== undefined) excludeBuds[budI.id] = true;
+    // if (budX !== undefined) excludeBuds[budX.id] = true;
+    let showBuds = binEditing.buildShowBuds();
     if (showBuds.length > 0) {
         viewShowBuds = <Band className="mt-2">
             <RowCols contentClassName="flex-fill">

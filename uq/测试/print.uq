@@ -1,0 +1,37 @@
+PRINT p1 {
+    SHEET 入库单;
+    MAIN {
+        HEADER <-
+            <div>a</div>
+        ->;
+        CONTENT <-
+            <div>a</div>
+        ->;
+        FOOTER <-
+            <div>a</div>
+        ->;
+        PAGEHEADER <-
+            <div>a</div>
+        ->;
+        PAGEFOOTER <-
+            <div>a</div>
+        ->;
+    }
+    Detail 收货单明细 {
+        HEADER <-
+            <div>a</div>
+        ->;
+        CONTENT <-
+            <div>a</div>
+        ->;
+        FOOTER <-
+            <div>a</div>
+        ->;
+        PAGEHEADER <-
+            <div>a</div>
+        ->;
+        PAGEFOOTER <-
+            <div>a</div>
+        ->;
+    }
+}

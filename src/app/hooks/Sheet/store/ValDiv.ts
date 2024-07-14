@@ -1,36 +1,40 @@
 import { BinDiv } from "app/Biz";
-import { WritableAtom, atom } from "jotai";
+import { Getter, WritableAtom, atom } from "jotai";
 import { ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { PendRow, SheetStore } from "./SheetStore";
 
 export class ValDivsBase<T extends ValDivBase> {
     readonly atomValDivs = atom([] as T[]);
-    readonly atomSum = atom(get => {
+    readonly atomSum = atom(get => this.getSum(get));
+
+    protected getSum(get: Getter) {
         let valDivs = get(this.atomValDivs);
-        let sum = 0, len = valDivs.length;
+        let sumValue = 0, sumAmount = 0, len = valDivs.length;
         for (let i = 0; i < len; i++) {
             let valDiv = valDivs[i];
-            let v: number = 0;
             try {
                 let { binDiv: { level, entityBin: { divLevels } } } = valDiv;
+                const { atomValue, atomValRow, atomSum } = valDiv;
                 if (level === divLevels) {
-                    const { atomValue } = valDiv;
-                    v = get(atomValue);
+                    const valRow = get(atomValRow);
+                    sumValue += get(atomValue);
+                    sumAmount += valRow.amount ?? 0;
                 }
                 else {
-                    const { atomSum } = valDiv;
-                    v = get(atomSum);
+                    const { sumAmount: a0, sumValue: v0 } = get(atomSum);
+                    sumAmount += a0;
+                    sumValue += v0;
                 }
             }
             catch (err) {
                 console.error(err);
                 debugger;
             }
-            sum += v;
         };
-        return sum;
-    });
+        return { sumValue, sumAmount };
+    }
+
     addValDiv(valDiv: T, trigger: boolean) {
         let { atomValDivs } = this;
         let valDivs = getAtomValue(atomValDivs);
@@ -114,6 +118,20 @@ export abstract class ValDivBase extends ValDivs {
         this.internalMergeValRow(vt, valRow)
         this.atomValRow = atom<any>(vt);
         this.setValRowIXBase(vt);
+    }
+
+    protected override getSum(get: Getter) {
+        let deleted = get(this.atomDeleted);
+        if (deleted === true) {
+            return { sumAmount: 0, sumValue: 0 };
+        }
+        let valDivs = get(this.atomValDivs);
+        if (valDivs.length > 0) return super.getSum(get);
+        let valRow = get(this.atomValRow);
+        return {
+            sumAmount: valRow.value,
+            sumValue: valRow.amount,
+        }
     }
 
     get id(): number {

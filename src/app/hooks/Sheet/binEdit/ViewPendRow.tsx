@@ -41,10 +41,11 @@ export function ViewPendRow({
             let valDiv = getAtomValue(atomValDiv);
             if (valDiv !== undefined) {
                 const { atomSum } = valDiv;
-                const pendValue = getAtomValue(atomSum);
+                const { sumAmount, sumValue: pendValue } = getAtomValue(atomSum);
+                const vPendValue = <span className="fw-bold fs-larger text-primary">{pendValue}</span>;
                 viewPendValue = <ViewValue
                     caption={'已办'}
-                    value={<span className="fw-bold fs-larger text-primary">{pendValue}</span>}
+                    value={vPendValue}
                 />;
             }
         }

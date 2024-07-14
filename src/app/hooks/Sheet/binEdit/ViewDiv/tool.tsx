@@ -45,8 +45,8 @@ export function ViewPendValue(props: ViewDivProps) {
     const { atomValRow, atomSum, binDiv, parent } = valDiv;
     const { level, entityBin } = binDiv;
     const valRow = useAtomValue(atomValRow);
-    let sum = useAtomValue(atomSum);
-    if (parent === undefined) sum = valRow.value;
+    let { sumValue, sumAmount } = useAtomValue(atomSum);
+    if (parent === undefined) sumValue = valRow.value;
     const { pendValue } = valRow;
     let {
         pend: cnPend, pendOver: cnPendOver, pendValue: cnPendValue
@@ -57,7 +57,7 @@ export function ViewPendValue(props: ViewDivProps) {
     if (level === 0) {
         if (readonly !== true) {
             let icon: string, color: string;
-            if (sum > pendValue) {
+            if (sumValue > pendValue) {
                 icon = 'exclamation-circle';
                 color = cnPendOver;
             }

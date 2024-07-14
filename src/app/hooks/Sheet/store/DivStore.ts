@@ -1,6 +1,6 @@
 import { PendRow, SheetStore } from "./SheetStore";
 import { BinDiv, EntityBin, PickPend } from "app/Biz";
-import { WritableAtom, atom } from "jotai";
+import { Getter, WritableAtom, atom } from "jotai";
 import { ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsRoot } from './ValDiv';
@@ -121,8 +121,8 @@ export class DivStore {
         let pendRows = getAtomValue(this.atomPendRows);
         for (let vd of vds) {
             if (has(vd, valDiv) === true) {
-                let { atomValRow, atomSum: atomValue } = vd;
-                let value = getAtomValue(atomValue);
+                let { atomValRow, atomSum } = vd;
+                let { sumValue, sumAmount } = getAtomValue(atomSum);
                 let valRow = getAtomValue(atomValRow);
                 let { pend } = valRow;
                 let pendRow = pendRows?.find(v => v.pend === pend);
@@ -130,7 +130,7 @@ export class DivStore {
                     // debugger;
                     return undefined;
                 }
-                return pendRow.value - value;
+                return pendRow.value - sumValue;
             }
         }
         return undefined;
@@ -322,5 +322,17 @@ export class DivStore {
             this.pickPendStores[id] = pps = new PickPendStore(this, pickPend, namedResults);
         }
         return pps;
+    }
+
+    sum(get: Getter) {
+        let sumAmount: number = 0, sumValue: number = 0;
+        const { atomValDivs } = this.valDivsRoot;
+        let valDivs = get(atomValDivs);
+        for (let valDiv of valDivs) {
+            const { sumValue: v0, sumAmount: a0 } = get(valDiv.atomSum);
+            sumValue += v0;
+            sumAmount += a0;
+        }
+        return { sumAmount, sumValue };
     }
 }

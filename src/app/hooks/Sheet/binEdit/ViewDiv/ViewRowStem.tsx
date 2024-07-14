@@ -12,7 +12,7 @@ export function ViewRowStem(props: ViewDivProps) {
     const { atomValRow, atomValDivs, atomSum, binDiv } = valDiv;
     const { entityBin } = binDiv;
     const valRow = useAtomValue(atomValRow);
-    let sum = useAtomValue(atomSum);
+    let { sumValue, sumAmount } = useAtomValue(atomSum);
     const divs = useAtomValue(atomValDivs);
     const { i: iValue } = valRow;
     let {
@@ -36,7 +36,7 @@ export function ViewRowStem(props: ViewDivProps) {
         return <>
             <ViewDivRight>
                 <ViewPendValue {...props} />
-                <PAV bud={budValue} val={sum} className={cn} />
+                <PAV bud={budValue} val={sumValue} className={cn} />
             </ViewDivRight>
             {buttons}
         </>;

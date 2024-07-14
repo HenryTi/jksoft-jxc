@@ -48,15 +48,18 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
         this.budValuesTool.setBudValue(bud, this.values, value);
     }
 
-    buildShowBuds(excludeBuds: { [id: number]: boolean }): any[] {
+    buildShowBuds(excludeBuds?: { [id: number]: boolean }): any[] {
+
         let ret: any[] = [];
-        for (let field of this.allFields) {
+        for (let field of this.fields) {
             const bud = field;
             const { valueSetType } = bud;
             if (this.budValuesTool.has(field) === true && valueSetType === ValueSetType.equ) {
                 const bud = field;
                 const { id } = bud;
-                if (excludeBuds[id] === true) continue;
+                if (excludeBuds !== undefined) {
+                    if (excludeBuds[id] === true) continue;
+                }
                 let value = this.budValuesTool.getBudValue(field, this.values);
                 if (value === null || value === undefined) return null;
                 ret.push(<ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} />);

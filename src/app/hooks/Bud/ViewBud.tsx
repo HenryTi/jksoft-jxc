@@ -45,7 +45,7 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
         }
     }
     if (noLabel === true) {
-        return <div className="col">{content}</div>;
+        return <div className="col mb-1">{content}</div>;
     }
     return <LabelBox label={caption ?? name} className="mb-1">{content}</LabelBox>;
 }
@@ -190,27 +190,26 @@ function bin(bud: BizBud, value: any, store: Store) {
     if (showBuds === undefined) return null;
     const { budsColl } = store;
     let budVals = budsColl[value];
-    if (budVals === undefined) {
-        debugger;
+    function viewNoVals(bud: BizBud) {
+        let { id, caption, name } = bud;
+        return <LabelBox key={id} label={caption ?? name} className="mb-1">
+            <div>{ }</div>
+            ?{id}-{value}?
+        </LabelBox>;
     }
+    function viewWithVals(bud: BizBud) {
+        const { id: showBudId } = bud;
+        let val = budVals[showBudId];
+        return <ViewBud key={showBudId} bud={bud} value={val} uiType={ViewBudUIType.inDiv} store={store} />;
+    }
+    let viewFunc = budVals === undefined ? viewNoVals : viewWithVals;
     return <>
         {
             showBuds.map((v, index) => {
                 if (v === undefined) {
                     return <div key={index}>showBuds undefined</div>;
                 }
-                if (budVals === undefined) {
-                    let showBudId = v.id
-                    let val = `?${showBudId}-${value}?`;
-                    return <div key={showBudId}>
-                        <div>{v.caption ?? v.name}</div>
-                        {val}
-                    </div>;
-
-                }
-                const { id: showBudId } = v;
-                let val = budVals[showBudId];
-                return <ViewBud key={showBudId} bud={v} value={val} uiType={ViewBudUIType.inDiv} store={store} />;
+                return viewFunc(v);
             })
         }
     </>;

@@ -47,6 +47,7 @@ export interface PageTemplateProps {
 }
 
 export interface PageProps extends PageHeaderProps, PageFooterProps, PageContentProps, PageTemplateProps {
+    ref?: any;
     auth?: boolean;                     // 需要验证，default=true
     onClosing?: () => Promise<boolean>;
     onClosed?: () => Promise<void> | void;

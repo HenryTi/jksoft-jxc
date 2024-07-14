@@ -1,6 +1,5 @@
 import { EntityFork, PickSpec } from "app/Biz";
-import { ViewAtom, ViewAtomId } from "app/hooks/BizAtom";
-import { Atom } from "uqs/UqDefault";
+import { ViewAtomId } from "app/hooks/BizAtom";
 import { useCallback } from "react";
 import { NamedResults, PickResult } from "../store";
 import { DivStore } from "../store";
@@ -9,14 +8,13 @@ import { useModal } from "tonwa-app";
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { Page } from "tonwa-app";
-import { List, theme } from "tonwa-com";
+import { theme } from "tonwa-com";
 import { ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
 import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 import { Calc } from "app/hooks/Calc";
-import { RowColsSm } from "app/hooks/tool";
-import { PagePickSelect, ViewBud } from "app/hooks";
+import { PagePickSelect } from "app/hooks";
 
 export interface PropsPickSpec {
     base: number;

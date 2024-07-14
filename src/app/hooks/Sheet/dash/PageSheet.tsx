@@ -4,12 +4,15 @@ import { ViewDiv, ViewMain } from "../binEdit";
 import { atom, useAtomValue } from "jotai";
 import { useDetailNew } from "../binEdit";
 // import { useUqApp } from "app/UqApp";
-import { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useBinPicks } from "../binPick";
 import { headerSheet, buttonDefs } from "../headerSheet";
 import { ViewReaction } from "app/hooks/View/ViewReaction";
-import { FA, setAtomValue } from "tonwa-com";
+import { FA, setAtomValue, theme } from "tonwa-com";
 import { ToolItem } from "app/coms";
+import { PAV } from "../binEdit/ViewDiv/tool";
+import { BizBud } from "app/Biz";
+import { useReactToPrint } from "react-to-print";
 
 export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean; }) {
     const { uq, main, divStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
@@ -19,7 +22,10 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     let submitState = useAtomValue(atomSubmitState);
     const detailNew = useDetailNew(store);
     const start = useStartSheetStore(store, pick);
-
+    const ref = useRef(null);
+    const handlePrint = useReactToPrint({
+        content: () => ref.current,
+    });
     async function onSubmit() {
         function checkTrigger() {
             if (main.trigger() === false) return false;
@@ -65,7 +71,8 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         sheetConsole.close();
     }
     function onPrint() {
-        alert('正在实现中...');
+        handlePrint();
+        // alert('正在实现中...');
     }
 
     let { id } = useAtomValue(main._valRow);
@@ -109,6 +116,34 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
                 <button className="btn btn-primary" onClick={startInputDetail}>开始录单</button>
             </div>;
         }
+        function ViewSum() {
+            const sum = useAtomValue(store.atomSum);
+            if (sum === undefined) return null;
+            const { sumAmount, sumValue } = sum;
+            const { amount: budAmount, value: budValue } = entityBin;
+            const { value: cnValue, amount: cnAmount } = theme;
+            let viewAmount: any, viewValue: any;
+            function viewNumber(cn: string, bud: BizBud, val: number) {
+                return <>
+                    <div className="ms-3" />
+                    <PAV className={cn} bud={bud} val={val} />
+                </>
+            }
+            if (budAmount === undefined) {
+                if (budValue === undefined) return null;
+            }
+            else {
+                viewAmount = viewNumber(cnAmount, budAmount, sumAmount);
+            }
+            if (budValue !== undefined) {
+                viewValue = viewNumber(cnValue, budValue, sumValue);
+            }
+            return <div className="d-flex ps-3 pe-5 py-3 justify-content-end">
+                <div className="me-3">合计</div>
+                {viewAmount}
+                {viewValue}
+            </div>;
+        }
         function ViewBinDivs() {
             const { valDivsRoot } = divStore;
             const valDivs = useAtomValue(valDivsRoot.atomValDivs);
@@ -135,11 +170,11 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
                     })}
             </div>
         }
-        view = <>
+        view = <div ref={ref}>
             <ViewMain store={store} popup={false} readOnly={readonly} />
             <ViewBinDivs />
-        </>;
-        // <div>directly: {entityBin.directly === true ? 'true' : 'false'}</div>
+            <ViewSum />
+        </div>;
     }
 
     if (divStore === undefined) mainOnlyEdit();

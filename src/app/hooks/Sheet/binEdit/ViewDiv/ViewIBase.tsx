@@ -22,10 +22,10 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     let iBase = valDiv.getIBase(sheetStore, iValue);
     if (iBase === undefined) iBase = iValue;
     if (iBase === undefined) return null;
-    return <>
+    return <div className="mb-1">
         <ViewSpecAtomBold id={iBase} store={sheetStore} />
         <ViewAtomTitles bud={iBud} id={iBase} store={sheetStore} />
-    </>;
+    </div>;
 }
 
 function ViewAtom({ value }: { value: BizAtom; }) {

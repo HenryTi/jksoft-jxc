@@ -173,7 +173,9 @@ export class SheetStore extends Store<EntitySheet> {
     readonly atomReaction = atom(undefined as any);
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
     readonly atomError = atom(undefined as { [id: number]: { pend: number; overValue: number; } | { bin: number; message: string; } });
-
+    readonly atomSum = atom(get => {
+        return this.divStore.sum(get);
+    });
     constructor(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
         super(entitySheet);
         this.sheetConsole = sheetConsole;
@@ -216,6 +218,7 @@ export class SheetStore extends Store<EntitySheet> {
     }
 
     async reloadBinProps(binId: number) {
+        if (this.budsColl[binId] !== undefined) return;
         await this.loadBinData(binId);
     }
 

@@ -67,6 +67,7 @@ export abstract class BudsEditing<R = any> implements FormContext {
     setStopRequired() { this.stopRequired = true; }
 
     get allFields() { return this.budValuesTool.allFields; }
+    get fields() { return this.budValuesTool.fields; }
 
     calcValue(formula: string): number | string {
         let ret = this.calc.calcFormula(formula);

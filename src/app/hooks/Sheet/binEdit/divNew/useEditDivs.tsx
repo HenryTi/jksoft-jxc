@@ -84,9 +84,9 @@ async function runInputDiv(runInputDivProps: RunInputDivProps, valDiv: ValDivBas
     valRow.id = id;
     valDiv.setValRow(valRow);
     valDiv.setIXBaseFromInput(divEditing);
-    if (retInputs === true) {
-        await divStore.reloadBinProps(id);
-    }
+    // if (retInputs === true) {
+    await divStore.reloadBinProps(id);
+    //}
     return true;
 }
 
