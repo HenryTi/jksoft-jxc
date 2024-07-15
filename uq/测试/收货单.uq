@@ -5,6 +5,18 @@ SHEET 收货单 {
       I, 物流中心, 
       收货单明细(I),
     );
+    PRINT {
+        MAIN SheetMainPage;
+        Detail 收货单明细 SheetDetailPage;
+    }
+    PRINT 单据 {
+        -- 覆盖PRINT定义
+        Detail 收货单明细 SheetDetailPage;
+    }
+    PRINT 标签 {
+        -- 覆盖PRINT定义
+        MAIN SheetMainPage;
+    }
 }
 
 BIN 收货单主表 {

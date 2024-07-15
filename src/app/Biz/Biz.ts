@@ -12,11 +12,12 @@ import { from62, getAtomValue, setAtomValue } from 'tonwa-com';
 import { EntityReport } from './EntityReport';
 import { EntityQuery } from './EntityQuery';
 import { EntityAssign } from './EntityAssign';
-import { BizBud, BudArr, BudIDIO, EnumBudType } from './BizBud';
+import { BizBud } from './BizBud';
 import { AtomsBuilder } from './AtomsBuilder';
 import { EntityConsole } from './EntityConsole';
 import { EntityIOApp, EntityIOSite, EntityIn, EntityOut } from './EntityInOut';
 import { atom } from 'jotai';
+import { EntityPrint, EntityTemplet } from './EntityPrint';
 
 enum EnumEntity {
     sheet,
@@ -41,6 +42,8 @@ enum EnumEntity {
     out,
     ioApp,
     ioSite,
+    templet,
+    print,
 };
 
 export interface BizGroup {
@@ -74,6 +77,8 @@ export class Biz {
     readonly titles: EntityBook[] = [];
     readonly reports: EntityReport[] = [];
     readonly assigns: EntityAssign[] = [];
+    readonly templets: EntityTemplet[] = [];
+    readonly prints: EntityPrint[] = [];
 
     readonly roles: EntityRole[] = [];
     readonly ins: EntityIn[] = [];
@@ -148,6 +153,8 @@ export class Biz {
             [EnumEntity.out]: this.buildOut,
             [EnumEntity.ioApp]: this.buildIOApp,
             [EnumEntity.ioSite]: this.buildIOSite,
+            [EnumEntity.templet]: this.buildTemplet,
+            [EnumEntity.print]: this.buildPrint,
         }
         for (let group of this.groups) {
             let { entities } = group;
@@ -202,6 +209,8 @@ export class Biz {
         this.sheets.push(...sheets);
 
         const typeSeq: EnumEntity[] = [
+            EnumEntity.templet,
+            EnumEntity.print,
             EnumEntity.title,
             EnumEntity.book,
             EnumEntity.assign,
@@ -242,7 +251,7 @@ export class Biz {
                 caption: '业务流程',
                 entities: [
                     [this.sheets, '业务单据', 'file'],
-                    [this.bins, '单据条', 'file-text-o'],
+                    // [this.bins, '单据条', 'file-text-o'],
                     [this.pends, '待处理', 'clone'],
                 ],
             },
@@ -300,8 +309,10 @@ export class Biz {
                         [this.outs, '发送', 'user-o'],
                         [this.ioSites, '外连机构', 'user-o'],
                         [this.ioApps, '外连应用', 'user-o'],
-                        [this.ioSheets, '接口单据', 'file']
-                    ]
+                        [this.ioSheets, '接口单据', 'file'],
+                        [this.prints, '打印模板', 'file'],
+                        [this.templets, '模板块', 'file'],
+                    ],
             },
         );
         if (this.bizConsole !== undefined) {
@@ -426,6 +437,18 @@ export class Biz {
     private buildTree = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityTree(this, id, name, type);
         this.trees.push(bizEntity);
+        return bizEntity;
+    }
+
+    private buildTemplet = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityTemplet(this, id, name, type);
+        this.templets.push(bizEntity);
+        return bizEntity;
+    }
+
+    private buildPrint = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityPrint(this, id, name, type);
+        this.prints.push(bizEntity);
         return bizEntity;
     }
 

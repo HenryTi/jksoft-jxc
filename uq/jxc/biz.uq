@@ -36,6 +36,8 @@ ENUM BizPhraseType (
     optionsitem = 1031,
 
     console = 6001,
+    templet = 6101,
+    print = 6102,
 );
 
 ID #BizPhrase (

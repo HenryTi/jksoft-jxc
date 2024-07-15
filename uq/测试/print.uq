@@ -1,37 +1,46 @@
-PRINT p1 {
-    SHEET 入库单;
-    MAIN {
-        HEADER <-
-            <div>a</div>
-        ->;
-        CONTENT <-
-            <div>a</div>
-        ->;
-        FOOTER <-
-            <div>a</div>
-        ->;
-        PAGEHEADER <-
-            <div>a</div>
-        ->;
-        PAGEFOOTER <-
-            <div>a</div>
-        ->;
-    }
-    Detail 收货单明细 {
-        HEADER <-
-            <div>a</div>
-        ->;
-        CONTENT <-
-            <div>a</div>
-        ->;
-        FOOTER <-
-            <div>a</div>
-        ->;
-        PAGEHEADER <-
-            <div>a</div>
-        ->;
-        PAGEFOOTER <-
-            <div>a</div>
-        ->;
-    }
+TEMPLET SheetHeader /-
+    <div>a</div>
+-/;
+TEMPLET SheetContent /-
+    <div>a</div>
+-/;
+TEMPLET SheetFooter /-
+    <div>a</div>
+-/;
+TEMPLET SheetPageHeader /-
+    <div>a</div>
+-/;
+TEMPLET SheetPageFooter /-
+    <div>a</div>
+-/;
+TEMPLET DetailHeader /-
+    <div>a</div>
+-/;
+TEMPLET DetailContent /-
+    <div>a</div>
+-/;
+TEMPLET DetailFooter /-
+    <div>a</div>
+-/;
+TEMPLET DetailPageHeader /-
+    <div>a</div>
+-/;
+TEMPLET DetailPageFooter /-
+    <div>a</div>
+-/;
+
+PRINT SheetMainPage {
+    HEADER SheetHeader;
+    CONTENT SheetContent;
+    FOOTER SheetFooter;
+    PAGEHEADER SheetPageHeader;
+    PAGEFOOTER SheetPageFooter;
+}
+
+PRINT SheetDetailPage {
+    HEADER DetailHeader;
+    CONTENT DetailContent;
+    FOOTER DetailFooter;
+    PAGEHEADER DetailPageHeader;
+    PAGEFOOTER DetailPageFooter;
 }
