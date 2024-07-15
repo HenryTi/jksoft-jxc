@@ -127,10 +127,10 @@ export abstract class ValDivBase extends ValDivs {
         }
         let valDivs = get(this.atomValDivs);
         if (valDivs.length > 0) return super.getSum(get);
-        let valRow = get(this.atomValRow);
+        let { amount, value } = get(this.atomValRow);
         return {
-            sumAmount: valRow.value,
-            sumValue: valRow.amount,
+            sumAmount: amount ?? 0,
+            sumValue: value ?? 0,
         }
     }
 
