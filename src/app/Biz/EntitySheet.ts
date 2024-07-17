@@ -56,6 +56,7 @@ export abstract class BinPick extends BizBud {
     readonly bin: EntityBin;
     pickParams: PickParam[];
     hiddenBuds: Set<number>;
+    on: BizBud;
     constructor(biz: Biz, id: number, name: string, bin: EntityBin) {
         super(biz, id, name, EnumBudType.pick, bin);
         this.bin = bin;
@@ -316,6 +317,7 @@ export class EntityBin extends Entity {
     main: EntityBin;
     binPicks: BinPick[];
     rearPick: BinPick;          // endmost pick
+    readonly onPicks: { [bud: number]: BinPick } = {};
     binDivRoot: BinDiv;
     divLevels: number;
     i: BizBud;
@@ -441,7 +443,7 @@ export class EntityBin extends Entity {
     }
 
     private buildPick(v: any): BinPick {
-        const { id, name, from, caption, params, hidden } = v;
+        const { id, name, from, caption, params, hidden, on } = v;
         let arr = (from as string[]).map(v => this.biz.entities[v]);
         let entity = arr[0];
         if (entity === undefined) return;
@@ -473,6 +475,9 @@ export class EntityBin extends Entity {
             case BizPhraseType.fork: binPick = buildPickSpec(); break;
             case BizPhraseType.query: binPick = buildPickQuery(); break;
             case BizPhraseType.pend: binPick = buildPickPend(); break;
+        }
+        if (on !== undefined) {
+            binPick.on = this.budColl[on];
         }
         binPick.pickParams = this.buildPickParams(params);
         binPick.ui = { caption };
@@ -545,9 +550,23 @@ export class EntityBin extends Entity {
             this.xBase.onForm = false;
         }
         if (this.binPicks !== undefined) {
-            let pLast = this.binPicks.length - 1;
-            this.rearPick = this.binPicks[pLast];
-            this.binPicks.splice(pLast, 1);
+            let binPicks: BinPick[] = [];
+            let rearPick: BinPick;
+            for (let pick of this.binPicks) {
+                const { on } = pick;
+                if (on !== undefined) {
+                    this.onPicks[on.id] = pick;
+                }
+                else {
+                    binPicks.push(pick);
+                    rearPick = pick;
+                }
+            }
+            if (rearPick !== undefined) {
+                binPicks.pop();
+            }
+            this.binPicks = binPicks;
+            this.rearPick = rearPick;
         }
         let divSchema = this.binDivRoot;
         this.binDivRoot = new BinDiv(this, undefined);
