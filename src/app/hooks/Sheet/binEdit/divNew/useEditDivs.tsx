@@ -3,7 +3,7 @@ import { inputAtom } from "./inputAtom";
 import { inputSpec } from "./inputSpec";
 import { useCallback } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
-import { DivEditing, DivStore, PendRow, ValDivBase } from "../../store";
+import { DivEditing, BinStore, PendRow, ValDivBase } from "../../store";
 import { PageInputDiv } from "./PageInputDiv";
 import { UqApp, useUqApp } from "app";
 import { Modal, useModal } from "tonwa-app";
@@ -11,7 +11,7 @@ import { PendProxyHandler } from "../../store";
 import { NamedResults } from "../../store";
 
 export interface UseEditDivsProps {
-    divStore: DivStore;
+    divStore: BinStore;
     pendRow: PendRow;
     valDiv: ValDivBase;         // 当前需要edit的valDiv, 如果新建，则先创建空的valDiv. 所以也不需要返回
     skipInputs: boolean;

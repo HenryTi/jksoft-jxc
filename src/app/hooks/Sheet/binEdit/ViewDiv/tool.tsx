@@ -1,11 +1,11 @@
 import { BizBud } from "app/Biz";
-import { DivStore, ValDiv, ValDivBase } from "../../store";
+import { BinStore, ValDiv, ValDivBase } from "../../store";
 import { ViewSpecNoAtom } from "app/hooks";
 import { FA, theme } from "tonwa-com";
 import { useAtomValue } from "jotai";
 
 export interface ViewDivProps {
-    divStore: DivStore;
+    divStore: BinStore;
     valDiv: ValDivBase;
     readonly?: boolean;
     hidePivot?: boolean;

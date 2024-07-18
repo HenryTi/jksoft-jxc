@@ -2,7 +2,7 @@ import { EntityFork, PickSpec } from "app/Biz";
 import { ViewAtomId } from "app/hooks/BizAtom";
 import { useCallback } from "react";
 import { NamedResults, PickResult } from "../store";
-import { DivStore } from "../store";
+import { BinStore } from "../store";
 import { useUqApp } from "app/UqApp";
 import { useModal } from "tonwa-app";
 import { useForm } from "react-hook-form";
@@ -27,7 +27,7 @@ export interface PropsPickSpec {
 export function usePickFromSpec() {
     const { uq } = useUqApp();
     const modal = useModal();
-    return useCallback(async function (divStore: DivStore, namedResults: NamedResults, binPick: PickSpec): Promise<PickResult> {
+    return useCallback(async function (divStore: BinStore, namedResults: NamedResults, binPick: PickSpec): Promise<PickResult> {
         let { pickParams, from } = binPick;
         const pickName = binPick.name;
         const calc = new Calc([[pickName, binPick.baseParam]], namedResults);

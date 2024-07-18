@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { DivEditing, DivStore, ValDiv, ValDivBase, ValDivRoot, ValRow } from "../../store";
+import { DivEditing, BinStore, ValDiv, ValDivBase, ValDivRoot, ValRow } from "../../store";
 import { FA, getAtomValue, setAtomValue } from "tonwa-com";
 import { useEditDivs } from "../divNew";
 import { useRowEdit } from "../useRowEdit";
@@ -9,7 +9,7 @@ import { ViewRow } from "./ViewRow";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
 
 // 编辑div任意层
-export function PageEditDivRoot({ divStore, valDiv }: { divStore: DivStore; valDiv: ValDivBase; }) {
+export function PageEditDivRoot({ divStore, valDiv }: { divStore: BinStore; valDiv: ValDivBase; }) {
     const { sheetStore } = divStore;
     const { entity: entitySheet, main } = sheetStore;
     return <Page header={`${(entitySheet.caption ?? entitySheet.name)} - ${main.no}`}>
@@ -18,7 +18,7 @@ export function PageEditDivRoot({ divStore, valDiv }: { divStore: DivStore; valD
 }
 
 interface EditDivProps {
-    divStore: DivStore;
+    divStore: BinStore;
     valDiv: ValDivBase;
 }
 

@@ -7,7 +7,7 @@ import { Calc, Formulas } from "app/hooks/Calc";
 // import { budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
 import { ValRow } from "./tool";
-import { DivStore, SubmitState } from "./DivStore";
+import { BinStore, SubmitState } from "./BinStore";
 import { ValDivRoot } from "./ValDiv";
 import { Modal } from "tonwa-app";
 import { Console, Store } from "app/tool";
@@ -15,7 +15,7 @@ import { arrFromJsonMid } from "app/hooks/tool";
 import { BinEditing } from "./BinEditing";
 import { BudsEditing } from "app/hooks/BudsEditing";
 
-abstract class BinStore extends Store<EntityBin> {
+abstract class MainBinStore extends Store<EntityBin> {
     readonly sheetStore: SheetStore;
     readonly budsEditing: BudsEditing;
     readonly budEditings: BudEditing[];
@@ -34,7 +34,7 @@ abstract class BinStore extends Store<EntityBin> {
     }
 }
 
-export class SheetMain extends BinStore {
+export class SheetMain extends MainBinStore {
     readonly _valRow = atom<ValRow>({ buds: {} } as ValRow);
     get valRow() { return getAtomValue(this._valRow) }
     no: string;
@@ -168,7 +168,7 @@ export class SheetStore extends Store<EntitySheet> {
     readonly backIcon = 'file-text-o';
     readonly isPend: boolean;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> } = {};
-    readonly divStore: DivStore;
+    readonly divStore: BinStore;
     readonly atomLoaded = atom(false);
     readonly atomReaction = atom(undefined as any);
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
@@ -189,7 +189,7 @@ export class SheetStore extends Store<EntitySheet> {
         }
         this.caption = entitySheet.caption ?? entitySheet.name;
         if (detail !== undefined) {
-            this.divStore = new DivStore(this, detail.bin);
+            this.divStore = new BinStore(this, detail.bin);
         }
         sheetConsole.picks = new PickStates(
             {
@@ -252,18 +252,23 @@ export class SheetStore extends Store<EntitySheet> {
             collSheet[v.id] = v;
         };
         let pendRows: PendRow[] = [];
+        let { i: iBud, x: xBud } = entityPend;
         let hiddenBuds: Set<number> = (rearPick?.hiddenBuds) ?? new Set();
         for (let v of $page) {
             let { id, pend, pendValue, mid, sheet, i, x } = v;
             if (pendValue === undefined || pendValue <= 0) continue;
-            this.valDivsOnPend[pend] = atom(undefined as ValDivRoot);
-            let iSpec = this.bizSpecColl[i];
-            if (iSpec !== undefined) {
-                (v as any).iBase = iSpec.atom.id;
+            if (iBud !== undefined) {
+                this.valDivsOnPend[pend] = atom(undefined as ValDivRoot);
+                let iSpec = this.bizSpecColl[i];
+                if (iSpec !== undefined) {
+                    (v as any).iBase = iSpec.atom.id;
+                }
             }
-            let xSpec = this.bizSpecColl[x];
-            if (xSpec !== undefined) {
-                (v as any).xBase = xSpec.atom.id;
+            if (xBud !== undefined) {
+                let xSpec = this.bizSpecColl[x];
+                if (xSpec !== undefined) {
+                    (v as any).xBase = xSpec.atom.id;
+                }
             }
             let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);
             let pendRow: PendRow = {

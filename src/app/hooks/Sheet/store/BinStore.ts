@@ -19,7 +19,7 @@ export enum SubmitState {
     disable,
     enable,
 }
-export class DivStore {
+export class BinStore {
     private valDivColl: { [id: number]: ValDivBase };
     private pendLoadState: PendLoadState;
     readonly sheetStore: SheetStore;

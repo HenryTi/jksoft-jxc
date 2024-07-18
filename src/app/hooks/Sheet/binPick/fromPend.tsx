@@ -2,13 +2,13 @@ import { PickPend } from "app/Biz";
 import { useCallback } from "react";
 import { useModal } from "tonwa-app";
 import { NamedResults, PendProxyHandler, PickResult, ValRow } from "../store";
-import { DivStore } from "../store";
+import { BinStore } from "../store";
 import { PagePend } from "./PagePend";
 
 export function usePickFromPend() {
     const modal = useModal();
     return useCallback(
-        async function (divStore: DivStore, namedResults: NamedResults, binPick: PickPend): Promise<PickResult[]> {
+        async function (divStore: BinStore, namedResults: NamedResults, binPick: PickPend): Promise<PickResult[]> {
             let { from: entityPend, bin } = binPick;
             const pendProxyHander = new PendProxyHandler(entityPend);
             const { sheetStore } = divStore;

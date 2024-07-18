@@ -1,15 +1,15 @@
 import { BizBud, EnumBudType, PickPend } from "app/Biz";
-import { DivStore } from "./DivStore";
+import { BinStore } from "./BinStore";
 import { NamedResults, PickResult } from "./NamedResults";
 import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 
 export class PickPendStore {
-    readonly divStore: DivStore;
+    readonly divStore: BinStore;
     readonly pickPend: PickPend;
     readonly namedResults: NamedResults;
     readonly paramsEditing: ValuesBudsEditing;
 
-    constructor(divStore: DivStore, pickPend: PickPend, namedResults: NamedResults) {
+    constructor(divStore: BinStore, pickPend: PickPend, namedResults: NamedResults) {
         this.divStore = divStore;
         this.pickPend = pickPend;
         this.namedResults = namedResults;

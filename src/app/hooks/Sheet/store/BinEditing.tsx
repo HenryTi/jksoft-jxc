@@ -3,7 +3,7 @@ import {
     ValueSetType
 } from "app/Biz";
 // import { Calc } from "../../Calc";
-import { DivStore } from "./DivStore";
+import { BinStore } from "./BinStore";
 import { SheetStore } from "./SheetStore";
 import { ValDivBase } from "./ValDiv";
 import { NamedResults } from "./NamedResults";
@@ -70,9 +70,9 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
 }
 
 export class DivEditing extends BinBudsEditing {
-    readonly divStore: DivStore;
+    readonly divStore: BinStore;
     readonly valDiv: ValDivBase;
-    constructor(divStore: DivStore, valDiv: ValDivBase, namedResults?: NamedResults) {
+    constructor(divStore: BinStore, valDiv: ValDivBase, namedResults?: NamedResults) {
         const { binDiv, valRow } = valDiv;
         super(divStore.sheetStore, divStore.entityBin, binDiv.buds, valRow);
         this.divStore = divStore;
