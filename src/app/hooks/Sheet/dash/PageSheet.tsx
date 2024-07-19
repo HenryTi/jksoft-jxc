@@ -1,8 +1,8 @@
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { PickFunc, SheetStore, SubmitState } from "../store";
-import { ViewDiv, ViewMain } from "../binEdit";
+import { detailNew, ViewDiv, ViewMain } from "../binEdit";
 import { atom, useAtomValue } from "jotai";
-import { useDetailNew } from "../binEdit";
+// import { useDetailNew } from "../binEdit";
 // import { useUqApp } from "app/UqApp";
 import React, { useCallback, useRef, useState } from "react";
 // import { useBinPicks } from "../binPick";
@@ -20,7 +20,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     const modal = useModal();
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(atomSubmitState);
-    const detailNew = useDetailNew(store);
+    // const detailNew = useDetailNew(store);
     // const start = useStartSheetStore(store/*, pick*/);
     const ref = useRef(null);
     const handlePrint = useReactToPrint({
@@ -95,11 +95,11 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             // let ret = await start();
             let ret = await startSheetStore(store);
             if (ret === undefined) {
-                await detailNew();
+                await detailNew(store);
             }
         }
         async function onAddRow() {
-            await detailNew();
+            await detailNew(store);
         }
         let submitHidden: boolean;
         submitHidden = false;

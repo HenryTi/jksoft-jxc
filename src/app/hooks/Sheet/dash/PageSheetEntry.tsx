@@ -7,8 +7,9 @@ import { useCallback } from "react";
 import { ToolItem } from "app/coms";
 import { buttonDefs, headerSheet } from "../headerSheet";
 import { ViewBinPicks } from "../binPick";
-import { useDetailNew } from "../binEdit";
+// import { useDetailNew } from "../binEdit";
 import { ViewSteps } from "./ViewSteps";
+import { detailNew } from "../binEdit";
 
 export function PageSheetEdit({ store, sheetId, readonly }: { store: SheetStore; sheetId: number; readonly?: boolean; }) {
     const loaded = useAtomValue(store.atomLoaded);
@@ -124,12 +125,12 @@ function PageStartPicks({ store }: { store: SheetStore; }) {
 
 function PageStartPend({ store }: { store: SheetStore; }) {
     const onPicked = useOnPicked(store);
-    const detailNew = useDetailNew(store);
+    // const detailNew = useDetailNew(store);
     const { caption, sheetConsole } = store;
     const subCaption = '批选待处理';
     const onPend = useCallback(async (results: ReturnUseBinPicks) => {
         await onPicked(results);
-        let added = await detailNew();
+        let added = await detailNew(store);
         if (added === true) {
             await store.setSheetAsDraft();
         }
@@ -142,7 +143,7 @@ function PageStartPend({ store }: { store: SheetStore; }) {
 
 function PageDirectPend({ store }: { store: SheetStore; }) {
     const onPicked = useOnPicked(store);
-    const detailNew = useDetailNew(store);
+    // const detailNew = useDetailNew(store);
     const { caption, sheetConsole } = store;
     const subCaption = '批选待处理';
     useEffectOnce(() => {
@@ -157,7 +158,7 @@ function PageDirectPend({ store }: { store: SheetStore; }) {
                 rearPickResultType: RearPickResultType.scalar,
             };
             await onPicked(results);
-            let added = await detailNew();
+            let added = await detailNew(store);
             if (added === true) {
                 await store.setSheetAsDraft();
             }

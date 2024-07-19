@@ -24,8 +24,8 @@ export interface PropsInputSpec extends InputProps<BinInputSpec> {
 };
 
 export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
-    const { binInput, pendRow, uqApp, modal, namedResults, divStore, valDiv } = props;
-    const { sheetStore } = divStore;
+    const { binInput, pendRow, namedResults, divStore, valDiv } = props;
+    const { sheetStore, uq, modal } = divStore;
     const { entityPend } = binInput;
     const formulas: [string, string][] = [
         ['.i', binInput.baseExp ?? binInput.baseBud.valueSet],
@@ -43,7 +43,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     let budsEditing: ValuesBudsEditing;
     const { preset } = entitySpec;
     if (preset === true) {
-        let { ret } = await uqApp.uq.GetSpecsFromBase.query({ base });
+        let { ret } = await uq.GetSpecsFromBase.query({ base });
         let retSpec: any;
         switch (ret.length) {
             default:
@@ -102,7 +102,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
                 keys: keyValues,
                 props: propValues,
             };
-            let results = await uqApp.uq.SaveSpec.submit(param);
+            let results = await uq.SaveSpec.submit(param);
             let { id } = results;
             if (id < 0) id = -id;
             let retSpec = Object.assign(data, { id, base });

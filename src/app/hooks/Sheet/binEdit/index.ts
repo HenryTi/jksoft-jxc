@@ -1,4 +1,4 @@
 // export * from './ViewDetail';
 export * from './ViewMain';
-export * from './useDetailNew';
+export * from './detailNew';
 export * from './ViewDiv';

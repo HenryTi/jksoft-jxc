@@ -1,11 +1,11 @@
 import { BinPick, EntityBin, PickAtom, PickPend, PickQuery, PickSpec } from "app/Biz";
 import { BizPhraseType } from "uqs/UqDefault";
-import { useCallback, useRef, useState } from "react";
+// import { useCallback, useRef, useState } from "react";
 import { pickFromAtom } from "./fromAtom";
 // import { usePickFromSpec } from "./fromSpec";
 // import { usePickFromPend } from "./fromPend";
 import { pickFromQuery, pickFromQueryScalar } from "../../Query/fromQuery";
-import { RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
+import { BinStore, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
 import { NamedResults, PickResult } from "../store";
 import { pickFromPend } from "./fromPend";
 import { pickFromSpec } from "./fromSpec";
@@ -96,10 +96,10 @@ export function useBinPicks() {
 */
 
 export async function runBinPicks(sheetStore: SheetStore, bin: EntityBin, rearPickResultType: RearPickResultType = RearPickResultType.array) {
-    if (bin === undefined) return;
+    // if (bin === undefined) return;
     // const refNamedResults = useRef<NamedResults>(undefined);
     // let { current: namedResults } = refNamedResults;
-    const refPicked = useRef<ReturnUseBinPicks>(undefined);
+    // const refPicked = useRef<ReturnUseBinPicks>(undefined);
     const { binPicks, rearPick } = bin;
     if (binPicks === undefined) return;
     const { divStore } = sheetStore;
@@ -108,8 +108,10 @@ export async function runBinPicks(sheetStore: SheetStore, bin: EntityBin, rearPi
         '%user': sheetStore.userProxy,
         '%sheet': sheetStore.mainProxy,
     };
-    let pickResult: PickResult;
+    // let pickResult: PickResult;
     for (const binPick of binPicks) {
+        await runBinPick(divStore, binPick, namedResults);
+        /*
         const { name, fromPhraseType } = binPick;
         if (fromPhraseType === undefined) break;
         switch (fromPhraseType) {
@@ -126,6 +128,7 @@ export async function runBinPicks(sheetStore: SheetStore, bin: EntityBin, rearPi
         }
         if (pickResult === undefined) return undefined;
         namedResults[name] = pickResult;
+        */
     }
 
     let ret: ReturnUseBinPicks = {
@@ -134,9 +137,10 @@ export async function runBinPicks(sheetStore: SheetStore, bin: EntityBin, rearPi
         rearResult: undefined,
         rearPickResultType: rearPickResultType,
     };
-    refPicked.current = ret;
+    // refPicked.current = ret;
 
-    async function pickRear(/*sheetStore: SheetStore, bin: EntityBin, rearPickResultType: RearPickResultType*/) {
+    /*
+    async function pickRear() {
         if (sheetStore === undefined) debugger;
         if (bin === undefined) return;
         const { divStore } = sheetStore;
@@ -159,8 +163,10 @@ export async function runBinPicks(sheetStore: SheetStore, bin: EntityBin, rearPi
         }
         return pickResult;
     }
+    */
 
-    let rearPickResult = await pickRear(/*sheetStore, bin, rearPickResultType*/);
+    //let rearPickResult = await pickRear(/*sheetStore, bin, rearPickResultType*/);
+    let rearPickResult = await runBinPickRear(divStore, rearPick, namedResults, rearPickResultType);
     if (rearPickResult === undefined) return undefined;
 
     let rearResult: PickResult[] = Array.isArray(rearPickResult) === false ?
@@ -168,4 +174,48 @@ export async function runBinPicks(sheetStore: SheetStore, bin: EntityBin, rearPi
 
     ret.rearResult = rearResult;
     return ret;
+}
+
+export async function runBinPick(divStore: BinStore, binPick: BinPick, namedResults: NamedResults) {
+    const { name, fromPhraseType } = binPick;
+    if (fromPhraseType === undefined) return; // break;
+    let pickResult: PickResult;
+    switch (fromPhraseType) {
+        default: debugger; break;
+        case BizPhraseType.atom:
+            pickResult = await pickFromAtom(divStore, namedResults, binPick as PickAtom);
+            break;
+        case BizPhraseType.fork:
+            pickResult = await pickFromSpec(divStore, namedResults, binPick as PickSpec);
+            break;
+        case BizPhraseType.query:
+            pickResult = await pickFromQueryScalar(divStore.modal, namedResults, binPick as PickQuery);
+            break;
+    }
+    if (pickResult === undefined) return;// undefined;
+    namedResults[name] = pickResult;
+}
+
+export async function runBinPickRear(divStore: BinStore, rearPick: BinPick, namedResults: NamedResults, rearPickResultType: RearPickResultType) {
+    // if (sheetStore === undefined) debugger;
+    // if (bin === undefined) return;
+    // const { divStore } = sheetStore;
+    // const { rearPick } = bin;
+    let pickResult: PickResult[] | PickResult;
+    const { fromPhraseType } = rearPick;
+    switch (fromPhraseType) {
+        default: debugger; break;
+        case BizPhraseType.atom:
+            pickResult = await pickFromAtom(divStore, namedResults, rearPick as PickAtom);
+            break;
+        case BizPhraseType.fork:
+            pickResult = await pickFromSpec(divStore, namedResults, rearPick as PickSpec);
+            break;
+        case BizPhraseType.query:
+            pickResult = await pickFromQuery(divStore.modal, namedResults, rearPick as PickQuery, rearPickResultType);
+            break;
+        case BizPhraseType.pend:
+            pickResult = await pickFromPend(divStore, namedResults, rearPick as PickPend);
+    }
+    return pickResult;
 }

@@ -1,4 +1,4 @@
-import { Page, useModal } from "tonwa-app";
+import { Modal, Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
@@ -10,6 +10,7 @@ import { BizBud } from "app/Biz";
 import { BinEditing, BinBudsEditing, ValDiv, ValDivBase } from "../store";
 import { RowCols, RowColsSm, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
+/*
 export function useRowEdit() {
     const modal = useModal();
     return useCallback(async (binEditing: BinEditing, valDiv: ValDivBase) => {
@@ -24,6 +25,19 @@ export function useRowEdit() {
         let ret = await modal.open(<ModalInputRow binEditing={binEditing} valDiv={valDiv} />);
         return ret;
     }, []);
+}
+*/
+export async function rowEdit(modal: Modal, binEditing: BinEditing, valDiv: ValDivBase) {
+    const { entityBin } = binEditing;
+    const { i: budI, x: budX } = entityBin;
+    const { atomParams } = budI;
+    if (atomParams !== undefined) {
+        const { name, caption } = budI;
+        await modal.open(<Page header={caption ?? name}>
+        </Page>);
+    }
+    let ret = await modal.open(<ModalInputRow binEditing={binEditing} valDiv={valDiv} />);
+    return ret;
 }
 
 function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; valDiv: ValDivBase }) {

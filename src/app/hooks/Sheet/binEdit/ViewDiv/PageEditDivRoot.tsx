@@ -2,11 +2,12 @@ import { useAtomValue } from "jotai";
 import { DivEditing, BinStore, ValDiv, ValDivBase, ValDivRoot, ValRow } from "../../store";
 import { FA, getAtomValue, setAtomValue } from "tonwa-com";
 import { useEditDivs } from "../divNew";
-import { useRowEdit } from "../useRowEdit";
+// import { useRowEdit } from "../rowEdit";
 import { Page, useModal } from "tonwa-app";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { ViewRow } from "./ViewRow";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
+import { rowEdit } from "../rowEdit";
 
 // 编辑div任意层
 export function PageEditDivRoot({ divStore, valDiv }: { divStore: BinStore; valDiv: ValDivBase; }) {
@@ -30,7 +31,7 @@ function EditDiv(props: EditDivProps) {
     const { divLevels, pivot } = entityBin;
     const editDivs = useEditDivs();
     const divs = useAtomValue(atomValDivs);
-    const rowEdit = useRowEdit();
+    // const rowEdit = useRowEdit();
     const deleted = useAtomValue(atomDeleted);
     let bg = divLevels - level - 1;
     let borderTop = ''; // bg > 0 ? 'border-top' : '';
@@ -97,7 +98,7 @@ function EditDiv(props: EditDivProps) {
         async function onEdit() {
             const { atomValRow } = valDiv;
             const editing = new DivEditing(divStore, valDiv);
-            let ret = await rowEdit(editing, valDiv);
+            let ret = await rowEdit(modal, editing, valDiv);
             if (ret !== true) return;
             const { values: newValRow } = editing;
             if (isPivotKeyDuplicate(valDiv, newValRow) === true) {

@@ -1,2 +1,2 @@
-export * from './useBinPicks';
+export * from './runBinPicks';
 export * from './ViewBinPicks';

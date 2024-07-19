@@ -12,6 +12,7 @@ import { FA, Sep, SpinnerSmall } from "tonwa-com";
 import { ViewAtomId } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { pickFromQuery, pickFromQueryScalar } from "app/hooks/Query";
+import { runBinPick, runBinPickRear } from "./runBinPicks";
 
 interface Props {
     subHeader?: string;
@@ -34,6 +35,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     let cur = useAtomValue(atomCur);
 
     async function onPick(binPick: BinPick, index: number) {
+        /*
         let pickResult: any;
         const { name, fromPhraseType } = binPick;
         if (fromPhraseType === undefined) return;
@@ -51,6 +53,8 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         }
         if (pickResult === undefined) return;
         namedResults[name] = pickResult;
+        */
+        await runBinPick(divStore, binPick, namedResults);
         for (let i = index + 1; i < binPicks.length; i++) {
             namedResults[binPicks[i].name] = undefined;
         }
@@ -59,6 +63,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         divStore.setReload();
     }
     async function onPickRear(binPick: BinPick, index: number) {
+        /*
         const { divStore } = sheetStore;
         let pickResult: PickResult[] | PickResult;
         const { fromPhraseType } = rearPick;
@@ -77,6 +82,8 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
                 pickResult = await pickFromPend(divStore, namedResults, rearPick as PickPend);
                 break;
         }
+        */
+        let pickResult = await runBinPickRear(divStore, binPick, namedResults, rearPickResultType);
         setAtomValue(atomRearPickResult, pickResult);
         setAtomValue(atomCur, binPicks.length + 1);
         setAtomValue(atomPickedResults, { ...namedResults, [binPick.name]: pickResult });

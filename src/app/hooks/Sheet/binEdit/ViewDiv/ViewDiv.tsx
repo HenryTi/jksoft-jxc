@@ -3,13 +3,14 @@ import { FA, setAtomValue } from "tonwa-com";
 import { useModal } from "tonwa-app";
 import { DivEditing, ValDivRoot } from "../../store";
 import { UseEditDivsProps, useEditDivs } from "../divNew";
-import { useRowEdit } from "../useRowEdit";
+// import { useRowEdit } from "../rowEdit";
 import { PageEditDivRoot } from "./PageEditDivRoot";
 import { ViewPendRow } from "../ViewPendRow";
 import { ViewDivProps } from "./tool";
 import { ViewRow } from "./ViewRow";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
+import { rowEdit } from "../rowEdit";
 
 export function ViewDiv(props: ViewDivProps) {
     const modal = useModal();
@@ -20,7 +21,7 @@ export function ViewDiv(props: ViewDivProps) {
     const valRow = useAtomValue(atomValRow);
     const deleted = useAtomValue(atomDeleted);
     const editDivs = useEditDivs();
-    const rowEdit = useRowEdit();
+    // const rowEdit = useRowEdit();
     if (entityBin.pivot === binDiv) {
         // pivot直接在末尾级stem显示value list
         return null;
@@ -64,7 +65,7 @@ export function ViewDiv(props: ViewDivProps) {
             // 无Div明细, 叶div
             try {
                 const editing = new DivEditing(divStore, valDiv);
-                let ret = await rowEdit(editing, valDiv);
+                let ret = await rowEdit(modal, editing, valDiv);
                 if (ret !== true) return;
                 const { values: newValRow } = editing;
                 await divStore.saveDetail(binDiv, newValRow);

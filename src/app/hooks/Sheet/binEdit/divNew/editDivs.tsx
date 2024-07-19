@@ -21,46 +21,49 @@ export interface UseEditDivsProps {
 export function useEditDivs() {
     const uqApp = useUqApp();
     const modal = useModal();
-    return useCallback(async function (props: UseEditDivsProps): Promise<boolean> {
-        let { divStore, pendRow, valDiv } = props;
-        let { entity: entityBin } = divStore;
-        let { rearPick, pend: entityPend } = entityBin;
-        let namedResults: NamedResults = {
-            [rearPick.name]: new Proxy(pendRow, new PendProxyHandler(entityPend)),
-        };
-        let divEditingFromPend = new DivEditing(divStore, valDiv, namedResults);
-        valDiv.setValRow(divEditingFromPend.values);
+    return useCallback(editDivs, []);
+}
 
-        let runInputDivProps: RunInputDivProps = { props, uqApp, modal, namedResults };
-        for (; ;) {
-            let retIsInputed = await runInputDiv(runInputDivProps, valDiv);
-            if (retIsInputed !== true) return;
-            // valDiv.mergeValRow(retValRow);
-            let { binDiv } = valDiv;
-            // 无下级，退出
-            if (binDiv.subBinDiv === undefined) {
-                // 仅仅表示有值
-                return true;
-            }
-            let valDivNew = valDiv.createValDivSub(pendRow);
-            let divEditing = new DivEditing(divStore, valDiv, namedResults);
-            valDiv.setValRow(divEditing.values);
-            valDiv.addValDiv(valDivNew, true);
-            valDiv = valDivNew;
+export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
+    let { divStore, pendRow, valDiv } = props;
+    let { entity: entityBin, modal } = divStore;
+    let { rearPick, pend: entityPend } = entityBin;
+    let namedResults: NamedResults = {
+        [rearPick.name]: new Proxy(pendRow, new PendProxyHandler(entityPend)),
+    };
+    let divEditingFromPend = new DivEditing(divStore, valDiv, namedResults);
+    valDiv.setValRow(divEditingFromPend.values);
+
+    let runInputDivProps: RunInputDivProps = { props, namedResults };
+    for (; ;) {
+        let retIsInputed = await runInputDiv(runInputDivProps, valDiv);
+        if (retIsInputed !== true) return;
+        // valDiv.mergeValRow(retValRow);
+        let { binDiv } = valDiv;
+        // 无下级，退出
+        if (binDiv.subBinDiv === undefined) {
+            // 仅仅表示有值
+            return true;
         }
-    }, []);
+        let valDivNew = valDiv.createValDivSub(pendRow);
+        let divEditing = new DivEditing(divStore, valDiv, namedResults);
+        valDiv.setValRow(divEditing.values);
+        valDiv.addValDiv(valDivNew, true);
+        valDiv = valDivNew;
+    }
 }
 
 interface RunInputDivProps {
-    uqApp: UqApp;
-    modal: Modal;
+    // uqApp: UqApp;
+    // modal: Modal;
     props: UseEditDivsProps;
     namedResults: NamedResults;
 }
 
 async function runInputDiv(runInputDivProps: RunInputDivProps, valDiv: ValDivBase) {
-    let { modal, props, namedResults } = runInputDivProps;
+    let { props, namedResults } = runInputDivProps;
     let { divStore, skipInputs } = props;
+    const { modal } = divStore;
     let { binDiv } = valDiv;
     let retInputs = await runInputs(runInputDivProps, valDiv);
     if (retInputs === false) return;
@@ -94,7 +97,7 @@ async function runInputs(runInputDivProps: RunInputDivProps, valDiv: ValDivBase)
     const { binDiv } = valDiv;
     const { inputs } = binDiv;
     if (inputs === undefined) return;
-    let { uqApp, modal, props, namedResults } = runInputDivProps;
+    let { props, namedResults } = runInputDivProps;
     let { skipInputs } = props;
     if (skipInputs == true) return;
     for (let input of inputs) {
@@ -109,8 +112,8 @@ async function runInputs(runInputDivProps: RunInputDivProps, valDiv: ValDivBase)
                     ...props,
                     namedResults,
                     valDiv,
-                    uqApp,
-                    modal,
+                    // uqApp,
+                    // modal,
                     binInput: input as BinInputAtom,
                 });
                 break;
@@ -119,8 +122,8 @@ async function runInputs(runInputDivProps: RunInputDivProps, valDiv: ValDivBase)
                     ...props,
                     namedResults,
                     valDiv,
-                    uqApp,
-                    modal,
+                    // uqApp,
+                    // modal,
                     binInput: input as BinInputSpec,
                 });
                 break;
