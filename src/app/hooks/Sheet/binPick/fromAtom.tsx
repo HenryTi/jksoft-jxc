@@ -6,6 +6,7 @@ import { NamedResults, PickResult } from "../store";
 import { BinStore } from "../store";
 import { PageIDSelect } from "app/hooks";
 
+/*
 export function usePickFromAtom() {
     const modal = useModal();
     async function func(divStore: BinStore, namedResults: NamedResults, binPick: PickAtom): Promise<PickResult> {
@@ -14,4 +15,11 @@ export function usePickFromAtom() {
         return ret as PickResult;
     }
     return useCallback(func, []);
+}
+*/
+export async function pickFromAtom(binStore: BinStore, namedResults: NamedResults, binPick: PickAtom): Promise<PickResult> {
+    const { modal } = binStore;
+    let { name, caption, from } = binPick;
+    let ret = await modal.open<AtomPhrase>(<PageIDSelect entity={from[0]} caption={caption ?? name} />);
+    return ret as PickResult;
 }

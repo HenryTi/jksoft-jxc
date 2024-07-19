@@ -9,7 +9,7 @@ interface Props {
 }
 
 export function LinkModal({ tag, className, modal, children }: Props) {
-    const { openModal } = useModal();
+    const modalContext = useModal();
     if (tag === undefined) {
         tag = 'div';
         className = (className ?? '') + ' cursor-pointer';
@@ -18,7 +18,7 @@ export function LinkModal({ tag, className, modal, children }: Props) {
         if (React.isValidElement(modal) === false) {
             modal = await (modal as (() => Promise<JSX.Element>))();
         }
-        openModal(modal as JSX.Element);
+        modalContext.open(modal as JSX.Element);
     }
     return React.createElement(
         tag,

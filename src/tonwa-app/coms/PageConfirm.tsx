@@ -11,11 +11,11 @@ interface PageConfirmProps {
 };
 
 export function PageConfirm({ auth, header, message, yes, no }: PageConfirmProps) {
-    const { closeModal } = useModal();
+    const modal = useModal();
     return <Page auth={auth} header={header}>
         <ViewMessage message={message}>
-            <button className="btn btn-primary me-3" onClick={() => closeModal(true)}>{yes}</button>
-            {no && <button className="btn btn-outline-primary" onClick={() => closeModal(false)}>{no}</button>}
+            <button className="btn btn-primary me-3" onClick={() => modal.close(true)}>{yes}</button>
+            {no && <button className="btn btn-outline-primary" onClick={() => modal.close(false)}>{no}</button>}
         </ViewMessage>
     </Page>;
 }

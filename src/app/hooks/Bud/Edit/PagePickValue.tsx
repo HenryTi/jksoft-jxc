@@ -5,8 +5,8 @@ import { theme } from "tonwa-com";
 
 export async function pickValue(uqApp: UqAppBase, pickProps: PickProps, options: RegisterOptions) {
     const { label, value, type } = pickProps;
-    const { openModal } = uqAppModal(uqApp);
-    let ret = await openModal(<PagePickValue label={label} value={value as any} type={type} options={options} />); //, '修改' + label);
+    const { open } = uqAppModal(uqApp);
+    let ret = await open(<PagePickValue label={label} value={value as any} type={type} options={options} />); //, '修改' + label);
     return ret;
 }
 
@@ -15,11 +15,11 @@ interface Props<T extends string | number> {
     options: RegisterOptions;
 };
 export function PagePickValue<T extends string | number>({ label, value, type, options, step }: Props<T>) {
-    const { closeModal } = useModal();
+    const modal = useModal();
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     async function onSubmit(data: any) {
         let { value } = data;
-        closeModal(value);
+        modal.close(value);
     }
     const formRows: FormRow[] = [
         { name: 'value', label, type, options: { ...options, value }, step },

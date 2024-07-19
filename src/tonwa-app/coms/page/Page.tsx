@@ -115,8 +115,8 @@ export function PageBase(props: PageProps) {
 }
 
 export function PageModal(props: PageProps) {
-    const { closeModal } = useModal();
-    const modalProps = { ...props, back: 'close', onBack: () => closeModal(undefined) };
+    const modal = useModal();
+    const modalProps = { ...props, back: 'close', onBack: () => modal.close(undefined) };
     return <PageBase {...modalProps as any} />;
 }
 

@@ -108,7 +108,7 @@ class RouteConsole extends SheetConsole {
         let { caption, name } = this.entitySheet;
         if (caption === undefined) caption = name;
         this.uqApp.autoRefresh?.();
-        const closeModal = (ret: any) => {
+        const onModalClose = (ret: any) => {
             this.modal.close(ret);
         }
         let ret = await this.modal.open<boolean>(<Page header="提交成功" back="none">
@@ -116,8 +116,8 @@ class RouteConsole extends SheetConsole {
                 {caption} <b>{no}</b> 已提交
             </div>
             <div className="border-top p-3">
-                <button className="btn btn-outline-primary" onClick={closeModal}>返回</button>
-                <button className="ms-3 btn btn-outline-secondary" onClick={() => closeModal(true)}>新建{caption}</button>
+                <button className="btn btn-outline-primary" onClick={onModalClose}>返回</button>
+                <button className="ms-3 btn btn-outline-secondary" onClick={() => onModalClose(true)}>新建{caption}</button>
             </div>
         </Page>);
         if (ret === true) {

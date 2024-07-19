@@ -22,7 +22,7 @@ interface PasswordContext {
     error?: string;
 }
 function ModalPasswordBase({ header, submitCaption, account, onPasswordSubmit }: Props) {
-    const { openModal } = useModal();
+    const modal = useModal();
     const context = useRef<PasswordContext>({})
 
     let onButtonSubmit = async (values: any): Promise<any> => {
@@ -36,7 +36,7 @@ function ModalPasswordBase({ header, submitCaption, account, onPasswordSubmit }:
             error = await onPasswordSubmit(pwd);
             context.current.error = error;
             if (error !== undefined) {
-                openModal(<Page header="注册不成功">
+                modal.open(<Page header="注册不成功">
                     <div className="p-5 text-danger">{context.current.error}</div>
                 </Page>);
             }
@@ -77,7 +77,7 @@ interface RegisterParameter {
 };
 
 export function ModalRegisterPassword({ passwordParams, header }: { passwordParams: PasswordParams; header: string; }) {
-    const { openModal } = useModal();
+    const modal = useModal();
     let { userApi } = useUqAppBase();
     let { type, account, verify } = passwordParams;
     let onPasswordSubmit = async (pwd: string): Promise<string> => {
@@ -103,7 +103,7 @@ export function ModalRegisterPassword({ passwordParams, header }: { passwordPara
         }
         let ret = await userApi.register(params);
         if (ret === 0) {
-            openModal(<RegisterSuccess />)
+            modal.open(<RegisterSuccess />)
             return;
         }
         let error = regReturn(ret)
@@ -141,7 +141,7 @@ export function ModalRegisterPassword({ passwordParams, header }: { passwordPara
 }
 
 export function ModalForgetPassword({ header, passwordParams }: { passwordParams: PasswordParams; header: string; }) {
-    const { openModal, closeModal } = useModal();
+    const modal = useModal();
     let { userApi } = useUqAppBase();
     let { account, verify, type, toLogin } = passwordParams;
     let onPasswordSubmit = async (pwd: string): Promise<string> => {
@@ -152,8 +152,8 @@ export function ModalForgetPassword({ header, passwordParams }: { passwordParams
             console.log(err);
             throw err;
         }
-        closeModal();
-        openModal(<ForgetSuccess />)
+        modal.close();
+        modal.open(<ForgetSuccess />)
         return;
     }
     return <ModalPasswordBase header={header} submitCaption="改密码" account={account} onPasswordSubmit={onPasswordSubmit} />;

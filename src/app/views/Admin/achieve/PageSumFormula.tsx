@@ -50,7 +50,7 @@ const groupArr: [string, string][] = [
 
 export function PageSumFormula() {
     const { uq } = useUqApp();
-    const { openModal, closeModal } = useModal();
+    const modal = useModal();
     const { data: [persons, groups] } = useQuery('formulas', async () => {
         let { ret } = await uq.GetAllFormula.query({});
         let persons: SumFormula[] = [];
@@ -98,7 +98,7 @@ export function PageSumFormula() {
                 let index = formulas.findIndex(v => v.id === id);
                 if (index >= 0) formulas.splice(index, 1);
                 setFormulas([...formulas]);
-                closeModal();
+                modal.close();
             }
             async function onValueChanged(name: string, value: any) {
                 let { id } = item;
@@ -121,7 +121,7 @@ export function PageSumFormula() {
                 formulas.splice(index, 1, formula);
                 setFormulas([...formulas]);
             }
-            openModal(<PageViewFormula value={item} onInvalid={onInvalid} onValueChanged={onValueChanged} arr={arr} />);
+            modal.open(<PageViewFormula value={item} onInvalid={onInvalid} onValueChanged={onValueChanged} arr={arr} />);
         }
         function ViewItem({ value }: { value: SumFormula }) {
             const arrLabel: [string, number][] = arr.map(([prop, label]) => [label, (value as any)[prop]]);
@@ -134,11 +134,11 @@ export function PageSumFormula() {
             param.id = id;
             formulas.unshift(param);
             setFormulas([...formulas]);
-            closeModal();
+            modal.close();
         }
         function onAddFormula() {
             const props = type === SumFormulaType.person ? personProps : groupProps;
-            openModal(<PageAddFormula onSubmit={onSubmit} {...props} />);
+            modal.open(<PageAddFormula onSubmit={onSubmit} {...props} />);
         }
         function ListHeader() {
             return <div className={cnHeader}>

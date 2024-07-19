@@ -29,7 +29,7 @@ export function PropEdit(props: DetailProps) {
 }
 
 function DefaultBandTemplate(props: BandTemplateProps) {
-    const { openModal } = useModal();
+    const modal = useModal();
     let detailContext = useBandContainer() as DetailContext;
     let band = useBand();
     let { label, labelSize, children, errors, memos, pageEdit, toEdit, content, sep, contentType, rightIcon } = props;
@@ -45,7 +45,7 @@ function DefaultBandTemplate(props: BandTemplateProps) {
                 alert(toEdit);
             }
             else {
-                openModal(pageEdit);
+                modal.open(pageEdit);
             }
         }
         return <div onClick={onClick}
@@ -84,11 +84,11 @@ function DefaultBandTemplate(props: BandTemplateProps) {
 }
 
 function ValueEditPage({ detail }: { detail: DetailContext; }) {
-    const { closeModal } = useModal();
+    const modal = useModal();
     const { content, label, onValuesChanged } = detail; // useOutletContext<DetailContext>();
     async function onSubmit(data: any) {
         await onValuesChanged(data);
-        closeModal();
+        modal.close();
     }
     let values = detail.getValues();
     return <Page header={label} back="close">

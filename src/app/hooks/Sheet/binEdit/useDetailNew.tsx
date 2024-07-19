@@ -1,21 +1,23 @@
 import { useCallback } from "react";
 import { RearPickResultType, SheetStore } from "../store";
-import { useBinPicks } from "../binPick";
+// import { useBinPicks } from "../binPick";
 import { useRowEdit } from "./useRowEdit";
 import { BinEditing } from "../store";
 import { PickResult } from "../store";
+import { runBinPicks } from "../binPick";
 
 export function useDetailNew(sheetStore: SheetStore) {
     const rowEdit = useRowEdit();
-    const pick = useBinPicks();
+    // const pick = useBinPicks();
     return useCallback(async function (): Promise<boolean> {
         const { divStore } = sheetStore;
         if (divStore === undefined) {
             alert('Pick Pend on main not implemented');
             return false;
         }
-        const { entityBin, binDivRoot } = divStore;
-        let ret = await pick(sheetStore, entityBin);
+        const { entity: entityBin, binDivRoot } = divStore;
+        //let ret = await pick(sheetStore, entityBin);
+        let ret = await runBinPicks(sheetStore, entityBin);
         if (ret === undefined) return false;
         let { namedResults, rearBinPick, rearResult, rearPickResultType } = ret;
         if (rearPickResultType === RearPickResultType.array) {

@@ -25,7 +25,7 @@ interface Props extends StartProps {
 }
 
 function PageRegisterBase({ header, accountLable, privacy, loginTop, ModalPassword, accountError, sendVerifyOem }: Props) {
-    const { openModal } = useModal();
+    const modal = useModal();
     const navigate = useNavigate();
     const uqApp = useUqAppBase();
     const { userApi, pathLogin } = uqApp;
@@ -71,9 +71,9 @@ function PageRegisterBase({ header, accountLable, privacy, loginTop, ModalPasswo
             passwordParams.verify = verify;
             let ret = await userApi.checkVerify(account, verify);
             if (ret === 0) return ret;
-            openModal(<ModalPassword header={header} passwordParams={passwordParams} />);
+            modal.open(<ModalPassword header={header} passwordParams={passwordParams} />);
         }
-        openModal(<ModalVerify header={header} onVerify={onVerify} passwordParams={passwordParams} />);
+        modal.open(<ModalVerify header={header} onVerify={onVerify} passwordParams={passwordParams} />);
     }
     /*
         let onEnter = async (name: string, context: Context): Promise<string> => {

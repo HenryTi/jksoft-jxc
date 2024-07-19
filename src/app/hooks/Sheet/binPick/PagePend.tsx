@@ -10,7 +10,7 @@ import { useAtomValue } from "jotai";
 export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
     let { divStore, pickPend } = pendStore;
     let { caption } = pickPend;
-    let { entityBin: { pend: entityPend }, atomPendRows, sheetStore } = divStore;
+    let { entity: { pend: entityPend }, atomPendRows, sheetStore } = divStore;
     const { sheetConsole: { steps }, atomLoaded } = sheetStore;
     const modal = useModal();
     let pendRows = useAtomValue(atomPendRows);

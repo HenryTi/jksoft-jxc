@@ -63,9 +63,9 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
     }
 
     function ModalViewNew() {
-        const { closeModal } = useModal();
+        const modal = useModal();
         function afterSubmit(atom: Atom) {
-            closeModal(atom);
+            modal.close(atom);
         }
         return <ViewNewBase afterSubmit={afterSubmit} />
     }

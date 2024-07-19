@@ -12,7 +12,7 @@ export function PagePickSelect({ base, entity }: { base: number; entity: EntityF
     const [list, setList] = useState(undefined as any[]);
     useEffectOnce(() => {
         (async () => {
-            const store = createIDSelectStore(entity);
+            const store = createIDSelectStore(modal, entity);
             let ret = await store.search({ base }, 0, 100);
             setList(ret);
         })();

@@ -7,7 +7,7 @@ const waitingTime = '一小时';
 
 export function UserQuit() {
     const navigate = useNavigate();
-    const { openModal } = useModal();
+    const modal = useModal();
     let note = <>
         注意：账号注销后，账号绑定手机、邮件等相关信息将被释放。账号无法将登录。<br />
         请确认！
@@ -21,7 +21,7 @@ export function UserQuit() {
             <button className="btn btn-primary" onClick={() => navigate(-1)}>
                 不注销
             </button>
-            <button className="btn btn-outline-info ms-3" onClick={() => openModal(<QuitConfirm header={quitCaption} />, closePage)}>
+            <button className="btn btn-outline-info ms-3" onClick={() => modal.open(<QuitConfirm header={quitCaption} />, closePage)}>
                 我已了解，仍然注销
             </button>
         </ViewMessage>
@@ -30,7 +30,7 @@ export function UserQuit() {
 
 function QuitConfirm({ header }: { header: string; }) {
     let uqApp = useUqAppBase();
-    const { openModal, closeModal } = useModal();
+    const modal = useModal();
     let note = <>
         账号注销后，如果在{waitingTime}内容重新登录账号，账号自动恢复。
         {waitingTime}之后，账号绑定手机、邮件等相关信息将被释放。账号无法将登录。<br />
@@ -38,12 +38,12 @@ function QuitConfirm({ header }: { header: string; }) {
     </>;
     let onClickButton2 = async () => {
         await uqApp.userApi.userQuit();
-        closeModal();
-        await openModal(<QuitDone />, () => uqApp.restart());
+        modal.close();
+        await modal.open(<QuitDone />, () => uqApp.restart());
     }
     return <Page header={header}>
         <ViewMessage message={note}>
-            <button className="btn btn-primary" onClick={() => closeModal()}>
+            <button className="btn btn-primary" onClick={() => modal.close()}>
                 不注销
             </button>
             <button className="btn btn-outline-info ms-3" onClick={onClickButton2}>
@@ -55,14 +55,14 @@ function QuitConfirm({ header }: { header: string; }) {
 
 function QuitDone() {
     let uqApp = useUqAppBase();
-    const { openModal, closeModal } = useModal();
+    const modal = useModal();
     let note = <>
         账号将在{waitingTime}后彻底注销。<br />
         如果在{waitingTime}内容重新登录账号，注销操作自动取消。
         {waitingTime}之后，账号绑定手机、邮件等相关信息将被释放。账号无法将登录。
     </>;
     let onClickButton1 = () => {
-        openModal(<QuitCancel />, () => uqApp.restart());
+        modal.open(<QuitCancel />, () => uqApp.restart());
     }
     return <Page header="注销已账号">
         <ViewMessage message={note}>

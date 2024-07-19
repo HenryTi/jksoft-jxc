@@ -120,6 +120,7 @@ interface FormLabelName extends FormLabel {
     name: string;
     placeHolder?: string;
     readOnly?: boolean;
+    onPick?: () => (void | Promise<void>);
 }
 
 export interface FormInput extends FormLabelName {
@@ -279,7 +280,6 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
 
     const { entityAtom, atom, options } = row as FormAtom;
     if (entityAtom !== undefined) {
-        let value = options?.value;
         let { name } = row as FormAtom;
         function onChange(target: { name: string; type: 'number'; value: string; }) {
             options?.onChange?.({ target });
@@ -294,15 +294,6 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
                 clearErrors={clearErrors}
                 onChange={onChange}
                 formContext={context} />;
-
-            /*
-            return <Band label={label}>
-                <ViewSpecBaseOnly id={value} />
-                <RowCols>
-                    <ViewSpecNoAtom id={value} />
-                </RowCols>
-            </Band>;
-            */
         }
         return <ViewFormAtom row={row as FormAtom} label={label} error={error}
             entityAtom={entityAtom as EntityAtom}
@@ -362,9 +353,13 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
     const uqApp = useUqApp();
     const { uq } = uqApp;
     const IDSelect = useIDSelect();
-    const { name, default: defaultValue, readOnly } = row;
+    const { name, default: defaultValue, readOnly, onPick } = row;
     const [id, setId] = useState<number>(defaultValue);
     async function onSelectAtom() {
+        if (onPick !== undefined) {
+            await onPick();
+            return;
+        }
         clearErrors?.(name);
         let ret = await IDSelect(entityAtom, undefined);
         if (ret === undefined) return;

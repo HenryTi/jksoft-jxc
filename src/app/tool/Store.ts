@@ -1,5 +1,5 @@
 import { Biz, BizBud, Entity } from "app/Biz";
-import { BudCheckValue, BudValue } from "tonwa-app";
+import { BudCheckValue, BudValue, Modal } from "tonwa-app";
 import { Atom, ReturnGetPendProps, ReturnGetSheetAtoms, ReturnGetSheetProps, ReturnGetSheetSpecs, UqExt } from "uqs/UqDefault";
 
 abstract class KeyIdObject {
@@ -34,16 +34,18 @@ export interface SpecColl {
 export abstract class Store<E extends Entity = Entity> extends KeyIdObject {
     readonly biz: Biz;
     readonly uq: UqExt;
+    readonly modal: Modal;
     readonly entity: E;
     readonly budsColl: BudsColl = {};
     readonly bizAtomColl: AtomColl = {};
     readonly bizSpecColl: SpecColl = {};
 
-    constructor(entity: E) {
+    constructor(modal: Modal, entity: E) {
         super();
         const { biz } = entity;
         this.biz = biz;
         this.uq = biz.uq;
+        this.modal = modal;
         this.entity = entity;
     }
 

@@ -19,7 +19,7 @@ export class PickPendStore {
     private createParamsEditing() {
         let paramsInput: BizBud[] = [];
         let { pickParams } = this.pickPend;
-        let { entityBin: { pend: entityPend } } = this.divStore;
+        let { entity: { pend: entityPend } } = this.divStore;
         let { params } = entityPend;
         for (let bud of params) {
             if (pickParams.findIndex(v => v.name === bud.name) >= 0) continue;
@@ -30,7 +30,7 @@ export class PickPendStore {
 
     async searchPend() {
         let params: { [budId: number]: number | string } = {};
-        let { entityBin: { pend: entityPend } } = this.divStore;
+        let { entity: { pend: entityPend } } = this.divStore;
         const { pickParams } = this.pickPend;
         const { params: queryParams } = entityPend;
         for (let param of queryParams) {

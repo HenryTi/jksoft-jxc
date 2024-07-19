@@ -14,7 +14,7 @@ const pathAbout = 'about';
 export function TabMe() {
     const t = useT(appT);
     const uqApp = useUqApp();
-    const { openModal } = useModal();
+    const modal = useModal();
     const { uq, user: atomUser, uqSites } = uqApp;
     const user = useAtomValue(atomUser);
 
@@ -46,7 +46,7 @@ export function TabMe() {
         let { userSite0 } = uqSites;
         if (userSite0 === undefined) return null;
         async function onSitesAdmin() {
-            openModal(<PageSys />);
+            modal.open(<PageSys />);
         }
         return <>
             <Cmd onClick={onSitesAdmin} content="系统管理" icon="database" iconColor="text-warning" />

@@ -7,10 +7,10 @@ import { ViewAdmin } from "../admin";
 import { useSiteRole0 } from "../useSiteRole";
 
 export function PageSys() {
-    const { openModal } = useModal();
+    const modal = useModal();
     const siteRole = useSiteRole0();
     function onSites() {
-        openModal(<PageSites />);
+        modal.open(<PageSites />);
     }
     let { isOwner } = siteRole.userSite;
     let viewRoles = isOwner === true ? <>

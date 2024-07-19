@@ -10,7 +10,7 @@ export function PageSelectAtom({ atoms, selected: selectedList, onSelectChanged 
     selected: number[];
     onSelectChanged: (selection: Selection) => Promise<void>;
 }) {
-    const { closeModal } = useModal();
+    const modal = useModal();
     const refSel = useRef<Selection>({ selected: [...selectedList], added: [], removed: [], });
     const list = atoms.map(v => {
         const { id } = v;
@@ -50,7 +50,7 @@ export function PageSelectAtom({ atoms, selected: selectedList, onSelectChanged 
         </label>;
     }
     function onClose() {
-        closeModal(refSel.current);
+        modal.close(refSel.current);
     }
     return <Page header="请选择">
         <List items={list} ViewItem={ViewItem} />

@@ -7,6 +7,7 @@ import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsRoot } from './ValDiv';
 import { BudEditing, ValuesBudsEditing } from "app/hooks";
 import { PickPendStore } from "./PickPendStore";
 import { NamedResults } from "./NamedResults";
+import { Store } from "app/tool";
 
 enum PendLoadState {
     none,
@@ -19,11 +20,11 @@ export enum SubmitState {
     disable,
     enable,
 }
-export class BinStore {
+export class BinStore extends Store<EntityBin> {
     private valDivColl: { [id: number]: ValDivBase };
     private pendLoadState: PendLoadState;
     readonly sheetStore: SheetStore;
-    readonly entityBin: EntityBin;
+    // readonly entity: EntityBin;
     readonly binDivRoot: BinDiv;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> };
     readonly atomPendRows = atom(undefined as PendRow[]);
@@ -33,9 +34,10 @@ export class BinStore {
     readonly pickPendStores: { [id: number]: PickPendStore; } = {};
 
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
+        super(sheetStore.modal, entityBin);
         this.sheetStore = sheetStore;
         const { pend, binDivRoot } = entityBin;
-        this.entityBin = entityBin;
+        // this.entityBin = entityBin;
         this.binDivRoot = binDivRoot;
         this.valDivsOnPend = sheetStore.valDivsOnPend;
         this.valDivsRoot = new ValDivsRoot();

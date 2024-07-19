@@ -11,7 +11,7 @@ import { consts } from "../consts";
 
 export function ViewOwner({ siteRole }: { siteRole: UseSiteRoleReturn; }) {
     let uqApp = useUqAppBase();
-    let { openModal, closeModal } = useModal();
+    let modal = useModal();
     let user = useAtomValue(uqApp.user);
     // let store = uqApp.objectOf(SiteRole);
     let { onOwnerAdded } = siteRole;
@@ -26,8 +26,8 @@ export function ViewOwner({ siteRole }: { siteRole: UseSiteRoleReturn; }) {
             function PageIQuitOwner() {
                 async function confirmQuit() {
                     await siteRole.quitOwner();
-                    closeModal();
-                    closeModal();
+                    modal.close();
+                    modal.close();
                 }
                 return <Page header={tOwner}>
                     <div className="w-20c rounded border px-3 py-4 mx-auto my-3 text-center">
@@ -46,7 +46,7 @@ export function ViewOwner({ siteRole }: { siteRole: UseSiteRoleReturn; }) {
                     </div>
                 </Page>;
             }
-            openModal(<PageIQuitOwner />);
+            modal.open(<PageIQuitOwner />);
         }
         if (value.user === user.id) {
             let vIQuitOwner: any;

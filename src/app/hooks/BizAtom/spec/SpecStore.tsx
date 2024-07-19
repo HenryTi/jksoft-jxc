@@ -2,7 +2,7 @@ import { EntityFork } from "app/Biz";
 import { Store } from "app/tool";
 import { atom } from "jotai";
 import { useRef } from "react";
-import { BudValue } from "tonwa-app";
+import { BudValue, Modal } from "tonwa-app";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { BizPhraseType, ParamSaveSpec, Spec } from "uqs/UqDefault";
 import { ViewAtom } from "../ViewAtom";
@@ -23,8 +23,8 @@ export class SpecStore extends Store<EntityFork> {
     readonly itemsAtom = atom(undefined as any[]);
     readonly baseValue: AtomIDValue;
 
-    constructor(entitySpec: EntityFork, baseValue: AtomIDValue) {
-        super(entitySpec);
+    constructor(modal: Modal, entitySpec: EntityFork, baseValue: AtomIDValue) {
+        super(modal, entitySpec);
         this.baseValue = baseValue;
     }
 
@@ -101,7 +101,7 @@ export class SpecStore extends Store<EntityFork> {
     }
 }
 
-export function useSpecStore(spec: EntityFork, baseValue: AtomIDValue) {
-    const ret = useRef(new SpecStore(spec, baseValue));
+export function useSpecStore(modal: Modal, spec: EntityFork, baseValue: AtomIDValue) {
+    const ret = useRef(new SpecStore(modal, spec, baseValue));
     return ret.current;
 }

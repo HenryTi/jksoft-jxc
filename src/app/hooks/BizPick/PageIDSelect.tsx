@@ -10,9 +10,9 @@ import { RowColsSm } from "../tool";
 import { ViewAtomId, ViewBud } from "..";
 
 export function useIDSelect() {
-    const { openModal } = useModal();
+    const modal = useModal();
     return async function (ID: EntityID, params?: object, buds?: number[], viewTop?: any) {
-        let ret = await openModal<AtomPhrase>(<PageIDSelect entity={ID} params={params} buds={buds} />);
+        let ret = await modal.open<AtomPhrase>(<PageIDSelect entity={ID} params={params} buds={buds} />);
         return ret;
     }
 }
@@ -28,9 +28,9 @@ export interface PropsIDSelect {
 }
 
 export function PageIDSelect(props: PropsIDSelect) {
-    const { params, buds, loadOnOpen, caption, placeholder, entity, onSelected } = props;
-    const { current: selectStore } = useRef(createIDSelectStore(entity));
     const modal = useModal();
+    const { params, buds, loadOnOpen, caption, placeholder, entity, onSelected } = props;
+    const { current: selectStore } = useRef(createIDSelectStore(modal, entity));
     const [searchParam, setSearchParam] = useState(loadOnOpen === false ? undefined : { ...params, key: undefined as string });
     if (entity === undefined) {
         return <PageError>没有定义ATOM或FORK</PageError>;

@@ -25,8 +25,8 @@ interface ReportRow {
 
 export class ReportStore extends Store<EntityReport> {
     readonly console: ReportConsole;
-    constructor(entityReport: EntityReport, console: ReportConsole) {
-        super(entityReport);
+    constructor(modal: Modal, entityReport: EntityReport, console: ReportConsole) {
+        super(modal, entityReport);
         this.console = console;
     }
 }
@@ -41,7 +41,7 @@ export class ReportConsole extends Console {
     }
 
     createReportStore() {
-        return new ReportStore(this.entityReport, this);
+        return new ReportStore(this.modal, this.entityReport, this);
     }
 
     async loadBizScript() {

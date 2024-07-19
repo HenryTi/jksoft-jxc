@@ -16,7 +16,7 @@ interface Props {
 
 export function ViewUser({ siteRole, userSite: userSiteInit }: Props) {
     let uqApp = useUqApp();
-    let { openModal, closeModal } = useModal();
+    let modal = useModal();
     let [userSite, setUserSite] = useState(userSiteInit);
     let { name, icon, nick, assigned } = userSite;
     let tUser = roleT('user');
@@ -50,7 +50,7 @@ export function ViewUser({ siteRole, userSite: userSiteInit }: Props) {
                 let { assigned } = data;
                 await siteRole.addUser(userId, assigned);
                 setUserSite({ ...userSite, assigned });
-                closeModal();
+                modal.close();
                 return;
             }
             function ButtonRemove() {
@@ -75,10 +75,10 @@ export function ViewUser({ siteRole, userSite: userSiteInit }: Props) {
                 }
                 async function onRemove() {
                     let message = stringFormat(roleT('userReallyDelete'), caption, userSite.name);
-                    let ret = await openModal(<PageConfirm header="确认" message={message} yes="删除" no="不删除" />);
+                    let ret = await modal.open(<PageConfirm header="确认" message={message} yes="删除" no="不删除" />);
                     if (ret === true) {
                         await siteRole.delAdmin(userId, admin);
-                        closeModal();
+                        modal.close();
                     }
                 }
                 let btnCaption = stringFormat(roleT('deleteThe'), caption);
@@ -138,7 +138,7 @@ export function ViewUser({ siteRole, userSite: userSiteInit }: Props) {
                 </Form>
             </Page>;
         }
-        openModal(<PageEdit />);
+        modal.open(<PageEdit />);
     }
     return <LMR className="my-2">
         <Image className="w-2c h-2c me-3" src={icon} />

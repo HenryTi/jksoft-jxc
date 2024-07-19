@@ -1,16 +1,17 @@
 import { BinPick, PickAtom, PickPend, PickQuery, PickSpec } from "app/Biz";
 import { BizPhraseType } from "uqs/UqDefault";
 import { useState } from "react";
-import { usePickFromAtom } from "./fromAtom";
-import { usePickFromSpec } from "./fromSpec";
-import { usePickFromPend } from "./fromPend";
-import { usePickFromQuery } from "../../Query/fromQuery";
+import { pickFromAtom } from "./fromAtom";
+import { pickFromSpec } from "./fromSpec";
+import { pickFromPend } from "./fromPend";
+// import { usePickFromQuery } from "../../Query/fromQuery";
 import { RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
 import { PickResult } from "../store";
 import { getAtomValue, setAtomValue, theme } from "tonwa-com";
 import { FA, Sep, SpinnerSmall } from "tonwa-com";
 import { ViewAtomId } from "app/hooks";
 import { useAtomValue } from "jotai";
+import { pickFromQuery, pickFromQueryScalar } from "app/hooks/Query";
 
 interface Props {
     subHeader?: string;
@@ -20,10 +21,10 @@ interface Props {
 
 export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     const rearPickResultType = RearPickResultType.scalar;
-    const pickFromAtom = usePickFromAtom();
-    const pickFromSpec = usePickFromSpec();
-    const pickFromPend = usePickFromPend();
-    const [pickFromQueryScalar, pickFromQuery] = usePickFromQuery();
+    // const pickFromAtom = usePickFromAtom();
+    // const pickFromSpec = usePickFromSpec();
+    // const pickFromPend = usePickFromPend();
+    // const [pickFromQueryScalar, pickFromQuery] = usePickFromQuery();
     const { main, divStore, sheetConsole } = sheetStore;
     const { binPicks, rearPick } = main.entity;
     const { picks, steps } = sheetConsole;
@@ -45,7 +46,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
                 pickResult = await pickFromSpec(divStore, namedResults, binPick as PickSpec);
                 break;
             case BizPhraseType.query:
-                pickResult = await pickFromQueryScalar(namedResults, binPick as PickQuery);
+                pickResult = await pickFromQueryScalar(divStore.modal, namedResults, binPick as PickQuery);
                 break;
         }
         if (pickResult === undefined) return;
@@ -70,7 +71,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
                 pickResult = await pickFromSpec(divStore, namedResults, rearPick as PickSpec);
                 break;
             case BizPhraseType.query:
-                pickResult = await pickFromQuery(namedResults, rearPick as PickQuery, rearPickResultType);
+                pickResult = await pickFromQuery(divStore.modal, namedResults, rearPick as PickQuery, rearPickResultType);
                 break;
             case BizPhraseType.pend:
                 pickResult = await pickFromPend(divStore, namedResults, rearPick as PickPend);

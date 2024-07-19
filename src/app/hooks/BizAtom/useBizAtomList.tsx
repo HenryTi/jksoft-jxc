@@ -69,7 +69,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
             </Link>;
         }
         function onItemClick(item: EntityID) {
-            // closeModal(item);
+            // modal.close(item);
         }
         return <Page header={`${caption}列表 - 大类`}>
             <List items={children} ViewItem={ViewItem} onItemClick={onItemClick} />

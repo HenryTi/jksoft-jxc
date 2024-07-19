@@ -11,7 +11,7 @@ import { ButtonAsyncIcon } from 'app/tool/ButtonAsyncIcon';
 
 export function PageCode() {
     const uqApp = useUqApp();
-    const { openModal } = useModal();
+    const modal = useModal();
     const [code, setCode] = useState('');
     const fileInput = useRef<HTMLInputElement>();
 
@@ -48,7 +48,7 @@ export function PageCode() {
             let str = JSON.stringify(allSchemas, null, 4);
             results = str;
         }
-        openModal(<Page header="业务设计已提交">
+        modal.open(<Page header="业务设计已提交">
             {top}
             <pre className='p-3 text-break' style={{ whiteSpace: 'pre-wrap' }}>{results}</pre>
         </Page>);
@@ -85,7 +85,7 @@ export function PageCode() {
         setCode(fullContent);
     }
     function onAdmin() {
-        openModal(<PageAdmin />);
+        modal.open(<PageAdmin />);
     }
 
     return <Page header={'脚本'}>

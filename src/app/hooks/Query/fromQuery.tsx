@@ -1,9 +1,9 @@
 import { EntityQuery, IDColumn, PickQuery } from "app/Biz";
 import { ChangeEvent, useCallback, useRef, useState } from "react";
-import { Page, useModal } from "tonwa-app";
+import { Modal, Page, useModal } from "tonwa-app";
 import { List, Sep, theme, useEffectOnce } from "tonwa-com";
 import { filterUndefined } from "app/tool";
-import { usePageParams } from "../Sheet/binPick/PageParams";
+import { pickQueryParams, usePageParams } from "../Sheet/binPick/PageParams";
 import { NamedResults, PickResult, RearPickResultType } from "../Sheet/store";
 import { LabelBox, Picked, Prop, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
@@ -12,6 +12,7 @@ import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtom, ViewSpecAto
 import { ViewSpecId } from "app/coms/ViewSpecId";
 import { ViewBud } from "../Bud";
 
+/*
 export function usePickFromQuery(): [
     (namedResults: NamedResults, binPick: PickQuery) => Promise<PickResult>,
     (namedResults: NamedResults, binPick: PickQuery, lastPickResultType: RearPickResultType) => Promise<PickResult[]>,
@@ -34,11 +35,6 @@ export function usePickFromQuery(): [
         if (retParam === undefined) return;
         retParam = filterUndefined(retParam);
 
-        /*
-        let queryStore = new QueryStore(query);
-        let pickedArr: Picked[] = [];
-        pickedArr = await queryStore.query(retParam);
-        */
         // const { ids: idCols, showIds: showIdCols, idFrom, value: budValue } = query;
         // const { arr, bizPhraseType } = idFrom;
         let ret = await modal.open(<PageFromQuery query={query} params={retParam}
@@ -79,7 +75,71 @@ export function usePickFromQuery(): [
     }, []);
     return [pickFromQueryScalar, pickFromQuery];
 }
+*/
+async function pickFromQueryBase(
+    modal: Modal
+    , namedResults: NamedResults
+    , binPick: PickQuery
+    , pickResultType: RearPickResultType)
+    : Promise<PickResult | PickResult[]> {
+    let { name, caption, query, pickParams } = binPick as PickQuery;
+    const header = caption ?? query.caption ?? name;
+    let retParam = await pickQueryParams(modal, {
+        header,
+        namedResults,
+        queryParams: query.params,
+        pickParams
+    });
+    if (retParam === undefined) return;
+    retParam = filterUndefined(retParam);
 
+    /*
+    let queryStore = new QueryStore(query);
+    let pickedArr: Picked[] = [];
+    pickedArr = await queryStore.query(retParam);
+    */
+    // const { ids: idCols, showIds: showIdCols, idFrom, value: budValue } = query;
+    // const { arr, bizPhraseType } = idFrom;
+    let ret = await modal.open(<PageFromQuery query={query} params={retParam}
+        pickResultType={pickResultType} isPick={true} />);
+    if (ret === undefined) return;
+    function toRet(v: any) {
+        let obj = {} as any;
+        for (let i in v) {
+            let p = v[i];
+            if (typeof p === 'object') {
+                obj[i] = p.value;
+            }
+            else {
+                obj[i] = p;
+            }
+        }
+        return obj;
+    }
+    if (pickResultType === RearPickResultType.scalar) {
+        return toRet(ret);
+    }
+    else {
+        return (ret as any[]).map(v => toRet(v));
+    }
+}
+
+export async function pickFromQueryScalar(
+    modal: Modal
+    , namedResults: NamedResults
+    , binPick: PickQuery)
+    : Promise<PickResult> {
+    return await pickFromQueryBase(modal, namedResults, binPick, RearPickResultType.scalar) as PickResult;
+};
+
+export async function pickFromQuery(
+    modal: Modal
+    , namedResults: NamedResults
+    , binPick: PickQuery
+    , lastPickResultType: RearPickResultType)
+    : Promise<PickResult[]> {
+    return await pickFromQueryBase(modal, namedResults, binPick, lastPickResultType) as PickResult[];
+};
 
 export function PageFromQuery({ query, params, isPick, pickResultType }: {
     query: EntityQuery; params: any;
@@ -91,7 +151,7 @@ export function PageFromQuery({ query, params, isPick, pickResultType }: {
     const header = caption ?? name;
     const { arr, bizPhraseType } = idFrom;
     let [selectedItems, setSelectedItems] = useState<{ [id: number]: Picked; }>({});
-    let { current: queryStore } = useRef(new QueryStore(query));
+    let { current: queryStore } = useRef(new QueryStore(modal, query));
     let [pickedArr, setPickedArr] = useState<Picked[]>(undefined);
     useEffectOnce(() => {
         (async function () {

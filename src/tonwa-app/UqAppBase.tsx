@@ -110,7 +110,7 @@ export abstract class UqAppBase<UQS = any> {
     closeAllModal() {
         setAtomValue(this.modal.stack, []);
     }
-    onCloseModal: () => void;
+    onModalClose: () => void;
 
     async logined(user: User) {
         this.net.logoutApis();
@@ -217,15 +217,13 @@ export function useModal() {
 }
 
 export interface Modal {
-    openModal: OpenModal;
     open: OpenModal;
-    closeModal: (result?: any) => void;
     close: (result?: any) => void;
 }
 export function uqAppModal(uqApp: UqAppBase): Modal {
     const { modal } = uqApp;
     const { stack: modalStackAtom } = modal;
-    async function openModal<T = any>(element: JSX.Element, onClosed?: (result: any) => void): Promise<T> {
+    async function open<T = any>(element: JSX.Element, onClosed?: (result: any) => void): Promise<T> {
         return new Promise<T>(async (resolve, reject) => {
             let modalStack = getAtomValue(modalStackAtom);
             if (React.isValidElement(element) !== true) {
@@ -240,15 +238,15 @@ export function uqAppModal(uqApp: UqAppBase): Modal {
             setAtomValue(modalStackAtom, [...modalStack, [modal, resolve, onClosed]]);
         })
     }
-    function closeModal(result?: any) {
+    function close(result?: any) {
         let modalStack = getAtomValue(modalStackAtom);
         let [, resolve, onClosed] = modalStack.pop();
         setAtomValue(modalStackAtom, [...modalStack]);
         resolve(result);
         onClosed?.(result);
-        uqApp.onCloseModal?.();
+        uqApp.onModalClose?.();
     }
-    return { openModal, open: openModal, closeModal, close: closeModal, }
+    return { open, close }
 }
 
 

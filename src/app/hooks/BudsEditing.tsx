@@ -20,7 +20,7 @@ export abstract class BudsEditing<R = any> implements FormContext {
     abstract get values(): R;
     protected stopRequired: boolean;
 
-    constructor(buds: BizBud[]/*, initBinRow?: any*/) {
+    constructor(buds: BizBud[]) {
         let requiredFields = this.requiredFields;
         const formulas: Formulas = [];
         this.buds = buds;
@@ -187,6 +187,10 @@ export abstract class BudsEditing<R = any> implements FormContext {
         return false;
     }
 
+    protected getOnPick(bud: BizBud): (() => void) {
+        return undefined;
+    }
+
     // bud.onForm===false
     buildFormRows(excludeOnFormFalse: boolean = false): FormRow[] {
         let ret: FormRow[] = [];
@@ -215,6 +219,7 @@ export abstract class BudsEditing<R = any> implements FormContext {
                 type: 'number',
                 options,
                 required,
+                onPick: this.getOnPick(bud),
             };
             const { type, min, max } = budDataType;
             switch (type) {

@@ -3,7 +3,7 @@ import { EntityAtom, EntityID } from "app/Biz";
 import { List } from "tonwa-com";
 
 export function PageBizAtomSelectType({ caption, entityAtom }: { caption: string; entityAtom: EntityAtom; }) {
-    const { closeModal } = useModal();
+    const modal = useModal();
     const { subClasses: children } = entityAtom;
     function ViewItem({ value }: { value: EntityID; }) {
         const { caption } = value;
@@ -12,7 +12,7 @@ export function PageBizAtomSelectType({ caption, entityAtom }: { caption: string
         </div>
     }
     function onItemClick(item: EntityID) {
-        closeModal(item);
+        modal.close(item);
     }
     return <Page header={`选择${caption}类型`}>
         <List items={children} ViewItem={ViewItem} onItemClick={onItemClick} />

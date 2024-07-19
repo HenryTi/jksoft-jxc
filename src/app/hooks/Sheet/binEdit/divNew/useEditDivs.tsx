@@ -23,7 +23,7 @@ export function useEditDivs() {
     const modal = useModal();
     return useCallback(async function (props: UseEditDivsProps): Promise<boolean> {
         let { divStore, pendRow, valDiv } = props;
-        let { entityBin } = divStore;
+        let { entity: entityBin } = divStore;
         let { rearPick, pend: entityPend } = entityBin;
         let namedResults: NamedResults = {
             [rearPick.name]: new Proxy(pendRow, new PendProxyHandler(entityPend)),

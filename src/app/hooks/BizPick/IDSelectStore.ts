@@ -1,13 +1,14 @@
 import { BizBud, EntityAtom, EntityID, EntityFork } from "app/Biz";
 import { Store } from "app/tool";
 import { WritableAtom, atom } from "jotai";
+import { Modal } from "tonwa-app";
 import { Atom, BizPhraseType, ParamSearchAtomBuds } from "uqs/UqDefault";
 
 export abstract class IDSelectStore<E extends EntityID> extends Store<E> {
     protected bizBuds: BizBud[];
 
-    constructor(entity: E, buds: number[], noMedsMessage?: string) {
-        super(entity);
+    constructor(modal: Modal, entity: E, buds: number[], noMedsMessage?: string) {
+        super(modal, entity);
         this.bizBuds = (buds === undefined) ? [] : buds.map(v => this.biz.budFromId(v));
     }
 
@@ -83,11 +84,11 @@ export interface RowMed {
     meds: Med[];
 }
 
-export function createIDSelectStore(entity: EntityID): IDSelectStore<EntityID> {
+export function createIDSelectStore(modal: Modal, entity: EntityID): IDSelectStore<EntityID> {
     if (entity === undefined) return undefined;
     switch (entity.bizPhraseType) {
         default: return undefined;
-        case BizPhraseType.fork: return new SpecSelectStore(entity as EntityFork, [], undefined);
-        case BizPhraseType.atom: return new AtomSelectStore(entity as EntityAtom, [], undefined);
+        case BizPhraseType.fork: return new SpecSelectStore(modal, entity as EntityFork, [], undefined);
+        case BizPhraseType.atom: return new AtomSelectStore(modal, entity as EntityAtom, [], undefined);
     }
 }

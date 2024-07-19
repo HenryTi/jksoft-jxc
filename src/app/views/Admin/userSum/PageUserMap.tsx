@@ -11,7 +11,7 @@ export function PageUserMap({ userItems, onChanged }: { userItems: UserItems; on
     const { uq, biz } = useUqApp();
     const { userSite, persons, groups } = userItems;
     function ViewAtoms({ caption, atomPhrase, items }: { caption: string; atomPhrase: number; items: Item[]; }) {
-        const { openModal } = useModal();
+        const modal = useModal();
         const refAtoms = useRef<any[]>(undefined);
         const refChanged = useRef<boolean>(false);
         const [selectedItems, setSelectedItems] = useState<Item[]>(items);
@@ -41,7 +41,7 @@ export function PageUserMap({ userItems, onChanged }: { userItems: UserItems; on
                 refChanged.current = true;
             }
             let selected: number[] = selectedItems.map(v => v.id);
-            await openModal<Selection>(<PageSelectAtom atoms={refAtoms.current as any[]} selected={selected} onSelectChanged={onSelectChanged} />);
+            await modal.open<Selection>(<PageSelectAtom atoms={refAtoms.current as any[]} selected={selected} onSelectChanged={onSelectChanged} />);
             if (refChanged.current === true as any) {
                 await onChanged(userSite);
             }

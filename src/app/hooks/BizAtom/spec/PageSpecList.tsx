@@ -11,7 +11,7 @@ import { AtomIDValue } from "../AtomIDValue";
 
 export function PageSpecList({ entitySpec, baseValue }: { entitySpec: EntityFork; baseValue: AtomIDValue; }) {
     const modal = useModal();
-    const store = useSpecStore(entitySpec, baseValue);
+    const store = useSpecStore(modal, entitySpec, baseValue);
     const items = useAtomValue(store.itemsAtom);
     useEffectOnce(() => {
         store.load();

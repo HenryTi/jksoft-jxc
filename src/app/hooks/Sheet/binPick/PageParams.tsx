@@ -1,6 +1,6 @@
 import { BizBud, PickParam } from "app/Biz";
 import { NamedResults } from "../store";
-import { Page, useModal } from "tonwa-app";
+import { Modal, Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { ValuesBudsEditing, ViewBud } from "app/hooks";
@@ -49,6 +49,38 @@ export function usePageParams() {
     }, []);
 }
 
+export async function pickQueryParams(modal: Modal, props: Props) {
+    const { header, namedResults, queryParams, pickParams } = props;
+    const valueParams: [PickParam, BizBud, any][] = [];
+    const inputParams: BizBud[] = [];
+    for (let param of queryParams) {
+        let { name, budDataType } = param;
+        let pickParam = pickParams?.find(v => v.name === name);
+        if (pickParam !== undefined) {
+            let { bud, prop, valueSet, valueSetType } = pickParam;
+            if (bud === undefined) debugger;
+            let namedResult = namedResults[bud] as NamedResults;
+            if (namedResult === undefined) debugger;
+            if (prop === undefined) prop = 'id';
+            let v = namedResult[prop];
+            valueParams.push([pickParam, param, v]);
+        }
+        else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {
+            inputParams.push(param);
+        }
+    }
+    if (inputParams.length === 0) {
+        let retParam: any = {};
+        for (let [pickParam, bizBud, value] of valueParams) {
+            retParam[pickParam.name] = value;
+        }
+        return retParam;
+    }
+    let paramBudsEditing = new ValuesBudsEditing(inputParams);
+    return await modal.open(<PageParams header={header}
+        valueParams={valueParams}
+        inputParams={paramBudsEditing} />);
+}
 
 interface PageParamsProps {
     header: string;

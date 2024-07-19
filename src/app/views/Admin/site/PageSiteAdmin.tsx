@@ -11,7 +11,7 @@ import { centers } from "app/views/center";
 
 function PageSiteAdmin() {
     const { uq, uqSites } = useUqApp();
-    const { openModal } = useModal();
+    const modal = useModal();
     const { site } = useParams();
     const { users, achieve, compile } = centers;
     function Cmd({ onClick, content, icon, iconColor }: { onClick?: () => void; content: any; icon?: string; iconColor?: string }) {
@@ -25,7 +25,7 @@ function PageSiteAdmin() {
         let { userSite0 } = uqSites;
         if (userSite0 === undefined) return null;
         async function onSitesAdmin() {
-            openModal(<PageSiteInit />);
+            modal.open(<PageSiteInit />);
         }
         return <>
             <Cmd onClick={onSitesAdmin} content={captionSiteInit} icon="laptop" iconColor="text-warning" />
@@ -37,7 +37,7 @@ function PageSiteAdmin() {
 
         }
         async function onRoleAdmin() {
-            openModal(
+            modal.open(
                 <PageSiteRole
                     admin={EnumSysRole.owner}
                     viewTop={<></>}

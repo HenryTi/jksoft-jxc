@@ -12,7 +12,7 @@ interface Props {
 }
 export function SelectUser({ header, top }: Props) {
     let app = useUqAppBase();
-    const { closeModal } = useModal();
+    const modal = useModal();
     let [user, setUser] = useState<User>(null);
     let onSearch = async (key: string) => {
         let retUser = await app.userApi.userFromName(key);
@@ -21,7 +21,7 @@ export function SelectUser({ header, top }: Props) {
     header = header ?? 'Select user';
     let cnBorder = "border rounded-3 bg-white p-5 mx-auto w-min-20c";
     async function onClick() {
-        closeModal(user);
+        modal.close(user);
     }
     let vContent: any;
     if (user === null) {

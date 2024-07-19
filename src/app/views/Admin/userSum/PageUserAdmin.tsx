@@ -12,7 +12,7 @@ import { ListHeader, ViewAtomItem } from "./tools";
 
 export function PageUserSum() {
     const { uq } = useUqApp();
-    const { openModal } = useModal();
+    const modal = useModal();
     const userStore = useUserSumStore();
     const list = useAtomValue(userStore.atomList);
     /*
@@ -66,14 +66,14 @@ export function PageUserSum() {
         userStore.loadUserSite(userSite);
     }
     async function onAdd() {
-        let user = await openModal<User>(<SelectUser />);
+        let user = await modal.open<User>(<SelectUser />);
         if (!user) return;
         // let { userSite } = await uq.UserSiteFromTonwaUser.submit({ tonwaUser: user.id });
         let userSite = await userStore.getUserSiteFromUserId(user.id);
         //let [userItems] = await getUserItemsList(userSite);
         let userItems = await userStore.loadUserSite(userSite);
         // let userItems = getAtomValue(userStore.atomList);
-        await openModal(<PageUserMap userItems={userItems} onChanged={onChanged} />);
+        await modal.open(<PageUserMap userItems={userItems} onChanged={onChanged} />);
     }
     function ViewItem({ value }: { value: UserItems }) {
         const { userSite, persons, groups } = value;
@@ -86,7 +86,7 @@ export function PageUserSum() {
         }
         async function onEdit() {
             let userItems = await userStore.loadUserSite(userSite);
-            let ret = await openModal(<PageUserMap userItems={userItems} onChanged={onChanged} />);
+            let ret = await modal.open(<PageUserMap userItems={userItems} onChanged={onChanged} />);
             if (ret === undefined) return;
         }
         return <div className="pt-3 mb-3 border-bottom bg-white">

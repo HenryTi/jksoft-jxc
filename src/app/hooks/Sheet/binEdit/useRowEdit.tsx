@@ -27,7 +27,7 @@ export function useRowEdit() {
 }
 
 function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; valDiv: ValDivBase }) {
-    const { closeModal } = useModal();
+    const modal = useModal();
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { entityBin, values: binDetail, sheetStore } = binEditing;
     const { i: budI, iBase: budIBase, x: budX, xBase: budXBase } = entityBin;
@@ -53,12 +53,12 @@ function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; val
             setError('value', { message: '不能为 0' });
             return;
         }
-        closeModal(true);
+        modal.close(true);
     }
 
     async function onDel() {
         await binEditing.onDel();
-        closeModal();
+        modal.close();
     }
     let right: any;
     if (binEditing.onDel !== undefined) {

@@ -8,7 +8,7 @@ import { AuthFormBandTemplate } from "./AuthFormBandTemplate";
 
 export function PageChangePassword() {
     const navigate = useNavigate();
-    const { openModal } = useModal();
+    const modal = useModal();
     let uqApp = useUqAppBase()
     let onSubmit = async (data: any): Promise<any> => {
         let { orgPassword, newPassword, newPassword1 } = data;
@@ -19,7 +19,7 @@ export function PageChangePassword() {
         if (ret === false) {
             return ['orgPassword', '原密码错误'];
         }
-        openModal(<ChangeSucceed />, () => navigate(-1));
+        modal.open(<ChangeSucceed />, () => navigate(-1));
     }
 
     return <Page auth={false} header="修改密码">

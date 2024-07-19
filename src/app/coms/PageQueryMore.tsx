@@ -163,7 +163,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         callQuery();
     }, [param]);
     if (isModal === false) {
-        uqApp.onCloseModal = () => {
+        uqApp.onModalClose = () => {
             let pageCache = uqApp.pageCache.getCache<PageMoreCacheData>();
             if (pageCache === undefined) return;
             let { data } = pageCache;

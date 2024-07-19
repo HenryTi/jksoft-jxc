@@ -4,7 +4,6 @@ import { EntitySheet, EntityBin, EntityPend, BinRow, BizBud, Entity } from "app/
 import { ParamSaveDetail, ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { PickFunc, PickStates, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
-// import { budValuesFromProps } from "../../tool";
 import { BudEditing } from "../../Bud";
 import { ValRow } from "./tool";
 import { BinStore, SubmitState } from "./BinStore";
@@ -14,13 +13,14 @@ import { Console, Store } from "app/tool";
 import { arrFromJsonMid } from "app/hooks/tool";
 import { BinEditing } from "./BinEditing";
 import { BudsEditing } from "app/hooks/BudsEditing";
+import { runBinPicks } from "../binPick";
 
 abstract class MainBinStore extends Store<EntityBin> {
     readonly sheetStore: SheetStore;
     readonly budsEditing: BudsEditing;
     readonly budEditings: BudEditing[];
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
-        super(entityBin);
+        super(sheetStore.modal, entityBin);
         this.sheetStore = sheetStore;
         this.budsEditing = new BinEditing(sheetStore, entityBin);
         this.budEditings = this.budsEditing.createBudEditings(); // main.buds.map(v => new BudEditing(undefined, v));
@@ -45,11 +45,12 @@ export class SheetMain extends MainBinStore {
     }
 
     // return: true: new sheet created
-    async start(pick: PickFunc) {
+    async start(/*pick: PickFunc*/) {
         const row = this.valRow;
         const { id } = row;
         if (id > 0) return;
-        const pickResults = await pick(this.sheetStore, this.entity, RearPickResultType.scalar);
+        //const pickResults = await pick(this.sheetStore, this.entity, RearPickResultType.scalar);
+        const pickResults = await runBinPicks(this.sheetStore, this.entity, RearPickResultType.scalar);
         let ret = await this.startFromPickResults(pickResults);
         setAtomValue(this.sheetStore.atomLoaded, true);
         this.onLoaded();
@@ -177,7 +178,7 @@ export class SheetStore extends Store<EntitySheet> {
         return this.divStore.sum(get);
     });
     constructor(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
-        super(entitySheet);
+        super(sheetConsole.modal, entitySheet);
         this.sheetConsole = sheetConsole;
         this.main = new SheetMain(this);
         const { details } = this.entity;
@@ -298,8 +299,8 @@ export class SheetStore extends Store<EntitySheet> {
             return id;
         }
     }
-    async start(pick: PickFunc) {
-        let ret = await this.main.start(pick);
+    async start(/*pick: PickFunc*/) {
+        let ret = await this.main.start(/*pick*/);
         if (ret !== undefined) return ret;
     }
 

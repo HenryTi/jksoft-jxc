@@ -13,7 +13,7 @@ type ConvertToBudValue = (value: any) => { value: any; int: number; dec: number;
 type FromBudValue = (value: any) => any;
 function EditBudValue(props: EditBudTemplateProps & { type: string; step?: string; convertToBudValue: ConvertToBudValue; fromBudValue?: FromBudValue; }) {
     const { uq } = useUqApp();
-    const { openModal } = useModal();
+    const modal = useModal();
     const { id, readOnly, labelSize, flag, value: initValue, budEditing
         , type, step, convertToBudValue, options, fromBudValue
         , ViewValueEdit: ValueEdit, onChanged } = props;
@@ -36,7 +36,7 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
     }
     if (ui?.edit === 'pop') {
         async function onEditClick() {
-            let ret = await openModal<number | string>(<PagePickValue label={label} value={value} type={type} options={options} step={step} />);
+            let ret = await modal.open<number | string>(<PagePickValue label={label} value={value} type={type} options={options} step={step} />);
             if (ret === undefined) return;
             await valueEdited(ret);
         }

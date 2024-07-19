@@ -11,7 +11,7 @@ import { Atom } from "uqs/UqDefault";
 export function PageSites() {
     const uqApp = useUqApp();
     const { uq } = uqApp;
-    const { openModal, closeModal } = useModal();
+    const modal = useModal();
     const right = <button className="btn btn-sm btn-success me-1" onClick={onAdd}>新增</button>;
     const [list, setList] = useState<any[]>(undefined);
     useEffectOnce(() => {
@@ -42,9 +42,9 @@ export function PageSites() {
 
     async function onAdd() {
         let top = <div className="my-3">{roleT('searchUser')}</div>;
-        let user = await openModal<User>(<SelectUser header={roleT('user')} top={top} />);
+        let user = await modal.open<User>(<SelectUser header={roleT('user')} top={top} />);
         if (user === undefined) return;
-        await openModal(<PageAdd user={user} />)
+        await modal.open(<PageAdd user={user} />)
     }
 
     function PageAdd({ user }: { user: User; }) {
@@ -67,7 +67,7 @@ export function PageSites() {
                 ex,
             }
             setList([site, ...list]);
-            closeModal();
+            modal.close();
         }
         if (no === undefined) {
             return <PageSpinner />;

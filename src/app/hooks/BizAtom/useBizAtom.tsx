@@ -135,7 +135,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
     };
     async function selectLeafAtom(entityAtom: EntityAtom): Promise<EntityAtom> {
         if (entityAtom === undefined) entityAtom = entity;
-        const { openModal } = uqAppModal(uqApp);
+        const { open } = uqAppModal(uqApp);
         const { subClasses: children } = entityAtom;
         switch (children.length) {
             case 0: return entityAtom;
@@ -143,7 +143,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
             default:
                 let page = <PageBizAtomSelectType entityAtom={entityAtom} caption="选择类型" />;
                 if (!page) return entityAtom;
-                let ea = await openModal<EntityAtom>(page);
+                let ea = await open<EntityAtom>(page);
                 if (ea === undefined) return undefined;
                 let ret = await selectLeafAtom(ea);
                 return ret;

@@ -14,7 +14,7 @@ export interface PendProps {
 export function ViewPendRow({
     pendRow, divStore, showPendValue
 }: PendProps & { showPendValue?: boolean }) {
-    const { sheetStore, entityBin } = divStore;
+    const { sheetStore, entity: entityBin } = divStore;
     const { pend: entityPend } = entityBin;
     let { i: iBud, hasPrice, hasAmount } = entityPend;
     const { pend: pendId, detail: { id, i, price, amount }, value, mid } = pendRow;

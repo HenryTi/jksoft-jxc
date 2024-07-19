@@ -22,7 +22,7 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
     onDel: () => Promise<void>;
 
     constructor(sheetStore: SheetStore, bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
-        super(buds/*, initBinRow*/);
+        super(buds);
         this.sheetStore = sheetStore;
         this.entityBin = bin;
         this.budValuesTool = new BinRowValuesTool(bin, buds);
@@ -49,7 +49,6 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
     }
 
     buildShowBuds(excludeBuds?: { [id: number]: boolean }): any[] {
-
         let ret: any[] = [];
         for (let field of this.fields) {
             const bud = field;
@@ -67,6 +66,13 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
         }
         return ret;
     }
+
+    protected getOnPick(bud: BizBud): (() => void) {
+        let { onPicks } = this.entityBin;
+        let pick = onPicks[bud.id];
+        if (pick === undefined) return;
+        return () => alert(bud.name);
+    }
 }
 
 export class DivEditing extends BinBudsEditing {
@@ -74,7 +80,7 @@ export class DivEditing extends BinBudsEditing {
     readonly valDiv: ValDivBase;
     constructor(divStore: BinStore, valDiv: ValDivBase, namedResults?: NamedResults) {
         const { binDiv, valRow } = valDiv;
-        super(divStore.sheetStore, divStore.entityBin, binDiv.buds, valRow);
+        super(divStore.sheetStore, divStore.entity, binDiv.buds, valRow);
         this.divStore = divStore;
         this.valDiv = valDiv;
         this.addNamedParams(namedResults);
@@ -102,7 +108,6 @@ export class DivEditing extends BinBudsEditing {
 
     private setValueDefault(valDiv: ValDivBase) {
         const { value: budValue } = this.entityBin;
-        // const { budValue } = this.budValuesTool;
         if (budValue === undefined) return;
         if (this.budValuesTool.has(budValue) === false) return;
         if (this.budValuesTool.getBudValue(budValue, this.values) !== undefined) return;

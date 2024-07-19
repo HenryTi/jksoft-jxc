@@ -54,14 +54,14 @@ export function PageSumGroup() {
 function PageOneGroup({ group }: { group: Atom; }) {
     const { uq } = useUqApp();
     /*
-    const { openModal } = useModal();
+    const modal = useModal();
     function PageAddPerson() {
         return <Page header="组员">
 
         </Page>;
     }
     function onAddPerson() {
-        openModal(<PageAddPerson />);
+        modal.open(<PageAddPerson />);
     }
     const right = <button className="btn btn-sm btn-info me-2" onClick={onAddPerson}>
         <FA name="plus" />
