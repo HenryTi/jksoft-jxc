@@ -1,8 +1,7 @@
 import { useAtomValue } from "jotai";
-import { DivEditing, BinStore, ValDiv, ValDivBase, ValDivRoot, ValRow } from "../../store";
+import { DivEditing, BinStore, ValDivBase, ValRow } from "../../store";
 import { FA, getAtomValue, setAtomValue } from "tonwa-com";
 import { useEditDivs } from "../divNew";
-// import { useRowEdit } from "../rowEdit";
 import { Page, useModal } from "tonwa-app";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { ViewRow } from "./ViewRow";
@@ -31,7 +30,6 @@ function EditDiv(props: EditDivProps) {
     const { divLevels, pivot } = entityBin;
     const editDivs = useEditDivs();
     const divs = useAtomValue(atomValDivs);
-    // const rowEdit = useRowEdit();
     const deleted = useAtomValue(atomDeleted);
     let bg = divLevels - level - 1;
     let borderTop = ''; // bg > 0 ? 'border-top' : '';

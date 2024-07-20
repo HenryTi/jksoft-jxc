@@ -34,7 +34,8 @@ export class BinStore extends Store<EntityBin> {
     readonly pickPendStores: { [id: number]: PickPendStore; } = {};
 
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
-        super(sheetStore.modal, entityBin);
+        const { modal } = sheetStore;
+        super(modal, entityBin);
         this.sheetStore = sheetStore;
         const { pend, binDivRoot } = entityBin;
         // this.entityBin = entityBin;
@@ -60,7 +61,7 @@ export class BinStore extends Store<EntityBin> {
             return hasValue === true ? SubmitState.enable : SubmitState.hide;
         }, null);
         if (pend !== undefined) {
-            const valuesBudsEditing = new ValuesBudsEditing(pend.params);
+            const valuesBudsEditing = new ValuesBudsEditing(modal, pend.params);
             this.budEditings = valuesBudsEditing.createBudEditings();
         }
     }

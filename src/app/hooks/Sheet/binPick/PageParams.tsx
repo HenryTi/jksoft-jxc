@@ -42,7 +42,7 @@ export function usePageParams() {
             }
             return retParam;
         }
-        let paramBudsEditing = new ValuesBudsEditing(inputParams);
+        let paramBudsEditing = new ValuesBudsEditing(modal, inputParams);
         return await modal.open(<PageParams header={header}
             valueParams={valueParams}
             inputParams={paramBudsEditing} />);
@@ -76,7 +76,7 @@ export async function pickQueryParams(modal: Modal, props: Props) {
         }
         return retParam;
     }
-    let paramBudsEditing = new ValuesBudsEditing(inputParams);
+    let paramBudsEditing = new ValuesBudsEditing(modal, inputParams);
     return await modal.open(<PageParams header={header}
         valueParams={valueParams}
         inputParams={paramBudsEditing} />);

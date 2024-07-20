@@ -8,19 +8,21 @@ import { Calc, CalcResult, Formulas } from "./Calc";
 import { getDays } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
-import { BudCheckValue } from "tonwa-app";
+import { BudCheckValue, Modal } from "tonwa-app";
 import { Atom } from "jotai";
 
 export abstract class BudsEditing<R = any> implements FormContext {
     private readonly requiredFields: BizBud[] = [];
-    protected readonly calc: Calc;
+    private readonly budColl: { [name: string]: BizBud } = {};
+    private readonly calc: Calc;
     protected budValuesTool: BudValuesToolBase<R>;
+    readonly modal: Modal;
     readonly buds: BizBud[];
-    readonly namedBuds: { [name: string]: BizBud } = {};
     abstract get values(): R;
     protected stopRequired: boolean;
 
-    constructor(buds: BizBud[]) {
+    constructor(modal: Modal, buds: BizBud[]) {
+        this.modal = modal;
         let requiredFields = this.requiredFields;
         const formulas: Formulas = [];
         this.buds = buds;
@@ -28,7 +30,7 @@ export abstract class BudsEditing<R = any> implements FormContext {
             let f = bud;
             const { name } = bud;
             let { required, valueSet, valueSetType } = bud;
-            this.namedBuds[name] = f;
+            this.budColl[name] = f;
             let { ui, budDataType: { min, max } } = bud;
             if (ui?.show === true) continue;
             if (valueSet !== undefined) {
@@ -74,12 +76,17 @@ export abstract class BudsEditing<R = any> implements FormContext {
         return ret;
     }
 
+    protected addNamedValues(name: string, values: object) {
+        this.calc.addValues(name, values);
+    }
+
     addNamedParams(namedResults: { [name: string]: any }) {
         if (namedResults === undefined) return;
-        this.calc.addValues(undefined, namedResults);
+        // this.calc.addValues(undefined, namedResults);
+        this.addNamedValues(undefined, namedResults);
         const { results } = this.calc;
-        for (let i in this.namedBuds) {
-            let field = this.namedBuds[i];
+        for (let i in this.budColl) {
+            let field = this.budColl[i];
             if (i !== field.name) debugger;
             let result = results[i];
             if (result === null || typeof result !== 'object') {
@@ -108,7 +115,7 @@ export abstract class BudsEditing<R = any> implements FormContext {
         let c = (name: string, value: CalcResult) => {
             this.setFieldOrBudValue(name, value);
             if (callback !== undefined) {
-                let field = this.namedBuds[name];
+                let field = this.budColl[name];
                 // 针对 bud date，需要做days到DATE的转换
                 // bud dec, 小数转换
                 let uiValue = field.getUIValue(value);
@@ -123,7 +130,7 @@ export abstract class BudsEditing<R = any> implements FormContext {
 
     private setFieldOrBudValue(name: string, value: CalcResult) {
         // console.log('setFieldOrBudValue name=', name, 'value=', value);
-        let field = this.namedBuds[name];
+        let field = this.budColl[name];
         if (field === undefined) {
             return;
         }
@@ -305,8 +312,8 @@ export abstract class BudsEditing<R = any> implements FormContext {
 export class ValuesBudsEditing extends BudsEditing<{ [id: number]: any }> {
     readonly values: { [id: number]: any } = {};
 
-    constructor(buds: BizBud[], initValues?: any) {
-        super(buds/*, initValues*/);
+    constructor(modal: Modal, buds: BizBud[], initValues?: any) {
+        super(modal, buds/*, initValues*/);
         this.budValuesTool = new BudValuesTool(buds);
         if (initValues !== undefined) {
             for (let bud of buds) this.budValuesTool.setBudValue(bud, this.values, initValues[bud.id]);

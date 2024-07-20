@@ -15,7 +15,7 @@ export function PageSpecNew({ store }: { store: SpecStore; }) {
     const submitClassName: string = undefined;
     let buds = [...keys];
     if (props !== undefined) buds.push(...props);
-    const budsEditing = new ValuesBudsEditing(buds);
+    const budsEditing = new ValuesBudsEditing(modal, buds);
     let formRows: FormRow[] = [
         ...budsEditing.buildFormRows(),
         { type: 'submit', label: submitCaption, options: {}, className: submitClassName }

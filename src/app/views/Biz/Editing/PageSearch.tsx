@@ -151,7 +151,8 @@ export function PageSearchSheet({ sheet }: { sheet: EntitySheet; }) {
 }
 
 function ViewParams({ vSearchNo, budArr, onBudChanged }: { vSearchNo: any; budArr: BizBud[]; onBudChanged: OnBudChanged; }) {
-    let valuesBudsEditing = new ValuesBudsEditing(budArr);
+    const modal = useModal();
+    let valuesBudsEditing = new ValuesBudsEditing(modal, budArr);
     let budEditings = valuesBudsEditing.createBudEditings();
     let { length } = budEditings;
     let propRow: any[] = [vSearchNo];

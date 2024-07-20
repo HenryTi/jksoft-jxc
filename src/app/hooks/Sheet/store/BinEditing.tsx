@@ -10,6 +10,7 @@ import { NamedResults } from "./NamedResults";
 import { ValRow } from "./tool";
 import { BudsEditing } from "app/hooks/BudsEditing";
 import { ViewBud, ViewBudUIType } from "app/hooks";
+import { runBinPick } from "../binPick";
 
 export abstract class BinBudsEditing extends BudsEditing<BinRow> {
     readonly values: ValRow = { buds: {} } as any;
@@ -22,7 +23,7 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
     onDel: () => Promise<void>;
 
     constructor(sheetStore: SheetStore, bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
-        super(buds);
+        super(sheetStore.modal, buds);
         this.sheetStore = sheetStore;
         this.entityBin = bin;
         this.budValuesTool = new BinRowValuesTool(bin, buds);
@@ -34,7 +35,8 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
     private setValues(binRow: BinRow) {
         Object.assign(this.values, binRow);
         let obj = new Proxy(binRow, this.entityBin.proxyHandler());
-        this.calc.addValues(undefined, obj);
+        // this.calc.addValues(undefined, obj);
+        this.addNamedValues(undefined, obj);
     }
 
     protected override setBudObjectValue(bud: BizBud, result: { id: number; base: number; }) {
@@ -66,21 +68,16 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
         }
         return ret;
     }
-
-    protected getOnPick(bud: BizBud): (() => void) {
-        let { onPicks } = this.entityBin;
-        let pick = onPicks[bud.id];
-        if (pick === undefined) return;
-        return () => alert(bud.name);
-    }
 }
 
 export class DivEditing extends BinBudsEditing {
     readonly divStore: BinStore;
     readonly valDiv: ValDivBase;
+    readonly namedResults: NamedResults;
     constructor(divStore: BinStore, valDiv: ValDivBase, namedResults?: NamedResults) {
         const { binDiv, valRow } = valDiv;
         super(divStore.sheetStore, divStore.entity, binDiv.buds, valRow);
+        this.namedResults = namedResults;
         this.divStore = divStore;
         this.valDiv = valDiv;
         this.addNamedParams(namedResults);
@@ -124,6 +121,19 @@ export class DivEditing extends BinBudsEditing {
             if (value === null || value === undefined) return null;
             return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} />;
         })
+    }
+
+    protected getOnPick(bud: BizBud): (() => void | Promise<void>) {
+        let { onPicks } = this.entityBin;
+        let pick = onPicks[bud.id];
+        if (pick === undefined) return;
+        if (this.namedResults === undefined) {
+            debugger;
+        }
+        return async () => {
+            // alert(bud.name);
+            await runBinPick(this.divStore, pick, this.namedResults);
+        };
     }
 }
 

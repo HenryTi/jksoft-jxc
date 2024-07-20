@@ -91,7 +91,7 @@ function PageEditUser({ user, usersStore, entity, userBudValues }: { user: Retur
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { bootstrapContainer } = theme;
     const { caption, name, user: userBuds } = entity;
-    const budsEditing = new ValuesBudsEditing(userBuds, userBudValues);
+    const budsEditing = new ValuesBudsEditing(modal, userBuds, userBudValues);
     const inputRows = budsEditing.buildFormRows();
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;

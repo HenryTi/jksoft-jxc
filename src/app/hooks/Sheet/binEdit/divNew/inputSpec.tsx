@@ -57,7 +57,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         const { keys, buds: props } = entitySpec;
         let buds = [...keys];
         if (props !== undefined) buds.push(...props);
-        budsEditing = new ValuesBudsEditing(buds)
+        budsEditing = new ValuesBudsEditing(modal, buds)
         let ret = await modal.open(<PagePickSpec />);
         if (ret !== undefined) {
             const { id, base } = ret;

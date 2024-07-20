@@ -1,8 +1,8 @@
 import { BizBud, EntityBook } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
-import { Route } from "react-router-dom";
-import { BudValue, Page } from "tonwa-app";
+import { Route, useMatch } from "react-router-dom";
+import { BudValue, Page, useModal } from "tonwa-app";
 import { List, Sep } from "tonwa-com";
 import { RegisterOptions } from "react-hook-form";
 import { BudEditing, EditBudLabelRow, ValuesBudsEditing } from "app/hooks";
@@ -52,6 +52,7 @@ const budOptions: { [name: string]: RegisterOptions } = {
 export function PageSiteInit() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
+    const modal = useModal();
     const { data } = useQuery(
         [],
         getInit,
@@ -67,7 +68,7 @@ export function PageSiteInit() {
         const { buds: budsValues } = readBuds(undefined, result as any);
         const siteSetting = biz.entities['sitesetting'] as EntityBook;
         const { budColl: bizBuds, buds } = siteSetting;
-        const valuesBudsEditing = new ValuesBudsEditing(buds, budsValues);
+        const valuesBudsEditing = new ValuesBudsEditing(modal, buds, budsValues);
         const budEditings = valuesBudsEditing.createBudEditings();
         // let ret: InitValue[] = buds.map(v => { // }) initBuds.map(v => {
         let ret: InitValue[] = budEditings.map(v => {

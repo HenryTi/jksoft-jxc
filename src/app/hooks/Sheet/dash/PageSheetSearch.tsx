@@ -165,7 +165,8 @@ export function PageSheetSearch({ sheetConsole }: { sheetConsole: SheetConsole; 
 }
 
 function ViewParams({ budArr, onBudChanged }: { budArr: BizBud[]; onBudChanged: OnBudChanged; }) {
-    let valuesBudsEditing = new ValuesBudsEditing(budArr);
+    const modal = useModal();
+    let valuesBudsEditing = new ValuesBudsEditing(modal, budArr);
     valuesBudsEditing.setStopRequired();
     let budEditings = valuesBudsEditing.createBudEditings(); // budArr.map(v => new BudEditing(v, false));
     let { length } = budEditings;

@@ -92,7 +92,7 @@ export function ViewAtomProps({ entity, value }: { entity: EntityID; value: Atom
     }
 
     function buildVPropRows(props: BizBud[], flag: JSX.Element = undefined) {
-        const valuesBudsEditing = new ValuesBudsEditing(props);
+        const valuesBudsEditing = new ValuesBudsEditing(modal, props);
         const budEditings = valuesBudsEditing.createBudEditings();
         return budEditings.map(v => {
             if (v === undefined) debugger;

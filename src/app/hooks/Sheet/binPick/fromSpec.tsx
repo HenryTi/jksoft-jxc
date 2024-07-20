@@ -62,7 +62,7 @@ export async function pickFromSpec(divStore: BinStore, namedResults: NamedResult
         const { buds: props } = entitySpec;
         let buds = [...keys];
         if (props !== undefined) buds.push(...props);
-        budsEditing = new ValuesBudsEditing(buds)
+        budsEditing = new ValuesBudsEditing(modal, buds)
         let ret = await modal.open(<PagePickSpec />);
         return ret;
     }

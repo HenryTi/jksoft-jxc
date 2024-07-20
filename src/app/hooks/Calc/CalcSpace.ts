@@ -18,13 +18,6 @@ export class CalcSpace {
     identifier(name: string): CalcIdObj {
         let ret = this.getObj(name);
         return ret;
-        /*
-        if (ret === undefined) return;
-        if (typeof ret === 'object') {
-            return (ret as any).id;
-        }
-        return ret;
-        */
     }
 
     member(name0: string, name1: string): CalcIdObj {

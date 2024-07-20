@@ -76,10 +76,10 @@ export class SheetMain extends MainBinStore {
         for (let mp of mainProps) {
             formulas.push([mp.name, getFormulaText(mp.valueSet)]);
         }
-        let { namedResults, rearBinPick: lastBinPick, rearResult: lastResult } = pickResults;
+        let { namedResults, rearBinPick, rearResult } = pickResults;
         const calc = new Calc(formulas, namedResults);
-        if (lastBinPick !== undefined) {
-            calc.addValues(lastBinPick.name, lastResult[0]);
+        if (rearBinPick !== undefined) {
+            calc.addValues(rearBinPick.name, rearResult[0]);
         }
         if (i !== undefined) {
             row.i = calc.getValue('i') as number; // as number;
