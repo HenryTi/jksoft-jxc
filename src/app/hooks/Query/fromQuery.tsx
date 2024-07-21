@@ -3,7 +3,7 @@ import { ChangeEvent, useCallback, useRef, useState } from "react";
 import { Modal, Page, useModal } from "tonwa-app";
 import { List, Sep, theme, useEffectOnce } from "tonwa-com";
 import { filterUndefined } from "app/tool";
-import { pickQueryParams, usePageParams } from "../Sheet/binPick/PageParams";
+import { pickQueryParams/*, usePageParams*/ } from "../Sheet/binPick/PageParams";
 import { NamedResults, PickResult, RearPickResultType } from "../Sheet/store";
 import { LabelBox, Picked, Prop, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
@@ -11,6 +11,7 @@ import { BizPhraseType } from "uqs/UqDefault";
 import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtom, ViewSpecAtomBold } from "../View";
 import { ViewSpecId } from "app/coms/ViewSpecId";
 import { ViewBud } from "../Bud";
+import { Editing } from "../BudsEditing";
 
 /*
 export function usePickFromQuery(): [
@@ -77,22 +78,24 @@ export function usePickFromQuery(): [
 }
 */
 async function pickFromQueryBase(
-    modal: Modal
-    , namedResults: NamedResults
+    // modal: Modal
+    // , namedResults: NamedResults
+    editing: Editing
     , binPick: PickQuery
     , pickResultType: RearPickResultType)
     : Promise<PickResult | PickResult[]> {
     let { name, caption, query, pickParams } = binPick as PickQuery;
     const header = caption ?? query.caption ?? name;
-    let retParam = await pickQueryParams(modal, {
+    let retParam = await pickQueryParams({
+        editing,
         header,
-        namedResults,
+        // namedResults,
         queryParams: query.params,
         pickParams
     });
     if (retParam === undefined) return;
     retParam = filterUndefined(retParam);
-
+    const { modal } = editing;
     /*
     let queryStore = new QueryStore(query);
     let pickedArr: Picked[] = [];
@@ -125,20 +128,22 @@ async function pickFromQueryBase(
 }
 
 export async function pickFromQueryScalar(
-    modal: Modal
-    , namedResults: NamedResults
+    // modal: Modal
+    // , namedResults: NamedResults
+    editing: Editing
     , binPick: PickQuery)
     : Promise<PickResult> {
-    return await pickFromQueryBase(modal, namedResults, binPick, RearPickResultType.scalar) as PickResult;
+    return await pickFromQueryBase(editing, binPick, RearPickResultType.scalar) as PickResult;
 };
 
 export async function pickFromQuery(
-    modal: Modal
-    , namedResults: NamedResults
+    // modal: Modal
+    // , namedResults: NamedResults
+    editing: Editing
     , binPick: PickQuery
     , lastPickResultType: RearPickResultType)
     : Promise<PickResult[]> {
-    return await pickFromQueryBase(modal, namedResults, binPick, lastPickResultType) as PickResult[];
+    return await pickFromQueryBase(editing, binPick, lastPickResultType) as PickResult[];
 };
 
 export function PageFromQuery({ query, params, isPick, pickResultType }: {

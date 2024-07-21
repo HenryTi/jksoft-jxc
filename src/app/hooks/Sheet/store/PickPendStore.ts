@@ -25,7 +25,7 @@ export class PickPendStore {
             if (pickParams.findIndex(v => v.name === bud.name) >= 0) continue;
             paramsInput.push(bud);
         }
-        return new ValuesBudsEditing(this.divStore.modal, paramsInput);
+        return new ValuesBudsEditing(this.divStore.modal, this.divStore.biz, paramsInput);
     }
 
     async searchPend() {

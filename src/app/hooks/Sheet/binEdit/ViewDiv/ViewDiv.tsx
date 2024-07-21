@@ -2,7 +2,7 @@ import { useAtomValue } from "jotai";
 import { FA, setAtomValue } from "tonwa-com";
 import { useModal } from "tonwa-app";
 import { DivEditing, ValDivRoot } from "../../store";
-import { UseEditDivsProps, useEditDivs } from "../divNew";
+import { editDivs, UseEditDivsProps } from "../divNew";
 // import { useRowEdit } from "../rowEdit";
 import { PageEditDivRoot } from "./PageEditDivRoot";
 import { ViewPendRow } from "../ViewPendRow";
@@ -20,7 +20,7 @@ export function ViewDiv(props: ViewDivProps) {
     const divs = useAtomValue(atomValDivs);
     const valRow = useAtomValue(atomValRow);
     const deleted = useAtomValue(atomDeleted);
-    const editDivs = useEditDivs();
+    // const editDivs = useEditDivs();
     // const rowEdit = useRowEdit();
     if (entityBin.pivot === binDiv) {
         // pivot直接在末尾级stem显示value list

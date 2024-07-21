@@ -54,7 +54,7 @@ export function PageSheetNew({ store }: { store: SheetStore; }) {
 }
 
 function PageSheetDirect({ store }: { store: SheetStore; }) {
-    const onPicked = useOnPicked(store);
+    // const onPicked = useOnPicked(store);
     const { caption } = store;
     useEffectOnce(() => {
         (async function () {
@@ -67,7 +67,7 @@ function PageSheetDirect({ store }: { store: SheetStore; }) {
                 rearResult: [],
                 rearPickResultType: RearPickResultType.scalar,
             };
-            await onPicked(results);
+            await onPicked(store, results);
             // let added = await detailNew();
             //if (added === true) {
             await store.setSheetAsDraft();
@@ -77,59 +77,60 @@ function PageSheetDirect({ store }: { store: SheetStore; }) {
     return <PageSpinner header={caption + ' 创建中...'} />
 }
 
+/*
 function useOnPicked(store: SheetStore) {
     const { sheetConsole, main } = store;
-    async function onPicked(results: ReturnUseBinPicks) {
-        let ret = await main.startFromPickResults(results);
-        if (ret === undefined) {
-            if (store.hasId() === false) {
-                // 还没有创建单据
-                if (sheetConsole.steps === undefined) {
-                    setTimeout(() => {
-                        sheetConsole.close();
-                    }, 100);
-                }
-            }
-            return; // 已有单据，不需要pick. 或者没有创建新单据
-        }
-        sheetConsole.onSheetAdded(store);
-    }
     return useCallback(onPicked, []);
 }
+*/
+async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
+    const { sheetConsole, main } = store;
+    let ret = await main.startFromPickResults(results);
+    if (ret === undefined) {
+        if (store.hasId() === false) {
+            // 还没有创建单据
+            if (sheetConsole.steps === undefined) {
+                setTimeout(() => {
+                    sheetConsole.close();
+                }, 100);
+            }
+        }
+        return; // 已有单据，不需要pick. 或者没有创建新单据
+    }
+    sheetConsole.onSheetAdded(store);
+}
 
-function useButtons(sheetConsole: SheetConsole) {
-    let btnSubmit = buttonDefs.submit(undefined);
-    const navBack = useCallback(async () => {
-        sheetConsole.close();
-    }, []);
+function buttons(sheetConsole: SheetConsole) {
+    let btnSubmit = buttonDefs.submit(undefined, true);
+    const navBack = () => sheetConsole.close();
     let btnExit = buttonDefs.exit(navBack, false);
-    setAtomValue(btnSubmit.atomDisabled, true);
+    // setAtomValue(btnSubmit.atomDisabled, true);
     return { btnSubmit, btnExit };
 }
 
 function PageStartPicks({ store }: { store: SheetStore; }) {
     const { sheetConsole } = store;
-    const retUseOnPicked = useOnPicked(store);
-    const { btnSubmit, btnExit } = useButtons(sheetConsole);
+    //const retUseOnPicked = useOnPicked(store);
+    const { btnSubmit, btnExit } = buttons(sheetConsole);
     const group0: ToolItem[] = [btnSubmit];
     let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
-    async function onPicked(results: ReturnUseBinPicks) {
-        await retUseOnPicked(results);
+    async function onPickedNew(results: ReturnUseBinPicks) {
+        await onPicked(store, results);
         await store.setSheetAsDraft();
     }
     return <Page header={pageHeader} back={null} top={top} right={right}>
         <ViewSteps sheetSteps={sheetConsole.steps} />
-        <ViewBinPicks subHeader="新开单据" sheetStore={store} onPicked={onPicked} />
+        <ViewBinPicks subHeader="新开单据" sheetStore={store} onPicked={onPickedNew} />
     </Page>;
 }
 
 function PageStartPend({ store }: { store: SheetStore; }) {
-    const onPicked = useOnPicked(store);
+    // const onPicked = useOnPicked(store);
     // const detailNew = useDetailNew(store);
     const { caption, sheetConsole } = store;
     const subCaption = '批选待处理';
     const onPend = useCallback(async (results: ReturnUseBinPicks) => {
-        await onPicked(results);
+        await onPicked(store, results);
         let added = await detailNew(store);
         if (added === true) {
             await store.setSheetAsDraft();
@@ -142,7 +143,7 @@ function PageStartPend({ store }: { store: SheetStore; }) {
 }
 
 function PageDirectPend({ store }: { store: SheetStore; }) {
-    const onPicked = useOnPicked(store);
+    // const onPicked = useOnPicked(store);
     // const detailNew = useDetailNew(store);
     const { caption, sheetConsole } = store;
     const subCaption = '批选待处理';
@@ -157,7 +158,7 @@ function PageDirectPend({ store }: { store: SheetStore; }) {
                 rearResult: [],
                 rearPickResultType: RearPickResultType.scalar,
             };
-            await onPicked(results);
+            await onPicked(store, results);
             let added = await detailNew(store);
             if (added === true) {
                 await store.setSheetAsDraft();

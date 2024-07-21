@@ -1,5 +1,5 @@
 import { EntityFork } from "app/Biz";
-import { Store } from "app/tool";
+import { EntityStore } from "app/tool";
 import { atom } from "jotai";
 import { useRef } from "react";
 import { BudValue, Modal } from "tonwa-app";
@@ -19,7 +19,7 @@ export interface BudValues {
     [bud: string]: BudValue;
 }
 
-export class SpecStore extends Store<EntityFork> {
+export class SpecStore extends EntityStore<EntityFork> {
     readonly itemsAtom = atom(undefined as any[]);
     readonly baseValue: AtomIDValue;
 

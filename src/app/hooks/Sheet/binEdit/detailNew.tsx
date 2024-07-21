@@ -6,6 +6,7 @@ import { BinEditing } from "../store";
 import { PickResult } from "../store";
 import { runBinPicks } from "../binPick";
 import { rowEdit } from "./rowEdit";
+import { Editing } from "app/hooks/BudsEditing";
 
 /*
 export function useDetailNew(sheetStore: SheetStore) {

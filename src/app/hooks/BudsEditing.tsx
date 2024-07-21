@@ -2,31 +2,96 @@ import { RegisterOptions } from "react-hook-form";
 import { FormContext, FormRow } from "app/coms";
 import {
     BizBud, BudID, BudDec, BudRadio, EnumBudType, ValueSetType, BudValuesTool,
-    BudValuesToolBase
+    BudValuesToolBase,
+    Biz
 } from "app/Biz";
 import { Calc, CalcResult, Formulas } from "./Calc";
-import { getDays } from "app/tool";
+import { getDays, Store } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
 import { BudCheckValue, Modal } from "tonwa-app";
-import { Atom } from "jotai";
+import { atom, Atom } from "jotai";
+import { NamedResults } from "./Sheet/store";
+import { getAtomValue, setAtomValue } from "tonwa-com";
 
-export abstract class BudsEditing<R = any> implements FormContext {
+export class Editing<R = any> extends Store {
+    private readonly calc: Calc;
+    readonly namedResults: NamedResults = {};
+    readonly values: R = {} as any;
+    readonly atomChanging = atom(0);
+
+    constructor(modal: Modal, biz: Biz) {
+        super(modal, biz);
+        const formulas = this.buildFormulas();
+        this.calc = new Calc(formulas, this.values as any);
+    }
+
+    protected buildFormulas(): Formulas {
+        return [];
+    }
+
+    addFormula(name: string, formula: string) {
+        this.calc.addFormula(name, formula);
+    }
+
+    get results() { return this.calc.results; }
+
+    calcValue(formula: string): number | string {
+        let ret = this.calc.calcFormula(formula);
+        return ret;
+    }
+
+    addNamedValues(name: string, values: object) {
+        if (values === undefined) return;
+        if (name === undefined) {
+            Object.assign(this.namedResults, values);
+        }
+        else {
+            this.namedResults[name] = values;
+        }
+        this.calc.addValues(name, values);
+    }
+
+    addNamedParams(namedResults: { [name: string]: any }) {
+        this.addNamedValues(undefined, namedResults);
+    }
+
+    stopFormula(name: string) {
+        this.calc.stopFormula(name);
+    }
+
+    setNamedValue(name: string, value: number | string, callback: (name: string, value: CalcResult) => void) {
+        this.calc.setValue(name, value, callback);
+    }
+
+    setChanging() {
+        setAtomValue(this.atomChanging, getAtomValue(this.atomChanging) + 1);
+    }
+
+    getValue(name: string) {
+        return this.calc.getValue(name);
+    }
+}
+
+export abstract class BudsEditing<R = any> extends Editing<R> implements FormContext {
     private readonly requiredFields: BizBud[] = [];
     private readonly budColl: { [name: string]: BizBud } = {};
-    private readonly calc: Calc;
     protected budValuesTool: BudValuesToolBase<R>;
-    readonly modal: Modal;
     readonly buds: BizBud[];
-    abstract get values(): R;
+    // abstract get values(): R;
     protected stopRequired: boolean;
 
-    constructor(modal: Modal, buds: BizBud[]) {
-        this.modal = modal;
+    constructor(modal: Modal, biz: Biz, buds: BizBud[]) {
+        super(modal, biz);
+        this.buds = buds;
+        // this.calc = this.createCalc(formulas);
+    }
+
+    protected buildFormulas(): Formulas {
         let requiredFields = this.requiredFields;
         const formulas: Formulas = [];
-        this.buds = buds;
-        for (let bud of buds) {
+        if (this.buds === undefined) return formulas;
+        for (let bud of this.buds) {
             let f = bud;
             const { name } = bud;
             let { required, valueSet, valueSetType } = bud;
@@ -49,7 +114,7 @@ export abstract class BudsEditing<R = any> implements FormContext {
                 formulas.push([name + '.max', max]);
             }
         }
-        this.calc = this.createCalc(formulas);
+        return formulas;
     }
 
     getTrigger(name: string): Atom<number> {
@@ -71,20 +136,12 @@ export abstract class BudsEditing<R = any> implements FormContext {
     get allFields() { return this.budValuesTool.allFields; }
     get fields() { return this.budValuesTool.fields; }
 
-    calcValue(formula: string): number | string {
-        let ret = this.calc.calcFormula(formula);
-        return ret;
-    }
+    protected setBudObjectValue(bud: BizBud, valObj: object) { }
 
-    protected addNamedValues(name: string, values: object) {
-        this.calc.addValues(name, values);
-    }
 
     addNamedParams(namedResults: { [name: string]: any }) {
-        if (namedResults === undefined) return;
-        // this.calc.addValues(undefined, namedResults);
-        this.addNamedValues(undefined, namedResults);
-        const { results } = this.calc;
+        super.addNamedParams(namedResults);
+        let results = this.results;
         for (let i in this.budColl) {
             let field = this.budColl[i];
             if (i !== field.name) debugger;
@@ -100,18 +157,16 @@ export abstract class BudsEditing<R = any> implements FormContext {
         }
     }
 
-    protected setBudObjectValue(bud: BizBud, valObj: object) { }
-
     // init formula only valid in init
     stopInitFormula() {
         for (let field of this.allFields) {
             if (field.valueSetType === ValueSetType.init) {
-                this.calc.stopFormula(field.name);
+                this.stopFormula(field.name);
             }
         }
     }
 
-    setNamedValue(name: string, value: number | string, callback: (name: string, value: CalcResult) => void) {
+    setNamedValue(name: string, value: number | string, callback?: (name: string, value: CalcResult) => void) {
         let c = (name: string, value: CalcResult) => {
             this.setFieldOrBudValue(name, value);
             if (callback !== undefined) {
@@ -125,7 +180,8 @@ export abstract class BudsEditing<R = any> implements FormContext {
         this.setFieldOrBudValue(name, value);
         // this.calc.setValue(name, value, callback);
         // c 的主要作用，是做了 value 转换。比如 计算的amount做了小数点转换
-        this.calc.setValue(name, value, c);
+        // this.calc.setValue(name, value, c);
+        super.setNamedValue(name, value, c);
     }
 
     private setFieldOrBudValue(name: string, value: CalcResult) {
@@ -178,8 +234,6 @@ export abstract class BudsEditing<R = any> implements FormContext {
         });
     }
 
-    get results() { return this.calc.results; }
-
     isInputNeeded(): boolean {
         for (let field of this.allFields) {
             const bud = field;
@@ -201,7 +255,7 @@ export abstract class BudsEditing<R = any> implements FormContext {
     // bud.onForm===false
     buildFormRows(excludeOnFormFalse: boolean = false): FormRow[] {
         let ret: FormRow[] = [];
-        const { results: calcResults } = this.calc;
+        const calcResults = this.results;
         for (let field of this.allFields) {
             const bud = field;
             const { name, onForm, required } = bud;
@@ -312,8 +366,8 @@ export abstract class BudsEditing<R = any> implements FormContext {
 export class ValuesBudsEditing extends BudsEditing<{ [id: number]: any }> {
     readonly values: { [id: number]: any } = {};
 
-    constructor(modal: Modal, buds: BizBud[], initValues?: any) {
-        super(modal, buds/*, initValues*/);
+    constructor(modal: Modal, biz: Biz, buds: BizBud[], initValues?: any) {
+        super(modal, biz, buds/*, initValues*/);
         this.budValuesTool = new BudValuesTool(buds);
         if (initValues !== undefined) {
             for (let bud of buds) this.budValuesTool.setBudValue(bud, this.values, initValues[bud.id]);

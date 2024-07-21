@@ -90,8 +90,8 @@ function PageEditUser({ user, usersStore, entity, userBudValues }: { user: Retur
     const modal = useModal();
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { bootstrapContainer } = theme;
-    const { caption, name, user: userBuds } = entity;
-    const budsEditing = new ValuesBudsEditing(modal, userBuds, userBudValues);
+    const { caption, name, user: userBuds, biz } = entity;
+    const budsEditing = new ValuesBudsEditing(modal, biz, userBuds, userBudValues);
     const inputRows = budsEditing.buildFormRows();
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;

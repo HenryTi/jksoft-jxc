@@ -7,7 +7,7 @@ import { Band, FormRow, FormRowsView } from "app/coms";
 import { ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
-import { Calc } from "app/hooks/Calc";
+// import { Calc } from "app/hooks/Calc";
 // import { ViewAtomId } from "app/hooks/BizAtom";
 import { PendProxyHandler, btnNext, cnNextClassName } from "../../store";
 import { InputProps } from "./inputBase";
@@ -24,16 +24,22 @@ export interface PropsInputSpec extends InputProps<BinInputSpec> {
 };
 
 export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
-    const { binInput, pendRow, namedResults, divStore, valDiv } = props;
-    const { sheetStore, uq, modal } = divStore;
+    const { binInput, pendRow, editing, divStore, valDiv } = props;
+    const { sheetStore, uq, modal, biz } = divStore;
     const { entityPend } = binInput;
+    /*
     const formulas: [string, string][] = [
         ['.i', binInput.baseExp ?? binInput.baseBud.valueSet],
     ];
-    const calc = new Calc(formulas, namedResults);
+    */
+    // const calc = new Calc(formulas, namedResults);
     const pendProxyHander = new PendProxyHandler(entityPend);
-    calc.addValues('pend', new Proxy(pendRow, pendProxyHander));
-    const base = calc.results['.i'] as number;
+    // calc.addValues('pend', new Proxy(pendRow, pendProxyHander));
+    // const base = calc.results['.i'] as number;
+    const baseName = '.i';
+    editing.addFormula(baseName, binInput.baseExp ?? binInput.baseBud.valueSet);
+    editing.addNamedValues('pend', new Proxy(pendRow, pendProxyHander));
+    const base = editing.getValue(baseName) as number;
     if (base === undefined) {
         debugger;
         throw Error('input spec must have base');
@@ -57,7 +63,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         const { keys, buds: props } = entitySpec;
         let buds = [...keys];
         if (props !== undefined) buds.push(...props);
-        budsEditing = new ValuesBudsEditing(modal, buds)
+        budsEditing = new ValuesBudsEditing(modal, biz, buds)
         let ret = await modal.open(<PagePickSpec />);
         if (ret !== undefined) {
             const { id, base } = ret;

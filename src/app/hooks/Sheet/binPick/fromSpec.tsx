@@ -12,7 +12,7 @@ import { theme } from "tonwa-com";
 import { ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
-import { ValuesBudsEditing } from "app/hooks/BudsEditing";
+import { Editing, ValuesBudsEditing } from "app/hooks/BudsEditing";
 import { Calc } from "app/hooks/Calc";
 import { PagePickSelect } from "app/hooks";
 
@@ -30,11 +30,11 @@ export function usePickFromSpec() {
     return useCallback(pickFromSpec, []);
 }
 */
-export async function pickFromSpec(divStore: BinStore, namedResults: NamedResults, binPick: PickSpec): Promise<PickResult> {
-    const { modal, uq } = divStore;
+export async function pickFromSpec(editing: Editing, binPick: PickSpec): Promise<PickResult> {
+    const { modal, biz, uq } = editing;
     let { pickParams, from } = binPick;
     const pickName = binPick.name;
-    const calc = new Calc([[pickName, binPick.baseParam]], namedResults);
+    const calc = new Calc([[pickName, binPick.baseParam]], editing.namedResults);
     let base = calc.getValue(pickName) as number;
     const viewTop = <div>
         <ViewAtomId id={base} />
@@ -62,7 +62,7 @@ export async function pickFromSpec(divStore: BinStore, namedResults: NamedResult
         const { buds: props } = entitySpec;
         let buds = [...keys];
         if (props !== undefined) buds.push(...props);
-        budsEditing = new ValuesBudsEditing(modal, buds)
+        budsEditing = new ValuesBudsEditing(modal, biz, buds)
         let ret = await modal.open(<PagePickSpec />);
         return ret;
     }

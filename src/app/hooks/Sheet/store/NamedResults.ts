@@ -22,11 +22,11 @@ export enum RearPickResultType {
 export type PickFunc = (sheetStore: SheetStore, bin: EntityBin, rearPickResultType: RearPickResultType) => Promise<ReturnUseBinPicks>;
 
 export class PickStates {
-    readonly atomPickedResults: WritableAtom<NamedResults, any, any>;
+    // readonly atomPickedResults: WritableAtom<NamedResults, any, any>;
     readonly atomRearPickResult: WritableAtom<PickResult, any, any>;
     readonly atomCur: WritableAtom<number, any, any>;
     constructor(namedResults: NamedResults, rearPickResult: PickResult, cur: number) {
-        this.atomPickedResults = atom(namedResults);
+        // this.atomPickedResults = atom(namedResults);
         this.atomRearPickResult = atom(rearPickResult);
         this.atomCur = atom(cur);
     }

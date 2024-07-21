@@ -4,6 +4,7 @@ import { PickPend } from "app/Biz";
 import { NamedResults, PendProxyHandler, PickResult, ValRow } from "../store";
 import { BinStore } from "../store";
 import { PagePend } from "./PagePend";
+import { Editing } from "app/hooks/BudsEditing";
 
 /*
 export function usePickFromPend() {
@@ -12,18 +13,19 @@ export function usePickFromPend() {
 }
 */
 
-export async function pickFromPend(divStore: BinStore, namedResults: NamedResults, binPick: PickPend): Promise<PickResult[]> {
+export async function pickFromPend(divStore: BinStore, editing: Editing, binPick: PickPend): Promise<PickResult[]> {
     let { from: entityPend, bin } = binPick;
     const pendProxyHander = new PendProxyHandler(entityPend);
-    const { modal, sheetStore } = divStore;
-    const { sheetConsole } = sheetStore;
+    // const { modal, sheetStore } = divStore;
+    const { modal } = editing;
+    // const { sheetConsole } = sheetStore;
     // const { steps } = sheetConsole;
     // if (steps !== undefined) steps.step = 1;
-    let pendStore = divStore.getPickPendStore(binPick, namedResults);
+    let pendStore = divStore.getPickPendStore(binPick, editing.namedResults);
     await pendStore.searchPend();
     let inputed = await modal.open<ValRow[]>(<PagePend pendStore={pendStore} />);
     if (inputed === undefined) return;
-    sheetConsole.steps = undefined;
+    // sheetConsole.steps = undefined;
     // 如果有inputs，直接已经输入进了。就不用返回了。
     if (bin.binDivRoot.inputs !== undefined) return;
     function proxy(obj: any) {

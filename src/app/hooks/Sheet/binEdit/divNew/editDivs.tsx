@@ -18,12 +18,13 @@ export interface UseEditDivsProps {
 }
 
 // 参数：valDiv，改变这个。不需要返回
+/*
 export function useEditDivs() {
     const uqApp = useUqApp();
     const modal = useModal();
     return useCallback(editDivs, []);
 }
-
+*/
 export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
     let { divStore, pendRow, valDiv } = props;
     let { entity: entityBin, modal } = divStore;
@@ -31,12 +32,13 @@ export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
     let namedResults: NamedResults = {
         [rearPick.name]: new Proxy(pendRow, new PendProxyHandler(entityPend)),
     };
-    let divEditingFromPend = new DivEditing(divStore, valDiv, namedResults);
+    let divEditingFromPend = new DivEditing(divStore, valDiv);
     valDiv.setValRow(divEditingFromPend.values);
 
-    let runInputDivProps: RunInputDivProps = { props, namedResults };
+    let divEditing = new DivEditing(divStore, valDiv, namedResults);
+    // let runInputDivProps: RunInputDivProps = { props, namedResults };
     for (; ;) {
-        let retIsInputed = await runInputDiv(runInputDivProps, valDiv);
+        let retIsInputed = await runInputDiv(props, valDiv, divEditing);
         if (retIsInputed !== true) return;
         // valDiv.mergeValRow(retValRow);
         let { binDiv } = valDiv;
@@ -46,7 +48,6 @@ export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
             return true;
         }
         let valDivNew = valDiv.createValDivSub(pendRow);
-        let divEditing = new DivEditing(divStore, valDiv, namedResults);
         valDiv.setValRow(divEditing.values);
         valDiv.addValDiv(valDivNew, true);
         valDiv = valDivNew;
@@ -60,14 +61,14 @@ interface RunInputDivProps {
     namedResults: NamedResults;
 }
 
-async function runInputDiv(runInputDivProps: RunInputDivProps, valDiv: ValDivBase) {
-    let { props, namedResults } = runInputDivProps;
+async function runInputDiv(props: UseEditDivsProps, valDiv: ValDivBase, editing: DivEditing) {
+    // let { props, namedResults } = runInputDivProps;
     let { divStore, skipInputs } = props;
     const { modal } = divStore;
     let { binDiv } = valDiv;
-    let retInputs = await runInputs(runInputDivProps, valDiv);
+    let retInputs = await runInputs(props, valDiv, editing);
     if (retInputs === false) return;
-    let divEditing = new DivEditing(divStore, valDiv, namedResults);
+    let divEditing = editing; // new DivEditing(divStore, valDiv, namedResults);
     divEditing.addNamedParams({
         '%sheet': props.divStore.sheetStore.mainProxy,
     })
@@ -93,13 +94,16 @@ async function runInputDiv(runInputDivProps: RunInputDivProps, valDiv: ValDivBas
     return true;
 }
 
-async function runInputs(runInputDivProps: RunInputDivProps, valDiv: ValDivBase) {
+async function runInputs(props: UseEditDivsProps, valDiv: ValDivBase, editing: DivEditing)
+//    runInputDivProps: RunInputDivProps, valDiv: ValDivBase) 
+{
     const { binDiv } = valDiv;
     const { inputs } = binDiv;
     if (inputs === undefined) return;
-    let { props, namedResults } = runInputDivProps;
+    // let { props, namedResults } = runInputDivProps;
     let { skipInputs } = props;
     if (skipInputs == true) return;
+    const { namedResults } = editing;
     for (let input of inputs) {
         const { bizPhraseType } = input;
         let retInput: any = undefined;
@@ -110,7 +114,7 @@ async function runInputs(runInputDivProps: RunInputDivProps, valDiv: ValDivBase)
             case BizPhraseType.atom:
                 retInput = await inputAtom({
                     ...props,
-                    namedResults,
+                    editing,
                     valDiv,
                     // uqApp,
                     // modal,
@@ -120,7 +124,7 @@ async function runInputs(runInputDivProps: RunInputDivProps, valDiv: ValDivBase)
             case BizPhraseType.fork:
                 retInput = await inputSpec({
                     ...props,
-                    namedResults,
+                    editing,
                     valDiv,
                     // uqApp,
                     // modal,

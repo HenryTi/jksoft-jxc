@@ -4,10 +4,10 @@ import { ViewBud, budContent } from "../Bud";
 import { FA, theme } from "tonwa-com";
 import React from "react";
 import { BizBud, Entity } from "app/Biz";
-import { BudValueColl, Store } from "app/tool";
+import { BudValueColl, EntityStore } from "app/tool";
 
 // atom field owns buds
-export function OwnedBuds({ values, noLabel, store }: { values: [number, BudValue][]; noLabel?: boolean; store: Store; }) {
+export function OwnedBuds({ values, noLabel, store }: { values: [number, BudValue][]; noLabel?: boolean; store: EntityStore; }) {
     if (values === undefined) return null;
     const { biz } = useUqApp();
     return <>{
@@ -31,7 +31,7 @@ export function OwnedBuds({ values, noLabel, store }: { values: [number, BudValu
     </>;
 }
 
-export function ViewShowBuds({ bud, id, noLabel, store }: { bud: BizBud; id: number; store: Store; noLabel?: boolean; }) {
+export function ViewShowBuds({ bud, id, noLabel, store }: { bud: BizBud; id: number; store: EntityStore; noLabel?: boolean; }) {
     const { budsColl } = store;
     const budValueColl = budsColl[id];
     if (budValueColl === undefined) return null;
@@ -53,7 +53,7 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud: BizBud; id: num
     </>;
 }
 
-export function ViewAtomTitles({ bud, id, noLabel, store }: { id: number; bud: BizBud; noLabel?: boolean; store: Store; }) {
+export function ViewAtomTitles({ bud, id, noLabel, store }: { id: number; bud: BizBud; noLabel?: boolean; store: EntityStore; }) {
     const { budsColl } = store;
     let budValueColl = budsColl[id];
     if (budValueColl === undefined) return null;

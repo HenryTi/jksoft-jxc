@@ -9,13 +9,13 @@ import { ValRow } from "./tool";
 import { BinStore, SubmitState } from "./BinStore";
 import { ValDivRoot } from "./ValDiv";
 import { Modal } from "tonwa-app";
-import { Console, Store } from "app/tool";
+import { Console, EntityStore } from "app/tool";
 import { arrFromJsonMid } from "app/hooks/tool";
 import { BinEditing } from "./BinEditing";
 import { BudsEditing } from "app/hooks/BudsEditing";
 import { runBinPicks } from "../binPick";
 
-abstract class MainBinStore extends Store<EntityBin> {
+abstract class MainBinStore extends EntityStore<EntityBin> {
     readonly sheetStore: SheetStore;
     readonly budsEditing: BudsEditing;
     readonly budEditings: BudEditing[];
@@ -161,7 +161,7 @@ class Detail extends BinStore {
 export class ExDetail extends Detail {
 }
 
-export class SheetStore extends Store<EntitySheet> {
+export class SheetStore extends EntityStore<EntitySheet> {
     private readonly cachePendRows: { [id: number]: PendRow } = {};
     readonly sheetConsole: SheetConsole;
     readonly main: SheetMain;

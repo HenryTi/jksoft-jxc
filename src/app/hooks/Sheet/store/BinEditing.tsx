@@ -23,7 +23,7 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
     onDel: () => Promise<void>;
 
     constructor(sheetStore: SheetStore, bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
-        super(sheetStore.modal, buds);
+        super(sheetStore.modal, sheetStore.biz, buds);
         this.sheetStore = sheetStore;
         this.entityBin = bin;
         this.budValuesTool = new BinRowValuesTool(bin, buds);
@@ -73,11 +73,11 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
 export class DivEditing extends BinBudsEditing {
     readonly divStore: BinStore;
     readonly valDiv: ValDivBase;
-    readonly namedResults: NamedResults;
+    // readonly namedResults: NamedResults;
     constructor(divStore: BinStore, valDiv: ValDivBase, namedResults?: NamedResults) {
         const { binDiv, valRow } = valDiv;
         super(divStore.sheetStore, divStore.entity, binDiv.buds, valRow);
-        this.namedResults = namedResults;
+        Object.assign(this.namedResults, namedResults);
         this.divStore = divStore;
         this.valDiv = valDiv;
         this.addNamedParams(namedResults);
@@ -132,7 +132,7 @@ export class DivEditing extends BinBudsEditing {
         }
         return async () => {
             // alert(bud.name);
-            await runBinPick(this.divStore, pick, this.namedResults);
+            await runBinPick(this, pick);
         };
     }
 }

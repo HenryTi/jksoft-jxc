@@ -249,7 +249,6 @@ export function uqAppModal(uqApp: UqAppBase): Modal {
     return { open, close }
 }
 
-
 export const UqAppContext = React.createContext(undefined);
 export function useUqAppBase() {
     return useContext<UqAppBase>(UqAppContext);

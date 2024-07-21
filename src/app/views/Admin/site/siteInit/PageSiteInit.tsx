@@ -67,8 +67,8 @@ export function PageSiteInit() {
         let result = await uq.GetSiteSetting.query({});
         const { buds: budsValues } = readBuds(undefined, result as any);
         const siteSetting = biz.entities['sitesetting'] as EntityBook;
-        const { budColl: bizBuds, buds } = siteSetting;
-        const valuesBudsEditing = new ValuesBudsEditing(modal, buds, budsValues);
+        const { buds } = siteSetting;
+        const valuesBudsEditing = new ValuesBudsEditing(modal, biz, buds, budsValues);
         const budEditings = valuesBudsEditing.createBudEditings();
         // let ret: InitValue[] = buds.map(v => { // }) initBuds.map(v => {
         let ret: InitValue[] = budEditings.map(v => {

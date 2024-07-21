@@ -3,20 +3,25 @@ import { NamedResults } from "../store";
 import { Modal, Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { ValuesBudsEditing, ViewBud } from "app/hooks";
+import { Editing, ValuesBudsEditing, ViewBud } from "app/hooks";
 import { useForm } from "react-hook-form";
 import { useCallback } from "react";
+import { useUqApp } from "app/UqApp";
 
 interface Props {
+    editing: Editing;
     header: string;
-    namedResults: NamedResults;
+    // namedResults: NamedResults;
     queryParams: BizBud[];
     pickParams: PickParam[];
 }
+/*
 export function usePageParams() {
     const modal = useModal();
+    const uqApp = useUqApp();
     return useCallback(async (props: Props) => {
-        const { header, namedResults, queryParams, pickParams } = props;
+        const { editing, header, queryParams, pickParams } = props;
+        const { namedResults } = editing
         const valueParams: [PickParam, BizBud, any][] = [];
         const inputParams: BizBud[] = [];
         for (let param of queryParams) {
@@ -42,15 +47,16 @@ export function usePageParams() {
             }
             return retParam;
         }
-        let paramBudsEditing = new ValuesBudsEditing(modal, inputParams);
+        let paramBudsEditing = new ValuesBudsEditing(modal, uqApp.biz, inputParams);
         return await modal.open(<PageParams header={header}
             valueParams={valueParams}
             inputParams={paramBudsEditing} />);
     }, []);
 }
-
-export async function pickQueryParams(modal: Modal, props: Props) {
-    const { header, namedResults, queryParams, pickParams } = props;
+*/
+export async function pickQueryParams(props: Props) {
+    const { editing, header, queryParams, pickParams } = props;
+    const { namedResults } = editing;
     const valueParams: [PickParam, BizBud, any][] = [];
     const inputParams: BizBud[] = [];
     for (let param of queryParams) {
@@ -76,7 +82,8 @@ export async function pickQueryParams(modal: Modal, props: Props) {
         }
         return retParam;
     }
-    let paramBudsEditing = new ValuesBudsEditing(modal, inputParams);
+    const { modal, biz } = editing;
+    let paramBudsEditing = new ValuesBudsEditing(modal, biz, inputParams);
     return await modal.open(<PageParams header={header}
         valueParams={valueParams}
         inputParams={paramBudsEditing} />);

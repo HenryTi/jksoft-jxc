@@ -2,7 +2,7 @@ import { atom } from "jotai";
 import { Modal } from "tonwa-app";
 import { setAtomValue } from "tonwa-com";
 import { EntityReport } from "app/Biz";
-import { Console, Store } from "../../../tool";
+import { Console, EntityStore } from "../../../tool";
 import { ParamGetReport } from "uqs/UqDefault";
 
 interface SpecRow {
@@ -23,7 +23,7 @@ interface ReportRow {
     specs: SpecRow[];
 }
 
-export class ReportStore extends Store<EntityReport> {
+export class ReportStore extends EntityStore<EntityReport> {
     readonly console: ReportConsole;
     constructor(modal: Modal, entityReport: EntityReport, console: ReportConsole) {
         super(modal, entityReport);

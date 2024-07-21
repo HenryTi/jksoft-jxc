@@ -1,6 +1,6 @@
 import { BizBud, BudID, BudRadio, EnumBudType } from "app/Biz";
 import { ViewBudSpec, ViewSpecNoAtom } from "app/hooks";
-import { Store, contentFromDays } from "app/tool";
+import { EntityStore, contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
 import { Atom as BizAtom, BizPhraseType } from "uqs/UqDefault";
 import { ViewSpecId } from "app/coms/ViewSpecId";
@@ -10,7 +10,7 @@ export enum ViewBudUIType {
     inDiv = 1,
 }
 
-export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; store?: Store/* atomColl?: AtomColl;*/ }) {
+export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; store?: EntityStore/* atomColl?: AtomColl;*/ }) {
     if (value === undefined) return null;
     if (value === null) return null;
     if (value === '') return null;
@@ -50,7 +50,7 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
     return <LabelBox label={caption ?? name} className="mb-1">{content}</LabelBox>;
 }
 
-export function budContent(bud: BizBud, value: any, store: Store) {
+export function budContent(bud: BizBud, value: any, store: EntityStore) {
     let content: any;
     const { name, caption, budDataType } = bud;
     if (value === undefined) {
@@ -88,7 +88,7 @@ export function budContent(bud: BizBud, value: any, store: Store) {
     return content;
 }
 
-function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, store: Store) {
+function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, store: EntityStore) {
     function view() {
         switch (bud.name) {
             default:
@@ -185,7 +185,7 @@ function ID(bud: BizBud, value: any) {
     return <>ID: {value}</>;
 }
 
-function bin(bud: BizBud, value: any, store: Store) {
+function bin(bud: BizBud, value: any, store: EntityStore) {
     let showBuds = bud.getPrimeBuds();
     if (showBuds === undefined) return null;
     const { budsColl } = store;

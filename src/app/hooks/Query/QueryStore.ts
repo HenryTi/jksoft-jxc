@@ -1,8 +1,8 @@
 import { EntityQuery } from "app/Biz";
-import { Store } from "app/tool";
+import { EntityStore } from "app/tool";
 import { Picked, Prop, pickedFromJsonArr } from "../tool";
 
-export class QueryStore extends Store<EntityQuery> {
+export class QueryStore extends EntityStore<EntityQuery> {
     async query(param: any) {
         let retQuery = await this.uq.DoQuery.submitReturns({ query: this.entity.id, json: param, pageStart: undefined, pageSize: 100 });
         let { ret: retItems, props, specs, atoms } = retQuery;

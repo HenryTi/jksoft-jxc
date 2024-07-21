@@ -1,9 +1,9 @@
 import { ViewBud, budContent } from "app/hooks";
 import { theme } from "tonwa-com";
 import { EntityAtom } from "app/Biz";
-import { Store } from "app/tool";
+import { EntityStore } from "app/tool";
 
-export function ViewSpecAtomBold({ id, store }: { id: number; store: Store; }) {
+export function ViewSpecAtomBold({ id, store }: { id: number; store: EntityStore; }) {
     const { bizAtomColl, bizSpecColl } = store;
     let bizAtom = bizAtomColl[id];
     if (bizAtom === undefined) {
@@ -15,7 +15,7 @@ export function ViewSpecAtomBold({ id, store }: { id: number; store: Store; }) {
     return <><b>{ex}</b> <span className="mx-3">{no}</span></>;
 }
 
-export function ViewSpecAtom({ id, store }: { id: number; store: Store; }) {
+export function ViewSpecAtom({ id, store }: { id: number; store: EntityStore; }) {
     const { bizAtomColl, bizSpecColl } = store;
     let bizAtom = bizAtomColl[id];
     if (bizAtom === undefined) {
@@ -27,7 +27,7 @@ export function ViewSpecAtom({ id, store }: { id: number; store: Store; }) {
     return <>{ex ?? no}</>;
 }
 
-export function ViewSpecBuds({ id, store }: { id: number; store: Store; }) {
+export function ViewSpecBuds({ id, store }: { id: number; store: EntityStore; }) {
     const { budsColl, bizSpecColl } = store;
     let bizSpec = bizSpecColl[id];
     if (bizSpec === undefined) return null;
@@ -40,7 +40,7 @@ export function ViewSpecBuds({ id, store }: { id: number; store: Store; }) {
     })}</>;
 }
 
-export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: Store; }) {
+export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: EntityStore; }) {
     const { budsColl, biz, bizAtomColl } = store;
     const atom = bizAtomColl[id];
     const noLabel: boolean = undefined;
@@ -71,7 +71,7 @@ export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: Store;
     }</>;
 }
 
-export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: Store; }) {
+export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: EntityStore; }) {
     const { budsColl, biz, bizAtomColl } = store;
     const atom = bizAtomColl[id];
     const noLabel: boolean = undefined;
@@ -94,7 +94,7 @@ export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: Store;
     }</>;
 }
 
-export function ViewSpecAtomTitles({ id, store }: { id: number; store: Store; }) {
+export function ViewSpecAtomTitles({ id, store }: { id: number; store: EntityStore; }) {
     const { budsColl, bizSpecColl, biz } = store;
     const noLabel: boolean = undefined;
     let bizSpec = bizSpecColl[id];

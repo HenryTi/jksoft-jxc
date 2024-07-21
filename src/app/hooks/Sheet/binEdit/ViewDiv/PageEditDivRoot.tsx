@@ -1,12 +1,13 @@
 import { useAtomValue } from "jotai";
 import { DivEditing, BinStore, ValDivBase, ValRow } from "../../store";
 import { FA, getAtomValue, setAtomValue } from "tonwa-com";
-import { useEditDivs } from "../divNew";
+// import { useEditDivs } from "../divNew";
 import { Page, useModal } from "tonwa-app";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { ViewRow } from "./ViewRow";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
 import { rowEdit } from "../rowEdit";
+import { editDivs } from "../divNew";
 
 // 编辑div任意层
 export function PageEditDivRoot({ divStore, valDiv }: { divStore: BinStore; valDiv: ValDivBase; }) {
@@ -28,7 +29,7 @@ function EditDiv(props: EditDivProps) {
     const { atomValDivs, binDiv, atomDeleted } = valDiv;
     const { level, entityBin, subBinDiv: div } = binDiv;
     const { divLevels, pivot } = entityBin;
-    const editDivs = useEditDivs();
+    //    const editDivs = useEditDivs();
     const divs = useAtomValue(atomValDivs);
     const deleted = useAtomValue(atomDeleted);
     let bg = divLevels - level - 1;

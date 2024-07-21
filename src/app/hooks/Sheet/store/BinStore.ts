@@ -7,7 +7,7 @@ import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsRoot } from './ValDiv';
 import { BudEditing, ValuesBudsEditing } from "app/hooks";
 import { PickPendStore } from "./PickPendStore";
 import { NamedResults } from "./NamedResults";
-import { Store } from "app/tool";
+import { EntityStore } from "app/tool";
 
 enum PendLoadState {
     none,
@@ -20,7 +20,7 @@ export enum SubmitState {
     disable,
     enable,
 }
-export class BinStore extends Store<EntityBin> {
+export class BinStore extends EntityStore<EntityBin> {
     private valDivColl: { [id: number]: ValDivBase };
     private pendLoadState: PendLoadState;
     readonly sheetStore: SheetStore;
@@ -34,7 +34,7 @@ export class BinStore extends Store<EntityBin> {
     readonly pickPendStores: { [id: number]: PickPendStore; } = {};
 
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
-        const { modal } = sheetStore;
+        const { modal, biz } = sheetStore;
         super(modal, entityBin);
         this.sheetStore = sheetStore;
         const { pend, binDivRoot } = entityBin;
@@ -61,7 +61,7 @@ export class BinStore extends Store<EntityBin> {
             return hasValue === true ? SubmitState.enable : SubmitState.hide;
         }, null);
         if (pend !== undefined) {
-            const valuesBudsEditing = new ValuesBudsEditing(modal, pend.params);
+            const valuesBudsEditing = new ValuesBudsEditing(modal, biz, pend.params);
             this.budEditings = valuesBudsEditing.createBudEditings();
         }
     }

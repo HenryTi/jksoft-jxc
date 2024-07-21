@@ -103,6 +103,11 @@ export class Calc {
         this.calcSpace.addValues(undefined, values);
     }
 
+    addFormula(name: string, formulaText: string) {
+        let formula = new Formula(formulaText);
+        this.formulas.set(name, formula);
+    }
+
     get results(): { [name: string]: CalcResult } {
         if (this._results === undefined) {
             this.run(undefined);

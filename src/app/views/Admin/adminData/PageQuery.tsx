@@ -10,7 +10,7 @@ import { PageFromQuery } from "app/hooks/Query";
 export function PageQuery({ entity }: { entity: EntityQuery; }) {
     const modal = useModal();
     const { caption, name, params } = entity;
-    let paramBudsEditing = new ValuesBudsEditing(modal, params);
+    let paramBudsEditing = new ValuesBudsEditing(modal, entity.biz, params);
     const { current: paramsData } = useRef({} as any);
     const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     let formRows: FormRow[] = [

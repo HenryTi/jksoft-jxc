@@ -31,21 +31,27 @@ export interface SpecColl {
     }
 }
 
-export abstract class Store<E extends Entity = Entity> extends KeyIdObject {
+export abstract class Store extends KeyIdObject {
+    readonly modal: Modal;
     readonly biz: Biz;
     readonly uq: UqExt;
-    readonly modal: Modal;
+    constructor(modal: Modal, biz: Biz) {
+        super();
+        this.modal = modal;
+        this.biz = biz;
+        this.uq = biz.uq;
+    }
+}
+
+export abstract class EntityStore<E extends Entity = Entity> extends Store {
     readonly entity: E;
     readonly budsColl: BudsColl = {};
     readonly bizAtomColl: AtomColl = {};
     readonly bizSpecColl: SpecColl = {};
 
     constructor(modal: Modal, entity: E) {
-        super();
         const { biz } = entity;
-        this.biz = biz;
-        this.uq = biz.uq;
-        this.modal = modal;
+        super(modal, biz);
         this.entity = entity;
     }
 
