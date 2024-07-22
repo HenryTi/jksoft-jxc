@@ -10,7 +10,7 @@ import { NamedResults } from "./NamedResults";
 import { ValRow } from "./tool";
 import { BudsEditing } from "app/hooks/BudsEditing";
 import { ViewBud, ViewBudUIType } from "app/hooks";
-import { runBinPick } from "../binPick";
+import { BinPicksEditing } from "../binPick";
 
 export abstract class BinBudsEditing extends BudsEditing<BinRow> {
     readonly values: ValRow = { buds: {} } as any;
@@ -26,7 +26,7 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
         super(sheetStore.modal, sheetStore.biz, buds);
         this.sheetStore = sheetStore;
         this.entityBin = bin;
-        this.budValuesTool = new BinRowValuesTool(bin, buds);
+        this.budValuesTool = new BinRowValuesTool(this, bin, buds);
         if (initBinRow !== undefined) {
             this.setValues(initBinRow);
         }
@@ -77,12 +77,12 @@ export class DivEditing extends BinBudsEditing {
     constructor(divStore: BinStore, valDiv: ValDivBase, namedResults?: NamedResults) {
         const { binDiv, valRow } = valDiv;
         super(divStore.sheetStore, divStore.entity, binDiv.buds, valRow);
-        Object.assign(this.namedResults, namedResults);
+        // Object.assign(this.namedResults, namedResults);
         this.divStore = divStore;
         this.valDiv = valDiv;
-        this.addNamedParams(namedResults);
         // 这里先强行设iBase和xBase from pend
         if (namedResults !== undefined) {
+            this.addNamedParams(namedResults);
             let pendValues = namedResults['pend'];
             if (pendValues !== undefined) {
                 let { i, x, iBase, xBase } = pendValues;
@@ -132,7 +132,8 @@ export class DivEditing extends BinBudsEditing {
         }
         return async () => {
             // alert(bud.name);
-            await runBinPick(this, pick);
+            let binPicksEditing = new BinPicksEditing(this.divStore.sheetStore, this.entityBin);
+            await binPicksEditing.runBinPick(pick);
         };
     }
 }

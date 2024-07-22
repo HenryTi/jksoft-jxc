@@ -1,5 +1,5 @@
 import { Page, PageConfirm, useModal } from "tonwa-app";
-import { PickFunc, SheetStore, SubmitState } from "../store";
+import { SheetStore, SubmitState } from "../store";
 import { detailNew, ViewDiv, ViewMain } from "../binEdit";
 import { atom, useAtomValue } from "jotai";
 // import { useDetailNew } from "../binEdit";

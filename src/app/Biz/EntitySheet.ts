@@ -7,6 +7,7 @@ import { EntityQuery } from "./EntityQuery";
 import { UI } from "app/ui";
 import { BudValue } from "tonwa-app";
 import { OptionsItem } from ".";
+import { Editing } from "app/hooks";
 
 export class PickParam extends BizBud {
     bud: string;
@@ -187,17 +188,24 @@ class BinAmount extends BinBudValue {
 }
 
 export abstract class BudValuesToolBase<T> {
+    protected readonly editing: Editing;
     allFields: BizBud[];
     fields: BizBud[];
+    constructor(editing: Editing) {
+        this.editing = editing;
+    }
     abstract has(bud: BizBud): boolean;
     abstract getBudValue(bud: BizBud, binRow: T): any;
     abstract setBudValue(bud: BizBud, binRow: T, value: any): void;
+    clearValue(bud: BizBud, binRow: T): void {
+        this.setBudValue(bud, binRow, undefined);
+    }
 }
 
 export class BudValuesTool extends BudValuesToolBase<any> {
     readonly coll: { [budId: number]: BizBud; } = {};
-    constructor(buds: BizBud[]) {
-        super();
+    constructor(editing: Editing, buds: BizBud[]) {
+        super(editing);
         this.allFields = buds;
         this.fields = buds;
         for (let bud of buds) this.coll[bud.id] = bud;
@@ -225,8 +233,8 @@ export class BinRowValuesTool extends BudValuesToolBase<BinRow> {
     readonly budAmount: BizBud;
     readonly budPrice: BizBud;
 
-    constructor(bin: EntityBin, buds: BizBud[]) {
-        super();
+    constructor(editing: Editing, bin: EntityBin, buds: BizBud[]) {
+        super(editing);
         this.entityBin = bin;
         const { i, iBase, x, xBase, value, price, amount } = bin;
         this.allFields = [];
@@ -292,10 +300,24 @@ export class BinRowValuesTool extends BudValuesToolBase<BinRow> {
         if (binBud === undefined) debugger; // return binRow.buds[bud.id];
         return binBud.getValue(binRow);
     }
+    clearValue(bud: BizBud, binRow: BinRow): void {
+        let binBud = this.coll[bud.id];
+        if (binBud === undefined) {
+            debugger; // binRow.buds[bud.id] = value;
+            return;
+        }
+        binBud.setValue(binRow, undefined);
+    }
     setBudValue(bud: BizBud, binRow: BinRow, value: any) {
         let binBud = this.coll[bud.id];
-        if (binBud === undefined) debugger; // binRow.buds[bud.id] = value;
-        else binBud.setValue(binRow, value);
+        if (binBud === undefined) {
+            debugger; // binRow.buds[bud.id] = value;
+            return;
+        }
+        if (value === undefined) {
+            let a = 1;
+        }
+        binBud.setValue(binRow, value);
     }
 }
 
@@ -303,9 +325,9 @@ export class BinDivBuds extends BinRowValuesTool /*extends BinBudsFields*/ {
     readonly binDiv: BinDiv;
     keyField: BizBud; // BinField;
 
-    constructor(binDiv: BinDiv) {
+    constructor(editing: Editing, binDiv: BinDiv) {
         const { buds, key } = binDiv;
-        super(binDiv.entityBin, buds);
+        super(editing, binDiv.entityBin, buds);
         this.binDiv = binDiv;
         if (key !== undefined) {
             this.keyField = key;
@@ -590,7 +612,7 @@ export class EntityBin extends Entity {
                 return [bud, withLabel === 1, item]
             });
         }
-        binDiv.binDivBuds = new BinDivBuds(binDiv);
+        binDiv.binDivBuds = new BinDivBuds(undefined, binDiv);
         if (subDivSchema !== undefined) {
             ++this.divLevels;
             let subBinDiv = binDiv.subBinDiv = new BinDiv(this, binDiv);

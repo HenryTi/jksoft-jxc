@@ -94,11 +94,7 @@ export class Calc {
 
     constructor(formulas: [string, string][], values?: { [name: string]: string | number | { [prop: string]: CalcResult; } }) {
         this.formulas = new Map();
-        for (let [name, formulaText] of formulas) {
-            if (formulaText === undefined) continue;
-            let formula = new Formula(formulaText);
-            this.formulas.set(name, formula);
-        }
+        this.addFormulas(formulas);
         this.calcSpace = new CalcSpace();
         this.calcSpace.addValues(undefined, values);
     }
@@ -106,6 +102,13 @@ export class Calc {
     addFormula(name: string, formulaText: string) {
         let formula = new Formula(formulaText);
         this.formulas.set(name, formula);
+    }
+
+    addFormulas(formulas: [string, string][]) {
+        for (let [name, formulaText] of formulas) {
+            if (formulaText === undefined) continue;
+            this.addFormula(name, formulaText);
+        }
     }
 
     get results(): { [name: string]: CalcResult } {

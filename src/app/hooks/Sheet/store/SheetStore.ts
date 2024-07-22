@@ -2,7 +2,7 @@ import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { EntitySheet, EntityBin, EntityPend, BinRow, BizBud, Entity } from "app/Biz";
 import { ParamSaveDetail, ReturnGetPendRetSheet } from "uqs/UqDefault";
-import { PickFunc, PickStates, RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
+import { RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
 import { Calc, Formulas } from "app/hooks/Calc";
 import { BudEditing } from "../../Bud";
 import { ValRow } from "./tool";
@@ -192,6 +192,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
         if (detail !== undefined) {
             this.divStore = new BinStore(this, detail.bin);
         }
+        /*
         sheetConsole.picks = new PickStates(
             {
                 'user': this.userProxy,
@@ -201,6 +202,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
             undefined,
             0
         );
+        */
         this.atomSubmitState = atom((get) => {
             if (this.divStore === undefined) return SubmitState.enable;
             return get(this.divStore.atomSubmitState);
@@ -431,7 +433,7 @@ export abstract class SheetConsole extends Console {
         return new SheetStore(this.entitySheet, this);
     }
 
-    picks: PickStates;
+    // picks: PickStates;
 }
 
 export class SheetSteps {

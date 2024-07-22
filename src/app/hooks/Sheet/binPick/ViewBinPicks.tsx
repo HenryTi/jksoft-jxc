@@ -1,18 +1,13 @@
-import { BinPick, PickAtom, PickPend, PickQuery, PickSpec } from "app/Biz";
-import { BizPhraseType } from "uqs/UqDefault";
+import { BinPick } from "app/Biz";
 import { useRef, useState } from "react";
-import { pickFromAtom } from "./fromAtom";
-import { pickFromSpec } from "./fromSpec";
-import { pickFromPend } from "./fromPend";
 // import { usePickFromQuery } from "../../Query/fromQuery";
 import { RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
 import { PickResult } from "../store";
-import { getAtomValue, setAtomValue, theme } from "tonwa-com";
+import { setAtomValue, theme } from "tonwa-com";
 import { FA, Sep, SpinnerSmall } from "tonwa-com";
-import { Editing, ViewAtomId } from "app/hooks";
-import { atom, useAtomValue, WritableAtom } from "jotai";
-import { pickFromQuery, pickFromQueryScalar } from "app/hooks/Query";
-import { runBinPick, runBinPickRear } from "./runBinPicks";
+import { ViewAtomId } from "app/hooks";
+import { useAtomValue } from "jotai";
+import { BinPicksEditing } from "./runBinPicks";
 
 interface Props {
     subHeader?: string;
@@ -20,27 +15,45 @@ interface Props {
     onPicked: (results: ReturnUseBinPicks) => Promise<void>;
 }
 
+/*
+export class PickStates {
+    // readonly atomPickedResults: WritableAtom<NamedResults, any, any>;
+    readonly atomRearPickResult: WritableAtom<PickResult, any, any>;
+    readonly atomCur: WritableAtom<number, any, any>;
+    constructor(namedResults: NamedResults, rearPickResult: PickResult, cur: number) {
+        // this.atomPickedResults = atom(namedResults);
+        this.atomRearPickResult = atom(rearPickResult);
+        this.atomCur = atom(cur);
+    }
+}
+
+sheetConsole.picks = new PickStates(
+    {
+        'user': this.userProxy,
+        '%user': this.userProxy,
+        '%sheet': this.mainProxy
+    },
+    undefined,
+    0
+);
+*/
+
 export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     const rearPickResultType = RearPickResultType.scalar;
     // const pickFromAtom = usePickFromAtom();
     // const pickFromSpec = usePickFromSpec();
     // const pickFromPend = usePickFromPend();
     // const [pickFromQueryScalar, pickFromQuery] = usePickFromQuery();
-    const { modal, biz, main, divStore, sheetConsole } = sheetStore;
-    const { binPicks, rearPick } = main.entity;
-    const { picks, steps } = sheetConsole;
-    const { /*atomPickedResults, */atomRearPickResult, atomCur } = picks;
-    let { current: editing } = useRef(new Editing(modal, biz));
-    editing.addNamedValues(undefined, {
-        'user': sheetStore.userProxy,
-        '%user': sheetStore.userProxy,
-        '%sheet': sheetStore.mainProxy
-    });
+    const { main, divStore, sheetConsole } = sheetStore;
+    const { steps } = sheetConsole;
+    // const { /*atomPickedResults, */atomRearPickResult, atomCur } = picks;
+    let { current: editing } = useRef(new BinPicksEditing(sheetStore, main.entity));
 
     // let namedResults = getAtomValue(atomPickedResults);
-    const { namedResults } = editing;
-    let rearPickResult = useAtomValue(atomRearPickResult);
+    const { namedResults, atomCur, entityBin: { binPicks, rearPick } } = editing;
+    // let rearPickResult = useAtomValue(atomRearPickResult);
     let cur = useAtomValue(atomCur);
+    let refRearPickResult = useRef(undefined as PickResult[] | PickResult);
 
     async function onPick(binPick: BinPick, index: number) {
         /*
@@ -62,7 +75,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         if (pickResult === undefined) return;
         namedResults[name] = pickResult;
         */
-        await runBinPick(editing, binPick);
+        await editing.runBinPick(binPick);
         for (let i = index + 1; i < binPicks.length; i++) {
             namedResults[binPicks[i].name] = undefined;
         }
@@ -94,8 +107,9 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         }
         */
 
-        let pickResult = await runBinPickRear(divStore, editing, binPick, rearPickResultType);
-        setAtomValue(atomRearPickResult, pickResult);
+        let pickResult = await editing.runBinPickRear(divStore, binPick, rearPickResultType);
+        // setAtomValue(atomRearPickResult, pickResult);
+        refRearPickResult.current = pickResult;
         setAtomValue(atomCur, binPicks.length + 1);
         //setAtomValue(atomPickedResults, { ...namedResults, [binPick.name]: pickResult });
         // setAtomValue(editing.atomNamedResults, { ...namedResults, [binPick.name]: pickResult });
@@ -104,7 +118,8 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         divStore.setReload();
     }
 
-    async function onStart() {
+    async function onNext() {
+        let rearPickResult = refRearPickResult.current;
         if (rearPickResult === undefined) return;
         let rearResult: PickResult[] = Array.isArray(rearPickResult) === false ?
             [rearPickResult as PickResult] : rearPickResult as PickResult[];
@@ -136,7 +151,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         </>;
         // sheetStore={sheetStore}
         viewBinPicksNext = <LR cn={undefined} onClick={undefined} label={null}>
-            <button className="btn btn-primary" onClick={onStart} disabled={cur <= binPicks.length}>
+            <button className="btn btn-primary" onClick={onNext} disabled={cur <= binPicks.length}>
                 <FA name="arrow-right me-2" />下一步
             </button>
         </LR>;
@@ -153,15 +168,13 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     </>;
 }
 
-function ViewBinPick({ editing, binPick, onPick, index, cur/*, sheetStore */ }: {
-    editing: Editing,
+function ViewBinPick({ editing, binPick, onPick, index, cur }: {
+    editing: BinPicksEditing,
     binPick: BinPick;
     onPick: (binPick: BinPick, index: number) => Promise<void>;
     cur: number;
     index: number;
-    // sheetStore: SheetStore;
 }) {
-    // let namedResults = useAtomValue(editing.atomNamedResults /* sheetStore.sheetConsole.picks.atomPickedResults*/);
     useAtomValue(editing.atomChanging);
     const { namedResults } = editing;
     let [isPicking, setIsPicking] = useState(false);

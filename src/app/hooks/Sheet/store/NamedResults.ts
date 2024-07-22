@@ -19,8 +19,8 @@ export enum RearPickResultType {
     array,
 }
 
-export type PickFunc = (sheetStore: SheetStore, bin: EntityBin, rearPickResultType: RearPickResultType) => Promise<ReturnUseBinPicks>;
-
+// export type PickFunc = (sheetStore: SheetStore, bin: EntityBin, rearPickResultType: RearPickResultType) => Promise<ReturnUseBinPicks>;
+/*
 export class PickStates {
     // readonly atomPickedResults: WritableAtom<NamedResults, any, any>;
     readonly atomRearPickResult: WritableAtom<PickResult, any, any>;
@@ -31,3 +31,4 @@ export class PickStates {
         this.atomCur = atom(cur);
     }
 }
+*/

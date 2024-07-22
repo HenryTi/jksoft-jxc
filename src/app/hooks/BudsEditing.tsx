@@ -5,7 +5,7 @@ import {
     BudValuesToolBase,
     Biz
 } from "app/Biz";
-import { Calc, CalcResult, Formulas } from "./Calc";
+import { Calc, CalcResult, Formula, Formulas } from "./Calc";
 import { getDays, Store } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
@@ -14,24 +14,22 @@ import { atom, Atom } from "jotai";
 import { NamedResults } from "./Sheet/store";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 
-export class Editing<R = any> extends Store {
-    private readonly calc: Calc;
+export abstract class Editing<R = any> extends Store {
+    private calc: Calc;
     readonly namedResults: NamedResults = {};
     readonly values: R = {} as any;
-    readonly atomChanging = atom(0);
 
     constructor(modal: Modal, biz: Biz) {
         super(modal, biz);
-        const formulas = this.buildFormulas();
-        this.calc = new Calc(formulas, this.values as any);
-    }
-
-    protected buildFormulas(): Formulas {
-        return [];
+        this.calc = new Calc([], this.values as any);
     }
 
     addFormula(name: string, formula: string) {
         this.calc.addFormula(name, formula);
+    }
+
+    addFormulas(formulas: [string, string][]) {
+        this.calc.addFormulas(formulas);
     }
 
     get results() { return this.calc.results; }
@@ -64,10 +62,6 @@ export class Editing<R = any> extends Store {
         this.calc.setValue(name, value, callback);
     }
 
-    setChanging() {
-        setAtomValue(this.atomChanging, getAtomValue(this.atomChanging) + 1);
-    }
-
     getValue(name: string) {
         return this.calc.getValue(name);
     }
@@ -85,9 +79,10 @@ export abstract class BudsEditing<R = any> extends Editing<R> implements FormCon
         super(modal, biz);
         this.buds = buds;
         // this.calc = this.createCalc(formulas);
+        this.addFormulas(this.buildFormulas());
     }
 
-    protected buildFormulas(): Formulas {
+    private buildFormulas(): Formulas {
         let requiredFields = this.requiredFields;
         const formulas: Formulas = [];
         if (this.buds === undefined) return formulas;
@@ -127,10 +122,6 @@ export abstract class BudsEditing<R = any> extends Editing<R> implements FormCon
         return { base: this.calcValue(field.atomParams?.base) }
     }
 
-    protected createCalc(formulas: Formulas): Calc {
-        return new Calc(formulas, this.values as any);
-    }
-
     setStopRequired() { this.stopRequired = true; }
 
     get allFields() { return this.budValuesTool.allFields; }
@@ -140,13 +131,17 @@ export abstract class BudsEditing<R = any> extends Editing<R> implements FormCon
 
 
     addNamedParams(namedResults: { [name: string]: any }) {
+        if (namedResults === undefined) return;
         super.addNamedParams(namedResults);
         let results = this.results;
         for (let i in this.budColl) {
             let field = this.budColl[i];
             if (i !== field.name) debugger;
             let result = results[i];
-            if (result === null || typeof result !== 'object') {
+            if (result === undefined) {
+                this.budValuesTool.clearValue(field, this.values);
+            }
+            else if (result === null || typeof result !== 'object') {
                 this.budValuesTool.setBudValue(field, this.values, result);
             }
             else {
@@ -190,6 +185,7 @@ export abstract class BudsEditing<R = any> extends Editing<R> implements FormCon
         if (field === undefined) {
             return;
         }
+        if (value === undefined) debugger;
         this.budValuesTool.setBudValue(field, this.values, value);
     }
 
@@ -368,7 +364,7 @@ export class ValuesBudsEditing extends BudsEditing<{ [id: number]: any }> {
 
     constructor(modal: Modal, biz: Biz, buds: BizBud[], initValues?: any) {
         super(modal, biz, buds/*, initValues*/);
-        this.budValuesTool = new BudValuesTool(buds);
+        this.budValuesTool = new BudValuesTool(this, buds);
         if (initValues !== undefined) {
             for (let bud of buds) this.budValuesTool.setBudValue(bud, this.values, initValues[bud.id]);
         }
