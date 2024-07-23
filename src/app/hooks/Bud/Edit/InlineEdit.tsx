@@ -1,7 +1,7 @@
 import { FA, setAtomValue } from "tonwa-com";
 import { EditProps } from "./model";
 import { useAtomValue } from "jotai";
-import { Pencil } from "app/hooks/tool";
+import { ChevronRight, Pencil, PencilLg } from "app/hooks/tool";
 
 export function InlineEdit(props: EditProps) {
     let { children, onEditClick, readOnly, error, required, popup, noBorder } = props;
@@ -28,21 +28,31 @@ export function InlineEdit(props: EditProps) {
         </div>;
     }
     else {
-        let right: any = <span className="p-2">&nbsp;</span>;
+        let right: any;
         if (onEditClick !== null) {
             if (readOnly !== true) {
-                right = <div onClick={onEditClick} className="cursor-pointer pb-2 pt-1 align-self-start">
-                    <Pencil />
+                right = <div onClick={onEditClick} className="cursor-pointer pb-2 pt-1 px-1 align-self-start">
+                    <PencilLg />
                 </div>;
+            }
+            else {
+                right = <span className="p-2">&nbsp;</span>;
             }
         }
         function onClick() {
             setAtomValue(error, undefined);
         }
-        content = <div className={'d-flex align-items-center border rounded ' + cn} onClick={onClick}>
-            <div className="flex-fill py-0 ps-2">{children}</div>
-            {right}
-        </div>;
+        if (right === undefined) {
+            content = <div className={'border rounded ' + cn} onClick={onClick}>
+                {children}
+            </div>;
+        }
+        else {
+            content = <div className={'d-flex align-items-center border rounded ' + cn} onClick={onClick}>
+                <div className="flex-fill py-0 ps-2">{children}</div>
+                {right}
+            </div>;
+        }
     }
     return <div>
         {content}

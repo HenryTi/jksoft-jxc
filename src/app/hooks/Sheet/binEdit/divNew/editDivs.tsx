@@ -29,16 +29,23 @@ export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
     let { divStore, pendRow, valDiv } = props;
     let { entity: entityBin, modal } = divStore;
     let { rearPick, pend: entityPend } = entityBin;
-    let namedResults: NamedResults = {
-        [rearPick.name]: new Proxy(pendRow, new PendProxyHandler(entityPend)),
-    };
     let divEditingFromPend = new DivEditing(divStore, valDiv);
     valDiv.setValRow(divEditingFromPend.values);
-
-    let divEditing = new DivEditing(divStore, valDiv, namedResults);
+    let pendResult = new Proxy(pendRow, new PendProxyHandler(entityPend));
+    let namedResults: NamedResults = {
+        '%sheet': props.divStore.sheetStore.mainProxy,
+        [rearPick.name]: pendResult,
+        'pend': pendResult,
+    };
+    /*
+    divEditing.addNamedParams({
+        '%sheet': props.divStore.sheetStore.mainProxy,
+    })
+    */
     // let runInputDivProps: RunInputDivProps = { props, namedResults };
     for (; ;) {
-        let retIsInputed = await runInputDiv(props, valDiv, divEditing);
+        let divEditing = new DivEditing(divStore, valDiv, namedResults);
+        let retIsInputed = await runInputDiv(props, divEditing);
         if (retIsInputed !== true) return;
         // valDiv.mergeValRow(retValRow);
         let { binDiv } = valDiv;
@@ -48,30 +55,33 @@ export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
             return true;
         }
         let valDivNew = valDiv.createValDivSub(pendRow);
-        valDiv.setValRow(divEditing.values);
+        // valDiv.setValRow(divEditing.values);
         valDiv.addValDiv(valDivNew, true);
         valDiv = valDivNew;
     }
 }
-
+/*
 interface RunInputDivProps {
     // uqApp: UqApp;
     // modal: Modal;
     props: UseEditDivsProps;
     namedResults: NamedResults;
 }
-
-async function runInputDiv(props: UseEditDivsProps, valDiv: ValDivBase, editing: DivEditing) {
+*/
+async function runInputDiv(props: UseEditDivsProps, editing: DivEditing) {
     // let { props, namedResults } = runInputDivProps;
     let { divStore, skipInputs } = props;
     const { modal } = divStore;
+    const { valDiv } = editing;
     let { binDiv } = valDiv;
-    let retInputs = await runInputs(props, valDiv, editing);
+    let retInputs = await runInputs(props, editing);
     if (retInputs === false) return;
     let divEditing = editing; // new DivEditing(divStore, valDiv, namedResults);
+    /*
     divEditing.addNamedParams({
         '%sheet': props.divStore.sheetStore.mainProxy,
     })
+    */
     valDiv.mergeValRow(divEditing.values);
     if (skipInputs !== true) {
         if (divEditing.isInputNeeded() === true) {
@@ -94,16 +104,17 @@ async function runInputDiv(props: UseEditDivsProps, valDiv: ValDivBase, editing:
     return true;
 }
 
-async function runInputs(props: UseEditDivsProps, valDiv: ValDivBase, editing: DivEditing)
+async function runInputs(props: UseEditDivsProps, editing: DivEditing)
 //    runInputDivProps: RunInputDivProps, valDiv: ValDivBase) 
 {
+    const { valDiv } = editing;
     const { binDiv } = valDiv;
     const { inputs } = binDiv;
     if (inputs === undefined) return;
     // let { props, namedResults } = runInputDivProps;
     let { skipInputs } = props;
     if (skipInputs == true) return;
-    const { namedResults } = editing;
+    // const { namedResults } = editing;
     for (let input of inputs) {
         const { bizPhraseType } = input;
         let retInput: any = undefined;
@@ -115,7 +126,7 @@ async function runInputs(props: UseEditDivsProps, valDiv: ValDivBase, editing: D
                 retInput = await inputAtom({
                     ...props,
                     editing,
-                    valDiv,
+                    // valDiv,
                     // uqApp,
                     // modal,
                     binInput: input as BinInputAtom,
@@ -125,7 +136,7 @@ async function runInputs(props: UseEditDivsProps, valDiv: ValDivBase, editing: D
                 retInput = await inputSpec({
                     ...props,
                     editing,
-                    valDiv,
+                    // valDiv,
                     // uqApp,
                     // modal,
                     binInput: input as BinInputSpec,
@@ -133,7 +144,8 @@ async function runInputs(props: UseEditDivsProps, valDiv: ValDivBase, editing: D
                 break;
         }
         if (retInput === undefined) return false;
-        namedResults[input.name] = retInput;
+        // namedResults[input.name] = retInput;
+        editing.setNamedValue(input.name, retInput);
     }
     return true;
 }

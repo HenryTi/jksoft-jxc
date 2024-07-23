@@ -24,21 +24,22 @@ export interface PropsInputSpec extends InputProps<BinInputSpec> {
 };
 
 export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
-    const { binInput, pendRow, editing, divStore, valDiv } = props;
+    const { binInput, editing } = props;
+    // const { entityPend } = binInput; pendRow, 
+    const { valDiv, divStore } = editing;
     const { sheetStore, uq, modal, biz } = divStore;
-    const { entityPend } = binInput;
     /*
     const formulas: [string, string][] = [
         ['.i', binInput.baseExp ?? binInput.baseBud.valueSet],
     ];
     */
     // const calc = new Calc(formulas, namedResults);
-    const pendProxyHander = new PendProxyHandler(entityPend);
+    // const pendProxyHander = new PendProxyHandler(entityPend);
     // calc.addValues('pend', new Proxy(pendRow, pendProxyHander));
     // const base = calc.results['.i'] as number;
     const baseName = '.i';
     editing.addFormula(baseName, binInput.baseExp ?? binInput.baseBud.valueSet);
-    editing.addNamedValues('pend', new Proxy(pendRow, pendProxyHander));
+    // editing.addNamedValues('pend', new Proxy(pendRow, pendProxyHander));
     const base = editing.getValue(baseName) as number;
     if (base === undefined) {
         debugger;
@@ -46,7 +47,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     }
     const viewTop = <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} />;
     const { spec: entitySpec } = binInput;
-    let budsEditing: ValuesBudsEditing;
+    // let budsEditing: ValuesBudsEditing;
     const { preset } = entitySpec;
     if (preset === true) {
         let { ret } = await uq.GetSpecsFromBase.query({ base });
@@ -59,23 +60,20 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         }
         return retSpec;
     }
-    else {
-        const { keys, buds: props } = entitySpec;
-        let buds = [...keys];
-        if (props !== undefined) buds.push(...props);
-        budsEditing = new ValuesBudsEditing(modal, biz, buds)
-        let ret = await modal.open(<PagePickSpec />);
-        if (ret !== undefined) {
-            const { id, base } = ret;
-            const { bizSpecColl, bizAtomColl } = sheetStore;
-            bizSpecColl[id] = {
-                atom: bizAtomColl[base],
-                buds: keys,
-            }
+    const { keys, buds: specBuds } = entitySpec;
+    let buds = [...keys];
+    if (specBuds !== undefined) buds.push(...specBuds);
+    let budsEditing = new ValuesBudsEditing(modal, biz, buds)
+    let ret = await modal.open(<PagePickSpec />);
+    if (ret !== undefined) {
+        const { id, base } = ret;
+        const { bizSpecColl, bizAtomColl } = sheetStore;
+        bizSpecColl[id] = {
+            atom: bizAtomColl[base],
+            buds: keys,
         }
-        return ret;
     }
-
+    return ret;
     function PagePickSpec() {
         const { id: entityId, caption, name, keys, buds: props } = entitySpec;
         const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });

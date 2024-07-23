@@ -69,7 +69,7 @@ export function ViewAtomTitles({ bud, id, noLabel, store }: { id: number; bud: B
             let vLabel: any;
             let vContent = budContent(v, value, store);
             if (noLabel !== true) {
-                vLabel = <><small className={labelColor}>{v.caption ?? v.name}</small>: </>;
+                vLabel = <><span className={labelColor}>{v.caption ?? v.name}</span>: </>;
             }
             return <span key={id} className="text-nowrap me-3">
                 {vLabel}{vContent}

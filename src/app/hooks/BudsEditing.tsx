@@ -10,9 +10,8 @@ import { getDays, Store } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
 import { BudCheckValue, Modal } from "tonwa-app";
-import { atom, Atom } from "jotai";
+import { Atom } from "jotai";
 import { NamedResults } from "./Sheet/store";
-import { getAtomValue, setAtomValue } from "tonwa-com";
 
 export abstract class Editing<R = any> extends Store {
     private calc: Calc;
@@ -37,6 +36,10 @@ export abstract class Editing<R = any> extends Store {
     calcValue(formula: string): number | string {
         let ret = this.calc.calcFormula(formula);
         return ret;
+    }
+
+    setNamedResults(name: string, results: any) {
+        this.namedResults[name] = results;
     }
 
     addNamedValues(name: string, values: object) {

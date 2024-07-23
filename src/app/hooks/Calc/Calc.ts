@@ -100,6 +100,7 @@ export class Calc {
     }
 
     addFormula(name: string, formulaText: string) {
+        this._results = undefined;
         let formula = new Formula(formulaText);
         this.formulas.set(name, formula);
     }

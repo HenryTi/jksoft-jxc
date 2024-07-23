@@ -62,7 +62,9 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
                     if (excludeBuds[id] === true) continue;
                 }
                 let value = this.budValuesTool.getBudValue(field, this.values);
-                if (value === null || value === undefined) return null;
+                if (value === null || value === undefined) {
+                    continue;
+                }
                 ret.push(<ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} />);
             }
         }

@@ -1,14 +1,14 @@
 import { BinPick, EntityBin, PickAtom, PickPend, PickQuery, PickSpec } from "app/Biz";
 import { BizPhraseType } from "uqs/UqDefault";
 // import { useCallback, useRef, useState } from "react";
-import { pickFromAtom } from "./fromAtom";
+import { pickFromAtom } from "./pickFromAtom";
 // import { usePickFromSpec } from "./fromSpec";
 // import { usePickFromPend } from "./fromPend";
 import { pickFromQuery, pickFromQueryScalar } from "../../Query/fromQuery";
 import { BinStore, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
 import { NamedResults, PickResult } from "../store";
-import { pickFromPend } from "./fromPend";
-import { pickFromSpec } from "./fromSpec";
+import { pickFromPend } from "./pickFromPend";
+import { pickFromSpec } from "./pickFromSpec";
 import { Editing } from "app/hooks/BudsEditing";
 import { atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";

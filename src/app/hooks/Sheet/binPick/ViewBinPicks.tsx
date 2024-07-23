@@ -50,7 +50,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     let { current: editing } = useRef(new BinPicksEditing(sheetStore, main.entity));
 
     // let namedResults = getAtomValue(atomPickedResults);
-    const { namedResults, atomCur, entityBin: { binPicks, rearPick } } = editing;
+    const { atomCur, entityBin: { binPicks, rearPick } } = editing;
     // let rearPickResult = useAtomValue(atomRearPickResult);
     let cur = useAtomValue(atomCur);
     let refRearPickResult = useRef(undefined as PickResult[] | PickResult);
@@ -77,7 +77,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         */
         await editing.runBinPick(binPick);
         for (let i = index + 1; i < binPicks.length; i++) {
-            namedResults[binPicks[i].name] = undefined;
+            editing.setNamedResults(binPicks[i].name, undefined);
         }
         // setAtomValue(atomPickedResults, { ...namedResults });
         //setAtomValue(editing.atomNamedResults, { ...namedResults });
@@ -113,7 +113,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         setAtomValue(atomCur, binPicks.length + 1);
         //setAtomValue(atomPickedResults, { ...namedResults, [binPick.name]: pickResult });
         // setAtomValue(editing.atomNamedResults, { ...namedResults, [binPick.name]: pickResult });
-        namedResults[binPick.name] = pickResult;
+        editing.setNamedResults(binPick.name, pickResult);
         editing.setChanging();
         divStore.setReload();
     }
@@ -125,7 +125,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
             [rearPickResult as PickResult] : rearPickResult as PickResult[];
 
         let ret: ReturnUseBinPicks = {
-            namedResults,
+            namedResults: editing.namedResults,
             rearBinPick: rearPick,           // endmost pick
             rearResult,
             rearPickResultType: rearPickResultType,

@@ -1,26 +1,13 @@
 import { PickPend } from "app/Biz";
-// import { useCallback } from "react";
-// import { useModal } from "tonwa-app";
-import { NamedResults, PendProxyHandler, PickResult, ValRow } from "../store";
+import { PendProxyHandler, PickResult, ValRow } from "../store";
 import { BinStore } from "../store";
 import { PagePend } from "./PagePend";
 import { Editing } from "app/hooks/BudsEditing";
 
-/*
-export function usePickFromPend() {
-    // const modal = useModal();
-    return useCallback(pickFromPend, []);
-}
-*/
-
 export async function pickFromPend(divStore: BinStore, editing: Editing, binPick: PickPend): Promise<PickResult[]> {
     let { from: entityPend, bin } = binPick;
     const pendProxyHander = new PendProxyHandler(entityPend);
-    // const { modal, sheetStore } = divStore;
     const { modal } = editing;
-    // const { sheetConsole } = sheetStore;
-    // const { steps } = sheetConsole;
-    // if (steps !== undefined) steps.step = 1;
     let pendStore = divStore.getPickPendStore(binPick, editing.namedResults);
     await pendStore.searchPend();
     let inputed = await modal.open<ValRow[]>(<PagePend pendStore={pendStore} />);
@@ -57,5 +44,7 @@ export async function pickFromPend(divStore: BinStore, editing: Editing, binPick
     for (let g of iGroup) {
         iArr.push([g, iColl[g]]);
     }
+    // 随后的pickFromPend，不再显示步骤
+    divStore.sheetStore.sheetConsole.steps = undefined;
     return iArr;
 }
