@@ -2,7 +2,6 @@ import {
     BinRow, BizBud, EntityBin, BinRowValuesTool,
     ValueSetType
 } from "app/Biz";
-// import { Calc } from "../../Calc";
 import { BinStore } from "./BinStore";
 import { SheetStore } from "./SheetStore";
 import { ValDivBase } from "./ValDiv";
@@ -35,7 +34,6 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
     private setValues(binRow: BinRow) {
         Object.assign(this.values, binRow);
         let obj = new Proxy(binRow, this.entityBin.proxyHandler());
-        // this.calc.addValues(undefined, obj);
         this.addNamedValues(undefined, obj);
     }
 
@@ -55,18 +53,14 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
         for (let field of this.fields) {
             const bud = field;
             const { valueSetType } = bud;
-            if (this.budValuesTool.has(field) === true && valueSetType === ValueSetType.equ) {
-                const bud = field;
-                const { id } = bud;
-                if (excludeBuds !== undefined) {
-                    if (excludeBuds[id] === true) continue;
-                }
-                let value = this.budValuesTool.getBudValue(field, this.values);
-                if (value === null || value === undefined) {
-                    continue;
-                }
-                ret.push(<ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} />);
+            if (this.budValuesTool.has(field) !== true || valueSetType !== ValueSetType.equ) continue;
+            const { id } = bud;
+            if (excludeBuds !== undefined) {
+                if (excludeBuds[id] === true) continue;
             }
+            let value = this.budValuesTool.getBudValue(field, this.values);
+            if (value === null || value === undefined) continue;
+            ret.push(<ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} />);
         }
         return ret;
     }
@@ -75,34 +69,34 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
 export class DivEditing extends BinBudsEditing {
     readonly divStore: BinStore;
     readonly valDiv: ValDivBase;
-    // readonly namedResults: NamedResults;
     constructor(divStore: BinStore, valDiv: ValDivBase, namedResults?: NamedResults) {
         const { binDiv, valRow } = valDiv;
         super(divStore.sheetStore, divStore.entity, binDiv.buds, valRow);
-        // Object.assign(this.namedResults, namedResults);
         this.divStore = divStore;
         this.valDiv = valDiv;
         // 这里先强行设iBase和xBase from pend
-        if (namedResults !== undefined) {
-            this.addNamedParams(namedResults);
-            let pendValues = namedResults['pend'];
-            if (pendValues !== undefined) {
-                let { i, x, iBase, xBase } = pendValues;
-                this.iValue = i;
-                this.xValue = x;
-                if (this.iBase === undefined) {
-                    if (iBase === undefined) {
-                        let specValues = namedResults['spec'];
-                        if (specValues !== undefined) {
-                            iBase = specValues.base;
-                        }
-                    }
-                    this.iBase = iBase;
-                }
-                this.xBase = xBase;
-            }
-        }
+        this.initNamedResults(namedResults);
         this.setValueDefault(valDiv);
+    }
+
+    private initNamedResults(namedResults: NamedResults) {
+        if (namedResults === undefined) return;
+        this.addNamedParams(namedResults);
+        let pendValues = namedResults['pend'];
+        if (pendValues === undefined) return;
+        let { i, x, iBase, xBase } = pendValues;
+        this.iValue = i;
+        this.xValue = x;
+        if (this.iBase === undefined) {
+            if (iBase === undefined) {
+                let specValues = namedResults['spec'];
+                if (specValues !== undefined) {
+                    iBase = specValues.base;
+                }
+            }
+            this.iBase = iBase;
+        }
+        this.xBase = xBase;
     }
 
     private setValueDefault(valDiv: ValDivBase) {
@@ -133,7 +127,6 @@ export class DivEditing extends BinBudsEditing {
             debugger;
         }
         return async () => {
-            // alert(bud.name);
             let binPicksEditing = new BinPicksEditing(this.divStore.sheetStore, this.entityBin);
             await binPicksEditing.runBinPick(pick);
         };
