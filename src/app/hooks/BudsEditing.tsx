@@ -5,76 +5,24 @@ import {
     BudValuesToolBase,
     Biz
 } from "app/Biz";
-import { Calc, CalcResult, Formula, Formulas } from "./Calc";
+import { Calc, CalcIdObj, CalcResult, ValueSpace, Formula, Formulas } from "./Calc";
 import { getDays, Store } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
 import { BudCheckValue, Modal } from "tonwa-app";
 import { Atom } from "jotai";
-import { NamedResults } from "./Sheet/store";
+// import { NamedResults } from "./Sheet/store";
 
-export abstract class Editing<R = any> extends Store {
-    private calc: Calc;
-    readonly namedResults: NamedResults = {};
-    readonly values: R = {} as any;
+export class BudsEditing<R = any> extends Store implements FormContext {
+    private readonly calc: Calc;
+    readonly valueSpace: ValueSpace;
+    protected readonly requiredFields: BizBud[] = [];
+    protected readonly budColl: { [name: string]: BizBud } = {};
+    protected readonly buds: BizBud[];
+    // readonly namedResults: NamedResults = {};
+    readonly values: R = { buds: {} } as any;
 
-    constructor(modal: Modal, biz: Biz) {
-        super(modal, biz);
-        this.calc = new Calc([], this.values as any);
-    }
-
-    addFormula(name: string, formula: string) {
-        this.calc.addFormula(name, formula);
-    }
-
-    addFormulas(formulas: [string, string][]) {
-        this.calc.addFormulas(formulas);
-    }
-
-    get results() { return this.calc.results; }
-
-    calcValue(formula: string): number | string {
-        let ret = this.calc.calcFormula(formula);
-        return ret;
-    }
-
-    setNamedResults(name: string, results: any) {
-        this.namedResults[name] = results;
-    }
-
-    addNamedValues(name: string, values: object) {
-        if (values === undefined) return;
-        if (name === undefined) {
-            Object.assign(this.namedResults, values);
-        }
-        else {
-            this.namedResults[name] = values;
-        }
-        this.calc.addValues(name, values);
-    }
-
-    addNamedParams(namedResults: { [name: string]: any }) {
-        this.addNamedValues(undefined, namedResults);
-    }
-
-    stopFormula(name: string) {
-        this.calc.stopFormula(name);
-    }
-
-    setNamedValue(name: string, value: number | string, callback: (name: string, value: CalcResult) => void) {
-        this.calc.setValue(name, value, callback);
-    }
-
-    getValue(name: string) {
-        return this.calc.getValue(name);
-    }
-}
-
-export abstract class BudsEditing<R = any> extends Editing<R> implements FormContext {
-    private readonly requiredFields: BizBud[] = [];
-    private readonly budColl: { [name: string]: BizBud } = {};
-    protected budValuesTool: BudValuesToolBase<R>;
-    readonly buds: BizBud[];
+    private budValuesTool: BudValuesToolBase<R>;
     // abstract get values(): R;
     protected stopRequired: boolean;
 
@@ -82,11 +30,19 @@ export abstract class BudsEditing<R = any> extends Editing<R> implements FormCon
         super(modal, biz);
         this.buds = buds;
         // this.calc = this.createCalc(formulas);
-        this.addFormulas(this.buildFormulas());
+        let formulas = this.buildFormulas();
+        this.valueSpace = new ValueSpace();
+        this.calc = new Calc(this.valueSpace, formulas, this.values as any);
+        // this.addFormulas();
     }
 
+    /*
+    constructor(modal: Modal, biz: Biz, buds: BizBud[]) {
+        super(modal, biz, buds);
+        this.budValuesTool = this.createBudValuesTool();
+    }
+    */
     private buildFormulas(): Formulas {
-        let requiredFields = this.requiredFields;
         const formulas: Formulas = [];
         if (this.buds === undefined) return formulas;
         for (let bud of this.buds) {
@@ -99,11 +55,11 @@ export abstract class BudsEditing<R = any> extends Editing<R> implements FormCon
             if (valueSet !== undefined) {
                 formulas.push([name, valueSet]);
                 if (valueSetType === ValueSetType.init) {
-                    if (required === true) requiredFields.push(f);
+                    if (required === true) this.requiredFields.push(f);
                 }
             }
             else {
-                if (required === true) requiredFields.push(f);
+                if (required === true) this.requiredFields.push(f);
             }
             if (min !== undefined) {
                 formulas.push([name + '.min', min]);
@@ -113,6 +69,84 @@ export abstract class BudsEditing<R = any> extends Editing<R> implements FormCon
             }
         }
         return formulas;
+    }
+
+    addFormula(name: string, formula: string) {
+        this.calc.addFormula(name, formula);
+    }
+
+    addFormulas(formulas: [string, string][]) {
+        this.calc.addFormulas(formulas);
+    }
+
+    getResults() { return this.calc.getResults(); }
+
+    calcValue(formula: string): number | string {
+        let ret = this.calc.calcFormula(formula);
+        return ret;
+    }
+
+    /*
+    setNamedResults(name: string, results: any) {
+        this.namedResults[name] = results;
+    }
+    */
+
+    setNamedValues(name: string, values: object) {
+        // if (values === undefined) return;
+        /*
+        if (name === undefined) {
+            Object.assign(this.namedResults, values);
+        }
+        else {
+            this.namedResults[name] = values;
+        }
+        */
+        this.calc.setValues(name, values);
+    }
+
+    clearNameValues(name: string) {
+        // this.namedResults[name] = undefined;
+        this.calc.setValue(name, undefined, undefined);
+    }
+
+    stopFormula(name: string) {
+        this.calc.stopFormula(name);
+    }
+
+    getValue(name: string) {
+        let ret = this.calc.getValue(name);
+        if (ret !== undefined) return ret;
+        let r = this.valueSpace.getValue(name);
+        return r;
+    }
+
+    getValueNumber(name: string) {
+        let r = this.getValue(name);
+        if (r === undefined || r === null) return r;
+        if (typeof r === 'object') return (r as any).id;
+        return r;
+    }
+
+    protected setBudValuesTool(budValuesTool: BudValuesToolBase<R>) {
+        this.budValuesTool = budValuesTool;
+    }
+
+    //protected abstract setBudValue(bud: BizBud, value: any): void;
+    protected setBudValue(bud: BizBud, value: any): void {
+        this.budValuesTool.setBudValue(bud, this.values, value);
+    }
+
+    protected getBudValue(bud: BizBud): any {
+        return this.budValuesTool.getBudValue(bud, this.values);
+    }
+
+    protected hasBud(bud: BizBud): boolean {
+        return this.budValuesTool.has(bud);
+    }
+
+    protected getBuds(): BizBud[] {
+        return this.budValuesTool.fields;
     }
 
     getTrigger(name: string): Atom<number> {
@@ -132,11 +166,10 @@ export abstract class BudsEditing<R = any> extends Editing<R> implements FormCon
 
     protected setBudObjectValue(bud: BizBud, valObj: object) { }
 
-
-    addNamedParams(namedResults: { [name: string]: any }) {
+    addNamedParams(namedResults: ValueSpace) {
         if (namedResults === undefined) return;
-        super.addNamedParams(namedResults);
-        let results = this.results;
+        this.setNamedValues(undefined, namedResults.namedValues);
+        let results = this.getResults();
         for (let i in this.budColl) {
             let field = this.budColl[i];
             if (i !== field.name) debugger;
@@ -179,7 +212,7 @@ export abstract class BudsEditing<R = any> extends Editing<R> implements FormCon
         // this.calc.setValue(name, value, callback);
         // c 的主要作用，是做了 value 转换。比如 计算的amount做了小数点转换
         // this.calc.setValue(name, value, c);
-        super.setNamedValue(name, value, c);
+        this.calc.setValue(name, value, c);
     }
 
     private setFieldOrBudValue(name: string, value: CalcResult) {
@@ -247,25 +280,28 @@ export abstract class BudsEditing<R = any> extends Editing<R> implements FormCon
         return false;
     }
 
-    protected getOnPick(bud: BizBud): (() => void) {
+    protected getOnPick(bud: BizBud): (() => number | Promise<number>) {
         return undefined;
     }
 
     // bud.onForm===false
     buildFormRows(excludeOnFormFalse: boolean = false): FormRow[] {
         let ret: FormRow[] = [];
-        const calcResults = this.results;
+        const calcResults = this.getResults();
         for (let field of this.allFields) {
             const bud = field;
-            const { name, onForm, required } = bud;
+            const { name, onForm, required, valueSetType } = bud;
             if (excludeOnFormFalse === true) {
                 if (onForm === false) continue;
             }
-            const { valueSetType } = bud;
+            /*
+            为什么要屏蔽呢？应该要显示
             if ((this.budValuesTool.has(field) === true || this.budValuesTool.has(field) === true)
-                && valueSetType === ValueSetType.equ) {
+                && valueSetType === ValueSetType.equ
+            ) {
                 continue;
             }
+            */
             const { caption, budDataType, ui } = bud;
             if (ui?.show === true) continue;
             let options: RegisterOptions = {
@@ -353,8 +389,6 @@ export abstract class BudsEditing<R = any> extends Editing<R> implements FormCon
         })
     }
 
-    protected abstract setBudValue(bud: BizBud, value: any): void;
-
     createBudEditings() {
         let required: boolean;
         if (this.stopRequired) required = false;
@@ -363,18 +397,34 @@ export abstract class BudsEditing<R = any> extends Editing<R> implements FormCon
 }
 
 export class ValuesBudsEditing extends BudsEditing<{ [id: number]: any }> {
-    readonly values: { [id: number]: any } = {};
+    // readonly values: { [id: number]: any } = {};
 
-    constructor(modal: Modal, biz: Biz, buds: BizBud[], initValues?: any) {
+    constructor(modal: Modal, biz: Biz, buds: BizBud[]/*, initValues?: any*/) {
         super(modal, biz, buds/*, initValues*/);
-        this.budValuesTool = new BudValuesTool(this, buds);
+        /*
         if (initValues !== undefined) {
-            for (let bud of buds) this.budValuesTool.setBudValue(bud, this.values, initValues[bud.id]);
+            //for (let bud of buds) this.budValuesTool.setBudValue(bud, this.values, initValues[bud.id]);
+            for (let bud of buds) this.setBudValue(bud, initValues[bud.id]);
         }
+        */
+        this.setBudValuesTool(new BudValuesTool(this, buds));
     }
+
+    initBudValues(initValues: any) {
+        if (initValues === undefined) return;
+        for (let bud of this.buds) this.setBudValue(bud, initValues[bud.id]);
+    }
+
+    /*
+    protected createBudValuesTool(): BudValuesToolBase<{ [id: number]: any; }> {
+        return new BudValuesTool(this, this.buds);
+    }
+    */
+    /*
     protected setBudValue(bud: BizBud, value: any) {
         this.values[bud.id] = value;
     }
+    */
 }
 
 function budRadios(budDataType: BudRadio): { label: string; value: string | number }[] {

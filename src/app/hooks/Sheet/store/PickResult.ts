@@ -1,14 +1,18 @@
-import { BinPick, EntityBin } from "app/Biz";
-import { SheetStore } from "./SheetStore";
-import { WritableAtom, atom } from "jotai";
+import { BinPick } from "app/Biz";
+import { BudsEditing } from "app/hooks/BudsEditing";
+import { PickResult } from "app/hooks/Calc";
 
-export type PickResult = { [prop: string]: any };
+/*
 export interface NamedResults {
     [name: string]: PickResult;
 }
-
+*/
+/*
+export type PickResult = { [prop: string]: any };
+*/
 export interface ReturnUseBinPicks {
-    namedResults: NamedResults;
+    editing: BudsEditing;
+    // namedResults: NamedResults;
     rearBinPick: BinPick;           // rear pick = the endmost pick
     rearResult: PickResult[];
     rearPickResultType: RearPickResultType;

@@ -1,7 +1,7 @@
 import { BinInput } from "app/Biz";
 // import { Modal } from "tonwa-app";
 // import { UqApp } from "app";
-import { BinStore, DivEditing, NamedResults, PendRow, ValDivBase } from "../../store";
+import { DivEditing, PendRow } from "../../store";
 // import { Editing } from "app/hooks";
 
 export interface InputProps<T extends BinInput = any> {

@@ -2,7 +2,7 @@ import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { EntitySheet, EntityBin, EntityPend, BinRow, BizBud, Entity } from "app/Biz";
 import { ParamSaveDetail, ReturnGetPendRetSheet } from "uqs/UqDefault";
-import { RearPickResultType, ReturnUseBinPicks } from "./NamedResults";
+import { RearPickResultType, ReturnUseBinPicks } from "./PickResult";
 import { Calc, Formulas } from "app/hooks/Calc";
 import { BudEditing } from "../../Bud";
 import { ValRow } from "./tool";
@@ -17,20 +17,26 @@ import { runBinPicks } from "../binPick";
 
 abstract class MainBinStore extends EntityStore<EntityBin> {
     readonly sheetStore: SheetStore;
-    readonly budsEditing: BudsEditing;
-    readonly budEditings: BudEditing[];
+    // readonly budsEditing: BudsEditing;
+    private _budEditings: BudEditing[];
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
         super(sheetStore.modal, entityBin);
         this.sheetStore = sheetStore;
-        this.budsEditing = new BinEditing(sheetStore, entityBin);
-        this.budEditings = this.budsEditing.createBudEditings(); // main.buds.map(v => new BudEditing(undefined, v));
+        // this.budsEditing = new BinEditing(sheetStore, entityBin);
+        // this.budEditings = this.budsEditing.createBudEditings(); // main.buds.map(v => new BudEditing(undefined, v));
     }
-
+    /*
     onLoaded() {
         this.budsEditing.addNamedParams({
             '%user': this.sheetStore.userProxy,
             '%sheet': this.sheetStore.mainProxy,
         });
+    }
+    */
+    get budEditings() {
+        if (this._budEditings !== undefined) return this._budEditings;
+        let budsEditing = new BinEditing(this.sheetStore, this.entity);
+        return this._budEditings = budsEditing.createBudEditings();
     }
 }
 
@@ -53,7 +59,7 @@ export class SheetMain extends MainBinStore {
         const pickResults = await runBinPicks(this.sheetStore, this.entity, RearPickResultType.scalar);
         let ret = await this.startFromPickResults(pickResults);
         setAtomValue(this.sheetStore.atomLoaded, true);
-        this.onLoaded();
+        // this.onLoaded();
         return ret;
     }
 
@@ -76,19 +82,23 @@ export class SheetMain extends MainBinStore {
         for (let mp of mainProps) {
             formulas.push([mp.name, getFormulaText(mp.valueSet)]);
         }
-        let { namedResults, rearBinPick, rearResult } = pickResults;
-        const calc = new Calc(formulas, namedResults);
+        let { editing,/* namedResults, */rearBinPick, rearResult } = pickResults;
+        // const calc = new Calc(formulas, namedResults);
         if (rearBinPick !== undefined) {
-            calc.addValues(rearBinPick.name, rearResult[0]);
+            // calc.addValues(rearBinPick.name, rearResult[0]);
+            editing.setNamedValues(rearBinPick.name, rearResult[0]);
         }
         if (i !== undefined) {
-            row.i = calc.getValue('i') as number; // as number;
+            // row.i = calc.getValue('i') as number; // as number;
+            row.i = editing.getValue('i') as number;
         }
         if (x !== undefined) {
-            row.x = calc.getValue('x') as number; // calcResults.x as number;
+            // row.x = calc.getValue('x') as number; // calcResults.x as number;
+            row.x = editing.getValue('x') as number;
         }
         for (let mp of mainProps) {
-            let v = calc.getValue(mp.name);
+            // let v = calc.getValue(mp.name);
+            let v = editing.getValueNumber(mp.name);
             row.buds[mp.id] = v;
         }
         setAtomValue(this._valRow, row);
@@ -217,7 +227,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
             this.divStore.load(details, false);
         }
         setAtomValue(this.atomLoaded, true);
-        this.main.onLoaded();
+        // this.main.onLoaded();
     }
 
     async reloadBinProps(binId: number) {

@@ -1,10 +1,5 @@
 import { EntityFork, PickSpec } from "app/Biz";
 import { ViewAtomId } from "app/hooks/BizAtom";
-import { useCallback } from "react";
-import { NamedResults, PickResult } from "../store";
-import { BinStore } from "../store";
-import { useUqApp } from "app/UqApp";
-import { useModal } from "tonwa-app";
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { Page } from "tonwa-app";
@@ -12,9 +7,8 @@ import { theme } from "tonwa-com";
 import { ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
-import { Editing, ValuesBudsEditing } from "app/hooks/BudsEditing";
-import { Calc } from "app/hooks/Calc";
-import { PagePickSelect } from "app/hooks";
+import { BudsEditing, ValuesBudsEditing } from "app/hooks/BudsEditing";
+import { PagePickSelect, PickResult } from "app/hooks";
 
 export interface PropsPickSpec {
     base: number;
@@ -30,12 +24,16 @@ export function usePickFromSpec() {
     return useCallback(pickFromSpec, []);
 }
 */
-export async function pickFromSpec(editing: Editing, binPick: PickSpec): Promise<PickResult> {
+export async function pickFromSpec(editing: BudsEditing, binPick: PickSpec): Promise<PickResult> {
     const { modal, biz, uq } = editing;
     let { pickParams, from } = binPick;
     const pickName = binPick.name;
-    const calc = new Calc([[pickName, binPick.baseParam]], editing.namedResults);
-    let base = calc.getValue(pickName) as number;
+    // const calc = new Calc([[pickName, binPick.baseParam]], editing.namedResults);
+    // let base = calc.getValue(pickName) as number;
+    let base = editing.calcValue(binPick.baseParam) as number;
+    if (base === undefined) {
+        debugger;
+    }
     const viewTop = <div>
         <ViewAtomId id={base} />
     </div>;

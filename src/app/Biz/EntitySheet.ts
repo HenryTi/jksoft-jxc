@@ -7,7 +7,8 @@ import { EntityQuery } from "./EntityQuery";
 import { UI } from "app/ui";
 import { BudValue } from "tonwa-app";
 import { OptionsItem } from ".";
-import { Editing } from "app/hooks";
+import { BudsEditing } from "app/hooks";
+// import { Editing } from "app/hooks";
 
 export class PickParam extends BizBud {
     bud: string;
@@ -188,10 +189,10 @@ class BinAmount extends BinBudValue {
 }
 
 export abstract class BudValuesToolBase<T> {
-    protected readonly editing: Editing;
+    protected readonly editing: BudsEditing;
     allFields: BizBud[];
     fields: BizBud[];
-    constructor(editing: Editing) {
+    constructor(editing: BudsEditing) {
         this.editing = editing;
     }
     abstract has(bud: BizBud): boolean;
@@ -204,7 +205,7 @@ export abstract class BudValuesToolBase<T> {
 
 export class BudValuesTool extends BudValuesToolBase<any> {
     readonly coll: { [budId: number]: BizBud; } = {};
-    constructor(editing: Editing, buds: BizBud[]) {
+    constructor(editing: BudsEditing, buds: BizBud[]) {
         super(editing);
         this.allFields = buds;
         this.fields = buds;
@@ -233,9 +234,10 @@ export class BinRowValuesTool extends BudValuesToolBase<BinRow> {
     readonly budAmount: BizBud;
     readonly budPrice: BizBud;
 
-    constructor(editing: Editing, bin: EntityBin, buds: BizBud[]) {
+    constructor(editing: BudsEditing, bin: EntityBin, buds: BizBud[]) {
         super(editing);
         this.entityBin = bin;
+        if (bin === undefined) debugger;
         const { i, iBase, x, xBase, value, price, amount } = bin;
         this.allFields = [];
         this.fields = [];
@@ -325,7 +327,7 @@ export class BinDivBuds extends BinRowValuesTool /*extends BinBudsFields*/ {
     readonly binDiv: BinDiv;
     keyField: BizBud; // BinField;
 
-    constructor(editing: Editing, binDiv: BinDiv) {
+    constructor(editing: BudsEditing, binDiv: BinDiv) {
         const { buds, key } = binDiv;
         super(editing, binDiv.entityBin, buds);
         this.binDiv = binDiv;
@@ -361,6 +363,9 @@ export class EntityBin extends Entity {
             }
         }
         this.getSubs(arrEntity, this.rearPick);
+        for (let i in this.onPicks) {
+            this.getSubs(arrEntity, this.onPicks[i]);
+        }
     }
 
     private getSubs(arrEntity: Entity[], binPick: BinPick) {

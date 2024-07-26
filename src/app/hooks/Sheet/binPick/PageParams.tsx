@@ -1,15 +1,12 @@
 import { BizBud, PickParam } from "app/Biz";
-import { NamedResults } from "../store";
-import { Modal, Page, useModal } from "tonwa-app";
+import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { Editing, ValuesBudsEditing, ViewBud } from "app/hooks";
+import { BudsEditing, ValuesBudsEditing, ViewBud } from "app/hooks";
 import { useForm } from "react-hook-form";
-import { useCallback } from "react";
-import { useUqApp } from "app/UqApp";
 
 interface Props {
-    editing: Editing;
+    editing: BudsEditing;
     header: string;
     // namedResults: NamedResults;
     queryParams: BizBud[];
@@ -56,19 +53,22 @@ export function usePageParams() {
 */
 export async function pickQueryParams(props: Props) {
     const { editing, header, queryParams, pickParams } = props;
-    const { namedResults } = editing;
+    const { valueSpace } = editing;
     const valueParams: [PickParam, BizBud, any][] = [];
     const inputParams: BizBud[] = [];
     for (let param of queryParams) {
         let { name, budDataType } = param;
         let pickParam = pickParams?.find(v => v.name === name);
         if (pickParam !== undefined) {
-            let { bud, prop, valueSet, valueSetType } = pickParam;
+            let { bud, prop } = pickParam;
             if (bud === undefined) debugger;
-            let namedResult = namedResults[bud] as NamedResults;
-            if (namedResult === undefined) debugger;
+            let namedResult = valueSpace.getValue(bud); // namedResults[bud]; // as NamedResults;
+            if (namedResult === undefined) {
+                debugger;
+                valueSpace.getValue(bud);
+            }
             if (prop === undefined) prop = 'id';
-            let v = namedResult[prop];
+            let v = (namedResult as any)[prop];
             valueParams.push([pickParam, param, v]);
         }
         else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {

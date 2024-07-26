@@ -4,9 +4,8 @@ import { Getter, WritableAtom, atom } from "jotai";
 import { ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsRoot } from './ValDiv';
-import { BudEditing, ValuesBudsEditing } from "app/hooks";
+import { BudEditing, ValuesBudsEditing, ValueSpace } from "app/hooks";
 import { PickPendStore } from "./PickPendStore";
-import { NamedResults } from "./NamedResults";
 import { EntityStore } from "app/tool";
 
 enum PendLoadState {
@@ -318,11 +317,11 @@ export class BinStore extends EntityStore<EntityBin> {
         return undefined;
     }
 
-    getPickPendStore(pickPend: PickPend, namedResults: NamedResults) {
+    getPickPendStore(pickPend: PickPend, valueSpace: ValueSpace) {
         let { id } = pickPend;
         let pps = this.pickPendStores[id];
         if (pps === undefined) {
-            this.pickPendStores[id] = pps = new PickPendStore(this, pickPend, namedResults);
+            this.pickPendStores[id] = pps = new PickPendStore(this, pickPend, valueSpace);
         }
         return pps;
     }

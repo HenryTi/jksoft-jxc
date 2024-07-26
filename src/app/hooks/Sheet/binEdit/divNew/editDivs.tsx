@@ -1,14 +1,10 @@
 import { BinInputAtom, BinInputSpec } from "app/Biz";
 import { inputAtom } from "./inputAtom";
 import { inputSpec } from "./inputSpec";
-import { useCallback } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
 import { DivEditing, BinStore, PendRow, ValDivBase } from "../../store";
 import { PageInputDiv } from "./PageInputDiv";
-import { UqApp, useUqApp } from "app";
-import { Modal, useModal } from "tonwa-app";
 import { PendProxyHandler } from "../../store";
-import { NamedResults } from "../../store";
 
 export interface UseEditDivsProps {
     divStore: BinStore;
@@ -32,11 +28,13 @@ export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
     let divEditingFromPend = new DivEditing(divStore, valDiv);
     valDiv.setValRow(divEditingFromPend.values);
     let pendResult = new Proxy(pendRow, new PendProxyHandler(entityPend));
+    /*
     let namedResults: NamedResults = {
         '%sheet': props.divStore.sheetStore.mainProxy,
         [rearPick.name]: pendResult,
         'pend': pendResult,
     };
+    */
     /*
     divEditing.addNamedParams({
         '%sheet': props.divStore.sheetStore.mainProxy,
@@ -44,7 +42,9 @@ export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
     */
     // let runInputDivProps: RunInputDivProps = { props, namedResults };
     for (; ;) {
-        let divEditing = new DivEditing(divStore, valDiv, namedResults);
+        let divEditing = new DivEditing(divStore, valDiv); // , namedResults);
+        divEditing.setNamedValues(rearPick.name, pendResult);
+        divEditing.setNamedValues('pend', pendResult);
         let retIsInputed = await runInputDiv(props, divEditing);
         if (retIsInputed !== true) return;
         // valDiv.mergeValRow(retValRow);

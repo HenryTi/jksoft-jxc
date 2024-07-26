@@ -68,7 +68,8 @@ export function PageSiteInit() {
         const { buds: budsValues } = readBuds(undefined, result as any);
         const siteSetting = biz.entities['sitesetting'] as EntityBook;
         const { buds } = siteSetting;
-        const valuesBudsEditing = new ValuesBudsEditing(modal, biz, buds, budsValues);
+        const valuesBudsEditing = new ValuesBudsEditing(modal, biz, buds);
+        valuesBudsEditing.initBudValues(budsValues);
         const budEditings = valuesBudsEditing.createBudEditings();
         // let ret: InitValue[] = buds.map(v => { // }) initBuds.map(v => {
         let ret: InitValue[] = budEditings.map(v => {

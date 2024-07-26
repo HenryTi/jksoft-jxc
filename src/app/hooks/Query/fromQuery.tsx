@@ -4,14 +4,15 @@ import { Modal, Page, useModal } from "tonwa-app";
 import { List, Sep, theme, useEffectOnce } from "tonwa-com";
 import { filterUndefined } from "app/tool";
 import { pickQueryParams/*, usePageParams*/ } from "../Sheet/binPick/PageParams";
-import { NamedResults, PickResult, RearPickResultType } from "../Sheet/store";
+import { RearPickResultType } from "../Sheet/store";
 import { LabelBox, Picked, Prop, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
 import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtom, ViewSpecAtomBold } from "../View";
 import { ViewSpecId } from "app/coms/ViewSpecId";
 import { ViewBud } from "../Bud";
-import { Editing } from "../BudsEditing";
+import { BudsEditing } from "../BudsEditing";
+import { PickResult } from "../Calc";
 
 /*
 export function usePickFromQuery(): [
@@ -80,7 +81,7 @@ export function usePickFromQuery(): [
 async function pickFromQueryBase(
     // modal: Modal
     // , namedResults: NamedResults
-    editing: Editing
+    editing: BudsEditing
     , binPick: PickQuery
     , pickResultType: RearPickResultType)
     : Promise<PickResult | PickResult[]> {
@@ -130,7 +131,7 @@ async function pickFromQueryBase(
 export async function pickFromQueryScalar(
     // modal: Modal
     // , namedResults: NamedResults
-    editing: Editing
+    editing: BudsEditing
     , binPick: PickQuery)
     : Promise<PickResult> {
     return await pickFromQueryBase(editing, binPick, RearPickResultType.scalar) as PickResult;
@@ -139,7 +140,7 @@ export async function pickFromQueryScalar(
 export async function pickFromQuery(
     // modal: Modal
     // , namedResults: NamedResults
-    editing: Editing
+    editing: BudsEditing
     , binPick: PickQuery
     , lastPickResultType: RearPickResultType)
     : Promise<PickResult[]> {

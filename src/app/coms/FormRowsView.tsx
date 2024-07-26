@@ -12,6 +12,7 @@ import { IDView } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { BizPhraseType, EnumAtom } from "uqs/UqDefault";
 import { ViewSpecId } from "./ViewSpecId";
+import { AtomPhrase } from "app/tool";
 
 export interface BandProps {
     label?: string | JSX.Element;
@@ -120,7 +121,7 @@ interface FormLabelName extends FormLabel {
     name: string;
     placeHolder?: string;
     readOnly?: boolean;
-    onPick?: () => (void | Promise<void>);
+    onPick?: () => (number | Promise<number>);
 }
 
 export interface FormInput extends FormLabelName {
@@ -356,19 +357,22 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
     const { name, default: defaultValue, readOnly, onPick } = row;
     const [id, setId] = useState<number>(defaultValue);
     async function onSelectAtom() {
-        if (onPick !== undefined) {
-            await onPick();
-            return;
-        }
         clearErrors?.(name);
-        let ret = await IDSelect(entityAtom, undefined);
-        if (ret === undefined) return;
-        const { id } = ret;
-        if (setValue !== undefined) {
-            setValue(name, id);
+        let retAtomId: number;
+        if (onPick !== undefined) {
+            retAtomId = await onPick();
+            if (retAtomId === undefined) return;
         }
-        setId(id);
-        onChange?.({ name, value: String(id), type: 'number' });
+        else {
+            let ret = await IDSelect(entityAtom, undefined);
+            if (ret === undefined) return;
+            retAtomId = ret.id;
+        }
+        if (setValue !== undefined) {
+            setValue(name, retAtomId);
+        }
+        setId(retAtomId);
+        onChange?.({ name, value: String(retAtomId), type: 'number' });
     }
     function ViewAtom({ value }: { value: any }) {
         const { no, ex } = value;

@@ -1,6 +1,6 @@
 import { getDays } from 'app/tool';
 import jsep from 'jsep';
-import { CalcSpace } from './CalcSpace';
+import { ValueSpace } from './ValueSpace';
 
 jsep.addIdentifierChar("%");
 export class Formula {
@@ -9,11 +9,11 @@ export class Formula {
         this.exp = jsep(formula);
     }
 
-    run(nameValues: CalcSpace) {
+    run(nameValues: ValueSpace) {
         return this.runExp(this.exp, nameValues);
     }
 
-    private runExp(exp: jsep.Expression, nameValues: CalcSpace): CalcResult {
+    private runExp(exp: jsep.Expression, nameValues: ValueSpace): CalcResult {
         switch (exp.type) {
             case 'CallExpression': return this.func(exp as jsep.CallExpression, nameValues);
             case 'BinaryExpression': return this.binary(exp as jsep.BinaryExpression, nameValues);
@@ -24,7 +24,7 @@ export class Formula {
         }
     }
 
-    private binary(exp: jsep.BinaryExpression, nameValues: CalcSpace): number {
+    private binary(exp: jsep.BinaryExpression, nameValues: ValueSpace): number {
         const { operator, left, right } = exp;
         let vLeft = this.runExp(left, nameValues) as number;
         if (vLeft === undefined) return;
@@ -41,7 +41,7 @@ export class Formula {
         }
     }
 
-    private unary(exp: jsep.UnaryExpression, nameValues: CalcSpace): number {
+    private unary(exp: jsep.UnaryExpression, nameValues: ValueSpace): number {
         const { operator, argument } = exp;
         let v = this.runExp(argument, nameValues) as number;
         switch (operator) {
@@ -51,12 +51,12 @@ export class Formula {
         }
     }
 
-    private identifier(exp: jsep.Identifier, nameValues: CalcSpace): CalcIdObj {
+    private identifier(exp: jsep.Identifier, nameValues: ValueSpace): CalcIdObj {
         const { name } = exp;
         return nameValues.identifier(name) as number;
     }
 
-    private member(exp: jsep.MemberExpression, nameValues: CalcSpace): CalcIdObj {
+    private member(exp: jsep.MemberExpression, nameValues: ValueSpace): CalcIdObj {
         const { object, property } = exp;
         let { type, name: objName } = object as jsep.Identifier;
         if (type !== property.type && type !== 'Identifier') debugger;
@@ -70,7 +70,7 @@ export class Formula {
         return Number.isNaN(ret) === true ? String(value) : ret;
     }
 
-    private func(exp: jsep.CallExpression, nameValues: CalcSpace): number {
+    private func(exp: jsep.CallExpression, nameValues: ValueSpace): number {
         let func = (exp.callee as jsep.Identifier).name.toLowerCase();
         let params = exp.arguments.map(v => this.runExp(v, nameValues));
         let ret = funcs[func]?.(...params);
@@ -88,14 +88,14 @@ export type Formulas = [string, string][];
 export type CalcIdObj = number | { id: number; base?: number; };
 export type CalcResult = number | string | CalcIdObj;
 export class Calc {
-    private readonly calcSpace: CalcSpace;
+    private readonly calcSpace: ValueSpace;
     private readonly formulas: Map<string, Formula>;
     private _results: { [name: string]: CalcResult; };
 
-    constructor(formulas: [string, string][], values?: { [name: string]: string | number | { [prop: string]: CalcResult; } }) {
+    constructor(calcSpace: ValueSpace, formulas: [string, string][], values?: any) {
         this.formulas = new Map();
         this.addFormulas(formulas);
-        this.calcSpace = new CalcSpace();
+        this.calcSpace = calcSpace; //  new CalcSpace();
         this.calcSpace.addValues(undefined, values);
     }
 
@@ -112,7 +112,7 @@ export class Calc {
         }
     }
 
-    get results(): { [name: string]: CalcResult } {
+    getResults(): { [name: string]: CalcResult } {
         if (this._results === undefined) {
             this.run(undefined);
         }
@@ -144,7 +144,7 @@ export class Calc {
         this.formulas.delete(name);
     }
 
-    addValues(name: string, values: object): void {
+    setValues(name: string, values: any): void {
         this.calcSpace.addValues(name, values);
         this._results = undefined;
     }

@@ -1,4 +1,3 @@
-import { PickResult } from "../../store";
 import { BinInputSpec } from "app/Biz";
 import { Page } from "tonwa-app";
 import { theme } from "tonwa-com";
@@ -13,6 +12,7 @@ import { PendProxyHandler, btnNext, cnNextClassName } from "../../store";
 import { InputProps } from "./inputBase";
 import { ViewIBaseFromId } from "../ViewDiv/ViewIBase";
 import { ValuesBudsEditing } from "app/hooks/BudsEditing";
+import { PickResult } from "app/hooks/Calc";
 
 
 export interface PropsInputSpec extends InputProps<BinInputSpec> {

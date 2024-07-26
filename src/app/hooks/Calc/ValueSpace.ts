@@ -1,9 +1,20 @@
 import { CalcIdObj } from "./Calc";
 
-export class CalcSpace {
-    private readonly roots: object[] = [];
-    private readonly namedValues: { [name: string]: object | string | number } = {};
-    addValues(name: string, values: object) {
+export type PickResult = { [prop: string]: number | string | object };
+
+export enum RearPickResultType {
+    scalar,
+    array,
+}
+
+type NamedValue = { [name: string]: string | number; };
+
+interface NamedValues { [name: string]: NamedValue | string | number }
+
+export class ValueSpace {
+    private readonly roots: NamedValue[] = [];
+    readonly namedValues: NamedValues = {};
+    addValues(name: string, values: NamedValue) {
         if (name === undefined) {
             this.roots.push(values);
             return;
@@ -11,7 +22,12 @@ export class CalcSpace {
         this.namedValues[name] = values;
     }
 
-    setValue(name: string, value: number) {
+    getValue(name: string) {
+        let obj = this.getObj(name);
+        return obj;
+    }
+
+    setValue(name: string, value: any) {
         this.namedValues[name] = value;
     }
 
@@ -21,14 +37,10 @@ export class CalcSpace {
     }
 
     member(name0: string, name1: string): CalcIdObj {
-        let obj = this.getObj(name0); // this.namedValues[name0];
+        let obj = this.getObj(name0);
         if (obj === null || typeof obj !== 'object') return;
         let ret = (obj as any)[name1];
         return ret;
-        /*
-        if (typeof ret === 'object') return ret.id;
-        return ret;
-        */
     }
 
     private getObj(name: string): any {

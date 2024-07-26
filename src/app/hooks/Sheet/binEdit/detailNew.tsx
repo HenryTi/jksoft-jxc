@@ -1,13 +1,8 @@
-import { useCallback } from "react";
 import { RearPickResultType, SheetStore } from "../store";
-// import { useBinPicks } from "../binPick";
-// import { useRowEdit } from "./useRowEdit";
 import { BinEditing } from "../store";
-import { PickResult } from "../store";
 import { runBinPicks } from "../binPick";
 import { rowEdit } from "./rowEdit";
-import { Editing } from "app/hooks/BudsEditing";
-
+import { PickResult } from "app/hooks/Calc";
 /*
 export function useDetailNew(sheetStore: SheetStore) {
     // const rowEdit = useRowEdit();
@@ -25,7 +20,8 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
     //let ret = await pick(sheetStore, entityBin);
     let ret = await runBinPicks(sheetStore, entityBin);
     if (ret === undefined) return false;
-    let { namedResults, rearBinPick, rearResult, rearPickResultType } = ret;
+    let { editing/*namedResults*/, rearBinPick, rearResult, rearPickResultType } = ret;
+    const { valueSpace } = editing;
     if (rearPickResultType === RearPickResultType.array) {
         // 直接选入行集，待修改
         for (let rowProps of rearResult as PickResult[]) {
@@ -33,14 +29,14 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
             const pickName = rearBinPick.name;
             switch (pickName) {
                 default:
-                    namedResults[pickName] = rowProps;
-                    binEditing.addNamedParams(namedResults);
+                    valueSpace.setValue(pickName, rowProps);
+                    binEditing.addNamedParams(valueSpace);
                     break;
                 case 'i$pick':
-                    binEditing.setNamedValue('i', rowProps.id, undefined);
+                    binEditing.setNamedValue('i', (rowProps as any).id, undefined);
                     break;
                 case 'x$pick':
-                    binEditing.setNamedValue('x', rowProps.id, undefined);
+                    binEditing.setNamedValue('x', (rowProps as any).id, undefined);
                     break;
             }
             let { values: valRow } = binEditing;
@@ -48,9 +44,9 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
                 binEditing.setNamedValue('value', 1, undefined);
             }
             const { origin, pend, pendValue } = rowProps;
-            valRow.origin = origin;
-            valRow.pend = pend;
-            valRow.pendValue = pendValue;
+            valRow.origin = origin as number;
+            valRow.pend = pend as number;
+            valRow.pendValue = pendValue as number;
             if (valRow.id !== undefined) debugger;
             let id = await divStore.saveDetail(binDivRoot, valRow);
             valRow.id = id;
@@ -61,7 +57,7 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
     else {
         // 直接跳出输入界面，开始编辑
         const binEditing = new BinEditing(sheetStore, entityBin);
-        binEditing.addNamedParams(namedResults);
+        binEditing.addNamedParams(valueSpace);
         let ret = await rowEdit(modal, binEditing, undefined);
         if (ret === true) {
             const { values: valRow } = binEditing;

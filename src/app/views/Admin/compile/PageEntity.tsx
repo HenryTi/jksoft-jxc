@@ -21,7 +21,7 @@ class Nav {
     readonly supers: Entity[] = [];
     cur: Entity;
     readonly subs: Entity[] = [];
-    changed = atom(false);
+    private readonly atomChanged = atom(false);
     private readonly onChange: (newEntity: Entity) => void;
     constructor(entity: Entity, onChange: (newEntity: Entity) => void) {
         this.cur = entity;
@@ -39,17 +39,16 @@ class Nav {
         let index = this.supers.findIndex(v => v === entity);
         if (index >= 0) {
             this.supers.splice(index);
-            this.cur = entity;
         }
         else {
             index = this.subs.findIndex(v => v === entity);
             if (index < 0) return;
             this.supers.push(this.cur);
-            this.cur = entity;
         }
+        this.cur = entity;
         this.setSubs(entity);
-        let changed = getAtomValue(this.changed);
-        setAtomValue(this.changed, !changed);
+        let changed = getAtomValue(this.atomChanged);
+        setAtomValue(this.atomChanged, !changed);
         this.onChange(entity);
     }
     private VClick(entity: Entity) {
@@ -75,7 +74,7 @@ class Nav {
     showView() {
         const View = () => {
             if (this.subs.length === 0 && this.supers.length === 0) return null;
-            useAtomValue(this.changed);
+            useAtomValue(this.atomChanged);
             return <div className="d-flex flex-wrap align-items-center border-bottom border-primary-subtle">
                 {this.supers.map(v => this.VSuper(v))}
                 {this.VCur()}
@@ -125,14 +124,12 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
         setCode('');
         let data = await query(newEntity.id);
         setCode(data.code ?? '');
-        // modal.open(<PageEntity entity={newEntity} />)
     }
     function onCodeChange(code: string) {
         setCode(code);
         setSumitDisabled(false);
     }
     async function onSubmit() {
-        // const { current: textAreaLog } = refTextAreaLog;
         modal.open(<PageLogs entity={entity} code={code} />);
         let newEntity = biz.entityFromId(entity.id);
         setPageCaption(newEntity.caption ?? newEntity.name);
@@ -141,9 +138,6 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
     function myHighlight(text: string, grammar: Grammar, language: string): string {
         let ret = highlight(text, grammar, language);
         return ret;
-    }
-    function btnClassName(c: string) {
-        return 'btn btn-sm mx-2 my-1 ' + (c ?? '');
     }
     async function onRename() {
         function PageChangeName() {
@@ -191,13 +185,11 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
         let { hasError, logs } = await modal.open(<PageDel />);
         let msg: string;
         if (hasError === true) {
-            // refTextAreaLog.current.value = logs === undefined ? '删除出错' : logs.join('\n');
             msg = logs === undefined ? '删除出错' : logs.join('\n');
         }
         else {
             setDeleted(true);
             biz.delEntity(entity);
-            // refTextAreaLog.current.value = '成功删除';
             msg = '成功删除';
         }
         modal.open(<Page header="删除">
@@ -211,7 +203,6 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
         style.textDecoration = 'line-through';
         style.color = 'lightgray';
     }
-    //const breadcrumb = new ToolElement(nav.showView());
     const groups: ToolItem[][] = [
         [
             new ToolButton({ caption: '提交', icon: 'send-o', className: 'btn btn-primary' }, onSubmit),
@@ -276,8 +267,6 @@ function PageUnique({ entity }: { entity: EntityAtom; }) {
     const [done, setDone] = useState(false);
     const { current: atomJob } = useRef(atom({ count: 0, dup: [] as any[] }));
     const { count, dup } = useAtomValue(atomJob);
-    // const [count, setCount] = useState(0);
-    // const [dup, setDup] = useState(undefined);
     const build = useCallback(async () => {
         async function iterate(ent: EntityID, callback: (e: EntityID) => Promise<void>) {
             await callback(ent);
@@ -350,18 +339,15 @@ function PageLogs({ entity, code }: { entity: Entity, code: string; }) {
             let msg = '...';
             setAtomValue(atomLogs, msg);
             let interval = refInterval.current = setInterval(() => {
-                // textAreaLog.value += '.';
                 msg += '.'
                 setAtomValue(atomLogs, msg);
                 intervals += 1;
                 if (intervals > 5) {
-                    // textAreaLog.value = 'Overtime! 5 seconds';
                     setAtomValue(atomLogs, 'Overtime! 5 seconds');
                     clearInterval(interval);
                     interval = undefined;
                 }
             }, 1000);
-            // textAreaLog.value = '......';
             let { schemas, hasError, logs } = await uqApi.compileEntity(id, code);
             let ret: string;
             if (hasError === true) {
@@ -373,7 +359,6 @@ function PageLogs({ entity, code }: { entity: Entity, code: string; }) {
                 biz.buildEntities(bizSchema);
                 ret = '编译成功!\n' + JSON.stringify(bizSchema, null, 4);
             }
-            //textAreaLog.value = ret;
             setAtomValue(atomLogs, ret);
             clearInterval(interval);
             interval = undefined;

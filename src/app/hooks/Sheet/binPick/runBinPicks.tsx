@@ -1,17 +1,6 @@
-import { BinPick, EntityBin, PickAtom, PickPend, PickQuery, PickSpec } from "app/Biz";
-import { BizPhraseType } from "uqs/UqDefault";
-// import { useCallback, useRef, useState } from "react";
-import { pickFromAtom } from "./pickFromAtom";
-// import { usePickFromSpec } from "./fromSpec";
-// import { usePickFromPend } from "./fromPend";
-import { pickFromQuery, pickFromQueryScalar } from "../../Query/fromQuery";
-import { BinStore, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
-import { NamedResults, PickResult } from "../store";
-import { pickFromPend } from "./pickFromPend";
-import { pickFromSpec } from "./pickFromSpec";
-import { Editing } from "app/hooks/BudsEditing";
-import { atom } from "jotai";
-import { getAtomValue, setAtomValue } from "tonwa-com";
+import { EntityBin } from "app/Biz";
+import { BinBudsEditing, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
+import { PickResult } from "app/hooks/Calc";
 
 /*
 export function useBinPicks() {
@@ -98,24 +87,26 @@ export function useBinPicks() {
 }
 */
 
-export class BinPicksEditing extends Editing {
-    readonly atomChanging = atom(0);
-    readonly atomCur = atom(0);
-    readonly sheetStore: SheetStore;
-    readonly entityBin: EntityBin;
+export class SheetEditing1 extends BinBudsEditing {
+    // readonly atomChanging = atom(0);
+    // readonly atomCur = atom(0);
+    // readonly sheetStore: SheetStore;
+    // readonly entityBin: EntityBin;
 
-    constructor(sheetStore: SheetStore, entityBin: EntityBin) {
-        super(sheetStore.modal, sheetStore.biz);
-        this.sheetStore = sheetStore;
-        this.entityBin = entityBin;
+    constructor(sheetStore: SheetStore, bin: EntityBin) {
+        super(sheetStore, bin, []);
+        // this.sheetStore = sheetStore;
+        // this.entityBin = entityBin;
+        /*
         const { userProxy, mainProxy } = sheetStore;
         this.addNamedValues(undefined, {
             'user': userProxy,
             '%user': userProxy,
             '%sheet': mainProxy,
         });
+        */
     }
-
+    /*
     setChanging() {
         setAtomValue(this.atomChanging, getAtomValue(this.atomChanging) + 1);
     }
@@ -137,7 +128,8 @@ export class BinPicksEditing extends Editing {
                 break;
         }
         if (pickResult === undefined) return;// undefined;
-        this.namedResults[name] = pickResult;
+        // this.namedResults[name] = pickResult;
+        this.addNamedValues(name, pickResult);
     }
 
     async runBinPickRear(divStore: BinStore, rearPick: BinPick, rearPickResultType: RearPickResultType) {
@@ -163,6 +155,7 @@ export class BinPicksEditing extends Editing {
         }
         return pickResult;
     }
+    */
 }
 
 export async function runBinPicks(
@@ -183,7 +176,7 @@ export async function runBinPicks(
         '%sheet': sheetStore.mainProxy,
     };
     */
-    let editing = new BinPicksEditing(sheetStore, bin);
+    let editing = new BinBudsEditing(sheetStore, bin, []);
     // let pickResult: PickResult;
     for (const binPick of binPicks) {
         //await runBinPick(divStore, binPick, namedResults);
@@ -209,7 +202,8 @@ export async function runBinPicks(
     }
 
     let ret: ReturnUseBinPicks = {
-        namedResults: editing.namedResults,
+        // namedResults: editing.namedResults,
+        editing,
         rearBinPick: rearPick,           // endmost pick
         rearResult: undefined,
         rearPickResultType: rearPickResultType,

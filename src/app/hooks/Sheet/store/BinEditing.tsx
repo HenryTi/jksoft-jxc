@@ -1,18 +1,32 @@
 import {
     BinRow, BizBud, EntityBin, BinRowValuesTool,
-    ValueSetType
+    ValueSetType,
+    BudValuesToolBase,
+    BinPick,
+    PickAtom,
+    PickSpec,
+    PickQuery,
+    PickPend
 } from "app/Biz";
 import { BinStore } from "./BinStore";
 import { SheetStore } from "./SheetStore";
 import { ValDivBase } from "./ValDiv";
-import { NamedResults } from "./NamedResults";
+import { RearPickResultType } from "./PickResult";
 import { ValRow } from "./tool";
 import { BudsEditing } from "app/hooks/BudsEditing";
-import { ViewBud, ViewBudUIType } from "app/hooks";
-import { BinPicksEditing } from "../binPick";
+import { PickResult, ViewBud, ViewBudUIType } from "app/hooks";
+import { getAtomValue, setAtomValue } from "tonwa-com";
+import { BizPhraseType } from "uqs/UqDefault";
+import { pickFromAtom } from "../binPick/pickFromAtom";
+import { pickFromSpec } from "../binPick/pickFromSpec";
+import { pickFromQuery, pickFromQueryScalar } from "app/hooks/Query";
+import { pickFromPend } from "../binPick/pickFromPend";
+import { atom } from "jotai";
+// import { SheetEditing } from "../binPick";
 
-export abstract class BinBudsEditing extends BudsEditing<BinRow> {
-    readonly values: ValRow = { buds: {} } as any;
+export class BinBudsEditing extends BudsEditing<ValRow> {
+    // readonly values: ValRow = { buds: {} } as any;
+    readonly atomChanging = atom(0);
     readonly entityBin: EntityBin;
     readonly sheetStore: SheetStore;
     iValue: number;
@@ -25,16 +39,26 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
         super(sheetStore.modal, sheetStore.biz, buds);
         this.sheetStore = sheetStore;
         this.entityBin = bin;
-        this.budValuesTool = new BinRowValuesTool(this, bin, buds);
+        this.setBudValuesTool(new BinRowValuesTool(this, bin, buds));
+        const { userProxy, mainProxy } = sheetStore;
+        this.setNamedValues(undefined, {
+            'user': userProxy,
+            '%user': userProxy,
+            '%sheet': mainProxy,
+        });
         if (initBinRow !== undefined) {
             this.setValues(initBinRow);
         }
     }
 
+    protected createBudValuesTool(): BudValuesToolBase<ValRow> {
+        return new BinRowValuesTool(this, this.entityBin, this.buds);
+    }
+
     private setValues(binRow: BinRow) {
         Object.assign(this.values, binRow);
         let obj = new Proxy(binRow, this.entityBin.proxyHandler());
-        this.addNamedValues(undefined, obj);
+        this.setNamedValues(undefined, obj);
     }
 
     protected override setBudObjectValue(bud: BizBud, result: { id: number; base: number; }) {
@@ -44,32 +68,85 @@ export abstract class BinBudsEditing extends BudsEditing<BinRow> {
         }
     }
 
+    /*
     protected setBudValue(bud: BizBud, value: any) {
         this.budValuesTool.setBudValue(bud, this.values, value);
     }
+    */
 
     buildShowBuds(excludeBuds?: { [id: number]: boolean }): any[] {
         let ret: any[] = [];
         for (let field of this.fields) {
             const bud = field;
             const { valueSetType } = bud;
-            if (this.budValuesTool.has(field) !== true || valueSetType !== ValueSetType.equ) continue;
+            // if (this.budValuesTool.has(field) !== true || valueSetType !== ValueSetType.equ) continue;
+            if (this.hasBud(field) !== true || valueSetType !== ValueSetType.equ) continue;
             const { id } = bud;
             if (excludeBuds !== undefined) {
                 if (excludeBuds[id] === true) continue;
             }
-            let value = this.budValuesTool.getBudValue(field, this.values);
+            // let value = this.budValuesTool.getBudValue(field, this.values);
+            let value = this.getBudValue(field);
             if (value === null || value === undefined) continue;
             ret.push(<ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} />);
         }
         return ret;
+    }
+
+    setChanging() {
+        setAtomValue(this.atomChanging, getAtomValue(this.atomChanging) + 1);
+    }
+
+    async runBinPick(binPick: BinPick) {
+        const { name, fromPhraseType } = binPick;
+        if (fromPhraseType === undefined) return; // break;
+        let pickResult: PickResult;
+        switch (fromPhraseType) {
+            default: debugger; break;
+            case BizPhraseType.atom:
+                pickResult = await pickFromAtom(this, binPick as PickAtom);
+                break;
+            case BizPhraseType.fork:
+                pickResult = await pickFromSpec(this, binPick as PickSpec);
+                break;
+            case BizPhraseType.query:
+                pickResult = await pickFromQueryScalar(this, binPick as PickQuery);
+                break;
+        }
+        if (pickResult === undefined) return;// undefined;
+        // this.namedResults[name] = pickResult;
+        this.setNamedValues(name, pickResult);
+    }
+
+    async runBinPickRear(divStore: BinStore, rearPick: BinPick, rearPickResultType: RearPickResultType) {
+        // if (sheetStore === undefined) debugger;
+        // if (bin === undefined) return;
+        // const { divStore } = sheetStore;
+        // const { rearPick } = bin;
+        let pickResult: PickResult[] | PickResult;
+        const { fromPhraseType } = rearPick;
+        switch (fromPhraseType) {
+            default: debugger; break;
+            case BizPhraseType.atom:
+                pickResult = await pickFromAtom(this, rearPick as PickAtom);
+                break;
+            case BizPhraseType.fork:
+                pickResult = await pickFromSpec(this, rearPick as PickSpec);
+                break;
+            case BizPhraseType.query:
+                pickResult = await pickFromQuery(this, rearPick as PickQuery, rearPickResultType);
+                break;
+            case BizPhraseType.pend:
+                pickResult = await pickFromPend(divStore, this, rearPick as PickPend);
+        }
+        return pickResult;
     }
 }
 
 export class DivEditing extends BinBudsEditing {
     readonly divStore: BinStore;
     readonly valDiv: ValDivBase;
-    constructor(divStore: BinStore, valDiv: ValDivBase, namedResults?: NamedResults) {
+    constructor(divStore: BinStore, valDiv: ValDivBase, namedResults?: any) {
         const { binDiv, valRow } = valDiv;
         super(divStore.sheetStore, divStore.entity, binDiv.buds, valRow);
         this.divStore = divStore;
@@ -79,7 +156,7 @@ export class DivEditing extends BinBudsEditing {
         this.setValueDefault(valDiv);
     }
 
-    private initNamedResults(namedResults: NamedResults) {
+    private initNamedResults(namedResults: any) {
         if (namedResults === undefined) return;
         this.addNamedParams(namedResults);
         let pendValues = namedResults['pend'];
@@ -102,33 +179,46 @@ export class DivEditing extends BinBudsEditing {
     private setValueDefault(valDiv: ValDivBase) {
         const { value: budValue } = this.entityBin;
         if (budValue === undefined) return;
-        if (this.budValuesTool.has(budValue) === false) return;
-        if (this.budValuesTool.getBudValue(budValue, this.values) !== undefined) return;
+        // if (this.budValuesTool.has(budValue) === false) return;
+        if (this.hasBud(budValue) === false) return;
+        // if (this.budValuesTool.getBudValue(budValue, this.values) !== undefined) return;
+        if (this.getBudValue(budValue) !== undefined) return;
         let pendLeft = this.divStore.getPendLeft(valDiv);
         if (pendLeft === undefined) return;
-        this.budValuesTool.setBudValue(budValue, this.values, pendLeft);
+        // this.budValuesTool.setBudValue(budValue, this.values, pendLeft);
+        this.setBudValue(budValue, pendLeft);
     }
 
     buildViewBuds() {
-        return this.budValuesTool.fields.map(field => {
+        let buds = this.getBuds();
+        return buds.map(field => {
             const bud = field;
             const { id } = bud;
-            let value = this.budValuesTool.getBudValue(field, this.values);
+            // let value = this.budValuesTool.getBudValue(field, this.values);
+            let value = this.getBudValue(field);
             if (value === null || value === undefined) return null;
             return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} />;
         })
     }
 
-    protected getOnPick(bud: BizBud): (() => void | Promise<void>) {
+    protected getOnPick(bud: BizBud): (() => number | Promise<number>) {
         let { onPicks } = this.entityBin;
         let pick = onPicks[bud.id];
         if (pick === undefined) return;
+        /*
         if (this.namedResults === undefined) {
             debugger;
         }
+        */
         return async () => {
-            let binPicksEditing = new BinPicksEditing(this.divStore.sheetStore, this.entityBin);
-            await binPicksEditing.runBinPick(pick);
+            // let binPicksEditing = new SheetEditing(this.divStore.sheetStore);
+            // await binPicksEditing.runBinPick(pick);
+            // let { values } = binPicksEditing;
+            await this.runBinPick(pick);
+            let v = this.getValue(pick.on.name);
+            // let { values } = this;
+            // return values.id;
+            return v;
         };
     }
 }

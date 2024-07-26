@@ -1,6 +1,6 @@
 import { Page, PageSpinner } from "tonwa-app";
 import { setAtomValue, useEffectOnce } from "tonwa-com";
-import { RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetSteps, SheetStore } from "../store";
+import { BinBudsEditing, RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetSteps, SheetStore } from "../store";
 import { useAtomValue } from "jotai";
 import { PageSheet } from "./PageSheet";
 import { useCallback } from "react";
@@ -58,6 +58,7 @@ function PageSheetDirect({ store }: { store: SheetStore; }) {
     const { caption } = store;
     useEffectOnce(() => {
         (async function () {
+            /*
             let results: ReturnUseBinPicks = {
                 namedResults: {
                     '%user': store.userProxy,
@@ -68,6 +69,8 @@ function PageSheetDirect({ store }: { store: SheetStore; }) {
                 rearPickResultType: RearPickResultType.scalar,
             };
             await onPicked(store, results);
+            */
+            await nothingPicked(store);
             // let added = await detailNew();
             //if (added === true) {
             await store.setSheetAsDraft();
@@ -149,6 +152,7 @@ function PageDirectPend({ store }: { store: SheetStore; }) {
     const subCaption = '批选待处理';
     useEffectOnce(() => {
         (async function () {
+            /*
             let results: ReturnUseBinPicks = {
                 namedResults: {
                     '%user': store.userProxy,
@@ -159,6 +163,8 @@ function PageDirectPend({ store }: { store: SheetStore; }) {
                 rearPickResultType: RearPickResultType.scalar,
             };
             await onPicked(store, results);
+            */
+            await nothingPicked(store);
             let added = await detailNew(store);
             if (added === true) {
                 await store.setSheetAsDraft();
@@ -168,4 +174,22 @@ function PageDirectPend({ store }: { store: SheetStore; }) {
     return <Page header={caption + ' - ' + subCaption}>
         <ViewSteps sheetSteps={sheetConsole.steps} />
     </Page>;
+}
+
+async function nothingPicked(store: SheetStore) {
+    // const {userProxy} = store;
+    let editing = new BinBudsEditing(store, store.main.entity, []);
+    let results: ReturnUseBinPicks = {
+        editing,
+        /*
+        namedResults: {
+            '%user': userProxy,
+            'user': userProxy,
+        },
+        */
+        rearBinPick: undefined,
+        rearResult: [],
+        rearPickResultType: RearPickResultType.scalar,
+    };
+    await onPicked(store, results);
 }

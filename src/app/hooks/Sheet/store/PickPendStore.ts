@@ -1,18 +1,18 @@
 import { BizBud, EnumBudType, PickPend } from "app/Biz";
 import { BinStore } from "./BinStore";
-import { NamedResults, PickResult } from "./NamedResults";
 import { ValuesBudsEditing } from "app/hooks/BudsEditing";
+import { PickResult, ValueSpace } from "app/hooks/Calc";
 
 export class PickPendStore {
     readonly divStore: BinStore;
     readonly pickPend: PickPend;
-    readonly namedResults: NamedResults;
+    readonly valueSpace: ValueSpace;
     readonly paramsEditing: ValuesBudsEditing;
 
-    constructor(divStore: BinStore, pickPend: PickPend, namedResults: NamedResults) {
+    constructor(divStore: BinStore, pickPend: PickPend, valueSpace: ValueSpace) {
         this.divStore = divStore;
         this.pickPend = pickPend;
-        this.namedResults = namedResults;
+        this.valueSpace = valueSpace;
         this.paramsEditing = this.createParamsEditing();
     }
 
@@ -40,7 +40,7 @@ export class PickPendStore {
             if (pickParam !== undefined) {
                 let { bud, prop, valueSet, valueSetType } = pickParam;
                 if (bud === undefined) debugger;
-                let namedResult = this.namedResults[bud] as PickResult;
+                let namedResult = this.valueSpace.getValue(bud) as PickResult;
                 if (namedResult === undefined) {
                     paramValue = this.paramsEditing.values[id];
                 }
