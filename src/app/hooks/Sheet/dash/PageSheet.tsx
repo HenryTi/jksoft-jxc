@@ -2,10 +2,7 @@ import { Page, PageConfirm, useModal } from "tonwa-app";
 import { SheetStore, SubmitState } from "../store";
 import { detailNew, ViewDiv, ViewMain } from "../binEdit";
 import { atom, useAtomValue } from "jotai";
-// import { useDetailNew } from "../binEdit";
-// import { useUqApp } from "app/UqApp";
-import React, { useCallback, useRef, useState } from "react";
-// import { useBinPicks } from "../binPick";
+import { useRef, useState } from "react";
 import { headerSheet, buttonDefs } from "../headerSheet";
 import { ViewReaction } from "app/hooks/View/ViewReaction";
 import { FA, setAtomValue, theme } from "tonwa-com";
@@ -16,12 +13,9 @@ import { useReactToPrint } from "react-to-print";
 
 export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean; }) {
     const { uq, main, divStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
-    // const pick = useBinPicks();
     const modal = useModal();
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(atomSubmitState);
-    // const detailNew = useDetailNew(store);
-    // const start = useStartSheetStore(store/*, pick*/);
     const ref = useRef(null);
     const handlePrint = useReactToPrint({
         content: () => ref.current,
@@ -190,23 +184,6 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     </Page>;
 }
 
-/*
-function useStartSheetStore(sheetStore: SheetStore) {
-    const { sheetConsole } = sheetStore;
-    async function startSheetStore() {
-        let ret = await sheetStore.start();
-        if (ret === undefined) {
-            if (sheetStore.main.no === undefined) {
-                // 还没有创建单据
-                sheetConsole.close();
-            }
-            return; // 已有单据，不需要pick. 或者没有创建新单据
-        }
-        sheetConsole.onSheetAdded(sheetStore);
-    }
-    return useCallback(startSheetStore, []);
-}
-*/
 export async function startSheetStore(sheetStore: SheetStore) {
     const { sheetConsole } = sheetStore;
     let ret = await sheetStore.start(/*pick*/);

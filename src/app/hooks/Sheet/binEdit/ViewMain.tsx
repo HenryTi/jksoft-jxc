@@ -17,13 +17,6 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
     let { length } = budEditings;
     function onBudChanged(bud: BizBud, value: string | number | BudCheckValue) {
         buds[bud.id] = value as any;
-        /*
-        switch (bud.name) {
-            case 'value': binRow.value = Number(value); break;
-            case 'price': binRow.price = Number(value); break;
-            case 'amount': binRow.amount = Number(value); break;
-        }
-        */
         setAtomValue(_binRow, { ...binRow });
     }
 

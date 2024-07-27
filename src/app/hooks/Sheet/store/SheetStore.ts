@@ -3,7 +3,7 @@ import { getAtomValue, setAtomValue } from "tonwa-com";
 import { EntitySheet, EntityBin, EntityPend, BinRow, BizBud, Entity } from "app/Biz";
 import { ParamSaveDetail, ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { RearPickResultType, ReturnUseBinPicks } from "./PickResult";
-import { Calc, Formulas } from "app/hooks/Calc";
+import { Formulas } from "app/hooks/Calc";
 import { BudEditing } from "../../Bud";
 import { ValRow } from "./tool";
 import { BinStore, SubmitState } from "./BinStore";
@@ -12,31 +12,23 @@ import { Modal } from "tonwa-app";
 import { Console, EntityStore } from "app/tool";
 import { arrFromJsonMid } from "app/hooks/tool";
 import { BinEditing } from "./BinEditing";
-import { BudsEditing } from "app/hooks/BudsEditing";
 import { runBinPicks } from "../binPick";
 
 abstract class MainBinStore extends EntityStore<EntityBin> {
     readonly sheetStore: SheetStore;
-    // readonly budsEditing: BudsEditing;
-    private _budEditings: BudEditing[];
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
         super(sheetStore.modal, entityBin);
         this.sheetStore = sheetStore;
-        // this.budsEditing = new BinEditing(sheetStore, entityBin);
-        // this.budEditings = this.budsEditing.createBudEditings(); // main.buds.map(v => new BudEditing(undefined, v));
     }
-    /*
-    onLoaded() {
-        this.budsEditing.addNamedParams({
-            '%user': this.sheetStore.userProxy,
-            '%sheet': this.sheetStore.mainProxy,
-        });
-    }
-    */
+
+    private _budsEditing: BinEditing;
+    get budsEditing(): BinEditing { return this._budsEditing; }
+
+    private _budEditings: BudEditing[];
     get budEditings() {
         if (this._budEditings !== undefined) return this._budEditings;
-        let budsEditing = new BinEditing(this.sheetStore, this.entity);
-        return this._budEditings = budsEditing.createBudEditings();
+        this._budsEditing = new BinEditing(this.sheetStore, this.entity);
+        return this._budEditings = this._budsEditing.createBudEditings();
     }
 }
 

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { BudValue, Page, PageSpinner, ViewSpinner, useModal } from "tonwa-app";
+import { Page, PageSpinner, ViewSpinner, useModal } from "tonwa-app";
 import { FA, Sep, from62, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
-import { EditBudLabelRow, EditAtomField, BudEditing } from "../Bud";
+import { EditBudLabelRow, EditAtomField } from "../Bud";
 import { ViewBudRowProps } from "../Bud";
 import { BizBud, EntityID } from "app/Biz";
 import { Tabs, Tab } from "react-bootstrap";

@@ -7,7 +7,7 @@ import { ButtonAsync, FA, SearchBox, Sep, theme } from "tonwa-com";
 import { User } from "tonwa-uq";
 import { ViewSheetItem } from "./ViewSheetItem";
 import { SheetConsole } from "../store";
-import { BudEditing, EditBudInline, OnBudChanged, ValuesBudsEditing } from "app/hooks";
+import { EditBudInline, OnBudChanged, ValuesBudsEditing } from "app/hooks";
 
 export function PageSearch() {
     const modal = useModal();

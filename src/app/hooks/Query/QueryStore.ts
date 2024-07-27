@@ -18,7 +18,6 @@ export class QueryStore extends EntityStore<EntityQuery> {
                 id: json[0], //: row.id as any,
                 value,
                 sum: 0,
-                // ...row,
             };
             picked.ban = {
                 name: 'ban',

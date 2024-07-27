@@ -23,7 +23,6 @@ export class BinStore extends EntityStore<EntityBin> {
     private valDivColl: { [id: number]: ValDivBase };
     private pendLoadState: PendLoadState;
     readonly sheetStore: SheetStore;
-    // readonly entity: EntityBin;
     readonly binDivRoot: BinDiv;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> };
     readonly atomPendRows = atom(undefined as PendRow[]);
@@ -37,7 +36,6 @@ export class BinStore extends EntityStore<EntityBin> {
         super(modal, entityBin);
         this.sheetStore = sheetStore;
         const { pend, binDivRoot } = entityBin;
-        // this.entityBin = entityBin;
         this.binDivRoot = binDivRoot;
         this.valDivsOnPend = sheetStore.valDivsOnPend;
         this.valDivsRoot = new ValDivsRoot();
