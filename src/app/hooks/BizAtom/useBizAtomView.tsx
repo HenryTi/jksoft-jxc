@@ -35,7 +35,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
         };
     }
     const { main, buds } = state;
-    let { name, caption, buds: atomProps, budGroups, specs } = entityAtom;
+    let { name, caption } = entityAtom;
     let lbId = <span className="text-primary fw-normal">
         <FA name="compass" className="text-danger me-1" /> ID
     </span>;
@@ -75,12 +75,12 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
 
 export function ViewAtomProps({ entity, value }: { entity: EntityID; value: AtomIDValue; }) {
     const modal = useModal();
-    let { name, caption, buds: atomProps, budGroups, specs } = entity;
+    let { buds: atomProps, budGroups, forks } = entity;
     const { id, buds } = value;
-    let vSpecs: any;
-    if (specs !== undefined) {
-        vSpecs = <div className="p-3">{
-            specs.map(v => {
+    let vForks: any;
+    if (forks !== undefined) {
+        vForks = <div className="p-3">{
+            forks.map(v => {
                 let { caption, name } = v;
                 if (caption === undefined) caption = name;
                 function onSpec() {
@@ -141,7 +141,7 @@ export function ViewAtomProps({ entity, value }: { entity: EntityID; value: Atom
         </Tabs>;
     }
     return <>
-        {vSpecs}
+        {vForks}
         {vPropRows}
     </>;
 }

@@ -60,7 +60,7 @@ export class Biz {
     readonly uq: UqExt;
     readonly atoms: EntityAtom[] = [];
     readonly atomRoots: EntityAtom[] = [];
-    readonly specs: EntityFork[] = [];
+    readonly forks: EntityFork[] = [];
     readonly duos: EntityDuo[] = [];
     readonly combos: EntityCombo[] = [];
 
@@ -268,7 +268,7 @@ export class Biz {
                 entities: [
                     [this.atoms],
                     [this.atomRoots, '基础编码', 'id-card-o'],
-                    [this.specs, '细分编码', 'asterisk'],
+                    [this.forks, '细分编码', 'asterisk'],
                     [this.duos, '双合编码', 'code-fork'],
                     [this.combos, '合成编码', 'code-fork'],
                     [this.titles, '科目', 'flag-o'],
@@ -392,7 +392,7 @@ export class Biz {
     }
     private buildSpec = (id: number, name: string, type: string): Entity => {
         let bizEntity = new EntityFork(this, id, name, type);
-        this.specs.push(bizEntity);
+        this.forks.push(bizEntity);
         return bizEntity;
     }
     private buildCombo = (id: number, name: string, type: string): Entity => {

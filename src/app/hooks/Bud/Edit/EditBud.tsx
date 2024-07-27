@@ -17,7 +17,7 @@ export function EditBudLabelRow(editProps: EditBudProps) {
 }
 
 export class BudEditing {
-    private readonly budsEditing: BudsEditing;
+    readonly budsEditing: BudsEditing;
     readonly bizBud: BizBud;
     readonly required: boolean;
     error = atom<string>(undefined as string);

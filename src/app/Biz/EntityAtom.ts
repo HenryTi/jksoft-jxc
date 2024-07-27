@@ -5,7 +5,8 @@ import { BudGroup, Entity } from "./Entity";
 
 export abstract class EntityID extends Entity {
     readonly subClasses: EntityID[] = [];
-    specs: EntityFork[];
+    superClass: EntityID;
+    forks: EntityFork[];
     titleBuds: BizBud[];
     primeBuds: BizBud[];
     uniques: string[];
@@ -21,8 +22,13 @@ export abstract class EntityID extends Entity {
     }
 
     addSpec(spec: EntityFork) {
-        if (this.specs === undefined) this.specs = [];
-        this.specs.push(spec);
+        if (this.forks === undefined) this.forks = [];
+        this.forks.push(spec);
+    }
+
+    getFork(): EntityFork {
+        if (this.forks !== undefined) return this.forks[0];
+        return this.superClass?.getFork();
     }
 
     protected override fromSwitch(i: string, val: any) {
@@ -126,6 +132,7 @@ export abstract class EntityID extends Entity {
         let superClass = this.biz.atomBuilder.initSuperClass(this, extendsId);
         if (superClass === undefined) debugger;
         superClass.subClasses.push(this);
+        this.superClass = superClass;
     }
 
     protected idArrToBudArr(ids: number[]): BizBud[] {
@@ -160,7 +167,7 @@ export class EntityDuo extends EntityID {
         }
     }
 }
-
+/*
 abstract class EntityIDWithBase extends EntityID {
     base: EntityID;
 
@@ -178,12 +185,13 @@ abstract class EntityIDWithBase extends EntityID {
         }
     }
 }
-
-export class EntityFork extends EntityIDWithBase {
+*/
+export class EntityFork extends EntityID {
     readonly keyColl: { [key: number]: BizBud; } = {};
     readonly keys: BizBud[] = [];
     readonly showKeys: BizBud[] = [];
     readonly showBuds: BizBud[] = [];
+    base: EntityID;
     noBud: BizBud;
     exBud: BizBud;
     preset: boolean;    // 如果true，不能临时录入，只能选择。
@@ -191,6 +199,7 @@ export class EntityFork extends EntityIDWithBase {
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
+            case 'base': this.base = val; break;
             case 'keys': this.fromKeys(val); break;
             case 'preset': this.preset = val; break;
         }
@@ -246,7 +255,10 @@ export class EntityFork extends EntityIDWithBase {
 
     scan() {
         super.scan();
-        this.base.addSpec(this);
+        if (this.base !== undefined) {
+            this.base = this.biz.entityFromId(this.base as unknown as number);
+            this.base.addSpec(this);
+        }
     }
 
     getSpecValues(specValue: any): string {
