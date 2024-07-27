@@ -25,8 +25,8 @@ export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
     let { divStore, pendRow, valDiv } = props;
     let { entity: entityBin, modal } = divStore;
     let { rearPick, pend: entityPend } = entityBin;
-    let divEditingFromPend = new DivEditing(divStore, valDiv);
-    valDiv.setValRow(divEditingFromPend.values);
+    // let divEditingFromPend = new DivEditing(divStore, valDiv);
+    // valDiv.setValRow(divEditingFromPend.values);
     let pendResult = new Proxy(pendRow, new PendProxyHandler(entityPend));
     /*
     let namedResults: NamedResults = {
@@ -45,6 +45,7 @@ export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
         let divEditing = new DivEditing(divStore, valDiv); // , namedResults);
         divEditing.setNamedValues(rearPick.name, pendResult);
         divEditing.setNamedValues('pend', pendResult);
+        divEditing.calcAll();
         let retIsInputed = await runInputDiv(props, divEditing);
         if (retIsInputed !== true) return;
         // valDiv.mergeValRow(retValRow);
@@ -68,15 +69,15 @@ interface RunInputDivProps {
     namedResults: NamedResults;
 }
 */
-async function runInputDiv(props: UseEditDivsProps, editing: DivEditing) {
+async function runInputDiv(props: UseEditDivsProps, divEditing: DivEditing) {
     // let { props, namedResults } = runInputDivProps;
     let { divStore, skipInputs } = props;
     const { modal } = divStore;
-    const { valDiv } = editing;
+    const { valDiv } = divEditing;
     let { binDiv } = valDiv;
-    let retInputs = await runInputs(props, editing);
+    let retInputs = await runInputs(props, divEditing);
     if (retInputs === false) return;
-    let divEditing = editing; // new DivEditing(divStore, valDiv, namedResults);
+    // let divEditing = divEditing; // new DivEditing(divStore, valDiv, namedResults);
     /*
     divEditing.addNamedParams({
         '%sheet': props.divStore.sheetStore.mainProxy,

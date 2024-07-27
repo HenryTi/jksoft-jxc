@@ -166,9 +166,7 @@ export class BudsEditing<R = any> extends Store implements FormContext {
 
     protected setBudObjectValue(bud: BizBud, valObj: object) { }
 
-    addNamedParams(namedResults: ValueSpace) {
-        if (namedResults === undefined) return;
-        this.setNamedValues(undefined, namedResults.namedValues);
+    calcAll() {
         let results = this.getResults();
         for (let i in this.budColl) {
             let field = this.budColl[i];
@@ -186,6 +184,12 @@ export class BudsEditing<R = any> extends Store implements FormContext {
                 this.setBudObjectValue(field, result);
             }
         }
+    }
+
+    addNamedParams(namedResults: ValueSpace) {
+        if (namedResults === undefined) return;
+        this.setNamedValues(undefined, namedResults.namedValues);
+        this.calcAll();
     }
 
     // init formula only valid in init
