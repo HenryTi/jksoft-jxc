@@ -21,8 +21,8 @@ export class DashConsole extends SheetConsole {
         this.modal.close();
     }
     async onSheetAdded(store: SheetStore/*sheetId: number, no: string*/): Promise<void> {
-        const { main } = store;
-        const { valRow, no } = main;
+        const { mainStore } = store;
+        const { valRow, no } = mainStore;
         let { id, i, x, origin, price, value, amount } = valRow;
         let myDrafts = getAtomValue(this.atomMyDrafts);
         myDrafts.unshift({
@@ -41,7 +41,7 @@ export class DashConsole extends SheetConsole {
         setAtomValue(this.atomMyDrafts, [...myDrafts]);
     }
     sheetRowCountChanged(store: SheetStore) {
-        const { main, divStore } = store;
+        const { mainStore: main, divStore } = store;
         const { valRow } = main;
         let { id } = valRow;
         let myDrafts = getAtomValue(this.atomMyDrafts);
@@ -72,7 +72,7 @@ export class DashConsole extends SheetConsole {
     steps: SheetSteps;
 
     async onSubmited(store: SheetStore): Promise<void> {
-        const { main } = store;
+        const { mainStore: main } = store;
         const { no, valRow } = main;
         const { id } = valRow;
         this.removeMyDraft(id);

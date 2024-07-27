@@ -9,7 +9,7 @@ import { BudCheckValue } from "tonwa-app";
 import { LabelBox, RowCols } from "app/hooks/tool";
 
 export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup: boolean; readOnly?: boolean; }) {
-    const { main } = store;
+    const { mainStore: main } = store;
     const { no, entity: entityMain, _valRow: _binRow, budEditings } = main;
     const { i: budI, x: budX } = entityMain;
     const binRow = useAtomValue(_binRow);

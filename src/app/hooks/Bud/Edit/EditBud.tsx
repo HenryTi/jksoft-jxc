@@ -3,19 +3,20 @@ import { EditBudRadio } from "./EditBudRadio";
 import { EditBudCheck } from "./EditBudCheck";
 import { EditBudString, EditBudInt, EditBudDec, EditBudDate } from "./EditBudValue";
 import { BizBud, EnumBudType } from "app/Biz";
-import { EditBudProps, EditBudTemplateProps, IBudEditing } from "./model";
-import { LabelRowEdit as LabelRowEditHere } from "./LabelRowEdit";
+import { EditBudProps, EditBudTemplateProps } from "./model";
+import { LabelRowEdit } from "./LabelRowEdit";
 import { atom } from "jotai";
 import { setAtomValue } from "tonwa-com";
 import { InlineEdit } from "./InlineEdit";
 import { BudsEditing } from "app/hooks/BudsEditing";
+import { EditBudOnPick } from "./EditBudOnPick";
 
 export function EditBudLabelRow(editProps: EditBudProps) {
-    const ValueEdit = LabelRowEditHere
+    const ValueEdit = LabelRowEdit
     return EditBud({ ...editProps, ViewValueEdit: ValueEdit });
 }
 
-export class BudEditing implements IBudEditing {
+export class BudEditing {
     private readonly budsEditing: BudsEditing;
     readonly bizBud: BizBud;
     readonly required: boolean;
@@ -43,6 +44,10 @@ export class BudEditing implements IBudEditing {
     calcValue(formula: string) {
         return this.budsEditing.calcValue(formula);
     }
+
+    getOnPick() {
+        return this.budsEditing.getOnPick(this.bizBud);
+    }
 }
 
 export function EditBudInline(editProps: EditBudProps) {
@@ -51,8 +56,13 @@ export function EditBudInline(editProps: EditBudProps) {
 }
 
 function EditBud(editProps: EditBudTemplateProps) {
-    const { budEditing: { bizBud } } = editProps;
-    const { type } = bizBud.budDataType;
+    const { budEditing } = editProps;
+    const { bizBud: { budDataType } } = budEditing;
+    const onPick = budEditing.getOnPick();
+    if (onPick !== undefined) {
+        return <EditBudOnPick {...editProps} onPick={onPick} />;
+    }
+    const { type } = budDataType;
     switch (type) {
         default:
             return <>unknown bud type {type} {EnumBudType[type]} </>;

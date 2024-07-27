@@ -13,7 +13,9 @@ import { Console, EntityStore } from "app/tool";
 import { arrFromJsonMid } from "app/hooks/tool";
 import { BinEditing } from "./BinEditing";
 import { runBinPicks } from "../binPick";
+import { BudsEditing } from "app/hooks/BudsEditing";
 
+/*
 abstract class MainBinStore extends EntityStore<EntityBin> {
     readonly sheetStore: SheetStore;
     constructor(sheetStore: SheetStore, entityBin: EntityBin) {
@@ -31,15 +33,31 @@ abstract class MainBinStore extends EntityStore<EntityBin> {
         return this._budEditings = this._budsEditing.createBudEditings();
     }
 }
+*/
 
-export class SheetMain extends MainBinStore {
+export class SheetMainStore extends EntityStore<EntityBin> {
+    readonly sheetStore: SheetStore;
+    budsEditing: BudsEditing;
+    budEditings: BudEditing[];
+
     readonly _valRow = atom<ValRow>({ buds: {} } as ValRow);
     get valRow() { return getAtomValue(this._valRow) }
     no: string;
 
     constructor(sheetStore: SheetStore) {
         const { main } = sheetStore.entity;
-        super(sheetStore, main);
+        super(sheetStore.modal, main);
+        this.sheetStore = sheetStore;
+    }
+
+    /*
+    createBudsEditing() {
+        return new BinEditing(this.sheetStore, this.entity);
+    }
+    */
+    init() {
+        this.budsEditing = new BinEditing(this.sheetStore, this.entity);
+        this.budEditings = this.budsEditing.createBudEditings();
     }
 
     // return: true: new sheet created
@@ -166,7 +184,7 @@ export class ExDetail extends Detail {
 export class SheetStore extends EntityStore<EntitySheet> {
     private readonly cachePendRows: { [id: number]: PendRow } = {};
     readonly sheetConsole: SheetConsole;
-    readonly main: SheetMain;
+    readonly mainStore: SheetMainStore;
     readonly caption: string;
     readonly backIcon = 'file-text-o';
     readonly isPend: boolean;
@@ -182,7 +200,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
     constructor(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
         super(sheetConsole.modal, entitySheet);
         this.sheetConsole = sheetConsole;
-        this.main = new SheetMain(this);
+        this.mainStore = new SheetMainStore(this);
         const { details } = this.entity;
         let detail = details[0];
         let len = details.length;
@@ -214,7 +232,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
     async load(sheetId: number) {
         let { main, details } = await this.loadBinData(sheetId);
         if (main === undefined) return;
-        this.main.setValue(main);
+        this.mainStore.setValue(main);
         if (this.divStore !== undefined) {
             this.divStore.load(details, false);
         }
@@ -228,7 +246,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
     }
 
     hasId() {
-        return this.main.valRow?.id !== undefined;
+        return this.mainStore.valRow?.id !== undefined;
     }
 
     // whole sheet or row detail
@@ -297,14 +315,14 @@ export class SheetStore extends EntityStore<EntitySheet> {
 
     async discard() {
         // 作废草稿单据
-        let { valRow: { id } } = this.main;
+        let { valRow: { id } } = this.mainStore;
         if (id >= 0) {
             await this.uq.RemoveDraft.submit({ id });
             return id;
         }
     }
     async start(/*pick: PickFunc*/) {
-        let ret = await this.main.start(/*pick*/);
+        let ret = await this.mainStore.start(/*pick*/);
         if (ret !== undefined) return ret;
     }
 
@@ -330,7 +348,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
     }
 
     async saveSheet(valRow: ValRow) {
-        let propArr = this.getPropArr(valRow, this.main.entity.buds);
+        let propArr = this.getPropArr(valRow, this.mainStore.entity.buds);
         let { id: sheetId, i, x } = valRow;
         const { uq, entity: entitySheet } = this;
         let ret = await uq.SaveSheet.submit({
@@ -351,7 +369,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
         let { id, i, x, value, price, amount, pend, origin } = valRow;
         let propArr = this.getPropArr(valRow, buds);
         let param: ParamSaveDetail = {
-            base: this.main.valRow.id,
+            base: this.mainStore.valRow.id,
             phrase: entityBin.id,
             id,
             i,
@@ -373,12 +391,12 @@ export class SheetStore extends EntityStore<EntitySheet> {
     }
 
     async setSheetAsDraft() {
-        await this.uq.SetSheetPreToDraft.submit({ id: this.main.valRow.id });
+        await this.uq.SetSheetPreToDraft.submit({ id: this.mainStore.valRow.id });
         setAtomValue(this.atomLoaded, true);
     }
 
     get mainProxy() {
-        const { valRow, entity } = this.main;
+        const { valRow, entity } = this.mainStore;
         return new Proxy(valRow, entity.proxyHandler());
     }
 
@@ -432,7 +450,9 @@ export abstract class SheetConsole extends Console {
     abstract removeFromCache(sheetId: number): void;
     abstract steps: SheetSteps;
     createSheetStore() {
-        return new SheetStore(this.entitySheet, this);
+        let ret = new SheetStore(this.entitySheet, this);
+        ret.mainStore.init();
+        return ret;
     }
 
     // picks: PickStates;

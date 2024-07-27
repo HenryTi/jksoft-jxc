@@ -141,6 +141,27 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
         }
         return pickResult;
     }
+
+    getOnPick(bud: BizBud): (() => number | Promise<number>) {
+        let { onPicks } = this.entityBin;
+        let pick = onPicks[bud.id];
+        if (pick === undefined) return;
+        /*
+        if (this.namedResults === undefined) {
+            debugger;
+        }
+        */
+        return async () => {
+            // let binPicksEditing = new SheetEditing(this.divStore.sheetStore);
+            // await binPicksEditing.runBinPick(pick);
+            // let { values } = binPicksEditing;
+            await this.runBinPick(pick);
+            let v = this.getValue(pick.on.name);
+            // let { values } = this;
+            // return values.id;
+            return v;
+        };
+    }
 }
 
 export class DivEditing extends BinBudsEditing {
@@ -199,27 +220,6 @@ export class DivEditing extends BinBudsEditing {
             if (value === null || value === undefined) return null;
             return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} />;
         })
-    }
-
-    protected getOnPick(bud: BizBud): (() => number | Promise<number>) {
-        let { onPicks } = this.entityBin;
-        let pick = onPicks[bud.id];
-        if (pick === undefined) return;
-        /*
-        if (this.namedResults === undefined) {
-            debugger;
-        }
-        */
-        return async () => {
-            // let binPicksEditing = new SheetEditing(this.divStore.sheetStore);
-            // await binPicksEditing.runBinPick(pick);
-            // let { values } = binPicksEditing;
-            await this.runBinPick(pick);
-            let v = this.getValue(pick.on.name);
-            // let { values } = this;
-            // return values.id;
-            return v;
-        };
     }
 }
 

@@ -284,7 +284,7 @@ export class BudsEditing<R = any> extends Store implements FormContext {
         return false;
     }
 
-    protected getOnPick(bud: BizBud): (() => number | Promise<number>) {
+    getOnPick(bud: BizBud): (() => number | Promise<number>) {
         return undefined;
     }
 

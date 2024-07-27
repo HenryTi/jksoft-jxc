@@ -12,7 +12,7 @@ import { BizBud } from "app/Biz";
 import { useReactToPrint } from "react-to-print";
 
 export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean; }) {
-    const { uq, main, divStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
+    const { uq, mainStore: main, divStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
     const modal = useModal();
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(atomSubmitState);
@@ -188,7 +188,7 @@ export async function startSheetStore(sheetStore: SheetStore) {
     const { sheetConsole } = sheetStore;
     let ret = await sheetStore.start(/*pick*/);
     if (ret === undefined) {
-        if (sheetStore.main.no === undefined) {
+        if (sheetStore.mainStore.no === undefined) {
             // 还没有创建单据
             sheetConsole.close();
         }

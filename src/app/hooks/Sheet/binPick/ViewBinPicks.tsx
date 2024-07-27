@@ -42,7 +42,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     // const pickFromSpec = usePickFromSpec();
     // const pickFromPend = usePickFromPend();
     // const [pickFromQueryScalar, pickFromQuery] = usePickFromQuery();
-    const { main, divStore, sheetConsole } = sheetStore;
+    const { mainStore: main, divStore, sheetConsole } = sheetStore;
     const { steps } = sheetConsole;
     // const { /*atomPickedResults, */atomRearPickResult, atomCur } = picks;
     let { current: editing } = useRef(new BinBudsEditing(sheetStore, main.entity, []));

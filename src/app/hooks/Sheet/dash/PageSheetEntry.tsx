@@ -32,7 +32,7 @@ export function PageSheetNew({ store }: { store: SheetStore; }) {
     if (loaded === true) {
         return <PageSheet store={store} />;
     }
-    const { main, isPend } = store;
+    const { mainStore: main, isPend } = store;
     const { entity } = main;
     const { binPicks, rearPick } = entity;
     if (rearPick === undefined && (binPicks === undefined || binPicks.length === 0)) {
@@ -87,7 +87,7 @@ function useOnPicked(store: SheetStore) {
 }
 */
 async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
-    const { sheetConsole, main } = store;
+    const { sheetConsole, mainStore: main } = store;
     let ret = await main.startFromPickResults(results);
     if (ret === undefined) {
         if (store.hasId() === false) {
@@ -178,7 +178,7 @@ function PageDirectPend({ store }: { store: SheetStore; }) {
 
 async function nothingPicked(store: SheetStore) {
     // const {userProxy} = store;
-    let editing = new BinBudsEditing(store, store.main.entity, []);
+    let editing = new BinBudsEditing(store, store.mainStore.entity, []);
     let results: ReturnUseBinPicks = {
         editing,
         /*

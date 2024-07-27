@@ -78,7 +78,7 @@ class RouteConsole extends SheetConsole {
     }
 
     async onSheetAdded(store: SheetStore/* sheetId: number, no: string*/): Promise<void> {
-        const { main } = store;
+        const { mainStore: main } = store;
         const { valRow, no } = main;
         let { id, i, x, origin, price, value, amount } = valRow;
         if (id <= 0) return;
@@ -102,7 +102,7 @@ class RouteConsole extends SheetConsole {
 
     async onSubmited(store: SheetStore): Promise<void> {        // 单据已提交
         // removeSheetFromCache();
-        const { main } = store;
+        const { mainStore: main } = store;
         const { valRow, no } = main;
         this.removeFromCache(valRow.id);
         let { caption, name } = this.entitySheet;
