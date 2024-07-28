@@ -313,6 +313,7 @@ export class BudsEditing<R = any> extends Store implements FormContext {
                 disabled: valueSetType === ValueSetType.equ,
                 required,
             };
+            let defaultValue = calcResults[name];
             let formRow: any = {
                 name,
                 label: caption ?? name,
@@ -320,6 +321,7 @@ export class BudsEditing<R = any> extends Store implements FormContext {
                 options,
                 required,
                 onPick: this.getOnPick(bud),
+                default: defaultValue,
             };
             const { type, min, max } = budDataType;
             switch (type) {

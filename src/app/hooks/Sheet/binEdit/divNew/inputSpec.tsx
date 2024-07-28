@@ -37,16 +37,21 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     // const pendProxyHander = new PendProxyHandler(entityPend);
     // calc.addValues('pend', new Proxy(pendRow, pendProxyHander));
     // const base = calc.results['.i'] as number;
+    const { spec: entitySpec, baseExp, baseBud, params } = binInput;
     const baseName = '.i';
-    editing.addFormula(baseName, binInput.baseExp ?? binInput.baseBud.valueSet);
+    editing.addFormula(baseName, baseExp ?? baseBud.valueSet);
     // editing.addNamedValues('pend', new Proxy(pendRow, pendProxyHander));
     const base = editing.getValue(baseName) as number;
     if (base === undefined) {
         debugger;
         throw Error('input spec must have base');
     }
+    const paramValues: { [budId: number]: any } = {};
+    for (let [bud, formula] of params) {
+        paramValues[bud.id] = editing.calcValue(formula);
+    }
+
     const viewTop = <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} />;
-    const { spec: entitySpec } = binInput;
     // let budsEditing: ValuesBudsEditing;
     const { preset } = entitySpec;
     if (preset === true) {
@@ -63,7 +68,8 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     const { keys, buds: specBuds } = entitySpec;
     let buds = [...keys];
     if (specBuds !== undefined) buds.push(...specBuds);
-    let budsEditing = new ValuesBudsEditing(modal, biz, buds)
+    let budsEditing = new ValuesBudsEditing(modal, biz, buds);
+    budsEditing.initBudValues(paramValues);
     let ret = await modal.open(<PagePickSpec />);
     if (ret !== undefined) {
         const { id, base } = ret;

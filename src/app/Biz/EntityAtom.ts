@@ -196,6 +196,12 @@ export class EntityFork extends EntityID {
     exBud: BizBud;
     preset: boolean;    // 如果true，不能临时录入，只能选择。
 
+    getBud(id: number): BizBud {
+        let ret = this.keyColl[id];
+        if (ret !== undefined) return ret;
+        return this.budColl[id];
+    }
+
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;

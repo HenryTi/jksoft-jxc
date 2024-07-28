@@ -99,9 +99,10 @@ export class BinInputSpec extends BinInput {
     spec: EntityFork;
     baseExp: string;
     baseBud: BizBud;        // 以后不允许表达式。只能是bud id
+    params: [BizBud, string][];
     build(val: any): void {
         super.build(val);
-        const { spec, base } = val;
+        const { spec, base, params } = val;
         this.spec = this.biz.entityFromId(spec) as EntityFork;
         this.bizPhraseType = this.spec.bizPhraseType;
         let baseBud = this.biz.budFromId(base);
@@ -111,6 +112,9 @@ export class BinInputSpec extends BinInput {
         else {
             this.baseExp = base;
         }
+        this.params = (params as [number, string][]).map(([budId, formula]) => {
+            return [this.spec.getBud(budId), formula];
+        });
     }
 }
 
