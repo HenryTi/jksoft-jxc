@@ -12,7 +12,7 @@ import { IDView } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { BizPhraseType, EnumAtom } from "uqs/UqDefault";
 import { ViewSpecId } from "./ViewSpecId";
-import { AtomPhrase } from "app/tool";
+import { contentFromDays, fromDays } from "app/tool";
 
 export interface BandProps {
     label?: string | JSX.Element;
@@ -315,16 +315,43 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     }
 
     const { name, type, readOnly, right, step } = row as FormInput;
+    function bandLabel() {
+        return options?.required === true ?
+            <>{label} <span className="text-danger fs-larger">*</span></> : label;
+
+    }
+    function buildBandInput() {
+        const theLabel = bandLabel();
+        let newOptions = registerOptions(type, label, options);
+        return <BandInput label={theLabel} type={type} step={step}
+            errors={errors}
+            labelClassName={labelClassName}
+            inputProps={register(name, newOptions)} defaultValue={options?.value}
+            right={right} />;
+    }
+    function buildBandDateInput() {
+        let label = bandLabel();
+        // let inputProps = registerOptions(type, label, options);
+        let error = errors[name];
+        let cnInput = 'form-control ';
+        if (error) cnInput += 'is-invalid';
+        let newOptions = registerOptions(type, label, options);
+        let defaultValue = contentFromDays(options?.value);
+        // newOptions.valueAsDate = true;
+        newOptions.value = defaultValue;
+        if (type === 'hidden') label = null;
+        return <Band label={label} labelClassName={labelClassName}>
+            <input {...register(name, newOptions)} className={cnInput} type={type} step={step} />
+            {error && <div className="invalid-feedback mt-1 ms-2">
+                {error.message?.toString()}
+            </div>}
+        </Band>
+    }
     switch (type) {
         default:
-            const theLabel = options?.required === true ?
-                <>{label} <span className="text-danger fs-larger">*</span></> : label;
-            let newOptions = registerOptions(type, label, options);
-            return <BandInput label={theLabel} type={type} step={step}
-                errors={errors}
-                labelClassName={labelClassName}
-                inputProps={register(name, newOptions)} defaultValue={options?.value}
-                right={right} />;
+            return buildBandInput();
+        case 'date':
+            return buildBandDateInput();
         case 'submit':
             return <Band>
                 <div className="d-flex">

@@ -31,6 +31,7 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
                         if (bizBud === budI || bizBud === budX) return null;
                         let { id, caption, name } = bizBud;
                         let value = buds[id];
+                        if (Number.isNaN(value) === true) debugger;
                         return <LabelBox key={id} label={caption ?? name} required={required} title={value as any} className="mb-2">
                             <EditBudInline budEditing={v} id={idBin} value={value} onChanged={onBudChanged} readOnly={readOnly} />
                         </LabelBox>;

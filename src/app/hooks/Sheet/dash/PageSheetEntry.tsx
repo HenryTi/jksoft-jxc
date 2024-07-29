@@ -87,8 +87,8 @@ function useOnPicked(store: SheetStore) {
 }
 */
 async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
-    const { sheetConsole, mainStore: main } = store;
-    let ret = await main.startFromPickResults(results);
+    const { sheetConsole, mainStore } = store;
+    let ret = await mainStore.startFromPickResults(results);
     if (ret === undefined) {
         if (store.hasId() === false) {
             // 还没有创建单据

@@ -90,9 +90,12 @@ export class SheetMainStore extends EntityStore<EntityBin> {
             formulas.push(['x', getFormulaText(x.valueSet ?? 'x$pick')]);
         }
         for (let mp of mainProps) {
-            formulas.push([mp.name, getFormulaText(mp.valueSet)]);
+            const { name, valueSet } = mp;
+            if (valueSet === undefined) continue;
+            formulas.push([name, getFormulaText(valueSet)]);
         }
         let { editing,/* namedResults, */rearBinPick, rearResult } = pickResults;
+        editing.addFormulas(formulas);
         // const calc = new Calc(formulas, namedResults);
         if (rearBinPick !== undefined) {
             // calc.addValues(rearBinPick.name, rearResult[0]);
@@ -109,6 +112,10 @@ export class SheetMainStore extends EntityStore<EntityBin> {
         for (let mp of mainProps) {
             // let v = calc.getValue(mp.name);
             let v = editing.getValueNumber(mp.name);
+            if (Number.isNaN(v) === true) {
+                debugger;
+                editing.getValueNumber(mp.name);
+            }
             row.buds[mp.id] = v;
         }
         setAtomValue(this._valRow, row);

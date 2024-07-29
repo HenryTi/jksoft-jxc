@@ -12,7 +12,7 @@ import { BizBud } from "app/Biz";
 import { useReactToPrint } from "react-to-print";
 
 export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean; }) {
-    const { uq, mainStore: main, divStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
+    const { uq, mainStore, divStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
     const modal = useModal();
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(atomSubmitState);
@@ -22,7 +22,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     });
     async function onSubmit() {
         function checkTrigger() {
-            if (main.trigger() === false) return false;
+            if (mainStore.trigger() === false) return false;
             if (divStore !== undefined) {
                 if (divStore.trigger() === false) return false;
             }
@@ -34,7 +34,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             return;
         }
         setEditable(false);
-        let sheetId = main.valRow.id;
+        let sheetId = mainStore.valRow.id;
         let { checkPend, checkBin } = await uq.SubmitSheet.submitReturns({ id: sheetId });
         if (checkPend.length + checkBin.length > 0) {
             let error: string = '';
@@ -54,11 +54,11 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     }
 
     async function onDiscardSheet() {
-        let message = `${caption} ${main.no} 真的要作废吗？`;
+        let message = `${caption} ${mainStore.no} 真的要作废吗？`;
         let ret = await modal.open(<PageConfirm header="确认" message={message} yes="单据作废" no="不作废" />);
         if (ret === true) {
             await store.discard();
-            sheetConsole.discard(main.valRow.id);
+            sheetConsole.discard(mainStore.valRow.id);
         }
     }
     async function onExit() {
@@ -69,7 +69,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         // alert('正在实现中...');
     }
 
-    let { id } = useAtomValue(main._valRow);
+    let { id } = useAtomValue(mainStore._valRow);
     let btnPrint = buttonDefs.print(onPrint);
     let btnExit = buttonDefs.exit(onExit, false);
     let headerGroup = [btnExit];

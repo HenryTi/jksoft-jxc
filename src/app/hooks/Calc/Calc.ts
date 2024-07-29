@@ -1,6 +1,7 @@
 import { getDays } from 'app/tool';
 import jsep from 'jsep';
 import { ValueSpace } from './ValueSpace';
+import dayjs from 'dayjs';
 
 jsep.addIdentifierChar("%");
 export class Formula {
@@ -80,7 +81,9 @@ export class Formula {
 
 const funcs: { [func: string]: (...params: any[]) => number } = {
     curdate: function () {
-        return getDays(new Date().toISOString());
+        let d = dayjs(new Date()).format('YYYY-MM-DD');
+        let ret = getDays(d);
+        return ret;
     }
 }
 
