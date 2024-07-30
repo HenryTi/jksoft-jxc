@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { FormRow, FormRowsView } from "app/coms";
 import { theme } from "tonwa-com";
 import { ChangeEvent, useRef } from "react";
-import { PageFromQuery } from "app/hooks/Query";
+import { doQuery } from "app/hooks/Query";
 
 export function PageQuery({ entity }: { entity: EntityQuery; }) {
     const modal = useModal();
@@ -26,9 +26,10 @@ export function PageQuery({ entity }: { entity: EntityQuery; }) {
         if (v === undefined) return null;
         return (v as any).options = { ...(v as any).options, ...options };
     });
-    function onSubmitForm(data: any) {
+    async function onSubmitForm(data: any) {
         let ret = { ...data, ...paramsData };
-        modal.open(<PageFromQuery query={entity} params={ret} />);
+        await doQuery(modal, entity, ret);
+        // modal.open(<PageFromQuery query={entity} params={ret} />);
     }
     return <Page header={caption ?? name}>
         <form className={theme.bootstrapContainer + ' my-3 '} onSubmit={handleSubmit(onSubmitForm)}>
