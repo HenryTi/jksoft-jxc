@@ -1,6 +1,6 @@
-import { EntityQuery } from "app/Biz";
+import { BizBud, EntityQuery } from "app/Biz";
 import { EntityStore } from "app/tool";
-import { Picked, Prop, pickedFromJsonArr } from "../tool";
+import { Picked, Prop } from "../tool";
 
 export class QueryStore extends EntityStore<EntityQuery> {
     async query(param: any) {
@@ -10,10 +10,11 @@ export class QueryStore extends EntityStore<EntityQuery> {
         let pickedArr: Picked[] = [];
         let coll: { [id: number]: Picked } = {};
         for (let row of retItems) {
+            let idArr: Prop[] = [];
             let propArr: Prop[] = [];
             const { id, ban, value, json } = row;
             let picked: Picked = {
-                $: propArr as any,
+                $: idArr as any,
                 $id: id,
                 id: json[0], //: row.id as any,
                 value,
@@ -25,7 +26,7 @@ export class QueryStore extends EntityStore<EntityQuery> {
                 value: ban, // row.ban,
             };
             picked.json = json;
-            pickedFromJsonArr(this.entity, propArr, picked, json);
+            this.fromJsonArr(idArr, picked, json);
             pickedArr.push(picked);
             coll[id] = picked;
         }
@@ -58,9 +59,54 @@ export class QueryStore extends EntityStore<EntityQuery> {
                 json,
                 value,
             };
-            pickedFromJsonArr(this.entity, propArr, $spec, json);
+            this.fromJsonArr(propArr, $spec, json);
             $specs.push($spec);
         }
         return pickedArr;
     }
+
+    private fromJsonArr(propArr: Prop[], picked: Picked, arr: any[]) {
+        if (arr === undefined) return;
+        const { biz, budColl } = this.entity;
+        for (let v of arr) {
+            let { length } = v;
+            if (length === undefined) continue;
+            let v0 = v[0];
+            let v1 = v[1];
+            let name: string, bud: BizBud, value: any;
+            if (v0 === 0) {
+                (v as number[]).shift();
+                picked.$ids = v;
+                continue;
+            }
+            switch (length) {
+                default: debugger; continue;
+                case 2:
+                    if (typeof (v0) === 'string') {
+                        switch (v0) {
+                            case 'no': picked.no = v1; continue;
+                            case 'ex': picked.ex = v1; continue;
+                        }
+                        name = v0;
+                        value = v1
+                    }
+                    else {
+                        bud = budColl[v0];
+                        name = bud.name;
+                        value = v1;
+                    }
+                    break;
+                case 3:
+                    let bizEntity = biz.entityFromId(v0);
+                    bud = bizEntity.budColl[v1];
+                    name = bud.name;
+                    value = v[2];
+                    break;
+            }
+            let prop: Prop = { name, bud, value };
+            picked[name] = prop;
+            propArr.push(prop);
+        }
+    }
+
 }

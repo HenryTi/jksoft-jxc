@@ -47,8 +47,9 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         throw Error('input spec must have base');
     }
     const paramValues: { [budId: number]: any } = {};
-    for (let [bud, formula] of params) {
-        paramValues[bud.id] = editing.calcValue(formula);
+    // 暂时先按赋值处理，以后可以处理:=
+    for (let { bud, valueSet, valueSetType } of params) {
+        paramValues[bud.id] = editing.calcValue(valueSet);
     }
 
     const viewTop = <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} />;

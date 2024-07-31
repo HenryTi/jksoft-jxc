@@ -275,9 +275,10 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
                 }
             }
             return <>
-                {ids.map((v, index) => {
-                    let col = idCols[index];
-                    return <ViewIdOne key={v} id={v} col={col} />
+                {idCols.map((v, index) => {
+                    let col = v;
+                    let val = ids[index];
+                    return <ViewIdOne key={val} id={val} col={col} />
                 })}
             </>;
         }

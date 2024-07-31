@@ -1,6 +1,6 @@
 import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
-import { BizBud, BizBudBinValue, BudID, BudRadio, EnumBudType } from "./BizBud";
+import { BizBud, BizBudBinValue, BudID, BudRadio, EnumBudType, ValueSetType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntityFork } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
@@ -95,11 +95,17 @@ export abstract class BinInput extends BizBud {
     }
 }
 
+export interface InputSpecParam {
+    bud: BizBud;
+    valueSet: string;
+    valueSetType: ValueSetType;
+}
+
 export class BinInputSpec extends BinInput {
     spec: EntityFork;
     baseExp: string;
     baseBud: BizBud;        // 以后不允许表达式。只能是bud id
-    params: [BizBud, string][];
+    params: InputSpecParam[];
     build(val: any): void {
         super.build(val);
         const { spec, base, params } = val;
@@ -112,8 +118,12 @@ export class BinInputSpec extends BinInput {
         else {
             this.baseExp = base;
         }
-        this.params = (params as [number, string][]).map(([budId, formula]) => {
-            return [this.spec.getBud(budId), formula];
+        this.params = (params as [number, string, string][]).map(([budId, formula, setType]) => {
+            return {
+                bud: this.spec.getBud(budId),
+                valueSet: formula,
+                valueSetType: setType === '=' ? ValueSetType.equ : ValueSetType.init,
+            };
         });
     }
 }
