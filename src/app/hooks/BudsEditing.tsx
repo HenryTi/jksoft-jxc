@@ -6,11 +6,13 @@ import {
     Biz
 } from "app/Biz";
 import { Calc, CalcIdObj, CalcResult, ValueSpace, Formula, Formulas } from "./Calc";
-import { getDays, Store } from "app/tool";
+import { fromDays, getDays, Store } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
 import { BudCheckValue, Modal } from "tonwa-app";
 import { Atom } from "jotai";
+import { ChangeEvent } from "react";
+import dayjs from "dayjs";
 // import { NamedResults } from "./Sheet/store";
 
 export class BudsEditing<R = any> extends Store implements FormContext {
@@ -115,7 +117,6 @@ export class BudsEditing<R = any> extends Store implements FormContext {
     }
 
     getValue(name: string) {
-
         let ret = this.valueSpace.getValue(name);
         if (ret !== undefined) return ret;
         ret = this.calc.getValue(name);
@@ -133,13 +134,15 @@ export class BudsEditing<R = any> extends Store implements FormContext {
         this.budValuesTool = budValuesTool;
     }
 
-    //protected abstract setBudValue(bud: BizBud, value: any): void;
     protected setBudValue(bud: BizBud, value: any): void {
+        this.setNamedValue(bud.name, value);
         this.budValuesTool.setBudValue(bud, this.values, value);
     }
 
-    protected getBudValue(bud: BizBud): any {
-        return this.budValuesTool.getBudValue(bud, this.values);
+    getBudValue(bud: BizBud): any {
+        let ret = this.budValuesTool.getBudValue(bud, this.values);
+        if (ret !== undefined) return ret;
+        return this.calc.getValue(bud.name);
     }
 
     protected hasBud(bud: BizBud): boolean {
@@ -386,12 +389,20 @@ export class BudsEditing<R = any> extends Store implements FormContext {
         return budEditings.map(budEditing => {
             const { bizBud: bud } = budEditing;
             const { caption, name } = bud;
-            let value = this.budValuesTool.getBudValue(bud, this.values);
+            let value = this.getBudValue(bud); // this.budValuesTool.getBudValue(bud, this.values);
             const onBudChanged = (bizBud: BizBud, newValue: string | number | BudCheckValue) => {
                 this.setBudValue(bizBud, newValue);
             }
+            const onChange = (event: ChangeEvent<HTMLInputElement>): void => {
+                let date = event.currentTarget.valueAsDate;
+                let iso = date.toISOString();
+                let p = iso.indexOf('T');
+                let str = iso.substring(0, p);
+                let n = getDays(str);
+                this.setBudValue(bud, n);
+            }
             return <LabelBox key={bud.id} label={caption ?? name} className="mb-2">
-                <EditBudInline budEditing={budEditing} id={0} value={value} onChanged={onBudChanged} readOnly={false} />
+                <EditBudInline budEditing={budEditing} id={0} value={value} onChanged={onBudChanged} readOnly={false} options={{ onChange }} />
             </LabelBox>;
         })
     }
