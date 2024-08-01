@@ -82,10 +82,13 @@ export async function pickQueryParams(props: Props) {
         }
     }
     if (inputParams.length === 0) {
-        let retParam: any = {};
+        /*
+        let retParam : any = {};
         for (let [pickParam, bizBud, value] of valueParams) {
             retParam[pickParam.name] = value;
         }
+        */
+        let retParam = stripParams(undefined, valueParams);
         return retParam;
     }
     const { modal, biz } = editing;
@@ -93,6 +96,15 @@ export async function pickQueryParams(props: Props) {
     return await modal.open(<PageParams header={header}
         valueParams={valueParams}
         inputParams={paramBudsEditing} />);
+}
+
+function stripParams(initData: any, valueParams: [PickParam, BizBud, any][]) {
+    let retParam: any = initData === undefined ? {} : { ...initData };
+    for (let [pickParam, bizBud, value] of valueParams) {
+        if (typeof value === 'object') value = value.id;
+        retParam[pickParam.name] = value;
+    }
+    return retParam;
 }
 
 interface PageParamsProps {
@@ -108,10 +120,13 @@ function PageParams({ header, valueParams, inputParams }: PageParamsProps) {
         { type: 'submit', label: '查找', options: {}, className: undefined }
     ];
     function onSubmitForm(data: any) {
+        let ret = stripParams(data, valueParams);
+        /*
         let ret = { ...data };
         for (let [pickParam, , value] of valueParams) {
             ret[pickParam.name] = value;
         }
+        */
         modal.close(ret);
     }
     return <Page header={header}>
