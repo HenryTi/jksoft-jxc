@@ -39,7 +39,6 @@ export async function pickFromSpec(editing: BudsEditing, binPick: PickSpec): Pro
     </div>;
     let entitySpec = from;
     const { preset, id: specPhrase, keys } = entitySpec;
-    let budsEditing: ValuesBudsEditing;
     if (preset === true) {
         let retSpec = await modal.open(<PagePickSelect entity={entitySpec} base={base} />);
         /*
@@ -56,14 +55,12 @@ export async function pickFromSpec(editing: BudsEditing, binPick: PickSpec): Pro
         */
         return retSpec;
     }
-    else {
-        const { buds: props } = entitySpec;
-        let buds = [...keys];
-        if (props !== undefined) buds.push(...props);
-        budsEditing = new ValuesBudsEditing(modal, biz, buds)
-        let ret = await modal.open(<PagePickSpec />);
-        return ret;
-    }
+    const { buds: props } = entitySpec;
+    let buds = [...keys];
+    if (props !== undefined) buds.push(...props);
+    let budsEditing = new ValuesBudsEditing(modal, biz, buds)
+    let ret = await modal.open(<PagePickSpec />);
+    return ret;
 
     function PagePickSpec() {
         const { id: entityId, caption, name, keys, buds: props } = entitySpec;

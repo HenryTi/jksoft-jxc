@@ -123,6 +123,7 @@ export class Calc {
     }
 
     calcFormula(formula: string): string | number {
+        if (formula === undefined) return undefined;
         this._results = undefined;
         let name = '$_$';
         let fm = new Formula(formula);

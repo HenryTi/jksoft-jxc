@@ -53,6 +53,9 @@ export function usePageParams() {
 */
 export async function pickQueryParams(props: Props) {
     const { editing, header, queryParams, pickParams } = props;
+    for (let pickParam of pickParams) {
+        editing.addFormula(pickParam.name, pickParam.valueSet);
+    }
     const { valueSpace } = editing;
     const valueParams: [PickParam, BizBud, any][] = [];
     const inputParams: BizBud[] = [];
@@ -60,15 +63,16 @@ export async function pickQueryParams(props: Props) {
         let { name, budDataType } = param;
         let pickParam = pickParams?.find(v => v.name === name);
         if (pickParam !== undefined) {
-            let { bud, prop } = pickParam;
-            if (bud === undefined) debugger;
-            let namedResult = valueSpace.getValue(bud); // namedResults[bud]; // as NamedResults;
-            if (namedResult === undefined) {
-                debugger;
-                valueSpace.getValue(bud);
-            }
-            if (prop === undefined) prop = 'id';
-            let v = (namedResult as any)[prop];
+            // let { bud, prop } = pickParam;
+            // if (bud === undefined) debugger;
+            // let namedResult = valueSpace.getValue(bud); // namedResults[bud]; // as NamedResults;
+            // if (namedResult === undefined) {
+            //     debugger;
+            //     valueSpace.getValue(bud);
+            // }
+            // if (prop === undefined) prop = 'id';
+            // let v = (namedResult as any)[prop];
+            let v = editing.getValue(name);
             valueParams.push([pickParam, param, v]);
         }
         else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {

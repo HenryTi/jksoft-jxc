@@ -54,14 +54,20 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         paramValues[bud.id] = editing.calcValue(valueSet);
         if (valueSetType === ValueSetType.equ) ++paramsSetCount;
     }
-    async function saveSpec(data: any) {
+    async function saveSpec(isFormInput: boolean, data: any) {
         function buildValues(buds: BizBud[]) {
             let values: { [bud: string]: number | string } = {};
             for (let bud of buds) {
                 const { id, name, budDataType } = bud;
-                let v = data[name] ?? data[id];
-                switch (budDataType.type) {
-                    case EnumBudType.date: v = getDays(v); break;
+                let v: any;
+                if (isFormInput === true) {
+                    v = data[name];
+                    switch (budDataType.type) {
+                        case EnumBudType.date: v = getDays(v); break;
+                    }
+                }
+                else {
+                    v = data[id];
                 }
                 values[name] = v;
             }
@@ -84,7 +90,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     }
     let ret: any;
     if (paramsSetCount === keys.length + specBuds.length) {
-        ret = await saveSpec(paramValues);
+        ret = await saveSpec(false, paramValues);
     }
     else if (preset === true) {
         let { ret } = await uq.GetSpecsFromBase.query({ base });
@@ -141,7 +147,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
                 if (id < 0) id = -id;
                 let retSpec = Object.assign(data, { id, base });
                 */
-                let retSpec = await saveSpec(data);
+                let retSpec = await saveSpec(true, data);
                 modal.close(retSpec);
             }
             const { bootstrapContainer } = theme;

@@ -15,7 +15,7 @@ export interface UserSite<T = any> {
     name: string;
     nick: string;
     icon: string;
-    rolesAtom: WritableAtom<string[], any, any>;
+    rolesAtom: WritableAtom<number[], any, any>;
     permits: { [permit: string]: boolean };
     entity: string;
     addBy: number;
@@ -90,14 +90,14 @@ export class UqSites {
         this.userSite = undefined; // this.userSite0;
     }
 
-    hasRole(role: string[] | string) {
+    hasRole(role: number[] | number) {
         if (this.userSite === undefined) return false;
         let { rolesAtom, isAdmin } = this.userSite;
         if (isAdmin === true) return true;
         if (rolesAtom === undefined) return false;
         let roles = getAtomValue(rolesAtom);
         if (Array.isArray(role) === true) {
-            let arr = role as string[];
+            let arr = role as number[];
             for (let item of arr) {
                 let ret = roles.indexOf(item) >= 0;
                 if (ret === true) return true;
@@ -105,7 +105,7 @@ export class UqSites {
             return false;
         }
         else {
-            return roles.indexOf(role as string) >= 0;
+            return roles.indexOf(role as number) >= 0;
         }
     }
 

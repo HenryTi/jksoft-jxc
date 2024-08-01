@@ -12,7 +12,7 @@ export interface UseSiteRoleReturn {
     onOwnerAdded: (userId: number, assigned: string) => Promise<void>;
     addUser: (user: number, assigned: string) => Promise<any>;
     delAdmin: (userId: number, admin: EnumSysRole) => Promise<void>;
-    setUserRole: (userId: number, role: string, on: boolean) => Promise<void>;
+    setUserRole: (userId: number, role: number, on: boolean) => Promise<void>;
 }
 
 export function useSiteRole() {
@@ -133,7 +133,7 @@ function useSiteRoleBase(userSite: UserSite): UseSiteRoleReturn {
         return await syncUser(user);
     }
 
-    async function setUserRole(userId: number, role: string, on: boolean) {
+    async function setUserRole(userId: number, role: number, on: boolean) {
         await internalSetUserRole(userId, role, on);
     }
 
@@ -159,7 +159,7 @@ function useSiteRoleBase(userSite: UserSite): UseSiteRoleReturn {
         return ret;
     }
 
-    async function internalSetUserRole(user: number, role: string, on: boolean) {
+    async function internalSetUserRole(user: number, role: number, on: boolean) {
         let action: 'add' | 'del' | 'clear' = on === true ? 'add' : 'del';
         let act: Action = uqMan.entities['$role_site_user_role'] as any;
         await act.submit({

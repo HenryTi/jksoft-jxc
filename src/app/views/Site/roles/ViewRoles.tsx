@@ -37,7 +37,7 @@ export function ViewRoles({ siteRole }: { siteRole: UseSiteRoleReturn; }) {
                     <Checked>roleT('admin')</Checked>
                     :
                     <>{roles.map(role => {
-                        let roleEntity = bizRoles.find(v => v.phrase === role);
+                        let roleEntity = bizRoles.find(v => v.id === role);
                         let content: string;
                         if (roleEntity === undefined) {
                             content = `role is not defined in biz`;

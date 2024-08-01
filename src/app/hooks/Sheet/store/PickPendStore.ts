@@ -2,30 +2,35 @@ import { BizBud, EnumBudType, PickPend } from "app/Biz";
 import { BinStore } from "./BinStore";
 import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 import { PickResult, ValueSpace } from "app/hooks/Calc";
+import { BinBudsEditing } from "./BinEditing";
 
 export class PickPendStore {
     readonly divStore: BinStore;
     readonly pickPend: PickPend;
     readonly valueSpace: ValueSpace;
-    readonly paramsEditing: ValuesBudsEditing;
+    readonly paramsEditing: BinBudsEditing;
 
     constructor(divStore: BinStore, pickPend: PickPend, valueSpace: ValueSpace) {
         this.divStore = divStore;
         this.pickPend = pickPend;
         this.valueSpace = valueSpace;
         this.paramsEditing = this.createParamsEditing();
+        this.paramsEditing.calcAll();
     }
 
     private createParamsEditing() {
-        let paramsInput: BizBud[] = [];
         let { pickParams } = this.pickPend;
-        let { entity: { pend: entityPend } } = this.divStore;
+        const { sheetStore, entity: entityBin } = this.divStore;
+        const { pend: entityPend } = entityBin;
         let { params } = entityPend;
+        let ret = new BinBudsEditing(sheetStore, entityBin, params);
         for (let bud of params) {
-            if (pickParams.findIndex(v => v.name === bud.name) >= 0) continue;
-            paramsInput.push(bud);
+            let pickParam = pickParams.find(v => v.name === bud.name);
+            if (pickParam !== undefined) {
+                ret.addFormula(pickParam.name, pickParam.valueSet);
+            }
         }
-        return new ValuesBudsEditing(this.divStore.modal, this.divStore.biz, paramsInput);
+        return ret;
     }
 
     async searchPend() {
@@ -38,7 +43,8 @@ export class PickPendStore {
             let { id, name, budDataType } = param;
             let pickParam = pickParams?.find(v => v.name === name);
             if (pickParam !== undefined) {
-                let { bud, prop, valueSet, valueSetType } = pickParam;
+                // let { /*bud, prop, */valueSet, valueSetType } = pickParam;
+                /*
                 if (bud === undefined) debugger;
                 let namedResult = this.valueSpace.getValue(bud) as PickResult;
                 if (namedResult === undefined) {
@@ -48,10 +54,12 @@ export class PickPendStore {
                     if (prop === undefined) prop = 'id';
                     paramValue = namedResult[prop];
                 }
+                */
+                // paramValue = this.paramsEditing.getValue(name);
+            } else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {
+                // paramValue = this.paramsEditing.getValue(name);
             }
-            else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {
-                paramValue = this.paramsEditing.values[id];
-            }
+            paramValue = this.paramsEditing.getValue(name);
 
             // radio 值是数组，需要变成单值
             if (budDataType.type === EnumBudType.radio) {

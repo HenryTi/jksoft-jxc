@@ -11,20 +11,21 @@ import { BudsEditing } from "app/hooks";
 // import { Editing } from "app/hooks";
 
 export class PickParam extends BizBud {
+    /*
     bud: string;
     prop: string;       // prop of bud
-
+    
     protected fromSwitch(i: string, val: any): void {
         switch (i) {
             default:
                 super.fromSwitch(i, val);
                 break;
             case 'value':
-                this.fromVal(val);
+                super.fromSwitch(i, val);
                 break;
         }
     }
-
+    /*
     private fromVal(val: string) {
         let [v, s] = val.split('\n');
         if (v[0] === '%') {
@@ -52,6 +53,7 @@ export class PickParam extends BizBud {
                 break;
         }
     }
+    */
 }
 
 export abstract class BinPick extends BizBud {
@@ -571,9 +573,6 @@ export class EntityBin extends Entity {
     scan() {
         super.scan();
         this.directly = true;
-        if (this.binPicks !== undefined) {
-            this.binPicks = this.binPicks.map(v => this.buildPick(v as any));
-        }
         if (this.i !== undefined) {
             this.i = this.buildBudPickable(this.i as any);
             this.i.onForm = false;
@@ -591,6 +590,7 @@ export class EntityBin extends Entity {
             this.xBase.onForm = false;
         }
         if (this.binPicks !== undefined) {
+            this.binPicks = this.binPicks.map(v => this.buildPick(v as any));
             let binPicks: BinPick[] = [];
             let rearPick: BinPick;
             for (let pick of this.binPicks) {

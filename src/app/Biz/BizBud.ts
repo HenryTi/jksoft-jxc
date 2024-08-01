@@ -37,8 +37,9 @@ export abstract class BudDataType {
     min: string;
     max: string;
     fromSchema(schema: any) {
-        this.min = schema.min;
-        this.max = schema.max;
+        const { min, max } = schema;
+        if (min !== undefined) this.min = min[0];
+        if (max !== undefined) this.max = max[0];
     }
     scan(biz: Biz, bud: BizBud) { }
     getUIValue(value: string | number) {
@@ -305,8 +306,13 @@ export class BizBud extends BizBase {
         return ret;
     }
 
-    private setDefault(defaultValue: string) {
+    private setDefault(defaultValue: [string, number]) {
+        let vt: ValueSetType;
         if (defaultValue !== undefined) {
+            const [dv, type] = defaultValue;
+            this.valueSet = dv;
+            vt = (type as ValueSetType) ?? ValueSetType.equ;
+            /*
             let p = defaultValue.indexOf('\n');
             if (p > 0) {
                 let suffix = defaultValue.substring(p + 1);
@@ -318,10 +324,12 @@ export class BizBud extends BizBase {
                 this.valueSet = defaultValue;
             }
             if (this.valueSet.indexOf('`') >= 0) debugger;
+            */
         }
         else {
-            this.valueSetType = ValueSetType.none;
+            vt = ValueSetType.none;
         }
+        this.valueSetType = vt;
     }
 }
 

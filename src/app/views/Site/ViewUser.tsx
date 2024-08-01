@@ -96,15 +96,15 @@ export function ViewUser({ siteRole, userSite: userSiteInit }: Props) {
                 let roles = useAtomValue(rolesAtom);
                 return <Band label={'角色'}>
                     {biz.roles.map((v, index) => {
-                        let { name, caption, phrase } = v;
-                        let defaultChecked = roles?.findIndex(r => r === phrase) >= 0;
+                        let { id, name, caption } = v;
+                        let defaultChecked = roles?.findIndex(r => r === id) >= 0;
                         async function onCheckChanged(name: string, checked: boolean) {
-                            await siteRole.setUserRole(userId, phrase, checked);
+                            await siteRole.setUserRole(userId, id, checked);
                             if (checked === true) {
-                                roles.push(phrase);
+                                roles.push(id);
                             }
                             else {
-                                let index = roles.findIndex(v => v === phrase);
+                                let index = roles.findIndex(v => v === id);
                                 if (index >= 0) roles.splice(index, 1);
                             }
                             setAtomValue(rolesAtom, [...roles]);
