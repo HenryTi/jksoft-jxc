@@ -53,8 +53,10 @@ export function usePageParams() {
 */
 export async function pickQueryParams(props: Props) {
     const { editing, header, queryParams, pickParams } = props;
-    for (let pickParam of pickParams) {
-        editing.addFormula(pickParam.name, pickParam.valueSet);
+    if (pickParams !== undefined) {
+        for (let pickParam of pickParams) {
+            editing.addFormula(pickParam.name, pickParam.valueSet);
+        }
     }
     const { valueSpace } = editing;
     const valueParams: [PickParam, BizBud, any][] = [];
