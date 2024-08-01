@@ -115,10 +115,11 @@ export class BudsEditing<R = any> extends Store implements FormContext {
     }
 
     getValue(name: string) {
-        let ret = this.calc.getValue(name);
+
+        let ret = this.valueSpace.getValue(name);
         if (ret !== undefined) return ret;
-        let r = this.valueSpace.getValue(name);
-        return r;
+        ret = this.calc.getValue(name);
+        return ret;
     }
 
     getValueNumber(name: string) {

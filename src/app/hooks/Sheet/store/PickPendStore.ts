@@ -59,7 +59,10 @@ export class PickPendStore {
             } else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {
                 // paramValue = this.paramsEditing.getValue(name);
             }
-            paramValue = this.paramsEditing.getValue(name);
+            paramValue = this.paramsEditing.values.buds[id];
+            if (paramValue === undefined) {
+                paramValue = this.paramsEditing.getValue(name);
+            }
 
             // radio 值是数组，需要变成单值
             if (budDataType.type === EnumBudType.radio) {
