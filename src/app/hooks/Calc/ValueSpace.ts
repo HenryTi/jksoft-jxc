@@ -1,3 +1,4 @@
+import { Biz } from "app/Biz";
 import { CalcIdObj } from "./Calc";
 
 export type PickResult = { [prop: string]: number | string | object };
@@ -14,6 +15,7 @@ interface NamedValues { [name: string]: NamedValue | string | number }
 export class ValueSpace {
     private readonly roots: NamedValue[] = [];
     readonly namedValues: NamedValues = {};
+
     addValues(name: string, values: NamedValue) {
         if (name === undefined) {
             this.roots.push(values);

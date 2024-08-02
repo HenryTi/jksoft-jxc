@@ -5,15 +5,13 @@ import {
     BudValuesToolBase,
     Biz
 } from "app/Biz";
-import { Calc, CalcIdObj, CalcResult, ValueSpace, Formula, Formulas } from "./Calc";
-import { fromDays, getDays, Store } from "app/tool";
+import { Calc, CalcResult, ValueSpace, Formulas } from "./Calc";
+import { getDays, Store } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
 import { BudCheckValue, Modal } from "tonwa-app";
 import { Atom } from "jotai";
 import { ChangeEvent } from "react";
-import dayjs from "dayjs";
-// import { NamedResults } from "./Sheet/store";
 
 export class BudsEditing<R = any> extends Store implements FormContext {
     private readonly calc: Calc;
