@@ -17,6 +17,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     const initCheckValue: BudCheckEditValue = {};
     if (initValue === undefined) {
         // initCheckValue[items[0].id] = true;
+        let a = 1;
     }
     else if (Array.isArray(initValue) === true) {
         for (let v of initValue as BudCheckValue) {

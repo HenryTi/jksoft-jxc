@@ -31,7 +31,7 @@ export class BudsEditing<R = any> extends Store implements FormContext {
         this.buds = buds;
         // this.calc = this.createCalc(formulas);
         let formulas = this.buildFormulas();
-        this.valueSpace = new ValueSpace();
+        this.valueSpace = new ValueSpace(biz);
         this.calc = new Calc(this.valueSpace, formulas, this.values as any);
         // this.addFormulas();
     }

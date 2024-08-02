@@ -1,4 +1,4 @@
-import { Biz } from "app/Biz";
+import { Biz, EntityOptions } from "app/Biz";
 import { CalcIdObj } from "./Calc";
 
 export type PickResult = { [prop: string]: number | string | object };
@@ -13,8 +13,13 @@ type NamedValue = { [name: string]: string | number; };
 interface NamedValues { [name: string]: NamedValue | string | number }
 
 export class ValueSpace {
+    private readonly biz: Biz;
     private readonly roots: NamedValue[] = [];
     readonly namedValues: NamedValues = {};
+
+    constructor(biz: Biz) {
+        this.biz = biz;
+    }
 
     addValues(name: string, values: NamedValue) {
         if (name === undefined) {
@@ -40,7 +45,9 @@ export class ValueSpace {
 
     member(name0: string, name1: string): CalcIdObj {
         let obj = this.getObj(name0);
-        if (obj === null || typeof obj !== 'object') return;
+        if (obj === null || typeof obj !== 'object') {
+            return this.getOptionsItem(name0, name1);
+        }
         let ret = (obj as any)[name1];
         return ret;
     }
@@ -54,5 +61,12 @@ export class ValueSpace {
             ret = (values as any)[name];
             if (ret !== undefined) return ret;
         }
+    }
+
+    private getOptionsItem(name0: string, name1: string) {
+        let n = name0.substring(1);
+        let options = this.biz.entities[n] as EntityOptions;
+        let ret = options.items.find(v => v.name === name1);
+        return ret.id;
     }
 }
