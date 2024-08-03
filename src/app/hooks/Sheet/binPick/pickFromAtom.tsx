@@ -15,7 +15,7 @@ export function usePickFromAtom() {
 */
 export async function pickFromAtom(editing: BudsEditing, binPick: PickAtom): Promise<PickResult> {
     const { modal } = editing;
-    let { name, caption, from } = binPick;
-    let ret = await modal.open<AtomPhrase>(<PageIDSelect entity={from[0]} caption={caption ?? name} />);
+    let { caption, from } = binPick;
+    let ret = await modal.open<AtomPhrase>(<PageIDSelect entity={from[0]} caption={caption} />);
     return ret as any as PickResult;
 }

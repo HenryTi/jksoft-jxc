@@ -23,7 +23,7 @@ export function PageSumGroup() {
     return <PageList />;
 
     function PageList() {
-        let caption = entityAtom.caption ?? entityAtom.name;
+        let caption = entityAtom.caption;
         let searchParam = {
             atom: entityAtom.id,
             key: undefined as string,

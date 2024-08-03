@@ -51,13 +51,13 @@ export function PageSpecNew({ store }: { store: SpecStore; }) {
                 alert('key input error');
                 break;
             case EnumSaveSpec.duplicateKey:
-                let err = `关键字 ${keys.map(v => v.caption ?? v.name).join(',')} 重复`;
+                let err = `关键字 ${keys.map(v => v.caption).join(',')} 重复`;
                 // alert(err);
                 setError(keys[0].name, { message: err });
                 break;
         }
     }
-    return <Page header={caption ?? name}>
+    return <Page header={caption}>
         <div className="pt-3 tonwa-bg-gray-2">
             <Band>
                 <div className="mx-3">{store.topViewAtom()}</div>

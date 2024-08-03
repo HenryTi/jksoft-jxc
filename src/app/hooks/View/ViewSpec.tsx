@@ -32,11 +32,11 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel, bold }: {
                     let { length: len } = buds;
                     for (let i = 0; i < len; i++) {
                         let bud = buds[i];
-                        let { id, caption, name } = bud
+                        let { id, caption } = bud
                         let content: any = bud.getUIValue(values[i]);
                         let band: any;
                         //if (noLabel !== true) {
-                        band = <LabelBox key={id} label={caption ?? name} /*colon={true}*/>
+                        band = <LabelBox key={id} label={caption} /*colon={true}*/>
                             {content}
                         </LabelBox>;
                         //}
@@ -77,8 +77,8 @@ function ViewAtom({ no, ex, entity, bold, noLabel }: { no: string; ex: string; e
     }
     let label: any;
     if (entity !== undefined) {
-        const { caption, name } = entity;
-        label = caption ?? name;
+        const { caption } = entity;
+        label = caption;
     }
     return <LabelBox label={label} title={'编号: ' + no} /*colon={true}*/>
         {vContent}
@@ -97,8 +97,8 @@ export function ViewBudSpec({ id, bud, noLabel }: { id: number; bud: BizBud; noL
         }
         let label: any;
         if (entity !== undefined) {
-            const { caption, name } = bud;
-            label = caption ?? name; // <small className="text-secondary me-2">{caption ?? name}</small>;
+            const { caption } = bud;
+            label = caption; // <small className="text-secondary me-2">{caption ?? name}</small>;
         }
         return <LabelBox title={title} label={label} /*colon={true}*/>
             {ex}
@@ -162,9 +162,9 @@ function ViewSpecProps({ phrase, props: propValues, className, buildProp }: VPPr
 
 export function ViewSpecPropsH({ phrase, props: propValues }: VPProps) {
     function buildProp(bud: BizBud, value: string | number) {
-        const { caption, name, id } = bud;
+        const { caption, id } = bud;
         return <div key={id} className="w-min-6c me-2">
-            <div className="small text-secondary w-min-3c me-1">{caption ?? name}:</div>
+            <div className="small text-secondary w-min-3c me-1">{caption}:</div>
             <div>{bud.getUIValue(value)}</div>
         </div>;
     }
@@ -173,9 +173,9 @@ export function ViewSpecPropsH({ phrase, props: propValues }: VPProps) {
 
 export function ViewSpecPropsV({ phrase, props: propValues }: VPProps) {
     function buildProp(bud: BizBud, value: string | number) {
-        const { caption, name, id } = bud;
+        const { caption, id } = bud;
         return <span key={id} className="d-inline-block me-3">
-            <span className="small text-secondary w-min-3c me-1">{caption ?? name}:</span>
+            <span className="small text-secondary w-min-3c me-1">{caption}:</span>
             {bud.getUIValue(value)}
         </span>;
     }

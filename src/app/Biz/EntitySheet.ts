@@ -478,7 +478,7 @@ export class EntityBin extends Entity {
         }
         if (ui !== undefined) {
             if (ui.caption === undefined) {
-                ui.caption = caption ?? name;
+                ui.caption = caption;
             }
         }
         pickID.ui = ui;

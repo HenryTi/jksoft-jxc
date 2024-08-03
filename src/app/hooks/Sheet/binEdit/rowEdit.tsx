@@ -32,8 +32,8 @@ export async function rowEdit(modal: Modal, binEditing: BinEditing, valDiv: ValD
     const { i: budI, x: budX } = entityBin;
     const { atomParams } = budI;
     if (atomParams !== undefined) {
-        const { name, caption } = budI;
-        await modal.open(<Page header={caption ?? name}>
+        const { caption } = budI;
+        await modal.open(<Page header={caption}>
         </Page>);
     }
     let ret = await modal.open(<ModalInputRow binEditing={binEditing} valDiv={valDiv} />);
@@ -44,7 +44,7 @@ function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; val
     const modal = useModal();
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { entityBin, values: binDetail, sheetStore } = binEditing;
-    const { i: budI, iBase: budIBase, x: budX, xBase: budXBase } = entityBin;
+    const { caption, i: budI, iBase: budIBase, x: budX, xBase: budXBase } = entityBin;
     const [submitable, setSubmitable] = useState(binEditing.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;
@@ -82,9 +82,9 @@ function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; val
     }
     function ViewIdField({ bud, budBase, value, base }: { bud: BizBud; budBase: BizBud; value: number; base: number; }) {
         if (bud === undefined) return null;
-        const { caption, name } = bud;
+        const { caption } = bud;
         let id = base ?? value;
-        return <Band label={caption ?? name} className="border-bottom py-2">
+        return <Band label={caption} className="border-bottom py-2">
             <ViewSpecBaseOnly id={value} bold={true} />
             <ViewAtomTitles bud={budBase ?? bud} id={id} store={sheetStore} />
             <RowCols>
@@ -109,7 +109,7 @@ function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; val
         </Band>
     }
 
-    return <Page header="输入明细" right={right}>
+    return <Page header={caption} right={right}>
         <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + theme.bootstrapContainer}>
             <ViewIdField bud={budI} budBase={budIBase} value={binDetail.i} base={valDiv?.iBase} />
             <ViewIdField bud={budX} budBase={budXBase} value={binDetail.x} base={valDiv?.xBase} />

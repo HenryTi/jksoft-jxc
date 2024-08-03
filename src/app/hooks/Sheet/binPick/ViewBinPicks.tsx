@@ -245,7 +245,7 @@ function ViewBinPick({ editing, binPick, onPick, index, cur }: {
         <LR label={<>
             <FA name={iconPrefix} fixWidth={true} className={'me-2 ' + cnAngle} />
             <div className="flex-fill" />
-            <span className={cnLabel}>{binPick.caption ?? binPick.name}</span>
+            <span className={cnLabel}>{binPick.caption}</span>
         </>} cn={cn} onClick={onClick}>
             {vContent}
         </LR>

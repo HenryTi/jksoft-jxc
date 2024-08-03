@@ -36,11 +36,11 @@ function SearchLink({ caption, iconColor, textColor, onClick }: { caption: strin
 
 function SearchSheetLink({ sheet }: { sheet: EntitySheet }) {
     const modal = useModal();
-    const { caption, name } = sheet;
+    const { caption } = sheet;
     function onSearch() {
         modal.open(<PageSheetSearch sheetConsole={undefined} />);
     }
-    return <SearchLink caption={caption ?? name} iconColor="text-info" textColor="text-primary" onClick={onSearch} />;
+    return <SearchLink caption={caption} iconColor="text-info" textColor="text-primary" onClick={onSearch} />;
 }
 
 function PageSearchAll() {
@@ -177,9 +177,9 @@ function ViewParams({ budArr, onBudChanged }: { budArr: BizBud[]; onBudChanged: 
         let budEditing = budEditings[i];
         const { bizBud, required } = budEditing;
         const cn = required === true ? ' text-primary ' : ' text-secodary ';
-        let { id, caption, name } = bizBud;
+        let { id, caption } = bizBud;
         propRow.push(<div key={id} className="col-3">
-            <div className={cn}>{caption ?? name}</div>
+            <div className={cn}>{caption}</div>
             <div className="py-1"><EditBudInline budEditing={budEditing} id={undefined} value={undefined} onChanged={onBudChanged} /></div>
         </div>);
         if (i === length - 1) break;

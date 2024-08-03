@@ -23,13 +23,13 @@ export function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
 
 export function PAV({ bud, className, val, onClick }: { bud: BizBud; className?: string; val: number; onClick?: () => void }) {
     if (bud === undefined) return null;
-    let { caption, name } = bud;
+    let { caption } = bud;
     if (Number.isNaN(val) === true) {
         debugger;
         val = 0;
     }
     return <div className="d-flex align-items-center text-end text-nowrap" onClick={onClick}>
-        <div className={theme.labelColor + ' me-2 '}>{caption ?? name}</div>
+        <div className={theme.labelColor + ' me-2 '}>{caption}</div>
         <div className={(className ?? '') + ' w-min-3c '}>{bud.getUIValue(val)}</div>
     </div>
 }

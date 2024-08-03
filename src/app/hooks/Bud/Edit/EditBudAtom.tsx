@@ -12,9 +12,9 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     const { id, readOnly, labelSize, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
     const { bizBud, error } = budEditing;
     const [value, setValue] = useState<number>(initValue as number);
-    const { caption, name, budDataType, atomParams } = bizBud;
+    const { caption, budDataType, atomParams } = bizBud;
     const { entityID } = budDataType as BudID;
-    const label = caption ?? name;
+    const label = caption;
     const IDSelect = useIDSelect();
     async function onEditClick() {
         if (entityID === undefined) {

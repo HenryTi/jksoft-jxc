@@ -47,8 +47,8 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
             pageHeader = String('Sheet Type ID: ' + base);
         }
         else {
-            const { caption, name } = entitySheetInView;
-            pageHeader = caption ?? name;
+            const { caption } = entitySheetInView;
+            pageHeader = caption;
         }
         if (entitySheetInView === undefined) {
             async function onDelMyDraft() {

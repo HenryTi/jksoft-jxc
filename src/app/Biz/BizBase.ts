@@ -14,7 +14,7 @@ export class BizBase {
     ui: Partial<UIStyle>;
     bizPhraseType: BizPhraseType;
     get name(): string { return this._name; }
-    get caption(): string { return this.ui?.caption; }
+    get caption(): string { return this.ui?.caption ?? this._name; }
 
     constructor(biz: Biz, id: number, name: string, type: string) {
         this.biz = biz;

@@ -7,7 +7,7 @@ import { PageSheetSearch } from "./PageSheetSearch";
 import { ViewSheetItem } from "./ViewSheetItem";
 
 export function PageSheetList({ entitySheet, sheetConsole }: { entitySheet: EntitySheet; sheetConsole: SheetConsole; }) {
-    const { caption, name, uq, id, biz } = entitySheet;
+    const { caption, uq, id, biz } = entitySheet;
     const modal = useModal();
     let to = new Date();
     to.setDate(to.getDate() + 2);
@@ -29,7 +29,7 @@ export function PageSheetList({ entitySheet, sheetConsole }: { entitySheet: Enti
         return <ViewSheetItem value={value} sheetConsole={sheetConsole} />;
     }
     return <PageQueryMore
-        header={(caption ?? name) + ' - 已归档'}
+        header={(caption) + ' - 已归档'}
         right={right}
         query={uq.GetMySheetList}
         param={param}

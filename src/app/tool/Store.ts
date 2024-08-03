@@ -56,7 +56,7 @@ export abstract class EntityStore<E extends Entity = Entity> extends Store {
     }
 
     get header() {
-        return this.entity.caption ?? this.entity.name;
+        return this.entity.caption;
     }
 
     protected cacheIdAndBuds(props: ReturnGetSheetProps[],

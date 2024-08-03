@@ -215,7 +215,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
             const { bin } = details[0];
             this.isPend = bin.pend !== undefined;
         }
-        this.caption = entitySheet.caption ?? entitySheet.name;
+        this.caption = entitySheet.caption;
         if (detail !== undefined) {
             this.divStore = new BinStore(this, detail.bin);
         }

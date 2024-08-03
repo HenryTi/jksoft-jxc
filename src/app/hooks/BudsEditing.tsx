@@ -13,7 +13,7 @@ import { BudCheckValue, Modal } from "tonwa-app";
 import { Atom } from "jotai";
 import { ChangeEvent } from "react";
 
-export class BudsEditing<R = any> extends Store implements FormContext {
+export abstract class BudsEditing<R = any> extends Store implements FormContext {
     private readonly calc: Calc;
     readonly valueSpace: ValueSpace;
     protected readonly requiredFields: BizBud[] = [];
@@ -318,7 +318,7 @@ export class BudsEditing<R = any> extends Store implements FormContext {
             let defaultValue = calcResults[name];
             let formRow: any = {
                 name,
-                label: caption ?? name,
+                label: caption,
                 type: 'number',
                 options,
                 required,
@@ -399,7 +399,7 @@ export class BudsEditing<R = any> extends Store implements FormContext {
                 let n = getDays(str);
                 this.setBudValue(bud, n);
             }
-            return <LabelBox key={bud.id} label={caption ?? name} className="mb-2">
+            return <LabelBox key={bud.id} label={caption} className="mb-2">
                 <EditBudInline budEditing={budEditing} id={0} value={value} onChanged={onBudChanged} readOnly={false} options={{ onChange }} />
             </LabelBox>;
         })

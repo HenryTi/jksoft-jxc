@@ -61,14 +61,14 @@ export function useBizAssign(): UseBizAssingReturn {
                 })}
             </div>;
         }
-        const titleCaptions = entity.titles.map(v => v.caption ?? v.name);
-        return <PageQueryMore header={caption ?? name}
+        const titleCaptions = entity.titles.map(v => v.caption);
+        return <PageQueryMore header={caption}
             query={query}
             param={searchParam}
             sortField="id"
             ViewItem={ViewItem}
         >
-            <div className="px-3 my-3">{entity.atoms.map(v => (v.caption ?? v.name)).join(', ')}</div>
+            <div className="px-3 my-3">{entity.atoms.map(v => (v.caption)).join(', ')}</div>
             <div className="d-flex px-3">
                 <div className="flex-grow-1"></div>
                 {titleCaptions.map((v, index) => <div key={index} className="w-8c text-end ms-3 me-2 small">{v}</div>)}

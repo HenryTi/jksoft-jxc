@@ -47,12 +47,12 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
     if (noLabel === true) {
         return <div className="col mb-1">{content}</div>;
     }
-    return <LabelBox label={caption ?? name} className="mb-1">{content}</LabelBox>;
+    return <LabelBox label={caption} className="mb-1">{content}</LabelBox>;
 }
 
 export function budContent(bud: BizBud, value: any, store: EntityStore) {
     let content: any;
-    const { name, caption, budDataType } = bud;
+    const { budDataType } = bud;
     if (value === undefined) {
         content = <>&nbsp;</>;
     }
@@ -110,8 +110,8 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
             return <span title={title}>{ex}</span>;
         }
         let label: any;
-        const { caption, name } = bud;
-        label = caption ?? name;
+        const { caption } = bud;
+        label = caption;
         return <LabelBox title={title} label={label} /*colon={true}*/>
             {ex}
         </LabelBox>;
@@ -128,8 +128,8 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
         }
         if (entityID.bizPhraseType === BizPhraseType.fork) {
             let label: any;
-            const { caption, name } = bud;
-            label = caption ?? name;
+            const { caption } = bud;
+            label = caption;
             return <LabelBox label={label}>
                 <ViewSpecId id={value} />
             </LabelBox>
@@ -145,8 +145,8 @@ function radio(bud: BizBud, value: any) {
     if (v === undefined) {
         return <>{JSON.stringify(value)}</>;
     }
-    const { caption, name } = v;
-    return <>{caption ?? name}</>;
+    const { caption } = v;
+    return <>{caption}</>;
 }
 
 function check(bud: BizBud, value: any) {
@@ -157,11 +157,11 @@ function check(bud: BizBud, value: any) {
     for (let v of vals) {
         let op = options.coll[v];
         if (op === undefined) continue;
-        const { caption, name } = op;
+        const { caption } = op;
         if (vArr.length > 0) {
             vArr.push(<small key={'s' + v} className="text-secondary mx-2">|</small>);
         }
-        vArr.push(<span key={v} className="">{caption ?? name}</span>);
+        vArr.push(<span key={v} className="">{caption}</span>);
     }
     return <>{vArr}</>;
 }
@@ -191,8 +191,8 @@ function bin(bud: BizBud, value: any, store: EntityStore) {
     const { budsColl } = store;
     let budVals = budsColl[value];
     function viewNoVals(bud: BizBud) {
-        let { id, caption, name } = bud;
-        return <LabelBox key={id} label={caption ?? name} className="mb-1">
+        let { id, caption } = bud;
+        return <LabelBox key={id} label={caption} className="mb-1">
             <div>{ }</div>
             ?{id}-{value}?
         </LabelBox>;

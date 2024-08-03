@@ -29,9 +29,9 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
                     {budEditings.map(v => {
                         const { bizBud, required } = v;
                         if (bizBud === budI || bizBud === budX) return null;
-                        let { id, caption, name } = bizBud;
+                        let { id, caption } = bizBud;
                         let value = buds[id];
-                        return <LabelBox key={id} label={caption ?? name} required={required} title={value as any} className="mb-2">
+                        return <LabelBox key={id} label={caption} required={required} title={value as any} className="mb-2">
                             <EditBudInline budEditing={v} id={idBin} value={value} onChanged={onBudChanged} readOnly={readOnly} />
                         </LabelBox>;
                     })}
@@ -42,9 +42,9 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
 
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
         if (bud === undefined) return null;
-        const { caption, name } = bud;
+        const { caption } = bud;
         let content = value ? <ViewSpecR id={value} /> : <>&nbsp;</>;
-        return <LabelBox label={caption ?? name} editable={false}>
+        return <LabelBox label={caption} editable={false}>
             {content}
         </LabelBox>
     }

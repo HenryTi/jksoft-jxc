@@ -157,18 +157,8 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
     function PageFromQuery() {
         const { caption, name, ids: idCols, showIds: showIdCols, idFrom, value: budValue } = query;
         const header = caption ?? name;
-        const { arr, bizPhraseType } = idFrom;
+        const { bizPhraseType } = idFrom;
         let [selectedItems, setSelectedItems] = useState<{ [id: number]: Picked; }>({});
-        // let { current: queryStore } = useRef(new QueryStore(modal, query));
-        // let [pickedArr, setPickedArr] = useState<Picked[]>(undefined);
-        /*
-        useEffectOnce(() => {
-            (async function () {
-                let ret = await queryStore.query(params);
-                setPickedArr(ret);
-            })();
-        });
-        */
         function onPick() {
             let values = Object.values(selectedItems);
             values.sort((a, b) => {
@@ -278,7 +268,8 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
                 {idCols.map((v, index) => {
                     let col = v;
                     let val = ids[index];
-                    return <ViewIdOne key={val} id={val} col={col} />
+                    if (index >= idCols.length) return null;
+                    return <ViewIdOne key={index} id={val} col={col} />
                 })}
             </>;
         }

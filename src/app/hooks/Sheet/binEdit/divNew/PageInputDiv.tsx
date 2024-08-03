@@ -14,7 +14,8 @@ export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
     const { binDivRoot: binDiv } = divStore;
     const { register, setValue, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [submitable, setSubmitable] = useState(divEditing.submitable);
-    let formRows = divEditing.buildFormRows();
+    const excludeOnFormFalse = true;
+    let formRows = divEditing.buildFormRows(excludeOnFormFalse);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         divEditing.stopInitFormula();
         const { type, value: valueInputText, name } = evt.target;

@@ -32,7 +32,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
     let radios: [item: number, caption: string, value: string | number, defaultCheck: boolean,][] = []
     let checked = false, checkedItem: OptionsItem;
     for (let item of items) {
-        let { id: itemId, name, caption, value } = item;
+        let { id: itemId, caption, name, value } = item;
         let c: boolean = checks[itemId];
         if (c === true) {
             checked = true;
@@ -44,7 +44,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
         // (radios[0])[3] = true;
     }
 
-    let label = caption ?? name;
+    let label = caption;
     let cnRadio: string;
     let onEditClick = async function () {
         function onReturn() {
@@ -109,8 +109,8 @@ export function EditBudRadio(props: EditBudTemplateProps) {
         if (optionItem === undefined) {
             return <ViewBudEmpty />;
         }
-        const { caption, name } = optionItem;
-        return <>{caption ?? name}</>;
+        const { caption } = optionItem;
+        return <>{caption}</>;
     }
 
     function Dropdown() {
@@ -125,7 +125,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
             return <option key={index} value={item}>{caption}</option>;
         });
         return <select onChange={onSelectChange} defaultValue={defaultValue} className="form-select" >
-            <option value={0} className="text-secondary small">--不选--</option>
+            <option value={0}>/</option>
             {viewOptions}
         </select>;
     }
@@ -145,7 +145,7 @@ export function EditBudRadio(props: EditBudTemplateProps) {
         onChanged?.(bizBud, [optionsItemPhrase]);
         setValue({ [optionsItemPhrase]: true });
     }
-    return <ValueEdit label={caption ?? name}
+    return <ValueEdit label={caption}
         flag={flag}
         labelSize={labelSize}
         readOnly={readOnly}
@@ -178,12 +178,12 @@ export function ViewBudRadio({ bizBud, value: initValue }: {
     let radios: [item: number, caption: string, value: string | number, defaultCheck: boolean,][] = []
     let hasChecked = false;
     for (let item of items) {
-        let { id: itemId, name, caption, value } = item;
+        let { id: itemId, caption, value } = item;
         let c: boolean = checks[itemId];
         if (c === true) {
             hasChecked = true;
         }
-        radios.push([itemId, caption ?? name, value, c]);
+        radios.push([itemId, caption, value, c]);
     }
     if (hasChecked === false) {
         (radios[0])[3] = true;

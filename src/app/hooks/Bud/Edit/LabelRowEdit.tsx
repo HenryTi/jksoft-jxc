@@ -19,7 +19,7 @@ export function LabelRowEdit(props: EditProps) {
         content = <div className="py-2 pe-1 w-100">{children}</div>;
     }
     else {
-        let right: any = <span className="p-3">&nbsp;</span>;
+        let right: any; // = <span className="p-3">&nbsp;</span>;
         if (onEditClick !== null) {
             if (readOnly !== true) {
                 right = <div onClick={onEditClick} className="cursor-pointer py-2 px-1">
@@ -32,10 +32,8 @@ export function LabelRowEdit(props: EditProps) {
         }
         else {
             content = <>
-                <div className="ms-2 py-2 position-relative flex-fill">
-                    <div className="form-control border-0">
-                        {children}
-                    </div>
+                <div className="ms-1 position-relative flex-fill">
+                    {children}
                 </div>
                 {right}
             </>;

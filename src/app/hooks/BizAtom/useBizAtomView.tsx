@@ -20,7 +20,7 @@ const cnColumns2 = 'gx-0 row row-cols-1 row-cols-md-2 row-cols-lg-3';
 
 function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { bottom?: any; }) {
     const { NOLabel, exLabel, id, bottom } = options;
-    const { getAtom, saveField, saveBud, entity: entityAtom } = useBizAtom(options)
+    const { getAtom, saveField, saveBudValue, entity: entityAtom } = useBizAtom(options)
     const [state, setState] = useState<AtomIDValue>(undefined);
     useEffectOnce(() => {
         (async () => {
@@ -47,7 +47,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
     const vFieldRows = <div className={cnColumns2}>
         {
             fieldRows.map((v, index) => <div key={index} className="col">
-                <EditAtomField key={index} {...v} id={id} value={main[v.name]} saveField={saveField} saveBud={saveBud} labelSize={0} />
+                <EditAtomField key={index} {...v} id={id} value={main[v.name]} saveField={saveField} saveBud={saveBudValue} labelSize={0} />
                 <Sep />
             </div>)
         }
@@ -81,8 +81,7 @@ export function ViewAtomProps({ entity, value }: { entity: EntityID; value: Atom
     if (forks !== undefined) {
         vForks = <div className="p-3">{
             forks.map(v => {
-                let { caption, name } = v;
-                if (caption === undefined) caption = name;
+                let { caption } = v;
                 function onSpec() {
                     modal.open(<PageSpecList entitySpec={v} baseValue={value} />);
                 }
@@ -97,8 +96,12 @@ export function ViewAtomProps({ entity, value }: { entity: EntityID; value: Atom
         return budEditings.map(v => {
             if (v === undefined) debugger;
             let budEditing = v; // valuesBudsEditing.createBudEditing(v); // new BudEditing(v);
-            let { id: budId } = v.bizBud;
+            const { bizBud } = budEditing;
+            let { id: budId } = bizBud;
             let prop = buds[budId];
+            if (prop === undefined) {
+                prop = valuesBudsEditing.getBudValue(bizBud);
+            }
             return <div key={budId} className="col">
                 <EditBudLabelRow
                     id={id}

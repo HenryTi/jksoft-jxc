@@ -76,8 +76,7 @@ export class DashConsole extends SheetConsole {
         const { no, valRow } = main;
         const { id } = valRow;
         this.removeMyDraft(id);
-        let { caption, name } = this.entitySheet;
-        if (caption === undefined) caption = name;
+        let { caption } = this.entitySheet;
         let viewSubmited = <>{caption} <b>{no}</b> 提交成功!</>;
         setAtomValue(this.atomViewSubmited, viewSubmited);
         this.modal.close();

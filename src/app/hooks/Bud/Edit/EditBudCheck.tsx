@@ -11,7 +11,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
     const modal = useModal();
     const { id, readOnly, labelSize, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
     const { bizBud } = budEditing;
-    const { budDataType, caption, name, ui } = bizBud;
+    const { budDataType, caption, ui } = bizBud;
     const { options: { items } } = budDataType as BudCheck;
     const initCheckValue: BudCheckEditValue = {};
     if (initValue !== undefined) {
@@ -43,7 +43,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
 
     let onEditClick: () => void;
     let content: any;
-    let label = caption ?? name;
+    let label = caption;
     if (ui?.edit === 'pop') {
         cn += ' w-25 my-1';
         onEditClick = async function () {
@@ -86,7 +86,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
     function Checks() {
         return <>{
             items.map((v, index) => {
-                let { id, name, caption, value } = v;
+                let { id, caption, value } = v;
                 async function onChange(name: string, checked: boolean) {
                     await onCheckChanged(v, checked);
                 }
@@ -96,13 +96,13 @@ export function EditBudCheck(props: EditBudTemplateProps) {
                     disabled={readOnly}
                     value={value}
                     defaultChecked={checks[id]}>
-                    {caption ?? name}
+                    {caption}
                 </CheckAsync>;
             })}
         </>;
     }
 
-    return <ValueEdit label={caption ?? name}
+    return <ValueEdit label={caption}
         readOnly={readOnly}
         labelSize={labelSize}
         flag={flag}

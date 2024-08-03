@@ -13,7 +13,7 @@ import { editDivs } from "../divNew";
 export function PageEditDivRoot({ divStore, valDiv }: { divStore: BinStore; valDiv: ValDivBase; }) {
     const { sheetStore } = divStore;
     const { entity: entitySheet, mainStore: main } = sheetStore;
-    return <Page header={`${(entitySheet.caption ?? entitySheet.name)} - ${main.no}`}>
+    return <Page header={`${(entitySheet.caption)} - ${main.no}`}>
         <EditDiv divStore={divStore} valDiv={valDiv} />
     </Page>
 }

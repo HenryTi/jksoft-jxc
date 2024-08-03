@@ -9,9 +9,9 @@ export function EditBudOnPick(props: EditBudTemplateProps & { onPick: () => numb
     const { id, onPick, readOnly, labelSize, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
     const { budsEditing, bizBud } = budEditing;
     const [value, setValue] = useState<number>(initValue as number);
-    const { caption, name, budDataType } = bizBud;
+    const { caption, budDataType } = bizBud;
     const { entityID } = budDataType as BudID;
-    const label = caption ?? name;
+    const label = caption;
     async function onEditClick() {
         let atomId: number = await onPick();
         if (atomId === undefined) return;

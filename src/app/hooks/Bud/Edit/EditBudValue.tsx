@@ -20,8 +20,8 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
     const budInitValue = fromBudValue === undefined ? initValue as string | number : fromBudValue(initValue);
     const [value, setValue] = useState<string | number>(budInitValue);
     const { bizBud } = budEditing;
-    const { caption, name, ui } = bizBud;
-    const label = caption ?? name;
+    const { caption, ui } = bizBud;
+    const label = caption;
     async function valueEdited(v: any) {
         let budValue = convertToBudValue(v);
         if (id !== undefined) {

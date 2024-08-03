@@ -100,7 +100,7 @@ export async function pickFromSpec(editing: BudsEditing, binPick: PickSpec): Pro
             let retSpec = Object.assign({ id, base }, data);
             modal.close(retSpec);
         }
-        return <Page header={caption ?? name}>
+        return <Page header={caption}>
             <div className="pt-3 tonwa-bg-gray-2">
                 <Band>
                     <div className="mx-3">{viewTop}</div>

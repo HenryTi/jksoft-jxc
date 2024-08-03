@@ -62,7 +62,7 @@ export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: Entity
             let vLabel: any;
             let vContent = budContent(v, value, store);
             if (noLabel !== true) {
-                vLabel = <><small className={labelColor}>{v.caption ?? v.name}</small>: </>;
+                vLabel = <><small className={labelColor}>{v.caption}</small>: </>;
             }
             return <span key={id} className="text-nowrap me-3">
                 {vLabel}{vContent}
@@ -117,7 +117,7 @@ export function ViewSpecAtomTitles({ id, store }: { id: number; store: EntitySto
             let vLabel: any;
             let vContent = budContent(v, value, store);
             if (noLabel !== true) {
-                vLabel = <><small className={labelColor}>{v.caption ?? v.name}</small>: </>;
+                vLabel = <><small className={labelColor}>{v.caption}</small>: </>;
             }
             return <span key={id} className="text-nowrap me-3">
                 {vLabel}{vContent}

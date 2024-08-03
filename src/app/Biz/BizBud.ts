@@ -207,10 +207,10 @@ export class BudPickable extends BudDataNumber {
 }
 
 export enum ValueSetType {
-    none,
-    init,
-    equ,
-    show,
+    none = 0,
+    init = 2,
+    equ = 1,
+    show = 3,
 }
 
 export class BizBud extends BizBase {

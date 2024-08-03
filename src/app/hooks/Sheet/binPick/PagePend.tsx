@@ -9,15 +9,14 @@ import { useAtomValue } from "jotai";
 
 export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
     let { divStore, pickPend } = pendStore;
-    let { caption } = pickPend;
+    let { caption, name } = pickPend;
     let { entity: { pend: entityPend }, atomPendRows, sheetStore } = divStore;
     const { sheetConsole: { steps }, atomLoaded } = sheetStore;
     const modal = useModal();
     let pendRows = useAtomValue(atomPendRows);
-    let { name: pendName } = entityPend;
 
-    if (caption === undefined) {
-        caption = entityPend.caption ?? pendName;
+    if (caption === name) {
+        caption = entityPend.caption;
     }
     function ViewItemPendRow({ value: pendRow }: { value: PendRow }) {
         return <ViewPendRowEdit pendRow={pendRow} divStore={divStore} />;

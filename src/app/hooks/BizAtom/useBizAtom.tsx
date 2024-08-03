@@ -60,7 +60,7 @@ export interface UseBizAtomReturn {
     pathList: string;
     getAtom(id: number): Promise<AtomIDValue>;
     saveField: (id: number, name: string, value: string | number) => Promise<void>;
-    saveBud: (id: number, bizBud: BizBud, value: string | number) => Promise<void>;
+    saveBudValue: (id: number, bizBud: BizBud, value: string | number) => Promise<void>;
     searchAtoms: QueryMore;
     selectLeafAtom: (entityAtom: EntityAtom) => Promise<EntityAtom>;
 }
@@ -112,7 +112,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         await uq.ActIDProp(uq.Atom, id, name, value);
     }
 
-    async function saveBud(id: number, bizBud: BizBud, value: string | number) {
+    async function saveBudValue(id: number, bizBud: BizBud, value: string | number) {
         let int: number, dec: number, str: string;
         const { budDataType, id: phraseId } = bizBud;
         switch (budDataType.type) {
@@ -157,7 +157,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         pathList,
         getAtom,
         saveField,
-        saveBud,
+        saveBudValue,
         searchAtoms,
         selectLeafAtom,
     };

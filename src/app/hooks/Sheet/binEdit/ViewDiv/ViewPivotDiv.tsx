@@ -41,7 +41,7 @@ export function ViewPivotDiv({ valDiv, divStore }: ViewDivProps) {
                     if (value === item.value) return null;
                 }
                 return <span key={bud.id} className="ms-2">
-                    {withLabel && <span className={labelColor + ' small '}>{bud.caption ?? bud.name}:</span>}
+                    {withLabel && <span className={labelColor + ' small '}>{bud.caption}:</span>}
                     {budContent(bud, value, sheetStore)}
                 </span>;
             })

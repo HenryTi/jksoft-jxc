@@ -58,7 +58,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     };
 
     function PageTypes() {
-        let caption = entityAtom.caption ?? entityAtom.name;
+        let caption = entityAtom.caption;
         const { subClasses: children } = entityAtom;
         function ViewItem({ value }: { value: EntityID; }) {
             const { id, caption } = value;

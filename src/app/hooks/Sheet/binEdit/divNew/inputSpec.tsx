@@ -110,7 +110,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         budsEditing.initBudValues(paramValues);
         ret = await modal.open(<PagePickSpec />);
         function PagePickSpec() {
-            const { caption, name } = entitySpec;
+            const { caption } = entitySpec;
             const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
             const submitCaption = btnNext;
             const submitClassName: string = cnNextClassName;
@@ -151,7 +151,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
                 modal.close(retSpec);
             }
             const { bootstrapContainer } = theme;
-            return <Page header={caption ?? name}>
+            return <Page header={caption}>
                 <div className={bootstrapContainer + ' pt-3 tonwa-bg-gray-2 '}>
                     <Band>
                         <div className="mx-3">

@@ -35,7 +35,7 @@ export function PageIDSelect(props: PropsIDSelect) {
     if (entity === undefined) {
         return <PageError>没有定义ATOM或FORK</PageError>;
     }
-    const entityAtomCaption = entity.caption ?? entity.name;
+    const entityAtomCaption = entity.caption;
     const searchBox = <SearchBox className="px-3 py-2"
         onSearch={onSearch}
         placeholder={placeholder ?? (entityAtomCaption + ' 编号或描述')} />;

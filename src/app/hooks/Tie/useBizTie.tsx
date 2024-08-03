@@ -50,13 +50,13 @@ export function useBizTie(): UseBizTieReturn {
                 content = <div>用户</div>;
             }
             else {
-                content = atoms.map(v => v.caption ?? v.name);
+                content = atoms.map(v => v.caption);
             }
             return <div className="px-3 py-2">
                 {content}
             </div>;
         }
-        return <PageQueryMore header={caption ?? name}
+        return <PageQueryMore header={caption}
             query={query}
             param={searchParam}
             sortField="id"
