@@ -419,9 +419,14 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
             content = <IDView uq={uq} id={Number(id)} Template={ViewAtom} />;
         }
     }
+    let onClick: () => void;
     let cnInput = 'form-control ';
     if (readOnly !== true) {
         cnInput += ' cursor-pointer ';
+        onClick = onSelectAtom;
+    }
+    else {
+        cnInput += ' bg-body-secondary'; // bg-body-tertiary bg-secondary-subtle 
     }
     let vError: any = undefined;
     if (error) {
@@ -431,7 +436,7 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
         </div>;
     }
     return <Band label={label}>
-        <div className={cnInput} onClick={onSelectAtom}>
+        <div className={cnInput} onClick={onClick} aria-disabled={readOnly}>
             {content} &nbsp;
             <input name={name} type="hidden" {...inputProps} />
         </div>

@@ -19,29 +19,19 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
     protected readonly requiredFields: BizBud[] = [];
     protected readonly budColl: { [name: string]: BizBud } = {};
     protected readonly buds: BizBud[];
-    // readonly namedResults: NamedResults = {};
     readonly values: R = { buds: {} } as any;
 
     private budValuesTool: BudValuesToolBase<R>;
-    // abstract get values(): R;
     protected stopRequired: boolean;
 
     constructor(modal: Modal, biz: Biz, buds: BizBud[]) {
         super(modal, biz);
         this.buds = buds;
-        // this.calc = this.createCalc(formulas);
         let formulas = this.buildFormulas();
         this.valueSpace = new ValueSpace(biz);
         this.calc = new Calc(this.valueSpace, formulas, this.values as any);
-        // this.addFormulas();
     }
 
-    /*
-    constructor(modal: Modal, biz: Biz, buds: BizBud[]) {
-        super(modal, biz, buds);
-        this.budValuesTool = this.createBudValuesTool();
-    }
-    */
     private buildFormulas(): Formulas {
         const formulas: Formulas = [];
         if (this.buds === undefined) return formulas;
@@ -86,27 +76,11 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         return ret;
     }
 
-    /*
-    setNamedResults(name: string, results: any) {
-        this.namedResults[name] = results;
-    }
-    */
-
     setNamedValues(name: string, values: object) {
-        // if (values === undefined) return;
-        /*
-        if (name === undefined) {
-            Object.assign(this.namedResults, values);
-        }
-        else {
-            this.namedResults[name] = values;
-        }
-        */
         this.calc.setValues(name, values);
     }
 
     clearNameValues(name: string) {
-        // this.namedResults[name] = undefined;
         this.calc.setValue(name, undefined, undefined);
     }
 
@@ -130,6 +104,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
 
     protected setBudValuesTool(budValuesTool: BudValuesToolBase<R>) {
         this.budValuesTool = budValuesTool;
+        this.calcAll();
     }
 
     protected setBudValue(bud: BizBud, value: any): void {
@@ -413,16 +388,8 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
 }
 
 export class ValuesBudsEditing extends BudsEditing<{ [id: number]: any }> {
-    // readonly values: { [id: number]: any } = {};
-
-    constructor(modal: Modal, biz: Biz, buds: BizBud[]/*, initValues?: any*/) {
-        super(modal, biz, buds/*, initValues*/);
-        /*
-        if (initValues !== undefined) {
-            //for (let bud of buds) this.budValuesTool.setBudValue(bud, this.values, initValues[bud.id]);
-            for (let bud of buds) this.setBudValue(bud, initValues[bud.id]);
-        }
-        */
+    constructor(modal: Modal, biz: Biz, buds: BizBud[]) {
+        super(modal, biz, buds);
         this.setBudValuesTool(new BudValuesTool(this, buds));
     }
 
@@ -430,17 +397,6 @@ export class ValuesBudsEditing extends BudsEditing<{ [id: number]: any }> {
         if (initValues === undefined) return;
         for (let bud of this.buds) this.setBudValue(bud, initValues[bud.id]);
     }
-
-    /*
-    protected createBudValuesTool(): BudValuesToolBase<{ [id: number]: any; }> {
-        return new BudValuesTool(this, this.buds);
-    }
-    */
-    /*
-    protected setBudValue(bud: BizBud, value: any) {
-        this.values[bud.id] = value;
-    }
-    */
 }
 
 function budRadios(budDataType: BudRadio): { label: string; value: string | number }[] {

@@ -186,7 +186,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
 
 export async function startSheetStore(sheetStore: SheetStore) {
     const { sheetConsole } = sheetStore;
-    let ret = await sheetStore.start(/*pick*/);
+    let ret = await sheetStore.start();
     if (ret === undefined) {
         if (sheetStore.mainStore.no === undefined) {
             // 还没有创建单据

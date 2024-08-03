@@ -219,17 +219,6 @@ export class SheetStore extends EntityStore<EntitySheet> {
         if (detail !== undefined) {
             this.divStore = new BinStore(this, detail.bin);
         }
-        /*
-        sheetConsole.picks = new PickStates(
-            {
-                'user': this.userProxy,
-                '%user': this.userProxy,
-                '%sheet': this.mainProxy
-            },
-            undefined,
-            0
-        );
-        */
         this.atomSubmitState = atom((get) => {
             if (this.divStore === undefined) return SubmitState.enable;
             return get(this.divStore.atomSubmitState);
@@ -244,7 +233,6 @@ export class SheetStore extends EntityStore<EntitySheet> {
             this.divStore.load(details, false);
         }
         setAtomValue(this.atomLoaded, true);
-        // this.main.onLoaded();
     }
 
     async reloadBinProps(binId: number) {
@@ -328,8 +316,8 @@ export class SheetStore extends EntityStore<EntitySheet> {
             return id;
         }
     }
-    async start(/*pick: PickFunc*/) {
-        let ret = await this.mainStore.start(/*pick*/);
+    async start() {
+        let ret = await this.mainStore.start();
         if (ret !== undefined) return ret;
     }
 
