@@ -341,7 +341,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
         newOptions.value = defaultValue;
         if (type === 'hidden') label = null;
         return <Band label={label} labelClassName={labelClassName}>
-            <input {...register(name, newOptions)} className={cnInput} type={type} step={step} />
+            <input {...register(name, newOptions)} className={cnInput} type={type} step={step} defaultValue={defaultValue} />
             {error && <div className="invalid-feedback mt-1 ms-2">
                 {error.message?.toString()}
             </div>}

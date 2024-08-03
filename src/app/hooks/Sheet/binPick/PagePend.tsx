@@ -1,5 +1,5 @@
 import { Page, useModal } from "tonwa-app";
-import { ButtonAsync, FA, List, Sep, setAtomValue, theme } from "tonwa-com";
+import { ButtonAsync, FA, List, Sep, setAtomValue, theme, wait } from "tonwa-com";
 import { PendRow } from "../store";
 import { ViewPendRowEdit } from "../binEdit/ViewPendRowEdit";
 import { ViewSteps } from "../dash/ViewSteps";
@@ -63,6 +63,7 @@ export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
     }
 
     async function onSearch() {
+        await wait(100);
         await pendStore.searchPend();
     }
 

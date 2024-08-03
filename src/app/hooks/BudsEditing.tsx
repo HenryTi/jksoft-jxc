@@ -3,7 +3,8 @@ import { FormContext, FormRow } from "app/coms";
 import {
     BizBud, BudID, BudDec, BudRadio, EnumBudType, ValueSetType, BudValuesTool,
     BudValuesToolBase,
-    Biz
+    Biz,
+    BudDataType
 } from "app/Biz";
 import { Calc, CalcResult, ValueSpace, Formulas } from "./Calc";
 import { getDays, Store } from "app/tool";
@@ -266,13 +267,13 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
     }
 
     // bud.onForm===false
-    buildFormRows(excludeOnFormFalse: boolean = false): FormRow[] {
+    buildFormRows(excludeOnForm: boolean = false): FormRow[] {
         let ret: FormRow[] = [];
         const calcResults = this.getResults();
         for (let field of this.allFields) {
             const bud = field;
             const { name, onForm, required, valueSetType } = bud;
-            if (excludeOnFormFalse === true) {
+            if (excludeOnForm === true) {
                 if (onForm === false) continue;
             }
             /*
@@ -285,12 +286,12 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
             */
             const { caption, budDataType, ui } = bud;
             if (ui?.show === true) continue;
+            let defaultValue = this.getBudValue(bud);// calcResults[name];
             let options: RegisterOptions = {
-                value: this.budValuesTool.getBudValue(field, this.values),
+                value: defaultValue, // this.budValuesTool.getBudValue(field, this.values),
                 disabled: valueSetType === ValueSetType.equ,
                 required,
             };
-            let defaultValue = calcResults[name];
             let formRow: any = {
                 name,
                 label: caption,
@@ -367,6 +368,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
                 this.setBudValue(bizBud, newValue);
             }
             const onChange = (event: ChangeEvent<HTMLInputElement>): void => {
+                if (bud.budDataType.type !== EnumBudType.date) return;
                 let date = event.currentTarget.valueAsDate;
                 let iso = date.toISOString();
                 let p = iso.indexOf('T');
