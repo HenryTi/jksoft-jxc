@@ -145,8 +145,8 @@ function radio(bud: BizBud, value: any) {
     if (v === undefined) {
         return <>{JSON.stringify(value)}</>;
     }
-    const { caption } = v;
-    return <>{caption}</>;
+    const { caption, name } = v;
+    return <>{caption ?? name}</>;
 }
 
 function check(bud: BizBud, value: any) {
