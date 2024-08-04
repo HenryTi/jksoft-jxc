@@ -421,7 +421,7 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
     }
     let onClick: () => void;
     let cnInput = 'form-control ';
-    if (readOnly !== true) {
+    if (readOnly !== true || onPick !== undefined) {
         cnInput += ' cursor-pointer ';
         onClick = onSelectAtom;
     }
@@ -436,7 +436,7 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
         </div>;
     }
     return <Band label={label}>
-        <div className={cnInput} onClick={onClick} aria-disabled={readOnly}>
+        <div className={cnInput} onClick={onClick}>
             {content} &nbsp;
             <input name={name} type="hidden" {...inputProps} />
         </div>

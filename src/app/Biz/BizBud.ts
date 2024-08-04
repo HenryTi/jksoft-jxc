@@ -293,13 +293,8 @@ export class BizBud extends BizBase {
         if (val === undefined) return;
         let ret: BizBud[] = [];
         for (let items of val) {
-            //for (let item of items) {
             for (let item of items) {
-                // const [entityId, budId] = item;
                 let bud = this.biz.budFromId(item);
-                // let entity = this.biz.entityFromId(budId);
-                // let bud = entity.budColl[budId];
-                // ret.push({ entity, bud });
                 ret.push(bud);
             }
         }
@@ -312,19 +307,6 @@ export class BizBud extends BizBase {
             const [dv, type] = defaultValue;
             this.valueSet = dv;
             vt = (type as ValueSetType) ?? ValueSetType.equ;
-            /*
-            let p = defaultValue.indexOf('\n');
-            if (p > 0) {
-                let suffix = defaultValue.substring(p + 1);
-                this.valueSet = defaultValue.substring(0, p);
-                this.valueSetType = ValueSetType[suffix as keyof typeof ValueSetType];
-            }
-            else {
-                this.valueSetType = ValueSetType.equ;
-                this.valueSet = defaultValue;
-            }
-            if (this.valueSet.indexOf('`') >= 0) debugger;
-            */
         }
         else {
             vt = ValueSetType.none;
