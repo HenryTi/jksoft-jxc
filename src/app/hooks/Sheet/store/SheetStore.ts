@@ -5,7 +5,7 @@ import { ParamSaveDetail, ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { RearPickResultType, ReturnUseBinPicks } from "./PickResult";
 import { Formulas } from "app/hooks/Calc";
 import { BudEditing } from "../../Bud";
-import { ValRow } from "./tool";
+import { getValRowPropArr, ValRow } from "./tool";
 import { BinStore, SubmitState } from "./BinStore";
 import { ValDivRoot } from "./ValDiv";
 import { Modal } from "tonwa-app";
@@ -240,8 +240,8 @@ export class SheetStore extends EntityStore<EntitySheet> {
         await this.loadBinData(binId);
     }
 
-    hasId() {
-        return this.mainStore.valRow?.id !== undefined;
+    get mainId() {
+        return this.mainStore.valRow?.id;
     }
 
     // whole sheet or row detail
@@ -330,20 +330,8 @@ export class SheetStore extends EntityStore<EntitySheet> {
         await this.uq.DeleteBin.submit({ id });
     }
 
-    private getPropArr(valRow: ValRow, buds: BizBud[]) {
-        const { buds: budsValues } = valRow;
-        let propArr: [number, string | number, number][] = [];
-        for (let bud of buds) {
-            let { id, budDataType } = bud;
-            let value = (budsValues as any)[id];
-            if (value === undefined) continue;
-            propArr.push([id, value, budDataType.type]);
-        }
-        return propArr;
-    }
-
     async saveSheet(valRow: ValRow) {
-        let propArr = this.getPropArr(valRow, this.mainStore.entity.buds);
+        let propArr = getValRowPropArr(valRow, this.mainStore.entity.buds);
         let { id: sheetId, i, x } = valRow;
         const { uq, entity: entitySheet } = this;
         let ret = await uq.SaveSheet.submit({
@@ -359,10 +347,10 @@ export class SheetStore extends EntityStore<EntitySheet> {
         let { id, no } = ret;
         return { id, no };
     }
-
+    /*
     async saveDetail(entityBin: EntityBin, buds: BizBud[], valRow: ValRow) {
         let { id, i, x, value, price, amount, pend, origin } = valRow;
-        let propArr = this.getPropArr(valRow, buds);
+        let propArr = getValRowPropArr(valRow, buds);
         let param: ParamSaveDetail = {
             base: this.mainStore.valRow.id,
             phrase: entityBin.id,
@@ -380,7 +368,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
         id = retSaveDetail.ret[0].id;
         return id;
     }
-
+    */
     notifyRowChange() {
         this.sheetConsole.sheetRowCountChanged(this);
     }

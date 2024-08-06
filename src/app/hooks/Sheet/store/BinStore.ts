@@ -1,12 +1,13 @@
 import { PendRow, SheetStore } from "./SheetStore";
 import { BinDiv, EntityBin, PickPend } from "app/Biz";
 import { Getter, WritableAtom, atom } from "jotai";
-import { ValRow } from "./tool";
+import { getValRowPropArr, ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsRoot } from './ValDiv';
 import { BudEditing, ValuesBudsEditing, ValueSpace } from "app/hooks";
 import { PickPendStore } from "./PickPendStore";
 import { EntityStore } from "app/tool";
+import { ParamSaveDetail } from "uqs/UqDefault";
 
 enum PendLoadState {
     none,
@@ -105,6 +106,14 @@ export class BinStore extends EntityStore<EntityBin> {
         for (let valRow of valRows) {
             this.setValRowRoot(valRow, trigger);
         }
+        let valDivs = getAtomValue(this.valDivsRoot.atomValDivs);
+        let valDivsNoneZero: ValDivRoot[] = [];
+        for (let valDiv of valDivs) {
+            const { sumValue } = getAtomValue(valDiv.atomSum);
+            const value = getAtomValue(valDiv.atomValue);
+            if (sumValue > 0 || value !== undefined) valDivsNoneZero.push(valDiv);
+        }
+        setAtomValue(this.valDivsRoot.atomValDivs, valDivsNoneZero);
     }
 
     getPendLeft(valDiv: ValDivBase): number {
@@ -254,9 +263,49 @@ export class BinStore extends EntityStore<EntityBin> {
 
     async saveDetail(binDiv: BinDiv, valRow: ValRow) {
         const { buds } = binDiv;
-        let retId = await this.sheetStore.saveDetail(binDiv.entityBin, buds, valRow);
-        return retId;
+        // let retId = await this.sheetStore.saveDetail(binDiv.entityBin, buds, valRow);
+        // return retId;
+        let { id, i, x, value, price, amount, pend, origin } = valRow;
+        let propArr = getValRowPropArr(valRow, buds);
+        let param: ParamSaveDetail = {
+            base: this.sheetStore.mainId,
+            phrase: binDiv.entityBin.id,
+            id,
+            i,
+            x,
+            value,
+            price,
+            amount,
+            origin,
+            pend,
+            props: propArr,
+        };
+        let retSaveDetail = await this.uq.SaveDetail.submitReturns(param);
+        id = retSaveDetail.ret[0].id;
+        return id;
     }
+    /*
+    async saveDetail(entityBin: EntityBin, buds: BizBud[], valRow: ValRow) {
+        let { id, i, x, value, price, amount, pend, origin } = valRow;
+        let propArr = this.getPropArr(valRow, buds);
+        let param: ParamSaveDetail = {
+            base: this.mainStore.valRow.id,
+            phrase: entityBin.id,
+            id,
+            i,
+            x,
+            value,
+            price,
+            amount,
+            origin,
+            pend,
+            props: propArr,
+        };
+        let retSaveDetail = await this.uq.SaveDetail.submitReturns(param);
+        id = retSaveDetail.ret[0].id;
+        return id;
+    }
+    */
 
     async reloadBinProps(bin: number) {
         await this.sheetStore.reloadBinProps(bin);

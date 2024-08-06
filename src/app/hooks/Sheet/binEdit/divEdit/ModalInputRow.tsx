@@ -1,46 +1,15 @@
-import { Modal, Page, useModal } from "tonwa-app";
+import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
-import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Band, FormRowsView } from "app/coms";
-import { ViewSpec, ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
+import { ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
 import { ChangeEvent, useState } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud } from "app/Biz";
-import { BinEditing, BinBudsEditing, ValDiv, ValDivBase } from "../store";
-import { RowCols, RowColsSm, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
+import { BinBudsEditing, ValDivBase } from "../../store";
+import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
-/*
-export function useRowEdit() {
-    const modal = useModal();
-    return useCallback(async (binEditing: BinEditing, valDiv: ValDivBase) => {
-        const { entityBin } = binEditing;
-        const { i: budI, x: budX } = entityBin;
-        const { atomParams } = budI;
-        if (atomParams !== undefined) {
-            const { name, caption } = budI;
-            await modal.open(<Page header={caption ?? name}>
-            </Page>);
-        }
-        let ret = await modal.open(<ModalInputRow binEditing={binEditing} valDiv={valDiv} />);
-        return ret;
-    }, []);
-}
-*/
-export async function rowEdit(modal: Modal, binEditing: BinEditing, valDiv: ValDivBase) {
-    const { entityBin } = binEditing;
-    const { i: budI, x: budX } = entityBin;
-    const { atomParams } = budI;
-    if (atomParams !== undefined) {
-        const { caption } = budI;
-        await modal.open(<Page header={caption}>
-        </Page>);
-    }
-    let ret = await modal.open(<ModalInputRow binEditing={binEditing} valDiv={valDiv} />);
-    return ret;
-}
-
-function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; valDiv: ValDivBase }) {
+export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; valDiv: ValDivBase }) {
     const modal = useModal();
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { entityBin, values: binDetail, sheetStore } = binEditing;
@@ -97,9 +66,6 @@ function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; val
     }
 
     let viewShowBuds: any;
-    // let excludeBuds: { [id: number]: boolean } = {};
-    // if (budI !== undefined) excludeBuds[budI.id] = true;
-    // if (budX !== undefined) excludeBuds[budX.id] = true;
     let showBuds = binEditing.buildShowBuds();
     if (showBuds.length > 0) {
         viewShowBuds = <Band className="mt-2">

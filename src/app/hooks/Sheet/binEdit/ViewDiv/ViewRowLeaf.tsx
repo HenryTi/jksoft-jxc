@@ -18,7 +18,8 @@ export function ViewRowLeaf(props: ViewDivProps) {
     let {
         value: cnValue, price: cnPrice, amount: cnAmount
     } = theme;
-    // const { bizAtomColl } = sheetStore;
+
+    if (value === undefined) return null;
     let viewIBud: any;
     if (budI !== undefined) {
         viewIBud = <>

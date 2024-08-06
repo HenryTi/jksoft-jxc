@@ -1,13 +1,11 @@
 import { useAtomValue } from "jotai";
 import { DivEditing, BinStore, ValDivBase, ValRow } from "../../store";
 import { FA, getAtomValue, setAtomValue } from "tonwa-com";
-// import { useEditDivs } from "../divNew";
 import { Page, useModal } from "tonwa-app";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { ViewRow } from "./ViewRow";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
-import { rowEdit } from "../rowEdit";
-import { editDivs } from "../divNew";
+import { editDivs, rowEdit } from "../divEdit";
 
 // 编辑div任意层
 export function PageEditDivRoot({ divStore, valDiv }: { divStore: BinStore; valDiv: ValDivBase; }) {
@@ -29,7 +27,6 @@ function EditDiv(props: EditDivProps) {
     const { atomValDivs, binDiv, atomDeleted } = valDiv;
     const { level, entityBin, subBinDiv: div } = binDiv;
     const { divLevels, pivot } = entityBin;
-    //    const editDivs = useEditDivs();
     const divs = useAtomValue(atomValDivs);
     const deleted = useAtomValue(atomDeleted);
     let bg = divLevels - level - 1;
@@ -50,12 +47,10 @@ function EditDiv(props: EditDivProps) {
             const { atomValRow } = valDiv;
             const valRow = getAtomValue(atomValRow);
             let pendRow = await divStore.loadPendRow(valRow.pend);
-            // let valDivNew = new ValDiv(valDiv, )
             let valDivNew = valDiv.createValDivSub(pendRow);
             let ret = await editDivs({
                 divStore,
                 pendRow,
-                // namedResults: {},
                 valDiv: valDivNew,
                 skipInputs: false,
             });
@@ -65,8 +60,6 @@ function EditDiv(props: EditDivProps) {
                 return;
             }
             valDiv.addValDiv(valDivNew, true);
-            // setAtomValue(atomValDivs, [...divs, ret]);
-            // valDiv.setValDivs([...divs, valDiv]);
         }
         viewDivs = <div className="ms-4 border-start">
             {

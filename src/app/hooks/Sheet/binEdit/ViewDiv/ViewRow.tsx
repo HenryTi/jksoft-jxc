@@ -1,4 +1,3 @@
-import React from "react";
 import { ViewDivProps } from "./tool";
 import { ViewRowLeaf } from "./ViewRowLeaf";
 import { ViewRowStem } from "./ViewRowStem";

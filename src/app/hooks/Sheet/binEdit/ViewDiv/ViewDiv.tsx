@@ -1,16 +1,15 @@
 import { useAtomValue } from "jotai";
-import { FA, setAtomValue } from "tonwa-com";
+import { setAtomValue } from "tonwa-com";
 import { useModal } from "tonwa-app";
 import { DivEditing, ValDivRoot } from "../../store";
-import { editDivs, UseEditDivsProps } from "../divNew";
-// import { useRowEdit } from "../rowEdit";
+import { editDivs, UseEditDivsProps } from "../divEdit";
 import { PageEditDivRoot } from "./PageEditDivRoot";
 import { ViewPendRow } from "../ViewPendRow";
 import { ViewDivProps } from "./tool";
 import { ViewRow } from "./ViewRow";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
-import { rowEdit } from "../rowEdit";
+import { rowEdit } from "../divEdit";
 
 export function ViewDiv(props: ViewDivProps) {
     const modal = useModal();
@@ -20,8 +19,6 @@ export function ViewDiv(props: ViewDivProps) {
     const divs = useAtomValue(atomValDivs);
     const valRow = useAtomValue(atomValRow);
     const deleted = useAtomValue(atomDeleted);
-    // const editDivs = useEditDivs();
-    // const rowEdit = useRowEdit();
     if (entityBin.pivot === binDiv) {
         // pivot直接在末尾级stem显示value list
         return null;

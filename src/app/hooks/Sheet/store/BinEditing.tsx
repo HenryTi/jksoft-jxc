@@ -169,7 +169,8 @@ export class DivEditing extends BinBudsEditing {
     readonly valDiv: ValDivBase;
     constructor(divStore: BinStore, valDiv: ValDivBase, namedResults?: any) {
         const { binDiv, valRow } = valDiv;
-        super(divStore.sheetStore, divStore.entity, binDiv.buds, valRow);
+        const { sheetStore, entity } = divStore;
+        super(sheetStore, entity, binDiv.buds, valRow);
         this.divStore = divStore;
         this.valDiv = valDiv;
         // 这里先强行设iBase和xBase from pend

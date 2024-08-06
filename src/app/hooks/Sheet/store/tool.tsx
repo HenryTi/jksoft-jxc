@@ -47,6 +47,18 @@ export interface ValRow extends BinRow {
     pendValue?: number;
 }
 
+export function getValRowPropArr(valRow: ValRow, buds: BizBud[]) {
+    const { buds: budsValues } = valRow;
+    let propArr: [number, string | number, number][] = [];
+    for (let bud of buds) {
+        let { id, budDataType } = bud;
+        let value = (budsValues as any)[id];
+        if (value === undefined) continue;
+        propArr.push([id, value, budDataType.type]);
+    }
+    return propArr;
+}
+
 export const btnNext = <>下一步 <FA name="arrow-right" className="ms-2" /></>;
 export const cnNextClassName: string = "btn btn-primary";
 

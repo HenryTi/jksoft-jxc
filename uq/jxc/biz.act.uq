@@ -425,7 +425,12 @@ PAGE (
 
     -- 获取我正在录入的单据
     PAGE SELECT * b, * d
-        , (SELECT count(*) FROM Detail as x JOIN Bud as y ON y.id=x.base WHERE y.base=b.id) as rowCount
+        , (SELECT count(*) 
+            FROM Detail as x 
+                JOIN Bud as y ON y.id=x.base
+                JOIN Bin as z ON z.id=x.id
+            WHERE y.base=b.id AND z.value IS NOT NULL
+        ) as rowCount
         FROM IxState as a
             JOIN Sheet as b ON a.x=b.id
             JOIN BizPhrase as c ON c.id=b.base

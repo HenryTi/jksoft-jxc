@@ -38,7 +38,7 @@ export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
         options: { disabled: submitable === false },
         className: cnNextClassName,
         right: <div className="align-self-center">
-            <div className="cursor-pointer text-info p-2 small border border-info rounded-3" onClick={onPrev}>
+            <div className="cursor-pointer text-info p-2 border border-info rounded-3" onClick={onPrev}>
                 <FA name="arrow-left" className="me-2" />
                 上一步
             </div>

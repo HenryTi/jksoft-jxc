@@ -90,7 +90,7 @@ async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
     const { sheetConsole, mainStore } = store;
     let ret = await mainStore.startFromPickResults(results);
     if (ret === undefined) {
-        if (store.hasId() === false) {
+        if (store.mainId === undefined) {
             // 还没有创建单据
             if (sheetConsole.steps === undefined) {
                 setTimeout(() => {

@@ -3,8 +3,8 @@ import { inputAtom } from "./inputAtom";
 import { inputSpec } from "./inputSpec";
 import { BizPhraseType } from "uqs/UqDefault";
 import { DivEditing, BinStore, PendRow, ValDivBase } from "../../store";
-import { PageInputDiv } from "./PageInputDiv";
 import { PendProxyHandler } from "../../store";
+import { ModalInputRow } from "./ModalInputRow";
 
 export interface UseEditDivsProps {
     divStore: BinStore;
@@ -15,11 +15,11 @@ export interface UseEditDivsProps {
 
 export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
     let { divStore, pendRow, valDiv } = props;
-    let { entity: entityBin, modal } = divStore;
+    let { entity: entityBin } = divStore;
     let { rearPick, pend: entityPend } = entityBin;
     let pendResult = new Proxy(pendRow, new PendProxyHandler(entityPend));
     for (; ;) {
-        let divEditing = new DivEditing(divStore, valDiv); // , namedResults);
+        let divEditing = new DivEditing(divStore, valDiv);
         divEditing.setNamedValues(rearPick.name, pendResult);
         divEditing.setNamedValues('pend', pendResult);
         divEditing.calcAll();
@@ -44,10 +44,12 @@ async function runInputDiv(props: UseEditDivsProps, divEditing: DivEditing) {
     let { binDiv } = valDiv;
     let retInputs = await runInputs(props, divEditing);
     if (retInputs === false) return;
+
     valDiv.mergeValRow(divEditing.values);
     if (skipInputs !== true) {
         if (divEditing.isInputNeeded() === true) {
-            if (await modal.open(<PageInputDiv divEditing={divEditing} />) !== true) {
+            //if (await modal.open(<PageInputDiv divEditing={divEditing} />) !== true) {
+            if (await modal.open(<ModalInputRow binEditing={divEditing} valDiv={valDiv} />) !== true) {
                 return;
             }
             else {
@@ -55,12 +57,15 @@ async function runInputDiv(props: UseEditDivsProps, divEditing: DivEditing) {
             }
         }
     }
-    let { valRow } = valDiv;
-    let id = await divStore.saveDetail(binDiv, valRow);
-    valRow.id = id;
-    valDiv.setValRow(valRow);
-    valDiv.setIXBaseFromInput(divEditing);
-    await divStore.reloadBinProps(id);
+    async function saveDetail() {
+        let { valRow } = valDiv;
+        let id = await divStore.saveDetail(binDiv, valRow);
+        await divStore.reloadBinProps(id);
+        valRow.id = id;
+        valDiv.setValRow(valRow);
+        valDiv.setIXBaseFromInput(divEditing);
+    }
+    await saveDetail();
     return true;
 }
 
@@ -96,5 +101,6 @@ async function runInputs(props: UseEditDivsProps, editing: DivEditing) {
         if (retInput === undefined) return false;
         editing.setNamedValue(input.name, retInput);
     }
+    editing.calcAll();
     return true;
 }

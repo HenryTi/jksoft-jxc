@@ -1,7 +1,7 @@
 import { RearPickResultType, SheetStore } from "../store";
 import { BinEditing } from "../store";
 import { runBinPicks } from "../binPick";
-import { rowEdit } from "./rowEdit";
+import { rowEdit } from "./divEdit";
 import { PickResult } from "app/hooks/Calc";
 /*
 export function useDetailNew(sheetStore: SheetStore) {
