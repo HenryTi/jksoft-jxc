@@ -22,7 +22,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     const { sheetStore, uq, modal, biz } = divStore;
     const { spec: entitySpec, baseExp, baseBud, params } = binInput;
     const baseName = '.i';
-    editing.addFormula(baseName, baseExp ?? baseBud.valueSet);
+    editing.addFormula(baseName, baseExp ?? baseBud.valueSet, baseBud.valueSetType === ValueSetType.init);
     const base = editing.getValue(baseName) as number;
     if (base === undefined) {
         debugger;
@@ -37,21 +37,25 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         if (valueSetType === ValueSetType.equ) ++paramsSetCount;
     }
     async function saveSpec(isFormInput: boolean, data: any) {
+        function budValueFromData(bud: BizBud) {
+            const { id, name, budDataType } = bud;
+            let v: any;
+            if (isFormInput === true) {
+                v = data[name];
+                switch (budDataType.type) {
+                    case EnumBudType.date: v = getDays(v); break;
+                }
+            }
+            else {
+                v = data[id];
+            }
+            return v;
+        }
         function buildValues(buds: BizBud[]) {
             let values: { [bud: string]: number | string } = {};
             for (let bud of buds) {
-                const { id, name, budDataType } = bud;
-                let v: any;
-                if (isFormInput === true) {
-                    v = data[name];
-                    switch (budDataType.type) {
-                        case EnumBudType.date: v = getDays(v); break;
-                    }
-                }
-                else {
-                    v = data[id];
-                }
-                values[name] = v;
+                let v = budValueFromData(bud);
+                values[bud.name] = v;
             }
             return values;
         }
@@ -68,6 +72,16 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         let { id } = results;
         if (id < 0) id = -id;
         let retSpec = Object.assign(data, { id, base });
+
+        sheetStore.addBizSpecs([{
+            id,
+            atom: base,
+        }],
+            [...keys, ...specBuds].map(v => ({
+                id,
+                phrase: v.id,
+                value: budValueFromData(v),
+            })));
         return retSpec;
     }
     let ret: any;

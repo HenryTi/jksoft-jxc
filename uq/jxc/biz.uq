@@ -120,6 +120,12 @@ IDX BizBud (
     -- ex JSON,                    -- 其它附加属性。比如，小数点数。格式。
 );
 
+IX BizBudShow (
+    i,                          -- ID entity phrase
+    x,                          -- bud id
+    type TINYINT,               -- BudDataType.str, dec, int
+);
+
 IX IxPermission (
     i,                          -- entity biz id
     x,                          -- role biz id
@@ -189,7 +195,8 @@ RETURNS budIds (
         memo CHAR(100) PATH '$.memo',
         dataType ENUM BudDataType PATH '$.dataType',
         objId ID PATH '$.objId',
-        flag SMALLINT PATH '$.flag'
+        flag SMALLINT PATH '$.flag',
+        show TINYINT PATH '$.show'
     ) FROM buds PATH '$[*]';
 
     TRANS START;
@@ -218,18 +225,13 @@ RETURNS budIds (
     /-mysql
     DELETE a FROM xbiz as a JOIN bizphrase as b ON b.id=a.id WHERE b.base=@Id;
     DELETE b FROM bizphrase as a JOIN bizbud as b ON b.id=a.id WHERE a.base=@id;
+    DELETE a FROM bizbudshow as a WHERE a.i=@id;
     -/
-    /*
-    FOR (VAR budId ID OF SELECT a.id as budId FROM BizPhrase as a WHERE a.base=id) {
-        WITH XBiz ID=budId DEL;
-    }
-    */
-
     FOR (
         VAR budId ID, budName Phrase, budCaption CHAR(100), budType ENUM BizPhraseType
-            , budMemo CHAR(100), dataType ENUM BudDataType, objId ID, flag SMALLINT
+            , budMemo CHAR(100), dataType ENUM BudDataType, objId ID, flag SMALLINT, show TINYINT
         OF SELECT a.id as budId, a.name as budName, a.caption as budCaption, a.type as budType
-            , a.memo as budMemo, a.dataType, a.objId, a.flag
+            , a.memo as budMemo, a.dataType, a.objId, a.flag, a.show
             FROM tbl as a
     )  {
         IF budId IS NOT NULL {
@@ -250,6 +252,19 @@ RETURNS budIds (
         WITH BizBud as a ID=budId 
             SET a.type=dataType
                 , a.obj=objId, a.flag=ifnull(flag, 0);
+        IF show=1 {
+            VAR bt TINYINT;
+            IF budType=BudDataType.str OR budType=BudDataType.char {
+                SET bt = BudDataType.str;
+            }
+            ELSEIF budType=BudDataType.dec {
+                SET bt = BudDataType.dec;
+            }
+            ELSE {
+                SET bt = BudDataType.int;
+            }
+            WITH BizBudShow I=id X=budId SET type=bt;
+        }
         INTO budIds SELECT budId as id, budName as name;
     }
 

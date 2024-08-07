@@ -4,7 +4,6 @@ import {
     BizBud, BudID, BudDec, BudRadio, EnumBudType, ValueSetType, BudValuesTool,
     BudValuesToolBase,
     Biz,
-    BudDataType
 } from "app/Biz";
 import { Calc, CalcResult, ValueSpace, Formulas } from "./Calc";
 import { getDays, Store } from "app/tool";
@@ -44,29 +43,31 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
             let { ui, budDataType: { min, max } } = bud;
             if (ui?.show === true) continue;
             if (valueSet !== undefined) {
-                formulas.push([name, valueSet]);
+                let initOnly: boolean;
                 if (valueSetType === ValueSetType.init) {
+                    initOnly = true;
                     if (required === true) this.requiredFields.push(f);
                 }
+                formulas.push([name, valueSet, initOnly]);
             }
             else {
                 if (required === true) this.requiredFields.push(f);
             }
             if (min !== undefined) {
-                formulas.push([name + '.min', min]);
+                formulas.push([name + '.min', min, undefined]);
             }
             if (max !== undefined) {
-                formulas.push([name + '.max', max]);
+                formulas.push([name + '.max', max, undefined]);
             }
         }
         return formulas;
     }
 
-    addFormula(name: string, formula: string) {
-        this.calc.addFormula(name, formula);
+    addFormula(name: string, formula: string, initOnly: boolean) {
+        this.calc.addFormula(name, formula, initOnly);
     }
 
-    addFormulas(formulas: [string, string][]) {
+    addFormulas(formulas: [string, string, boolean][]) {
         this.calc.addFormulas(formulas);
     }
 
@@ -179,32 +180,50 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         }
     }
 
-    setNamedValue(name: string, value: number | string, callback?: (name: string, value: CalcResult) => void) {
+    setNamedValue(name: string, value: number | string, callback?: (bud: BizBud, value: CalcResult) => void) {
         let c = (name: string, value: CalcResult) => {
-            this.setFieldOrBudValue(name, value);
+            let bud = this.budColl[name];
+            this.setFieldOrBudValue(bud, value);
             if (callback !== undefined) {
-                let field = this.budColl[name];
+                // let field = this.budColl[name];
                 // 针对 bud date，需要做days到DATE的转换
                 // bud dec, 小数转换
-                let uiValue = field.getUIValue(value);
-                callback(name, uiValue);
+                let uiValue = bud.getUIValue(value);
+                callback(bud, uiValue);
             }
         }
-        this.setFieldOrBudValue(name, value);
+        // this.setFieldOrBudValue(bud, value);
         // this.calc.setValue(name, value, callback);
         // c 的主要作用，是做了 value 转换。比如 计算的amount做了小数点转换
         // this.calc.setValue(name, value, c);
         this.calc.setValue(name, value, c);
     }
 
-    private setFieldOrBudValue(name: string, value: CalcResult) {
-        // console.log('setFieldOrBudValue name=', name, 'value=', value);
-        let field = this.budColl[name];
-        if (field === undefined) {
-            return;
+    recalcNamedValues(name: string, value: number | string, callback?: (bud: BizBud, value: CalcResult) => void) {
+        let c = (name: string, value: CalcResult) => {
+            let bud = this.budColl[name];
+            this.setFieldOrBudValue(bud, value);
+            if (callback !== undefined) {
+                // let field = this.budColl[name];
+                // 针对 bud date，需要做days到DATE的转换
+                // bud dec, 小数转换
+                let uiValue = bud.getUIValue(value);
+                callback(bud, uiValue);
+            }
         }
+        let bud = this.budColl[name];
+        this.setFieldOrBudValue(bud, value);
+        // this.calc.setValue(name, value, callback);
+        // c 的主要作用，是做了 value 转换。比如 计算的amount做了小数点转换
+        // this.calc.setValue(name, value, c);
+        this.calc.setValueAndRecalcNotInitOnly(name, value, c);
+    }
+
+    private setFieldOrBudValue(bud: BizBud, value: CalcResult) {
+        // console.log('setFieldOrBudValue name=', name, 'value=', value);
+        if (bud === undefined) return;
         if (value === undefined) debugger;
-        this.budValuesTool.setBudValue(field, this.values, value);
+        this.budValuesTool.setBudValue(bud, this.values, value);
     }
 
     get submitable(): boolean {
@@ -219,7 +238,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
     }
 
     onChange(name: string, type: 'text' | 'number' | 'radio' | 'date' | 'select-one', valueInputText: string
-        , callback: (name: string, value: CalcResult) => void) {
+        , callback: (bud: BizBud, value: CalcResult) => void) {
         let valueInput: any;
         if (valueInputText.trim().length === 0) {
             valueInput = undefined;
@@ -243,8 +262,9 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
                     break;
             }
         }
-        this.setNamedValue(name, valueInput, (name, value) => {
-            callback(name, value);
+        if (valueInput === undefined) valueInput = null;
+        this.recalcNamedValues(name, valueInput, (bud, value) => {
+            callback(bud, value);
         });
     }
 

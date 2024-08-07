@@ -1,4 +1,4 @@
-import { BizBud, PickParam } from "app/Biz";
+import { BizBud, PickParam, ValueSetType } from "app/Biz";
 import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";
@@ -55,7 +55,7 @@ export async function pickQueryParams(props: Props) {
     const { editing, header, queryParams, pickParams } = props;
     if (pickParams !== undefined) {
         for (let pickParam of pickParams) {
-            editing.addFormula(pickParam.name, pickParam.valueSet);
+            editing.addFormula(pickParam.name, pickParam.valueSet, pickParam.valueSetType === ValueSetType.init);
         }
     }
     const { valueSpace } = editing;

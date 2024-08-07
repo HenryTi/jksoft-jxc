@@ -68,7 +68,7 @@ export function BandInput(props: BandInputProps) {
     let error = errors[name];
     let cnInput = 'form-control ';
     if (error) cnInput += 'is-invalid';
-    let vInput = <input {...inputProps} className={cnInput} type={type} step={step} defaultValue={defaultValue} />;
+    let vInput = <input defaultValue={defaultValue} {...inputProps} className={cnInput} type={type} step={step} />;
     if (right !== undefined && !error) {
         vInput = <div className="input-group">
             {vInput}

@@ -1,4 +1,4 @@
-import { BizBud, EnumBudType, PickPend } from "app/Biz";
+import { BizBud, EnumBudType, PickPend, ValueSetType } from "app/Biz";
 import { BinStore } from "./BinStore";
 import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 import { PickResult, ValueSpace } from "app/hooks/Calc";
@@ -27,7 +27,7 @@ export class PickPendStore {
         for (let bud of params) {
             let pickParam = pickParams.find(v => v.name === bud.name);
             if (pickParam !== undefined) {
-                ret.addFormula(pickParam.name, pickParam.valueSet);
+                ret.addFormula(pickParam.name, pickParam.valueSet, pickParam.valueSetType === ValueSetType.init);
             }
         }
         return ret;

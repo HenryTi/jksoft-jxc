@@ -5,7 +5,7 @@ import { Band, FormRowsView } from "app/coms";
 import { ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
 import { ChangeEvent, useState } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
-import { BizBud } from "app/Biz";
+import { BizBud, ValueSetType } from "app/Biz";
 import { BinBudsEditing, ValDivBase } from "../../store";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 
@@ -17,8 +17,10 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
     const [submitable, setSubmitable] = useState(binEditing.submitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;
-        binEditing.onChange(name, type as 'number' | 'text', valueInputText, (name, value) => {
-            setValue(name, value);
+        binEditing.onChange(name, type as 'number' | 'text', valueInputText, (bud, value) => {
+            if (bud.valueSetType === ValueSetType.equ) {
+                setValue(bud.name, value);
+            }
         });
         setSubmitable(binEditing.submitable);
     }

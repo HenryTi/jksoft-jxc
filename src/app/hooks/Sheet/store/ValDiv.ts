@@ -269,7 +269,13 @@ export abstract class ValDivBase extends ValDivs {
     }
 
     getRowCount(): number {
-        return super.getRowCount() + 1;
+        let ret = super.getRowCount();
+        let valRow = getAtomValue(this.atomValRow);
+        if (valRow !== undefined) {
+            if (valRow.value !== undefined) ret++;
+        }
+        return ret;
+        // return super.getRowCount() + 1;
     }
 
     private internalMergeValRow(dest: ValRow, src: ValRow) {

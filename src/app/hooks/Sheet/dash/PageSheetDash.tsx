@@ -77,7 +77,6 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
                 {right}
             </div>;
         }
-        // Link to={`/${sheet}/${to62(entitySheet.id)}/${to62(id)}`}
         function onSheet() {
             modal.open(<PageSheetEdit sheetId={id} store={dashConsole.createSheetStore()} />);
         }

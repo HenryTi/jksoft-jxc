@@ -77,7 +77,7 @@ export abstract class EntityStore<E extends Entity = Entity> extends Store {
         }
     }
 
-    private addBizSpecs(bizSpecs: { id: number; atom: number; }[], props: ReturnGetPendProps[]) {
+    public addBizSpecs(bizSpecs: { id: number; atom: number; }[], props: ReturnGetPendProps[]) {
         for (let bizSpec of bizSpecs) {
             const { id, atom } = bizSpec;
             this.bizSpecColl[id] = {
@@ -94,6 +94,12 @@ export abstract class EntityStore<E extends Entity = Entity> extends Store {
                 continue;
             }
             bizSpec.buds.push(bud);
+            let coll = this.budsColl[id];
+            if (coll === undefined) {
+                coll = {};
+                this.budsColl[id] = coll;
+            }
+            coll[phrase] = value;
         }
     }
 

@@ -201,13 +201,10 @@ export class DivEditing extends BinBudsEditing {
     private setValueDefault(valDiv: ValDivBase) {
         const { value: budValue } = this.entityBin;
         if (budValue === undefined) return;
-        // if (this.budValuesTool.has(budValue) === false) return;
         if (this.hasBud(budValue) === false) return;
-        // if (this.budValuesTool.getBudValue(budValue, this.values) !== undefined) return;
         if (this.getBudValue(budValue) !== undefined) return;
         let pendLeft = this.divStore.getPendLeft(valDiv);
         if (pendLeft === undefined) return;
-        // this.budValuesTool.setBudValue(budValue, this.values, pendLeft);
         this.setBudValue(budValue, pendLeft);
     }
 

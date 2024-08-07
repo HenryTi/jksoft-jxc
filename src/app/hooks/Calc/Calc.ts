@@ -6,8 +6,10 @@ import dayjs from 'dayjs';
 jsep.addIdentifierChar("%");
 export class Formula {
     private readonly exp: jsep.Expression;
-    constructor(formula: string) {
+    readonly initOnly: boolean;
+    constructor(formula: string, initOnly: boolean) {
         this.exp = jsep(formula);
+        this.initOnly = initOnly;
     }
 
     run(nameValues: ValueSpace) {
@@ -87,7 +89,7 @@ const funcs: { [func: string]: (...params: any[]) => number } = {
     }
 }
 
-export type Formulas = [string, string][];
+export type Formulas = [string, string, boolean][];
 export type CalcIdObj = number | { id: number; base?: number; };
 export type CalcResult = number | string | CalcIdObj;
 export class Calc {
@@ -95,29 +97,29 @@ export class Calc {
     private readonly formulas: Map<string, Formula>;
     private _results: { [name: string]: CalcResult; };
 
-    constructor(calcSpace: ValueSpace, formulas: [string, string][], values?: any) {
+    constructor(calcSpace: ValueSpace, formulas: [string, string, boolean][], values?: any) {
         this.formulas = new Map();
         this.addFormulas(formulas);
         this.calcSpace = calcSpace; //  new CalcSpace();
         this.calcSpace.addValues(undefined, values);
     }
 
-    addFormula(name: string, formulaText: string) {
+    addFormula(name: string, formulaText: string, initOnly: boolean) {
         this._results = undefined;
-        let formula = new Formula(formulaText);
+        let formula = new Formula(formulaText, initOnly);
         this.formulas.set(name, formula);
     }
 
-    addFormulas(formulas: [string, string][]) {
-        for (let [name, formulaText] of formulas) {
+    addFormulas(formulas: [string, string, boolean][]) {
+        for (let [name, formulaText, initOnly] of formulas) {
             if (formulaText === undefined) continue;
-            this.addFormula(name, formulaText);
+            this.addFormula(name, formulaText, initOnly);
         }
     }
 
     getResults(): { [name: string]: CalcResult } {
         if (this._results === undefined) {
-            this.run(undefined);
+            this.run(undefined, undefined);
         }
         return this._results;
     }
@@ -126,7 +128,7 @@ export class Calc {
         if (formula === undefined) return undefined;
         this._results = undefined;
         let name = '$_$';
-        let fm = new Formula(formula);
+        let fm = new Formula(formula, undefined);
         this.formulas.set(name, fm);
         let ret = this.getValue(name);
         this.formulas.delete(name);
@@ -135,7 +137,7 @@ export class Calc {
 
     getValue(name: string): string | number {
         if (this._results === undefined) {
-            this.run(undefined);
+            this.run(undefined, undefined);
         }
         let v = this._results[name];
         if (typeof v === 'object') {
@@ -153,10 +155,13 @@ export class Calc {
         this._results = undefined;
     }
 
-    private run(callback: (name: string, value: CalcResult) => void) {
+    private run(callback: (name: string, value: CalcResult) => void, noInitOnly: boolean) {
         if (this._results === undefined) this._results = {};
         for (let [name, formula] of this.formulas) {
             try {
+                if (noInitOnly === true) {
+                    if (formula.initOnly === true) continue;
+                }
                 let ret = formula.run(this.calcSpace);
                 if (ret === undefined) continue;
                 this._results[name] = ret;
@@ -172,6 +177,11 @@ export class Calc {
 
     setValue(name: string, value: number | string, callback: (name: string, value: CalcResult) => void) {
         this.calcSpace.setValue(name, value as number);
-        this.run(callback);
+        this.run(callback, undefined);
+    }
+
+    setValueAndRecalcNotInitOnly(name: string, value: number | string, callback: (name: string, value: CalcResult) => void) {
+        this.calcSpace.setValue(name, value as number);
+        this.run(callback, true);
     }
 }

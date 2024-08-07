@@ -7,7 +7,8 @@ import { useForm } from "react-hook-form";
 import { ChangeEvent, useState } from "react";
 import { ViewRowStem } from "../ViewDiv/ViewRowStem";
 import { ViewRowLeaf } from "../ViewDiv/ViewRowLeaf";
-
+import { ValueSetType } from "app/Biz";
+/*
 export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
     const modal = useModal();
     const { divStore, valDiv } = divEditing;
@@ -19,8 +20,10 @@ export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         divEditing.stopInitFormula();
         const { type, value: valueInputText, name } = evt.target;
-        divEditing.onChange(name, type as 'number' | 'text', valueInputText, (name, value) => {
-            setValue(name, value);
+        divEditing.onChange(name, type as 'number' | 'text', valueInputText, (bud, value) => {
+            if (bud.valueSetType === ValueSetType.equ) {
+                setValue(bud.name, value);
+            }
         });
         setSubmitable(divEditing.submitable);
     }
@@ -84,3 +87,4 @@ export function PageInputDiv({ divEditing }: { divEditing: DivEditing; }) {
         </form>
     </Page>
 }
+*/

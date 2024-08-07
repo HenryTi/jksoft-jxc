@@ -84,33 +84,28 @@ export class SheetMainStore extends EntityStore<EntityBin> {
             return parts[0];
         }
         if (i !== undefined) {
-            formulas.push(['i', getFormulaText(i.valueSet ?? 'i$pick')]);
+            formulas.push(['i', getFormulaText(i.valueSet ?? 'i$pick'), undefined]);
         }
         if (x !== undefined) {
-            formulas.push(['x', getFormulaText(x.valueSet ?? 'x$pick')]);
+            formulas.push(['x', getFormulaText(x.valueSet ?? 'x$pick'), undefined]);
         }
         for (let mp of mainProps) {
             const { name, valueSet } = mp;
             if (valueSet === undefined) continue;
-            formulas.push([name, getFormulaText(valueSet)]);
+            formulas.push([name, getFormulaText(valueSet), undefined]);
         }
-        let { editing,/* namedResults, */rearBinPick, rearResult } = pickResults;
+        let { editing, rearBinPick, rearResult } = pickResults;
         editing.addFormulas(formulas);
-        // const calc = new Calc(formulas, namedResults);
         if (rearBinPick !== undefined) {
-            // calc.addValues(rearBinPick.name, rearResult[0]);
             editing.setNamedValues(rearBinPick.name, rearResult[0]);
         }
         if (i !== undefined) {
-            // row.i = calc.getValue('i') as number; // as number;
             row.i = editing.getValue('i') as number;
         }
         if (x !== undefined) {
-            // row.x = calc.getValue('x') as number; // calcResults.x as number;
             row.x = editing.getValue('x') as number;
         }
         for (let mp of mainProps) {
-            // let v = calc.getValue(mp.name);
             let v = editing.getValueNumber(mp.name);
             if (Number.isNaN(v) === true) {
                 debugger;
