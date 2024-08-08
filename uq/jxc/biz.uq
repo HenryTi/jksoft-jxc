@@ -83,7 +83,7 @@ IX BizResource (
 -- bud i owns bud x
 IX IxBizPhrase (
     i,
-    x,
+    x INDEX,
 );
 
 IDX BizObject (
