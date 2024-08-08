@@ -1,9 +1,9 @@
-import { BinInputSpec, BizBud, ValueSetType } from "app/Biz";
+import { BinInputSpec, BizBud, EntityID, ValueSetType } from "app/Biz";
 import { Page } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { ParamSaveSpec } from "uqs/UqDefault";
+import { Atom, ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
 import { btnNext, cnNextClassName } from "../../store";
@@ -138,9 +138,17 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     }
     if (ret !== undefined) {
         const { id, base } = ret;
-        const { bizSpecColl, bizAtomColl } = sheetStore;
+        const { bizForkColl: bizSpecColl, bizAtomColl } = sheetStore;
+        let pAtom = bizAtomColl[base];
+        let atom: Atom;
+        let entityID: EntityID;
+        if (pAtom !== undefined) {
+            atom = pAtom.atom;
+            entityID = pAtom.entityID;
+        }
         bizSpecColl[id] = {
-            atom: bizAtomColl[base],
+            atom,
+            entityID,
             buds: keys,
         }
     }

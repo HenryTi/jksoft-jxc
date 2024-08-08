@@ -272,13 +272,13 @@ export class SheetStore extends EntityStore<EntitySheet> {
             if (pendValue === undefined || pendValue <= 0) continue;
             if (iBud !== undefined) {
                 this.valDivsOnPend[pend] = atom(undefined as ValDivRoot);
-                let iSpec = this.bizSpecColl[i];
+                let iSpec = this.bizForkColl[i];
                 if (iSpec !== undefined) {
                     (v as any).iBase = iSpec.atom.id;
                 }
             }
             if (xBud !== undefined) {
-                let xSpec = this.bizSpecColl[x];
+                let xSpec = this.bizForkColl[x];
                 if (xSpec !== undefined) {
                     (v as any).xBase = xSpec.atom.id;
                 }

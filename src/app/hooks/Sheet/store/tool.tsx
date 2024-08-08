@@ -1,17 +1,6 @@
 import { BinRow, BizBud, EntityPend, predefinedPendFields } from "app/Biz";
-// import { ViewBud } from "app/hooks/Bud";
 import { FA } from "tonwa-com";
-/*
-export function VNamedBud({ name, value, bud }: { name: string; value: any; bud: BizBud; }) {
-    let caption: string;
-    if (bud === undefined) caption = name;
-    else {
-        const { name: bn, ui } = bud;
-        caption = ui?.caption ?? bn;
-    }
-    return <ViewBud bud={bud} value={value} />;
-}
-*/
+
 const sheetFields = ['si', 'sx', 'svalue', 'sprice', 'samount'];
 export class PendProxyHandler implements ProxyHandler<any> {
     private readonly entityPend: EntityPend;

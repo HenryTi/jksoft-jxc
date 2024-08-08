@@ -51,7 +51,7 @@ export function ViewPendRow({
         }
     }
     let viewBuds: any, viewAtomTitles: any;
-    const { bizSpecColl } = sheetStore;
+    const { bizForkColl: bizSpecColl } = sheetStore;
     let iBizSpec = bizSpecColl[i];
     if (iBizSpec !== undefined) {
         viewBuds = <ViewSpecBuds id={i} store={sheetStore} />;
@@ -59,7 +59,7 @@ export function ViewPendRow({
     }
     else {
         viewBuds = <ViewShowBuds id={i} bud={iBud} store={sheetStore} />;
-        viewAtomTitles = <ViewAtomTitles id={i} bud={iBud} store={sheetStore} />;
+        viewAtomTitles = <ViewAtomTitles id={i} store={sheetStore} />;
     }
     return <>
         <div className="py-2 bg-white flex-fill ps-3">

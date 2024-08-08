@@ -2,12 +2,13 @@ import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { useForm } from "react-hook-form";
 import { Band, FormRowsView } from "app/coms";
-import { ViewSpecBaseOnly, ViewSpecNoAtom } from "app/hooks/View";
+import { ViewSpecNoAtom } from "app/hooks/View";
 import { ChangeEvent, useState } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
 import { BizBud, ValueSetType } from "app/Biz";
 import { BinBudsEditing, ValDivBase } from "../../store";
-import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
+import { RowCols, ViewShowBuds } from "app/hooks/tool";
+import { ViewId } from "../../views";
 
 export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; valDiv: ValDivBase }) {
     const modal = useModal();
@@ -55,9 +56,12 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
         if (bud === undefined) return null;
         const { caption } = bud;
         let id = base ?? value;
+        /*
+        <ViewSpecBaseOnly id={value} bold={true} />
+        <ViewAtomTitles bud={budBase ?? bud} id={id} store={sheetStore} />
+        */
         return <Band label={caption} className="border-bottom py-2">
-            <ViewSpecBaseOnly id={value} bold={true} />
-            <ViewAtomTitles bud={budBase ?? bud} id={id} store={sheetStore} />
+            <ViewId id={value} store={sheetStore} />
             <RowCols>
                 <ViewSpecNoAtom id={value} />
             </RowCols>

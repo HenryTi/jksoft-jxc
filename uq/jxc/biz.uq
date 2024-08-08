@@ -254,10 +254,10 @@ RETURNS budIds (
                 , a.obj=objId, a.flag=ifnull(flag, 0);
         IF show=1 {
             VAR bt TINYINT;
-            IF budType=BudDataType.str OR budType=BudDataType.char {
+            IF dataType=BudDataType.str OR dataType=BudDataType.char {
                 SET bt = BudDataType.str;
             }
-            ELSEIF budType=BudDataType.dec {
+            ELSEIF dataType=BudDataType.dec {
                 SET bt = BudDataType.dec;
             }
             ELSE {

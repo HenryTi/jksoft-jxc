@@ -38,7 +38,7 @@ export class QueryStore extends EntityStore<EntityQuery> {
             let propArr: Prop[] = [];
             const specValue = this.budsColl[id];
             if (specValue !== undefined) {
-                for (let bud of this.bizSpecColl[id].buds) {
+                for (let bud of this.bizForkColl[id].buds) {
                     propArr.push({
                         name: bud.name,
                         bud,

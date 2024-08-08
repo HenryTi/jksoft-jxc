@@ -1,4 +1,4 @@
-import { Biz, BizBud, Entity } from "app/Biz";
+import { Biz, BizBud, Entity, EntityFork, EntityID } from "app/Biz";
 import { BudCheckValue, BudValue, Modal } from "tonwa-app";
 import { Atom, ReturnGetPendProps, ReturnGetSheetAtoms, ReturnGetSheetProps, ReturnGetSheetSpecs, UqExt } from "uqs/UqDefault";
 
@@ -21,12 +21,17 @@ export interface BudValueColl {
 }
 
 export interface AtomColl {
-    [id: number]: Atom;
-}
-
-export interface SpecColl {
     [id: number]: {
         atom: Atom;
+        entityID: EntityID;
+    }
+}
+
+export interface ForkColl {
+    [id: number]: {
+        atom: Atom;
+        // entityFork: EntityFork;
+        entityID: EntityID;
         buds: BizBud[];
     }
 }
@@ -47,7 +52,7 @@ export abstract class EntityStore<E extends Entity = Entity> extends Store {
     readonly entity: E;
     readonly budsColl: BudsColl = {};
     readonly bizAtomColl: AtomColl = {};
-    readonly bizSpecColl: SpecColl = {};
+    readonly bizForkColl: ForkColl = {};
 
     constructor(modal: Modal, entity: E) {
         const { biz } = entity;
@@ -71,22 +76,33 @@ export abstract class EntityStore<E extends Entity = Entity> extends Store {
 
     private addBizAtoms(bizAtoms: Atom[]) {
         for (let atom of bizAtoms) {
-            const { id } = atom;
-            this.bizAtomColl[id] = atom;
+            const { id, base } = atom;
+            this.bizAtomColl[id] = {
+                atom,
+                entityID: this.biz.entities[base] as EntityID,
+            };
             this.uq.idCacheAdd(atom);
         }
     }
 
     public addBizSpecs(bizSpecs: { id: number; atom: number; }[], props: ReturnGetPendProps[]) {
         for (let bizSpec of bizSpecs) {
-            const { id, atom } = bizSpec;
-            this.bizSpecColl[id] = {
-                atom: this.bizAtomColl[atom],
+            const { id, atom: atomId } = bizSpec;
+            const pAtom = this.bizAtomColl[atomId];
+            let atom: Atom;
+            let entityID: EntityID;
+            if (pAtom !== undefined) {
+                atom = pAtom.atom;
+                entityID = pAtom.entityID;
+            }
+            this.bizForkColl[id] = {
+                atom,
+                entityID,
                 buds: [],
             }
         }
         for (let { id, phrase, value } of props) {
-            let bizSpec = this.bizSpecColl[id];
+            let bizSpec = this.bizForkColl[id];
             if (bizSpec === undefined) continue;
             let bud = this.biz.budFromId(phrase);
             if (bud === undefined) {

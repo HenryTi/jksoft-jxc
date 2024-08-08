@@ -3,8 +3,8 @@ import { BudValue } from "tonwa-app";
 import { ViewBud, budContent } from "../Bud";
 import { FA, theme } from "tonwa-com";
 import React from "react";
-import { BizBud, Entity } from "app/Biz";
-import { BudValueColl, EntityStore } from "app/tool";
+import { BizBud, Entity, EntityID } from "app/Biz";
+import { BudsColl, BudValueColl, EntityStore } from "app/tool";
 
 // atom field owns buds
 export function OwnedBuds({ values, noLabel, store }: { values: [number, BudValue][]; noLabel?: boolean; store: EntityStore; }) {
@@ -53,12 +53,23 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud: BizBud; id: num
     </>;
 }
 
-export function ViewAtomTitles({ bud, id, noLabel, store }: { id: number; bud: BizBud; noLabel?: boolean; store: EntityStore; }) {
-    const { budsColl } = store;
-    let budValueColl = budsColl[id];
+export function ViewAtomTitles({ id, noLabel, store }: { id: number; noLabel?: boolean; store: EntityStore; }) {
+    const { budsColl, bizForkColl, bizAtomColl } = store;
+    let budValueColl: BudValueColl;
+    let bizAtom = bizAtomColl[id];
+    let entityID: EntityID;
+    if (bizAtom === undefined) {
+        let bizFork = bizForkColl[id];
+        if (bizFork === undefined) return null;
+        entityID = bizFork.entityID;
+        budValueColl = budsColl[bizFork.atom.id];
+    }
+    else {
+        entityID = bizAtom.entityID;
+        budValueColl = budsColl[id];
+    }
     if (budValueColl === undefined) return null;
-    if (bud === undefined) return null;
-    let buds = bud.getTitleBuds();
+    let buds: BizBud[] = entityID.titleBuds;
     if (buds === undefined) return null;
     const { labelColor } = theme;
     return <>{

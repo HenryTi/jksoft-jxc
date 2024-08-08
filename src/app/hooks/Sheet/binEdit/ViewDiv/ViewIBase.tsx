@@ -24,7 +24,7 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     if (iBase === undefined) return null;
     return <div className="mb-1">
         <ViewSpecAtomBold id={iBase} store={sheetStore} />
-        <ViewAtomTitles bud={iBud} id={iBase} store={sheetStore} />
+        <ViewAtomTitles id={iBase} store={sheetStore} />
     </div>;
 }
 
@@ -45,13 +45,13 @@ export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, 
 export function ViewIBaseFromId({ sheetStore, valDiv, iBase }: { sheetStore: SheetStore, valDiv: ValDivBase; iBase: number; }) {
     let { iBase: budIBase } = valDiv.binDiv.entityBin
     const { bizAtomColl } = sheetStore
-    let bizAtomValue = bizAtomColl[iBase];
+    let bizAtomValue = bizAtomColl[iBase]?.atom;
     return <div>
         <div>
             <ViewAtom value={bizAtomValue} />
         </div>
         <div>
-            <ViewAtomTitles id={iBase} bud={budIBase} store={sheetStore} />
+            <ViewAtomTitles id={iBase} store={sheetStore} />
         </div>
         <div className={theme.bootstrapContainer}>
             <RowColsSm contentClassName="flex-fill">

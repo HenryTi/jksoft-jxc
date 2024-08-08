@@ -4,8 +4,8 @@ import { EntityAtom } from "app/Biz";
 import { EntityStore } from "app/tool";
 
 export function ViewSpecAtomBold({ id, store }: { id: number; store: EntityStore; }) {
-    const { bizAtomColl, bizSpecColl } = store;
-    let bizAtom = bizAtomColl[id];
+    const { bizAtomColl, bizForkColl: bizSpecColl } = store;
+    let bizAtom = bizAtomColl[id]?.atom;
     if (bizAtom === undefined) {
         let bizSpec = bizSpecColl[id];
         if (bizSpec === undefined) return null;
@@ -16,8 +16,8 @@ export function ViewSpecAtomBold({ id, store }: { id: number; store: EntityStore
 }
 
 export function ViewSpecAtom({ id, store }: { id: number; store: EntityStore; }) {
-    const { bizAtomColl, bizSpecColl } = store;
-    let bizAtom = bizAtomColl[id];
+    const { bizAtomColl, bizForkColl: bizSpecColl } = store;
+    let bizAtom = bizAtomColl[id]?.atom;
     if (bizAtom === undefined) {
         let bizSpec = bizSpecColl[id];
         if (bizSpec === undefined) return null;
@@ -28,7 +28,7 @@ export function ViewSpecAtom({ id, store }: { id: number; store: EntityStore; })
 }
 
 export function ViewSpecBuds({ id, store }: { id: number; store: EntityStore; }) {
-    const { budsColl, bizSpecColl } = store;
+    const { budsColl, bizForkColl: bizSpecColl } = store;
     let bizSpec = bizSpecColl[id];
     if (bizSpec === undefined) return null;
     let { buds } = bizSpec;
@@ -42,7 +42,7 @@ export function ViewSpecBuds({ id, store }: { id: number; store: EntityStore; })
 
 export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: EntityStore; }) {
     const { budsColl, biz, bizAtomColl } = store;
-    const atom = bizAtomColl[id];
+    const atom = bizAtomColl[id]?.atom;
     const noLabel: boolean = undefined;
     if (atom === undefined) return null;
     let bizAtom = biz.entityFromId<EntityAtom>(atom.base);
@@ -73,7 +73,7 @@ export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: Entity
 
 export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: EntityStore; }) {
     const { budsColl, biz, bizAtomColl } = store;
-    const atom = bizAtomColl[id];
+    const atom = bizAtomColl[id]?.atom;
     const noLabel: boolean = undefined;
     if (atom === undefined) return null;
     let bizAtom = biz.entityFromId<EntityAtom>(atom.base);
@@ -95,7 +95,7 @@ export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: Entity
 }
 
 export function ViewSpecAtomTitles({ id, store }: { id: number; store: EntityStore; }) {
-    const { budsColl, bizSpecColl, biz } = store;
+    const { budsColl, bizForkColl: bizSpecColl, biz } = store;
     const noLabel: boolean = undefined;
     let bizSpec = bizSpecColl[id];
     if (bizSpec === undefined) return null;

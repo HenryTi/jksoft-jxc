@@ -102,7 +102,8 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
         return view();
     }
     const { bizAtomColl } = store;
-    let bizAtom: BizAtom = bizAtomColl[value];
+    let pAtom = bizAtomColl[value];
+    let bizAtom: BizAtom = pAtom?.atom;
     if (bizAtom !== undefined) {
         let { no, ex } = bizAtom
         let title = `${ex} ${no}`;
@@ -116,7 +117,7 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
             {ex}
         </LabelBox>;
     }
-    const { bizSpecColl } = store;
+    const { bizForkColl: bizSpecColl } = store;
     let specValue = bizSpecColl[value];
     if (specValue !== undefined) {
         return <div>spec: {specValue.atom.id}</div>
