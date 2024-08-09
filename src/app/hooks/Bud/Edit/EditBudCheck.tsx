@@ -86,7 +86,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
     function Checks() {
         return <>{
             items.map((v, index) => {
-                let { id, caption, value } = v;
+                let { id, caption, value, name } = v;
                 async function onChange(name: string, checked: boolean) {
                     await onCheckChanged(v, checked);
                 }
@@ -96,7 +96,7 @@ export function EditBudCheck(props: EditBudTemplateProps) {
                     disabled={readOnly}
                     value={value}
                     defaultChecked={checks[id]}>
-                    {caption}
+                    {caption ?? name}
                 </CheckAsync>;
             })}
         </>;

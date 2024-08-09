@@ -4,6 +4,7 @@ import { EntityStore, contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
 import { Atom as BizAtom, BizPhraseType } from "uqs/UqDefault";
 import { ViewSpecId } from "app/coms/ViewSpecId";
+import { FA } from "tonwa-com";
 
 export enum ViewBudUIType {
     notInDiv = 0,
@@ -15,7 +16,11 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
     if (value === null) return null;
     if (value === '') return null;
     if (bud === undefined) return <>{value}</>;
-    if (Array.isArray(value) === true) value = value[0];
+    if (Array.isArray(value) === true) {
+        // value = value[0];
+        // debugger;
+        value = value;
+    }
     let content: any;
     const { name, caption, budDataType } = bud;
     if (value === undefined) {
@@ -155,14 +160,15 @@ function check(bud: BizBud, value: any) {
     let { options } = bud.budDataType as BudRadio;
     let vArr: any[] = [];
     let vals = Array.isArray(value) === true ? value as number[] : [value];
+    if (vals.length === 0) return <ViewBudEmpty />;
     for (let v of vals) {
         let op = options.coll[v];
         if (op === undefined) continue;
-        const { caption } = op;
+        const { caption, name } = op;
         if (vArr.length > 0) {
-            vArr.push(<small key={'s' + v} className="text-secondary mx-2">|</small>);
+            vArr.push(<small key={'s' + v} className="text-body-tertiary mx-1">/</small>);
         }
-        vArr.push(<span key={v} className="">{caption}</span>);
+        vArr.push(<span key={v} className="">{caption ?? name}</span>);
     }
     return <>{vArr}</>;
 }

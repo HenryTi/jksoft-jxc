@@ -10,13 +10,14 @@ export function readBuds(id: number, props: ReturnGetAtomProps[]) {
         main = { id, phrase, no, ex }
     }
     let len = props.length;
-    let checks: { [bud: number]: BudCheckValue } = {}
+    // let checks: { [bud: number]: BudCheckValue } = {}
     for (let i = 1; i < len; i++) {
         let { phrase, value } = props[i];
         switch (value.length) {
-            default:
             case 0: debugger; break;
             case 1: buds[phrase] = value[0]; break;
+            default: buds[phrase] = value; break;
+            /*
             case 2:
                 let check = checks[phrase];
                 if (check === undefined) {
@@ -24,10 +25,13 @@ export function readBuds(id: number, props: ReturnGetAtomProps[]) {
                 }
                 check.push(value[1]);
                 break;
+            */
         }
     }
+    /*
     for (let i in checks) {
         buds[i] = checks[i];
     }
+    */
     return { main, buds };
 }

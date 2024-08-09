@@ -79,12 +79,14 @@ PROC ProcSaveBudCheck(
     optionsItemPhrase ID,
     checked TINYINT,            -- 0: remove, 1: add
 ) {
-    VAR budId ID = ID(Bud new KEY base=budPhrase, ext=optionsItemPhrase);
+    // VAR budId ID = ID(Bud new KEY base=budPhrase, ext=optionsItemPhrase);
     IF checked=0 {
-        WITH IxBud I=id X=budId DEL;
+        // WITH IxBud I=id X=budId DEL;
+        WITH IxBudCheck II=id I=budPhrase X=optionsItemPhrase DEL;
     }
     ELSE {
-        WITH IxBud I=id X=budId;
+        // WITH IxBud I=id X=budId;
+        WITH IxBudCheck II=id I=budPhrase X=optionsItemPhrase;
     }
     WITH IxBudInt I=id X=budPhrase DEL;
     WITH IxBudDec I=id X=budPhrase DEL;
@@ -962,10 +964,16 @@ RETURNS props VIRTUAL ( -- VIRTUAL 就不会生成临时表，直接使用调用
             JOIN BizPhrase as b on b.id=a.x
             JOIN BizPhrase as c on c.id=b.base
         WHERE a.i=id AND c.type=BizPhraseType.atom;
+    /*
     INTO props SELECT b.base as phrase, JSON_ARRAY(0, b.ext) as value
         FROM IxBud as a
             JOIN Bud as b ON b.id=a.x
         WHERE a.i=id;
+    */
+    INTO props SELECT a.i as phrase, JSON_ARRAYAGG(a.x) as value
+        FROM IxBudCheck as a
+        WHERE a.ii=id
+        GROUP BY a.i;
 }
 
 PROC ProcGetAtom ver 0.1 (
