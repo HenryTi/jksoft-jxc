@@ -22,7 +22,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     const { sheetStore, uq, modal, biz } = divStore;
     const { spec: entitySpec, baseExp, baseBud, params } = binInput;
     const baseName = '.i';
-    editing.addFormula(baseName, baseExp ?? baseBud.valueSet, baseBud.valueSetType === ValueSetType.init);
+    editing.addFormula(baseName, baseExp ?? baseBud.valueSet, false); // baseBud.valueSetType === ValueSetType.init);
     const base = editing.getValue(baseName) as number;
     if (base === undefined) {
         debugger;

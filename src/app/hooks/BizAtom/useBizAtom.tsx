@@ -65,16 +65,16 @@ export interface UseBizAtomReturn {
     selectLeafAtom: (entityAtom: EntityAtom) => Promise<EntityAtom>;
 }
 
-async function getAtomBase(uq: UqExt, id: number) {
+async function getAtomBase(biz: Biz, uq: UqExt, id: number) {
     let { props } = await uq.GetAtom.query({ id });
-    let { main, buds } = readBuds(id, props);
+    let { main, buds } = readBuds(biz, id, props);
     return {
         main, buds
     };
 }
 
 export async function getAtomWithProps(biz: Biz, uq: UqExt, id: number): Promise<any> {
-    let { main, buds } = await getAtomBase(uq, id);
+    let { main, buds } = await getAtomBase(biz, uq, id);
     let ret = { ...main };
     let { phrase: phraseId } = main;
     let entity = biz.entityFromId(phraseId);
@@ -99,7 +99,7 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
     const pathList = entity.name + '-list';
 
     async function getAtom(id: number) {
-        let ret = await getAtomBase(uq, id);
+        let ret = await getAtomBase(biz, uq, id);
         let { main } = ret;
         let { phrase } = main;
         let entityAtom = biz.entityFromId<EntityAtom>(phrase);

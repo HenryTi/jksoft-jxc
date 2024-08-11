@@ -1,7 +1,8 @@
-import { BudCheckValue, BudValue } from "tonwa-app";
+import { Biz, EnumBudType } from "app/Biz";
+import { BudValue } from "tonwa-app";
 import { ReturnGetAtomProps } from "uqs/UqDefault";
 
-export function readBuds(id: number, props: ReturnGetAtomProps[]) {
+export function readBuds(biz: Biz, id: number, props: ReturnGetAtomProps[]) {
     let main: any;
     let buds: { [bud: number]: BudValue; } = {};
     let prop = props[0];
@@ -10,28 +11,19 @@ export function readBuds(id: number, props: ReturnGetAtomProps[]) {
         main = { id, phrase, no, ex }
     }
     let len = props.length;
-    // let checks: { [bud: number]: BudCheckValue } = {}
     for (let i = 1; i < len; i++) {
         let { phrase, value } = props[i];
-        switch (value.length) {
-            case 0: debugger; break;
-            case 1: buds[phrase] = value[0]; break;
-            default: buds[phrase] = value; break;
-            /*
-            case 2:
-                let check = checks[phrase];
-                if (check === undefined) {
-                    checks[phrase] = check = [];
-                }
-                check.push(value[1]);
-                break;
-            */
+        let bud = biz.budFromId(phrase);
+        if (bud.budDataType.type === EnumBudType.check) {
+            buds[phrase] = value;
+        }
+        else {
+            switch (value.length) {
+                case 0: debugger; break;
+                case 1: buds[phrase] = value[0]; break;
+                default: buds[phrase] = value; break;
+            }
         }
     }
-    /*
-    for (let i in checks) {
-        buds[i] = checks[i];
-    }
-    */
     return { main, buds };
 }
