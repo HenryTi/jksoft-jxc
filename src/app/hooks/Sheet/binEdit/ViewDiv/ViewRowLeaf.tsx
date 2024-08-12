@@ -9,10 +9,10 @@ import { ViewSpecBuds } from "app/hooks/View";
 export function ViewRowLeaf(props: ViewDivProps) {
     const { divStore, valDiv, buttons } = props;
     const { sheetStore } = divStore;
-    const { atomValRow, atomValue, binDiv } = valDiv;
+    const { atomValue, binDiv } = valDiv;
     const { binDivBuds } = binDiv;
     const { budValue, budPrice, budAmount, budI } = binDivBuds;
-    const valRow = useAtomValue(atomValRow);
+    const valRow = useAtomValue(valDiv.getAtomValRow());
     const value = useAtomValue(atomValue);
     const { i, price, amount } = valRow;
     let {

@@ -9,11 +9,11 @@ import { DivEditing } from "../../store";
 export function ViewRowStem(props: ViewDivProps) {
     const { valDiv, divStore, buttons, hidePivot } = props;
     const { sheetStore } = divStore;
-    const { atomValRow, atomValDivs, atomSum, binDiv } = valDiv;
+    const { atomSum, binDiv } = valDiv;
     const { entityBin } = binDiv;
-    const valRow = useAtomValue(atomValRow);
+    const valRow = useAtomValue(valDiv.getAtomValRow());
     let { sumValue, sumAmount } = useAtomValue(atomSum);
-    const divs = useAtomValue(atomValDivs);
+    const divs = useAtomValue(valDiv.getAtomValDivs());
     const { i: iValue } = valRow;
     let {
         sum: cnSum, sumBold: cnSumBold

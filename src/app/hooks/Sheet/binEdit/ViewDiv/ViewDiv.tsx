@@ -14,10 +14,10 @@ import { rowEdit } from "../divEdit";
 export function ViewDiv(props: ViewDivProps) {
     const modal = useModal();
     const { divStore, valDiv, readonly } = props;
-    const { binDiv, atomDeleted, atomValRow, atomValDivs } = valDiv;
+    const { binDiv, atomDeleted } = valDiv;
     const { entityBin, level } = binDiv;
-    const divs = useAtomValue(atomValDivs);
-    const valRow = useAtomValue(atomValRow);
+    const divs = useAtomValue(valDiv.getAtomValDivs());
+    const valRow = useAtomValue(valDiv.getAtomValRow());
     const deleted = useAtomValue(atomDeleted);
     if (entityBin.pivot === binDiv) {
         // pivot直接在末尾级stem显示value list
@@ -66,7 +66,8 @@ export function ViewDiv(props: ViewDivProps) {
                 if (ret !== true) return;
                 const { values: newValRow } = editing;
                 await divStore.saveDetail(binDiv, newValRow);
-                setAtomValue(atomValRow, newValRow);
+                // setAtomValue(atomValRow, newValRow);
+                valDiv.setValRow(newValRow);
                 return;
             }
             catch (e) {

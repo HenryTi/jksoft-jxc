@@ -6,16 +6,16 @@ import { ViewDivProps } from "./tool";
 
 export function ViewPivotDiv({ valDiv, divStore }: ViewDivProps) {
     const { sheetStore } = divStore;
-    const divs = useAtomValue(valDiv.atomValDivs);
+    const divs = useAtomValue(valDiv.getAtomValDivs());
     const { labelColor, value: cnValue } = theme;
     return <>
         {divs.map(v => <ViewPivot key={v.id} valDiv={v} />)}
     </>;
     function ViewPivot({ valDiv }: { valDiv: ValDiv }) {
-        const { binDiv, atomValRow, atomValue } = valDiv;
+        const { binDiv, atomValue } = valDiv;
         const { binDivBuds: binBuds, format } = binDiv;
         const { keyField, coll } = binBuds;
-        const valRow = useAtomValue(atomValRow);
+        const valRow = useAtomValue(valDiv.getAtomValRow());
         let valueValue = useAtomValue(atomValue);
         if (valueValue === undefined) {
             valueValue = 0;

@@ -23,6 +23,7 @@ export enum SubmitState {
 export class BinStore extends EntityStore<EntityBin> {
     private valDivColl: { [id: number]: ValDivBase };
     private pendLoadState: PendLoadState;
+    readonly atomWaiting = atom(false);
     readonly sheetStore: SheetStore;
     readonly binDivRoot: BinDiv;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> };
@@ -43,15 +44,15 @@ export class BinStore extends EntityStore<EntityBin> {
         this.valDivColl = {};
         this.pendLoadState = PendLoadState.none;
         this.atomSubmitState = atom((get) => {
-            const { atomValDivs } = this.valDivsRoot;
-            if (atomValDivs === undefined) return SubmitState.none;
-            let valDivs = get(atomValDivs);
+            const { valDivs } = this.valDivsRoot;
+            // if (atomValDivs === undefined) return SubmitState.none;
+            // let valDivs = get(atomValDivs);
             let hasValue = false;
             if (valDivs.length === 0) return SubmitState.none;
             for (let valDiv of valDivs) {
-                const { atomValue, atomValRow } = valDiv;
+                const { atomValue, valRow } = valDiv;
                 let value = get(atomValue);
-                let valRow = get(atomValRow);
+                // let valRow = get(atomValRow);
                 if (valRow.id < 0) return SubmitState.disable;
                 if (value !== undefined) hasValue = true;
                 if (value > valRow.pendValue) return SubmitState.disable;
@@ -64,17 +65,21 @@ export class BinStore extends EntityStore<EntityBin> {
         }
     }
 
+    setWaiting(waiting: boolean) {
+        setAtomValue(this.atomWaiting, waiting);
+    }
+
     async loadPend(params: any): Promise<void> {
         if (this.pendLoadState !== PendLoadState.none) return;
         this.pendLoadState = PendLoadState.loading;
 
         let pendRows = await this.sheetStore.loadPend(params, undefined);
         this.pendLoadState = PendLoadState.loaded;
-        const { atomValDivs } = this.valDivsRoot;
-        if (atomValDivs !== undefined) {
-            let valDivs = getAtomValue(atomValDivs);
+        const { valDivs } = this.valDivsRoot;
+        if (valDivs !== undefined) {
+            // let valDivs = getAtomValue(atomValDivs);
             for (let valDiv of valDivs) {
-                let valRow = getAtomValue(valDiv.atomValRow);
+                let { valRow } = valDiv;
                 this.setPend(valRow.pend, valDiv, false);
             }
         }
@@ -106,33 +111,34 @@ export class BinStore extends EntityStore<EntityBin> {
         for (let valRow of valRows) {
             this.setValRowRoot(valRow, trigger);
         }
-        let valDivs = getAtomValue(this.valDivsRoot.atomValDivs);
+        /*
+        let { valDivs } = this.valDivsRoot;
         let valDivsNoneZero: ValDivRoot[] = [];
         for (let valDiv of valDivs) {
             const { sumValue } = getAtomValue(valDiv.atomSum);
             const value = getAtomValue(valDiv.atomValue);
             if (sumValue > 0 || value !== undefined) valDivsNoneZero.push(valDiv);
         }
-        setAtomValue(this.valDivsRoot.atomValDivs, valDivsNoneZero);
+        this.valDivsRoot.setValDivs(valDivsNoneZero);
+        */
     }
 
     getPendLeft(valDiv: ValDivBase): number {
         if (valDiv === undefined) return undefined;
         function has(valDivs: ValDivs, valDiv: ValDivBase) {
-            let vds = getAtomValue(valDivs.atomValDivs);
+            let vds = valDivs.valDivs;
             for (let vd of vds) {
                 if (vd === valDiv) return true;
                 if (has(vd, valDiv) === true) return true;
             }
             return false;
         }
-        let vds = getAtomValue(this.valDivsRoot.atomValDivs);
+        let vds = this.valDivsRoot.valDivs;
         let pendRows = getAtomValue(this.atomPendRows);
         for (let vd of vds) {
             if (has(vd, valDiv) === true) {
-                let { atomValRow, atomSum } = vd;
+                let { valRow, atomSum } = vd;
                 let { sumValue, sumAmount } = getAtomValue(atomSum);
-                let valRow = getAtomValue(atomValRow);
                 let { pend } = valRow;
                 let pendRow = pendRows?.find(v => v.pend === pend);
                 if (pendRow === undefined) {
@@ -146,9 +152,9 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 
     async delValDiv(valDiv: ValDivBase) {
-        const { binDiv, atomValRow } = valDiv;
+        const { binDiv, valRow } = valDiv;
         if (binDiv.subBinDiv === undefined) {
-            let valRow = getAtomValue(atomValRow);
+            // let valRow = getAtomValue(atomValRow);
             await this.delValRow(valRow.id);
             this.sheetStore.notifyRowChange();
             return;
@@ -168,7 +174,7 @@ export class BinStore extends EntityStore<EntityBin> {
 
     async delValRow(id: number) {
         let val = this.valDivColl[id];
-        let valRow = getAtomValue(val.atomValRow);
+        let { valRow } = val;
         const { origin } = valRow;
         let valDiv = this.valDivColl[origin];
         if (valDiv === undefined) {
@@ -246,7 +252,7 @@ export class BinStore extends EntityStore<EntityBin> {
             valDiv.setValRow(valRow);
             return valDiv;
         }
-        let valDivSub = new ValDiv(parentValDiv, valRow); // this.setSub(parentValDiv, valRow);
+        let valDivSub = new ValDiv(parentValDiv, valRow);
         this.valDivColl[id] = valDivSub;
         parentValDiv.addValDiv(valDivSub, trigger);
         return valDivSub;
@@ -263,8 +269,6 @@ export class BinStore extends EntityStore<EntityBin> {
 
     async saveDetail(binDiv: BinDiv, valRow: ValRow) {
         const { buds } = binDiv;
-        // let retId = await this.sheetStore.saveDetail(binDiv.entityBin, buds, valRow);
-        // return retId;
         let { id, i, x, value, price, amount, pend, origin } = valRow;
         let propArr = getValRowPropArr(valRow, buds);
         let param: ParamSaveDetail = {
@@ -284,28 +288,6 @@ export class BinStore extends EntityStore<EntityBin> {
         id = retSaveDetail.ret[0].id;
         return id;
     }
-    /*
-    async saveDetail(entityBin: EntityBin, buds: BizBud[], valRow: ValRow) {
-        let { id, i, x, value, price, amount, pend, origin } = valRow;
-        let propArr = this.getPropArr(valRow, buds);
-        let param: ParamSaveDetail = {
-            base: this.mainStore.valRow.id,
-            phrase: entityBin.id,
-            id,
-            i,
-            x,
-            value,
-            price,
-            amount,
-            origin,
-            pend,
-            props: propArr,
-        };
-        let retSaveDetail = await this.uq.SaveDetail.submitReturns(param);
-        id = retSaveDetail.ret[0].id;
-        return id;
-    }
-    */
 
     async reloadBinProps(bin: number) {
         await this.sheetStore.reloadBinProps(bin);
@@ -318,13 +300,12 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 
     replaceValDiv(valDiv: ValDivBase, newValDiv: ValDivRoot) {
-        const { atomValDivs } = this.valDivsRoot;
-        let valDivs = getAtomValue(atomValDivs);
+        const { valDivs } = this.valDivsRoot;
         let { length } = valDivs;
         for (let i = 0; i < length; i++) {
             if (valDiv === valDivs[i]) {
                 valDivs.splice(i, 1, newValDiv);
-                setAtomValue(atomValDivs, [...valDivs]);
+                this.valDivsRoot.setValDivs([...valDivs]);
                 break;
             }
         }
@@ -344,8 +325,8 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 
     getParentValDiv(valDiv: ValDivBase): ValDivBase {
-        const { atomValDivs } = this.valDivsRoot;
-        let valDivs = getAtomValue(atomValDivs);
+        const { valDivs } = this.valDivsRoot;
+        // let valDivs = getAtomValue(atomValDivs);
         for (let vd of valDivs) {
             let ret = this.getParentDivInternal(vd, valDiv);
             if (ret !== undefined) return ret;
@@ -354,8 +335,8 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 
     private getParentDivInternal(valDivParent: ValDivBase, valDiv: ValDivBase): ValDivBase {
-        const { atomValDivs } = valDivParent;
-        let valDivs = getAtomValue(atomValDivs);
+        const { valDivs } = valDivParent;
+        // let valDivs = getAtomValue(atomValDivs);
         for (let vd of valDivs) {
             if (vd === valDiv) return valDivParent;
             let ret = this.getParentDivInternal(vd, valDiv);
@@ -375,8 +356,8 @@ export class BinStore extends EntityStore<EntityBin> {
 
     sum(get: Getter) {
         let sumAmount: number = 0, sumValue: number = 0;
-        const { atomValDivs } = this.valDivsRoot;
-        let valDivs = get(atomValDivs);
+        const { valDivs } = this.valDivsRoot;
+        // let valDivs = get(atomValDivs);
         for (let valDiv of valDivs) {
             const { sumValue: v0, sumAmount: a0 } = get(valDiv.atomSum);
             sumValue += v0;

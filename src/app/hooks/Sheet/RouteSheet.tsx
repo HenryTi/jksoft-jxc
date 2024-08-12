@@ -94,6 +94,7 @@ class RouteConsole extends SheetConsole {
             origin, price, value, amount
         });
     }
+
     sheetRowCountChanged(store: SheetStore) {
     }
 

@@ -42,9 +42,9 @@ export function ViewDivRight({ children }: { children: React.ReactNode; }) {
 
 export function ViewPendValue(props: ViewDivProps) {
     const { valDiv, readonly } = props;
-    const { atomValRow, atomSum, binDiv, parent } = valDiv;
+    const { atomSum, binDiv, parent } = valDiv;
     const { level, entityBin } = binDiv;
-    const valRow = useAtomValue(atomValRow);
+    const valRow = useAtomValue(valDiv.getAtomValRow());
     let { sumValue, sumAmount } = useAtomValue(atomSum);
     if (parent === undefined) sumValue = valRow.value;
     const { pendValue } = valRow;

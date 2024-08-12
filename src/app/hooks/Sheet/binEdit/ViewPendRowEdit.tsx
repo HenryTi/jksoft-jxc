@@ -43,8 +43,8 @@ export function ViewPendRowEdit(props: PendProps) {
     }
 
     function ViewWithDiv() {
-        const { atomDeleted, atomValRow } = valDiv;
-        const valRow = useAtomValue(atomValRow);
+        const { atomDeleted } = valDiv;
+        const valRow = useAtomValue(valDiv.getAtomValRow());
         const deleted = useAtomValue(atomDeleted);
         const { id } = valRow;
         function onDelThoroughly() {

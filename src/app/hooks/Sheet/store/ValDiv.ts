@@ -5,19 +5,30 @@ import { getAtomValue, setAtomValue } from "tonwa-com";
 import { PendRow, SheetStore } from "./SheetStore";
 
 export class ValDivsBase<T extends ValDivBase> {
-    readonly atomValDivs = atom([] as T[]);
+    private readonly _atomValDivs = atom([] as T[]);
     readonly atomSum = atom(get => this.getSum(get));
 
+    get valDivs() { return getAtomValue(this._atomValDivs); } //  atom([] as T[]);
+    getAtomValDivs() { return this._atomValDivs };
+
+    setValDivs(valDivs: ValDivBase[]) {
+        setAtomValue(this._atomValDivs, valDivs);
+    }
+
+    protected getValDivsFromGetter(get: Getter) {
+        return get(this._atomValDivs);
+    }
+
     protected getSum(get: Getter) {
-        let valDivs = get(this.atomValDivs);
+        let valDivs = get(this._atomValDivs);
         let sumValue = 0, sumAmount = 0, len = valDivs.length;
         for (let i = 0; i < len; i++) {
             let valDiv = valDivs[i];
             try {
                 let { binDiv: { level, entityBin: { divLevels } } } = valDiv;
-                const { atomValue, atomValRow, atomSum } = valDiv;
+                const { atomValue, valRow, atomSum } = valDiv;
                 if (level === divLevels) {
-                    const valRow = get(atomValRow);
+                    // const valRow = get(atomValRow);
                     sumValue += get(atomValue);
                     sumAmount += valRow.amount ?? 0;
                 }
@@ -36,13 +47,12 @@ export class ValDivsBase<T extends ValDivBase> {
     }
 
     addValDiv(valDiv: T, trigger: boolean) {
-        let { atomValDivs } = this;
-        let valDivs = getAtomValue(atomValDivs);
-        let { atomValRow } = valDiv;
-        let valRow = getAtomValue(atomValRow);
+        let { _atomValDivs } = this;
+        let valDivs = getAtomValue(_atomValDivs);
+        let { valRow } = valDiv;
         let { id } = valRow;
         let index = valDivs.findIndex(v => {
-            let ivr = getAtomValue(v.atomValRow);
+            let ivr = v.valRow;
             return (ivr.id === id);
         });
         if (index >= 0) {
@@ -54,11 +64,11 @@ export class ValDivsBase<T extends ValDivBase> {
         }
     }
     removePend(pendId: number) {
-        let valDivs = getAtomValue(this.atomValDivs);
+        let valDivs = getAtomValue(this._atomValDivs);
         let len = valDivs.length;
         for (let i = 0; i < len; i++) {
             let valDiv = valDivs[i];
-            let valRow = getAtomValue(valDiv.atomValRow);
+            let { valRow } = valDiv;
             if (valRow.pend === pendId) {
                 valDivs.splice(i, 1);
                 break;
@@ -70,7 +80,7 @@ export class ValDivsBase<T extends ValDivBase> {
 
     getRowCount(): number {
         let rowCount = 0;
-        let valDivs = getAtomValue(this.atomValDivs);
+        let valDivs = getAtomValue(this._atomValDivs);
         for (let valDiv of valDivs) {
             rowCount += valDiv.getRowCount();
         }
@@ -78,17 +88,13 @@ export class ValDivsBase<T extends ValDivBase> {
     }
 
     delValRow(id: number) {
-        let divs = getAtomValue(this.atomValDivs);
+        let divs = getAtomValue(this._atomValDivs);
         let p = divs.findIndex(v => v.id === id);
         if (p >= 0) {
             divs.splice(p, 1);
             // setAtomValue(this.atomValDivs, [...divs]);
             this.setValDivs([...divs]);
         }
-    }
-
-    setValDivs(valDivs: ValDivBase[]) {
-        setAtomValue(this.atomValDivs, valDivs);
     }
 }
 
@@ -100,7 +106,7 @@ export class ValDivs extends ValDivsBase<ValDiv> {
 
 export abstract class ValDivBase extends ValDivs {
     readonly binDiv: BinDiv;
-    readonly atomValRow: WritableAtom<ValRow, any, any>;
+    private readonly atomValRow: WritableAtom<ValRow, any, any>;
     readonly atomDeleted = atom(false);
     iValue: number;
     iBase: number;
@@ -125,7 +131,7 @@ export abstract class ValDivBase extends ValDivs {
         if (deleted === true) {
             return { sumAmount: 0, sumValue: 0 };
         }
-        let valDivs = get(this.atomValDivs);
+        let valDivs = this.getValDivsFromGetter(get); // get(this._atomValDivs);
         if (valDivs.length > 0) return super.getSum(get);
         let { amount, value } = get(this.atomValRow);
         return {
@@ -133,6 +139,8 @@ export abstract class ValDivBase extends ValDivs {
             sumValue: value ?? 0,
         }
     }
+
+    getAtomValRow() { return this.atomValRow; }
 
     get id(): number {
         let valRow = getAtomValue(this.atomValRow);
@@ -150,7 +158,7 @@ export abstract class ValDivBase extends ValDivs {
         let valRow = getAtomValue(this.atomValRow);
         let { i } = valRow;
         if (i !== undefined) return i;
-        let subValDivs = getAtomValue(this.atomValDivs);
+        let subValDivs = this.valDivs; // getAtomValue(this._atomValDivs);
         if (subValDivs.length === 0) return;
         return subValDivs[0].getIValue();
     }
@@ -305,7 +313,8 @@ export abstract class ValDivBase extends ValDivs {
 
     clone(): ValDivBase {
         let ret = this.cloneObj();
-        setAtomValue(ret.atomValDivs, [...getAtomValue(this.atomValDivs)]);
+        // setAtomValue(ret.atomValDivs, [...getAtomValue(this._atomValDivs)]);
+        this.setValDivs([...this.valDivs]);
         ret.iValue = this.iValue;
         ret.iBase = this.iBase;
         ret.xValue = this.xValue;

@@ -191,13 +191,13 @@ export class SheetStore extends EntityStore<EntitySheet> {
     readonly backIcon = 'file-text-o';
     readonly isPend: boolean;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> } = {};
-    readonly divStore: BinStore;
+    readonly binStore: BinStore;
     readonly atomLoaded = atom(false);
     readonly atomReaction = atom(undefined as any);
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
     readonly atomError = atom(undefined as { [id: number]: { pend: number; overValue: number; } | { bin: number; message: string; } });
     readonly atomSum = atom(get => {
-        return this.divStore.sum(get);
+        return this.binStore.sum(get);
     });
     constructor(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
         super(sheetConsole.modal, entitySheet);
@@ -212,11 +212,11 @@ export class SheetStore extends EntityStore<EntitySheet> {
         }
         this.caption = entitySheet.caption;
         if (detail !== undefined) {
-            this.divStore = new BinStore(this, detail.bin);
+            this.binStore = new BinStore(this, detail.bin);
         }
         this.atomSubmitState = atom((get) => {
-            if (this.divStore === undefined) return SubmitState.enable;
-            return get(this.divStore.atomSubmitState);
+            if (this.binStore === undefined) return SubmitState.enable;
+            return get(this.binStore.atomSubmitState);
         }, null);
     }
 
@@ -224,8 +224,8 @@ export class SheetStore extends EntityStore<EntitySheet> {
         let { main, details } = await this.loadBinData(sheetId);
         if (main === undefined) return;
         this.mainStore.setValue(main);
-        if (this.divStore !== undefined) {
-            this.divStore.load(details, false);
+        if (this.binStore !== undefined) {
+            this.binStore.load(details, false);
         }
         setAtomValue(this.atomLoaded, true);
     }

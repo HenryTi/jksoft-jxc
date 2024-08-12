@@ -5,14 +5,14 @@ import { atom, useAtomValue } from "jotai";
 import { useRef, useState } from "react";
 import { headerSheet, buttonDefs } from "../headerSheet";
 import { ViewReaction } from "app/hooks/View/ViewReaction";
-import { FA, setAtomValue, theme } from "tonwa-com";
+import { FA, setAtomValue, SpinnerSmall, theme } from "tonwa-com";
 import { ToolItem } from "app/coms";
 import { PAV } from "../binEdit/ViewDiv/tool";
 import { BizBud } from "app/Biz";
 import { useReactToPrint } from "react-to-print";
 
 export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean; }) {
-    const { uq, mainStore, divStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
+    const { uq, mainStore, binStore: divStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
     const modal = useModal();
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(atomSubmitState);
@@ -140,14 +140,19 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             </div>;
         }
         function ViewBinDivs() {
-            const { valDivsRoot } = divStore;
-            const valDivs = useAtomValue(valDivsRoot.atomValDivs);
+            const { valDivsRoot, atomWaiting } = divStore;
+            const valDivs = useAtomValue(valDivsRoot.getAtomValDivs());
+            const waiting = useAtomValue(atomWaiting);
             let length = valDivs.length;
             for (let i = 0; i < length; i++) {
                 let valDiv = valDivs[i];
                 let { valRow } = valDiv;
                 if (valRow.id === undefined) debugger;
                 if (valDiv.id === undefined) debugger;
+            }
+            let viewWaiting: any;
+            if (waiting === true) {
+                viewWaiting = <div className="px-3 py-2"><SpinnerSmall /></div>;
             }
             return <div className="tonwa-bg-gray-1 pt-3">
                 {valDivs.length === 0 ?
@@ -163,6 +168,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
                             <ViewDiv divStore={divStore} valDiv={v} readonly={readonly} />
                         </div>;
                     })}
+                {viewWaiting}
             </div>
         }
         view = <div ref={ref}>

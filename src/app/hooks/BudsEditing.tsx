@@ -196,6 +196,8 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         // this.calc.setValue(name, value, callback);
         // c 的主要作用，是做了 value 转换。比如 计算的amount做了小数点转换
         // this.calc.setValue(name, value, c);
+        let bud = this.budColl[name];
+        this.setFieldOrBudValue(bud, value);
         this.calc.setValue(name, value, c);
     }
 

@@ -3,24 +3,20 @@ import { BinEditing } from "../store";
 import { runBinPicks } from "../binPick";
 import { rowEdit } from "./divEdit";
 import { PickResult } from "app/hooks/Calc";
-/*
-export function useDetailNew(sheetStore: SheetStore) {
-    // const rowEdit = useRowEdit();
-    // const pick = useBinPicks();
-    return useCallback(detailNew, []);
-}
-*/
+import { wait } from "tonwa-com";
+
 export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
-    const { modal, divStore } = sheetStore;
-    if (divStore === undefined) {
+    const { modal, binStore } = sheetStore;
+    if (binStore === undefined) {
         alert('Pick Pend on main not implemented');
         return false;
     }
-    const { entity: entityBin, binDivRoot } = divStore;
-    //let ret = await pick(sheetStore, entityBin);
+    const { entity: entityBin, binDivRoot } = binStore;
     let ret = await runBinPicks(sheetStore, entityBin);
     if (ret === undefined) return false;
-    let { editing/*namedResults*/, rearBinPick, rearResult, rearPickResultType } = ret;
+
+    binStore.setWaiting(true);
+    let { editing, rearBinPick, rearResult, rearPickResultType } = ret;
     const { valueSpace } = editing;
     if (rearPickResultType === RearPickResultType.array) {
         // 直接选入行集，待修改
@@ -41,17 +37,18 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
             }
             let { values: valRow } = binEditing;
             if (valRow.value === undefined) {
-                binEditing.setNamedValue('value', 1, undefined);
+                const defaultValue = 1;
+                binEditing.setNamedValue('value', defaultValue, undefined);
             }
             const { origin, pend, pendValue } = rowProps;
             valRow.origin = origin as number;
             valRow.pend = pend as number;
             valRow.pendValue = pendValue as number;
             if (valRow.id !== undefined) debugger;
-            let id = await divStore.saveDetail(binDivRoot, valRow);
+            let id = await binStore.saveDetail(binDivRoot, valRow);
             valRow.id = id;
-            await divStore.reloadValRow(valRow);
-            divStore.setValRowRoot(valRow, true);
+            await binStore.reloadValRow(valRow);
+            binStore.setValRowRoot(valRow, true);
         }
     }
     else {
@@ -62,11 +59,12 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
         if (ret === true) {
             const { values: valRow } = binEditing;
             if (valRow.id !== undefined) debugger;
-            let id = await divStore.saveDetail(binDivRoot, valRow);
+            let id = await binStore.saveDetail(binDivRoot, valRow);
             valRow.id = id;
-            await divStore.reloadValRow(valRow);
+            await binStore.reloadValRow(valRow);
         }
     }
+    binStore.setWaiting(false);
     sheetStore.notifyRowChange();
     return true;
 }

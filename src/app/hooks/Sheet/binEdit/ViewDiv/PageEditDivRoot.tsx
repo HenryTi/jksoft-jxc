@@ -24,10 +24,10 @@ interface EditDivProps {
 function EditDiv(props: EditDivProps) {
     const modal = useModal();
     const { divStore, valDiv } = props;
-    const { atomValDivs, binDiv, atomDeleted } = valDiv;
+    const { binDiv, atomDeleted } = valDiv;
     const { level, entityBin, subBinDiv: div } = binDiv;
     const { divLevels, pivot } = entityBin;
-    const divs = useAtomValue(atomValDivs);
+    const divs = useAtomValue(valDiv.getAtomValDivs());
     const deleted = useAtomValue(atomDeleted);
     let bg = divLevels - level - 1;
     let borderTop = ''; // bg > 0 ? 'border-top' : '';
@@ -44,8 +44,8 @@ function EditDiv(props: EditDivProps) {
     let viewDivs: any;
     if (divs.length > 0) {
         async function onAddNew() {
-            const { atomValRow } = valDiv;
-            const valRow = getAtomValue(atomValRow);
+            const { valRow } = valDiv;
+            // const valRow = getAtomValue(atomValRow);
             let pendRow = await divStore.loadPendRow(valRow.pend);
             let valDivNew = valDiv.createValDivSub(pendRow);
             let ret = await editDivs({
@@ -88,7 +88,7 @@ function EditDiv(props: EditDivProps) {
     let tops: DivRightButton[], bottoms: DivRightButton[];
     if (level === divLevels) {
         async function onEdit() {
-            const { atomValRow } = valDiv;
+            // const { atomValRow } = valDiv;
             const editing = new DivEditing(divStore, valDiv);
             let ret = await rowEdit(modal, editing, valDiv);
             if (ret !== true) return;
@@ -98,7 +98,8 @@ function EditDiv(props: EditDivProps) {
                 return;
             }
             await divStore.saveDetail(binDiv, newValRow);
-            setAtomValue(atomValRow, newValRow);
+            valDiv.setValRow(newValRow);
+            // setAtomValue(atomValRow, newValRow);
         }
         tops = [{
             icon: 'pencil-square-o',
@@ -121,12 +122,12 @@ function EditDiv(props: EditDivProps) {
         const { id: keyId } = key;
         valRow = valRow ?? valDiv.valRow;
         const keyValue = valRow.buds[keyId];
-        const { atomValDivs } = parent;
-        const parentValDivs = getAtomValue(atomValDivs);
+        const { valDivs: parentValDivs } = parent;
+        // const parentValDivs = getAtomValue(atomValDivs);
         for (let vd of parentValDivs) {
             if (vd === valDiv) continue;
-            const { atomValRow } = vd;
-            const vr = getAtomValue(atomValRow);
+            const { valRow: vr } = vd;
+            // const vr = getAtomValue(atomValRow);
             if (keyValue === vr.buds[keyId]) return true;
         }
         return false;

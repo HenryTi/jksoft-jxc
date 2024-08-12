@@ -41,7 +41,7 @@ export class DashConsole extends SheetConsole {
         setAtomValue(this.atomMyDrafts, [...myDrafts]);
     }
     sheetRowCountChanged(store: SheetStore) {
-        const { mainStore: main, divStore } = store;
+        const { mainStore: main, binStore: divStore } = store;
         const { valRow } = main;
         let { id } = valRow;
         let myDrafts = getAtomValue(this.atomMyDrafts);
