@@ -731,7 +731,7 @@ RETURNS specs (
             JOIN Bud as b ON b.id=a1.base
             LEFT JOIN BinPend as c ON c.id=a.id
             LEFT JOIN Pend as d ON d.id=c.pendFrom
-        WHERE b.base=id AND (detail IS NULL OR a.id=detail) AND a.value IS NOT NULL;
+        WHERE b.base=id AND (detail IS NULL OR a.id=detail);
     INTO origins SELECT DISTINCT * b -- , IFNULL(c.value, 0) as done
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN Bin as b ON b.id=a.origin

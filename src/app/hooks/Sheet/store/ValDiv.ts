@@ -47,8 +47,7 @@ export class ValDivsBase<T extends ValDivBase> {
     }
 
     addValDiv(valDiv: T, trigger: boolean) {
-        let { _atomValDivs } = this;
-        let valDivs = getAtomValue(_atomValDivs);
+        let valDivs = getAtomValue(this._atomValDivs);
         let { valRow } = valDiv;
         let { id } = valRow;
         let index = valDivs.findIndex(v => {

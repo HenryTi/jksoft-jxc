@@ -16,7 +16,7 @@ enum PendLoadState {
 }
 export enum SubmitState {
     none,
-    hide,
+    // hide,
     disable,
     enable,
 }
@@ -44,20 +44,22 @@ export class BinStore extends EntityStore<EntityBin> {
         this.valDivColl = {};
         this.pendLoadState = PendLoadState.none;
         this.atomSubmitState = atom((get) => {
-            const { valDivs } = this.valDivsRoot;
+            const valDivs = get(this.valDivsRoot.getAtomValDivs());
             // if (atomValDivs === undefined) return SubmitState.none;
             // let valDivs = get(atomValDivs);
             let hasValue = false;
             if (valDivs.length === 0) return SubmitState.none;
             for (let valDiv of valDivs) {
-                const { atomValue, valRow } = valDiv;
+                const { atomValue, atomSum } = valDiv;
                 let value = get(atomValue);
-                // let valRow = get(atomValRow);
+                let { sumValue } = get(atomSum);
+                let valRow = get(valDiv.getAtomValRow());
                 if (valRow.id < 0) return SubmitState.disable;
-                if (value !== undefined) hasValue = true;
+                if (value !== undefined || sumValue > 0) hasValue = true;
                 if (value > valRow.pendValue) return SubmitState.disable;
             }
-            return hasValue === true ? SubmitState.enable : SubmitState.hide;
+            let ret = hasValue === true ? SubmitState.enable : SubmitState.disable; // .hide;
+            return ret;
         }, null);
         if (pend !== undefined) {
             const valuesBudsEditing = new ValuesBudsEditing(modal, biz, pend.params);
@@ -108,9 +110,12 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 
     load(valRows: ValRow[], trigger: boolean) {
+        let valDivs = [];
         for (let valRow of valRows) {
-            this.setValRowRoot(valRow, trigger);
+            let valDiv = this.setValRowRoot(valRow, trigger);
+            if (valDiv !== undefined) valDivs.push(valDiv);
         }
+        this.valDivsRoot.setValDivs(valDivs);
         /*
         let { valDivs } = this.valDivsRoot;
         let valDivsNoneZero: ValDivRoot[] = [];
@@ -215,12 +220,13 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 
     setValRowRoot(valRow: ValRow, trigger: boolean) {
+        let rootValDiv: ValDivBase;
         let valDiv: ValDivBase;
         let { origin } = valRow;
         if (origin !== undefined) {
             let valDivOrigin = this.valDivColl[origin];
             if (valDivOrigin === undefined) {
-                valDiv = this.addRootDiv(valRow, trigger);
+                rootValDiv = valDiv = this.addRootDiv(valRow, trigger);
             }
             else {
                 if (valDivOrigin.binDiv.subBinDiv === undefined) {
@@ -231,7 +237,7 @@ export class BinStore extends EntityStore<EntityBin> {
             }
         }
         else {
-            valDiv = this.addRootDiv(valRow, trigger);
+            rootValDiv = valDiv = this.addRootDiv(valRow, trigger);
         }
         let { binDiv } = valDiv;
         let { binDivBuds: { budIBase, budXBase } } = binDiv;
@@ -243,6 +249,7 @@ export class BinStore extends EntityStore<EntityBin> {
             let bizAtom = this.sheetStore.bizAtomColl[budXBase.id]?.atom;
             if (bizAtom !== undefined) valDiv.xBase = bizAtom.id;
         }
+        return rootValDiv;
     }
 
     private setVal(parentValDiv: ValDivBase, valRow: ValRow, trigger: boolean): ValDivBase {
