@@ -72,6 +72,7 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
     }
 
     let viewShowBuds: any;
+    /* 暂时不显示 showBuds
     let showBuds = binEditing.buildShowBuds();
     if (showBuds.length > 0) {
         viewShowBuds = <Band className="mt-2">
@@ -80,6 +81,7 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
             </RowCols>
         </Band>
     }
+    */
 
     return <Page header={caption} right={right}>
         <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + theme.bootstrapContainer}>
