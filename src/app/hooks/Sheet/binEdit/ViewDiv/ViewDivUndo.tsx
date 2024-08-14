@@ -3,9 +3,13 @@ import { ViewRow } from "./ViewRow";
 import { ViewDivProps } from "./tool";
 import { useCallback, useRef, useState } from "react";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
+import { atom, useAtomValue } from "jotai";
+import { BinStore, ValDivBase } from "../../store";
 
 export function ViewDivUndo(props: ViewDivProps) {
-    const { divStore, valDiv } = props;
+    const { binStore, valDiv } = props;
+    const { current: undoStore } = useRef(new UndoStore(binStore, valDiv));
+    /*
     const { atomDeleted } = valDiv;
     let [deleting, setDeleting] = useState(0);
     const refCanceled = useRef(false);
@@ -24,10 +28,8 @@ export function ViewDivUndo(props: ViewDivProps) {
             }
             setDeleting(i);
         }
-        await divStore.delValDiv(valDiv);
+        await binStore.delValDiv(valDiv);
     }, []);
-
-    const bottoms: DivRightButton[] = [];
 
     function btn(onClick: () => void, icon: string, iconColor: string, caption: string, captionColor: string) {
         return <div className={'cursor-pointer px-2 ' + iconColor} onClick={onClick}>
@@ -35,46 +37,24 @@ export function ViewDivUndo(props: ViewDivProps) {
             <span className={captionColor}>{caption}</span>
         </div>
     }
+    */
 
-    // function viewRestore() {
-    if (deleting === 0) {
-        bottoms.push(
-            {
-                icon: 'undo',
-                color: ' text-warning ',
-                label: '恢复',
-                // labelColor: 'text-info',
-                onClick: onRestore,
-            },
-            {
-                icon: 'times',
-                color: ' text-body-tertiary ',
-                label: '清除',
-                onClick: onDelThoroughly
-            }
-        )
-        /*
-        return <div className="d-flex flex-column align-items-end w-min-6c text-end pt-2">
-            {btn(onRestore, 'undo', ' text-warning ', '恢复', 'text-info')}
-            {btn(onDelThoroughly, 'times', ' text-body-tertiary ', '清理', '')}
-        </div>;
-        */
-    }
-    else {
-        function onCancelDel() {
-            refCanceled.current = true;
-        }
-        bottoms.push({
+
+    const bottoms: DivRightButton[] = [
+        {
+            icon: 'undo',
+            color: ' text-warning ',
+            label: '恢复',
+            // labelColor: 'text-info',
+            onClick: undoStore.onRestore,
+        },
+        {
             icon: 'times',
-            color: ' text-secondary ',
-            label: '取消',
-            onClick: onCancelDel,
-        });
-    }
-
-    // {viewRestore()}
-    // {viewIsDeleting()}
-    // <EditRow {...props} deleted={deleted} />
+            color: ' text-body-tertiary ',
+            label: '清除',
+            onClick: undoStore.onDelThoroughly
+        },
+    ];
 
     return <div className="d-flex border-bottom">
         <div className="flex-fill text-body-tetiary opacity-50 text-decoration-line-through">
@@ -82,4 +62,20 @@ export function ViewDivUndo(props: ViewDivProps) {
         </div>
         <ViewDivRightButtons tops={undefined} bottoms={bottoms} />
     </div>;
+}
+
+class UndoStore {
+    private readonly binStore: BinStore;
+    private readonly valDiv: ValDivBase;
+
+    constructor(binStore: BinStore, valDiv: ValDivBase) {
+        this.binStore = binStore;
+        this.valDiv = valDiv;
+    }
+    onRestore = () => {
+        setAtomValue(this.valDiv.atomDeleted, false);
+    };
+    onDelThoroughly = async () => {
+        await this.binStore.delValDiv(this.valDiv);
+    };
 }

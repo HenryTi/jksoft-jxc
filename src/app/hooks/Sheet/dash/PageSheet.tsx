@@ -165,7 +165,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
                         if (id === undefined) debugger;
                         const cn = 'border-top border-bottom ' + (id < 0 ? 'border-warning' : 'border-primary-subtle');
                         return <div key={id} className={cn}>
-                            <ViewDiv divStore={divStore} valDiv={v} readonly={readonly} />
+                            <ViewDiv binStore={divStore} valDiv={v} readonly={readonly} />
                         </div>;
                     })}
                 {viewWaiting}

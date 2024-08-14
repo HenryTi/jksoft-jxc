@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Jul 11 2024 18:54:14 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue Aug 13 2024 21:42:02 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -22,121 +22,121 @@ export interface IX {
 }
 
 export enum EnumID {
-    $phrase = '$phrase',
-    SumFormula = 'sumformula',
-    Bud = 'bud',
-    History = 'history',
-    Atom = 'atom',
-    Spec = 'spec',
-    Duo = 'duo',
-    Sheet = 'sheet',
-    Detail = 'detail',
-    Pend = 'pend',
+	$phrase = '$phrase',
+	SumFormula = 'sumformula',
+	Bud = 'bud',
+	History = 'history',
+	Atom = 'atom',
+	Spec = 'spec',
+	Duo = 'duo',
+	Sheet = 'sheet',
+	Detail = 'detail',
+	Pend = 'pend',
 }
 
 export interface $phrase extends ID {
-    name: string;
-    caption: string;
-    base: number;
-    valid: number;
-    owner: number;
-    type: number;
-    index: number;
+	name: string;
+	caption: string;
+	base: number;
+	valid: number;
+	owner: number;
+	type: number;
+	index: number;
 }
 
 export interface $phraseInActs extends ID {
-    ID?: UqID<any>;
-    name: string;
-    caption: string;
-    base: number;
-    valid: number;
-    owner: number;
-    type: number;
-    index: number;
+	ID?: UqID<any>;
+	name: string;
+	caption: string;
+	base: number;
+	valid: number;
+	owner: number;
+	type: number;
+	index: number;
 }
 
 export interface Param$role_My {
 }
 export interface Return$role_MySites {
-    id: number;
-    site: number;
-    admin: number;
-    entity: string;
-    assigned: string;
-    def: number;
+	id: number;
+	site: number;
+	admin: number;
+	entity: string;
+	assigned: string;
+	def: number;
 }
 export interface Return$role_MyRoles {
-    site: number;
-    role: string;
+	site: number;
+	role: string;
 }
 export interface Return$role_MyPermits {
-    site: number;
-    permit: string;
+	site: number;
+	permit: string;
 }
 export interface Result$role_My {
-    sites: Return$role_MySites[];
-    roles: Return$role_MyRoles[];
-    permits: Return$role_MyPermits[];
+	sites: Return$role_MySites[];
+	roles: Return$role_MyRoles[];
+	permits: Return$role_MyPermits[];
 }
 
 export interface Param$role_Site_Users {
-    site: number;
+	site: number;
 }
 export interface Return$role_Site_UsersUsers {
-    id: number;
-    user: number;
-    admin: number;
-    assigned: string;
-    name: string;
-    nick: string;
-    icon: string;
-    addBy: number;
+	id: number;
+	user: number;
+	admin: number;
+	assigned: string;
+	name: string;
+	nick: string;
+	icon: string;
+	addBy: number;
 }
 export interface Return$role_Site_UsersRoles {
-    user: number;
-    role: string;
+	user: number;
+	role: string;
 }
 export interface Result$role_Site_Users {
-    users: Return$role_Site_UsersUsers[];
-    roles: Return$role_Site_UsersRoles[];
+	users: Return$role_Site_UsersUsers[];
+	roles: Return$role_Site_UsersRoles[];
 }
 
 export interface Param$role_Site_Add_Admin {
-    site: number;
-    user: number;
-    admin: number;
-    assigned: string;
+	site: number;
+	user: number;
+	admin: number;
+	assigned: string;
 }
 export interface Result$role_Site_Add_Admin {
 }
 
 export interface Param$role_Site_Del_Admin {
-    site: number;
-    user: number;
-    admin: number;
+	site: number;
+	user: number;
+	admin: number;
 }
 export interface Result$role_Site_Del_Admin {
 }
 
 export interface Param$role_Site_Add_User {
-    site: number;
-    user: number;
-    assigned: string;
+	site: number;
+	user: number;
+	assigned: string;
 }
 export interface Result$role_Site_Add_User {
 }
 
 export interface Param$role_Site_User_Role {
-    site: number;
-    user: number;
-    action: string;
-    role: string;
+	site: number;
+	user: number;
+	action: string;
+	role: string;
 }
 export interface Result$role_Site_User_Role {
 }
 
 export interface Param$role_Site_Quit_Owner {
-    site: number;
+	site: number;
 }
 export interface Result$role_Site_Quit_Owner {
 }
@@ -144,16 +144,16 @@ export interface Result$role_Site_Quit_Owner {
 export interface Param$sites {
 }
 export interface Return$sites$page {
-    id: number;
-    no: string;
-    ex: string;
+	id: number;
+	no: string;
+	ex: string;
 }
 export interface Result$sites {
-    $page: Return$sites$page[];
+	$page: Return$sites$page[];
 }
 
 export interface Param$setSite {
-    site: number;
+	site: number;
 }
 export interface Result$setSite {
 }
@@ -161,14 +161,14 @@ export interface Result$setSite {
 export interface Param$poked {
 }
 export interface Return$pokedRet {
-    poke: number;
+	poke: number;
 }
 export interface Result$poked {
-    ret: Return$pokedRet[];
+	ret: Return$pokedRet[];
 }
 
 export interface Param$setMyTimezone {
-    _timezone: number;
+	_timezone: number;
 }
 export interface Result$setMyTimezone {
 }
@@ -176,13 +176,13 @@ export interface Result$setMyTimezone {
 export interface Param$getUnitTime {
 }
 export interface Return$getUnitTimeRet {
-    timezone: number;
-    unitTimeZone: number;
-    unitBizMonth: number;
-    unitBizDate: number;
+	timezone: number;
+	unitTimeZone: number;
+	unitBizMonth: number;
+	unitBizDate: number;
 }
 export interface Result$getUnitTime {
-    ret: Return$getUnitTimeRet[];
+	ret: Return$getUnitTimeRet[];
 }
 
 export interface ParamClearCode {
@@ -196,1233 +196,1233 @@ export interface ResultClearPend {
 }
 
 export interface ParamClearBook {
-    bud: number;
+	bud: number;
 }
 export interface ResultClearBook {
 }
 
 export interface ParamAdminBook {
-    bud: number;
+	bud: number;
 }
 export interface ReturnAdminBook$page {
-    i: number;
-    value: number;
+	i: number;
+	value: number;
 }
 export interface ResultAdminBook {
-    $page: ReturnAdminBook$page[];
+	$page: ReturnAdminBook$page[];
 }
 
 export interface ParamSaveAtom {
-    atomPhrase: number;
-    base: number;
-    no: string;
-    ex: string;
+	atomPhrase: number;
+	base: number;
+	no: string;
+	ex: string;
 }
 export interface ReturnSaveAtomRet {
-    id: number;
+	id: number;
 }
 export interface ResultSaveAtom {
-    ret: ReturnSaveAtomRet[];
+	ret: ReturnSaveAtomRet[];
 }
 
 export interface ParamSaveBudValue {
-    phraseId: number;
-    id: number;
-    int: number;
-    dec: number;
-    str: string;
+	phraseId: number;
+	id: number;
+	int: number;
+	dec: number;
+	str: string;
 }
 export interface ResultSaveBudValue {
 }
 
 export interface ParamSaveBudCheck {
-    budPhrase: number;
-    id: number;
-    optionsItemPhrase: number;
-    checked: number;
+	budPhrase: number;
+	id: number;
+	optionsItemPhrase: number;
+	checked: number;
 }
 export interface ResultSaveBudCheck {
 }
 
 export interface ParamSaveBudRadio {
-    budPhrase: number;
-    id: number;
-    optionsItemPhrase: number;
+	budPhrase: number;
+	id: number;
+	optionsItemPhrase: number;
 }
 export interface ResultSaveBudRadio {
 }
 
 export interface ParamDelAtom {
-    id: number;
+	id: number;
 }
 export interface ResultDelAtom {
 }
 
 export interface ParamSaveSpec {
-    id: number;
-    spec: number;
-    base: number;
-    keys: any;
-    props: any;
+	id: number;
+	spec: number;
+	base: number;
+	keys: any;
+	props: any;
 }
 export interface ReturnSaveSpecRet {
-    id: number;
+	id: number;
 }
 export interface ResultSaveSpec {
-    ret: ReturnSaveSpecRet[];
+	ret: ReturnSaveSpecRet[];
 }
 
 export interface ParamGetSpec {
-    id: number;
+	id: number;
 }
 export interface ReturnGetSpecProps {
-    id: number;
-    base: number;
-    phrase: number;
-    value: any;
+	id: number;
+	base: number;
+	phrase: number;
+	value: any;
 }
 export interface ResultGetSpec {
-    props: ReturnGetSpecProps[];
+	props: ReturnGetSpecProps[];
 }
 
 export interface ParamSaveSheet {
-    phrase: number;
-    no: string;
-    i: number;
-    x: number;
-    value: number;
-    price: number;
-    amount: number;
-    props: any;
+	phrase: number;
+	no: string;
+	i: number;
+	x: number;
+	value: number;
+	price: number;
+	amount: number;
+	props: any;
 }
 export interface ReturnSaveSheetRet {
-    id: number;
-    no: string;
+	id: number;
+	no: string;
 }
 export interface ResultSaveSheet {
-    ret: ReturnSaveSheetRet[];
+	ret: ReturnSaveSheetRet[];
 }
 
 export interface ParamSaveDetail {
-    base: number;
-    phrase: number;
-    id: number;
-    i: number;
-    x: number;
-    origin: number;
-    value: number;
-    price: number;
-    amount: number;
-    pend: number;
-    props: any;
+	base: number;
+	phrase: number;
+	id: number;
+	i: number;
+	x: number;
+	origin: number;
+	value: number;
+	price: number;
+	amount: number;
+	pend: number;
+	props: any;
 }
 export interface ReturnSaveDetailRet {
-    id: number;
+	id: number;
 }
 export interface ResultSaveDetail {
-    ret: ReturnSaveDetailRet[];
+	ret: ReturnSaveDetailRet[];
 }
 
 export interface ParamDeleteBin {
-    id: number;
+	ids: any;
 }
 export interface ResultDeleteBin {
 }
 
 export interface ParamSubmitSheet {
-    id: number;
+	id: number;
 }
 export interface ReturnSubmitSheetCheckPend {
-    pend: number;
-    overValue: number;
+	pend: number;
+	overValue: number;
 }
 export interface ReturnSubmitSheetCheckBin {
-    bin: number;
-    message: string;
+	bin: number;
+	message: string;
 }
 export interface ResultSubmitSheet {
-    checkPend: ReturnSubmitSheetCheckPend[];
-    checkBin: ReturnSubmitSheetCheckBin[];
+	checkPend: ReturnSubmitSheetCheckPend[];
+	checkBin: ReturnSubmitSheetCheckBin[];
 }
 
 export interface ParamDoQuery {
-    query: number;
-    json: any;
-    pageStart: number;
-    pageSize: number;
+	query: number;
+	json: any;
+	pageStart: number;
+	pageSize: number;
 }
 export interface ReturnDoQueryRet {
-    id: number;
-    ban: number;
-    json: any;
-    value: number;
+	id: number;
+	ban: number;
+	json: any;
+	value: number;
 }
 export interface ReturnDoQueryProps {
-    id: number;
-    phrase: number;
-    value: any;
+	id: number;
+	phrase: number;
+	value: any;
 }
 export interface ReturnDoQueryAtoms {
-    id: number;
-    base: number;
-    no: string;
-    ex: string;
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
 }
 export interface ReturnDoQuerySpecs {
-    id: number;
-    atom: number;
-    ban: number;
-    json: any;
-    value: number;
+	id: number;
+	atom: number;
+	ban: number;
+	json: any;
+	value: number;
 }
 export interface ResultDoQuery {
-    ret: ReturnDoQueryRet[];
-    props: ReturnDoQueryProps[];
-    atoms: ReturnDoQueryAtoms[];
-    specs: ReturnDoQuerySpecs[];
+	ret: ReturnDoQueryRet[];
+	props: ReturnDoQueryProps[];
+	atoms: ReturnDoQueryAtoms[];
+	specs: ReturnDoQuerySpecs[];
 }
 
 export interface ParamRemoveDraft {
-    id: number;
+	id: number;
 }
 export interface ResultRemoveDraft {
 }
 
 export interface ParamGetMyDrafts {
-    entitySheet: number;
+	entitySheet: number;
 }
 export interface ReturnGetMyDrafts$page {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
-    rowCount: number;
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	rowCount: number;
 }
 export interface ResultGetMyDrafts {
-    $page: ReturnGetMyDrafts$page[];
+	$page: ReturnGetMyDrafts$page[];
 }
 
 export interface ParamSetSheetPreToDraft {
-    id: number;
+	id: number;
 }
 export interface ResultSetSheetPreToDraft {
 }
 
 export interface ParamDeleteMyDrafts {
-    entitySheet: number;
+	entitySheet: number;
 }
 export interface ResultDeleteMyDrafts {
 }
 
 export interface ParamSearchAtom {
-    atom: number;
-    key: string;
+	atom: number;
+	key: string;
 }
 export interface ReturnSearchAtom$page {
-    id: number;
-    no: string;
-    ex: string;
-    phrase: number;
+	id: number;
+	no: string;
+	ex: string;
+	phrase: number;
 }
 export interface ResultSearchAtom {
-    $page: ReturnSearchAtom$page[];
+	$page: ReturnSearchAtom$page[];
 }
 
 export interface ParamGetAssigns {
-    assign: number;
-    params: any;
+	assign: number;
+	params: any;
 }
 export interface ReturnGetAssigns$page {
-    id: number;
-    no: string;
-    ex: string;
-    values: any;
+	id: number;
+	no: string;
+	ex: string;
+	values: any;
 }
 export interface ResultGetAssigns {
-    $page: ReturnGetAssigns$page[];
+	$page: ReturnGetAssigns$page[];
 }
 
 export interface ParamGetTies {
-    tie: number;
-    params: any;
+	tie: number;
+	params: any;
 }
 export interface ReturnGetTies$page {
-    id: number;
-    no: string;
-    ex: string;
-    values: any;
+	id: number;
+	no: string;
+	ex: string;
+	values: any;
 }
 export interface ResultGetTies {
-    $page: ReturnGetTies$page[];
+	$page: ReturnGetTies$page[];
 }
 
 export interface ParamSaveTie {
-    tie: number;
-    i: number;
-    x: number;
+	tie: number;
+	i: number;
+	x: number;
 }
 export interface ResultSaveTie {
 }
 
 export interface ParamDeleteTie {
-    tie: number;
-    i: number;
-    x: number;
+	tie: number;
+	i: number;
+	x: number;
 }
 export interface ResultDeleteTie {
 }
 
 export interface ParamSearchAtomBuds {
-    phrase: number;
-    key: string;
-    buds: any;
+	phrase: number;
+	key: string;
+	buds: any;
 }
 export interface ReturnSearchAtomBuds$page {
-    id: number;
-    no: string;
-    ex: string;
-    phrase: number;
+	id: number;
+	no: string;
+	ex: string;
+	phrase: number;
 }
 export interface ReturnSearchAtomBudsMeds {
-    id: number;
-    main: number;
-    detail: number;
+	id: number;
+	main: number;
+	detail: number;
 }
 export interface ReturnSearchAtomBudsBudsInt {
-    id: number;
-    bud: number;
-    value: number;
+	id: number;
+	bud: number;
+	value: number;
 }
 export interface ReturnSearchAtomBudsBudsDec {
-    id: number;
-    bud: number;
-    value: number;
+	id: number;
+	bud: number;
+	value: number;
 }
 export interface ReturnSearchAtomBudsBudsStr {
-    id: number;
-    bud: number;
-    value: string;
+	id: number;
+	bud: number;
+	value: string;
 }
 export interface ResultSearchAtomBuds {
-    $page: ReturnSearchAtomBuds$page[];
-    meds: ReturnSearchAtomBudsMeds[];
-    budsInt: ReturnSearchAtomBudsBudsInt[];
-    budsDec: ReturnSearchAtomBudsBudsDec[];
-    budsStr: ReturnSearchAtomBudsBudsStr[];
+	$page: ReturnSearchAtomBuds$page[];
+	meds: ReturnSearchAtomBudsMeds[];
+	budsInt: ReturnSearchAtomBudsBudsInt[];
+	budsDec: ReturnSearchAtomBudsBudsDec[];
+	budsStr: ReturnSearchAtomBudsBudsStr[];
 }
 
 export interface ParamGetSheet {
-    id: number;
+	id: number;
 }
 export interface ReturnGetSheetMain {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
-    phrase: number;
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	phrase: number;
 }
 export interface ReturnGetSheetDetails {
-    id: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
-    pend: number;
-    pendValue: number;
-    phrase: number;
+	id: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	pend: number;
+	pendValue: number;
+	phrase: number;
 }
 export interface ReturnGetSheetOrigins {
-    id: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
+	id: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
 }
 export interface ReturnGetSheetProps {
-    id: number;
-    phrase: number;
-    value: any;
+	id: number;
+	phrase: number;
+	value: any;
 }
 export interface ReturnGetSheetAtoms {
-    id: number;
-    base: number;
-    no: string;
-    ex: string;
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
 }
 export interface ReturnGetSheetSpecs {
-    id: number;
-    atom: number;
-    json: any;
+	id: number;
+	atom: number;
+	json: any;
 }
 export interface ResultGetSheet {
-    main: ReturnGetSheetMain[];
-    details: ReturnGetSheetDetails[];
-    origins: ReturnGetSheetOrigins[];
-    props: ReturnGetSheetProps[];
-    atoms: ReturnGetSheetAtoms[];
-    specs: ReturnGetSheetSpecs[];
+	main: ReturnGetSheetMain[];
+	details: ReturnGetSheetDetails[];
+	origins: ReturnGetSheetOrigins[];
+	props: ReturnGetSheetProps[];
+	atoms: ReturnGetSheetAtoms[];
+	specs: ReturnGetSheetSpecs[];
 }
 
 export interface ParamGetAtom {
-    id: number;
+	id: number;
 }
 export interface ReturnGetAtomProps {
-    phrase: number;
-    value: any;
+	phrase: number;
+	value: any;
 }
 export interface ResultGetAtom {
-    props: ReturnGetAtomProps[];
+	props: ReturnGetAtomProps[];
 }
 
 export interface ParamGetSpecsFromBase {
-    base: number;
+	base: number;
 }
 export interface ReturnGetSpecsFromBaseRet {
-    id: number;
-    keys: any;
-    props: any;
+	id: number;
+	keys: any;
+	props: any;
 }
 export interface ResultGetSpecsFromBase {
-    ret: ReturnGetSpecsFromBaseRet[];
+	ret: ReturnGetSpecsFromBaseRet[];
 }
 
 export interface ParamGetSpecListFromBase {
-    base: number;
-    phrase: number;
+	base: number;
+	phrase: number;
 }
 export interface ReturnGetSpecListFromBaseRet {
-    id: number;
-    keys: any;
-    props: any;
+	id: number;
+	keys: any;
+	props: any;
 }
 export interface ResultGetSpecListFromBase {
-    ret: ReturnGetSpecListFromBaseRet[];
+	ret: ReturnGetSpecListFromBaseRet[];
 }
 
 export interface ParamSaveDuoOuterApp {
-    i: number;
-    x: number;
+	i: number;
+	x: number;
 }
 export interface ReturnSaveDuoOuterAppRet {
-    id: number;
+	id: number;
 }
 export interface ResultSaveDuoOuterApp {
-    ret: ReturnSaveDuoOuterAppRet[];
+	ret: ReturnSaveDuoOuterAppRet[];
 }
 
 export interface ParamDelDuoOuterApp {
-    id: number;
-    i: number;
-    x: number;
+	id: number;
+	i: number;
+	x: number;
 }
 export interface ResultDelDuoOuterApp {
 }
 
 export interface ParamGetDuos {
-    i: number;
+	i: number;
 }
 export interface ReturnGetDuosRet {
-    id: number;
-    x: number;
-    props: any;
+	id: number;
+	x: number;
+	props: any;
 }
 export interface ResultGetDuos {
-    ret: ReturnGetDuosRet[];
+	ret: ReturnGetDuosRet[];
 }
 
 export interface ParamGetPend {
-    pendEntity: number;
-    params: any;
-    pendId: number;
+	pendEntity: number;
+	params: any;
+	pendId: number;
 }
 export interface ReturnGetPend$page {
-    pend: number;
-    sheet: number;
-    id: number;
-    i: number;
-    x: number;
-    value: number;
-    price: number;
-    amount: number;
-    pendValue: number;
-    mid: any;
-    cols: any;
+	pend: number;
+	sheet: number;
+	id: number;
+	i: number;
+	x: number;
+	value: number;
+	price: number;
+	amount: number;
+	pendValue: number;
+	mid: any;
+	cols: any;
 }
 export interface ReturnGetPendRetSheet {
-    id: number;
-    no: string;
-    i: number;
-    x: number;
-    value: number;
-    price: number;
-    amount: number;
+	id: number;
+	no: string;
+	i: number;
+	x: number;
+	value: number;
+	price: number;
+	amount: number;
 }
 export interface ReturnGetPendProps {
-    id: number;
-    phrase: number;
-    value: any;
+	id: number;
+	phrase: number;
+	value: any;
 }
 export interface ReturnGetPendAtoms {
-    id: number;
-    base: number;
-    no: string;
-    ex: string;
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
 }
 export interface ReturnGetPendSpecs {
-    id: number;
-    atom: number;
-    json: any;
+	id: number;
+	atom: number;
+	json: any;
 }
 export interface ResultGetPend {
-    $page: ReturnGetPend$page[];
-    retSheet: ReturnGetPendRetSheet[];
-    props: ReturnGetPendProps[];
-    atoms: ReturnGetPendAtoms[];
-    specs: ReturnGetPendSpecs[];
+	$page: ReturnGetPend$page[];
+	retSheet: ReturnGetPendRetSheet[];
+	props: ReturnGetPendProps[];
+	atoms: ReturnGetPendAtoms[];
+	specs: ReturnGetPendSpecs[];
 }
 
 export interface ParamGetPendsNotify {
 }
 export interface ReturnGetPendsNotifyRet {
-    phrase: number;
-    count: number;
+	phrase: number;
+	count: number;
 }
 export interface ResultGetPendsNotify {
-    ret: ReturnGetPendsNotifyRet[];
+	ret: ReturnGetPendsNotifyRet[];
 }
 
 export interface ParamGetPendSheetFromNo {
-    pend: string;
-    key: string;
+	pend: string;
+	key: string;
 }
 export interface ReturnGetPendSheetFromNo$page {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    sheet: string;
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	sheet: string;
 }
 export interface ResultGetPendSheetFromNo {
-    $page: ReturnGetPendSheetFromNo$page[];
+	$page: ReturnGetPendSheetFromNo$page[];
 }
 
 export interface ParamGetPendSheetFromTarget {
-    pend: string;
-    key: string;
+	pend: string;
+	key: string;
 }
 export interface ReturnGetPendSheetFromTarget$page {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    sheet: string;
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	sheet: string;
 }
 export interface ResultGetPendSheetFromTarget {
-    $page: ReturnGetPendSheetFromTarget$page[];
+	$page: ReturnGetPendSheetFromTarget$page[];
 }
 
 export interface ParamGetSiteSheets {
-    from: any;
-    to: any;
-    timeZone: number;
+	from: any;
+	to: any;
+	timeZone: number;
 }
 export interface ReturnGetSiteSheetsRet {
-    phrase: number;
-    count: number;
+	phrase: number;
+	count: number;
 }
 export interface ResultGetSiteSheets {
-    ret: ReturnGetSiteSheetsRet[];
+	ret: ReturnGetSiteSheetsRet[];
 }
 
 export interface ParamGetSiteSheetList {
-    phrase: number;
+	phrase: number;
 }
 export interface ReturnGetSiteSheetList$page {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
-    rowCount: number;
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	rowCount: number;
 }
 export interface ResultGetSiteSheetList {
-    $page: ReturnGetSiteSheetList$page[];
+	$page: ReturnGetSiteSheetList$page[];
 }
 
 export interface ParamGetMySheetList {
-    phrase: number;
-    from: any;
-    to: any;
-    timeZone: number;
+	phrase: number;
+	from: any;
+	to: any;
+	timeZone: number;
 }
 export interface ReturnGetMySheetList$page {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
-    rowCount: number;
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	rowCount: number;
 }
 export interface ResultGetMySheetList {
-    $page: ReturnGetMySheetList$page[];
+	$page: ReturnGetMySheetList$page[];
 }
 
 export interface ParamGetReport1 {
-    reportPhrase: number;
-    atomPhrase: number;
-    atomId: number;
-    dateStart: any;
-    dateEnd: any;
-    params: any;
+	reportPhrase: number;
+	atomPhrase: number;
+	atomId: number;
+	dateStart: any;
+	dateEnd: any;
+	params: any;
 }
 export interface ReturnGetReport1$page {
-    id: number;
-    phrase: number;
-    no: string;
-    ex: string;
-    value: any;
+	id: number;
+	phrase: number;
+	no: string;
+	ex: string;
+	value: any;
 }
 export interface ResultGetReport1 {
-    $page: ReturnGetReport1$page[];
+	$page: ReturnGetReport1$page[];
 }
 
 export interface ParamGetReport {
-    reportPhrase: number;
-    atomPhrase: number;
-    atomId: number;
-    dateStart: any;
-    dateEnd: any;
-    params: any;
+	reportPhrase: number;
+	atomPhrase: number;
+	atomId: number;
+	dateStart: any;
+	dateEnd: any;
+	params: any;
 }
 export interface ReturnGetReport$page {
-    id: number;
-    phrase: number;
-    no: string;
-    ex: string;
-    value: any;
+	id: number;
+	phrase: number;
+	no: string;
+	ex: string;
+	value: any;
 }
 export interface ReturnGetReportSpecs {
-    id: number;
-    phrase: number;
-    base: number;
-    value: any;
-    props: any;
+	id: number;
+	phrase: number;
+	base: number;
+	value: any;
+	props: any;
 }
 export interface ResultGetReport {
-    $page: ReturnGetReport$page[];
-    specs: ReturnGetReportSpecs[];
+	$page: ReturnGetReport$page[];
+	specs: ReturnGetReportSpecs[];
 }
 
 export interface ParamGetHistory {
-    objId: number;
-    title: number;
+	objId: number;
+	title: number;
 }
 export interface ReturnGetHistory$page {
-    id: number;
-    value: number;
-    ref: number;
-    plusMinus: number;
-    sheetNo: string;
-    sheetPhrase: number;
-    binPhrase: number;
+	id: number;
+	value: number;
+	ref: number;
+	plusMinus: number;
+	sheetNo: string;
+	sheetPhrase: number;
+	binPhrase: number;
 }
 export interface ResultGetHistory {
-    $page: ReturnGetHistory$page[];
+	$page: ReturnGetHistory$page[];
 }
 
 export interface ParamSearchAllSheets {
-    no: string;
-    phrase: number;
-    paramMain: any;
-    paramDetail: any;
+	no: string;
+	phrase: number;
+	paramMain: any;
+	paramDetail: any;
 }
 export interface ReturnSearchAllSheets$page {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
-    rowCount: number;
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	rowCount: number;
 }
 export interface ResultSearchAllSheets {
-    $page: ReturnSearchAllSheets$page[];
+	$page: ReturnSearchAllSheets$page[];
 }
 
 export enum BizPhraseType {
-    any = 0,
-    atom = 11,
-    fork = 12,
-    bud = 13,
-    budGroup = 14,
-    duo = 15,
-    combo = 16,
-    sheet = 101,
-    main = 102,
-    detail = 103,
-    pend = 104,
-    detailAct = 111,
-    query = 151,
-    pick = 161,
-    role = 201,
-    permit = 202,
-    options = 301,
-    tree = 401,
-    tie = 501,
-    report = 601,
-    in = 701,
-    out = 700,
-    ioApp = 710,
-    ioSite = 711,
-    book = 901,
-    assign = 902,
-    key = 1001,
-    prop = 1011,
-    optionsitem = 1031,
-    console = 6001,
-    templet = 6101,
-    print = 6102,
+	any = 0,
+	atom = 11,
+	fork = 12,
+	bud = 13,
+	budGroup = 14,
+	duo = 15,
+	combo = 16,
+	sheet = 101,
+	main = 102,
+	detail = 103,
+	pend = 104,
+	detailAct = 111,
+	query = 151,
+	pick = 161,
+	role = 201,
+	permit = 202,
+	options = 301,
+	tree = 401,
+	tie = 501,
+	report = 601,
+	in = 701,
+	out = 700,
+	ioApp = 710,
+	ioSite = 711,
+	book = 901,
+	assign = 902,
+	key = 1001,
+	prop = 1011,
+	optionsitem = 1031,
+	console = 6001,
+	templet = 6101,
+	print = 6102
 }
 
 export enum BudDataType {
-    none = 0,
-    int = 11,
-    atom = 12,
-    radio = 13,
-    check = 14,
-    ID = 19,
-    dec = 21,
-    char = 31,
-    str = 32,
-    date = 41,
-    datetime = 42,
-    optionItem = 81,
-    arr = 99
+	none = 0,
+	int = 11,
+	atom = 12,
+	radio = 13,
+	check = 14,
+	ID = 19,
+	dec = 21,
+	char = 31,
+	str = 32,
+	date = 41,
+	datetime = 42,
+	optionItem = 81,
+	arr = 99
 }
 
 export enum BizBudFlag {
-    index = 1
+	index = 1
 }
 
 export interface ParamGetEntityCode {
-    id: number;
+	id: number;
 }
 export interface ReturnGetEntityCodeRet {
-    code: string;
-    schema: string;
+	code: string;
+	schema: string;
 }
 export interface ResultGetEntityCode {
-    ret: ReturnGetEntityCodeRet[];
+	ret: ReturnGetEntityCodeRet[];
 }
 
 export interface ParamCreateSiteForUser {
-    no: string;
-    ex: string;
-    tonwaUser: number;
+	no: string;
+	ex: string;
+	tonwaUser: number;
 }
 export interface ReturnCreateSiteForUserRet {
-    site: number;
-    userSite: number;
+	site: number;
+	userSite: number;
 }
 export interface ResultCreateSiteForUser {
-    ret: ReturnCreateSiteForUserRet[];
+	ret: ReturnCreateSiteForUserRet[];
 }
 
 export enum SumFormulaType {
-    person = 1,
-    group = 2
+	person = 1,
+	group = 2
 }
 
 export interface SumFormula extends ID {
-    formulaType: any;
-    subject: number;
-    post: number;
-    sumSubject: number;
-    caption: string;
-    start: any;
-    end: any;
-    ratio: number;
-    valid: number;
+	formulaType: any;
+	subject: number;
+	post: number;
+	sumSubject: number;
+	caption: string;
+	start: any;
+	end: any;
+	ratio: number;
+	valid: number;
 }
 
 export interface SumFormulaInActs extends ID {
-    ID?: UqID<any>;
-    formulaType: any;
-    subject: number | ID;
-    post: number | ID;
-    sumSubject: number | ID;
-    caption: string;
-    start: any;
-    end: any;
-    ratio: number;
-    valid: number;
+	ID?: UqID<any>;
+	formulaType: any;
+	subject: number | ID;
+	post: number | ID;
+	sumSubject: number | ID;
+	caption: string;
+	start: any;
+	end: any;
+	ratio: number;
+	valid: number;
 }
 
 export interface ParamSearchGroupPersons {
-    group: number;
-    key: string;
+	group: number;
+	key: string;
 }
 export interface ReturnSearchGroupPersons$page {
-    id: number;
-    no: string;
-    ex: string;
-    phrase: string;
-    selected: number;
+	id: number;
+	no: string;
+	ex: string;
+	phrase: string;
+	selected: number;
 }
 export interface ResultSearchGroupPersons {
-    $page: ReturnSearchGroupPersons$page[];
+	$page: ReturnSearchGroupPersons$page[];
 }
 
 export interface ParamSaveSumFormula {
-    id: number;
-    formulaType: any;
-    subject: number;
-    post: number;
-    sumSubject: number;
-    caption: string;
-    start: any;
-    end: any;
-    ratio: number;
+	id: number;
+	formulaType: any;
+	subject: number;
+	post: number;
+	sumSubject: number;
+	caption: string;
+	start: any;
+	end: any;
+	ratio: number;
 }
 export interface ReturnSaveSumFormulaRet {
-    id: number;
+	id: number;
 }
 export interface ResultSaveSumFormula {
-    ret: ReturnSaveSumFormulaRet[];
+	ret: ReturnSaveSumFormulaRet[];
 }
 
 export interface ParamChangeSumFormulaCaption {
-    id: number;
-    caption: string;
+	id: number;
+	caption: string;
 }
 export interface ResultChangeSumFormulaCaption {
 }
 
 export interface ParamChangeSumFormula {
-    id: number;
-    start: any;
-    end: any;
-    ratio: number;
+	id: number;
+	start: any;
+	end: any;
+	ratio: number;
 }
 export interface ReturnChangeSumFormulaRet {
-    id: number;
+	id: number;
 }
 export interface ResultChangeSumFormula {
-    ret: ReturnChangeSumFormulaRet[];
+	ret: ReturnChangeSumFormulaRet[];
 }
 
 export interface ParamUserSiteFromTonwaUser {
-    tonwaUser: number;
+	tonwaUser: number;
 }
 export interface ReturnUserSiteFromTonwaUserRet {
-    userSite: number;
+	userSite: number;
 }
 export interface ResultUserSiteFromTonwaUser {
-    ret: ReturnUserSiteFromTonwaUserRet[];
+	ret: ReturnUserSiteFromTonwaUserRet[];
 }
 
 export interface ParamChangeIxMySum {
-    userSite: number;
-    added: {
-        id: number;
-    }[];
-    removed: {
-        idDel: number;
-    }[];
+	userSite: number;
+	added: {
+		id: number;
+	}[];
+	removed: {
+		idDel: number;
+	}[];
 
 }
 export interface ResultChangeIxMySum {
 }
 
 export interface ParamGetIxMySum {
-    userSite: number;
+	userSite: number;
 }
 export interface ReturnGetIxMySumUsers {
-    tonwaUser: number;
-    userSite: number;
+	tonwaUser: number;
+	userSite: number;
 }
 export interface ReturnGetIxMySumAtoms {
-    userSite: number;
-    atom: number;
-    phrase: string;
-    no: string;
-    ex: string;
+	userSite: number;
+	atom: number;
+	phrase: string;
+	no: string;
+	ex: string;
 }
 export interface ResultGetIxMySum {
-    users: ReturnGetIxMySumUsers[];
-    atoms: ReturnGetIxMySumAtoms[];
+	users: ReturnGetIxMySumUsers[];
+	atoms: ReturnGetIxMySumAtoms[];
 }
 
 export interface ParamGetAllFormula {
 }
 export interface ReturnGetAllFormulaRet {
-    id: number;
-    formulaType: any;
-    subject: number;
-    post: number;
-    sumSubject: number;
-    caption: string;
-    start: any;
-    end: any;
-    ratio: number;
-    valid: number;
+	id: number;
+	formulaType: any;
+	subject: number;
+	post: number;
+	sumSubject: number;
+	caption: string;
+	start: any;
+	end: any;
+	ratio: number;
+	valid: number;
 }
 export interface ResultGetAllFormula {
-    ret: ReturnGetAllFormulaRet[];
+	ret: ReturnGetAllFormulaRet[];
 }
 
 export interface ParamSetSumGroupPerson {
-    group: number;
-    person: number;
-    act: number;
+	group: number;
+	person: number;
+	act: number;
 }
 export interface ResultSetSumGroupPerson {
 }
 
 export interface ParamGetMySums {
-    start: any;
-    end: any;
+	start: any;
+	end: any;
 }
 export interface ReturnGetMySumsRet {
-    obj: number;
-    post: number;
-    subject: number;
-    value: number;
+	obj: number;
+	post: number;
+	subject: number;
+	value: number;
 }
 export interface ResultGetMySums {
-    ret: ReturnGetMySumsRet[];
+	ret: ReturnGetMySumsRet[];
 }
 
 export interface ParamGetMyBalance {
 }
 export interface ReturnGetMyBalanceRet {
-    obj: number;
-    post: number;
-    subject: number;
-    value: number;
+	obj: number;
+	post: number;
+	subject: number;
+	value: number;
 }
 export interface ResultGetMyBalance {
-    ret: ReturnGetMyBalanceRet[];
+	ret: ReturnGetMyBalanceRet[];
 }
 
 export interface IxBud extends IX {
-    i: number;
-    x: number;
+	i: number;
+	x: number;
 }
 
 export interface Bud extends ID {
-    base: number;
-    ext: number;
+	base: number;
+	ext: number;
 }
 
 export interface BudInActs extends ID {
-    ID?: UqID<any>;
-    base: number | ID;
-    ext: number | ID;
+	ID?: UqID<any>;
+	base: number | ID;
+	ext: number | ID;
 }
 
 export interface History extends ID {
-    bud: number;
-    value: number;
-    ref: number;
-    plusMinus: number;
+	bud: number;
+	value: number;
+	ref: number;
+	plusMinus: number;
 }
 
 export interface HistoryInActs extends ID {
-    ID?: UqID<any>;
-    bud: number | ID;
-    value: number;
-    ref: number | ID;
-    plusMinus: number;
+	ID?: UqID<any>;
+	bud: number | ID;
+	value: number;
+	ref: number | ID;
+	plusMinus: number;
 }
 
 export interface Atom extends ID {
-    base: number;
-    no?: string;
-    ex: string;
+	base: number;
+	no?: string;
+	ex: string;
 }
 
 export interface AtomInActs extends ID {
-    ID?: UqID<any>;
-    base: number | ID;
-    no?: string;
-    ex: string;
+	ID?: UqID<any>;
+	base: number | ID;
+	no?: string;
+	ex: string;
 }
 
 export interface Spec extends ID {
-    base: number;
+	base: number;
 }
 
 export interface SpecInActs extends ID {
-    ID?: UqID<any>;
-    base: number | ID;
+	ID?: UqID<any>;
+	base: number | ID;
 }
 
 export interface Duo extends ID {
-    i: number;
-    x: number;
-    valid: number;
+	i: number;
+	x: number;
+	valid: number;
 }
 
 export interface DuoInActs extends ID {
-    ID?: UqID<any>;
-    i: number | ID;
-    x: number | ID;
-    valid: number;
+	ID?: UqID<any>;
+	i: number | ID;
+	x: number | ID;
+	valid: number;
 }
 
 export interface Sheet extends ID {
-    base: number;
-    no: string;
-    operator: number;
+	base: number;
+	no: string;
+	operator: number;
 }
 
 export interface SheetInActs extends ID {
-    ID?: UqID<any>;
-    base: number | ID;
-    no: string;
-    operator: number | ID;
+	ID?: UqID<any>;
+	base: number | ID;
+	no: string;
+	operator: number | ID;
 }
 
 export interface Detail extends ID {
-    base: number;
+	base: number;
 }
 
 export interface DetailInActs extends ID {
-    ID?: UqID<any>;
-    base: number | ID;
+	ID?: UqID<any>;
+	base: number | ID;
 }
 
 export interface Pend extends ID {
-    base: number;
-    bin: number;
-    mid: any;
-    value: number;
+	base: number;
+	bin: number;
+	mid: any;
+	value: number;
 }
 
 export interface PendInActs extends ID {
-    ID?: UqID<any>;
-    base: number | ID;
-    bin: number | ID;
-    mid: any;
-    value: number;
+	ID?: UqID<any>;
+	base: number | ID;
+	bin: number | ID;
+	mid: any;
+	value: number;
 }
 
 export interface ParamGetSiteSetting {
 }
 export interface ReturnGetSiteSettingBudsInt {
-    bud: number;
-    value: number;
+	bud: number;
+	value: number;
 }
 export interface ReturnGetSiteSettingBudsDec {
-    bud: number;
-    value: number;
+	bud: number;
+	value: number;
 }
 export interface ReturnGetSiteSettingBudsStr {
-    bud: number;
-    value: string;
+	bud: number;
+	value: string;
 }
 export interface ReturnGetSiteSettingBudsCheck {
-    bud: number;
-    item: number;
+	bud: number;
+	item: number;
 }
 export interface ResultGetSiteSetting {
-    budsInt: ReturnGetSiteSettingBudsInt[];
-    budsDec: ReturnGetSiteSettingBudsDec[];
-    budsStr: ReturnGetSiteSettingBudsStr[];
-    budsCheck: ReturnGetSiteSettingBudsCheck[];
+	budsInt: ReturnGetSiteSettingBudsInt[];
+	budsDec: ReturnGetSiteSettingBudsDec[];
+	budsStr: ReturnGetSiteSettingBudsStr[];
+	budsCheck: ReturnGetSiteSettingBudsCheck[];
 }
 
 export interface ParamGetIOSiteAtoms {
-    ioSite: number;
+	ioSite: number;
 }
 export interface ReturnGetIOSiteAtoms$page {
-    id: number;
-    no: string;
-    ex: string;
-    ioSiteAtom: number;
-    errorCount: number;
+	id: number;
+	no: string;
+	ex: string;
+	ioSiteAtom: number;
+	errorCount: number;
 }
 export interface ResultGetIOSiteAtoms {
-    $page: ReturnGetIOSiteAtoms$page[];
+	$page: ReturnGetIOSiteAtoms$page[];
 }
 
 export interface ParamGetIOAtomApps {
-    ioSite: number;
-    atom: number;
+	ioSite: number;
+	atom: number;
 }
 export interface ReturnGetIOAtomAppsRet {
-    ioSite: number;
-    atom: number;
-    ioApp: number;
-    siteAtomApp: number;
-    inKey: string;
-    inPassword: string;
-    outUrl: string;
-    outKey: string;
-    outPassword: string;
-    valid: number;
+	ioSite: number;
+	atom: number;
+	ioApp: number;
+	siteAtomApp: number;
+	inKey: string;
+	inPassword: string;
+	outUrl: string;
+	outKey: string;
+	outPassword: string;
+	valid: number;
 }
 export interface ResultGetIOAtomApps {
-    ret: ReturnGetIOAtomAppsRet[];
+	ret: ReturnGetIOAtomAppsRet[];
 }
 
 export interface ParamSetIOSiteAtomAppOut {
-    ioSiteAtomApp: number;
-    outUrl: string;
-    outKey: string;
-    outPassword: string;
+	ioSiteAtomApp: number;
+	outUrl: string;
+	outKey: string;
+	outPassword: string;
 }
 export interface ResultSetIOSiteAtomAppOut {
 }
 
 export interface ParamSaveIOAtom {
-    id: number;
-    ioSite: number;
-    siteAtom: number;
-    ioApp: number;
-    ioAppID: number;
-    atom: number;
-    no: string;
+	id: number;
+	ioSite: number;
+	siteAtom: number;
+	ioApp: number;
+	ioAppID: number;
+	atom: number;
+	no: string;
 }
 export interface ReturnSaveIOAtomRet {
-    id: number;
+	id: number;
 }
 export interface ResultSaveIOAtom {
-    ret: ReturnSaveIOAtomRet[];
+	ret: ReturnSaveIOAtomRet[];
 }
 
 export interface ParamGetIOAtoms {
-    ioSite: number;
-    siteAtom: number;
-    ioApp: number;
-    ioAppID: number;
+	ioSite: number;
+	siteAtom: number;
+	ioApp: number;
+	ioAppID: number;
 }
 export interface ReturnGetIOAtoms$page {
-    atom: number;
-    atomNo: string;
-    atomEx: string;
-    no: string;
+	atom: number;
+	atomNo: string;
+	atomEx: string;
+	no: string;
 }
 export interface ResultGetIOAtoms {
-    $page: ReturnGetIOAtoms$page[];
+	$page: ReturnGetIOAtoms$page[];
 }
 
 export interface ParamGetIOErrorCounts {
 }
 export interface ReturnGetIOErrorCountsRet {
-    siteAtomApp: number;
-    ioSite: number;
-    ioAtom: number;
-    ioApp: number;
-    errorCount: number;
+	siteAtomApp: number;
+	ioSite: number;
+	ioAtom: number;
+	ioApp: number;
+	errorCount: number;
 }
 export interface ResultGetIOErrorCounts {
-    ret: ReturnGetIOErrorCountsRet[];
+	ret: ReturnGetIOErrorCountsRet[];
 }
 
 export interface ParamGetIOError {
-    siteAtomApp: number;
+	siteAtomApp: number;
 }
 export interface ReturnGetIOError$page {
-    id: number;
-    siteAtomApp: number;
-    appIO: number;
-    result: any;
-    times: number;
-    done: any;
+	id: number;
+	siteAtomApp: number;
+	appIO: number;
+	result: any;
+	times: number;
+	done: any;
 }
 export interface ResultGetIOError {
-    $page: ReturnGetIOError$page[];
+	$page: ReturnGetIOError$page[];
 }
 
 export interface ParamIORetry {
-    id: number;
+	id: number;
 }
 export interface ResultIORetry {
 }
 
 export interface ParamBuildAtomUnique {
-    phrase: number;
-    start: number;
-    batchNumber: number;
+	phrase: number;
+	start: number;
+	batchNumber: number;
 }
 export interface ReturnBuildAtomUniqueRet {
-    batchDone: number;
-    lastId: number;
+	batchDone: number;
+	lastId: number;
 }
 export interface ReturnBuildAtomUniqueDupTable {
-    unique: number;
-    i: number;
-    x: string;
-    atom: number;
+	unique: number;
+	i: number;
+	x: string;
+	atom: number;
 }
 export interface ResultBuildAtomUnique {
-    ret: ReturnBuildAtomUniqueRet[];
-    DupTable: ReturnBuildAtomUniqueDupTable[];
+	ret: ReturnBuildAtomUniqueRet[];
+	DupTable: ReturnBuildAtomUniqueDupTable[];
 }
 
 export interface ParamGetUsers {
 }
 export interface ReturnGetUsers$page {
-    userSite: number;
-    user: number;
-    admin: number;
-    assigned: string;
-    tonwaUser: number;
-    tuName: string;
-    tuNick: string;
-    tuIcon: string;
-    timeZone: number;
+	userSite: number;
+	user: number;
+	admin: number;
+	assigned: string;
+	tonwaUser: number;
+	tuName: string;
+	tuNick: string;
+	tuIcon: string;
+	timeZone: number;
 }
 export interface ResultGetUsers {
-    $page: ReturnGetUsers$page[];
+	$page: ReturnGetUsers$page[];
 }
 
 export interface ParamGetUserBuds {
-    userId: number;
+	userId: number;
 }
 export interface ReturnGetUserBudsBuds {
-    bud: number;
-    value: any;
+	bud: number;
+	value: any;
 }
 export interface ResultGetUserBuds {
-    buds: ReturnGetUserBudsBuds[];
+	buds: ReturnGetUserBudsBuds[];
 }
 
 export interface ParamSaveUserBuds {
-    id: number;
-    budsArr: any;
+	id: number;
+	budsArr: any;
 }
 export interface ResultSaveUserBuds {
 }
@@ -1430,122 +1430,122 @@ export interface ResultSaveUserBuds {
 
 
 export interface ParamActs {
-    $phrase?: $phraseInActs[];
-    sumFormula?: SumFormulaInActs[];
-    ixBud?: IxBud[];
-    bud?: BudInActs[];
-    history?: HistoryInActs[];
-    atom?: AtomInActs[];
-    spec?: SpecInActs[];
-    duo?: DuoInActs[];
-    sheet?: SheetInActs[];
-    detail?: DetailInActs[];
-    pend?: PendInActs[];
+	$phrase?: $phraseInActs[];
+	sumFormula?: SumFormulaInActs[];
+	ixBud?: IxBud[];
+	bud?: BudInActs[];
+	history?: HistoryInActs[];
+	atom?: AtomInActs[];
+	spec?: SpecInActs[];
+	duo?: DuoInActs[];
+	sheet?: SheetInActs[];
+	detail?: DetailInActs[];
+	pend?: PendInActs[];
 }
 
 
 export interface UqExt extends Uq {
-    Acts(param: ParamActs): Promise<any>;
-    SQL: Uq;
+	Acts(param:ParamActs): Promise<any>;
+	SQL: Uq;
     Role: { [key: string]: string[] };
 
-    $phrase: UqID<any>;
-    $role_My: UqQuery<Param$role_My, Result$role_My>;
-    $role_Site_Users: UqQuery<Param$role_Site_Users, Result$role_Site_Users>;
-    $role_Site_Add_Admin: UqAction<Param$role_Site_Add_Admin, Result$role_Site_Add_Admin>;
-    $role_Site_Del_Admin: UqAction<Param$role_Site_Del_Admin, Result$role_Site_Del_Admin>;
-    $role_Site_Add_User: UqAction<Param$role_Site_Add_User, Result$role_Site_Add_User>;
-    $role_Site_User_Role: UqAction<Param$role_Site_User_Role, Result$role_Site_User_Role>;
-    $role_Site_Quit_Owner: UqAction<Param$role_Site_Quit_Owner, Result$role_Site_Quit_Owner>;
-    $sites: UqQuery<Param$sites, Result$sites>;
-    $setSite: UqAction<Param$setSite, Result$setSite>;
-    $poked: UqQuery<Param$poked, Result$poked>;
-    $setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
-    $getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
-    ClearCode: UqAction<ParamClearCode, ResultClearCode>;
-    ClearPend: UqAction<ParamClearPend, ResultClearPend>;
-    ClearBook: UqAction<ParamClearBook, ResultClearBook>;
-    AdminBook: UqQuery<ParamAdminBook, ResultAdminBook>;
-    SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
-    SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
-    SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
-    SaveBudRadio: UqAction<ParamSaveBudRadio, ResultSaveBudRadio>;
-    DelAtom: UqAction<ParamDelAtom, ResultDelAtom>;
-    SaveSpec: UqAction<ParamSaveSpec, ResultSaveSpec>;
-    GetSpec: UqQuery<ParamGetSpec, ResultGetSpec>;
-    SaveSheet: UqAction<ParamSaveSheet, ResultSaveSheet>;
-    SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
-    DeleteBin: UqAction<ParamDeleteBin, ResultDeleteBin>;
-    SubmitSheet: UqAction<ParamSubmitSheet, ResultSubmitSheet>;
-    DoQuery: UqAction<ParamDoQuery, ResultDoQuery>;
-    RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
-    GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
-    SetSheetPreToDraft: UqAction<ParamSetSheetPreToDraft, ResultSetSheetPreToDraft>;
-    DeleteMyDrafts: UqAction<ParamDeleteMyDrafts, ResultDeleteMyDrafts>;
-    SearchAtom: UqQuery<ParamSearchAtom, ResultSearchAtom>;
-    GetAssigns: UqQuery<ParamGetAssigns, ResultGetAssigns>;
-    GetTies: UqQuery<ParamGetTies, ResultGetTies>;
-    SaveTie: UqAction<ParamSaveTie, ResultSaveTie>;
-    DeleteTie: UqAction<ParamDeleteTie, ResultDeleteTie>;
-    SearchAtomBuds: UqQuery<ParamSearchAtomBuds, ResultSearchAtomBuds>;
-    GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
-    GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
-    GetSpecsFromBase: UqQuery<ParamGetSpecsFromBase, ResultGetSpecsFromBase>;
-    GetSpecListFromBase: UqQuery<ParamGetSpecListFromBase, ResultGetSpecListFromBase>;
-    SaveDuoOuterApp: UqAction<ParamSaveDuoOuterApp, ResultSaveDuoOuterApp>;
-    DelDuoOuterApp: UqAction<ParamDelDuoOuterApp, ResultDelDuoOuterApp>;
-    GetDuos: UqQuery<ParamGetDuos, ResultGetDuos>;
-    GetPend: UqQuery<ParamGetPend, ResultGetPend>;
-    GetPendsNotify: UqQuery<ParamGetPendsNotify, ResultGetPendsNotify>;
-    GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
-    GetPendSheetFromTarget: UqQuery<ParamGetPendSheetFromTarget, ResultGetPendSheetFromTarget>;
-    GetSiteSheets: UqQuery<ParamGetSiteSheets, ResultGetSiteSheets>;
-    GetSiteSheetList: UqQuery<ParamGetSiteSheetList, ResultGetSiteSheetList>;
-    GetMySheetList: UqQuery<ParamGetMySheetList, ResultGetMySheetList>;
-    GetReport1: UqQuery<ParamGetReport1, ResultGetReport1>;
-    GetReport: UqQuery<ParamGetReport, ResultGetReport>;
-    GetHistory: UqQuery<ParamGetHistory, ResultGetHistory>;
-    SearchAllSheets: UqQuery<ParamSearchAllSheets, ResultSearchAllSheets>;
-    GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
-    CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
-    SumFormula: UqID<any>;
-    SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
-    SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
-    ChangeSumFormulaCaption: UqAction<ParamChangeSumFormulaCaption, ResultChangeSumFormulaCaption>;
-    ChangeSumFormula: UqAction<ParamChangeSumFormula, ResultChangeSumFormula>;
-    UserSiteFromTonwaUser: UqAction<ParamUserSiteFromTonwaUser, ResultUserSiteFromTonwaUser>;
-    ChangeIxMySum: UqAction<ParamChangeIxMySum, ResultChangeIxMySum>;
-    GetIxMySum: UqQuery<ParamGetIxMySum, ResultGetIxMySum>;
-    GetAllFormula: UqQuery<ParamGetAllFormula, ResultGetAllFormula>;
-    SetSumGroupPerson: UqAction<ParamSetSumGroupPerson, ResultSetSumGroupPerson>;
-    GetMySums: UqQuery<ParamGetMySums, ResultGetMySums>;
-    GetMyBalance: UqQuery<ParamGetMyBalance, ResultGetMyBalance>;
-    IxBud: UqIX<any>;
-    Bud: UqID<any>;
-    History: UqID<any>;
-    Atom: UqID<any>;
-    Spec: UqID<any>;
-    Duo: UqID<any>;
-    Sheet: UqID<any>;
-    Detail: UqID<any>;
-    Pend: UqID<any>;
-    GetSiteSetting: UqQuery<ParamGetSiteSetting, ResultGetSiteSetting>;
-    GetIOSiteAtoms: UqQuery<ParamGetIOSiteAtoms, ResultGetIOSiteAtoms>;
-    GetIOAtomApps: UqQuery<ParamGetIOAtomApps, ResultGetIOAtomApps>;
-    SetIOSiteAtomAppOut: UqAction<ParamSetIOSiteAtomAppOut, ResultSetIOSiteAtomAppOut>;
-    SaveIOAtom: UqAction<ParamSaveIOAtom, ResultSaveIOAtom>;
-    GetIOAtoms: UqQuery<ParamGetIOAtoms, ResultGetIOAtoms>;
-    GetIOErrorCounts: UqQuery<ParamGetIOErrorCounts, ResultGetIOErrorCounts>;
-    GetIOError: UqQuery<ParamGetIOError, ResultGetIOError>;
-    IORetry: UqAction<ParamIORetry, ResultIORetry>;
-    BuildAtomUnique: UqAction<ParamBuildAtomUnique, ResultBuildAtomUnique>;
-    GetUsers: UqQuery<ParamGetUsers, ResultGetUsers>;
-    GetUserBuds: UqQuery<ParamGetUserBuds, ResultGetUserBuds>;
-    SaveUserBuds: UqAction<ParamSaveUserBuds, ResultSaveUserBuds>;
+	$phrase: UqID<any>;
+	$role_My: UqQuery<Param$role_My, Result$role_My>;
+	$role_Site_Users: UqQuery<Param$role_Site_Users, Result$role_Site_Users>;
+	$role_Site_Add_Admin: UqAction<Param$role_Site_Add_Admin, Result$role_Site_Add_Admin>;
+	$role_Site_Del_Admin: UqAction<Param$role_Site_Del_Admin, Result$role_Site_Del_Admin>;
+	$role_Site_Add_User: UqAction<Param$role_Site_Add_User, Result$role_Site_Add_User>;
+	$role_Site_User_Role: UqAction<Param$role_Site_User_Role, Result$role_Site_User_Role>;
+	$role_Site_Quit_Owner: UqAction<Param$role_Site_Quit_Owner, Result$role_Site_Quit_Owner>;
+	$sites: UqQuery<Param$sites, Result$sites>;
+	$setSite: UqAction<Param$setSite, Result$setSite>;
+	$poked: UqQuery<Param$poked, Result$poked>;
+	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
+	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
+	ClearCode: UqAction<ParamClearCode, ResultClearCode>;
+	ClearPend: UqAction<ParamClearPend, ResultClearPend>;
+	ClearBook: UqAction<ParamClearBook, ResultClearBook>;
+	AdminBook: UqQuery<ParamAdminBook, ResultAdminBook>;
+	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
+	SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
+	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
+	SaveBudRadio: UqAction<ParamSaveBudRadio, ResultSaveBudRadio>;
+	DelAtom: UqAction<ParamDelAtom, ResultDelAtom>;
+	SaveSpec: UqAction<ParamSaveSpec, ResultSaveSpec>;
+	GetSpec: UqQuery<ParamGetSpec, ResultGetSpec>;
+	SaveSheet: UqAction<ParamSaveSheet, ResultSaveSheet>;
+	SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
+	DeleteBin: UqAction<ParamDeleteBin, ResultDeleteBin>;
+	SubmitSheet: UqAction<ParamSubmitSheet, ResultSubmitSheet>;
+	DoQuery: UqAction<ParamDoQuery, ResultDoQuery>;
+	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
+	GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
+	SetSheetPreToDraft: UqAction<ParamSetSheetPreToDraft, ResultSetSheetPreToDraft>;
+	DeleteMyDrafts: UqAction<ParamDeleteMyDrafts, ResultDeleteMyDrafts>;
+	SearchAtom: UqQuery<ParamSearchAtom, ResultSearchAtom>;
+	GetAssigns: UqQuery<ParamGetAssigns, ResultGetAssigns>;
+	GetTies: UqQuery<ParamGetTies, ResultGetTies>;
+	SaveTie: UqAction<ParamSaveTie, ResultSaveTie>;
+	DeleteTie: UqAction<ParamDeleteTie, ResultDeleteTie>;
+	SearchAtomBuds: UqQuery<ParamSearchAtomBuds, ResultSearchAtomBuds>;
+	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
+	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
+	GetSpecsFromBase: UqQuery<ParamGetSpecsFromBase, ResultGetSpecsFromBase>;
+	GetSpecListFromBase: UqQuery<ParamGetSpecListFromBase, ResultGetSpecListFromBase>;
+	SaveDuoOuterApp: UqAction<ParamSaveDuoOuterApp, ResultSaveDuoOuterApp>;
+	DelDuoOuterApp: UqAction<ParamDelDuoOuterApp, ResultDelDuoOuterApp>;
+	GetDuos: UqQuery<ParamGetDuos, ResultGetDuos>;
+	GetPend: UqQuery<ParamGetPend, ResultGetPend>;
+	GetPendsNotify: UqQuery<ParamGetPendsNotify, ResultGetPendsNotify>;
+	GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
+	GetPendSheetFromTarget: UqQuery<ParamGetPendSheetFromTarget, ResultGetPendSheetFromTarget>;
+	GetSiteSheets: UqQuery<ParamGetSiteSheets, ResultGetSiteSheets>;
+	GetSiteSheetList: UqQuery<ParamGetSiteSheetList, ResultGetSiteSheetList>;
+	GetMySheetList: UqQuery<ParamGetMySheetList, ResultGetMySheetList>;
+	GetReport1: UqQuery<ParamGetReport1, ResultGetReport1>;
+	GetReport: UqQuery<ParamGetReport, ResultGetReport>;
+	GetHistory: UqQuery<ParamGetHistory, ResultGetHistory>;
+	SearchAllSheets: UqQuery<ParamSearchAllSheets, ResultSearchAllSheets>;
+	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
+	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
+	SumFormula: UqID<any>;
+	SearchGroupPersons: UqQuery<ParamSearchGroupPersons, ResultSearchGroupPersons>;
+	SaveSumFormula: UqAction<ParamSaveSumFormula, ResultSaveSumFormula>;
+	ChangeSumFormulaCaption: UqAction<ParamChangeSumFormulaCaption, ResultChangeSumFormulaCaption>;
+	ChangeSumFormula: UqAction<ParamChangeSumFormula, ResultChangeSumFormula>;
+	UserSiteFromTonwaUser: UqAction<ParamUserSiteFromTonwaUser, ResultUserSiteFromTonwaUser>;
+	ChangeIxMySum: UqAction<ParamChangeIxMySum, ResultChangeIxMySum>;
+	GetIxMySum: UqQuery<ParamGetIxMySum, ResultGetIxMySum>;
+	GetAllFormula: UqQuery<ParamGetAllFormula, ResultGetAllFormula>;
+	SetSumGroupPerson: UqAction<ParamSetSumGroupPerson, ResultSetSumGroupPerson>;
+	GetMySums: UqQuery<ParamGetMySums, ResultGetMySums>;
+	GetMyBalance: UqQuery<ParamGetMyBalance, ResultGetMyBalance>;
+	IxBud: UqIX<any>;
+	Bud: UqID<any>;
+	History: UqID<any>;
+	Atom: UqID<any>;
+	Spec: UqID<any>;
+	Duo: UqID<any>;
+	Sheet: UqID<any>;
+	Detail: UqID<any>;
+	Pend: UqID<any>;
+	GetSiteSetting: UqQuery<ParamGetSiteSetting, ResultGetSiteSetting>;
+	GetIOSiteAtoms: UqQuery<ParamGetIOSiteAtoms, ResultGetIOSiteAtoms>;
+	GetIOAtomApps: UqQuery<ParamGetIOAtomApps, ResultGetIOAtomApps>;
+	SetIOSiteAtomAppOut: UqAction<ParamSetIOSiteAtomAppOut, ResultSetIOSiteAtomAppOut>;
+	SaveIOAtom: UqAction<ParamSaveIOAtom, ResultSaveIOAtom>;
+	GetIOAtoms: UqQuery<ParamGetIOAtoms, ResultGetIOAtoms>;
+	GetIOErrorCounts: UqQuery<ParamGetIOErrorCounts, ResultGetIOErrorCounts>;
+	GetIOError: UqQuery<ParamGetIOError, ResultGetIOError>;
+	IORetry: UqAction<ParamIORetry, ResultIORetry>;
+	BuildAtomUnique: UqAction<ParamBuildAtomUnique, ResultBuildAtomUnique>;
+	GetUsers: UqQuery<ParamGetUsers, ResultGetUsers>;
+	GetUserBuds: UqQuery<ParamGetUserBuds, ResultGetUserBuds>;
+	SaveUserBuds: UqAction<ParamSaveUserBuds, ResultSaveUserBuds>;
 }
 
 
-export const uqSchema = {
+export const uqSchema={
     "$phrase": {
         "name": "$phrase",
         "type": "id",
@@ -2340,8 +2340,8 @@ export const uqSchema = {
         "sys": true,
         "fields": [
             {
-                "name": "id",
-                "type": "id"
+                "name": "ids",
+                "type": "json"
             }
         ],
         "jsoned": true,
@@ -4116,7 +4116,9 @@ export const uqSchema = {
             "key": 1001,
             "prop": 1011,
             "optionsitem": 1031,
-            "console": 6001
+            "console": 6001,
+            "templet": 6101,
+            "print": 6102
         }
     },
     "buddatatype": {
@@ -5674,8 +5676,8 @@ export const uqSchema = {
 }
 
 export enum EnumAtom {
-    Subject = 'subject',
-    SumPersonPost = 'sumpersonpost',
-    SumGroupPost = 'sumgrouppost',
-    SumGroup = 'sumgroup',
+	Subject = 'subject',
+	SumPersonPost = 'sumpersonpost',
+	SumGroupPost = 'sumgrouppost',
+	SumGroup = 'sumgroup',
 }

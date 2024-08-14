@@ -7,7 +7,7 @@ import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
 import { DivEditing } from "../../store";
 
 export function ViewRowStem(props: ViewDivProps) {
-    const { valDiv, divStore, buttons, hidePivot } = props;
+    const { valDiv, binStore: divStore, buttons, hidePivot } = props;
     const { sheetStore } = divStore;
     const { atomSum, binDiv } = valDiv;
     const { entityBin } = binDiv;
@@ -22,7 +22,7 @@ export function ViewRowStem(props: ViewDivProps) {
     const { pivot, i: budI, value: budValue } = entityBin;
     let viewPivot: any;
     if (pivot !== undefined && pivot === binDiv.subBinDiv && hidePivot !== true) {
-        viewPivot = <ViewPivotDiv divStore={divStore} valDiv={valDiv} />;
+        viewPivot = <ViewPivotDiv binStore={divStore} valDiv={valDiv} />;
     }
 
     const divEditing = new DivEditing(divStore, valDiv);

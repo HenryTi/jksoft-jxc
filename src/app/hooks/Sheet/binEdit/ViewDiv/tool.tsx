@@ -5,7 +5,7 @@ import { FA, theme } from "tonwa-com";
 import { useAtomValue } from "jotai";
 
 export interface ViewDivProps {
-    divStore: BinStore;
+    binStore: BinStore;
     valDiv: ValDivBase;
     readonly?: boolean;
     hidePivot?: boolean;

@@ -279,28 +279,33 @@ PROC SaveBinBuds(
 }
 
 Biz AC DeleteBin (
-    id ID,
+    ids JSON,
 ) {
+    JSONTABLE tblIds (
+        id ID PATH '$'
+    ) FROM ids PATH '$[*]';
     VAR me ID = Me();
-    IF EXISTS(SELECT a.i
-        FROM IxState as a
-        WHERE a.i=me AND a.x=id)  -- sheet id
-    {
-        WITH Bin ID=id DEL;
-        WITH BinPend ID=id DEL;
-    }
-    ELSEIF EXISTS(SELECT a.i
-        FROM IxState as a
-        JOIN Sheet as b ON b.id=a.x
-        JOIN Bud as c ON c.base=b.id
-        JOIN Detail as d ON d.base=c.id
-        WHERE a.i=me AND d.id=id)
-    {
-        -- 如果base sheet没有在我的draft里面，不能写入明细。这是安全保证
-        WITH Bin ID=id DEL;
-        WITH Detail ID=id DEL;
-        WITH BinPend ID=id DEL;
-        RETURN;
+
+    FOR (VAR id ID OF SELECT id FROM tblIds) {
+        IF EXISTS(SELECT a.i
+            FROM IxState as a
+            WHERE a.i=me AND a.x=id)  -- sheet id
+        {
+            WITH Bin ID=id DEL;
+            WITH BinPend ID=id DEL;
+        }
+        ELSEIF EXISTS(SELECT a.i
+            FROM IxState as a
+            JOIN Sheet as b ON b.id=a.x
+            JOIN Bud as c ON c.base=b.id
+            JOIN Detail as d ON d.base=c.id
+            WHERE a.i=me AND d.id=id)
+        {
+            -- 如果base sheet没有在我的draft里面，不能写入明细。这是安全保证
+            WITH Bin ID=id DEL;
+            WITH Detail ID=id DEL;
+            WITH BinPend ID=id DEL;
+        }
     }
 }
 

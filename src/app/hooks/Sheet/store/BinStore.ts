@@ -157,14 +157,30 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 
     async delValDiv(valDiv: ValDivBase) {
-        const { binDiv, valRow } = valDiv;
-        if (binDiv.subBinDiv === undefined) {
-            // let valRow = getAtomValue(atomValRow);
-            await this.delValRow(valRow.id);
-            this.sheetStore.notifyRowChange();
-            return;
+        const ids: number[] = [];
+        const { binDiv, valRow, parent } = valDiv;
+        if (parent.valDivs.length === 1) {
+            this.delValDivAndSubs(ids, parent);
         }
-        alert('彻底删除单据分拆行正在实现中...');
+        else if (binDiv.subBinDiv === undefined) {
+            const { id } = valRow;
+            this.delValRow(id);
+            this.sheetStore.notifyRowChange();
+            ids.push(id);
+        }
+        else {
+            this.delValDivAndSubs(ids, parent);
+        }
+        await this.delDetail(ids);
+    }
+
+    private delValDivAndSubs(ids: number[], valDiv: ValDivBase) {
+        for (let valDivSub of valDiv.valDivs) {
+            this.delValDivAndSubs(ids, valDivSub);
+        }
+        let { id } = valDiv;
+        this.delValRow(id);
+        ids.push(id);
     }
 
     private getOwnerAtomValDivs(valRow: ValRow) {
@@ -177,7 +193,7 @@ export class BinStore extends EntityStore<EntityBin> {
         return valDiv;
     }
 
-    async delValRow(id: number) {
+    private delValRow(id: number) {
         let val = this.valDivColl[id];
         let { valRow } = val;
         const { origin } = valRow;
@@ -188,9 +204,13 @@ export class BinStore extends EntityStore<EntityBin> {
             let _valDiv = this.valDivsOnPend[pend];
             setAtomValue(_valDiv, undefined);
         }
-        await this.sheetStore.delDetail(id);
-        let atomValDivs = this.getOwnerAtomValDivs(valRow);
-        atomValDivs.delValRow(id);
+        // await this.delDetail([id]);
+        let valDivs = this.getOwnerAtomValDivs(valRow);
+        valDivs.delValRow(id);
+    }
+
+    private async delDetail(ids: number[]) {
+        await this.uq.DeleteBin.submit({ ids });
     }
 
     private setPend(pend: number, val: ValDivRoot, trigger: boolean) {
@@ -303,7 +323,9 @@ export class BinStore extends EntityStore<EntityBin> {
     async reloadValRow(valRow: ValRow) {
         const { id: binId } = valRow;
         let { details } = await this.sheetStore.loadBinData(binId);
-        this.load(details, true);
+        // 这里不应该再调用下面的load
+        // reload其实是load相关props和atoms
+        // this.load(details, true);
     }
 
     replaceValDiv(valDiv: ValDivBase, newValDiv: ValDivRoot) {

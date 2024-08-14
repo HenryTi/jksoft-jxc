@@ -91,7 +91,6 @@ export class ValDivsBase<T extends ValDivBase> {
         let p = divs.findIndex(v => v.id === id);
         if (p >= 0) {
             divs.splice(p, 1);
-            // setAtomValue(this.atomValDivs, [...divs]);
             this.setValDivs([...divs]);
         }
     }

@@ -1,7 +1,7 @@
 import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { EntitySheet, EntityBin, EntityPend, BinRow, BizBud, Entity } from "app/Biz";
-import { ParamSaveDetail, ReturnGetPendRetSheet } from "uqs/UqDefault";
+import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { RearPickResultType, ReturnUseBinPicks } from "./PickResult";
 import { Formulas } from "app/hooks/Calc";
 import { BudEditing } from "../../Bud";
@@ -14,26 +14,6 @@ import { arrFromJsonMid } from "app/hooks/tool";
 import { BinEditing } from "./BinEditing";
 import { runBinPicks } from "../binPick";
 import { BudsEditing } from "app/hooks/BudsEditing";
-
-/*
-abstract class MainBinStore extends EntityStore<EntityBin> {
-    readonly sheetStore: SheetStore;
-    constructor(sheetStore: SheetStore, entityBin: EntityBin) {
-        super(sheetStore.modal, entityBin);
-        this.sheetStore = sheetStore;
-    }
-
-    private _budsEditing: BinEditing;
-    get budsEditing(): BinEditing { return this._budsEditing; }
-
-    private _budEditings: BudEditing[];
-    get budEditings() {
-        if (this._budEditings !== undefined) return this._budEditings;
-        this._budsEditing = new BinEditing(this.sheetStore, this.entity);
-        return this._budEditings = this._budsEditing.createBudEditings();
-    }
-}
-*/
 
 export class SheetMainStore extends EntityStore<EntityBin> {
     readonly sheetStore: SheetStore;
@@ -50,26 +30,18 @@ export class SheetMainStore extends EntityStore<EntityBin> {
         this.sheetStore = sheetStore;
     }
 
-    /*
-    createBudsEditing() {
-        return new BinEditing(this.sheetStore, this.entity);
-    }
-    */
     init() {
         this.budsEditing = new BinEditing(this.sheetStore, this.entity);
         this.budEditings = this.budsEditing.createBudEditings();
     }
 
-    // return: true: new sheet created
-    async start(/*pick: PickFunc*/) {
+    async start() {
         const row = this.valRow;
         const { id } = row;
         if (id > 0) return;
-        //const pickResults = await pick(this.sheetStore, this.entity, RearPickResultType.scalar);
         const pickResults = await runBinPicks(this.sheetStore, this.entity, RearPickResultType.scalar);
         let ret = await this.startFromPickResults(pickResults);
         setAtomValue(this.sheetStore.atomLoaded, true);
-        // this.onLoaded();
         return ret;
     }
 
@@ -321,10 +293,6 @@ export class SheetStore extends EntityStore<EntitySheet> {
         return ret;
     }
 
-    async delDetail(id: number) {
-        await this.uq.DeleteBin.submit({ id });
-    }
-
     async saveSheet(valRow: ValRow) {
         let propArr = getValRowPropArr(valRow, this.mainStore.entity.buds);
         let { id: sheetId, i, x } = valRow;
@@ -342,28 +310,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
         let { id, no } = ret;
         return { id, no };
     }
-    /*
-    async saveDetail(entityBin: EntityBin, buds: BizBud[], valRow: ValRow) {
-        let { id, i, x, value, price, amount, pend, origin } = valRow;
-        let propArr = getValRowPropArr(valRow, buds);
-        let param: ParamSaveDetail = {
-            base: this.mainStore.valRow.id,
-            phrase: entityBin.id,
-            id,
-            i,
-            x,
-            value,
-            price,
-            amount,
-            origin,
-            pend,
-            props: propArr,
-        };
-        let retSaveDetail = await this.uq.SaveDetail.submitReturns(param);
-        id = retSaveDetail.ret[0].id;
-        return id;
-    }
-    */
+
     notifyRowChange() {
         this.sheetConsole.sheetRowCountChanged(this);
     }
@@ -432,8 +379,6 @@ export abstract class SheetConsole extends Console {
         ret.mainStore.init();
         return ret;
     }
-
-    // picks: PickStates;
 }
 
 export class SheetSteps {

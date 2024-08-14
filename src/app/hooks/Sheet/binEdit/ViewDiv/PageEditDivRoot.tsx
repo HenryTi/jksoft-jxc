@@ -12,18 +12,18 @@ export function PageEditDivRoot({ divStore, valDiv }: { divStore: BinStore; valD
     const { sheetStore } = divStore;
     const { entity: entitySheet, mainStore: main } = sheetStore;
     return <Page header={`${(entitySheet.caption)} - ${main.no}`}>
-        <EditDiv divStore={divStore} valDiv={valDiv} />
+        <EditDiv binStore={divStore} valDiv={valDiv} />
     </Page>
 }
 
 interface EditDivProps {
-    divStore: BinStore;
+    binStore: BinStore;
     valDiv: ValDivBase;
 }
 
 function EditDiv(props: EditDivProps) {
     const modal = useModal();
-    const { divStore, valDiv } = props;
+    const { binStore: divStore, valDiv } = props;
     const { binDiv, atomDeleted } = valDiv;
     const { level, entityBin, subBinDiv: div } = binDiv;
     const { divLevels, pivot } = entityBin;
@@ -82,7 +82,7 @@ function EditDiv(props: EditDivProps) {
     const btnDel: DivRightButton = { onClick: onDel, icon: 'trash-o', color: ' text-body-secondary ' }
 
     if (deleted === true) {
-        return <ViewDivUndo divStore={divStore} valDiv={valDiv} />;
+        return <ViewDivUndo binStore={divStore} valDiv={valDiv} />;
     }
 
     let tops: DivRightButton[], bottoms: DivRightButton[];

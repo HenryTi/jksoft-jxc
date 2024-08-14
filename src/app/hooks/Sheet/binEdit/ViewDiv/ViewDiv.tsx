@@ -13,7 +13,7 @@ import { rowEdit } from "../divEdit";
 
 export function ViewDiv(props: ViewDivProps) {
     const modal = useModal();
-    const { divStore, valDiv, readonly } = props;
+    const { binStore: divStore, valDiv, readonly } = props;
     const { binDiv, atomDeleted } = valDiv;
     const { entityBin, level } = binDiv;
     const divs = useAtomValue(valDiv.getAtomValDivs());
@@ -79,7 +79,7 @@ export function ViewDiv(props: ViewDivProps) {
     }
 
     if (deleted === true) {
-        return <ViewDivUndo divStore={divStore} valDiv={valDiv} />;
+        return <ViewDivUndo binStore={divStore} valDiv={valDiv} />;
     }
 
     let buttons = divRightButtons(id, deleted, onDelSub, onEdit);

@@ -7,7 +7,7 @@ import { DivEditing } from "../../store";
 import { ViewSpecBuds } from "app/hooks/View";
 
 export function ViewRowLeaf(props: ViewDivProps) {
-    const { divStore, valDiv, buttons } = props;
+    const { binStore: divStore, valDiv, buttons } = props;
     const { sheetStore } = divStore;
     const { atomValue, binDiv } = valDiv;
     const { binDivBuds } = binDiv;
