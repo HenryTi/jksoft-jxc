@@ -15,6 +15,17 @@ export class ValDivsBase<T extends ValDivBase> {
         setAtomValue(this._atomValDivs, valDivs);
     }
 
+    removeFromAtomValDiv(valDiv: ValDivBase) {
+        let valDivs = getAtomValue(this._atomValDivs);
+        let index = valDivs.findIndex(v => v === valDiv);
+        if (index < 0) {
+            debugger;
+            return;
+        }
+        valDivs.splice(index, 1);
+        setAtomValue(this._atomValDivs, [...valDivs]);
+    }
+
     protected getValDivsFromGetter(get: Getter) {
         return get(this._atomValDivs);
     }

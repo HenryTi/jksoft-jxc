@@ -158,20 +158,26 @@ export class BinStore extends EntityStore<EntityBin> {
 
     async delValDiv(valDiv: ValDivBase) {
         const ids: number[] = [];
-        const { binDiv, valRow, parent } = valDiv;
-        if (parent.valDivs.length === 1) {
-            this.delValDivAndSubs(ids, parent);
-        }
-        else if (binDiv.subBinDiv === undefined) {
+        let valDivToDel = this.getNeedDelValDiv(valDiv);
+        const { binDiv, valRow } = valDivToDel;
+        if (binDiv.subBinDiv === undefined) {
             const { id } = valRow;
             this.delValRow(id);
             this.sheetStore.notifyRowChange();
             ids.push(id);
         }
         else {
-            this.delValDivAndSubs(ids, parent);
+            this.delValDivAndSubs(ids, valDiv);
         }
         await this.delDetail(ids);
+    }
+
+    private getNeedDelValDiv(valDiv: ValDivBase): ValDivBase {
+        const { parent } = valDiv;
+        if (parent !== undefined && parent.valDivs.length === 1) {
+            return this.getNeedDelValDiv(parent);
+        }
+        return valDiv;
     }
 
     private delValDivAndSubs(ids: number[], valDiv: ValDivBase) {
