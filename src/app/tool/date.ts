@@ -15,18 +15,9 @@ export function fromDays(days: number) {
 }
 export function contentFromDays(days: number) {
     if (days === undefined) return undefined;
+    if (days === null) return undefined;
+    if (Number.isNaN(days) === true) return undefined;
     let date = fromDays(days);
-    //let ret = date.toISOString();
-    //let p = ret.indexOf('T');
-    //return ret.substring(0, p);
-    /*
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    let ret = `${year}-${month}-${day}`;
-    return ret;
-    */
-    // let ret = dayjs(date).format('YYYY-MM-DD');
     let ret = date.toISOString();
     let p = ret.indexOf('T');
     return ret.substring(0, p);

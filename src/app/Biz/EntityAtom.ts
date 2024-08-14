@@ -167,25 +167,7 @@ export class EntityDuo extends EntityID {
         }
     }
 }
-/*
-abstract class EntityIDWithBase extends EntityID {
-    base: EntityID;
 
-    protected override fromSwitch(i: string, val: any) {
-        switch (i) {
-            default: super.fromSwitch(i, val); break;
-            case 'base': this.base = val; break;
-        }
-    }
-
-    override scan() {
-        super.scan();
-        if (this.base !== undefined) {
-            this.base = this.biz.entityFromId(this.base as unknown as number);
-        }
-    }
-}
-*/
 export class EntityFork extends EntityID {
     readonly keyColl: { [key: number]: BizBud; } = {};
     readonly keys: BizBud[] = [];
@@ -214,16 +196,21 @@ export class EntityFork extends EntityID {
     protected fromKeys(keys: any[]) {
         for (let key of keys) {
             let { id, name, dataType } = key;
-            let bizProp = new BizBud(this.biz, id, name, dataType, this);
-            let { budDataType } = bizProp;
+            let bizBud = new BizBud(this.biz, id, name, dataType, this);
+            let { budDataType } = bizBud;
             if (budDataType === undefined) {
                 debugger;
                 continue;
             }
             budDataType.fromSchema(key);
-            bizProp.fromSchema(key);
-            this.keyColl[bizProp.id] = bizProp;
-            this.keys.push(bizProp);
+            bizBud.fromSchema(key);
+            let { ui } = bizBud;
+            if (ui === undefined) {
+                bizBud.ui = ui = {};
+            }
+            ui.required = true;
+            this.keyColl[bizBud.id] = bizBud;
+            this.keys.push(bizBud);
         }
     }
 

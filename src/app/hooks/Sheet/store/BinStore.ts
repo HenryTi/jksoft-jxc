@@ -3,7 +3,7 @@ import { BinDiv, EntityBin, PickPend } from "app/Biz";
 import { Getter, WritableAtom, atom } from "jotai";
 import { getValRowPropArr, ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsRoot } from './ValDiv';
+import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsBase, ValDivsRoot } from './ValDiv';
 import { BudEditing, ValuesBudsEditing, ValueSpace } from "app/hooks";
 import { PickPendStore } from "./PickPendStore";
 import { EntityStore } from "app/tool";
@@ -163,13 +163,14 @@ export class BinStore extends EntityStore<EntityBin> {
         if (binDiv.subBinDiv === undefined) {
             const { id } = valRow;
             this.delValRow(id);
-            this.sheetStore.notifyRowChange();
             ids.push(id);
         }
         else {
             this.delValDivAndSubs(ids, valDiv);
         }
+        // debugger;
         await this.delDetail(ids);
+        this.sheetStore.notifyRowChange();
     }
 
     private getNeedDelValDiv(valDiv: ValDivBase): ValDivBase {
@@ -181,7 +182,11 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 
     private delValDivAndSubs(ids: number[], valDiv: ValDivBase) {
-        for (let valDivSub of valDiv.valDivs) {
+        for (; ;) {
+            const { valDivs } = valDiv;
+            const { length } = valDivs;
+            if (length === 0) break;
+            let valDivSub = valDivs[length - 1];
             this.delValDivAndSubs(ids, valDivSub);
         }
         let { id } = valDiv;
@@ -189,14 +194,14 @@ export class BinStore extends EntityStore<EntityBin> {
         ids.push(id);
     }
 
-    private getOwnerAtomValDivs(valRow: ValRow) {
+    private getOwnerAtomValDivs(valRow: ValRow): ValDivsBase<any> {
         const { subBinDiv: div } = this.binDivRoot;
         if (div === undefined) {
             return this.valDivsRoot;
         }
         const { origin } = valRow;
         let valDiv = this.valDivColl[origin];
-        return valDiv;
+        return valDiv ?? this.valDivsRoot;
     }
 
     private delValRow(id: number) {

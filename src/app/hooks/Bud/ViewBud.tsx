@@ -4,7 +4,6 @@ import { EntityStore, contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
 import { Atom as BizAtom, BizPhraseType } from "uqs/UqDefault";
 import { ViewSpecId } from "app/coms/ViewSpecId";
-import { FA } from "tonwa-com";
 
 export enum ViewBudUIType {
     notInDiv = 0,
@@ -17,8 +16,6 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
     if (value === '') return null;
     if (bud === undefined) return <>{value}</>;
     if (Array.isArray(value) === true) {
-        // value = value[0];
-        // debugger;
         value = value;
     }
     let content: any;
@@ -63,11 +60,6 @@ export function budContent(bud: BizBud, value: any, store: EntityStore) {
     }
     else {
         let type = budDataType?.type;
-        /*
-        if (type === EnumBudType.atom) {
-            return atom(bud, value, ViewBudUIType.notInDiv, true, store);
-        }
-        */
         switch (type) {
             default:
             case EnumBudType.dec:
