@@ -7,7 +7,7 @@ import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
 import { DivEditing } from "../../store";
 
 export function ViewRowStem(props: ViewDivProps) {
-    const { valDiv, binStore: divStore, buttons, hidePivot } = props;
+    const { valDiv, binStore: divStore, buttons, hidePivot, index } = props;
     const { sheetStore } = divStore;
     const { atomSum, binDiv } = valDiv;
     const { entityBin } = binDiv;
@@ -62,7 +62,7 @@ export function ViewRowStem(props: ViewDivProps) {
     }
     return <>
         <div className="flex-fill px-2 py-2 px-lg-3">
-            <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />
+            <ViewIBase sheetStore={sheetStore} valDiv={valDiv} index={index} />
             {viewContent}
         </div>
         {viewRight}

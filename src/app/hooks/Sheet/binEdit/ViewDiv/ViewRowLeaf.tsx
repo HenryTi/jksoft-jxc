@@ -7,7 +7,7 @@ import { DivEditing } from "../../store";
 import { ViewSpecBuds } from "app/hooks/View";
 
 export function ViewRowLeaf(props: ViewDivProps) {
-    const { binStore: divStore, valDiv, buttons } = props;
+    const { binStore: divStore, valDiv, buttons, index } = props;
     const { sheetStore } = divStore;
     const { atomValue, binDiv } = valDiv;
     const { binDivBuds } = binDiv;
@@ -29,7 +29,7 @@ export function ViewRowLeaf(props: ViewDivProps) {
     const divEditing = new DivEditing(divStore, valDiv);
     return <>
         <div className={cn + ' flex-fill bg-white px-2 py-2 px-lg-3 '}>
-            <ViewIBase sheetStore={sheetStore} valDiv={valDiv} />
+            <ViewIBase sheetStore={sheetStore} valDiv={valDiv} index={index} />
             <RowColsSm contentClassName="flex-fill">
                 {viewIBud}
                 {divEditing.buildViewBuds()}
@@ -37,9 +37,9 @@ export function ViewRowLeaf(props: ViewDivProps) {
         </div>
         <ViewDivRight>
             <ViewPendValue {...props} />
-            <PAV bud={budAmount} className={cnAmount} val={amount} />
-            <PAV bud={budPrice} className={cnPrice} val={price} />
             <PAV bud={budValue} className={cnValue} val={value} />
+            <PAV bud={budPrice} className={cnPrice} val={price} />
+            <PAV bud={budAmount} className={cnAmount} val={amount} />
         </ViewDivRight>
         {buttons}
     </>;

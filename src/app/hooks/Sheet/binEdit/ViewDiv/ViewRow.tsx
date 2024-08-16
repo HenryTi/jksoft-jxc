@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import { FA } from "tonwa-com";
 
 export function ViewRow(props: ViewDivProps) {
-    const { valDiv, binStore: { sheetStore: { atomError } } } = props;
+    const { valDiv, binStore: { sheetStore: { atomError } }, index } = props;
     const { binDiv, valRow } = valDiv;
     const { level, entityBin, subBinDiv } = binDiv;
     const { id, pend } = valRow;

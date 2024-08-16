@@ -110,7 +110,7 @@ export function ViewDiv(props: ViewDivProps) {
     }
     return <>
         {viewRow}
-        {divs.map(v => <ViewDiv key={v.id} {...props} valDiv={v} />)}
+        {divs.map(v => <ViewDiv key={v.id} {...props} valDiv={v} index={undefined} />)}
     </>;
 }
 

@@ -1,5 +1,3 @@
-import dayjs from "dayjs";
-
 const date19700101 = Date.parse('1970-1-1 UTC');
 const milliseconds = 1000 * 60 * 60 * 24;
 

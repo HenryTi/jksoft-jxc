@@ -5,7 +5,7 @@ import { theme } from "tonwa-com";
 import { ViewSpecAtomBold } from "app/hooks/View";
 import { BizBud } from "app/Biz";
 
-export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valDiv: ValDivBase }) {
+export function ViewIBase({ sheetStore, valDiv, index }: { sheetStore: SheetStore; valDiv: ValDivBase; index: number; }) {
     const { binDiv } = valDiv;
     const { binDivBuds, entityBin } = binDiv;
     const { budIBase: iBaseBudInDiv } = binDivBuds;
@@ -22,7 +22,12 @@ export function ViewIBase({ sheetStore, valDiv }: { sheetStore: SheetStore, valD
     let iBase = valDiv.getIBase(sheetStore, iValue);
     if (iBase === undefined) iBase = iValue;
     if (iBase === undefined) return null;
+    let vIndex: any;
+    if (index !== undefined) {
+        vIndex = <span className="small text-body-tertiary w-min-1c d-inline-block">{index}&nbsp;</span>;
+    }
     return <div className="mb-1">
+        {vIndex}
         <ViewSpecAtomBold id={iBase} store={sheetStore} />
         <ViewAtomTitles id={iBase} store={sheetStore} />
     </div>;

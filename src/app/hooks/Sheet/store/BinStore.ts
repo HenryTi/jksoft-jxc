@@ -45,8 +45,6 @@ export class BinStore extends EntityStore<EntityBin> {
         this.pendLoadState = PendLoadState.none;
         this.atomSubmitState = atom((get) => {
             const valDivs = get(this.valDivsRoot.getAtomValDivs());
-            // if (atomValDivs === undefined) return SubmitState.none;
-            // let valDivs = get(atomValDivs);
             let hasValue = false;
             if (valDivs.length === 0) return SubmitState.none;
             for (let valDiv of valDivs) {
@@ -56,7 +54,9 @@ export class BinStore extends EntityStore<EntityBin> {
                 let valRow = get(valDiv.getAtomValRow());
                 if (valRow.id < 0) return SubmitState.disable;
                 if (value !== undefined || sumValue > 0) hasValue = true;
-                if (value > valRow.pendValue) return SubmitState.disable;
+                const { pendValue } = valRow;
+                if (pendValue === undefined) debugger;
+                if (value > pendValue) return SubmitState.disable;
             }
             let ret = hasValue === true ? SubmitState.enable : SubmitState.disable; // .hide;
             return ret;

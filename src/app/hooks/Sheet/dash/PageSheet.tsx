@@ -160,12 +160,12 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
                         无明细
                     </div>
                     :
-                    valDivs.map(v => {
+                    valDivs.map((v, index) => {
                         const { id } = v;
                         if (id === undefined) debugger;
                         const cn = 'border-top border-bottom ' + (id < 0 ? 'border-warning' : 'border-primary-subtle');
                         return <div key={id} className={cn}>
-                            <ViewDiv binStore={divStore} valDiv={v} readonly={readonly} />
+                            <ViewDiv binStore={divStore} valDiv={v} readonly={readonly} index={index + 1} />
                         </div>;
                     })}
                 {viewWaiting}
