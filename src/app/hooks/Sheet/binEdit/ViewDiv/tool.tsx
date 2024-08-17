@@ -46,7 +46,12 @@ export function ViewPendValue(props: ViewDivProps) {
     const { level, entityBin } = binDiv;
     const valRow = useAtomValue(valDiv.getAtomValRow());
     let { sumValue, sumAmount } = useAtomValue(atomSum);
-    if (parent === undefined) sumValue = valRow.value;
+    if (parent === undefined) {
+        const { value: rootValue } = valRow;
+        if (rootValue !== undefined) {
+            sumValue = rootValue;
+        }
+    }
     const { pendValue } = valRow;
     let {
         pend: cnPend, pendOver: cnPendOver, pendValue: cnPendValue
@@ -56,18 +61,23 @@ export function ViewPendValue(props: ViewDivProps) {
     if (pendValue === undefined) return null;
     if (level === 0) {
         if (readonly !== true) {
+            let vOver: any;
             let icon: string, color: string;
             if (sumValue > pendValue) {
                 icon = 'exclamation-circle';
                 color = cnPendOver;
+                vOver = <div className="position-absolute text-danger" style={{ right: '-0.5rem', top: '-0.5rem' }}>
+                    <FA name={icon} />
+                </div>;
             }
             else {
-                icon = 'th-large'; //'hand-o-right';
                 color = cnPend;
             }
-            return <div className="d-flex align-items-center">
-                <FA name={icon} className={color + ' me-2 '} />
+            // <FA name={icon} className={color + ' me-2 '} />
+            return <div className="d-flex align-items-center position-relative">
+                <span className={color + ' me-2 '}>待办</span>
                 <span className={'w-min-2c w-min-3c ' + cnPendValue}>{budValue?.getUIValue(pendValue)}</span>
+                {vOver}
             </div>;
         }
     }
