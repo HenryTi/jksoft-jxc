@@ -1,4 +1,4 @@
-import { BinInputSpec, BizBud, EntityID, ValueSetType } from "app/Biz";
+import { BinInputFork, BizBud, EntityID, ValueSetType } from "app/Biz";
 import { Page } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { useForm } from "react-hook-form";
@@ -13,7 +13,7 @@ import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 import { PickResult } from "app/hooks/Calc";
 
 
-export interface PropsInputSpec extends InputProps<BinInputSpec> {
+export interface PropsInputSpec extends InputProps<BinInputFork> {
 };
 
 export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {

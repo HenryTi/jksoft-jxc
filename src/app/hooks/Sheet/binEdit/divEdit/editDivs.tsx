@@ -1,4 +1,4 @@
-import { BinInputAtom, BinInputSpec } from "app/Biz";
+import { BinInputAtom, BinInputFork } from "app/Biz";
 import { inputAtom } from "./inputAtom";
 import { inputSpec } from "./inputSpec";
 import { BizPhraseType } from "uqs/UqDefault";
@@ -94,7 +94,7 @@ async function runInputs(props: UseEditDivsProps, editing: DivEditing) {
                 retInput = await inputSpec({
                     ...props,
                     editing,
-                    binInput: input as BinInputSpec,
+                    binInput: input as BinInputFork,
                 });
                 break;
         }

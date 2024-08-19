@@ -103,7 +103,7 @@ export interface InputSpecParam {
     valueSetType: ValueSetType;
 }
 
-export class BinInputSpec extends BinInput {
+export class BinInputFork extends BinInput {
     spec: EntityFork;
     baseExp: string;
     baseBud: BizBud;        // 以后不允许表达式。只能是bud id
@@ -111,8 +111,27 @@ export class BinInputSpec extends BinInput {
     build(val: any): void {
         super.build(val);
         const { spec, base, params } = val;
-        this.spec = this.biz.entityFromId(spec) as EntityFork;
-        this.bizPhraseType = this.spec.bizPhraseType;
+        if (spec !== undefined) {
+            this.spec = this.biz.entityFromId(spec) as EntityFork;
+            this.bizPhraseType = this.spec.bizPhraseType;
+            this.params = (params as [number, string, string][]).map(([budId, formula, setType]) => {
+                return {
+                    bud: this.spec.getBud(budId),
+                    valueSet: formula,
+                    valueSetType: setType === '=' ? ValueSetType.equ : ValueSetType.init,
+                };
+            });
+        }
+        else {
+            if (params.length > 0) {
+                const [budId, formula, setType] = (params as [number, string, string][])[0];
+                this.params = [{
+                    bud: undefined,
+                    valueSet: formula,
+                    valueSetType: setType === '=' ? ValueSetType.equ : ValueSetType.init,
+                }];
+            }
+        }
         let baseBud = this.biz.budFromId(base);
         if (baseBud !== undefined) {
             this.baseBud = baseBud;
@@ -120,13 +139,6 @@ export class BinInputSpec extends BinInput {
         else {
             this.baseExp = base;
         }
-        this.params = (params as [number, string, string][]).map(([budId, formula, setType]) => {
-            return {
-                bud: this.spec.getBud(budId),
-                valueSet: formula,
-                valueSetType: setType === '=' ? ValueSetType.equ : ValueSetType.init,
-            };
-        });
     }
 }
 
@@ -549,15 +561,12 @@ export class EntityBin extends Entity {
     private buildInput(v: any): BinInput {
         const { id, name, spec, atom } = v;
         let input: BinInput;
-        if (spec !== undefined) {
-            input = new BinInputSpec(this.biz, id, name, undefined, this);
-        }
-        else if (atom !== undefined) {
+        if (atom !== undefined) {
             input = new BinInputAtom(this.biz, id, name, undefined, this);
         }
-        else {
-            debugger;
-            return;
+        else if (spec !== undefined || spec === undefined) {
+            // spec === undefined 就是自动选择
+            input = new BinInputFork(this.biz, id, name, undefined, this);
         }
         input.build(v);
         return input;
