@@ -9,9 +9,9 @@ import { ViewBud } from "app/hooks";
 import { PageSpecEdit } from "./PageSpecEdit";
 import { AtomIDValue } from "../AtomIDValue";
 
-export function PageSpecList({ entitySpec, baseValue }: { entitySpec: EntityFork; baseValue: AtomIDValue; }) {
+export function PageSpecList({ entityFork, baseValue }: { entityFork: EntityFork; baseValue: AtomIDValue; }) {
     const modal = useModal();
-    const store = useSpecStore(modal, entitySpec, baseValue);
+    const store = useSpecStore(modal, entityFork, baseValue);
     const items = useAtomValue(store.itemsAtom);
     useEffectOnce(() => {
         store.load();
@@ -22,7 +22,7 @@ export function PageSpecList({ entitySpec, baseValue }: { entitySpec: EntityFork
         await modal.open(<PageSpecNew store={store} />);
     }
 
-    const { showKeys, showBuds } = entitySpec;
+    const { showKeys, showBuds } = entityFork;
     function ViewSpecItem({ value }: { value: any; }) {
         const { no, ex } = value;
         let vEx: any, vNo: any;

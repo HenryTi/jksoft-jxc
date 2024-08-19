@@ -55,7 +55,7 @@ export class BinStore extends EntityStore<EntityBin> {
                 if (valRow.id < 0) return SubmitState.disable;
                 if (value !== undefined || sumValue > 0) hasValue = true;
                 const { pendValue } = valRow;
-                if (pendValue === undefined) debugger;
+                // if (pendValue === undefined) debugger;
                 if (value > pendValue || sumValue > pendValue) return SubmitState.disable;
             }
             let ret = hasValue === true ? SubmitState.enable : SubmitState.disable; // .hide;

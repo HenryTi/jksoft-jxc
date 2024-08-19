@@ -6,7 +6,7 @@ import { BudGroup, Entity } from "./Entity";
 export abstract class EntityID extends Entity {
     readonly subClasses: EntityID[] = [];
     superClass: EntityID;
-    forks: EntityFork[];
+    fork: EntityFork;
     titleBuds: BizBud[];
     primeBuds: BizBud[];
     uniques: string[];
@@ -21,13 +21,14 @@ export abstract class EntityID extends Entity {
         return us;
     }
 
-    addSpec(spec: EntityFork) {
-        if (this.forks === undefined) this.forks = [];
-        this.forks.push(spec);
+    setFork(fork: EntityFork) {
+        // if (this.fork === undefined) this.fork = [];
+        // this.fork.push(spec);
+        this.fork = fork;
     }
 
     getFork(): EntityFork {
-        if (this.forks !== undefined) return this.forks[0];
+        if (this.fork !== undefined) return this.fork;
         return this.superClass?.getFork();
     }
 
@@ -148,11 +149,26 @@ export abstract class EntityID extends Entity {
 }
 
 export class EntityAtom extends EntityID {
+    /*
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
+            case 'fork': this.fromFork(val); break;
         }
     }
+
+    private fromFork(val: any) {
+        this.fork = new EntityFork(this.biz, this.id, this.name, 'fork');
+        this.fork.fromSchema(val);
+    }
+
+    protected override scanBuds(): void {
+        super.scanBuds();
+        if (this.fork !== undefined) {
+            this.fork.scanBudsPublic();
+        }
+    }
+    */
 }
 
 export class EntityDuo extends EntityID {
@@ -214,6 +230,10 @@ export class EntityFork extends EntityID {
         }
     }
 
+    scanBudsPublic() {
+        this.scanBuds();
+    }
+
     protected override scanBuds(): void {
         super.scanBuds();
         const setNoEx = (bud: BizBud) => {
@@ -250,7 +270,7 @@ export class EntityFork extends EntityID {
         super.scan();
         if (this.base !== undefined) {
             this.base = this.biz.entityFromId(this.base as unknown as number);
-            this.base.addSpec(this);
+            this.base.setFork(this);
         }
     }
 

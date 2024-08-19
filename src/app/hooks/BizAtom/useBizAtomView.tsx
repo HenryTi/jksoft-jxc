@@ -75,18 +75,16 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
 
 export function ViewAtomProps({ entity, value }: { entity: EntityID; value: AtomIDValue; }) {
     const modal = useModal();
-    let { buds: atomProps, budGroups, forks } = entity;
+    let { buds: atomProps, budGroups, fork } = entity;
     const { id, buds } = value;
-    let vForks: any;
-    if (forks !== undefined) {
-        vForks = <div className="p-3">{
-            forks.map(v => {
-                let { caption } = v;
-                function onSpec() {
-                    modal.open(<PageSpecList entitySpec={v} baseValue={value} />);
-                }
-                return <button key={v.id} className="btn btn-link me-3" onClick={onSpec}>{caption}</button>
-            })}
+    let vFork: any;
+    if (fork !== undefined) {
+        function onSpec() {
+            modal.open(<PageSpecList entityFork={fork} baseValue={value} />);
+        }
+        const { id, caption } = fork;
+        vFork = <div className="p-3">
+            <button key={id} className="btn btn-link me-3" onClick={onSpec}>{caption}</button>
         </div>;
     }
 
@@ -144,7 +142,7 @@ export function ViewAtomProps({ entity, value }: { entity: EntityID; value: Atom
         </Tabs>;
     }
     return <>
-        {vForks}
+        {vFork}
         {vPropRows}
     </>;
 }
