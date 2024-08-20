@@ -1,6 +1,6 @@
 import { BinInputAtom, BinInputFork } from "app/Biz";
 import { inputAtom } from "./inputAtom";
-import { inputSpec } from "./inputSpec";
+import { inputFork } from "./inputFork";
 import { BizPhraseType } from "uqs/UqDefault";
 import { DivEditing, BinStore, PendRow, ValDivBase } from "../../store";
 import { PendProxyHandler } from "../../store";
@@ -91,7 +91,7 @@ async function runInputs(props: UseEditDivsProps, editing: DivEditing) {
                 });
                 break;
             case BizPhraseType.fork:
-                retInput = await inputSpec({
+                retInput = await inputFork({
                     ...props,
                     editing,
                     binInput: input as BinInputFork,

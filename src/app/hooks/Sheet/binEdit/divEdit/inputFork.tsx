@@ -13,14 +13,14 @@ import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 import { PickResult } from "app/hooks/Calc";
 
 
-export interface PropsInputSpec extends InputProps<BinInputFork> {
+export interface PropsInputFork extends InputProps<BinInputFork> {
 };
 
-export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
+export async function inputFork(props: PropsInputFork): Promise<PickResult> {
     const { binInput, editing } = props;
     const { valDiv, divStore } = editing;
     const { sheetStore, uq, modal, biz } = divStore;
-    const { spec: entitySpec, baseExp, baseBud, params } = binInput;
+    const { baseExp, baseBud, params } = binInput;
     const baseName = '.i';
     editing.addFormula(baseName, baseExp ?? baseBud.valueSet, false); // baseBud.valueSetType === ValueSetType.init);
     const base = editing.getValue(baseName) as number;
@@ -30,7 +30,16 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     }
     const paramValues: { [budId: number]: any } = {};
     // 暂时先按赋值处理，以后可以处理:=
-    const { id: entityId, preset, keys, buds: specBuds } = entitySpec;
+    let entityFork = binInput.spec;
+    if (entityFork === undefined) {
+        let { atom: atomObj, entityID } = sheetStore.bizAtomColl[base];
+        entityFork = entityID.fork;
+    }
+    if (entityFork === undefined) {
+        alert('no entity fork');
+        return;
+    }
+    const { id: entityId, preset, keys, buds: forkBuds } = entityFork;
     let paramsSetCount = 0;
     for (let { bud, valueSet, valueSetType } of params) {
         paramValues[bud.id] = editing.calcValue(valueSet);
@@ -60,7 +69,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
             return values;
         }
         const keyValues = buildValues(keys);
-        const propValues = buildValues(specBuds);
+        const propValues = buildValues(forkBuds);
         const param: ParamSaveSpec = {
             id: undefined,
             spec: entityId,
@@ -77,7 +86,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
             id,
             atom: base,
         }],
-            [...keys, ...specBuds].map(v => ({
+            [...keys, ...forkBuds].map(v => ({
                 id,
                 phrase: v.id,
                 value: budValueFromData(v),
@@ -85,7 +94,7 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
         return retSpec;
     }
     let ret: any;
-    if (paramsSetCount === keys.length + specBuds.length) {
+    if (paramsSetCount === keys.length + forkBuds.length) {
         ret = await saveSpec(false, paramValues);
     }
     else if (preset === true) {
@@ -101,12 +110,12 @@ export async function inputSpec(props: PropsInputSpec): Promise<PickResult> {
     }
     else {
         let buds = [...keys];
-        if (specBuds !== undefined) buds.push(...specBuds);
+        if (forkBuds !== undefined) buds.push(...forkBuds);
         let budsEditing = new ValuesBudsEditing(modal, biz, buds);
         budsEditing.initBudValues(paramValues);
         ret = await modal.open(<PagePickSpec />);
         function PagePickSpec() {
-            const { caption } = entitySpec;
+            const { caption } = entityFork;
             const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
             const submitCaption = btnNext;
             const submitClassName: string = cnNextClassName;
