@@ -54,6 +54,7 @@ export abstract class EntityID extends Entity {
             if (buds !== undefined) {
                 this.buds.push(...buds);
             }
+            for (let bud of buds) bud.scan();
             this.mergeBudGroups(p);
         }
     }

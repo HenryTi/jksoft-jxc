@@ -1,6 +1,6 @@
 import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
-import { BizBud, BizBudBinValue, BudID, BudRadio, EnumBudType, ValueSetType } from "./BizBud";
+import { BizBud, BizBudBinValue, BudFork, BudID, BudRadio, EnumBudType, ValueSetType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntityFork } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
@@ -585,6 +585,7 @@ export class EntityBin extends Entity {
         if (this.i !== undefined) {
             this.i = this.buildBudPickable(this.i as any);
             this.i.onForm = false;
+            this.biz.addBudIds(this.i);
         }
         if (this.iBase !== undefined) {
             this.iBase = this.buildAtomBud(this.iBase as any);
@@ -593,6 +594,7 @@ export class EntityBin extends Entity {
         if (this.x !== undefined) {
             this.x = this.buildBudPickable(this.x as any);
             this.x.onForm = false;
+            this.biz.addBudIds(this.x);
         }
         if (this.xBase !== undefined) {
             this.xBase = this.buildAtomBud(this.xBase as any);
@@ -622,6 +624,20 @@ export class EntityBin extends Entity {
         this.binDivRoot = new BinDiv(this, undefined);
         this.divLevels = 0;
         this.scanDiv(this.binDivRoot as any, divSchema);
+        this.scanForkBase();
+    }
+
+    private scanForkBase() {
+        for (let bud of this.buds) {
+            const { budDataType } = bud;
+            if (budDataType.type === EnumBudType.fork) {
+                let bdt = budDataType as BudFork;
+                const { base } = bdt;
+                if (typeof base === 'number') {
+                    bdt.base = this.biz.budFromId(base as unknown as number);
+                }
+            }
+        }
     }
 
     private scanDiv(binDiv: BinDiv, divSchema: any) {

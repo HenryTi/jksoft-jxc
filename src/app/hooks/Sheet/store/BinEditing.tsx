@@ -6,7 +6,8 @@ import {
     PickAtom,
     PickSpec,
     PickQuery,
-    PickPend
+    PickPend,
+    Entity
 } from "app/Biz";
 import { BinStore } from "./BinStore";
 import { SheetStore } from "./SheetStore";
@@ -49,6 +50,16 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
         if (initBinRow !== undefined) {
             this.setValues(initBinRow);
         }
+    }
+
+    getEntityFromId(id: number): Entity {
+        const ret = this.sheetStore.bizAtomColl[id];
+        if (ret === undefined) {
+            debugger;
+            return;
+        }
+        const { atom, entityID } = ret;
+        return entityID;
     }
 
     protected createBudValuesTool(): BudValuesToolBase<ValRow> {

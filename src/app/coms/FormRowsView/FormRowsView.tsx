@@ -1,4 +1,4 @@
-import { EntityAtom, EntityID, EntityFork } from "app/Biz";
+import { EntityAtom, EntityID, EntityFork, BizBud, Entity } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useIDSelect } from "app/hooks";
 import { Atom, atom } from "jotai";
@@ -11,8 +11,9 @@ import {
 import { IDView } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { BizPhraseType, EnumAtom } from "uqs/UqDefault";
-import { ViewSpecId } from "./ViewSpecId";
+import { ViewSpecId } from "../ViewSpecId";
 import { contentFromDays, fromDays } from "app/tool";
+import { ViewFormFork } from "./ViewFormFork";
 
 export interface BandProps {
     label?: string | JSX.Element;
@@ -154,17 +155,23 @@ export interface FormAtom extends FormLabelName {
     entityAtom?: EntityID;
 }
 
+export interface FormFork extends FormLabelName {
+    baseBud: BizBud;
+}
+
 export interface FormSubmit extends FormLabel {
     label?: string | JSX.Element;
     type: 'submit';
     className?: string;
 }
 
-export type FormRow = FormInput | FormBand | FormSubmit | FormRadios | FormSelect | FormAtom;
+export type FormRow = FormInput | FormBand | FormSubmit | FormRadios | FormSelect | FormAtom | FormFork;
 
 export interface FormContext {
     getTrigger(name: string): Atom<number>;
     getParams(name: string): any;
+    getBudValue(bud: BizBud): any;
+    getEntityFromId(id: number): Entity;
 }
 
 interface FormProps {
@@ -192,6 +199,8 @@ const emptyAtom = atom(0);
 const emptyFormContext: FormContext = {
     getTrigger(name: string) { return emptyAtom; },
     getParams(name: string) { return undefined; },
+    getBudValue(bud: BizBud) { return undefined; },
+    getEntityFromId(id: number): Entity { return undefined; }
 }
 export function FormRowsView(props: FormRowsViewProps) {
     let { rows, context } = props;
@@ -288,7 +297,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
         let error: FieldError = errors[name] as FieldError;
         if (entityAtom.bizPhraseType === BizPhraseType.fork) {
             // fork???
-            return <ViewFormFork row={row as FormAtom} label={label} error={error}
+            return <ViewFormAtomFork row={row as FormAtom} label={label} error={error}
                 entity={entityAtom as EntityFork}
                 inputProps={register(name, options)}
                 setValue={setValue}
@@ -312,6 +321,18 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
             setValue={setValue}
             clearErrors={clearErrors}
             onChange={undefined} />;
+    }
+
+    const { baseBud } = row as FormFork;
+    if (baseBud !== undefined) {
+        let { name } = row as FormFork;
+        let error: FieldError = errors[name] as FieldError;
+        return <ViewFormFork row={row as FormFork} label={label} error={error}
+            inputProps={register(name, options)}
+            setValue={setValue}
+            clearErrors={clearErrors}
+            onChange={undefined}
+            formContext={context} />;
     }
 
     const { name, type, readOnly, right, step } = row as FormInput;
@@ -444,7 +465,7 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
     </Band>
 }
 
-function ViewFormFork({ row, label, error, inputProps, clearErrors, setValue, entity, onChange, formContext }: {
+function ViewFormAtomFork({ row, label, error, inputProps, clearErrors, setValue, entity, onChange, formContext }: {
     row: FormAtom;
     label: string | JSX.Element;
     entity: EntityFork;

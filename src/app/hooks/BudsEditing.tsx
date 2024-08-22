@@ -4,6 +4,8 @@ import {
     BizBud, BudID, BudDec, BudRadio, EnumBudType, ValueSetType, BudValuesTool,
     BudValuesToolBase,
     Biz,
+    BudFork,
+    Entity,
 } from "app/Biz";
 import { Calc, CalcResult, ValueSpace, Formulas } from "./Calc";
 import { getDays, Store } from "app/tool";
@@ -119,6 +121,8 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         if (ret !== undefined) return ret;
         return this.calc.getValue(bud.name);
     }
+
+    getEntityFromId(id: number): Entity { return undefined; }
 
     protected hasBud(bud: BizBud): boolean {
         return this.budValuesTool.has(bud);
@@ -330,6 +334,10 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
                     formRow.atom = null;
                     formRow.readOnly = true;
                     formRow.entityAtom = (budDataType as BudID).entityID;
+                    break;
+                case EnumBudType.fork:
+                    const { base: baseBud } = budDataType as BudFork;
+                    formRow.baseBud = baseBud;
                     break;
                 case EnumBudType.char:
                 case EnumBudType.str:

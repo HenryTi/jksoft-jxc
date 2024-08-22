@@ -25,7 +25,7 @@ export enum EnumBudType {
     datetime = 42,
 
     optionItem = 81,            // options item
-    json = 95,
+    fork = 95,
     any = 96,
     unique = 97,
     user = 98,
@@ -79,8 +79,12 @@ export class BudArr extends BudDataString {
         this.props = undefined;
     }
 }
-export class BudJSON extends BudDataString {
-    readonly type = EnumBudType.json;
+export class BudFork extends BudDataString {
+    readonly type = EnumBudType.fork;
+    base: BizBud;
+    override fromSchema(schema: any): void {
+        this.base = schema.base;
+    }
 }
 export class BudInt extends BudDataNumber {
     readonly type = EnumBudType.int;
@@ -235,7 +239,7 @@ export class BizBud extends BizBase {
             case EnumBudType.none: budDataType = new BudNone(); break;
             case EnumBudType.any: budDataType = new BudAny(); break;
             case EnumBudType.arr: budDataType = new BudArr(); break;
-            case EnumBudType.json: budDataType = new BudJSON(); break;
+            case EnumBudType.fork: budDataType = new BudFork(); break;
             case EnumBudType.int: budDataType = new BudInt(); break;
             case EnumBudType.dec: budDataType = new BudDec(); break;
             case EnumBudType.char:
@@ -290,6 +294,7 @@ export class BizBud extends BizBase {
             case 'atom':
             case 'options':
             case 'setType':
+            case 'base':
                 break;
         }
     }

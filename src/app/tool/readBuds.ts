@@ -14,14 +14,20 @@ export function readBuds(biz: Biz, id: number, props: ReturnGetAtomProps[]) {
     for (let i = 1; i < len; i++) {
         let { phrase, value } = props[i];
         let bud = biz.budFromId(phrase);
-        if (bud.budDataType.type === EnumBudType.check) {
-            buds[phrase] = value;
+        if (bud === undefined) {
+            debugger;
         }
         else {
-            switch (value.length) {
-                case 0: debugger; break;
-                case 1: buds[phrase] = value[0]; break;
-                default: buds[phrase] = value; break;
+            const { budDataType } = bud;
+            if (budDataType.type === EnumBudType.check) {
+                buds[phrase] = value;
+            }
+            else {
+                switch (value.length) {
+                    case 0: debugger; break;
+                    case 1: buds[phrase] = value[0]; break;
+                    default: buds[phrase] = value; break;
+                }
             }
         }
     }

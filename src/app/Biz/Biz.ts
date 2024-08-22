@@ -351,8 +351,8 @@ export class Biz {
     }
 
     delEntity(entity: Entity) {
-        this.entities[entity.name];
-        this.ids[entity.id];
+        // this.entities[entity.name];
+        // this.ids[entity.id];
         for (let group of this.groups) {
             const { entities } = group;
             for (let row of entities) {
