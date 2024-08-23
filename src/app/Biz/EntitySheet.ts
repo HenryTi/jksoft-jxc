@@ -237,7 +237,9 @@ export class BudValuesTool extends BudValuesToolBase<any> {
         super(editing);
         this.allFields = buds;
         this.fields = buds;
-        for (let bud of buds) this.coll[bud.id] = bud;
+        if (buds !== undefined) {
+            for (let bud of buds) this.coll[bud.id] = bud;
+        }
     }
 
     has(bud: BizBud): boolean {

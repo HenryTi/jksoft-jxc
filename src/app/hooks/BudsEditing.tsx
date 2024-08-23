@@ -28,7 +28,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
 
     constructor(modal: Modal, biz: Biz, buds: BizBud[]) {
         super(modal, biz);
-        this.buds = buds;
+        this.buds = buds ?? [];
         let formulas = this.buildFormulas();
         this.valueSpace = new ValueSpace(biz);
         this.calc = new Calc(this.valueSpace, formulas, this.values as any);

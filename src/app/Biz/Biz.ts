@@ -95,7 +95,7 @@ export class Biz {
     bizConsole: EntityConsole;
     hasEntity: boolean;
     entities: { [name: string | number]: Entity } = {};
-    atomBuilder: AtomsBuilder;
+    // atomBuilder: AtomsBuilder;
     userDefaults: { [bud: number]: string | number | (string | number)[]; };
     atomSchemasChanged = atom(false);
 
@@ -128,7 +128,7 @@ export class Biz {
 
     buildEntities(bizSchema: any) {
         if (bizSchema === undefined) return;
-        this.atomBuilder = new AtomsBuilder(this);
+        // this.atomBuilder = new AtomsBuilder(this);
         this.entityWithUser = [];
         const builders: { [type in EnumEntity]: (id: number, name: string, type: string) => Entity } = {
             [EnumEntity.sheet]: this.buildSheet,
@@ -170,6 +170,7 @@ export class Biz {
         for (let schema of biz) {
             if (schema === undefined) debugger;
             let { id, name, phrase, type, caption } = schema;
+            // console.log(name);
             let enumType = EnumEntity[type] as unknown as EnumEntity;
             let builder = builders[enumType];
             if (builder === undefined) {
@@ -192,7 +193,9 @@ export class Biz {
         }
         for (let i in arr) {
             for (let [bizEntity, schema] of arr[i as unknown as EnumEntity]) {
+                // let d = Date.now();
                 bizEntity.fromSchema(schema);
+                // console.log('arr', Date.now() - d, bizEntity.name);
             }
         }
 
@@ -238,6 +241,8 @@ export class Biz {
                 bizEntity.scan();
             }
         }
+        this.buildAtomHierachy(arr[EnumEntity.atom]);
+        /*
         let entityArrAtom = arr[EnumEntity.atom];
         if (entityArrAtom !== undefined) {
             for (let [bizEntity] of arr[EnumEntity.atom]) {
@@ -245,6 +250,7 @@ export class Biz {
             }
             this.atomBuilder.buildRootAtoms();
         }
+        */
         this.groups.push(
             {
                 name: 'sheet',
@@ -342,7 +348,7 @@ export class Biz {
             group.hasEntity = hasEntity;
         }
         this.hasEntity = allHasEntity;
-        this.atomBuilder = undefined;
+        // this.atomBuilder = undefined;
         setAtomValue(this.atomSchemasChanged, !getAtomValue(this.atomSchemasChanged));
     }
 
@@ -492,6 +498,25 @@ export class Biz {
         let bizEntity = new EntityIOSite(this, id, name, type);
         this.ioSites.push(bizEntity);
         return bizEntity;
+    }
+
+    private buildAtomHierachy(entityAtomArr: [Entity, any][]) {
+        if (entityAtomArr === undefined) return;
+        // let rootAtoms: EntityAtom[] = [];
+        // let rootHierachy: EntityAtom[] = [];
+        for (let atom of this.atoms) {
+            let { superClass: _extends } = atom;
+            if (_extends !== undefined) continue;
+            this.atomRoots.push(atom);
+            atom.hierarchy();
+        }
+        /*
+        // let entityArrAtom = arr[EnumEntity.atom];
+        for (let [bizEntity] of entityAtomArr) {
+            (bizEntity as EntityAtom).scanTitlePrime();
+        }
+        this.atomBuilder.buildRootAtoms();
+        */
     }
 
     async loadUserDefaults() {

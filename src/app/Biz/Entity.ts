@@ -41,7 +41,8 @@ export class Entity extends BizBase {
             default: super.fromSwitch(i, val); break;
             case 'props':
                 let buds = this.fromProps(val);
-                this.biz.atomBuilder.initBuds(this, buds);
+                // this.biz.atomBuilder.initBuds(this, buds);
+                this.buds.push(...buds);
                 break;
             case 'groups': this.fromGroups(val); break;
             case 'user': this.fromUser(val); break;
@@ -55,8 +56,8 @@ export class Entity extends BizBase {
 
     protected fromGroups(groups: any[]) {
         let budGroups: BudGroups = {
-            home: new BudGroup(this.biz, 0, '-', undefined),
-            must: new BudGroup(this.biz, 0, '+', undefined),
+            home: undefined, // new BudGroup(this.biz, 0, '-', undefined),
+            must: undefined, // new BudGroup(this.biz, 0, '+', undefined),
             arr: [],
         } as any;
         for (let g of groups) {
@@ -77,10 +78,11 @@ export class Entity extends BizBase {
             }
             group.buds = buds;
         }
-
-        this.biz.atomBuilder.initBudGroups(this, budGroups);
+        this.budGroups = budGroups;
+        //this.biz.atomBuilder.initBudGroups(this, budGroups);
     }
 
+    /*
     protected buildBudsGroups() {
         let entitySelf = this.biz.atomBuilder.self(this);
         this.buildBudsGroupsFromSelf(entitySelf);
@@ -102,6 +104,7 @@ export class Entity extends BizBase {
             bud.scan();
         }
     }
+    */
 
     cloneBudGroups(groups: BudGroups) {
         if (groups === undefined) return undefined;
@@ -139,13 +142,19 @@ export class Entity extends BizBase {
 
     scan() {
         if (this.scaned === true) return;
-        this.buildBudsGroups();
-        this.scanBudGroups();
+        //this.buildBudsGroups();
         this.scanBuds();
+        this.scanBudGroups();
         this.scaned = true;
     }
 
     protected scanBuds() {
+        for (let bud of this.buds) {
+            const { id, name } = bud;
+            this.budColl[id] = bud;
+            this.budColl[name] = bud;
+            bud.scan();
+        }
         if (this.user !== undefined) {
             for (let bud of this.user) {
                 bud.scan();
@@ -162,7 +171,10 @@ export class Entity extends BizBase {
     }
 
     private scanBudGroup(group: BudGroup) {
-        group.buds = (group.buds as any[]).map(v => {
+        if (group === undefined) return;
+        const { buds } = group;
+        if (buds === undefined) return;
+        group.buds = (buds as any[]).map(v => {
             return typeof (v) === 'number' ? this.budColl[v] : v;
         });
     }

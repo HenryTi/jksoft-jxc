@@ -22,8 +22,6 @@ export abstract class EntityID extends Entity {
     }
 
     setFork(fork: EntityFork) {
-        // if (this.fork === undefined) this.fork = [];
-        // this.fork.push(spec);
         this.fork = fork;
     }
 
@@ -42,6 +40,7 @@ export abstract class EntityID extends Entity {
         }
     }
 
+    /*
     protected override buildBudsGroups() {
         const ancestorSelfs = this.biz.atomBuilder.getAncestorSelfs(this);
         const ancestorSelfs0 = ancestorSelfs[0];
@@ -58,18 +57,21 @@ export abstract class EntityID extends Entity {
             this.mergeBudGroups(p);
         }
     }
+    */
 
+    /*
     scanTitlePrime() {
         const ancestorSelfs = this.biz.atomBuilder.getAncestorSelfs(this);
-        if (ancestorSelfs.length <= 1) return;
+        // if (ancestorSelfs.length <= 1) return;
         let titleBuds: BizBud[] = [];
         let primeBuds: BizBud[] = [];
         let titleColl: { [id: number]: BizBud } = {};
         let primeColl: { [id: number]: BizBud } = {};
         for (let ancestor of ancestorSelfs) {
-            let { titleBuds: tbs, primeBuds: pbs } = ancestor.entity as EntityAtom;
+            let { _titleBuds: tbs, _primeBuds: pbs } = ancestor.entity as EntityAtom;
             if (tbs !== undefined) {
                 for (let tb of tbs) {
+                    if (tb === undefined) debugger;
                     let { id } = tb;
                     if (titleColl[id] !== undefined) continue;
                     titleBuds.push(tb);
@@ -88,6 +90,7 @@ export abstract class EntityID extends Entity {
             }
         }
     }
+    */
 
     private mergeBudGroups(entitySelf: EntitySelf) {
         const { groups, groupColl } = entitySelf;
@@ -131,7 +134,7 @@ export abstract class EntityID extends Entity {
 
     protected fromExtends(extendsId: number) {
         if (extendsId === undefined) return;
-        let superClass = this.biz.atomBuilder.initSuperClass(this, extendsId);
+        let superClass = this.biz.entityFromId(extendsId) as EntityID; // .atomBuilder.initSuperClass(this, extendsId);
         if (superClass === undefined) debugger;
         superClass.subClasses.push(this);
         this.superClass = superClass;
@@ -144,8 +147,47 @@ export abstract class EntityID extends Entity {
 
     scan() {
         super.scan();
-        this.titleBuds = this.idArrToBudArr(this.titleBuds as unknown as number[]);
-        this.primeBuds = this.idArrToBudArr(this.primeBuds as unknown as number[]);
+        /*
+        let _titleBuds = this._titleBuds;
+        this._titleBuds = this.idArrToBudArr(this._titleBuds as unknown as number[]);
+        if (this._titleBuds) {
+            for (let b of this._titleBuds) {
+                if (b === undefined) debugger;
+            }
+        }
+        this._primeBuds = this.idArrToBudArr(this._primeBuds as unknown as number[]);
+        */
+    }
+
+    hierarchy() {
+        this.buildSelf();
+        for (let sub of this.subClasses) {
+            sub.hierarchy();
+        }
+    }
+
+    private buildSelf() {
+        let buds: BizBud[] = [];
+        this.mergeTitlePrime([], {}, true);
+        this.titleBuds = buds;
+        buds = [];
+        this.mergeTitlePrime(buds, {}, false);
+        this.primeBuds = buds;
+    }
+
+    private mergeTitlePrime(buds: BizBud[], budsColl: { [id: number]: BizBud }, isTitle: boolean) {
+        let myBuds = isTitle === true ? this.titleBuds : this.primeBuds;
+        if (myBuds === undefined) return;
+        let budArr: BizBud[] = this.idArrToBudArr(myBuds as unknown as number[]);
+        for (let b of budArr) {
+            const { id } = b;
+            if (budsColl[id] !== undefined) continue;
+            buds.push(b);
+            budsColl[id] = b;
+        }
+        if (this.superClass !== undefined) {
+            this.superClass.mergeTitlePrime(buds, budsColl, isTitle);
+        }
     }
 }
 
