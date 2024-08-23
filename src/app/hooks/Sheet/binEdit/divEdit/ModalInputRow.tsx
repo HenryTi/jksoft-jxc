@@ -9,13 +9,14 @@ import { BizBud, ValueSetType } from "app/Biz";
 import { BinBudsEditing, ValDivBase } from "../../store";
 import { RowCols, ViewShowBuds } from "app/hooks/tool";
 import { ViewId } from "../../views";
+import { useAtomValue } from "jotai";
 
 export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; valDiv: ValDivBase }) {
     const modal = useModal();
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { entityBin, values: binDetail, sheetStore } = binEditing;
     const { caption, i: budI, iBase: budIBase, x: budX, xBase: budXBase } = entityBin;
-    const [submitable, setSubmitable] = useState(binEditing.submitable);
+    const submitable = useAtomValue(binEditing.atomSubmitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;
         binEditing.onChange(name, type as 'number' | 'text', valueInputText, (bud, value) => {
@@ -23,7 +24,8 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
                 setValue(bud.name, value);
             }
         });
-        setSubmitable(binEditing.submitable);
+        binEditing.triggerSubmitable();
+        // setSubmitable(binEditing.submitable);
     }
     const options = { onChange };
     const formRows = binEditing.buildFormRows(true);
