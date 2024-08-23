@@ -92,44 +92,45 @@ export abstract class EntityID extends Entity {
     }
     */
 
-    private mergeBudGroups(entitySelf: EntitySelf) {
-        const { groups, groupColl } = entitySelf;
-        if (groups === undefined) {
-            if (this.budGroups !== undefined) {
-                const { home } = this.budGroups;
-                if (home === undefined) debugger;
-                const { buds } = home;
-                if (buds !== undefined) {
-                    let { buds: selfBuds } = entitySelf;
-                    if (selfBuds !== undefined) {
-                        buds.push(...selfBuds);
-                    }
-                }
-            }
-            return;
-        }
+    private mergeBudGroupsFromSuperClass() {
+        const { budGroups } = this.superClass;
+        if (budGroups === undefined) return;
         if (this.budGroups === undefined) {
-            this.budGroups = this.cloneBudGroups(groups);
+            let home = new BudGroup(this.biz, 0, '-', undefined);
+            home.buds.push(...this.buds);
+            this.budGroups = {
+                home,
+                must: undefined,
+                arr: [],
+            };
         }
         const { home, must, arr } = this.budGroups;
-        this.mergeBudGroup(home, groups.home);
-        this.mergeBudGroup(must, groups.must);
-        for (let g of arr) {
+        this.budGroups.home = this.mergeBudGroup(home, budGroups.home);
+        this.budGroups.must = this.mergeBudGroup(must, budGroups.must);
+        for (let g of budGroups.arr) {
             const { groupName } = g;
-            let group = groupColl[groupName];
+            let group = arr.find(v => v.name === groupName);
             if (group === undefined) {
-                group = this.cloneBudGroup(g);
-                groupColl[groupName] = group;
-                arr.push(group);
+                arr.push(this.cloneBudGroup(g));
+                continue;
             }
-            else {
-                this.mergeBudGroup(group, g);
-            }
+            this.mergeBudGroup(group, g);
         }
     }
 
     private mergeBudGroup(to: BudGroup, from: BudGroup) {
-        to.buds.push(...from.buds);
+        if (to === undefined) {
+            to = new BudGroup(this.biz, from.id, from.name, from.type);
+        }
+        const { buds: toBuds } = to;
+        const { buds: fromBuds } = from;
+        if (toBuds === undefined) {
+            to.buds = [...fromBuds];
+        }
+        else if (fromBuds !== undefined) {
+            toBuds.push(...fromBuds);
+        }
+        return to;
     }
 
     protected fromExtends(extendsId: number) {
@@ -147,47 +148,49 @@ export abstract class EntityID extends Entity {
 
     scan() {
         super.scan();
-        /*
-        let _titleBuds = this._titleBuds;
-        this._titleBuds = this.idArrToBudArr(this._titleBuds as unknown as number[]);
-        if (this._titleBuds) {
-            for (let b of this._titleBuds) {
-                if (b === undefined) debugger;
-            }
-        }
-        this._primeBuds = this.idArrToBudArr(this._primeBuds as unknown as number[]);
-        */
+        this.titleBuds = this.idArrToBudArr(this.titleBuds as unknown as number[]);
+        this.primeBuds = this.idArrToBudArr(this.primeBuds as unknown as number[]);
     }
 
     hierarchy() {
-        this.buildSelf();
+        // this.buildSelf();
         for (let sub of this.subClasses) {
+            sub.mergeFromSuperClass();
             sub.hierarchy();
         }
     }
 
+    private mergeFromSuperClass() {
+        this.mergeTitleFromSuperClass();
+        this.mergePrimeFromSuperClass();
+        this.mergeBudGroupsFromSuperClass();
+    }
+
+    /*
     private buildSelf() {
         let buds: BizBud[] = [];
-        this.mergeTitlePrime([], {}, true);
+        this.mergeTitlePrime(buds, {}, true);
         this.titleBuds = buds;
         buds = [];
         this.mergeTitlePrime(buds, {}, false);
         this.primeBuds = buds;
     }
+    */
+    private mergeTitleFromSuperClass() {
+        this.titleBuds = this.mergeTitlePrime(this.titleBuds, this.superClass.titleBuds);
+    }
 
-    private mergeTitlePrime(buds: BizBud[], budsColl: { [id: number]: BizBud }, isTitle: boolean) {
-        let myBuds = isTitle === true ? this.titleBuds : this.primeBuds;
-        if (myBuds === undefined) return;
-        let budArr: BizBud[] = this.idArrToBudArr(myBuds as unknown as number[]);
-        for (let b of budArr) {
-            const { id } = b;
-            if (budsColl[id] !== undefined) continue;
-            buds.push(b);
-            budsColl[id] = b;
+    private mergePrimeFromSuperClass() {
+        this.primeBuds = this.mergeTitlePrime(this.primeBuds, this.superClass.primeBuds);
+    }
+
+    private mergeTitlePrime(to: BizBud[], from: BizBud[]): BizBud[] {
+        if (to === undefined) {
+            if (from === undefined) return;
+            return [...from];
         }
-        if (this.superClass !== undefined) {
-            this.superClass.mergeTitlePrime(buds, budsColl, isTitle);
-        }
+        if (from === undefined) return to;
+        return [...new Set([...from, ...to])];
     }
 }
 

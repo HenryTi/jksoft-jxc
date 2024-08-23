@@ -121,7 +121,7 @@ export class Entity extends BizBase {
     }
 
     protected cloneBudGroup(group: BudGroup) {
-        if (group === undefined) debugger;
+        if (group === undefined) return;
         const { id, name, type, buds } = group;
         let ret: BudGroup = new BudGroup(this.biz, id, name, type);
         // clone other attribute
