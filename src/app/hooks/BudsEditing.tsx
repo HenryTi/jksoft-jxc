@@ -142,6 +142,14 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         return { base: this.calcValue(field.atomParams?.base) }
     }
 
+    getResultObject(): any {
+        let ret: any = {};
+        for (let f of this.allFields) {
+            ret[f.id] = this.getBudValue(f);
+        }
+        return ret;
+    }
+
     setStopRequired() { this.stopRequired = true; }
 
     get allFields() { return this.budValuesTool.allFields; }
@@ -252,7 +260,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
     onChange(name: string, type: 'text' | 'number' | 'radio' | 'date' | 'select-one', valueInputText: string
         , callback: (bud: BizBud, value: CalcResult) => void) {
         let valueInput: any;
-        if (valueInputText.trim().length === 0) {
+        if (typeof valueInput === 'string' && valueInputText.trim().length === 0) {
             valueInput = undefined;
         }
         else {
@@ -434,6 +442,11 @@ export class ValuesBudsEditing extends BudsEditing<{ [id: number]: any }> {
     initBudValues(initValues: any) {
         if (initValues === undefined) return;
         for (let bud of this.buds) this.setBudValue(bud, initValues[bud.id]);
+    }
+
+    initNameValues(initValues: any) {
+        if (initValues === undefined) return;
+        for (let bud of this.buds) this.setBudValue(bud, initValues[bud.name]);
     }
 }
 

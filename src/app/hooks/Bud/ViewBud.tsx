@@ -1,4 +1,4 @@
-import { BizBud, BudID, BudRadio, EnumBudType } from "app/Biz";
+import { BizBud, BudFork, BudID, BudRadio, EntityAtom, EntityFork, EnumBudType } from "app/Biz";
 import { ViewBudSpec, ViewSpecNoAtom } from "app/hooks";
 import { EntityStore, contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
@@ -44,6 +44,8 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
                 return atom(bud, value, uiType, noLabel, store);
             case EnumBudType.bin:
                 return bin(bud, value, store);
+            case EnumBudType.fork:
+                return fork(bud, value, store);
         }
     }
     if (noLabel === true) {
@@ -80,6 +82,8 @@ export function budContent(bud: BizBud, value: any, store: EntityStore) {
                 return atom(bud, value, ViewBudUIType.notInDiv, true, store);
             case EnumBudType.bin:
                 return bin(bud, value, store);
+            case EnumBudType.fork:
+                return fork(bud, value, store);
         }
     }
     return content;
@@ -211,5 +215,23 @@ function bin(bud: BizBud, value: any, store: EntityStore) {
                 return viewFunc(v);
             })
         }
+    </>;
+}
+
+function fork(bud: BizBud, value: any, store: EntityStore) {
+    // let { base } = bud.budDataType as BudFork;
+    let { $ } = value;
+    let entityFork: EntityFork;
+    if ($ !== undefined) {
+        entityFork = bud.biz.entityFromId($);
+    }
+    if (entityFork === undefined) {
+        return <LabelBox label={bud.caption} className="mb-1">{JSON.stringify(value)}</LabelBox>;
+    }
+    return <>
+        {entityFork.keys.map(v => {
+            const { id } = v;
+            return <ViewBud key={id} bud={v} value={value[id]} />;
+        })}
     </>;
 }

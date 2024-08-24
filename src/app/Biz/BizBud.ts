@@ -228,7 +228,7 @@ export class BizBud extends BizBase {
     fieldShows: BizBud[];
     valueSet: string;
     valueSetType: ValueSetType;
-    onForm: boolean;            // default: true
+    onForm: boolean;            // default: trueWITH IxBudInt I=id X=bud SET value=value;B
 
     constructor(biz: Biz, id: number, name: string, dataType: EnumBudType, entity: Entity) {
         super(biz, id, name, 'bud');

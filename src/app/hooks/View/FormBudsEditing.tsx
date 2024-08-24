@@ -3,7 +3,6 @@ import { BudsEditing } from "../BudsEditing";
 import { ChangeEvent, useState } from "react";
 import { ValueSetType } from "app/Biz";
 import { FormRowsView } from "app/coms";
-import { useAtomValue } from "jotai";
 
 interface Props {
     budsEditing: BudsEditing;
@@ -13,20 +12,20 @@ interface Props {
     validate?(data: any): [string, string][];
 }
 
-export function FormBudsEditing({ className, budsEditing: binEditing, onSubmit, submitCaption, validate }: Props) {
+export function FormBudsEditing({ className, budsEditing, onSubmit, submitCaption, validate }: Props) {
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
-    const [submitable, setSubmitable] = useState(false);
+    const [submitable, setSubmitable] = useState(budsEditing.submitable());
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;
-        binEditing.onChange(name, type as 'number' | 'text', valueInputText, (bud, value) => {
+        budsEditing.onChange(name, type as 'number' | 'text', valueInputText, (bud, value) => {
             if (bud.valueSetType === ValueSetType.equ) {
                 setValue(bud.name, value);
             }
         });
-        setSubmitable(binEditing.submitable());
+        setSubmitable(budsEditing.submitable());
     }
     const options = { onChange };
-    const formRows = binEditing.buildFormRows(true);
+    const formRows = budsEditing.buildFormRows(true);
     formRows.forEach(v => {
         if (v === undefined) return null;
         return (v as any).options = { ...(v as any).options, ...options };
@@ -37,7 +36,7 @@ export function FormBudsEditing({ className, budsEditing: binEditing, onSubmit, 
         if (await trigger(undefined, { shouldFocus: true }) === false) return;
         if (validate !== undefined) {
             let errors = validate(data);
-            if (errors !== undefined) {
+            if (errors !== undefined && errors.length > 0) {
                 for (let [name, message] of errors) {
                     setError(name, { message });
                 }
@@ -55,6 +54,6 @@ export function FormBudsEditing({ className, budsEditing: binEditing, onSubmit, 
     }
 
     return <form className={className} onSubmit={handleSubmit(onSubmitData)}>
-        <FormRowsView rows={formRows} register={register} errors={errors} context={binEditing} />
+        <FormRowsView rows={formRows} register={register} errors={errors} context={budsEditing} setValue={setValue} />
     </form>;
 }

@@ -272,6 +272,9 @@ PROC SaveBinBuds(
             -- check 的参数应该是数组JsonArray，随后再改
             PROC ProcSaveBudCheck(bud, id, value, 1);
         }
+        ELSEIF type=BudDataType.fork {
+            WITH IxBudJson I=id X=bud SET value=value;
+        }
         ELSE {
             WITH IxBudInt I=id X=bud SET value=value;
         }
@@ -741,35 +744,6 @@ RETURNS specs (
         FROM (SELECT DISTINCT origin FROM details) as a
             JOIN Bin as b ON b.id=a.origin
     ;
-    /*
-    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value
-        FROM details as s
-            JOIN IxBudInt as a ON a.i=s.id or a.i=s.i or a.i=s.x;
-    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value
-        FROM details as s
-            JOIN IxBudDec as a ON a.i=s.id;
-    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_QUOTE(a.value) as value
-        FROM details as s
-            JOIN IxBudStr as a ON a.i=s.id;
-    INTO IGNORE props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value
-        FROM details as s
-            JOIN IxBud as a ON a.i=s.id
-            JOIN Bud as b ON b.id=a.x;
-
-    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value
-        FROM main as s
-            JOIN IxBudInt as a ON a.i=s.id or a.i=s.i or a.i=s.x;
-    INTO IGNORE props SELECT s.id, a.x as phrase, CAST(a.value as JSON) as value
-        FROM main as s
-            JOIN IxBudDec as a ON a.i=s.id;
-    INTO IGNORE props SELECT s.id, a.x as phrase, JSON_QUOTE(a.value) as value
-        FROM main as s
-            JOIN IxBudStr as a ON a.i=s.id;
-    INTO IGNORE props SELECT s.id, b.base as phrase, JSON_ARRAY(0, b.ext) as value
-        FROM main as s
-            JOIN IxBud as a ON a.i=s.id
-            JOIN Bud as b ON b.id=a.x;
-    */
     VAR procName CHAR(200) = CONCAT($site, '.', sheetPhrase, 'gs');
     IF routine_exists('$site', procName) {
         VAR sql CHAR(500) = CONCAT('call `$site`.`', procName, '`(?);');
@@ -791,14 +765,6 @@ RETURNS specs (
 
     INTO IGNORE atoms SELECT DISTINCT e.id as id, e.base as base, e.no, e.ex
         FROM specs as a JOIN Atom as e on e.id=a.atom;
-    /*
-    INTO IGNORE props SELECT DISTINCT a.id as id, b.x as phrase, CAST(b.value AS JSON) as value
-        FROM specs as a JOIN IxBudInt as b ON b.i=a.id;
-    INTO IGNORE props SELECT DISTINCT a.id as id, b.x as phrase, CAST(b.value AS JSON) as value
-        FROM specs as a JOIN IxBudDec as b ON b.i=a.id;
-    INTO IGNORE props SELECT DISTINCT a.id as id, b.x as phrase, JSON_QUOTE(b.value) as value
-        FROM specs as a JOIN IxBudStr as b ON b.i=a.id;
-    */
 };
 
 Biz Query GetAtom (

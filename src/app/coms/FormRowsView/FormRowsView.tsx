@@ -170,6 +170,7 @@ export type FormRow = FormInput | FormBand | FormSubmit | FormRadios | FormSelec
 export interface FormContext {
     getTrigger(name: string): Atom<number>;
     getParams(name: string): any;
+    getValue(name: string): any;
     getBudValue(bud: BizBud): any;
     getEntityFromId(id: number): Entity;
 }
@@ -199,6 +200,7 @@ const emptyAtom = atom(0);
 const emptyFormContext: FormContext = {
     getTrigger(name: string) { return emptyAtom; },
     getParams(name: string) { return undefined; },
+    getValue(name: string) { return undefined; },
     getBudValue(bud: BizBud) { return undefined; },
     getEntityFromId(id: number): Entity { return undefined; }
 }
@@ -291,7 +293,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     const { entityAtom, atom, options } = row as FormAtom;
     if (entityAtom !== undefined) {
         let { name } = row as FormAtom;
-        function onChange(target: { name: string; type: 'number'; value: string; }) {
+        function onChange(target: { name: string; type: 'number'; value: string | object; }) {
             options?.onChange?.({ target });
         }
         let error: FieldError = errors[name] as FieldError;
@@ -327,11 +329,14 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     if (baseBud !== undefined) {
         let { name } = row as FormFork;
         let error: FieldError = errors[name] as FieldError;
+        function onChange(target: { name: string; type: 'text'; value: string | object; }) {
+            options?.onChange?.({ target });
+        }
         return <ViewFormFork row={row as FormFork} label={label} error={error}
             inputProps={register(name, options)}
             setValue={setValue}
             clearErrors={clearErrors}
-            onChange={undefined}
+            onChange={onChange}
             formContext={context} />;
     }
 
@@ -397,7 +402,7 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
     error: FieldError;
     clearErrors: UseFormClearErrors<any>;
     inputProps: UseFormRegisterReturn;
-    onChange: (props: { name: string; value: string, type: 'number' }) => void;
+    onChange: (props: { name: string; value: string | object, type: 'number' }) => void;
 }) {
     const uqApp = useUqApp();
     const { uq } = uqApp;
