@@ -2,9 +2,9 @@ import { useAtomValue } from "jotai";
 import { theme } from "tonwa-com";
 import { RowColsSm } from "../../../tool";
 import { PAV, ViewDivProps, ViewDivRight, ViewPendValue, cn } from "./tool";
-import { ViewIBase } from "./ViewIBase";
+import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
 import { DivEditing } from "../../store";
-import { ViewSpecBuds } from "app/hooks/View";
+import { ViewAtomPrimesOfStore, ViewSpecBuds } from "app/hooks/View";
 
 export function ViewRowLeaf(props: ViewDivProps) {
     const { binStore: divStore, valDiv, buttons, index } = props;
@@ -31,6 +31,7 @@ export function ViewRowLeaf(props: ViewDivProps) {
         <div className={cn + ' flex-fill bg-white px-2 py-2 px-lg-3 '}>
             <ViewIBase sheetStore={sheetStore} valDiv={valDiv} index={index} />
             <RowColsSm contentClassName="flex-fill">
+                <ViewAtomPrimesOfStore id={valDiv.getIValue()} store={sheetStore} />
                 {viewIBud}
                 {divEditing.buildViewBuds()}
             </RowColsSm>

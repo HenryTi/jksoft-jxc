@@ -44,7 +44,7 @@ export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, 
     const { budIBase } = binDivBuds;
     if (budIBase === undefined) return null;
     let { iBase } = valDiv;
-    return <ViewShowBuds bud={budIBase} id={iBase} store={sheetStore} />
+    return <ViewShowBuds bud={budIBase} id={iBase} store={sheetStore} />;
 }
 
 export function ViewIBaseFromId({ sheetStore, valDiv, iBase }: { sheetStore: SheetStore, valDiv: ValDivBase; iBase: number; }) {
