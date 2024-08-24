@@ -4,8 +4,8 @@ import {
 } from "react-hook-form";
 import { Band, FormContext, FormFork } from "./FormRowsView";
 import { Page, useModal } from "tonwa-app";
-import { FA } from "tonwa-com";
-import { FormBudsEditing, ValuesBudsEditing } from "app/hooks";
+import { FA, theme } from "tonwa-com";
+import { budContent, FormBudsEditing, ValuesBudsEditing } from "app/hooks";
 import { useRef, useState } from "react";
 
 export function ViewFormFork({ row, label, error, inputProps, formContext, setValue, onChange }: {
@@ -45,7 +45,17 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
         vContent = <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>;
     }
     else {
-        vContent = <>baseBud: {baseBud.id} formType: {fork.name} {JSON.stringify(forkObj)}</>
+        const { labelColor } = theme;
+        vContent = <>{
+            fork.keys.map(v => {
+                const { id, caption } = v;
+                const value = forkObj[id];
+                return <span key={id} className="text-nowrap me-3">
+                    <small className={labelColor}>{caption}</small>: {budContent(v, value, formContext.store)}
+                </span>;
+
+            })
+        }</>
     }
     async function onEdit() {
         let ret = await modal.open(<PageFork fork={fork} value={forkObj} />);

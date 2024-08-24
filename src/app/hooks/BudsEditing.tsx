@@ -8,7 +8,7 @@ import {
     Entity,
 } from "app/Biz";
 import { Calc, CalcResult, ValueSpace, Formulas } from "./Calc";
-import { getDays, Store } from "app/tool";
+import { EntityStore, getDays, Store } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
 import { BudCheckValue, Modal } from "tonwa-app";
@@ -79,6 +79,8 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         let ret = this.calc.calcFormula(formula);
         return ret;
     }
+
+    get store(): EntityStore { return undefined; }
 
     setNamedValues(name: string, values: object) {
         this.calc.setValues(name, values);

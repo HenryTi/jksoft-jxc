@@ -12,7 +12,7 @@ import { IDView } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { BizPhraseType, EnumAtom } from "uqs/UqDefault";
 import { ViewSpecId } from "../ViewSpecId";
-import { contentFromDays, fromDays } from "app/tool";
+import { contentFromDays, EntityStore, fromDays, Store } from "app/tool";
 import { ViewFormFork } from "./ViewFormFork";
 
 export interface BandProps {
@@ -173,6 +173,7 @@ export interface FormContext {
     getValue(name: string): any;
     getBudValue(bud: BizBud): any;
     getEntityFromId(id: number): Entity;
+    store: EntityStore;
 }
 
 interface FormProps {
@@ -202,7 +203,8 @@ const emptyFormContext: FormContext = {
     getParams(name: string) { return undefined; },
     getValue(name: string) { return undefined; },
     getBudValue(bud: BizBud) { return undefined; },
-    getEntityFromId(id: number): Entity { return undefined; }
+    getEntityFromId(id: number): Entity { return undefined; },
+    store: undefined,
 }
 export function FormRowsView(props: FormRowsViewProps) {
     let { rows, context } = props;
