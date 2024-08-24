@@ -12,9 +12,8 @@ import { getDays, Store } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
 import { BudCheckValue, Modal } from "tonwa-app";
-import { atom, Atom } from "jotai";
+import { Atom } from "jotai";
 import { ChangeEvent } from "react";
-import { getAtomValue, setAtomValue } from "tonwa-com";
 
 export abstract class BudsEditing<R = any> extends Store implements FormContext {
     private readonly calc: Calc;
@@ -233,12 +232,13 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         this.budValuesTool.setBudValue(bud, this.values, value);
     }
 
+    /*
     private atomTriggerSubmitable = atom(false);
     triggerSubmitable() {
         setAtomValue(this.atomTriggerSubmitable, !getAtomValue(this.atomTriggerSubmitable));
     }
-
-    atomSubmitable = atom((): boolean => {
+    */
+    submitable(): boolean {
         let ret = true;
         for (let field of this.requiredFields) {
             let v = this.budValuesTool.getBudValue(field, this.values); // this.calc.results[field.name];
@@ -247,7 +247,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
             }
         }
         return ret;
-    });
+    }
 
     onChange(name: string, type: 'text' | 'number' | 'radio' | 'date' | 'select-one', valueInputText: string
         , callback: (bud: BizBud, value: CalcResult) => void) {

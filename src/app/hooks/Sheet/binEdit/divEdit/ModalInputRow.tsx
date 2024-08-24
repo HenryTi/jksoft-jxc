@@ -1,21 +1,20 @@
 import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
-import { useForm } from "react-hook-form";
-import { Band, FormRowsView } from "app/coms";
+import { Band } from "app/coms";
 import { ViewSpecNoAtom } from "app/hooks/View";
-import { ChangeEvent, useState } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
-import { BizBud, ValueSetType } from "app/Biz";
+import { BizBud } from "app/Biz";
 import { BinBudsEditing, ValDivBase } from "../../store";
 import { RowCols, ViewShowBuds } from "app/hooks/tool";
 import { ViewId } from "../../views";
-import { useAtomValue } from "jotai";
+import { FormBudsEditing } from "../../../View";
 
 export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; valDiv: ValDivBase }) {
     const modal = useModal();
-    const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
+    // const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { entityBin, values: binDetail, sheetStore } = binEditing;
     const { caption, i: budI, iBase: budIBase, x: budX, xBase: budXBase } = entityBin;
+    /*
     const submitable = useAtomValue(binEditing.atomSubmitable);
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;
@@ -43,7 +42,18 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
         }
         modal.close(true);
     }
-
+    */
+    async function onSubmit(data: any) {
+        modal.close(true);
+    }
+    function validate(data: any): [string, string][] {
+        let ret: [string, string][] = [];
+        if (data.value === 0) {
+            // setError('value', { message: '不能为 0' });
+            ret.push(['value', '不能为 0']);
+        }
+        return ret;
+    }
     async function onDel() {
         await binEditing.onDel();
         modal.close();
@@ -91,8 +101,14 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
             <ViewIdField bud={budX} budBase={budXBase} value={binDetail.x} base={valDiv?.xBase} />
             {viewShowBuds}
         </div>
-        <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmit)}>
-            <FormRowsView rows={formRows} register={register} errors={errors} context={binEditing} />
-        </form>
+        <FormBudsEditing className={theme.bootstrapContainer}
+            budsEditing={binEditing}
+            onSubmit={onSubmit}
+            validate={validate} />
     </Page >;
+    /*
+    <form className={theme.bootstrapContainer} onSubmit={handleSubmit(onSubmit)}>
+        <FormRowsView rows={formRows} register={register} errors={errors} context={binEditing} />
+    </form>
+    */
 }
