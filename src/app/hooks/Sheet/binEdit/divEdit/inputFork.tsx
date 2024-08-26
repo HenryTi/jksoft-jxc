@@ -28,7 +28,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         debugger;
         throw Error('input spec must have base');
     }
-    const paramValues: { [budId: number]: any } = {};
+    let paramValues: { [budId: number]: any };
     // 暂时先按赋值处理，以后可以处理:=
     let entityFork = binInput.spec;
     if (entityFork === undefined) {
@@ -40,10 +40,27 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         return;
     }
     const { id: entityId, preset, keys, buds: forkBuds } = entityFork;
-    let paramsSetCount = 0;
-    for (let { bud, valueSet, valueSetType } of params) {
-        paramValues[bud.id] = editing.calcValue(valueSet);
-        if (valueSetType === ValueSetType.equ) ++paramsSetCount;
+    let paramsDefined: boolean;
+    if (params.length === 1) {
+        const { bud, valueSet, valueSetType } = params[0];
+        if (bud === undefined) {
+            paramValues = editing.calcValue(valueSet) as any;
+            if (paramValues !== undefined) {
+                paramsDefined = (valueSetType === ValueSetType.equ);
+            }
+            else {
+                paramsDefined = false;
+            }
+        }
+    }
+    if (paramsDefined === undefined) {
+        let paramsSetCount = 0;
+        paramValues = {};
+        for (let { bud, valueSet, valueSetType } of params) {
+            paramValues[bud.id] = editing.calcValue(valueSet);
+            if (valueSetType === ValueSetType.equ) ++paramsSetCount;
+        }
+        paramsDefined = (paramsSetCount === keys.length + forkBuds.length);
     }
     async function saveSpec(isFormInput: boolean, data: any) {
         function budValueFromData(bud: BizBud) {
@@ -94,7 +111,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         return retSpec;
     }
     let ret: any;
-    if (paramsSetCount === keys.length + forkBuds.length) {
+    if (paramsDefined === true) {
         ret = await saveSpec(false, paramValues);
     }
     else if (preset === true) {
