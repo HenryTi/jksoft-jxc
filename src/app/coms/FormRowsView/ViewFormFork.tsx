@@ -46,16 +46,13 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
     }
     else {
         const { labelColor } = theme;
-        vContent = <>{
-            fork.keys.map(v => {
-                const { id, caption } = v;
-                const value = forkObj[id];
-                return <span key={id} className="text-nowrap me-3">
-                    <small className={labelColor}>{caption}</small>: {budContent(v, value, formContext.store)}
-                </span>;
-
-            })
-        }</>
+        vContent = fork.keys.map(v => {
+            const { id, caption } = v;
+            const value = forkObj[id];
+            return <span key={id} className="text-nowrap me-3">
+                <small className={labelColor}>{caption}</small>: {budContent(v, value, formContext.store)}
+            </span>;
+        });
     }
     async function onEdit() {
         let ret = await modal.open(<PageFork fork={fork} value={forkObj} />);
