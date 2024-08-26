@@ -81,20 +81,20 @@ async function runInputs(props: UseEditDivsProps, editing: DivEditing) {
         let retInput: any = undefined;
         switch (bizPhraseType) {
             default:
-                debugger;
-                throw new Error('unknown BizPhraseType:' + bizPhraseType);
-            case BizPhraseType.atom:
-                retInput = await inputAtom({
-                    ...props,
-                    editing,
-                    binInput: input as BinInputAtom,
-                });
-                break;
             case BizPhraseType.fork:
                 retInput = await inputFork({
                     ...props,
                     editing,
                     binInput: input as BinInputFork,
+                });
+                break;
+            // debugger;
+            // throw new Error('unknown BizPhraseType:' + bizPhraseType);
+            case BizPhraseType.atom:
+                retInput = await inputAtom({
+                    ...props,
+                    editing,
+                    binInput: input as BinInputAtom,
                 });
                 break;
         }

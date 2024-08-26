@@ -125,9 +125,11 @@ function ViewUserDefaults({ entity }: { entity: Entity; }) {
     let { biz, user } = entity;
     let { userDefaults } = biz;
     if (user === undefined || userDefaults === undefined) return null;
-    return <div className="px-3 pt-3 row row-cols-6">
-        {user.map(v => {
-            return <ViewBud key={v.id} bud={v} value={userDefaults[v.id]} />;
-        })}
+    return <div className="container-fluid pt-3">
+        <div className="row row-cols-6">
+            {user.map(v => {
+                return <ViewBud key={v.id} bud={v} value={userDefaults[v.id]} />;
+            })}
+        </div>
     </div>;
 }

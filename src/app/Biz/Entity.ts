@@ -1,7 +1,6 @@
 import { BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
 import { Biz } from "./Biz";
-import { EntitySelf } from "./AtomsBuilder";
 import { EntityID } from "./EntityAtom";
 
 export class BudGroup extends BizBase {

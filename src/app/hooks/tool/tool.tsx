@@ -3,8 +3,9 @@ import { BudValue } from "tonwa-app";
 import { ViewBud, budContent } from "../Bud";
 import { FA, theme } from "tonwa-com";
 import React from "react";
-import { BizBud, Entity, EntityID } from "app/Biz";
+import { BizBud, Entity, EntityFork, EntityID } from "app/Biz";
 import { BudsColl, BudValueColl, EntityStore } from "app/tool";
+import { BizPhraseType } from "uqs/UqDefault";
 
 // atom field owns buds
 export function OwnedBuds({ values, noLabel, store }: { values: [number, BudValue][]; noLabel?: boolean; store: EntityStore; }) {
@@ -35,16 +36,37 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud: BizBud; id: num
     const { budsColl } = store;
     const budValueColl = budsColl[id];
     if (budValueColl === undefined) return null;
+    /*
     if (bud === undefined) return null;
     let { fieldShows } = bud;
     if (fieldShows === undefined) {
         fieldShows = bud.getPrimeBuds();
         if (fieldShows === undefined) return null;
     }
+    */
+    let fieldShows: BizBud[];
+    let entity = store.entityFromId(id);
+    if (entity !== undefined) {
+        switch (entity.bizPhraseType) {
+            default:
+                debugger;
+                break;
+            case BizPhraseType.fork:
+                fieldShows = (entity as EntityFork).showKeys;
+                break;
+            case BizPhraseType.atom:
+                fieldShows = entity.primeBuds;
+                break;
+        }
+    }
+    else {
+        fieldShows = bud?.getPrimeBuds();
+    }
+    if (fieldShows === undefined) return null;
+
     return <>
         {
-            fieldShows.map((fieldShow, index) => {
-                const bud = fieldShow;
+            fieldShows.map((bud, index) => {
                 let { id } = bud;
                 let value = budValueColl[id];
                 return <ViewBud key={index} bud={bud} value={value} noLabel={noLabel} store={store} />;

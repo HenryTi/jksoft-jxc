@@ -13,7 +13,6 @@ import { EntityReport } from './EntityReport';
 import { EntityQuery } from './EntityQuery';
 import { EntityAssign } from './EntityAssign';
 import { BizBud } from './BizBud';
-import { AtomsBuilder } from './AtomsBuilder';
 import { EntityConsole } from './EntityConsole';
 import { EntityIOApp, EntityIOSite, EntityIn, EntityOut } from './EntityInOut';
 import { atom } from 'jotai';

@@ -124,7 +124,7 @@ export class Calc {
         return this._results;
     }
 
-    calcFormula(formula: string): string | number {
+    calcFormula(formula: string): string | number | object {
         if (formula === undefined) return undefined;
         this._results = undefined;
         let name = '$_$';
@@ -135,13 +135,15 @@ export class Calc {
         return ret;
     }
 
-    getValue(name: string): string | number {
+    getValue(name: string): string | number | object {
         if (this._results === undefined) {
             this.run(undefined, undefined);
         }
         let v = this._results[name];
         if (typeof v === 'object') {
-            if (v !== null) return v.id;
+            debugger;
+            // if (v !== null) return v.id;
+            return v;
         }
         return v as number | string;
     }

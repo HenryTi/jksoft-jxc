@@ -119,6 +119,17 @@ export abstract class EntityStore<E extends Entity = Entity> extends Store {
         }
     }
 
+    entityFromId(id: number): EntityID {
+        let fork = this.bizForkColl[id];
+        if (fork !== undefined) {
+            return fork.entityID.fork;
+        }
+        let atomColl = this.bizAtomColl[id];
+        if (atomColl !== undefined) {
+            return atomColl.entityID;
+        }
+        return;
+    }
 }
 interface PropData {
     id: number;

@@ -75,7 +75,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
 
     getResults() { return this.calc.getResults(); }
 
-    calcValue(formula: string): number | string {
+    calcValue(formula: string): number | string | object {
         let ret = this.calc.calcFormula(formula);
         return ret;
     }

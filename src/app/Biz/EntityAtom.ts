@@ -1,4 +1,3 @@
-import { EntitySelf } from "./AtomsBuilder";
 import { IxField } from "./BizBase";
 import { BizBud } from "./BizBud";
 import { BudGroup, Entity } from "./Entity";

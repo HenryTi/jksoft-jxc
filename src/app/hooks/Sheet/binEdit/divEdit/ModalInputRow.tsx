@@ -64,21 +64,19 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
             <FA name="trash" fixWidth={true} />
         </ButtonAsync>;
     }
-    function ViewIdField({ bud, budBase, value, base }: { bud: BizBud; budBase: BizBud; value: number; base: number; }) {
-        if (bud === undefined) return null;
-        const { caption } = bud;
+    function ViewIdField({ value, base }: { value: number; base: number; }) {
+        // if (bud === undefined) return null;
+        // const { caption } = bud;
         let id = base ?? value;
-        /*
-        <ViewSpecBaseOnly id={value} bold={true} />
-        <ViewAtomTitles bud={budBase ?? bud} id={id} store={sheetStore} />
-        */
-        return <Band label={caption} className="border-bottom py-2">
+        if (id === undefined) return null;
+        let entity = sheetStore.entityFromId(id);
+        return <Band label={entity.caption} className="border-bottom py-2">
             <ViewId id={value} store={sheetStore} />
             <RowCols>
                 <ViewSpecNoAtom id={value} />
             </RowCols>
             <RowCols>
-                <ViewShowBuds bud={bud} id={id} noLabel={false} store={sheetStore} />
+                <ViewShowBuds bud={undefined} id={id} noLabel={false} store={sheetStore} />
             </RowCols>
         </Band>;
     }
@@ -97,8 +95,8 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
 
     return <Page header={caption} right={right}>
         <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + theme.bootstrapContainer}>
-            <ViewIdField bud={budI} budBase={budIBase} value={binDetail.i} base={valDiv?.iBase} />
-            <ViewIdField bud={budX} budBase={budXBase} value={binDetail.x} base={valDiv?.xBase} />
+            <ViewIdField value={binDetail.i} base={valDiv?.iBase} />
+            <ViewIdField value={binDetail.x} base={valDiv?.xBase} />
             {viewShowBuds}
         </div>
         <FormBudsEditing className={theme.bootstrapContainer}
