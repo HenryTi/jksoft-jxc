@@ -223,11 +223,9 @@ export class DivEditing extends BinBudsEditing {
 
     buildViewBuds() {
         let buds = this.getBuds();
-        return buds.map(field => {
-            const bud = field;
+        return buds.map(bud => {
             const { id } = bud;
-            // let value = this.budValuesTool.getBudValue(field, this.values);
-            let value = this.getBudValue(field);
+            let value = this.getBudValue(bud);
             if (value === null || value === undefined) return null;
             return <ViewBud key={id} bud={bud} value={value} uiType={ViewBudUIType.inDiv} store={this.sheetStore} />;
         })
