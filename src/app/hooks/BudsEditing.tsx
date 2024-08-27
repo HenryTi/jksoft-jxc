@@ -125,6 +125,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
     }
 
     getEntityFromId(id: number): Entity { return undefined; }
+    getEntity(entityId: number): Entity { return this.biz.entityFromId(entityId); }
 
     protected hasBud(bud: BizBud): boolean {
         return this.budValuesTool.has(bud);
@@ -308,12 +309,22 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         return undefined;
     }
 
+    buildCalcBuds() {
+        for (let bud of this.allFields) {
+            const { valueSetType } = bud;
+            if (valueSetType === ValueSetType.equ || valueSetType === ValueSetType.init) {
+                let value = this.getBudValue(bud);
+                if (value === undefined) continue;
+                this.budValuesTool.setBudValue(bud, this.values, value);
+            }
+        }
+    }
+
     // bud.onForm===false
     buildFormRows(excludeOnForm: boolean = false): FormRow[] {
         let ret: FormRow[] = [];
         const calcResults = this.getResults();
-        for (let field of this.allFields) {
-            const bud = field;
+        for (let bud of this.allFields) {
             const { name, onForm, required, valueSetType } = bud;
             if (excludeOnForm === true) {
                 if (onForm === false) continue;
@@ -328,10 +339,11 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
             */
             const { caption, budDataType, ui } = bud;
             if (ui?.show === true) continue;
-            let defaultValue = this.getBudValue(bud);// calcResults[name];
+            let defaultValue = this.getBudValue(bud);
+            let readOnly = valueSetType === ValueSetType.equ;
             let options: RegisterOptions = {
-                value: defaultValue, // this.budValuesTool.getBudValue(field, this.values),
-                disabled: valueSetType === ValueSetType.equ,
+                value: typeof defaultValue === 'object' ? JSON.stringify(defaultValue) : defaultValue,
+                disabled: readOnly,
                 required,
             };
             let formRow: any = {
@@ -346,14 +358,15 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
             const { type, min, max } = budDataType;
             switch (type) {
                 case EnumBudType.atom:
-                    formRow.default = this.budValuesTool.getBudValue(field, this.values);
+                    formRow.default = this.budValuesTool.getBudValue(bud, this.values);
                     formRow.atom = null;
                     formRow.readOnly = true;
                     formRow.entityAtom = (budDataType as BudID).entityID;
                     break;
                 case EnumBudType.fork:
                     const { base: baseBud } = budDataType as BudFork;
-                    formRow.baseBud = baseBud;
+                    formRow.baseBud = baseBud === undefined ? null : baseBud;
+                    formRow.readOnly = readOnly;
                     break;
                 case EnumBudType.char:
                 case EnumBudType.str:

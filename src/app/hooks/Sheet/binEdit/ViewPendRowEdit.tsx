@@ -23,8 +23,8 @@ export function ViewPendRowEdit(props: PendProps) {
     }
 
     function ViewItem({ icon, color, onSelectChanged }: { icon: string; color: string; onSelectChanged: () => Promise<void> | void }) {
-        return <div className="d-flex">
-            <div className="z-0 position-relative cursor-pointer px-2 py-3 text-center align-self-end text-info me-n3" onClick={onSelectChanged}>
+        return <div className="d-flex cursor-pointer" onClick={onSelectChanged}>
+            <div className="z-0 position-relative px-2 py-3 text-center align-self-end text-info me-n3">
                 <FA name={icon} fixWidth={true} size="lg" className={color + ' mx-1 '} />
             </div>
             <ViewPendRow divStore={divStore} pendRow={pendRow} showPendValue={true} />

@@ -25,6 +25,7 @@ export function FormBudsEditing({ className, budsEditing, onSubmit, submitCaptio
         setSubmitable(budsEditing.submitable());
     }
     const options = { onChange };
+    budsEditing.buildCalcBuds();
     const formRows = budsEditing.buildFormRows(true);
     formRows.forEach(v => {
         if (v === undefined) return null;

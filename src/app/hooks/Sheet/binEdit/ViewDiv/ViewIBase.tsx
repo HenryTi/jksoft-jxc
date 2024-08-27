@@ -1,5 +1,5 @@
 import { SheetStore, ValDivBase } from "../../store";
-import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
+import { RowCols, RowColsSm, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { Atom as BizAtom } from "uqs/UqDefault";
 import { theme } from "tonwa-com";
 import { ViewSpecAtomBold } from "app/hooks/View";
@@ -55,13 +55,13 @@ export function ViewIBaseFromId({ sheetStore, valDiv, iBase }: { sheetStore: She
         <div>
             <ViewAtom value={bizAtomValue} />
         </div>
-        <div>
+        <div className="my-1">
             <ViewAtomTitles id={iBase} store={sheetStore} />
         </div>
-        <div className={theme.bootstrapContainer}>
-            <RowColsSm contentClassName="flex-fill">
+        <div className="my-1">
+            <RowCols contentClassName="flex-fill">
                 <ViewShowBuds bud={budIBase} id={iBase} store={sheetStore} />
-            </RowColsSm>
+            </RowCols>
         </div>
     </div>;
 }

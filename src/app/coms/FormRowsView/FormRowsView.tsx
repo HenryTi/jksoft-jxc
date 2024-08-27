@@ -173,6 +173,7 @@ export interface FormContext {
     getValue(name: string): any;
     getBudValue(bud: BizBud): any;
     getEntityFromId(id: number): Entity;
+    getEntity(entityId: number): Entity;
     store: EntityStore;
 }
 
@@ -204,6 +205,7 @@ const emptyFormContext: FormContext = {
     getValue(name: string) { return undefined; },
     getBudValue(bud: BizBud) { return undefined; },
     getEntityFromId(id: number): Entity { return undefined; },
+    getEntity(entityId: number): Entity { return undefined; },
     store: undefined,
 }
 export function FormRowsView(props: FormRowsViewProps) {
@@ -454,7 +456,7 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
         onClick = onSelectAtom;
     }
     else {
-        cnInput += ' bg-body-secondary'; // bg-body-tertiary bg-secondary-subtle 
+        cnInput += ' bg-body-secondary';
     }
     let vError: any = undefined;
     if (error) {

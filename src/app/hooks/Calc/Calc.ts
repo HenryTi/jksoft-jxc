@@ -141,7 +141,7 @@ export class Calc {
         }
         let v = this._results[name];
         if (typeof v === 'object') {
-            debugger;
+            // debugger;
             // if (v !== null) return v.id;
             return v;
         }

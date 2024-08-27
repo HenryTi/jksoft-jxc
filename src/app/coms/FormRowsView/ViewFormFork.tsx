@@ -26,6 +26,9 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
     if (readOnly !== true) {
         cnInput += ' cursor-pointer ';
     }
+    else {
+        cnInput += ' bg-body-secondary';
+    }
     let vError: any = undefined;
     if (error) {
         cnInput += 'is-invalid'
@@ -34,40 +37,49 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
         </div>;
     }
     let vContent: any;
-    let atomId = formContext.getBudValue(baseBud);
-    let entityAtom = formContext.getEntityFromId(atomId);
-    if (entityAtom === undefined) return null;
-    let { fork } = entityAtom as EntityAtom;
-    if (fork === undefined) return null;
     if (forkObj === undefined) {
         let { placeHolder } = row;
         if (!placeHolder) placeHolder = '点击输入';
-        vContent = <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>;
+        vContent = <div className={cnInput}>
+            <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>
+        </div>;
     }
     else {
-        const { labelColor } = theme;
-        vContent = fork.keys.map(v => {
-            const { id, caption } = v;
-            const value = forkObj[id];
-            return <span key={id} className="text-nowrap me-3">
-                <small className={labelColor}>{caption}</small>: {budContent(v, value, formContext.store)}
-            </span>;
-        });
-    }
-    async function onEdit() {
-        let ret = await modal.open(<PageFork fork={fork} value={forkObj} />);
-        if (ret === undefined) return;
-        if (setValue !== undefined) {
-            setValue(name, JSON.stringify(ret));
+        let fork: EntityFork;
+        if (baseBud) {
+            let atomId = formContext.getBudValue(baseBud);
+            let entityAtom = formContext.getEntityFromId(atomId);
+            if (entityAtom === undefined) return null;
+            fork = (entityAtom as EntityAtom).fork;
         }
-        setForkObj(ret);
-        onChange?.({ name, value: ret, type: 'text' });
+        else {
+            // baseBud === null
+            fork = formContext.getEntity(forkObj.$) as EntityFork;
+        }
+        if (fork === undefined) return null;
+        const { labelColor } = theme;
+        vContent = <div className={cnInput} onClick={readOnly === true ? undefined : onEdit}>{
+            fork.keys.map(v => {
+                const { id, caption } = v;
+                const value = forkObj[id];
+                return <span key={id} className="text-nowrap me-3">
+                    <small className={labelColor}>{caption}</small>: {budContent(v, value, formContext.store)}
+                </span>;
+            })}  &nbsp;
+            <input name={name} type="hidden" {...inputProps} />
+        </div>;
+        async function onEdit() {
+            let ret = await modal.open(<PageFork fork={fork} value={forkObj} />);
+            if (ret === undefined) return;
+            if (setValue !== undefined) {
+                setValue(name, JSON.stringify(ret));
+            }
+            setForkObj(ret);
+            onChange?.({ name, value: ret, type: 'text' });
+        }
     }
     return <Band label={label}>
-        <div className={cnInput} onClick={onEdit}>
-            {vContent} &nbsp;
-            <input name={name} type="hidden" {...inputProps} />
-        </div>
+        {vContent}
         {vError}
     </Band>
 }
