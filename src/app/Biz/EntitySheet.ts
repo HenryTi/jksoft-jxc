@@ -8,52 +8,8 @@ import { UI } from "app/ui";
 import { BudValue } from "tonwa-app";
 import { OptionsItem } from ".";
 import { BudsEditing } from "app/hooks";
-// import { Editing } from "app/hooks";
 
 export class PickParam extends BizBud {
-    /*
-    bud: string;
-    prop: string;       // prop of bud
-    
-    protected fromSwitch(i: string, val: any): void {
-        switch (i) {
-            default:
-                super.fromSwitch(i, val);
-                break;
-            case 'value':
-                super.fromSwitch(i, val);
-                break;
-        }
-    }
-    /*
-    private fromVal(val: string) {
-        let [v, s] = val.split('\n');
-        if (v[0] === '%') {
-            let [bud, prop] = v.split('.');
-            this.bud = bud;
-            this.prop = prop;
-            return;
-        }
-        switch (v) {
-            default:
-                if (v.includes('(') === true) {
-                    if (v.includes('CURDATE') === true) break;
-                    debugger;
-                    break;
-                }
-                this.bud = v;
-                break;
-            case '_si':
-                this.bud = '%sheet';
-                this.prop = 'i';
-                break;
-            case '_sx':
-                this.bud = '%sheet';
-                this.prop = 'x';
-                break;
-        }
-    }
-    */
 }
 
 export abstract class BinPick extends BizBud {
@@ -152,6 +108,14 @@ export class BinInputAtom extends BinInput {
     }
 }
 
+// BinDiv 的主从字段状态
+export enum IXType {
+    base,
+    me,
+    sub,
+    both,
+}
+
 export class BinDiv {
     readonly entityBin: EntityBin;
     readonly parent: BinDiv;
@@ -161,12 +125,37 @@ export class BinDiv {
     buds: BizBud[];
     subBinDiv: BinDiv;
     key: BizBud;
+    // pivot format
     format: [BizBud, boolean, OptionsItem][];
     ui: Partial<UI>;
+    iType: IXType;
+    xType: IXType;
     constructor(entityBin: EntityBin, parent: BinDiv) {
         this.entityBin = entityBin;
         this.parent = parent;
         this.level = parent === undefined ? 0 : parent.level + 1;
+    }
+
+    hasIBase(): boolean {
+        switch (this.iType) {
+            default:
+                if (this.parent === undefined) return false;
+                return this.parent.hasIBase();
+            case IXType.base: return true;
+            case IXType.me:
+            case IXType.sub: return false;
+        }
+    }
+
+    hasXBase(): boolean {
+        switch (this.xType) {
+            default:
+                if (this.parent === undefined) return false;
+                return this.parent.hasXBase();
+            case IXType.base: return true;
+            case IXType.me:
+            case IXType.sub: return false;
+        }
     }
 }
 
@@ -353,9 +342,9 @@ export class BinRowValuesTool extends BudValuesToolBase<BinRow> {
     }
 }
 
-export class BinDivBuds extends BinRowValuesTool /*extends BinBudsFields*/ {
+export class BinDivBuds extends BinRowValuesTool {
     readonly binDiv: BinDiv;
-    keyField: BizBud; // BinField;
+    keyField: BizBud;
 
     constructor(editing: BudsEditing, binDiv: BinDiv) {
         const { buds, key } = binDiv;
@@ -645,8 +634,10 @@ export class EntityBin extends Entity {
     private scanDiv(binDiv: BinDiv, divSchema: any) {
         let { inputs, div: subDivSchema, buds, ui, key, format } = divSchema;
         binDiv.ui = ui;
-        binDiv.inputs = this.scanInputs(inputs);
-        binDiv.buds = this.scanBinBuds(buds);
+        // binDiv.inputs = 
+        this.scanInputs(binDiv, inputs);
+        // binDiv.buds = 
+        this.scanBinBuds(binDiv, buds);
         if (key !== undefined) {
             binDiv.key = this.budColl[key as unknown as number];
         }
@@ -669,36 +660,55 @@ export class EntityBin extends Entity {
         }
     }
 
-    private scanInputs(inputs: any[]) {
+    private scanInputs(binDiv: BinDiv, inputs: any[]) {
         if (inputs === undefined) return;
-        return inputs.map(v => {
+        binDiv.inputs = inputs.map(v => {
             let input = this.buildInput(v as any);
             input.entityPend = this.pend;
             return input;
         });
     }
 
-    private scanBinBuds(buds: any[]) {
+    private scanBinBuds(binDiv: BinDiv, buds: any[]) {
         if (buds === undefined) return;
         let ret: BizBud[] = [];
         for (let bud of buds) {
             let bizBud: BizBud;
             let required: boolean = undefined;
+            let { iType, xType } = binDiv;
             switch (bud) {
                 default: bizBud = this.budColl[bud]; break;
-                case 'i': bizBud = this.i; required = true; break;
-                case '.i': bizBud = this.iBase; break;
-                case 'x': bizBud = this.x; required = true; break;
-                case '.x': bizBud = this.xBase; break;
                 case 'value': bizBud = this.value; required = true; break;
                 case 'price': bizBud = this.price; break;
                 case 'amount': bizBud = this.amount; break;
+                case 'i':
+                    bizBud = this.i; required = true;
+                    if (iType !== undefined) iType = IXType.both;
+                    else iType = (binDiv.hasIBase() === true) ? IXType.sub : IXType.me;
+                    break;
+                case '.i':
+                    bizBud = this.iBase;
+                    if (iType !== undefined) iType = IXType.both;
+                    else iType = IXType.base;
+                    break;
+                case 'x':
+                    bizBud = this.x; required = true;
+                    if (xType !== undefined) xType = IXType.both;
+                    else xType = (binDiv.hasXBase() === true) ? IXType.sub : IXType.me;
+                    break;
+                case '.x':
+                    bizBud = this.xBase;
+                    if (xType !== undefined) xType = IXType.both;
+                    else xType = IXType.base;
+                    break;
             }
+            binDiv.iType = iType;
+            binDiv.xType = xType;
             if (bizBud === undefined) debugger;
             ret.push(bizBud);
             this.setDirectly(bizBud, required);
         }
-        return ret;
+        binDiv.buds = ret;
     }
 
     proxyHandler() {

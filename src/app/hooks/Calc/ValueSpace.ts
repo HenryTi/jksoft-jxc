@@ -66,7 +66,8 @@ export class ValueSpace {
     private getOptionsItem(name0: string, name1: string) {
         let n = name0.substring(1);
         let options = this.biz.entities[n] as EntityOptions;
+        if (options === undefined) return;
         let ret = options.items.find(v => v.name === name1);
-        return ret.id;
+        return ret?.id;
     }
 }

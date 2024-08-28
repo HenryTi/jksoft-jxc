@@ -91,6 +91,7 @@ export function ViewAtomTitles({ id, noLabel, store }: { id: number; noLabel?: b
         budValueColl = budsColl[id];
     }
     if (budValueColl === undefined) return null;
+    if (entityID === undefined) return null;
     let buds: BizBud[] = entityID.titleBuds;
     if (buds === undefined) return null;
     const { labelColor } = theme;

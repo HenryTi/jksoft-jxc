@@ -36,23 +36,24 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
             {error.message?.toString()}
         </div>;
     }
+    let fork: EntityFork;
+    if (baseBud) {
+        let atomId = formContext.getBudValue(baseBud);
+        let entityAtom = formContext.getEntityFromId(atomId);
+        if (entityAtom === undefined) return null;
+        fork = (entityAtom as EntityAtom).fork;
+        if (fork === undefined) return null;
+    }
     let vContent: any;
     if (forkObj === undefined) {
         let { placeHolder } = row;
         if (!placeHolder) placeHolder = '点击输入';
-        vContent = <div className={cnInput}>
+        vContent = <div className={cnInput} onClick={onEdit}>
             <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>
         </div>;
     }
     else {
-        let fork: EntityFork;
-        if (baseBud) {
-            let atomId = formContext.getBudValue(baseBud);
-            let entityAtom = formContext.getEntityFromId(atomId);
-            if (entityAtom === undefined) return null;
-            fork = (entityAtom as EntityAtom).fork;
-        }
-        else {
+        if (baseBud === null) {
             // baseBud === null
             fork = formContext.getEntity(forkObj.$) as EntityFork;
         }
@@ -68,15 +69,15 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
             })}  &nbsp;
             <input name={name} type="hidden" {...inputProps} />
         </div>;
-        async function onEdit() {
-            let ret = await modal.open(<PageFork fork={fork} value={forkObj} />);
-            if (ret === undefined) return;
-            if (setValue !== undefined) {
-                setValue(name, JSON.stringify(ret));
-            }
-            setForkObj(ret);
-            onChange?.({ name, value: ret, type: 'text' });
+    }
+    async function onEdit() {
+        let ret = await modal.open(<PageFork fork={fork} value={forkObj} />);
+        if (ret === undefined) return;
+        if (setValue !== undefined) {
+            setValue(name, JSON.stringify(ret));
         }
+        setForkObj(ret);
+        onChange?.({ name, value: ret, type: 'text' });
     }
     return <Band label={label}>
         {vContent}
