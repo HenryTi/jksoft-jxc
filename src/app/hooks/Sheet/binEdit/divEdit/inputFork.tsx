@@ -11,6 +11,7 @@ import { InputProps } from "./inputBase";
 import { ViewIBaseFromId } from "../ViewDiv/ViewIBase";
 import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 import { PickResult } from "app/hooks/Calc";
+import { FormBudsEditing } from "app/hooks/View";
 
 
 export interface PropsInputFork extends InputProps<BinInputFork> {
@@ -133,14 +134,15 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         ret = await modal.open(<PagePickSpec />);
         function PagePickSpec() {
             const { caption } = entityFork;
-            const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
-            const submitCaption = btnNext;
-            const submitClassName: string = cnNextClassName;
-
+            // const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
+            // const submitCaption = btnNext;
+            // const submitClassName: string = cnNextClassName;
+            /*
             let formRows: FormRow[] = [
                 ...budsEditing.buildFormRows(),
                 { type: 'submit', label: submitCaption, options: {}, className: submitClassName }
             ];
+            */
             const onSubmitForm = async (data: any) => {
                 let retSpec = await saveSpec(true, data);
                 modal.close(retSpec);
@@ -155,11 +157,19 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
                     </Band>
                 </div>
                 <div className="m-3">
-                    <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
-                        <FormRowsView rows={formRows} register={register} errors={errors} context={budsEditing} />
-                    </form>
+                    <FormBudsEditing
+                        className={bootstrapContainer}
+                        budsEditing={budsEditing}
+                        onSubmit={onSubmitForm}
+                        submit={btnNext}
+                        submitClassName={cnNextClassName} />
                 </div>
             </Page>;
+            /*
+            <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
+                <FormRowsView rows={formRows} register={register} errors={errors} context={budsEditing} />
+            </form>
+            */
         }
     }
     if (ret !== undefined) {

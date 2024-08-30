@@ -8,11 +8,12 @@ interface Props {
     budsEditing: BudsEditing;
     className?: string;
     onSubmit(data: any): Promise<void>;
-    submitCaption?: string;
+    submit?: string | JSX.Element;
+    submitClassName?: string;
     validate?(data: any): [string, string][];
 }
 
-export function FormBudsEditing({ className, budsEditing, onSubmit, submitCaption, validate }: Props) {
+export function FormBudsEditing({ className, budsEditing, onSubmit, submit: submitCaption, submitClassName, validate }: Props) {
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [submitable, setSubmitable] = useState(budsEditing.submitable());
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
@@ -31,7 +32,12 @@ export function FormBudsEditing({ className, budsEditing, onSubmit, submitCaptio
         if (v === undefined) return null;
         return (v as any).options = { ...(v as any).options, ...options };
     });
-    formRows.push({ type: 'submit', label: submitCaption ?? '提交', options: { disabled: submitable === false } });
+    formRows.push({
+        type: 'submit',
+        label: submitCaption ?? '提交',
+        options: { disabled: submitable === false },
+        className: submitClassName,
+    });
 
     async function onSubmitData(data: any) {
         if (await trigger(undefined, { shouldFocus: true }) === false) return;
