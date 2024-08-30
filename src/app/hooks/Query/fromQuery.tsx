@@ -250,6 +250,7 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
                     default:
                         return <>unknown bizPhraseType {bizPhraseType}</>
                     case BizPhraseType.fork:
+                        if (id === undefined) return null;
                         return <ViewSpecId id={id} />;
                     case BizPhraseType.atom:
                         return <>
