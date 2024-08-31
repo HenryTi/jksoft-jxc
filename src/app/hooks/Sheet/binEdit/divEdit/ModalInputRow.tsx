@@ -69,6 +69,7 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
         // const { caption } = bud;
         let id = base ?? value;
         if (id === undefined) return null;
+        if (id === null) return null;
         let entity = sheetStore.entityFromId(id);
         return <Band label={entity.caption} className="border-bottom py-2">
             <ViewId id={value} store={sheetStore} />

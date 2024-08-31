@@ -38,7 +38,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
     }
     if (entityFork === undefined) {
         // alert('no entity fork');
-        return { id: null, };   // 没有批次定义
+        return { id: base, };   // 没有批次定义
     }
     const { id: entityId, preset, keys, buds: forkBuds } = entityFork;
     let paramsDefined: boolean;

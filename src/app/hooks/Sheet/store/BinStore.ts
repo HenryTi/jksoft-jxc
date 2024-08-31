@@ -79,7 +79,6 @@ export class BinStore extends EntityStore<EntityBin> {
         this.pendLoadState = PendLoadState.loaded;
         const { valDivs } = this.valDivsRoot;
         if (valDivs !== undefined) {
-            // let valDivs = getAtomValue(atomValDivs);
             for (let valDiv of valDivs) {
                 let { valRow } = valDiv;
                 this.setPend(valRow.pend, valDiv, false);
@@ -116,16 +115,6 @@ export class BinStore extends EntityStore<EntityBin> {
             if (valDiv !== undefined) valDivs.push(valDiv);
         }
         this.valDivsRoot.setValDivs(valDivs);
-        /*
-        let { valDivs } = this.valDivsRoot;
-        let valDivsNoneZero: ValDivRoot[] = [];
-        for (let valDiv of valDivs) {
-            const { sumValue } = getAtomValue(valDiv.atomSum);
-            const value = getAtomValue(valDiv.atomValue);
-            if (sumValue > 0 || value !== undefined) valDivsNoneZero.push(valDiv);
-        }
-        this.valDivsRoot.setValDivs(valDivsNoneZero);
-        */
     }
 
     getPendLeft(valDiv: ValDivBase): number {
@@ -366,7 +355,6 @@ export class BinStore extends EntityStore<EntityBin> {
 
     getParentValDiv(valDiv: ValDivBase): ValDivBase {
         const { valDivs } = this.valDivsRoot;
-        // let valDivs = getAtomValue(atomValDivs);
         for (let vd of valDivs) {
             let ret = this.getParentDivInternal(vd, valDiv);
             if (ret !== undefined) return ret;
@@ -376,7 +364,6 @@ export class BinStore extends EntityStore<EntityBin> {
 
     private getParentDivInternal(valDivParent: ValDivBase, valDiv: ValDivBase): ValDivBase {
         const { valDivs } = valDivParent;
-        // let valDivs = getAtomValue(atomValDivs);
         for (let vd of valDivs) {
             if (vd === valDiv) return valDivParent;
             let ret = this.getParentDivInternal(vd, valDiv);
@@ -397,7 +384,6 @@ export class BinStore extends EntityStore<EntityBin> {
     sum(get: Getter) {
         let sumAmount: number = 0, sumValue: number = 0;
         const { valDivs } = this.valDivsRoot;
-        // let valDivs = get(atomValDivs);
         for (let valDiv of valDivs) {
             const { sumValue: v0, sumAmount: a0 } = get(valDiv.atomSum);
             sumValue += v0;

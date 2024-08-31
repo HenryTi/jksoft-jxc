@@ -305,7 +305,7 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
                     if (index > 0) cn += ' border-top';
                     let vInput: any;
                     if (isPick === true) {
-                        vInput = <input type="checkbox" className="form-check-input mx-3 mb-2 align-self-end"
+                        vInput = <input type="checkbox" className="form-check-input me-3 mb-2 align-self-end"
                             defaultChecked={selectedItems[$id] !== undefined}
                             onChange={onCheckChange}
                         />;

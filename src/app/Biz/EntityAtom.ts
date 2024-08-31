@@ -194,26 +194,6 @@ export abstract class EntityID extends Entity {
 }
 
 export class EntityAtom extends EntityID {
-    /*
-    protected override fromSwitch(i: string, val: any) {
-        switch (i) {
-            default: super.fromSwitch(i, val); break;
-            case 'fork': this.fromFork(val); break;
-        }
-    }
-
-    private fromFork(val: any) {
-        this.fork = new EntityFork(this.biz, this.id, this.name, 'fork');
-        this.fork.fromSchema(val);
-    }
-
-    protected override scanBuds(): void {
-        super.scanBuds();
-        if (this.fork !== undefined) {
-            this.fork.scanBudsPublic();
-        }
-    }
-    */
 }
 
 export class EntityDuo extends EntityID {
@@ -269,7 +249,7 @@ export class EntityFork extends EntityID {
             if (ui === undefined) {
                 bizBud.ui = ui = {};
             }
-            ui.required = true;
+            if (ui.required === undefined) ui.required = true;
             this.keyColl[bizBud.id] = bizBud;
             this.keys.push(bizBud);
         }
@@ -398,14 +378,5 @@ export class EntityPick extends Entity {
 
     scan() {
         super.scan();
-        // 如果前面 atom.uom = true, 后面自动加上 SpecUom。
-        let len = this.specs.length;
-        for (let i = 0; i < len; i++) {
-            let spec = this.specs[i];
-            if (spec.name === 'specuom') {
-                this.specs.splice(i, 1);
-                break;
-            }
-        }
     }
 }
