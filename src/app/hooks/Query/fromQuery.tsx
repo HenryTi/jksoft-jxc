@@ -292,6 +292,8 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
         }
         function ViewItemSpec({ value: picked }: { value: Picked }) {
             const { $specs } = picked;
+            const cQuantity = '数量';
+            let cSum = '合计';
             let vSpecs: any;
             if ($specs !== undefined) {
                 let vList = ($specs as any[]).map((v, index) => {
@@ -318,19 +320,22 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
                                 <ViewPropArr propArr={propArr} />
                             </RowCols>
                         </div>
-                        <ViewValue value={v.value} caption="数量" />
+                        <ViewValue value={v.value} caption={cQuantity} />
                     </label>
                 });
                 vSpecs = <div className="">
                     {vList}
                 </div>
             }
+            else {
+                cSum = cQuantity;
+            }
             return <div className="pt-2">
                 <div className="px-3 border-bottom d-flex">
                     <div className="flex-fill">
                         <ViewItemAtomContent value={picked} />
                     </div>
-                    <ViewValue value={picked.sum} caption="合计" />
+                    <ViewValue value={picked.sum} caption={cSum} />
                 </div>
                 {vSpecs}
             </div>;

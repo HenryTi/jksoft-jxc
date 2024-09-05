@@ -18,6 +18,7 @@ RETURNS ret (
     }
     WITH Atom as a ID=id SET a.no=no, a.ex=ex;
     -- WITH IxAtom i=atomPhrase x=id;
+    WITH IDU as a ID=id SET a.base=atomPhrase;
     INTO ret SELECT id;
 }
 Biz ACT SaveBudValue ver 0.4 (
@@ -153,7 +154,8 @@ RETURNS ret (
     VAR retId ID;
     VAR sql CHAR(500);
     SET sql=CONCAT('call `$site`.`', $site, '.', spec, '$s`(?, ?,?,?,?,?);');
-    ExecSql sql to retId USING $site, me, id, BudId(base, spec), keys, props;
+    ExecSql sql to retId USING $site, me, id, spec, keys, props;
+    WITH IDU as a ID=id SET a.base=spec;
     INTO ret SELECT retId as id;
 }
 
@@ -751,9 +753,10 @@ RETURNS specs (
     }
 
     INTO IGNORE specs SELECT DISTINCT a.i as id, e.id as atom, null as json
-        FROM details as a JOIN Spec as c ON (c.id=a.i OR c.id=a.x)
-            JOIN Bud as d ON d.id=c.base
-            JOIN Atom as e on e.id=d.base;
+        FROM details as a 
+            JOIN Spec as c ON (c.id=a.i OR c.id=a.x)
+            -- -- JOIN Bud as d ON d.id=c.base
+            JOIN Atom as e on e.id=c.base;
 
     INTO IGNORE atoms SELECT DISTINCT c.id as id, c.base as base, c.no, c.ex
         FROM details as a JOIN Atom as c ON (c.id=a.i OR c.id=a.x);
@@ -764,7 +767,8 @@ RETURNS specs (
         WHERE b.type=BudDataType.atom;
 
     INTO IGNORE atoms SELECT DISTINCT e.id as id, e.base as base, e.no, e.ex
-        FROM specs as a JOIN Atom as e on e.id=a.atom;
+        FROM specs as a 
+            JOIN Atom as e on e.id=a.atom;
 };
 
 Biz Query GetAtom (

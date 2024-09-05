@@ -32,24 +32,29 @@ export class QueryStore extends EntityStore<EntityQuery> {
         }
         let specSerial = 1;
         for (let specRow of specs) {
-            const { atom, id, ban, value, json } = specRow;
+            let { atom, id, ban, value, json } = specRow;
             let picked = coll[atom];
             if (picked === undefined) continue;
-            let propArr: Prop[] = [];
-            const specValue = this.budsColl[id];
-            if (specValue !== undefined) {
-                for (let bud of this.bizForkColl[id].buds) {
-                    propArr.push({
-                        name: bud.name,
-                        bud,
-                        value: specValue[bud.id],
-                    });
-                }
-            }
             if (value !== undefined) picked.sum += value;
             let { $specs } = picked;
             if ($specs === undefined) {
                 picked.$specs = $specs = [];
+            }
+            let propArr: Prop[] = [];
+            if (id !== undefined) {
+                const specValue = this.budsColl[id];
+                if (specValue !== undefined) {
+                    for (let bud of this.bizForkColl[id].buds) {
+                        propArr.push({
+                            name: bud.name,
+                            bud,
+                            value: specValue[bud.id],
+                        });
+                    }
+                }
+            }
+            else {
+                id = picked.id;
             }
             let $spec = {
                 $: propArr as any,
