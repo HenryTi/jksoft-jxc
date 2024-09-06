@@ -239,7 +239,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
     private setFieldOrBudValue(bud: BizBud, value: CalcResult) {
         // console.log('setFieldOrBudValue name=', name, 'value=', value);
         if (bud === undefined) return;
-        if (value === undefined) debugger;
+        // if (value === undefined) debugger;
         this.budValuesTool.setBudValue(bud, this.values, value);
     }
 

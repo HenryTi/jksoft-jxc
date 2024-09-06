@@ -12,7 +12,7 @@ import { BizBud } from "app/Biz";
 import { useReactToPrint } from "react-to-print";
 
 export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean; }) {
-    const { uq, mainStore, binStore: divStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
+    const { uq, mainStore, binStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
     const modal = useModal();
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(atomSubmitState);
@@ -23,8 +23,8 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     async function onSubmit() {
         function checkTrigger() {
             if (mainStore.trigger() === false) return false;
-            if (divStore !== undefined) {
-                if (divStore.trigger() === false) return false;
+            if (binStore !== undefined) {
+                if (binStore.trigger() === false) return false;
             }
             return true;
         }
@@ -35,6 +35,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         }
         setEditable(false);
         let sheetId = mainStore.valRow.id;
+        await binStore.deleteAllRemoved();
         let { checkPend, checkBin } = await uq.SubmitSheet.submitReturns({ id: sheetId });
         if (checkPend.length + checkBin.length > 0) {
             let error: string = '';
@@ -84,7 +85,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     }
 
     function mainDetailEdit() {
-        const { entity: entityBin } = divStore;
+        const { entity: entityBin } = binStore;
         async function startInputDetail() {
             // let ret = await start();
             let ret = await startSheetStore(store);
@@ -140,7 +141,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             </div>;
         }
         function ViewBinDivs() {
-            const { valDivsRoot, atomWaiting } = divStore;
+            const { valDivsRoot, atomWaiting } = binStore;
             const valDivs = useAtomValue(valDivsRoot.getAtomValDivs());
             const waiting = useAtomValue(atomWaiting);
             let length = valDivs.length;
@@ -165,7 +166,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
                         if (id === undefined) debugger;
                         const cn = 'border-top border-bottom ' + (id < 0 ? 'border-warning' : 'border-primary-subtle');
                         return <div key={id} className={cn}>
-                            <ViewDiv binStore={divStore} valDiv={v} readonly={readonly} index={index + 1} />
+                            <ViewDiv binStore={binStore} valDiv={v} readonly={readonly} index={index + 1} />
                         </div>;
                     })}
                 {viewWaiting}
@@ -178,7 +179,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         </div>;
     }
 
-    if (divStore === undefined) mainOnlyEdit();
+    if (binStore === undefined) mainOnlyEdit();
     else mainDetailEdit();
     let { header, top, right } = headerSheet({ store, toolGroups, headerGroup });
     if (readonly === true) top = undefined;

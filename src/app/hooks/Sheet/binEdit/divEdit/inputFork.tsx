@@ -70,6 +70,9 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
             if (isFormInput === true) {
                 v = data[name];
                 switch (budDataType.type) {
+                    default:
+                        if (v === '') v = undefined;
+                        break;
                     case EnumBudType.date: v = getDays(v); break;
                 }
             }

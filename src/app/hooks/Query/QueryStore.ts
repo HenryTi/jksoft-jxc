@@ -40,21 +40,30 @@ export class QueryStore extends EntityStore<EntityQuery> {
             if ($specs === undefined) {
                 picked.$specs = $specs = [];
             }
-            let propArr: Prop[] = [];
+            let propArr: Prop[];
             if (id !== undefined) {
                 const specValue = this.budsColl[id];
                 if (specValue !== undefined) {
-                    for (let bud of this.bizForkColl[id].buds) {
-                        propArr.push({
-                            name: bud.name,
+                    const { buds } = this.bizForkColl[id];
+                    propArr = buds.map((bud => {
+                        const { id, name } = bud;
+                        return {
+                            name,
                             bud,
-                            value: specValue[bud.id],
-                        });
-                    }
+                            value: specValue[id],
+                        };
+                    }));
+                }
+                else {
+                    propArr = [];
                 }
             }
             else {
-                id = picked.id;
+                const { json } = picked;
+                if (Array.isArray(json) === true) {
+                    id = json[json.length - 1];
+                }
+                picked.atomOnly = true;
             }
             let $spec = {
                 $: propArr as any,

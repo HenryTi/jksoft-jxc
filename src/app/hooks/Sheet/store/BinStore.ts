@@ -145,8 +145,43 @@ export class BinStore extends EntityStore<EntityBin> {
         return undefined;
     }
 
+    async deleteAllRemoved() {
+        let ids: number[] = [];
+        for (let valDiv of this.valDivsRoot.valDivs) {
+            this.deletedIds(ids, valDiv);
+        }
+        if (ids.length > 0) {
+            await this.delDetail(ids);
+        }
+    }
+
     async delValDiv(valDiv: ValDivBase) {
         const ids: number[] = [];
+        this.emptyIds(ids, valDiv);
+        // debugger;
+        await this.delDetail(ids);
+        this.sheetStore.notifyRowChange();
+    }
+
+    private deletedIds(ids: number[], valDiv: ValDivBase) {
+        if (getAtomValue(valDiv.atomDeleted) === true) {
+            ids.push(valDiv.id);
+            this.subIds(ids, valDiv);
+            return;
+        }
+        for (let sub of valDiv.valDivs) {
+            this.deletedIds(ids, sub);
+        }
+    }
+
+    private subIds(ids: number[], valDiv: ValDivBase) {
+        for (let sub of valDiv.valDivs) {
+            ids.push(sub.id);
+            this.subIds(ids, sub);
+        }
+    }
+
+    private emptyIds(ids: number[], valDiv: ValDivBase) {
         let valDivToDel = this.getNeedDelValDiv(valDiv);
         const { binDiv, valRow } = valDivToDel;
         if (binDiv.subBinDiv === undefined) {
@@ -157,9 +192,6 @@ export class BinStore extends EntityStore<EntityBin> {
         else {
             this.delValDivAndSubs(ids, valDiv);
         }
-        // debugger;
-        await this.delDetail(ids);
-        this.sheetStore.notifyRowChange();
     }
 
     private getNeedDelValDiv(valDiv: ValDivBase): ValDivBase {

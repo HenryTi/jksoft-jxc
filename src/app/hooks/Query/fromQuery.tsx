@@ -1,9 +1,9 @@
 import { EntityQuery, IDColumn, PickQuery } from "app/Biz";
-import { ChangeEvent, useCallback, useRef, useState } from "react";
-import { Modal, Page, useModal } from "tonwa-app";
-import { List, Sep, theme, useEffectOnce } from "tonwa-com";
+import { ChangeEvent, useState } from "react";
+import { Modal, Page } from "tonwa-app";
+import { List, Sep, theme } from "tonwa-com";
 import { filterUndefined } from "app/tool";
-import { pickQueryParams/*, usePageParams*/ } from "../Sheet/binPick/PageParams";
+import { pickQueryParams /*, usePageParams*/ } from "../Sheet/binPick/PageParams";
 import { RearPickResultType } from "../Sheet/store";
 import { LabelBox, Picked, Prop, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
@@ -14,73 +14,7 @@ import { ViewBud } from "../Bud";
 import { BudsEditing } from "../BudsEditing";
 import { PickResult } from "../Calc";
 
-/*
-export function usePickFromQuery(): [
-    (namedResults: NamedResults, binPick: PickQuery) => Promise<PickResult>,
-    (namedResults: NamedResults, binPick: PickQuery, lastPickResultType: RearPickResultType) => Promise<PickResult[]>,
-] {
-    const modal = useModal();
-    const pickParam = usePageParams();
-    const pickFromQueryBase = useCallback(async function (
-        namedResults: NamedResults
-        , binPick: PickQuery
-        , pickResultType: RearPickResultType)
-        : Promise<PickResult | PickResult[]> {
-        let { name, caption, query, pickParams } = binPick as PickQuery;
-        const header = caption ?? query.caption ?? name;
-        let retParam = await pickParam({
-            header,
-            namedResults,
-            queryParams: query.params,
-            pickParams
-        });
-        if (retParam === undefined) return;
-        retParam = filterUndefined(retParam);
-
-        // const { ids: idCols, showIds: showIdCols, idFrom, value: budValue } = query;
-        // const { arr, bizPhraseType } = idFrom;
-        let ret = await modal.open(<PageFromQuery query={query} params={retParam}
-            pickResultType={pickResultType} isPick={true} />);
-        if (ret === undefined) return;
-        function toRet(v: any) {
-            let obj = {} as any;
-            for (let i in v) {
-                let p = v[i];
-                if (typeof p === 'object') {
-                    obj[i] = p.value;
-                }
-                else {
-                    obj[i] = p;
-                }
-            }
-            return obj;
-        }
-        if (pickResultType === RearPickResultType.scalar) {
-            return toRet(ret);
-        }
-        else {
-            return (ret as any[]).map(v => toRet(v));
-        }
-    }, []);
-    const pickFromQueryScalar = useCallback(async function (
-        namedResults: NamedResults
-        , binPick: PickQuery)
-        : Promise<PickResult> {
-        return await pickFromQueryBase(namedResults, binPick, RearPickResultType.scalar) as PickResult;
-    }, []);
-    const pickFromQuery = useCallback(async function (
-        namedResults: NamedResults
-        , binPick: PickQuery
-        , lastPickResultType: RearPickResultType)
-        : Promise<PickResult[]> {
-        return await pickFromQueryBase(namedResults, binPick, lastPickResultType) as PickResult[];
-    }, []);
-    return [pickFromQueryScalar, pickFromQuery];
-}
-*/
 async function pickFromQueryBase(
-    // modal: Modal
-    // , namedResults: NamedResults
     editing: BudsEditing
     , binPick: PickQuery
     , pickResultType: RearPickResultType)
@@ -90,20 +24,12 @@ async function pickFromQueryBase(
     let retParam = await pickQueryParams({
         editing,
         header,
-        // namedResults,
         queryParams: query.params,
         pickParams
     });
     if (retParam === undefined) return;
     retParam = filterUndefined(retParam);
     const { modal } = editing;
-    /*
-    let queryStore = new QueryStore(query);
-    let pickedArr: Picked[] = [];
-    pickedArr = await queryStore.query(retParam);
-    */
-    // const { ids: idCols, showIds: showIdCols, idFrom, value: budValue } = query;
-    // const { arr, bizPhraseType } = idFrom;
     let ret = await doQuery(modal, query, retParam, true, pickResultType);
     if (ret === undefined) return;
     function toRet(v: any) {
@@ -137,8 +63,6 @@ export async function pickFromQueryScalar(
 };
 
 export async function pickFromQuery(
-    // modal: Modal
-    // , namedResults: NamedResults
     editing: BudsEditing
     , binPick: PickQuery
     , lastPickResultType: RearPickResultType)
@@ -153,7 +77,6 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
 
     let ret = await modal.open(<PageFromQuery />);
     return ret;
-
     function PageFromQuery() {
         const { caption, name, ids: idCols, showIds: showIdCols, idFrom, value: budValue } = query;
         const header = caption ?? name;
@@ -206,6 +129,7 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
             }
         }
         function ViewPropArr({ propArr }: { propArr: Prop[]; }) {
+            if (propArr === undefined) return null;
             return <>
                 {propArr.map((v, index) => {
                     return <ViewBud key={index} {...v} store={queryStore} />;
@@ -291,51 +215,55 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
             </div>
         }
         function ViewItemSpec({ value: picked }: { value: Picked }) {
-            const { $specs } = picked;
+            const { $specs, atomOnly } = picked;
             const cQuantity = '数量';
             let cSum = '合计';
+            function ViewSpec({ spec: v, index }: { spec: any; index: number }) {
+                const { $, $id, id, $ids } = v; // $id 是序号
+                let propArr: Prop[] = $ as any;
+                let cn = 'py-1 px-3 d-flex align-items-end ';
+                function onCheckChange(evt: ChangeEvent<HTMLInputElement>) {
+                    const { checked } = evt.currentTarget;
+                    onMultipleClick(v, checked);
+                }
+                if (index > 0) cn += ' border-top';
+                let vInput: any;
+                if (isPick === true) {
+                    vInput = <input type="checkbox" className="form-check-input me-3 mb-2 align-self-end"
+                        defaultChecked={selectedItems[$id] !== undefined}
+                        onChange={onCheckChange}
+                    />;
+                }
+                return <label className={cn}>
+                    {vInput}
+                    <div className="flex-fill">
+                        <RowCols contentClassName="">
+                            <ViewShowIds ids={$ids} />
+                            <ViewPropArr propArr={propArr} />
+                        </RowCols>
+                    </div>
+                    <ViewValue value={v.value} caption={cQuantity} />
+                </label>
+            }
             let vSpecs: any;
             if ($specs !== undefined) {
-                let vList = ($specs as any[]).map((v, index) => {
-                    const { $, $id, id, $ids } = v; // $id 是序号
-                    let propArr: Prop[] = $ as any;
-                    let cn = 'py-1 px-3 d-flex align-items-end ';
-                    function onCheckChange(evt: ChangeEvent<HTMLInputElement>) {
-                        const { checked } = evt.currentTarget;
-                        onMultipleClick(v, checked);
-                    }
-                    if (index > 0) cn += ' border-top';
-                    let vInput: any;
-                    if (isPick === true) {
-                        vInput = <input type="checkbox" className="form-check-input me-3 mb-2 align-self-end"
-                            defaultChecked={selectedItems[$id] !== undefined}
-                            onChange={onCheckChange}
-                        />;
-                    }
-                    return <label className={cn} key={$id}>
-                        {vInput}
-                        <div className="flex-fill">
-                            <RowCols contentClassName="">
-                                <ViewShowIds ids={$ids} />
-                                <ViewPropArr propArr={propArr} />
-                            </RowCols>
-                        </div>
-                        <ViewValue value={v.value} caption={cQuantity} />
-                    </label>
-                });
                 vSpecs = <div className="">
-                    {vList}
+                    {($specs as any[]).map((v, index) => <ViewSpec key={v.$id} spec={v} index={index} />)}
                 </div>
             }
+            let vSumValue: any, cnBase: string = 'px-3 d-flex ';
+            if (atomOnly === true) {
+            }
             else {
-                cSum = cQuantity;
+                cnBase += ' border-bottom ';
+                vSumValue = <ViewValue value={picked.sum} caption={cSum} />;
             }
             return <div className="pt-2">
-                <div className="px-3 border-bottom d-flex">
+                <div className={cnBase}>
                     <div className="flex-fill">
                         <ViewItemAtomContent value={picked} />
                     </div>
-                    <ViewValue value={picked.sum} caption={cSum} />
+                    {vSumValue}
                 </div>
                 {vSpecs}
             </div>;

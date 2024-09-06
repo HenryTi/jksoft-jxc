@@ -154,8 +154,8 @@ RETURNS ret (
     VAR retId ID;
     VAR sql CHAR(500);
     SET sql=CONCAT('call `$site`.`', $site, '.', spec, '$s`(?, ?,?,?,?,?);');
-    ExecSql sql to retId USING $site, me, id, spec, keys, props;
-    WITH IDU as a ID=id SET a.base=spec;
+    ExecSql sql to retId USING $site, me, id, base, keys, props;
+    WITH IDU as a ID=retId SET a.base=spec;
     INTO ret SELECT retId as id;
 }
 
