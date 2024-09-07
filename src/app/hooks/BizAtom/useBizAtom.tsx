@@ -1,6 +1,6 @@
 import { QueryMore, readBuds } from "app/tool";
 import { UqApp, useUqApp } from "app/UqApp";
-import { Biz, BizBud, EntityAtom, EnumBudType } from "app/Biz";
+import { Biz, BizBud, EntityAtom, EntityID, EnumBudType } from "app/Biz";
 import { BudValue, uqAppModal } from "tonwa-app";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { UqExt } from "uqs/UqDefault";
@@ -102,9 +102,9 @@ export function useBizAtom(options: OptionsUseBizAtom): UseBizAtomReturn {
         let ret = await getAtomBase(biz, uq, id);
         let { main } = ret;
         let { phrase } = main;
-        let entityAtom = biz.entityFromId<EntityAtom>(phrase);
+        let entityID = biz.entityFromId<EntityID>(phrase);
         return {
-            ...ret, entityAtom, id
+            ...ret, entityID, id
         };
     }
 

@@ -819,7 +819,8 @@ RETURNS ret (
         ) as arr ) as keys,
         null as props
         FROM Spec as a
-        WHERE a.base=BudId(base, phrase);
+            JOIN IDU as b ON b.id=a.id
+        WHERE a.base=base AND b.base=phrase;
 }
 
 Biz AC SaveDuoOuterApp (
@@ -892,10 +893,10 @@ RETURNS props VIRTUAL (
 ) {
     -- VAR jval JSON;
     WHILE 1=1 {
-        VAR base ID=b.base, phrase Phrase=c.id, type ENUM BizPhraseType=c.type 
+        VAR base ID=a.base, phrase Phrase=c.id, type ENUM BizPhraseType=c.type 
             FROM Spec as a 
-                JOIN Bud as b ON b.id=a.base 
-                JOIN BizPhrase as c ON c.id=b.ext
+                JOIN IDU as b ON b.id=a.id 
+                JOIN BizPhrase as c ON c.id=b.base
             WHERE a.id=id;
         IF type IS NULL {
             BREAK;
