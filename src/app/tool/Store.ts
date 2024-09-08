@@ -60,10 +60,6 @@ export abstract class EntityStore<E extends Entity = Entity> extends Store {
         this.entity = entity;
     }
 
-    get header() {
-        return this.entity.caption;
-    }
-
     protected cacheIdAndBuds(props: ReturnGetSheetProps[],
         atoms: ReturnGetSheetAtoms[],
         specs: ReturnGetSheetSpecs[],

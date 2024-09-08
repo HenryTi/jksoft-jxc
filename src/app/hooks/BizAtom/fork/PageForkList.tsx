@@ -1,28 +1,18 @@
 import { Page, useModal } from "tonwa-app";
-import { SpecStore, useSpecStore } from "./SpecStore";
+import { ForkStore, useForkStore, ViewForkTop } from "./ForkStore";
 import { FA, List, useEffectOnce } from "tonwa-com";
 import { BizBud, EntityFork } from "app/Biz";
 import { useAtomValue } from "jotai";
-import { PageSpecNew } from "./PageSpecNew";
+import { PageForkNew } from "./PageForkNew";
 import { RowColsSm } from "app/hooks/tool";
 import { ViewBud } from "app/hooks";
-import { PageSpecEdit } from "./PageSpecEdit";
+import { PageForkEdit } from "./PageForkEdit";
 import { AtomIDValue } from "../AtomIDValue";
 
-export function PageSpecList({ entityFork, baseValue }: { entityFork: EntityFork; baseValue: AtomIDValue; }) {
+export function ViewForkList({ store }: { store: ForkStore }) {
     const modal = useModal();
-    const store = useSpecStore(modal, entityFork, baseValue);
     const items = useAtomValue(store.itemsAtom);
-    useEffectOnce(() => {
-        store.load();
-    });
-    const right = <button className="btn btn-sm btn-success me-2" onClick={onAdd}><FA name="plus" /></button>;
-
-    async function onAdd() {
-        await modal.open(<PageSpecNew store={store} />);
-    }
-
-    const { showKeys, showBuds } = entityFork;
+    const { showKeys, showBuds } = store.entity;
     function ViewSpecItem({ value }: { value: any; }) {
         const { no, ex } = value;
         let vEx: any, vNo: any;
@@ -51,13 +41,35 @@ export function PageSpecList({ entityFork, baseValue }: { entityFork: EntityFork
 
     function onItemClick(item: any) {
         let itemStore = store; // new SpecStore();
-        modal.open(<PageSpecEdit value={item} store={itemStore} />);
+        modal.open(<PageForkEdit value={item} store={itemStore} />);
     }
 
-    return <Page header={store.header} right={right}>
+    return <List items={items} ViewItem={ViewSpecItem} onItemClick={onItemClick} />;
+}
+
+export function PageForkList({ store }: { store: ForkStore }) {
+    const modal = useModal();
+    const right = <button className="btn btn-sm btn-success me-2" onClick={onAdd}><FA name="plus" /></button>;
+
+    async function onAdd() {
+        await modal.open(<PageForkNew store={store} />);
+    }
+    return <Page header={store.entity.caption} right={right}>
         <div className="p-3 tonwa-bg-gray-2">
-            {store.topViewAtom()}
+            <ViewForkTop store={store} />
         </div>
-        <List items={items} ViewItem={ViewSpecItem} onItemClick={onItemClick} />
+        <ViewForkList store={store} />
     </Page>;
+}
+
+export function ViewForkListAutoLoad({ fork, value }: { fork: EntityFork; value: AtomIDValue; }) {
+    let modal = useModal();
+    let store = useForkStore(modal, fork, value);
+    useEffectOnce(() => {
+        store.load();
+    });
+    return <div>
+        <div className="mt-3 px-3 pt-2 pb-1 border-top border-bottom tonwa-bg-gray-1">{fork.caption}</div>
+        <ViewForkList store={store} />
+    </div>;
 }

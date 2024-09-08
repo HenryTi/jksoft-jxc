@@ -7,9 +7,10 @@ import { EditBudLabelRow, EditAtomField } from "../Bud";
 import { ViewBudRowProps } from "../Bud";
 import { BizBud, EntityID } from "app/Biz";
 import { Tabs, Tab } from "react-bootstrap";
-import { PageSpecList } from "./spec";
+import { PageForkList, ViewForkListAutoLoad } from "./fork";
 import { AtomIDValue } from "./AtomIDValue";
 import { ValuesBudsEditing } from "../BudsEditing";
+import { ForkStore } from "./fork/ForkStore";
 
 export function useBizAtomView(options: OptionsUseBizAtom & { bottom?: any; }) {
     const { id } = useParams();
@@ -67,27 +68,28 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
         </>;
     }
     function PageView() {
-        return <Page header={caption ?? name}>
+        const modal = useModal();
+        let right: any;
+        if (entityAtom.fork) {
+            right = <button className="btn btn-sm btn-info me-2" onClick={() => modal.open(<PageEdit />)}>
+                <FA name="pencil" />
+            </button>;
+        }
+        return <Page header={caption} right={right}>
             <View />
+        </Page>;
+    }
+    function PageEdit() {
+        return <Page>
+            <ViewAtomEdit entity={entityAtom} value={state} />
         </Page>;
     }
 }
 
-export function ViewAtomProps({ entity, value }: { entity: EntityID; value: AtomIDValue; }) {
+function ViewAtomEdit({ entity, value }: { entity: EntityID; value: AtomIDValue; }) {
     const modal = useModal();
-    let { buds: atomProps, budGroups, fork } = entity;
+    let { buds: atomProps, budGroups } = entity;
     const { id, buds } = value;
-    let vFork: any;
-    if (fork !== undefined) {
-        function onSpec() {
-            modal.open(<PageSpecList entityFork={fork} baseValue={value} />);
-        }
-        const { id, caption } = fork;
-        vFork = <div className="p-3">
-            <button key={id} className="btn btn-link me-3" onClick={onSpec}>{caption}</button>
-        </div>;
-    }
-
     function buildVPropRows(props: BizBud[], flag: JSX.Element = undefined) {
         const valuesBudsEditing = new ValuesBudsEditing(modal, entity.biz, props);
         const budEditings = valuesBudsEditing.createBudEditings();
@@ -111,38 +113,40 @@ export function ViewAtomProps({ entity, value }: { entity: EntityID; value: Atom
             </div>;
         });
     }
-    let vPropRows: any;
     if (budGroups === undefined) {
-        vPropRows = <div className={cnColumns2}>{buildVPropRows(atomProps)}</div>;
+        return <div className={cnColumns2}>{buildVPropRows(atomProps)}</div>;
     }
-    else {
-        const { home, must, arr } = budGroups;
-        const vAtomId = String(entity.id);
-        const baseTitle = <span>
-            <span className="text-danger">*</span>基本
-        </span>;
-        vPropRows = <Tabs className="mt-3 ps-3 mb-1" id={vAtomId} defaultActiveKey={'+'}>
-            <Tab eventKey={'+'} title={baseTitle}>
+
+    const { home, must, arr } = budGroups;
+    const vAtomId = String(entity.id);
+    const baseTitle = <span>
+        <span className="text-danger">*</span>基本
+    </span>;
+    return <Tabs className="mt-3 ps-3 mb-1" id={vAtomId} defaultActiveKey={'+'}>
+        <Tab eventKey={'+'} title={baseTitle}>
+            <div className={cnColumns2}>
+                {must !== undefined && buildVPropRows(must.buds, <span className="text-danger">*</span>)}
+                {home !== undefined && buildVPropRows(home.buds)}
+            </div>
+        </Tab>
+        {arr.map((v, index) => {
+            const { id, name, caption, buds } = v;
+            if (id === undefined) debugger;
+            if (typeof id !== 'number') debugger;
+            const vId = String(id);
+            return <Tab key={id} eventKey={vId} title={caption ?? name}>
                 <div className={cnColumns2}>
-                    {buildVPropRows(must.buds, <span className="text-danger">*</span>)}
-                    {buildVPropRows(home.buds)}
+                    {buildVPropRows(buds)}
                 </div>
-            </Tab>
-            {arr.map((v, index) => {
-                const { id, name, caption, buds } = v;
-                if (id === undefined) debugger;
-                if (typeof id !== 'number') debugger;
-                const vId = String(id);
-                return <Tab key={id} eventKey={vId} title={caption ?? name}>
-                    <div className={cnColumns2}>
-                        {buildVPropRows(buds)}
-                    </div>
-                </Tab>;
-            })}
-        </Tabs>;
+            </Tab>;
+        })}
+    </Tabs>;
+}
+
+export function ViewAtomProps({ entity, value }: { entity: EntityID; value: AtomIDValue; }) {
+    let { fork } = entity;
+    if (fork !== undefined) {
+        return <ViewForkListAutoLoad fork={fork} value={value} />;
     }
-    return <>
-        {vFork}
-        {vPropRows}
-    </>;
+    return <ViewAtomEdit entity={entity} value={value} />;
 }

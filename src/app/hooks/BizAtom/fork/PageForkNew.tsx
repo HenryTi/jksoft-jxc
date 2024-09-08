@@ -1,5 +1,5 @@
 import { Page, useModal } from "tonwa-app";
-import { BudValues, EnumSaveSpec, SpecStore } from "./SpecStore";
+import { BudValues, EnumSaveFork, ForkStore, ViewForkTop } from "./ForkStore";
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { EnumBudType } from "app/Biz";
@@ -7,7 +7,7 @@ import { getDays } from "app/tool";
 import { theme } from "tonwa-com";
 import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 
-export function PageSpecNew({ store }: { store: SpecStore; }) {
+export function PageForkNew({ store }: { store: ForkStore; }) {
     const modal = useModal();
     const { caption, name, keys, buds: props } = store.entity;
     const { register, handleSubmit, formState: { errors }, setError } = useForm({ mode: 'onBlur' });
@@ -44,13 +44,13 @@ export function PageSpecNew({ store }: { store: SpecStore; }) {
         }
         let results = await store.saveSpec(undefined, keyValues, propValues);
         switch (results) {
-            case EnumSaveSpec.success:
+            case EnumSaveFork.success:
                 modal.close();
                 break;
-            case EnumSaveSpec.errorInput:
+            case EnumSaveFork.errorInput:
                 alert('key input error');
                 break;
-            case EnumSaveSpec.duplicateKey:
+            case EnumSaveFork.duplicateKey:
                 let err = `关键字 ${keys.map(v => v.caption).join(',')} 重复`;
                 // alert(err);
                 setError(keys[0].name, { message: err });
@@ -60,7 +60,9 @@ export function PageSpecNew({ store }: { store: SpecStore; }) {
     return <Page header={caption}>
         <div className="pt-3 tonwa-bg-gray-2">
             <Band>
-                <div className="mx-3">{store.topViewAtom()}</div>
+                <div className="mx-3">
+                    <ViewForkTop store={store} />
+                </div>
             </Band>
         </div>
         <div className="m-3">

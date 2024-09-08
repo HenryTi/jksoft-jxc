@@ -9,7 +9,7 @@ import { ViewAtom } from "../ViewAtom";
 import { AtomIDValue } from "../AtomIDValue";
 import { ViewSpecId } from "app/coms/ViewSpecId";
 
-export enum EnumSaveSpec {
+export enum EnumSaveFork {
     errorInput = -1,
     duplicateKey = -2,
     success = 0,
@@ -19,7 +19,7 @@ export interface BudValues {
     [bud: string]: BudValue;
 }
 
-export class SpecStore extends EntityStore<EntityFork> {
+export class ForkStore extends EntityStore<EntityFork> {
     readonly itemsAtom = atom(undefined as any[]);
     readonly baseValue: AtomIDValue;
 
@@ -68,7 +68,7 @@ export class SpecStore extends EntityStore<EntityFork> {
         setAtomValue(this.itemsAtom, [...items]);
     }
 
-    async saveSpec(id: number, keyValues: BudValues, propValues: BudValues): Promise<EnumSaveSpec> {
+    async saveSpec(id: number, keyValues: BudValues, propValues: BudValues): Promise<EnumSaveFork> {
         const param: ParamSaveSpec = {
             id,
             spec: this.entity.id,
@@ -80,28 +80,40 @@ export class SpecStore extends EntityStore<EntityFork> {
         const { id: retId } = results;
         if (retId === 0) {
             console.error('input error');
-            return EnumSaveSpec.errorInput;
+            return EnumSaveFork.errorInput;
         }
         if (retId < 0) {
-            return EnumSaveSpec.duplicateKey;
+            return EnumSaveFork.duplicateKey;
         }
         results.keys = keyValues;
         results.props = propValues;
         this.addSpec(results);
-        return EnumSaveSpec.success;
+        return EnumSaveFork.success;
     }
-
-    topViewAtom() {
-        switch (this.entity.base.bizPhraseType) {
-            case BizPhraseType.fork:
-                return <ViewSpecId id={this.baseValue.id} />;
-            case BizPhraseType.atom:
-                return <ViewAtom value={this.baseValue.main} />;
+    /*
+        topViewAtom() {
+            switch (this.entity.base.bizPhraseType) {
+                case BizPhraseType.fork:
+                    return <ViewSpecId id={this.baseValue.id} />;
+                case BizPhraseType.atom:
+                    return <ViewAtom value={this.baseValue.main} />;
+            }
         }
+    */
+}
+
+export function ViewForkTop({ store }: { store: ForkStore; }) {
+    const { entity, baseValue } = store;
+    switch (entity.base.bizPhraseType) {
+        default: return null;
+        case BizPhraseType.fork:
+            return <ViewSpecId id={baseValue.id} />;
+        case BizPhraseType.atom:
+            return <ViewAtom value={baseValue.main} />;
     }
 }
 
-export function useSpecStore(modal: Modal, spec: EntityFork, baseValue: AtomIDValue) {
-    const ret = useRef(new SpecStore(modal, spec, baseValue));
+export function useForkStore(modal: Modal, fork: EntityFork, baseValue: AtomIDValue) {
+    const ret = useRef(new ForkStore(modal, fork, baseValue));
     return ret.current;
 }

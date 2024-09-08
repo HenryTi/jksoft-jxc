@@ -78,32 +78,7 @@ export class Entity extends BizBase {
             group.buds = buds;
         }
         this.budGroups = budGroups;
-        //this.biz.atomBuilder.initBudGroups(this, budGroups);
     }
-
-    /*
-    protected buildBudsGroups() {
-        let entitySelf = this.biz.atomBuilder.self(this);
-        this.buildBudsGroupsFromSelf(entitySelf);
-    }
-
-    protected buildBudsGroupsFromSelf(entitySelf: EntitySelf) {
-        let { buds, groups } = entitySelf;
-        if (buds === undefined) {
-            return;
-        }
-        this.buds.push(...buds);
-        this.budGroups = this.cloneBudGroups(groups);
-        for (let bud of buds) {
-            const { id, name } = bud;
-            this.budColl[id] = bud;
-            this.budColl[name] = bud;
-        }
-        for (let bud of buds) {
-            bud.scan();
-        }
-    }
-    */
 
     cloneBudGroups(groups: BudGroups) {
         if (groups === undefined) return undefined;
