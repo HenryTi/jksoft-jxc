@@ -1,4 +1,4 @@
-import { EntityFork } from "app/Biz";
+import { EntityFork, EnumBudType } from "app/Biz";
 import { EntityStore } from "app/tool";
 import { atom } from "jotai";
 import { useRef } from "react";
@@ -43,9 +43,26 @@ export class ForkStore extends EntityStore<EntityFork> {
             const { id, keys } = item;
             let buds: any = {};
             let value: any = { id, buds };
-            for (let [bud, val] of keys) {
-                switch (bud) {
-                    default: buds[bud] = val; break;
+            for (let [budId, val] of keys) {
+                if (val === undefined || val === null) continue;
+                switch (budId) {
+                    default:
+                        let bud = this.biz.budFromId(budId);
+                        if (bud !== undefined) {
+                            const { budDataType: { type } } = bud;
+                            switch (type) {
+                                default:
+                                    val = Number(val);
+                                    break;
+                                case EnumBudType.char:
+                                case EnumBudType.str:
+                                    break;
+                                case EnumBudType.arr:
+                                    break;
+                            }
+                        }
+                        buds[budId] = val;
+                        break;
                     case noBudId: value.no = val; break;
                     case exBudId: value.ex = val; break;
                 }

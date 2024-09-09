@@ -7,10 +7,10 @@ import { EditBudLabelRow, EditAtomField } from "../Bud";
 import { ViewBudRowProps } from "../Bud";
 import { BizBud, EntityID } from "app/Biz";
 import { Tabs, Tab } from "react-bootstrap";
-import { PageForkList, ViewForkListAutoLoad } from "./fork";
+import { ViewForkListAutoLoad } from "./fork";
 import { AtomIDValue } from "./AtomIDValue";
 import { ValuesBudsEditing } from "../BudsEditing";
-import { ForkStore } from "./fork/ForkStore";
+import { ViewIDLabel } from "../tool";
 
 export function useBizAtomView(options: OptionsUseBizAtom & { bottom?: any; }) {
     const { id } = useParams();
@@ -37,11 +37,8 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
     }
     const { main, buds } = state;
     let { name, caption } = entityAtom;
-    let lbId = <span className="text-primary fw-normal">
-        <FA name="compass" className="text-danger me-1" /> ID
-    </span>;
     const fieldRows: ViewBudRowProps[] = [
-        { name: 'id', label: lbId, readonly: true, type: 'number', },
+        { name: 'id', label: <ViewIDLabel />, readonly: true, type: 'number', },
         { name: 'no', label: NOLabel ?? '编号', readonly: true, type: 'string', },
         { name: 'ex', label: exLabel ?? '名称', type: 'string', },
     ];
@@ -63,7 +60,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
     function View() {
         return <>
             {vFieldRows}
-            <ViewAtomProps entity={entityAtom} value={state} />
+            <ViewIDBuds entity={entityAtom} value={state} />
             {bottom}
         </>;
     }
@@ -71,7 +68,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
         const modal = useModal();
         let right: any;
         if (entityAtom.fork) {
-            right = <button className="btn btn-sm btn-info me-2" onClick={() => modal.open(<PageEdit />)}>
+            right = <button className="btn btn-sm btn-success me-2" onClick={() => modal.open(<PageEdit />)}>
                 <FA name="pencil" />
             </button>;
         }
@@ -80,13 +77,14 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
         </Page>;
     }
     function PageEdit() {
-        return <Page>
-            <ViewAtomEdit entity={entityAtom} value={state} />
+        return <Page header={caption + ' - 详情'}>
+            {vFieldRows}
+            <ViewIDEdit entity={entityAtom} value={state} />
         </Page>;
     }
 }
 
-function ViewAtomEdit({ entity, value }: { entity: EntityID; value: AtomIDValue; }) {
+export function ViewIDEdit({ entity, value }: { entity: EntityID; value: AtomIDValue; }) {
     const modal = useModal();
     let { buds: atomProps, budGroups } = entity;
     const { id, buds } = value;
@@ -143,10 +141,10 @@ function ViewAtomEdit({ entity, value }: { entity: EntityID; value: AtomIDValue;
     </Tabs>;
 }
 
-export function ViewAtomProps({ entity, value }: { entity: EntityID; value: AtomIDValue; }) {
+export function ViewIDBuds({ entity, value }: { entity: EntityID; value: AtomIDValue; }) {
     let { fork } = entity;
     if (fork !== undefined) {
         return <ViewForkListAutoLoad fork={fork} value={value} />;
     }
-    return <ViewAtomEdit entity={entity} value={value} />;
+    return <ViewIDEdit entity={entity} value={value} />;
 }

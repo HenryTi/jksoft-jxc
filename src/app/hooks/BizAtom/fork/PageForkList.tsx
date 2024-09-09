@@ -14,26 +14,26 @@ export function ViewForkList({ store }: { store: ForkStore }) {
     const items = useAtomValue(store.itemsAtom);
     const { showKeys, showBuds } = store.entity;
     function ViewSpecItem({ value }: { value: any; }) {
-        const { no, ex } = value;
+        const { no, ex, buds: budsValue } = value;
         let vEx: any, vNo: any;
         if (ex !== undefined) {
             vEx = ex;
             vNo = no;
         }
         else {
-            vEx = <b className="w-16c">{no}</b>;
+            vEx = <b>{no}</b>;
         }
         function ViewBuds({ buds }: { buds: BizBud[]; }) {
             if (buds.length === 0) return null;
             return <RowColsSm>
                 {buds.map(v => {
                     const { id: budId } = v;
-                    return <ViewBud key={budId} bud={v} value={value[budId]} />
+                    return <ViewBud key={budId} bud={v} value={budsValue[budId]} />
                 })}
             </RowColsSm>
         }
         return <div className="px-3 py-2">
-            <RowColsSm><b className="w-16c">{vEx}</b> <span>{vNo}</span></RowColsSm>
+            <RowColsSm><b className="w-min-6c">{vEx}</b> <span>{vNo}</span></RowColsSm>
             <ViewBuds buds={showKeys} />
             <ViewBuds buds={showBuds} />
         </div>;

@@ -15,7 +15,7 @@ export function readBuds(biz: Biz, id: number, props: ReturnGetAtomProps[]) {
         let { phrase, value } = props[i];
         let bud = biz.budFromId(phrase);
         if (bud === undefined) {
-            debugger;
+            // debugger; 已经不再使用
         }
         else {
             const { budDataType } = bud;
