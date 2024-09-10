@@ -1,7 +1,5 @@
-import { FA } from "tonwa-com";
-
 export function ViewIDLabel() {
-    return <span className="text-primary fw-normal">
-        <FA name="compass" className="text-danger me-1" /> ID
+    return <span className="text-danger fw-normal me-1 rounded-4 border border-danger border-1 small px-1">
+        <small className="align-text-top">ID</small>
     </span>;
 }

@@ -29,7 +29,7 @@ export function PageForkEdit({ store, value }: { store: ForkStore; value: any; }
     let vTop = <div className="p-3 tonwa-bg-gray-2">
         <ViewForkTop store={store} />
         {vTitle}
-        <div><small className="text-body-tertiary me-1">ID:</small>{id}</div>
+        <div><ViewIDLabel />{id}</div>
         <RowCols>
             {keys.map(v => {
                 const { id: budId } = v;

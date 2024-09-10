@@ -86,3 +86,10 @@ IDX Temp (
     id,
     value BIGINT,
 );
+
+ID Log (
+    id MINUTE,
+    KEY base ID,        -- site
+    KEY id,
+    value CHAR(200),    -- text
+);
