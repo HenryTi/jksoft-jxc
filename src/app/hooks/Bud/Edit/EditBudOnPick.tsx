@@ -13,7 +13,12 @@ export function EditBudOnPick(props: EditBudTemplateProps & { onPick: () => numb
     const { entityID } = budDataType as BudID;
     const label = caption;
     async function onEditClick() {
-        let atomId: number = await onPick();
+        let retPick = await onPick();
+        if (retPick === null || retPick === undefined) return;
+        let atomId = retPick;
+        if (typeof retPick === 'object') {
+            atomId = (retPick as any).id;
+        }
         if (atomId === undefined) return;
         if (id !== undefined) {
             await budsEditing.uq.SaveBudValue.submit({

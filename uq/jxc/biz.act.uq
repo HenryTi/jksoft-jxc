@@ -40,22 +40,29 @@ Biz ACT SaveBudValue ver 0.4 (
         {
             RETURN;
         }
-        WITH IxBudInt I=id X=phraseId DEL;
-        WITH IxBudDec I=id X=phraseId DEL;
-        WITH IxBudStr I=id X=phraseId DEL;
         IF int IS NOT NULL {
-            WITH IxBudInt as a I=id X=phraseId SET a.value=int;
             IF EXISTS(SELECT a.id FROM BizBud as a WHERE (a.flag & 1)=1) {
                 -- radio 直接调用SaveBudRadio
                 -- check 直接调用SaveBudCheck
                 -- 没有需要运行到这里。这里是错误的。
+                VAR old BIGINT;
+                SET old=a.value FROM IxBudInt as a WHERE a.i=id AND a.x=phraseId;
+                VAR oldBudId ID = ID(Bud New Key base=phraseId, ext=old);
+                WITH IxBud I=oldBudId X=id DEL;
                 VAR budId ID = ID(Bud New Key base=phraseId, ext=int);
                 WITH IxBud I=budId X=id;
             }
+            WITH IxBudInt I=id X=phraseId DEL;
+            WITH IxBudInt as a I=id X=phraseId SET a.value=int;
         }
+        ELSE {
+            WITH IxBudInt I=id X=phraseId DEL;
+        }
+        WITH IxBudDec I=id X=phraseId DEL;
         IF dec IS NOT NULL {
             WITH IxBudDec as a I=id X=phraseId SET a.value=dec;
         }
+        WITH IxBudStr I=id X=phraseId DEL;
         IF str IS NOT NULL {
             WITH IxBudStr as a I=id X=phraseId SET a.value=str;
         }

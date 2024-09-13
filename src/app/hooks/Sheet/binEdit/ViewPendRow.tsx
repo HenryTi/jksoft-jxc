@@ -61,6 +61,14 @@ export function ViewPendRow({
         viewBuds = <ViewShowBuds id={i} bud={iBud} store={sheetStore} />;
         viewAtomTitles = <ViewAtomTitles id={i} store={sheetStore} />;
     }
+    let vPrice: any, vAmount: any;
+    if (hasPrice === true && price !== undefined) {
+        vPrice = <ViewValue caption={'单价'} value={price.toFixed(digits)} />;
+    }
+    if (hasAmount === true && amount !== undefined) {
+        vAmount = <ViewValue caption={'金额'} value={amount.toFixed(digits)} />;
+    }
+
     return <>
         <div className="py-2 bg-white flex-fill ps-3">
             <div className="flex-fill">
@@ -75,9 +83,9 @@ export function ViewPendRow({
             </div>
         </div>
         <div className="w-min-10c d-flex flex-column align-items-end pt-2 pe-3">
-            {hasPrice === true && price !== undefined && <ViewValue caption={'单价'} value={price.toFixed(digits)} />}
-            {hasAmount === true && amount !== undefined && <ViewValue caption={'金额'} value={amount.toFixed(digits)} />}
             <ViewValue caption={'数量'} value={<span className="fw-bold fs-larger">{value}</span>} />
+            {vPrice}
+            {vAmount}
             {viewPendValue}
         </div >
     </>;
