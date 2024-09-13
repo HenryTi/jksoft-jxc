@@ -5,7 +5,7 @@ import { atom, useAtomValue } from "jotai";
 import { useRef, useState } from "react";
 import { headerSheet, buttonDefs } from "../headerSheet";
 import { ViewReaction } from "app/hooks/View/ViewReaction";
-import { FA, setAtomValue, SpinnerSmall, theme } from "tonwa-com";
+import { FA, getAtomValue, setAtomValue, SpinnerSmall, theme } from "tonwa-com";
 import { ToolItem } from "app/coms";
 import { PAV } from "../binEdit/ViewDiv/tool";
 import { BizBud } from "app/Biz";
@@ -98,10 +98,10 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         }
         let submitHidden: boolean;
         submitHidden = false;
-        let submitDisabled = atom(get => {
-            submitState = get(atomSubmitState);
+        let submitDisabled = (function () {
+            submitState = getAtomValue(atomSubmitState);
             return submitState === SubmitState.none || submitState === SubmitState.disable;
-        });
+        })();
         let btnSubmit = buttonDefs.submit(onSubmit, submitDisabled, submitHidden);
         let btnAddDetail = entityBin.pend === undefined ?
             buttonDefs.addDetail(onAddRow) : buttonDefs.addPend(onAddRow);

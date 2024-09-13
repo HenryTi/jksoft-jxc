@@ -6,7 +6,7 @@ import { UseQueryOptions } from "app/tool";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { Modal, Page, useModal } from "tonwa-app";
-import { theme } from "tonwa-com";
+import { theme, wait } from "tonwa-com";
 import { FA, getAtomValue, setAtomValue, useEffectOnce } from 'tonwa-com';
 import { Grammar, highlight } from "prismjs";
 import './code-editor-style.css'
@@ -92,6 +92,7 @@ class Nav {
     }
 }
 
+const codeWaiting = '...';
 export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
     const uqApp = useUqApp();
     const { uq, uqMan, biz } = uqApp;
@@ -99,20 +100,48 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
     const modal = useModal();
     const [entity, setEntity] = useState(orgEntity);
     const { id, caption, name } = entity;
+    const { current: toolButtonSubmit } = useRef(new ToolButton({
+        caption: '提交',
+        icon: 'send-o',
+        className: 'btn btn-primary'
+    }, onSubmit, true));
+    const [code, setCode] = useState(codeWaiting);
+    function setSumitDisabled(disabled: boolean) {
+        setAtomValue(toolButtonSubmit.atomDisabled, disabled);
+    }
     const query = useCallback(async (id: number) => {
+        setSumitDisabled(true);
+        setCode(codeWaiting);
         let { ret } = await uq.GetEntityCode.query({ id });
         let data = ret[0];
+        setCode(data.code);
+        setSumitDisabled(false);
         return data;
-    }, [])
+    }, [id]);
+    useEffectOnce(() => {
+        query(id);
+    });
+    /*
     const { data } = useQuery([id], async () => {
-        return await query(id);
+        let ret = await query(id);
+        // await wait(5000);
+        // setAtomValue(toolButtonSubmit.atomDisabled, false);
+        // let code = ret?.code ?? '';
+        // setCode(code);
+        if (ret === undefined || ret.code === undefined) {
+            console.error('no ret in useQuery');
+        }
+        else {
+            setCode(ret.code);
+        }
+        return ret;
     }, UseQueryOptions);
-    const [code, setCode] = useState(data?.code ?? '');
+    */
     const nav = useMemo(() => new Nav(orgEntity, onEntityChange), [orgEntity]);
     const [pageCaption, setPageCaption] = useState(caption ?? name);
-    const [submitDisabled, setSumitDisabled] = useState(true);
+    // const [submitDisabled, setSumitDisabled] = useState(true);
     const [deleted, setDeleted] = useState(false);
-    if (data === undefined) {
+    if (code === undefined) {
         return <Page header="错误">
             <div className="p-3">
                 没有能够拿到{entity.name}的code
@@ -204,9 +233,7 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
         style.color = 'lightgray';
     }
     const groups: ToolItem[][] = [
-        [
-            new ToolButton({ caption: '提交', icon: 'send-o', className: 'btn btn-primary' }, onSubmit),
-        ],
+        [toolButtonSubmit],
         null,
         [
             adminData(modal, entity),
@@ -231,7 +258,6 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
                     <Editor className="container__editor"
                         autoFocus={true}
                         spellCheck={false}
-                        placeholder="Type some code…"
                         value={code}
                         onValueChange={onCodeChange}
                         highlight={(code) => myHighlight(code, uqGrammar, 'uq')}

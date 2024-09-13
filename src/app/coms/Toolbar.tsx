@@ -11,58 +11,61 @@ export interface ToolItemDef {
 type OnAct = () => void | Promise<void>;
 
 export abstract class ToolItem {
-    abstract get Render(): () => JSX.Element;
+    abstract Render(): JSX.Element;
 }
 
-export abstract class ToolActItem extends ToolItem {
-    protected readonly def: ToolItemDef;
-    protected readonly onAct: OnAct;
-    readonly atomDisabled: Atom<any>;
-    readonly atomHidden: Atom<any>;
-    constructor(def: ToolItemDef, onAct: OnAct, disabled?: boolean | Atom<any>, hidden?: boolean | Atom<any>) {
+function ViewToolButton({ toolButton }: { toolButton: ToolButton; }) {
+    const { atomHidden, atomDisabled, def, onAct } = toolButton;
+    const hidden = useAtomValue(atomHidden);
+    const disabled = useAtomValue(atomDisabled);
+    if (hidden === true) return null;
+    const { caption, icon, className } = def;
+    let vIcon: any;
+    if (icon !== undefined) {
+        vIcon = <FA name={icon} className="me-2" />;
+    }
+    return <ButtonAsync
+        className={(className ?? 'btn btn-outline-primary')}
+        disabled={disabled} onClick={onAct as any}>
+        {vIcon}{caption}
+    </ButtonAsync>;
+}
+export class ToolButton extends ToolItem {
+    readonly def: ToolItemDef;
+    readonly onAct: OnAct;
+    readonly atomDisabled: WritableAtom<any, any, any>;
+    readonly atomHidden: WritableAtom<any, any, any>;
+    constructor(def: ToolItemDef, onAct: OnAct, disabled?: boolean, hidden?: boolean) {
         super();
         this.def = def;
         this.onAct = onAct;
         this.atomDisabled = this.atomBoolean(disabled);
-        this.atomHidden = this.atomBoolean(hidden);
+        this.atomHidden = this.atomBoolean(hidden) as any;
     }
 
-    private atomBoolean(v: boolean | Atom<any>) {
+    private atomBoolean(v: boolean) {
         switch (typeof (v)) {
+            default:
             case 'boolean': return atom(v);
             case 'undefined': return atom(false);
-            default: return atom(get => get(v));
         }
     }
 
-    readonly Render = (): JSX.Element => {
-        const { atomHidden, atomDisabled, onAct } = this;
-        const hidden = useAtomValue(atomHidden);
-        const disabled = useAtomValue(atomDisabled);
-        if (hidden === true) return null;
-        return this.render(disabled);
-    }
-
-    protected abstract render(disabled: boolean): JSX.Element;
-}
-
-export class ToolButton extends ToolActItem {
-    protected render(disabled: boolean): JSX.Element {
-        const { caption, icon, className } = this.def;
-        let vIcon: any;
-        if (icon !== undefined) {
-            vIcon = <FA name={icon} className="me-2" />;
-        }
-        return <ButtonAsync
-            className={(className ?? 'btn btn-outline-primary')}
-            disabled={disabled} onClick={this.onAct as any}>
-            {vIcon}{caption}
-        </ButtonAsync>;
+    Render(): JSX.Element {
+        return <ViewToolButton toolButton={this} />;
     }
 }
 
-export class ToolIcon extends ToolActItem {
-    protected render(disabled: boolean): JSX.Element {
+export class ToolIcon extends ToolItem {
+    protected readonly def: ToolItemDef;
+    protected readonly onAct: OnAct;
+    constructor(def: ToolItemDef, onAct: OnAct) {
+        super();
+        this.def = def;
+        this.onAct = onAct;
+    }
+
+    Render(): JSX.Element {
         const { caption, icon, className } = this.def;
         let vIcon = <FA name={icon ?? 'question'} fixWidth={true} />;
         return <div className={className + ' cursor-pointer '} title={caption}
@@ -85,16 +88,16 @@ export class ToolElement extends ToolItem {
 
 export type ItemOnAct = () => void | Promise<void>;
 
-export type ItemDef<T extends ToolItem> = (onAct: ItemOnAct, disabled?: boolean | Atom<any>, hidden?: boolean | Atom<any>) => T;
+export type ItemDef<T extends ToolItem> = (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean) => T;
 
 export function toolButtonDef(def: ToolItemDef) {
-    return function (onAct: ItemOnAct, disabled?: boolean | Atom<any>, hidden?: boolean | Atom<any>): ToolButton {
+    return function (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean): ToolItem {
         return new ToolButton(def, onAct, disabled, hidden);
     }
 }
 export function toolIconDef(def: ToolItemDef) {
-    return function (onAct: ItemOnAct, disabled?: boolean | Atom<any>, hidden?: boolean | Atom<any>): ToolIcon {
-        return new ToolIcon(def, onAct, disabled, hidden);
+    return function (onAct: ItemOnAct): ToolIcon {
+        return new ToolIcon(def, onAct);
     }
 }
 
@@ -106,9 +109,14 @@ export function ToolGroup({ group }: { group: ToolItem[] | JSX.Element; }) {
         if (!v) return null;
         if (first === true) {
             first = false;
-            return <v.Render key={index} />;
+            return <React.Fragment key={index}>{v.Render()}</React.Fragment>;
+            // <ViewToolItem toolItem={v} key={index} />;
         }
-        return <React.Fragment key={index}><span className="d-inline-block me-3" /><v.Render /></React.Fragment>;
+        // <ViewToolItem toolItem={v} />
+        return <React.Fragment key={index}>
+            <span className="d-inline-block me-3" />
+            {v.Render()}
+        </React.Fragment>;
     })}</>;
 }
 
