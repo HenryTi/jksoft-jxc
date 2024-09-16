@@ -236,3 +236,16 @@ PAGE (
         ORDER BY a.id DESC
         LIMIT $pageSize;
 };
+
+Biz Query GetLogs(
+) 
+PAGE (
+    id ID DESC,
+    value TEXT,
+) {
+    PAGE SELECT a.id, a.value
+        FROM Log as a
+        WHERE a.id<$pageStart AND a.base=$site
+        ORDER BY a.id DESC
+        LIMIT $pageSize;
+}

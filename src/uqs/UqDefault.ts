@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Aug 13 2024 21:42:02 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sun Sep 15 2024 23:33:01 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -32,6 +32,7 @@ export enum EnumID {
 	Sheet = 'sheet',
 	Detail = 'detail',
 	Pend = 'pend',
+	Log = 'log',
 }
 
 export interface $phrase extends ID {
@@ -517,6 +518,37 @@ export interface ResultSearchAtomBuds {
 	budsStr: ReturnSearchAtomBudsBudsStr[];
 }
 
+export interface ParamGetTiedIDs {
+	tie: number;
+	i: number;
+}
+export interface ReturnGetTiedIDs$page {
+	id: number;
+	phrase: number;
+}
+export interface ReturnGetTiedIDsProps {
+	id: number;
+	phrase: number;
+	value: any;
+}
+export interface ReturnGetTiedIDsAtoms {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnGetTiedIDsSpecs {
+	id: number;
+	atom: number;
+	json: any;
+}
+export interface ResultGetTiedIDs {
+	$page: ReturnGetTiedIDs$page[];
+	props: ReturnGetTiedIDsProps[];
+	atoms: ReturnGetTiedIDsAtoms[];
+	specs: ReturnGetTiedIDsSpecs[];
+}
+
 export interface ParamGetSheet {
 	id: number;
 }
@@ -793,6 +825,16 @@ export interface ResultGetMySheetList {
 	$page: ReturnGetMySheetList$page[];
 }
 
+export interface ParamGetLogs {
+}
+export interface ReturnGetLogs$page {
+	id: number;
+	value: string;
+}
+export interface ResultGetLogs {
+	$page: ReturnGetLogs$page[];
+}
+
 export interface ParamGetReport1 {
 	reportPhrase: number;
 	atomPhrase: number;
@@ -927,6 +969,10 @@ export enum BudDataType {
 	date = 41,
 	datetime = 42,
 	optionItem = 81,
+	fork = 95,
+	any = 96,
+	unique = 97,
+	user = 98,
 	arr = 99
 }
 
@@ -1238,6 +1284,17 @@ export interface PendInActs extends ID {
 	value: number;
 }
 
+export interface Log extends ID {
+	base: number;
+	value: string;
+}
+
+export interface LogInActs extends ID {
+	ID?: UqID<any>;
+	base: number | ID;
+	value: string;
+}
+
 export interface ParamGetSiteSetting {
 }
 export interface ReturnGetSiteSettingBudsInt {
@@ -1441,6 +1498,7 @@ export interface ParamActs {
 	sheet?: SheetInActs[];
 	detail?: DetailInActs[];
 	pend?: PendInActs[];
+	log?: LogInActs[];
 }
 
 
@@ -1488,6 +1546,7 @@ export interface UqExt extends Uq {
 	SaveTie: UqAction<ParamSaveTie, ResultSaveTie>;
 	DeleteTie: UqAction<ParamDeleteTie, ResultDeleteTie>;
 	SearchAtomBuds: UqQuery<ParamSearchAtomBuds, ResultSearchAtomBuds>;
+	GetTiedIDs: UqQuery<ParamGetTiedIDs, ResultGetTiedIDs>;
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
 	GetSpecsFromBase: UqQuery<ParamGetSpecsFromBase, ResultGetSpecsFromBase>;
@@ -1502,6 +1561,7 @@ export interface UqExt extends Uq {
 	GetSiteSheets: UqQuery<ParamGetSiteSheets, ResultGetSiteSheets>;
 	GetSiteSheetList: UqQuery<ParamGetSiteSheetList, ResultGetSiteSheetList>;
 	GetMySheetList: UqQuery<ParamGetMySheetList, ResultGetMySheetList>;
+	GetLogs: UqQuery<ParamGetLogs, ResultGetLogs>;
 	GetReport1: UqQuery<ParamGetReport1, ResultGetReport1>;
 	GetReport: UqQuery<ParamGetReport, ResultGetReport>;
 	GetHistory: UqQuery<ParamGetHistory, ResultGetHistory>;
@@ -1529,6 +1589,7 @@ export interface UqExt extends Uq {
 	Sheet: UqID<any>;
 	Detail: UqID<any>;
 	Pend: UqID<any>;
+	Log: UqID<any>;
 	GetSiteSetting: UqQuery<ParamGetSiteSetting, ResultGetSiteSetting>;
 	GetIOSiteAtoms: UqQuery<ParamGetIOSiteAtoms, ResultGetIOSiteAtoms>;
 	GetIOAtomApps: UqQuery<ParamGetIOAtomApps, ResultGetIOAtomApps>;
@@ -2910,6 +2971,95 @@ export const uqSchema={
             }
         ]
     },
+    "gettiedids": {
+        "name": "GetTiedIDs",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "tie",
+                "type": "id"
+            },
+            {
+                "name": "i",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    }
+                ],
+                "order": "asc"
+            },
+            {
+                "name": "props",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "specs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "atom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "json",
+                        "type": "json"
+                    }
+                ]
+            }
+        ]
+    },
     "getsheet": {
         "name": "GetSheet",
         "type": "query",
@@ -3792,6 +3942,29 @@ export const uqSchema={
             }
         ]
     },
+    "getlogs": {
+        "name": "GetLogs",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "text"
+                    }
+                ],
+                "order": "desc"
+            }
+        ]
+    },
     "getreport1": {
         "name": "GetReport1",
         "type": "query",
@@ -4139,6 +4312,10 @@ export const uqSchema={
             "date": 41,
             "datetime": 42,
             "optionItem": 81,
+            "fork": 95,
+            "any": 96,
+            "unique": 97,
+            "user": 98,
             "arr": 99
         }
     },
@@ -4871,7 +5048,7 @@ export const uqSchema={
         ],
         "global": false,
         "idType": 3,
-        "isMinute": false
+        "isMinute": true
     },
     "duo": {
         "name": "Duo",
@@ -5005,6 +5182,37 @@ export const uqSchema={
                 "type": "dec",
                 "scale": 6,
                 "precision": 18
+            }
+        ],
+        "keys": [
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "log": {
+        "name": "Log",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "char",
+                "size": 200
             }
         ],
         "keys": [

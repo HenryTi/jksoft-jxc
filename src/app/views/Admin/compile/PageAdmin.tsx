@@ -2,6 +2,7 @@ import React from "react";
 import { Page, useModal } from "tonwa-app";
 import { FA, Sep } from "tonwa-com";
 import { PageCmdClearCode, PageCmdClearPend } from "./PageCmdClear";
+import { PageCmdLog } from "./PageLog";
 
 interface Cmd {
     icon: string;
@@ -13,6 +14,14 @@ interface Cmd {
 export function PageAdmin() {
     const modal = useModal();
     const cmdArr: Cmd[] = [
+        {
+            icon: 'list',
+            iconColor: 'text-info',
+            caption: '日志清单',
+            onAct: () => {
+                modal.open(<PageCmdLog />);
+            }
+        },
         {
             icon: 'trash',
             iconColor: 'text-danger',
