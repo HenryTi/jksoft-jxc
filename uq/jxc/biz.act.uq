@@ -47,8 +47,10 @@ Biz ACT SaveBudValue ver 0.4 (
                 -- 没有需要运行到这里。这里是错误的。
                 VAR old BIGINT;
                 SET old=a.value FROM IxBudInt as a WHERE a.i=id AND a.x=phraseId;
-                VAR oldBudId ID = ID(Bud New Key base=phraseId, ext=old);
-                WITH IxBud I=oldBudId X=id DEL;
+                IF old IS NOT NULL {
+                    VAR oldBudId ID = ID(Bud New Key base=phraseId, ext=old);
+                    WITH IxBud I=oldBudId X=id DEL;
+                }
                 VAR budId ID = ID(Bud New Key base=phraseId, ext=int);
                 WITH IxBud I=budId X=id;
             }
