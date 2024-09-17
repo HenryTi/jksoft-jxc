@@ -1,7 +1,6 @@
 import { PageQueryMore } from "app/coms";
 import { UqApp, useUqApp } from "app/UqApp";
 import { useRef } from "react";
-import { Page } from "tonwa-app";
 import { dateFromMinuteId, EasyTime } from "tonwa-com";
 import { UqExt } from "uqs/UqDefault";
 
@@ -27,10 +26,10 @@ function useLogStore() {
 
 export function PageCmdLog() {
     const store = useLogStore();
-    function ViewItem({ value: { id, value } }: { value: { id: number; value: string; } }) {
+    function ViewItem({ value: { id, value } }: { value: { id: number; value: any; } }) {
         return <div className="py-2 px-3">
             <div className="small text-body-tertiary"><EasyTime date={dateFromMinuteId(id)} /></div>
-            <div>{value}</div>
+            <pre>{JSON.stringify(value, undefined, 4)}</pre>
         </div>;
     }
     return <PageQueryMore

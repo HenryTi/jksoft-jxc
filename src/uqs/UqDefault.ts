@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Sep 15 2024 23:33:01 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Mon Sep 16 2024 21:50:38 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -829,7 +829,7 @@ export interface ParamGetLogs {
 }
 export interface ReturnGetLogs$page {
 	id: number;
-	value: string;
+	value: any;
 }
 export interface ResultGetLogs {
 	$page: ReturnGetLogs$page[];
@@ -1286,13 +1286,13 @@ export interface PendInActs extends ID {
 
 export interface Log extends ID {
 	base: number;
-	value: string;
+	value: any;
 }
 
 export interface LogInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
-	value: string;
+	value: any;
 }
 
 export interface ParamGetSiteSetting {
@@ -3958,7 +3958,7 @@ export const uqSchema={
                     },
                     {
                         "name": "value",
-                        "type": "text"
+                        "type": "json"
                     }
                 ],
                 "order": "desc"
@@ -5211,8 +5211,7 @@ export const uqSchema={
             },
             {
                 "name": "value",
-                "type": "char",
-                "size": 200
+                "type": "json"
             }
         ],
         "keys": [

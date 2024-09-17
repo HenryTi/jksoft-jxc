@@ -241,7 +241,7 @@ Biz Query GetLogs(
 ) 
 PAGE (
     id ID DESC,
-    value TEXT,
+    value JSON,
 ) {
     PAGE SELECT a.id, a.value
         FROM Log as a
