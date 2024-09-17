@@ -1,11 +1,11 @@
-import { BizBud, BudID, EntityAtom } from "app/Biz";
+import { BizBud, BudID } from "app/Biz";
 import { PageQueryMore } from "app/coms";
 import { EntityStore } from "app/tool";
 import { useRef, useState } from "react";
-import { Modal, Page, useModal } from "tonwa-app";
-import { Atom, ParamGetIDList } from "uqs/UqDefault";
-import { BudEditing, ViewBud, ViewSpecAtomBold } from "..";
-import { ViewAtomTitles, ViewShowBuds } from "../tool";
+import { Modal, useModal } from "tonwa-app";
+import { ParamGetIDList } from "uqs/UqDefault";
+import { BudEditing, ViewSpecAtomBold } from "..";
+import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../tool";
 import { SearchBox } from "tonwa-com";
 
 export async function pickBudID(modal: Modal, budEditing: BudEditing) {
@@ -24,13 +24,15 @@ class BudIDStore extends EntityStore {
 }
 
 function ViewID({ id, store }: { id: number; store: EntityStore; }) {
-    const cnRow = ' px-3 py-2 ';
+    const cnRow = ' px-3 py-2 cursor-pointer ';
     return <div className={cnRow}>
         <div>
             <ViewSpecAtomBold id={id} store={store} />
             <ViewAtomTitles id={id} store={store} />
         </div>
-        <ViewShowBuds id={id} store={store} />
+        <RowColsSm>
+            <ViewShowBuds id={id} store={store} />
+        </RowColsSm>
     </div>;
 }
 
@@ -61,25 +63,19 @@ function PagePickBudID({ budEditing }: { budEditing: BudEditing; }) {
             searchKey: key,
         });
     }
+    async function onItemSelect(item: any) {
+        modal.close(item);
+    }
     return <PageQueryMore header={caption}
         query={store.query}
         ViewItem={ViewItem}
         sortField="id"
         param={param}
+        onItemSelect={onItemSelect}
     >
         <SearchBox onSearch={onSearch} allowEmptySearch={true}
             className="px-3 py-1 border-bottom"
             size="sm"
             placeholder={caption + ' 编号，名称'} />
     </PageQueryMore>;
-}
-
-function ViewBudTie({ bud }: { bud: BizBud; }) {
-    const { tie: budTie } = bud;
-    if (budTie === undefined) return null;
-    const { tie, on } = budTie;
-    return <div>
-        <div>tie: {tie.id}</div>
-        <div>on: {on}</div>
-    </div>;
 }
