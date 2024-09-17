@@ -32,18 +32,10 @@ export function OwnedBuds({ values, noLabel, store }: { values: [number, BudValu
     </>;
 }
 
-export function ViewShowBuds({ bud, id, noLabel, store }: { bud: BizBud; id: number; store: EntityStore; noLabel?: boolean; }) {
+export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: number; store: EntityStore; noLabel?: boolean; }) {
     const { budsColl } = store;
     const budValueColl = budsColl[id];
     if (budValueColl === undefined) return null;
-    /*
-    if (bud === undefined) return null;
-    let { fieldShows } = bud;
-    if (fieldShows === undefined) {
-        fieldShows = bud.getPrimeBuds();
-        if (fieldShows === undefined) return null;
-    }
-    */
     let fieldShows: BizBud[];
     let entity = store.entityFromId(id);
     if (entity !== undefined) {

@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Sep 16 2024 21:50:38 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue Sep 17 2024 16:36:31 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -516,37 +516,6 @@ export interface ResultSearchAtomBuds {
 	budsInt: ReturnSearchAtomBudsBudsInt[];
 	budsDec: ReturnSearchAtomBudsBudsDec[];
 	budsStr: ReturnSearchAtomBudsBudsStr[];
-}
-
-export interface ParamGetTiedIDs {
-	tie: number;
-	i: number;
-}
-export interface ReturnGetTiedIDs$page {
-	id: number;
-	phrase: number;
-}
-export interface ReturnGetTiedIDsProps {
-	id: number;
-	phrase: number;
-	value: any;
-}
-export interface ReturnGetTiedIDsAtoms {
-	id: number;
-	base: number;
-	no: string;
-	ex: string;
-}
-export interface ReturnGetTiedIDsSpecs {
-	id: number;
-	atom: number;
-	json: any;
-}
-export interface ResultGetTiedIDs {
-	$page: ReturnGetTiedIDs$page[];
-	props: ReturnGetTiedIDsProps[];
-	atoms: ReturnGetTiedIDsAtoms[];
-	specs: ReturnGetTiedIDsSpecs[];
 }
 
 export interface ParamGetSheet {
@@ -1212,6 +1181,39 @@ export interface HistoryInActs extends ID {
 	plusMinus: number;
 }
 
+export interface ParamGetIDList {
+	phrase: number;
+	tie: number;
+	i: number;
+	searchKey: string;
+}
+export interface ReturnGetIDList$page {
+	id: number;
+	phrase: number;
+}
+export interface ReturnGetIDListProps {
+	id: number;
+	phrase: number;
+	value: any;
+}
+export interface ReturnGetIDListAtoms {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnGetIDListSpecs {
+	id: number;
+	atom: number;
+	json: any;
+}
+export interface ResultGetIDList {
+	$page: ReturnGetIDList$page[];
+	props: ReturnGetIDListProps[];
+	atoms: ReturnGetIDListAtoms[];
+	specs: ReturnGetIDListSpecs[];
+}
+
 export interface Atom extends ID {
 	base: number;
 	no?: string;
@@ -1546,7 +1548,6 @@ export interface UqExt extends Uq {
 	SaveTie: UqAction<ParamSaveTie, ResultSaveTie>;
 	DeleteTie: UqAction<ParamDeleteTie, ResultDeleteTie>;
 	SearchAtomBuds: UqQuery<ParamSearchAtomBuds, ResultSearchAtomBuds>;
-	GetTiedIDs: UqQuery<ParamGetTiedIDs, ResultGetTiedIDs>;
 	GetSheet: UqQuery<ParamGetSheet, ResultGetSheet>;
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
 	GetSpecsFromBase: UqQuery<ParamGetSpecsFromBase, ResultGetSpecsFromBase>;
@@ -1583,6 +1584,7 @@ export interface UqExt extends Uq {
 	IxBud: UqIX<any>;
 	Bud: UqID<any>;
 	History: UqID<any>;
+	GetIDList: UqQuery<ParamGetIDList, ResultGetIDList>;
 	Atom: UqID<any>;
 	Spec: UqID<any>;
 	Duo: UqID<any>;
@@ -2966,95 +2968,6 @@ export const uqSchema={
                         "name": "value",
                         "type": "char",
                         "size": 200
-                    }
-                ]
-            }
-        ]
-    },
-    "gettiedids": {
-        "name": "GetTiedIDs",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "tie",
-                "type": "id"
-            },
-            {
-                "name": "i",
-                "type": "id"
-            }
-        ],
-        "returns": [
-            {
-                "name": "$page",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "id"
-                    }
-                ],
-                "order": "asc"
-            },
-            {
-                "name": "props",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "json"
-                    }
-                ]
-            },
-            {
-                "name": "atoms",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "no",
-                        "type": "char",
-                        "size": 30
-                    },
-                    {
-                        "name": "ex",
-                        "type": "char",
-                        "size": 200
-                    }
-                ]
-            },
-            {
-                "name": "specs",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "atom",
-                        "type": "id"
-                    },
-                    {
-                        "name": "json",
-                        "type": "json"
                     }
                 ]
             }
@@ -4987,6 +4900,104 @@ export const uqSchema={
         "global": false,
         "idType": 3,
         "isMinute": true
+    },
+    "getidlist": {
+        "name": "GetIDList",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "phrase",
+                "type": "id"
+            },
+            {
+                "name": "tie",
+                "type": "id"
+            },
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "searchKey",
+                "type": "char",
+                "size": 50
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    }
+                ],
+                "order": "asc"
+            },
+            {
+                "name": "props",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "specs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "atom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "json",
+                        "type": "json"
+                    }
+                ]
+            }
+        ]
     },
     "atom": {
         "name": "Atom",

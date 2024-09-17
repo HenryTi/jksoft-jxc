@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useIDSelect } from "../../BizPick";
 import { BizPhraseType } from "uqs/UqDefault";
 import { ViewSpecId } from "app/coms/ViewSpecId";
+import { pickBudID } from "app/hooks/BizPick/pickBudID";
+import { useModal } from "tonwa-app";
 
 export function EditBudAtom(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
@@ -15,7 +17,8 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     const { caption, budDataType, atomParams } = bizBud;
     const { entityID } = budDataType as BudID;
     const label = caption;
-    const IDSelect = useIDSelect();
+    const modal = useModal();
+    // const IDSelect = useIDSelect();
     async function onEditClick() {
         if (entityID === undefined) {
             alert('查询字段，必须声明Atom类型');
@@ -27,7 +30,8 @@ export function EditBudAtom(props: EditBudTemplateProps) {
                 params[i] = budEditing.calcValue(atomParams[i]);
             }
         }
-        let ret = await IDSelect(entityID, params);
+        // let ret = await IDSelect(entityID, params);
+        let ret = await pickBudID(modal, budEditing);
         if (ret === undefined) return;
         let atomId = ret === null ? undefined : ret.id;
         if (id !== undefined) {

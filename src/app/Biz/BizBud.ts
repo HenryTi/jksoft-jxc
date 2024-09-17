@@ -5,6 +5,7 @@ import { Entity } from "./Entity";
 import { EntityOptions } from './EntityOptions';
 import { contentFromDays } from "app/tool";
 import { EntityBin } from "./EntitySheet";
+import { EntityTie } from "./EntityTie";
 
 export enum EnumBudType {
     none = 0,
@@ -229,6 +230,7 @@ export class BizBud extends BizBase {
     valueSet: string;
     valueSetType: ValueSetType;
     onForm: boolean;            // default: trueWITH IxBudInt I=id X=bud SET value=value;B
+    tie: { tie: BizBud | EntityTie; on: string; }
 
     constructor(biz: Biz, id: number, name: string, dataType: EnumBudType, entity: Entity) {
         super(biz, id, name, 'bud');
@@ -267,6 +269,7 @@ export class BizBud extends BizBase {
         }
         this.biz.addBudIds(this);
         this.fieldShows = this.scanFieldShows(this.fieldShows);
+        this.scanTie();
         this.scaned = true;
     }
     getUIValue(value: any) {
@@ -285,6 +288,7 @@ export class BizBud extends BizBase {
             case 'params':
                 this.atomParams = val; break;
             case 'fieldShows': this.fieldShows = val; break;
+            case 'tie': this.tie = val; break;
             case 'props':
             case 'min':
             case 'max':
@@ -322,6 +326,16 @@ export class BizBud extends BizBase {
             vt = ValueSetType.none;
         }
         this.valueSetType = vt;
+    }
+
+    private scanTie() {
+        if (this.tie === undefined) return;
+        const { id, on } = this.tie as any;
+        let tie: EntityTie | BizBud = this.biz.entities[id] as EntityTie;
+        if (tie === undefined) {
+            tie = this.biz.budFromId(id);
+        }
+        this.tie = { tie, on };
     }
 }
 
