@@ -21,7 +21,7 @@ export function EditBudOnPick(props: EditBudTemplateProps & { onPick: () => numb
         }
         if (atomId === undefined) return;
         if (id !== undefined) {
-            await budsEditing.uq.SaveBudValue.submit({
+            await entityID.uq.SaveBudValue.submit({
                 phraseId: bizBud.id,
                 id,
                 int: atomId,

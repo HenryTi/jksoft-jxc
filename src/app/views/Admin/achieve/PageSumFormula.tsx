@@ -170,9 +170,9 @@ function PageAddFormula({ postAtom, postLabel, header, onSubmit }: PageAddFormul
     const { input, caption, sourceSubject, sumSubject, ratio } = label;
     const formRows: FormRow[] = [
         { name: 'caption', label: label.caption, type: 'text', options: { maxLength: 100, required: input + caption } },
-        { name: 'subject', label: label.sourceSubject, atom: EnumAtom.Subject, options: { required: input + sourceSubject } },
-        { name: 'post', label: postLabel, atom: postAtom, options: { required: input + postLabel } },
-        { name: 'sumSubject', label: label.sumSubject, atom: EnumAtom.Subject, options: { required: input + sumSubject } },
+        { name: 'subject', label: label.sourceSubject, bud: undefined, options: { required: input + sourceSubject } },
+        { name: 'post', label: postLabel, bud: undefined, options: { required: input + postLabel } },
+        { name: 'sumSubject', label: label.sumSubject, bud: undefined, options: { required: input + sumSubject } },
         { name: 'ratio', label: label.ratio, type: 'number', options: { required: input + ratio } },
         { type: 'submit' },
     ];

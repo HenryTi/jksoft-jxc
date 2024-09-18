@@ -44,7 +44,7 @@ export class BinStore extends EntityStore<EntityBin> {
         this.valDivColl = {};
         this.pendLoadState = PendLoadState.none;
         this.atomSubmitState = atom((get) => {
-            const valDivs = get(this.valDivsRoot.getAtomValDivs());
+            const valDivs = get(this.valDivsRoot.atomValDivs);
             let hasValue = false;
             if (valDivs.length === 0) return SubmitState.none;
             for (let valDiv of valDivs) {
@@ -415,7 +415,8 @@ export class BinStore extends EntityStore<EntityBin> {
 
     sum(get: Getter) {
         let sumAmount: number = 0, sumValue: number = 0;
-        const { valDivs } = this.valDivsRoot;
+        const { atomValDivs } = this.valDivsRoot;
+        const valDivs = get(atomValDivs);
         for (let valDiv of valDivs) {
             const { sumValue: v0, sumAmount: a0 } = get(valDiv.atomSum);
             sumValue += v0;

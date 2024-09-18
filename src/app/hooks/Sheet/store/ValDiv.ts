@@ -9,7 +9,7 @@ export class ValDivsBase<T extends ValDivBase> {
     readonly atomSum = atom(get => this.getSum(get));
 
     get valDivs() { return getAtomValue(this._atomValDivs); } //  atom([] as T[]);
-    getAtomValDivs() { return this._atomValDivs };
+    get atomValDivs() { return this._atomValDivs };
 
     setValDivs(valDivs: ValDivBase[]) {
         setAtomValue(this._atomValDivs, valDivs);

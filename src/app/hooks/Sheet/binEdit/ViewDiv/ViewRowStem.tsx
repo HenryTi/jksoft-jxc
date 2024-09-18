@@ -13,7 +13,7 @@ export function ViewRowStem(props: ViewDivProps) {
     const { entityBin } = binDiv;
     const valRow = useAtomValue(valDiv.getAtomValRow());
     let { sumValue, sumAmount } = useAtomValue(atomSum);
-    const divs = useAtomValue(valDiv.getAtomValDivs());
+    const divs = useAtomValue(valDiv.atomValDivs);
     const { i: iValue } = valRow;
     let {
         sum: cnSum, sumBold: cnSumBold

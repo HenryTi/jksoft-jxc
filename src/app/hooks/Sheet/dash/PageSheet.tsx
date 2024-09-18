@@ -142,7 +142,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         }
         function ViewBinDivs() {
             const { valDivsRoot, atomWaiting } = binStore;
-            const valDivs = useAtomValue(valDivsRoot.getAtomValDivs());
+            const valDivs = useAtomValue(valDivsRoot.atomValDivs);
             const waiting = useAtomValue(atomWaiting);
             let length = valDivs.length;
             for (let i = 0; i < length; i++) {

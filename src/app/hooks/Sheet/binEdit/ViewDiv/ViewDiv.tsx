@@ -16,7 +16,7 @@ export function ViewDiv(props: ViewDivProps) {
     const { binStore: divStore, valDiv, readonly } = props;
     const { binDiv, atomDeleted } = valDiv;
     const { entityBin, level } = binDiv;
-    const divs = useAtomValue(valDiv.getAtomValDivs());
+    const divs = useAtomValue(valDiv.atomValDivs);
     const valRow = useAtomValue(valDiv.getAtomValRow());
     const deleted = useAtomValue(atomDeleted);
     if (entityBin.pivot === binDiv) {

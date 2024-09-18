@@ -1,12 +1,10 @@
 import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band } from "app/coms";
-import { ViewSpecNoAtom } from "app/hooks/View";
+import { ViewSpecAtomBold, ViewSpecNoAtom } from "app/hooks/View";
 import { ButtonAsync, FA } from "tonwa-com";
-import { BizBud } from "app/Biz";
 import { BinBudsEditing, ValDivBase } from "../../store";
-import { RowCols, ViewShowBuds } from "app/hooks/tool";
-import { ViewId } from "../../views";
+import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { FormBudsEditing } from "../../../View";
 
 export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditing; valDiv: ValDivBase }) {
@@ -72,7 +70,10 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
         if (id === null) return null;
         let entity = sheetStore.entityFromId(id);
         return <Band label={entity.caption} className="border-bottom py-2">
-            <ViewId id={value} store={sheetStore} />
+            <div className="mb-1">
+                <ViewSpecAtomBold id={value} store={sheetStore} />
+                <ViewAtomTitles id={value} store={sheetStore} />
+            </div>
             <RowCols>
                 <ViewSpecNoAtom id={value} />
             </RowCols>

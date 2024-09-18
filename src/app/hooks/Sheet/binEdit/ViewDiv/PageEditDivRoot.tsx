@@ -27,7 +27,7 @@ function EditDiv(props: EditDivProps) {
     const { binDiv, atomDeleted } = valDiv;
     const { level, entityBin, subBinDiv: div } = binDiv;
     const { divLevels, pivot } = entityBin;
-    const divs = useAtomValue(valDiv.getAtomValDivs());
+    const divs = useAtomValue(valDiv.atomValDivs);
     const deleted = useAtomValue(atomDeleted);
     let bg = divLevels - level - 1;
     let borderTop = ''; // bg > 0 ? 'border-top' : '';
