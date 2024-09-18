@@ -359,9 +359,10 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
             switch (type) {
                 case EnumBudType.atom:
                     formRow.default = this.budValuesTool.getBudValue(bud, this.values);
-                    formRow.atom = null;
+                    // formRow.atom = null;
                     formRow.readOnly = true;
                     formRow.entityAtom = (budDataType as BudID).entityID;
+                    formRow.bud = bud;
                     break;
                 case EnumBudType.fork:
                     const { base: baseBud } = budDataType as BudFork;

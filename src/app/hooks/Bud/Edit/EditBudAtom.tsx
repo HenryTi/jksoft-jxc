@@ -3,7 +3,7 @@ import { EditBudTemplateProps } from "./model";
 import { useUqApp } from "app/UqApp";
 import { ViewAtomId } from "../../BizAtom";
 import { useState } from "react";
-import { useIDSelect } from "../../BizPick";
+// import { useIDSelect } from "../../BizPick";
 import { BizPhraseType } from "uqs/UqDefault";
 import { ViewSpecId } from "app/coms/ViewSpecId";
 import { pickBudID } from "app/hooks/BizPick/pickBudID";

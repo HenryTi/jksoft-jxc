@@ -10,6 +10,7 @@ import { setAtomValue } from "tonwa-com";
 import { InlineEdit } from "./InlineEdit";
 import { BudsEditing } from "app/hooks/BudsEditing";
 import { EditBudOnPick } from "./EditBudOnPick";
+import { FormContext } from "app/coms";
 
 export function EditBudLabelRow(editProps: EditBudProps) {
     const ValueEdit = LabelRowEdit
@@ -17,12 +18,12 @@ export function EditBudLabelRow(editProps: EditBudProps) {
 }
 
 export class BudEditing {
-    readonly budsEditing: BudsEditing;
+    readonly budsEditing: FormContext;
     readonly bizBud: BizBud;
     readonly required: boolean;
     error = atom<string>(undefined as string);
 
-    constructor(budsEditing: BudsEditing, bizBud: BizBud, required: boolean = undefined) {
+    constructor(budsEditing: FormContext, bizBud: BizBud, required: boolean = undefined) {
         this.budsEditing = budsEditing;
         this.bizBud = bizBud;
         this.required = required === undefined ?

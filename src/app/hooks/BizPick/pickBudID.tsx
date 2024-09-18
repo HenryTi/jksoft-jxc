@@ -1,5 +1,5 @@
 import { BizBud, BudID } from "app/Biz";
-import { PageQueryMore } from "app/coms";
+import { FormContext, PageQueryMore } from "app/coms";
 import { EntityStore } from "app/tool";
 import { useRef, useState } from "react";
 import { Modal, useModal } from "tonwa-app";
@@ -9,6 +9,11 @@ import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../tool";
 import { SearchBox } from "tonwa-com";
 
 export async function pickBudID(modal: Modal, budEditing: BudEditing) {
+    return await modal.open(<PagePickBudID budEditing={budEditing} />);
+}
+
+export async function pickBudIDinFormContext(modal: Modal, formContext: FormContext, bud: BizBud) {
+    let budEditing = new BudEditing(formContext, bud);
     return await modal.open(<PagePickBudID budEditing={budEditing} />);
 }
 

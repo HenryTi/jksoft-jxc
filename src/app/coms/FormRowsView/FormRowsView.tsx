@@ -1,4 +1,4 @@
-import { EntityAtom, EntityID, EntityFork, BizBud, Entity } from "app/Biz";
+import { EntityAtom, EntityID, EntityFork, BizBud, Entity, BudID } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useIDSelect } from "app/hooks";
 import { Atom, atom } from "jotai";
@@ -8,12 +8,13 @@ import {
     RegisterOptions, UseFormRegister,
     FieldError, UseFormSetError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";
-import { IDView } from "tonwa-app";
+import { IDView, useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
-import { BizPhraseType, EnumAtom } from "uqs/UqDefault";
+import { BizPhraseType } from "uqs/UqDefault";
 import { ViewSpecId } from "../ViewSpecId";
 import { contentFromDays, EntityStore, fromDays, Store } from "app/tool";
 import { ViewFormFork } from "./ViewFormFork";
+import { pickBudIDinFormContext } from "app/hooks/BizPick/pickBudID";
 
 export interface BandProps {
     label?: string | JSX.Element;
@@ -150,9 +151,10 @@ export interface FormSelect extends FormLabelName {
 
 export interface FormAtom extends FormLabelName {
     default?: number;
-    atom: EnumAtom;
+    // atom: EnumAtom;
+    bud: BizBud;
     options?: RegisterOptions;
-    entityAtom?: EntityID;
+    // entityAtom?: EntityID;
 }
 
 export interface FormFork extends FormLabelName {
@@ -175,6 +177,8 @@ export interface FormContext {
     getEntityFromId(id: number): Entity;
     getEntity(entityId: number): Entity;
     store: EntityStore;
+    calcValue(formula: string): number | string | object;
+    getOnPick(bud: BizBud): (() => number | Promise<number>);
 }
 
 interface FormProps {
@@ -207,6 +211,8 @@ const emptyFormContext: FormContext = {
     getEntityFromId(id: number): Entity { return undefined; },
     getEntity(entityId: number): Entity { return undefined; },
     store: undefined,
+    calcValue(formula: string): number | string | object { return undefined; },
+    getOnPick(bud: BizBud): (() => number | Promise<number>) { return undefined; },
 }
 export function FormRowsView(props: FormRowsViewProps) {
     let { rows, context } = props;
@@ -294,13 +300,16 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
         </Band>
     }
 
-    const { entityAtom, atom, options } = row as FormAtom;
-    if (entityAtom !== undefined) {
+    const { bud, options } = row as FormAtom;
+    if (bud !== undefined) {
+        const { budDataType } = bud;
+        const { entityID: entityAtom } = budDataType as BudID;
         let { name } = row as FormAtom;
         function onChange(target: { name: string; type: 'number'; value: string | object; }) {
             options?.onChange?.({ target });
         }
         let error: FieldError = errors[name] as FieldError;
+        // const budEditing = context
         if (entityAtom.bizPhraseType === BizPhraseType.fork) {
             // fork???
             return <ViewFormAtomFork row={row as FormAtom} label={label} error={error}
@@ -316,8 +325,10 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
             inputProps={register(name, options)}
             setValue={setValue}
             clearErrors={clearErrors}
-            onChange={onChange} />;
+            onChange={onChange}
+            formContext={context} />;
     }
+    /*
     if (atom !== undefined) {
         let { name } = row as FormAtom;
         let error: FieldError = errors[name] as FieldError;
@@ -326,8 +337,10 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
             inputProps={register(name, options)}
             setValue={setValue}
             clearErrors={clearErrors}
-            onChange={undefined} />;
+            onChange={undefined}
+            formContext={context} />;
     }
+    */
 
     const { baseBud } = row as FormFork;
     if (baseBud !== undefined) {
@@ -398,7 +411,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     }
 }
 
-function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, entityAtom, onChange }: {
+function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, entityAtom, onChange, formContext }: {
     row: FormAtom;
     label: string | JSX.Element;
     entityAtom: EntityAtom;
@@ -407,11 +420,13 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
     clearErrors: UseFormClearErrors<any>;
     inputProps: UseFormRegisterReturn;
     onChange: (props: { name: string; value: string | object, type: 'number' }) => void;
+    formContext: FormContext;
 }) {
     const uqApp = useUqApp();
+    const modal = useModal();
     const { uq } = uqApp;
-    const IDSelect = useIDSelect();
-    const { name, default: defaultValue, readOnly, onPick } = row;
+    // const IDSelect = useIDSelect();
+    const { name, default: defaultValue, readOnly, onPick, bud } = row;
     const [id, setId] = useState<number>(defaultValue);
     async function onSelectAtom() {
         clearErrors?.(name);
@@ -421,7 +436,8 @@ function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, en
             if (retAtomId === undefined) return;
         }
         else {
-            let ret = await IDSelect(entityAtom, undefined);
+            // let ret = await IDSelect(entityAtom, undefined);
+            let ret = await pickBudIDinFormContext(modal, formContext, bud);
             if (ret === undefined) return;
             retAtomId = ret.id;
         }
@@ -486,14 +502,16 @@ function ViewFormAtomFork({ row, label, error, inputProps, clearErrors, setValue
     formContext: FormContext
 }) {
     const uqApp = useUqApp();
+    const modal = useModal();
     const { uq } = uqApp;
-    const IDSelect = useIDSelect();
-    const { name, default: defaultValue, readOnly } = row;
+    // const IDSelect = useIDSelect();
+    const { name, default: defaultValue, readOnly, bud } = row;
     const [id, setId] = useState<number>(defaultValue);
     async function onSelect() {
         clearErrors?.(name);
         let params = formContext.getParams(name);
-        let ret = await IDSelect(entity, params);
+        // let ret = await IDSelect(entity, params);
+        let ret = await pickBudIDinFormContext(modal, formContext, bud);
         if (ret === undefined) return;
         const { id } = ret;
         if (setValue !== undefined) {
