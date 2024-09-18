@@ -14,6 +14,7 @@ interface ButtonDefs {
     test: ItemDef<any>;
     discard: ItemDef<any>;
     exit: ItemDef<any>;
+    download: ItemDef<any>;
 }
 export const buttonDefs: ButtonDefs = {
     submit: toolButtonDef({ caption: '提交', /*icon: 'send-o', */className: btn + ' btn-success' }),
@@ -24,11 +25,11 @@ export const buttonDefs: ButtonDefs = {
     test: toolButtonDef({ caption: '测试', icon: undefined }),
     discard: toolButtonDef({ caption: '作废', /*icon: 'trash-o'*/ }),
     exit: toolIconDef({ caption: '退出', icon: 'times', className: ' px-2 ' }),
+    download: toolButtonDef({ caption: '导出' }),
 }
 
 export function headerSheet({ store, toolGroups, headerGroup }: { store: SheetStore; toolGroups: (ToolItem[] | JSX.Element)[]; headerGroup?: ToolItem[]; }) {
     const { caption, backIcon } = store;
-    // const { header: headerContent, back } = useSheetHeader(store);
     return {
         header: <div className="py-2 px-3">
             <FA name={backIcon} className="me-3" />

@@ -54,38 +54,16 @@ export function PageSheetNew({ store }: { store: SheetStore; }) {
 }
 
 function PageSheetDirect({ store }: { store: SheetStore; }) {
-    // const onPicked = useOnPicked(store);
     const { caption } = store;
     useEffectOnce(() => {
         (async function () {
-            /*
-            let results: ReturnUseBinPicks = {
-                namedResults: {
-                    '%user': store.userProxy,
-                    'user': store.userProxy,
-                },
-                rearBinPick: undefined,
-                rearResult: [],
-                rearPickResultType: RearPickResultType.scalar,
-            };
-            await onPicked(store, results);
-            */
             await nothingPicked(store);
-            // let added = await detailNew();
-            //if (added === true) {
             await store.setSheetAsDraft();
-            //}
         })();
     });
     return <PageSpinner header={caption + ' 创建中...'} />
 }
 
-/*
-function useOnPicked(store: SheetStore) {
-    const { sheetConsole, main } = store;
-    return useCallback(onPicked, []);
-}
-*/
 async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
     const { sheetConsole, mainStore } = store;
     let ret = await mainStore.startFromPickResults(results);
@@ -113,7 +91,6 @@ function buttons(sheetConsole: SheetConsole) {
 
 function PageStartPicks({ store }: { store: SheetStore; }) {
     const { sheetConsole } = store;
-    //const retUseOnPicked = useOnPicked(store);
     const { btnSubmit, btnExit } = buttons(sheetConsole);
     const group0: ToolItem[] = [btnSubmit];
     let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
@@ -128,8 +105,6 @@ function PageStartPicks({ store }: { store: SheetStore; }) {
 }
 
 function PageStartPend({ store }: { store: SheetStore; }) {
-    // const onPicked = useOnPicked(store);
-    // const detailNew = useDetailNew(store);
     const { caption, sheetConsole } = store;
     const subCaption = '批选待处理';
     const onPend = useCallback(async (results: ReturnUseBinPicks) => {
@@ -146,24 +121,10 @@ function PageStartPend({ store }: { store: SheetStore; }) {
 }
 
 function PageDirectPend({ store }: { store: SheetStore; }) {
-    // const onPicked = useOnPicked(store);
-    // const detailNew = useDetailNew(store);
     const { caption, sheetConsole } = store;
     const subCaption = '批选待处理';
     useEffectOnce(() => {
         (async function () {
-            /*
-            let results: ReturnUseBinPicks = {
-                namedResults: {
-                    '%user': store.userProxy,
-                    'user': store.userProxy,
-                },
-                rearBinPick: undefined,
-                rearResult: [],
-                rearPickResultType: RearPickResultType.scalar,
-            };
-            await onPicked(store, results);
-            */
             await nothingPicked(store);
             let added = await detailNew(store);
             if (added === true) {
@@ -177,16 +138,9 @@ function PageDirectPend({ store }: { store: SheetStore; }) {
 }
 
 async function nothingPicked(store: SheetStore) {
-    // const {userProxy} = store;
-    let { budsEditing: editing } = store.mainStore; // new BinBudsEditing(store, store.mainStore.entity, []);
+    let { budsEditing: editing } = store.mainStore;
     let results: ReturnUseBinPicks = {
         editing,
-        /*
-        namedResults: {
-            '%user': userProxy,
-            'user': userProxy,
-        },
-        */
         rearBinPick: undefined,
         rearResult: [],
         rearPickResultType: RearPickResultType.scalar,

@@ -110,9 +110,7 @@ export function ToolGroup({ group }: { group: ToolItem[] | JSX.Element; }) {
         if (first === true) {
             first = false;
             return <React.Fragment key={index}>{v.Render()}</React.Fragment>;
-            // <ViewToolItem toolItem={v} key={index} />;
         }
-        // <ViewToolItem toolItem={v} />
         return <React.Fragment key={index}>
             <span className="d-inline-block me-3" />
             {v.Render()}

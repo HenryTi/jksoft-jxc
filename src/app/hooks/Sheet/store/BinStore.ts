@@ -48,14 +48,15 @@ export class BinStore extends EntityStore<EntityBin> {
             let hasValue = false;
             if (valDivs.length === 0) return SubmitState.none;
             for (let valDiv of valDivs) {
-                const { atomValue, atomSum } = valDiv;
+                const { atomValue, atomSum, atomDeleted } = valDiv;
+                const deleted = get(atomDeleted);
+                if (deleted === true) continue;
                 let value = get(atomValue);
                 let { sumValue } = get(atomSum);
                 let valRow = get(valDiv.getAtomValRow());
                 if (valRow.id < 0) return SubmitState.disable;
                 if (value !== undefined || sumValue > 0) hasValue = true;
                 const { pendValue } = valRow;
-                // if (pendValue === undefined) debugger;
                 if (value > pendValue || sumValue > pendValue) return SubmitState.disable;
             }
             let ret = hasValue === true ? SubmitState.enable : SubmitState.disable; // .hide;

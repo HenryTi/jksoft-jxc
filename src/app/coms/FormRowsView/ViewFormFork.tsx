@@ -37,9 +37,10 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
         </div>;
     }
     let fork: EntityFork;
+    let baseId: number;
     if (baseBud) {
-        let atomId = formContext.getBudValue(baseBud);
-        let entityAtom = formContext.getEntityFromId(atomId);
+        baseId = formContext.getBudValue(baseBud);
+        let entityAtom = formContext.getEntityFromId(baseId);
         if (entityAtom === undefined) return null;
         fork = (entityAtom as EntityAtom).fork;
         if (fork === undefined) return null;
@@ -71,7 +72,7 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
         </div>;
     }
     async function onEdit() {
-        let ret = await modal.open(<PageFork fork={fork} value={forkObj} />);
+        let ret = await modal.open(<PageFork fork={fork} value={forkObj} baseId={baseId} />);
         if (ret === undefined) return;
         if (setValue !== undefined) {
             setValue(name, JSON.stringify(ret));
@@ -85,18 +86,12 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
     </Band>
 }
 
-function PageFork({ fork, value }: { fork: EntityFork; value: object; }) {
+function PageFork({ fork, value, baseId }: { fork: EntityFork; value: object; baseId: number; }) {
     const modal = useModal();
     const buds = [...fork.keys, ...fork.buds];
     const { current: budsEditing } = useRef(new ValuesBudsEditing(modal, fork.biz, buds));
+    budsEditing.setNamedValue('%base', baseId);
     budsEditing.initBudValues(value);
-    /*
-    const { register, handleSubmit, formState: { errors }, } = useForm({ mode: 'onBlur' });
-    let rows: FormRow[] = [
-        ...budsEditing.buildFormRows(),
-        { type: 'submit', label: '提交' },
-    ];
-    */
     async function onSubmit(data: any) {
         let ret = budsEditing.getResultObject();
         ret.$ = fork.id;
@@ -105,9 +100,4 @@ function PageFork({ fork, value }: { fork: EntityFork; value: object; }) {
     return <Page header={fork.caption}>
         <FormBudsEditing budsEditing={budsEditing} onSubmit={onSubmit} className="p-3" />
     </Page>;
-    /*
-        <form onSubmit={handleSubmit(onSubmit)} className={theme.bootstrapContainer + ' my-3 pe-5 '}>
-        <FormRowsView rows={rows} {...{ register, errors }} context={budsEditing} />
-    </form>
-    */
 }

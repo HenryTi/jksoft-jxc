@@ -15,3 +15,4 @@ export * from './filterUndefined';
 export * from './IDViewUserSite';
 export * from "./Store";
 export * from "./Console";
+export * from './download';

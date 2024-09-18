@@ -360,7 +360,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
                 case EnumBudType.atom:
                     formRow.default = this.budValuesTool.getBudValue(bud, this.values);
                     // formRow.atom = null;
-                    formRow.readOnly = true;
+                    formRow.readOnly = readOnly;
                     formRow.entityAtom = (budDataType as BudID).entityID;
                     formRow.bud = bud;
                     break;
