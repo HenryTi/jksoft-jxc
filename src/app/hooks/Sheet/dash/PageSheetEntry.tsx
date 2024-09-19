@@ -1,4 +1,4 @@
-import { Page, PageSpinner } from "tonwa-app";
+import { Page, PageSpinner, useModal } from "tonwa-app";
 import { setAtomValue, useEffectOnce } from "tonwa-com";
 import { BinBudsEditing, RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetSteps, SheetStore } from "../store";
 import { useAtomValue } from "jotai";
@@ -121,6 +121,7 @@ function PageStartPend({ store }: { store: SheetStore; }) {
 }
 
 function PageDirectPend({ store }: { store: SheetStore; }) {
+    const modal = useModal();
     const { caption, sheetConsole } = store;
     const subCaption = '批选待处理';
     useEffectOnce(() => {
@@ -129,6 +130,10 @@ function PageDirectPend({ store }: { store: SheetStore; }) {
             let added = await detailNew(store);
             if (added === true) {
                 await store.setSheetAsDraft();
+            }
+            else {
+                await store.discard();
+                modal.close();
             }
         })();
     });

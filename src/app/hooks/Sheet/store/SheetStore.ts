@@ -280,6 +280,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
         let { valRow: { id } } = this.mainStore;
         if (id >= 0) {
             await this.uq.RemoveDraft.submit({ id });
+            this.sheetConsole.removeFromCache(id);
             return id;
         }
     }

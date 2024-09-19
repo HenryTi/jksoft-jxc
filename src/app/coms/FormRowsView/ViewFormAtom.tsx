@@ -6,8 +6,9 @@ import {
 } from "react-hook-form";
 import { IDView, useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
-import { pickBudIDinFormContext } from "app/hooks/BizPick/pickBudID";
+import { pickBudID } from "app/hooks/BizPick";
 import { Band, FormAtom, FormContext } from "./FormRowsView";
+import { BudEditing } from "app/hooks";
 
 export function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, entityAtom, onChange, formContext }: {
     row: FormAtom;
@@ -42,7 +43,8 @@ export function ViewFormAtom({ row, label, error, inputProps, clearErrors, setVa
         }
         else {
             // let ret = await IDSelect(entityAtom, undefined);
-            let ret = await pickBudIDinFormContext(modal, formContext, bud);
+            let budEditing = new BudEditing(formContext, bud);
+            let ret = await pickBudID(modal, budEditing);
             if (ret === undefined) return;
             retAtomId = ret.id;
         }

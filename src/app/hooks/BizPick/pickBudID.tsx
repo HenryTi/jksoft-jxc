@@ -12,11 +12,6 @@ export async function pickBudID(modal: Modal, budEditing: BudEditing) {
     return await modal.open(<PagePickBudID budEditing={budEditing} />);
 }
 
-export async function pickBudIDinFormContext(modal: Modal, formContext: FormContext, bud: BizBud) {
-    let budEditing = new BudEditing(formContext, bud);
-    return await modal.open(<PagePickBudID budEditing={budEditing} />);
-}
-
 class BudIDStore extends EntityStore {
     constructor(modal: Modal, bud: BizBud) {
         super(modal, bud.entity);

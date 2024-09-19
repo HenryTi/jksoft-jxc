@@ -29,7 +29,8 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         debugger;
         throw Error('input spec must have base');
     }
-    let paramValues: { [budId: number]: any };
+    editing.setNamedValue('%base', base);
+    let paramValues: { [budId: number | string]: any };
     // 暂时先按赋值处理，以后可以处理:=
     let entityFork = binInput.spec;
     if (entityFork === undefined) {
@@ -133,6 +134,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         let buds = [...keys];
         if (forkBuds !== undefined) buds.push(...forkBuds);
         let budsEditing = new ValuesBudsEditing(modal, biz, buds);
+        budsEditing.setNamedValue('%base', base);
         budsEditing.initBudValues(paramValues);
         ret = await modal.open(<PagePickSpec />);
         function PagePickSpec() {
