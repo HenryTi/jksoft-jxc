@@ -129,6 +129,7 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
         if (pickResult === undefined) return;// undefined;
         // this.namedResults[name] = pickResult;
         this.setNamedValues(name, pickResult);
+        return pickResult;
     }
 
     async runBinPickRear(divStore: BinStore, rearPick: BinPick, rearPickResultType: RearPickResultType) {
@@ -168,11 +169,12 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
             // let binPicksEditing = new SheetEditing(this.divStore.sheetStore);
             // await binPicksEditing.runBinPick(pick);
             // let { values } = binPicksEditing;
-            await this.runBinPick(pick);
-            let v = this.getValue(pick.on.name);
+            let ret = await this.runBinPick(pick);
+            // let v = this.getValue(pick.on.name);
             // let { values } = this;
             // return values.id;
-            return v;
+            let retId = (ret as any).id;
+            return retId;
         };
     }
 }

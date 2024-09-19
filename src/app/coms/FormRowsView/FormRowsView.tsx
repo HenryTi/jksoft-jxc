@@ -1,20 +1,16 @@
-import { EntityAtom, EntityID, EntityFork, BizBud, Entity, BudID } from "app/Biz";
-import { useUqApp } from "app/UqApp";
-import { useIDSelect } from "app/hooks";
+import { EntityAtom, EntityFork, BizBud, Entity, BudID } from "app/Biz";
 import { Atom, atom } from "jotai";
-import { HTMLInputTypeAttribute, ReactNode, useState } from "react";
+import { HTMLInputTypeAttribute, ReactNode } from "react";
 import {
     UseFormRegisterReturn, FieldErrorsImpl,
     RegisterOptions, UseFormRegister,
     FieldError, UseFormSetError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";
-import { IDView, useModal } from "tonwa-app";
-import { FA } from "tonwa-com";
 import { BizPhraseType } from "uqs/UqDefault";
-import { ViewSpecId } from "../ViewSpecId";
-import { contentFromDays, EntityStore, fromDays, Store } from "app/tool";
+import { contentFromDays, EntityStore } from "app/tool";
 import { ViewFormFork } from "./ViewFormFork";
-import { pickBudIDinFormContext } from "app/hooks/BizPick/pickBudID";
+import { ViewFormAtom } from "./ViewFormAtom";
+import { ViewFormAtomFork } from "./ViewFormAtomFork";
 
 export interface BandProps {
     label?: string | JSX.Element;
@@ -409,142 +405,4 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
                 </div>
             </Band>;
     }
-}
-
-function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, entityAtom, onChange, formContext }: {
-    row: FormAtom;
-    label: string | JSX.Element;
-    entityAtom: EntityAtom;
-    setValue: UseFormSetValue<any>;
-    error: FieldError;
-    clearErrors: UseFormClearErrors<any>;
-    inputProps: UseFormRegisterReturn;
-    onChange: (props: { name: string; value: string | object, type: 'number' }) => void;
-    formContext: FormContext;
-}) {
-    const uqApp = useUqApp();
-    const modal = useModal();
-    const { uq } = uqApp;
-    // const IDSelect = useIDSelect();
-    const { name, default: defaultValue, readOnly, onPick, bud } = row;
-    const [id, setId] = useState<number>(defaultValue);
-    async function onSelectAtom() {
-        clearErrors?.(name);
-        let retAtomId: number;
-        if (onPick !== undefined) {
-            retAtomId = await onPick();
-            if (retAtomId === undefined) return;
-        }
-        else {
-            // let ret = await IDSelect(entityAtom, undefined);
-            let ret = await pickBudIDinFormContext(modal, formContext, bud);
-            if (ret === undefined) return;
-            retAtomId = ret.id;
-        }
-        if (setValue !== undefined) {
-            setValue(name, retAtomId);
-        }
-        setId(retAtomId);
-        onChange?.({ name, value: String(retAtomId), type: 'number' });
-    }
-    function ViewAtom({ value }: { value: any }) {
-        const { no, ex } = value;
-        return <>{ex} &nbsp; <small className="text-muted">{no}</small></>;
-    }
-    let content: any;
-    if (id === undefined && entityAtom) {
-        let { placeHolder } = row;
-        if (!placeHolder) placeHolder = '点击选择';
-        content = <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>;
-    }
-    else {
-        if (id === undefined) {
-            content = <>id: undefined</>;
-        }
-        else {
-            content = <IDView uq={uq} id={Number(id)} Template={ViewAtom} />;
-        }
-    }
-    let onClick: () => void;
-    let cnInput = 'form-control ';
-    if (readOnly !== true || onPick !== undefined) {
-        cnInput += ' cursor-pointer ';
-        onClick = onSelectAtom;
-    }
-    else {
-        cnInput += ' bg-body-secondary';
-    }
-    let vError: any = undefined;
-    if (error) {
-        cnInput += 'is-invalid'
-        vError = <div className="invalid-feedback mt-1">
-            {error.message?.toString()}
-        </div>;
-    }
-    return <Band label={label}>
-        <div className={cnInput} onClick={onClick}>
-            {content} &nbsp;
-            <input name={name} type="hidden" {...inputProps} />
-        </div>
-        {vError}
-    </Band>
-}
-
-function ViewFormAtomFork({ row, label, error, inputProps, clearErrors, setValue, entity, onChange, formContext }: {
-    row: FormAtom;
-    label: string | JSX.Element;
-    entity: EntityFork;
-    setValue: UseFormSetValue<any>;
-    error: FieldError;
-    clearErrors: UseFormClearErrors<any>;
-    inputProps: UseFormRegisterReturn;
-    onChange: (props: { name: string; value: string, type: 'number' }) => void;
-    formContext: FormContext
-}) {
-    const uqApp = useUqApp();
-    const modal = useModal();
-    const { uq } = uqApp;
-    // const IDSelect = useIDSelect();
-    const { name, default: defaultValue, readOnly, bud } = row;
-    const [id, setId] = useState<number>(defaultValue);
-    async function onSelect() {
-        clearErrors?.(name);
-        let params = formContext.getParams(name);
-        // let ret = await IDSelect(entity, params);
-        let ret = await pickBudIDinFormContext(modal, formContext, bud);
-        if (ret === undefined) return;
-        const { id } = ret;
-        if (setValue !== undefined) {
-            setValue(name, id);
-        }
-        setId(id);
-        onChange?.({ name, value: String(id), type: 'number' });
-    }
-    let content: any;
-    if (id === undefined && entity) {
-        let { placeHolder } = row;
-        if (!placeHolder) placeHolder = '点击选择';
-        content = <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>;
-    }
-    else {
-        content = <ViewSpecId id={id} />;
-    }
-    let cnInput = 'form-control ';
-    if (readOnly !== true) {
-        cnInput += ' cursor-pointer ';
-    }
-    let vError: any = undefined;
-    if (error) {
-        cnInput += 'is-invalid'
-        vError = <div className="invalid-feedback mt-1">
-            {error.message?.toString()}
-        </div>;
-    }
-    return <Band label={label}>
-        <div className={cnInput} onClick={onSelect}>
-            {content} &nbsp;
-            <input name={name} type="hidden" {...inputProps} />
-        </div>
-        {vError}
-    </Band>
 }
