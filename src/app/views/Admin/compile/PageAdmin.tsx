@@ -3,6 +3,7 @@ import { Page, useModal } from "tonwa-app";
 import { FA, Sep } from "tonwa-com";
 import { PageCmdClearCode, PageCmdClearPend } from "./PageCmdClear";
 import { PageCmdLog } from "./PageLog";
+import { PageCmdPrintTemplate } from "./PageCmdPrintTemplate";
 
 interface Cmd {
     icon: string;
@@ -14,6 +15,14 @@ interface Cmd {
 export function PageAdmin() {
     const modal = useModal();
     const cmdArr: Cmd[] = [
+        {
+            icon: 'print',
+            iconColor: 'text-primary',
+            caption: '打印模板',
+            onAct: () => {
+                modal.open(<PageCmdPrintTemplate />);
+            }
+        },
         {
             icon: 'list',
             iconColor: 'text-info',

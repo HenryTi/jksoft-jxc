@@ -1,4 +1,4 @@
-import { EntityAtom, EntityFork } from "app/Biz";
+import { BizBud, EntityAtom, EntityFork } from "app/Biz";
 import {
     UseFormRegisterReturn, FieldError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";
@@ -60,14 +60,20 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
         }
         if (fork === undefined) return null;
         const { labelColor } = theme;
-        vContent = <div className={cnInput} onClick={readOnly === true ? undefined : onEdit}>{
-            fork.keys.map(v => {
+        function viewBuds(buds: BizBud[]) {
+            return buds.map(v => {
                 const { id, caption } = v;
                 const value = forkObj[id];
                 return <span key={id} className="text-nowrap me-3">
                     <small className={labelColor}>{caption}</small>: {budContent(v, value, formContext.store)}
                 </span>;
-            })}  &nbsp;
+            });
+        }
+        const { showKeys, showBuds } = fork;
+        vContent = <div className={cnInput} onClick={readOnly === true ? undefined : onEdit}>
+            {viewBuds(showKeys)}
+            {viewBuds(showBuds)}
+            &nbsp;
             <input name={name} type="hidden" {...inputProps} />
         </div>;
     }

@@ -64,6 +64,13 @@ export abstract class EntityStore<E extends Entity = Entity> extends Store {
         atoms: ReturnGetSheetAtoms[],
         specs: ReturnGetSheetSpecs[],
     ) {
+        props.sort((a, b) => {
+            const { id: aId, phrase: aPhrase } = a;
+            const { id: bId, phrase: bPhrase } = b;
+            let c0 = aId - bId;
+            if (c0 !== 0) return c0;
+            return aPhrase - bPhrase;
+        });
         const budsColl = budValuesFromProps(props);
         Object.assign(this.budsColl, budsColl);
         this.addBizAtoms(atoms);

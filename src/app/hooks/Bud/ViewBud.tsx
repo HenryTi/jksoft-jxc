@@ -222,7 +222,6 @@ function bin(bud: BizBud, value: any, store: EntityStore) {
 }
 
 function fork(bud: BizBud, value: any, store: EntityStore) {
-    // let { base } = bud.budDataType as BudFork;
     let { $ } = value;
     let entityFork: EntityFork;
     if ($ !== undefined) {
@@ -231,10 +230,13 @@ function fork(bud: BizBud, value: any, store: EntityStore) {
     if (entityFork === undefined) {
         return <LabelBox label={bud.caption} className="mb-1">{JSON.stringify(value)}</LabelBox>;
     }
+    const { showKeys, showBuds } = entityFork;
+    function viewBud(bud: BizBud) {
+        const { id } = bud;
+        return <ViewBud key={id} bud={bud} value={value[id]} />;
+    }
     return <>
-        {entityFork.keys.map(v => {
-            const { id } = v;
-            return <ViewBud key={id} bud={v} value={value[id]} />;
-        })}
+        {showKeys.map(v => viewBud(v))}
+        {showBuds.map(v => viewBud(v))}
     </>;
 }

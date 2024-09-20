@@ -36,7 +36,6 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: nu
     const { budsColl } = store;
     const budValueColl = budsColl[id];
     if (budValueColl === undefined) return null;
-    let fieldShows: BizBud[];
     let entity = store.entityFromId(id);
     if (entity !== undefined) {
         switch (entity.bizPhraseType) {
@@ -44,27 +43,26 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: nu
                 debugger;
                 break;
             case BizPhraseType.fork:
-                fieldShows = (entity as EntityFork).showKeys;
-                break;
+                const { showKeys, showBuds } = entity as EntityFork;
+                return <>
+                    {viewBuds(showKeys)}
+                    {viewBuds(showBuds)}
+                </>;
             case BizPhraseType.atom:
-                fieldShows = entity.primeBuds;
-                break;
+                return <>{viewBuds(entity.primeBuds)}</>
         }
     }
-    else {
-        fieldShows = bud?.getPrimeBuds();
-    }
+    let fieldShows: BizBud[] = bud?.getPrimeBuds();
     if (fieldShows === undefined) return null;
+    return <>{viewBuds(fieldShows)}</>
 
-    return <>
-        {
-            fieldShows.map((bud, index) => {
-                let { id } = bud;
-                let value = budValueColl[id];
-                return <ViewBud key={index} bud={bud} value={value} noLabel={noLabel} store={store} />;
-            })
-        }
-    </>;
+    function viewBuds(buds: BizBud[]) {
+        buds.map((bud, index) => {
+            let { id } = bud;
+            let value = budValueColl[id];
+            return <ViewBud key={index} bud={bud} value={value} noLabel={noLabel} store={store} />;
+        })
+    }
 }
 
 export function ViewAtomTitles({ id, noLabel, store }: { id: number; noLabel?: boolean; store: EntityStore; }) {
