@@ -12,9 +12,9 @@ import { AtomIDValue } from "./AtomIDValue";
 import { ValuesBudsEditing } from "../BudsEditing";
 import { ViewIDLabel } from "../tool";
 
-export function useBizAtomView(options: OptionsUseBizAtom & { bottom?: any; }) {
-    const { id } = useParams();
-    return useBizAtomViewFromId({ ...options, id: from62(id) });
+export function useBizAtomView(options: OptionsUseBizAtom & { id?: number; bottom?: any; }) {
+    const { id: pageId } = useParams();
+    return useBizAtomViewFromId({ ...options, id: options.id ?? from62(pageId) });
 }
 
 const cnColumns2 = 'gx-0 row row-cols-1 row-cols-md-2 row-cols-lg-3';

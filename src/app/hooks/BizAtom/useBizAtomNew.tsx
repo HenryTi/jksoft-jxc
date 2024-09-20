@@ -4,7 +4,7 @@ import { theme } from "tonwa-com";
 import { FormRow, FormRowsView } from "app/coms";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
-import { OptionsUseBizAtom, pathAtom, useBizAtom } from "./useBizAtom";
+import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { useEffectOnce } from "tonwa-com";
 import { BizBud, EntityAtom, ValueSetType } from "app/Biz";
 import { useState } from "react";
@@ -12,6 +12,7 @@ import { Atom } from "uqs/UqDefault";
 import { UseQueryOptions } from "app/tool";
 import { BinBudsEditing } from "../Sheet/store";
 import { BudsEditing, ValuesBudsEditing } from "../BudsEditing";
+import { pathAtom } from "./AtomStore";
 
 interface OptionsNew {
 }

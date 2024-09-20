@@ -8,41 +8,6 @@ import { useParams } from "react-router-dom";
 import { from62, to62 } from "tonwa-com";
 import { AtomIDValue } from "./AtomIDValue";
 
-function atomInPath(main: string, atomPhraseId: number | string) {
-    let p: string;
-    if (typeof atomPhraseId === 'string') {
-        if (atomPhraseId !== ':atom') debugger;
-        p = atomPhraseId;
-    }
-    else {
-        p = to62(atomPhraseId);
-    }
-    return `${main}/${p}`;
-}
-const atom = 'atom';
-
-export function buildPathAtom(main: string) {
-    return {
-        new: function (atomPhraseId: number | string) {
-            return `${atomInPath(main, atomPhraseId)}/new`;
-        },
-        list: function (atomPhraseId: number | string) {
-            return `${atomInPath(main, atomPhraseId)}/list`;
-        },
-        view: function (atomPhraseId: number | string, id?: number) {
-            return `${atomInPath(main, atomPhraseId)}/${to62(id) ?? ':id'}`;
-        },
-        edit: function (atomPhraseId: number | string, id?: number) {
-            return `${atomInPath(main, atomPhraseId)}/${to62(id) ?? ':id'}`;
-        },
-        index: function (atomPhraseId: number | string, id?: number) {
-            return `${atomInPath(main, atomPhraseId)}/${to62(id) ?? ':id'}`;
-        }
-    }
-}
-
-export const pathAtom = buildPathAtom(atom);
-
 export interface OptionsUseBizAtom {
     atomName: string;
     NOLabel?: string;
