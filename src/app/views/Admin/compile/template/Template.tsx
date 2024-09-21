@@ -1,19 +1,10 @@
 import { Entity } from "app/Biz";
-import { UqApp, useUqApp } from "app/UqApp";
-import { useRef } from "react";
-import { Page } from "tonwa-app";
+import { UqApp } from "app/UqApp";
 import { theme } from "tonwa-com";
 
 const rowCols = ' gx-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 ';
-export function PageCmdPrintTemplate() {
-    const uqApp = useUqApp();
-    const { current: store } = useRef(new StoreTemplates(uqApp));
-    return <Page header="打印模板">
-        {store.groups.map(v => <ViewGroup key={v.name} group={v} store={store} />)}
-    </Page>;
-}
 
-function ViewGroup({ group, store }: { group: Group; store: StoreTemplates; }) {
+export function ViewGroup({ group, store }: { group: Group; store: StoreTemplates; }) {
     const { list } = group;
     return <div className={theme.bootstrapContainer}>
         <div className={rowCols + ' border-bottom mb-2 '}>
@@ -46,7 +37,7 @@ interface Group {
     list: EntityTemplates[];
 }
 
-class StoreTemplates {
+export class StoreTemplates {
     private readonly uqApp: UqApp;
     readonly groups: Group[];
 

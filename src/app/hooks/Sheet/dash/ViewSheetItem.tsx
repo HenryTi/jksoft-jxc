@@ -7,16 +7,15 @@ import { SheetConsole } from "../store";
 
 export function ViewSheetItem({ value, sheetConsole }: { value: ReturnGetMySheetList$page, sheetConsole: SheetConsole; }) {
     const modal = useModal();
+    const store = sheetConsole.createSheetStore();
     async function onSheet() {
-        const store = sheetConsole.createSheetStore();
         await modal.open(<PageSheetEdit store={store} sheetId={value.id} readonly={true} />);
     }
 
     return <div className="d-flex cursor-pointer" onClick={onSheet}>
         <FA name="file-text" className="ps-4 pt-3 pe-2 text-info" size="lg" />
         <div className="flex-fill">
-            <ViewItemMain value={value} isMy={true} />
+            <ViewItemMain value={value} isMy={true} store={store} />
         </div>
     </div>;
-    // return <ViewItemMain value={value} isMy={true} />;
 }

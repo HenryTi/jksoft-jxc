@@ -122,6 +122,11 @@ export class Entity extends BizBase {
         this.scaned = true;
     }
 
+    protected idArrToBudArr(ids: number[]): BizBud[] {
+        if (ids === undefined) return;
+        return ids.map(v => this.budColl[v]);
+    }
+
     protected scanBuds() {
         for (let bud of this.buds) {
             const { id, name } = bud;

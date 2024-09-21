@@ -6,7 +6,7 @@ import { EntityAtom, EntityFork } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
 import { UI } from "app/ui";
 import { BudValue } from "tonwa-app";
-import { OptionsItem } from ".";
+import { EntityOptions, OptionsItem } from ".";
 import { BudsEditing } from "app/hooks";
 
 export class PickParam extends BizBud {
@@ -44,6 +44,10 @@ export class PickPend extends BinPick {
     readonly fromPhraseType = BizPhraseType.pend;
     from: EntityPend;
     getRefEntities(arrEntity: Entity[]) { arrEntity.push(this.from); }
+}
+export class PickOptions extends BinPick {
+    readonly fromPhraseType = BizPhraseType.options;
+    from: EntityOptions;
 }
 
 export abstract class BinInput extends BizBud {
@@ -373,6 +377,7 @@ export class EntityBin extends Entity {
     amount: BizBud;
     pivot: BinDiv;
     directly: boolean;
+    primeBuds: BizBud[];
 
     // 在代码界面上显示需要。本entity引用的entities
     override getRefEntities(arrEntity: Entity[]) {
@@ -411,6 +416,7 @@ export class EntityBin extends Entity {
             case 'price': this.fromPrice(val); break;
             case 'amount': this.fromAmount(val); break;
             case 'pivot': this.pivot = true as any; break;
+            case ':': this.primeBuds = val; break;
         }
     }
 
@@ -515,12 +521,18 @@ export class EntityBin extends Entity {
             pick.from = entity as EntityPend;
             return pick;
         }
+        const buildPickOptions = () => {
+            let pick = new PickOptions(this.biz, id, name, this);
+            pick.from = entity as EntityOptions;
+            return pick;
+        }
         switch (bizPhraseType) {
             default: binPick = undefined; break;
             case BizPhraseType.atom: binPick = buildPickAtom(); break;
             case BizPhraseType.fork: binPick = buildPickSpec(); break;
             case BizPhraseType.query: binPick = buildPickQuery(); break;
             case BizPhraseType.pend: binPick = buildPickPend(); break;
+            case BizPhraseType.options: binPick = buildPickOptions(); break;
         }
         if (on !== undefined) {
             binPick.on = this.budColl[on];
@@ -616,6 +628,7 @@ export class EntityBin extends Entity {
         this.divLevels = 0;
         this.scanDiv(this.binDivRoot as any, divSchema);
         this.scanForkBase();
+        this.primeBuds = this.idArrToBudArr(this.primeBuds as unknown as number[]);
     }
 
     private scanForkBase() {

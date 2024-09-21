@@ -2,7 +2,7 @@ import { SheetStore } from "../store";
 import { EditBudInline, ViewSpecR } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "../../ViewSheetTime";
-import { BizBud } from "app/Biz";
+import { BizBud, ValueSetType } from "app/Biz";
 import { setAtomValue } from "tonwa-com";
 import { theme } from "tonwa-com";
 import { BudCheckValue } from "tonwa-app";
@@ -20,6 +20,7 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
         setAtomValue(_binRow, { ...binRow });
     }
 
+    let topBuds: any[] = [];
     let cnBlock = ' d-flex bg-white ' + theme.bootstrapContainer;
     let viewProps: any;
     if (length > 0) {
@@ -29,11 +30,19 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
                     {budEditings.map(v => {
                         const { bizBud, required } = v;
                         if (bizBud === budI || bizBud === budX) return null;
-                        let { id, caption } = bizBud;
+                        let { id, caption, valueSetType } = bizBud;
                         let value = buds[id];
-                        return <LabelBox key={id} label={caption} required={required} title={value as any} className="mb-2">
-                            <EditBudInline budEditing={v} id={idBin} value={value} onChanged={onBudChanged} readOnly={readOnly} />
+                        let budReadOnly: boolean;
+                        if (readOnly === true) budReadOnly = readOnly;
+                        else budReadOnly = valueSetType === ValueSetType.equ;
+                        let view = <LabelBox key={id} label={caption} required={required} title={value as any} className="mb-2">
+                            <EditBudInline budEditing={v} id={idBin} value={value} onChanged={onBudChanged} readOnly={budReadOnly} />
                         </LabelBox>;
+                        if (budReadOnly === true) {
+                            topBuds.push(view);
+                            return null;
+                        }
+                        return view;
                     })}
                 </RowCols>
             </div>
@@ -60,6 +69,7 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
                     </LabelBox>
                     <ViewIdField bud={budI} value={i} />
                     <ViewIdField bud={budX} value={x} />
+                    {topBuds}
                 </RowCols>
             </div>
         </div>

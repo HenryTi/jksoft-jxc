@@ -39,58 +39,6 @@ export abstract class EntityID extends Entity {
         }
     }
 
-    /*
-    protected override buildBudsGroups() {
-        const ancestorSelfs = this.biz.atomBuilder.getAncestorSelfs(this);
-        const ancestorSelfs0 = ancestorSelfs[0];
-        this.buildBudsGroupsFromSelf(ancestorSelfs0);
-
-        let len = ancestorSelfs.length;
-        for (let i = 1; i < len; i++) {
-            let p = ancestorSelfs[i];
-            const { buds } = p;
-            if (buds !== undefined) {
-                this.buds.push(...buds);
-            }
-            for (let bud of buds) bud.scan();
-            this.mergeBudGroups(p);
-        }
-    }
-    */
-
-    /*
-    scanTitlePrime() {
-        const ancestorSelfs = this.biz.atomBuilder.getAncestorSelfs(this);
-        // if (ancestorSelfs.length <= 1) return;
-        let titleBuds: BizBud[] = [];
-        let primeBuds: BizBud[] = [];
-        let titleColl: { [id: number]: BizBud } = {};
-        let primeColl: { [id: number]: BizBud } = {};
-        for (let ancestor of ancestorSelfs) {
-            let { _titleBuds: tbs, _primeBuds: pbs } = ancestor.entity as EntityAtom;
-            if (tbs !== undefined) {
-                for (let tb of tbs) {
-                    if (tb === undefined) debugger;
-                    let { id } = tb;
-                    if (titleColl[id] !== undefined) continue;
-                    titleBuds.push(tb);
-                    titleColl[id] = tb;
-                }
-                this.titleBuds = titleBuds;
-            }
-            if (pbs !== undefined) {
-                for (let pb of pbs) {
-                    let { id } = pb;
-                    if (primeColl[id] !== undefined) continue;
-                    primeBuds.push(pb);
-                    primeColl[id] = pb;
-                }
-                this.primeBuds = primeBuds;
-            }
-        }
-    }
-    */
-
     private mergeBudGroupsFromSuperClass() {
         const { budGroups } = this.superClass;
         if (budGroups === undefined) return;
@@ -138,11 +86,6 @@ export abstract class EntityID extends Entity {
         if (superClass === undefined) debugger;
         superClass.subClasses.push(this);
         this.superClass = superClass;
-    }
-
-    protected idArrToBudArr(ids: number[]): BizBud[] {
-        if (ids === undefined) return;
-        return ids.map(v => this.budColl[v]);
     }
 
     scan() {

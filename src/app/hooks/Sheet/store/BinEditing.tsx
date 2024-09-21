@@ -7,7 +7,8 @@ import {
     PickSpec,
     PickQuery,
     PickPend,
-    Entity
+    Entity,
+    PickOptions
 } from "app/Biz";
 import { BinStore } from "./BinStore";
 import { SheetStore } from "./SheetStore";
@@ -23,6 +24,7 @@ import { pickFromSpec } from "../binPick/pickFromSpec";
 import { pickFromQuery, pickFromQueryScalar } from "app/hooks/Query";
 import { pickFromPend } from "../binPick/pickFromPend";
 import { atom } from "jotai";
+import { pickFromOptions } from "../binPick/pickFromOptions";
 // import { SheetEditing } from "../binPick";
 
 export class BinBudsEditing extends BudsEditing<ValRow> {
@@ -81,12 +83,6 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
         }
     }
 
-    /*
-    protected setBudValue(bud: BizBud, value: any) {
-        this.budValuesTool.setBudValue(bud, this.values, value);
-    }
-    */
-
     buildShowBuds(excludeBuds?: { [id: number]: boolean }): any[] {
         let ret: any[] = [];
         for (let field of this.fields) {
@@ -113,47 +109,41 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
     async runBinPick(binPick: BinPick) {
         const { name, fromPhraseType } = binPick;
         if (fromPhraseType === undefined) return; // break;
-        let pickResult: PickResult;
-        switch (fromPhraseType) {
-            default: debugger; break;
-            case BizPhraseType.atom:
-                pickResult = await pickFromAtom(this, binPick as PickAtom);
-                break;
-            case BizPhraseType.fork:
-                pickResult = await pickFromSpec(this, binPick as PickSpec);
-                break;
-            case BizPhraseType.query:
-                pickResult = await pickFromQueryScalar(this, binPick as PickQuery);
-                break;
-        }
-        if (pickResult === undefined) return;// undefined;
-        // this.namedResults[name] = pickResult;
+        let pickResult: PickResult = await this.switchPhraseType(binPick);
+        if (pickResult === undefined) return;
         this.setNamedValues(name, pickResult);
         return pickResult;
     }
 
-    async runBinPickRear(divStore: BinStore, rearPick: BinPick, rearPickResultType: RearPickResultType) {
-        // if (sheetStore === undefined) debugger;
-        // if (bin === undefined) return;
-        // const { divStore } = sheetStore;
-        // const { rearPick } = bin;
-        let pickResult: PickResult[] | PickResult;
-        const { fromPhraseType } = rearPick;
-        switch (fromPhraseType) {
-            default: debugger; break;
+    private async switchPhraseType(pick: BinPick) {
+        let pickResult: PickResult;
+        switch (pick.fromPhraseType) {
+            default: break;
             case BizPhraseType.atom:
-                pickResult = await pickFromAtom(this, rearPick as PickAtom);
+                pickResult = await pickFromAtom(this, pick as PickAtom);
                 break;
             case BizPhraseType.fork:
-                pickResult = await pickFromSpec(this, rearPick as PickSpec);
+                pickResult = await pickFromSpec(this, pick as PickSpec);
                 break;
             case BizPhraseType.query:
-                pickResult = await pickFromQuery(this, rearPick as PickQuery, rearPickResultType);
+                pickResult = await pickFromQueryScalar(this, pick as PickQuery);
                 break;
-            case BizPhraseType.pend:
-                pickResult = await pickFromPend(divStore, this, rearPick as PickPend);
+            case BizPhraseType.options:
+                pickResult = await pickFromOptions(this.modal, pick as PickOptions);
+                break;
         }
         return pickResult;
+    }
+
+    async runBinPickRear(divStore: BinStore, rearPick: BinPick, rearPickResultType: RearPickResultType) {
+        let pickResult = await this.switchPhraseType(rearPick);
+        if (pickResult !== undefined) return pickResult;
+        const { fromPhraseType } = rearPick;
+        switch (fromPhraseType) {
+            default: break;
+            case BizPhraseType.pend:
+                return await pickFromPend(divStore, this, rearPick as PickPend);
+        }
     }
 
     getOnPick(bud: BizBud): (() => number | Promise<number>) {

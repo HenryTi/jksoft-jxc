@@ -117,7 +117,7 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
         let label: any;
         const { caption } = bud;
         label = caption;
-        return <LabelBox title={title} label={label} /*colon={true}*/>
+        return <LabelBox title={title} label={label}>
             {ex}
         </LabelBox>;
     }
@@ -131,12 +131,15 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
         if (entityID === undefined) {
             return view();
         }
+        const { caption } = bud;
         if (entityID.bizPhraseType === BizPhraseType.fork) {
-            let label: any;
-            const { caption } = bud;
-            label = caption;
-            return <LabelBox label={label}>
+            return <LabelBox label={caption}>
                 <ViewSpecId id={value} />
+            </LabelBox>
+        }
+        else {
+            return <LabelBox label={caption}>
+                {value}
             </LabelBox>
         }
     }

@@ -16,6 +16,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const [visible, setVisible] = useState(true);
     const { caption, name, uq, biz, coreDetail } = entitySheet;
     const { current: dashConsole } = useRef(new DashConsole(modal, entitySheet));
+    const sheetStore = dashConsole.createSheetStore();
     const myDrafts = useAtomValue(dashConsole.atomMyDrafts);
     useEffectOnce(() => {
         (async () => {
@@ -26,8 +27,8 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         })();
     });
     async function onNew() {
-        const store = dashConsole.createSheetStore();
-        let ret = await modal.open(<PageSheetNew store={store} />);
+        // const store = dashConsole.createSheetStore();
+        let ret = await modal.open(<PageSheetNew store={sheetStore} />);
     }
     async function onList() {
         modal.open(<PageSheetList entitySheet={entitySheet} sheetConsole={dashConsole} />);
@@ -83,7 +84,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         return <div className="d-flex cursor-pointer" onClick={onSheet}>
             <FA name="file" className="ps-4 pt-3 pe-2 text-info" size="lg" />
             <div className="flex-fill">
-                <ViewItemMain value={value} isMy={true} />
+                <ViewItemMain value={value} isMy={true} store={sheetStore} />
             </div>
         </div>;
     }

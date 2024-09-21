@@ -7,7 +7,7 @@ import { PageSheetSearch } from "./PageSheetSearch";
 import { ViewSheetItem } from "./ViewSheetItem";
 
 export function PageSheetList({ entitySheet, sheetConsole }: { entitySheet: EntitySheet; sheetConsole: SheetConsole; }) {
-    const { caption, uq, id, biz } = entitySheet;
+    const { caption, uq, id } = entitySheet;
     const modal = useModal();
     let to = new Date();
     to.setDate(to.getDate() + 2);
