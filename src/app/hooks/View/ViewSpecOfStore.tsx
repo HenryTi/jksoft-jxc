@@ -55,7 +55,7 @@ export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: Entity
     if (budValueColl === undefined) return null;
     const { labelColor } = theme;
     return <>{
-        bizAtom.titleBuds.map(v => {
+        titleBuds.map(v => {
             let { id } = v;
             let value = budValueColl[id];
             if (value === undefined) return null;

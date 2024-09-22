@@ -124,7 +124,13 @@ export class Entity extends BizBase {
 
     protected idArrToBudArr(ids: number[]): BizBud[] {
         if (ids === undefined) return;
-        return ids.map(v => this.budColl[v]);
+        let ret: BizBud[] = [];
+        for (let id of ids) {
+            let bud = this.budColl[id];
+            if (bud === undefined) continue;
+            ret.push(bud);
+        }
+        return ret;
     }
 
     protected scanBuds() {
