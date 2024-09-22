@@ -47,7 +47,7 @@ export function ViewItemMain({ value, isMy, store }: { value: Sheet & Bin & { ro
     return <div className="px-3 py-2">
         <RowCols>
             <div>
-                <div className="me-3 w-min-10c">{vNo}</div>
+                <div className="me-3 w-min-10c text-primary fw-bold">{vNo}</div>
                 {
                     isMy !== true ?
                         <div>
