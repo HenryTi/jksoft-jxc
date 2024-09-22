@@ -15,6 +15,7 @@ export interface ViewBudRowProps {
     labelSize?: 0 | 1 | 2;
     readonly?: boolean;
     type: 'string' | 'number' | 'text';
+    bold?: boolean;
 }
 
 export interface ViewBudProps extends ViewBudRowProps {

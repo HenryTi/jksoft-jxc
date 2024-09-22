@@ -22,6 +22,7 @@ export interface EditProps {
     label: string | JSX.Element;
     value: BudValue;
     type: string;
+    bold?: boolean;
     readonly?: boolean;         // default: false
     onValueChanged?: OnValueChanged;
     options?: RegisterOptions;
@@ -31,7 +32,7 @@ export interface EditProps {
 
 export function LabelRowEdit(props: LabelRowPropsBase & EditProps) {
     const uqApp = useUqAppBase();
-    let { label, value: initValue, type, readonly, pickValue: pickValueProp, options, onValueChanged, ValueTemplate } = props;
+    let { label, value: initValue, type, bold, readonly, pickValue: pickValueProp, options, onValueChanged, ValueTemplate } = props;
     const [value, setValue] = useState(initValue);
     async function onClick() {
         let ret = await pickValueProp(uqApp, { label, value: initValue, type, }, options);
@@ -52,9 +53,11 @@ export function LabelRowEdit(props: LabelRowPropsBase & EditProps) {
         <>{value}</>
         :
         <ValueTemplate value={value} onValueChanged={onValueChanged} />;
+    let cnValue = 'ms-3 position-relative ';
+    if (bold === true) cnValue += ' fw-bold ';
     return <LabelRow {...props}>
         {label}
-        <div className="ms-3 position-relative">{viewValue}</div>
+        <div className={cnValue}>{viewValue}</div>
         {right}
     </LabelRow>;
 }

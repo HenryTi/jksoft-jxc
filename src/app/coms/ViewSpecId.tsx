@@ -58,16 +58,6 @@ export function ViewSpecId({ id }: { id: number; }) {
     }
     contents.push(value[0].value[1]);
     return <>{contents}</>;
-    /*
-    return <>{
-        value.map((v, index) => {
-            if (index === 0) {
-                return v.value[1];
-            }
-            return <span key={v.id} className="ms-3">{viewFork(v)}</span>;
-        })
-    }</>
-    */
 }
 
 const cachePromise: { [id: number]: Promise<any> } = {};

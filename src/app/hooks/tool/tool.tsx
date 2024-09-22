@@ -4,7 +4,7 @@ import { ViewBud, budContent } from "../Bud";
 import { FA, theme } from "tonwa-com";
 import React from "react";
 import { BizBud, Entity, EntityFork, EntityID } from "app/Biz";
-import { BudsColl, BudValueColl, EntityStore } from "app/tool";
+import { BudValueColl, EntityStore } from "app/tool";
 import { BizPhraseType } from "uqs/UqDefault";
 
 // atom field owns buds
@@ -56,7 +56,8 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: nu
     if (fieldShows === undefined) return null;
     return <>{viewBuds(fieldShows)}</>
 
-    function viewBuds(buds: BizBud[]) {
+    function viewBuds(buds: BizBud[]): any {
+        if (buds === undefined) return null;
         buds.map((bud, index) => {
             let { id } = bud;
             let value = budValueColl[id];

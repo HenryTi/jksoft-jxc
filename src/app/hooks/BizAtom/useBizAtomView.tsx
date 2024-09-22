@@ -38,9 +38,9 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
     const { main, buds } = state;
     let { name, caption } = entityAtom;
     const fieldRows: ViewBudRowProps[] = [
-        { name: 'id', label: <ViewIDLabel />, readonly: true, type: 'number', },
+        { name: 'ex', label: exLabel ?? '名称', type: 'string', bold: true, },
         { name: 'no', label: NOLabel ?? '编号', readonly: true, type: 'string', },
-        { name: 'ex', label: exLabel ?? '名称', type: 'string', },
+        { name: 'id', label: <ViewIDLabel />, readonly: true, type: 'number', },
     ];
     const vFieldRows = <div className={cnColumns2}>
         {
