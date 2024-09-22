@@ -17,17 +17,17 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const { caption, name, uq, biz, coreDetail } = entitySheet;
     const { current: dashConsole } = useRef(new DashConsole(modal, entitySheet));
     const sheetStore = dashConsole.createSheetStore();
-    const myDrafts = useAtomValue(dashConsole.atomMyDrafts);
+    const { myDraftsStore } = dashConsole;
+    const myDrafts = useAtomValue(myDraftsStore.atomMyDrafts);
     useEffectOnce(() => {
         (async () => {
             Promise.all([
                 biz.loadUserDefaults(),
-                dashConsole.loadMyDrafts()
+                myDraftsStore.loadMyDrafts()
             ]);
         })();
     });
     async function onNew() {
-        // const store = dashConsole.createSheetStore();
         let ret = await modal.open(<PageSheetNew store={sheetStore} />);
     }
     async function onList() {
@@ -84,7 +84,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         return <div className="d-flex cursor-pointer" onClick={onSheet}>
             <FA name="file" className="ps-4 pt-3 pe-2 text-info" size="lg" />
             <div className="flex-fill">
-                <ViewItemMain value={value} isMy={true} store={sheetStore} />
+                <ViewItemMain value={value} isMy={true} store={myDraftsStore} />
             </div>
         </div>;
     }

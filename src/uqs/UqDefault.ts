@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Sep 19 2024 20:56:59 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sun Sep 22 2024 00:12:24 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,7 +23,7 @@ export interface IX {
 
 export enum EnumID {
 	$phrase = '$phrase',
-	PrintTemplate = 'printtemplate',
+	Template = 'template',
 	SumFormula = 'sumformula',
 	Bud = 'bud',
 	History = 'history',
@@ -392,6 +392,7 @@ export interface ResultRemoveDraft {
 
 export interface ParamGetMyDrafts {
 	entitySheet: number;
+	entityMain: number;
 }
 export interface ReturnGetMyDrafts$page {
 	id: number;
@@ -406,8 +407,26 @@ export interface ReturnGetMyDrafts$page {
 	price: number;
 	rowCount: number;
 }
+export interface ReturnGetMyDraftsProps {
+	id: number;
+	phrase: number;
+	value: any;
+}
+export interface ReturnGetMyDraftsAtoms {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnGetMyDraftsSpecs {
+	id: number;
+	atom: number;
+}
 export interface ResultGetMyDrafts {
 	$page: ReturnGetMyDrafts$page[];
+	props: ReturnGetMyDraftsProps[];
+	atoms: ReturnGetMyDraftsAtoms[];
+	specs: ReturnGetMyDraftsSpecs[];
 }
 
 export interface ParamSetSheetPreToDraft {
@@ -768,8 +787,26 @@ export interface ReturnGetSiteSheetList$page {
 	price: number;
 	rowCount: number;
 }
+export interface ReturnGetSiteSheetListProps {
+	id: number;
+	phrase: number;
+	value: any;
+}
+export interface ReturnGetSiteSheetListAtoms {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnGetSiteSheetListSpecs {
+	id: number;
+	atom: number;
+}
 export interface ResultGetSiteSheetList {
 	$page: ReturnGetSiteSheetList$page[];
+	props: ReturnGetSiteSheetListProps[];
+	atoms: ReturnGetSiteSheetListAtoms[];
+	specs: ReturnGetSiteSheetListSpecs[];
 }
 
 export interface ParamGetMySheetList {
@@ -791,8 +828,26 @@ export interface ReturnGetMySheetList$page {
 	price: number;
 	rowCount: number;
 }
+export interface ReturnGetMySheetListProps {
+	id: number;
+	phrase: number;
+	value: any;
+}
+export interface ReturnGetMySheetListAtoms {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnGetMySheetListSpecs {
+	id: number;
+	atom: number;
+}
 export interface ResultGetMySheetList {
 	$page: ReturnGetMySheetList$page[];
+	props: ReturnGetMySheetListProps[];
+	atoms: ReturnGetMySheetListAtoms[];
+	specs: ReturnGetMySheetListSpecs[];
 }
 
 export interface ParamGetLogs {
@@ -805,18 +860,25 @@ export interface ResultGetLogs {
 	$page: ReturnGetLogs$page[];
 }
 
-export interface PrintTemplate extends ID {
+export enum EnumTemplateType {
+	print = 1,
+	data = 2
+}
+
+export interface Template extends ID {
 	base: number;
 	no?: string;
 	ex: string;
+	type: any;
 	template: string;
 }
 
-export interface PrintTemplateInActs extends ID {
+export interface TemplateInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
 	no?: string;
 	ex: string;
+	type: any;
 	template: string;
 }
 
@@ -825,41 +887,44 @@ export interface ParamSavePrintTemplate {
 	base: number;
 	no: string;
 	ex: string;
+	type: any;
 	template: string;
 }
 export interface ResultSavePrintTemplate {
 }
 
-export interface ParamDeletePrintTemplate {
+export interface ParamDeleteTemplate {
 	id: number;
 }
-export interface ResultDeletePrintTemplate {
+export interface ResultDeleteTemplate {
 }
 
-export interface ParamGetPrintTemplate {
+export interface ParamGetTemplate {
 	id: number;
 }
-export interface ReturnGetPrintTemplateRet {
+export interface ReturnGetTemplateRet {
 	id: number;
 	base: number;
 	no: string;
 	ex: string;
+	type: any;
 	template: string;
 }
-export interface ResultGetPrintTemplate {
-	ret: ReturnGetPrintTemplateRet[];
+export interface ResultGetTemplate {
+	ret: ReturnGetTemplateRet[];
 }
 
-export interface ParamGetAllPrintTemplates {
+export interface ParamGetAllTemplates {
 }
-export interface ReturnGetAllPrintTemplatesRet {
+export interface ReturnGetAllTemplatesRet {
 	id: number;
 	base: number;
 	no: string;
 	ex: string;
+	type: any;
 }
-export interface ResultGetAllPrintTemplates {
-	ret: ReturnGetAllPrintTemplatesRet[];
+export interface ResultGetAllTemplates {
+	ret: ReturnGetAllTemplatesRet[];
 }
 
 export interface ParamGetReport1 {
@@ -1548,7 +1613,7 @@ export interface ResultSaveUserBuds {
 
 export interface ParamActs {
 	$phrase?: $phraseInActs[];
-	printTemplate?: PrintTemplateInActs[];
+	template?: TemplateInActs[];
 	sumFormula?: SumFormulaInActs[];
 	ixBud?: IxBud[];
 	bud?: BudInActs[];
@@ -1622,11 +1687,11 @@ export interface UqExt extends Uq {
 	GetSiteSheetList: UqQuery<ParamGetSiteSheetList, ResultGetSiteSheetList>;
 	GetMySheetList: UqQuery<ParamGetMySheetList, ResultGetMySheetList>;
 	GetLogs: UqQuery<ParamGetLogs, ResultGetLogs>;
-	PrintTemplate: UqID<any>;
+	Template: UqID<any>;
 	SavePrintTemplate: UqAction<ParamSavePrintTemplate, ResultSavePrintTemplate>;
-	DeletePrintTemplate: UqAction<ParamDeletePrintTemplate, ResultDeletePrintTemplate>;
-	GetPrintTemplate: UqQuery<ParamGetPrintTemplate, ResultGetPrintTemplate>;
-	GetAllPrintTemplates: UqQuery<ParamGetAllPrintTemplates, ResultGetAllPrintTemplates>;
+	DeleteTemplate: UqAction<ParamDeleteTemplate, ResultDeleteTemplate>;
+	GetTemplate: UqQuery<ParamGetTemplate, ResultGetTemplate>;
+	GetAllTemplates: UqQuery<ParamGetAllTemplates, ResultGetAllTemplates>;
 	GetReport1: UqQuery<ParamGetReport1, ResultGetReport1>;
 	GetReport: UqQuery<ParamGetReport, ResultGetReport>;
 	GetHistory: UqQuery<ParamGetHistory, ResultGetHistory>;
@@ -2657,6 +2722,10 @@ export const uqSchema={
             {
                 "name": "entitySheet",
                 "type": "id"
+            },
+            {
+                "name": "entityMain",
+                "type": "id"
             }
         ],
         "returns": [
@@ -2717,6 +2786,59 @@ export const uqSchema={
                     }
                 ],
                 "order": "desc"
+            },
+            {
+                "name": "props",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "specs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "atom",
+                        "type": "id"
+                    }
+                ]
             }
         ]
     },
@@ -3832,6 +3954,59 @@ export const uqSchema={
                     }
                 ],
                 "order": "asc"
+            },
+            {
+                "name": "props",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "specs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "atom",
+                        "type": "id"
+                    }
+                ]
             }
         ]
     },
@@ -3916,6 +4091,59 @@ export const uqSchema={
                     }
                 ],
                 "order": "desc"
+            },
+            {
+                "name": "props",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "specs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "atom",
+                        "type": "id"
+                    }
+                ]
             }
         ]
     },
@@ -3942,8 +4170,18 @@ export const uqSchema={
             }
         ]
     },
-    "printtemplate": {
-        "name": "PrintTemplate",
+    "enumtemplatetype": {
+        "name": "EnumTemplateType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "print": 1,
+            "data": 2
+        }
+    },
+    "template": {
+        "name": "Template",
         "type": "id",
         "private": false,
         "sys": true,
@@ -3966,6 +4204,10 @@ export const uqSchema={
                 "name": "ex",
                 "type": "char",
                 "size": 200
+            },
+            {
+                "name": "type",
+                "type": "enum"
             },
             {
                 "name": "template",
@@ -4007,6 +4249,10 @@ export const uqSchema={
                 "size": 200
             },
             {
+                "name": "type",
+                "type": "enum"
+            },
+            {
                 "name": "template",
                 "type": "text"
             }
@@ -4014,8 +4260,8 @@ export const uqSchema={
         "jsoned": true,
         "returns": [] as any
     },
-    "deleteprinttemplate": {
-        "name": "DeletePrintTemplate",
+    "deletetemplate": {
+        "name": "DeleteTemplate",
         "type": "action",
         "private": false,
         "sys": true,
@@ -4028,8 +4274,8 @@ export const uqSchema={
         "jsoned": true,
         "returns": [] as any
     },
-    "getprinttemplate": {
-        "name": "GetPrintTemplate",
+    "gettemplate": {
+        "name": "GetTemplate",
         "type": "query",
         "private": false,
         "sys": true,
@@ -4062,6 +4308,10 @@ export const uqSchema={
                         "size": 200
                     },
                     {
+                        "name": "type",
+                        "type": "enum"
+                    },
+                    {
                         "name": "template",
                         "type": "text"
                     }
@@ -4069,8 +4319,8 @@ export const uqSchema={
             }
         ]
     },
-    "getallprinttemplates": {
-        "name": "GetAllPrintTemplates",
+    "getalltemplates": {
+        "name": "GetAllTemplates",
         "type": "query",
         "private": false,
         "sys": true,
@@ -4096,6 +4346,10 @@ export const uqSchema={
                         "name": "ex",
                         "type": "char",
                         "size": 200
+                    },
+                    {
+                        "name": "type",
+                        "type": "enum"
                     }
                 ]
             }

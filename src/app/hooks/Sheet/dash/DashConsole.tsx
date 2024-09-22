@@ -3,11 +3,32 @@ import { SheetConsole, SheetSteps, SheetStore } from "../store";
 import { ReturnGetMyDrafts$page } from "uqs/UqDefault";
 import { atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
+import { Modal } from "tonwa-app";
+import { EntitySheet } from "app/Biz";
 
 const maxDraftsCount = 10;
 
 export class DashConsole extends SheetConsole {
     readonly atomViewSubmited = atom(undefined as any);
+    readonly myDraftsStore: SheetMyDraftsStore;
+
+    constructor(modal: Modal, entitySheet: EntitySheet) {
+        super(modal, entitySheet);
+        this.myDraftsStore = new SheetMyDraftsStore(entitySheet, this);
+    }
+
+    discard(sheetId: number): void {
+        this.myDraftsStore.discardDraft(sheetId);
+    }
+    async onSheetAdded(store: SheetStore): Promise<void> {
+        await this.myDraftsStore.onSheetAdded(store);
+    }
+    sheetRowCountChanged(store: SheetStore): void {
+        this.myDraftsStore.sheetRowCountChanged(store);
+    }
+    removeFromCache(sheetId: number): void {
+        this.myDraftsStore.removeFromCache(sheetId);
+    }
 
     close(): void {
         this.modal.close();
@@ -16,17 +37,34 @@ export class DashConsole extends SheetConsole {
         this.modal.close();
         this.modal.open(<PageSheetNew store={this.createSheetStore()} />);
     }
-    discard(sheetId: number): void {
+
+    steps: SheetSteps;
+
+    async onSubmited(store: SheetStore): Promise<void> {
+        const { mainStore: main } = store;
+        const { no, valRow } = main;
+        const { id } = valRow;
+        this.myDraftsStore.removeMyDraft(id);
+        let { caption } = this.entitySheet;
+        let viewSubmited = <>{caption} <b>{no}</b> 提交成功!</>;
+        setAtomValue(this.atomViewSubmited, viewSubmited);
+        this.modal.close();
+    }
+}
+
+export class SheetMyDraftsStore extends SheetStore {
+    discardDraft(sheetId: number): void {
         this.removeMyDraft(sheetId);
         this.modal.close();
     }
+
     async onSheetAdded(store: SheetStore/*sheetId: number, no: string*/): Promise<void> {
         const { mainStore } = store;
         const { valRow, no } = mainStore;
         let { id, i, x, origin, price, value, amount } = valRow;
         let myDrafts = getAtomValue(this.atomMyDrafts);
         myDrafts.unshift({
-            id, base: this.entitySheet.id, no, operator: undefined
+            id, base: this.entity.id, no, operator: undefined
             , i, x, origin
             , value, price, amount
             , rowCount: 0
@@ -40,6 +78,7 @@ export class DashConsole extends SheetConsole {
         }
         setAtomValue(this.atomMyDrafts, [...myDrafts]);
     }
+
     sheetRowCountChanged(store: SheetStore) {
         const { mainStore: main, binStore: divStore } = store;
         const { valRow } = main;
@@ -50,11 +89,12 @@ export class DashConsole extends SheetConsole {
         draft.rowCount = divStore.valDivsRoot.getRowCount();
         setAtomValue(this.atomMyDrafts, [...myDrafts]);
     }
+
     removeFromCache(sheetId: number): void {
         this.removeMyDraft(sheetId);
     }
 
-    private removeMyDraft(sheetId: number) {
+    removeMyDraft(sheetId: number) {
         let myDrafts = getAtomValue(this.atomMyDrafts);
         let index = myDrafts.findIndex(v => v.id === sheetId);
         if (index >= 0) {
@@ -65,20 +105,11 @@ export class DashConsole extends SheetConsole {
 
     readonly atomMyDrafts = atom(undefined as ReturnGetMyDrafts$page[]);
     async loadMyDrafts(): Promise<void> {
-        let { $page } = await this.uq.GetMyDrafts.page({ entitySheet: this.entitySheet.id }, undefined, 100);
+        let { $page, props, atoms, specs } = await this.uq.GetMyDrafts.page({
+            entitySheet: this.entity.id,
+            entityMain: this.entity.main.id,
+        }, undefined, 100);
+        this.cacheIdAndBuds(props, atoms, specs as any);
         setAtomValue(this.atomMyDrafts, $page);
-    }
-
-    steps: SheetSteps;
-
-    async onSubmited(store: SheetStore): Promise<void> {
-        const { mainStore: main } = store;
-        const { no, valRow } = main;
-        const { id } = valRow;
-        this.removeMyDraft(id);
-        let { caption } = this.entitySheet;
-        let viewSubmited = <>{caption} <b>{no}</b> 提交成功!</>;
-        setAtomValue(this.atomViewSubmited, viewSubmited);
-        this.modal.close();
     }
 }
