@@ -11,10 +11,12 @@ const maxDraftsCount = 10;
 export class DashConsole extends SheetConsole {
     readonly atomViewSubmited = atom(undefined as any);
     readonly myDraftsStore: SheetMyDraftsStore;
+    readonly myArchiveList: SheetArchiveStore;
 
     constructor(modal: Modal, entitySheet: EntitySheet) {
         super(modal, entitySheet);
         this.myDraftsStore = new SheetMyDraftsStore(entitySheet, this);
+        this.myArchiveList = new SheetArchiveStore(entitySheet, this);
     }
 
     discard(sheetId: number): void {
@@ -52,7 +54,10 @@ export class DashConsole extends SheetConsole {
     }
 }
 
-export class SheetMyDraftsStore extends SheetStore {
+export abstract class SheetListStore extends SheetStore {
+}
+
+export class SheetMyDraftsStore extends SheetListStore {
     discardDraft(sheetId: number): void {
         this.removeMyDraft(sheetId);
         this.modal.close();
@@ -111,5 +116,13 @@ export class SheetMyDraftsStore extends SheetStore {
         }, undefined, 100);
         this.cacheIdAndBuds(props, atoms, specs as any);
         setAtomValue(this.atomMyDrafts, $page);
+    }
+}
+
+export class SheetArchiveStore extends SheetListStore {
+    readonly loadMyList = async (param: any, pageStart: any, pageSize: number): Promise<any[]> => {
+        const { $page, props, atoms, specs } = await this.uq.GetMySheetList.page(param, pageStart, pageSize);
+        this.cacheIdAndBuds(props, atoms, specs);
+        return $page;
     }
 }

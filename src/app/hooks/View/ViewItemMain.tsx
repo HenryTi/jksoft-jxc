@@ -4,7 +4,7 @@ import { ViewSpec } from "./ViewSpec";
 import { ViewOperator } from "./ViewOperator";
 import { Bin } from "app/tool";
 import { SheetStore } from "../Sheet/store";
-import { RowCols } from "../tool";
+import { LabelBox, RowCols } from "../tool";
 import { ViewBud } from "..";
 
 export function ViewItemMain({ value, isMy, store }: { value: Sheet & Bin & { rowCount: number; }; isMy: boolean; store: SheetStore; }) {
@@ -34,13 +34,10 @@ export function ViewItemMain({ value, isMy, store }: { value: Sheet & Bin & { ro
         vPrimeBuds = primeBuds.map(v => {
             const { id } = v;
             const bin = store.budsColl[binId];
-            let value: any;
-            if (bin !== undefined) {
-                value = bin[id];
+            if (bin === undefined) {
+                return <LabelBox key={id} label={v.caption} className="mb-1">-</LabelBox>;
             }
-            else {
-                value = '-';
-            }
+            const value = bin[id];
             return <ViewBud key={id} bud={v} value={value} store={store} />;
         });
     }

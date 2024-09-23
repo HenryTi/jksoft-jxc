@@ -31,7 +31,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         let ret = await modal.open(<PageSheetNew store={sheetStore} />);
     }
     async function onList() {
-        modal.open(<PageSheetList entitySheet={entitySheet} sheetConsole={dashConsole} />);
+        modal.open(<PageSheetList dashConsole={dashConsole} />);
     }
     async function onRemoveDraft() {
         if (await modal.open(<PageConfirm header="单据草稿" message="真的要删除全部单据草稿吗？" yes="删除" no="不删除" />) !== true) return;

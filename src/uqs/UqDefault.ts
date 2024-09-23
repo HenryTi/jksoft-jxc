@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Sep 22 2024 00:12:24 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Mon Sep 23 2024 14:12:50 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -589,7 +589,6 @@ export interface ReturnGetSheetAtoms {
 export interface ReturnGetSheetSpecs {
 	id: number;
 	atom: number;
-	json: any;
 }
 export interface ResultGetSheet {
 	main: ReturnGetSheetMain[];
@@ -708,7 +707,6 @@ export interface ReturnGetPendAtoms {
 export interface ReturnGetPendSpecs {
 	id: number;
 	atom: number;
-	json: any;
 }
 export interface ResultGetPend {
 	$page: ReturnGetPend$page[];
@@ -1328,7 +1326,6 @@ export interface ReturnGetIDListAtoms {
 export interface ReturnGetIDListSpecs {
 	id: number;
 	atom: number;
-	json: any;
 }
 export interface ResultGetIDList {
 	$page: ReturnGetIDList$page[];
@@ -3370,10 +3367,6 @@ export const uqSchema={
                     {
                         "name": "atom",
                         "type": "id"
-                    },
-                    {
-                        "name": "json",
-                        "type": "json"
                     }
                 ]
             }
@@ -3721,10 +3714,6 @@ export const uqSchema={
                     {
                         "name": "atom",
                         "type": "id"
-                    },
-                    {
-                        "name": "json",
-                        "type": "json"
                     }
                 ]
             }
@@ -5467,10 +5456,6 @@ export const uqSchema={
                     {
                         "name": "atom",
                         "type": "id"
-                    },
-                    {
-                        "name": "json",
-                        "type": "json"
                     }
                 ]
             }
