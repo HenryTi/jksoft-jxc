@@ -138,9 +138,7 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
             </LabelBox>
         }
         else {
-            return <LabelBox label={caption}>
-                {value}
-            </LabelBox>
+            return <ViewSpecId id={value} />;
         }
     }
     return view();

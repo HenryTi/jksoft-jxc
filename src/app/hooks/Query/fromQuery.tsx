@@ -3,7 +3,7 @@ import { ChangeEvent, useState } from "react";
 import { Modal, Page } from "tonwa-app";
 import { List, Sep, theme } from "tonwa-com";
 import { filterUndefined } from "app/tool";
-import { pickQueryParams /*, usePageParams*/ } from "../Sheet/binPick/PageParams";
+import { pickQueryParams } from "../Sheet/binPick/PageParams";
 import { RearPickResultType } from "../Sheet/store";
 import { LabelBox, Picked, Prop, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";

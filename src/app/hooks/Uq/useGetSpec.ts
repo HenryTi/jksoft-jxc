@@ -3,6 +3,7 @@ import { EntityFork } from "app/Biz/EntityAtom";
 import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import { useQuery } from "react-query";
+import { isPromise } from "tonwa-uq";
 import { Atom, ReturnGetSpecProps, UqExt } from "uqs/UqDefault";
 
 interface SpecAtom {
@@ -45,9 +46,20 @@ export async function loadSpec(uq: UqExt, biz: Biz, specId: number): Promise<Spe
     }
     let value = cache[specId];
     if (value === null) return empty;
-    if (value !== undefined) return value;
+    if (value !== undefined) {
+        if (isPromise(value) === true) {
+            let ret = await value;
+            return buildSpec(biz, specId, ret);
+        }
+        return value;
+    }
 
-    let { props } = await uq.GetSpec.query({ id: specId });
+    let promiseGetSpec = cache[specId] = uq.GetSpec.query({ id: specId });
+    let { props } = await promiseGetSpec;
+    return buildSpec(biz, specId, props);
+}
+
+function buildSpec(biz: Biz, specId: number, props: ReturnGetSpecProps[]) {
     let atom: SpecAtom;
     let specs: SpecItem[] = [];
     let len = props.length;

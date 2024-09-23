@@ -136,14 +136,19 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
     }
 
     async runBinPickRear(divStore: BinStore, rearPick: BinPick, rearPickResultType: RearPickResultType) {
-        let pickResult = await this.switchPhraseType(rearPick);
-        if (pickResult !== undefined) return pickResult;
         const { fromPhraseType } = rearPick;
         switch (fromPhraseType) {
             default: break;
+            case BizPhraseType.query:
+                if (rearPickResultType === RearPickResultType.array) {
+                    return await pickFromQuery(this, rearPick as PickQuery, rearPickResultType);
+                }
+                break;
             case BizPhraseType.pend:
                 return await pickFromPend(divStore, this, rearPick as PickPend);
         }
+        let pickResult = await this.switchPhraseType(rearPick);
+        if (pickResult !== undefined) return pickResult;
     }
 
     getOnPick(bud: BizBud): (() => number | Promise<number>) {
