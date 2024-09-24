@@ -3,7 +3,7 @@ import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { FA, List, useEffectOnce, wait } from "tonwa-com";
 import { Entity, EntitySheet } from "app/Biz";
 import { PageSheetEdit, PageSheetNew } from "./PageSheetEntry";
-import { DashConsole } from "./DashConsole";
+import { DashConsole } from "../store";
 import { Sheet } from "uqs/UqDefault";
 import { Bin, ViewNotifyCount } from "app/tool";
 import { PageSheetList } from "./PageSheetList";

@@ -8,6 +8,7 @@ import { User } from "tonwa-uq";
 import { ViewSheetItem } from "./ViewSheetItem";
 import { SheetConsole } from "../store";
 import { EditBudInline, OnBudChanged, ValuesBudsEditing } from "app/hooks";
+import { DashConsole } from "../store";
 
 export function PageSearch() {
     const modal = useModal();
@@ -38,7 +39,7 @@ function SearchSheetLink({ sheet }: { sheet: EntitySheet }) {
     const modal = useModal();
     const { caption } = sheet;
     function onSearch() {
-        modal.open(<PageSheetSearch sheetConsole={undefined} />);
+        modal.open(<PageSheetSearch dashConsole={undefined} />);
     }
     return <SearchLink caption={caption} iconColor="text-info" textColor="text-primary" onClick={onSearch} />;
 }
@@ -56,7 +57,7 @@ function PageSearchAll() {
     }
     function ViewItem({ value }: { value: any; }) {
         let sheetConsole = undefined;
-        return <ViewSheetItem value={value} sheetConsole={sheetConsole} />;
+        return <ViewSheetItem value={value} sheetConsole={sheetConsole} listStore={undefined} />;
     }
     return <PageQueryMore
         query={uq.SearchAllSheets}
@@ -75,9 +76,9 @@ interface SearchSheetParam {
     x: number;
     buds: [number, any][];
 }
-export function PageSheetSearch({ sheetConsole }: { sheetConsole: SheetConsole; }) {
+export function PageSheetSearch({ dashConsole }: { dashConsole: DashConsole; }) {
     const { uq } = useUqApp();
-    let { entitySheet } = sheetConsole;
+    let { entitySheet } = dashConsole;
     let { name, caption, search } = entitySheet;
     if (caption === undefined) caption = name;
     const { current: paramValues } = useRef<any>({});
@@ -143,7 +144,7 @@ export function PageSheetSearch({ sheetConsole }: { sheetConsole: SheetConsole; 
         vBudParams = <ViewParams budArr={budArr} onBudChanged={onBudChanged} />;
     }
     function ViewItem({ value }: { value: any; }) {
-        return <ViewSheetItem value={value} sheetConsole={sheetConsole} />;
+        return <ViewSheetItem value={value} sheetConsole={dashConsole} listStore={dashConsole.myArchiveList} />;
     }
     return <PageQueryMore
         query={uq.SearchAllSheets}

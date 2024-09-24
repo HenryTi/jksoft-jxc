@@ -4,3 +4,4 @@ export * from './BinStore';
 export * from './ValDiv';
 export * from './PickResult';
 export * from "./tool";
+export * from "./DashConsole";

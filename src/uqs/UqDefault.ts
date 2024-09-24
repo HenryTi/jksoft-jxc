@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Sep 23 2024 14:12:50 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Mon Sep 23 2024 21:57:58 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -809,6 +809,7 @@ export interface ResultGetSiteSheetList {
 
 export interface ParamGetMySheetList {
 	phrase: number;
+	mainPhrase: number;
 	from: any;
 	to: any;
 	timeZone: number;
@@ -4007,6 +4008,10 @@ export const uqSchema={
         "fields": [
             {
                 "name": "phrase",
+                "type": "id"
+            },
+            {
+                "name": "mainPhrase",
                 "type": "id"
             },
             {

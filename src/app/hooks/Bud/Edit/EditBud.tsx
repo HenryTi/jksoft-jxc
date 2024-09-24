@@ -8,7 +8,6 @@ import { LabelRowEdit } from "./LabelRowEdit";
 import { atom } from "jotai";
 import { setAtomValue } from "tonwa-com";
 import { InlineEdit } from "./InlineEdit";
-import { BudsEditing } from "app/hooks/BudsEditing";
 import { EditBudOnPick } from "./EditBudOnPick";
 import { FormContext } from "app/coms";
 

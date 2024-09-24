@@ -100,6 +100,7 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
     if (store === undefined) {
         return view();
     }
+    const { caption } = bud;
     const { bizAtomColl } = store;
     let pAtom = bizAtomColl[value];
     let bizAtom: BizAtom = pAtom?.atom;
@@ -109,24 +110,30 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
         if (noLabel === true) {
             return <span title={title}>{ex}</span>;
         }
-        let label: any;
-        const { caption } = bud;
-        label = caption;
-        return <LabelBox title={title} label={label}>
+        return <LabelBox title={title} label={caption}>
             {ex}
         </LabelBox>;
     }
-    const { bizForkColl: bizSpecColl } = store;
-    let specValue = bizSpecColl[value];
+    const { bizForkColl } = store;
+    let specValue = bizForkColl[value];
     if (specValue !== undefined) {
-        return <div>spec: {specValue.atom.id}</div>
+        const { atom } = specValue;
+        let vContent: any;
+        if (atom === undefined) {
+            vContent = <ViewSpecId id={value} />;
+        }
+        else {
+            vContent = <ViewSpecId id={atom.id} />;
+        }
+        return <LabelBox label={caption}>
+            {vContent}
+        </LabelBox>
     }
     else {
         const { entityID } = bud.budDataType as BudID;
         if (entityID === undefined) {
             return view();
         }
-        const { caption } = bud;
         if (entityID.bizPhraseType === BizPhraseType.fork) {
             return <LabelBox label={caption}>
                 <ViewSpecId id={value} />
