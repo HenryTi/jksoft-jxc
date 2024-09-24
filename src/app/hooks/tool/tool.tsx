@@ -75,6 +75,8 @@ export function ViewAtomTitles({ id, noLabel, store }: { id: number; noLabel?: b
         let bizFork = bizForkColl[id];
         if (bizFork === undefined) return null;
         entityID = bizFork.entityID;
+        const { atom } = bizFork;
+        if (atom === undefined) return null;
         budValueColl = budsColl[bizFork.atom.id];
     }
     else {

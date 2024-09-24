@@ -14,6 +14,7 @@ export interface OptionsUseBizAtom {
     exLabel?: string;
     entityAtom?: EntityAtom;
     header?: string;
+    readOnly?: boolean;
 }
 
 export interface UseBizAtomReturn {

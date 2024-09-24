@@ -22,6 +22,7 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
     const { name, baseBud, readOnly } = row;
     let defaultValue = formContext.getValue(name);
     const [forkObj, setForkObj] = useState(defaultValue);
+    if (defaultValue === undefined) return null;
     let cnInput = 'form-control ';
     if (readOnly !== true) {
         cnInput += ' cursor-pointer ';

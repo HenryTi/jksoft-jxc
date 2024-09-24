@@ -100,7 +100,7 @@ function getIdArr(obj: any) {
         let { base } = obj;
         if (base === 0) break;
         obj = cache.get(base);
-        if (obj === undefined) debugger;
+        if (obj === undefined) break; // continue;// debugger;
         arr.unshift(obj);
     }
     return arr;

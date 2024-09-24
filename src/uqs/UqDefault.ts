@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Sep 23 2024 21:57:58 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Tue Sep 24 2024 14:39:27 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1335,6 +1335,23 @@ export interface ResultGetIDList {
 	specs: ReturnGetIDListSpecs[];
 }
 
+export interface ParamGetIDListCount {
+	phrase: number;
+}
+export interface ReturnGetIDListCountRet {
+	count: number;
+}
+export interface ResultGetIDListCount {
+	ret: ReturnGetIDListCountRet[];
+}
+
+export interface ParamSetIDBase {
+	id: number;
+	base: number;
+}
+export interface ResultSetIDBase {
+}
+
 export interface Atom extends ID {
 	base: number;
 	no?: string;
@@ -1712,6 +1729,8 @@ export interface UqExt extends Uq {
 	Bud: UqID<any>;
 	History: UqID<any>;
 	GetIDList: UqQuery<ParamGetIDList, ResultGetIDList>;
+	GetIDListCount: UqQuery<ParamGetIDListCount, ResultGetIDListCount>;
+	SetIDBase: UqAction<ParamSetIDBase, ResultSetIDBase>;
 	Atom: UqID<any>;
 	Spec: UqID<any>;
 	Duo: UqID<any>;
@@ -5465,6 +5484,47 @@ export const uqSchema={
                 ]
             }
         ]
+    },
+    "getidlistcount": {
+        "name": "GetIDListCount",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "phrase",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "count",
+                        "type": "int"
+                    }
+                ]
+            }
+        ]
+    },
+    "setidbase": {
+        "name": "SetIDBase",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [] as any
     },
     "atom": {
         "name": "Atom",

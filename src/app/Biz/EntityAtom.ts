@@ -29,6 +29,23 @@ export abstract class EntityID extends Entity {
         return this.superClass?.getFork();
     }
 
+    getAllLeafs() {
+        let leafs: EntityID[] = [];
+        this.getSubLeafs(this, leafs);
+        return leafs;
+    }
+
+    private getSubLeafs(entity: EntityAtom, leafs: EntityID[]) {
+        for (let sub of this.subClasses) {
+            if (sub.subClasses.length === 0) {
+                leafs.push(sub);
+            }
+            else {
+                sub.getSubLeafs(sub, leafs);
+            }
+        }
+    }
+
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;

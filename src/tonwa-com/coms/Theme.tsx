@@ -1,5 +1,6 @@
 const labelCss = {
-    color: ' text-body-tertiary ',
+    // color: ' text-body-tertiary ',
+    color: ' text-label ',
 }
 
 export interface Theme {
@@ -54,7 +55,7 @@ const labelBoxCssH: LabelBoxCss = {
     cnColLabel: ' col-4 ',
     cnColContent: ' col-8 ps-1 py-1 ',
     cnGX: ' gx-0 ',
-    cnLabelContainer: ` col-4 text-body-secondary text-end d-flex align-items-center flex-row justify-content-end `, //  small
+    cnLabelContainer: ` col-4 ${labelCss.color} text-end d-flex align-items-center flex-row justify-content-end `, //  small
     cnReadonly: ' d-flex align-items-center border-bottom border-secondary-subtle tonwa-bg-gray-1 pt-1 pb-2 px-2 text-nowrap text-truncate ',
     cnLabel: ' text-nowrap text-truncate ',
 }

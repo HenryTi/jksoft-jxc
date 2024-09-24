@@ -40,7 +40,7 @@ export function PageForkEdit({ store, value }: { store: ForkStore; value: any; }
 
     return <Page header={caption} right={vRight}>
         {vTop}
-        <ViewIDBuds entity={entity} value={value} />
+        <ViewIDBuds entity={entity} value={value} readOnly={undefined} />
     </Page>;
 
     function PageEdit() {
@@ -76,7 +76,7 @@ export function PageForkEdit({ store, value }: { store: ForkStore; value: any; }
         </div>;
         return <Page header={caption + ' - 详情'}>
             {vFieldRows}
-            <ViewIDEdit entity={entity} value={value} />
+            <ViewIDEdit entity={entity} value={value} readOnly={undefined} />
         </Page>;
     }
 }

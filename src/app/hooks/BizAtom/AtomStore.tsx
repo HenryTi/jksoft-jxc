@@ -117,6 +117,15 @@ export class AtomStore extends EntityStore<EntityAtom> {
                 return ret;
         }
     }
+
+    async directListCount(): Promise<number> {
+        let ret = await this.entity.uq.GetIDListCount.query({ phrase: this.entity.id });
+        return ret.ret[0].count;
+    }
+
+    async setIDBase(id: number, base: number) {
+        await this.entity.uq.SetIDBase.submit({ id, base });
+    }
 }
 
 export function useAtomStore() {

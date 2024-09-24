@@ -1,14 +1,15 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { PageQueryMore } from '../../coms';
-import { FA, List, SearchBox } from 'tonwa-com';
-import { EntityID } from 'app/Biz';
-import { Page } from 'tonwa-app';
+import { FA, List, SearchBox, useEffectOnce } from 'tonwa-com';
+import { EntityAtom, EntityID } from 'app/Biz';
+import { Page, useModal } from 'tonwa-app';
 import { OptionsUseBizAtom, useBizAtom } from './useBizAtom';
-import { pathAtom, useAtomStore } from './AtomStore';
+import { AtomStore, pathAtom, useAtomStore } from './AtomStore';
 import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtomBold } from '../View';
 import { RowCols } from '../tool';
 import { useBizAtomView } from './useBizAtomView';
 import { useState } from 'react';
+import { ButtonAtomBase } from './atomBase';
 
 interface OptionsList {
     ViewItemAtom: (props: { value: any; }) => JSX.Element;
@@ -20,9 +21,6 @@ interface OptionsList {
 export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     const { top, header, pathAtomNew, pathAtomView } = options;
     const store = useAtomStore();
-    // const useBizAtomReturn = useBizAtom(options);
-    // const { entity, searchAtoms } = useBizAtomReturn;
-    // const { subClasses: children } = entity;
     const { entity } = store;
     const { subClasses } = entity;
     let entityAtom = entity;
@@ -68,7 +66,11 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
 
     function PageTypes() {
         let caption = entityAtom.caption;
-        const { subClasses: children } = entityAtom;
+        const { subClasses: children, superClass } = entityAtom;
+        let right: any;
+        if (superClass === undefined) {
+            right = <ButtonAtomBase entityAtom={entityAtom} store={store} />
+        }
         function ViewItem({ value }: { value: EntityID; }) {
             const { id, caption } = value;
             return <Link to={`../${pathAtom.list(id)}`}>
@@ -80,7 +82,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
         function onItemClick(item: EntityID) {
             // modal.close(item);
         }
-        return <Page header={`${caption}列表 - 大类`}>
+        return <Page header={`${caption}列表 - 大类`} right={right}>
             <List items={children} ViewItem={ViewItem} onItemClick={onItemClick} />
         </Page>
     }
@@ -102,7 +104,6 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
                 <ViewAtomPrimesOfStore id={id} store={store} />
             </RowCols>
         </div>;
-        // <ViewPropArr propArr={propArr} />
     }
 
     function PageList() {

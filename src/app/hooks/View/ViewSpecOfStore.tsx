@@ -2,6 +2,7 @@ import { ViewBud, budContent } from "app/hooks";
 import { theme } from "tonwa-com";
 import { EntityAtom } from "app/Biz";
 import { EntityStore } from "app/tool";
+import { ViewSpecId } from "app/coms/ViewSpecId";
 
 export function ViewSpecAtomBold({ id, store }: { id: number; store: EntityStore; }) {
     const { bizAtomColl, bizForkColl: bizSpecColl } = store;
@@ -10,6 +11,10 @@ export function ViewSpecAtomBold({ id, store }: { id: number; store: EntityStore
         let bizSpec = bizSpecColl[id];
         if (bizSpec === undefined) return null;
         bizAtom = bizSpec.atom;
+        if (bizAtom === undefined) {
+            // return <span>ViewSpecAtomBold:{id}</span>;
+            return <ViewSpecId id={id} />;
+        }
     }
     const { no, ex } = bizAtom;
     return <><b>{ex}</b> <span className="mx-3">{no}</span></>;

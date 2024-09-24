@@ -20,7 +20,7 @@ export function useBizAtomView(options: OptionsUseBizAtom & { id?: number; botto
 const cnColumns2 = 'gx-0 row row-cols-1 row-cols-md-2 row-cols-lg-3';
 
 function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { bottom?: any; }) {
-    const { NOLabel, exLabel, id, bottom } = options;
+    const { NOLabel, exLabel, id, bottom, readOnly } = options;
     const { getAtom, saveField, saveBudValue, entity: entityAtom } = useBizAtom(options)
     const [state, setState] = useState<AtomIDValue>(undefined);
     useEffectOnce(() => {
@@ -60,7 +60,7 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
     function View() {
         return <>
             {vFieldRows}
-            <ViewIDBuds entity={entityAtom} value={state} />
+            <ViewIDBuds entity={entityAtom} value={state} readOnly={readOnly} />
             {bottom}
         </>;
     }
@@ -79,12 +79,12 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
     function PageEdit() {
         return <Page header={caption + ' - 详情'}>
             {vFieldRows}
-            <ViewIDEdit entity={entityAtom} value={state} />
+            <ViewIDEdit entity={entityAtom} value={state} readOnly={readOnly} />
         </Page>;
     }
 }
 
-export function ViewIDEdit({ entity, value }: { entity: EntityID; value: AtomIDValue; }) {
+export function ViewIDEdit({ entity, value, readOnly }: { entity: EntityID; value: AtomIDValue; readOnly: boolean; }) {
     const modal = useModal();
     let { buds: atomProps, budGroups } = entity;
     const { id, buds } = value;
@@ -106,6 +106,7 @@ export function ViewIDEdit({ entity, value }: { entity: EntityID; value: AtomIDV
                     flag={flag}
                     labelSize={2}
                     budEditing={budEditing} value={prop as any}
+                    readOnly={readOnly}
                 />
                 <Sep />
             </div>;
@@ -141,10 +142,10 @@ export function ViewIDEdit({ entity, value }: { entity: EntityID; value: AtomIDV
     </Tabs>;
 }
 
-export function ViewIDBuds({ entity, value }: { entity: EntityID; value: AtomIDValue; }) {
+export function ViewIDBuds({ entity, value, readOnly }: { entity: EntityID; value: AtomIDValue; readOnly: boolean; }) {
     let { fork } = entity;
     if (fork !== undefined) {
         return <ViewForkListAutoLoad fork={fork} value={value} />;
     }
-    return <ViewIDEdit entity={entity} value={value} />;
+    return <ViewIDEdit entity={entity} value={value} readOnly={readOnly} />;
 }
