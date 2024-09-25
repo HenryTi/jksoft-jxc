@@ -3,9 +3,9 @@ import { BizBud } from "./BizBud";
 import { BudGroup, Entity } from "./Entity";
 
 export abstract class EntityID extends Entity {
+    private _fork: EntityFork;
     readonly subClasses: EntityID[] = [];
     superClass: EntityID;
-    fork: EntityFork;
     titleBuds: BizBud[];
     primeBuds: BizBud[];
     uniques: string[];
@@ -20,13 +20,13 @@ export abstract class EntityID extends Entity {
         return us;
     }
 
-    setFork(fork: EntityFork) {
-        this.fork = fork;
+    get fork(): EntityFork {
+        if (this._fork !== undefined) return this._fork;
+        return this.superClass?.fork;
     }
 
-    getFork(): EntityFork {
-        if (this.fork !== undefined) return this.fork;
-        return this.superClass?.getFork();
+    set fork(fork: EntityFork) {
+        this._fork = fork;
     }
 
     getAllLeafs() {
@@ -255,7 +255,7 @@ export class EntityFork extends EntityID {
         super.scan();
         if (this.base !== undefined) {
             this.base = this.biz.entityFromId(this.base as unknown as number);
-            this.base.setFork(this);
+            this.base.fork = this;
         }
     }
 
