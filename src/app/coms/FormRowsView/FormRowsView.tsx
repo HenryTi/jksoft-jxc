@@ -8,7 +8,7 @@ import {
 } from "react-hook-form";
 import { BizPhraseType } from "uqs/UqDefault";
 import { contentFromDays, EntityStore } from "app/tool";
-import { ViewFormFork } from "./ViewFormFork";
+import { ViewFormForkObj } from "./ViewFormForkObj";
 import { ViewFormAtom } from "./ViewFormAtom";
 import { ViewFormAtomFork } from "./ViewFormAtomFork";
 
@@ -345,7 +345,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
         function onChange(target: { name: string; type: 'text'; value: string | object; }) {
             options?.onChange?.({ target });
         }
-        return <ViewFormFork row={row as FormFork} label={label} error={error}
+        return <ViewFormForkObj row={row as FormFork} label={label} error={error}
             inputProps={register(name, options)}
             setValue={setValue}
             clearErrors={clearErrors}

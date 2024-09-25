@@ -8,7 +8,7 @@ import { FA, theme } from "tonwa-com";
 import { budContent, FormBudsEditing, ValuesBudsEditing } from "app/hooks";
 import { useRef, useState } from "react";
 
-export function ViewFormFork({ row, label, error, inputProps, formContext, setValue, onChange }: {
+export function ViewFormForkObj({ row, label, error, inputProps, formContext, setValue, onChange }: {
     row: FormFork;
     label: string | JSX.Element;
     setValue: UseFormSetValue<any>;
@@ -59,7 +59,8 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
             // baseBud === null
             fork = formContext.getEntity(forkObj.$) as EntityFork;
         }
-        if (fork === undefined) return null;
+        // if (fork === undefined) return null;
+        // if (fork === undefined) readOnly = true;
         const { labelColor } = theme;
         function viewBuds(buds: BizBud[]) {
             return buds.map(v => {
@@ -71,7 +72,7 @@ export function ViewFormFork({ row, label, error, inputProps, formContext, setVa
             });
         }
         const { showKeys, showBuds } = fork;
-        vContent = <div className={cnInput} onClick={readOnly === true ? undefined : onEdit}>
+        vContent = <div className={cnInput} onClick={readOnly === true || fork === undefined ? undefined : onEdit}>
             {viewBuds(showKeys)}
             {viewBuds(showBuds)}
             &nbsp;
