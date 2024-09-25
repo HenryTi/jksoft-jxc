@@ -63,6 +63,11 @@ export class SheetMyDraftsStore extends SheetListStore {
         this.modal.close();
     }
 
+    async deleteAllMyDrafts(): Promise<void> {
+        await this.uq.DeleteMyDrafts.submit({ entitySheet: this.entity.id });
+        setAtomValue(this.atomMyDrafts, []);
+    }
+
     async onSheetAdded(store: SheetStore/*sheetId: number, no: string*/): Promise<void> {
         const { mainStore } = store;
         const { valRow, no } = mainStore;

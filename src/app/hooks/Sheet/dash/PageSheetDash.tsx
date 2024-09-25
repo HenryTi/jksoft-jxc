@@ -23,7 +23,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         (async () => {
             Promise.all([
                 biz.loadUserDefaults(),
-                myDraftsStore.loadMyDrafts()
+                myDraftsStore.loadMyDrafts(),
             ]);
         })();
     });
@@ -36,7 +36,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     async function onRemoveDraft() {
         if (await modal.open(<PageConfirm header="单据草稿" message="真的要删除全部单据草稿吗？" yes="删除" no="不删除" />) !== true) return;
         setVisible(false);
-        await uq.DeleteMyDrafts.submit({ entitySheet: entitySheet.id });
+        await myDraftsStore.deleteAllMyDrafts();
         await wait(10);
         setVisible(true);
     }
@@ -110,9 +110,12 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
             <div className="pb-1 flex-grow-1">
                 草稿 <small className="text-secondary ms-3">(最多10份)</small>
             </div>
-            <button className="btn btn-sm btn-link" onClick={onRemoveDraft}>
-                全部清除
-            </button>
+            {
+                myDrafts !== undefined && myDrafts.length > 0 &&
+                <button className="btn btn-sm btn-link" onClick={onRemoveDraft}>
+                    清除
+                </button>
+            }
         </div>
         <List
             ViewItem={ViewSheetItem}

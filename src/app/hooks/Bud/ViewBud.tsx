@@ -97,53 +97,60 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
                 return <ViewSpecNoAtom id={value} uiType={uiType} noLabel={noLabel} />;
         }
     }
-    if (store === undefined) {
-        return view();
-    }
     const { caption } = bud;
-    const { bizAtomColl } = store;
-    let pAtom = bizAtomColl[value];
-    let bizAtom: BizAtom = pAtom?.atom;
-    if (bizAtom !== undefined) {
-        let { no, ex } = bizAtom
-        let title = `${ex} ${no}`;
-        if (noLabel === true) {
-            return <span title={title}>{ex}</span>;
-        }
-        return <LabelBox title={title} label={caption}>
-            {ex}
-        </LabelBox>;
-    }
-    const { bizForkColl } = store;
-    let specValue = bizForkColl[value];
-    if (specValue !== undefined) {
-        const { atom } = specValue;
-        let vContent: any;
-        if (atom === undefined) {
-            vContent = <ViewSpecId id={value} />;
-        }
-        else {
-            vContent = <ViewSpecId id={atom.id} />;
-        }
-        return <LabelBox label={caption}>
-            {vContent}
-        </LabelBox>
+    let vContent: any, title: string;
+    if (store === undefined) {
+        vContent = view();
     }
     else {
-        const { entityID } = bud.budDataType as BudID;
-        if (entityID === undefined) {
-            return view();
-        }
-        if (entityID.bizPhraseType === BizPhraseType.fork) {
-            return <LabelBox label={caption}>
-                <ViewSpecId id={value} />
-            </LabelBox>
+        const { bizAtomColl } = store;
+        let pAtom = bizAtomColl[value];
+        let bizAtom: BizAtom = pAtom?.atom;
+        if (bizAtom !== undefined) {
+            let { no, ex } = bizAtom
+            title = `${ex} ${no}`;
+            vContent = ex;
+            /*
+            if (noLabel === true) {
+                return <span title={title}>{ex}</span>;
+            }
+            return <LabelBox title={title} label={caption}>
+                {ex}
+            </LabelBox>;
+            */
         }
         else {
-            return <ViewSpecId id={value} />;
+            const { bizForkColl } = store;
+            let specValue = bizForkColl[value];
+            if (specValue !== undefined) {
+                const { atom } = specValue;
+                if (atom === undefined) {
+                    vContent = <ViewSpecId id={value} />;
+                }
+                else {
+                    vContent = <ViewSpecId id={atom.id} />;
+                }
+            }
+            else {
+                const { entityID } = bud.budDataType as BudID;
+                if (entityID === undefined) {
+                    vContent = view();
+                }
+                else if (entityID.bizPhraseType === BizPhraseType.fork) {
+                    vContent = <ViewSpecId id={value} />
+                }
+                else {
+                    vContent = <ViewSpecId id={value} />;
+                }
+            }
         }
     }
-    return view();
+    if (noLabel === true) {
+        return <span title={title}>{vContent}</span>;
+    }
+    return <LabelBox title={title} label={caption}>
+        {vContent}
+    </LabelBox>;
 }
 
 function radio(bud: BizBud, value: any) {

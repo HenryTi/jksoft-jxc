@@ -23,31 +23,29 @@ export function RadioAsync(props: Props) {
     let spinner: any;
     if (submiting === true) {
         disabled = true;
-        spinner = <div className="position-absolute d-flex align-items-center" style={{ left: 0, top: 0, right: 0, bottom: 0 }}>
+        spinner = <div className="position-absolute d-flex align-items-center" style={{ left: '1em', top: 0, right: 0, bottom: 0 }}>
             <SpinnerSmall />
         </div>;
     }
-    return <>
-        {spinner}
-        <ViewRadios name={name}
-            items={items}
-            onCheckChanged={onValueChanged}
-            disabled={disabled}
-            classNameRadio={classNameRadio} />
-    </>;
+    return <ViewRadios name={name}
+        items={items}
+        onCheckChanged={onValueChanged}
+        disabled={disabled}
+        classNameRadio={classNameRadio}
+        spinner={spinner} />;
 }
 
-function ViewRadios(props: Props & { disabled: boolean; }) {
-    let { name, items, onCheckChanged, disabled, classNameRadio } = props;
-    let cn = (classNameRadio ?? 'me-4') + ' ';
-    // if (disabled === true) cn += ' text-light  ';
+function ViewRadios(props: Props & { disabled: boolean; spinner: any }) {
+    let { name, items, onCheckChanged, disabled, classNameRadio, spinner } = props;
+    let cn = (classNameRadio ?? ' me-4 ') + ' ';
     return <>
         {items.map((v, index) => {
             let [item, caption, value, defaultCheck] = v;
             async function onChange() {
                 await onCheckChanged(item);
             }
-            return <label key={index} className={cn}>
+            return <label key={index} className={cn + ' position-relative '}>
+                {spinner}
                 <input className="form-check-input"
                     onChange={onChange}
                     disabled={disabled}
