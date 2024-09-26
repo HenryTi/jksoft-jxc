@@ -11,12 +11,15 @@ import { PAV } from "../binEdit/ViewDiv/tool";
 import { BizBud } from "app/Biz";
 import { useReactToPrint } from "react-to-print";
 import { download } from "app/tool";
+import { useSiteRole } from "app/views/Site/useSiteRole";
 
 export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean; }) {
     const { uq, mainStore, binStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
     const modal = useModal();
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(atomSubmitState);
+    let useSiteRoleReturn = useSiteRole();
+    let { isOwner, isAdmin } = useSiteRoleReturn.userSite;
     const refPrint = useRef(null);
     const handlePrint = useReactToPrint({
         content: () => refPrint.current,
@@ -35,9 +38,12 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             return;
         }
         setEditable(false);
-        let sheetId = mainStore.valRow.id;
         await binStore.deleteAllRemoved();
+        /*
+        let sheetId = mainStore.valRow.id;
         let { checkPend, checkBin } = await uq.SubmitSheet.submitReturns({ id: sheetId });
+        */
+        let { checkPend, checkBin } = await store.submit();
         if (checkPend.length + checkBin.length > 0) {
             let error: string = '';
             if (checkPend.length > 0) {
@@ -116,7 +122,39 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     else mainDetailEdit();
     let { header, top, right } = headerSheet({ store, toolGroups, headerGroup });
     if (readonly === true) {
-        let toolGroups = [[], reaction, null, [btnDownload, btnPrint]];
+        async function onSubmitDebug() {
+            let { checkPend, checkBin, logs } = await store.submitDebug();
+            let error: string = '';
+            if (checkPend.length + checkBin.length > 0) {
+                if (checkPend.length > 0) {
+                    error += `checkPend: ${JSON.stringify(checkPend)}\n`;
+                }
+                if (checkBin.length > 0) {
+                    error += `checkBin: ${JSON.stringify(checkBin)}\n`;
+                }
+                // alert(error);
+                // store.setSubmitError(checkPend, checkBin);
+                // return;
+            }
+            modal.open(<Page header="调试结果">
+                {error.length > 0 && <div className="m-3">
+                    <div>错误：</div>
+                    <div>{error}</div>
+                </div>}
+                <div className="m-3">
+                    {logs.map(v => {
+                        return <div key={v.id}>
+                            <div>{v.id}</div>
+                            <pre>{JSON.stringify(v.value, undefined, 4)}</pre>
+                        </div>;
+                    })}
+                </div>
+            </Page>)
+        }
+        let btnSubmitDebug = buttonDefs.submitDebug(onSubmitDebug);
+        let leftGroup: any[] = [];
+        if (isAdmin === true) leftGroup.push(btnSubmitDebug);
+        let toolGroups = [leftGroup, reaction, null, [btnDownload, btnPrint]];
         top = <Toolbar groups={toolGroups} />;
     }
     return <Page header={header} back={null}

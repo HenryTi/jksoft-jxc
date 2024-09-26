@@ -15,9 +15,11 @@ interface ButtonDefs {
     discard: ItemDef<any>;
     exit: ItemDef<any>;
     download: ItemDef<any>;
+    submitDebug: ItemDef<any>;
 }
 export const buttonDefs: ButtonDefs = {
     submit: toolButtonDef({ caption: '提交', /*icon: 'send-o', */className: btn + ' btn-success' }),
+    submitDebug: toolButtonDef({ caption: '调试提交', /*icon: 'send-o', */className: btn + ' btn-success' }),
     batchSelect: toolButtonDef({ caption: '批选', /*icon: 'print', */className: btn + ' btn-primary' }),
     print: toolButtonDef({ caption: '打印', /*icon: 'print'*/ }),
     addDetail: toolButtonDef({ caption: '明细', icon: 'plus', className: btn + ' btn-primary' }),

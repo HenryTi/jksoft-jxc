@@ -341,6 +341,20 @@ export class SheetStore extends EntityStore<EntitySheet> {
         }
         setAtomValue(this.atomError, error);
     }
+
+    async submit() {
+        // let { checkPend, checkBin } = 
+        let sheetId = this.mainStore.valRow.id;
+        let ret = await this.uq.SubmitSheet.submitReturns({ id: sheetId });
+        return ret;
+    }
+
+    async submitDebug() {
+        // let { checkPend, checkBin } = 
+        let sheetId = this.mainStore.valRow.id;
+        let ret = await this.uq.SubmitSheetDebug.submitReturns({ id: sheetId });
+        return ret;
+    }
 }
 
 class UserProxyHander implements ProxyHandler<any> {

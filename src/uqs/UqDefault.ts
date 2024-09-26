@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Sep 24 2024 14:39:27 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Wed Sep 25 2024 23:28:44 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -345,6 +345,27 @@ export interface ReturnSubmitSheetCheckBin {
 export interface ResultSubmitSheet {
 	checkPend: ReturnSubmitSheetCheckPend[];
 	checkBin: ReturnSubmitSheetCheckBin[];
+}
+
+export interface ParamSubmitSheetDebug {
+	id: number;
+}
+export interface ReturnSubmitSheetDebugLogs {
+	id: number;
+	value: any;
+}
+export interface ReturnSubmitSheetDebugCheckPend {
+	pend: number;
+	overValue: number;
+}
+export interface ReturnSubmitSheetDebugCheckBin {
+	bin: number;
+	message: string;
+}
+export interface ResultSubmitSheetDebug {
+	logs: ReturnSubmitSheetDebugLogs[];
+	checkPend: ReturnSubmitSheetDebugCheckPend[];
+	checkBin: ReturnSubmitSheetDebugCheckBin[];
 }
 
 export interface ParamDoQuery {
@@ -1676,6 +1697,7 @@ export interface UqExt extends Uq {
 	SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
 	DeleteBin: UqAction<ParamDeleteBin, ResultDeleteBin>;
 	SubmitSheet: UqAction<ParamSubmitSheet, ResultSubmitSheet>;
+	SubmitSheetDebug: UqAction<ParamSubmitSheetDebug, ResultSubmitSheetDebug>;
 	DoQuery: UqAction<ParamDoQuery, ResultDoQuery>;
 	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
 	GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
@@ -2569,6 +2591,63 @@ export const uqSchema={
         ],
         "jsoned": true,
         "returns": [
+            {
+                "name": "checkPend",
+                "fields": [
+                    {
+                        "name": "pend",
+                        "type": "id"
+                    },
+                    {
+                        "name": "overValue",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            },
+            {
+                "name": "checkBin",
+                "fields": [
+                    {
+                        "name": "bin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "message",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            }
+        ]
+    },
+    "submitsheetdebug": {
+        "name": "SubmitSheetDebug",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [
+            {
+                "name": "logs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ]
+            },
             {
                 "name": "checkPend",
                 "fields": [
