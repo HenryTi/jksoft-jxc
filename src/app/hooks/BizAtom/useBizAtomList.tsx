@@ -25,7 +25,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     const { subClasses } = entity;
     let entityAtom = entity;
     let [searchParam, setSearchParam] = useState({
-        atom: entityAtom.id,
+        phrase: entityAtom.id,
         searchKey: undefined as string,
     });
     switch (subClasses.length) {

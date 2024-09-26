@@ -700,6 +700,7 @@ export class EntityBin extends Entity {
                     else iType = (binDiv.hasIBase() === true) ? IXType.sub : IXType.me;
                     break;
                 case '.i':
+                case 'ibase':
                     bizBud = this.iBase;
                     if (iType !== undefined) iType = IXType.both;
                     else iType = IXType.base;
@@ -710,6 +711,7 @@ export class EntityBin extends Entity {
                     else xType = (binDiv.hasXBase() === true) ? IXType.sub : IXType.me;
                     break;
                 case '.x':
+                case 'xbase':
                     bizBud = this.xBase;
                     if (xType !== undefined) xType = IXType.both;
                     else xType = IXType.base;
