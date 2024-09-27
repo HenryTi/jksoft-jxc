@@ -144,7 +144,6 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
                 <div className="m-3">
                     {logs.map(v => {
                         return <div key={v.id}>
-                            <div>{v.id}</div>
                             <pre>{JSON.stringify(v.value, undefined, 4)}</pre>
                         </div>;
                     })}
