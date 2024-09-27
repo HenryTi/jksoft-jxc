@@ -28,7 +28,6 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
         // phrase: entityAtom.id,
         searchKey: undefined as string,
     });
-    console.log(entity, searchParam);
     switch (subClasses.length) {
         case 0: break;
         case 1: entityAtom = subClasses[0] as any; break;
