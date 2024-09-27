@@ -25,9 +25,10 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     const { subClasses } = entity;
     let entityAtom = entity;
     let [searchParam, setSearchParam] = useState({
-        phrase: entityAtom.id,
+        // phrase: entityAtom.id,
         searchKey: undefined as string,
     });
+    console.log(entity, searchParam);
     switch (subClasses.length) {
         case 0: break;
         case 1: entityAtom = subClasses[0] as any; break;
@@ -59,7 +60,8 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
 
     async function onSearch(key: string) {
         setSearchParam({
-            ...searchParam,
+            // ...searchParam,
+            // phrase: entityAtom.id,
             searchKey: key,
         });
     }
@@ -109,7 +111,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     function PageList() {
         return <PageQueryMore header={header ?? caption} right={right}
             query={store.searchItems}
-            param={searchParam}
+            param={{ phrase: entityAtom.id, ...searchParam }}
             sortField={sortField}
             ViewItem={ViewItem}
             none={none}
