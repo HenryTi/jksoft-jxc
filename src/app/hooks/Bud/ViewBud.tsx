@@ -110,25 +110,30 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
             let { no, ex } = bizAtom
             title = `${ex} ${no}`;
             vContent = ex;
-            /*
-            if (noLabel === true) {
-                return <span title={title}>{ex}</span>;
-            }
-            return <LabelBox title={title} label={caption}>
-                {ex}
-            </LabelBox>;
-            */
         }
         else {
-            const { bizForkColl } = store;
+            const { bizForkColl, budsColl } = store;
             let specValue = bizForkColl[value];
             if (specValue !== undefined) {
-                const { atom } = specValue;
+                const { atom, buds } = specValue;
                 if (atom === undefined) {
                     vContent = <ViewSpecId id={value} />;
                 }
                 else {
-                    vContent = <ViewSpecId id={atom.id} />;
+                    // vContent = <ViewSpecId id={atom.id} />;
+                    vContent = <ViewSpec />;
+                    function ViewSpec() {
+                        const { no, ex } = atom;
+                        let ret: string = '';
+                        for (let bud of buds) {
+                            let budValue = budsColl[value][bud.id];
+                            if (budValue !== undefined) {
+                                ret += budValue + '/';
+                            }
+                        }
+                        ret += ex ?? no;
+                        return <>{ret}</>;
+                    }
                 }
             }
             else {

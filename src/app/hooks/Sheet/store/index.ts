@@ -5,3 +5,4 @@ export * from './ValDiv';
 export * from './PickResult';
 export * from "./tool";
 export * from "./DashConsole";
+export * from "./upload";

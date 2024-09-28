@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Sep 25 2024 23:28:44 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sat Sep 28 2024 17:01:12 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -203,15 +203,34 @@ export interface ParamClearBook {
 export interface ResultClearBook {
 }
 
-export interface ParamAdminBook {
+export interface ParamGetAdminBook {
 	bud: number;
 }
-export interface ReturnAdminBook$page {
+export interface ReturnGetAdminBook$page {
 	i: number;
+	phrase: number;
 	value: number;
 }
-export interface ResultAdminBook {
-	$page: ReturnAdminBook$page[];
+export interface ReturnGetAdminBookProps {
+	id: number;
+	phrase: number;
+	value: any;
+}
+export interface ReturnGetAdminBookAtoms {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnGetAdminBookSpecs {
+	id: number;
+	atom: number;
+}
+export interface ResultGetAdminBook {
+	$page: ReturnGetAdminBook$page[];
+	props: ReturnGetAdminBookProps[];
+	atoms: ReturnGetAdminBookAtoms[];
+	specs: ReturnGetAdminBookSpecs[];
 }
 
 export interface ParamSaveAtom {
@@ -1685,7 +1704,7 @@ export interface UqExt extends Uq {
 	ClearCode: UqAction<ParamClearCode, ResultClearCode>;
 	ClearPend: UqAction<ParamClearPend, ResultClearPend>;
 	ClearBook: UqAction<ParamClearBook, ResultClearBook>;
-	AdminBook: UqQuery<ParamAdminBook, ResultAdminBook>;
+	GetAdminBook: UqQuery<ParamGetAdminBook, ResultGetAdminBook>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
 	SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
 	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
@@ -2198,8 +2217,8 @@ export const uqSchema={
         "jsoned": true,
         "returns": [] as any
     },
-    "adminbook": {
-        "name": "AdminBook",
+    "getadminbook": {
+        "name": "GetAdminBook",
         "type": "query",
         "private": false,
         "sys": true,
@@ -2218,6 +2237,10 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
                         "name": "value",
                         "type": "dec",
                         "scale": 6,
@@ -2225,6 +2248,59 @@ export const uqSchema={
                     }
                 ],
                 "order": "asc"
+            },
+            {
+                "name": "props",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "specs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "atom",
+                        "type": "id"
+                    }
+                ]
             }
         ]
     },

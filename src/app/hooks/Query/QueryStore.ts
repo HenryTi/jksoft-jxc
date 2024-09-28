@@ -6,7 +6,7 @@ export class QueryStore extends EntityStore<EntityQuery> {
     async query(param: any) {
         let retQuery = await this.uq.DoQuery.submitReturns({ query: this.entity.id, json: param, pageStart: undefined, pageSize: 100 });
         let { ret: retItems, props, specs, atoms } = retQuery;
-        this.cacheIdAndBuds(props, atoms, specs);
+        this.cacheIdAndBuds(props, atoms, specs as any);
         let pickedArr: Picked[] = [];
         let coll: { [id: number]: Picked } = {};
         for (let row of retItems) {

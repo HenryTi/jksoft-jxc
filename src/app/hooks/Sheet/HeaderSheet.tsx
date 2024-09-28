@@ -7,6 +7,7 @@ const btn = ' btn ';
 const btnSm = ' btn btn-sm ';
 interface ButtonDefs {
     submit: ItemDef<any>;
+    submitDebug: ItemDef<any>;
     batchSelect: ItemDef<any>;
     print: ItemDef<any>;
     addDetail: ItemDef<any>;    // 直接输入明细
@@ -15,7 +16,7 @@ interface ButtonDefs {
     discard: ItemDef<any>;
     exit: ItemDef<any>;
     download: ItemDef<any>;
-    submitDebug: ItemDef<any>;
+    upload: ItemDef<any>;
 }
 export const buttonDefs: ButtonDefs = {
     submit: toolButtonDef({ caption: '提交', /*icon: 'send-o', */className: btn + ' btn-success' }),
@@ -28,6 +29,7 @@ export const buttonDefs: ButtonDefs = {
     discard: toolButtonDef({ caption: '作废', /*icon: 'trash-o'*/ }),
     exit: toolIconDef({ caption: '退出', icon: 'times', className: ' px-2 ' }),
     download: toolButtonDef({ caption: '导出' }),
+    upload: toolButtonDef({ caption: '导入' }),
 }
 
 export function headerSheet({ store, toolGroups, headerGroup }: { store: SheetStore; toolGroups: (ToolItem[] | JSX.Element)[]; headerGroup?: ToolItem[]; }) {

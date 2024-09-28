@@ -1,5 +1,5 @@
 import { Page, PageConfirm, useModal } from "tonwa-app";
-import { SheetStore, SubmitState } from "../store";
+import { SheetStore, SubmitState, upload } from "../store";
 import { detailNew, ViewDiv, ViewMain } from "../binEdit";
 import { atom, useAtomValue } from "jotai";
 import React, { useEffect, useRef, useState } from "react";
@@ -79,10 +79,14 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     function onDownload() {
         download('sss', 'file', 'csv');
     }
+    function onUpload() {
+        upload();
+    }
 
     // let { id } = useAtomValue(mainStore._valRow);
     let btnPrint = buttonDefs.print(onPrint);
     let btnDownload = buttonDefs.download(onDownload);
+    let btnUpload = buttonDefs.upload(onUpload);
     let btnExit = buttonDefs.exit(onExit, false);
     let headerGroup = [btnExit];
     let toolGroups: (ToolItem[] | JSX.Element)[];
@@ -115,7 +119,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         let btnAddDetail = entityBin.pend === undefined ?
             buttonDefs.addDetail(onAddRow) : buttonDefs.addPend(onAddRow);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, false, editable === false);
-        toolGroups = [[btnAddDetail, btnPrint, btnSubmit], reaction, null, [btnDiscard]];
+        toolGroups = [[btnAddDetail, btnUpload, btnPrint, btnSubmit], reaction, null, [btnDiscard]];
     }
 
     if (binStore === undefined) mainOnlyEdit();
