@@ -35,7 +35,9 @@ export function ViewItemMain({ value, isMy, store }: { value: Sheet & Bin & { ro
             const { id } = v;
             const bin = store.budsColl[binId];
             if (bin === undefined) {
-                return <LabelBox key={id} label={v.caption} className="mb-1">-</LabelBox>;
+                return null;
+                // 没有内容，应该null
+                // return <LabelBox key={id} label={v.caption} className="mb-1">-</LabelBox>;
             }
             const value = bin[id];
             return <ViewBud key={id} bud={v} value={value} store={store} />;

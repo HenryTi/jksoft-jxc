@@ -10,6 +10,8 @@ export enum ViewBudUIType {
     inDiv = 1,
 }
 
+const cnViewBud = ' mb-2 ';
+
 export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; store?: EntityStore/* atomColl?: AtomColl;*/ }) {
     if (value === undefined) return null;
     if (value === null) return null;
@@ -46,9 +48,9 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
             return fork(bud, value, store);
     }
     if (noLabel === true) {
-        return <div className="col mb-1">{content}</div>;
+        return <div className="col mb-2">{content}</div>;
     }
-    return <LabelBox label={caption} className="mb-1">{content}</LabelBox>;
+    return <LabelBox label={caption} className={cnViewBud}>{content}</LabelBox>;
 }
 
 export function budContent(bud: BizBud, value: any, store: EntityStore) {
@@ -153,7 +155,7 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
     if (noLabel === true) {
         return <span title={title}>{vContent}</span>;
     }
-    return <LabelBox title={title} label={caption}>
+    return <LabelBox title={title} label={caption} className={cnViewBud}>
         {vContent}
     </LabelBox>;
 }
@@ -213,7 +215,7 @@ function bin(bud: BizBud, value: any, store: EntityStore) {
     let budVals = budsColl[value];
     function viewNoVals(bud: BizBud) {
         let { id, caption } = bud;
-        return <LabelBox key={id} label={caption} className="mb-1">
+        return <LabelBox key={id} label={caption} className={cnViewBud}>
             <div>{ }</div>
             ?{id}-{value}?
         </LabelBox>;
@@ -243,7 +245,7 @@ function fork(bud: BizBud, value: any, store: EntityStore) {
         entityFork = bud.biz.entityFromId($);
     }
     if (entityFork === undefined) {
-        return <LabelBox label={bud.caption} className="mb-1">{JSON.stringify(value)}</LabelBox>;
+        return <LabelBox label={bud.caption} className={cnViewBud}>{JSON.stringify(value)}</LabelBox>;
     }
     const { showKeys, showBuds } = entityFork;
     function viewBud(bud: BizBud) {

@@ -103,10 +103,21 @@ export function ViewSpecAtomTitles({ id, store }: { id: number; store: EntitySto
     const { budsColl, bizForkColl: bizSpecColl, biz } = store;
     const noLabel: boolean = undefined;
     let bizSpec = bizSpecColl[id];
-    if (bizSpec === undefined) return null;
-    const { id: atomId, base } = bizSpec.atom;
-    let bizAtom = biz.entityFromId<EntityAtom>(base);
-    if (bizAtom === undefined) return null;
+    let bizAtom: EntityAtom;
+    let atomId: number;
+    if (bizSpec === undefined) {
+        const atomRet = store.bizAtomColl[id];
+        if (atomRet === undefined) return null;
+        const { atom, entityID } = atomRet;
+        bizAtom = entityID;
+        atomId = id;
+    }
+    else {
+        const { id, base } = bizSpec.atom;
+        atomId = id;
+        bizAtom = biz.entityFromId<EntityAtom>(base);
+        if (bizAtom === undefined) return null;
+    }
     let { titleBuds } = bizAtom;
     if (titleBuds === undefined) {
         return null;

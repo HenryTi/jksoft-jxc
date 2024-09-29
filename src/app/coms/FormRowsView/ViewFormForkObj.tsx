@@ -4,9 +4,11 @@ import {
 } from "react-hook-form";
 import { Band, FormContext, FormFork } from "./FormRowsView";
 import { Page, useModal } from "tonwa-app";
-import { FA, theme } from "tonwa-com";
-import { budContent, FormBudsEditing, ValuesBudsEditing } from "app/hooks";
+import { FA, LabelRow, theme } from "tonwa-com";
+import { budContent, FormBudsEditing, LabelRowEdit, ValuesBudsEditing, ViewAtom, ViewSpecAtomBold, ViewSpecAtomTitles } from "app/hooks";
 import { useRef, useState } from "react";
+import { EntityStore } from "app/tool";
+import { LabelBox } from "app/hooks/tool";
 
 export function ViewFormForkObj({ row, label, error, inputProps, formContext, setValue, onChange }: {
     row: FormFork;
@@ -22,7 +24,7 @@ export function ViewFormForkObj({ row, label, error, inputProps, formContext, se
     const { name, baseBud, readOnly } = row;
     let defaultValue = formContext.getValue(name);
     const [forkObj, setForkObj] = useState(defaultValue);
-    if (defaultValue === undefined) return null;
+    // if (defaultValue === undefined) return null;
     let cnInput = 'form-control ';
     if (readOnly !== true) {
         cnInput += ' cursor-pointer ';
@@ -80,7 +82,7 @@ export function ViewFormForkObj({ row, label, error, inputProps, formContext, se
         </div>;
     }
     async function onEdit() {
-        let ret = await modal.open(<PageFork fork={fork} value={forkObj} baseId={baseId} />);
+        let ret = await modal.open(<PageFork fork={fork} value={forkObj} baseId={baseId} store={formContext.store} />);
         if (ret === undefined) return;
         if (setValue !== undefined) {
             setValue(name, JSON.stringify(ret));
@@ -94,7 +96,7 @@ export function ViewFormForkObj({ row, label, error, inputProps, formContext, se
     </Band>
 }
 
-function PageFork({ fork, value, baseId }: { fork: EntityFork; value: object; baseId: number; }) {
+function PageFork({ fork, value, baseId, store }: { fork: EntityFork; value: object; baseId: number; store: EntityStore; }) {
     const modal = useModal();
     const buds = [...fork.keys, ...fork.buds];
     const { current: budsEditing } = useRef(new ValuesBudsEditing(modal, fork.biz, buds));
@@ -106,6 +108,15 @@ function PageFork({ fork, value, baseId }: { fork: EntityFork; value: object; ba
         modal.close(ret);
     }
     return <Page header={fork.caption}>
-        <FormBudsEditing budsEditing={budsEditing} onSubmit={onSubmit} className="p-3" />
+        <div className="px-3 pt-3">
+            <Band>
+                <span></span>
+                <div>
+                    <ViewSpecAtomBold id={baseId} store={store} />
+                    <ViewSpecAtomTitles id={baseId} store={store} />
+                </div>
+            </Band>
+        </div>
+        <FormBudsEditing budsEditing={budsEditing} onSubmit={onSubmit} className="px-3 pb-3" />
     </Page>;
 }

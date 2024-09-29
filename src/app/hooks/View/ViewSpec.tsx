@@ -90,14 +90,17 @@ export function ViewBudSpec({ id, bud, noLabel }: { id: number; bud: BizBud; noL
         if (noLabel === true) {
             return <span title={title}>{ex}</span>;
         }
-        let label: any;
-        if (entity !== undefined) {
-            const { caption } = bud;
-            label = caption; // <small className="text-secondary me-2">{caption ?? name}</small>;
-        }
-        return <LabelBox title={title} label={label} /*colon={true}*/>
+        // let label: any;
+        // if (entity !== undefined) {
+        //    const { caption } = bud;
+        //    label = caption; // <small className="text-secondary me-2">{caption ?? name}</small>;
+        //}
+        return <>{ex}</>;
+        /*
+         <LabelBox title={title} label={label}>
             {ex}
         </LabelBox>;
+        */
     }
     return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={ViewBudUIType.inDiv} noLabel={noLabel} />
 }

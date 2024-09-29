@@ -9,7 +9,8 @@ import { useState } from "react";
 import { ViewNotifyCount } from "app/tool";
 import { centers } from "app/views/center";
 
-function PageSheetCenter() {
+function PageSheetCenter1() {
+    console.log('PageSheetCenter');
     const uqApp = useUqApp();
     const { biz } = uqApp;
     const sheetEntities = biz.sheets;
@@ -36,12 +37,13 @@ function PageSheetCenter() {
             </div>
         </Link>
     }
+    const cnList = ' row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6 ';
     return visible === false ?
         <PageSpinner />
         :
         <Page header={centers.sheet.caption}
         >
-            <List items={sheetEntities} ViewItem={ViewSheetType} />
+            <List items={sheetEntities} ViewItem={ViewSheetType} className={cnList} sep={null} />
         </Page>;
 }
 
@@ -60,7 +62,7 @@ export function pathSheet(phrase: number | string) {
 }
 
 export function routeSheetCenter() {
-    <Route path={centers.sheet.path} element={<PageSheetCenter />} />
+    // <Route path={centers.sheet.path} element={<PageSheetCenter />} />
     return <>
         <Route path={`${sheet}/:sheet/:id`} element={<RouteSheetEdit />} />
         <Route path={`${sheet}/:sheet`} element={<RouteSheetDash />} />

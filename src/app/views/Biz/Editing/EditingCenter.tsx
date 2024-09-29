@@ -20,7 +20,7 @@ function PageEditingCenter() {
         if (coreDetail !== undefined) {
             pendEntityId = coreDetail.pend?.id;
             if (pendEntityId !== undefined) {
-                vNotifyCount = <div className="position-absolute" style={{ right: "0.3rem", top: "-0.5rem" }}>
+                vNotifyCount = <div className="position-absolute" style={{ right: "-0.3rem", top: "-0.5rem" }}>
                     <div className="ms-3">
                         <ViewNotifyCount phrase={pendEntityId} />
                     </div>
@@ -30,21 +30,22 @@ function PageEditingCenter() {
         return <Link
             to={`/sheet/${to62(entityId)}`}
         >
-            <div className="px-1 py-2 align-items-center d-flex">
+            <div className="px-1 py-2 align-items-center d-flex border border-info rounded-3 my-2">
                 <div className="position-relative">
-                    <FA name="file-text" className="my-2 mx-4 text-primary" size="lg" />
+                    <FA name="file-text" className="my-2 mx-2 text-info" size="lg" />
                     {vNotifyCount}
                 </div>
                 <span className="text-body">{caption ?? name}</span>
             </div>
         </Link>
     }
+    const cnList = ' my-1 row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6 ';
     return visible === false ?
         <PageSpinner />
         :
         <Page header={centers.editing.caption}
         >
-            <List items={sheetEntities} ViewItem={ViewSheetType} />
+            <List items={sheetEntities} ViewItem={ViewSheetType} className={cnList} sep={null} />
         </Page>;
 }
 

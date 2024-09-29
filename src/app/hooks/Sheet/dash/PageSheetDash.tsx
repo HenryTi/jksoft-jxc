@@ -106,7 +106,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         </div>
         <ViewReaction atomContent={dashConsole.atomViewSubmited} className="ms-3 mt-3 me-auto" />
         <ViewUserDefaults entity={entitySheet} />
-        <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-1 mt-4 align-items-end">
+        <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-1 mt-2 align-items-end">
             <div className="pb-1 flex-grow-1">
                 草稿 <small className="text-secondary ms-3">(最多10份)</small>
             </div>
@@ -129,7 +129,7 @@ function ViewUserDefaults({ entity }: { entity: Entity; }) {
     let { biz, user } = entity;
     let { userDefaults } = biz;
     if (user === undefined || userDefaults === undefined) return null;
-    return <div className="container-fluid pt-3">
+    return <div className="container-fluid pt-2">
         <div className="row row-cols-6">
             {user.map(v => {
                 return <ViewBud key={v.id} bud={v} value={userDefaults[v.id]} />;
