@@ -66,6 +66,9 @@ function PageData({ bud, store }: { bud: BizBud; store: AdminStore; }) {
         </div>;
         function view() {
             let entity = biz.entityFromId(phrase);
+            if (entity === undefined) {
+                return null;
+            }
             switch (entity.bizPhraseType) {
                 default: return null;
                 case BizPhraseType.combo:
