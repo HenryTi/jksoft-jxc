@@ -178,6 +178,29 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
                 this.setBudObjectValue(field, result);
             }
         }
+        this.initEmptyForkBuds();
+    }
+
+    private initEmptyForkBuds() {
+        for (const bud of this.buds) {
+            const { budDataType } = bud;
+            if (budDataType.type !== EnumBudType.fork) continue;
+            let forkValue = this.getBudValue(bud);
+            if (forkValue === undefined) this.initEmptyForkBud(bud, budDataType as BudFork);
+        }
+    }
+
+    private initEmptyForkBud(bud: BizBud, budFork: BudFork) {
+        const { base } = budFork;
+        if (base === undefined) return;
+        let baseId = this.getBudValue(base);
+        if (baseId === undefined) return;
+        const atom = this.store.bizAtomColl[baseId];
+        if (atom === undefined) return;
+        let { fork } = atom.entityID;
+        if (fork === undefined) return;
+        let forkValue = { "$": fork.id };
+        this.setBudValue(bud, forkValue);
     }
 
     addNamedParams(namedResults: ValueSpace) {

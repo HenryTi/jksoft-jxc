@@ -28,7 +28,7 @@ export function PageQuery({ entity }: { entity: EntityQuery; }) {
     });
     async function onSubmitForm(data: any) {
         let ret = { ...data, ...paramsData };
-        await doQuery(modal, entity, ret);
+        await doQuery(paramBudsEditing, entity, ret);
         // modal.open(<PageFromQuery query={entity} params={ret} />);
     }
     return <Page header={caption ?? name}>

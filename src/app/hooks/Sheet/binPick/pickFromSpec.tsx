@@ -17,13 +17,7 @@ export interface PropsPickSpec {
     buttonCaption: string | JSX.Element;
     buttonClassName: string;
 };
-/*
-export function usePickFromSpec() {
-    const { uq } = useUqApp();
-    const modal = useModal();
-    return useCallback(pickFromSpec, []);
-}
-*/
+
 export async function pickFromSpec(editing: BudsEditing, binPick: PickSpec): Promise<PickResult> {
     const { modal, biz, uq } = editing;
     let { pickParams, from } = binPick;

@@ -5,13 +5,13 @@ import { PickResult, ValueSpace } from "app/hooks/Calc";
 import { BinBudsEditing } from "./BinEditing";
 
 export class PickPendStore {
-    readonly divStore: BinStore;
+    readonly binStore: BinStore;
     readonly pickPend: PickPend;
     readonly valueSpace: ValueSpace;
     readonly paramsEditing: BinBudsEditing;
 
     constructor(divStore: BinStore, pickPend: PickPend, valueSpace: ValueSpace) {
-        this.divStore = divStore;
+        this.binStore = divStore;
         this.pickPend = pickPend;
         this.valueSpace = valueSpace;
         this.paramsEditing = this.createParamsEditing();
@@ -20,7 +20,7 @@ export class PickPendStore {
 
     private createParamsEditing() {
         let { pickParams } = this.pickPend;
-        const { sheetStore, entity: entityBin } = this.divStore;
+        const { sheetStore, entity: entityBin } = this.binStore;
         const { pend: entityPend } = entityBin;
         let { params } = entityPend;
         let ret = new BinBudsEditing(sheetStore, entityBin, params);
@@ -35,7 +35,7 @@ export class PickPendStore {
 
     async searchPend() {
         let params: { [budId: number]: number | string } = {};
-        let { entity: { pend: entityPend } } = this.divStore;
+        let { entity: { pend: entityPend } } = this.binStore;
         const { pickParams } = this.pickPend;
         const { params: queryParams } = entityPend;
         for (let param of queryParams) {
@@ -76,6 +76,6 @@ export class PickPendStore {
             }
             params[id] = paramValue;
         }
-        await this.divStore.searchPend(params);
+        await this.binStore.searchPend(params);
     }
 }

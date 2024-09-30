@@ -1,4 +1,4 @@
-import { EntityAtom, EntityID, EntityPick } from "./EntityAtom";
+import { EntityAtom, EntityFork, EntityID, EntityPick } from "./EntityAtom";
 import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
@@ -83,8 +83,14 @@ export class BudArr extends BudDataString {
 export class BudFork extends BudDataString {
     readonly type = EnumBudType.fork;
     base: BizBud;
+    fork: EntityFork;
     override fromSchema(schema: any): void {
         this.base = schema.base;
+    }
+
+    setBase(base: BizBud) {
+        this.base = base;
+        this.fork = (base.budDataType as BudID).entityID.fork;
     }
 }
 export class BudInt extends BudDataNumber {

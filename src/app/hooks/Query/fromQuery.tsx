@@ -29,8 +29,7 @@ async function pickFromQueryBase(
     });
     if (retParam === undefined) return;
     retParam = filterUndefined(retParam);
-    const { modal } = editing;
-    let ret = await doQuery(modal, query, retParam, true, pickResultType);
+    let ret = await doQuery(editing, query, retParam, true, pickResultType);
     if (ret === undefined) return;
     function toRet(v: any) {
         let obj = {} as any;
@@ -70,7 +69,8 @@ export async function pickFromQuery(
     return await pickFromQueryBase(editing, binPick, lastPickResultType) as PickResult[];
 };
 
-export async function doQuery(modal: Modal, query: EntityQuery, params: any, isPick?: boolean, pickResultType?: RearPickResultType) {
+export async function doQuery(editing: BudsEditing, query: EntityQuery, params: any, isPick?: boolean, pickResultType?: RearPickResultType) {
+    const { modal } = editing;
     let queryStore = new QueryStore(modal, query);
     let queryResults = await queryStore.query(params);
     let pickedArr = queryResults as Picked[];
@@ -82,6 +82,11 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
         const header = caption ?? name;
         const { bizPhraseType } = idFrom;
         let [selectedItems, setSelectedItems] = useState<{ [id: number]: Picked; }>({});
+        function modalClose(results: any) {
+            // Object.assign(editing.store.bizAtomColl, queryStore.bizAtomColl);
+            editing.store.mergeStoreAtomColl(queryStore);
+            modal.close(results);
+        }
         function onPick() {
             let values = Object.values(selectedItems);
             values.sort((a, b) => {
@@ -89,7 +94,7 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
                 if (a$Id === b$Id) return 0;
                 return a$Id < b$Id ? -1 : 1;
             });
-            modal.close(values);
+            modalClose(values);
         }
         function onMultipleClick(item: Picked, isSelected: boolean) {
             const { $id } = item;  // $id 是序号
@@ -102,7 +107,7 @@ export async function doQuery(modal: Modal, query: EntityQuery, params: any, isP
             setSelectedItems({ ...selectedItems });
         }
         function onSingleClick(item: Picked) {
-            modal.close(item);
+            modalClose(item);
         }
         function itemBan(item: Picked) {
             const { ban } = item;

@@ -39,7 +39,7 @@ function PageEditingCenter() {
             </div>
         </Link>
     }
-    const cnList = ' my-1 row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6 ';
+    const cnList = ' my-1 row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 ';
     return visible === false ?
         <PageSpinner />
         :

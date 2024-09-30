@@ -8,7 +8,6 @@ import { FA, LabelRow, theme } from "tonwa-com";
 import { budContent, FormBudsEditing, LabelRowEdit, ValuesBudsEditing, ViewAtom, ViewSpecAtomBold, ViewSpecAtomTitles } from "app/hooks";
 import { useRef, useState } from "react";
 import { EntityStore } from "app/tool";
-import { LabelBox } from "app/hooks/tool";
 
 export function ViewFormForkObj({ row, label, error, inputProps, formContext, setValue, onChange }: {
     row: FormFork;
@@ -41,14 +40,19 @@ export function ViewFormForkObj({ row, label, error, inputProps, formContext, se
     }
     let fork: EntityFork;
     let baseId: number;
-    if (baseBud) {
+    let vContent: any;
+    if (baseBud !== undefined && baseBud !== null) {
         baseId = formContext.getBudValue(baseBud);
         let entityAtom = formContext.getEntityFromId(baseId);
         if (entityAtom === undefined) return null;
         fork = (entityAtom as EntityAtom).fork;
         if (fork === undefined) return null;
     }
-    let vContent: any;
+    else {
+        if (forkObj === undefined) return null;
+        fork = formContext.getEntity(forkObj.$) as EntityFork;
+    }
+
     if (forkObj === undefined) {
         let { placeHolder } = row;
         if (!placeHolder) placeHolder = '点击输入';
@@ -57,12 +61,6 @@ export function ViewFormForkObj({ row, label, error, inputProps, formContext, se
         </div>;
     }
     else {
-        if (baseBud === null) {
-            // baseBud === null
-            fork = formContext.getEntity(forkObj.$) as EntityFork;
-        }
-        // if (fork === undefined) return null;
-        // if (fork === undefined) readOnly = true;
         const { labelColor } = theme;
         function viewBuds(buds: BizBud[]) {
             return buds.map(v => {

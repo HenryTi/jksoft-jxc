@@ -57,7 +57,7 @@ export function budContent(bud: BizBud, value: any, store: EntityStore) {
     let content: any;
     const { budDataType } = bud;
     if (value === undefined) {
-        content = <>&nbsp;</>;
+        content = <small className="text-body-tertiary">-</small>;
     }
     else {
         let type = budDataType?.type;

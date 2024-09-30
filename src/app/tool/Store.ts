@@ -1,6 +1,7 @@
 import { Biz, BizBud, Entity, EntityFork, EntityID } from "app/Biz";
 import { BudCheckValue, BudValue, Modal } from "tonwa-app";
 import { Atom, ReturnGetPendProps, ReturnGetSheetAtoms, ReturnGetSheetProps, ReturnGetSheetSpecs, UqExt } from "uqs/UqDefault";
+import { AtomPhrase } from "./Model";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -79,12 +80,30 @@ export abstract class EntityStore<E extends Entity = Entity> extends Store {
 
     private addBizAtoms(bizAtoms: Atom[]) {
         for (let atom of bizAtoms) {
+            this.mergeAtom(atom);
+            /*
             const { id, base } = atom;
             this.bizAtomColl[id] = {
                 atom,
                 entityID: this.biz.entities[base] as EntityID,
             };
-            this.uq.idCacheAdd(atom);
+            */
+            // this.uq.idCacheAdd(atom);
+        }
+    }
+
+    mergeAtom(atom: Atom) {
+        const { id, base } = atom;
+        this.bizAtomColl[id] = {
+            atom,
+            entityID: this.biz.entities[base] as EntityID,
+        };
+    }
+
+    mergeStoreAtomColl(store: EntityStore) {
+        const { bizAtomColl } = store;
+        for (let i in bizAtomColl) {
+            this.bizAtomColl[i] = bizAtomColl[i];
         }
     }
 

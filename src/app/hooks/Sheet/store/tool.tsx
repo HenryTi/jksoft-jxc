@@ -1,4 +1,4 @@
-import { BinRow, BizBud, EntityPend, predefinedPendFields } from "app/Biz";
+import { BinRow, BizBud, BudFork, EntityPend, EnumBudType, predefinedPendFields } from "app/Biz";
 import { FA } from "tonwa-com";
 
 const sheetFields = ['si', 'sx', 'svalue', 'sprice', 'samount'];
@@ -36,14 +36,16 @@ export interface ValRow extends BinRow {
     pendValue?: number;
 }
 
+// 特别处理 BudFork
 export function getValRowPropArr(valRow: ValRow, buds: BizBud[]) {
     const { buds: budsValues } = valRow;
     let propArr: [number, string | number, number][] = [];
     for (let bud of buds) {
         let { id, budDataType } = bud;
         let value = (budsValues as any)[id];
-        if (value === undefined) continue;
-        if (typeof value === 'object') value = JSON.stringify(value);
+        if (typeof value === 'object') {
+            value = JSON.stringify(value);
+        }
         propArr.push([id, value, budDataType.type]);
     }
     return propArr;

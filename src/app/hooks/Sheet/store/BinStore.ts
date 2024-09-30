@@ -237,7 +237,6 @@ export class BinStore extends EntityStore<EntityBin> {
             let _valDiv = this.valDivsOnPend[pend];
             setAtomValue(_valDiv, undefined);
         }
-        // await this.delDetail([id]);
         let valDivs = this.getOwnerAtomValDivs(valRow);
         valDivs.delValRow(id);
     }

@@ -638,7 +638,7 @@ export class EntityBin extends Entity {
                 let bdt = budDataType as BudFork;
                 const { base } = bdt;
                 if (typeof base === 'number') {
-                    bdt.base = this.biz.budFromId(base as unknown as number);
+                    bdt.setBase(this.biz.budFromId(base as unknown as number));
                 }
             }
         }

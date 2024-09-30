@@ -8,9 +8,9 @@ import { PickPendStore } from "../store/PickPendStore";
 import { useAtomValue } from "jotai";
 
 export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
-    let { divStore, pickPend } = pendStore;
+    let { binStore, pickPend } = pendStore;
     let { caption, name } = pickPend;
-    let { entity: { pend: entityPend }, atomPendRows, sheetStore } = divStore;
+    let { entity: { pend: entityPend }, atomPendRows, sheetStore } = binStore;
     const { sheetConsole: { steps }, atomLoaded } = sheetStore;
     const modal = useModal();
     let pendRows = useAtomValue(atomPendRows);
@@ -19,7 +19,7 @@ export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
         caption = entityPend.caption;
     }
     function ViewItemPendRow({ value: pendRow }: { value: PendRow }) {
-        return <ViewPendRowEdit pendRow={pendRow} divStore={divStore} />;
+        return <ViewPendRowEdit pendRow={pendRow} divStore={binStore} />;
     }
     let onItemSelectFunc: any, btnFinish: any;
     function BtnNext() {
