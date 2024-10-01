@@ -13,7 +13,7 @@ export async function pickFromPend(divStore: BinStore, editing: BudsEditing, bin
     await pendStore.searchPend();
     let inputed = await modal.open<ValRow[]>(<PagePend pendStore={pendStore} />);
     if (inputed === undefined) return;
-    editing.store.mergeStoreAtomColl(pendStore.binStore);
+    // editing.store.mergeStoreAtomColl(pendStore.binStore); 已经在sheetStore了
     // sheetConsole.steps = undefined;
     // 如果有inputs，直接已经输入进了。就不用返回了。
     if (bin.binDivRoot.inputs !== undefined) return;

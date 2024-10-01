@@ -43,6 +43,8 @@ export function getValRowPropArr(valRow: ValRow, buds: BizBud[]) {
     for (let bud of buds) {
         let { id, budDataType } = bud;
         let value = (budsValues as any)[id];
+        if (value === undefined) continue;
+        if (value === null) continue;
         if (typeof value === 'object') {
             value = JSON.stringify(value);
         }

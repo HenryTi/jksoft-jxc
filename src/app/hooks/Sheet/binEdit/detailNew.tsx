@@ -3,7 +3,6 @@ import { BinEditing } from "../store";
 import { runBinPicks } from "../binPick";
 import { rowEdit } from "./divEdit";
 import { PickResult } from "app/hooks/Calc";
-import { wait } from "tonwa-com";
 
 export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
     const { modal, binStore } = sheetStore;
@@ -47,7 +46,8 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
             if (valRow.id !== undefined) debugger;
             let id = await binStore.saveDetail(binDivRoot, valRow);
             valRow.id = id;
-            await binStore.reloadValRow(valRow);
+            // 下面一句不再必要，应该都已经在内存了
+            // await binStore.reloadValRow(valRow);
             binStore.setValRowRoot(valRow, true);
         }
     }
@@ -61,7 +61,8 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
             if (valRow.id !== undefined) debugger;
             let id = await binStore.saveDetail(binDivRoot, valRow);
             valRow.id = id;
-            await binStore.reloadValRow(valRow);
+            // 下面一句不再必要，应该都已经在内存了
+            // await binStore.reloadValRow(valRow);
         }
     }
     binStore.setWaiting(false);

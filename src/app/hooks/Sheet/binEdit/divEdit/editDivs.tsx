@@ -48,13 +48,10 @@ async function runInputDiv(props: UseEditDivsProps, divEditing: DivEditing) {
     valDiv.mergeValRow(divEditing.values);
     if (skipInputs !== true) {
         if (divEditing.isInputNeeded() === true) {
-            //if (await modal.open(<PageInputDiv divEditing={divEditing} />) !== true) {
             if (await modal.open(<ModalInputRow binEditing={divEditing} valDiv={valDiv} />) !== true) {
                 return;
             }
-            else {
-                valDiv.mergeValRow(divEditing.values);
-            }
+            valDiv.mergeValRow(divEditing.values);
         }
     }
     async function saveDetail() {

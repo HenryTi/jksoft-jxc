@@ -352,6 +352,7 @@ export class BinStore extends EntityStore<EntityBin> {
         await this.sheetStore.reloadBinProps(bin);
     }
 
+    /*
     async reloadValRow(valRow: ValRow) {
         const { id: binId } = valRow;
         let { details } = await this.sheetStore.loadBinData(binId);
@@ -359,6 +360,7 @@ export class BinStore extends EntityStore<EntityBin> {
         // reload其实是load相关props和atoms
         // this.load(details, true);
     }
+    */
 
     replaceValDiv(valDiv: ValDivBase, newValDiv: ValDivRoot) {
         const { valDivs } = this.valDivsRoot;
