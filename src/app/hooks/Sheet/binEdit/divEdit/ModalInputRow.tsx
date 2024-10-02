@@ -33,7 +33,7 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
         </ButtonAsync>;
     }
     function ViewIdField({ value, base }: { value: number; base: number; }) {
-        let id = base ?? value;
+        let id: number = base ?? value;
         if (id === undefined) return null;
         if (id === null) return null;
         let entity = sheetStore.entityFromId(id);
@@ -42,9 +42,6 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
                 <ViewSpecAtomBold id={value} store={sheetStore} />
                 <ViewAtomTitles id={value} store={sheetStore} />
             </div>
-            <RowCols>
-                <ViewSpecNoAtom id={value} />
-            </RowCols>
             <RowCols>
                 <ViewShowBuds bud={undefined} id={id} noLabel={false} store={sheetStore} />
             </RowCols>

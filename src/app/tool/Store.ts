@@ -31,7 +31,6 @@ export interface AtomColl {
 export interface ForkColl {
     [id: number]: {
         atom: Atom;
-        // entityFork: EntityFork;
         entityID: EntityID;
         buds: BizBud[];
     }

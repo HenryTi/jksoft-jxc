@@ -4,7 +4,7 @@ import { ViewBud, budContent } from "../Bud";
 import { FA, theme } from "tonwa-com";
 import React from "react";
 import { BizBud, Entity, EntityFork, EntityID } from "app/Biz";
-import { BudValueColl, EntityStore } from "app/tool";
+import { BudsColl, BudValueColl, EntityStore } from "app/tool";
 import { BizPhraseType } from "uqs/UqDefault";
 
 // atom field owns buds
@@ -43,24 +43,26 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: nu
                 debugger;
                 break;
             case BizPhraseType.fork:
+                const { atom, entityID: entityAtom, } = store.bizForkColl[id];
                 const { showKeys, showBuds } = entity as EntityFork;
                 return <>
-                    {viewBuds(showKeys)}
-                    {viewBuds(showBuds)}
+                    {viewBuds(budsColl[atom.id], entityAtom.primeBuds)}
+                    {viewBuds(budValueColl, showKeys)}
+                    {viewBuds(budValueColl, showBuds)}
                 </>;
             case BizPhraseType.atom:
-                return <>{viewBuds(entity.primeBuds)}</>
+                return <>{viewBuds(budValueColl, entity.primeBuds)}</>
         }
     }
     let fieldShows: BizBud[] = bud?.getPrimeBuds();
     if (fieldShows === undefined) return null;
-    return <>{viewBuds(fieldShows)}</>
+    return <>{viewBuds(budValueColl, fieldShows)}</>
 
-    function viewBuds(buds: BizBud[]): any {
-        if (buds === undefined) return null;
-        buds.map((bud, index) => {
-            let { id } = bud;
-            let value = budValueColl[id];
+    function viewBuds(budsColl: BudValueColl, buds: BizBud[]): any {
+        if (budsColl === undefined || buds === undefined) return null;
+        return buds.map((bud, index) => {
+            let { id: budId } = bud;
+            let value = budsColl[budId];
             return <ViewBud key={index} bud={bud} value={value} noLabel={noLabel} store={store} />;
         })
     }

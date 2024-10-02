@@ -52,9 +52,21 @@ function useSiteRoleBase(userSite: UserSite): UseSiteRoleReturn {
     let onAdminChanged: () => Promise<void> = undefined;
 
     async function loadUnitUsers(): Promise<UnitRoles> {
-        let query: Query = uqMan.entities['$role_site_users'] as any;
-        let result = await query.query({ site });
-        if (result === undefined) return;
+        let result: any;
+        const $role_site_users = '$role_site_users';
+        let $role_site_usersCache = uqApp.cache[$role_site_users];
+        if ($role_site_usersCache !== undefined) {
+            result = $role_site_usersCache[site];
+        }
+        if (result === undefined) {
+            let query: Query = uqMan.entities[$role_site_users] as any;
+            result = await query.query({ site });
+            if (result === undefined) return;
+            if ($role_site_usersCache === undefined) {
+                uqApp.cache[$role_site_users] = $role_site_usersCache = {};
+            }
+            $role_site_usersCache[site] = result;
+        }
         let { users: userRows, roles: roleRows } = result;
         let users: UserSite[] = [];
         let owners: UserSite[] = [];
