@@ -46,8 +46,7 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
             if (valRow.id !== undefined) debugger;
             let id = await binStore.saveDetail(binDivRoot, valRow);
             valRow.id = id;
-            // 下面一句不再必要，应该都已经在内存了
-            // await binStore.reloadValRow(valRow);
+            await binStore.reloadValRow(valRow);
             binStore.setValRowRoot(valRow, true);
         }
     }
@@ -61,8 +60,7 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
             if (valRow.id !== undefined) debugger;
             let id = await binStore.saveDetail(binDivRoot, valRow);
             valRow.id = id;
-            // 下面一句不再必要，应该都已经在内存了
-            // await binStore.reloadValRow(valRow);
+            await binStore.reloadValRow(valRow);
         }
     }
     binStore.setWaiting(false);

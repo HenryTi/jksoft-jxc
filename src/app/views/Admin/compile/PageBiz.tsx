@@ -34,16 +34,13 @@ export function useBuildViewBiz() {
         modal.open(<PageEntity entity={entity} />);
     }
     function ViewEntityItem({ value, icon, onEntity }: { value: Entity; icon: string; onEntity: (entity: Entity) => void; }) {
-        const { id, caption, name } = value;
-        let content: any;
+        let { id, caption, name } = value;
+        let vCaption: any;
         if (caption === undefined || caption === name) {
-            content = name;
+            vCaption = <>&nbsp;</>;
         }
         else {
-            content = <>
-                <div className="small text-secondary">{name}</div>
-                <div>{caption}</div>
-            </>
+            vCaption = caption;
         }
         // <FA name={icon} className="mt-1 me-2 text-success" />
         // className="px-2 py-2 border border-secondary-subtle shadow-sm mx-2 my-1 rounded cursor-pointer link-primary bg-white d-flex"
@@ -53,12 +50,15 @@ export function useBuildViewBiz() {
             onEntity(value);
             evt.preventDefault();
         }
-        return <div key={id} className="col">
+        return <div key={id} className="col my-1">
             <a
                 className={cnLink}
                 href="#"
                 onClick={onClick}>
-                <div className="py-2">{content}</div>
+                <div className="py-1 rounded-3 px-2 bg-white">
+                    <div>{name}</div>
+                    <div className="small text-secondary">{vCaption}</div>
+                </div>
             </a>
         </div>
     }
@@ -71,12 +71,12 @@ export function useBuildViewBiz() {
             content = entitys.flatMap((v, index) => {
                 const { name, id } = v;
                 if (name[0] === '$') {
-                    if (name !== '$console') return []
+                    if (name !== '$console') return null
                 }
-                return [<ViewEntityItem key={id} value={v} icon={icon} onEntity={onEntity} />];
+                return <ViewEntityItem key={id} value={v} icon={icon} onEntity={onEntity} />;
             })
         }
-        return <div className={' bg-white py-2 ps-5 ' + theme.bootstrapContainer}>
+        return <div className={' ps-3 py-1 ' + theme.bootstrapContainer}>
             <div className={rowCols}>
                 {content}
             </div>
@@ -93,7 +93,7 @@ export function useBuildViewBiz() {
         return <div className="">
             {
                 hasEntity === true &&
-                <div className="tonwa-bg-gray-2 px-3 pb-2 pt-2 d-flex border-top">
+                <div className="tonwa-bg-gray-3 px-3 pb-2 pt-2 d-flex border-top">
                     <b className="flex-grow-1">{groupCaption}</b>
                     <a className="" href="#" onClick={onDownload}><FA name="download" /></a>
                 </div>
@@ -108,8 +108,8 @@ export function useBuildViewBiz() {
             if (arr.length === 0) return null;
             let top: any;
             if (entities.length > 1) {
-                top = <div className="px-3 pt-1 bg-white">
-                    <FA name={icon} className="me-3 text-success" />
+                top = <div className="pe-3 py-1 tonwa-bg-gray-1 border-bottom">
+                    <FA name={icon} className="mx-2 text-success" />
                     {caption}
                 </div>;
             }
@@ -120,20 +120,6 @@ export function useBuildViewBiz() {
         })}
         </div>;
     }
-    /*
-    function ViewQueries() {
-        function onQuery(entity: Entity) {
-            modal.open(<PageQuery entityQuery={entity as EntityQuery} />);
-        }
-        return <div className="border-top">
-            <div className="px-3 pt-2 tonwa-bg-gray-1 border-bottom">
-                <FA name="search" className="me-3 text-success" />
-                查询数据
-            </div>
-            <ViewEntitys entitys={biz.queries} icon="search" onEntity={onQuery} />
-        </div>;
-    }
-    */
     return {
         header: <>
             {compile.caption} -
