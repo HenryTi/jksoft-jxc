@@ -1,12 +1,12 @@
 import { Page, PageSpinner, useModal } from "tonwa-app";
-import { setAtomValue, useEffectOnce } from "tonwa-com";
-import { BinBudsEditing, RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetSteps, SheetStore } from "../store";
+import { useEffectOnce } from "tonwa-com";
+import { RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetSteps, SheetStore } from "../store";
 import { useAtomValue } from "jotai";
 import { PageSheet } from "./PageSheet";
 import { useCallback } from "react";
 import { ToolItem } from "app/coms";
 import { buttonDefs, headerSheet } from "../headerSheet";
-import { ViewBinPicks } from "../binPick";
+import { ViewMainPicks } from "../binPick";
 // import { useDetailNew } from "../binEdit";
 import { ViewSteps } from "./ViewSteps";
 import { detailNew } from "../binEdit";
@@ -32,8 +32,11 @@ export function PageSheetNew({ store }: { store: SheetStore; }) {
     if (loaded === true) {
         return <PageSheet store={store} />;
     }
-    const { mainStore, isPend } = store;
+    const { mainStore, isPend, isMainPend } = store;
     const { entity } = mainStore;
+    if (isMainPend === true) {
+        return <PageMainPend store={store} />;
+    }
     const { binPicks, rearPick } = entity;
     if (rearPick === undefined && (binPicks === undefined || binPicks.length === 0)) {
         if (isPend === true) {
@@ -51,6 +54,13 @@ export function PageSheetNew({ store }: { store: SheetStore; }) {
         return <PageStartPicks store={store} />;
     }
     return <PageSheetDirect store={store} />;
+}
+
+function PageMainPend({ store }: { store: SheetStore; }) {
+    const { caption } = store;
+    return <Page header={caption + ' - 新开'}>
+        PageMainPend
+    </Page>;
 }
 
 function PageSheetDirect({ store }: { store: SheetStore; }) {
@@ -100,7 +110,7 @@ function PageStartPicks({ store }: { store: SheetStore; }) {
     }
     return <Page header={pageHeader} back={null} top={top} right={right}>
         <ViewSteps sheetSteps={sheetConsole.steps} />
-        <ViewBinPicks subHeader="新开单据" sheetStore={store} onPicked={onPickedNew} />
+        <ViewMainPicks subHeader="新开单据" sheetStore={store} onPicked={onPickedNew} />
     </Page>;
 }
 
@@ -116,7 +126,7 @@ function PageStartPend({ store }: { store: SheetStore; }) {
     }, []);
     return <Page header={caption + ' - ' + subCaption}>
         <ViewSteps sheetSteps={sheetConsole.steps} />
-        <ViewBinPicks subHeader={'批选条件'} sheetStore={store} onPicked={onPend} />
+        <ViewMainPicks subHeader={'批选条件'} sheetStore={store} onPicked={onPend} />
     </Page>;
 }
 

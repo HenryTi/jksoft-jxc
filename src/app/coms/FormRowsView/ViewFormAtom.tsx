@@ -4,11 +4,11 @@ import { useCallback, useState } from "react";
 import {
     UseFormRegisterReturn, FieldError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";
-import { IDView, useModal } from "tonwa-app";
+import { useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { pickBudID } from "app/hooks/BizPick";
 import { Band, FormAtom, FormContext } from "./FormRowsView";
-import { BudEditing, ViewAtomId, ViewSpec, ViewSpecAtom } from "app/hooks";
+import { BudEditing, ViewSpecAtom } from "app/hooks";
 
 export function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, entityAtom, onChange, formContext }: {
     row: FormAtom;

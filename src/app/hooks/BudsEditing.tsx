@@ -260,18 +260,10 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
     }
 
     private setFieldOrBudValue(bud: BizBud, value: CalcResult) {
-        // console.log('setFieldOrBudValue name=', name, 'value=', value);
         if (bud === undefined) return;
-        // if (value === undefined) debugger;
         this.budValuesTool.setBudValue(bud, this.values, value);
     }
 
-    /*
-    private atomTriggerSubmitable = atom(false);
-    triggerSubmitable() {
-        setAtomValue(this.atomTriggerSubmitable, !getAtomValue(this.atomTriggerSubmitable));
-    }
-    */
     submitable(): boolean {
         let ret = true;
         for (let field of this.requiredFields) {

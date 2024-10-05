@@ -43,28 +43,10 @@ export class PickPendStore {
             let { id, name, budDataType } = param;
             let pickParam = pickParams?.find(v => v.name === name);
             if (pickParam !== undefined) {
-                // let { /*bud, prop, */valueSet, valueSetType } = pickParam;
-                /*
-                if (bud === undefined) debugger;
-                let namedResult = this.valueSpace.getValue(bud) as PickResult;
-                if (namedResult === undefined) {
-                    paramValue = this.paramsEditing.values[id];
-                }
-                else {
-                    if (prop === undefined) prop = 'id';
-                    paramValue = namedResult[prop];
-                }
-                */
-                // paramValue = this.paramsEditing.getValue(name);
             } else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {
                 // paramValue = this.paramsEditing.getValue(name);
             }
             paramValue = this.paramsEditing.getBudValue(param); // .values.buds[id];
-            /*
-            if (paramValue === undefined) {
-                paramValue = this.paramsEditing.getValue(name);
-            }
-            */
             // radio 值是数组，需要变成单值
             if (budDataType.type === EnumBudType.radio) {
                 if (Array.isArray(paramValue) === true) {

@@ -14,7 +14,7 @@ interface Props {
     onPicked: (results: ReturnUseBinPicks) => Promise<void>;
 }
 
-export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
+export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
     const rearPickResultType = RearPickResultType.scalar;
     const { mainStore: main, binStore: divStore, sheetConsole } = sheetStore;
     const { steps } = sheetConsole;
@@ -63,16 +63,15 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
         viewBinPicks = <>
             {binPicks.map((v, index) => {
                 const { name } = v;
-                return <ViewBinPick key={name} editing={editing} binPick={v}
+                return <ViewPick key={name} editing={editing} binPick={v}
                     onPick={onPick}
                     index={index} cur={cur}
                 />;
             })}
-            <ViewBinPick editing={editing} binPick={rearPick} onPick={onPickRear}
+            <ViewPick editing={editing} binPick={rearPick} onPick={onPickRear}
                 index={binPicks.length} cur={cur}
             />
         </>;
-        // sheetStore={sheetStore}
         viewBinPicksNext = <LR cn={undefined} onClick={undefined} label={null}>
             <button className="btn btn-primary" onClick={onNext} disabled={cur <= binPicks.length}>
                 <FA name="arrow-right me-2" />下一步
@@ -91,7 +90,7 @@ export function ViewBinPicks({ sheetStore, onPicked, subHeader }: Props) {
     </>;
 }
 
-function ViewBinPick({ editing, binPick, onPick, index, cur }: {
+function ViewPick({ editing, binPick, onPick, index, cur }: {
     editing: BinBudsEditing,
     binPick: BinPick;
     onPick: (binPick: BinPick, index: number) => Promise<void>;

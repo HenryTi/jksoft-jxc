@@ -18,11 +18,6 @@ PAGE (
         WHERE a.id>$pageStart AND a.site=$site
         ORDER BY a.id ASC
         LIMIT $pageSize;
-    /*
-    INTO buds SELECT b.userSite, a.x as bud, a.value FROM IxBudInt as a JOIN $page as b ON b.userSite=a.i;
-    INTO buds SELECT b.userSite, a.x as bud, a.value FROM IxBudStr as a JOIN $page as b ON b.userSite=a.i;
-    INTO buds SELECT b.userSite, a.x as bud, a.value FROM IxBudDec as a JOIN $page as b ON b.userSite=a.i;
-    */
 }
 
 Biz Query GetUserBuds (
@@ -36,8 +31,6 @@ RETURNS buds (
         SET userId=ME();
     }
     INTO buds SELECT a.x as bud, a.value FROM IxBudJson as a WHERE a.i=userId;
-    -- INTO buds SELECT a.x as bud, a.value FROM IxBudStr as a WHERE a.i=userId;
-    -- INTO buds SELECT a.x as bud, a.value FROM IxBudDec as a WHERE a.i=userId;
 }
 
 Biz ACT SaveUserBuds (
@@ -52,23 +45,5 @@ Biz ACT SaveUserBuds (
 
     FOR (VAR bud ID, type INT, value CHAR(200) OF SELECT a.bud, a.type, a.value FROM buds as a) {
         WITH IxBudJson I=id X=bud SET value=value;
-        /*
-        IF type=BudDataType.char OR type=BudDataType.str {
-            WITH IxBudStr I=id X=bud SET value=value;
-        }
-        ELSEIF type=BudDataType.dec {
-            WITH IxBudDec I=id X=bud SET value=value;
-        }
-        ELSEIF type=BudDataType.radio {
-            PROC ProcSaveBudRadio(bud, id, value);
-        }
-        ELSEIF type=BudDataType.check {
-            -- check 的参数应该是数组JsonArray，随后再改
-            PROC ProcSaveBudCheck(bud, id, value, 1);
-        }
-        ELSE {
-            WITH IxBudInt I=id X=bud SET value=value;
-        }
-        */
     }
 }

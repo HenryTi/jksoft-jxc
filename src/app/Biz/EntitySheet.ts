@@ -16,7 +16,7 @@ export abstract class BinPick extends BizBud {
     readonly bin: EntityBin;
     pickParams: PickParam[];
     hiddenBuds: Set<number>;
-    on: BizBud;
+    to: BizBud;
     constructor(biz: Biz, id: number, name: string, bin: EntityBin) {
         super(biz, id, name, EnumBudType.pick, bin);
         this.bin = bin;
@@ -495,7 +495,7 @@ export class EntityBin extends Entity {
     }
 
     private buildPick(v: any): BinPick {
-        const { id, name, from, caption, params, hidden, on } = v;
+        const { id, name, from, caption, params, hidden, to } = v;
         let arr = (from as string[]).map(v => this.biz.entities[v]);
         let entity = arr[0];
         if (entity === undefined) return;
@@ -534,8 +534,8 @@ export class EntityBin extends Entity {
             case BizPhraseType.pend: binPick = buildPickPend(); break;
             case BizPhraseType.options: binPick = buildPickOptions(); break;
         }
-        if (on !== undefined) {
-            binPick.on = this.budColl[on];
+        if (to !== undefined) {
+            binPick.to = this.budColl[to];
         }
         binPick.pickParams = this.buildPickParams(params);
         binPick.ui = { caption };
@@ -608,7 +608,7 @@ export class EntityBin extends Entity {
             let binPicks: BinPick[] = [];
             let rearPick: BinPick;
             for (let pick of this.binPicks) {
-                const { on } = pick;
+                const { to: on } = pick;
                 if (on !== undefined) {
                     this.onPicks[on.id] = pick;
                 }

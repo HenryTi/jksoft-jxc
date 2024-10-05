@@ -21,6 +21,9 @@ export function ViewSpecAtomBold({ id, store }: { id: number; store: EntityStore
 }
 
 export function ViewSpecAtom({ id, store }: { id: number; store: EntityStore; }) {
+    if (store === undefined) {
+        return <ViewSpecId id={id} />;
+    }
     const { bizAtomColl, bizForkColl: bizSpecColl } = store;
     let bizAtom = bizAtomColl[id]?.atom;
     if (bizAtom === undefined) {

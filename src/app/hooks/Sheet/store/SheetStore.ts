@@ -162,6 +162,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
     readonly caption: string;
     readonly backIcon = 'file-text-o';
     readonly isPend: boolean;
+    readonly isMainPend: boolean;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> } = {};
     readonly binStore: BinStore;
     readonly atomLoaded = atom(false);
@@ -175,7 +176,10 @@ export class SheetStore extends EntityStore<EntitySheet> {
         super(sheetConsole.modal, entitySheet);
         this.sheetConsole = sheetConsole;
         this.mainStore = new SheetMainStore(this);
-        const { details } = this.entity;
+        const { main, details } = this.entity;
+        if (main.pend !== undefined) {
+            this.isMainPend = true;
+        }
         let detail = details[0];
         let len = details.length;
         if (len > 0) {
@@ -385,7 +389,7 @@ export abstract class SheetConsole extends Console {
     abstract restart(): void;                    // 关闭并新开单
     abstract onSubmited(store: SheetStore): Promise<void>;        // 单据已提交
     abstract discard(sheetId: number): void;     // 废弃当前单据
-    abstract onSheetAdded(store: SheetStore/*sheetId: number, no: string*/): Promise<void>;
+    abstract onSheetAdded(store: SheetStore): Promise<void>;
     abstract sheetRowCountChanged(store: SheetStore): void;
     abstract removeFromCache(sheetId: number): void;
     abstract steps: SheetSteps;
@@ -393,6 +397,19 @@ export abstract class SheetConsole extends Console {
         let ret = new SheetStore(this.entitySheet, this);
         ret.mainStore.init();
         return ret;
+    }
+
+    async loadUserDefaults(): Promise<boolean> {
+        const { biz, user } = this.entitySheet;
+        if (user === undefined) return true;
+        if (user.length === 0) return true;
+        await biz.loadUserDefaults();
+        let { userDefaults } = biz;
+        if (userDefaults === undefined) return false;
+        for (let bud of user) {
+            if (userDefaults[bud.id] === undefined) return false;
+        }
+        return true;
     }
 }
 

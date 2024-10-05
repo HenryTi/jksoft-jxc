@@ -19,10 +19,11 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const sheetStore = dashConsole.createSheetStore();
     const { myDraftsStore } = dashConsole;
     const myDrafts = useAtomValue(myDraftsStore.atomMyDrafts);
+    const [hasUserDefaults, setHasUserDefaults] = useState(undefined as boolean);
     useEffectOnce(() => {
         (async () => {
             Promise.all([
-                biz.loadUserDefaults(),
+                dashConsole.loadUserDefaults(),
                 myDraftsStore.loadMyDrafts(),
             ]);
         })();
@@ -89,9 +90,17 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         </div>;
     }
     if (visible === false) return <PageSpinner />;
+    let pageHeader = (caption ?? name) + ' - 工作台';
+    if (hasUserDefaults === false) {
+        return <Page header={pageHeader}>
+            <div>
+                <FA className="text-danger me-2" name="exclamation-circle" />
+                请联系管理员设置本单据
+            </div>
+        </Page>
+    }
 
-    let pageHeader = caption ?? name;
-    return <Page header={pageHeader + ' - 工作台'}>
+    return <Page header={pageHeader}>
         <div className="d-flex px-3 py-2 tonwa-bg-gray-1 border-bottom">
             <button className="btn btn-primary me-3" onClick={onNew}>
                 <FA name="file" className="me-2" />
