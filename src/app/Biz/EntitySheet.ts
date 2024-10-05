@@ -26,6 +26,10 @@ export abstract class BinPick extends BizBud {
     getRefEntities(arrEntity: Entity[]) { return; }
 }
 
+export class PickScalar extends BinPick {
+    readonly fromPhraseType = BizPhraseType.any;
+}
+
 export class PickQuery extends BinPick {
     readonly fromPhraseType = BizPhraseType.query;
     query: EntityQuery;
@@ -496,55 +500,60 @@ export class EntityBin extends Entity {
 
     private buildPick(v: any): BinPick {
         const { id, name, from, caption, params, hidden, to } = v;
-        let arr = (from as string[]).map(v => this.biz.entities[v]);
-        let entity = arr[0];
-        if (entity === undefined) return;
-        let { bizPhraseType } = entity;
         let binPick: BinPick;
-        const buildPickAtom = () => {
-            let pick = new PickAtom(this.biz, id, name, this);
-            pick.from = arr as EntityAtom[];
-            return pick;
+        if (from === undefined) {
+            return new PickScalar(this.biz, id, name, this);
         }
-        const buildPickSpec = () => {
-            let pick = new PickSpec(this.biz, id, name, this);
-            pick.from = entity as EntityFork;
-            return pick;
-        }
-        const buildPickQuery = () => {
-            let pick = new PickQuery(this.biz, id, name, this);
-            pick.query = entity as EntityQuery;
-            return pick;
-        }
-        const buildPickPend = () => {
-            let pick = new PickPend(this.biz, id, name, this);
-            pick.from = entity as EntityPend;
-            return pick;
-        }
-        const buildPickOptions = () => {
-            let pick = new PickOptions(this.biz, id, name, this);
-            pick.from = entity as EntityOptions;
-            return pick;
-        }
-        switch (bizPhraseType) {
-            default: binPick = undefined; break;
-            case BizPhraseType.atom: binPick = buildPickAtom(); break;
-            case BizPhraseType.fork: binPick = buildPickSpec(); break;
-            case BizPhraseType.query: binPick = buildPickQuery(); break;
-            case BizPhraseType.pend: binPick = buildPickPend(); break;
-            case BizPhraseType.options: binPick = buildPickOptions(); break;
+        else {
+            let arr = (from as string[]).map(v => this.biz.entities[v]);
+            let entity = arr[0];
+            if (entity === undefined) return;
+            let { bizPhraseType } = entity;
+            const buildPickAtom = () => {
+                let pick = new PickAtom(this.biz, id, name, this);
+                pick.from = arr as EntityAtom[];
+                return pick;
+            }
+            const buildPickSpec = () => {
+                let pick = new PickSpec(this.biz, id, name, this);
+                pick.from = entity as EntityFork;
+                return pick;
+            }
+            const buildPickQuery = () => {
+                let pick = new PickQuery(this.biz, id, name, this);
+                pick.query = entity as EntityQuery;
+                return pick;
+            }
+            const buildPickPend = () => {
+                let pick = new PickPend(this.biz, id, name, this);
+                pick.from = entity as EntityPend;
+                return pick;
+            }
+            const buildPickOptions = () => {
+                let pick = new PickOptions(this.biz, id, name, this);
+                pick.from = entity as EntityOptions;
+                return pick;
+            }
+            switch (bizPhraseType) {
+                default: binPick = undefined; break;
+                case BizPhraseType.atom: binPick = buildPickAtom(); break;
+                case BizPhraseType.fork: binPick = buildPickSpec(); break;
+                case BizPhraseType.query: binPick = buildPickQuery(); break;
+                case BizPhraseType.pend: binPick = buildPickPend(); break;
+                case BizPhraseType.options: binPick = buildPickOptions(); break;
+            }
+            binPick.pickParams = this.buildPickParams(params);
+            binPick.ui = { caption };
+            if (hidden !== undefined) {
+                binPick.hiddenBuds = new Set();
+                const { hiddenBuds } = binPick;
+                for (let h of (hidden as number[])) {
+                    hiddenBuds.add(h);
+                }
+            }
         }
         if (to !== undefined) {
             binPick.to = this.budColl[to];
-        }
-        binPick.pickParams = this.buildPickParams(params);
-        binPick.ui = { caption };
-        if (hidden !== undefined) {
-            binPick.hiddenBuds = new Set();
-            const { hiddenBuds } = binPick;
-            for (let h of (hidden as number[])) {
-                hiddenBuds.add(h);
-            }
         }
         return binPick;
     }
