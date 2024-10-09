@@ -1,4 +1,4 @@
-import { EntityAtom, EntityFork, BizBud, Entity, BudID } from "app/Biz";
+import { EntityAtom, EntityFork, BizBud, Entity, BudID, BinPick } from "app/Biz";
 import { Atom, atom } from "jotai";
 import { HTMLInputTypeAttribute, ReactNode } from "react";
 import {
@@ -174,7 +174,8 @@ export interface FormContext {
     getEntity(entityId: number): Entity;
     store: EntityStore;
     calcValue(formula: string): number | string | object;
-    getOnPick(bud: BizBud): (() => number | Promise<number>);
+    // getOnPick(bud: BizBud): (() => number | Promise<number>);
+    getPick(bud: BizBud): BinPick;
 }
 
 interface FormProps {
@@ -208,7 +209,8 @@ const emptyFormContext: FormContext = {
     getEntity(entityId: number): Entity { return undefined; },
     store: undefined,
     calcValue(formula: string): number | string | object { return undefined; },
-    getOnPick(bud: BizBud): (() => number | Promise<number>) { return undefined; },
+    // getOnPick(bud: BizBud): (() => number | Promise<number>) { return undefined; },
+    getPick(bud: BizBud): BinPick { return undefined; }
 }
 export function FormRowsView(props: FormRowsViewProps) {
     let { rows, context } = props;

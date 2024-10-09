@@ -57,10 +57,24 @@ export function PageSheetNew({ store }: { store: SheetStore; }) {
 }
 
 function PageMainPend({ store }: { store: SheetStore; }) {
+    const { sheetConsole } = store;
+    const { btnSubmit, btnExit } = buttons(sheetConsole);
+    const group0: ToolItem[] = [btnSubmit];
+    let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
+    async function onPickedNew(results: ReturnUseBinPicks) {
+        await onPicked(store, results);
+        await store.setSheetAsDraft();
+    }
+    return <Page header={pageHeader} back={null} top={top} right={right}>
+        <ViewSteps sheetSteps={sheetConsole.steps} />
+        <ViewMainPicks subHeader="新开单据" sheetStore={store} onPicked={onPickedNew} />
+    </Page>;
+    /*
     const { caption } = store;
     return <Page header={caption + ' - 新开'}>
         PageMainPend
     </Page>;
+    */
 }
 
 function PageSheetDirect({ store }: { store: SheetStore; }) {

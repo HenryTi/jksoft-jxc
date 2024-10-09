@@ -1,5 +1,5 @@
 import { EntityBin } from "app/Biz";
-import { BinBudsEditing, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
+import { BinBudsEditing, doBinPick, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
 import { PickResult } from "app/hooks/Calc";
 
 export async function runBinPicks(
@@ -10,7 +10,8 @@ export async function runBinPicks(
     if (binPicks === undefined) return;
     let editing = new BinBudsEditing(sheetStore, bin, []);
     for (const binPick of binPicks) {
-        await editing.runBinPick(binPick);
+        await doBinPick(editing, binPick);
+        //await editing.runBinPick(binPick);
     }
 
     let ret: ReturnUseBinPicks = {

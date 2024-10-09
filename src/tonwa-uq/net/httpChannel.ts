@@ -106,8 +106,9 @@ export class HttpChannel {
     }
     async fetch(url: string, options: any, resolve: (value?: any) => any, reject: (reason?: any) => void): Promise<void> {
         let path = url;
+        const time = Date.now();
+        console.log('%s-%s %s', options.method, path, options.body || '');
         try {
-            console.log('%s-%s %s', options.method, path, options.body || '');
             let now = Date.now();
             let timeOutHandler = setTimeout(
                 () => {
@@ -164,6 +165,9 @@ export class HttpChannel {
                 }
             }
             console.error('fecth error (no nav.showError): ' + url);
+        }
+        finally {
+            console.log('%s-%s %s', options.method, 'done', (Date.now() - time) + 'ms');
         };
     }
 

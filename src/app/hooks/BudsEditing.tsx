@@ -6,6 +6,7 @@ import {
     Biz,
     BudFork,
     Entity,
+    BinPick,
 } from "app/Biz";
 import { Calc, CalcResult, ValueSpace, Formulas } from "./Calc";
 import { EntityStore, getDays, Store } from "app/tool";
@@ -17,6 +18,7 @@ import { ChangeEvent } from "react";
 
 export abstract class BudsEditing<R = any> extends Store implements FormContext {
     private readonly calc: Calc;
+    // private composingValues: { [bud: number]: any };
     readonly valueSpace: ValueSpace;
     protected readonly requiredFields: BizBud[] = [];
     protected readonly budColl: { [name: string]: BizBud } = {};
@@ -123,6 +125,17 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         if (ret !== undefined) return ret;
         return this.calc.getValue(bud.name);
     }
+
+    /*
+    setBudComposingValue(bud: BizBud, value: any) {
+        if (this.composingValues === undefined) this.composingValues = {};
+        this.composingValues[bud.id] = value;
+    }
+    getBudComposingValue(bud: BizBud) {
+        if (this.composingValues === undefined) return;
+        return this.composingValues[bud.id];
+    }
+    */
 
     getEntityFromId(id: number): Entity { return undefined; }
     getEntity(entityId: number): Entity { return this.biz.entityFromId(entityId); }
@@ -319,10 +332,12 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         }
         return false;
     }
-
+    /*
     getOnPick(bud: BizBud): (() => number | Promise<number>) {
         return undefined;
     }
+    */
+    getPick(bud: BizBud): BinPick { return undefined; }
 
     buildCalcBuds() {
         for (let bud of this.allFields) {
@@ -367,7 +382,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
                 type: 'number',
                 options,
                 required,
-                onPick: this.getOnPick(bud),
+                // onPick: this.getOnPick(bud),
                 default: defaultValue,
             };
             const { type, min, max } = budDataType;

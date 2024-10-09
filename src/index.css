@@ -130,8 +130,16 @@ button:focus-visible {
     margin-right: -0.25rem !important;
 }
 
+.ms-n1 {
+    margin-left: -0.25rem !important;
+}
+
 .me-n2 {
     margin-right: -0.5rem !important;
+}
+
+.ms-n2 {
+    margin-left: -0.5rem !important;
 }
 
 .me-n3 {

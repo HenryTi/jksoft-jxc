@@ -106,7 +106,7 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
         setAtomValue(this.atomChanging, getAtomValue(this.atomChanging) + 1);
     }
 
-    async runBinPick(binPick: BinPick) {
+    async runBinPick1(binPick: BinPick) {
         const { name, fromPhraseType } = binPick;
         if (fromPhraseType === undefined) return; // break;
         let pickResult: PickResult = await this.switchPhraseType(binPick);
@@ -119,6 +119,11 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
         let pickResult: PickResult;
         switch (pick.fromPhraseType) {
             default: break;
+            /*
+            case BizPhraseType.any:
+                pickResult = this.getBudComposingValue(pick);
+                break;
+            */
             case BizPhraseType.atom:
                 pickResult = await pickFromAtom(this, pick as PickAtom);
                 break;
@@ -151,26 +156,22 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
         if (pickResult !== undefined) return pickResult;
     }
 
+    /*
     getOnPick(bud: BizBud): (() => number | Promise<number>) {
         let { onPicks } = this.entityBin;
         let pick = onPicks[bud.id];
         if (pick === undefined) return;
-        /*
-        if (this.namedResults === undefined) {
-            debugger;
-        }
-        */
         return async () => {
-            // let binPicksEditing = new SheetEditing(this.divStore.sheetStore);
-            // await binPicksEditing.runBinPick(pick);
-            // let { values } = binPicksEditing;
             let ret = await this.runBinPick(pick);
-            // let v = this.getValue(pick.on.name);
-            // let { values } = this;
-            // return values.id;
             let retId = (ret as any).id;
             return retId;
         };
+    }
+    */
+    getPick(bud: BizBud) {
+        let { onPicks } = this.entityBin;
+        let pick = onPicks[bud.id];
+        return pick;
     }
 }
 

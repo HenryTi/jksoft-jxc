@@ -1,21 +1,23 @@
-import { BudID } from "app/Biz";
+import { BinPick, BudID } from "app/Biz";
 import { EditBudTemplateProps } from "./model";
 import { ViewAtomId } from "../../BizAtom";
 import { useState } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
 import { ViewSpecId } from "app/coms/ViewSpecId";
+import { BinBudsEditing, doBinPick } from "app/hooks/Sheet/store";
 
-export function EditBudOnPick(props: EditBudTemplateProps & { onPick: () => number | Promise<number>; }) {
-    const { id, onPick, readOnly, labelSize, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
+export function EditBudOnPick(props: EditBudTemplateProps & { pick: BinPick; }) {
+    const { id, pick, readOnly, labelSize, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
     const { budsEditing, bizBud } = budEditing;
     const [value, setValue] = useState<number>(initValue as number);
     const { caption, budDataType } = bizBud;
     const { entityID } = budDataType as BudID;
     const label = caption;
     async function onEditClick() {
-        let retPick = await onPick();
+        // let retPick = await onPick();
+        let retPick = await doBinPick(budsEditing as BinBudsEditing, pick);
         if (retPick === null || retPick === undefined) return;
-        let atomId = retPick;
+        let atomId = retPick as any;
         if (typeof retPick === 'object') {
             atomId = (retPick as any).id;
         }

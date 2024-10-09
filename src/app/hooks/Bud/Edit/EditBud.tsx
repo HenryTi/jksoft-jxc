@@ -2,7 +2,7 @@ import { EditBudAtom } from "./EditBudAtom";
 import { EditBudRadio } from "./EditBudRadio";
 import { EditBudCheck } from "./EditBudCheck";
 import { EditBudString, EditBudInt, EditBudDec, EditBudDate } from "./EditBudValue";
-import { BizBud, EnumBudType } from "app/Biz";
+import { BinPick, BizBud, EnumBudType } from "app/Biz";
 import { EditBudProps, EditBudTemplateProps } from "./model";
 import { LabelRowEdit } from "./LabelRowEdit";
 import { atom } from "jotai";
@@ -45,9 +45,12 @@ export class BudEditing {
         return this.budsEditing.calcValue(formula);
     }
 
+    /*
     getOnPick() {
         return this.budsEditing.getOnPick(this.bizBud);
     }
+    */
+    getPick(): BinPick { return this.budsEditing.getPick(this.bizBud); }
 }
 
 export function EditBudInline(editProps: EditBudProps) {
@@ -58,9 +61,11 @@ export function EditBudInline(editProps: EditBudProps) {
 function EditBud(editProps: EditBudTemplateProps) {
     const { budEditing } = editProps;
     const { bizBud: { budDataType } } = budEditing;
-    const onPick = budEditing.getOnPick();
-    if (onPick !== undefined) {
-        return <EditBudOnPick {...editProps} onPick={onPick} />;
+    const pick = budEditing.getPick();
+    // const onPick = budEditing.getOnPick();
+    //if (onPick !== undefined) {
+    if (pick !== undefined) {
+        return <EditBudOnPick {...editProps} pick={pick} />;
     }
     const { type } = budDataType;
     switch (type) {
