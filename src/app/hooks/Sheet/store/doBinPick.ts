@@ -23,10 +23,13 @@ async function switchPhraseType(editing: BinBudsEditing, pick: BinPick) {
     let pickResult: PickResult;
     switch (pick.fromPhraseType) {
         default: break;
+        /*
         case BizPhraseType.any:
             // pickResult = this.getBudComposingValue(pick);
-            debugger;
+/            debugger;
+            pickResult = { [pick.name]: 'a' };
             break;
+        */
         case BizPhraseType.atom:
             pickResult = await pickFromAtom(editing, pick as PickAtom);
             break;

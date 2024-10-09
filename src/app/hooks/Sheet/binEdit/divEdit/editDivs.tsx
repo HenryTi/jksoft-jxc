@@ -20,7 +20,9 @@ export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
     let pendResult = new Proxy(pendRow, new PendProxyHandler(entityPend));
     for (; ;) {
         let divEditing = new DivEditing(divStore, valDiv);
-        divEditing.setNamedValues(rearPick.name, pendResult);
+        if (rearPick !== undefined) {
+            divEditing.setNamedValues(rearPick.name, pendResult);
+        }
         divEditing.setNamedValues('pend', pendResult);
         divEditing.calcAll();
         let retIsInputed = await runInputDiv(props, divEditing);

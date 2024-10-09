@@ -6,6 +6,7 @@ import { FA, Sep, SpinnerSmall } from "tonwa-com";
 import { PickResult, ViewAtomId } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { BizPhraseType } from "uqs/UqDefault";
+import { InputScalar } from "./InputScalar";
 
 interface Props {
     subHeader?: string;
@@ -23,40 +24,16 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
     const { binPicks, rearPick } = main.entity;
     let refRearPickResult = useRef(undefined as PickResult[] | PickResult);
 
-    async function onPick(binPick: BinPick, serial: number) {
-        if (await doBinPick(editing, binPick) === undefined) {
-            // if (await editing.runBinPick(binPick) === undefined) {
-            return;
-        }
-        afterPicked(serial);
-        /*
-        for (let i = index + 1; i < binPicks.length; i++) {
+    function clearTailPicks(curSerial: number) {
+        for (let i = curSerial + 1; i < binPicks.length; i++) {
             editing.clearNameValues(binPicks[i].name);
         }
-        editing.setChanging();
-        setCur(index + 1);
-        divStore.setReload();
-        */
     }
-    async function onPickRear(binPick: BinPick) {
-        let pickResult = await doBinPickRear(divStore, editing, binPick, rearPickResultType);
-        if (pickResult === undefined) return;
-        // refRearPickResult.current = pickResult;
-        // editing.setNamedValues(binPick.name, pickResult);
-        afterPicked(binPicks.length + 1);
-        /*
-        editing.setChanging();
-        setCur(binPicks.length + 1);
-        divStore.setReload();
-        */
-    }
+
     function afterPicked(curSerial: number) {
-        let serial = curSerial + 1;
-        for (let i = serial; i < binPicks.length; i++) {
-            editing.clearNameValues(binPicks[i].name);
-        }
+        clearTailPicks(curSerial);
         editing.setChanging();
-        setCur(serial);
+        setCur(curSerial + 1);
         divStore.setReload();
     }
 
@@ -73,7 +50,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
             rearPickResultType: rearPickResultType,
         };
         await onPicked(ret);
-        steps.next();
+        steps?.next();
     }
     let viewBinPicks: any;
     let viewBinPicksNext: any;
@@ -95,6 +72,28 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
     </div>;
     function ViewPick({ binPick, serial }: { binPick: BinPick; serial: number; }) {
         useAtomValue(editing.atomChanging);
+        if (binPick.fromPhraseType === BizPhraseType.any) {
+            if (serial === cur) {
+                const { caption, name } = binPick;
+                const defaultValue = editing.getValue(name);
+                async function onPicked(scalarResult: PickResult) {
+                    if (scalarResult === undefined) return;
+                    editing.setNamedValue(binPick.name, scalarResult as any);
+                    afterPicked(serial);
+                }
+                return <ViewLabelRowPicking cn="d-flex align-items-stretch g-0" caption={caption}>
+                    <InputScalar binPick={binPick} onPicked={onPicked} value={defaultValue} />
+                </ViewLabelRowPicking>;
+            }
+            else if (serial < cur) {
+                async function pick() {
+                    setCur(serial);
+                    clearTailPicks(serial);
+                    divStore.setReload();
+                }
+                return <ViewPicked binPick={binPick} pick={pick} />;
+            }
+        }
         async function pick() {
             if (await doBinPick(editing, binPick) !== undefined) {
                 afterPicked(serial);
@@ -105,6 +104,13 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
             return <ViewPicking binPick={binPick} pick={pick} />;
         }
         return <ViewToPick binPick={binPick} />;
+    }
+    function ViewLabelRowPicking({ cn, children, caption }: { cn?: string; children: any; caption: string; }) {
+        return <LabelRow label={caption} cn={cn}
+            cnLabel="text-primary fw-bold"
+            cnAngle="text-primary" iconPrefix="hand-o-right" >
+            {children}
+        </LabelRow>;
     }
     function ViewPicked({ binPick, pick }: { binPick: BinPick; pick: () => Promise<void>; }) {
         let val = editing.getValue(binPick.name);
@@ -128,12 +134,6 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                     break;
             }
         }
-        // function onClick() {
-        // onPick(binPick, serial);
-        // clearSerialAfter(serial + 1);
-        // editing.setChanging();
-        //setCur(serial);
-        // }
         return <LabelRow label={binPick.caption} cnAngle="text-success" iconPrefix="check-circle-o">
             <div className="d-flex py-3 cursor-pointer" onClick={pick}>
                 <div className="text-secondary flex-fill">
@@ -144,37 +144,8 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
         </LabelRow>;
     }
     function ViewPicking({ binPick, pick }: { binPick: BinPick; pick: () => Promise<void>; }) {
-        function ViewLabelRowPicking({ cn, children }: { cn?: string; children: any; }) {
-            return <LabelRow label={binPick.caption} cn={cn}
-                cnLabel="text-primary fw-bold"
-                cnAngle="text-primary" iconPrefix="hand-o-right" >
-                {children}
-            </LabelRow>;
-        }
-        // let vContent: any, cn: string;
-        if (binPick.fromPhraseType === BizPhraseType.any) {
-            function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-                if (e.key === 'Enter') {
-                    // onClick();
-                    pick();
-                }
-            }
-            function onChange(e: ChangeEvent<HTMLInputElement>) {
-                // editing.setBudComposingValue(binPick, e.currentTarget.value);
-            }
-            return <ViewLabelRowPicking cn="d-flex">
-                <input className="border-0 px-2 ms-n2 me-n2 flex-fill" type="text"
-                    onKeyDown={onKeyDown}
-                    onChange={onChange} />
-            </ViewLabelRowPicking>
-        }
-        // cn = ' cursor-pointer ' + py;
-        /*
-        async function onClick() {
-            await onPicking(binPick, serial);
-        }
-        */
-        return <ViewLabelRowPicking>
+        const { caption } = binPick;
+        return <ViewLabelRowPicking caption={caption}>
             <div className="text-secondary flex-fill py-3 cursor-pointer" onClick={pick}>
                 <FA name="search" className="text-primary" size="lg" />
             </div>
