@@ -30,7 +30,7 @@ export class Entity extends BizBase {
     // 1. Atom 里面 extends 的sub
     // 2. Sheet 里面，包含的 main 和 details
     // 3. Bin 里面的 Pend
-    getRefEntities(arrEntity: Entity[]) { }
+    getRefEntities(entitySet: Set<Entity>) { }
 
     protected override fromSwitch(i: string, val: any) {
         if (val === undefined) {

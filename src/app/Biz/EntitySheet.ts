@@ -16,14 +16,14 @@ export abstract class BinPick extends BizBud {
     readonly bin: EntityBin;
     pickParams: PickParam[];
     hiddenBuds: Set<number>;
-    to: BizBud;
+    to: [BizBud, string][];
     constructor(biz: Biz, id: number, name: string, bin: EntityBin) {
         super(biz, id, name, EnumBudType.pick, bin);
         this.bin = bin;
     }
 
     abstract get fromPhraseType(): BizPhraseType;
-    getRefEntities(arrEntity: Entity[]) { return; }
+    getRefEntities(entitySet: Set<Entity>) { return; }
 }
 
 export class PickScalar extends BinPick {
@@ -33,7 +33,7 @@ export class PickScalar extends BinPick {
 export class PickQuery extends BinPick {
     readonly fromPhraseType = BizPhraseType.query;
     query: EntityQuery;
-    override getRefEntities(arrEntity: Entity[]) { arrEntity.push(this.query); }
+    override getRefEntities(entitySet: Set<Entity>) { entitySet.add(this.query); }
 }
 export class PickAtom extends BinPick {
     readonly fromPhraseType = BizPhraseType.atom;
@@ -47,7 +47,7 @@ export class PickSpec extends BinPick {
 export class PickPend extends BinPick {
     readonly fromPhraseType = BizPhraseType.pend;
     from: EntityPend;
-    getRefEntities(arrEntity: Entity[]) { arrEntity.push(this.from); }
+    override getRefEntities(entitySet: Set<Entity>) { entitySet.add(this.from); }
 }
 export class PickOptions extends BinPick {
     readonly fromPhraseType = BizPhraseType.options;
@@ -384,21 +384,21 @@ export class EntityBin extends Entity {
     primeBuds: BizBud[];
 
     // 在代码界面上显示需要。本entity引用的entities
-    override getRefEntities(arrEntity: Entity[]) {
+    override getRefEntities(entitySet: Set<Entity>) {
         if (this.binPicks !== undefined) {
             for (let pick of this.binPicks) {
-                this.getSubs(arrEntity, pick);
+                this.getSubs(entitySet, pick);
             }
         }
-        this.getSubs(arrEntity, this.rearPick);
+        this.getSubs(entitySet, this.rearPick);
         for (let i in this.onPicks) {
-            this.getSubs(arrEntity, this.onPicks[i]);
+            this.getSubs(entitySet, this.onPicks[i]);
         }
     }
 
-    private getSubs(arrEntity: Entity[], binPick: BinPick) {
+    private getSubs(entitySet: Set<Entity>, binPick: BinPick) {
         if (binPick === undefined) return;
-        binPick.getRefEntities(arrEntity);
+        binPick.getRefEntities(entitySet);
     }
 
     protected override fromSwitch(i: string, val: any) {
@@ -499,10 +499,10 @@ export class EntityBin extends Entity {
     }
 
     private buildPick(v: any): BinPick {
-        const { id, name, from, caption, params, hidden, to } = v;
+        const { id, name, from, caption, params, hidden, to, ui } = v;
         let binPick: BinPick;
         if (from === undefined) {
-            return new PickScalar(this.biz, id, name, this);
+            binPick = new PickScalar(this.biz, id, name, this);
         }
         else {
             let arr = (from as string[]).map(v => this.biz.entities[v]);
@@ -543,7 +543,6 @@ export class EntityBin extends Entity {
                 case BizPhraseType.options: binPick = buildPickOptions(); break;
             }
             binPick.pickParams = this.buildPickParams(params);
-            binPick.ui = { caption };
             if (hidden !== undefined) {
                 binPick.hiddenBuds = new Set();
                 const { hiddenBuds } = binPick;
@@ -552,8 +551,9 @@ export class EntityBin extends Entity {
                 }
             }
         }
+        binPick.ui = ui;
         if (to !== undefined) {
-            binPick.to = this.budColl[to];
+            binPick.to = (to as [number, string][]).map(([budId, col]) => ([this.budColl[budId], col]));
         }
         return binPick;
     }
@@ -617,14 +617,14 @@ export class EntityBin extends Entity {
             let binPicks: BinPick[] = [];
             let rearPick: BinPick;
             for (let pick of this.binPicks) {
-                const { to: on } = pick;
-                if (on !== undefined) {
-                    this.onPicks[on.id] = pick;
+                const { to } = pick;
+                if (to !== undefined) {
+                    for (let [bud, col] of to) {
+                        this.onPicks[bud.id] = pick;
+                    }
                 }
-                else {
-                    binPicks.push(pick);
-                    rearPick = pick;
-                }
+                binPicks.push(pick);
+                rearPick = pick;
             }
             if (rearPick !== undefined) {
                 binPicks.pop();
@@ -837,9 +837,9 @@ export class EntitySheet extends Entity {
     }[] = [];
     search: { bin: EntityBin; buds: BizBud[]; }[];
 
-    getRefEntities(arrEntity: Entity[]) {
-        if (this.main !== undefined) arrEntity.push(this.main);
-        arrEntity.push(...this.details.map(v => v.bin));
+    getRefEntities(entitySet: Set<Entity>) {
+        if (this.main !== undefined) entitySet.add(this.main);
+        for (let bin of this.details.map(v => v.bin)) entitySet.add(bin);
     }
 
     protected override fromSwitch(i: string, val: any) {

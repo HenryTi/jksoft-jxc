@@ -69,7 +69,9 @@ export class SheetMainStore extends EntityStore<EntityBin> {
         let { editing, rearBinPick, rearResult } = pickResults;
         editing.addFormulas(formulas);
         if (rearBinPick !== undefined) {
-            editing.setNamedValues(rearBinPick.name, rearResult[0]);
+            if (rearResult !== undefined) {
+                editing.setNamedValues(rearBinPick.name, rearResult[0]);
+            }
         }
         if (i !== undefined) {
             row.i = editing.getValue('i') as number;

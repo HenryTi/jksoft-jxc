@@ -30,9 +30,9 @@ class Nav {
     }
     private setSubs(entity: Entity) {
         this.subs.splice(0);
-        let arrEntity: Entity[] = [];
-        entity.getRefEntities(arrEntity);
-        this.subs.push(...arrEntity);
+        let entitySet: Set<Entity> = new Set();
+        entity.getRefEntities(entitySet);
+        this.subs.push(...Array.from(entitySet));
     }
     private setCur(entity: Entity) {
         if (entity === this.cur) return;
@@ -116,8 +116,6 @@ class EntityStore {
         let entity = getAtomValue(this.atomEntity);
         let code = getAtomValue(this.atomCode);
         this.modal.open(<PageLogs entity={entity} code={code} />);
-        // let newEntity = this.biz.entityFromId(entity.id);
-        // setPageCaption(newEntity.caption ?? newEntity.name);
         this.setSubmitDisabled(true);
     }
 

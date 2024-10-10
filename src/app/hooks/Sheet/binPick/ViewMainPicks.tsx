@@ -42,7 +42,6 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
         if (rearPickResult === undefined) return;
         let rearResult: PickResult[] = Array.isArray(rearPickResult) === false ?
             [rearPickResult as PickResult] : rearPickResult as PickResult[];
-
         let ret: ReturnUseBinPicks = {
             editing,
             rearBinPick: rearPick,           // endmost pick
@@ -62,7 +61,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
             <ViewPickRear />
         </>;
         viewBinPicksNext = <LabelRow label={null} >
-            <button className="btn btn-primary my-3" onClick={onNext} disabled={cur <= binPicks.length}>
+            <button className="btn btn-primary my-3" onClick={onNext} disabled={cur < binPicks.length}>
                 <FA name="arrow-right me-2" />下一步
             </button>
         </LabelRow>;
@@ -183,107 +182,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
         {viewBinPicksNext}
     </>;
 }
-/*
-function ViewPick({ editing, binPick, onPick, index, cur }: {
-    editing: BinBudsEditing,
-    binPick: BinPick;
-    onPick: (binPick: BinPick, index: number) => Promise<void>;
-    cur: number;
-    index: number;
-}) {
-    useAtomValue(editing.atomChanging);
-    let [isPicking, setIsPicking] = useState(false);
-    let vPencil = <div className="ms-3">
-        <FA name="search" fixWidth={true} className="small text-info" />
-    </div>;
-    async function onClick() {
-        if (index > cur) return;
-        if (isPicking === true) return;
-        setIsPicking(true);
-        await onPick(binPick, index);
-        setIsPicking(false);
-    }
-    let cnLabel: string, cnAngle: string, iconPrefix: string;
-    // const py = ' py-3 ';
-    let cn: string;
-    let vContent: any;
-    if (index < cur) {
-        let val = editing.getValue(binPick.name);
-        let vVal: any;
-        if (val === undefined) {
-            vVal = <span className="text-secondary">-</span>;
-        }
-        else {
-            switch (typeof val) {
-                case 'object':
-                    vVal = <ViewAtomId id={(val as any).id} />;
-                    break;
-                default:
-                    if (binPick.fromPhraseType === BizPhraseType.options) {
-                        let item = (binPick as PickOptions).from.items.find(v => v.id === val);
-                        vVal = item.caption ?? item.name;
-                    }
-                    else {
-                        vVal = val;
-                    }
-                    break;
-            }
-        }
-        vContent = <div className="d-flex py-3 cursor-pointer" onClick={onClick}>
-            <div className="text-secondary flex-fill">
-                {vVal}
-            </div>
-            {vPencil}
-        </div>;
-        // cn = ' cursor-pointer ' + py;
-        cnLabel = '';
-        cnAngle = ' text-success ';
-        iconPrefix = 'check-circle-o';
-    }
-    else if (index === cur) {
-        switch (binPick.fromPhraseType) {
-            case BizPhraseType.any:
-                cn = ' d-flex ';
-                vContent = <ViewInputStr />;
-                break;
-            default:
-                // cn = ' cursor-pointer ' + py;
-                vContent = <div className="text-secondary flex-fill py-3 cursor-pointer" onClick={onClick}>
-                    <FA name="search" className="text-primary" size="lg" />
-                </div>;
-                break;
-        }
-        cnLabel = ' text-primary fw-bold ';
-        cnAngle = ' text-primary ';
-        iconPrefix = 'hand-o-right';
-    }
-    else {
-        vContent = <div className="small text-secondary py-3">-</div>;
-        // cn = py;
-        cnLabel = ' text-secondary ';
-        cnAngle = ' text-secondary ';
-        iconPrefix = 'angle-right';
-    }
-    if (isPicking === true) {
-        vContent = <div className="py-3"><SpinnerSmall /></div>;
-    }
-    return <></>;
 
-    function ViewInputStr() {
-        function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-            if (e.key === 'Enter') {
-                onClick();
-            }
-        }
-        function onChange(e: ChangeEvent<HTMLInputElement>) {
-            // editing.setBudComposingValue(binPick, e.currentTarget.value);
-        }
-        return <input className="border-0 px-2 ms-n2 me-n2 flex-fill" type="text"
-            onKeyDown={onKeyDown}
-            onChange={onChange} />;
-    }
-}
-*/
 function LabelRow({ children, label, cn, iconPrefix, cnAngle, cnLabel }: {
     children: React.ReactNode;
     label?: string;

@@ -10,7 +10,7 @@ export abstract class EntityID extends Entity {
     primeBuds: BizBud[];
     uniques: string[];
 
-    getRefEntities(arrEntity: Entity[]) { arrEntity.push(... this.subClasses); }
+    getRefEntities(entitySet: Set<Entity>) { for (let sub of this.subClasses) entitySet.add(sub); }
 
     getUniques(): string[] {
         let us = [...(this.uniques ?? [])];
