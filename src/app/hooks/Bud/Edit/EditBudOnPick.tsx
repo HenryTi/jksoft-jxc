@@ -35,10 +35,15 @@ export function EditBudOnPick(props: EditBudTemplateProps & { pick: BinPick; }) 
         onChanged?.(bizBud, atomId);
     }
     let vContent: any;
-    switch (entityID.bizPhraseType) {
-        default: debugger; break;
-        case BizPhraseType.atom: vContent = <ViewAtomId id={value} />; break;
-        case BizPhraseType.fork: vContent = <ViewSpecId id={value} />; break;
+    if (entityID === undefined) {
+        vContent = value; // 'entityID===undefined';
+    }
+    else {
+        switch (entityID.bizPhraseType) {
+            default: debugger; break;
+            case BizPhraseType.atom: vContent = <ViewAtomId id={value} />; break;
+            case BizPhraseType.fork: vContent = <ViewSpecId id={value} />; break;
+        }
     }
     return <ValueEdit label={label}
         readOnly={readOnly}

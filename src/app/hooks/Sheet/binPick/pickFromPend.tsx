@@ -5,11 +5,11 @@ import { PagePend } from "./PagePend";
 import { BudsEditing } from "app/hooks/BudsEditing";
 import { PickResult } from "app/hooks/Calc";
 
-export async function pickFromPend(divStore: BinStore, editing: BudsEditing, binPick: PickPend): Promise<PickResult[]> {
+export async function pickFromPend(binStore: BinStore, editing: BudsEditing, binPick: PickPend): Promise<PickResult[]> {
     let { from: entityPend, bin } = binPick;
     const pendProxyHander = new PendProxyHandler(entityPend);
     const { modal } = editing;
-    let pendStore = divStore.getPickPendStore(binPick, editing.valueSpace);
+    let pendStore = binStore.getPickPendStore(binPick, editing.valueSpace);
     await pendStore.searchPend();
     let inputed = await modal.open<ValRow[]>(<PagePend pendStore={pendStore} />);
     if (inputed === undefined) return;
@@ -47,6 +47,6 @@ export async function pickFromPend(divStore: BinStore, editing: BudsEditing, bin
         iArr.push([g, iColl[g]]);
     }
     // 随后的pickFromPend，不再显示步骤
-    divStore.sheetStore.sheetConsole.steps = undefined;
+    binStore.sheetStore.sheetConsole.steps = undefined;
     return iArr as any;
 }

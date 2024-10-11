@@ -1,12 +1,13 @@
-import { BinPick, PickOptions } from "app/Biz";
+import { BinPick, PickOptions, PickPend } from "app/Biz";
 import { ChangeEvent, KeyboardEvent, useRef, useState } from "react";
 import { BinBudsEditing, doBinPick, doBinPickRear, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
-import { theme } from "tonwa-com";
+import { getAtomValue, theme } from "tonwa-com";
 import { FA, Sep, SpinnerSmall } from "tonwa-com";
-import { PickResult, ViewAtomId } from "app/hooks";
+import { PickResult, ViewAtomId, ViewBud } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { BizPhraseType } from "uqs/UqDefault";
 import { InputScalar } from "./InputScalar";
+import { RowCols } from "app/hooks/tool";
 
 interface Props {
     subHeader?: string;
@@ -23,6 +24,10 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
 
     const { binPicks, rearPick } = main.entity;
     let refRearPickResult = useRef(undefined as PickResult[] | PickResult);
+    function getNextPick() {
+        if (cur < binPicks.length - 1) return binPicks[cur + 1];
+        return rearPick;
+    }
 
     function clearTailPicks(curSerial: number) {
         for (let i = curSerial + 1; i < binPicks.length; i++) {
@@ -39,7 +44,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
 
     async function onNext() {
         let rearPickResult = refRearPickResult.current;
-        if (rearPickResult === undefined) return;
+        // if (rearPickResult === undefined) return;
         let rearResult: PickResult[] = Array.isArray(rearPickResult) === false ?
             [rearPickResult as PickResult] : rearPickResult as PickResult[];
         let ret: ReturnUseBinPicks = {
@@ -77,8 +82,30 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                 const defaultValue = editing.getValue(name);
                 async function onPicked(scalarResult: PickResult) {
                     if (scalarResult === undefined) return;
-                    editing.setNamedValue(binPick.name, scalarResult as any);
+                    editing.setNamedValue(binPick.to[0][0].name, scalarResult as any);
+                    let nextPick = getNextPick();
                     afterPicked(serial);
+                    if (nextPick.fromPhraseType === BizPhraseType.pend) {
+                        let pickPend = nextPick as PickPend;
+                        const { binStore } = sheetStore;
+                        let pendStore = binStore.getPickPendStore(nextPick as PickPend, editing.valueSpace);
+                        await pendStore.searchPend();
+                        let pendRows = getAtomValue(binStore.atomPendRows);
+                        if (pendRows.length > 0) {
+                            let pendRow = pendRows[0];
+                            let { to: toArr } = pickPend;
+                            for (let [bud, col] of toArr) {
+                                let colVal: any;
+                                for (let midValue of pendRow.mid) {
+                                    if (midValue.bud.name === col) {
+                                        colVal = midValue.value; // pendRow.mid[]
+                                    }
+                                }
+                                editing.setNamedValue(bud.name, colVal);
+                            }
+                            afterPicked(serial + 1);
+                        }
+                    }
                 }
                 return <ViewLabelRowPicking cn="d-flex align-items-stretch g-0" caption={caption}>
                     <InputScalar binPick={binPick} onPicked={onPicked} value={defaultValue} />
@@ -158,18 +185,49 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
     function ViewPickRear() {
         useAtomValue(editing.atomChanging);
         let serial = binPicks.length;
-        async function pick() {
-            let pickResult = await doBinPickRear(divStore, editing, rearPick, rearPickResultType);
-            if (pickResult !== undefined) {
-                refRearPickResult.current = pickResult;
-                afterPicked(serial + 1);
+        if (rearPick.fromPhraseType === BizPhraseType.pend) {
+            let cnAngle: string, iconPrefix: string, vContent: any;
+            if (serial > cur) {
+                // to pick
+                cnAngle = "text-secondary";
+                iconPrefix = "angle-right";
+                vContent = <div className="py-3 text-body-tertiery small">-</div>;
             }
+            else {
+                cnAngle = "text-success";
+                iconPrefix = "check-circle-o";
+                const { to } = rearPick;
+                if (to === undefined) {
+                    vContent = "Picked";
+                }
+                else {
+                    vContent = <div className="py-2">
+                        <RowCols>
+                            {to.map(([bud]) => {
+                                return <ViewBud key={bud.id} bud={bud} value={editing.getValue(bud.name)} />;
+                            })}
+                        </RowCols>
+                    </div>
+                };
+            }
+            return <LabelRow label={''} cnAngle={cnAngle} iconPrefix={iconPrefix} >
+                {vContent}
+            </LabelRow>;
         }
-        if (serial < cur) {
-            return <ViewPicked binPick={rearPick} pick={pick} />;
+        else {
+            if (serial > cur) return <ViewToPick binPick={rearPick} />;
+            async function pick() {
+                let pickResult = await doBinPickRear(divStore, editing, rearPick, rearPickResultType);
+                if (pickResult !== undefined) {
+                    refRearPickResult.current = pickResult;
+                    afterPicked(serial + 1);
+                }
+            }
+            if (serial < cur) {
+                return <ViewPicked binPick={rearPick} pick={pick} />;
+            }
+            return <ViewPicking binPick={rearPick} pick={pick} />;
         }
-        if (serial > cur) return <ViewToPick binPick={rearPick} />;
-        return <ViewPicking binPick={rearPick} pick={pick} />;
     }
     return <>
         <div className="border rounded-3 mt-3">
@@ -188,16 +246,23 @@ function LabelRow({ children, label, cn, iconPrefix, cnAngle, cnLabel }: {
     label?: string;
     cn?: string; iconPrefix?: string; cnAngle?: string; cnLabel?: string;
 }) {
-    let cnLabelContainer = ' col-3 ' + (label ? 'col-3 tonwa-bg-gray-1 d-flex align-items-center border-end py-3' : '');
+    let cnLabelContainer: string, vLabel: any;
+    if (label === null) {
+        cnLabelContainer = ' col-3 ';
+    }
+    else {
+        cnLabelContainer = ' col-3 tonwa-bg-gray-1 d-flex align-items-center border-end py-3';
+        vLabel = <>
+            <FA name={iconPrefix} fixWidth={true} className={'me-2 ' + cnAngle} />
+            <div className="flex-fill" />
+            <span className={cnLabel}>{label}</span>
+        </>;
+    }
     return <>
         <div className={theme.bootstrapContainer}>
             <div className="row">
                 <div className={cnLabelContainer}>
-                    {label && <>
-                        <FA name={iconPrefix} fixWidth={true} className={'me-2 ' + cnAngle} />
-                        <div className="flex-fill" />
-                        <span className={cnLabel}>{label}</span>
-                    </>}
+                    {vLabel}
                 </div>
                 <div className={' col ' + (cn ?? '')}>
                     {children}
