@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Sep 28 2024 17:01:12 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sat Oct 12 2024 11:43:15 GMT-0400 (Eastern Daylight Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -342,6 +342,69 @@ export interface ReturnSaveDetailRet {
 }
 export interface ResultSaveDetail {
 	ret: ReturnSaveDetailRet[];
+}
+
+export interface ParamSaveDetails {
+	base: number;
+	phrase: number;
+	details: any;
+}
+export interface ReturnSaveDetailsMain {
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	phrase: number;
+}
+export interface ReturnSaveDetailsDetails {
+	id: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	pend: number;
+	pendValue: number;
+	phrase: number;
+}
+export interface ReturnSaveDetailsOrigins {
+	id: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+}
+export interface ReturnSaveDetailsProps {
+	id: number;
+	phrase: number;
+	value: any;
+}
+export interface ReturnSaveDetailsAtoms {
+	id: number;
+	base: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnSaveDetailsSpecs {
+	id: number;
+	atom: number;
+}
+export interface ResultSaveDetails {
+	main: ReturnSaveDetailsMain[];
+	details: ReturnSaveDetailsDetails[];
+	origins: ReturnSaveDetailsOrigins[];
+	props: ReturnSaveDetailsProps[];
+	atoms: ReturnSaveDetailsAtoms[];
+	specs: ReturnSaveDetailsSpecs[];
 }
 
 export interface ParamDeleteBin {
@@ -1714,6 +1777,7 @@ export interface UqExt extends Uq {
 	GetSpec: UqQuery<ParamGetSpec, ResultGetSpec>;
 	SaveSheet: UqAction<ParamSaveSheet, ResultSaveSheet>;
 	SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
+	SaveDetails: UqAction<ParamSaveDetails, ResultSaveDetails>;
 	DeleteBin: UqAction<ParamDeleteBin, ResultDeleteBin>;
 	SubmitSheet: UqAction<ParamSubmitSheet, ResultSubmitSheet>;
 	SubmitSheetDebug: UqAction<ParamSubmitSheetDebug, ResultSubmitSheetDebug>;
@@ -2634,6 +2698,231 @@ export const uqSchema={
                 "fields": [
                     {
                         "name": "id",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "savedetails": {
+        "name": "SaveDetails",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "phrase",
+                "type": "id"
+            },
+            {
+                "name": "details",
+                "type": "json"
+            }
+        ],
+        "jsoned": true,
+        "returns": [
+            {
+                "name": "main",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "operator",
+                        "type": "id"
+                    },
+                    {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "i",
+                        "type": "id"
+                    },
+                    {
+                        "name": "x",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "amount",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "price",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    }
+                ]
+            },
+            {
+                "name": "details",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "i",
+                        "type": "id"
+                    },
+                    {
+                        "name": "x",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "amount",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "price",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "pend",
+                        "type": "id"
+                    },
+                    {
+                        "name": "pendValue",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    }
+                ]
+            },
+            {
+                "name": "origins",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "i",
+                        "type": "id"
+                    },
+                    {
+                        "name": "x",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "amount",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "price",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    }
+                ]
+            },
+            {
+                "name": "props",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "specs",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "atom",
                         "type": "id"
                     }
                 ]

@@ -88,7 +88,6 @@ function EditDiv(props: EditDivProps) {
     let tops: DivRightButton[], bottoms: DivRightButton[];
     if (level === divLevels) {
         async function onEdit() {
-            // const { atomValRow } = valDiv;
             const editing = new DivEditing(divStore, valDiv);
             let ret = await rowEdit(modal, editing, valDiv);
             if (ret !== true) return;
@@ -97,9 +96,8 @@ function EditDiv(props: EditDivProps) {
                 alert('Pivot key duplicate'); // 这个界面要改
                 return;
             }
-            await divStore.saveDetail(binDiv, newValRow);
+            await divStore.saveDetails(binDiv, [newValRow]);
             valDiv.setValRow(newValRow);
-            // setAtomValue(atomValRow, newValRow);
         }
         tops = [{
             icon: 'pencil-square-o',

@@ -207,11 +207,12 @@ export class SheetStore extends EntityStore<EntitySheet> {
         }
         setAtomValue(this.atomLoaded, true);
     }
-
+    /*
     async reloadBinProps(binId: number) {
         if (this.budsColl[binId] !== undefined) return;
         await this.loadBinData(binId);
     }
+    */
 
     get mainId() {
         return this.mainStore.valRow?.id;

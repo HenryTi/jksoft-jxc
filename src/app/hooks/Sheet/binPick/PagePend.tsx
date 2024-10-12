@@ -21,7 +21,7 @@ export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
     function ViewItemPendRow({ value: pendRow }: { value: PendRow }) {
         return <ViewPendRowEdit pendRow={pendRow} divStore={binStore} />;
     }
-    let onItemSelectFunc: any, btnFinish: any;
+    let onItemSelectFunc: any;
     function BtnNext() {
         function onNext() {
             steps?.next();

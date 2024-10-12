@@ -11,7 +11,6 @@ export async function runBinPicks(
     let editing = new BinBudsEditing(sheetStore, bin, []);
     for (const binPick of binPicks) {
         await doBinPick(editing, binPick);
-        //await editing.runBinPick(binPick);
     }
 
     let ret: ReturnUseBinPicks = {

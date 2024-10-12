@@ -44,9 +44,9 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
             valRow.pend = pend as number;
             valRow.pendValue = pendValue as number;
             if (valRow.id !== undefined) debugger;
-            let id = await binStore.saveDetail(binDivRoot, valRow);
-            valRow.id = id;
-            await binStore.reloadValRow(valRow);
+            let ids = await binStore.saveDetails(binDivRoot, [valRow]);
+            valRow.id = ids[0];
+            // await binStore.reloadValRow(valRow);
             binStore.setValRowRoot(valRow, true);
         }
     }
@@ -58,9 +58,9 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
         if (ret === true) {
             const { values: valRow } = binEditing;
             if (valRow.id !== undefined) debugger;
-            let id = await binStore.saveDetail(binDivRoot, valRow);
-            valRow.id = id;
-            await binStore.reloadValRow(valRow);
+            let ids = await binStore.saveDetails(binDivRoot, [valRow]);
+            valRow.id = ids[0];
+            // await binStore.reloadValRow(valRow);
         }
     }
     binStore.setWaiting(false);

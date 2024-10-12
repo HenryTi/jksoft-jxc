@@ -172,7 +172,7 @@ export function ViewDiv(props: ViewDivProps) {
                     let ret = await rowEdit(modal, editing, valDiv);
                     if (ret !== true) return;
                     const { values: newValRow } = editing;
-                    await divStore.saveDetail(binDiv, newValRow);
+                    await divStore.saveDetails(binDiv, [newValRow]);
                     // setAtomValue(atomValRow, newValRow);
                     valDiv.setValRow(newValRow);
                     return;

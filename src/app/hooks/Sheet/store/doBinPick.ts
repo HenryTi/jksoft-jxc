@@ -19,33 +19,6 @@ export async function doBinPick(editing: BinBudsEditing, binPick: BinPick) {
     return pickResult;
 }
 
-async function switchPhraseType(editing: BinBudsEditing, pick: BinPick) {
-    let pickResult: PickResult;
-    switch (pick.fromPhraseType) {
-        default: break;
-        /*
-        case BizPhraseType.any:
-            // pickResult = this.getBudComposingValue(pick);
-/            debugger;
-            pickResult = { [pick.name]: 'a' };
-            break;
-        */
-        case BizPhraseType.atom:
-            pickResult = await pickFromAtom(editing, pick as PickAtom);
-            break;
-        case BizPhraseType.fork:
-            pickResult = await pickFromSpec(editing, pick as PickSpec);
-            break;
-        case BizPhraseType.query:
-            pickResult = await pickFromQueryScalar(editing, pick as PickQuery);
-            break;
-        case BizPhraseType.options:
-            pickResult = await pickFromOptions(editing.modal, pick as PickOptions);
-            break;
-    }
-    return pickResult;
-}
-
 export async function doBinPickRear(binStore: BinStore, editing: BinBudsEditing, rearPick: BinPick, rearPickResultType: RearPickResultType) {
     const { name, fromPhraseType } = rearPick;
     switch (fromPhraseType) {
@@ -59,8 +32,27 @@ export async function doBinPickRear(binStore: BinStore, editing: BinBudsEditing,
             return await pickFromPend(binStore, editing, rearPick as PickPend);
     }
     let pickResult = await switchPhraseType(editing, rearPick);
-    // if (pickResult !== undefined) return pickResult;
     if (pickResult === undefined) return;
     editing.setNamedValues(name, pickResult);
+    return pickResult;
+}
+
+async function switchPhraseType(editing: BinBudsEditing, pick: BinPick) {
+    let pickResult: PickResult;
+    switch (pick.fromPhraseType) {
+        default: break;
+        case BizPhraseType.atom:
+            pickResult = await pickFromAtom(editing, pick as PickAtom);
+            break;
+        case BizPhraseType.fork:
+            pickResult = await pickFromSpec(editing, pick as PickSpec);
+            break;
+        case BizPhraseType.query:
+            pickResult = await pickFromQueryScalar(editing, pick as PickQuery);
+            break;
+        case BizPhraseType.options:
+            pickResult = await pickFromOptions(editing.modal, pick as PickOptions);
+            break;
+    }
     return pickResult;
 }

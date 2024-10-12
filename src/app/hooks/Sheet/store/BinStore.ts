@@ -7,7 +7,7 @@ import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsBase, ValDivsRoot } fro
 import { BudEditing, ValuesBudsEditing, ValueSpace } from "app/hooks";
 import { PickPendStore } from "./PickPendStore";
 import { EntityStore } from "app/tool";
-import { ParamSaveDetail } from "uqs/UqDefault";
+import { ParamSaveDetail, ParamSaveDetails } from "uqs/UqDefault";
 
 enum PendLoadState {
     none,
@@ -326,32 +326,42 @@ export class BinStore extends EntityStore<EntityBin> {
         return ret;
     }
 
-    async saveDetail(binDiv: BinDiv, valRow: ValRow) {
+    async saveDetails(binDiv: BinDiv, valRows: ValRow[]) {
         const { buds } = binDiv;
-        let { id, i, x, value, price, amount, pend, origin } = valRow;
-        let propArr = getValRowPropArr(valRow, buds);
-        let param: ParamSaveDetail = {
+        let details = [];
+        for (let valRow of valRows) {
+            let { id, i, x, value, price, amount, pend, origin } = valRow;
+            let propArr = getValRowPropArr(valRow, buds);
+            details.push({
+                id,
+                i,
+                x,
+                value,
+                price,
+                amount,
+                origin,
+                pend,
+                props: propArr,
+            });
+        }
+        let param: ParamSaveDetails = {
             base: this.sheetStore.mainId,
             phrase: binDiv.entityBin.id,
-            id,
-            i,
-            x,
-            value,
-            price,
-            amount,
-            origin,
-            pend,
-            props: propArr,
+            details,
         };
-        let retSaveDetail = await this.uq.SaveDetail.submitReturns(param);
-        id = retSaveDetail.ret[0].id;
-        return id;
+        let { details: retDetails, props, specs, atoms } = await this.uq.SaveDetails.submitReturns(param);
+        this.sheetStore.cacheIdAndBuds(props, atoms, specs);
+        let ids = retDetails.map(v => v.id);
+        return ids;
     }
 
+    /*
     async reloadBinProps(bin: number) {
         await this.sheetStore.reloadBinProps(bin);
     }
+    */
 
+    /*
     async reloadValRow(valRow: ValRow) {
         const { id: binId } = valRow;
         // let { details } = 
@@ -360,6 +370,7 @@ export class BinStore extends EntityStore<EntityBin> {
         // reload其实是load相关props和atoms
         // this.load(details, true);
     }
+    */
 
     replaceValDiv(valDiv: ValDivBase, newValDiv: ValDivRoot) {
         const { valDivs } = this.valDivsRoot;

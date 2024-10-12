@@ -7,7 +7,6 @@ import { useCallback } from "react";
 import { ToolItem } from "app/coms";
 import { buttonDefs, headerSheet } from "../headerSheet";
 import { ViewMainPicks } from "../binPick";
-// import { useDetailNew } from "../binEdit";
 import { ViewSteps } from "./ViewSteps";
 import { detailNew } from "../binEdit";
 

@@ -259,6 +259,76 @@ RETURNS ret (
     INTO ret SELECT id;
 };
 
+Biz AC SaveDetails ver 0.2 (
+    base ID,                -- sheet id
+    phrase ID,              -- detail phrase id
+    details JSON,
+    /*
+    id ID,
+    i ID,                -- 计量对象。比如：商品不同包装或者批次
+    x ID,               -- 操作对象。比如：客户，仓库，等
+    origin ID,
+    value VALUE,
+    price VALUE,
+    amount VALUE,
+    pend ID,
+    props JSON,
+    */
+)
+RETURNS ret (
+    id ID,
+) {
+    VAR me ID = Me();
+    VAR pendFrom ID = pend;
+    -- 安全判断
+    IF base IS NULL OR NOT EXISTS(SELECT x FROM IxState WHERE i=me AND x=base) {
+        -- base sheet必须在我的draft里面
+        RETURN;
+    }
+    -- 安全判断
+    IF NOT EXISTS(SELECT a.id FROM BizPhrase as a WHERE a.id=phrase AND a.base=$site) {
+        -- phrase id 必须是 my site
+        RETURN;
+    }
+
+    JSONTABLE tblDetail (
+        id ID PATH '$.id',
+        i ID PATH '$.i',                -- 计量对象。比如：商品不同包装或者批次
+        x ID PATH '$.x',               -- 操作对象。比如：客户，仓库，等
+        origin ID PATH '$.origin',
+        value VALUE PATH '$.value',
+        price VALUE PATH '$.price',
+        amount VALUE PATH '$.amount',
+        pend ID PATH '$.pend',
+        props JSON PATH '$.props'
+    ) FROM details PATH '$[*]';
+
+    FOR (VAR id ID,
+        i ID,                -- 计量对象。比如：商品不同包装或者批次
+        x ID,               -- 操作对象。比如：客户，仓库，等
+        origin ID,
+        value VALUE,
+        price VALUE,
+        amount VALUE,
+        pend ID,
+        props JSON
+        OF SELECT a.id, a.i, a.x, a.origin, a.value, a.price, a.amount, a.pend, a.props
+            FROM tblDetail as a
+    ) {
+        IF id IS NULL {
+            SET id = ID(Detail New Key base=ID(Bud New KEY base=base, ext=phrase));
+        }
+        WITH Bin ID=id SET i=i, x=x
+            , origin=origin
+            , value=value, price=price, amount=amount;
+        IF pendFrom IS NOT NULL {
+            WITH BinPend as a ID=id SET a.pendFrom=pendFrom;
+        }
+        PROC SaveBinBuds(id, props);
+        INTO ret SELECT id;
+    }
+};
+
 PROC SaveBinBuds(
     id ID,
     props JSON,

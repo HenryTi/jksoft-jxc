@@ -58,8 +58,9 @@ async function runInputDiv(props: UseEditDivsProps, divEditing: DivEditing) {
     }
     async function saveDetail() {
         let { valRow } = valDiv;
-        let id = await divStore.saveDetail(binDiv, valRow);
-        await divStore.reloadBinProps(id);
+        let ids = await divStore.saveDetails(binDiv, [valRow]);
+        let id = ids[0];
+        // await divStore.reloadBinProps(id);
         valRow.id = id;
         valDiv.setValRow(valRow);
         valDiv.setIXBaseFromInput(divEditing);

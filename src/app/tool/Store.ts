@@ -60,7 +60,7 @@ export abstract class EntityStore<E extends Entity = Entity> extends Store {
         this.entity = entity;
     }
 
-    protected cacheIdAndBuds(props: ReturnGetSheetProps[],
+    cacheIdAndBuds(props: ReturnGetSheetProps[],
         atoms: ReturnGetSheetAtoms[],
         specs: ReturnGetSheetSpecs[],
     ) {
