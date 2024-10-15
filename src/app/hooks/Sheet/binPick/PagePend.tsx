@@ -19,7 +19,7 @@ export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
         caption = entityPend.caption;
     }
     function ViewItemPendRow({ value: pendRow }: { value: PendRow }) {
-        return <ViewPendRowEdit pendRow={pendRow} divStore={binStore} />;
+        return <ViewPendRowEdit pendRow={pendRow} binStore={binStore} />;
     }
     let onItemSelectFunc: any;
     function BtnNext() {

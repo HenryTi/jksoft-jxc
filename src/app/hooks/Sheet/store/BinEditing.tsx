@@ -140,7 +140,7 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
         return pickResult;
     }
 
-    async runBinPickRear(divStore: BinStore, rearPick: BinPick, rearPickResultType: RearPickResultType) {
+    async runBinPickRear(binStore: BinStore, rearPick: BinPick, rearPickResultType: RearPickResultType) {
         const { fromPhraseType } = rearPick;
         switch (fromPhraseType) {
             default: break;
@@ -150,7 +150,7 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
                 }
                 break;
             case BizPhraseType.pend:
-                return await pickFromPend(divStore, this, rearPick as PickPend);
+                return await pickFromPend(binStore, this, rearPick as PickPend);
         }
         let pickResult = await this.switchPhraseType(rearPick);
         if (pickResult !== undefined) return pickResult;
@@ -176,13 +176,13 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
 }
 
 export class DivEditing extends BinBudsEditing {
-    readonly divStore: BinStore;
+    readonly binStore: BinStore;
     readonly valDiv: ValDivBase;
-    constructor(divStore: BinStore, valDiv: ValDivBase, namedResults?: any) {
+    constructor(binStore: BinStore, valDiv: ValDivBase, namedResults?: any) {
         const { binDiv, valRow } = valDiv;
-        const { sheetStore, entity } = divStore;
+        const { sheetStore, entity } = binStore;
         super(sheetStore, entity, binDiv.buds, valRow);
-        this.divStore = divStore;
+        this.binStore = binStore;
         this.valDiv = valDiv;
         // 这里先强行设iBase和xBase from pend
         this.initNamedResults(namedResults);
@@ -214,7 +214,7 @@ export class DivEditing extends BinBudsEditing {
         if (budValue === undefined) return;
         if (this.hasBud(budValue) === false) return;
         if (this.getBudValue(budValue) !== undefined) return;
-        let pendLeft = this.divStore.getPendLeft(valDiv);
+        let pendLeft = this.binStore.getPendLeft(valDiv);
         if (pendLeft === undefined) return;
         this.setBudValue(budValue, pendLeft);
     }

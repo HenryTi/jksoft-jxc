@@ -2,13 +2,13 @@ import { useAtomValue } from "jotai";
 import { theme } from "tonwa-com";
 import { RowColsSm } from "../../../tool";
 import { PAV, ViewDivProps, ViewDivRight, ViewPendValue, cn } from "./tool";
-import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
+import { ViewIBase } from "./ViewIBase";
 import { DivEditing } from "../../store";
 import { ViewAtomPrimesOfStore, ViewSpecBuds } from "app/hooks/View";
 
 export function ViewRowLeaf(props: ViewDivProps) {
-    const { binStore: divStore, valDiv, buttons, index } = props;
-    const { sheetStore } = divStore;
+    const { binStore: binStore, valDiv, buttons, index } = props;
+    const { sheetStore } = binStore;
     const { atomValue, binDiv } = valDiv;
     const { binDivBuds } = binDiv;
     const { budValue, budPrice, budAmount, budI } = binDivBuds;
@@ -26,7 +26,7 @@ export function ViewRowLeaf(props: ViewDivProps) {
             <ViewSpecBuds id={i} store={sheetStore} />
         </>;
     }
-    const divEditing = new DivEditing(divStore, valDiv);
+    const divEditing = new DivEditing(binStore, valDiv);
     return <>
         <div className={cn + ' flex-fill bg-white px-2 py-2 px-lg-3 '}>
             <ViewIBase sheetStore={sheetStore} valDiv={valDiv} index={index} />

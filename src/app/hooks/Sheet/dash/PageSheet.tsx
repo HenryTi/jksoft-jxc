@@ -218,6 +218,7 @@ function ViewSheetContent({ store, readonly }: { store: SheetStore; readonly: bo
         const { valDivsRoot, atomWaiting } = binStore;
         const valDivs = useAtomValue(valDivsRoot.atomValDivs);
         const waiting = useAtomValue(atomWaiting);
+        /*
         let length = valDivs.length;
         for (let i = 0; i < length; i++) {
             let valDiv = valDivs[i];
@@ -225,6 +226,7 @@ function ViewSheetContent({ store, readonly }: { store: SheetStore; readonly: bo
             if (valRow.id === undefined) debugger;
             if (valDiv.id === undefined) debugger;
         }
+        */
         let viewWaiting: any;
         if (waiting === true) {
             viewWaiting = <div className="px-3 py-2"><SpinnerSmall /></div>;
@@ -237,7 +239,7 @@ function ViewSheetContent({ store, readonly }: { store: SheetStore; readonly: bo
                 :
                 valDivs.map((v, index) => {
                     const { id } = v;
-                    if (id === undefined) debugger;
+                    if (id === undefined) return null;// debugger;
                     const cn = 'border-top border-bottom ' + (id < 0 ? 'border-warning' : 'border-primary-subtle');
                     return <React.Fragment key={id}>
                         <div className="page-break" />

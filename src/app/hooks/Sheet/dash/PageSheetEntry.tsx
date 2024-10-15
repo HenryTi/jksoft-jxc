@@ -108,7 +108,6 @@ function buttons(sheetConsole: SheetConsole) {
     let btnSubmit = buttonDefs.submit(undefined, true);
     const navBack = () => sheetConsole.close();
     let btnExit = buttonDefs.exit(navBack, false);
-    // setAtomValue(btnSubmit.atomDisabled, true);
     return { btnSubmit, btnExit };
 }
 

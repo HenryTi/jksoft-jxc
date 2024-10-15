@@ -1,8 +1,7 @@
 import { BinInputFork, BizBud, EntityID, ValueSetType } from "app/Biz";
 import { Page } from "tonwa-app";
 import { theme } from "tonwa-com";
-import { useForm } from "react-hook-form";
-import { Band, FormRow, FormRowsView } from "app/coms";
+import { Band } from "app/coms";
 import { Atom, ParamSaveSpec } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
@@ -19,8 +18,8 @@ export interface PropsInputFork extends InputProps<BinInputFork> {
 
 export async function inputFork(props: PropsInputFork): Promise<PickResult> {
     const { binInput, editing } = props;
-    const { valDiv, divStore } = editing;
-    const { sheetStore, uq, modal, biz } = divStore;
+    const { valDiv, binStore } = editing;
+    const { sheetStore, uq, modal, biz } = binStore;
     const { baseExp, baseBud, params } = binInput;
     const baseName = '.i';
     editing.addFormula(baseName, baseExp ?? baseBud.valueSet, false); // baseBud.valueSetType === ValueSetType.init);
@@ -139,15 +138,6 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         ret = await modal.open(<PagePickSpec />);
         function PagePickSpec() {
             const { caption } = entityFork;
-            // const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
-            // const submitCaption = btnNext;
-            // const submitClassName: string = cnNextClassName;
-            /*
-            let formRows: FormRow[] = [
-                ...budsEditing.buildFormRows(),
-                { type: 'submit', label: submitCaption, options: {}, className: submitClassName }
-            ];
-            */
             const onSubmitForm = async (data: any) => {
                 let retSpec = await saveSpec(true, data);
                 modal.close(retSpec);
@@ -170,11 +160,6 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
                         submitClassName={cnNextClassName} />
                 </div>
             </Page>;
-            /*
-            <form className={bootstrapContainer} onSubmit={handleSubmit(onSubmitForm)}>
-                <FormRowsView rows={formRows} register={register} errors={errors} context={budsEditing} />
-            </form>
-            */
         }
     }
     if (ret !== undefined) {

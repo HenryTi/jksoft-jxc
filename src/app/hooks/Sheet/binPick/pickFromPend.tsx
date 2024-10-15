@@ -17,10 +17,11 @@ export async function pickFromPend(binStore: BinStore, editing: BudsEditing, bin
     // sheetConsole.steps = undefined;
     // 如果有inputs，直接已经输入进了。就不用返回了。
     if (bin.binDivRoot.inputs !== undefined) return;
+    let iArr: (ValRow | [number, ValRow[]])[] = [];
+    /*
     function proxy(obj: any) {
         return new Proxy(obj, pendProxyHander);
     }
-    let iArr: (ValRow | [number, ValRow[]])[] = [];
     let iGroup: number[] = [];
     let iColl: { [i: number]: ValRow[] } = {};
     // group 按 i 分组
@@ -46,6 +47,7 @@ export async function pickFromPend(binStore: BinStore, editing: BudsEditing, bin
     for (let g of iGroup) {
         iArr.push([g, iColl[g]]);
     }
+    */
     // 随后的pickFromPend，不再显示步骤
     binStore.sheetStore.sheetConsole.steps = undefined;
     return iArr as any;

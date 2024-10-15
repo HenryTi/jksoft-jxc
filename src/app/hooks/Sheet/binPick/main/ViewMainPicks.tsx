@@ -18,7 +18,7 @@ interface Props {
 
 export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
     const rearPickResultType = RearPickResultType.scalar;
-    const { mainStore: main, binStore: divStore, sheetConsole } = sheetStore;
+    const { mainStore: main, binStore, sheetConsole } = sheetStore;
     const { steps } = sheetConsole;
     let { current: editing } = useRef(new BinBudsEditing(sheetStore, main.entity, []));
     const [cur, setCur] = useState(0);
@@ -40,7 +40,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
         clearTailPicks(curSerial);
         editing.setChanging();
         setCur(curSerial + 1);
-        divStore.setReload();
+        binStore.setReload();
     }
 
     async function onNext() {
@@ -87,30 +87,36 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                     let nextPick = getNextPick();
                     afterPicked(serial);
                     if (nextPick.fromPhraseType === BizPhraseType.pend) {
-                        let pickPend = nextPick as PickPend;
-                        const { binStore } = sheetStore;
-                        let pendStore = binStore.getPickPendStore(nextPick as PickPend, editing.valueSpace);
-                        await pendStore.searchPend();
-                        let pendRows = getAtomValue(binStore.atomPendRows);
-                        if (pendRows.length > 0) {
-                            let pendRow = pendRows[0];
-                            let { to: toArr } = pickPend;
-                            for (let [bud, col] of toArr) {
-                                let colVal: any;
-                                for (let midValue of pendRow.mid) {
-                                    if (midValue.bud.name === col) {
-                                        colVal = midValue.value; // pendRow.mid[]
-                                    }
-                                }
-                                editing.setNamedValue(bud.name, colVal);
-                            }
-                            afterPicked(serial + 1);
-                        }
-                        let pickResult = await doBinPickRear(divStore, editing, rearPick, rearPickResultType);
-                        if (pickResult !== undefined) {
-                            refRearPickResult.current = pickResult;
-                        }
+                        await autoPickPend(nextPick as PickPend);
                     }
+                }
+                async function autoPickPend(nextPick: PickPend) {
+                    let pickPend = nextPick as PickPend;
+                    const { binStore } = sheetStore;
+                    let pendStore = binStore.getPickPendStore(nextPick as PickPend, editing.valueSpace);
+                    await pendStore.searchPend();
+                    let pendRows = getAtomValue(binStore.atomPendRows);
+                    if (pendRows.length === 0) return;
+                    let pendRow = pendRows[0];
+                    let { to: toArr } = pickPend;
+                    for (let [bud, col] of toArr) {
+                        let colVal: any;
+                        for (let midValue of pendRow.mid) {
+                            if (midValue.bud.name === col) {
+                                colVal = midValue.value; // pendRow.mid[]
+                            }
+                        }
+                        editing.setNamedValue(bud.name, colVal);
+                    }
+                    afterPicked(serial + 1);
+                    /*
+                    let pickResult = await doBinPickRear(binStore, editing, rearPick, rearPickResultType);
+                    if (pickResult !== undefined) {
+                        refRearPickResult.current = pickResult;
+                    }
+                    */
+                    // 直接写入单据明细
+                    binStore.addAllPendRows();
                 }
                 return <ViewLabelRowPicking cn="d-flex align-items-stretch g-0" caption={caption}>
                     <InputScalar binPick={binPick} onPicked={onPicked} value={defaultValue} />
@@ -120,7 +126,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                 async function pick() {
                     setCur(serial);
                     clearTailPicks(serial);
-                    divStore.setReload();
+                    binStore.setReload();
                 }
                 return <ViewPicked binPick={binPick} pick={pick} />;
             }
@@ -222,7 +228,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
         else {
             if (serial > cur) return <ViewToPick binPick={rearPick} />;
             async function pick() {
-                let pickResult = await doBinPickRear(divStore, editing, rearPick, rearPickResultType);
+                let pickResult = await doBinPickRear(binStore, editing, rearPick, rearPickResultType);
                 if (pickResult !== undefined) {
                     refRearPickResult.current = pickResult;
                     afterPicked(serial + 1);

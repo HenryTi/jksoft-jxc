@@ -9,8 +9,8 @@ export class PickPendStore {
     readonly valueSpace: ValueSpace;
     readonly paramsEditing: BinBudsEditing;
 
-    constructor(divStore: BinStore, pickPend: PickPend, valueSpace: ValueSpace) {
-        this.binStore = divStore;
+    constructor(binStore: BinStore, pickPend: PickPend, valueSpace: ValueSpace) {
+        this.binStore = binStore;
         this.pickPend = pickPend;
         this.valueSpace = valueSpace;
         this.paramsEditing = this.createParamsEditing();

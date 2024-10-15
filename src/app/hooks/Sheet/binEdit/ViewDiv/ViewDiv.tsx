@@ -13,7 +13,7 @@ import { rowEdit } from "../divEdit";
 
 export function ViewDiv(props: ViewDivProps) {
     const modal = useModal();
-    const { binStore: divStore, valDiv, readonly } = props;
+    const { binStore, valDiv, readonly } = props;
     const { binDiv, atomDeleted } = valDiv;
     const { entityBin, level } = binDiv;
     const divs = useAtomValue(valDiv.atomValDivs);
@@ -23,106 +23,18 @@ export function ViewDiv(props: ViewDivProps) {
         // pivot直接在末尾级stem显示value list
         return null;
     }
-    if (deleted === true) return <ViewDivUndo binStore={divStore} valDiv={valDiv} />;
+    if (deleted === true) return <ViewDivUndo binStore={binStore} valDiv={valDiv} />;
 
     const { pend, id } = valRow;
-    const { sheetStore } = divStore;
+    const { sheetStore } = binStore;
 
     if (id < 0) return <ViewDivPendRow />;
     else return <ViewDivBinRow />;
 
-    /*
-    async function onDelSub() {
-        if (id < 0) {
-            // 候选还没有输入行内容
-            divStore.removePend(pend);
-            return;
-        }
-        setAtomValue(atomDeleted, !deleted);
-        sheetStore.notifyRowChange();
-    }
-    async function onEdit() {
-        if (id < 0) {
-            // 候选还没有输入行内容
-            let pendRow = sheetStore.getPendRow(pend);
-            let valDivClone = valDiv.clone() as ValDivRoot;
-            let { valRow } = valDivClone;
-            valDivClone.id = undefined;
-            valRow.id = undefined;
-            valRow.origin = pendRow.origin;
-            valRow.pend = pendRow.pend;
-            valRow.pendValue = pendRow.value;
-            valDivClone.setValRow(valRow);
-            const useInputsProps: UseEditDivsProps = {
-                divStore,
-                valDiv: valDivClone,
-                pendRow,
-                skipInputs: false,
-            }
-            let retHasValue = await editDivs(useInputsProps);
-            if (retHasValue !== true) return;
-            divStore.replaceValDiv(valDiv, valDivClone);
-            return;
-        }
-        if (divs.length === 0) {
-            // 无Div明细, 叶div
-            try {
-                const editing = new DivEditing(divStore, valDiv);
-                let ret = await rowEdit(modal, editing, valDiv);
-                if (ret !== true) return;
-                const { values: newValRow } = editing;
-                await divStore.saveDetail(binDiv, newValRow);
-                // setAtomValue(atomValRow, newValRow);
-                valDiv.setValRow(newValRow);
-                return;
-            }
-            catch (e) {
-                console.error(e);
-                alert('error');
-            }
-        }
-        await modal.open(<PageEditDivRoot divStore={divStore} valDiv={valDiv} />);
-    }
-
-    if (deleted === true) {
-        return <ViewDivUndo binStore={divStore} valDiv={valDiv} />;
-    }
-
-    let buttons = divRightButtons(id, deleted, onDelSub, onEdit);
-    let viewDivRightButtons: any;
-    if (readonly !== true) {
-        if (level === 0) {
-            let { tops, bottoms } = buttons;
-            viewDivRightButtons = <ViewDivRightButtons tops={tops} bottoms={bottoms} />;
-        }
-        else {
-            viewDivRightButtons = <ViewDivRightButtons tops={undefined} bottoms={undefined} />;
-        }
-    }
-
-    if (id < 0) {
-        let pendRow = sheetStore.getPendRow(pend);
-        return <div className="d-flex bg-white">
-            <div className="d-flex flex-fill">
-                <ViewPendRow divStore={divStore} pendRow={pendRow} />
-            </div>
-            {viewDivRightButtons}
-        </div>;
-    }
-
-    let viewRow = <ViewRow {...props} buttons={viewDivRightButtons} />;
-    if (divs.length === 0) {
-        return viewRow;
-    }
-    return <>
-        {viewRow}
-        {divs.map(v => <ViewDiv key={v.id} {...props} valDiv={v} index={undefined} />)}
-    </>;
-    */
     function ViewDivPendRow() {
         async function onDelSub() {
             // 候选还没有输入行内容
-            divStore.removePend(pend);
+            binStore.removePend(pend);
         }
         async function onEdit() {
             // 候选还没有输入行内容
@@ -136,14 +48,14 @@ export function ViewDiv(props: ViewDivProps) {
             valRow.pendValue = pendRow.value;
             valDivClone.setValRow(valRow);
             const useInputsProps: UseEditDivsProps = {
-                divStore,
+                binStore: binStore,
                 valDiv: valDivClone,
                 pendRow,
                 skipInputs: false,
             }
             let retHasValue = await editDivs(useInputsProps);
             if (retHasValue !== true) return;
-            divStore.replaceValDiv(valDiv, valDivClone);
+            binStore.replaceValDiv(valDiv, valDivClone);
         }
 
         let buttons = divRightButtons(id, deleted, onDelSub, onEdit);
@@ -153,7 +65,7 @@ export function ViewDiv(props: ViewDivProps) {
         let pendRow = sheetStore.getPendRow(pend);
         return <div className="d-flex bg-white">
             <div className="d-flex flex-fill">
-                <ViewPendRow divStore={divStore} pendRow={pendRow} />
+                <ViewPendRow binStore={binStore} pendRow={pendRow} />
             </div>
             {viewDivRightButtons}
         </div>;
@@ -168,12 +80,11 @@ export function ViewDiv(props: ViewDivProps) {
             if (divs.length === 0) {
                 // 无Div明细, 叶div
                 try {
-                    const editing = new DivEditing(divStore, valDiv);
+                    const editing = new DivEditing(binStore, valDiv);
                     let ret = await rowEdit(modal, editing, valDiv);
                     if (ret !== true) return;
                     const { values: newValRow } = editing;
-                    await divStore.saveDetails(binDiv, [newValRow]);
-                    // setAtomValue(atomValRow, newValRow);
+                    await binStore.saveDetails(binDiv, [newValRow]);
                     valDiv.setValRow(newValRow);
                     return;
                 }
@@ -182,7 +93,7 @@ export function ViewDiv(props: ViewDivProps) {
                     alert('error');
                 }
             }
-            await modal.open(<PageEditDivRoot divStore={divStore} valDiv={valDiv} />);
+            await modal.open(<PageEditDivRoot binStore={binStore} valDiv={valDiv} />);
         }
 
         let buttons = divRightButtons(id, deleted, onDelSub, onEdit);

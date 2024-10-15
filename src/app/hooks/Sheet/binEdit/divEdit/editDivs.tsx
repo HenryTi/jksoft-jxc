@@ -7,19 +7,19 @@ import { PendProxyHandler } from "../../store";
 import { ModalInputRow } from "./ModalInputRow";
 
 export interface UseEditDivsProps {
-    divStore: BinStore;
+    binStore: BinStore;
     pendRow: PendRow;
     valDiv: ValDivBase;         // 当前需要edit的valDiv, 如果新建，则先创建空的valDiv. 所以也不需要返回
     skipInputs: boolean;
 }
 
 export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
-    let { divStore, pendRow, valDiv } = props;
-    let { entity: entityBin } = divStore;
+    let { binStore, pendRow, valDiv } = props;
+    let { entity: entityBin } = binStore;
     let { rearPick, pend: entityPend } = entityBin;
     let pendResult = new Proxy(pendRow, new PendProxyHandler(entityPend));
     for (; ;) {
-        let divEditing = new DivEditing(divStore, valDiv);
+        let divEditing = new DivEditing(binStore, valDiv);
         if (rearPick !== undefined) {
             divEditing.setNamedValues(rearPick.name, pendResult);
         }
@@ -40,8 +40,8 @@ export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
 }
 
 async function runInputDiv(props: UseEditDivsProps, divEditing: DivEditing) {
-    let { divStore, skipInputs } = props;
-    const { modal } = divStore;
+    let { binStore, skipInputs } = props;
+    const { modal } = binStore;
     const { valDiv } = divEditing;
     let { binDiv } = valDiv;
     let retInputs = await runInputs(props, divEditing);
@@ -58,10 +58,7 @@ async function runInputDiv(props: UseEditDivsProps, divEditing: DivEditing) {
     }
     async function saveDetail() {
         let { valRow } = valDiv;
-        let ids = await divStore.saveDetails(binDiv, [valRow]);
-        let id = ids[0];
-        // await divStore.reloadBinProps(id);
-        valRow.id = id;
+        await binStore.saveDetails(binDiv, [valRow]);
         valDiv.setValRow(valRow);
         valDiv.setIXBaseFromInput(divEditing);
     }
@@ -88,8 +85,6 @@ async function runInputs(props: UseEditDivsProps, editing: DivEditing) {
                     binInput: input as BinInputFork,
                 });
                 break;
-            // debugger;
-            // throw new Error('unknown BizPhraseType:' + bizPhraseType);
             case BizPhraseType.atom:
                 retInput = await inputAtom({
                     ...props,

@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai";
-import { DivEditing, BinStore, ValDivBase, ValRow } from "../../store";
-import { FA, getAtomValue, setAtomValue } from "tonwa-com";
+import { DivEditing, BinStore, ValDivBase } from "../../store";
+import { FA, setAtomValue } from "tonwa-com";
 import { Page, useModal } from "tonwa-app";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { ViewRow } from "./ViewRow";
@@ -8,12 +8,12 @@ import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
 import { editDivs, rowEdit } from "../divEdit";
 
 // 编辑div任意层
-export function PageEditDivRoot({ divStore, valDiv }: { divStore: BinStore; valDiv: ValDivBase; }) {
-    const { sheetStore } = divStore;
-    const { entity: entitySheet, mainStore: main } = sheetStore;
-    return <Page header={`${(entitySheet.caption)} - ${main.no}`}>
-        <EditDiv binStore={divStore} valDiv={valDiv} />
-    </Page>
+export function PageEditDivRoot({ binStore, valDiv }: { binStore: BinStore; valDiv: ValDivBase; }) {
+    const { sheetStore } = binStore;
+    const { entity, mainStore } = sheetStore;
+    return <Page header={`${(entity.caption)} - ${mainStore.no}`}>
+        <EditDiv binStore={binStore} valDiv={valDiv} />
+    </Page>;
 }
 
 interface EditDivProps {
@@ -23,7 +23,7 @@ interface EditDivProps {
 
 function EditDiv(props: EditDivProps) {
     const modal = useModal();
-    const { binStore: divStore, valDiv } = props;
+    const { binStore, valDiv } = props;
     const { binDiv, atomDeleted } = valDiv;
     const { level, entityBin, subBinDiv: div } = binDiv;
     const { divLevels, pivot } = entityBin;
@@ -45,17 +45,16 @@ function EditDiv(props: EditDivProps) {
     if (divs.length > 0) {
         async function onAddNew() {
             const { valRow } = valDiv;
-            // const valRow = getAtomValue(atomValRow);
-            let pendRow = await divStore.loadPendRow(valRow.pend);
+            let pendRow = await binStore.loadPendRow(valRow.pend);
             let valDivNew = valDiv.createValDivSub(pendRow);
             let ret = await editDivs({
-                divStore,
+                binStore: binStore,
                 pendRow,
                 valDiv: valDivNew,
                 skipInputs: false,
             });
             if (ret !== true) return;
-            if (isPivotKeyDuplicate(valDivNew) === true) {
+            if (valDivNew.isPivotKeyDuplicate() === true) {
                 alert('Pivot key duplicate'); // 这个界面要改
                 return;
             }
@@ -72,7 +71,7 @@ function EditDiv(props: EditDivProps) {
     }
     async function onDel() {
         setAtomValue(atomDeleted, !deleted);
-        const { sheetStore } = divStore;
+        const { sheetStore } = binStore;
         sheetStore.notifyRowChange();
         if (level === 0) {
             modal.close();
@@ -82,21 +81,21 @@ function EditDiv(props: EditDivProps) {
     const btnDel: DivRightButton = { onClick: onDel, icon: 'trash-o', color: ' text-body-secondary ' }
 
     if (deleted === true) {
-        return <ViewDivUndo binStore={divStore} valDiv={valDiv} />;
+        return <ViewDivUndo binStore={binStore} valDiv={valDiv} />;
     }
 
     let tops: DivRightButton[], bottoms: DivRightButton[];
     if (level === divLevels) {
         async function onEdit() {
-            const editing = new DivEditing(divStore, valDiv);
+            const editing = new DivEditing(binStore, valDiv);
             let ret = await rowEdit(modal, editing, valDiv);
             if (ret !== true) return;
             const { values: newValRow } = editing;
-            if (isPivotKeyDuplicate(valDiv, newValRow) === true) {
+            if (valDiv.isPivotKeyDuplicate(newValRow) === true) {
                 alert('Pivot key duplicate'); // 这个界面要改
                 return;
             }
-            await divStore.saveDetails(binDiv, [newValRow]);
+            await binStore.saveDetails(binDiv, [newValRow]);
             valDiv.setValRow(newValRow);
         }
         tops = [{
@@ -111,26 +110,6 @@ function EditDiv(props: EditDivProps) {
     }
 
     let viewDivRightButtons = <ViewDivRightButtons tops={tops} bottoms={bottoms} />;
-
-    // 增加内容的时候，会用到pivot key duplicate
-    function isPivotKeyDuplicate(valDiv: ValDivBase, valRow?: ValRow) {
-        const { binDiv, parent } = valDiv;
-        const { key } = binDiv;
-        if (key === undefined) return false;
-        const { id: keyId } = key;
-        valRow = valRow ?? valDiv.valRow;
-        const keyValue = valRow.buds[keyId];
-        const { valDivs: parentValDivs } = parent;
-        // const parentValDivs = getAtomValue(atomValDivs);
-        for (let vd of parentValDivs) {
-            if (vd === valDiv) continue;
-            const { valRow: vr } = vd;
-            // const vr = getAtomValue(atomValRow);
-            if (keyValue === vr.buds[keyId]) return true;
-        }
-        return false;
-    }
-
     return <div className={cnDivBottom}>
         <ViewRow {...props} buttons={viewDivRightButtons} hidePivot={true} />
         {viewDivs}

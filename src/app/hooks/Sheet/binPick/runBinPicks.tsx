@@ -20,8 +20,8 @@ export async function runBinPicks(
         rearPickResultType: rearPickResultType,
     };
 
-    const { binStore: divStore } = sheetStore;
-    let rearPickResult = await editing.runBinPickRear(divStore, rearPick, rearPickResultType);
+    const { binStore } = sheetStore;
+    let rearPickResult = await editing.runBinPickRear(binStore, rearPick, rearPickResultType);
     if (rearPickResult === undefined) return undefined;
 
     let rearResult: PickResult[] = Array.isArray(rearPickResult) === false ?

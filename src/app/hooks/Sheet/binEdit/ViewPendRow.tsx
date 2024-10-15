@@ -5,16 +5,16 @@ import { ViewSpecAtomBold, ViewSpecAtomTitles, ViewSpecBuds } from "app/hooks/Vi
 import { ViewBud } from "app/hooks";
 
 export interface PendProps {
-    divStore: BinStore;
+    binStore: BinStore;
     pendRow: PendRow;
 }
 
 // 如果 Pend 有I和X，主体显示这个
 // 否则，尝试显示 origin bin 的 i
 export function ViewPendRow({
-    pendRow, divStore, showPendValue
+    pendRow, binStore, showPendValue
 }: PendProps & { showPendValue?: boolean }) {
-    const { sheetStore, entity: entityBin } = divStore;
+    const { sheetStore, entity: entityBin } = binStore;
     const { pend: entityPend } = entityBin;
     let { i: iBud, hasPrice, hasAmount } = entityPend;
     const { pend: pendId, detail: { id, i, price, amount }, value, mid } = pendRow;
@@ -36,7 +36,7 @@ export function ViewPendRow({
     }
     let viewPendValue: any;
     if (showPendValue === true) {
-        let atomValDiv = divStore.valDivsOnPend[pendId];
+        let atomValDiv = binStore.valDivsOnPend[pendId];
         if (atomValDiv !== undefined) {
             let valDiv = getAtomValue(atomValDiv);
             if (valDiv !== undefined) {

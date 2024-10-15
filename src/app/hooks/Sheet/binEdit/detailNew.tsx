@@ -1,4 +1,4 @@
-import { RearPickResultType, SheetStore } from "../store";
+import { RearPickResultType, SheetStore, ValRow } from "../store";
 import { BinEditing } from "../store";
 import { runBinPicks } from "../binPick";
 import { rowEdit } from "./divEdit";
@@ -17,6 +17,7 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
     binStore.setWaiting(true);
     let { editing, rearBinPick, rearResult, rearPickResultType } = ret;
     const { valueSpace } = editing;
+    const valRows: ValRow[] = [];
     if (rearPickResultType === RearPickResultType.array) {
         // 直接选入行集，待修改
         for (let rowProps of rearResult as PickResult[]) {
@@ -44,10 +45,7 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
             valRow.pend = pend as number;
             valRow.pendValue = pendValue as number;
             if (valRow.id !== undefined) debugger;
-            let ids = await binStore.saveDetails(binDivRoot, [valRow]);
-            valRow.id = ids[0];
-            // await binStore.reloadValRow(valRow);
-            binStore.setValRowRoot(valRow, true);
+            valRows.push(valRow);
         }
     }
     else {
@@ -58,11 +56,12 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
         if (ret === true) {
             const { values: valRow } = binEditing;
             if (valRow.id !== undefined) debugger;
-            let ids = await binStore.saveDetails(binDivRoot, [valRow]);
-            valRow.id = ids[0];
-            // await binStore.reloadValRow(valRow);
+            valRows.push(valRow);
         }
     }
+
+    await binStore.saveDetails(binDivRoot, valRows);
+
     binStore.setWaiting(false);
     sheetStore.notifyRowChange();
     return true;

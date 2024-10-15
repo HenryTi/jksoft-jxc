@@ -4,8 +4,8 @@ import { budContent } from "../../../Bud";
 import { ValDiv } from "../../store";
 import { ViewDivProps } from "./tool";
 
-export function ViewPivotDiv({ valDiv, binStore: divStore }: ViewDivProps) {
-    const { sheetStore } = divStore;
+export function ViewPivotDiv({ valDiv, binStore }: ViewDivProps) {
+    const { sheetStore } = binStore;
     const divs = useAtomValue(valDiv.atomValDivs);
     const { labelColor, value: cnValue } = theme;
     return <>

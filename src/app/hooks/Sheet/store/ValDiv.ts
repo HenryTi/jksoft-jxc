@@ -344,6 +344,23 @@ export abstract class ValDivBase extends ValDivs {
         // this.addValDiv(ret, true); // 操作完成后再加
         return ret;
     }
+
+    // 增加内容的时候，会用到pivot key duplicate
+    isPivotKeyDuplicate(valRow?: ValRow) {
+        const { binDiv, parent } = this;
+        const { key } = binDiv;
+        if (key === undefined) return false;
+        const { id: keyId } = key;
+        valRow = valRow ?? this.valRow;
+        const keyValue = valRow.buds[keyId];
+        const { valDivs: parentValDivs } = parent;
+        for (let vd of parentValDivs) {
+            if ((vd as ValDivBase) === this) continue;
+            const { valRow: vr } = vd;
+            if (keyValue === vr.buds[keyId]) return true;
+        }
+        return false;
+    }
 }
 
 export class ValDivRoot extends ValDivBase {

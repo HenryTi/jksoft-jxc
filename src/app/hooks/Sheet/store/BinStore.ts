@@ -7,7 +7,7 @@ import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsBase, ValDivsRoot } fro
 import { BudEditing, ValuesBudsEditing, ValueSpace } from "app/hooks";
 import { PickPendStore } from "./PickPendStore";
 import { EntityStore } from "app/tool";
-import { ParamSaveDetail, ParamSaveDetails } from "uqs/UqDefault";
+import { ParamSaveDetails } from "uqs/UqDefault";
 
 enum PendLoadState {
     none,
@@ -16,7 +16,6 @@ enum PendLoadState {
 }
 export enum SubmitState {
     none,
-    // hide,
     disable,
     enable,
 }
@@ -271,7 +270,7 @@ export class BinStore extends EntityStore<EntityBin> {
         return valDiv;
     }
 
-    setValRowRoot(valRow: ValRow, trigger: boolean) {
+    private setValRowRoot(valRow: ValRow, trigger: boolean) {
         let rootValDiv: ValDivBase;
         let valDiv: ValDivBase;
         let { origin } = valRow;
@@ -351,26 +350,15 @@ export class BinStore extends EntityStore<EntityBin> {
         };
         let { details: retDetails, props, specs, atoms } = await this.uq.SaveDetails.submitReturns(param);
         this.sheetStore.cacheIdAndBuds(props, atoms, specs);
-        let ids = retDetails.map(v => v.id);
-        return ids;
+        let { length } = valRows;
+        for (let i = 0; i < length; i++) {
+            let retDetail = retDetails[i];
+            let { id } = retDetail;
+            let valRow = valRows[i];
+            valRow.id = id;
+            this.setValRowRoot(valRow, true);
+        }
     }
-
-    /*
-    async reloadBinProps(bin: number) {
-        await this.sheetStore.reloadBinProps(bin);
-    }
-    */
-
-    /*
-    async reloadValRow(valRow: ValRow) {
-        const { id: binId } = valRow;
-        // let { details } = 
-        await this.sheetStore.loadBinData(binId);
-        // 这里不应该再调用下面的load
-        // reload其实是load相关props和atoms
-        // this.load(details, true);
-    }
-    */
 
     replaceValDiv(valDiv: ValDivBase, newValDiv: ValDivRoot) {
         const { valDivs } = this.valDivsRoot;
@@ -435,5 +423,28 @@ export class BinStore extends EntityStore<EntityBin> {
             sumAmount += a0;
         }
         return { sumAmount, sumValue };
+    }
+
+    addNewPendRow(pendId: number) {
+        let atomValDiv = this.valDivsOnPend[pendId];
+        let valRow: ValRow = { id: -pendId, buds: {}, owned: {}, pend: pendId };
+        let retValDiv = new ValDivRoot(this.binDivRoot, valRow);
+        this.valDivsRoot.addValDiv(retValDiv, true);
+        setAtomValue(atomValDiv, retValDiv);
+    }
+
+    addAllPendRows() {
+        let pendRows = getAtomValue(this.atomPendRows);
+        for (let pendRow of pendRows) {
+            this.addNewPendRow(pendRow.pend);
+        }
+    }
+
+    deletePendThoroughly(valRow: ValRow) {
+        const { id } = valRow;
+        let pendId = -id;
+        let atomValDiv = this.valDivsOnPend[pendId];
+        this.valDivsRoot.removePend(pendId);
+        setAtomValue(atomValDiv, undefined);
     }
 }

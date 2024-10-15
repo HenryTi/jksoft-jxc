@@ -90,13 +90,13 @@ export class SheetMyDraftsStore extends SheetListStore {
     }
 
     sheetRowCountChanged(store: SheetStore) {
-        const { mainStore: main, binStore: divStore } = store;
+        const { mainStore: main, binStore } = store;
         const { valRow } = main;
         let { id } = valRow;
         let myDrafts = getAtomValue(this.atomMyDrafts);
         let draft = myDrafts.find(v => v.id === id);
         if (draft === undefined) return;
-        draft.rowCount = divStore.valDivsRoot.getRowCount();
+        draft.rowCount = binStore.valDivsRoot.getRowCount();
         setAtomValue(this.atomMyDrafts, [...myDrafts]);
     }
 
