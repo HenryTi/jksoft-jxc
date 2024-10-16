@@ -24,6 +24,7 @@ export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
             divEditing.setNamedValues(rearPick.name, pendResult);
         }
         divEditing.setNamedValues('pend', pendResult);
+        divEditing.setNamedValues('%pend', pendResult);
         divEditing.calcAll();
         let retIsInputed = await runInputDiv(props, divEditing);
         if (retIsInputed !== true) return;

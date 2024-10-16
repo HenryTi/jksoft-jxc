@@ -1,10 +1,11 @@
 import { theme } from "tonwa-com";
 import { FA, Sep } from "tonwa-com";
 
-export function PickRow({ children, label, cn, iconPrefix, cnAngle, cnLabel }: {
+export function PickRow({ children, label, cn, iconPrefix, cnAngle, cnLabel, message }: {
     children: React.ReactNode;
     label?: string;
     cn?: string; iconPrefix?: string; cnAngle?: string; cnLabel?: string;
+    message?: string | JSX.Element;
 }) {
     let cnLabelContainer: string, vLabel: any;
     if (label === null) {
@@ -18,6 +19,23 @@ export function PickRow({ children, label, cn, iconPrefix, cnAngle, cnLabel }: {
             <span className={cnLabel}>{label}</span>
         </>;
     }
+    let vContent: any;
+    if (message === undefined) {
+        vContent = children;
+    }
+    else {
+        let vMessage: any;
+        if (typeof message === 'string') {
+            vMessage = <div className="text-danger small">{message}</div>;
+        }
+        else {
+            vMessage = message;
+        }
+        vContent = <>
+            <div>{children}</div>
+            {vMessage}
+        </>;
+    }
     return <>
         <div className={theme.bootstrapContainer}>
             <div className="row">
@@ -25,7 +43,7 @@ export function PickRow({ children, label, cn, iconPrefix, cnAngle, cnLabel }: {
                     {vLabel}
                 </div>
                 <div className={' col ' + (cn ?? '')}>
-                    {children}
+                    {vContent}
                 </div>
             </div>
         </div>

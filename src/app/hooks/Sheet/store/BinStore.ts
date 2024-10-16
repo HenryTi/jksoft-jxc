@@ -1,13 +1,14 @@
 import { PendRow, SheetStore } from "./SheetStore";
-import { BinDiv, EntityBin, PickPend } from "app/Biz";
+import { BinDiv, EntityBin, EnumDetailOperate, PickPend } from "app/Biz";
 import { Getter, WritableAtom, atom } from "jotai";
-import { getValRowPropArr, ValRow } from "./tool";
+import { getValRowPropArr, PendProxyHandler, ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsBase, ValDivsRoot } from './ValDiv';
 import { BudEditing, ValuesBudsEditing, ValueSpace } from "app/hooks";
 import { PickPendStore } from "./PickPendStore";
 import { EntityStore } from "app/tool";
 import { ParamSaveDetails } from "uqs/UqDefault";
+import { DivEditing } from "./BinEditing";
 
 enum PendLoadState {
     none,
@@ -24,6 +25,7 @@ export class BinStore extends EntityStore<EntityBin> {
     private pendLoadState: PendLoadState;
     readonly atomWaiting = atom(false);
     readonly sheetStore: SheetStore;
+    readonly operate: EnumDetailOperate;
     readonly binDivRoot: BinDiv;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> };
     readonly atomPendRows = atom(undefined as PendRow[]);
@@ -32,10 +34,11 @@ export class BinStore extends EntityStore<EntityBin> {
     readonly budEditings: BudEditing[];
     readonly pickPendStores: { [id: number]: PickPendStore; } = {};
 
-    constructor(sheetStore: SheetStore, entityBin: EntityBin) {
+    constructor(sheetStore: SheetStore, entityBin: EntityBin, operate: EnumDetailOperate) {
         const { modal, biz } = sheetStore;
         super(modal, entityBin);
         this.sheetStore = sheetStore;
+        this.operate = operate;
         const { pend, binDivRoot } = entityBin;
         this.binDivRoot = binDivRoot;
         this.valDivsOnPend = sheetStore.valDivsOnPend;
@@ -431,6 +434,7 @@ export class BinStore extends EntityStore<EntityBin> {
         let retValDiv = new ValDivRoot(this.binDivRoot, valRow);
         this.valDivsRoot.addValDiv(retValDiv, true);
         setAtomValue(atomValDiv, retValDiv);
+        return retValDiv;
     }
 
     addAllPendRows() {
@@ -438,6 +442,26 @@ export class BinStore extends EntityStore<EntityBin> {
         for (let pendRow of pendRows) {
             this.addNewPendRow(pendRow.pend);
         }
+    }
+
+    async addAllPendRowsDirect() {
+        let pendRows = getAtomValue(this.atomPendRows);
+        const { pend, binDivRoot } = this.entity;
+        const valRows: ValRow[] = [];
+        for (let pendRow of pendRows) {
+            let pendResult = new Proxy(pendRow, new PendProxyHandler(pend));
+            let valDiv = this.addNewPendRow(pendRow.pend);
+
+            let divEditing = new DivEditing(this, valDiv);
+            divEditing.setNamedValues('pend', pendResult);
+            divEditing.setNamedValues('%pend', pendResult);
+            divEditing.calcAll();
+            valRows.push(valDiv.valRow);
+            // let { valRow } = valDiv;
+            // valDiv.setValRow(valRow);
+            // valDiv.setIXBaseFromInput(divEditing);
+        }
+        await this.saveDetails(binDivRoot, valRows);
     }
 
     deletePendThoroughly(valRow: ValRow) {

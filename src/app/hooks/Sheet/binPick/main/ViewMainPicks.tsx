@@ -1,4 +1,4 @@
-import { BinPick, PickOptions, PickPend } from "app/Biz";
+import { BinPick, EnumDetailOperate, PickOptions, PickPend } from "app/Biz";
 import { useRef, useState } from "react";
 import { BinBudsEditing, doBinPick, doBinPickRear, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../../store";
 import { getAtomValue } from "tonwa-com";
@@ -76,6 +76,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
         <FA name="search" fixWidth={true} className="small text-info" />
     </div>;
     function ViewPick({ binPick, serial }: { binPick: BinPick; serial: number; }) {
+        const [message, setMessage] = useState(undefined as string);
         useAtomValue(editing.atomChanging);
         if (binPick.fromPhraseType === BizPhraseType.any) {
             if (serial === cur) {
@@ -93,10 +94,15 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                 async function autoPickPend(nextPick: PickPend) {
                     let pickPend = nextPick as PickPend;
                     const { binStore } = sheetStore;
+                    const { atomPendRows, operate, entity } = binStore;
+                    const { divLevels } = entity;
                     let pendStore = binStore.getPickPendStore(nextPick as PickPend, editing.valueSpace);
                     await pendStore.searchPend();
-                    let pendRows = getAtomValue(binStore.atomPendRows);
-                    if (pendRows.length === 0) return;
+                    let pendRows = getAtomValue(atomPendRows);
+                    if (pendRows.length === 0) {
+                        setMessage('无待处理');
+                        return;
+                    }
                     let pendRow = pendRows[0];
                     let { to: toArr } = pickPend;
                     for (let [bud, col] of toArr) {
@@ -116,9 +122,27 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                     }
                     */
                     // 直接写入单据明细
-                    binStore.addAllPendRows();
+                    switch (operate) {
+                        default:
+                        case EnumDetailOperate.default:
+                            if (divLevels <= 1) {
+                                await binStore.addAllPendRowsDirect();
+                            }
+                            else {
+                                binStore.addAllPendRows();
+                            }
+                            break;
+                        case EnumDetailOperate.direct:
+                            binStore.addAllPendRowsDirect();
+                            break;
+                        case EnumDetailOperate.pend:
+                            binStore.addAllPendRows();
+                            break;
+                        case EnumDetailOperate.scan:
+                            break;
+                    }
                 }
-                return <ViewLabelRowPicking cn="d-flex align-items-stretch g-0" caption={caption}>
+                return <ViewLabelRowPicking cn="d-flex align-items-stretch g-0" caption={caption} message={message}>
                     <InputScalar binPick={binPick} onPicked={onPicked} value={defaultValue} />
                 </ViewLabelRowPicking>;
             }
@@ -138,14 +162,14 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
         }
         if (serial < cur) return <ViewPicked binPick={binPick} pick={pick} />;
         if (serial === cur) {
-            return <ViewPicking binPick={binPick} pick={pick} />;
+            return <ViewPicking binPick={binPick} pick={pick} message={message} />;
         }
         return <ViewToPick binPick={binPick} />;
     }
-    function ViewLabelRowPicking({ cn, children, caption }: { cn?: string; children: any; caption: string; }) {
+    function ViewLabelRowPicking({ cn, children, caption, message }: { cn?: string; children: any; caption: string; message?: string | JSX.Element; }) {
         return <PickRow label={caption} cn={cn}
             cnLabel="text-primary fw-bold"
-            cnAngle="text-primary" iconPrefix="hand-o-right" >
+            cnAngle="text-primary" iconPrefix="hand-o-right" message={message}>
             {children}
         </PickRow>;
     }
@@ -180,9 +204,9 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
             </div>
         </PickRow>;
     }
-    function ViewPicking({ binPick, pick }: { binPick: BinPick; pick: () => Promise<void>; }) {
+    function ViewPicking({ binPick, pick, message }: { binPick: BinPick; pick: () => Promise<void>; message?: string | JSX.Element; }) {
         const { caption } = binPick;
-        return <ViewLabelRowPicking caption={caption}>
+        return <ViewLabelRowPicking caption={caption} message={message}>
             <div className="text-secondary flex-fill py-3 cursor-pointer" onClick={pick}>
                 <FA name="search" className="text-primary" size="lg" />
             </div>

@@ -827,14 +827,22 @@ export class EntityPend extends Entity {
     }
 }
 
+export enum EnumDetailOperate {
+    default = 0,            // 默认方式
+    pend = 1,               // 先上pend，再逐行修改
+    direct = 2,             // 直接加入明细，可以不再修改
+    scan = 3,               // 扫描逐行操作。暂时不支持。需要前台代码处理
+}
+export interface SheetDetail {
+    bin: EntityBin;
+    caption: string;
+    operate: EnumDetailOperate;
+}
 export class EntitySheet extends Entity {
     io: boolean;
     main: EntityBin;
     coreDetail: EntityBin;
-    readonly details: {
-        bin: EntityBin;
-        caption: string;
-    }[] = [];
+    readonly details: SheetDetail[] = [];
     search: { bin: EntityBin; buds: BizBud[]; }[];
 
     getRefEntities(entitySet: Set<Entity>) {
@@ -857,14 +865,15 @@ export class EntitySheet extends Entity {
     }
 
     private fromMain(main: any) {
-        this.main = this.biz.entities[main] as EntityBin;
+        this.main = this.biz.entityFromId(main) as EntityBin;
     }
 
     protected fromDetails(details: any[]) {
-        for (let { bin, caption } of details) {
+        for (let { bin, caption, operate } of details) {
             this.details.push({
-                bin: this.biz.entities[bin] as EntityBin,
+                bin: this.biz.entityFromId(bin) as EntityBin,
                 caption,
+                operate,
             })
         }
         this.coreDetail = this.details[0]?.bin;

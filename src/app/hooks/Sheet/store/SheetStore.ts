@@ -1,6 +1,6 @@
 import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { EntitySheet, EntityBin, EntityPend, BinRow, Entity } from "app/Biz";
+import { EntitySheet, EntityBin, EntityPend, BinRow, Entity, EnumDetailOperate } from "app/Biz";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { RearPickResultType, ReturnUseBinPicks } from "./PickResult";
 import { Formulas } from "app/hooks/Calc";
@@ -147,8 +147,8 @@ export interface PendRow {
 
 class Detail extends BinStore {
     readonly caption: string;
-    constructor(sheetStore: SheetStore, entityBin: EntityBin, caption: string) {
-        super(sheetStore, entityBin);
+    constructor(sheetStore: SheetStore, entityBin: EntityBin, caption: string, operate: EnumDetailOperate) {
+        super(sheetStore, entityBin, operate);
         this.caption = caption ?? entityBin.caption;
     }
 }
@@ -190,7 +190,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
         }
         this.caption = entitySheet.caption;
         if (detail !== undefined) {
-            this.binStore = new BinStore(this, detail.bin);
+            this.binStore = new BinStore(this, detail.bin, detail.operate);
         }
         this.atomSubmitState = atom((get) => {
             if (this.binStore === undefined) return SubmitState.enable;
