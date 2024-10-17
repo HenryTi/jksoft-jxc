@@ -63,6 +63,7 @@ function PageMainPend({ store }: { store: SheetStore; }) {
     async function onPickedNew(results: ReturnUseBinPicks) {
         await onPicked(store, results);
         await store.setSheetAsDraft();
+        await store.binStore.saveDetailsDirect();
     }
     return <Page header={pageHeader} back={null} top={top} right={right}>
         <ViewSteps sheetSteps={sheetConsole.steps} />
@@ -101,7 +102,6 @@ async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
         }
         return; // 已有单据，不需要pick. 或者没有创建新单据
     }
-    await binStore.saveDetailsDirect();
     sheetConsole.onSheetAdded(store);
 }
 
