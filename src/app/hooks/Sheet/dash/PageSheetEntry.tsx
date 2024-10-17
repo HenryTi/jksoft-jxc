@@ -88,7 +88,7 @@ function PageSheetDirect({ store }: { store: SheetStore; }) {
 }
 
 async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
-    const { sheetConsole, mainStore } = store;
+    const { sheetConsole, mainStore, binStore } = store;
     let ret = await mainStore.startFromPickResults(results);
     if (ret === undefined) {
         if (store.mainId === undefined) {
@@ -101,6 +101,7 @@ async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
         }
         return; // 已有单据，不需要pick. 或者没有创建新单据
     }
+    await binStore.saveDetailsDirect();
     sheetConsole.onSheetAdded(store);
 }
 

@@ -328,6 +328,14 @@ export class BinStore extends EntityStore<EntityBin> {
         return ret;
     }
 
+    async saveDetailsDirect() {
+        const { binDivRoot } = this.entity;
+        const { valDivs } = this.valDivsRoot;
+        if (valDivs.length === 0) return;
+        let valRows = valDivs.map(v => v.valRow);
+        await this.saveDetails(binDivRoot, valRows);
+    }
+
     async saveDetails(binDiv: BinDiv, valRows: ValRow[]) {
         const { buds } = binDiv;
         let details = [];
@@ -352,6 +360,10 @@ export class BinStore extends EntityStore<EntityBin> {
             details,
         };
         let { details: retDetails, props, specs, atoms } = await this.uq.SaveDetails.submitReturns(param);
+        if (retDetails.length === 0) {
+            console.error('*************** SaveDetails something wrong *******************');
+            return;
+        }
         this.sheetStore.cacheIdAndBuds(props, atoms, specs);
         let { length } = valRows;
         for (let i = 0; i < length; i++) {
@@ -449,19 +461,21 @@ export class BinStore extends EntityStore<EntityBin> {
         const { pend, binDivRoot } = this.entity;
         const valRows: ValRow[] = [];
         for (let pendRow of pendRows) {
+            let { pend: pendId } = pendRow;
             let pendResult = new Proxy(pendRow, new PendProxyHandler(pend));
-            let valDiv = this.addNewPendRow(pendRow.pend);
-
+            let valRow: ValRow = { id: undefined, buds: {}, owned: {}, pend: pendId };
+            let valDiv = new ValDivRoot(this.binDivRoot, valRow);
+            this.valDivsRoot.addValDiv(valDiv, true);
             let divEditing = new DivEditing(this, valDiv);
             divEditing.setNamedValues('pend', pendResult);
             divEditing.setNamedValues('%pend', pendResult);
             divEditing.calcAll();
+            valDiv.mergeValRow(divEditing.values);
             valRows.push(valDiv.valRow);
             // let { valRow } = valDiv;
             // valDiv.setValRow(valRow);
             // valDiv.setIXBaseFromInput(divEditing);
         }
-        await this.saveDetails(binDivRoot, valRows);
     }
 
     deletePendThoroughly(valRow: ValRow) {

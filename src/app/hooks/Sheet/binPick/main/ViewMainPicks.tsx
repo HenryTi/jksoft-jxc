@@ -93,10 +93,15 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                 }
                 async function autoPickPend(nextPick: PickPend) {
                     let pickPend = nextPick as PickPend;
-                    const { binStore } = sheetStore;
+                    const { binStore, mainStore } = sheetStore;
                     const { atomPendRows, operate, entity } = binStore;
                     const { divLevels } = entity;
                     let pendStore = binStore.getPickPendStore(nextPick as PickPend, editing.valueSpace);
+                    const { paramsEditing } = pendStore;
+                    for (let bud of mainStore.entity.buds) {
+                        let { name } = bud;
+                        paramsEditing.setNamedValues(name, editing.getValue(name));
+                    }
                     await pendStore.searchPend();
                     let pendRows = getAtomValue(atomPendRows);
                     if (pendRows.length === 0) {
