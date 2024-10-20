@@ -218,15 +218,6 @@ function ViewSheetContent({ store, readonly }: { store: SheetStore; readonly: bo
         const { valDivsRoot, atomWaiting } = binStore;
         const valDivs = useAtomValue(valDivsRoot.atomValDivs);
         const waiting = useAtomValue(atomWaiting);
-        /*
-        let length = valDivs.length;
-        for (let i = 0; i < length; i++) {
-            let valDiv = valDivs[i];
-            let { valRow } = valDiv;
-            if (valRow.id === undefined) debugger;
-            if (valDiv.id === undefined) debugger;
-        }
-        */
         let viewWaiting: any;
         if (waiting === true) {
             viewWaiting = <div className="px-3 py-2"><SpinnerSmall /></div>;

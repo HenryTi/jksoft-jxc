@@ -334,6 +334,7 @@ export class BinStore extends EntityStore<EntityBin> {
         if (valDivs.length === 0) return;
         let valRows = valDivs.map(v => v.valRow);
         await this.saveDetails(binDivRoot, valRows);
+        this.valDivsRoot.triggerRender();
     }
 
     async saveDetails(binDiv: BinDiv, valRows: ValRow[]) {
@@ -449,7 +450,7 @@ export class BinStore extends EntityStore<EntityBin> {
         return retValDiv;
     }
 
-    addAllPendRows() {
+    addAllPendRowsToSelect() {
         let pendRows = getAtomValue(this.atomPendRows);
         for (let pendRow of pendRows) {
             this.addNewPendRow(pendRow.pend);
@@ -465,7 +466,7 @@ export class BinStore extends EntityStore<EntityBin> {
             let pendResult = new Proxy(pendRow, new PendProxyHandler(pend));
             let valRow: ValRow = { id: undefined, buds: {}, owned: {}, pend: pendId };
             let valDiv = new ValDivRoot(this.binDivRoot, valRow);
-            this.valDivsRoot.addValDiv(valDiv, true);
+            this.valDivsRoot.addValDiv(valDiv, false);
             let divEditing = new DivEditing(this, valDiv);
             divEditing.setNamedValues('pend', pendResult);
             divEditing.setNamedValues('%pend', pendResult);
@@ -476,6 +477,7 @@ export class BinStore extends EntityStore<EntityBin> {
             // valDiv.setValRow(valRow);
             // valDiv.setIXBaseFromInput(divEditing);
         }
+        // this.valDivsRoot.triggerRender();
     }
 
     deletePendThoroughly(valRow: ValRow) {
