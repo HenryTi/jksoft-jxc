@@ -14,15 +14,21 @@ export function PageTabsLayout({ tabs }: PageTabsLayoutProps) {
         return 'flex-fill mx-1 text-center py-1 ' +
             (isActive === true ? 'text-primary' : 'text-secondary');
     }
-    let vTabs = <div className={' d-flex ' + theme.bootstrapContainer}>
-        {tabs.map(v => {
-            const { to, caption, icon } = v;
-            return <NavLink key={caption} to={to} className={tabClassName} replace={true} >
-                <FA name={icon} /> <br />
-                {caption}
-            </NavLink>;
-        })}
-    </div>;
+    let vICP = <div className="bg-white small text-center">
+        <a href="https://beian.miit.gov.cn" target="_blank" className="small text-body-tertiary">苏ICP备11035425号-2</a>
+    </div>
+    let vTabs = <>
+        <div className={' d-flex ' + theme.bootstrapContainer}>
+            {tabs.map(v => {
+                const { to, caption, icon } = v;
+                return <NavLink key={caption} to={to} className={tabClassName} replace={true} >
+                    <FA name={icon} /> <br />
+                    {caption}
+                </NavLink>;
+            })}
+        </div>
+        {vICP}
+    </>;
 
     return <div className='d-flex flex-column flex-fill h-100'>
         <div className='flex-fill d-flex'>

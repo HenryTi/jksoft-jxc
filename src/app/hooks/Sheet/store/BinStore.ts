@@ -259,7 +259,7 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 
     private addRootDiv(valRow: ValRow, trigger: boolean) {
-        let { id } = valRow;
+        let { id, pend } = valRow;
         let valDiv = this.valDivColl[id] as ValDivRoot;
         if (valDiv !== undefined) {
             valDiv.setValRow(valRow);
@@ -268,7 +268,6 @@ export class BinStore extends EntityStore<EntityBin> {
         valDiv = new ValDivRoot(this.binDivRoot, valRow);
         this.valDivColl[id] = valDiv;
         this.valDivsRoot.addValDiv(valDiv, trigger);
-        const { pend } = valRow;
         this.setPend(pend, valDiv, trigger);
         return valDiv;
     }

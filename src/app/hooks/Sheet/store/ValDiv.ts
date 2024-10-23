@@ -60,7 +60,15 @@ export class ValDivsBase<T extends ValDivBase> {
     addValDiv(valDiv: T, trigger: boolean) {
         let valDivs = getAtomValue(this._atomValDivs);
         let { valRow } = valDiv;
-        let { id } = valRow;
+        let { id, pend } = valRow;
+        let pendId = -pend;
+        let pendIndex = valDivs.findIndex(v => {
+            let ivr = v.valRow;
+            return (ivr.id === pendId);
+        });
+        if (pendIndex >= 0) {
+            valDivs.splice(pendIndex, 1);
+        }
         let index = valDivs.findIndex(v => {
             let ivr = v.valRow;
             return (ivr.id === id);
