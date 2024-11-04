@@ -60,7 +60,9 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
         }
     }
 
-    await binStore.saveDetails(binDivRoot, valRows);
+    if (valRows.length > 0) {
+        await binStore.saveDetails(binDivRoot, valRows);
+    }
 
     binStore.setWaiting(false);
     sheetStore.notifyRowChange();

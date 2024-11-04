@@ -62,24 +62,26 @@ export class ValDivsBase<T extends ValDivBase> {
         let { valRow } = valDiv;
         let { id, pend } = valRow;
         let pendId = -pend;
-        let pendIndex = valDivs.findIndex(v => {
+        let index = valDivs.findIndex(v => {
             let ivr = v.valRow;
             return (ivr.id === pendId);
         });
-        if (pendIndex >= 0) {
-            valDivs.splice(pendIndex, 1);
+        if (index < 0) {
+            index = valDivs.findIndex(v => {
+                let ivr = v.valRow;
+                return (ivr.id === id);
+            });
         }
-        let index = valDivs.findIndex(v => {
-            let ivr = v.valRow;
-            return (ivr.id === id);
-        });
+        else {
+            let a = 1;
+        }
         if (index >= 0) {
             valDivs.splice(index, 1, valDiv);
         }
         else {
             valDivs.push(valDiv);
-            if (trigger === true) this.setValDivs([...valDivs]);
         }
+        if (trigger === true) this.setValDivs([...valDivs]);
     }
 
     triggerRender() {

@@ -5,7 +5,7 @@ import { atom, useAtomValue } from "jotai";
 import React, { useEffect, useRef, useState } from "react";
 import { headerSheet, buttonDefs } from "../headerSheet";
 import { ViewReaction } from "app/hooks/View/ViewReaction";
-import { FA, getAtomValue, setAtomValue, SpinnerSmall, theme } from "tonwa-com";
+import { env, FA, getAtomValue, setAtomValue, SpinnerSmall, theme } from "tonwa-com";
 import { Toolbar, ToolItem } from "app/coms";
 import { PAV } from "../binEdit/ViewDiv/tool";
 import { BizBud } from "app/Biz";
@@ -119,7 +119,12 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
         let btnAddDetail = entityBin.pend === undefined ?
             buttonDefs.addDetail(onAddRow) : buttonDefs.addPend(onAddRow);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, false, editable === false);
-        toolGroups = [[btnAddDetail, btnUpload, btnPrint, btnSubmit], reaction, null, [btnDiscard]];
+        let leftGroup = [btnAddDetail];
+        if (env.isMobile === false) {
+            leftGroup.push(btnUpload);
+        }
+        leftGroup.push(btnPrint, btnSubmit);
+        toolGroups = [leftGroup, reaction, null, [btnDiscard]];
     }
 
     if (binStore === undefined) mainOnlyEdit();
@@ -141,6 +146,10 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
                 // return;
             }
             modal.open(<Page header="调试结果">
+                <div className="px-3 py-2">
+                    <FA className="text-danger me-2" name="info-circle" />
+                    <span className="text-info">写账过程自动回滚。只保留LOG语句的结果。</span>
+                </div>
                 {error.length > 0 && <div className="m-3">
                     <div>错误：</div>
                     <div>{error}</div>

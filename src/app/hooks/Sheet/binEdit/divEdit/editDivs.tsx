@@ -15,7 +15,7 @@ export interface UseEditDivsProps {
 
 export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
     let { binStore, pendRow, valDiv } = props;
-    let { entity: entityBin } = binStore;
+    let { entity: entityBin, sheetStore } = binStore;
     let { rearPick, pend: entityPend } = entityBin;
     let pendResult = new Proxy(pendRow, new PendProxyHandler(entityPend));
     for (; ;) {
@@ -32,12 +32,15 @@ export async function editDivs(props: UseEditDivsProps): Promise<boolean> {
         // 无下级，退出
         if (binDiv.subBinDiv === undefined) {
             // 仅仅表示有值
-            return true;
+            // return true;
+            break;
         }
         let valDivNew = valDiv.createValDivSub(pendRow);
         valDiv.addValDiv(valDivNew, true);
         valDiv = valDivNew;
     }
+    sheetStore.notifyRowChange();
+    return true;
 }
 
 async function runInputDiv(props: UseEditDivsProps, divEditing: DivEditing) {

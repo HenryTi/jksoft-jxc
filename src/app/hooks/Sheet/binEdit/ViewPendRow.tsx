@@ -1,4 +1,4 @@
-import { Prop, RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
+import { Prop, RowCols, RowColsSm, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { getAtomValue, theme } from "tonwa-com";
 import { BinStore, PendRow } from "../store";
 import { ViewSpecAtomBold, ViewSpecAtomTitles, ViewSpecBuds } from "app/hooks/View";
@@ -76,10 +76,10 @@ export function ViewPendRow({
                 {viewAtomTitles}
             </div>
             <div className="d-flex">
-                <RowCols contentClassName=" flex-fill ">
+                <RowColsSm contentClassName=" flex-fill ">
                     {viewBuds}
                     <ViewPropArr arr={mid} />
-                </RowCols>
+                </RowColsSm>
             </div>
         </div>
         <div className="w-min-10c d-flex flex-column align-items-end pt-2 pe-3">

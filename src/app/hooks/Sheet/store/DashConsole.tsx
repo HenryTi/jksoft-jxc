@@ -68,7 +68,7 @@ export class SheetMyDraftsStore extends SheetListStore {
         setAtomValue(this.atomMyDrafts, []);
     }
 
-    async onSheetAdded(store: SheetStore/*sheetId: number, no: string*/): Promise<void> {
+    async onSheetAdded(store: SheetStore): Promise<void> {
         const { mainStore } = store;
         const { valRow, no } = mainStore;
         let { id, i, x, origin, price, value, amount } = valRow;

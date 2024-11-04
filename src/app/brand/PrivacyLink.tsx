@@ -11,6 +11,9 @@ export function PrivacyLink() {
         <Link to={pathPrivacy} className="small d-inline-block ">
             隐私政策
         </Link>
+        <div className="bg-white small text-center ms-3">
+            <a href="https://beian.miit.gov.cn" target="_blank" className="small text-body-tertiary">苏ICP备11035425号-2</a>
+        </div>
     </div>;
 }
 
