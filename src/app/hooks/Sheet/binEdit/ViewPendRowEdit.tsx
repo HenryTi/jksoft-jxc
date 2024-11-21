@@ -1,4 +1,4 @@
-import { FA, getAtomValue, setAtomValue } from "tonwa-com";
+import { FA, getAtomValue } from "tonwa-com";
 import { useAtomValue } from "jotai";
 import { PendProps, ViewPendRow } from "./ViewPendRow";
 
@@ -42,7 +42,7 @@ export function ViewPendRowEdit(props: PendProps) {
         const deleted = useAtomValue(atomDeleted);
         const { id } = valRow;
         function onDelThoroughly() {
-            binStore.deletePendThoroughly(valRow);
+            binStore.deletePendThoroughly(pendId);
         }
         function onNothing() {
         }

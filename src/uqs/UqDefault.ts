@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Oct 12 2024 11:43:15 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sat Nov 16 2024 22:09:39 GMT+0800 (China Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -347,7 +347,18 @@ export interface ResultSaveDetail {
 export interface ParamSaveDetails {
 	base: number;
 	phrase: number;
-	details: any;
+	inDetails: {
+		id: number;
+		i: number;
+		x: number;
+		origin: number;
+		value: number;
+		price: number;
+		amount: number;
+		pend: number;
+		props: any;
+	}[];
+
 }
 export interface ReturnSaveDetailsMain {
 	id: number;
@@ -2717,13 +2728,57 @@ export const uqSchema={
             {
                 "name": "phrase",
                 "type": "id"
-            },
-            {
-                "name": "details",
-                "type": "json"
             }
         ],
-        "jsoned": true,
+        "arrs": [
+            {
+                "name": "inDetails",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "i",
+                        "type": "id"
+                    },
+                    {
+                        "name": "x",
+                        "type": "id"
+                    },
+                    {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "price",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "amount",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "pend",
+                        "type": "id"
+                    },
+                    {
+                        "name": "props",
+                        "type": "json"
+                    }
+                ]
+            }
+        ],
         "returns": [
             {
                 "name": "main",

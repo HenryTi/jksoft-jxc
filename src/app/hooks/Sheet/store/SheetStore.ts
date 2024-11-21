@@ -6,7 +6,7 @@ import { RearPickResultType, ReturnUseBinPicks } from "./PickResult";
 import { Formulas } from "app/hooks/Calc";
 import { BudEditing } from "../../Bud";
 import { getValRowPropArr, ValRow } from "./tool";
-import { BinStore, SubmitState } from "./BinStore";
+import { BinStore, BinStorePendDirect, SubmitState } from "./BinStore";
 import { ValDivRoot } from "./ValDiv";
 import { Modal } from "tonwa-app";
 import { Console, EntityStore } from "app/tool";
@@ -190,7 +190,12 @@ export class SheetStore extends EntityStore<EntitySheet> {
         }
         this.caption = entitySheet.caption;
         if (detail !== undefined) {
-            this.binStore = new BinStore(this, detail.bin, detail.operate);
+            let binStore: BinStore;
+            switch (detail.operate) {
+                default: binStore = new BinStore(this, detail.bin, detail.operate); break;
+                case EnumDetailOperate.direct: binStore = new BinStorePendDirect(this, detail.bin, detail.operate); break;
+            }
+            this.binStore = binStore;
         }
         this.atomSubmitState = atom((get) => {
             if (this.binStore === undefined) return SubmitState.enable;
@@ -207,12 +212,6 @@ export class SheetStore extends EntityStore<EntitySheet> {
         }
         setAtomValue(this.atomLoaded, true);
     }
-    /*
-    async reloadBinProps(binId: number) {
-        if (this.budsColl[binId] !== undefined) return;
-        await this.loadBinData(binId);
-    }
-    */
 
     get mainId() {
         return this.mainStore.valRow?.id;

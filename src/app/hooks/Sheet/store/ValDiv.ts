@@ -72,9 +72,6 @@ export class ValDivsBase<T extends ValDivBase> {
                 return (ivr.id === id);
             });
         }
-        else {
-            let a = 1;
-        }
         if (index >= 0) {
             valDivs.splice(index, 1, valDiv);
         }

@@ -120,12 +120,6 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                         editing.setNamedValue(bud.name, colVal);
                     }
                     afterPicked(serial + 1);
-                    /*
-                    let pickResult = await doBinPickRear(binStore, editing, rearPick, rearPickResultType);
-                    if (pickResult !== undefined) {
-                        refRearPickResult.current = pickResult;
-                    }
-                    */
                     // 直接写入单据明细
                     switch (operate) {
                         default:

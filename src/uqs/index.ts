@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Oct 12 2024 11:43:15 GMT-0400 (Eastern Daylight Time) ===//
+//=== UqApp builder created on Sat Nov 16 2024 22:09:39 GMT+0800 (China Standard Time) ===//
 import * as UqDefault from './UqDefault';
 
 export interface UQs {

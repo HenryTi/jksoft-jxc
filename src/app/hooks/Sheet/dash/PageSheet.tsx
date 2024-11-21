@@ -100,12 +100,6 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
 
     function mainDetailEdit() {
         const { entity: entityBin } = binStore;
-        async function startInputDetail() {
-            let ret = await startSheetStore(store);
-            if (ret === undefined) {
-                await detailNew(store);
-            }
-        }
         async function onAddRow() {
             await detailNew(store);
         }

@@ -338,11 +338,21 @@ export class BinStore extends EntityStore<EntityBin> {
 
     async saveDetails(binDiv: BinDiv, valRows: ValRow[]) {
         const { buds } = binDiv;
-        let details = [];
+        let inDetails: {
+            id: number;
+            i: number;
+            x: number;
+            origin: number;
+            value: number;
+            price: number;
+            amount: number;
+            pend: number;
+            props: any;
+        }[] = [];
         for (let valRow of valRows) {
             let { id, i, x, value, price, amount, pend, origin } = valRow;
             let propArr = getValRowPropArr(valRow, buds);
-            details.push({
+            inDetails.push({
                 id,
                 i,
                 x,
@@ -357,9 +367,10 @@ export class BinStore extends EntityStore<EntityBin> {
         let param: ParamSaveDetails = {
             base: this.sheetStore.mainId,
             phrase: binDiv.entityBin.id,
-            details,
+            inDetails,
         };
-        let { details: retDetails, props, specs, atoms } = await this.uq.SaveDetails.submitReturns(param);
+        let results = await this.uq.SaveDetails.submitReturns(param);
+        let { details: retDetails, props, specs, atoms } = results;
         if (retDetails.length === 0) {
             console.error('*************** SaveDetails something wrong *******************');
             return;
@@ -458,7 +469,7 @@ export class BinStore extends EntityStore<EntityBin> {
 
     async addAllPendRowsDirect() {
         let pendRows = getAtomValue(this.atomPendRows);
-        const { pend, binDivRoot } = this.entity;
+        const { pend } = this.entity;
         const valRows: ValRow[] = [];
         for (let pendRow of pendRows) {
             let { pend: pendId } = pendRow;
@@ -472,18 +483,112 @@ export class BinStore extends EntityStore<EntityBin> {
             divEditing.calcAll();
             valDiv.mergeValRow(divEditing.values);
             valRows.push(valDiv.valRow);
-            // let { valRow } = valDiv;
-            // valDiv.setValRow(valRow);
-            // valDiv.setIXBaseFromInput(divEditing);
         }
-        // this.valDivsRoot.triggerRender();
     }
 
-    deletePendThoroughly(valRow: ValRow) {
-        const { id } = valRow;
-        let pendId = -id;
+    deletePendThoroughly(pendId: number) {
+        // const { id } = valRow;
+        // let pendId = -id;
         let atomValDiv = this.valDivsOnPend[pendId];
         this.valDivsRoot.removePend(pendId);
         setAtomValue(atomValDiv, undefined);
+    }
+
+    async allPendsToValRows(): Promise<void> {
+    }
+}
+
+interface PendToValRow {
+    valDiv: ValDivBase;
+    iValue: number;
+    iBase: number;
+    xValue: number;
+    xBase: number;
+}
+
+// 待选之后，不需要处理待选属性值，直接生成Detail。
+export class BinStorePendDirect extends BinStore {
+    async allPendsToValRows(): Promise<void> {
+        return;
+        const { valDivs } = this.valDivsRoot;
+        if (valDivs.length === 0) return;
+        const pendRows = getAtomValue(this.atomPendRows);
+        let rows: PendToValRow[] = [];
+        for (let valDiv of valDivs) {
+            let pendRow = pendRows.find(p => p.pend === valDiv.pend);
+            if (pendRow === undefined) debugger;
+            await this.pendToValRow(rows, valDiv, pendRow);
+        }
+        const { binDiv } = valDivs[0];
+        await this.saveDetails(binDiv, rows.map(v => v.valDiv.valRow));
+        for (let row of rows) {
+            const { valDiv } = row;
+            const { valRow } = valDiv;
+            valDiv.setValRow(valRow);
+            // valDiv.setIXBaseFromInput(divEditing);
+            valDiv.setIXBaseFromInput(row);
+        }
+    }
+
+    private async pendToValRow(rows: PendToValRow[], valDiv: ValDivBase, pendRow: PendRow) {
+        let { entity: entityBin, sheetStore } = this;
+        let { rearPick, pend: entityPend } = entityBin;
+        let pendResult = new Proxy(pendRow, new PendProxyHandler(entityPend));
+
+        for (; ;) {
+            let divEditing = new DivEditing(this, valDiv);
+            if (rearPick !== undefined) {
+                divEditing.setNamedValues(rearPick.name, pendResult);
+            }
+            divEditing.setNamedValues('pend', pendResult);
+            divEditing.setNamedValues('%pend', pendResult);
+            divEditing.calcAll();
+            // let retIsInputed = await this.runInputDiv(divEditing);
+            // if (retIsInputed !== true) return;
+            valDiv.mergeValRow(divEditing.values);
+            let { valRow } = valDiv;
+            valRow.id = undefined;
+            const { iValue, iBase, xValue, xBase } = divEditing;
+            rows.push({ valDiv, iValue, iBase, xValue, xBase });
+
+            let { binDiv } = valDiv;
+            // 无下级，退出
+            if (binDiv.subBinDiv === undefined) {
+                // 仅仅表示有值
+                // return true;
+                break;
+            }
+            let valDivNew = valDiv.createValDivSub(pendRow);
+            valDiv.addValDiv(valDivNew, true);
+            valDiv = valDivNew;
+        }
+        sheetStore.notifyRowChange();
+        return true;
+    }
+
+    private async runInputDiv(divEditing: DivEditing) {
+        // const { modal } = binStore;
+        const { valDiv } = divEditing;
+        let { binDiv } = valDiv;
+        // let retInputs = await runInputs(props, divEditing);
+        // if (retInputs === false) return;
+
+        valDiv.mergeValRow(divEditing.values);
+        /*
+        if (skipInputs !== true) {
+            if (divEditing.isInputNeeded() === true) {
+                if (await modal.open(<ModalInputRow binEditing={divEditing} valDiv={valDiv} />) !== true) {
+                    return;
+                }
+                valDiv.mergeValRow(divEditing.values);
+            }
+        }
+        */
+        let { valRow } = valDiv;
+        valRow.id = undefined;
+        await this.saveDetails(binDiv, [valRow]);
+        valDiv.setValRow(valRow);
+        valDiv.setIXBaseFromInput(divEditing);
+        return true;
     }
 }
