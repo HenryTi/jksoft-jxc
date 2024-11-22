@@ -60,6 +60,7 @@ async function runInputDiv(props: UseEditDivsProps, divEditing: DivEditing) {
             valDiv.mergeValRow(divEditing.values);
         }
     }
+    /*
     async function saveDetail() {
         let { valRow } = valDiv;
         await binStore.saveDetails(binDiv, [valRow]);
@@ -67,6 +68,11 @@ async function runInputDiv(props: UseEditDivsProps, divEditing: DivEditing) {
         valDiv.setIXBaseFromInput(divEditing);
     }
     await saveDetail();
+    */
+    let { valRow } = valDiv;
+    await binStore.saveDetails(binDiv, [valRow]);
+    valDiv.setValRow(valRow);
+    valDiv.setIXBaseFromInput(divEditing);
     return true;
 }
 

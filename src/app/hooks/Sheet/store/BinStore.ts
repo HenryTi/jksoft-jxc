@@ -509,7 +509,6 @@ interface PendToValRow {
 // 待选之后，不需要处理待选属性值，直接生成Detail。
 export class BinStorePendDirect extends BinStore {
     async allPendsToValRows(): Promise<void> {
-        return;
         const { valDivs } = this.valDivsRoot;
         if (valDivs.length === 0) return;
         const pendRows = getAtomValue(this.atomPendRows);
@@ -520,7 +519,8 @@ export class BinStorePendDirect extends BinStore {
             await this.pendToValRow(rows, valDiv, pendRow);
         }
         const { binDiv } = valDivs[0];
-        await this.saveDetails(binDiv, rows.map(v => v.valDiv.valRow));
+        const valRows = rows.map(v => v.valDiv.valRow);
+        await this.saveDetails(binDiv, valRows);
         for (let row of rows) {
             const { valDiv } = row;
             const { valRow } = valDiv;

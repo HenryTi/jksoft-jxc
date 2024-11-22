@@ -187,6 +187,8 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
             }
             else {
                 let v = result.id;
+                // 这一句处理Fork字段，是一个json结构
+                if (v === undefined) v = result as any;
                 this.budValuesTool.setBudValue(field, this.values, v);
                 this.setBudObjectValue(field, result);
             }
