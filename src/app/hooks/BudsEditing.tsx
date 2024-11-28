@@ -20,7 +20,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
     private readonly calc: Calc;
     readonly valueSpace: ValueSpace;
     protected readonly requiredFields: BizBud[] = [];
-    protected readonly budColl: { [name: string]: BizBud } = {};
+    protected readonly budColl: { [name: string | number]: BizBud } = {};
     protected readonly buds: BizBud[];
     readonly values: R = { buds: {} } as any;
 
@@ -40,9 +40,9 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         if (this.buds === undefined) return formulas;
         for (let bud of this.buds) {
             let f = bud;
-            const { name } = bud;
-            let { required, valueSet, valueSetType } = bud;
+            const { id, name, required, valueSet, valueSetType } = bud;
             this.budColl[name] = f;
+            this.budColl[id] = f;
             let { ui, budDataType: { min, max } } = bud;
             if (ui?.show === true) continue;
             if (valueSet !== undefined) {
@@ -169,7 +169,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         let results = this.getResults();
         for (let i in this.budColl) {
             let field = this.budColl[i];
-            if (i !== field.name) debugger;
+            if (i !== field.name) continue;
             let result = results[i];
             if (result === undefined) {
                 this.budValuesTool.clearValue(field, this.values);
@@ -470,6 +470,16 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         let required: boolean;
         if (this.stopRequired) required = false;
         return this.buds.map(v => new BudEditing(this, v, required));
+    }
+
+    getNamedValues() {
+        let ret: any = {};
+        for (let i in this.values) {
+            let bud = this.budColl[i];
+            if (bud === undefined) continue;
+            ret[bud.name] = this.values[i];
+        }
+        return ret;
     }
 }
 

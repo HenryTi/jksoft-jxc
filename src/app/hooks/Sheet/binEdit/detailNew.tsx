@@ -12,11 +12,6 @@ export async function detailNewLoop(sheetStore: SheetStore): Promise<void> {
         binEditing.addNamedParams(ret.editing.valueSpace);
         let retEdit = await rowEdit(modal, binEditing, undefined);
         if (retEdit !== true) break;
-        if (retEdit === true) {
-            const { values: valRow } = binEditing;
-            if (valRow.id !== undefined) debugger;
-            // valRows.push(valRow);
-        }
     }
 }
 

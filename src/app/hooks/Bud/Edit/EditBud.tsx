@@ -50,7 +50,7 @@ export class BudEditing {
         return this.budsEditing.getOnPick(this.bizBud);
     }
     */
-    getPick(): BinPick { return this.budsEditing.getPick(this.bizBud); }
+    getPick(): BinPick { return this.budsEditing?.getPick(this.bizBud); }
 }
 
 export function EditBudInline(editProps: EditBudProps) {
