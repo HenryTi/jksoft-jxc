@@ -56,6 +56,7 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
         <FormBudsEditing className={theme.bootstrapContainer}
             budsEditing={binEditing}
             onSubmit={onSubmit}
+            submit="确认明细"
             validate={validate} />
     </Page >;
 }

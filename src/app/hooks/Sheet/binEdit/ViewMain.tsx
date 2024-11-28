@@ -24,29 +24,31 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
     let cnBlock = ' d-flex bg-white ' + theme.bootstrapContainer;
     let viewProps: any;
     if (length > 0) {
-        viewProps = <div className={cnBlock + ' pt-2 border-top border-secondary '}>
-            <div className={'flex-fill py-2 '}>
-                <RowCols>
-                    {budEditings.map(v => {
-                        const { bizBud, required } = v;
-                        if (bizBud === budI || bizBud === budX) return null;
-                        let { id, caption, valueSetType } = bizBud;
-                        let value = buds[id];
-                        let budReadOnly: boolean;
-                        if (readOnly === true) budReadOnly = readOnly;
-                        else budReadOnly = valueSetType === ValueSetType.equ;
-                        let view = <LabelBox key={id} label={caption} required={required} title={value as any} className="mb-2">
-                            <EditBudInline budEditing={v} id={idBin} value={value} onChanged={onBudChanged} readOnly={budReadOnly} />
-                        </LabelBox>;
-                        if (budReadOnly === true) {
-                            topBuds.push(view);
-                            return null;
-                        }
-                        return view;
-                    })}
-                </RowCols>
-            </div>
-        </div>
+        let vBudArr: any[] = [];
+        for (let budEditing of budEditings) {
+            const { bizBud, required } = budEditing;
+            if (bizBud === budI || bizBud === budX) continue;
+            let { id, caption, valueSetType } = bizBud;
+            let value = buds[id];
+            let budReadOnly: boolean;
+            if (readOnly === true) budReadOnly = readOnly;
+            else budReadOnly = valueSetType === ValueSetType.equ;
+            let view = <LabelBox key={id} label={caption} required={required} title={value as any} className="mb-2">
+                <EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} readOnly={budReadOnly} />
+            </LabelBox>;
+            if (budReadOnly === true) {
+                topBuds.push(view);
+                continue;
+            }
+            vBudArr.push(view);
+        };
+        if (vBudArr.length > 0) {
+            viewProps = <div className={cnBlock + ' pt-2 border-top border-secondary '}>
+                <div className={'flex-fill py-2 '}>
+                    <RowCols>{vBudArr}</RowCols>
+                </div>
+            </div>;
+        }
     }
 
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
@@ -58,7 +60,7 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
         </LabelBox>
     }
 
-    return <div className="tonwa-bg-gray-1">
+    return <div className="tonwa-bg-gray-1 ">
         <div className={cnBlock}>
             <div className={'flex-fill py-3'}>
                 <RowCols>

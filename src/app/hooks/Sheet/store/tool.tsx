@@ -36,6 +36,16 @@ export interface ValRow extends BinRow {
     pendValue?: number;
 }
 
+export function cloneValRow(valRow: ValRow) {
+    let { buds, owned } = valRow;
+    let ret: ValRow = {
+        ...valRow,
+        buds: { ...buds }, //?: { [bud: number]: string | number };
+        owned: { ...owned }, // 也许不需要了 ?: { [bud: number]: [number, BudValue][] 
+    };
+    return ret;
+}
+
 // 特别处理 BudFork
 export function getValRowPropArr(valRow: ValRow, buds: BizBud[]) {
     const { buds: budsValues } = valRow;

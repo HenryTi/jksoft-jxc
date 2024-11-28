@@ -18,7 +18,6 @@ import { ChangeEvent } from "react";
 
 export abstract class BudsEditing<R = any> extends Store implements FormContext {
     private readonly calc: Calc;
-    // private composingValues: { [bud: number]: any };
     readonly valueSpace: ValueSpace;
     protected readonly requiredFields: BizBud[] = [];
     protected readonly budColl: { [name: string]: BizBud } = {};
@@ -84,6 +83,10 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
 
     get store(): EntityStore { return undefined; }
 
+    getNameValues(name: string) {
+        return this.calc.getValues(name);
+    }
+
     setNamedValues(name: string, values: object) {
         this.calc.setValues(name, values);
     }
@@ -125,17 +128,6 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         if (ret !== undefined) return ret;
         return this.calc.getValue(bud.name);
     }
-
-    /*
-    setBudComposingValue(bud: BizBud, value: any) {
-        if (this.composingValues === undefined) this.composingValues = {};
-        this.composingValues[bud.id] = value;
-    }
-    getBudComposingValue(bud: BizBud) {
-        if (this.composingValues === undefined) return;
-        return this.composingValues[bud.id];
-    }
-    */
 
     getEntityFromId(id: number): Entity { return undefined; }
     getEntity(entityId: number): Entity { return this.biz.entityFromId(entityId); }

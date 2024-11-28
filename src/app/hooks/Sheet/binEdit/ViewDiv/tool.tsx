@@ -1,5 +1,5 @@
 import { BizBud } from "app/Biz";
-import { BinStore, ValDiv, ValDivBase } from "../../store";
+import { BinStore, ValDivBase } from "../../store";
 import { ViewSpecNoAtom } from "app/hooks";
 import { FA, theme } from "tonwa-com";
 import { useAtomValue } from "jotai";
@@ -45,7 +45,7 @@ export function ViewPendValue(props: ViewDivProps) {
     const { atomSum, binDiv, parent } = valDiv;
     const { level, entityBin } = binDiv;
     const valRow = useAtomValue(valDiv.getAtomValRow());
-    let { sumValue, sumAmount } = useAtomValue(atomSum);
+    let { sumValue } = useAtomValue(atomSum);
     if (parent === undefined) {
         const { value: rootValue } = valRow;
         if (rootValue !== undefined) {

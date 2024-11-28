@@ -1,6 +1,6 @@
 import { BinDiv } from "app/Biz";
 import { Getter, WritableAtom, atom } from "jotai";
-import { ValRow } from "./tool";
+import { cloneValRow, ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { PendRow, SheetStore } from "./SheetStore";
 
@@ -10,6 +10,14 @@ export class ValDivsBase<T extends ValDivBase> {
 
     get valDivs() { return getAtomValue(this._atomValDivs); } //  atom([] as T[]);
     get atomValDivs() { return this._atomValDivs };
+
+    hasPend(): boolean {
+        let valDivs = getAtomValue(this._atomValDivs);
+        for (let valDiv of valDivs) {
+            if (valDiv.id < 0) return true;
+        }
+        return false;
+    }
 
     setValDivs(valDivs: ValDivBase[]) {
         setAtomValue(this._atomValDivs, valDivs);
@@ -81,10 +89,12 @@ export class ValDivsBase<T extends ValDivBase> {
         if (trigger === true) this.setValDivs([...valDivs]);
     }
 
+    /*
     triggerRender() {
         let valDivs = getAtomValue(this._atomValDivs);
         this.setValDivs([...valDivs]);
     }
+    */
 
     removePend(pendId: number) {
         let valDivs = getAtomValue(this._atomValDivs);
@@ -335,8 +345,7 @@ export abstract class ValDivBase extends ValDivs {
 
     clone(): ValDivBase {
         let ret = this.cloneObj();
-        // setAtomValue(ret.atomValDivs, [...getAtomValue(this._atomValDivs)]);
-        this.setValDivs([...this.valDivs]);
+        // this.setValDivs([...this.valDivs]);
         ret.iValue = this.iValue;
         ret.iBase = this.iBase;
         ret.xValue = this.xValue;
@@ -381,7 +390,8 @@ export class ValDivRoot extends ValDivBase {
     readonly parent: ValDivBase = undefined;
 
     protected cloneObj() {
-        let ret = new ValDivRoot(this.binDiv, this.valRow);
+        let valRow = cloneValRow(this.valRow);
+        let ret = new ValDivRoot(this.binDiv, valRow);
         return ret;
     }
 }
@@ -394,7 +404,8 @@ export class ValDiv extends ValDivBase {
     }
 
     protected cloneObj() {
-        let ret = new ValDiv(this.parent, this.valRow);
+        let valRow = cloneValRow(this.valRow);
+        let ret = new ValDiv(this.parent, valRow);
         return ret;
     }
 }

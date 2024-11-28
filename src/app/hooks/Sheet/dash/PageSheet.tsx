@@ -1,8 +1,8 @@
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { SheetStore, SubmitState, upload } from "../store";
-import { detailNew, ViewDiv, ViewMain } from "../binEdit";
-import { atom, useAtomValue } from "jotai";
-import React, { useEffect, useRef, useState } from "react";
+import { detailNewLoop, ViewDiv, ViewMain } from "../binEdit";
+import { useAtomValue } from "jotai";
+import React, { useRef, useState } from "react";
 import { headerSheet, buttonDefs } from "../headerSheet";
 import { ViewReaction } from "app/hooks/View/ViewReaction";
 import { env, FA, getAtomValue, setAtomValue, SpinnerSmall, theme } from "tonwa-com";
@@ -14,12 +14,12 @@ import { download } from "app/tool";
 import { useSiteRole } from "app/views/Site/useSiteRole";
 
 export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean; }) {
-    const { uq, mainStore, binStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
+    const { mainStore, binStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
     const modal = useModal();
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(atomSubmitState);
     let useSiteRoleReturn = useSiteRole();
-    let { isOwner, isAdmin } = useSiteRoleReturn.userSite;
+    let { isAdmin } = useSiteRoleReturn.userSite;
     const refPrint = useRef(null);
     const handlePrint = useReactToPrint({
         content: () => refPrint.current,
@@ -101,7 +101,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     function mainDetailEdit() {
         const { entity: entityBin } = binStore;
         async function onAddRow() {
-            await detailNew(store);
+            await detailNewLoop(store);
         }
         let submitHidden: boolean;
         submitHidden = false;
@@ -225,7 +225,7 @@ function ViewSheetContent({ store, readonly }: { store: SheetStore; readonly: bo
         if (waiting === true) {
             viewWaiting = <div className="px-3 py-2"><SpinnerSmall /></div>;
         }
-        return <div className="tonwa-bg-gray-1 pt-3">
+        return <div className="tonwa-bg-gray-1 border-top border-bottom border-primary-subtle">
             {valDivs.length === 0 ?
                 <div className="mt-3 small text-body-tertiary p-3 bg-white border-top">
                     无明细
@@ -237,7 +237,7 @@ function ViewSheetContent({ store, readonly }: { store: SheetStore; readonly: bo
                     const cn = 'border-top border-bottom ' + (id < 0 ? 'border-warning' : 'border-primary-subtle');
                     return <React.Fragment key={id}>
                         <div className="page-break" />
-                        <div className={cn}>
+                        <div className={cn} style={{ marginTop: '1px', marginBottom: '1px' }}>
                             <ViewDiv binStore={binStore} valDiv={v} readonly={readonly} index={index + 1} />
                         </div>
                     </React.Fragment>;

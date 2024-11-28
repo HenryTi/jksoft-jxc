@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { theme, FA } from "tonwa-com";
+import { theme } from "tonwa-com";
 import { RowColsSm, ViewShowBuds } from "../../../tool";
 import { PAV, ViewDivProps, ViewDivRight, ViewPendValue, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
@@ -12,7 +12,7 @@ export function ViewRowStem(props: ViewDivProps) {
     const { atomSum, binDiv } = valDiv;
     const { entityBin } = binDiv;
     const valRow = useAtomValue(valDiv.getAtomValRow());
-    let { sumValue, sumAmount } = useAtomValue(atomSum);
+    let { sumValue } = useAtomValue(atomSum);
     const divs = useAtomValue(valDiv.atomValDivs);
     const { i: iValue } = valRow;
     let {

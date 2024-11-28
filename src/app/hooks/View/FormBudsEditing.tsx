@@ -10,6 +10,9 @@ interface Props {
     onSubmit(data: any): Promise<void>;
     submit?: string | JSX.Element;
     submitClassName?: string;
+    onContinue?(data: any): Promise<void>;
+    continue?: string | JSX.Element;
+    continueClassName?: string;
     validate?(data: any): [string, string][];
 }
 

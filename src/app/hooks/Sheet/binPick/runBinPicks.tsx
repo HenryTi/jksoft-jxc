@@ -17,7 +17,7 @@ export async function runBinPicks(
         editing,
         rearBinPick: rearPick,           // endmost pick
         rearResult: undefined,
-        rearPickResultType: rearPickResultType,
+        rearPickResultType,
     };
 
     const { binStore } = sheetStore;

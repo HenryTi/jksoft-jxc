@@ -1,18 +1,34 @@
-import { RearPickResultType, SheetStore, ValRow } from "../store";
-import { BinEditing } from "../store";
+import { BinEditing, RearPickResultType, ReturnUseBinPicks, SheetStore, ValRow } from "../store";
 import { runBinPicks } from "../binPick";
 import { rowEdit } from "./divEdit";
 import { PickResult } from "app/hooks/Calc";
 
-export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
+export async function detailNewLoop(sheetStore: SheetStore): Promise<void> {
+    const { modal, binStore } = sheetStore;
+    for (; ;) {
+        let ret = await detailNew(sheetStore);
+        if (ret === undefined) break;
+        const binEditing = new BinEditing(sheetStore, binStore.entity);
+        binEditing.addNamedParams(ret.editing.valueSpace);
+        let retEdit = await rowEdit(modal, binEditing, undefined);
+        if (retEdit !== true) break;
+        if (retEdit === true) {
+            const { values: valRow } = binEditing;
+            if (valRow.id !== undefined) debugger;
+            // valRows.push(valRow);
+        }
+    }
+}
+
+export async function detailNew(sheetStore: SheetStore): Promise<ReturnUseBinPicks> {
     const { modal, binStore } = sheetStore;
     if (binStore === undefined) {
         alert('Pick Pend on main not implemented');
-        return false;
+        return;
     }
     const { entity: entityBin, binDivRoot } = binStore;
     let ret = await runBinPicks(sheetStore, entityBin);
-    if (ret === undefined) return false;
+    if (ret === undefined) return;
 
     binStore.setWaiting(true);
     let { editing, rearBinPick, rearResult, rearPickResultType } = ret;
@@ -62,9 +78,10 @@ export async function detailNew(sheetStore: SheetStore): Promise<boolean> {
 
     if (valRows.length > 0) {
         await binStore.saveDetails(binDivRoot, valRows);
+        binStore.setValRowArrayToRoot(valRows);
     }
 
     binStore.setWaiting(false);
     sheetStore.notifyRowChange();
-    return true;
+    return ret;
 }

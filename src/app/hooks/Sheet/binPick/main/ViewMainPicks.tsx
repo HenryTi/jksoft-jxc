@@ -132,7 +132,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                             }
                             break;
                         case EnumDetailOperate.direct:
-                            binStore.addAllPendRowsDirect();
+                            await binStore.addAllPendRowsDirect();
                             break;
                         case EnumDetailOperate.pend:
                             binStore.addAllPendRowsToSelect();

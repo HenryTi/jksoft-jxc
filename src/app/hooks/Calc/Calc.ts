@@ -157,6 +157,10 @@ export class Calc {
         this._results = undefined;
     }
 
+    getValues(name: string) {
+        return this.calcSpace.namedValues[name];
+    }
+
     private run(callback: (name: string, value: CalcResult) => void, noInitOnly: boolean) {
         if (this._results === undefined) this._results = {};
         for (let [name, formula] of this.formulas) {

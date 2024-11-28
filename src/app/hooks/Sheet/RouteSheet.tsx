@@ -77,7 +77,7 @@ class RouteConsole extends SheetConsole {
         }
     }
 
-    async onSheetAdded(store: SheetStore/* sheetId: number, no: string*/): Promise<void> {
+    async onSheetAdded(store: SheetStore): Promise<void> {
         const { mainStore: main } = store;
         const { valRow, no } = main;
         let { id, i, x, origin, price, value, amount } = valRow;

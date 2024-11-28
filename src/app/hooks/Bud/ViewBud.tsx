@@ -10,7 +10,7 @@ export enum ViewBudUIType {
     inDiv = 1,
 }
 
-const cnViewBud = ' mb-2 ';
+const cnViewBud = ' my-1 ';
 
 export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; store?: EntityStore/* atomColl?: AtomColl;*/ }) {
     if (value === undefined) return null;
@@ -48,7 +48,7 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
             return fork(bud, value, store);
     }
     if (noLabel === true) {
-        return <div className="col mb-2">{content}</div>;
+        return <div className="col my-2 ">{content}</div>;
     }
     return <LabelBox label={caption} className={cnViewBud}>{content}</LabelBox>;
 }

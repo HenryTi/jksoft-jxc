@@ -11,13 +11,12 @@ import { ValDivRoot } from "./ValDiv";
 import { Modal } from "tonwa-app";
 import { Console, EntityStore } from "app/tool";
 import { arrFromJsonMid } from "app/hooks/tool";
-import { BinEditing } from "./BinEditing";
+import { BinBudsEditing, BinEditing } from "./BinEditing";
 import { runBinPicks } from "../binPick";
-import { BudsEditing } from "app/hooks/BudsEditing";
 
 export class SheetMainStore extends EntityStore<EntityBin> {
     readonly sheetStore: SheetStore;
-    budsEditing: BudsEditing;
+    budsEditing: BinBudsEditing;
     budEditings: BudEditing[];
 
     readonly _valRow = atom<ValRow>({ buds: {} } as ValRow);
@@ -208,7 +207,8 @@ export class SheetStore extends EntityStore<EntitySheet> {
         if (main === undefined) return;
         this.mainStore.setValue(main);
         if (this.binStore !== undefined) {
-            this.binStore.load(details, false);
+            // this.binStore.load(details, false);
+            this.binStore.setValRowArrayToRoot(details);//, false);
         }
         setAtomValue(this.atomLoaded, true);
     }

@@ -70,23 +70,23 @@ export function ViewPendRow({
     }
 
     return <>
-        <div className="py-2 bg-white flex-fill ps-3">
-            <div className="flex-fill">
+        <div className="pb-2 bg-white flex-fill ps-1">
+            <div className="flex-fill ps-2 pt-2 pb-1 border-bottom tonwa-bg-gray-1">
                 <ViewSpecAtomBold id={i} store={sheetStore} />
                 {viewAtomTitles}
             </div>
-            <div className="d-flex">
+            <div className="d-flex ps-2">
                 <RowColsSm contentClassName=" flex-fill ">
                     {viewBuds}
                     <ViewPropArr arr={mid} />
                 </RowColsSm>
+                <div className="align-self-end w-min-10c d-flex flex-column align-items-end pt-2 pe-3 my-1">
+                    <ViewValue caption={'数量'} value={<span className="fw-bold fs-larger">{value}</span>} />
+                    {vPrice}
+                    {vAmount}
+                    {viewPendValue}
+                </div >
             </div>
         </div>
-        <div className="w-min-10c d-flex flex-column align-items-end pt-2 pe-3">
-            <ViewValue caption={'数量'} value={<span className="fw-bold fs-larger">{value}</span>} />
-            {vPrice}
-            {vAmount}
-            {viewPendValue}
-        </div >
     </>;
 }

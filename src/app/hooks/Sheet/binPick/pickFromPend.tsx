@@ -6,8 +6,8 @@ import { BudsEditing } from "app/hooks/BudsEditing";
 import { PickResult } from "app/hooks/Calc";
 
 export async function pickFromPend(binStore: BinStore, editing: BudsEditing, binPick: PickPend): Promise<PickResult[]> {
-    let { from: entityPend, bin } = binPick;
-    const pendProxyHander = new PendProxyHandler(entityPend);
+    let { /*from: entityPend, */bin } = binPick;
+    // const pendProxyHander = new PendProxyHandler(entityPend);
     const { modal } = editing;
     let pendStore = binStore.getPickPendStore(binPick, editing.valueSpace);
     await pendStore.searchPend();

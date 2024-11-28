@@ -1,6 +1,7 @@
 import { BinPick } from "app/Biz";
 import { BudsEditing } from "app/hooks/BudsEditing";
 import { PickResult } from "app/hooks/Calc";
+import { BinBudsEditing } from "./BinEditing";
 
 /*
 export interface NamedResults {
@@ -11,7 +12,7 @@ export interface NamedResults {
 export type PickResult = { [prop: string]: any };
 */
 export interface ReturnUseBinPicks {
-    editing: BudsEditing;
+    editing: BinBudsEditing;
     // namedResults: NamedResults;
     rearBinPick: BinPick;           // rear pick = the endmost pick
     rearResult: PickResult[];

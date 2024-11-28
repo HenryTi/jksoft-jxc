@@ -189,9 +189,32 @@ export class DivEditing extends BinBudsEditing {
         this.setValueDefault(valDiv);
     }
 
+    setPendResult(pendResult: object) {
+        if (pendResult === undefined) return;
+        this.setNamedValues('pend', pendResult);
+        this.setNamedValues('%pend', pendResult);
+        let pendValues = this.getNameValues('pend') as any; // namedResults['pend'];
+        if (pendValues === undefined) return;
+        let { i, x, iBase, xBase } = pendValues;
+        this.iValue = i;
+        this.xValue = x;
+        if (this.iBase === undefined) {
+            if (iBase === undefined) {
+                let specValues = this.getNameValues('spec') as any; // namedResults['spec'];
+                if (specValues !== undefined) {
+                    iBase = specValues.base;
+                }
+            }
+            this.iBase = iBase;
+        }
+        this.xBase = xBase;
+    }
+
     private initNamedResults(namedResults: any) {
         if (namedResults === undefined) return;
         this.addNamedParams(namedResults);
+        this.setPendResult(namedResults);
+        /*
         let pendValues = namedResults['pend'];
         if (pendValues === undefined) return;
         let { i, x, iBase, xBase } = pendValues;
@@ -207,6 +230,7 @@ export class DivEditing extends BinBudsEditing {
             this.iBase = iBase;
         }
         this.xBase = xBase;
+        */
     }
 
     private setValueDefault(valDiv: ValDivBase) {

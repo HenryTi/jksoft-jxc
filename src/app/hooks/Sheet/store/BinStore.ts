@@ -111,6 +111,7 @@ export class BinStore extends EntityStore<EntityBin> {
         setAtomValue(this.atomPendRows, pendRows);
     }
 
+    /*
     load(valRows: ValRow[], trigger: boolean) {
         let valDivs = [];
         for (let valRow of valRows) {
@@ -119,6 +120,7 @@ export class BinStore extends EntityStore<EntityBin> {
         }
         this.valDivsRoot.setValDivs(valDivs);
     }
+    */
 
     getPendLeft(valDiv: ValDivBase): number {
         if (valDiv === undefined) return undefined;
@@ -153,9 +155,7 @@ export class BinStore extends EntityStore<EntityBin> {
         for (let valDiv of this.valDivsRoot.valDivs) {
             this.deletedIds(ids, valDiv);
         }
-        if (ids.length > 0) {
-            await this.delDetail(ids);
-        }
+        await this.delDetail(ids);
     }
 
     async delValDiv(valDiv: ValDivBase) {
@@ -243,7 +243,13 @@ export class BinStore extends EntityStore<EntityBin> {
         valDivs.delValRow(id);
     }
 
+    async deleteValRows(valRows: ValRow[]) {
+        let ids = valRows.map(v => v.id);
+        await this.delDetail(ids);
+    }
+
     private async delDetail(ids: number[]) {
+        if (ids.length === 0) return;
         await this.uq.DeleteBin.submit({ ids });
     }
 
@@ -333,7 +339,8 @@ export class BinStore extends EntityStore<EntityBin> {
         if (valDivs.length === 0) return;
         let valRows = valDivs.map(v => v.valRow);
         await this.saveDetails(binDivRoot, valRows);
-        this.valDivsRoot.triggerRender();
+        // this.valDivsRoot.triggerRender();
+        this.setValRowArrayToRoot(valRows);
     }
 
     async saveDetails(binDiv: BinDiv, valRows: ValRow[]) {
@@ -382,6 +389,12 @@ export class BinStore extends EntityStore<EntityBin> {
             let { id } = retDetail;
             let valRow = valRows[i];
             valRow.id = id;
+        }
+        // this.setValRowArrayToRoot(valRows);
+    }
+
+    setValRowArrayToRoot(valRows: ValRow[]) {
+        for (let valRow of valRows) {
             this.setValRowRoot(valRow, true);
         }
     }
@@ -389,8 +402,9 @@ export class BinStore extends EntityStore<EntityBin> {
     replaceValDiv(valDiv: ValDivBase, newValDiv: ValDivRoot) {
         const { valDivs } = this.valDivsRoot;
         let { length } = valDivs;
+        let { id } = valDiv;
         for (let i = 0; i < length; i++) {
-            if (valDiv === valDivs[i]) {
+            if (id === valDivs[i].id) {
                 valDivs.splice(i, 1, newValDiv);
                 this.valDivsRoot.setValDivs([...valDivs]);
                 break;
@@ -468,6 +482,7 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 
     async addAllPendRowsDirect() {
+        /*
         let pendRows = getAtomValue(this.atomPendRows);
         const { pend } = this.entity;
         const valRows: ValRow[] = [];
@@ -478,12 +493,14 @@ export class BinStore extends EntityStore<EntityBin> {
             let valDiv = new ValDivRoot(this.binDivRoot, valRow);
             this.valDivsRoot.addValDiv(valDiv, false);
             let divEditing = new DivEditing(this, valDiv);
-            divEditing.setNamedValues('pend', pendResult);
-            divEditing.setNamedValues('%pend', pendResult);
+            divEditing.setPendResult(pendResult);
             divEditing.calcAll();
             valDiv.mergeValRow(divEditing.values);
             valRows.push(valDiv.valRow);
         }
+        */
+        this.addAllPendRowsToSelect();
+        await this.allPendsToValRows();
     }
 
     deletePendThoroughly(pendId: number) {
@@ -498,58 +515,124 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 }
 
-interface PendToValRow {
-    valDiv: ValDivBase;
+interface InDetail {
+    id: number;
+    i: number;
+    x: number;
+    origin: number;
+    value: number;
+    price: number;
+    amount: number;
+    pend: number;
+    props: any;
+}
+
+class PendToValDiv {
+    readonly vId: number;
+    readonly parent: PendToValDiv;
+    readonly valDiv: ValDivBase;
+    readonly children: PendToValDiv[] = [];
     iValue: number;
     iBase: number;
     xValue: number;
     xBase: number;
+
+    constructor(vId: number, parent: PendToValDiv, valDiv: ValDivBase) {
+        this.vId = vId;
+        this.parent = parent;
+        this.valDiv = valDiv;
+        if (this.parent !== undefined) this.parent.children.push(this);
+    }
+
+    getValRows(inDetails: InDetail[], valRows: ValRow[]) {
+        const { valRow, binDiv: { buds } } = this.valDiv;
+        let { id, i, x, value, price, amount, pend, origin } = valRow;
+        let propArr = getValRowPropArr(valRow, buds);
+        inDetails.push({
+            id,
+            i,
+            x,
+            value,
+            price,
+            amount,
+            origin,
+            pend,
+            props: propArr,
+        });
+        valRows.push(valRow);
+        for (let p of this.children) {
+            p.getValRows(inDetails, valRows);
+        }
+    }
+
+    setIXBaseFromInput() {
+        // const { valDiv } = row;
+        // const { valRow } = valDiv;
+        // valDiv.setValRow(valRow);
+        // valDiv.setIXBaseFromInput(divEditing);
+        this.valDiv.setIXBaseFromInput(this);
+        for (let p of this.children) {
+            p.setIXBaseFromInput();
+        }
+    }
 }
 
 // 待选之后，不需要处理待选属性值，直接生成Detail。
 export class BinStorePendDirect extends BinStore {
+    // pendRows 已经在单据上了
     async allPendsToValRows(): Promise<void> {
         const { valDivs } = this.valDivsRoot;
-        if (valDivs.length === 0) return;
+        const { length } = valDivs;
+        if (length === 0) return;
         const pendRows = getAtomValue(this.atomPendRows);
-        let rows: PendToValRow[] = [];
-        for (let valDiv of valDivs) {
-            let pendRow = pendRows.find(p => p.pend === valDiv.pend);
+        let pendToValDivs: PendToValDiv[] = [];
+        let vId = 0;
+        for (let i = 0; i < length; i++) {
+            let valDiv = valDivs[i];
+            let { valRow } = valDiv;
+            const { id, pend } = valRow;
+            if (id > 0) continue;
+            let pendRow = pendRows.find(p => p.pend === pend);
             if (pendRow === undefined) debugger;
-            await this.pendToValRow(rows, valDiv, pendRow);
+            let pendToValDiv = this.pendToValDiv(vId, valDiv, pendRow);
+            pendToValDivs.push(pendToValDiv);
+            vId = pendToValDiv.vId - 100;
         }
-        const { binDiv } = valDivs[0];
-        const valRows = rows.map(v => v.valDiv.valRow);
-        await this.saveDetails(binDiv, valRows);
-        for (let row of rows) {
-            const { valDiv } = row;
-            const { valRow } = valDiv;
-            valDiv.setValRow(valRow);
-            // valDiv.setIXBaseFromInput(divEditing);
-            valDiv.setIXBaseFromInput(row);
-        }
+        await this.saveDivDetails(pendToValDivs);
+        for (let p of pendToValDivs) p.setIXBaseFromInput();
+        this.sheetStore.notifyRowChange();
     }
 
-    private async pendToValRow(rows: PendToValRow[], valDiv: ValDivBase, pendRow: PendRow) {
-        let { entity: entityBin, sheetStore } = this;
-        let { rearPick, pend: entityPend } = entityBin;
+    private pendToValDiv(vId: number, valDiv: ValDivBase, pendRow: PendRow): PendToValDiv {
+        let { rearPick, pend: entityPend } = this.entity;
         let pendResult = new Proxy(pendRow, new PendProxyHandler(entityPend));
+        let valRowRoot = valDiv.valRow;
+        valRowRoot.pend = pendRow.pend;
+        valRowRoot.pendValue = pendRow.value;
 
+        let parent: PendToValDiv;
+        let ret: PendToValDiv;
         for (; ;) {
             let divEditing = new DivEditing(this, valDiv);
             if (rearPick !== undefined) {
                 divEditing.setNamedValues(rearPick.name, pendResult);
             }
-            divEditing.setNamedValues('pend', pendResult);
-            divEditing.setNamedValues('%pend', pendResult);
+            divEditing.setPendResult(pendResult);
+            // divEditing.setNamedValues('pend', pendResult);
+            // divEditing.setNamedValues('%pend', pendResult);
             divEditing.calcAll();
             // let retIsInputed = await this.runInputDiv(divEditing);
             // if (retIsInputed !== true) return;
             valDiv.mergeValRow(divEditing.values);
             let { valRow } = valDiv;
-            valRow.id = undefined;
+            valRow.id = vId;
             const { iValue, iBase, xValue, xBase } = divEditing;
-            rows.push({ valDiv, iValue, iBase, xValue, xBase });
+            ret = new PendToValDiv(vId, parent, valDiv);
+            ret.iValue = iValue;
+            ret.iBase = iBase;
+            ret.xValue = xValue;
+            ret.xBase = xBase;
+            vId--;
 
             let { binDiv } = valDiv;
             // 无下级，退出
@@ -561,34 +644,74 @@ export class BinStorePendDirect extends BinStore {
             let valDivNew = valDiv.createValDivSub(pendRow);
             valDiv.addValDiv(valDivNew, true);
             valDiv = valDivNew;
+            parent = ret;
         }
-        sheetStore.notifyRowChange();
-        return true;
+        for (; ret !== undefined;) {
+            let p = ret.parent;
+            if (p === undefined) break;
+            ret = p;
+        }
+        return ret;
     }
+    /*
+        private async runInputDiv(divEditing: DivEditing) {
+            // const { modal } = binStore;
+            const { valDiv } = divEditing;
+            let { binDiv } = valDiv;
+            // let retInputs = await runInputs(props, divEditing);
+            // if (retInputs === false) return;
+    
+            valDiv.mergeValRow(divEditing.values);
+            let { valRow } = valDiv;
+            valRow.id = undefined;
+            await this.saveDetails(binDiv, [valRow]);
+            valDiv.setValRow(valRow);
+            valDiv.setIXBaseFromInput(divEditing);
+            return true;
+        }
+    */
 
-    private async runInputDiv(divEditing: DivEditing) {
-        // const { modal } = binStore;
-        const { valDiv } = divEditing;
-        let { binDiv } = valDiv;
-        // let retInputs = await runInputs(props, divEditing);
-        // if (retInputs === false) return;
-
-        valDiv.mergeValRow(divEditing.values);
+    private async saveDivDetails(pendToValDivs: PendToValDiv[]) {
+        // const { binDiv } = valDivs[0];
+        const valRows: ValRow[] = [];
+        let inDetails: InDetail[] = [];
+        for (let p of pendToValDivs) p.getValRows(inDetails, valRows);
+        // await this.saveDetails(binDiv, valRows);
         /*
-        if (skipInputs !== true) {
-            if (divEditing.isInputNeeded() === true) {
-                if (await modal.open(<ModalInputRow binEditing={divEditing} valDiv={valDiv} />) !== true) {
-                    return;
-                }
-                valDiv.mergeValRow(divEditing.values);
-            }
+        for (let valRow of valRows) {
+            let { id, i, x, value, price, amount, pend, origin } = valRow;
+            let propArr = getValRowPropArr(valRow, buds);
+            inDetails.push({
+                id,
+                i,
+                x,
+                value,
+                price,
+                amount,
+                origin,
+                pend,
+                props: propArr,
+            });
         }
         */
-        let { valRow } = valDiv;
-        valRow.id = undefined;
-        await this.saveDetails(binDiv, [valRow]);
-        valDiv.setValRow(valRow);
-        valDiv.setIXBaseFromInput(divEditing);
-        return true;
+        let param: ParamSaveDetails = {
+            base: this.sheetStore.mainId,
+            phrase: this.entity.id,
+            inDetails,
+        };
+        let results = await this.uq.SaveDetails.submitReturns(param);
+        let { details: retDetails, props, specs, atoms } = results;
+        if (retDetails.length === 0) {
+            console.error('*************** SaveDetails something wrong *******************');
+            return;
+        }
+        this.sheetStore.cacheIdAndBuds(props, atoms, specs);
+        let { length } = valRows;
+        for (let i = 0; i < length; i++) {
+            let retDetail = retDetails[i];
+            let { id } = retDetail;
+            let valRow = valRows[i];
+            valRow.id = id;
+        }
     }
 }
