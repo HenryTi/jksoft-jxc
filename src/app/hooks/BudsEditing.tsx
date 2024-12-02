@@ -118,7 +118,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         this.calcAll();
     }
 
-    protected setBudValue(bud: BizBud, value: any): void {
+    setBudValue(bud: BizBud, value: any): void {
         this.setNamedValue(bud.name, value);
         this.budValuesTool.setBudValue(bud, this.values, value);
     }
@@ -441,13 +441,14 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         return ret;
     }
 
+    private budEditings: BudEditing[];
     buildEditBuds() {
         let { fields } = this.budValuesTool;
-        let budEditings = fields.map(v => new BudEditing(this, v));
-        return budEditings.map(budEditing => {
+        this.budEditings = fields.map(v => new BudEditing(this, v));
+        return this.budEditings.map(budEditing => {
             const { bizBud: bud } = budEditing;
-            const { caption, name } = bud;
-            let value = this.getBudValue(bud); // this.budValuesTool.getBudValue(bud, this.values);
+            const { caption } = bud;
+            let value = this.getBudValue(bud);
             const onBudChanged = (bizBud: BizBud, newValue: string | number | BudCheckValue) => {
                 this.setBudValue(bizBud, newValue);
             }
@@ -472,7 +473,7 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
         return this.buds.map(v => new BudEditing(this, v, required));
     }
 
-    getNamedValues() {
+    async getBudsNameValues() {
         let ret: any = {};
         for (let i in this.values) {
             let bud = this.budColl[i];
@@ -480,6 +481,10 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
             ret[bud.name] = this.values[i];
         }
         return ret;
+    }
+
+    async getBudsIdValues() {
+        return this.values;
     }
 }
 

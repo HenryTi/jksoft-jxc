@@ -127,7 +127,7 @@ export class UqApi extends ApiBase {
         return ret;
     }
     async source(name: string): Promise<any> {
-        let ret = await this.download('compile/source/' + name);
+        let ret = await this.download('compile/source' + name);
         return ret;
     }
     async appKey(ioSite: number, atom: number, app: number, valid: 0 | 1) {

@@ -45,12 +45,11 @@ export class BudEditing {
         return this.budsEditing.calcValue(formula);
     }
 
-    /*
-    getOnPick() {
-        return this.budsEditing.getOnPick(this.bizBud);
-    }
-    */
     getPick(): BinPick { return this.budsEditing?.getPick(this.bizBud); }
+
+    setBudValue(value: any) {
+        this.budsEditing.setBudValue(this.bizBud, value);
+    }
 }
 
 export function EditBudInline(editProps: EditBudProps) {

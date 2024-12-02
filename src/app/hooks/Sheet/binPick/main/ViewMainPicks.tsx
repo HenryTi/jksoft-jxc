@@ -85,6 +85,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                 async function onPicked(scalarResult: PickResult) {
                     if (scalarResult === undefined) return;
                     editing.setNamedValue(binPick.to[0][0].name, scalarResult as any);
+                    editing.setNamedValue(binPick.name, scalarResult as any);
                     let nextPick = getNextPick();
                     afterPicked(serial);
                     if (nextPick.fromPhraseType === BizPhraseType.pend) {
@@ -100,7 +101,8 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                     const { paramsEditing } = pendStore;
                     for (let bud of mainStore.entity.buds) {
                         let { name } = bud;
-                        paramsEditing.setNamedValues(name, editing.getValue(name));
+                        let editingValue = editing.getValue(name);
+                        paramsEditing.setNamedValues(name, editingValue);
                     }
                     await pendStore.searchPend();
                     let pendRows = getAtomValue(atomPendRows);
@@ -248,20 +250,18 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                 {vContent}
             </PickRow>;
         }
-        else {
-            if (serial > cur) return <ViewToPick binPick={rearPick} />;
-            async function pick() {
-                let pickResult = await doBinPickRear(binStore, editing, rearPick, rearPickResultType);
-                if (pickResult !== undefined) {
-                    refRearPickResult.current = pickResult;
-                    afterPicked(serial + 1);
-                }
+        if (serial > cur) return <ViewToPick binPick={rearPick} />;
+        async function pick() {
+            let pickResult = await doBinPickRear(binStore, editing, rearPick, rearPickResultType);
+            if (pickResult !== undefined) {
+                refRearPickResult.current = pickResult;
+                afterPicked(serial + 1);
             }
-            if (serial < cur) {
-                return <ViewPicked binPick={rearPick} pick={pick} />;
-            }
-            return <ViewPicking binPick={rearPick} pick={pick} />;
         }
+        if (serial < cur) {
+            return <ViewPicked binPick={rearPick} pick={pick} />;
+        }
+        return <ViewPicking binPick={rearPick} pick={pick} />;
     }
     return <>
         <div className="border rounded-3 mt-3">

@@ -88,7 +88,7 @@ export function useBuildViewBiz() {
             evt.preventDefault();
             const { uqMan } = uqApp;
             let { uqApi } = uqMan;
-            await uqApi.source(name);
+            await uqApi.source('/' + name);
         }
         return <div className="">
             {

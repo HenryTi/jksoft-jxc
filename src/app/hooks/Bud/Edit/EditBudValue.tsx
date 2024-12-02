@@ -24,7 +24,8 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
     const label = caption;
     async function valueEdited(v: any) {
         let budValue = convertToBudValue(v);
-        if (id !== undefined) {
+        budEditing.setBudValue(budValue);
+        if (id !== undefined && id > 0) {
             await uq.SaveBudValue.submit({
                 phraseId: bizBud.id,
                 id,
@@ -33,6 +34,9 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
         }
         setValue(v);
         onChanged?.(bizBud, budValue.value);
+    }
+    function onInputChange(evt: React.ChangeEvent<HTMLInputElement>) {
+        budEditing.setBudValue(evt.currentTarget.value);
     }
     if (ui?.edit === 'pop') {
         async function onEditClick() {
@@ -67,7 +71,9 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
             onEditClick={null}
             {...budEditing}
         >
-            <Input value={value} options={options} type={type} onEdited={valueEdited} readOnly={readOnly} />
+            <Input value={value} options={options} type={type}
+                onChange={onInputChange}
+                onEdited={valueEdited} readOnly={readOnly} />
         </ValueEdit>;
     }
 }
@@ -75,22 +81,25 @@ function EditBudValue(props: EditBudTemplateProps & { type: string; step?: strin
 interface InputProps {
     value: string | number; options: RegisterOptions; type: string;
     onEdited: (v: any) => Promise<void>;
+    onChange: React.ChangeEventHandler<HTMLInputElement>;
     readOnly: boolean;
 }
 
-function Input({ value, options, type, onEdited, readOnly }: InputProps) {
+function Input({ onChange, value, options, type, onEdited, readOnly }: InputProps) {
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [waiting, setWaiting] = useState(false);
     const cn = 'form-control border-0 ';
-    async function onBlur(evt: React.FocusEvent<HTMLInputElement>) {
-        let nv = evt.currentTarget.value;
-        if (nv.trim() === '') nv = undefined;
-        if (nv !== value) {
+    async function triggerInputChange(newValue: string) {
+        if (newValue.trim() === '') newValue = undefined;
+        if (newValue !== value) {
             setWaiting(true);
             // await wait(2000);
-            await onEdited?.(nv);
+            await onEdited?.(newValue);
             setWaiting(false);
         }
+    }
+    async function onBlur(evt: React.FocusEvent<HTMLInputElement>) {
+        await triggerInputChange(evt.currentTarget.value);
     }
     let vWaiting: any;
     if (waiting === true) {
@@ -103,6 +112,7 @@ function Input({ value, options, type, onEdited, readOnly }: InputProps) {
             defaultValue={value} readOnly={readOnly}
             {...register('noname', options)}
             onBlur={onBlur}
+            onChange={onChange}
         />
         {vWaiting}
     </div>;

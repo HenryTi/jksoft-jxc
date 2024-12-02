@@ -172,6 +172,7 @@ export interface FormContext {
     getBudValue(bud: BizBud): any;
     getEntityFromId(id: number): Entity;
     getEntity(entityId: number): Entity;
+    setBudValue(bud: BizBud, value: any): void;
     store: EntityStore;
     calcValue(formula: string): number | string | object;
     // getOnPick(bud: BizBud): (() => number | Promise<number>);
@@ -207,6 +208,7 @@ const emptyFormContext: FormContext = {
     getBudValue(bud: BizBud) { return undefined; },
     getEntityFromId(id: number): Entity { return undefined; },
     getEntity(entityId: number): Entity { return undefined; },
+    setBudValue(bud: BizBud, value: any) { },
     store: undefined,
     calcValue(formula: string): number | string | object { return undefined; },
     // getOnPick(bud: BizBud): (() => number | Promise<number>) { return undefined; },

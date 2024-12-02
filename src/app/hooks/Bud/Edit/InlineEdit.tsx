@@ -1,7 +1,7 @@
 import { FA, setAtomValue } from "tonwa-com";
 import { EditProps } from "./model";
 import { useAtomValue } from "jotai";
-import { ChevronRight, Pencil, PencilLg } from "app/hooks/tool";
+import { PencilLg } from "app/hooks/tool";
 
 export function InlineEdit(props: EditProps) {
     let { children, onEditClick, readOnly, error, required, popup, noBorder } = props;

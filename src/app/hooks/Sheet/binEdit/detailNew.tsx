@@ -2,16 +2,21 @@ import { BinEditing, RearPickResultType, ReturnUseBinPicks, SheetStore, ValRow }
 import { runBinPicks } from "../binPick";
 import { rowEdit } from "./divEdit";
 import { PickResult } from "app/hooks/Calc";
+import { PageConfirm } from "tonwa-app";
 
 export async function detailNewLoop(sheetStore: SheetStore): Promise<void> {
     const { modal, binStore } = sheetStore;
     for (; ;) {
         let ret = await detailNew(sheetStore);
         if (ret === undefined) break;
+        if (ret.rearResult.length > 1) break;
         const binEditing = new BinEditing(sheetStore, binStore.entity);
         binEditing.addNamedParams(ret.editing.valueSpace);
         let retEdit = await rowEdit(modal, binEditing, undefined);
         if (retEdit !== true) break;
+        // if (await modal.open(<PageConfirm header="输入明细" auth={false} message="继续输入明细吗？" yes="继续" no="不继续" />) !== true) {
+        //    break;
+        //}
     }
 }
 

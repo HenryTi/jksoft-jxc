@@ -62,8 +62,13 @@ export function PageCode() {
     }
     let style: React.CSSProperties = { ...editorStyle };
 
-    function onLoadFile() {
+    function onUploadFile() {
         fileInput.current.click();
+    }
+    async function onDownloadFile() {
+        const { uqMan } = uqApp;
+        let { uqApi } = uqMan;
+        await uqApi.source('');
     }
     async function load(file: File): Promise<string> {
         return new Promise<string>((resolve) => {
@@ -92,7 +97,8 @@ export function PageCode() {
         <div className="px-3 py-1 tonwa-bg-gray-2 d-flex">
             <ButtonAsyncIcon onClick={onCompile} icon="send-o">提交</ButtonAsyncIcon>
             <div className="flex-grow-1" />
-            <button className="btn btn-outline-primary" onClick={onLoadFile}>载入文件</button>
+            <button className="btn btn-outline-primary" onClick={onUploadFile}>上传脚本</button>
+            <button className="btn btn-outline-primary ms-2" onClick={onDownloadFile}>下载脚本</button>
             <button className="btn btn-outline-primary ms-2" onClick={onAdmin}>管理</button>
         </div>
         <div className="border-info rounded flex-grow-1">

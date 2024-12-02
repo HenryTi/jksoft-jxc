@@ -130,8 +130,9 @@ export function ViewQueryParams({ editing, query, binPick, onSearch }: {
         ...paramBudsEditing.buildFormRows(),
         { type: 'submit', label: '查找', options: {}, className: undefined }
     ];
-    function onSubmitForm(data: any) {
-        let ret = stripParams(paramBudsEditing.getNamedValues(), valueParams);
+    async function onSubmitForm(data: any) {
+        let values = await paramBudsEditing.getBudsNameValues();
+        let ret = stripParams(values, valueParams);
         onSearch(ret);
     }
     // <FormRowsView rows={formRows} register={register} errors={errors} context={paramBudsEditing} />
