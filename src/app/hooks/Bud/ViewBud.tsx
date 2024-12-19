@@ -12,7 +12,12 @@ export enum ViewBudUIType {
 
 const cnViewBud = ' my-1 ';
 
-export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; value: any; uiType?: ViewBudUIType; noLabel?: boolean; store?: EntityStore/* atomColl?: AtomColl;*/ }) {
+export function ViewBud({ bud, value, uiType, noLabel, store, colon }: {
+    bud: BizBud;
+    value: any; uiType?: ViewBudUIType; noLabel?: boolean;
+    colon?: boolean;
+    store?: EntityStore;
+}) {
     if (value === undefined) return null;
     if (value === null) return null;
     if (value === '') return null;
@@ -41,7 +46,7 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
             break;
         case EnumBudType.datetime: content = datetime(bud, value); break;
         case EnumBudType.atom:
-            return atom(bud, value, uiType, noLabel, store);
+            return atom(bud, value, uiType, colon, noLabel, store);
         case EnumBudType.bin:
             return bin(bud, value, store);
         case EnumBudType.fork:
@@ -50,10 +55,10 @@ export function ViewBud({ bud, value, uiType, noLabel, store }: { bud: BizBud; v
     if (noLabel === true) {
         return <div className="col my-2 ">{content}</div>;
     }
-    return <LabelBox label={caption} className={cnViewBud}>{content}</LabelBox>;
+    return <LabelBox label={caption} colon={colon} className={cnViewBud}>{content}</LabelBox>;
 }
 
-export function budContent(bud: BizBud, value: any, store: EntityStore) {
+export function budContent(bud: BizBud, value: any, store: EntityStore, colon: boolean = undefined) {
     let content: any;
     const { budDataType } = bud;
     if (value === undefined) {
@@ -79,7 +84,7 @@ export function budContent(bud: BizBud, value: any, store: EntityStore) {
                 break;
             case EnumBudType.datetime: content = datetime(bud, value); break;
             case EnumBudType.atom:
-                return atom(bud, value, ViewBudUIType.notInDiv, true, store);
+                return atom(bud, value, ViewBudUIType.notInDiv, colon, true, store);
             case EnumBudType.bin:
                 return bin(bud, value, store);
             case EnumBudType.fork:
@@ -89,7 +94,7 @@ export function budContent(bud: BizBud, value: any, store: EntityStore) {
     return content;
 }
 
-function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, store: EntityStore) {
+function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, noLabel: boolean, store: EntityStore) {
     function view() {
         switch (bud.name) {
             default:
@@ -155,7 +160,7 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, noLabel: boolean, 
     if (noLabel === true) {
         return <span title={title}>{vContent}</span>;
     }
-    return <LabelBox title={title} label={caption} className={cnViewBud}>
+    return <LabelBox title={title} label={caption} className={cnViewBud} colon={colon}>
         {vContent}
     </LabelBox>;
 }

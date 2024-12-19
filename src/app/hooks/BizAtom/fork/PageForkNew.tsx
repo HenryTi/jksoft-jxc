@@ -42,7 +42,7 @@ export function PageForkNew({ store }: { store: ForkStore; }) {
             }
             propValues[name] = v;
         }
-        let results = await store.saveSpec(undefined, keyValues, propValues);
+        let results = await store.saveFork(undefined, keyValues, propValues);
         switch (results) {
             case EnumSaveFork.success:
                 modal.close();

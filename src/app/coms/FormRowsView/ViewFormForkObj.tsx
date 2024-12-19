@@ -17,7 +17,7 @@ export function ViewFormForkObj({ row, label, error, inputProps, formContext, se
     clearErrors: UseFormClearErrors<any>;
     inputProps: UseFormRegisterReturn;
     onChange: (props: { name: string; value: string | object, type: 'text' }) => void;
-    formContext: FormContext
+    formContext: FormContext,
 }) {
     const modal = useModal();
     const { name, baseBud, readOnly } = row;
@@ -103,6 +103,7 @@ function PageFork({ fork, value, baseId, store }: { fork: EntityFork; value: obj
     async function onSubmit(data: any) {
         let ret = budsEditing.getResultObject();
         ret.$ = fork.id;
+        ret.$base = baseId;
         modal.close(ret);
     }
     return <Page header={fork.caption}>

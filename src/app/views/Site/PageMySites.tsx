@@ -77,7 +77,7 @@ function ViewMySites() {
         {sites.map((v, index) => {
             let { siteId } = v;
             async function onSiteSelect() {
-                await uqApp.uqSites.setSite(siteId);
+                await uqApp.setSite(siteId);
                 navigate('../');
                 document.location.reload();
             }

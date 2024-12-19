@@ -10,6 +10,7 @@ import { BizPhraseType, UqExt } from 'uqs/UqDefault';
 import { atom } from 'jotai';
 import { Biz } from './Biz';
 import { ViewsRoutes } from './views';
+import { RoleStore } from './RoleStore';
 
 // const pathBase = 'jksoft-jxc';
 const pathBase = '';
@@ -54,6 +55,8 @@ export class UqApp extends UqAppBase<UQs> {
     unitBizMonth: number;
     biz: Biz;
     uq: UqExt;
+    roleStore: RoleStore;
+    roleStore0: RoleStore;
     readonly cache: any = {};
 
     get pathLogin() { return '/login'; }
@@ -93,6 +96,7 @@ export class UqApp extends UqAppBase<UQs> {
     protected override async loadOnLogined(): Promise<void> {
         await this.loginSite();
         console.log('site logined');
+        await this.initRoleStore0();
     }
 
     _notifyCounts = atom<{ [phrase: number | BizPhraseType]: number }>({});
@@ -142,12 +146,28 @@ export class UqApp extends UqAppBase<UQs> {
                 let bizSchema = jsonpack.unpack(schemas);
                 this.biz = new Biz(this, bizSchema, undefined);
             }
+            await this.initRoleStore();
         }
         else {
             siteLogined = false;
         }
         setAtomValue(this.atomSiteLogined, siteLogined);
         return this.biz;
+    }
+
+    private async initRoleStore() {
+        this.roleStore = new RoleStore(this, this.uqSites.userSite);
+        await this.roleStore.init();
+    }
+
+    private async initRoleStore0() {
+        this.roleStore0 = new RoleStore(this, this.uqSites.userSite0);
+        await this.roleStore0.init();
+    }
+
+    async setSite(site: number) {
+        await this.uqSites.setSite(site);
+        await this.initRoleStore();
     }
 }
 

@@ -2,11 +2,11 @@
 import * as UqDefault from './UqDefault';
 
 export interface UQs {
-	UqDefault: UqDefault.UqExt;
+    UqDefault: UqDefault.UqExt;
 }
 
 export const uqsSchema = {
-	"jksoft/jksoft-mini-jxc-trial": UqDefault.uqSchema,
+    "jksoft/jksoft-mini-jxc-trial": UqDefault.uqSchema,
 }
 
 export * as UqDefault from './UqDefault';

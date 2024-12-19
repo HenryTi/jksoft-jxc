@@ -12,10 +12,11 @@ export class EntityConsole extends Entity {
         }
     }
 
+    /*
     protected fromUser(val: any[]) {
         this.user = this.fromProps(val);
-        // this.biz.entityWithUser.push(this);
     }
+    */
 
     private buildFolder(val: any) {
         let folders: Folder[] = [];

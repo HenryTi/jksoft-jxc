@@ -135,7 +135,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
 }
 
 function ViewUserDefaults({ entity }: { entity: Entity; }) {
-    let { biz, user } = entity;
+    let { biz, userBuds: user } = entity;
     let { userDefaults } = biz;
     if (user === undefined || userDefaults === undefined) return null;
     return <div className="container-fluid pt-2">

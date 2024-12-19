@@ -9,14 +9,14 @@ import {
     BinPick,
 } from "app/Biz";
 import { Calc, CalcResult, ValueSpace, Formulas } from "./Calc";
-import { EntityStore, getDays, Store } from "app/tool";
+import { EntityStore, getDays, BizStore } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";
 import { BudCheckValue, Modal } from "tonwa-app";
 import { Atom } from "jotai";
 import { ChangeEvent } from "react";
 
-export abstract class BudsEditing<R = any> extends Store implements FormContext {
+export abstract class BudsEditing<R = any> extends BizStore implements FormContext {
     private readonly calc: Calc;
     readonly valueSpace: ValueSpace;
     protected readonly requiredFields: BizBud[] = [];
@@ -383,7 +383,6 @@ export abstract class BudsEditing<R = any> extends Store implements FormContext 
             switch (type) {
                 case EnumBudType.atom:
                     formRow.default = this.budValuesTool.getBudValue(bud, this.values);
-                    // formRow.atom = null;
                     formRow.readOnly = readOnly;
                     formRow.entityAtom = (budDataType as BudID).entityID;
                     formRow.bud = bud;

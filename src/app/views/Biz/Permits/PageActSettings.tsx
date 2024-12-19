@@ -57,7 +57,7 @@ function PageActSettings() {
                 return <div key={v.id} className="mb-3">
                     <div>{v.caption ?? v.name}</div>
                     <div className="ms-3">
-                        {v.user.map(v => {
+                        {v.userBuds.map(v => {
                             return <div key={v.id}>{v.caption ?? v.name}</div>
                         })}
                     </div>

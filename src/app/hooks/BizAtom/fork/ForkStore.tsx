@@ -23,8 +23,8 @@ export class ForkStore extends EntityStore<EntityFork> {
     readonly itemsAtom = atom(undefined as any[]);
     readonly baseValue: AtomIDValue;
 
-    constructor(modal: Modal, entitySpec: EntityFork, baseValue: AtomIDValue) {
-        super(modal, entitySpec);
+    constructor(modal: Modal, entityFork: EntityFork, baseValue: AtomIDValue) {
+        super(modal, entityFork);
         this.baseValue = baseValue;
     }
 
@@ -71,7 +71,7 @@ export class ForkStore extends EntityStore<EntityFork> {
         }
     }
 
-    private addSpec(specValue: any) {
+    private addFork(specValue: any) {
         let items = getAtomValue(this.itemsAtom);
         if (items === undefined) items = [];
         const { keys, buds } = this.entity;
@@ -85,7 +85,7 @@ export class ForkStore extends EntityStore<EntityFork> {
         setAtomValue(this.itemsAtom, [...items]);
     }
 
-    async saveSpec(id: number, keyValues: BudValues, propValues: BudValues): Promise<EnumSaveFork> {
+    async saveFork(id: number, keyValues: BudValues, propValues: BudValues): Promise<EnumSaveFork> {
         const param: ParamSaveSpec = {
             id,
             spec: this.entity.id,
@@ -104,19 +104,9 @@ export class ForkStore extends EntityStore<EntityFork> {
         }
         results.keys = keyValues;
         results.props = propValues;
-        this.addSpec(results);
+        this.addFork(results);
         return EnumSaveFork.success;
     }
-    /*
-        topViewAtom() {
-            switch (this.entity.base.bizPhraseType) {
-                case BizPhraseType.fork:
-                    return <ViewSpecId id={this.baseValue.id} />;
-                case BizPhraseType.atom:
-                    return <ViewAtom value={this.baseValue.main} />;
-            }
-        }
-    */
 }
 
 export function ViewForkTop({ store }: { store: ForkStore; }) {

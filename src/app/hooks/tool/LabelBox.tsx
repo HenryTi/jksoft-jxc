@@ -21,9 +21,9 @@ interface LabelBoxProps {
     className?: string;
 }
 
-export function LabelBox({ label, children, required, title, editable, className }: LabelBoxProps) {
-    const { cnReadonly, cnGX, cnLabelContainer, cnLabel, cnColContent, colon } = theme.labelBox;
-    let vLabel: any;
+export function LabelBox({ label, children, required, title, editable, className, colon }: LabelBoxProps) {
+    const { cnReadonly, cnGX, cnLabelContainer, cnLabel, cnColContent, colon: themeColon } = theme.labelBox;
+    let vLabel: any, cnContainer = cnGX;
     if (required === true) {
         vLabel = <>
             {label}
@@ -36,7 +36,10 @@ export function LabelBox({ label, children, required, title, editable, className
     let labelTitle: string;
     if (typeof label === 'string') labelTitle = label;
     let vColon: any;
-    if (colon === true) vColon = ':';
+    if ((colon ?? themeColon) === true) {
+        vColon = <span className="me-1">:</span>;
+        cnContainer += ' d-flex ';
+    }
     let content = editable === false ?
         <div className={cnReadonly}>
             {children}
@@ -45,7 +48,7 @@ export function LabelBox({ label, children, required, title, editable, className
         children;
 
     return <div className={' col ' + (className ?? '')}>
-        <div className={'row ' + cnGX}>
+        <div className={cnContainer}>
             <div className={cnLabelContainer} title={labelTitle}>
                 <span className={cnLabel}>{vLabel}</span> {vColon}
             </div>

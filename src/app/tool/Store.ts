@@ -37,6 +37,9 @@ export interface ForkColl {
 }
 
 export abstract class Store extends KeyIdObject {
+}
+
+export abstract class BizStore extends Store {
     readonly modal: Modal;
     readonly biz: Biz;
     readonly uq: UqExt;
@@ -48,7 +51,7 @@ export abstract class Store extends KeyIdObject {
     }
 }
 
-export abstract class EntityStore<E extends Entity = Entity> extends Store {
+export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
     readonly entity: E;
     readonly budsColl: BudsColl = {};
     readonly bizAtomColl: AtomColl = {};

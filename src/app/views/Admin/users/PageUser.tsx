@@ -2,13 +2,14 @@ import { ReturnGetUsers$page } from "uqs/UqDefault";
 import { UsersStore } from "./UsersStore";
 import { Image, Page, useModal } from "tonwa-app";
 import { FA, getAtomValue, setAtomValue, theme } from "tonwa-com";
-import { Entity } from "app/Biz";
+import { Entity, EnumBudType } from "app/Biz";
 import { ValuesBudsEditing, ViewBud } from "app/hooks";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
 import { ViewUser } from "./ViewUser";
 import { ChangeEvent } from "react";
 import { useAtomValue } from "jotai";
+import { RowColsSm } from "app/hooks/tool";
 
 export function PageUser({ user, usersStore }: { user: ReturnGetUsers$page; usersStore: UsersStore; }) {
     const modal = useModal();
@@ -23,16 +24,18 @@ export function PageUser({ user, usersStore }: { user: ReturnGetUsers$page; user
     }
     const vConsoleCaption = <>
         <FAIcon name="hand-o-right" />
-        <span className="text-success">全局</span>
+        <span className="text-primary fw-bold">全局</span>
     </>;
     async function onEdit(entity: Entity) {
         let ret = await modal.open(<PageEditUser user={user} entity={entity} usersStore={usersStore} userBudValues={userBuds} />);
         if (ret === undefined) return;
-        let namedValues = ret[':user'];
+        const userPrefix = Entity.userPrefix;
+        let namedValues = ret[userPrefix];
+        let lenUser = userPrefix.length + 1;
         let budValues: { [bud: number]: (string | number)[]; } = { ...getAtomValue(atomUserBuds) };
-        for (let bud of entity.user) {
+        for (let bud of entity.userBuds) {
             let { id, name } = bud;
-            budValues[id] = namedValues[name.substring(':user.'.length)];
+            budValues[id] = namedValues[name.substring(lenUser)];
         }
         setAtomValue(atomUserBuds, budValues);
     }
@@ -48,17 +51,30 @@ export function PageUser({ user, usersStore }: { user: ReturnGetUsers$page; user
                 </div>
             </div>
         </div>
-        <ViewEntityWithUser entity={biz.bizConsole} caption={vConsoleCaption} onEdit={onEdit} budValues={userBuds} />
-        {
-            entityWithUser.map(v => {
-                const { caption, name } = v;
-                const vCaption = <>
-                    <FAIcon name="file-o" />
-                    <span className="text-info">{caption ?? name}</span>
-                </>;
-                return <ViewEntityWithUser key={v.id} entity={v} caption={vCaption} onEdit={onEdit} budValues={userBuds} />;
-            })
-        }
+        <div className="container-fluid">
+            <RowColsSm>
+                <ViewEntityWithUser
+                    entity={biz.bizConsole}
+                    caption={vConsoleCaption}
+                    onEdit={onEdit} budValues={userBuds}
+                />
+                {
+                    entityWithUser.map(v => {
+                        const { caption, name } = v;
+                        const vCaption = <>
+                            <FAIcon name="file-o" />
+                            <span className="text-info">{caption ?? name}</span>
+                        </>;
+                        return <ViewEntityWithUser key={v.id}
+                            entity={v}
+                            caption={vCaption}
+                            onEdit={onEdit}
+                            budValues={userBuds}
+                        />;
+                    })
+                }
+            </RowColsSm>
+        </div>
     </Page>;
 }
 
@@ -72,16 +88,13 @@ function ViewEntityWithUser({ entity, caption, onEdit, budValues }: {
     onEdit: (entity: Entity) => void;
     budValues: { [bud: number]: (string | number)[]; };
 }) {
-    return <div className="border-bottom d-flex">
-        <div className="flex-fill row row-cols-6 ps-3 py-2">
-            <div>{caption}</div>
-            {entity.user.map(v => {
+    return <div className="border rounded-3 m-1 p-1 cursor-pointer" onClick={() => onEdit(entity)}>
+        <div>{caption}</div>
+        <div className="">
+            {entity.userBuds.map(v => {
                 let { id } = v;
-                return <ViewBud key={id} bud={v} value={budValues[id]} />;
+                return <ViewBud key={id} bud={v} value={budValues[id]} colon={true} />;
             })}
-        </div>
-        <div className="px-3 py-2 cursor-pointer" onClick={() => onEdit(entity)}>
-            <FA name="pencil" />
         </div>
     </div>
 }
@@ -90,7 +103,7 @@ function PageEditUser({ user, usersStore, entity, userBudValues }: { user: Retur
     const modal = useModal();
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { bootstrapContainer } = theme;
-    const { caption, name, user: userBuds, biz } = entity;
+    const { caption, name, userBuds: userBuds, biz } = entity;
     const budsEditing = new ValuesBudsEditing(modal, biz, userBuds);
     budsEditing.initBudValues(userBudValues);
     const inputRows = budsEditing.buildFormRows();
@@ -107,20 +120,23 @@ function PageEditUser({ user, usersStore, entity, userBudValues }: { user: Retur
         { type: 'submit', label: '提交', options: {}, className: "btn btn-primary" }
     ];
     const onSubmitForm = async (data: any) => {
-        let userPrefix = ':user';
+        const userPrefix = Entity.userPrefix;
+        const lenUserPrefix = userPrefix.length + 1;
         let values = data[userPrefix];
-        let arr = userBuds.map(v => {
+        let arr: { bud: number; type: EnumBudType; value: any; }[] = [];
+        for (let v of userBuds) {
             const { id, name, budDataType } = v;
-            let n = name.substring(userPrefix.length + 1);
+            let n = name.substring(lenUserPrefix);
             const { type } = budDataType;
             let value: any = values[n];
+            if (value === null || value === undefined || value === '') continue;
             switch (typeof value) {
                 case 'boolean':
                 case 'number':
                 case 'string': value = [value]; break;
             }
-            return { bud: id, type, value, }
-        });
+            arr.push({ bud: id, type, value, });
+        }
         await usersStore.saveUserBuds(user.userSite, arr);
         modal.close(data);
     }

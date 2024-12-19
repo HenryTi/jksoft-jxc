@@ -20,11 +20,12 @@ export interface BudGroups {
 }
 
 export class Entity extends BizBase {
+    static userPrefix = ':user';
     // readonly selfProps: BizBud[] = [];       // 本 Atom 定义的
     readonly budColl: { [key: string | number]: BizBud; } = {};           // 包括全部继承来的
     readonly buds: BizBud[] = [];                       // 是否包含继承的？
     budGroups: BudGroups;
-    user: BizBud[];
+    userBuds: BizBud[];
 
     // subEntities 有3种不同情况:
     // 1. Atom 里面 extends 的sub
@@ -40,7 +41,6 @@ export class Entity extends BizBase {
             default: super.fromSwitch(i, val); break;
             case 'props':
                 let buds = this.fromProps(val);
-                // this.biz.atomBuilder.initBuds(this, buds);
                 this.buds.push(...buds);
                 break;
             case 'groups': this.fromGroups(val); break;
@@ -49,7 +49,7 @@ export class Entity extends BizBase {
     }
 
     protected fromUser(val: any[]) {
-        this.user = this.fromProps(val);
+        this.userBuds = this.fromProps(val);
         this.biz.entityWithUser.push(this);
     }
 
@@ -116,7 +116,6 @@ export class Entity extends BizBase {
 
     scan() {
         if (this.scaned === true) return;
-        //this.buildBudsGroups();
         this.scanBuds();
         this.scanBudGroups();
         this.scaned = true;
@@ -140,8 +139,8 @@ export class Entity extends BizBase {
             this.budColl[name] = bud;
             bud.scan();
         }
-        if (this.user !== undefined) {
-            for (let bud of this.user) {
+        if (this.userBuds !== undefined) {
+            for (let bud of this.userBuds) {
                 bud.scan();
             }
         }

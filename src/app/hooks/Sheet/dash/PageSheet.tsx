@@ -22,7 +22,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     let { isAdmin } = useSiteRoleReturn.userSite;
     const refPrint = useRef(null);
     const handlePrint = useReactToPrint({
-        content: () => refPrint.current,
+        contentRef: refPrint,
     });
     async function onSubmit() {
         function checkTrigger() {

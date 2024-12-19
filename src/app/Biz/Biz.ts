@@ -169,7 +169,6 @@ export class Biz {
         for (let schema of biz) {
             if (schema === undefined) debugger;
             let { id, name, phrase, type, caption } = schema;
-            // console.log(name);
             let enumType = EnumEntity[type] as unknown as EnumEntity;
             let builder = builders[enumType];
             if (builder === undefined) {
@@ -192,9 +191,7 @@ export class Biz {
         }
         for (let i in arr) {
             for (let [bizEntity, schema] of arr[i as unknown as EnumEntity]) {
-                // let d = Date.now();
                 bizEntity.fromSchema(schema);
-                // console.log('arr', Date.now() - d, bizEntity.name);
             }
         }
 
@@ -232,6 +229,7 @@ export class Biz {
             EnumEntity.tie,
             EnumEntity.in,
             EnumEntity.out,
+            EnumEntity.console,
         ];
         for (let i of typeSeq) {
             let entityArr = arr[i];
@@ -241,15 +239,6 @@ export class Biz {
             }
         }
         this.buildAtomHierachy(arr[EnumEntity.atom]);
-        /*
-        let entityArrAtom = arr[EnumEntity.atom];
-        if (entityArrAtom !== undefined) {
-            for (let [bizEntity] of arr[EnumEntity.atom]) {
-                (bizEntity as EntityAtom).scanTitlePrime();
-            }
-            this.atomBuilder.buildRootAtoms();
-        }
-        */
         this.groups.push(
             {
                 name: 'sheet',

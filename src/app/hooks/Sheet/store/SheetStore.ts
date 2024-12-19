@@ -369,11 +369,18 @@ class UserProxyHander implements ProxyHandler<any> {
         this.entity = entity;
     }
     get(target: any, p: string | symbol, receiver: any) {
-        const { user, biz: { userDefaults } } = this.entity;
-        let n = ':user.' + (p as string);
-        let userBud = user.find(v => v.name === n);
+        const { userBuds, biz } = this.entity;
+        const { userDefaults } = biz;
+        let budName = Entity.userPrefix + '.' + (p as string);
+        let userBud = userBuds.find(v => v.name === budName);
         if (userBud === undefined) return;
         let v = userDefaults[userBud.id];
+        if (v === undefined) {
+            let console = biz.bizConsole;
+            let consoleUserBud = console.userBuds.find(v => v.name === budName);
+            if (consoleUserBud === undefined) return;
+            v = userDefaults[consoleUserBud.id];
+        }
         if (Array.isArray(v) === true) v = v[0];
         return v;
     }
@@ -402,7 +409,7 @@ export abstract class SheetConsole extends Console {
     }
 
     async loadUserDefaults(): Promise<boolean> {
-        const { biz, user } = this.entitySheet;
+        const { biz, userBuds: user } = this.entitySheet;
         if (user === undefined) return true;
         if (user.length === 0) return true;
         await biz.loadUserDefaults();

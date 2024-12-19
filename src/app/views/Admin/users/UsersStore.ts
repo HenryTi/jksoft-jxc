@@ -2,13 +2,8 @@ import { UqApp, useUqApp } from "app/UqApp";
 import { atom } from "jotai";
 import { useRef } from "react";
 import { setAtomValue } from "tonwa-com";
-import { ParamGetUsers, ReturnGetUsers$page, UqExt } from "uqs/UqDefault";
+import { ParamGetUsers, UqExt } from "uqs/UqDefault";
 
-/*
-export interface UserBudValues extends ReturnGetUsers$page {
-    buds: { [budId: number]: string | number };
-}
-*/
 export class UsersStore {
     readonly uqApp: UqApp;
     readonly uq: UqExt;
@@ -23,24 +18,7 @@ export class UsersStore {
 
     getUserBuds = async (param: ParamGetUsers, pageStart: any, pageSize: number) => {
         let { $page } = await this.uq.GetUsers.page(param, pageStart, pageSize);
-        // let budColl: { [userId: number]: { [bud: number]: string | number } } = {};
-        // let ret: UserBudValues[] = [];
-        /*
-        for (let budValue of buds) {
-            const { userSite, bud, value } = budValue
-            let item = budColl[userSite];
-            if (item === undefined) {
-                budColl[userSite] = item = {};
-            }
-            item[bud] = value;
-        }
-        for (let p of $page as UserBudValues[]) {
-            const { userSite } = p;
-            (p as UserBudValues).buds = budColl[userSite];
-            ret.push(p);
-        }
-        */
-        return $page; // ret;
+        return $page;
     }
 
     async loadUserBuds(userId: number) {

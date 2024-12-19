@@ -72,7 +72,5 @@ const labelBoxCssV: LabelBoxCss = {
     cnReadonly: ' d-flex align-items-center border tonwa-bg-gray-1 rounded pt-1 pb-2 px-2 text-nowrap text-truncate ',
 }
 
-// export const labelBoxCss = labelBoxCssV;
-
 export const theme = new ThemeValues();
 
