@@ -15,7 +15,7 @@ export function ViewSpecId({ id }: { id: number; }) {
             let obj = cache.get(id);
             if (obj === undefined) {
                 try {
-                    obj = await idSpec(uq, id);
+                    obj = await idFork(uq, id);
                 }
                 catch (err) {
                     console.error(err);
@@ -61,12 +61,12 @@ export function ViewSpecId({ id }: { id: number; }) {
 }
 
 const cachePromise: { [id: number]: Promise<any> } = {};
-async function idSpec(uq: UqExt, id: number) {
+async function idFork(uq: UqExt, id: number) {
     let obj = cache.get(id);
     if (obj === undefined) {
         let promise = cachePromise[id];
         if (promise === undefined) {
-            promise = uq.GetSpec.query({ id });
+            promise = uq.GetFork.query({ id });
             cachePromise[id] = promise;
         }
         let ret: any;

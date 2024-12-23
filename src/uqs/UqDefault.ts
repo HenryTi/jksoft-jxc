@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Nov 16 2024 22:09:39 GMT+0800 (China Standard Time) ===//
+//=== UqApp builder created on Thu Dec 19 2024 16:22:47 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,7 +28,7 @@ export enum EnumID {
 	Bud = 'bud',
 	History = 'history',
 	Atom = 'atom',
-	Spec = 'spec',
+	Fork = 'fork',
 	Duo = 'duo',
 	Sheet = 'sheet',
 	Detail = 'detail',
@@ -279,31 +279,30 @@ export interface ParamDelAtom {
 export interface ResultDelAtom {
 }
 
-export interface ParamSaveSpec {
+export interface ParamSaveFork {
 	id: number;
-	spec: number;
+	fork: number;
 	base: number;
-	keys: any;
-	props: any;
+	values: any;
 }
-export interface ReturnSaveSpecRet {
+export interface ReturnSaveForkRet {
 	id: number;
 }
-export interface ResultSaveSpec {
-	ret: ReturnSaveSpecRet[];
+export interface ResultSaveFork {
+	ret: ReturnSaveForkRet[];
 }
 
-export interface ParamGetSpec {
+export interface ParamGetFork {
 	id: number;
 }
-export interface ReturnGetSpecProps {
+export interface ReturnGetForkProps {
 	id: number;
 	base: number;
 	phrase: number;
 	value: any;
 }
-export interface ResultGetSpec {
-	props: ReturnGetSpecProps[];
+export interface ResultGetFork {
+	props: ReturnGetForkProps[];
 }
 
 export interface ParamSaveSheet {
@@ -1479,11 +1478,11 @@ export interface AtomInActs extends ID {
 	ex: string;
 }
 
-export interface Spec extends ID {
+export interface Fork extends ID {
 	base: number;
 }
 
-export interface SpecInActs extends ID {
+export interface ForkInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
 }
@@ -1748,7 +1747,7 @@ export interface ParamActs {
 	bud?: BudInActs[];
 	history?: HistoryInActs[];
 	atom?: AtomInActs[];
-	spec?: SpecInActs[];
+	fork?: ForkInActs[];
 	duo?: DuoInActs[];
 	sheet?: SheetInActs[];
 	detail?: DetailInActs[];
@@ -1784,8 +1783,8 @@ export interface UqExt extends Uq {
 	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
 	SaveBudRadio: UqAction<ParamSaveBudRadio, ResultSaveBudRadio>;
 	DelAtom: UqAction<ParamDelAtom, ResultDelAtom>;
-	SaveSpec: UqAction<ParamSaveSpec, ResultSaveSpec>;
-	GetSpec: UqQuery<ParamGetSpec, ResultGetSpec>;
+	SaveFork: UqAction<ParamSaveFork, ResultSaveFork>;
+	GetFork: UqQuery<ParamGetFork, ResultGetFork>;
 	SaveSheet: UqAction<ParamSaveSheet, ResultSaveSheet>;
 	SaveDetail: UqAction<ParamSaveDetail, ResultSaveDetail>;
 	SaveDetails: UqAction<ParamSaveDetails, ResultSaveDetails>;
@@ -1848,7 +1847,7 @@ export interface UqExt extends Uq {
 	GetIDListCount: UqQuery<ParamGetIDListCount, ResultGetIDListCount>;
 	SetIDBase: UqAction<ParamSetIDBase, ResultSetIDBase>;
 	Atom: UqID<any>;
-	Spec: UqID<any>;
+	Fork: UqID<any>;
 	Duo: UqID<any>;
 	Sheet: UqID<any>;
 	Detail: UqID<any>;
@@ -2507,8 +2506,8 @@ export const uqSchema={
         ],
         "returns": [] as any
     },
-    "savespec": {
-        "name": "SaveSpec",
+    "savefork": {
+        "name": "SaveFork",
         "type": "action",
         "private": false,
         "sys": true,
@@ -2518,7 +2517,7 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "spec",
+                "name": "fork",
                 "type": "id"
             },
             {
@@ -2526,11 +2525,7 @@ export const uqSchema={
                 "type": "id"
             },
             {
-                "name": "keys",
-                "type": "json"
-            },
-            {
-                "name": "props",
+                "name": "values",
                 "type": "json"
             }
         ],
@@ -2547,8 +2542,8 @@ export const uqSchema={
             }
         ]
     },
-    "getspec": {
-        "name": "GetSpec",
+    "getfork": {
+        "name": "GetFork",
         "type": "query",
         "private": false,
         "sys": true,
@@ -6061,8 +6056,8 @@ export const uqSchema={
         "idType": 3,
         "isMinute": false
     },
-    "spec": {
-        "name": "Spec",
+    "fork": {
+        "name": "Fork",
         "type": "id",
         "private": false,
         "sys": true,

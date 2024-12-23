@@ -4,7 +4,7 @@ import { useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import { useQuery } from "react-query";
 import { isPromise } from "tonwa-uq";
-import { Atom, ReturnGetSpecProps, UqExt } from "uqs/UqDefault";
+import { Atom, ReturnGetForkProps, UqExt } from "uqs/UqDefault";
 
 interface SpecAtom {
     entity: EntityAtom;
@@ -54,12 +54,12 @@ export async function loadSpec(uq: UqExt, biz: Biz, specId: number): Promise<Spe
         return value;
     }
 
-    let promiseGetSpec = cache[specId] = uq.GetSpec.query({ id: specId });
+    let promiseGetSpec = cache[specId] = uq.GetFork.query({ id: specId });
     let { props } = await promiseGetSpec;
     return buildSpec(biz, specId, props);
 }
 
-function buildSpec(biz: Biz, specId: number, props: ReturnGetSpecProps[]) {
+function buildSpec(biz: Biz, specId: number, props: ReturnGetForkProps[]) {
     let atom: SpecAtom;
     let specs: SpecItem[] = [];
     let len = props.length;
@@ -79,14 +79,14 @@ function buildSpec(biz: Biz, specId: number, props: ReturnGetSpecProps[]) {
             specs.push(spec);
         }
     }
-    function buildAtom(entity: EntityAtom, row: ReturnGetSpecProps): SpecAtom {
+    function buildAtom(entity: EntityAtom, row: ReturnGetForkProps): SpecAtom {
         const { id, phrase: base, value: [no, ex] } = row;
         return {
             entity,
             value: { id, base, no, ex, },
         }
     }
-    function buildSpec(entity: EntityFork, row: ReturnGetSpecProps): SpecItem {
+    function buildSpec(entity: EntityFork, row: ReturnGetForkProps): SpecItem {
         let { keys: keysArr, buds: propsArr } = entity;
         let coll: { [bud: number]: string | number } = {};
         let keys: (string | number)[] = [];

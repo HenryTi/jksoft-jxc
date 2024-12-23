@@ -2,7 +2,7 @@ import { BinInputFork, BizBud, EntityID, ValueSetType } from "app/Biz";
 import { Page } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band } from "app/coms";
-import { Atom, ParamSaveSpec } from "uqs/UqDefault";
+import { Atom, ParamSaveFork } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
 import { btnNext, cnNextClassName } from "../../store";
@@ -89,16 +89,18 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
             }
             return values;
         }
-        const keyValues = buildValues(keys);
-        const propValues = buildValues(forkBuds);
-        const param: ParamSaveSpec = {
+        // const keyValues = buildValues(keys);
+        // const propValues = buildValues(forkBuds);
+        const values = buildValues([...keys, ...forkBuds]);
+        const param: ParamSaveFork = {
             id: undefined,
-            spec: entityId,
+            fork: entityId,
             base,
-            keys: keyValues,
-            props: propValues,
+            values,
+            // keys: keyValues,
+            // props: propValues,
         };
-        let results = await uq.SaveSpec.submit(param);
+        let results = await uq.SaveFork.submit(param);
         let { id } = results;
         if (id < 0) id = -id;
         let retSpec = Object.assign(data, { id, base });

@@ -1,10 +1,10 @@
-import { EntityFork, EnumBudType } from "app/Biz";
+import { BizBud, EntityFork, EnumBudType } from "app/Biz";
 import { EntityStore } from "app/tool";
 import { atom } from "jotai";
 import { useRef } from "react";
 import { BudValue, Modal } from "tonwa-app";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { BizPhraseType, ParamSaveSpec, Spec } from "uqs/UqDefault";
+import { BizPhraseType, ParamSaveFork } from "uqs/UqDefault";
 import { ViewAtom } from "../ViewAtom";
 import { AtomIDValue } from "../AtomIDValue";
 import { ViewSpecId } from "app/coms/ViewSpecId";
@@ -16,7 +16,7 @@ export enum EnumSaveFork {
 }
 
 export interface BudValues {
-    [bud: string]: BudValue;
+    [bud: string | number]: BudValue;
 }
 
 export class ForkStore extends EntityStore<EntityFork> {
@@ -76,24 +76,32 @@ export class ForkStore extends EntityStore<EntityFork> {
         if (items === undefined) items = [];
         const { keys, buds } = this.entity;
         let value: any = { id: specValue.id };
-        const { keys: keyValues, props: budValues } = specValue;
-        value.keys = keyValues !== undefined ? keys.map(v => [v.id, keyValues[v.name]]) : [];
-        if (budValues !== undefined) {
-            value.keys.push(...buds.map(v => [v.id, budValues[v.name]]));
+        //const { keys: keyValues, props: budValues } = specValue;
+        const { values } = specValue;
+        if (values !== undefined) {
+            function conv(v: BizBud) {
+                const { id } = v;
+                return [id, values[id]];
+            }
+            value.keys = keys.map(conv);
+            // if (budValues !== undefined) {
+            value.keys.push(...buds.map(conv));
+            //}
         }
         this.loadItems(items, [value]);
         setAtomValue(this.itemsAtom, [...items]);
     }
 
-    async saveFork(id: number, keyValues: BudValues, propValues: BudValues): Promise<EnumSaveFork> {
-        const param: ParamSaveSpec = {
+    async saveFork(id: number, budValues: BudValues/*, propValues: BudValues*/): Promise<EnumSaveFork> {
+        const param: ParamSaveFork = {
             id,
-            spec: this.entity.id,
+            fork: this.entity.id,
             base: this.baseValue.id,
-            keys: keyValues,
-            props: propValues,
+            // keys: keyValues,
+            // props: propValues,
+            values: budValues,
         };
-        let results = await this.uq.SaveSpec.submit(param);
+        let results = await this.uq.SaveFork.submit(param);
         const { id: retId } = results;
         if (retId === 0) {
             console.error('input error');
@@ -102,8 +110,9 @@ export class ForkStore extends EntityStore<EntityFork> {
         if (retId < 0) {
             return EnumSaveFork.duplicateKey;
         }
-        results.keys = keyValues;
-        results.props = propValues;
+        // results.keys = keyValues;
+        // results.props = propValues;
+        results.values = budValues;
         this.addFork(results);
         return EnumSaveFork.success;
     }

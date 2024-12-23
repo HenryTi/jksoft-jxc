@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { Page } from "tonwa-app";
 import { theme } from "tonwa-com";
-import { ParamSaveSpec } from "uqs/UqDefault";
+import { ParamSaveFork } from "uqs/UqDefault";
 import { EnumBudType } from "app/Biz";
 import { getDays } from "app/tool";
 import { BudsEditing, ValuesBudsEditing } from "app/hooks/BudsEditing";
@@ -67,7 +67,17 @@ export async function pickFromSpec(editing: BudsEditing, binPick: PickSpec): Pro
             { type: 'submit', label: submitCaption, options: {}, className: submitClassName }
         ];
         const onSubmitForm = async (data: any) => {
-            const keyValues: { [bud: string]: number | string } = {};
+            // const keyValues: { [bud: string]: number | string } = {};
+            const values: { [bud: string]: number | string } = {};
+            for (let key of keys) {
+                const { id, name, budDataType } = key;
+                let v = data[name];
+                switch (budDataType.type) {
+                    case EnumBudType.date: v = getDays(v); break;
+                }
+                values[id] = v;
+            }
+            /*
             for (let key of keys) {
                 const { name, budDataType } = key;
                 let v = data[name];
@@ -81,14 +91,16 @@ export async function pickFromSpec(editing: BudsEditing, binPick: PickSpec): Pro
                 const { name } = prop;
                 propValues[name] = data[name];
             }
-            const param: ParamSaveSpec = {
+            */
+            const param: ParamSaveFork = {
                 id: undefined,
-                spec: entityId,
+                fork: entityId,
                 base,
-                keys: keyValues,
-                props: propValues,
+                values,
+                // keys: keyValues,
+                // props: propValues,
             };
-            let results = await uq.SaveSpec.submit(param);
+            let results = await uq.SaveFork.submit(param);
             let { id } = results;
             if (id < 0) id = -id;
             let retSpec = Object.assign({ id, base }, data);

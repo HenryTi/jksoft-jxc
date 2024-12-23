@@ -21,6 +21,7 @@ export function PageForkNew({ store }: { store: ForkStore; }) {
         { type: 'submit', label: submitCaption, options: {}, className: submitClassName }
     ];
     const onSubmitForm = async (data: any) => {
+        /*
         const keyValues: BudValues = {};
         for (let key of keys) {
             const { name, budDataType } = key;
@@ -43,6 +44,20 @@ export function PageForkNew({ store }: { store: ForkStore; }) {
             propValues[name] = v;
         }
         let results = await store.saveFork(undefined, keyValues, propValues);
+        */
+        const values: BudValues = {};
+        for (let bud of buds) {
+            const { id, name, budDataType } = bud;
+            let v = data[name];
+            switch (budDataType.type) {
+                case EnumBudType.date: v = getDays(v); break;
+            }
+            if (budDataType.dataType === 'number') {
+                if (v === '') v = null;
+            }
+            values[id] = v;
+        }
+        let results = await store.saveFork(undefined, values);
         switch (results) {
             case EnumSaveFork.success:
                 modal.close();

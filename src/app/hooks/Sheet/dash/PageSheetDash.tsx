@@ -3,7 +3,7 @@ import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { FA, List, useEffectOnce, wait } from "tonwa-com";
 import { Entity, EntitySheet } from "app/Biz";
 import { PageSheetEdit, PageSheetNew } from "./PageSheetEntry";
-import { DashConsole } from "../store";
+import { DashConsole, getUserBudValue } from "../store";
 import { Sheet } from "uqs/UqDefault";
 import { Bin, ViewNotifyCount } from "app/tool";
 import { PageSheetList } from "./PageSheetList";
@@ -135,13 +135,14 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
 }
 
 function ViewUserDefaults({ entity }: { entity: Entity; }) {
-    let { biz, userBuds: user } = entity;
+    let { biz, userBuds } = entity;
     let { userDefaults } = biz;
-    if (user === undefined || userDefaults === undefined) return null;
+    if (userBuds === undefined || userDefaults === undefined) return null;
     return <div className="container-fluid pt-2">
         <div className="row row-cols-6">
-            {user.map(v => {
-                return <ViewBud key={v.id} bud={v} value={userDefaults[v.id]} />;
+            {userBuds.map(v => {
+                let userBudValue = getUserBudValue(entity, v);
+                return <ViewBud key={v.id} bud={v} value={userBudValue} />;
             })}
         </div>
     </div>;

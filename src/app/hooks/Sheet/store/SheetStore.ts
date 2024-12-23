@@ -1,6 +1,6 @@
 import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { EntitySheet, EntityBin, EntityPend, BinRow, Entity, EnumDetailOperate } from "app/Biz";
+import { EntitySheet, EntityBin, EntityPend, BinRow, Entity, EnumDetailOperate, BizBud } from "app/Biz";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { RearPickResultType, ReturnUseBinPicks } from "./PickResult";
 import { Formulas } from "app/hooks/Calc";
@@ -369,21 +369,27 @@ class UserProxyHander implements ProxyHandler<any> {
         this.entity = entity;
     }
     get(target: any, p: string | symbol, receiver: any) {
-        const { userBuds, biz } = this.entity;
-        const { userDefaults } = biz;
+        const { userBuds } = this.entity;
         let budName = Entity.userPrefix + '.' + (p as string);
         let userBud = userBuds.find(v => v.name === budName);
         if (userBud === undefined) return;
-        let v = userDefaults[userBud.id];
-        if (v === undefined) {
-            let console = biz.bizConsole;
-            let consoleUserBud = console.userBuds.find(v => v.name === budName);
-            if (consoleUserBud === undefined) return;
-            v = userDefaults[consoleUserBud.id];
-        }
-        if (Array.isArray(v) === true) v = v[0];
-        return v;
+        return getUserBudValue(this.entity, userBud);
     }
+}
+
+export function getUserBudValue(entity: Entity, bud: BizBud) {
+    const { biz } = entity;
+    const { userDefaults } = biz;
+    let v = userDefaults[bud.id];
+    if (v === undefined) {
+        let budName = bud.name;
+        let console = biz.bizConsole;
+        let consoleUserBud = console.userBuds.find(v => v.name === budName);
+        if (consoleUserBud === undefined) return;
+        v = userDefaults[consoleUserBud.id];
+    }
+    if (Array.isArray(v) === true) v = v[0];
+    return v;
 }
 
 export abstract class SheetConsole extends Console {
