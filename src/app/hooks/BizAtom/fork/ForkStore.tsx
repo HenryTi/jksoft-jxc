@@ -7,7 +7,7 @@ import { getAtomValue, setAtomValue } from "tonwa-com";
 import { BizPhraseType, ParamSaveFork } from "uqs/UqDefault";
 import { ViewAtom } from "../ViewAtom";
 import { AtomIDValue } from "../AtomIDValue";
-import { ViewSpecId } from "app/coms/ViewSpecId";
+import { ViewForkId } from "app/coms/ViewForkId";
 
 export enum EnumSaveFork {
     errorInput = -1,
@@ -76,7 +76,6 @@ export class ForkStore extends EntityStore<EntityFork> {
         if (items === undefined) items = [];
         const { keys, buds } = this.entity;
         let value: any = { id: specValue.id };
-        //const { keys: keyValues, props: budValues } = specValue;
         const { values } = specValue;
         if (values !== undefined) {
             function conv(v: BizBud) {
@@ -84,21 +83,17 @@ export class ForkStore extends EntityStore<EntityFork> {
                 return [id, values[id]];
             }
             value.keys = keys.map(conv);
-            // if (budValues !== undefined) {
             value.keys.push(...buds.map(conv));
-            //}
         }
         this.loadItems(items, [value]);
         setAtomValue(this.itemsAtom, [...items]);
     }
 
-    async saveFork(id: number, budValues: BudValues/*, propValues: BudValues*/): Promise<EnumSaveFork> {
+    async saveFork(id: number, budValues: BudValues): Promise<EnumSaveFork> {
         const param: ParamSaveFork = {
             id,
             fork: this.entity.id,
             base: this.baseValue.id,
-            // keys: keyValues,
-            // props: propValues,
             values: budValues,
         };
         let results = await this.uq.SaveFork.submit(param);
@@ -110,8 +105,6 @@ export class ForkStore extends EntityStore<EntityFork> {
         if (retId < 0) {
             return EnumSaveFork.duplicateKey;
         }
-        // results.keys = keyValues;
-        // results.props = propValues;
         results.values = budValues;
         this.addFork(results);
         return EnumSaveFork.success;
@@ -123,7 +116,7 @@ export function ViewForkTop({ store }: { store: ForkStore; }) {
     switch (entity.base.bizPhraseType) {
         default: return null;
         case BizPhraseType.fork:
-            return <ViewSpecId id={baseValue.id} />;
+            return <ViewForkId id={baseValue.id} />;
         case BizPhraseType.atom:
             return <ViewAtom value={baseValue.main} />;
     }

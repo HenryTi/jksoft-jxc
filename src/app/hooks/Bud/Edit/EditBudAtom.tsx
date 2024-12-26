@@ -5,7 +5,7 @@ import { ViewAtomId } from "../../BizAtom";
 import { useState } from "react";
 // import { useIDSelect } from "../../BizPick";
 import { BizPhraseType } from "uqs/UqDefault";
-import { ViewSpecId } from "app/coms/ViewSpecId";
+import { ViewForkId } from "app/coms/ViewForkId";
 import { pickBudID } from "app/hooks/BizPick/pickBudID";
 import { useModal } from "tonwa-app";
 
@@ -50,7 +50,7 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     switch (entityID.bizPhraseType) {
         default: debugger; break;
         case BizPhraseType.atom: vContent = <ViewAtomId id={value} />; break;
-        case BizPhraseType.fork: vContent = <ViewSpecId id={value} />; break;
+        case BizPhraseType.fork: vContent = <ViewForkId id={value} />; break;
     }
     return <ValueEdit label={label}
         readOnly={readOnly}

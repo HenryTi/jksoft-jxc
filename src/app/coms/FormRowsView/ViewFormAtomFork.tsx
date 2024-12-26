@@ -8,7 +8,7 @@ import { useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { pickBudID } from "app/hooks/BizPick";
 import { Band, FormAtom, FormContext } from "./FormRowsView";
-import { ViewSpecId } from "../ViewSpecId";
+import { ViewForkId } from "../ViewForkId";
 import { BudEditing } from "app/hooks";
 
 export function ViewFormAtomFork({ row, label, error, inputProps, clearErrors, setValue, entity, onChange, formContext }: {
@@ -49,7 +49,7 @@ export function ViewFormAtomFork({ row, label, error, inputProps, clearErrors, s
         content = <span className="text-black-50"><FA name="hand" /> {placeHolder}</span>;
     }
     else {
-        content = <ViewSpecId id={id} />;
+        content = <ViewForkId id={id} />;
     }
     let cnInput = 'form-control ';
     if (readOnly !== true) {

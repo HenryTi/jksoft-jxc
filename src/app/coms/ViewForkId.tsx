@@ -4,7 +4,7 @@ import { ViewBudEmpty } from "app/hooks/tool";
 import { useEffect, useState } from "react";
 import { UqExt } from "uqs/UqDefault";
 
-export function ViewSpecId({ id }: { id: number; }) {
+export function ViewForkId({ id }: { id: number; }) {
     const { uq, biz } = useUqApp();
     const idObj = cache.get(id);
     const idArr = getIdArr(idObj);
@@ -52,11 +52,11 @@ export function ViewSpecId({ id }: { id: number; }) {
 
     let contents: any[] = [];
     let { length } = value;
+    contents.push(value[0].value[1]);
     for (let i = length - 1; i > 0; i--) {
         let v = value[i];
         contents.push(<span key={v.id}>{viewFork(v)}<small className="text-body-tertiary">/</small></span>);
     }
-    contents.push(value[0].value[1]);
     return <>{contents}</>;
 }
 

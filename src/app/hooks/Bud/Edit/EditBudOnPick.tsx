@@ -3,7 +3,7 @@ import { EditBudTemplateProps } from "./model";
 import { ViewAtomId } from "../../BizAtom";
 import { useState } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
-import { ViewSpecId } from "app/coms/ViewSpecId";
+import { ViewForkId } from "app/coms/ViewForkId";
 import { BinBudsEditing, doBinPick } from "app/hooks/Sheet/store";
 
 export function EditBudOnPick(props: EditBudTemplateProps & { pick: BinPick; }) {
@@ -42,7 +42,7 @@ export function EditBudOnPick(props: EditBudTemplateProps & { pick: BinPick; }) 
         switch (entityID.bizPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom: vContent = <ViewAtomId id={value} />; break;
-            case BizPhraseType.fork: vContent = <ViewSpecId id={value} />; break;
+            case BizPhraseType.fork: vContent = <ViewForkId id={value} />; break;
         }
     }
     return <ValueEdit label={label}

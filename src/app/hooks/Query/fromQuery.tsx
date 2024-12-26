@@ -9,7 +9,7 @@ import { LabelBox, Picked, Prop, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
 import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtom, ViewSpecAtomBold } from "../View";
-import { ViewSpecId } from "app/coms/ViewSpecId";
+import { ViewForkId } from "app/coms/ViewForkId";
 import { ViewBud } from "../Bud";
 import { BudsEditing } from "../BudsEditing";
 import { PickResult } from "../Calc";
@@ -145,7 +145,7 @@ async function pickFromQueryBase(
                         default:
                             return <>unknown bizPhraseType {bizPhraseType}</>
                         case BizPhraseType.fork:
-                            return <ViewSpecId id={id} />;
+                            return <ViewForkId id={id} />;
                         case BizPhraseType.atom:
                             return <ViewSpecAtom id={id} store={queryStore} />;
                     }
@@ -166,7 +166,7 @@ async function pickFromQueryBase(
                         return <>unknown bizPhraseType {bizPhraseType}</>
                     case BizPhraseType.fork:
                         if (id === undefined) return null;
-                        return <ViewSpecId id={id} />;
+                        return <ViewForkId id={id} />;
                     case BizPhraseType.atom:
                         return <>
                             <div>
@@ -395,7 +395,7 @@ export async function doQuery(editing: BudsEditing, query: EntityQuery, params: 
                         default:
                             return <>unknown bizPhraseType {bizPhraseType}</>
                         case BizPhraseType.fork:
-                            return <ViewSpecId id={id} />;
+                            return <ViewForkId id={id} />;
                         case BizPhraseType.atom:
                             return <ViewSpecAtom id={id} store={queryStore} />;
                     }
@@ -416,7 +416,7 @@ export async function doQuery(editing: BudsEditing, query: EntityQuery, params: 
                         return <>unknown bizPhraseType {bizPhraseType}</>
                     case BizPhraseType.fork:
                         if (id === undefined) return null;
-                        return <ViewSpecId id={id} />;
+                        return <ViewForkId id={id} />;
                     case BizPhraseType.atom:
                         return <>
                             <div>

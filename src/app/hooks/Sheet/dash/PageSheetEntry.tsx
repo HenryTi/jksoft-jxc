@@ -133,7 +133,7 @@ function PageStartPend({ store }: { store: SheetStore; }) {
     const onPend = useCallback(async (results: ReturnUseBinPicks) => {
         await onPicked(store, results);
         let added = await detailNew(store);
-        if (added !== undefined) {
+        if (added > 0) {
             await store.setSheetAsDraft();
         }
     }, []);
@@ -151,7 +151,7 @@ function PageDirectPend({ store }: { store: SheetStore; }) {
         (async function () {
             await nothingPicked(store);
             let added = await detailNew(store);
-            if (added !== undefined) {
+            if (added > 0) {
                 await store.setSheetAsDraft();
             }
             else {

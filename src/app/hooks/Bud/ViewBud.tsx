@@ -3,7 +3,7 @@ import { ViewBudSpec, ViewSpecNoAtom } from "app/hooks";
 import { EntityStore, contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
 import { Atom as BizAtom, BizPhraseType } from "uqs/UqDefault";
-import { ViewSpecId } from "app/coms/ViewSpecId";
+import { ViewForkId } from "app/coms/ViewForkId";
 
 export enum ViewBudUIType {
     notInDiv = 0,
@@ -120,25 +120,27 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, no
         }
         else {
             const { bizForkColl, budsColl } = store;
-            let specValue = bizForkColl[value];
-            if (specValue !== undefined) {
-                const { atom, buds } = specValue;
+            let forkValue = bizForkColl[value];
+            if (forkValue !== undefined) {
+                const { atom, buds } = forkValue;
                 if (atom === undefined) {
-                    vContent = <ViewSpecId id={value} />;
+                    vContent = <ViewForkId id={value} />;
                 }
                 else {
                     // vContent = <ViewSpecId id={atom.id} />;
-                    vContent = <ViewSpec />;
-                    function ViewSpec() {
+                    vContent = <ViewFork />;
+                    function ViewFork() {
                         const { no, ex } = atom;
-                        let ret: string = '';
+                        let ret: string = (ex ?? no);
+                        let sep = ' '
                         for (let bud of buds) {
                             let budValue = budsColl[value][bud.id];
                             if (budValue !== undefined) {
-                                ret += budValue + '/';
+                                ret += sep;
+                                ret += bud.getUIValue(budValue);
+                                sep = '/';
                             }
                         }
-                        ret += ex ?? no;
                         return <>{ret}</>;
                     }
                 }
@@ -149,10 +151,10 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, no
                     vContent = view();
                 }
                 else if (entityID.bizPhraseType === BizPhraseType.fork) {
-                    vContent = <ViewSpecId id={value} />
+                    vContent = <ViewForkId id={value} />
                 }
                 else {
-                    vContent = <ViewSpecId id={value} />;
+                    vContent = <ViewForkId id={value} />;
                 }
             }
         }

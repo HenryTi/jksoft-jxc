@@ -69,6 +69,8 @@ function PageData({ bud, store }: { bud: BizBud; store: AdminStore; }) {
             if (entity === undefined) {
                 return null;
             }
+            const valColl = store.budsColl[i];
+            if (valColl === undefined) return null;
             switch (entity.bizPhraseType) {
                 default: return null;
                 case BizPhraseType.combo:
@@ -77,7 +79,7 @@ function PageData({ bud, store }: { bud: BizBud; store: AdminStore; }) {
                         keys.map(key => {
                             const { id } = key;
                             return <div key={id}>
-                                <ViewBud bud={key} value={store.budsColl[i][id]} store={store} />
+                                <ViewBud bud={key} value={valColl[id]} store={store} />
                             </div>
                         })
                     }</>;
