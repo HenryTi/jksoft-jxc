@@ -238,6 +238,14 @@ export class Biz {
                 bizEntity.scan();
             }
         }
+        for (let i of typeSeq) {
+            let entityArr = arr[i];
+            if (entityArr === undefined) continue;
+            for (let [bizEntity] of entityArr) {
+                // if (bizEntity.name === '采购收货单明细') debugger;
+                bizEntity.scanBuds();
+            }
+        }
         this.buildAtomHierachy(arr[EnumEntity.atom]);
         this.groups.push(
             {

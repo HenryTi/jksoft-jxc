@@ -116,7 +116,8 @@ export class Entity extends BizBase {
 
     scan() {
         if (this.scaned === true) return;
-        this.scanBuds();
+        // this.scanBuds();
+        this.budsToColl();
         this.scanBudGroups();
         this.scaned = true;
     }
@@ -132,11 +133,20 @@ export class Entity extends BizBase {
         return ret;
     }
 
-    protected scanBuds() {
+    protected budsToColl() {
         for (let bud of this.buds) {
             const { id, name } = bud;
             this.budColl[id] = bud;
             this.budColl[name] = bud;
+            // bud.scan();
+        }
+    }
+
+    scanBuds() {
+        for (let bud of this.buds) {
+            // const { id, name } = bud;
+            // this.budColl[id] = bud;
+            // this.budColl[name] = bud;
             bud.scan();
         }
         if (this.userBuds !== undefined) {

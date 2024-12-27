@@ -2,13 +2,13 @@ import { BinEditing, RearPickResultType, ReturnUseBinPicks, SheetStore, ValRow }
 import { runBinPicks } from "../binPick";
 import { rowEdit } from "./divEdit";
 import { PickResult } from "app/hooks/Calc";
+import { BizPhraseType } from "uqs/UqDefault";
 // import { PageConfirm } from "tonwa-app";
 
 export async function detailNewLoop(sheetStore: SheetStore): Promise<void> {
     // const { modal, binStore } = sheetStore;
     for (; ;) {
         let ret = await detailNew(sheetStore);
-        if (ret === undefined) break;
         if (ret !== 1) break;
         /*
         const binEditing = new BinEditing(sheetStore, binStore.entity);
@@ -31,11 +31,14 @@ export async function detailNew(sheetStore: SheetStore): Promise<number> {
     const { entity: entityBin, binDivRoot } = binStore;
     let ret = await runBinPicks(sheetStore, entityBin);
     if (ret === undefined) return 0;
-
-    binStore.setWaiting(true);
     let { editing, rearBinPick, rearResult, rearPickResultType } = ret;
+    if (rearBinPick.fromPhraseType === BizPhraseType.pend) {
+        // 中断输入循环
+        return 2;
+    }
     const { valueSpace } = editing;
     const valRows: ValRow[] = [];
+    binStore.setWaiting(true);
     if (rearPickResultType === RearPickResultType.array) {
         // 直接选入行集，待修改
         for (let rowProps of rearResult as PickResult[]) {

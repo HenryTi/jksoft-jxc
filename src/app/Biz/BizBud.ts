@@ -150,8 +150,10 @@ export class BudBin extends BudDataNumber {
                     if (v0 !== undefined) {
                         debugger;
                     }
+                    let mainBud = arr[1];
                     let budCollMain = main.budColl;
-                    return budCollMain[arr[1]];
+                    let bud = budCollMain[mainBud];
+                    return bud;
                 });
             }
         }

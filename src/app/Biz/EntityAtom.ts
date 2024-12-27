@@ -219,7 +219,7 @@ export class EntityFork extends EntityID {
         this.scanBuds();
     }
 
-    protected override scanBuds(): void {
+    override scanBuds(): void {
         super.scanBuds();
         const setNoEx = (bud: BizBud) => {
             switch (bud.name) {
@@ -313,7 +313,7 @@ export class EntityCombo extends EntityID {
         }
     }
 
-    protected override scanBuds(): void {
+    override scanBuds(): void {
         super.scanBuds();
         for (let bud of this.keys) {
             bud.scan();
