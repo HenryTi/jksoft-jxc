@@ -220,6 +220,10 @@ function bin(bud: BizBud, value: any, store: EntityStore) {
     const showBuds = bud.getPrimeBuds();
     const { budsColl } = store;
     let budVals = budsColl[value];
+    if (budVals === undefined) {
+        debugger;
+        return null;
+    }
     return <>{viewSysBuds()}{viewShowBuds()}</>
     function viewSysBuds() {
         const budBin = bud.budDataType as BudBin;

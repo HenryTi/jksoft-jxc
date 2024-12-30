@@ -362,11 +362,8 @@ export class BinStore extends EntityStore<EntityBin> {
             });
         }
         let results = await this.uqSaveDetails(binDiv.entityBin.id, inDetails);
+        if (results === undefined) return;
         let { details: retDetails, props, specs, atoms } = results;
-        if (retDetails.length === 0) {
-            console.error('*************** SaveDetails something wrong *******************');
-            return;
-        }
         this.sheetStore.cacheIdAndBuds(props, atoms, specs);
         let { length } = valRows;
         for (let i = 0; i < length; i++) {
@@ -385,6 +382,11 @@ export class BinStore extends EntityStore<EntityBin> {
             inDetails,
         };
         let results = await this.uq.SaveDetails.submitReturns(param);
+        let { details: retDetails } = results;
+        if (retDetails.length === 0) {
+            console.error('*************** SaveDetails something wrong *******************');
+            return;
+        }
         return results;
     }
 
@@ -671,11 +673,8 @@ export class BinStorePendDirect extends BinStore {
         let inDetails: InDetail[] = [];
         for (let p of pendToValDivs) p.getValRows(inDetails, valRows);
         let results = await this.uqSaveDetails(this.entity.id, inDetails);
+        if (results === undefined) return;
         let { details: retDetails, props, specs, atoms } = results;
-        if (retDetails.length === 0) {
-            console.error('*************** SaveDetails something wrong *******************');
-            return;
-        }
         this.sheetStore.cacheIdAndBuds(props, atoms, specs);
         let { length } = valRows;
         for (let i = 0; i < length; i++) {
