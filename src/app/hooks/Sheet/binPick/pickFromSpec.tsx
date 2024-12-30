@@ -77,28 +77,11 @@ export async function pickFromSpec(editing: BudsEditing, binPick: PickSpec): Pro
                 }
                 values[id] = v;
             }
-            /*
-            for (let key of keys) {
-                const { name, budDataType } = key;
-                let v = data[name];
-                switch (budDataType.type) {
-                    case EnumBudType.date: v = getDays(v); break;
-                }
-                keyValues[name] = v;
-            }
-            const propValues: { [bud: string]: number | string } = {};
-            for (let prop of props) {
-                const { name } = prop;
-                propValues[name] = data[name];
-            }
-            */
             const param: ParamSaveFork = {
                 id: undefined,
                 fork: entityId,
                 base,
                 values,
-                // keys: keyValues,
-                // props: propValues,
             };
             let results = await uq.SaveFork.submit(param);
             let { id } = results;

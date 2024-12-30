@@ -111,17 +111,6 @@ export class BinStore extends EntityStore<EntityBin> {
         setAtomValue(this.atomPendRows, pendRows);
     }
 
-    /*
-    load(valRows: ValRow[], trigger: boolean) {
-        let valDivs = [];
-        for (let valRow of valRows) {
-            let valDiv = this.setValRowRoot(valRow, trigger);
-            if (valDiv !== undefined) valDivs.push(valDiv);
-        }
-        this.valDivsRoot.setValDivs(valDivs);
-    }
-    */
-
     getPendLeft(valDiv: ValDivBase): number {
         if (valDiv === undefined) return undefined;
         function has(valDivs: ValDivs, valDiv: ValDivBase) {

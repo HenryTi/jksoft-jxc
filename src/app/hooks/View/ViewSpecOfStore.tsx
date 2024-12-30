@@ -36,8 +36,8 @@ export function ViewSpecAtom({ id, store }: { id: number; store: EntityStore; })
 }
 
 export function ViewSpecBuds({ id, store }: { id: number; store: EntityStore; }) {
-    const { budsColl, bizForkColl: bizSpecColl } = store;
-    let bizSpec = bizSpecColl[id];
+    const { budsColl, bizForkColl } = store;
+    let bizSpec = bizForkColl[id];
     if (bizSpec === undefined) return null;
     let { buds } = bizSpec;
     let specBudValueColl = budsColl[id];

@@ -85,20 +85,16 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
             let values: { [bud: string]: number | string } = {};
             for (let bud of buds) {
                 let v = budValueFromData(bud);
-                values[bud.name] = v;
+                values[bud.id] = v;
             }
             return values;
         }
-        // const keyValues = buildValues(keys);
-        // const propValues = buildValues(forkBuds);
         const values = buildValues([...keys, ...forkBuds]);
         const param: ParamSaveFork = {
             id: undefined,
             fork: entityId,
             base,
             values,
-            // keys: keyValues,
-            // props: propValues,
         };
         let results = await uq.SaveFork.submit(param);
         let { id } = results;

@@ -207,7 +207,6 @@ export class SheetStore extends EntityStore<EntitySheet> {
         if (main === undefined) return;
         this.mainStore.setValue(main);
         if (this.binStore !== undefined) {
-            // this.binStore.load(details, false);
             this.binStore.setValRowArrayToRoot(details);//, false);
         }
         setAtomValue(this.atomLoaded, true);

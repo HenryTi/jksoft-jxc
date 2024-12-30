@@ -55,8 +55,10 @@ export function PageForkList({ store }: { store: ForkStore }) {
         await modal.open(<PageForkNew store={store} />);
     }
     return <Page header={store.entity.caption} right={right}>
-        <div className="p-3 tonwa-bg-gray-2">
+        <div className="p-3 tonwa-bg-gray-2 d-flex">
             <ViewForkTop store={store} />
+            <div className="flex-fill" />
+            <div>ddd</div>
         </div>
         <ViewForkList store={store} />
     </Page>;
@@ -68,8 +70,18 @@ export function ViewForkListAutoLoad({ fork, value }: { fork: EntityFork; value:
     useEffectOnce(() => {
         store.load();
     });
+    async function onAddFork() {
+        await modal.open(<PageForkNew store={store} />);
+    }
     return <div>
-        <div className="mt-3 px-3 pt-2 pb-1 border-top border-bottom tonwa-bg-gray-1">{fork.caption}</div>
+        <div className="mt-3 ps-3 pe-2 py-1 border-top border-bottom tonwa-bg-gray-1 d-flex align-items-end">
+            <div className="flex-fill">{fork.caption}</div>
+            <div>
+                <button className="btn btn-sm btn-outline-success" onClick={onAddFork}>
+                    <FA name="plus" />
+                </button>
+            </div>
+        </div>
         <ViewForkList store={store} />
     </div>;
 }
