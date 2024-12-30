@@ -345,17 +345,7 @@ export class BinStore extends EntityStore<EntityBin> {
 
     async saveDetails(binDiv: BinDiv, valRows: ValRow[]) {
         const { buds } = binDiv;
-        let inDetails: {
-            id: number;
-            i: number;
-            x: number;
-            origin: number;
-            value: number;
-            price: number;
-            amount: number;
-            pend: number;
-            props: any;
-        }[] = [];
+        let inDetails: InDetail[] = [];
         for (let valRow of valRows) {
             let { id, i, x, value, price, amount, pend, origin } = valRow;
             let propArr = getValRowPropArr(valRow, buds);
@@ -371,12 +361,7 @@ export class BinStore extends EntityStore<EntityBin> {
                 props: propArr,
             });
         }
-        let param: ParamSaveDetails = {
-            base: this.sheetStore.mainId,
-            phrase: binDiv.entityBin.id,
-            inDetails,
-        };
-        let results = await this.uq.SaveDetails.submitReturns(param);
+        let results = await this.uqSaveDetails(binDiv.entityBin.id, inDetails);
         let { details: retDetails, props, specs, atoms } = results;
         if (retDetails.length === 0) {
             console.error('*************** SaveDetails something wrong *******************');
@@ -391,6 +376,16 @@ export class BinStore extends EntityStore<EntityBin> {
             valRow.id = id;
         }
         // this.setValRowArrayToRoot(valRows);
+    }
+
+    protected async uqSaveDetails(phrase: number, inDetails: InDetail[]) {
+        let param: ParamSaveDetails = {
+            base: this.sheetStore.mainId,
+            phrase,
+            inDetails,
+        };
+        let results = await this.uq.SaveDetails.submitReturns(param);
+        return results;
     }
 
     setValRowArrayToRoot(valRows: ValRow[]) {
@@ -672,34 +667,10 @@ export class BinStorePendDirect extends BinStore {
     */
 
     private async saveDivDetails(pendToValDivs: PendToValDiv[]) {
-        // const { binDiv } = valDivs[0];
         const valRows: ValRow[] = [];
         let inDetails: InDetail[] = [];
         for (let p of pendToValDivs) p.getValRows(inDetails, valRows);
-        // await this.saveDetails(binDiv, valRows);
-        /*
-        for (let valRow of valRows) {
-            let { id, i, x, value, price, amount, pend, origin } = valRow;
-            let propArr = getValRowPropArr(valRow, buds);
-            inDetails.push({
-                id,
-                i,
-                x,
-                value,
-                price,
-                amount,
-                origin,
-                pend,
-                props: propArr,
-            });
-        }
-        */
-        let param: ParamSaveDetails = {
-            base: this.sheetStore.mainId,
-            phrase: this.entity.id,
-            inDetails,
-        };
-        let results = await this.uq.SaveDetails.submitReturns(param);
+        let results = await this.uqSaveDetails(this.entity.id, inDetails);
         let { details: retDetails, props, specs, atoms } = results;
         if (retDetails.length === 0) {
             console.error('*************** SaveDetails something wrong *******************');

@@ -47,6 +47,7 @@ export class BizBase {
             case 'dataType': break;
             case 'history': break;
             case 'bin': break;
+            case 'sysBuds': break;
             case 'showBuds': break;
             case 'phrase': this.phrase = val; break;
             case 'caption':

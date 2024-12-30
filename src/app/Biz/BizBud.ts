@@ -130,13 +130,22 @@ export class BudID extends BudDataNumber {
     getTitleBuds(): BizBud[] { return this.entityID?.titleBuds; }
     getPrimeBuds(): BizBud[] { return this.entityID?.primeBuds; }
 }
+
+export enum EnumSysBud {
+    id = 1,
+    sheetNo = 2,
+    sheetOperator = 3,
+    sheetDate = 4,
+}
 export class BudBin extends BudDataNumber {
     readonly type = EnumBudType.bin;
     entityBin: EntityBin;
+    sysBuds: EnumSysBud[];
     showBuds: BizBud[];
 
     fromSchema(schema: any) {
         this.entityBin = schema.bin as any;
+        this.sysBuds = schema.sysBuds;
         this.showBuds = schema.showBuds as any;
     }
     override scan(biz: Biz, bud: BizBud) {

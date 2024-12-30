@@ -365,6 +365,7 @@ export class BinDivBuds extends BinRowValuesTool {
 }
 
 export class EntityBin extends Entity {
+    sheet: EntitySheet;
     main: EntityBin;
     binPicks: BinPick[];
     rearPick: BinPick;          // endmost pick
@@ -866,12 +867,15 @@ export class EntitySheet extends Entity {
 
     private fromMain(main: any) {
         this.main = this.biz.entityFromId(main) as EntityBin;
+        this.main.sheet = this;
     }
 
     protected fromDetails(details: any[]) {
         for (let { bin, caption, operate } of details) {
+            let binDetail = this.biz.entityFromId(bin) as EntityBin;
+            binDetail.sheet = this;
             this.details.push({
-                bin: this.biz.entityFromId(bin) as EntityBin,
+                bin: binDetail,
                 caption,
                 operate,
             })

@@ -1,9 +1,10 @@
-import { BizBud, BudFork, BudID, BudRadio, EntityAtom, EntityFork, EnumBudType } from "app/Biz";
+import { BizBud, BudBin, BudFork, BudID, BudRadio, EntityAtom, EntityFork, EnumBudType, EnumSysBud } from "app/Biz";
 import { ViewBudSpec, ViewSpecNoAtom } from "app/hooks";
 import { EntityStore, contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
 import { Atom as BizAtom, BizPhraseType } from "uqs/UqDefault";
 import { ViewForkId } from "app/coms/ViewForkId";
+import { dateFromMinuteId, EasyDate } from "tonwa-com";
 
 export enum ViewBudUIType {
     notInDiv = 0,
@@ -216,33 +217,56 @@ function ID(bud: BizBud, value: any) {
 }
 
 function bin(bud: BizBud, value: any, store: EntityStore) {
-    let showBuds = bud.getPrimeBuds();
-    if (showBuds === undefined) return null;
+    const showBuds = bud.getPrimeBuds();
     const { budsColl } = store;
     let budVals = budsColl[value];
-    function viewNoVals(bud: BizBud) {
-        let { id, caption } = bud;
-        return <LabelBox key={id} label={caption} className={cnViewBud}>
-            <div>{ }</div>
-            ?{id}-{value}?
-        </LabelBox>;
+    return <>{viewSysBuds()}{viewShowBuds()}</>
+    function viewSysBuds() {
+        const budBin = bud.budDataType as BudBin;
+        const { sysBuds } = budBin
+        if (sysBuds === undefined || sysBuds.length === 0) return null;
+        const { entityBin } = budBin;
+        return sysBuds.map(v => {
+            let label: string = entityBin.sheet.caption, content: any = budVals[v];
+            switch (v) {
+                case EnumSysBud.sheetNo:
+                    label += '编号';
+                    break;
+                case EnumSysBud.sheetOperator:
+                    label += '操作员';
+                    break;
+                case EnumSysBud.sheetDate:
+                    label += '日期';
+                    content = dateFromMinuteId(content).toLocaleDateString();
+                    break;
+            }
+            return <LabelBox key={v} label={label} className={cnViewBud}>
+                {content}
+            </LabelBox>;
+        });
     }
-    function viewWithVals(bud: BizBud) {
-        const { id: showBudId } = bud;
-        let val = budVals[showBudId];
-        return <ViewBud key={showBudId} bud={bud} value={val} uiType={ViewBudUIType.inDiv} store={store} />;
-    }
-    let viewFunc = budVals === undefined ? viewNoVals : viewWithVals;
-    return <>
-        {
-            showBuds.map((v, index) => {
-                if (v === undefined) {
-                    return <div key={index}>showBuds undefined</div>;
-                }
-                return viewFunc(v);
-            })
+    function viewShowBuds() {
+        if (showBuds === undefined || showBuds.length === 0) return null;
+        function viewNoVals(bud: BizBud) {
+            let { id, caption } = bud;
+            return <LabelBox key={id} label={caption} className={cnViewBud}>
+                <div>{ }</div>
+                ?{id}-{value}?
+            </LabelBox>;
         }
-    </>;
+        function viewWithVals(bud: BizBud) {
+            const { id: showBudId } = bud;
+            let val = budVals[showBudId];
+            return <ViewBud key={showBudId} bud={bud} value={val} uiType={ViewBudUIType.inDiv} store={store} />;
+        }
+        let viewFunc = budVals === undefined ? viewNoVals : viewWithVals;
+        return showBuds.map((v, index) => {
+            if (v === undefined) {
+                return <div key={index}>showBuds undefined</div>;
+            }
+            return viewFunc(v);
+        })
+    };
 }
 
 function fork(bud: BizBud, value: any, store: EntityStore) {
