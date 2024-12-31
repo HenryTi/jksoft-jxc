@@ -38,7 +38,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             return;
         }
         setEditable(false);
-        await binStore.deleteAllRemoved();
+        await binStore?.deleteAllRemoved();
         /*
         let sheetId = mainStore.valRow.id;
         let { checkPend, checkBin } = await uq.SubmitSheet.submitReturns({ id: sheetId });
