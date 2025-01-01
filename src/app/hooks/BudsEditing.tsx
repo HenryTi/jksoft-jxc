@@ -381,6 +381,10 @@ export abstract class BudsEditing<R = any> extends BizStore implements FormConte
             };
             const { type, min, max } = budDataType;
             switch (type) {
+                case EnumBudType.bin:
+                    formRow.default = this.budValuesTool.getBudValue(bud, this.values);
+                    formRow.bud = bud;
+                    break;
                 case EnumBudType.atom:
                     formRow.default = this.budValuesTool.getBudValue(bud, this.values);
                     formRow.readOnly = readOnly;

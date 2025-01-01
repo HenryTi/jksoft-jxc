@@ -1,4 +1,4 @@
-import { EntityAtom, EntityFork, BizBud, Entity, BudID, BinPick } from "app/Biz";
+import { EntityAtom, EntityFork, BizBud, Entity, BudID, BinPick, EnumBudType } from "app/Biz";
 import { Atom, atom } from "jotai";
 import { HTMLInputTypeAttribute, ReactNode } from "react";
 import {
@@ -11,6 +11,7 @@ import { contentFromDays, EntityStore } from "app/tool";
 import { ViewFormForkObj } from "./ViewFormForkObj";
 import { ViewFormAtom } from "./ViewFormAtom";
 import { ViewFormAtomFork } from "./ViewFormAtomFork";
+import { ViewFormBin } from "./ViewFormBin";
 
 export interface BandProps {
     label?: string | JSX.Element;
@@ -147,14 +148,18 @@ export interface FormSelect extends FormLabelName {
 
 export interface FormAtom extends FormLabelName {
     default?: number;
-    // atom: EnumAtom;
     bud: BizBud;
     options?: RegisterOptions;
-    // entityAtom?: EntityID;
 }
 
 export interface FormFork extends FormLabelName {
+    default?: number;
     baseBud: BizBud;
+}
+
+export interface FormBin extends FormLabelName {
+    default?: number;
+    bud: BizBud;
 }
 
 export interface FormSubmit extends FormLabel {
@@ -243,7 +248,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
 
     const { radios } = row as FormRadios;
     if (radios !== undefined) {
-        const { name, default: defaultValue, readOnly, options } = row as FormRadios;
+        const { name, readOnly, options } = row as FormRadios;
         return <Band label={label}>
             {
                 radios.map((v, index) => {
@@ -303,15 +308,17 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     const { bud, options } = row as FormAtom;
     if (bud !== undefined) {
         const { budDataType } = bud;
+        if (budDataType.type === EnumBudType.bin) {
+            return <ViewFormBin row={row as FormBin} label={label} formContext={context} />
+        }
+
         const { entityID: entityAtom } = budDataType as BudID;
         let { name } = row as FormAtom;
         function onChange(target: { name: string; type: 'number'; value: string | object; }) {
             options?.onChange?.({ target });
         }
         let error: FieldError = errors[name] as FieldError;
-        // const budEditing = context
         if (entityAtom.bizPhraseType === BizPhraseType.fork) {
-            // fork???
             return <ViewFormAtomFork row={row as FormAtom} label={label} error={error}
                 entity={entityAtom as EntityFork}
                 inputProps={register(name, options)}
@@ -328,19 +335,6 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
             onChange={onChange}
             formContext={context} />;
     }
-    /*
-    if (atom !== undefined) {
-        let { name } = row as FormAtom;
-        let error: FieldError = errors[name] as FieldError;
-        return <ViewFormAtom row={row as FormAtom} label={label} error={error}
-            entityAtom={entityAtom as EntityAtom}
-            inputProps={register(name, options)}
-            setValue={setValue}
-            clearErrors={clearErrors}
-            onChange={undefined}
-            formContext={context} />;
-    }
-    */
 
     const { baseBud } = row as FormFork;
     if (baseBud !== undefined) {
@@ -374,13 +368,11 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     }
     function buildBandDateInput() {
         let label = bandLabel();
-        // let inputProps = registerOptions(type, label, options);
         let error = errors[name];
         let cnInput = 'form-control ';
         if (error) cnInput += 'is-invalid';
         let newOptions = registerOptions(type, label, options);
         let defaultValue = contentFromDays(options?.value);
-        // newOptions.valueAsDate = true;
         newOptions.value = defaultValue;
         if (type === 'hidden') label = null;
         return <Band label={label} labelClassName={labelClassName}>

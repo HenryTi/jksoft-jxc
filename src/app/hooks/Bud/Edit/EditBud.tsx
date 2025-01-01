@@ -61,8 +61,6 @@ function EditBud(editProps: EditBudTemplateProps) {
     const { budEditing } = editProps;
     const { bizBud: { budDataType } } = budEditing;
     const pick = budEditing.getPick();
-    // const onPick = budEditing.getOnPick();
-    //if (onPick !== undefined) {
     if (pick !== undefined) {
         return <EditBudOnPick {...editProps} pick={pick} />;
     }

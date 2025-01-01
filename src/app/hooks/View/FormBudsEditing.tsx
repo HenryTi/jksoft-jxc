@@ -53,13 +53,6 @@ export function FormBudsEditing({ className, budsEditing, onSubmit, submit: subm
                 return;
             }
         }
-        /*
-        if (data.value === 0) {
-            setError('value', { message: '不能为 0' });
-            return;
-        }
-        */
-        // modal.close(true);
         await onSubmit(data);
     }
 

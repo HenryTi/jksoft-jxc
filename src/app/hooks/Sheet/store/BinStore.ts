@@ -328,7 +328,6 @@ export class BinStore extends EntityStore<EntityBin> {
         if (valDivs.length === 0) return;
         let valRows = valDivs.map(v => v.valRow);
         await this.saveDetails(binDivRoot, valRows);
-        // this.valDivsRoot.triggerRender();
         this.setValRowArrayToRoot(valRows);
     }
 
@@ -361,7 +360,6 @@ export class BinStore extends EntityStore<EntityBin> {
             let valRow = valRows[i];
             valRow.id = id;
         }
-        // this.setValRowArrayToRoot(valRows);
     }
 
     protected async uqSaveDetails(phrase: number, inDetails: InDetail[]) {
