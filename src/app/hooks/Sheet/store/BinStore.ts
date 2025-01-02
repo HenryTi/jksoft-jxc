@@ -466,30 +466,11 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 
     async addAllPendRowsDirect() {
-        /*
-        let pendRows = getAtomValue(this.atomPendRows);
-        const { pend } = this.entity;
-        const valRows: ValRow[] = [];
-        for (let pendRow of pendRows) {
-            let { pend: pendId } = pendRow;
-            let pendResult = new Proxy(pendRow, new PendProxyHandler(pend));
-            let valRow: ValRow = { id: undefined, buds: {}, owned: {}, pend: pendId };
-            let valDiv = new ValDivRoot(this.binDivRoot, valRow);
-            this.valDivsRoot.addValDiv(valDiv, false);
-            let divEditing = new DivEditing(this, valDiv);
-            divEditing.setPendResult(pendResult);
-            divEditing.calcAll();
-            valDiv.mergeValRow(divEditing.values);
-            valRows.push(valDiv.valRow);
-        }
-        */
         this.addAllPendRowsToSelect();
         await this.allPendsToValRows();
     }
 
     deletePendThoroughly(pendId: number) {
-        // const { id } = valRow;
-        // let pendId = -id;
         let atomValDiv = this.valDivsOnPend[pendId];
         this.valDivsRoot.removePend(pendId);
         setAtomValue(atomValDiv, undefined);
@@ -602,11 +583,7 @@ export class BinStorePendDirect extends BinStore {
                 divEditing.setNamedValues(rearPick.name, pendResult);
             }
             divEditing.setPendResult(pendResult);
-            // divEditing.setNamedValues('pend', pendResult);
-            // divEditing.setNamedValues('%pend', pendResult);
             divEditing.calcAll();
-            // let retIsInputed = await this.runInputDiv(divEditing);
-            // if (retIsInputed !== true) return;
             valDiv.mergeValRow(divEditing.values);
             let { valRow } = valDiv;
             valRow.id = vId;
@@ -637,23 +614,6 @@ export class BinStorePendDirect extends BinStore {
         }
         return ret;
     }
-    /*
-        private async runInputDiv(divEditing: DivEditing) {
-            // const { modal } = binStore;
-            const { valDiv } = divEditing;
-            let { binDiv } = valDiv;
-            // let retInputs = await runInputs(props, divEditing);
-            // if (retInputs === false) return;
-    
-            valDiv.mergeValRow(divEditing.values);
-            let { valRow } = valDiv;
-            valRow.id = undefined;
-            await this.saveDetails(binDiv, [valRow]);
-            valDiv.setValRow(valRow);
-            valDiv.setIXBaseFromInput(divEditing);
-            return true;
-        }
-    */
 
     private async saveDivDetails(pendToValDivs: PendToValDiv[]) {
         const valRows: ValRow[] = [];

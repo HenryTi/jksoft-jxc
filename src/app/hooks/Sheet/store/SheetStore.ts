@@ -234,7 +234,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
     async loadPend(params: any, pendId: number) {
         let { pend: entityPend, rearPick } = this.entity.coreDetail;
         if (entityPend === undefined) debugger;
-        let ret = await this.uqGetPend(entityPend, params, pendId);
+        let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
         let { $page, retSheet, props: showBuds, atoms, specs } = ret;
         this.cacheIdAndBuds(showBuds, atoms, specs);
         let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
@@ -292,11 +292,6 @@ export class SheetStore extends EntityStore<EntitySheet> {
     async start() {
         let ret = await this.mainStore.start();
         if (ret !== undefined) return ret;
-    }
-
-    async uqGetPend(entityPend: EntityPend, params: any, pendId: number) {
-        let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
-        return ret;
     }
 
     async saveSheet(valRow: ValRow) {
@@ -359,6 +354,23 @@ export class SheetStore extends EntityStore<EntitySheet> {
         let sheetId = this.mainStore.valRow.id;
         let ret = await this.uq.SubmitSheetDebug.submitReturns({ id: sheetId });
         return ret;
+    }
+
+    async onPicked(results: ReturnUseBinPicks) {
+        const { sheetConsole, mainStore } = this;
+        let ret = await mainStore.startFromPickResults(results);
+        if (ret === undefined) {
+            if (this.mainId === undefined) {
+                // 还没有创建单据
+                if (sheetConsole.steps === undefined) {
+                    setTimeout(() => {
+                        sheetConsole.close();
+                    }, 100);
+                }
+            }
+            return; // 已有单据，不需要pick. 或者没有创建新单据
+        }
+        sheetConsole.onSheetAdded(this);
     }
 }
 

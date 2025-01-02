@@ -61,7 +61,7 @@ function PageMainPend({ store }: { store: SheetStore; }) {
     const group0: ToolItem[] = [btnSubmit];
     let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
     async function onPickedNew(results: ReturnUseBinPicks) {
-        await onPicked(store, results);
+        await store.onPicked(results);
         await store.setSheetAsDraft();
         await store.binStore.saveDetailsDirect();
     }
@@ -88,6 +88,7 @@ function PageSheetDirect({ store }: { store: SheetStore; }) {
     return <PageSpinner header={caption + ' 创建中...'} />
 }
 
+/*
 async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
     const { sheetConsole, mainStore, binStore } = store;
     let ret = await mainStore.startFromPickResults(results);
@@ -104,6 +105,7 @@ async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
     }
     sheetConsole.onSheetAdded(store);
 }
+*/
 
 function buttons(sheetConsole: SheetConsole) {
     let btnSubmit = buttonDefs.submit(undefined, true);
@@ -118,7 +120,7 @@ function PageStartPicks({ store }: { store: SheetStore; }) {
     const group0: ToolItem[] = [btnSubmit];
     let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
     async function onPickedNew(results: ReturnUseBinPicks) {
-        await onPicked(store, results);
+        await store.onPicked(results);
         await store.setSheetAsDraft();
     }
     return <Page header={pageHeader} back={null} top={top} right={right}>
@@ -131,7 +133,7 @@ function PageStartPend({ store }: { store: SheetStore; }) {
     const { caption, sheetConsole } = store;
     const subCaption = '批选待处理';
     const onPend = useCallback(async (results: ReturnUseBinPicks) => {
-        await onPicked(store, results);
+        await store.onPicked(results);
         let added = await detailNew(store);
         if (added > 0) {
             await store.setSheetAsDraft();
@@ -173,5 +175,5 @@ async function nothingPicked(store: SheetStore) {
         rearResult: [],
         rearPickResultType: RearPickResultType.scalar,
     };
-    await onPicked(store, results);
+    await store.onPicked(results);
 }

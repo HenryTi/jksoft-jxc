@@ -5,7 +5,7 @@ import { UqApp, useUqApp } from "app/UqApp";
 import { UseQueryOptions } from "app/tool";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import { Modal, Page, useModal } from "tonwa-app";
+import { IDView, Modal, Page, useModal } from "tonwa-app";
 import { theme, wait } from "tonwa-com";
 import { FA, getAtomValue, setAtomValue, useEffectOnce } from 'tonwa-com';
 import { Grammar, highlight } from "prismjs";
@@ -16,6 +16,7 @@ import { FormRow, FormRowsView, Band, ToolItem, Toolbar, ToolButton } from 'app/
 import { atom, useAtomValue, WritableAtom } from 'jotai';
 import { BizPhraseType, UqExt } from 'uqs/UqDefault';
 import { adminData } from '../adminData';
+import { ViewSite } from 'app/views/Site';
 
 class Nav {
     readonly supers: Entity[] = [];
@@ -167,61 +168,17 @@ class EntityStore {
 }
 export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
     const uqApp = useUqApp();
-    // const { uq, uqMan, biz } = uqApp;
-    // const { uqApi } = uqMan;
     const modal = useModal();
-    // const [entity, setEntity] = useState(orgEntity);
-    // const { id, caption, name } = entity;
+    const { uq, uqSites } = uqApp;
+    let { userSite } = uqSites;
     const { current: store } = useRef(new EntityStore(uqApp, modal, orgEntity));
     const { atomEntity, atomCode, atomDeleted } = store;
     const entity = useAtomValue(atomEntity);
     const code = useAtomValue(atomCode);
     const deleted = useAtomValue(atomDeleted);
-    /*
-    const { current: toolButtonSubmit } = useRef(new ToolButton({
-        caption: '提交',
-        icon: 'send-o',
-        className: 'btn btn-primary'
-    }, onSubmit, true));
-    const [code, setCode] = useState(codeWaiting);
-    function setSumitDisabled(disabled: boolean) {
-        setAtomValue(toolButtonSubmit.atomDisabled, disabled);
-    }
-    const query = useCallback(async (id: number) => {
-        setSumitDisabled(true);
-        setCode(codeWaiting);
-        let { ret } = await uq.GetEntityCode.query({ id });
-        let data = ret[0];
-        setCode(data.code);
-        setSumitDisabled(false);
-        return data;
-    }, [id]);
-    */
-
     useEffectOnce(() => {
-        // query(id);
         store.loadCode();
     });
-    /*
-    const { data } = useQuery([id], async () => {
-        let ret = await query(id);
-        // await wait(5000);
-        // setAtomValue(toolButtonSubmit.atomDisabled, false);
-        // let code = ret?.code ?? '';
-        // setCode(code);
-        if (ret === undefined || ret.code === undefined) {
-            console.error('no ret in useQuery');
-        }
-        else {
-            setCode(ret.code);
-        }
-        return ret;
-    }, UseQueryOptions);
-    */
-    // const nav = useMemo(() => new Nav(orgEntity, onEntityChange), [orgEntity]);
-    // const [pageCaption, setPageCaption] = useState(caption ?? name);
-    // const [submitDisabled, setSumitDisabled] = useState(true);
-    // const [deleted, setDeleted] = useState(false);
     if (code === undefined) {
         return <Page header="错误">
             <div className="p-3">
@@ -229,22 +186,6 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
             </div>
         </Page>;
     }
-    /*
-    async function onEntityChange(newEntity: Entity) {
-        setEntity(newEntity);
-        await query(newEntity.id);
-    }
-    function onCodeChange(code: string) {
-        setCode(code);
-        setSumitDisabled(false);
-    }
-    async function onSubmit() {
-        modal.open(<PageLogs entity={entity} code={code} />);
-        let newEntity = biz.entityFromId(entity.id);
-        setPageCaption(newEntity.caption ?? newEntity.name);
-        setSumitDisabled(true);
-    }
-    */
     function myHighlight(text: string, grammar: Grammar, language: string): string {
         let ret = highlight(text, grammar, language);
         return ret;
@@ -277,18 +218,10 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
             </Page>;
         }
         if (await modal.open(<PageChangeName />) === true) {
-            // let { ret } = await uq.GetEntityCode.query({ id });
-            // setCode(ret[0]?.code);
         }
     }
     async function onDel() {
         function PageDel() {
-            /*
-            async function onDeleted() {
-                let ret = await uqApi.delEntity(id);
-                modal.close(ret);
-            }
-            */
             return <Page header={`删除 - ${entity.name}`}>
                 <div className='p-3'>
                     <button className="btn btn-primary" onClick={store.onDeleted}>确定删除</button>
@@ -301,9 +234,6 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
             msg = logs === undefined ? '删除出错' : logs.join('\n');
         }
         else {
-            // setDeleted(true);
-            // setAtomValue(store.atomDeleted, true);
-            // biz.delEntity(entity);
             store.deleteEntity();
             msg = '成功删除';
         }
@@ -337,7 +267,8 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
         {store.nav.showView()}
         {deleted === false && <Toolbar groups={groups} />}
     </div>;
-    return <Page header={entity.caption} hideScroll={true} top={top}>
+    const header = <>{entity.caption} - <IDView uq={uq} id={userSite.site} Template={ViewSite} /></>;
+    return <Page header={header} hideScroll={true} top={top}>
         <div className="d-flex flex-column">
             <div className="border-info rounded flex-grow-1">
                 <div className="container_editor_area w-100">

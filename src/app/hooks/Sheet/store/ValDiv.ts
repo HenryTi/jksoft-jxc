@@ -89,13 +89,6 @@ export class ValDivsBase<T extends ValDivBase> {
         if (trigger === true) this.setValDivs([...valDivs]);
     }
 
-    /*
-    triggerRender() {
-        let valDivs = getAtomValue(this._atomValDivs);
-        this.setValDivs([...valDivs]);
-    }
-    */
-
     removePend(pendId: number) {
         let valDivs = getAtomValue(this._atomValDivs);
         let len = valDivs.length;
@@ -107,7 +100,6 @@ export class ValDivsBase<T extends ValDivBase> {
                 break;
             }
         }
-        // setAtomValue(this.atomValDivs, [...valDivs]);
         this.setValDivs([...valDivs]);
     }
 
