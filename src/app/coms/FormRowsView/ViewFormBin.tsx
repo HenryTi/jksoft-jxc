@@ -8,6 +8,7 @@ export function ViewFormBin({ row, label, formContext }: {
 }) {
     const { default: defaultValue, bud } = row;
     let cnInput = 'form-control  bg-body-secondary';
+    if (defaultValue === undefined) return null;
     let budVals = formContext.store.budsColl[defaultValue];
     let content: any;
     if (budVals === undefined) content = defaultValue;
