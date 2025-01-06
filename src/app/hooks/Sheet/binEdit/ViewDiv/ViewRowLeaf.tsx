@@ -4,7 +4,7 @@ import { RowColsSm } from "../../../tool";
 import { PAV, ViewDivProps, ViewDivRight, ViewPendValue, cn } from "./tool";
 import { ViewIBase } from "./ViewIBase";
 import { DivEditing } from "../../store";
-import { ViewAtomPrimesOfStore, ViewSpecBuds } from "app/hooks/View";
+import { ViewAtomPrimesOfStore, ViewForkBuds } from "app/hooks/View";
 
 export function ViewRowLeaf(props: ViewDivProps) {
     const { binStore: binStore, valDiv, buttons, index } = props;
@@ -23,7 +23,7 @@ export function ViewRowLeaf(props: ViewDivProps) {
     let viewIBud: any;
     if (budI !== undefined) {
         viewIBud = <>
-            <ViewSpecBuds id={i} store={sheetStore} />
+            <ViewForkBuds id={i} store={sheetStore} />
         </>;
     }
     const divEditing = new DivEditing(binStore, valDiv);

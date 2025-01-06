@@ -83,14 +83,6 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
     private addBizAtoms(bizAtoms: Atom[]) {
         for (let atom of bizAtoms) {
             this.mergeAtom(atom);
-            /*
-            const { id, base } = atom;
-            this.bizAtomColl[id] = {
-                atom,
-                entityID: this.biz.entities[base] as EntityID,
-            };
-            */
-            // this.uq.idCacheAdd(atom);
         }
     }
 
@@ -102,10 +94,16 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
         };
     }
 
-    mergeStoreAtomColl(store: EntityStore) {
-        const { bizAtomColl } = store;
+    mergeStoreColl(store: EntityStore) {
+        const { bizAtomColl, bizForkColl, budsColl } = store;
         for (let i in bizAtomColl) {
             this.bizAtomColl[i] = bizAtomColl[i];
+        }
+        for (let i in bizForkColl) {
+            this.bizForkColl[i] = bizForkColl[i];
+        }
+        for (let i in budsColl) {
+            this.budsColl[i] = budsColl[i];
         }
     }
 

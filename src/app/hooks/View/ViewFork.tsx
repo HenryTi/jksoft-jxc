@@ -5,7 +5,7 @@ import { ViewBudUIType } from "..";
 import React from "react";
 import { LabelBox } from "../tool";
 
-export function ViewSpecBase({ id, ViewAtom, uiType, noLabel, bold }: {
+export function ViewForkBase({ id, ViewAtom, uiType, noLabel, bold }: {
     id: number;
     ViewAtom: (props: { no: string; ex: string; entity?: EntityID; bold: boolean; noLabel: boolean; }) => JSX.Element;
     uiType?: ViewBudUIType;
@@ -22,7 +22,7 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel, bold }: {
             viewAtom = <ViewAtom no={no} ex={ex} entity={entity} bold={bold} noLabel={noLabel} />;
         }
     }
-    function ViewSpecs() {
+    function ViewForks() {
         if (specs.length === 0) return null;
         return <>
             {specs.map(v => {
@@ -56,7 +56,7 @@ export function ViewSpecBase({ id, ViewAtom, uiType, noLabel, bold }: {
     }
     let content = <>
         {viewAtom}
-        <ViewSpecs />
+        <ViewForks />
     </>;
     if (uiType === ViewBudUIType.inDiv) {
         return content;
@@ -80,11 +80,11 @@ function ViewAtom({ no, ex, entity, bold, noLabel }: { no: string; ex: string; e
     </LabelBox>;
 }
 
-export function ViewSpec({ id, uiType, noLabel, bold }: { id: number; uiType?: ViewBudUIType; noLabel?: boolean; bold?: boolean; }) {
-    return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={uiType} noLabel={noLabel} bold={bold} />
+export function ViewFork({ id, uiType, noLabel, bold }: { id: number; uiType?: ViewBudUIType; noLabel?: boolean; bold?: boolean; }) {
+    return <ViewForkBase id={id} ViewAtom={ViewAtom} uiType={uiType} noLabel={noLabel} bold={bold} />
 }
 
-export function ViewBudSpec({ id, bud, noLabel }: { id: number; bud: BizBud; noLabel?: boolean; }) {
+export function ViewBudFork({ id, bud, noLabel }: { id: number; bud: BizBud; noLabel?: boolean; }) {
     function ViewAtom({ no, ex, entity }: { no: string; ex: string; entity?: EntityID; }) {
         let title = `${ex} ${no}`;
         if (noLabel === true) {
@@ -102,14 +102,14 @@ export function ViewBudSpec({ id, bud, noLabel }: { id: number; bud: BizBud; noL
         </LabelBox>;
         */
     }
-    return <ViewSpecBase id={id} ViewAtom={ViewAtom} uiType={ViewBudUIType.inDiv} noLabel={noLabel} />
+    return <ViewForkBase id={id} ViewAtom={ViewAtom} uiType={ViewBudUIType.inDiv} noLabel={noLabel} />
 }
 
-export function ViewSpecNoAtom({ id, uiType, noLabel }: { id: number; uiType?: ViewBudUIType; noLabel?: boolean; }) {
-    return <ViewSpecBase id={id} ViewAtom={undefined} uiType={uiType} noLabel={noLabel} />
+export function ViewForkNoAtom({ id, uiType, noLabel }: { id: number; uiType?: ViewBudUIType; noLabel?: boolean; }) {
+    return <ViewForkBase id={id} ViewAtom={undefined} uiType={uiType} noLabel={noLabel} />
 }
 
-export function ViewSpecBaseOnly({ id, noVisible, bold }: { id: number; noVisible?: boolean; bold?: boolean }) {
+export function ViewForkBaseOnly({ id, noVisible, bold }: { id: number; noVisible?: boolean; bold?: boolean }) {
     const { atom, } = useGetSpec(id);
     if (atom === undefined) return null;
     const { value } = atom;
@@ -120,13 +120,13 @@ export function ViewSpecBaseOnly({ id, noVisible, bold }: { id: number; noVisibl
     }
 }
 
-export function ViewSpecR({ id }: { id: number; }) {
+export function ViewForkR({ id }: { id: number; }) {
     function ViewAtom({ no, ex }: { no: string; ex: string; }) {
         return <div title={ex + ' ' + no}>
             {ex}
         </div>;
     }
-    return <ViewSpecBase id={id} ViewAtom={ViewAtom} />
+    return <ViewForkBase id={id} ViewAtom={ViewAtom} />
 }
 
 interface VPProps {
@@ -139,7 +139,7 @@ interface VPPropsMore extends VPProps {
     buildProp: (bud: BizBud, value: string | number) => JSX.Element;
 }
 
-function ViewSpecProps({ phrase, props: propValues, className, buildProp }: VPPropsMore) {
+function ViewForkProps({ phrase, props: propValues, className, buildProp }: VPPropsMore) {
     const { biz } = useUqApp();
     let entity = biz.entityFromId<EntityFork>(phrase);
     let { keys, buds: props } = entity;
@@ -158,7 +158,7 @@ function ViewSpecProps({ phrase, props: propValues, className, buildProp }: VPPr
     return <div className={className}>{ret}</div>;
 }
 
-export function ViewSpecPropsH({ phrase, props: propValues }: VPProps) {
+export function ViewForkPropsH({ phrase, props: propValues }: VPProps) {
     function buildProp(bud: BizBud, value: string | number) {
         const { caption, id } = bud;
         return <div key={id} className="w-min-6c me-2">
@@ -166,10 +166,10 @@ export function ViewSpecPropsH({ phrase, props: propValues }: VPProps) {
             <div>{bud.getUIValue(value)}</div>
         </div>;
     }
-    return <ViewSpecProps phrase={phrase} props={propValues} className="d-flex" buildProp={buildProp} />;
+    return <ViewForkProps phrase={phrase} props={propValues} className="d-flex" buildProp={buildProp} />;
 }
 
-export function ViewSpecPropsV({ phrase, props: propValues }: VPProps) {
+export function ViewForkPropsV({ phrase, props: propValues }: VPProps) {
     function buildProp(bud: BizBud, value: string | number) {
         const { caption, id } = bud;
         return <span key={id} className="d-inline-block me-3">
@@ -177,5 +177,5 @@ export function ViewSpecPropsV({ phrase, props: propValues }: VPProps) {
             {bud.getUIValue(value)}
         </span>;
     }
-    return <ViewSpecProps phrase={phrase} props={propValues} className="d-block" buildProp={buildProp} />;
+    return <ViewForkProps phrase={phrase} props={propValues} className="d-block" buildProp={buildProp} />;
 }

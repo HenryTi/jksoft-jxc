@@ -1,5 +1,5 @@
 import { BizBud, BudBin, BudFork, BudID, BudRadio, EntityAtom, EntityFork, EnumBudType, EnumSysBud } from "app/Biz";
-import { ViewBudSpec, ViewSpecNoAtom } from "app/hooks";
+import { ViewBudFork, ViewForkNoAtom } from "app/hooks";
 import { EntityStore, contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
 import { Atom as BizAtom, BizPhraseType } from "uqs/UqDefault";
@@ -99,10 +99,10 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, no
     function view() {
         switch (bud.name) {
             default:
-                return <ViewBudSpec id={value} bud={bud} noLabel={noLabel} />;
+                return <ViewBudFork id={value} bud={bud} noLabel={noLabel} />;
             case 'i':
             case 'x':
-                return <ViewSpecNoAtom id={value} uiType={uiType} noLabel={noLabel} />;
+                return <ViewForkNoAtom id={value} uiType={uiType} noLabel={noLabel} />;
         }
     }
     const { caption } = bud;

@@ -4,15 +4,14 @@ import { EntityAtom } from "app/Biz";
 import { EntityStore } from "app/tool";
 import { ViewForkId } from "app/coms/ViewForkId";
 
-export function ViewSpecAtomBold({ id, store }: { id: number; store: EntityStore; }) {
-    const { bizAtomColl, bizForkColl: bizSpecColl } = store;
+export function ViewForkAtomBold({ id, store }: { id: number; store: EntityStore; }) {
+    const { bizAtomColl, bizForkColl } = store;
     let bizAtom = bizAtomColl[id]?.atom;
     if (bizAtom === undefined) {
-        let bizSpec = bizSpecColl[id];
+        let bizSpec = bizForkColl[id];
         if (bizSpec === undefined) return null;
         bizAtom = bizSpec.atom;
         if (bizAtom === undefined) {
-            // return <span>ViewSpecAtomBold:{id}</span>;
             return <ViewForkId id={id} />;
         }
     }
@@ -20,14 +19,14 @@ export function ViewSpecAtomBold({ id, store }: { id: number; store: EntityStore
     return <><b>{ex}</b> <span className="mx-3">{no}</span></>;
 }
 
-export function ViewSpecAtom({ id, store }: { id: number; store: EntityStore; }) {
+export function ViewForkAtom({ id, store }: { id: number; store: EntityStore; }) {
     if (store === undefined) {
         return <ViewForkId id={id} />;
     }
-    const { bizAtomColl, bizForkColl: bizSpecColl } = store;
+    const { bizAtomColl, bizForkColl } = store;
     let bizAtom = bizAtomColl[id]?.atom;
     if (bizAtom === undefined) {
-        let bizSpec = bizSpecColl[id];
+        let bizSpec = bizForkColl[id];
         if (bizSpec === undefined) return null;
         bizAtom = bizSpec.atom;
     }
@@ -35,7 +34,7 @@ export function ViewSpecAtom({ id, store }: { id: number; store: EntityStore; })
     return <>{ex ?? no}</>;
 }
 
-export function ViewSpecBuds({ id, store }: { id: number; store: EntityStore; }) {
+export function ViewForkBuds({ id, store }: { id: number; store: EntityStore; }) {
     const { budsColl, bizForkColl } = store;
     let bizSpec = bizForkColl[id];
     if (bizSpec === undefined) return null;
@@ -102,13 +101,13 @@ export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: Entity
     }</>;
 }
 
-export function ViewSpecAtomTitles({ id, store }: { id: number; store: EntityStore; }) {
-    const { budsColl, bizForkColl: bizSpecColl, biz } = store;
+export function ViewForkAtomTitles({ id, store }: { id: number; store: EntityStore; }) {
+    const { budsColl, bizForkColl, biz } = store;
     const noLabel: boolean = undefined;
-    let bizSpec = bizSpecColl[id];
+    let bizFork = bizForkColl[id];
     let bizAtom: EntityAtom;
     let atomId: number;
-    if (bizSpec === undefined) {
+    if (bizFork === undefined) {
         const atomRet = store.bizAtomColl[id];
         if (atomRet === undefined) return null;
         const { atom, entityID } = atomRet;
@@ -116,7 +115,7 @@ export function ViewSpecAtomTitles({ id, store }: { id: number; store: EntitySto
         atomId = id;
     }
     else {
-        const { id, base } = bizSpec.atom;
+        const { id, base } = bizFork.atom;
         atomId = id;
         bizAtom = biz.entityFromId<EntityAtom>(base);
         if (bizAtom === undefined) return null;

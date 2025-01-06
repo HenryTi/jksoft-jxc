@@ -5,7 +5,7 @@ import {
 import { Band, FormContext, FormFork } from "./FormRowsView";
 import { Page, useModal } from "tonwa-app";
 import { FA, LabelRow, theme } from "tonwa-com";
-import { budContent, FormBudsEditing, LabelRowEdit, ValuesBudsEditing, ViewAtom, ViewSpecAtomBold, ViewSpecAtomTitles } from "app/hooks";
+import { budContent, FormBudsEditing, LabelRowEdit, ValuesBudsEditing, ViewAtom, ViewForkAtomBold, ViewForkAtomTitles } from "app/hooks";
 import { useRef, useState } from "react";
 import { EntityStore } from "app/tool";
 
@@ -111,8 +111,8 @@ function PageFork({ fork, value, baseId, store }: { fork: EntityFork; value: obj
             <Band>
                 <span></span>
                 <div>
-                    <ViewSpecAtomBold id={baseId} store={store} />
-                    <ViewSpecAtomTitles id={baseId} store={store} />
+                    <ViewForkAtomBold id={baseId} store={store} />
+                    <ViewForkAtomTitles id={baseId} store={store} />
                 </div>
             </Band>
         </div>

@@ -6,7 +6,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { EasyTime, FA, from62 } from "tonwa-com";
 import { ParamGetHistory, ReturnGetHistory$page } from "uqs/UqDefault";
-import { ViewSpec } from "../View";
+import { ViewFork } from "../View";
 import { pathSheetRef } from "./useReport";
 // import { useSubject } from "./useReport";
 // import { EnumTitle } from "uqs/UqDefault";
@@ -49,7 +49,7 @@ export function PageHistory() {
         ViewItem={ViewItem}
     >
         <div className="p-3 tonwa-bg-gray-2">
-            <ViewSpec id={id} />
+            <ViewFork id={id} />
         </div>
     </PageQueryMore>;
 }

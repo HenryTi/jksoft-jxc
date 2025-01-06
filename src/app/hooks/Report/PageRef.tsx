@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { EasyTime, from62 } from "tonwa-com";
-import { ViewSpec } from "../View";
+import { ViewFork } from "../View";
 
 export function PageRef() {
     const { id: id62/*, d: detail62*/ } = useParams();
@@ -36,13 +36,13 @@ export function PageRefId({ id }: { id: number; }) {
 
         </div>
             <div className="px-3 py-2 tonwa-bg-gray-1">
-                <div><ViewSpec id={i} /></div>
+                <div><ViewFork id={i} /></div>
             </div>
             <div className="border-top">
                 {details.map(v => {
                     return <div key={v.id} className="px-3 py-2 d-flex border-bottom">
                         <div className="flex-grow-1">
-                            <ViewSpec id={v.i} />
+                            <ViewFork id={v.i} />
                         </div>
                         <div className="fw-bold">{v.value}</div>
                     </div>

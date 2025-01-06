@@ -3,7 +3,7 @@ import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { useCallback } from "react";
 import { BizPhraseType, ParamGetReport } from "uqs/UqDefault";
-import { ViewSpecPropsH } from "../View";
+import { ViewForkPropsH } from "../View";
 import { FA } from "tonwa-com";
 import { Link } from "react-router-dom";
 import { Period, ViewPeriodHeader, path, usePeriod } from "app/tool";
@@ -150,7 +150,7 @@ function PageResult({ entityReport, atomId, top }: { entityReport: EntityReport;
                     let { id, phrase, value, props } = v;
                     return <Link key={id} to={path('../history', title[0].bud.id, id)}>
                         <div className="d-flex ps-3 pe-3 py-2 border-bottom align-items-center">
-                            <ViewSpecPropsH phrase={phrase} props={props as []} />
+                            <ViewForkPropsH phrase={phrase} props={props as []} />
                             <div className="flex-grow-1">
                             </div>
                             <ViewValue values={value} titles={title} />

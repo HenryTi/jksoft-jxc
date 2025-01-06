@@ -1,5 +1,5 @@
 import { SheetStore } from "../store";
-import { EditBudInline, ViewSpecR } from "app/hooks";
+import { EditBudInline, ViewForkR } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "../../ViewSheetTime";
 import { BizBud, ValueSetType } from "app/Biz";
@@ -54,7 +54,7 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
         if (bud === undefined) return null;
         const { caption } = bud;
-        let content = value ? <ViewSpecR id={value} /> : <>&nbsp;</>;
+        let content = value ? <ViewForkR id={value} /> : <>&nbsp;</>;
         return <LabelBox label={caption} editable={false}>
             {content}
         </LabelBox>

@@ -6,12 +6,11 @@ export class QueryStore extends EntityStore<EntityQuery> {
     async query(param: any) {
         let retQuery = await this.uq.DoQuery.submitReturns({ query: this.entity.id, json: param, pageStart: undefined, pageSize: 100 });
         let { ret: retItems, props, specs, atoms } = retQuery;
-        this.cacheIdAndBuds(props, atoms, specs as any);
         let pickedArr: Picked[] = [];
         let coll: { [id: number]: Picked } = {};
         for (let row of retItems) {
             let idArr: Prop[] = [];
-            let propArr: Prop[] = [];
+            // let propArr: Prop[] = [];
             const { id, ban, value, json } = row;
             let picked: Picked = {
                 $: idArr as any,
@@ -30,6 +29,16 @@ export class QueryStore extends EntityStore<EntityQuery> {
             pickedArr.push(picked);
             coll[id] = picked;
         }
+
+        let specsForCache = specs.map(v => {
+            const { id, atom: rowId } = v;
+            return {
+                id,
+                atom: coll[rowId].json[0],
+            }
+        });
+        this.cacheIdAndBuds(props, atoms, specsForCache);
+
         let specSerial = 1;
         for (let specRow of specs) {
             let { atom, id, ban, value, json } = specRow;

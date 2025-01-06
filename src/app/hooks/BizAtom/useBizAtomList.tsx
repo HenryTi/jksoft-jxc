@@ -5,7 +5,7 @@ import { EntityAtom, EntityID } from 'app/Biz';
 import { Page, useModal } from 'tonwa-app';
 import { OptionsUseBizAtom, useBizAtom } from './useBizAtom';
 import { AtomStore, pathAtom, useAtomStore } from './AtomStore';
-import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtomBold } from '../View';
+import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtomBold } from '../View';
 import { RowCols } from '../tool';
 import { useBizAtomView } from './useBizAtomView';
 import { useState } from 'react';
@@ -98,7 +98,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
         }
         return <div className="text-decoration-none px-3 py-2 cursor-pointer" onClick={onClick}>
             <div>
-                <ViewSpecAtomBold id={id} store={store} />
+                <ViewForkAtomBold id={id} store={store} />
                 <ViewAtomTitlesOfStore id={id} store={store} />
             </div>
             <RowCols contentClassName="">

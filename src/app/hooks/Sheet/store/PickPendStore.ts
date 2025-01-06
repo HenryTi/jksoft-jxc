@@ -2,6 +2,7 @@ import { EnumBudType, PickPend, ValueSetType } from "app/Biz";
 import { BinStore } from "./BinStore";
 import { ValueSpace } from "app/hooks/Calc";
 import { BinBudsEditing } from "./BinEditing";
+import { contentFromDays, fromDays } from "app/tool";
 
 export class PickPendStore {
     readonly binStore: BinStore;
@@ -47,13 +48,18 @@ export class PickPendStore {
             }
             paramValue = this.paramsEditing.getBudValue(param); // .values.buds[id];
             // radio 值是数组，需要变成单值
-            if (budDataType.type === EnumBudType.radio) {
-                if (Array.isArray(paramValue) === true) {
-                    paramValue = Number(paramValue[0]);
-                    if (Number.isNaN(paramValue) === true || paramValue === 0) {
-                        paramValue = undefined;
+            switch (budDataType.type) {
+                case EnumBudType.radio:
+                    if (Array.isArray(paramValue) === true) {
+                        paramValue = Number(paramValue[0]);
+                        if (Number.isNaN(paramValue) === true || paramValue === 0) {
+                            paramValue = undefined;
+                        }
                     }
-                }
+                    break;
+                case EnumBudType.date:
+                    paramValue = contentFromDays(paramValue);
+                    break;
             }
             params[id] = paramValue;
         }

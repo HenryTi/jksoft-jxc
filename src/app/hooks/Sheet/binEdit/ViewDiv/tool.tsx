@@ -1,6 +1,6 @@
 import { BizBud } from "app/Biz";
 import { BinStore, ValDivBase } from "../../store";
-import { ViewSpecNoAtom } from "app/hooks";
+import { ViewForkNoAtom } from "app/hooks";
 import { FA, theme } from "tonwa-com";
 import { useAtomValue } from "jotai";
 
@@ -18,7 +18,7 @@ export let cn: string = theme.bootstrapContainer + ' gx-0 ';
 
 export function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
     if (bud === undefined) return null;
-    return <ViewSpecNoAtom id={value} noLabel={true} />;
+    return <ViewForkNoAtom id={value} noLabel={true} />;
 }
 
 export function PAV({ bud, className, val, onClick }: { bud: BizBud; className?: string; val: number; onClick?: () => void }) {

@@ -1,5 +1,5 @@
-export * from './ViewSpec';
+export * from './ViewFork';
 export * from './ViewItemMain';
 export * from "./ViewReaction";
-export * from "./ViewSpecOfStore";
+export * from "./ViewForkOfStore";
 export * from "./FormBudsEditing";

@@ -1,6 +1,6 @@
 import { EasyTime } from "tonwa-com";
 import { Sheet } from "uqs/UqDefault";
-import { ViewSpec } from "./ViewSpec";
+import { ViewFork } from "./ViewFork";
 import { ViewOperator } from "./ViewOperator";
 import { Bin } from "app/tool";
 import { SheetStore } from "../Sheet/store";
@@ -61,8 +61,8 @@ export function ViewItemMain({ value, isMy, store }: { value: Sheet & Bin & { ro
                 }
                 <small className="text-secondary"></small>
             </div>
-            {i > 0 && <ViewSpec id={i} />}
-            {x > 0 && <ViewSpec id={x} />}
+            {i > 0 && <ViewFork id={i} />}
+            {x > 0 && <ViewFork id={x} />}
             {vPrimeBuds}
         </RowCols>
     </div>;

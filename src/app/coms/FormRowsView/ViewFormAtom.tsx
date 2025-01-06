@@ -8,7 +8,7 @@ import { useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { pickBudID } from "app/hooks/BizPick";
 import { Band, FormAtom, FormContext } from "./FormRowsView";
-import { BudEditing, ViewSpecAtom } from "app/hooks";
+import { BudEditing, ViewForkAtom } from "app/hooks";
 
 export function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, entityAtom, onChange, formContext }: {
     row: FormAtom;
@@ -70,7 +70,7 @@ export function ViewFormAtom({ row, label, error, inputProps, clearErrors, setVa
         }
         else {
             // content = <IDView uq={uq} id={Number(id)} Template={ViewAtom} />;
-            content = <ViewSpecAtom id={Number(id)} store={formContext.store} />;
+            content = <ViewForkAtom id={Number(id)} store={formContext.store} />;
         }
     }
     let onClick: () => void;

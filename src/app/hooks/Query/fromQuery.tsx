@@ -1,14 +1,12 @@
 import { EntityQuery, IDColumn, PickQuery } from "app/Biz";
 import { ChangeEvent, useState } from "react";
-import { Modal, Page } from "tonwa-app";
+import { Page } from "tonwa-app";
 import { List, Sep, theme } from "tonwa-com";
-import { filterUndefined } from "app/tool";
-import { pickQueryParams } from "./PageParams";
 import { RearPickResultType } from "../Sheet/store";
 import { LabelBox, Picked, Prop, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
-import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtom, ViewSpecAtomBold } from "../View";
+import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtom, ViewForkAtomBold } from "../View";
 import { ViewForkId } from "app/coms/ViewForkId";
 import { ViewBud } from "../Bud";
 import { BudsEditing } from "../BudsEditing";
@@ -21,15 +19,6 @@ async function pickFromQueryBase(
     , pickResultType: RearPickResultType)
     : Promise<PickResult | PickResult[]> {
     let { caption, query, pickParams } = binPick as PickQuery;
-    /*
-    const header = caption ?? query.caption;
-    let retParam = await pickQueryParams({
-        editing,
-        header,
-        queryParams: query.params,
-        pickParams
-    });
-    */
     const { modal } = editing;
     let queryStore = new QueryStore(modal, query);
     let ret = await modal.open(<PageFromQuery />);
@@ -70,7 +59,7 @@ async function pickFromQueryBase(
         }
         function modalClose(results: any) {
             // Object.assign(editing.store.bizAtomColl, queryStore.bizAtomColl);
-            editing.store.mergeStoreAtomColl(queryStore);
+            editing.store.mergeStoreColl(queryStore);
             modal.close(results);
         }
         function onPick() {
@@ -147,7 +136,7 @@ async function pickFromQueryBase(
                         case BizPhraseType.fork:
                             return <ViewForkId id={id} />;
                         case BizPhraseType.atom:
-                            return <ViewSpecAtom id={id} store={queryStore} />;
+                            return <ViewForkAtom id={id} store={queryStore} />;
                     }
                 }
                 return <LabelBox key={index} label={caption}>
@@ -170,7 +159,7 @@ async function pickFromQueryBase(
                     case BizPhraseType.atom:
                         return <>
                             <div>
-                                <ViewSpecAtomBold id={id} store={queryStore} />
+                                <ViewForkAtomBold id={id} store={queryStore} />
                                 <ViewAtomTitlesOfStore id={id} store={queryStore} />
                             </div>
                             <RowCols contentClassName="">
@@ -319,8 +308,7 @@ export async function doQuery(editing: BudsEditing, query: EntityQuery, params: 
         const { bizPhraseType } = idFrom;
         let [selectedItems, setSelectedItems] = useState<{ [id: number]: Picked; }>({});
         function modalClose(results: any) {
-            // Object.assign(editing.store.bizAtomColl, queryStore.bizAtomColl);
-            editing.store.mergeStoreAtomColl(queryStore);
+            editing.store.mergeStoreColl(queryStore);
             modal.close(results);
         }
         function onPick() {
@@ -397,7 +385,7 @@ export async function doQuery(editing: BudsEditing, query: EntityQuery, params: 
                         case BizPhraseType.fork:
                             return <ViewForkId id={id} />;
                         case BizPhraseType.atom:
-                            return <ViewSpecAtom id={id} store={queryStore} />;
+                            return <ViewForkAtom id={id} store={queryStore} />;
                     }
                 }
                 return <LabelBox key={index} label={caption}>
@@ -420,7 +408,7 @@ export async function doQuery(editing: BudsEditing, query: EntityQuery, params: 
                     case BizPhraseType.atom:
                         return <>
                             <div>
-                                <ViewSpecAtomBold id={id} store={queryStore} />
+                                <ViewForkAtomBold id={id} store={queryStore} />
                                 <ViewAtomTitlesOfStore id={id} store={queryStore} />
                             </div>
                             <RowCols contentClassName="">

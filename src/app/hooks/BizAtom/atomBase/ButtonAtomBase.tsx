@@ -4,7 +4,7 @@ import { Page, useModal } from 'tonwa-app';
 import { useState } from 'react';
 import { AtomStore } from '../AtomStore';
 import { useBizAtomView } from '../useBizAtomView';
-import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewSpecAtomBold } from 'app/hooks/View';
+import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtomBold } from 'app/hooks/View';
 import { RowCols } from 'app/hooks/tool';
 import { PageQueryMore } from 'app/coms';
 
@@ -44,7 +44,7 @@ function PageDirectAtom({ rootAtom, entityAtom, store }: { rootAtom: EntityAtom;
         return <div className="text-decoration-none px-3 py-2 ">
             <div className="cursor-pointer pb-2" onClick={onClick}>
                 <div>
-                    <ViewSpecAtomBold id={id} store={store} />
+                    <ViewForkAtomBold id={id} store={store} />
                     <ViewAtomTitlesOfStore id={id} store={store} />
                 </div>
                 <RowCols contentClassName="">

@@ -4,7 +4,7 @@ import { EntityStore } from "app/tool";
 import { useRef, useState } from "react";
 import { Modal, useModal } from "tonwa-app";
 import { ParamGetIDList } from "uqs/UqDefault";
-import { BudEditing, ViewSpecAtomBold } from "..";
+import { BudEditing, ViewForkAtomBold } from "..";
 import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../tool";
 import { SearchBox } from "tonwa-com";
 
@@ -27,7 +27,7 @@ function ViewID({ id, store }: { id: number; store: EntityStore; }) {
     const cnRow = ' px-3 py-2 cursor-pointer ';
     return <div className={cnRow}>
         <div>
-            <ViewSpecAtomBold id={id} store={store} />
+            <ViewForkAtomBold id={id} store={store} />
             <ViewAtomTitles id={id} store={store} />
         </div>
         <RowColsSm>

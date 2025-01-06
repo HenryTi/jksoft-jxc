@@ -246,7 +246,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
         let hiddenBuds: Set<number> = (rearPick?.hiddenBuds) ?? new Set();
         for (let v of $page) {
             let { id, pend, pendValue, mid, sheet, i, x } = v;
-            if (pendValue === undefined || pendValue <= 0) continue;
+            if (pendValue === undefined) continue;
             if (iBud !== undefined) {
                 this.valDivsOnPend[pend] = atom(undefined as ValDivRoot);
                 let iSpec = this.bizForkColl[i];

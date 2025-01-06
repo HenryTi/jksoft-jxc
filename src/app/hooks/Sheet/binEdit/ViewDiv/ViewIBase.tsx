@@ -1,7 +1,7 @@
 import { SheetStore, ValDivBase } from "../../store";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { Atom as BizAtom } from "uqs/UqDefault";
-import { ViewSpecAtomBold } from "app/hooks/View";
+import { ViewForkAtomBold } from "app/hooks/View";
 import { BizBud } from "app/Biz";
 
 export function ViewIBase({ sheetStore, valDiv, index }: { sheetStore: SheetStore; valDiv: ValDivBase; index: number; }) {
@@ -27,7 +27,7 @@ export function ViewIBase({ sheetStore, valDiv, index }: { sheetStore: SheetStor
     }
     return <div className="mb-1">
         {vIndex}
-        <ViewSpecAtomBold id={iBase} store={sheetStore} />
+        <ViewForkAtomBold id={iBase} store={sheetStore} />
         <ViewAtomTitles id={iBase} store={sheetStore} />
     </div>;
 }
