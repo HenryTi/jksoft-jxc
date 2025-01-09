@@ -76,6 +76,8 @@ export class UqSites {
     constructor(uqMan: UqMan) {
         this.uqMan = uqMan;
         this.localSiteId = new LocalNumber('localSiteId');
+        const { value } = this.localSiteId;
+        if (!value) debugger;
     }
 
     async login() {
@@ -130,6 +132,25 @@ export class UqSites {
         await this.reloadMyRoles();
     }
 
+    private getMySite(site: number) {
+        let mySite = this.mySitesColl[site];
+        if (mySite === undefined) {
+            mySite = {
+                site: site,
+                rolesAtom: atom<UserSite[]>([]) as any,
+                permits: {},
+            } as UserSite;
+            this.mySitesColl[site] = mySite;
+            if (site !== 0) {
+                this.mySites.push(mySite);
+            }
+            else {
+                this.userSite0 = mySite;
+            }
+        }
+        return mySite;
+    }
+
     private async loadMyRoles(): Promise<void> {
         if (this.mySitesColl !== undefined) return;
         this.mySites = [];
@@ -137,28 +158,11 @@ export class UqSites {
         let query: Query = this.uqMan.entities['$role_my'] as any;
         let results = await query.query({});
         let { sites, roles, permits } = results;
-        const getMySite = (site: number) => {
-            let mySite = this.mySitesColl[site];
-            if (mySite === undefined) {
-                mySite = {
-                    site: site,
-                    rolesAtom: atom<UserSite[]>([]) as any,
-                    permits: {},
-                } as UserSite;
-                this.mySitesColl[site] = mySite;
-                if (site !== 0) {
-                    this.mySites.push(mySite);
-                }
-                else {
-                    this.userSite0 = mySite;
-                }
-            }
-            return mySite;
-        }
-        let userSiteDef: UserSite;
+        const localSiteId = this.localSiteId.value;
+        let userSiteDef: UserSite, localSite: UserSite;
         for (let siteRow of sites) {
             let { id, site, admin, entity, assigned, def } = siteRow;
-            let mySite = getMySite(site);
+            let mySite = this.getMySite(site);
             mySite.id = id;
             mySite.siteId = site;
             mySite.isAdmin = ((admin & 1) === 1);
@@ -166,9 +170,8 @@ export class UqSites {
             mySite.entity = entity;
             mySite.assigned = assigned;
 
-            if (mySite.id === this.localSiteId.value) {
-                userSiteDef = mySite;
-                break;
+            if (site === localSiteId) {
+                localSite = mySite;
             }
             if (userSiteDef === undefined && mySite !== this.userSite0) {
                 userSiteDef = mySite;
@@ -177,6 +180,7 @@ export class UqSites {
                 userSiteDef = mySite;
             }
         }
+        if (localSite !== undefined) userSiteDef = localSite;
         this.userSite = userSiteDef;
         if (userSiteDef !== undefined) {
             let i = this.mySites.findIndex(v => v === userSiteDef);
@@ -187,7 +191,7 @@ export class UqSites {
         }
         for (let roleRow of roles) {
             let { site, role } = roleRow;
-            let mySite = getMySite(site);
+            let mySite = this.getMySite(site);
             let { rolesAtom } = mySite;
             let roles = getAtomValue(rolesAtom);
             if (roles === undefined) {
@@ -199,7 +203,7 @@ export class UqSites {
         }
         for (let permitRow of permits) {
             let { site, permit } = permitRow;
-            let mySite = getMySite(site);
+            let mySite = this.getMySite(site);
             mySite.permits[permit] = true;
         }
     }

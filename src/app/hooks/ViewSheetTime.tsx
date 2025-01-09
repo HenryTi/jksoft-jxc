@@ -1,8 +1,9 @@
-import { EasyTime } from "tonwa-com";
+import { dateFromMinuteId, EasyTime } from "tonwa-com";
 
-const umPow = Math.pow(2, 20);
+// const umPow = Math.pow(2, 20);
 export function ViewSheetTime({ id }: { id: number; }) {
+    const d = dateFromMinuteId(id);
     return <span className="small text-secondary">
-        <EasyTime date={(id / umPow) * 60} />
+        <EasyTime date={d} />
     </span>;
 }
