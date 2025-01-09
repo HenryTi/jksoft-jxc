@@ -136,7 +136,7 @@ export function ViewQueryParams({ editing, query, binPick, onSearch }: {
         onSearch(ret);
     }
     // <FormRowsView rows={formRows} register={register} errors={errors} context={paramBudsEditing} />
-    return <form className={theme.bootstrapContainer + ' py-3 border-bottom mb-3'} onSubmit={handleSubmit(onSubmitForm)}>
+    return <form className={theme.bootstrapContainer + ' py-3 border-bottom'} onSubmit={handleSubmit(onSubmitForm)}>
         <RowColsSm>
             {valueParams.map((v, index) => {
                 const [pickParam, bizBud, value] = v;

@@ -235,7 +235,7 @@ async function pickFromQueryBase(
             if (atomOnly === true) {
             }
             else {
-                cnBase += ' border-bottom ';
+                cnBase += ' border-bottom pb-1 ';
                 vSumValue = <ViewValue value={picked.sum} caption={cSum} />;
             }
             return <div className="pt-2">
