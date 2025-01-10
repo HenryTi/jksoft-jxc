@@ -158,7 +158,8 @@ export class UqSites {
         let query: Query = this.uqMan.entities['$role_my'] as any;
         let results = await query.query({});
         let { sites, roles, permits } = results;
-        const localSiteId = this.localSiteId.value;
+        let localSiteId = this.localSiteId.value;
+        if (localSiteId === 0) localSiteId = undefined;
         let userSiteDef: UserSite, localSite: UserSite;
         for (let siteRow of sites) {
             let { id, site, admin, entity, assigned, def } = siteRow;
