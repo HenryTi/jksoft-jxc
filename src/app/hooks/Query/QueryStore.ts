@@ -4,13 +4,17 @@ import { Picked, Prop } from "../tool";
 
 export class QueryStore extends EntityStore<EntityQuery> {
     async query(param: any) {
-        let retQuery = await this.uq.DoQuery.submitReturns({ query: this.entity.id, json: param, pageStart: undefined, pageSize: 100 });
+        let json: any = {};
+        const { params: paramBuds } = this.entity;
+        for (let bud of paramBuds) {
+            json[bud.id] = param[bud.name];
+        }
+        let retQuery = await this.uq.DoQuery.submitReturns({ query: this.entity.id, json, pageStart: undefined, pageSize: 100 });
         let { ret: retItems, props, specs, atoms } = retQuery;
         let pickedArr: Picked[] = [];
         let coll: { [id: number]: Picked } = {};
         for (let row of retItems) {
             let idArr: Prop[] = [];
-            // let propArr: Prop[] = [];
             const { id, ban, value, json } = row;
             let picked: Picked = {
                 $: idArr as any,
