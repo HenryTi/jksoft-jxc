@@ -75,7 +75,7 @@ function ViewAtom({ no, ex, entity, bold, noLabel }: { no: string; ex: string; e
         const { caption } = entity;
         label = caption;
     }
-    return <LabelBox label={label} title={'编号: ' + no} className="mb-2">
+    return <LabelBox label={label} title={'编号: ' + no} className="mb-1">
         {vContent}
     </LabelBox>;
 }

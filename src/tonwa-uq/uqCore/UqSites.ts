@@ -76,8 +76,8 @@ export class UqSites {
     constructor(uqMan: UqMan) {
         this.uqMan = uqMan;
         this.localSiteId = new LocalNumber('localSiteId');
-        const { value } = this.localSiteId;
-        if (!value) debugger;
+        // const { value } = this.localSiteId;
+        // if (!value) debugger;
     }
 
     async login() {

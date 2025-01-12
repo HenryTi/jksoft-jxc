@@ -300,6 +300,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
         const { uq, entity: entitySheet } = this;
         let ret = await uq.SaveSheet.submit({
             phrase: entitySheet.id,
+            mainPhrase: entitySheet.main?.id,
             no: undefined,
             i: i === 0 ? undefined : i,
             x: x === 0 ? undefined : x,

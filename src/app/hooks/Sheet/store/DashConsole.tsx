@@ -74,7 +74,7 @@ export class SheetMyDraftsStore extends SheetListStore {
         let { id, i, x, origin, price, value, amount } = valRow;
         let myDrafts = getAtomValue(this.atomMyDrafts);
         myDrafts.unshift({
-            id, base: this.entity.id, no, operator: undefined
+            id, base: this.entity.id, no, operator: undefined, sheet: undefined
             , i, x, origin
             , value, price, amount
             , rowCount: 0

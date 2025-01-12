@@ -38,7 +38,7 @@ export function PageReport({ entityReport }: { entityReport: EntityReport; }) {
             break;
         case BizPhraseType.atom:
             return <PageResult entityReport={entityReport} atomId={undefined} top={undefined} />;
-        case BizPhraseType.duo:
+        case BizPhraseType.combo:
             return <PageSelect entityReport={entityReport} />;
     }
 }

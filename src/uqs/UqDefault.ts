@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Jan 06 2025 16:26:24 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Sat Jan 11 2025 19:00:38 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,11 +29,12 @@ export enum EnumID {
 	History = 'history',
 	Atom = 'atom',
 	Fork = 'fork',
-	Duo = 'duo',
 	Sheet = 'sheet',
 	Detail = 'detail',
+	Bin = 'bin',
 	Pend = 'pend',
 	Log = 'log',
+	Duo = 'duo',
 }
 
 export interface $phrase extends ID {
@@ -307,6 +308,7 @@ export interface ResultGetFork {
 
 export interface ParamSaveSheet {
 	phrase: number;
+	mainPhrase: number;
 	no: string;
 	i: number;
 	x: number;
@@ -364,6 +366,7 @@ export interface ReturnSaveDetailsMain {
 	base: number;
 	no: string;
 	operator: number;
+	sheet: number;
 	origin: number;
 	i: number;
 	x: number;
@@ -374,6 +377,8 @@ export interface ReturnSaveDetailsMain {
 }
 export interface ReturnSaveDetailsDetails {
 	id: number;
+	sheet: number;
+	base: number;
 	origin: number;
 	i: number;
 	x: number;
@@ -386,6 +391,8 @@ export interface ReturnSaveDetailsDetails {
 }
 export interface ReturnSaveDetailsOrigins {
 	id: number;
+	sheet: number;
+	base: number;
 	origin: number;
 	i: number;
 	x: number;
@@ -512,6 +519,7 @@ export interface ReturnGetMyDrafts$page {
 	base: number;
 	no: string;
 	operator: number;
+	sheet: number;
 	origin: number;
 	i: number;
 	x: number;
@@ -659,6 +667,7 @@ export interface ReturnGetSheetMain {
 	base: number;
 	no: string;
 	operator: number;
+	sheet: number;
 	origin: number;
 	i: number;
 	x: number;
@@ -669,6 +678,8 @@ export interface ReturnGetSheetMain {
 }
 export interface ReturnGetSheetDetails {
 	id: number;
+	sheet: number;
+	base: number;
 	origin: number;
 	i: number;
 	x: number;
@@ -681,6 +692,8 @@ export interface ReturnGetSheetDetails {
 }
 export interface ReturnGetSheetOrigins {
 	id: number;
+	sheet: number;
+	base: number;
 	origin: number;
 	i: number;
 	x: number;
@@ -746,37 +759,6 @@ export interface ReturnGetSpecListFromBaseRet {
 }
 export interface ResultGetSpecListFromBase {
 	ret: ReturnGetSpecListFromBaseRet[];
-}
-
-export interface ParamSaveDuoOuterApp {
-	i: number;
-	x: number;
-}
-export interface ReturnSaveDuoOuterAppRet {
-	id: number;
-}
-export interface ResultSaveDuoOuterApp {
-	ret: ReturnSaveDuoOuterAppRet[];
-}
-
-export interface ParamDelDuoOuterApp {
-	id: number;
-	i: number;
-	x: number;
-}
-export interface ResultDelDuoOuterApp {
-}
-
-export interface ParamGetDuos {
-	i: number;
-}
-export interface ReturnGetDuosRet {
-	id: number;
-	x: number;
-	props: any;
-}
-export interface ResultGetDuos {
-	ret: ReturnGetDuosRet[];
 }
 
 export interface ParamGetPend {
@@ -890,6 +872,7 @@ export interface ReturnGetSiteSheetList$page {
 	base: number;
 	no: string;
 	operator: number;
+	sheet: number;
 	origin: number;
 	i: number;
 	x: number;
@@ -932,6 +915,7 @@ export interface ReturnGetMySheetList$page {
 	base: number;
 	no: string;
 	operator: number;
+	sheet: number;
 	origin: number;
 	i: number;
 	x: number;
@@ -1113,6 +1097,7 @@ export interface ReturnSearchAllSheets$page {
 	base: number;
 	no: string;
 	operator: number;
+	sheet: number;
 	origin: number;
 	i: number;
 	x: number;
@@ -1131,7 +1116,6 @@ export enum BizPhraseType {
 	fork = 12,
 	bud = 13,
 	budGroup = 14,
-	duo = 15,
 	combo = 16,
 	sheet = 101,
 	main = 102,
@@ -1385,7 +1369,7 @@ export interface ResultGetMyBalance {
 	ret: ReturnGetMyBalanceRet[];
 }
 
-export interface IxBud extends IX {
+export interface Ix extends IX {
 	i: number;
 	x: number;
 }
@@ -1487,19 +1471,6 @@ export interface ForkInActs extends ID {
 	base: number | ID;
 }
 
-export interface Duo extends ID {
-	i: number;
-	x: number;
-	valid: number;
-}
-
-export interface DuoInActs extends ID {
-	ID?: UqID<any>;
-	i: number | ID;
-	x: number | ID;
-	valid: number;
-}
-
 export interface Sheet extends ID {
 	base: number;
 	no: string;
@@ -1520,6 +1491,29 @@ export interface Detail extends ID {
 export interface DetailInActs extends ID {
 	ID?: UqID<any>;
 	base: number | ID;
+}
+
+export interface Bin extends ID {
+	sheet: number;
+	base: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+}
+
+export interface BinInActs extends ID {
+	ID?: UqID<any>;
+	sheet: number | ID;
+	base: number | ID;
+	origin: number | ID;
+	i: number | ID;
+	x: number | ID;
+	value: number;
+	amount: number;
+	price: number;
 }
 
 export interface Pend extends ID {
@@ -1702,6 +1696,50 @@ export interface ResultBuildAtomUnique {
 	DupTable: ReturnBuildAtomUniqueDupTable[];
 }
 
+export interface ParamSaveDuoOuterApp {
+	i: number;
+	x: number;
+}
+export interface ReturnSaveDuoOuterAppRet {
+	id: number;
+}
+export interface ResultSaveDuoOuterApp {
+	ret: ReturnSaveDuoOuterAppRet[];
+}
+
+export interface ParamDelDuoOuterApp {
+	id: number;
+	i: number;
+	x: number;
+}
+export interface ResultDelDuoOuterApp {
+}
+
+export interface ParamGetDuos {
+	i: number;
+}
+export interface ReturnGetDuosRet {
+	id: number;
+	x: number;
+	props: any;
+}
+export interface ResultGetDuos {
+	ret: ReturnGetDuosRet[];
+}
+
+export interface Duo extends ID {
+	i: number;
+	x: number;
+	valid: number;
+}
+
+export interface DuoInActs extends ID {
+	ID?: UqID<any>;
+	i: number | ID;
+	x: number | ID;
+	valid: number;
+}
+
 export interface ParamGetUsers {
 }
 export interface ReturnGetUsers$page {
@@ -1743,16 +1781,17 @@ export interface ParamActs {
 	$phrase?: $phraseInActs[];
 	template?: TemplateInActs[];
 	sumFormula?: SumFormulaInActs[];
-	ixBud?: IxBud[];
+	ix?: Ix[];
 	bud?: BudInActs[];
 	history?: HistoryInActs[];
 	atom?: AtomInActs[];
 	fork?: ForkInActs[];
-	duo?: DuoInActs[];
 	sheet?: SheetInActs[];
 	detail?: DetailInActs[];
+	bin?: BinInActs[];
 	pend?: PendInActs[];
 	log?: LogInActs[];
+	duo?: DuoInActs[];
 }
 
 
@@ -1806,9 +1845,6 @@ export interface UqExt extends Uq {
 	GetAtom: UqQuery<ParamGetAtom, ResultGetAtom>;
 	GetSpecsFromBase: UqQuery<ParamGetSpecsFromBase, ResultGetSpecsFromBase>;
 	GetSpecListFromBase: UqQuery<ParamGetSpecListFromBase, ResultGetSpecListFromBase>;
-	SaveDuoOuterApp: UqAction<ParamSaveDuoOuterApp, ResultSaveDuoOuterApp>;
-	DelDuoOuterApp: UqAction<ParamDelDuoOuterApp, ResultDelDuoOuterApp>;
-	GetDuos: UqQuery<ParamGetDuos, ResultGetDuos>;
 	GetPend: UqQuery<ParamGetPend, ResultGetPend>;
 	GetPendsNotify: UqQuery<ParamGetPendsNotify, ResultGetPendsNotify>;
 	GetPendSheetFromNo: UqQuery<ParamGetPendSheetFromNo, ResultGetPendSheetFromNo>;
@@ -1840,7 +1876,7 @@ export interface UqExt extends Uq {
 	SetSumGroupPerson: UqAction<ParamSetSumGroupPerson, ResultSetSumGroupPerson>;
 	GetMySums: UqQuery<ParamGetMySums, ResultGetMySums>;
 	GetMyBalance: UqQuery<ParamGetMyBalance, ResultGetMyBalance>;
-	IxBud: UqIX<any>;
+	Ix: UqIX<any>;
 	Bud: UqID<any>;
 	History: UqID<any>;
 	GetIDList: UqQuery<ParamGetIDList, ResultGetIDList>;
@@ -1848,9 +1884,9 @@ export interface UqExt extends Uq {
 	SetIDBase: UqAction<ParamSetIDBase, ResultSetIDBase>;
 	Atom: UqID<any>;
 	Fork: UqID<any>;
-	Duo: UqID<any>;
 	Sheet: UqID<any>;
 	Detail: UqID<any>;
+	Bin: UqID<any>;
 	Pend: UqID<any>;
 	Log: UqID<any>;
 	GetSiteSetting: UqQuery<ParamGetSiteSetting, ResultGetSiteSetting>;
@@ -1863,6 +1899,10 @@ export interface UqExt extends Uq {
 	GetIOError: UqQuery<ParamGetIOError, ResultGetIOError>;
 	IORetry: UqAction<ParamIORetry, ResultIORetry>;
 	BuildAtomUnique: UqAction<ParamBuildAtomUnique, ResultBuildAtomUnique>;
+	SaveDuoOuterApp: UqAction<ParamSaveDuoOuterApp, ResultSaveDuoOuterApp>;
+	DelDuoOuterApp: UqAction<ParamDelDuoOuterApp, ResultDelDuoOuterApp>;
+	GetDuos: UqQuery<ParamGetDuos, ResultGetDuos>;
+	Duo: UqID<any>;
 	GetUsers: UqQuery<ParamGetUsers, ResultGetUsers>;
 	GetUserBuds: UqQuery<ParamGetUserBuds, ResultGetUserBuds>;
 	SaveUserBuds: UqAction<ParamSaveUserBuds, ResultSaveUserBuds>;
@@ -2588,6 +2628,10 @@ export const uqSchema={
                 "type": "id"
             },
             {
+                "name": "mainPhrase",
+                "type": "id"
+            },
+            {
                 "name": "no",
                 "type": "char",
                 "size": 30
@@ -2797,6 +2841,10 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
                         "name": "origin",
                         "type": "id"
                     },
@@ -2837,6 +2885,15 @@ export const uqSchema={
                 "fields": [
                     {
                         "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
                         "type": "id"
                     },
                     {
@@ -2890,6 +2947,15 @@ export const uqSchema={
                 "fields": [
                     {
                         "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
                         "type": "id"
                     },
                     {
@@ -3259,6 +3325,10 @@ export const uqSchema={
                     },
                     {
                         "name": "operator",
+                        "type": "id"
+                    },
+                    {
+                        "name": "sheet",
                         "type": "id"
                     },
                     {
@@ -3704,6 +3774,10 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
                         "name": "origin",
                         "type": "id"
                     },
@@ -3744,6 +3818,15 @@ export const uqSchema={
                 "fields": [
                     {
                         "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
                         "type": "id"
                     },
                     {
@@ -3797,6 +3880,15 @@ export const uqSchema={
                 "fields": [
                     {
                         "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
+                        "name": "base",
                         "type": "id"
                     },
                     {
@@ -3970,87 +4062,6 @@ export const uqSchema={
                     {
                         "name": "keys",
                         "type": "json"
-                    },
-                    {
-                        "name": "props",
-                        "type": "json"
-                    }
-                ]
-            }
-        ]
-    },
-    "saveduoouterapp": {
-        "name": "SaveDuoOuterApp",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "i",
-                "type": "id"
-            },
-            {
-                "name": "x",
-                "type": "id"
-            }
-        ],
-        "jsoned": true,
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    }
-                ]
-            }
-        ]
-    },
-    "delduoouterapp": {
-        "name": "DelDuoOuterApp",
-        "type": "action",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id"
-            },
-            {
-                "name": "i",
-                "type": "id"
-            },
-            {
-                "name": "x",
-                "type": "id"
-            }
-        ],
-        "jsoned": true,
-        "returns": [] as any
-    },
-    "getduos": {
-        "name": "GetDuos",
-        "type": "query",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "i",
-                "type": "id"
-            }
-        ],
-        "returns": [
-            {
-                "name": "ret",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "x",
-                        "type": "id"
                     },
                     {
                         "name": "props",
@@ -4422,6 +4433,10 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
                         "name": "origin",
                         "type": "id"
                     },
@@ -4560,6 +4575,10 @@ export const uqSchema={
                     },
                     {
                         "name": "operator",
+                        "type": "id"
+                    },
+                    {
+                        "name": "sheet",
                         "type": "id"
                     },
                     {
@@ -5113,6 +5132,10 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
                         "name": "origin",
                         "type": "id"
                     },
@@ -5162,7 +5185,6 @@ export const uqSchema={
             "fork": 12,
             "bud": 13,
             "budGroup": 14,
-            "duo": 15,
             "combo": 16,
             "sheet": 101,
             "main": 102,
@@ -5797,8 +5819,8 @@ export const uqSchema={
             }
         ]
     },
-    "ixbud": {
-        "name": "IxBud",
+    "ix": {
+        "name": "Ix",
         "type": "ix",
         "private": false,
         "sys": true,
@@ -6082,44 +6104,6 @@ export const uqSchema={
         "idType": 3,
         "isMinute": true
     },
-    "duo": {
-        "name": "Duo",
-        "type": "id",
-        "private": false,
-        "sys": true,
-        "fields": [
-            {
-                "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "i",
-                "type": "id"
-            },
-            {
-                "name": "x",
-                "type": "id"
-            },
-            {
-                "name": "valid",
-                "type": "tinyint"
-            }
-        ],
-        "keys": [
-            {
-                "name": "i",
-                "type": "id"
-            },
-            {
-                "name": "x",
-                "type": "id"
-            }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": true
-    },
     "sheet": {
         "name": "Sheet",
         "type": "id",
@@ -6179,6 +6163,66 @@ export const uqSchema={
         "keys": [
             {
                 "name": "base",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "bin": {
+        "name": "Bin",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "sheet",
+                "type": "id"
+            },
+            {
+                "name": "base",
+                "type": "id"
+            },
+            {
+                "name": "origin",
+                "type": "id"
+            },
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            },
+            {
+                "name": "amount",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            },
+            {
+                "name": "price",
+                "type": "dec",
+                "scale": 6,
+                "precision": 18
+            }
+        ],
+        "keys": [
+            {
+                "name": "sheet",
                 "type": "id"
             }
         ],
@@ -6707,6 +6751,125 @@ export const uqSchema={
                 ]
             }
         ]
+    },
+    "saveduoouterapp": {
+        "name": "SaveDuoOuterApp",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "delduoouterapp": {
+        "name": "DelDuoOuterApp",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            },
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            }
+        ],
+        "jsoned": true,
+        "returns": [] as any
+    },
+    "getduos": {
+        "name": "GetDuos",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "i",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "x",
+                        "type": "id"
+                    },
+                    {
+                        "name": "props",
+                        "type": "json"
+                    }
+                ]
+            }
+        ]
+    },
+    "duo": {
+        "name": "Duo",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            },
+            {
+                "name": "valid",
+                "type": "tinyint"
+            }
+        ],
+        "keys": [
+            {
+                "name": "i",
+                "type": "id"
+            },
+            {
+                "name": "x",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
     },
     "getusers": {
         "name": "GetUsers",
