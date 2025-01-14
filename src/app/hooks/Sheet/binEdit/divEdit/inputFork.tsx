@@ -33,7 +33,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
     // 暂时先按赋值处理，以后可以处理:=
     let entityFork = binInput.spec;
     if (entityFork === undefined) {
-        let { atom: atomObj, entityID } = sheetStore.bizAtomColl[base];
+        let { entityID } = sheetStore.bizAtomColl[base];
         entityFork = entityID.fork;
     }
     if (entityFork === undefined) {

@@ -110,8 +110,10 @@ async function pickFromQueryBase(
         }
         function ViewPropArr({ propArr }: { propArr: Prop[]; }) {
             if (propArr === undefined) return null;
+            const { hideCols } = query;
             return <>
                 {propArr.map((v, index) => {
+                    if (hideCols[v.bud.id] === true) return null;
                     return <ViewBud key={index} {...v} store={queryStore} />;
                 })}
             </>;
@@ -359,8 +361,10 @@ export async function doQuery(editing: BudsEditing, query: EntityQuery, params: 
         }
         function ViewPropArr({ propArr }: { propArr: Prop[]; }) {
             if (propArr === undefined) return null;
+            const { hideCols } = query;
             return <>
                 {propArr.map((v, index) => {
+                    if (hideCols[v.bud.id] === true) return null;
                     return <ViewBud key={index} {...v} store={queryStore} />;
                 })}
             </>;

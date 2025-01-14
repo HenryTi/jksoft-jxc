@@ -25,6 +25,7 @@ export class EntityQuery extends Entity {
     idFrom: FromEntity;
     fromEntity: FromEntity;
     value: BizBud;
+    hideCols: { [budId: number]: boolean } = {};
     private cols: [number, number][];
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -33,7 +34,6 @@ export class EntityQuery extends Entity {
             case 'params': this.params = (val as any[]).map(v => this.fromProp(v)); break;
             case 'ban': this.ban = val; break;
             case 'cols': this.cols = val; break;
-            // case 'idFrom': this.idFrom = val; break;
             case 'value': this.value = val; break;
             case 'from': this.fromEntity = val; break;
             case 'ids': this.ids = val; break;
@@ -50,6 +50,10 @@ export class EntityQuery extends Entity {
         }
         for (let col of this.cols) {
             let [eId, bId] = col;
+            if (eId < 0) {
+                eId = -eId;
+                this.hideCols[bId] = true;
+            }
             let entity = this.biz.entityFromId(eId);
             if (entity === undefined) {
                 continue;
@@ -60,6 +64,7 @@ export class EntityQuery extends Entity {
             }
             this.budColl[bud.id] = bud;
         }
+        this.cols = undefined;
 
         this.fromEntity = this.scanFrom(this.fromEntity);
         if (this.ids === undefined || this.ids.length === 0) {
