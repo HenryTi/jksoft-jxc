@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Jan 11 2025 19:00:38 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Thu Jan 16 2025 17:12:04 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,6 +27,7 @@ export enum EnumID {
 	SumFormula = 'sumformula',
 	Bud = 'bud',
 	History = 'history',
+	IDU = 'idu',
 	Atom = 'atom',
 	Fork = 'fork',
 	Sheet = 'sheet',
@@ -235,8 +236,8 @@ export interface ResultGetAdminBook {
 }
 
 export interface ParamSaveAtom {
-	atomPhrase: number;
-	base: number;
+	rootPhrase: number;
+	phrase: number;
 	no: string;
 	ex: string;
 }
@@ -245,6 +246,34 @@ export interface ReturnSaveAtomRet {
 }
 export interface ResultSaveAtom {
 	ret: ReturnSaveAtomRet[];
+}
+
+export interface ParamSaveAtomAndProps {
+	rootPhrase: number;
+	phrase: number;
+	no: string;
+	ex: string;
+	props: any;
+}
+export interface ReturnSaveAtomAndPropsRet {
+	id: number;
+}
+export interface ResultSaveAtomAndProps {
+	ret: ReturnSaveAtomAndPropsRet[];
+}
+
+export interface ParamGetAtomNos {
+	arr: {
+		entity: number;
+		no: string;
+	}[];
+
+}
+export interface ReturnGetAtomNosRet {
+	id: number;
+}
+export interface ResultGetAtomNos {
+	ret: ReturnGetAtomNosRet[];
 }
 
 export interface ParamSaveBudValue {
@@ -1449,6 +1478,17 @@ export interface ParamSetIDBase {
 export interface ResultSetIDBase {
 }
 
+export interface IDU extends ID {
+	seed: number;
+	base: number;
+}
+
+export interface IDUInActs extends ID {
+	ID?: UqID<any>;
+	seed: number | ID;
+	base: number | ID;
+}
+
 export interface Atom extends ID {
 	base: number;
 	no?: string;
@@ -1784,6 +1824,7 @@ export interface ParamActs {
 	ix?: Ix[];
 	bud?: BudInActs[];
 	history?: HistoryInActs[];
+	iDU?: IDUInActs[];
 	atom?: AtomInActs[];
 	fork?: ForkInActs[];
 	sheet?: SheetInActs[];
@@ -1818,6 +1859,8 @@ export interface UqExt extends Uq {
 	ClearBook: UqAction<ParamClearBook, ResultClearBook>;
 	GetAdminBook: UqQuery<ParamGetAdminBook, ResultGetAdminBook>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
+	SaveAtomAndProps: UqAction<ParamSaveAtomAndProps, ResultSaveAtomAndProps>;
+	GetAtomNos: UqAction<ParamGetAtomNos, ResultGetAtomNos>;
 	SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
 	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
 	SaveBudRadio: UqAction<ParamSaveBudRadio, ResultSaveBudRadio>;
@@ -1882,6 +1925,7 @@ export interface UqExt extends Uq {
 	GetIDList: UqQuery<ParamGetIDList, ResultGetIDList>;
 	GetIDListCount: UqQuery<ParamGetIDListCount, ResultGetIDListCount>;
 	SetIDBase: UqAction<ParamSetIDBase, ResultSetIDBase>;
+	IDU: UqID<any>;
 	Atom: UqID<any>;
 	Fork: UqID<any>;
 	Sheet: UqID<any>;
@@ -2425,12 +2469,12 @@ export const uqSchema={
         "sys": true,
         "fields": [
             {
-                "name": "atomPhrase",
+                "name": "rootPhrase",
                 "type": "id"
             },
             {
-                "name": "base",
-                "type": "bigint"
+                "name": "phrase",
+                "type": "id"
             },
             {
                 "name": "no",
@@ -2441,6 +2485,81 @@ export const uqSchema={
                 "name": "ex",
                 "type": "char",
                 "size": 200
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "saveatomandprops": {
+        "name": "SaveAtomAndProps",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "rootPhrase",
+                "type": "id"
+            },
+            {
+                "name": "phrase",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 30
+            },
+            {
+                "name": "ex",
+                "type": "char",
+                "size": 200
+            },
+            {
+                "name": "props",
+                "type": "json"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "getatomnos": {
+        "name": "GetAtomNos",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [] as any,
+        "arrs": [
+            {
+                "name": "arr",
+                "fields": [
+                    {
+                        "name": "entity",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 100
+                    }
+                ]
             }
         ],
         "returns": [
@@ -6041,6 +6160,36 @@ export const uqSchema={
         ],
         "jsoned": true,
         "returns": [] as any
+    },
+    "idu": {
+        "name": "IDU",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "seed",
+                "type": "id"
+            },
+            {
+                "name": "base",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "seed",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
     },
     "atom": {
         "name": "Atom",

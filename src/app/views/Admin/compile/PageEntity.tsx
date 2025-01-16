@@ -2,9 +2,7 @@ import * as jsonpack from 'jsonpack';
 import { useForm } from "react-hook-form";
 import { Biz, Entity, EntityAtom, EntityID, EntityQuery } from "app/Biz";
 import { UqApp, useUqApp } from "app/UqApp";
-import { UseQueryOptions } from "app/tool";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { useQuery } from "react-query";
 import { IDView, Modal, Page, useModal } from "tonwa-app";
 import { theme, wait } from "tonwa-com";
 import { FA, getAtomValue, setAtomValue, useEffectOnce } from 'tonwa-com';
@@ -17,6 +15,7 @@ import { atom, useAtomValue, WritableAtom } from 'jotai';
 import { BizPhraseType, UqExt } from 'uqs/UqDefault';
 import { adminData } from '../adminData';
 import { ViewSite } from 'app/views/Site';
+import { PageImportAtom } from './PageImportAtom';
 
 class Nav {
     readonly supers: Entity[] = [];
@@ -298,9 +297,17 @@ function buildEntityButton(modal: Modal, entity: Entity): ToolItem[][] {
 function buildAtomButton(modal: Modal, entity: EntityAtom): ToolItem[][] {
     const uniques = entity.getUniques();
     if (uniques === undefined) return;
-    return [[new ToolButton({ caption: '对照表', }, onMap),]];
+    let arr = [];
+    if (entity.rootClass == entity) {
+        arr.push(new ToolButton({ caption: '导入数据', }, onImportData));
+    }
+    arr.push(new ToolButton({ caption: '对照表', }, onMap));
+    return [arr];
     function onMap() {
         modal.open(<PageUnique entity={entity} />);
+    }
+    function onImportData() {
+        modal.open(<PageImportAtom entity={entity} />);
     }
 }
 

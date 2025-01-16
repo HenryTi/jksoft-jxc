@@ -71,7 +71,7 @@ export class AtomStore extends EntityStore<EntityAtom> {
             main, buds
         };
     }
-
+    /*
     async saveField(id: number, name: string, value: string | number) {
         const { uq } = this.entity;
         await uq.ActIDProp(uq.Atom, id, name, value);
@@ -93,7 +93,7 @@ export class AtomStore extends EntityStore<EntityAtom> {
             int, dec, str
         });
     }
-
+    */
     readonly searchItems: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
         let newParam = { phrase: this.entity.id, ...param };
         let query = this.entity.uq.GetIDList;

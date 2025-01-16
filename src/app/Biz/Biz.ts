@@ -498,21 +498,12 @@ export class Biz {
 
     private buildAtomHierachy(entityAtomArr: [Entity, any][]) {
         if (entityAtomArr === undefined) return;
-        // let rootAtoms: EntityAtom[] = [];
-        // let rootHierachy: EntityAtom[] = [];
         for (let atom of this.atoms) {
             let { superClass: _extends } = atom;
             if (_extends !== undefined) continue;
             this.atomRoots.push(atom);
             atom.hierarchy();
         }
-        /*
-        // let entityArrAtom = arr[EnumEntity.atom];
-        for (let [bizEntity] of entityAtomArr) {
-            (bizEntity as EntityAtom).scanTitlePrime();
-        }
-        this.atomBuilder.buildRootAtoms();
-        */
     }
 
     async loadUserDefaults() {

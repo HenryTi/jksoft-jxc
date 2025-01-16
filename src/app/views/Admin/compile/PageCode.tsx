@@ -8,6 +8,7 @@ import { Grammar, highlight } from 'prismjs';
 import { editorStyle, uqGrammar } from './grammar';
 import { PageAdmin } from './PageAdmin';
 import { ButtonAsyncIcon } from 'app/tool/ButtonAsyncIcon';
+import { loadFiles } from './loadFiles';
 
 export function PageCode() {
     const uqApp = useUqApp();
@@ -70,6 +71,7 @@ export function PageCode() {
         let { uqApi } = uqMan;
         await uqApi.source('');
     }
+    /*
     async function load(file: File): Promise<string> {
         return new Promise<string>((resolve) => {
             let fr = new FileReader();
@@ -79,13 +81,17 @@ export function PageCode() {
             }
         });
     }
+    */
     async function onFilesChange(evt: React.ChangeEvent<HTMLInputElement>) {
         let { files } = evt.target;
         if (files === null) return;
+        let fullContent = code + await loadFiles(files);
+        /*
         let fullContent = code;
         for (let file of files) {
             fullContent += await load(file);
         }
+        */
         fileInput.current.value = '';
         setCode(fullContent);
     }

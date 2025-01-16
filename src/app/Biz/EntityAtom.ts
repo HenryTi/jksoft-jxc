@@ -6,6 +6,7 @@ export abstract class EntityID extends Entity {
     private _fork: EntityFork;
     readonly subClasses: EntityID[] = [];
     superClass: EntityID;
+    rootClass: EntityID;
     titleBuds: BizBud[];
     primeBuds: BizBud[];
     uniques: string[];
@@ -27,6 +28,22 @@ export abstract class EntityID extends Entity {
 
     set fork(fork: EntityFork) {
         this._fork = fork;
+    }
+
+    budFromName(name: string): BizBud {
+        let bud = this.budColl[name];
+        if (bud !== undefined) return bud;
+        if (this.superClass !== undefined) return this.superClass.budFromName(name);
+    }
+
+    getLeaf(leaf: string): EntityID {
+        if (this.subClasses.length === 0) {
+            if (this.name === leaf) return this;
+        }
+        for (let sub of this.subClasses) {
+            let ret = sub.getLeaf(leaf);
+            if (ret !== undefined) return ret;
+        }
     }
 
     getAllLeafs() {
@@ -99,7 +116,7 @@ export abstract class EntityID extends Entity {
 
     protected fromExtends(extendsId: number) {
         if (extendsId === undefined) return;
-        let superClass = this.biz.entityFromId(extendsId) as EntityID; // .atomBuilder.initSuperClass(this, extendsId);
+        let superClass = this.biz.entityFromId(extendsId) as EntityID;
         if (superClass === undefined) debugger;
         superClass.subClasses.push(this);
         this.superClass = superClass;
@@ -112,10 +129,21 @@ export abstract class EntityID extends Entity {
     }
 
     hierarchy() {
-        // this.buildSelf();
         for (let sub of this.subClasses) {
             sub.mergeFromSuperClass();
             sub.hierarchy();
+        }
+        this.setRoot();
+    }
+
+    private setRoot() {
+        if (this.rootClass !== undefined) return;
+        if (this.superClass === undefined) {
+            this.rootClass = this;
+        }
+        else {
+            this.superClass.setRoot();
+            this.rootClass = this.superClass.rootClass;
         }
     }
 
@@ -125,16 +153,6 @@ export abstract class EntityID extends Entity {
         this.mergeBudGroupsFromSuperClass();
     }
 
-    /*
-    private buildSelf() {
-        let buds: BizBud[] = [];
-        this.mergeTitlePrime(buds, {}, true);
-        this.titleBuds = buds;
-        buds = [];
-        this.mergeTitlePrime(buds, {}, false);
-        this.primeBuds = buds;
-    }
-    */
     private mergeTitleFromSuperClass() {
         this.titleBuds = this.mergeTitlePrime(this.titleBuds, this.superClass.titleBuds);
     }

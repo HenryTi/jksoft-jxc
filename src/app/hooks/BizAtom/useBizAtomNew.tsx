@@ -83,7 +83,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
         const modal = useModal();
         async function actSave(entityAtom: EntityAtom, no: string, data: any, budValues: [BizBud, number | string][]) {
             const { ex } = data;
-            let ret = await uq.SaveAtom.submit({ atomPhrase: entityAtom.id, base: undefined, no, ex });
+            let ret = await uq.SaveAtom.submit({ rootPhrase: entityAtom.rootClass.id, phrase: entityAtom.id, no, ex });
             let promises = budValues.map(async ([bud, value]) => {
                 await saveBudValue(ret, bud, value);
             });
