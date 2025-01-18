@@ -1,4 +1,4 @@
-import { BizBud, Entity, EntityAtom, EntityOptions, EnumBudType } from "app/Biz";
+import { BizBud, BudOptions, Entity, EntityAtom, EntityOptions, EnumBudType } from "app/Biz";
 import { AtomData, AtomRow, Col, EnumError, ErrorCol, ErrorRow, ImportAtom, PropValue, RefAtom } from "./ImportAtom";
 import { getDays } from "app/tool";
 import { BizPhraseType } from "uqs/UqDefault";
@@ -210,8 +210,8 @@ export class Parser {
             case EnumBudType.dec: return this.budNumberValue(v);
             case EnumBudType.char:
             case EnumBudType.str: return v;
-            case EnumBudType.radio: return this.budRadioValue(v);
-            case EnumBudType.check: return this.budCheckValue(v);
+            case EnumBudType.radio: return this.budRadioValue(bud, v);
+            case EnumBudType.check: return this.budCheckValue(bud, v);
             case EnumBudType.date: return this.budDateValue(v);
             case EnumBudType.datetime: return this.budDateTimeValue(v);
             case EnumBudType.ID:
@@ -235,26 +235,18 @@ export class Parser {
         return date;
     }
 
-    private parseOptionsValue(v: string): [EntityOptions, string] {
-        let parts = v.split('.');
-        if (parts.length !== 2) return;
-        let optionsEntity = this.rootEntity.biz.entities[parts[0]];
-        if (optionsEntity === undefined) return;
-        if (optionsEntity.bizPhraseType !== BizPhraseType.options) return;
-        let options = optionsEntity as EntityOptions;
-        return [options, parts[1]];
-    }
-
-    private budRadioValue(v: string) {
-        let [options, value] = this.parseOptionsValue(v);
-        let optionItem = options.items.find(item => item.name === value);
+    private budRadioValue(bud: BizBud, v: string) {
+        const { budDataType } = bud;
+        const { options } = budDataType as BudOptions;
+        let optionItem = options.items.find(item => item.name === v);
         if (optionItem === undefined) return;
         return optionItem.id;
     }
 
-    private budCheckValue(v: string) {
-        let [options, items] = this.parseOptionsValue(v);
-        let parts = items.split('+');
+    private budCheckValue(bud: BizBud, v: string) {
+        const { budDataType } = bud;
+        const { options } = budDataType as BudOptions;
+        let parts = v.split('+');
         let ret: number[] = [];
         for (let p of parts) {
             p = p.trim();

@@ -116,7 +116,7 @@ class EntityStore {
         let entity = getAtomValue(this.atomEntity);
         let code = getAtomValue(this.atomCode);
         this.modal.open(<PageLogs entity={entity} code={code} />);
-        this.setSubmitDisabled(true);
+        this.setSubmitDisabled(false);
     }
 
     get entity() {

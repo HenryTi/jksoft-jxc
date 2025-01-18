@@ -100,7 +100,7 @@ export class UqApp extends UqAppBase<UQs> {
     }
 
     _notifyCounts = atom<{ [phrase: number | BizPhraseType]: number }>({});
-    get autoRefresh() {
+    get refreshAction() {
         return async (): Promise<void> => {
             let { ret } = await this.uq.GetPendsNotify.query({});
             let nc = getAtomValue(this._notifyCounts);

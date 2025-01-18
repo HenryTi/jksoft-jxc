@@ -182,7 +182,7 @@ export class BudIDIO extends BudDataNumber {
         this.bizAtom = biz.entityFromId(this.atom);
     }
 }
-abstract class BudOptions extends BudDataType {
+export abstract class BudOptions extends BudDataType {
     options: EntityOptions;
     get dataType(): 'string' | 'number' { return; }
     override scan(biz: Biz, bud: BizBud) {

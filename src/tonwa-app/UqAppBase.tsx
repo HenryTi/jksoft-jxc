@@ -53,7 +53,9 @@ export abstract class UqAppBase<UQS = any> {
         stack: atom([] as [JSX.Element, (value: any | PromiseLike<any>) => void, (result: any) => void][]),
     }
     readonly pageCache: PageCache;
-    get autoRefresh(): () => Promise<void> { return undefined };
+    readonly autoRefresh: AutoRefresh;
+
+    get refreshAction(): () => Promise<void> { return undefined };
 
     uqsMan: UQsMan;
     guest: number;
@@ -83,6 +85,7 @@ export abstract class UqAppBase<UQS = any> {
         let user = this.localData.user.get();
         setAtomValue(this.user, user);
         this.pageCache = new PageCache();
+        this.autoRefresh = new AutoRefresh(this);
     }
 
     abstract get pathLogin(): string;
@@ -120,8 +123,8 @@ export abstract class UqAppBase<UQS = any> {
             this.net.setCenterToken(user.id, user.token);
             this.localData.user.set(user);
             await this.loadOnLogined();
-            let autoRefresh = new AutoRefresh(this, this.autoRefresh);
-            autoRefresh.start();
+            // let autoRefresh = new AutoRefresh(this, this.refreshAction);
+            this.autoRefresh.start();
         }
         else {
             this.net.clearCenterToken();

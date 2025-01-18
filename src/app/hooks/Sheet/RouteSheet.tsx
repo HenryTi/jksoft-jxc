@@ -108,7 +108,7 @@ class RouteConsole extends SheetConsole {
         this.removeFromCache(valRow.id);
         let { caption, name } = this.entitySheet;
         if (caption === undefined) caption = name;
-        this.uqApp.autoRefresh?.();
+        this.uqApp.refreshAction?.();
         const onModalClose = (ret: any) => {
             this.modal.close(ret);
         }

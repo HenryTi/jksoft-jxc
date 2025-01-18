@@ -1,4 +1,5 @@
 import { BizBud, Entity, EntityAtom } from "app/Biz";
+import { atom } from "jotai";
 import { wait } from "tonwa-com";
 
 export type PropValue = string | number | (number[]);
@@ -20,6 +21,11 @@ export interface Col {
     header: string;
     bud: BizBud;
 }
+export interface State {
+    atomIndex: number;
+    ln: number;
+    error: any;
+}
 export class AtomData {
     readonly importAtom: ImportAtom;
     entityLeaf: EntityAtom;
@@ -30,6 +36,7 @@ export class AtomData {
     errorRows: ErrorRow[];      // 行号，字段号
     refAtoms: RefAtom[]; // refEntity, no, row index, prop index
     ln: number;         // 起始文字行
+    stateAtom = atom<State>();
 
     constructor(importAtom: ImportAtom) {
         this.importAtom = importAtom;
@@ -59,7 +66,7 @@ export class AtomData {
         return cols;
     }
 
-    async upload(importAtom: ImportAtom, step: (rowGroup: AtomRow[]) => void) {
+    async upload(importAtom: ImportAtom, step: (rowGroup: AtomRow[], error?: any) => void) {
         const { entityLeaf, rows, cols } = this;
         const phrase = entityLeaf.id;
         const { rootEntity } = importAtom;
@@ -67,7 +74,7 @@ export class AtomData {
         const { uq } = entityLeaf.biz;
         let promises: Promise<any>[] = [];
         let rowGroup: AtomRow[] = [];
-        const maxRows = 1;
+        const maxRows = 8;
         let serverError: any;
         for (let row of rows) {
             if (promises.length === maxRows) {
@@ -80,25 +87,25 @@ export class AtomData {
             rowGroup.push(row);
             promises.push((async () => {
                 try {
-                    await wait(1000);
-                    /*
+                    let arrProps = props.filter(v => v !== undefined && v !== '').map((value, index) => ([cols[index + 2].bud.id, value]));
                     let ret = await uq.SaveAtomAndProps.submit({
                         rootPhrase,
                         phrase,
                         no,
                         ex,
-                        props: props.map((value, index) => ([cols[index].bud.id, value]))
+                        props: arrProps
                     });
-                    */
                 }
                 catch (e) {
                     serverError = e;
                 }
             })());
-            if (serverError !== undefined) break;
+            if (serverError !== undefined) {
+                step(rowGroup, serverError);
+                break;
+            }
         }
         if (promises.length > 0) await Promise.all(promises);
-        return serverError;
     }
 }
 

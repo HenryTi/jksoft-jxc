@@ -4,19 +4,22 @@ const gaps = [10, 4, 8, 8, 16, 16, 32, 32, 60];
 
 export class AutoRefresh {
     private readonly uqApp: UqAppBase;
-    private readonly refreshAction: () => Promise<void>;
+    // private readonly refreshAction: () => Promise<void>;
     private timer: any;
+    private paused: boolean;
 
-    constructor(uqApp: UqAppBase, refreshAction: () => Promise<void>) {
+    constructor(uqApp: UqAppBase) {
         this.uqApp = uqApp;
-        this.refreshAction = refreshAction;
+        // this.refreshAction = refreshAction;
+        this.paused = true;
     }
 
     start() {
-        if (this.refreshAction === undefined) return;
+        const { refreshAction } = this.uqApp;
+        if (refreshAction === undefined) return;
         this.stop();
         this.timer = setInterval(this.callTick, 1000);
-        this.refreshAction();
+        refreshAction();
     }
 
     stop() {
@@ -25,12 +28,22 @@ export class AutoRefresh {
         this.timer = undefined;
     }
 
+    pause() {
+        this.paused = true;
+    }
+
+    resume() {
+        this.paused = false;
+    }
+
     private refreshTime: number = Date.now() / 1000;
     // 数据服务器提醒客户端刷新，下面代码重新调入的数据
     refresh = async () => {
+        if (this.paused === true) return;
         let d = Date.now() / 1000;
         if (d - this.refreshTime < 30) return;
-        await this.refreshAction();
+        const { refreshAction } = this.uqApp;
+        await refreshAction();
         this.refreshTime = d;
     }
 
