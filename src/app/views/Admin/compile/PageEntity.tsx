@@ -15,7 +15,7 @@ import { atom, useAtomValue, WritableAtom } from 'jotai';
 import { BizPhraseType, UqExt } from 'uqs/UqDefault';
 import { adminData } from '../adminData';
 import { ViewSite } from 'app/views/Site';
-import { PageImportAtom } from './PageImportAtom';
+import { PageImportAtom } from './importData';
 
 class Nav {
     readonly supers: Entity[] = [];
