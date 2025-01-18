@@ -1,6 +1,6 @@
 import { Page } from "tonwa-app";
 import '../code-editor-style.css';
-import { FA, setAtomValue } from "tonwa-com";
+import { ButtonAsync, FA, setAtomValue } from "tonwa-com";
 import { AtomData, ImportAtom } from "./ImportAtom";
 import { useState } from "react";
 import { useAtomValue } from "jotai";
@@ -18,7 +18,7 @@ export function PageImportInfo({ importAtom }: { importAtom: ImportAtom; }) {
     if (hasError === true) {
         viewTop = <div className="p-3 border-bottom">
             <FA name="exclamation-circle me-3" className="text-danger" />
-            <span className="text-info">请先修正数据问题，然后再导入</span>
+            <span className="text-info">请先处理数据，再导入</span>
         </div>
     }
     else if (buttonVisible === true) {
@@ -63,7 +63,10 @@ export function PageImportInfo({ importAtom }: { importAtom: ImportAtom; }) {
 }
 
 function ViewAtomData({ atomData }: { atomData: AtomData; }) {
-    const { importAtom, entityLeaf, entityName, cols, rows, errorRows, errorCols, stateAtom } = atomData;
+    const { importAtom, entityLeaf, entityName, cols, rows
+        , errorRows, errorCols, stateAtom
+        , errorAtoms, idsLoadedAtom, hasAtomCols } = atomData;
+    const idsLoaded = useAtomValue(idsLoadedAtom);
     let vCaption = <>{entityName}</>;
     let vCenter;
     let vRight = <span>共{rows.length}行</span>;
@@ -133,20 +136,38 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
         </div>
     }
     else {
+        if (hasAtomCols === true) {
+            if (idsLoaded === false) {
+                async function onGetAtomIds() {
+                    await atomData.getAtomIds();
+                }
+                vCenter = <ButtonAsync className="btn btn-success" onClick={onGetAtomIds}>获取Atom IDs</ButtonAsync>;
+            }
+            else if (errorAtoms === undefined) {
+                vCenter = <span className="text-success">已获得Atom IDs</span>;
+            }
+            else {
+                vCenter = <span className="text-danger">Atom IDs错误</span>;
+            }
+        }
+
         const { name, caption } = entityLeaf;
         vCaption = <>
             <b>{caption}</b>
             {caption === name ? undefined : <span className="text-info">&nbsp; {name}</span>}
         </>;
     }
-    let vErrorCols: any;
+    let vError: any;
     if (errorCols.length > 0) {
-        vErrorCols = <div className="d-flex flex-wrap px-3 py-2">
+        vError = <div className="d-flex flex-wrap px-3 py-2">
             <span className="me-3">无效列：</span>
             {errorCols.map((v, index) => {
                 return <span key={index} className="mx-1">{v.header}</span>
             })}
         </div>;
+    }
+    if (errorAtoms !== undefined) {
+        vError = <div>errAtoms</div>;
     }
     return <div className="px-3 py-2 border-bottom">
         <div className="d-flex align-items-center">
@@ -154,7 +175,7 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
             <div className="flex-fill">{vCenter}</div>
             {vRight}
         </div>
-        {vErrorCols}
+        {vError}
         {vBottom}
         {vState}
     </div>;

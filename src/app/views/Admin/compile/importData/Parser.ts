@@ -1,5 +1,5 @@
 import { BizBud, BudOptions, Entity, EntityAtom, EntityOptions, EnumBudType } from "app/Biz";
-import { AtomData, AtomRow, Col, EnumError, ErrorCol, ErrorRow, ImportAtom, PropValue, RefAtom } from "./ImportAtom";
+import { AtomData, AtomRow, Col, EnumError, ErrorCol, ErrorRow, ImportAtom, PropValue } from "./ImportAtom";
 import { getDays } from "app/tool";
 import { BizPhraseType } from "uqs/UqDefault";
 
@@ -144,7 +144,6 @@ export class Parser {
             let cols = this.parseCols();
             let rows: AtomRow[] = [];
             let errorRows: ErrorRow[] = [];
-            let refAtoms: RefAtom[] = [];
             for (; ;) {
                 this.readWord(this.delimiter);
                 let no = this.word;
@@ -165,15 +164,9 @@ export class Parser {
                         if (bud !== undefined) {
                             let v = this.budValue(bud, this.word);
                             if (v === null) {
-                                this.budAtomValue(refAtoms, rows.length, props.length, this.word);
-                                props.push(undefined);
-                            }
-                            else if (v !== undefined) {
-                                props.push(v);
-                            }
-                            else {
                                 errs.push([colIndex, EnumError.invalidValue]);
                             }
+                            props.push(v);
                         }
                         else {
                             errs.push([colIndex, EnumError.nonexists]);
@@ -196,7 +189,6 @@ export class Parser {
             atomData.cols = cols;
             atomData.rows = rows;
             atomData.errorRows = errorRows;
-            atomData.refAtoms = refAtoms;
             atomData.ln = ln;
             arrAtomData.push(atomData);
             if (this.sep === Sep.eof) break;
@@ -215,7 +207,7 @@ export class Parser {
             case EnumBudType.date: return this.budDateValue(v);
             case EnumBudType.datetime: return this.budDateTimeValue(v);
             case EnumBudType.ID:
-            case EnumBudType.atom: return null;
+            case EnumBudType.atom: return v;
         }
     }
 
@@ -255,17 +247,6 @@ export class Parser {
             ret.push(optionItem.id);
         }
         return ret;
-    }
-
-    private budAtomValue(refAtoms: [EntityAtom, string, number, number][], rowIndex: number, propIndex: number, v: string) {
-        let p = v.indexOf('.');
-        if (p <= 0) return;
-        let e = v.substring(0, p);
-        let no = v.substring(p + 1);
-        let entity = this.rootEntity.biz.entities[e];
-        if (entity === undefined) return;
-        if (entity.bizPhraseType !== BizPhraseType.atom) return;
-        refAtoms.push([entity as EntityAtom, no, rowIndex, propIndex]);
     }
 
     private parseHead(): EntityAtom {

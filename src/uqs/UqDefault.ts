@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Jan 16 2025 17:12:04 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Sat Jan 18 2025 18:29:01 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -262,18 +262,16 @@ export interface ResultSaveAtomAndProps {
 	ret: ReturnSaveAtomAndPropsRet[];
 }
 
-export interface ParamGetAtomNos {
-	arr: {
-		entity: number;
-		no: string;
-	}[];
-
+export interface ParamGetAtomIds {
+	entity: number;
+	arrNo: any;
 }
-export interface ReturnGetAtomNosRet {
+export interface ReturnGetAtomIdsRet {
+	no: string;
 	id: number;
 }
-export interface ResultGetAtomNos {
-	ret: ReturnGetAtomNosRet[];
+export interface ResultGetAtomIds {
+	ret: ReturnGetAtomIdsRet[];
 }
 
 export interface ParamSaveBudValue {
@@ -1860,7 +1858,7 @@ export interface UqExt extends Uq {
 	GetAdminBook: UqQuery<ParamGetAdminBook, ResultGetAdminBook>;
 	SaveAtom: UqAction<ParamSaveAtom, ResultSaveAtom>;
 	SaveAtomAndProps: UqAction<ParamSaveAtomAndProps, ResultSaveAtomAndProps>;
-	GetAtomNos: UqAction<ParamGetAtomNos, ResultGetAtomNos>;
+	GetAtomIds: UqAction<ParamGetAtomIds, ResultGetAtomIds>;
 	SaveBudValue: UqAction<ParamSaveBudValue, ResultSaveBudValue>;
 	SaveBudCheck: UqAction<ParamSaveBudCheck, ResultSaveBudCheck>;
 	SaveBudRadio: UqAction<ParamSaveBudRadio, ResultSaveBudRadio>;
@@ -2540,32 +2538,30 @@ export const uqSchema={
             }
         ]
     },
-    "getatomnos": {
-        "name": "GetAtomNos",
+    "getatomids": {
+        "name": "GetAtomIds",
         "type": "action",
         "private": false,
         "sys": true,
-        "fields": [] as any,
-        "arrs": [
+        "fields": [
             {
-                "name": "arr",
-                "fields": [
-                    {
-                        "name": "entity",
-                        "type": "id"
-                    },
-                    {
-                        "name": "no",
-                        "type": "char",
-                        "size": 100
-                    }
-                ]
+                "name": "entity",
+                "type": "id"
+            },
+            {
+                "name": "arrNo",
+                "type": "json"
             }
         ],
         "returns": [
             {
                 "name": "ret",
                 "fields": [
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 100
+                    },
                     {
                         "name": "id",
                         "type": "id"

@@ -1,9 +1,9 @@
-import { BizBud, Entity, EntityAtom } from "app/Biz";
+import { BizBud, BudID, Entity, EntityAtom, EnumBudType } from "app/Biz";
 import { atom } from "jotai";
-import { wait } from "tonwa-com";
+import { getAtomValue, setAtomValue } from "tonwa-com";
+import { ReturnGetAtomIdsRet } from "uqs/UqDefault";
 
 export type PropValue = string | number | (number[]);
-export type RefAtom = [EntityAtom, string, number, number]; // , no, rowIndex, propIndex
 export type ErrorCol = [number, EnumError];
 export type ErrorRow = [number, ErrorCol[]];
 export enum EnumError {
@@ -34,12 +34,22 @@ export class AtomData {
     cols: Col[];
     rows: AtomRow[];
     errorRows: ErrorRow[];      // 行号，字段号
-    refAtoms: RefAtom[]; // refEntity, no, row index, prop index
+    errorAtoms: { [col: number]: number[] };
     ln: number;         // 起始文字行
-    stateAtom = atom<State>();
+    readonly stateAtom = atom<State>();
+    readonly idsLoadedAtom = atom<boolean>(false);
 
     constructor(importAtom: ImportAtom) {
         this.importAtom = importAtom;
+    }
+
+    get hasAtomCols() {
+        for (let i = 2; i < this.cols.length; i++) {
+            const col = this.cols[i];
+            const { budDataType } = col.bud;
+            if (budDataType.type === EnumBudType.atom) return true;
+        }
+        return false;
     }
 
     get hasError() {
@@ -51,6 +61,12 @@ export class AtomData {
         if (exCol.header.toLowerCase() !== 'ex') return true;
         for (let i = 2; i < this.cols.length; i++) {
             if (this.cols[i].bud === undefined) return true;
+        }
+        if (this.hasAtomCols === true) {
+            let idsLoaded = getAtomValue(this.idsLoadedAtom);
+            if (idsLoaded === true) {
+                if (this.errorAtoms !== undefined) return true;
+            }
         }
         return false;
     }
@@ -107,6 +123,58 @@ export class AtomData {
         }
         if (promises.length > 0) await Promise.all(promises);
     }
+
+    async getAtomIds() {
+        for (let i = 2; i < this.cols.length; i++) {
+            const col = this.cols[i];
+            const { budDataType } = col.bud;
+            if (budDataType.type !== EnumBudType.atom) continue;
+            const { entityID } = budDataType as BudID;
+            await this.getAtomColIds(entityID, i - 2);
+        }
+    }
+
+    private async getAtomColIds(atom: EntityAtom, propIndex: number) {
+        const { rootEntity } = this.importAtom;
+        const noColl: { [no: string]: number[] } = {}; // no: rowIndex array;
+        const arrNo: string[] = [];
+        for (let i = 0; i < this.rows.length; i++) {
+            let row = this.rows[i];
+            let no = row.props[propIndex] as string;
+            if (no === undefined) continue;
+            let arrRowIndex = noColl[no];
+            if (arrRowIndex === undefined) {
+                noColl[no] = arrRowIndex = [];
+                arrNo.push(no);
+            }
+            arrRowIndex.push(i);
+        }
+
+        let results = await rootEntity.biz.uq.GetAtomIds.submitReturns({
+            entity: atom.id,
+            arrNo,
+        });
+        const { ret } = results;
+        const errorAtomRows: number[] = [];
+        for (let { no, id } of ret) {
+            let rows = noColl[no];
+            for (let rowIndex of rows) {
+                if (!id) {
+                    errorAtomRows.push(rowIndex);
+                }
+                else {
+                    this.rows[rowIndex].props[propIndex] = id;
+                }
+            }
+        }
+        if (errorAtomRows.length > 0) {
+            if (this.errorAtoms === undefined) {
+                this.errorAtoms = {};
+            }
+            this.errorAtoms[propIndex + 2] = errorAtomRows;
+        }
+        setAtomValue(this.idsLoadedAtom, true);
+    }
 }
 
 export class ImportAtom {
@@ -122,40 +190,5 @@ export class ImportAtom {
             if (atomData.hasError === true) return true;
         }
         return false;
-    }
-
-    async loadAtomNos(atomData: AtomData) {
-        if (atomData.hasError === true) return;
-        let coll: { [id: number]: { [no: string]: RefAtom } } = {};
-        let arr: RefAtom[] = [];
-        let { refAtoms } = atomData;
-        for (let refAtom of refAtoms) {
-            let [entity, no] = refAtom;
-            const { id } = entity;
-            let noColl = coll[id];
-            if (noColl === undefined) coll[id] = noColl = {};
-            if (noColl[no] === undefined) {
-                noColl[no] = refAtom;
-                arr.push(refAtom);
-            }
-        }
-        let results = await this.rootEntity.biz.uq.GetAtomNos.submit({
-            arr: arr.map(([entity, no]) => ({
-                entity: entity.rootClass.id, no
-            }))
-        });
-        let { length } = results;
-        for (let i = 0; i < length; i++) {
-            let [, , rowIndex, propIndex] = arr[i];
-            let row = atomData.rows[rowIndex];
-            let ret = results[i];
-            let retId = ret.id;
-            if (retId === 0) {
-                atomData.errorRows.push([rowIndex, [[propIndex, EnumError.invalidValue]]]);
-            }
-            else {
-                row.props[propIndex] = retId;
-            }
-        }
     }
 }
