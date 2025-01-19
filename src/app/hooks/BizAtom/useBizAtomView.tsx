@@ -5,12 +5,13 @@ import { FA, Sep, from62, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { EditBudLabelRow, EditAtomField } from "../Bud";
 import { ViewBudRowProps } from "../Bud";
-import { BizBud, EntityID } from "app/Biz";
+import { BizBud, EntityAtom, EntityID } from "app/Biz";
 import { Tabs, Tab } from "react-bootstrap";
 import { ViewForkListAutoLoad } from "./fork";
 import { AtomIDValue } from "./AtomIDValue";
 import { ValuesBudsEditing } from "../BudsEditing";
 import { ViewIDLabel } from "../tool";
+import { AtomStore } from "./AtomStore";
 
 export function useBizAtomView(options: OptionsUseBizAtom & { id?: number; bottom?: any; }) {
     const { id: pageId } = useParams();
@@ -82,6 +83,115 @@ function useBizAtomViewFromId(options: OptionsUseBizAtom & { id: number; } & { b
             <ViewIDEdit entity={entityAtom} value={state} readOnly={readOnly} />
         </Page>;
     }
+}
+function useAtomBase(props: OptionsUseBizAtom & { id: number; }) {
+    const modal = useModal();
+    const [state, setState] = useState<AtomIDValue>(undefined);
+    const { entityAtom, id, NOLabel, exLabel } = props;
+    const atomStore = new AtomStore(modal, entityAtom);
+    useEffectOnce(() => {
+        (async () => {
+            let ret = await atomStore.getAtom(id);
+            setState(ret);
+        })();
+    });
+    if (state === undefined) {
+        return {
+            view: <ViewSpinner />,
+            page: <PageSpinner />,
+        };
+    }
+    const { main, buds } = state;
+    let { name, caption } = entityAtom;
+    const fieldRows: ViewBudRowProps[] = [
+        { name: 'ex', label: exLabel ?? '名称', type: 'string', bold: true, },
+        { name: 'no', label: NOLabel ?? '编号', readonly: true, type: 'string', },
+        { name: 'id', label: <ViewIDLabel />, readonly: true, type: 'number', },
+    ];
+    const vFieldRows = <div className={cnColumns2}>
+        {
+            fieldRows.map((v, index) => <div key={index} className="col">
+                <EditAtomField key={index} {...v} id={id} value={main[v.name]}
+                    saveField={atomStore.saveField} saveBud={atomStore.saveBudValue} labelSize={0} />
+                <Sep />
+            </div>)
+        }
+    </div>;
+    return { state, vFieldRows }
+}
+/*
+export function ViewAtom(props: OptionsUseBizAtom & { id: number; } & { bottom?: any; }) {
+    const modal = useModal();
+    const { NOLabel, exLabel, id, bottom, readOnly, entityAtom } = props;
+    const [state, setState] = useState<AtomIDValue>(undefined);
+    const atomStore = new AtomStore(modal, entityAtom);
+    useEffectOnce(() => {
+        (async () => {
+            let ret = await atomStore.getAtom(id);
+            setState(ret);
+        })();
+    });
+    if (state === undefined) {
+        return {
+            view: <ViewSpinner />,
+            page: <PageSpinner />,
+        };
+    }
+    const { main, buds } = state;
+    let { name, caption } = entityAtom;
+    const fieldRows: ViewBudRowProps[] = [
+        { name: 'ex', label: exLabel ?? '名称', type: 'string', bold: true, },
+        { name: 'no', label: NOLabel ?? '编号', readonly: true, type: 'string', },
+        { name: 'id', label: <ViewIDLabel />, readonly: true, type: 'number', },
+    ];
+    const vFieldRows = <div className={cnColumns2}>
+        {
+            fieldRows.map((v, index) => <div key={index} className="col">
+                <EditAtomField key={index} {...v} id={id} value={main[v.name]}
+                    saveField={atomStore.saveField} saveBud={atomStore.saveBudValue} labelSize={0} />
+                <Sep />
+            </div>)
+        }
+    </div>;
+    return <>
+        {vFieldRows}
+        <ViewIDBuds entity={entityAtom} value={state} readOnly={readOnly} />
+        {bottom}
+    </>;
+}
+*/
+export function PageAtomView(props: OptionsUseBizAtom & { id: number; } & { bottom?: any; }) {
+    const modal = useModal();
+    const { entityAtom, readOnly, bottom } = props;
+    const { caption } = entityAtom;
+    const { state, vFieldRows } = useAtomBase(props);
+    if (state === undefined) return <PageSpinner />;
+    let right: any;
+    if (entityAtom.fork) {
+        function onRight() {
+            modal.open(<PageAtomEdit {...props} />);
+        }
+        right = <button className="btn btn-sm btn-success me-2" onClick={onRight}>
+            <FA name="pencil" />
+        </button>;
+    }
+    return <Page header={caption} right={right}>
+        {vFieldRows}
+        <ViewIDBuds entity={entityAtom} value={state} readOnly={readOnly} />
+        {bottom}
+    </Page>;
+}
+
+export function PageAtomEdit(props: OptionsUseBizAtom & { id: number; } & { bottom?: any; }) {
+    const { entityAtom, readOnly, bottom } = props;
+    const { caption } = entityAtom;
+    const { state, vFieldRows } = useAtomBase(props);
+    if (state === undefined) return <PageSpinner />;
+    return <Page header={caption + ' - 详情'}>
+        {vFieldRows}
+        <ViewIDEdit entity={entityAtom} value={state} readOnly={readOnly} />
+        {bottom}
+    </Page>;
 }
 
 export function ViewIDEdit({ entity, value, readOnly }: { entity: EntityID; value: AtomIDValue; readOnly: boolean; }) {

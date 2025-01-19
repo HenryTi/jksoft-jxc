@@ -7,7 +7,7 @@ import { OptionsUseBizAtom } from './useBizAtom';
 import { pathAtom, useAtomStore } from './AtomStore';
 import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtomBold } from '../View';
 import { RowCols } from '../tool';
-import { useBizAtomView } from './useBizAtomView';
+import { PageAtomView, useBizAtomView } from './useBizAtomView';
 import { useState } from 'react';
 import { ButtonAtomBase } from './atomBase';
 
@@ -95,7 +95,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
         function onClick() {
             // navigate(`../${pathAtomView(phrase, id)}`);
             // store.modal.open(page);
-            alert('no page');
+            store.modal.open(<PageAtomView atomName="" entityAtom={entityAtom} id={id} />)
         }
         return <div className="text-decoration-none px-3 py-2 cursor-pointer" onClick={onClick}>
             <div>
@@ -115,6 +115,7 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
             sortField={sortField}
             ViewItem={ViewItem}
             none={none}
+            pageSize={100}
         >
             {top}
             <SearchBox className="px-3 py-1 border-bottom tonwa-bg-gray-2"

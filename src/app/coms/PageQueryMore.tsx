@@ -174,15 +174,15 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
             current.items = newItems;
         }
     }
-    let scrolling = false;
     function scrollIntoView(divId: string) {
         setTimeout(() => {
             let div = document.getElementById(divId);
             div?.scrollIntoView();
-            scrolling = false;
-        }, 20);
+        }, 50);
     }
     async function onScrollBottom(scroller: Scroller) {
+        scrollIntoView('$$bottom');
+        await callQuery(true);
         return;
     }
     ItemView = ItemView ?? function ({ value }: { value: R; }) {
@@ -194,7 +194,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
     if (Bottom) bottom = <Bottom items={items} />;
 
     let content: any;
-    if (loading === true) {
+    if (loading === true && !items) {
         content = <div>
             <Spinner className="m-3 text-info" />
             <div id="$$bottom" />
@@ -204,6 +204,8 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         if (items.length > 0) {
             content = <>
                 <List items={items} ViewItem={ItemView} onItemClick={onItemClick} onItemSelect={onItemSelect} itemKey={itemKey} />
+                <Spinner className="m-3 text-info" />
+                <div id="$$bottom" />
             </>;
         }
         else {

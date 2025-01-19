@@ -18,17 +18,18 @@ export function PageBase(props: PageProps) {
     const uqApp = useUqAppBase();
     let { children, header, back, right, top, footer, onClosed, hideScroll } = props;
     const divRef = useRef<HTMLDivElement>();
-    const { pathname } = document.location;
     useEffectOnce(() => {
         let { current: div } = divRef;
         if (!div) return;
         let elScroll = getScrollableParent(div);
         if (!elScroll) return;
         if (hideScroll === true) {
-            window.onscroll = undefined;
+            //window.onscroll = undefined;
+            elScroll.onscroll = undefined;
         }
         else {
-            window.onscroll = onScroll;
+            // window.onscroll = onScroll;
+            elScroll.onscroll = onScroll;
         }
 
         let bottomTimeSave = 0;
@@ -38,7 +39,8 @@ export function PageBase(props: PageProps) {
             let { onScroll: propsOnScroll, onScrollTop, onScrollBottom } = props;
             if (propsOnScroll) propsOnScroll(e);
 
-            let el = (e.target as Document).scrollingElement as HTMLBaseElement;
+            // let el = (e.target as Document).scrollingElement as HTMLBaseElement;
+            let el = e.target;
             const { scrollTop, offsetHeight, scrollHeight } = el;
             if (scrollTop > scrollTopSave) {
                 scrollTopSave = scrollTop;
@@ -161,6 +163,7 @@ export function Page(props: PageProps) {
 }
 
 function isScrollable(ele: HTMLElement) {
+    return ele.classList.contains('tonwa-page');
     const hasScrollableContent = ele.scrollHeight > ele.clientHeight;
 
     const overflowYStyle = window.getComputedStyle(ele).overflowY;

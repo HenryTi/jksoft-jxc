@@ -71,13 +71,13 @@ export class AtomStore extends EntityStore<EntityAtom> {
             main, buds
         };
     }
-    /*
-    async saveField(id: number, name: string, value: string | number) {
+
+    saveField = async (id: number, name: string, value: string | number) => {
         const { uq } = this.entity;
         await uq.ActIDProp(uq.Atom, id, name, value);
     }
 
-    async saveBudValue(id: number, bizBud: BizBud, value: string | number) {
+    saveBudValue = async (id: number, bizBud: BizBud, value: string | number) => {
         let int: number, dec: number, str: string;
         const { budDataType, id: phraseId } = bizBud;
         switch (budDataType.type) {
@@ -93,7 +93,7 @@ export class AtomStore extends EntityStore<EntityAtom> {
             int, dec, str
         });
     }
-    */
+
     readonly searchItems: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
         let newParam = { phrase: this.entity.id, ...param };
         let query = this.entity.uq.GetIDList;
