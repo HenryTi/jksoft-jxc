@@ -1,10 +1,10 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { PageQueryMore } from '../../coms';
-import { FA, List, SearchBox, useEffectOnce } from 'tonwa-com';
-import { EntityAtom, EntityID } from 'app/Biz';
-import { Page, useModal } from 'tonwa-app';
-import { OptionsUseBizAtom, useBizAtom } from './useBizAtom';
-import { AtomStore, pathAtom, useAtomStore } from './AtomStore';
+import { FA, List, SearchBox } from 'tonwa-com';
+import { EntityID } from 'app/Biz';
+import { Page } from 'tonwa-app';
+import { OptionsUseBizAtom } from './useBizAtom';
+import { pathAtom, useAtomStore } from './AtomStore';
 import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtomBold } from '../View';
 import { RowCols } from '../tool';
 import { useBizAtomView } from './useBizAtomView';
@@ -91,10 +91,11 @@ export function useBizAtomList(options: OptionsUseBizAtom & OptionsList) {
     function ViewItem({ value: { id, phrase } }: { value: { id: number; phrase: number; } }) {
         // const navigate = useNavigate();
         // const atomValue = store.bizAtomColl[id];
-        const { page } = useBizAtomView({ atomName: entity.name, entityAtom: entity, id });
+        // const { page } = useBizAtomView({ atomName: entity.name, entityAtom: entity, id });
         function onClick() {
             // navigate(`../${pathAtomView(phrase, id)}`);
-            store.modal.open(page);
+            // store.modal.open(page);
+            alert('no page');
         }
         return <div className="text-decoration-none px-3 py-2 cursor-pointer" onClick={onClick}>
             <div>

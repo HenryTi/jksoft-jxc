@@ -92,7 +92,7 @@ export class AtomData {
         const { uq } = entityLeaf.biz;
         let promises: Promise<any>[] = [];
         let rowGroup: AtomRow[] = [];
-        const maxRows = 1;
+        const maxRows = 30;
         let serverError: any;
         for (let row of rows) {
             if (promises.length === maxRows) {

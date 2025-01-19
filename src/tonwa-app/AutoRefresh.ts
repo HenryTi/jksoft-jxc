@@ -39,7 +39,6 @@ export class AutoRefresh {
     private refreshTime: number = Date.now() / 1000;
     // 数据服务器提醒客户端刷新，下面代码重新调入的数据
     refresh = async () => {
-        if (this.paused === true) return;
         let d = Date.now() / 1000;
         if (d - this.refreshTime < 30) return;
         const { refreshAction } = this.uqApp;
@@ -57,6 +56,7 @@ export class AutoRefresh {
             if (this.gapIndex < gaps.length - 1) ++this.gapIndex;
             let { uqSites: uqUnit } = this.uqApp;
             if (uqUnit) {
+                if (this.paused === true) return;
                 let poked = await uqUnit.Poked();
                 if (poked === false) return;
                 this.gapIndex = 1;

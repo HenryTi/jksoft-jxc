@@ -78,13 +78,6 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
     if (state !== undefined) {
         const { ln, error } = state;
         if (error !== undefined) {
-            /*
-            let vError = '';
-            for (let i in error) {
-                let v = error[i];
-                vError += `${i}:${v}; `;
-            }
-            */
             vState = <div className="mt-2 text-primary">
                 第{ln}行, 导入错误: {error.message}
             </div>
@@ -168,7 +161,22 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
         </div>;
     }
     if (errorAtoms !== undefined) {
-        vError = <div>errAtoms</div>;
+        let vArr: any[] = [];
+        for (let i in errorAtoms) {
+            const errorAtom = errorAtoms[i];
+            const propIndex = Number(i) - 2;
+            const nos = errorAtom.slice(0, 100).map(v => {
+                let ln = v + atomData.ln;
+                `${ln}:${rows[v].props[propIndex]}`
+            });
+            vArr.push(<div key={i}>
+                {cols[i].header} {nos.join(', ')} {nos.length > 100 ? '...' : undefined}
+            </div>);
+        }
+        vError = <>
+            <div>没有找到编号</div>
+            {vArr}
+        </>;
     }
     return <div className="px-3 py-2 border-bottom">
         <div className="d-flex align-items-center">

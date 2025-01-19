@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Jan 18 2025 18:29:01 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Sun Jan 19 2025 11:53:06 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -236,7 +236,6 @@ export interface ResultGetAdminBook {
 }
 
 export interface ParamSaveAtom {
-	rootPhrase: number;
 	phrase: number;
 	no: string;
 	ex: string;
@@ -2466,10 +2465,6 @@ export const uqSchema={
         "private": false,
         "sys": true,
         "fields": [
-            {
-                "name": "rootPhrase",
-                "type": "id"
-            },
             {
                 "name": "phrase",
                 "type": "id"
