@@ -1,7 +1,6 @@
 import { BizBud, BudID, Entity, EntityAtom, EnumBudType } from "app/Biz";
 import { atom } from "jotai";
-import { getAtomValue, setAtomValue } from "tonwa-com";
-import { ReturnGetAtomIdsRet } from "uqs/UqDefault";
+import { setAtomValue } from "tonwa-com";
 
 export type PropValue = string | number | (number[]);
 export type ErrorCol = [number, EnumError];
@@ -52,7 +51,7 @@ export class AtomData {
         return false;
     }
 
-    get hasError() {
+    hasErrorAtom = atom((get) => {
         if (this.entityLeaf === undefined) return true;
         if (this.errorRows.length > 0) return true;
         if (this.cols.length < 2) return true;
@@ -63,13 +62,16 @@ export class AtomData {
             if (this.cols[i].bud === undefined) return true;
         }
         if (this.hasAtomCols === true) {
-            let idsLoaded = getAtomValue(this.idsLoadedAtom);
+            let idsLoaded = get(this.idsLoadedAtom);
             if (idsLoaded === true) {
                 if (this.errorAtoms !== undefined) return true;
             }
+            else {
+                return true;
+            }
         }
         return false;
-    }
+    });
 
     get errorCols() {
         let cols: Col[] = [];
@@ -90,7 +92,7 @@ export class AtomData {
         const { uq } = entityLeaf.biz;
         let promises: Promise<any>[] = [];
         let rowGroup: AtomRow[] = [];
-        const maxRows = 8;
+        const maxRows = 1;
         let serverError: any;
         for (let row of rows) {
             if (promises.length === maxRows) {
@@ -99,11 +101,16 @@ export class AtomData {
                 rowGroup = [];
                 promises = [];
             }
-            const { no, ex, props } = row;
             rowGroup.push(row);
             promises.push((async () => {
+                const { no, ex, props } = row;
+                let arrProps = props
+                    .map((value, index) => ([cols[index + 2].bud.id, value]))
+                    .filter(v => {
+                        const [, value] = v;
+                        return value !== undefined && value !== '';
+                    });
                 try {
-                    let arrProps = props.filter(v => v !== undefined && v !== '').map((value, index) => ([cols[index + 2].bud.id, value]));
                     let ret = await uq.SaveAtomAndProps.submit({
                         rootPhrase,
                         phrase,
@@ -185,10 +192,10 @@ export class ImportAtom {
         this.rootEntity = entity;
     }
 
-    get hasError() {
+    hasErrorAtom = atom((get) => {
         for (let atomData of this.arrAtomData) {
-            if (atomData.hasError === true) return true;
+            if (get(atomData.hasErrorAtom) === true) return true;
         }
         return false;
-    }
+    })
 }

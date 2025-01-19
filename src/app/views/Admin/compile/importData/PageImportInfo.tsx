@@ -6,22 +6,23 @@ import { useState } from "react";
 import { useAtomValue } from "jotai";
 
 export function PageImportInfo({ importAtom }: { importAtom: ImportAtom; }) {
-    const { rootEntity, arrAtomData, hasError } = importAtom;
+    const { rootEntity, arrAtomData, hasErrorAtom } = importAtom;
     let content: any[] = [];
-    let [buttonVisible, setButtonVisible] = useState(hasError === false);
+    let hasError = useAtomValue(hasErrorAtom);
+    let [buttonVisible, setButtonVisible] = useState(true);
     let [finished, setFinished] = useState(-1);
     for (let i = 0; i < arrAtomData.length; i++) {
         let atomData = arrAtomData[i];
         content.push(<ViewAtomData key={i} atomData={atomData} />);
     }
     let viewTop: any, viewBottom: any;
-    if (hasError === true) {
+    if (hasError) {
         viewTop = <div className="p-3 border-bottom">
             <FA name="exclamation-circle me-3" className="text-danger" />
             <span className="text-info">请先处理数据，再导入</span>
         </div>
     }
-    else if (buttonVisible === true) {
+    else if (buttonVisible) {
         viewBottom = <div className="m-3">
             <button className="btn btn-primary" onClick={onStart}>开始导入</button>
         </div>
