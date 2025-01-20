@@ -85,7 +85,7 @@ export function PageCode() {
     async function onFilesChange(evt: React.ChangeEvent<HTMLInputElement>) {
         let { files } = evt.target;
         if (files === null) return;
-        let fullContent = code + await loadFiles(files);
+        let fullContent = code + await loadFiles(files, undefined);
         /*
         let fullContent = code;
         for (let file of files) {

@@ -18,6 +18,7 @@ export function PageImportAtom() {
     const modal = useModal();
     const [code, setCode] = useState('');
     const fileInput = useRef<HTMLInputElement>();
+    const elSelect = useRef<HTMLSelectElement>();
     async function onImport() {
         let atomData = new AtomData(biz, code);
         atomData.parseHead();
@@ -34,7 +35,7 @@ export function PageImportAtom() {
     async function onFilesChange(evt: React.ChangeEvent<HTMLInputElement>) {
         let { files } = evt.target;
         if (files === null) return;
-        let fullContent = code + (await loadFiles(files));
+        let fullContent = (await loadFiles(files, elSelect.current.value));
         fileInput.current.value = '';
         setCode(fullContent);
     }
@@ -52,11 +53,21 @@ export function PageImportAtom() {
         }
     }
     return <Page header={'导入数据'}>
-        <div className="px-3 py-1 tonwa-bg-gray-2 d-flex">
-            <ButtonAsyncIcon onClick={onImport} icon="send-o">导入</ButtonAsyncIcon>
-            <button className="btn btn-sm btn-link" onClick={onMemo}>导入格式说明</button>
-            <div className="flex-grow-1" />
-            <button className="btn btn-outline-primary" onClick={onLoadFile}>打开文件</button>
+        <div className="px-3 py-2 tonwa-bg-gray-2">
+            <div className="row">
+                <div className="col-auto">
+                    <ButtonAsyncIcon onClick={onImport} icon="send-o">导入</ButtonAsyncIcon>
+                </div>
+                <button className="col-auto btn btn-sm btn-link" onClick={onMemo}>导入格式说明</button>
+                <button className="col-auto ms-auto btn btn-outline-primary" onClick={onLoadFile}>打开文件</button>
+                <div className="col-auto">
+                    <select ref={elSelect} className="form-select">
+                        <option value={undefined} selected>文本编码</option>
+                        <option value="utf8">utf8编码</option>
+                        <option value="gbk">简体中文编码</option>
+                    </select>
+                </div>
+            </div>
         </div>
         <div className="border-info rounded flex-grow-1">
             <div className="container_editor_area w-100">
