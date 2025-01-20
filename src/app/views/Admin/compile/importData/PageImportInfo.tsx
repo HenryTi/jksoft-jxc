@@ -4,6 +4,7 @@ import { ButtonAsync, FA, setAtomValue } from "tonwa-com";
 import { AtomData } from "./AtomData";
 import { useState } from "react";
 import { useAtomValue } from "jotai";
+import { EnumBudType } from "app/Biz";
 
 export function PageImportInfo({ atomData }: { atomData: AtomData; }) {
     const { hasErrorAtom } = atomData;
@@ -60,7 +61,7 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
         , errorAtoms, idsLoadedAtom, hasAtomCols } = atomData;
     const idsLoaded = useAtomValue(idsLoadedAtom);
     let vCaption = <>{entityName}</>;
-    let vCenter;
+    let vCenter: any, vCols: any;
     // let vRight = <span>共{rows.length}行</span>;
     let vBottom: any;
     let state = useAtomValue(stateAtom);
@@ -142,6 +143,17 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
             <b>{caption}</b>
             {caption === name ? undefined : <span className="text-info">&nbsp; {name}</span>}
         </>;
+        vCols = <div>
+            <div>1. NO</div>
+            <div>2. EX</div>
+            {cols.map((v, index) => {
+                if (index < 2) return null;
+                const { header, bud } = v;
+                return <div key={index}>
+                    {index + 2}. {header}: {EnumBudType[bud.budDataType.type]}
+                </div>;
+            })}
+        </div>;
     }
     let vError: any;
     if (errorCols.length > 0) {
@@ -175,6 +187,7 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
             <span className="me-3">{vIcon}<b>{vCaption}</b></span>
         </div>
         <div className="flex-fill">{vCenter}</div>
+        {vCols}
         {vError}
         {vBottom}
         {vState}
