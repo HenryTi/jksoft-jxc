@@ -3,7 +3,7 @@ import { AtomData, AtomRow, Col, EnumError, ErrorCol, ErrorRow, PropValue } from
 import { getDays } from "app/tool";
 import { BizPhraseType } from "uqs/UqDefault";
 
-enum Sep {
+export enum Sep {
     eof = 0,
     eol = 1,
     eow = 2,
@@ -159,26 +159,8 @@ export class Parser {
         this.word = this.data.substring(start, end).trim();
         // this.lowered = this.word.toLowerCase();
     }
-    parse() {
-        // let rows: AtomRow[] = [];
-        // let errorRows: ErrorRow[] = [];
-        for (; ;) {
-            this.parseRow();
-            if (this.sep === Sep.eof) break;
-        }
-        /*
-        // atomData.setEntityLeaf(this.readEntityLeaf);
-        atomData.entityName = this.readEntityName;
-        atomData.entityAny = this.readEntity;
-        atomData.cols = cols;
-        atomData.rows = rows;
-        atomData.errorRows = errorRows;
-        atomData.ln = ln;
-        // return atomData;
-        */
-    }
 
-    private parseRow() {
+    parseRow() {
         const cells: string[] = [];
         for (; ;) {
             this.readWord(this.delimiter);
@@ -187,6 +169,7 @@ export class Parser {
             if (this.sep === Sep.eof) break;
         }
         this.atomData.addRow(cells);
+        return this.sep;
     }
 
     parseHead() {

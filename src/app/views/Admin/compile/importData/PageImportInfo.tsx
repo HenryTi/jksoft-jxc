@@ -27,7 +27,9 @@ export function PageImportInfo({ atomData }: { atomData: AtomData; }) {
     else {
     }
     async function onStart() {
-        setButtonVisible(false)
+        setButtonVisible(false);
+        let ms = await atomData.start();
+        /*
         let date = Date.now();
         const { stateAtom } = atomData;
         // let error: any;
@@ -38,14 +40,10 @@ export function PageImportInfo({ atomData }: { atomData: AtomData; }) {
             });
             // error = uploadError;
         });
-        /*
-        setAtomValue(stateAtom, {
-            rows: null,
-            error,
-        });
-        */
         // if (error !== undefined) break;
         setFinished(Date.now() - date);
+        */
+        setFinished(ms);
     }
     return <Page header={`导入数据 - 开始`}>
         {viewTop}
@@ -58,7 +56,7 @@ export function PageImportInfo({ atomData }: { atomData: AtomData; }) {
 }
 
 function ViewAtomData({ atomData }: { atomData: AtomData; }) {
-    const { entityRoot, entityLeaf, entityAtom, entityName, cols
+    const { entityRoot, entityLeaf, entityAtom, entityName, cols, rows
         , errorRows, errorCols, stateAtom
         , errorAtoms, idsLoadedAtom, hasAtomCols } = atomData;
     const idsLoaded = useAtomValue(idsLoadedAtom);
@@ -69,20 +67,24 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
     let state = useAtomValue(stateAtom);
     let vIcon: any;
     let vState: any;
+    let vQuit: any;
     if (state !== undefined) {
-        const { rows, error } = state;
-        let ln = rows[rows.length - 1].ln;
-        if (error !== undefined) {
-            vState = <div className="mt-2 text-primary">
-                第{ln}行, 导入错误: {error.message}
-            </div>
-        }
-        else if (ln > 0) {
-            vState = <div className="mt-2 text-primary">第{ln}行导入...</div>
-            vIcon = <FA name="chevron-circle-right" className="me-3 text-primary" />;
+        const { row, error } = state;
+        if (row !== undefined) {
+            const { ln } = row;
+            if (error !== undefined) {
+                vState = <div className="mt-2 text-primary">
+                    第{ln}行, 导入错误: {error.message}
+                </div>
+            }
+            else if (ln > 0) {
+                vState = <div className="mt-2 text-primary">第{ln}行导入...</div>
+                vIcon = <FA name="chevron-circle-right" className="me-3 text-primary" />;
+                vQuit = <button className="btn btn-link" onClick={() => atomData.loopEnd = true}>取消导入</button>;
+            }
         }
         else {
-            // vState = <div className="mt-2 text-success"><FA name="check-circle" className="me-2" /> 完成</div>;
+            vState = <div className="mt-2 text-success"><FA name="check-circle" className="me-2" /> 完成</div>;
             vIcon = <FA name="check-circle" className="me-3 text-success" />;
         }
     }
@@ -160,7 +162,6 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
     }
     if (errorAtoms !== undefined) {
         let vArr: any[] = [];
-        const { rows } = state;
         for (let i in errorAtoms) {
             const errorAtom = errorAtoms[i];
             const propIndex = Number(i) - 2;
@@ -187,5 +188,6 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
         {vError}
         {vBottom}
         {vState}
+        {vQuit}
     </div>;
 }

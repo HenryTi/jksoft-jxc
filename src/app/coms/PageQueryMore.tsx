@@ -193,20 +193,28 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
     let bottom: any;
     if (Bottom) bottom = <Bottom items={items} />;
 
+    function LoadingSpinner() {
+        if (loading !== true) return null;
+        return <Spinner className="m-3 text-info" />;
+    }
     let content: any;
     if (loading === true && !items) {
-        content = <div>
+        content = <LoadingSpinner />;
+        /*
+        <div>
             <Spinner className="m-3 text-info" />
             <div id="$$bottom" />
         </div>;
+        */
     }
     else if (items) {
         if (items.length > 0) {
             content = <>
                 <List items={items} ViewItem={ItemView} onItemClick={onItemClick} onItemSelect={onItemSelect} itemKey={itemKey} />
-                <Spinner className="m-3 text-info" />
+                <LoadingSpinner />
                 <div id="$$bottom" />
             </>;
+            // <Spinner className="m-3 text-info" />
         }
         else {
             content = none === undefined ? <div className="m-3">-</div> : none;

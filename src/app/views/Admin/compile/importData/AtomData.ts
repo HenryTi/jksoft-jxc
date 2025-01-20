@@ -1,7 +1,7 @@
 import { Biz, BizBud, BudID, BudOptions, EntityAtom, EnumBudType } from "app/Biz";
 import { atom } from "jotai";
 import { setAtomValue } from "tonwa-com";
-import { Parser } from "./Parser";
+import { Parser, Sep } from "./Parser";
 import { getDays } from "app/tool";
 import { BizPhraseType } from "uqs/UqDefault";
 
@@ -24,8 +24,8 @@ export interface Col {
     bud: BizBud;
 }
 export interface State {
-    rows: AtomRow[];
-    error: any;
+    row: AtomRow;
+    error?: any;
 }
 export class AtomData {
     // readonly importAtom: ImportAtom;
@@ -40,6 +40,7 @@ export class AtomData {
     readonly errorRows: ErrorRow[];      // 行号，字段号
     errorAtoms: { [col: number]: number[] };
     ln: number;         // 起始文字行
+    loopEnd: boolean;
     readonly stateAtom = atom<State>();
     readonly idsLoadedAtom = atom<boolean>(false);
 
@@ -48,6 +49,7 @@ export class AtomData {
         this.parser = new Parser(this, csv);
         this.rows = [];
         this.errorRows = [];
+        this.loopEnd = false;
     }
 
     parseHead() {
@@ -58,6 +60,7 @@ export class AtomData {
         entityName = entityName.toLowerCase();
         this.entityName = entityName;
         let entity = this.biz.entities[entityName];
+        if (entity === undefined) return;
         if (entity.bizPhraseType !== BizPhraseType.atom) return;
         this.entityAtom = entity as EntityAtom;
         if (this.entityAtom.subClasses.length > 0) return;
@@ -73,6 +76,7 @@ export class AtomData {
     }
 
     addRow(cells: string[]) {
+        ++this.ln;
         if (cells.length < 2) return;
         let no = cells[0];
         let ex = cells[1];
@@ -100,9 +104,7 @@ export class AtomData {
                 }
             }
         }
-        this.rows.push({
-            no, ex, ln: 0, props,
-        });
+        this.rows.push({ no, ex, props, ln: this.ln });
         if (errs.length > 0) {
             this.errorRows.push([this.ln, errs]);
         }
@@ -194,17 +196,38 @@ export class AtomData {
         return cols;
     }
 
-    async upload(step: (rowGroup: AtomRow[], error?: any) => void) {
+    async start() {
+        const maxRows = 30;
+        let date = Date.now();
+        this.ln = 0;
+        for (; ;) {
+            if (this.loopEnd === true) break;
+            let sep = this.parser.parseRow();
+            if (sep === Sep.eof) break;
+            if (this.rows.length >= maxRows) {
+                let ret = await this.upload();
+                this.rows.splice(0);
+                if (ret === false) break;
+            }
+        }
+        if (this.rows.length > 0) {
+            await this.upload();
+        }
+        setAtomValue(this.stateAtom, { row: undefined });
+        this.ln = -1;
+        return Date.now() - date;
+    }
+
+    private async upload() {
         // this.parseHead();
-        this.parser.parse();
+        // this.parser.parse();
         const { entityLeaf, rows, cols } = this;
         const phrase = entityLeaf.id;
         const rootEntity = entityLeaf.rootClass;
         const rootPhrase = rootEntity.id;
         const { uq } = entityLeaf.biz;
-        let rowGroup: AtomRow[] = [];
-        const maxRows = 30;
         let serverError: any;
+        const { stateAtom } = this;
         async function uploadOneRow(row: AtomRow) {
             const { no, ex, props } = row;
             let arrProps = props
@@ -213,6 +236,9 @@ export class AtomData {
                     const [, value] = v;
                     return value !== undefined && value !== '';
                 });
+            setAtomValue(stateAtom, {
+                row,
+            });
             try {
                 let ret = await uq.SaveAtomAndProps.submit({
                     rootPhrase,
@@ -227,31 +253,17 @@ export class AtomData {
             }
         }
 
-        const runRows = async (rowArr: AtomRow[]) => {
-            await this.getAtomIds(rowArr);
-            if (this.errorAtoms !== undefined) {
-                step(rowArr);
-                return false;
-            }
-            let promises: Promise<any>[] = rowArr.map(row => uploadOneRow(row));
-            await Promise.all(promises);
-            step(rowArr);
+        await this.getAtomIds(this.rows);
+
+        if (this.errorAtoms !== undefined) {
+            setAtomValue(stateAtom, {
+                row: undefined,
+            });
+            return false;
         }
-        for (let row of rows) {
-            if (rowGroup.length === maxRows) {
-                let ret = await runRows(rowGroup);
-                if (ret === false) return;
-                rowGroup = [];
-            }
-            rowGroup.push(row);
-            if (serverError !== undefined) {
-                step(rowGroup, serverError);
-                break;
-            }
-        }
-        if (rowGroup.length > 0) {
-            await runRows(rowGroup);
-        }
+        let promises: Promise<any>[] = this.rows.map(row => uploadOneRow(row));
+        await Promise.all(promises);
+        return true;
     }
 
     async getAtomIds(rowGroup: AtomRow[]) {
