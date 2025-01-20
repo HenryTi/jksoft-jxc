@@ -1,20 +1,16 @@
 import { Page } from "tonwa-app";
 import '../code-editor-style.css';
 import { ButtonAsync, FA, setAtomValue } from "tonwa-com";
-import { AtomData, ImportAtom } from "./ImportAtom";
+import { AtomData } from "./AtomData";
 import { useState } from "react";
 import { useAtomValue } from "jotai";
 
-export function PageImportInfo({ importAtom }: { importAtom: ImportAtom; }) {
-    const { rootEntity, arrAtomData, hasErrorAtom } = importAtom;
-    let content: any[] = [];
+export function PageImportInfo({ atomData }: { atomData: AtomData; }) {
+    const { hasErrorAtom } = atomData;
     let hasError = useAtomValue(hasErrorAtom);
     let [buttonVisible, setButtonVisible] = useState(true);
     let [finished, setFinished] = useState(-1);
-    for (let i = 0; i < arrAtomData.length; i++) {
-        let atomData = arrAtomData[i];
-        content.push(<ViewAtomData key={i} atomData={atomData} />);
-    }
+    let content = <ViewAtomData atomData={atomData} />;
     let viewTop: any, viewBottom: any;
     if (hasError) {
         viewTop = <div className="p-3 border-bottom">
@@ -32,28 +28,23 @@ export function PageImportInfo({ importAtom }: { importAtom: ImportAtom; }) {
     async function onStart() {
         setButtonVisible(false)
         let date = Date.now();
-        for (let i = 0; i < arrAtomData.length; i++) {
-            let atomData = arrAtomData[i];
-            const { stateAtom } = atomData;
-            let error: any;
-            await atomData.upload(importAtom, (rowGroup, uploadError?: any) => {
-                setAtomValue(stateAtom, {
-                    atomIndex: i,
-                    ln: rowGroup[rowGroup.length - 1].ln,
-                    error: uploadError,
-                });
-                error = uploadError;
-            });
+        const { stateAtom } = atomData;
+        let error: any;
+        await atomData.upload((rowGroup, uploadError?: any) => {
             setAtomValue(stateAtom, {
-                atomIndex: i,
-                ln: -1,
-                error,
+                ln: rowGroup[rowGroup.length - 1].ln,
+                error: uploadError,
             });
-            if (error !== undefined) break;
-        }
+            error = uploadError;
+        });
+        setAtomValue(stateAtom, {
+            ln: -1,
+            error,
+        });
+        // if (error !== undefined) break;
         setFinished(Date.now() - date);
     }
-    return <Page header={`导入 - ${rootEntity.caption} - 数据`}>
+    return <Page header={`导入数据 - 开始`}>
         {viewTop}
         <div className="pb-3">
             {content}
@@ -64,13 +55,13 @@ export function PageImportInfo({ importAtom }: { importAtom: ImportAtom; }) {
 }
 
 function ViewAtomData({ atomData }: { atomData: AtomData; }) {
-    const { importAtom, entityLeaf, entityName, cols, rows
+    const { entityRoot, entityLeaf, entityName, cols, rows
         , errorRows, errorCols, stateAtom
         , errorAtoms, idsLoadedAtom, hasAtomCols } = atomData;
     const idsLoaded = useAtomValue(idsLoadedAtom);
     let vCaption = <>{entityName}</>;
     let vCenter;
-    let vRight = <span>共{rows.length}行</span>;
+    // let vRight = <span>共{rows.length}行</span>;
     let vBottom: any;
     let state = useAtomValue(stateAtom);
     let vIcon: any;
@@ -96,7 +87,7 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
     }
     if (entityLeaf === undefined) {
         vCenter = <><span className="text-danger">数据错误：</span>
-            '{entityName}' 不是 '{importAtom.rootEntity.caption}' 的一部分
+            '{entityName}' 不是 '{entityRoot.caption}' 的一部分
         </>;
     }
     else if (cols.length < 2) {
@@ -130,6 +121,7 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
         </div>
     }
     else {
+        /*
         if (hasAtomCols === true) {
             if (idsLoaded === false) {
                 async function onGetAtomIds() {
@@ -144,7 +136,7 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
                 vCenter = <span className="text-danger">Atom IDs错误</span>;
             }
         }
-
+        */
         const { name, caption } = entityLeaf;
         vCaption = <>
             <b>{caption}</b>
@@ -179,11 +171,10 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
         </>;
     }
     return <div className="px-3 py-2 border-bottom">
-        <div className="d-flex align-items-center">
-            <span className="w-min-12c">{vIcon}<b>{vCaption}</b></span>
-            <div className="flex-fill">{vCenter}</div>
-            {vRight}
+        <div className="">
+            <span className="me-3">{vIcon}<b>{vCaption}</b></span>
         </div>
+        <div className="flex-fill">{vCenter}</div>
         {vError}
         {vBottom}
         {vState}

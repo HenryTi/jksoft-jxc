@@ -9,16 +9,21 @@ import { loadFiles } from "../loadFiles";
 import { Parser } from "./Parser";
 import { PageMemo } from "./PageMemo";
 import { PageImportInfo } from "./PageImportInfo";
+import { useUqApp } from "app/UqApp";
+import { AtomData } from "./AtomData";
 
 const style: React.CSSProperties = { ...editorStyle };
-export function PageImportAtom({ entity }: { entity: EntityAtom; }) {
+export function PageImportAtom() {
+    const { biz } = useUqApp();
     const modal = useModal();
     const [code, setCode] = useState('');
     const fileInput = useRef<HTMLInputElement>();
     async function onImport() {
-        let parser = new Parser(code, entity);
-        let importAtom = parser.parse();
-        modal.open(<PageImportInfo importAtom={importAtom} />);
+        let atomData = new AtomData(biz, code);
+        atomData.parseHead();
+        // let parser = new Parser(biz, code);
+        // let atomData = parser.parse();
+        modal.open(<PageImportInfo atomData={atomData} />);
     }
     function onCodeChange(code: string) {
         setCode(code);
@@ -46,7 +51,7 @@ export function PageImportAtom({ entity }: { entity: EntityAtom; }) {
             evt.preventDefault();
         }
     }
-    return <Page header={'导入 - ' + entity.caption}>
+    return <Page header={'导入数据'}>
         <div className="px-3 py-1 tonwa-bg-gray-2 d-flex">
             <ButtonAsyncIcon onClick={onImport} icon="send-o">导入</ButtonAsyncIcon>
             <button className="btn btn-sm btn-link" onClick={onMemo}>导入格式说明</button>

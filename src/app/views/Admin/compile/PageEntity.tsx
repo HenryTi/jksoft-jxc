@@ -307,7 +307,7 @@ function buildAtomButton(modal: Modal, entity: EntityAtom): ToolItem[][] {
         modal.open(<PageUnique entity={entity} />);
     }
     function onImportData() {
-        modal.open(<PageImportAtom entity={entity} />);
+        modal.open(<PageImportAtom />);
     }
 }
 
