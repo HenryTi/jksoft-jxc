@@ -30,18 +30,20 @@ export function PageImportInfo({ atomData }: { atomData: AtomData; }) {
         setButtonVisible(false)
         let date = Date.now();
         const { stateAtom } = atomData;
-        let error: any;
+        // let error: any;
         await atomData.upload((rowGroup, uploadError?: any) => {
             setAtomValue(stateAtom, {
-                ln: rowGroup[rowGroup.length - 1].ln,
+                rows: rowGroup,
                 error: uploadError,
             });
-            error = uploadError;
+            // error = uploadError;
         });
+        /*
         setAtomValue(stateAtom, {
-            ln: -1,
+            rows: null,
             error,
         });
+        */
         // if (error !== undefined) break;
         setFinished(Date.now() - date);
     }
@@ -56,7 +58,7 @@ export function PageImportInfo({ atomData }: { atomData: AtomData; }) {
 }
 
 function ViewAtomData({ atomData }: { atomData: AtomData; }) {
-    const { entityRoot, entityLeaf, entityName, cols, rows
+    const { entityRoot, entityLeaf, entityAtom, entityName, cols
         , errorRows, errorCols, stateAtom
         , errorAtoms, idsLoadedAtom, hasAtomCols } = atomData;
     const idsLoaded = useAtomValue(idsLoadedAtom);
@@ -68,7 +70,8 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
     let vIcon: any;
     let vState: any;
     if (state !== undefined) {
-        const { ln, error } = state;
+        const { rows, error } = state;
+        let ln = rows[rows.length - 1].ln;
         if (error !== undefined) {
             vState = <div className="mt-2 text-primary">
                 第{ln}行, 导入错误: {error.message}
@@ -87,9 +90,16 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
         vIcon = <FA name="list-alt" className="me-3 text-info" />;
     }
     if (entityLeaf === undefined) {
-        vCenter = <><span className="text-danger">数据错误：</span>
-            '{entityName}' 不是 '{entityRoot.caption}' 的一部分
-        </>;
+        if (entityAtom !== undefined) {
+            vCenter = <><span className="text-danger">数据错误：</span>
+                '{entityName}'有子类：{entityAtom.subClasses.map(v => v.caption).join(',')}。只能导入叶Atom。
+            </>;
+        }
+        else {
+            vCenter = <><span className="text-danger">数据错误：</span>
+                '{entityName}' 不是 ATOM
+            </>;
+        }
     }
     else if (cols.length < 2) {
         vCenter = <span className="text-danger">
@@ -103,7 +113,7 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
     }
     else if (cols[1].header.toLowerCase() != 'ex') {
         vCenter = <span className="text-danger">
-            第一列必须是ex
+            第二列必须是ex
         </span>;
     }
     else if (errorRows.length > 0) {
@@ -122,22 +132,6 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
         </div>
     }
     else {
-        /*
-        if (hasAtomCols === true) {
-            if (idsLoaded === false) {
-                async function onGetAtomIds() {
-                    await atomData.getAtomIds();
-                }
-                vCenter = <ButtonAsync className="btn btn-success" onClick={onGetAtomIds}>获取Atom IDs</ButtonAsync>;
-            }
-            else if (errorAtoms === undefined) {
-                vCenter = <span className="text-success">已获得Atom IDs</span>;
-            }
-            else {
-                vCenter = <span className="text-danger">Atom IDs错误</span>;
-            }
-        }
-        */
         const { name, caption } = entityLeaf;
         vCaption = <>
             <b>{caption}</b>
@@ -166,19 +160,21 @@ function ViewAtomData({ atomData }: { atomData: AtomData; }) {
     }
     if (errorAtoms !== undefined) {
         let vArr: any[] = [];
+        const { rows } = state;
         for (let i in errorAtoms) {
             const errorAtom = errorAtoms[i];
             const propIndex = Number(i) - 2;
             const nos = errorAtom.slice(0, 100).map(v => {
-                let ln = v + atomData.ln;
-                `${ln}:${rows[v].props[propIndex]}`
+                let row = rows[v];
+                let ln = row.ln + 1;
+                return `${ln}:${row.props[propIndex]}`;
             });
             vArr.push(<div key={i}>
                 {cols[i].header} {nos.join(', ')} {nos.length > 100 ? '...' : undefined}
             </div>);
         }
         vError = <>
-            <div>没有找到编号</div>
+            <div className="text-danger mt-3">没有找到编号</div>
             {vArr}
         </>;
     }

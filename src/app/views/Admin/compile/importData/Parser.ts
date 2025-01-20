@@ -8,13 +8,15 @@ enum Sep {
     eol = 1,
     eow = 2,
 }
-const chars = ':;"\n\r,';
+const chars = ':;"\n\r,\t ';
 const chColon = chars.charCodeAt(0);
 const chSemiColon = chars.charCodeAt(1);
 const chQuote = chars.charCodeAt(2);
 const chN = chars.charCodeAt(3);
 const chR = chars.charCodeAt(4);
 const chComma = chars.charCodeAt(5);
+const chTab = chars.charCodeAt(6);
+const chSpace = chars.charCodeAt(7);
 const ch0 = 0;
 export class Parser {
     private readonly atomData: AtomData;
@@ -49,7 +51,30 @@ export class Parser {
         this.c = this.data.charCodeAt(this.p);
         ++this.p;
     }
+    private skipSpace() {
+        for (; ;) {
+            if (this.c === chSpace || this.c === chTab) {
+                if (this.p >= this.length) break;
+                this.c = this.data.charCodeAt(this.p);
+                ++this.p;
+            }
+            else {
+                break;
+            }
+        }
+    }
+    private skipToEndOfWord(chEnd: number) {
+        for (; ;) {
+            let c = this.c;
+            if (c === chEnd) break;
+            if (c === chR || c === chN) break;
+            if (this.p >= this.length) break;
+            this.c = this.data.charCodeAt(this.p);
+            ++this.p;
+        }
+    }
     private readWord(chEnd: number) {
+        this.skipSpace();
         if (this.c === ch0) {
             this.sep = Sep.eof;
             this.word = '';
@@ -71,31 +96,28 @@ export class Parser {
                         this.sep = Sep.eof;
                         break;
                     }
-                    if (c === chEnd) {
-                        this.sep = Sep.eow;
-                        this.advance();
-                        break;
-                    }
-                    if (c === chR || c === chN) {
-                        this.sep = Sep.eol;
-                        this.advance();
-                        ++this.ln;
-                        break;
-                    }
                     if (c === chQuote) {
                         this.advance();
                         this.word += String.fromCharCode(chQuote);
                     }
                     else {
+                        this.skipToEndOfWord(chEnd);
+                        c = this.c;
+                        if (c === chEnd) {
+                            this.sep = Sep.eow;
+                            this.advance();
+                            break;
+                        }
+                        if (c === chR || c === chN) {
+                            this.sep = Sep.eol;
+                            this.advance();
+                            ++this.ln;
+                            break;
+                        }
                         this.advance();
                         this.word += String.fromCharCode(c);
                     }
                     continue;
-                }
-                if (this.c === chEnd) {
-                    this.advance();
-                    this.sep = Sep.eow;
-                    break;
                 }
                 if (this.c === chR || this.c === chN) {
                     this.advance();

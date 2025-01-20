@@ -24,7 +24,7 @@ export interface Col {
     bud: BizBud;
 }
 export interface State {
-    ln: number;
+    rows: AtomRow[];
     error: any;
 }
 export class AtomData {
@@ -34,6 +34,7 @@ export class AtomData {
     entityRoot: EntityAtom;
     entityLeaf: EntityAtom;
     entityName: string;
+    entityAtom: EntityAtom;
     cols: Col[];
     readonly rows: AtomRow[];
     readonly errorRows: ErrorRow[];      // 行号，字段号
@@ -58,7 +59,9 @@ export class AtomData {
         this.entityName = entityName;
         let entity = this.biz.entities[entityName];
         if (entity.bizPhraseType !== BizPhraseType.atom) return;
-        this.entityLeaf = entity as EntityAtom;
+        this.entityAtom = entity as EntityAtom;
+        if (this.entityAtom.subClasses.length > 0) return;
+        this.entityLeaf = this.entityAtom;
         this.entityRoot = this.entityLeaf.rootClass;
     }
 
@@ -177,17 +180,6 @@ export class AtomData {
         for (let i = 2; i < this.cols.length; i++) {
             if (this.cols[i].bud === undefined) return true;
         }
-        /*
-        if (this.hasAtomCols === true) {
-            let idsLoaded = get(this.idsLoadedAtom);
-            if (idsLoaded === true) {
-                if (this.errorAtoms !== undefined) return true;
-            }
-            else {
-                return true;
-            }
-        }
-        */
         return false;
     });
 
@@ -237,13 +229,18 @@ export class AtomData {
 
         const runRows = async (rowArr: AtomRow[]) => {
             await this.getAtomIds(rowArr);
+            if (this.errorAtoms !== undefined) {
+                step(rowArr);
+                return false;
+            }
             let promises: Promise<any>[] = rowArr.map(row => uploadOneRow(row));
             await Promise.all(promises);
             step(rowArr);
         }
         for (let row of rows) {
             if (rowGroup.length === maxRows) {
-                await runRows(rowGroup);
+                let ret = await runRows(rowGroup);
+                if (ret === false) return;
                 rowGroup = [];
             }
             rowGroup.push(row);
@@ -309,20 +306,3 @@ export class AtomData {
         setAtomValue(this.idsLoadedAtom, true);
     }
 }
-/*
-export class ImportAtom {
-    readonly rootEntity: EntityAtom;
-    readonly arrAtomData: AtomData[] = [];
-
-    constructor(entity: EntityAtom) {
-        this.rootEntity = entity;
-    }
-
-    hasErrorAtom = atom((get) => {
-        for (let atomData of this.arrAtomData) {
-            if (get(atomData.hasErrorAtom) === true) return true;
-        }
-        return false;
-    })
-}
-*/
