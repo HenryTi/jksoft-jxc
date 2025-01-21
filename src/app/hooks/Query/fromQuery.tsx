@@ -47,7 +47,7 @@ async function pickFromQueryBase(
 
     function PageFromQuery() {
         let isPick = true;
-        const { caption, name, ids: idCols, showIds: showIdCols, idFrom, value: budValue } = query;
+        const { caption, name, ids: idCols, showIds: showIdCols, idFrom, value: budValue, hideCols, subCols } = query;
         const header = caption ?? name;
         const { bizPhraseType } = idFrom;
         let [list, setList] = useState(null as Picked[]);
@@ -110,10 +110,11 @@ async function pickFromQueryBase(
         }
         function ViewPropArr({ propArr }: { propArr: Prop[]; }) {
             if (propArr === undefined) return null;
-            const { hideCols } = query;
             return <>
                 {propArr.map((v, index) => {
-                    if (hideCols[v.bud.id] === true) return null;
+                    const { id } = v.bud;
+                    if (hideCols[id] === true) return null;
+                    if (subCols[id] !== true) return null;
                     return <ViewBud key={index} {...v} store={queryStore} />;
                 })}
             </>;
@@ -250,15 +251,53 @@ async function pickFromQueryBase(
                 {vSpecs}
             </div>;
         }
-
+        function ViewItemHead({ value: picked }: { value: Picked }) {
+            const { $, $id, id, $ids, group } = picked; // $id 是序号
+            if (group === undefined) return null;
+            let propArr: Prop[] = $ as any;
+            return <div className="px-3 tonwa-bg-gray-1 border-bottom">
+                <RowCols contentClassName="">
+                    <ViewShowIds ids={$ids} />
+                    {(propArr as Prop[]).map((v, index) => {
+                        const { id } = v.bud;
+                        if (hideCols[id] === true) return null;
+                        if (subCols[id] === true) return null;
+                        return <ViewBud key={index} {...v} store={queryStore} />;
+                    })}
+                </RowCols>
+            </div>;
+        }
+        function ViewItemSheet({ value: picked }: { value: Picked }) {
+            const { $, $id, id, $ids } = picked; // $id 是序号
+            let propArr: Prop[] = $ as any;
+            return <>
+                <div>
+                    <RowCols contentClassName="">
+                        <ViewShowIds ids={$ids} />
+                        <ViewPropArr propArr={propArr} />
+                    </RowCols>
+                </div>
+            </>;
+        }
         let vList: any, cnList = ' bg-white ';
         let vSep = <Sep className="border-bottom" />;
         switch (bizPhraseType) {
             default:
                 vList = <div>can not show bizPhraseType {bizPhraseType}</div>;
                 break;
+            case BizPhraseType.sheet:
+                vList = <List items={list} ViewItem={ViewItemSheet}
+                    ViewItemHead={ViewItemHead}
+                    className={cnList}
+                    onItemSelect={onItemSelect}
+                    onItemClick={onItemClick}
+                    itemBan={itemBan}
+                    sep={vSep} />
+                break;
             case BizPhraseType.atom:
-                vList = <List items={list} ViewItem={ViewItemAtom} className={cnList}
+                vList = <List items={list} ViewItem={ViewItemAtom}
+                    ViewItemHead={ViewItemHead}
+                    className={cnList}
                     onItemSelect={onItemSelect}
                     onItemClick={onItemClick}
                     itemBan={itemBan}
@@ -266,6 +305,7 @@ async function pickFromQueryBase(
                 break;
             case BizPhraseType.fork:
                 vList = <List items={list} ViewItem={ViewItemSpec} className={cnList}
+                    ViewItemHead={ViewItemHead}
                     sep={vSep} />
                 break;
         }
@@ -305,7 +345,7 @@ export async function doQuery(editing: BudsEditing, query: EntityQuery, params: 
     let ret = await modal.open(<PageFromQuery />);
     return ret;
     function PageFromQuery() {
-        const { caption, name, ids: idCols, showIds: showIdCols, idFrom, value: budValue } = query;
+        const { caption, name, ids: idCols, showIds: showIdCols, idFrom, value: budValue, subCols, hideCols } = query;
         const header = caption ?? name;
         const { bizPhraseType } = idFrom;
         let [selectedItems, setSelectedItems] = useState<{ [id: number]: Picked; }>({});
@@ -361,10 +401,11 @@ export async function doQuery(editing: BudsEditing, query: EntityQuery, params: 
         }
         function ViewPropArr({ propArr }: { propArr: Prop[]; }) {
             if (propArr === undefined) return null;
-            const { hideCols } = query;
             return <>
                 {propArr.map((v, index) => {
-                    if (hideCols[v.bud.id] === true) return null;
+                    const { id } = v.bud;
+                    if (hideCols[id] === true) return null;
+                    if (subCols[id] !== true) return null;
                     return <ViewBud key={index} {...v} store={queryStore} />;
                 })}
             </>;

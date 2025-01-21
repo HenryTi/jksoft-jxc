@@ -1,7 +1,6 @@
-import { Biz, BizBud, Entity, EntityFork, EntityID } from "app/Biz";
-import { BudCheckValue, BudValue, Modal } from "tonwa-app";
-import { Atom, ReturnGetPendProps, ReturnGetSheetAtoms, ReturnGetSheetProps, ReturnGetSheetSpecs, UqExt } from "uqs/UqDefault";
-import { AtomPhrase } from "./Model";
+import { BizBud, Entity, EntityID } from "../Biz";
+import { Biz } from "../Biz";
+import { Modal } from "../UI";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -15,10 +14,24 @@ export interface BudsColl {
     [row: number]: BudValueColl;
 }
 
+export type BudCheckValue = number[];
+export type BudCheckEditValue = { [item: number]: boolean; };
+export type BudValue = string | number | BudCheckValue; // | BudCheckEditValue;
+
 // bud=100, atom.no
 // bud=101, atom.ex
 export interface BudValueColl {
     [bud: number]: BudValue;
+}
+
+export interface ID {
+    id?: number;
+}
+
+export interface Atom extends ID {
+    base: number;
+    no?: string;
+    ex: string;
 }
 
 export interface AtomColl {
@@ -42,15 +55,30 @@ export abstract class Store extends KeyIdObject {
 export abstract class BizStore extends Store {
     readonly modal: Modal;
     readonly biz: Biz;
-    readonly uq: UqExt;
+    //    readonly uq: UqExt;
     constructor(modal: Modal, biz: Biz) {
         super();
         this.modal = modal;
         this.biz = biz;
-        this.uq = biz.uq;
+        //        this.uq = biz.uq;
     }
 }
 
+interface CacheProp {
+    id: number;
+    phrase: number;
+    value: any;
+}
+interface CacheAtom {
+    id: number;
+    base: number;
+    no: string;
+    ex: string;
+}
+interface CacheFork {
+    id: number;
+    atom: number;
+}
 export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
     readonly entity: E;
     readonly budsColl: BudsColl = {};
@@ -63,9 +91,9 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
         this.entity = entity;
     }
 
-    cacheIdAndBuds(props: ReturnGetSheetProps[],
-        atoms: ReturnGetSheetAtoms[],
-        specs: ReturnGetSheetSpecs[],
+    cacheIdAndBuds(props: CacheProp[],
+        atoms: CacheAtom[],
+        forks: CacheFork[],
     ) {
         props.sort((a, b) => {
             const { id: aId, phrase: aPhrase } = a;
@@ -77,7 +105,7 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
         const budsColl = budValuesFromProps(props);
         Object.assign(this.budsColl, budsColl);
         this.addBizAtoms(atoms);
-        this.addBizSpecs(specs, props);
+        this.addBizSpecs(forks, props);
     }
 
     private addBizAtoms(bizAtoms: Atom[]) {
@@ -107,7 +135,7 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
         }
     }
 
-    public addBizSpecs(bizSpecs: { id: number; atom: number; }[], props: ReturnGetPendProps[]) {
+    public addBizSpecs(bizSpecs: { id: number; atom: number; }[], props: CacheProp[]) {
         for (let bizSpec of bizSpecs) {
             const { id, atom: atomId } = bizSpec;
             const pAtom = this.bizAtomColl[atomId];

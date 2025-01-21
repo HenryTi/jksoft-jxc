@@ -1,5 +1,5 @@
 import { BizPhraseType } from "uqs/UqDefault";
-import { Biz } from "./Biz";
+import { Biz } from ".";
 import { BizBud, BizBudBinValue, BudFork, BudID, BudRadio, EnumBudType, ValueSetType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntityFork } from "./EntityAtom";
@@ -773,7 +773,6 @@ export class EntityPend extends Entity {
     private cols: BizBud[];
     hasPrice: boolean;
     hasAmount: boolean;
-    subCols: { [budId: number]: boolean };
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -786,7 +785,6 @@ export class EntityPend extends Entity {
             case 'i': this.i = val; break;
             case 'x': this.x = val; break;
             case 'predefinedFields': this.setPredefinedFields(val); break;
-            case 'subCols': this.subCols = val; break;
         }
     }
 
@@ -807,13 +805,6 @@ export class EntityPend extends Entity {
             for (let bud of this.cols) {
                 if (bud === undefined) continue;
                 this.budColl[bud.id] = bud;
-            }
-        }
-        let subCols = this.subCols;
-        this.subCols = {};
-        if (subCols !== undefined) {
-            for (let id of subCols as unknown as number[]) {
-                this.subCols[id] = true;
             }
         }
         if (this.params !== undefined) {

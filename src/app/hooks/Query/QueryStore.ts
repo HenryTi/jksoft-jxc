@@ -5,7 +5,7 @@ import { Picked, Prop } from "../tool";
 export class QueryStore extends EntityStore<EntityQuery> {
     async query(param: any) {
         let json: any = {};
-        const { params: paramBuds } = this.entity;
+        const { params: paramBuds, subCols } = this.entity;
         for (let bud of paramBuds) {
             json[bud.id] = param[bud.name];
         }
@@ -13,6 +13,7 @@ export class QueryStore extends EntityStore<EntityQuery> {
         let { ret: retItems, props, specs, atoms } = retQuery;
         let pickedArr: Picked[] = [];
         let coll: { [id: number]: Picked } = {};
+        let lastId = 0;
         for (let row of retItems) {
             let idArr: Prop[] = [];
             const { id, ban, value, json } = row;
@@ -23,12 +24,17 @@ export class QueryStore extends EntityStore<EntityQuery> {
                 value,
                 sum: 0,
             };
+
             picked.ban = {
                 name: 'ban',
                 bud: undefined,
                 value: ban, // row.ban,
             };
             picked.json = json;
+            if (subCols !== undefined && id > lastId) {
+                picked.group = id;
+                lastId = id;
+            }
             this.fromJsonArr(idArr, picked, json);
             pickedArr.push(picked);
             coll[id] = picked;

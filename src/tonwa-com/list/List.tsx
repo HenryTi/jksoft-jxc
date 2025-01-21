@@ -10,6 +10,7 @@ export interface ListPropsWithoutItems<T> {
     className?: string;
     itemKey?: string | ((item: T) => string | number);
     ViewItem?: (props: ItemProps<T>) => JSX.Element;
+    ViewItemHead?: (props: ItemProps<T>) => JSX.Element;
     sep?: JSX.Element;
     none?: JSX.Element;
     loading?: JSX.Element;
@@ -24,7 +25,7 @@ export interface ListProps<T> extends ListPropsWithoutItems<T> {
 
 export function List<T>(props: ListProps<T>) {
     let [showLoading, setShowLoding] = useState(false);
-    let { items, className, itemKey, ViewItem: ItemView, onItemClick, onItemSelect, sep, none, loading, itemBan } = props;
+    let { items, className, itemKey, ViewItem, ViewItemHead, onItemClick, onItemSelect, sep, none, loading, itemBan } = props;
     className = className ?? '';
     useEffect(() => {
         // loading超过200ms，显示spinner
@@ -48,7 +49,8 @@ export function List<T>(props: ListProps<T>) {
         return none;
     }
 
-    ItemView = ItemView ?? DefaultViewItem;
+    ViewItem = ViewItem ?? DefaultViewItem;
+
     let renderItem: (item: T, index: number, key: string) => JSX.Element;
     function onCheckChange(item: T, evt: ChangeEvent<HTMLInputElement>): void {
         onItemSelect(item, evt.currentTarget.checked);
@@ -91,7 +93,7 @@ export function List<T>(props: ListProps<T>) {
                             onChange={evt => onCheckChange(v, evt)} disabled={vBan !== undefined} />
                     </label>
                     <div className="flex-grow-1 cursor-pointer" onClick={() => onItemNav(v)}>
-                        <ItemView value={v} index={index} />
+                        <ViewItem value={v} index={index} />
                         {vBan}
                     </div>
                 </div>;
@@ -99,28 +101,13 @@ export function List<T>(props: ListProps<T>) {
         }
         else {
             renderItem = (v, index, key) => {
-                /*
-                let disabled: boolean;
-                let banMessage: string;
-                let vMessage: any;
-                if (itemBan !== undefined) {
-                    banMessage = itemBan(v)
-                }
-                if (banMessage !== undefined) {
-                    disabled = true;
-                    vMessage = <div className="text-danger small">{banMessage}</div>;
-                }
-                else {
-                    disabled = false;
-                }
-                */
                 let vBan = renderBan(v);
                 return <div className="form-check mx-3">
                     <input type="checkbox" disabled={vBan !== undefined}
                         className="mt-2 form-check-input" id={key}
                         onChange={evt => onCheckChange(v, evt)} />
                     <label className="form-check-label w-100 ms-1" htmlFor={key}>
-                        <ItemView value={v} index={index} />
+                        <ViewItem value={v} index={index} />
                         {vBan}
                     </label>
                 </div>
@@ -139,7 +126,7 @@ export function List<T>(props: ListProps<T>) {
                 cn = 'tonwa-list-item cursor-pointer';
             }
             return <div onClick={funcClick} className={cn}>
-                <ItemView value={v} index={index} />
+                <ViewItem value={v} index={index} />
                 {vBan}
             </div>
         };
@@ -162,6 +149,7 @@ export function List<T>(props: ListProps<T>) {
         <ul className={'m-0 p-0 ' + className}>{items.map((v, index) => {
             let key = funcKey(v, index);
             return <React.Fragment key={key}>
+                {ViewItemHead && <ViewItemHead value={v} index={index} />}
                 {renderItem(v, index, key as string)}
                 {index < len - 1 && sep}
             </React.Fragment>;
