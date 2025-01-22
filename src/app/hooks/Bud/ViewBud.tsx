@@ -111,8 +111,8 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, no
         vContent = view();
     }
     else {
-        const { bizAtomColl } = store;
-        let pAtom = bizAtomColl[value];
+        // const { bizAtomColl } = store;
+        let pAtom = store.getCacheAtom(value); // bizAtomColl[value];
         let bizAtom: BizAtom = pAtom?.atom;
         if (bizAtom !== undefined) {
             let { no, ex } = bizAtom
@@ -120,8 +120,8 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, no
             vContent = ex;
         }
         else {
-            const { bizForkColl, budsColl } = store;
-            let forkValue = bizForkColl[value];
+            // const { budsColl } = store;
+            let forkValue = store.getCacheFork(value); // bizForkColl[value];
             if (forkValue !== undefined) {
                 const { atom, buds } = forkValue;
                 if (atom === undefined) {
@@ -135,7 +135,7 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, no
                         let ret: string = (ex ?? no);
                         let sep = ' '
                         for (let bud of buds) {
-                            let budValue = budsColl[value][bud.id];
+                            let budValue = store.getCacheBudValue(value, bud); // budsColl[value][bud.id];
                             if (budValue !== undefined) {
                                 ret += sep;
                                 ret += bud.getUIValue(budValue);
@@ -218,8 +218,8 @@ function ID(bud: BizBud, value: any) {
 
 function bin(bud: BizBud, value: any, store: EntityStore) {
     const showBuds = bud.getPrimeBuds();
-    const { budsColl } = store;
-    let budVals = budsColl[value];
+    // const { budsColl } = store;
+    let budVals = store.getCacheBudProps(value); // budsColl[value];
     if (budVals === undefined) {
         debugger;
         return null;

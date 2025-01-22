@@ -6,6 +6,6 @@ export async function pickFromAtom(editing: BudsEditing, binPick: PickAtom): Pro
     const { modal } = editing;
     let { caption, from } = binPick;
     let ret = await modal.open<AtomPhrase>(<PageIDSelect entity={from[0]} caption={caption} />);
-    editing.store.mergeAtom(ret);
+    editing.store.cacheAtom(ret);
     return ret as any as PickResult;
 }

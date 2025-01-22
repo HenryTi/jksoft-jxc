@@ -53,14 +53,51 @@ export abstract class BizStore extends Store {
 
 export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
     readonly entity: E;
-    readonly budsColl: BudsColl = {};
-    readonly bizAtomColl: AtomColl = {};
-    readonly bizForkColl: ForkColl = {};
+    protected readonly budsColl: BudsColl = {};
+    private readonly bizAtomColl: AtomColl = {};
+    protected readonly bizForkColl: ForkColl = {};
 
     constructor(modal: Modal, entity: E) {
         const { biz } = entity;
         super(modal, biz);
         this.entity = entity;
+    }
+
+    getCacheAtom(id: number) { return this.bizAtomColl[id]; }
+    getCacheFork(id: number) { return this.bizForkColl[id]; }
+    getCacheBudProps(id: number) { return this.budsColl[id]; }
+    getCacheBudValue(id: number, bud: BizBud) { return this.budsColl[id][bud.id]; }
+    getCacheAtomOrForkBudProps(id: number) {
+        let budValueColl: BudValueColl;
+        let bizAtom = this.bizAtomColl[id];
+        let entityID: EntityID;
+        if (bizAtom === undefined) {
+            let bizFork = this.bizForkColl[id];
+            if (bizFork === undefined) return null;
+            entityID = bizFork.entityID;
+            const { atom } = bizFork;
+            if (atom === undefined) return null;
+            budValueColl = this.budsColl[bizFork.atom.id];
+        }
+        else {
+            entityID = bizAtom.entityID;
+            budValueColl = this.budsColl[id];
+        }
+        return { budValueColl, entityID };
+    }
+    setCacheFork(id: number, base: number, buds: BizBud[]) {
+        let pAtom = this.getCacheAtom(base);
+        let atom: Atom;
+        let entityID: EntityID;
+        if (pAtom !== undefined) {
+            atom = pAtom.atom;
+            entityID = pAtom.entityID;
+        }
+        this.bizForkColl[id] = {
+            atom,
+            entityID,
+            buds,
+        }
     }
 
     cacheIdAndBuds(props: ReturnGetSheetProps[],
@@ -82,11 +119,11 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
 
     private addBizAtoms(bizAtoms: Atom[]) {
         for (let atom of bizAtoms) {
-            this.mergeAtom(atom);
+            this.cacheAtom(atom);
         }
     }
 
-    mergeAtom(atom: Atom) {
+    cacheAtom(atom: Atom) {
         const { id, base } = atom;
         this.bizAtomColl[id] = {
             atom,

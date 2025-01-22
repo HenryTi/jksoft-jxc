@@ -31,9 +31,9 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
     editing.setNamedValue('%base', base);
     let paramValues: { [budId: number | string]: any };
     // 暂时先按赋值处理，以后可以处理:=
-    let entityFork = binInput.spec;
+    let entityFork = binInput.fork;
     if (entityFork === undefined) {
-        let { entityID } = sheetStore.bizAtomColl[base];
+        let { entityID } = sheetStore.getCacheAtom(base);
         entityFork = entityID.fork;
     }
     if (entityFork === undefined) {
@@ -63,7 +63,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         }
         paramsDefined = (paramsSetCount === keys.length + forkBuds.length);
     }
-    async function saveSpec(isFormInput: boolean, data: any) {
+    async function saveFork(isFormInput: boolean, data: any) {
         function budValueFromData(bud: BizBud) {
             const { id, name, budDataType } = bud;
             let v: any;
@@ -114,7 +114,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
     }
     let ret: any;
     if (paramsDefined === true) {
-        ret = await saveSpec(false, paramValues);
+        ret = await saveFork(false, paramValues);
     }
     else if (preset === true) {
         let { ret } = await uq.GetSpecsFromBase.query({ base });
@@ -137,7 +137,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         function PagePickSpec() {
             const { caption } = entityFork;
             const onSubmitForm = async (data: any) => {
-                let retSpec = await saveSpec(true, data);
+                let retSpec = await saveFork(true, data);
                 modal.close(retSpec);
             }
             const { bootstrapContainer } = theme;
@@ -162,19 +162,23 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
     }
     if (ret !== undefined) {
         const { id, base } = ret;
-        const { bizForkColl: bizSpecColl, bizAtomColl } = sheetStore;
-        let pAtom = bizAtomColl[base];
+        // const { bizForkColl } = sheetStore;
+        sheetStore.setCacheFork(id, base, keys);
+        /*
+        let pAtom = sheetStore.getCacheAtom(base);
         let atom: Atom;
         let entityID: EntityID;
         if (pAtom !== undefined) {
             atom = pAtom.atom;
             entityID = pAtom.entityID;
         }
-        bizSpecColl[id] = {
+        // sheetStore.set
+        bizForkColl[id] = {
             atom,
             entityID,
             buds: keys,
         }
+        */
     }
     return ret;
 

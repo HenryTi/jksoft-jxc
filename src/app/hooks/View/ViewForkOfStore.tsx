@@ -5,10 +5,9 @@ import { EntityStore } from "app/tool";
 import { ViewForkId } from "app/coms/ViewForkId";
 
 export function ViewForkAtomBold({ id, store }: { id: number; store: EntityStore; }) {
-    const { bizAtomColl, bizForkColl } = store;
-    let bizAtom = bizAtomColl[id]?.atom;
+    let bizAtom = store.getCacheAtom(id)?.atom;
     if (bizAtom === undefined) {
-        let bizSpec = bizForkColl[id];
+        let bizSpec = store.getCacheFork(id);
         if (bizSpec === undefined) return null;
         bizAtom = bizSpec.atom;
         if (bizAtom === undefined) {
@@ -23,10 +22,9 @@ export function ViewForkAtom({ id, store }: { id: number; store: EntityStore; })
     if (store === undefined) {
         return <ViewForkId id={id} />;
     }
-    const { bizAtomColl, bizForkColl } = store;
-    let bizAtom = bizAtomColl[id]?.atom;
+    let bizAtom = store.getCacheAtom(id)?.atom;
     if (bizAtom === undefined) {
-        let bizSpec = bizForkColl[id];
+        let bizSpec = store.getCacheFork(id);
         if (bizSpec === undefined) return null;
         bizAtom = bizSpec.atom;
     }
@@ -35,11 +33,10 @@ export function ViewForkAtom({ id, store }: { id: number; store: EntityStore; })
 }
 
 export function ViewForkBuds({ id, store }: { id: number; store: EntityStore; }) {
-    const { budsColl, bizForkColl } = store;
-    let bizSpec = bizForkColl[id];
+    let bizSpec = store.getCacheFork(id);
     if (bizSpec === undefined) return null;
     let { buds } = bizSpec;
-    let specBudValueColl = budsColl[id];
+    let specBudValueColl = store.getCacheBudProps(id);
     return <>{buds.map(v => {
         let budId = v.id;
         let value = specBudValueColl[budId];
@@ -48,8 +45,8 @@ export function ViewForkBuds({ id, store }: { id: number; store: EntityStore; })
 }
 
 export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: EntityStore; }) {
-    const { budsColl, biz, bizAtomColl } = store;
-    const atom = bizAtomColl[id]?.atom;
+    const { biz } = store;
+    const atom = store.getCacheAtom(id)?.atom;
     const noLabel: boolean = undefined;
     if (atom === undefined) return null;
     let bizAtom = biz.entityFromId<EntityAtom>(atom.base);
@@ -58,7 +55,7 @@ export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: Entity
     if (titleBuds === undefined) {
         return null;
     }
-    const budValueColl = budsColl[id];
+    const budValueColl = store.getCacheBudProps(id);
     if (budValueColl === undefined) return null;
     const { labelColor } = theme;
     return <>{
@@ -79,9 +76,9 @@ export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: Entity
 }
 
 export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: EntityStore; }) {
-    const { budsColl, biz, bizAtomColl } = store;
-    const atom = bizAtomColl[id]?.atom;
-    const noLabel: boolean = undefined;
+    const { biz } = store;
+    const atom = store.getCacheAtom(id)?.atom;
+    // const noLabel: boolean = undefined;
     if (atom === undefined) return null;
     let bizAtom = biz.entityFromId<EntityAtom>(atom.base);
     if (bizAtom === undefined) return null;
@@ -89,7 +86,7 @@ export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: Entity
     if (primeBuds === undefined) {
         return null;
     }
-    const budValueColl = budsColl[id];
+    const budValueColl = store.getCacheBudProps(id);
     if (budValueColl === undefined) return null;
     return <>{
         primeBuds.map(v => {
@@ -102,13 +99,13 @@ export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: Entity
 }
 
 export function ViewForkAtomTitles({ id, store }: { id: number; store: EntityStore; }) {
-    const { budsColl, bizForkColl, biz } = store;
+    const { biz } = store;
     const noLabel: boolean = undefined;
-    let bizFork = bizForkColl[id];
+    let bizFork = store.getCacheFork(id);
     let bizAtom: EntityAtom;
     let atomId: number;
     if (bizFork === undefined) {
-        const atomRet = store.bizAtomColl[id];
+        const atomRet = store.getCacheAtom(id);
         if (atomRet === undefined) return null;
         const { atom, entityID } = atomRet;
         bizAtom = entityID;
@@ -124,7 +121,7 @@ export function ViewForkAtomTitles({ id, store }: { id: number; store: EntitySto
     if (titleBuds === undefined) {
         return null;
     }
-    const budValueColl = budsColl[atomId];
+    const budValueColl = store.getCacheBudProps(atomId);
     if (budValueColl === undefined) return null;
     const { labelColor } = theme;
     return <>{

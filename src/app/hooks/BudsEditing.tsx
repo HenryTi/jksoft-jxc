@@ -202,7 +202,7 @@ export abstract class BudsEditing<R = any> extends BizStore implements FormConte
         if (base === undefined) return;
         let baseId = this.getBudValue(base);
         if (baseId === undefined) return;
-        const atom = this.store.bizAtomColl[baseId];
+        const atom = this.store.getCacheAtom(baseId);
         if (atom === undefined) return;
         let { fork } = atom.entityID;
         if (fork === undefined) return;

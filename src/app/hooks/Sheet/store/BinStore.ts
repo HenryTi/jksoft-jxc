@@ -290,11 +290,11 @@ export class BinStore extends EntityStore<EntityBin> {
         let { binDiv } = valDiv;
         let { binDivBuds: { budIBase, budXBase } } = binDiv;
         if (budIBase !== undefined) {
-            let bizAtom = this.sheetStore.bizAtomColl[budIBase.id]?.atom;
+            let bizAtom = this.sheetStore.getCacheAtom(budIBase.id)?.atom;
             if (bizAtom !== undefined) valDiv.iBase = bizAtom.id;
         }
         if (budXBase !== undefined) {
-            let bizAtom = this.sheetStore.bizAtomColl[budXBase.id]?.atom;
+            let bizAtom = this.sheetStore.getCacheAtom(budXBase.id)?.atom;
             if (bizAtom !== undefined) valDiv.xBase = bizAtom.id;
         }
         return rootValDiv;

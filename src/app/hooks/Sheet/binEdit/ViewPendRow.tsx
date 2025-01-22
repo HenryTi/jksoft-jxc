@@ -51,8 +51,7 @@ export function ViewPendRow({
         }
     }
     let viewBuds: any, viewAtomTitles: any;
-    const { bizForkColl } = sheetStore;
-    let iBizSpec = bizForkColl[i];
+    let iBizSpec = sheetStore.getCacheFork(i);
     if (iBizSpec !== undefined) {
         viewBuds = <ViewForkBuds id={i} store={sheetStore} />;
         viewAtomTitles = <ViewForkAtomTitles id={i} store={sheetStore} />;

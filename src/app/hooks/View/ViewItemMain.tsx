@@ -33,7 +33,7 @@ export function ViewItemMain({ value, isMy, store }: { value: Sheet & Bin & { ro
     if (primeBuds !== undefined) {
         vPrimeBuds = primeBuds.map(v => {
             const { id } = v;
-            const bin = store.budsColl[binId];
+            const bin = store.getCacheBudProps(binId);
             if (bin === undefined) {
                 return null;
                 // 没有内容，应该null

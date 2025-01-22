@@ -51,8 +51,7 @@ export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, 
 
 export function ViewIBaseFromId({ sheetStore, valDiv, iBase }: { sheetStore: SheetStore, valDiv: ValDivBase; iBase: number; }) {
     let { iBase: budIBase } = valDiv.binDiv.entityBin
-    const { bizAtomColl } = sheetStore
-    let bizAtomValue = bizAtomColl[iBase]?.atom;
+    let bizAtomValue = sheetStore.getCacheAtom(iBase)?.atom;
     return <div>
         <div>
             <ViewAtom value={bizAtomValue} />

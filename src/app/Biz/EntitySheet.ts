@@ -68,7 +68,7 @@ export interface InputSpecParam {
 }
 
 export class BinInputFork extends BinInput {
-    spec: EntityFork;
+    fork: EntityFork;
     baseExp: string;
     baseBud: BizBud;        // 以后不允许表达式。只能是bud id
     params: InputSpecParam[];
@@ -76,11 +76,11 @@ export class BinInputFork extends BinInput {
         super.build(val);
         const { spec, base, params } = val;
         if (spec !== undefined) {
-            this.spec = this.biz.entityFromId(spec) as EntityFork;
-            this.bizPhraseType = this.spec.bizPhraseType;
+            this.fork = this.biz.entityFromId(spec) as EntityFork;
+            this.bizPhraseType = this.fork.bizPhraseType;
             this.params = (params as [number, string, string][]).map(([budId, formula, setType]) => {
                 return {
-                    bud: this.spec.getBud(budId),
+                    bud: this.fork.getBud(budId),
                     valueSet: formula,
                     valueSetType: setType === '=' ? ValueSetType.equ : ValueSetType.init,
                 };

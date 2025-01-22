@@ -69,7 +69,7 @@ function PageData({ bud, store }: { bud: BizBud; store: AdminStore; }) {
             if (entity === undefined) {
                 return null;
             }
-            const valColl = store.budsColl[i];
+            const valColl = store.getCacheBudProps(i);
             if (valColl === undefined) return null;
             switch (entity.bizPhraseType) {
                 default: return null;

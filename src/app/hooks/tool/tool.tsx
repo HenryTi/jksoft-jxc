@@ -33,8 +33,8 @@ export function OwnedBuds({ values, noLabel, store }: { values: [number, BudValu
 }
 
 export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: number; store: EntityStore; noLabel?: boolean; }) {
-    const { budsColl } = store;
-    const budValueColl = budsColl[id];
+    // const { budsColl } = store;
+    const budValueColl = store.getCacheBudProps(id);
     if (budValueColl === undefined) return null;
     let entity = store.entityFromId(id);
     if (entity !== undefined) {
@@ -43,10 +43,10 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: nu
                 debugger;
                 break;
             case BizPhraseType.fork:
-                const { atom, entityID: entityAtom, } = store.bizForkColl[id];
+                const { atom, entityID: entityAtom, } = store.getCacheFork(id);
                 const { showKeys, showBuds } = entity as EntityFork;
                 return <>
-                    {viewBuds(budsColl[atom.id], entityAtom.primeBuds)}
+                    {viewBuds(store.getCacheBudProps(atom.id), entityAtom.primeBuds)}
                     {viewBuds(budValueColl, showKeys)}
                     {viewBuds(budValueColl, showBuds)}
                 </>;
@@ -69,12 +69,12 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: nu
 }
 
 export function ViewAtomTitles({ id, noLabel, store }: { id: number; noLabel?: boolean; store: EntityStore; }) {
-    const { budsColl, bizForkColl, bizAtomColl } = store;
+    /* const { budsColl, bizForkColl, bizAtomColl } = store;
     let budValueColl: BudValueColl;
-    let bizAtom = bizAtomColl[id];
+    let bizAtom = store.getCacheAtom(id);
     let entityID: EntityID;
     if (bizAtom === undefined) {
-        let bizFork = bizForkColl[id];
+        let bizFork = store.getCacheFork(id);
         if (bizFork === undefined) return null;
         entityID = bizFork.entityID;
         const { atom } = bizFork;
@@ -85,6 +85,8 @@ export function ViewAtomTitles({ id, noLabel, store }: { id: number; noLabel?: b
         entityID = bizAtom.entityID;
         budValueColl = budsColl[id];
     }
+    */
+    let { budValueColl, entityID } = store.getCacheAtomOrForkBudProps(id);
     if (budValueColl === undefined) return null;
     if (entityID === undefined) return null;
     let buds: BizBud[] = entityID.titleBuds;

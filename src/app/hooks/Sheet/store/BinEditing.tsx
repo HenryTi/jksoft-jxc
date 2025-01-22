@@ -57,7 +57,7 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
     get store() { return this.sheetStore; }
 
     getEntityFromId(id: number): Entity {
-        const ret = this.sheetStore.bizAtomColl[id];
+        const ret = this.sheetStore.getCacheAtom(id);
         if (ret === undefined) {
             debugger;
             return;
