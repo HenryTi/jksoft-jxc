@@ -68,8 +68,8 @@ export class EntityQuery extends Entity {
         }
         this.cols = undefined;
         let subCols = this.subCols;
-        this.subCols = {};
         if (subCols !== undefined) {
+            this.subCols = {};
             for (let id of subCols as unknown as number[]) {
                 this.subCols[id] = true;
             }

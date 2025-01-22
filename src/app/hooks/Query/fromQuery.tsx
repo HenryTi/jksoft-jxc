@@ -114,7 +114,9 @@ async function pickFromQueryBase(
                 {propArr.map((v, index) => {
                     const { id } = v.bud;
                     if (hideCols[id] === true) return null;
-                    if (subCols[id] !== true) return null;
+                    if (subCols !== undefined) {
+                        if (subCols[id] !== true) return null;
+                    }
                     return <ViewBud key={index} {...v} store={queryStore} />;
                 })}
             </>;
@@ -252,6 +254,7 @@ async function pickFromQueryBase(
             </div>;
         }
         function ViewItemHead({ value: picked }: { value: Picked }) {
+            if (subCols === undefined) return null;
             const { $, $id, id, $ids, group } = picked; // $id 是序号
             if (group === undefined) return null;
             let propArr: Prop[] = $ as any;
@@ -405,7 +408,9 @@ export async function doQuery(editing: BudsEditing, query: EntityQuery, params: 
                 {propArr.map((v, index) => {
                     const { id } = v.bud;
                     if (hideCols[id] === true) return null;
-                    if (subCols[id] !== true) return null;
+                    if (subCols !== undefined) {
+                        if (subCols[id] !== true) return null;
+                    }
                     return <ViewBud key={index} {...v} store={queryStore} />;
                 })}
             </>;
