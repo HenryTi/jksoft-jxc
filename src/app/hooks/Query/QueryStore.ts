@@ -41,10 +41,11 @@ export class QueryStore extends EntityStore<EntityQuery> {
         }
 
         let specsForCache = specs.map(v => {
-            const { id, atom: rowId } = v;
+            const { id, atom: rowId, seed } = v;
             return {
                 id,
-                atom: coll[rowId].json[0],
+                atom: coll[rowId]?.json[0],
+                seed,
             }
         });
         this.cacheIdAndBuds(props, atoms, specsForCache);

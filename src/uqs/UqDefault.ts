@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Jan 19 2025 11:53:06 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Wed Jan 22 2025 23:39:54 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -227,6 +227,7 @@ export interface ReturnGetAdminBookAtoms {
 export interface ReturnGetAdminBookSpecs {
 	id: number;
 	atom: number;
+	seed: number;
 }
 export interface ResultGetAdminBook {
 	$page: ReturnGetAdminBook$page[];
@@ -440,6 +441,7 @@ export interface ReturnSaveDetailsAtoms {
 export interface ReturnSaveDetailsSpecs {
 	id: number;
 	atom: number;
+	seed: number;
 }
 export interface ResultSaveDetails {
 	main: ReturnSaveDetailsMain[];
@@ -519,6 +521,7 @@ export interface ReturnDoQueryAtoms {
 export interface ReturnDoQuerySpecs {
 	id: number;
 	atom: number;
+	seed: number;
 	ban: number;
 	json: any;
 	value: number;
@@ -568,6 +571,7 @@ export interface ReturnGetMyDraftsAtoms {
 export interface ReturnGetMyDraftsSpecs {
 	id: number;
 	atom: number;
+	seed: number;
 }
 export interface ResultGetMyDrafts {
 	$page: ReturnGetMyDrafts$page[];
@@ -741,6 +745,7 @@ export interface ReturnGetSheetAtoms {
 export interface ReturnGetSheetSpecs {
 	id: number;
 	atom: number;
+	seed: number;
 }
 export interface ResultGetSheet {
 	main: ReturnGetSheetMain[];
@@ -828,6 +833,7 @@ export interface ReturnGetPendAtoms {
 export interface ReturnGetPendSpecs {
 	id: number;
 	atom: number;
+	seed: number;
 }
 export interface ResultGetPend {
 	$page: ReturnGetPend$page[];
@@ -921,6 +927,7 @@ export interface ReturnGetSiteSheetListAtoms {
 export interface ReturnGetSiteSheetListSpecs {
 	id: number;
 	atom: number;
+	seed: number;
 }
 export interface ResultGetSiteSheetList {
 	$page: ReturnGetSiteSheetList$page[];
@@ -964,6 +971,7 @@ export interface ReturnGetMySheetListAtoms {
 export interface ReturnGetMySheetListSpecs {
 	id: number;
 	atom: number;
+	seed: number;
 }
 export interface ResultGetMySheetList {
 	$page: ReturnGetMySheetList$page[];
@@ -1450,6 +1458,7 @@ export interface ReturnGetIDListAtoms {
 export interface ReturnGetIDListSpecs {
 	id: number;
 	atom: number;
+	seed: number;
 }
 export interface ResultGetIDList {
 	$page: ReturnGetIDList$page[];
@@ -2454,6 +2463,10 @@ export const uqSchema={
                     {
                         "name": "atom",
                         "type": "id"
+                    },
+                    {
+                        "name": "seed",
+                        "type": "id"
                     }
                 ]
             }
@@ -3150,6 +3163,10 @@ export const uqSchema={
                     {
                         "name": "atom",
                         "type": "id"
+                    },
+                    {
+                        "name": "seed",
+                        "type": "id"
                     }
                 ]
             }
@@ -3370,6 +3387,10 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
+                        "name": "seed",
+                        "type": "id"
+                    },
+                    {
                         "name": "ban",
                         "type": "tinyint"
                     },
@@ -3527,6 +3548,10 @@ export const uqSchema={
                     },
                     {
                         "name": "atom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "seed",
                         "type": "id"
                     }
                 ]
@@ -4083,6 +4108,10 @@ export const uqSchema={
                     {
                         "name": "atom",
                         "type": "id"
+                    },
+                    {
+                        "name": "seed",
+                        "type": "id"
                     }
                 ]
             }
@@ -4348,6 +4377,10 @@ export const uqSchema={
                     },
                     {
                         "name": "atom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "seed",
                         "type": "id"
                     }
                 ]
@@ -4633,6 +4666,10 @@ export const uqSchema={
                     {
                         "name": "atom",
                         "type": "id"
+                    },
+                    {
+                        "name": "seed",
+                        "type": "id"
                     }
                 ]
             }
@@ -4777,6 +4814,10 @@ export const uqSchema={
                     },
                     {
                         "name": "atom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "seed",
                         "type": "id"
                     }
                 ]
@@ -6105,6 +6146,10 @@ export const uqSchema={
                     },
                     {
                         "name": "atom",
+                        "type": "id"
+                    },
+                    {
+                        "name": "seed",
                         "type": "id"
                     }
                 ]
