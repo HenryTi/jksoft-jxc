@@ -2,17 +2,17 @@ import { useRef, useState } from "react";
 import { SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { Page, PageError, useModal } from "tonwa-app";
-import { AtomPhrase } from "app/tool";
 import { BizBud, EntityID, EntityFork } from "app/Biz";
 import { Atom, BizPhraseType } from "uqs/UqDefault";
 import { RowMed, createIDSelectStore } from "./IDSelectStore";
 import { RowColsSm } from "../tool";
 import { ViewAtomId, ViewBud } from "..";
+import { AtomData } from "app/tool";
 
 export function useIDSelect() {
     const modal = useModal();
     return async function (ID: EntityID, params?: object, buds?: number[], viewTop?: any) {
-        let ret = await modal.open<AtomPhrase>(<PageIDSelect entity={ID} params={params} buds={buds} />);
+        let ret = await modal.open<AtomData>(<PageIDSelect entity={ID} params={params} buds={buds} />);
         return ret;
     }
 }

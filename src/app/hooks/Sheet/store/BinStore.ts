@@ -351,8 +351,8 @@ export class BinStore extends EntityStore<EntityBin> {
         }
         let results = await this.uqSaveDetails(binDiv.entityBin.id, inDetails);
         if (results === undefined) return;
-        let { details: retDetails, props, specs, atoms } = results;
-        this.sheetStore.cacheIdAndBuds(props, atoms, specs);
+        let { details: retDetails, props, forks, atoms } = results;
+        this.sheetStore.cacheIdAndBuds(props, atoms, forks);
         let { length } = valRows;
         for (let i = 0; i < length; i++) {
             let retDetail = retDetails[i];
@@ -621,8 +621,8 @@ export class BinStorePendDirect extends BinStore {
         for (let p of pendToValDivs) p.getValRows(inDetails, valRows);
         let results = await this.uqSaveDetails(this.entity.id, inDetails);
         if (results === undefined) return;
-        let { details: retDetails, props, specs, atoms } = results;
-        this.sheetStore.cacheIdAndBuds(props, atoms, specs);
+        let { details: retDetails, props, forks, atoms } = results;
+        this.sheetStore.cacheIdAndBuds(props, atoms, forks);
         let { length } = valRows;
         for (let i = 0; i < length; i++) {
             let retDetail = retDetails[i];

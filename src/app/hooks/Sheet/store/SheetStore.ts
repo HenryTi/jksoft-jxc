@@ -218,8 +218,8 @@ export class SheetStore extends EntityStore<EntitySheet> {
 
     // whole sheet or row detail
     async loadBinData(binId: number) {
-        let { main, details, props, atoms: bizAtoms, specs } = await this.uq.GetSheet.query({ id: binId });
-        this.cacheIdAndBuds(props, bizAtoms, specs);
+        let { main, details, props, atoms: bizAtoms, forks } = await this.uq.GetSheet.query({ id: binId });
+        this.cacheIdAndBuds(props, bizAtoms, forks);
         let mainRow = main[0];
         if (mainRow !== undefined) {
             (mainRow as any).buds = this.budsColl[binId] ?? {};
@@ -235,8 +235,8 @@ export class SheetStore extends EntityStore<EntitySheet> {
         let { pend: entityPend, rearPick } = this.entity.coreDetail;
         if (entityPend === undefined) debugger;
         let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
-        let { $page, retSheet, props: showBuds, atoms, specs } = ret;
-        this.cacheIdAndBuds(showBuds, atoms, specs);
+        let { $page, retSheet, props: showBuds, atoms, forks } = ret;
+        this.cacheIdAndBuds(showBuds, atoms, forks);
         let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
         for (let v of retSheet) {
             collSheet[v.id] = v;
@@ -251,13 +251,13 @@ export class SheetStore extends EntityStore<EntitySheet> {
                 this.valDivsOnPend[pend] = atom(undefined as ValDivRoot);
                 let iSpec = this.bizForkColl[i];
                 if (iSpec !== undefined) {
-                    (v as any).iBase = iSpec.atom.id;
+                    (v as any).iBase = iSpec.seed.id;
                 }
             }
             if (xBud !== undefined) {
                 let xSpec = this.bizForkColl[x];
                 if (xSpec !== undefined) {
-                    (v as any).xBase = xSpec.atom.id;
+                    (v as any).xBase = xSpec.seed.id;
                 }
             }
             let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);

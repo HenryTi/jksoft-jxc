@@ -17,8 +17,8 @@ class BudIDStore extends EntityStore {
         super(modal, bud.entity);
     }
     query = async (param: any, pageStart: any, pageSize: number): Promise<any[]> => {
-        const { $page, props, atoms, specs } = await this.uq.GetIDList.page(param, pageStart, pageSize);
-        this.cacheIdAndBuds(props, atoms, specs);
+        const { $page, props, atoms, forks } = await this.uq.GetIDList.page(param, pageStart, pageSize);
+        this.cacheIdAndBuds(props, atoms, forks);
         return $page;
     }
 }

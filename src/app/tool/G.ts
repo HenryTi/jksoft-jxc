@@ -1,5 +1,5 @@
-import { Atom } from "uqs/UqDefault";
 import { EntityAtom } from "app/Biz";
+import { AtomData } from "./Store";
 
 export interface GAtom {
     name: string;
@@ -9,5 +9,5 @@ export interface GAtom {
     pageEdit: JSX.Element;
     pageList: JSX.Element;
     pageView: JSX.Element;
-    ViewItem: ({ value }: { value: Atom; }) => JSX.Element;
+    ViewItem: ({ value }: { value: AtomData; }) => JSX.Element;
 }

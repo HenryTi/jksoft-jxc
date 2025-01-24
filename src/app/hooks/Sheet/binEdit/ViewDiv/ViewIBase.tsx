@@ -3,6 +3,7 @@ import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { Atom as BizAtom } from "uqs/UqDefault";
 import { ViewForkAtomBold } from "app/hooks/View";
 import { BizBud } from "app/Biz";
+import { AtomData } from "app/tool";
 
 export function ViewIBase({ sheetStore, valDiv, index }: { sheetStore: SheetStore; valDiv: ValDivBase; index: number; }) {
     const { binDiv } = valDiv;
@@ -32,7 +33,7 @@ export function ViewIBase({ sheetStore, valDiv, index }: { sheetStore: SheetStor
     </div>;
 }
 
-function ViewAtom({ value }: { value: BizAtom; }) {
+function ViewAtom({ value }: { value: AtomData; }) {
     const { no, ex } = value;
     return <><b>{ex}</b> <span className="ms-3">{no}</span></>;
 }

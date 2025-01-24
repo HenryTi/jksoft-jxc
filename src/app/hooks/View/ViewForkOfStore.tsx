@@ -9,7 +9,7 @@ export function ViewForkAtomBold({ id, store }: { id: number; store: EntityStore
     if (bizAtom === undefined) {
         let bizSpec = store.getCacheFork(id);
         if (bizSpec === undefined) return null;
-        bizAtom = bizSpec.atom;
+        bizAtom = bizSpec.seed;
         if (bizAtom === undefined) {
             return <ViewForkId id={id} />;
         }
@@ -26,7 +26,7 @@ export function ViewForkAtom({ id, store }: { id: number; store: EntityStore; })
     if (bizAtom === undefined) {
         let bizSpec = store.getCacheFork(id);
         if (bizSpec === undefined) return null;
-        bizAtom = bizSpec.atom;
+        bizAtom = bizSpec.seed;
     }
     const { no, ex } = bizAtom;
     return <>{ex ?? no}</>;
@@ -49,7 +49,7 @@ export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: Entity
     const atom = store.getCacheAtom(id)?.atom;
     const noLabel: boolean = undefined;
     if (atom === undefined) return null;
-    let bizAtom = biz.entityFromId<EntityAtom>(atom.base);
+    let bizAtom = biz.entityFromId<EntityAtom>(atom.phrase);
     if (bizAtom === undefined) return null;
     let { titleBuds } = bizAtom;
     if (titleBuds === undefined) {
@@ -80,7 +80,7 @@ export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: Entity
     const atom = store.getCacheAtom(id)?.atom;
     // const noLabel: boolean = undefined;
     if (atom === undefined) return null;
-    let bizAtom = biz.entityFromId<EntityAtom>(atom.base);
+    let bizAtom = biz.entityFromId<EntityAtom>(atom.phrase);
     if (bizAtom === undefined) return null;
     let { primeBuds } = bizAtom;
     if (primeBuds === undefined) {
@@ -112,9 +112,9 @@ export function ViewForkAtomTitles({ id, store }: { id: number; store: EntitySto
         atomId = id;
     }
     else {
-        const { id, base } = bizFork.atom;
+        const { id, phrase } = bizFork.seed;
         atomId = id;
-        bizAtom = biz.entityFromId<EntityAtom>(base);
+        bizAtom = biz.entityFromId<EntityAtom>(phrase);
         if (bizAtom === undefined) return null;
     }
     let { titleBuds } = bizAtom;

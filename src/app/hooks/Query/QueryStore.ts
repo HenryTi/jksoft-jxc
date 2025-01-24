@@ -10,7 +10,7 @@ export class QueryStore extends EntityStore<EntityQuery> {
             json[bud.id] = param[bud.name];
         }
         let retQuery = await this.uq.DoQuery.submitReturns({ query: this.entity.id, json, pageStart: undefined, pageSize: 100 });
-        let { ret: retItems, props, specs, atoms } = retQuery;
+        let { ret: retItems, details, props, forks, atoms } = retQuery;
         let pickedArr: Picked[] = [];
         let coll: { [id: number]: Picked } = {};
         let lastId = 0;
@@ -40,20 +40,34 @@ export class QueryStore extends EntityStore<EntityQuery> {
             coll[id] = picked;
         }
 
-        let specsForCache = specs.map(v => {
+        /*
+        let forksForCache = forks.map(v => {
             const { id, atom: rowId, seed } = v;
             return {
                 id,
                 atom: coll[rowId]?.json[0],
                 seed,
             }
+            const { id, phrase, seed } = v;
+            return {
+                id,
+                // atom: coll[seed]?.json[0],
+                phrase,
+                seed,
+                // base,
+            }
         });
-        this.cacheIdAndBuds(props, atoms, specsForCache);
+        this.cacheIdAndBuds(props, atoms, forksForCache);
+        */
+        this.cacheIdAndBuds(props, atoms, forks);
 
         let specSerial = 1;
-        for (let specRow of specs) {
-            let { atom, id, ban, value, json } = specRow;
+        for (let detail of details) {
+            /*let { atom, id, ban, value, json } = forkRow;
             let picked = coll[atom];
+            */
+            let { seed, id, ban, value, json } = detail;
+            let picked = coll[seed];
             if (picked === undefined) continue;
             if (value !== undefined) picked.sum += value;
             let { $specs } = picked;

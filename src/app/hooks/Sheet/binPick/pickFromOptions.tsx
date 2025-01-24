@@ -1,5 +1,4 @@
 import { EntityOptions, PickOptions } from "app/Biz";
-import { AtomPhrase } from "app/tool";
 import { PickResult } from "app/hooks";
 import { Modal, Page, useModal } from "tonwa-app";
 import { OptionsRadioAsync } from "app/hooks/Bud/OptionsRadioAsync";

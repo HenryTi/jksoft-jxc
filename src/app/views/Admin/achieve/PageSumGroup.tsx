@@ -2,6 +2,7 @@ import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { OptionsUseBizAtom, pathAtom, useBizAtom } from "app/hooks";
 import { ViewAtom } from "app/hooks";
+import { AtomData } from "app/tool";
 import { Link } from "react-router-dom";
 import { LinkModal } from "tonwa-app";
 import { CheckAsync, FA } from "tonwa-com";
@@ -51,7 +52,7 @@ export function PageSumGroup() {
     }
 }
 
-function PageOneGroup({ group }: { group: Atom; }) {
+function PageOneGroup({ group }: { group: AtomData; }) {
     const { uq } = useUqApp();
     /*
     const modal = useModal();
@@ -68,7 +69,7 @@ function PageOneGroup({ group }: { group: Atom; }) {
     </button>;
     */
     const none = <div className='m-3 small text-muted'>[无]</div>;
-    function ViewItemPerson({ value }: { value: Atom & { selected: number; } }) {
+    function ViewItemPerson({ value }: { value: AtomData & { selected: number; } }) {
         async function onCheckChanged(name: string, checked: boolean) {
             let act: number = checked === true ? 1 : -1;
             await uq.SetSumGroupPerson.submit({ group: group.id, person: value.id, act, });

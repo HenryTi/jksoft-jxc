@@ -21,24 +21,24 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
     const { valDiv, binStore } = editing;
     const { sheetStore, uq, modal, biz } = binStore;
     const { baseExp, baseBud, params } = binInput;
-    const baseName = '.i';
-    editing.addFormula(baseName, baseExp ?? baseBud.valueSet, false); // baseBud.valueSetType === ValueSetType.init);
-    const base = editing.getValue(baseName) as number;
-    if (base === undefined) {
+    const seedName = '.i';
+    editing.addFormula(seedName, baseExp ?? baseBud.valueSet, false); // baseBud.valueSetType === ValueSetType.init);
+    const seed = editing.getValue(seedName) as number;
+    if (seed === undefined) {
         debugger;
-        throw Error('input spec must have base');
+        throw Error('input fork must have seed');
     }
-    editing.setNamedValue('%base', base);
+    editing.setNamedValue('%base', seed);
     let paramValues: { [budId: number | string]: any };
     // 暂时先按赋值处理，以后可以处理:=
     let entityFork = binInput.fork;
     if (entityFork === undefined) {
-        let { entityID } = sheetStore.getCacheAtom(base);
+        let { entityID } = sheetStore.getCacheAtom(seed);
         entityFork = entityID.fork;
     }
     if (entityFork === undefined) {
         // alert('no entity fork');
-        return { id: base, };   // 没有批次定义
+        return { id: seed, };   // 没有批次定义
     }
     const { id: entityId, preset, keys, buds: forkBuds } = entityFork;
     let paramsDefined: boolean;
@@ -93,21 +93,22 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         const param: ParamSaveFork = {
             id: undefined,
             fork: entityId,
-            base,
+            base: seed,
             values,
         };
         let results = await uq.SaveFork.submit(param);
         let { id } = results;
         if (id < 0) id = -id;
-        let retSpec = Object.assign(data, { id, base });
+        let retSpec = Object.assign(data, { id, base: seed });
 
-        sheetStore.addBizSpecs([{
+        sheetStore.addBizForks([{
             id,
-            atom: base,
+            seed,
+            phrase: entityId,
         }],
             [...keys, ...forkBuds].map(v => ({
                 id,
-                phrase: v.id,
+                bud: v.id,
                 value: budValueFromData(v),
             })));
         return retSpec;
@@ -117,12 +118,12 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         ret = await saveFork(false, paramValues);
     }
     else if (preset === true) {
-        let { ret } = await uq.GetSpecsFromBase.query({ base });
+        let { ret } = await uq.GetSpecsFromBase.query({ base: seed });
         let retSpec: any;
         switch (ret.length) {
             default:
                 return await modal.open(<PagePickSelect />);
-            case 0: retSpec = { id: base }; break;
+            case 0: retSpec = { id: seed }; break;
             case 1: retSpec = ret[0]; break;
         }
         ret = retSpec;
@@ -131,7 +132,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         let buds = [...keys];
         if (forkBuds !== undefined) buds.push(...forkBuds);
         let budsEditing = new ValuesBudsEditing(modal, biz, buds);
-        budsEditing.setNamedValue('%base', base);
+        budsEditing.setNamedValue('%base', seed);
         budsEditing.initBudValues(paramValues);
         ret = await modal.open(<PagePickSpec />);
         function PagePickSpec() {
@@ -145,7 +146,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
                 <div className={bootstrapContainer + ' pt-3 tonwa-bg-gray-2 '}>
                     <Band>
                         <div className="mx-3">
-                            <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={base} />
+                            <ViewIBaseFromId sheetStore={sheetStore} valDiv={valDiv} iBase={seed} />
                         </div>
                     </Band>
                 </div>

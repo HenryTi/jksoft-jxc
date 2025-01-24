@@ -1,7 +1,6 @@
 import { Biz, BizBud, Entity, EntityFork, EntityID } from "app/Biz";
 import { BudCheckValue, BudValue, Modal } from "tonwa-app";
-import { Atom, ReturnGetPendProps, ReturnGetSheetAtoms, ReturnGetSheetProps, ReturnGetSheetSpecs, UqExt } from "uqs/UqDefault";
-import { AtomPhrase } from "./Model";
+import { Atom, ReturnGetPendProps, ReturnGetSheetAtoms, ReturnGetSheetProps, ReturnGetSheetForks, UqExt } from "uqs/UqDefault";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -21,16 +20,23 @@ export interface BudValueColl {
     [bud: number]: BudValue;
 }
 
+export interface AtomData {
+    id: number;
+    phrase: number;
+    no: string;
+    ex: string;
+}
+
 export interface AtomColl {
     [id: number]: {
-        atom: Atom;
+        atom: AtomData;
         entityID: EntityID;
     }
 }
 
 export interface ForkColl {
     [id: number]: {
-        atom: Atom;
+        seed: AtomData;
         entityID: EntityID;
         buds: BizBud[];
     }
@@ -75,9 +81,9 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
             let bizFork = this.bizForkColl[id];
             if (bizFork === undefined) return null;
             entityID = bizFork.entityID;
-            const { atom } = bizFork;
-            if (atom === undefined) return null;
-            budValueColl = this.budsColl[bizFork.atom.id];
+            const { seed } = bizFork;
+            if (seed === undefined) return null;
+            budValueColl = this.budsColl[bizFork.seed.id];
         }
         else {
             entityID = bizAtom.entityID;
@@ -87,14 +93,14 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
     }
     setCacheFork(id: number, base: number, buds: BizBud[]) {
         let pAtom = this.getCacheAtom(base);
-        let atom: Atom;
+        let atom: AtomData;
         let entityID: EntityID;
         if (pAtom !== undefined) {
             atom = pAtom.atom;
             entityID = pAtom.entityID;
         }
         this.bizForkColl[id] = {
-            atom,
+            seed: atom,
             entityID,
             buds,
         }
@@ -102,32 +108,32 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
 
     cacheIdAndBuds(props: ReturnGetSheetProps[],
         atoms: ReturnGetSheetAtoms[],
-        specs: ReturnGetSheetSpecs[],
+        forks: ReturnGetSheetForks[],
     ) {
         props.sort((a, b) => {
-            const { id: aId, phrase: aPhrase } = a;
-            const { id: bId, phrase: bPhrase } = b;
+            const { id: aId, bud: aBud } = a;
+            const { id: bId, bud: bBud } = b;
             let c0 = aId - bId;
             if (c0 !== 0) return c0;
-            return aPhrase - bPhrase;
+            return aBud - bBud;
         });
         const budsColl = budValuesFromProps(props);
         Object.assign(this.budsColl, budsColl);
         this.addBizAtoms(atoms);
-        this.addBizSpecs(specs, props);
+        this.addBizForks(forks, props);
     }
 
-    private addBizAtoms(bizAtoms: Atom[]) {
+    private addBizAtoms(bizAtoms: ReturnGetSheetAtoms[]) {
         for (let atom of bizAtoms) {
             this.cacheAtom(atom);
         }
     }
 
-    cacheAtom(atom: Atom) {
-        const { id, base } = atom;
+    cacheAtom(atom: ReturnGetSheetAtoms) {
+        const { id, phrase } = atom;
         this.bizAtomColl[id] = {
             atom,
-            entityID: this.biz.entities[base] as EntityID,
+            entityID: this.biz.entities[phrase] as EntityID,
         };
     }
 
@@ -144,37 +150,37 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
         }
     }
 
-    public addBizSpecs(bizSpecs: { id: number; atom: number; }[], props: ReturnGetPendProps[]) {
-        for (let bizSpec of bizSpecs) {
-            const { id, atom: atomId } = bizSpec;
-            const pAtom = this.bizAtomColl[atomId];
-            let atom: Atom;
+    public addBizForks(bizForks: { id: number; seed: number; phrase: number; }[], props: ReturnGetPendProps[]) {
+        for (let bizSpec of bizForks) {
+            const { id, seed } = bizSpec;
+            const pAtom = this.bizAtomColl[seed];
+            let atom: AtomData;
             let entityID: EntityID;
             if (pAtom !== undefined) {
                 atom = pAtom.atom;
                 entityID = pAtom.entityID;
             }
             this.bizForkColl[id] = {
-                atom,
+                seed: atom,
                 entityID,
                 buds: [],
             }
         }
-        for (let { id, phrase, value } of props) {
+        for (let { id, bud, value } of props) {
             let bizSpec = this.bizForkColl[id];
             if (bizSpec === undefined) continue;
-            let bud = this.biz.budFromId(phrase);
+            let bizBud = this.biz.budFromId(bud);
             if (bud === undefined) {
                 // debugger;
                 continue;
             }
-            bizSpec.buds.push(bud);
+            bizSpec.buds.push(bizBud);
             let coll = this.budsColl[id];
             if (coll === undefined) {
                 coll = {};
                 this.budsColl[id] = coll;
             }
-            coll[phrase] = value;
+            coll[bud] = value;
         }
     }
 
@@ -193,31 +199,31 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
 
 interface PropData {
     id: number;
-    phrase: number;
+    bud: number;
     value: any;
     //    owner: number;
 }
 
 function budValuesFromProps(props: PropData[]) {
     const budsColl: BudsColl = {};
-    for (let { id, phrase, value } of props) {
+    for (let { id, bud, value } of props) {
         let budValues = budsColl[id];
         if (budValues === undefined) {
             budsColl[id] = budValues = {};
         }
         if (Array.isArray(value) === false) {
-            budValues[phrase] = value;
+            budValues[bud] = value;
         }
         else {
             switch (value.length) {
                 default:
                 case 0: debugger; break;
-                case 1: budValues[phrase] = value[0]; break;
+                case 1: budValues[bud] = value[0]; break;
                 case 2:
                     let v1 = value[1];
-                    let checks = budValues[phrase] as BudCheckValue;
+                    let checks = budValues[bud] as BudCheckValue;
                     if (checks === undefined) {
-                        budValues[phrase] = checks = [v1];
+                        budValues[bud] = checks = [v1];
                     }
                     else {
                         // 可能重复，去重。具体为什么会重复，随后再找原因

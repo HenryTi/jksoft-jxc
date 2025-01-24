@@ -97,8 +97,8 @@ export class AtomStore extends EntityStore<EntityAtom> {
     readonly searchItems: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
         let newParam = { phrase: this.entity.id, ...param };
         let query = this.entity.uq.GetIDList;
-        let { $page, props, atoms, specs } = await query.page(newParam, pageStart, pageSize);
-        this.cacheIdAndBuds(props, atoms, specs);
+        let { $page, props, atoms, forks } = await query.page(newParam, pageStart, pageSize);
+        this.cacheIdAndBuds(props, atoms, forks);
         return $page;
     }
 

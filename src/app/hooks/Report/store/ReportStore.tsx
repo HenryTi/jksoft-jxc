@@ -65,7 +65,7 @@ export class ReportConsole extends Console {
             dateEnd: to,
             params: { a: 1 }
         };
-        let { $page, specs } = await this.uq.GetReport.page(queryParam, pageStart, pageSize);
+        let { $page, forks } = await this.uq.GetReport.page(queryParam, pageStart, pageSize);
         let ret: ReportRow[] = [];
         let coll: { [id: number]: ReportRow } = {};
         for (let row of $page) {
@@ -74,11 +74,11 @@ export class ReportConsole extends Console {
             coll[id] = rr;
             ret.push(rr);
         }
-        for (let spec of specs) {
-            let { base } = spec;
+        for (let fork of forks) {
+            let { base } = fork;
             let rr = coll[base];
             if (rr === undefined) continue;
-            rr.specs.push(spec);
+            rr.specs.push(fork);
         }
         for (let rr of ret) {
             const { value, specs } = rr;

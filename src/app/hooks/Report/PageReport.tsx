@@ -83,7 +83,7 @@ function PageResult({ entityReport, atomId, top }: { entityReport: EntityReport;
     async function onChanged(period: Period) {
     }
     const query = useCallback(async (queryParam: any, pageStart: any, pageSize: number) => {
-        let { $page, specs } = await uq.GetReport.page(queryParam, pageStart, pageSize);
+        let { $page, forks } = await uq.GetReport.page(queryParam, pageStart, pageSize);
         let ret: ReportRow[] = [];
         let coll: { [id: number]: ReportRow } = {};
         for (let row of $page) {
@@ -92,11 +92,11 @@ function PageResult({ entityReport, atomId, top }: { entityReport: EntityReport;
             coll[id] = rr;
             ret.push(rr);
         }
-        for (let spec of specs) {
-            let { base } = spec;
+        for (let fork of forks) {
+            let { base } = fork;
             let rr = coll[base];
             if (rr === undefined) continue;
-            rr.specs.push(spec);
+            rr.specs.push(fork);
         }
         for (let rr of ret) {
             const { value, specs } = rr;

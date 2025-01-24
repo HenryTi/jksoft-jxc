@@ -189,9 +189,9 @@ export abstract class ValDivBase extends ValDivs {
 
     getIBase(sheetStore: SheetStore, iValue: number): number {
         if (this.iBase !== undefined) return this.iBase;
-        let bizSpec = sheetStore.getCacheFork(iValue);
-        if (bizSpec === undefined) return;
-        return bizSpec.atom.id;
+        let bizFork = sheetStore.getCacheFork(iValue);
+        if (bizFork === undefined) return;
+        return bizFork.seed.id;
     }
 
     get pend(): number {

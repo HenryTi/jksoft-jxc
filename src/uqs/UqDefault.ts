@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Jan 22 2025 23:39:54 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Thu Jan 23 2025 15:02:22 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -215,25 +215,25 @@ export interface ReturnGetAdminBook$page {
 }
 export interface ReturnGetAdminBookProps {
 	id: number;
-	phrase: number;
+	bud: number;
 	value: any;
 }
 export interface ReturnGetAdminBookAtoms {
 	id: number;
-	base: number;
+	phrase: number;
 	no: string;
 	ex: string;
 }
-export interface ReturnGetAdminBookSpecs {
+export interface ReturnGetAdminBookForks {
 	id: number;
-	atom: number;
+	phrase: number;
 	seed: number;
 }
 export interface ResultGetAdminBook {
 	$page: ReturnGetAdminBook$page[];
 	props: ReturnGetAdminBookProps[];
 	atoms: ReturnGetAdminBookAtoms[];
-	specs: ReturnGetAdminBookSpecs[];
+	forks: ReturnGetAdminBookForks[];
 }
 
 export interface ParamSaveAtom {
@@ -429,18 +429,18 @@ export interface ReturnSaveDetailsOrigins {
 }
 export interface ReturnSaveDetailsProps {
 	id: number;
-	phrase: number;
+	bud: number;
 	value: any;
 }
 export interface ReturnSaveDetailsAtoms {
 	id: number;
-	base: number;
+	phrase: number;
 	no: string;
 	ex: string;
 }
-export interface ReturnSaveDetailsSpecs {
+export interface ReturnSaveDetailsForks {
 	id: number;
-	atom: number;
+	phrase: number;
 	seed: number;
 }
 export interface ResultSaveDetails {
@@ -449,7 +449,7 @@ export interface ResultSaveDetails {
 	origins: ReturnSaveDetailsOrigins[];
 	props: ReturnSaveDetailsProps[];
 	atoms: ReturnSaveDetailsAtoms[];
-	specs: ReturnSaveDetailsSpecs[];
+	forks: ReturnSaveDetailsForks[];
 }
 
 export interface ParamDeleteBin {
@@ -507,30 +507,36 @@ export interface ReturnDoQueryRet {
 	json: any;
 	value: number;
 }
-export interface ReturnDoQueryProps {
-	id: number;
-	phrase: number;
-	value: any;
-}
-export interface ReturnDoQueryAtoms {
+export interface ReturnDoQueryDetails {
 	id: number;
 	base: number;
-	no: string;
-	ex: string;
-}
-export interface ReturnDoQuerySpecs {
-	id: number;
-	atom: number;
 	seed: number;
 	ban: number;
 	json: any;
 	value: number;
 }
+export interface ReturnDoQueryProps {
+	id: number;
+	bud: number;
+	value: any;
+}
+export interface ReturnDoQueryAtoms {
+	id: number;
+	phrase: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnDoQueryForks {
+	id: number;
+	phrase: number;
+	seed: number;
+}
 export interface ResultDoQuery {
 	ret: ReturnDoQueryRet[];
+	details: ReturnDoQueryDetails[];
 	props: ReturnDoQueryProps[];
 	atoms: ReturnDoQueryAtoms[];
-	specs: ReturnDoQuerySpecs[];
+	forks: ReturnDoQueryForks[];
 }
 
 export interface ParamRemoveDraft {
@@ -559,25 +565,25 @@ export interface ReturnGetMyDrafts$page {
 }
 export interface ReturnGetMyDraftsProps {
 	id: number;
-	phrase: number;
+	bud: number;
 	value: any;
 }
 export interface ReturnGetMyDraftsAtoms {
 	id: number;
-	base: number;
+	phrase: number;
 	no: string;
 	ex: string;
 }
-export interface ReturnGetMyDraftsSpecs {
+export interface ReturnGetMyDraftsForks {
 	id: number;
-	atom: number;
+	phrase: number;
 	seed: number;
 }
 export interface ResultGetMyDrafts {
 	$page: ReturnGetMyDrafts$page[];
 	props: ReturnGetMyDraftsProps[];
 	atoms: ReturnGetMyDraftsAtoms[];
-	specs: ReturnGetMyDraftsSpecs[];
+	forks: ReturnGetMyDraftsForks[];
 }
 
 export interface ParamSetSheetPreToDraft {
@@ -733,18 +739,18 @@ export interface ReturnGetSheetOrigins {
 }
 export interface ReturnGetSheetProps {
 	id: number;
-	phrase: number;
+	bud: number;
 	value: any;
 }
 export interface ReturnGetSheetAtoms {
 	id: number;
-	base: number;
+	phrase: number;
 	no: string;
 	ex: string;
 }
-export interface ReturnGetSheetSpecs {
+export interface ReturnGetSheetForks {
 	id: number;
-	atom: number;
+	phrase: number;
 	seed: number;
 }
 export interface ResultGetSheet {
@@ -753,7 +759,7 @@ export interface ResultGetSheet {
 	origins: ReturnGetSheetOrigins[];
 	props: ReturnGetSheetProps[];
 	atoms: ReturnGetSheetAtoms[];
-	specs: ReturnGetSheetSpecs[];
+	forks: ReturnGetSheetForks[];
 }
 
 export interface ParamGetAtom {
@@ -821,18 +827,18 @@ export interface ReturnGetPendRetSheet {
 }
 export interface ReturnGetPendProps {
 	id: number;
-	phrase: number;
+	bud: number;
 	value: any;
 }
 export interface ReturnGetPendAtoms {
 	id: number;
-	base: number;
+	phrase: number;
 	no: string;
 	ex: string;
 }
-export interface ReturnGetPendSpecs {
+export interface ReturnGetPendForks {
 	id: number;
-	atom: number;
+	phrase: number;
 	seed: number;
 }
 export interface ResultGetPend {
@@ -840,7 +846,7 @@ export interface ResultGetPend {
 	retSheet: ReturnGetPendRetSheet[];
 	props: ReturnGetPendProps[];
 	atoms: ReturnGetPendAtoms[];
-	specs: ReturnGetPendSpecs[];
+	forks: ReturnGetPendForks[];
 }
 
 export interface ParamGetPendsNotify {
@@ -915,25 +921,25 @@ export interface ReturnGetSiteSheetList$page {
 }
 export interface ReturnGetSiteSheetListProps {
 	id: number;
-	phrase: number;
+	bud: number;
 	value: any;
 }
 export interface ReturnGetSiteSheetListAtoms {
 	id: number;
-	base: number;
+	phrase: number;
 	no: string;
 	ex: string;
 }
-export interface ReturnGetSiteSheetListSpecs {
+export interface ReturnGetSiteSheetListForks {
 	id: number;
-	atom: number;
+	phrase: number;
 	seed: number;
 }
 export interface ResultGetSiteSheetList {
 	$page: ReturnGetSiteSheetList$page[];
 	props: ReturnGetSiteSheetListProps[];
 	atoms: ReturnGetSiteSheetListAtoms[];
-	specs: ReturnGetSiteSheetListSpecs[];
+	forks: ReturnGetSiteSheetListForks[];
 }
 
 export interface ParamGetMySheetList {
@@ -959,25 +965,25 @@ export interface ReturnGetMySheetList$page {
 }
 export interface ReturnGetMySheetListProps {
 	id: number;
-	phrase: number;
+	bud: number;
 	value: any;
 }
 export interface ReturnGetMySheetListAtoms {
 	id: number;
-	base: number;
+	phrase: number;
 	no: string;
 	ex: string;
 }
-export interface ReturnGetMySheetListSpecs {
+export interface ReturnGetMySheetListForks {
 	id: number;
-	atom: number;
+	phrase: number;
 	seed: number;
 }
 export interface ResultGetMySheetList {
 	$page: ReturnGetMySheetList$page[];
 	props: ReturnGetMySheetListProps[];
 	atoms: ReturnGetMySheetListAtoms[];
-	specs: ReturnGetMySheetListSpecs[];
+	forks: ReturnGetMySheetListForks[];
 }
 
 export interface ParamGetLogs {
@@ -1091,7 +1097,7 @@ export interface ReturnGetReport$page {
 	ex: string;
 	value: any;
 }
-export interface ReturnGetReportSpecs {
+export interface ReturnGetReportForks {
 	id: number;
 	phrase: number;
 	base: number;
@@ -1100,7 +1106,7 @@ export interface ReturnGetReportSpecs {
 }
 export interface ResultGetReport {
 	$page: ReturnGetReport$page[];
-	specs: ReturnGetReportSpecs[];
+	forks: ReturnGetReportForks[];
 }
 
 export interface ParamGetHistory {
@@ -1446,25 +1452,25 @@ export interface ReturnGetIDList$page {
 }
 export interface ReturnGetIDListProps {
 	id: number;
-	phrase: number;
+	bud: number;
 	value: any;
 }
 export interface ReturnGetIDListAtoms {
 	id: number;
-	base: number;
+	phrase: number;
 	no: string;
 	ex: string;
 }
-export interface ReturnGetIDListSpecs {
+export interface ReturnGetIDListForks {
 	id: number;
-	atom: number;
+	phrase: number;
 	seed: number;
 }
 export interface ResultGetIDList {
 	$page: ReturnGetIDList$page[];
 	props: ReturnGetIDListProps[];
 	atoms: ReturnGetIDListAtoms[];
-	specs: ReturnGetIDListSpecs[];
+	forks: ReturnGetIDListForks[];
 }
 
 export interface ParamGetIDListCount {
@@ -2421,7 +2427,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "phrase",
+                        "name": "bud",
                         "type": "id"
                     },
                     {
@@ -2438,7 +2444,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "base",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -2454,14 +2460,14 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "specs",
+                "name": "forks",
                 "fields": [
                     {
                         "name": "id",
                         "type": "id"
                     },
                     {
-                        "name": "atom",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -3121,7 +3127,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "phrase",
+                        "name": "bud",
                         "type": "id"
                     },
                     {
@@ -3138,7 +3144,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "base",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -3154,14 +3160,14 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "specs",
+                "name": "forks",
                 "fields": [
                     {
                         "name": "id",
                         "type": "id"
                     },
                     {
-                        "name": "atom",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -3336,24 +3342,7 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "props",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "phrase",
-                        "type": "id"
-                    },
-                    {
-                        "name": "value",
-                        "type": "json"
-                    }
-                ]
-            },
-            {
-                "name": "atoms",
+                "name": "details",
                 "fields": [
                     {
                         "name": "id",
@@ -3361,29 +3350,6 @@ export const uqSchema={
                     },
                     {
                         "name": "base",
-                        "type": "id"
-                    },
-                    {
-                        "name": "no",
-                        "type": "char",
-                        "size": 30
-                    },
-                    {
-                        "name": "ex",
-                        "type": "char",
-                        "size": 200
-                    }
-                ]
-            },
-            {
-                "name": "specs",
-                "fields": [
-                    {
-                        "name": "id",
-                        "type": "id"
-                    },
-                    {
-                        "name": "atom",
                         "type": "id"
                     },
                     {
@@ -3403,6 +3369,63 @@ export const uqSchema={
                         "type": "dec",
                         "scale": 6,
                         "precision": 18
+                    }
+                ]
+            },
+            {
+                "name": "props",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "forks",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "seed",
+                        "type": "id"
                     }
                 ]
             }
@@ -3507,7 +3530,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "phrase",
+                        "name": "bud",
                         "type": "id"
                     },
                     {
@@ -3524,7 +3547,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "base",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -3540,14 +3563,14 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "specs",
+                "name": "forks",
                 "fields": [
                     {
                         "name": "id",
                         "type": "id"
                     },
                     {
-                        "name": "atom",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -4066,7 +4089,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "phrase",
+                        "name": "bud",
                         "type": "id"
                     },
                     {
@@ -4083,7 +4106,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "base",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -4099,14 +4122,14 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "specs",
+                "name": "forks",
                 "fields": [
                     {
                         "name": "id",
                         "type": "id"
                     },
                     {
-                        "name": "atom",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -4336,7 +4359,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "phrase",
+                        "name": "bud",
                         "type": "id"
                     },
                     {
@@ -4353,7 +4376,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "base",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -4369,14 +4392,14 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "specs",
+                "name": "forks",
                 "fields": [
                     {
                         "name": "id",
                         "type": "id"
                     },
                     {
-                        "name": "atom",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -4624,7 +4647,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "phrase",
+                        "name": "bud",
                         "type": "id"
                     },
                     {
@@ -4641,7 +4664,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "base",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -4657,14 +4680,14 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "specs",
+                "name": "forks",
                 "fields": [
                     {
                         "name": "id",
                         "type": "id"
                     },
                     {
-                        "name": "atom",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -4773,7 +4796,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "phrase",
+                        "name": "bud",
                         "type": "id"
                     },
                     {
@@ -4790,7 +4813,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "base",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -4806,14 +4829,14 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "specs",
+                "name": "forks",
                 "fields": [
                     {
                         "name": "id",
                         "type": "id"
                     },
                     {
-                        "name": "atom",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -5155,7 +5178,7 @@ export const uqSchema={
                 "order": "asc"
             },
             {
-                "name": "specs",
+                "name": "forks",
                 "fields": [
                     {
                         "name": "id",
@@ -6105,7 +6128,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "phrase",
+                        "name": "bud",
                         "type": "id"
                     },
                     {
@@ -6122,7 +6145,7 @@ export const uqSchema={
                         "type": "id"
                     },
                     {
-                        "name": "base",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {
@@ -6138,14 +6161,14 @@ export const uqSchema={
                 ]
             },
             {
-                "name": "specs",
+                "name": "forks",
                 "fields": [
                     {
                         "name": "id",
                         "type": "id"
                     },
                     {
-                        "name": "atom",
+                        "name": "phrase",
                         "type": "id"
                     },
                     {

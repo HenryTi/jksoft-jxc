@@ -115,19 +115,19 @@ export class SheetMyDraftsStore extends SheetListStore {
 
     readonly atomMyDrafts = atom(undefined as ReturnGetMyDrafts$page[]);
     async loadMyDrafts(): Promise<void> {
-        let { $page, props, atoms, specs } = await this.uq.GetMyDrafts.page({
+        let { $page, props, atoms, forks } = await this.uq.GetMyDrafts.page({
             entitySheet: this.entity.id,
             entityMain: this.entity.main.id,
         }, undefined, 100);
-        this.cacheIdAndBuds(props, atoms, specs as any);
+        this.cacheIdAndBuds(props, atoms, forks);
         setAtomValue(this.atomMyDrafts, $page);
     }
 }
 
 export class SheetMyListStore extends SheetListStore {
     readonly loadMyList = async (param: any, pageStart: any, pageSize: number): Promise<any[]> => {
-        const { $page, props, atoms, specs } = await this.uq.GetMySheetList.page(param, pageStart, pageSize);
-        this.cacheIdAndBuds(props, atoms, specs);
+        const { $page, props, atoms, forks } = await this.uq.GetMySheetList.page(param, pageStart, pageSize);
+        this.cacheIdAndBuds(props, atoms, forks);
         return $page;
     }
 }

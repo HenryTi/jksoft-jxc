@@ -1,15 +1,19 @@
 import { atom } from "jotai";
 import { setAtomValue } from "tonwa-com";
 import { Atom } from "uqs/UqDefault";
+import { AtomData } from "./Store";
 
+/*
 export interface Spec {
     id?: number;
     $phrase: string;
 }
-
-export interface AtomPhrase extends Atom {
-    phrase: string;
+*/
+/*
+export interface AtomPhrase extends AtomData {
+    // phrase: string;
 }
+*/
 
 export interface OriginDetail extends Bin {
     pend: number;

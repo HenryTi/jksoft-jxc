@@ -1,6 +1,6 @@
 import { BizBud, BudBin, BudFork, BudID, BudRadio, EntityAtom, EntityFork, EnumBudType, EnumSysBud } from "app/Biz";
 import { ViewBudFork, ViewForkNoAtom } from "app/hooks";
-import { EntityStore, contentFromDays } from "app/tool";
+import { AtomData, EntityStore, contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
 import { Atom as BizAtom, BizPhraseType } from "uqs/UqDefault";
 import { ViewForkId } from "app/coms/ViewForkId";
@@ -113,7 +113,7 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, no
     else {
         // const { bizAtomColl } = store;
         let pAtom = store.getCacheAtom(value); // bizAtomColl[value];
-        let bizAtom: BizAtom = pAtom?.atom;
+        let bizAtom: AtomData = pAtom?.atom;
         if (bizAtom !== undefined) {
             let { no, ex } = bizAtom
             title = `${ex} ${no}`;
@@ -123,15 +123,15 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, no
             // const { budsColl } = store;
             let forkValue = store.getCacheFork(value); // bizForkColl[value];
             if (forkValue !== undefined) {
-                const { atom, buds } = forkValue;
-                if (atom === undefined) {
+                const { seed, buds } = forkValue;
+                if (seed === undefined) {
                     vContent = <ViewForkId id={value} />;
                 }
                 else {
                     // vContent = <ViewSpecId id={atom.id} />;
                     vContent = <ViewFork />;
                     function ViewFork() {
-                        const { no, ex } = atom;
+                        const { no, ex } = seed;
                         let ret: string = (ex ?? no);
                         let sep = ' '
                         for (let bud of buds) {

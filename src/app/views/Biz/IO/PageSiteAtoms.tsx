@@ -2,7 +2,7 @@ import { useUqApp } from "app";
 import { EntityIOSite } from "app/Biz";
 import { ButtonRightAdd, PageQueryMore } from "app/coms";
 import { ViewAtom, useIDSelect } from "app/hooks";
-import { AtomPhrase, UseQueryOptions } from "app/tool";
+import { AtomData, UseQueryOptions } from "app/tool";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { Page, useModal } from "tonwa-app";
@@ -45,7 +45,7 @@ export function PageSiteAtoms({ ioSite }: { ioSite: EntityIOSite; }) {
     />;
 }
 
-function PageSetApp({ atom, ioSite }: { atom: AtomPhrase; ioSite: EntityIOSite; }) {
+function PageSetApp({ atom, ioSite }: { atom: AtomData; ioSite: EntityIOSite; }) {
     const uqApp = useUqApp();
     const { uq } = uqApp;
     const modal = useModal();

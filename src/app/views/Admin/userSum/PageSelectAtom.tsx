@@ -2,11 +2,11 @@ import { ViewAtom } from "app/hooks";
 import { ChangeEvent, useRef } from "react";
 import { Page, useModal } from "tonwa-app";
 import { List } from "tonwa-com";
-import { Atom } from "uqs/UqDefault";
 import { Selection } from "./UserSumStore";
+import { AtomData } from "app/tool";
 
 export function PageSelectAtom({ atoms, selected: selectedList, onSelectChanged }: {
-    atoms: Atom[];
+    atoms: AtomData[];
     selected: number[];
     onSelectChanged: (selection: Selection) => Promise<void>;
 }) {
@@ -16,7 +16,7 @@ export function PageSelectAtom({ atoms, selected: selectedList, onSelectChanged 
         const { id } = v;
         return { atom: v, sel: selectedList.find(s => s === id) !== undefined };
     });
-    function ViewItem({ value: { atom, sel } }: { value: { atom: Atom; sel: boolean; }; }) {
+    function ViewItem({ value: { atom, sel } }: { value: { atom: AtomData; sel: boolean; }; }) {
         async function onChange(evt: ChangeEvent<HTMLInputElement>) {
             let { id } = atom;
             const { selected, added, removed } = refSel.current;

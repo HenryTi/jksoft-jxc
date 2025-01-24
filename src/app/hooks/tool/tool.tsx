@@ -43,10 +43,10 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: nu
                 debugger;
                 break;
             case BizPhraseType.fork:
-                const { atom, entityID: entityAtom, } = store.getCacheFork(id);
+                const { seed, entityID: entityAtom, } = store.getCacheFork(id);
                 const { showKeys, showBuds } = entity as EntityFork;
                 return <>
-                    {viewBuds(store.getCacheBudProps(atom.id), entityAtom.primeBuds)}
+                    {viewBuds(store.getCacheBudProps(seed.id), entityAtom.primeBuds)}
                     {viewBuds(budValueColl, showKeys)}
                     {viewBuds(budValueColl, showBuds)}
                 </>;
@@ -86,7 +86,9 @@ export function ViewAtomTitles({ id, noLabel, store }: { id: number; noLabel?: b
         budValueColl = budsColl[id];
     }
     */
-    let { budValueColl, entityID } = store.getCacheAtomOrForkBudProps(id);
+    let ret = store.getCacheAtomOrForkBudProps(id);
+    if (ret === null) return null;
+    let { budValueColl, entityID } = ret;
     if (budValueColl === undefined) return null;
     if (entityID === undefined) return null;
     let buds: BizBud[] = entityID.titleBuds;

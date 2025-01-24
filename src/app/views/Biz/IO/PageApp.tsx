@@ -1,7 +1,7 @@
 import { useUqApp } from "app";
 import { EntityIOApp, EntityIOSite, IOAppID } from "app/Biz";
 import { LabelRowEdit, PagePickValue, ViewAtom } from "app/hooks";
-import { AtomPhrase, UseQueryOptions } from "app/tool";
+import { AtomData, UseQueryOptions } from "app/tool";
 import React, { useState } from "react";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
@@ -27,7 +27,7 @@ export interface IOApp {
 
 const cnRowCols = ' row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3 ';
 const cnItem = ' p-3 cursor-pointer border rounded-2 bg-white ';
-export function PageApp({ atom, ioSite, ioApp }: { atom: AtomPhrase; ioSite: EntityIOSite; ioApp: IOApp }) {
+export function PageApp({ atom, ioSite, ioApp }: { atom: AtomData; ioSite: EntityIOSite; ioApp: IOApp }) {
     const { uq } = useUqApp();
     const modal = useModal();
     const { caption, name, tie } = ioSite;
