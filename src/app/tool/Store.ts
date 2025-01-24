@@ -1,6 +1,6 @@
 import { Biz, BizBud, Entity, EntityFork, EntityID } from "app/Biz";
 import { BudCheckValue, BudValue, Modal } from "tonwa-app";
-import { Atom, ReturnGetPendProps, ReturnGetSheetAtoms, ReturnGetSheetProps, ReturnGetSheetForks, UqExt } from "uqs/UqDefault";
+import { Atom, ReturnGetPendProps, ReturnGetSheetAtoms, ReturnGetSheetProps, ReturnGetSheetForks, UqExt, BizPhraseType } from "uqs/UqDefault";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -131,9 +131,10 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
 
     cacheAtom(atom: ReturnGetSheetAtoms) {
         const { id, phrase } = atom;
+        let entityID = this.biz.entities[phrase] as EntityID;
         this.bizAtomColl[id] = {
             atom,
-            entityID: this.biz.entities[phrase] as EntityID,
+            entityID,
         };
     }
 
@@ -151,8 +152,8 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
     }
 
     public addBizForks(bizForks: { id: number; seed: number; phrase: number; }[], props: ReturnGetPendProps[]) {
-        for (let bizSpec of bizForks) {
-            const { id, seed } = bizSpec;
+        for (let bizFork of bizForks) {
+            const { id, seed } = bizFork;
             const pAtom = this.bizAtomColl[seed];
             let atom: AtomData;
             let entityID: EntityID;
@@ -167,14 +168,14 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
             }
         }
         for (let { id, bud, value } of props) {
-            let bizSpec = this.bizForkColl[id];
-            if (bizSpec === undefined) continue;
+            let bizFork = this.bizForkColl[id];
+            if (bizFork === undefined) continue;
             let bizBud = this.biz.budFromId(bud);
             if (bud === undefined) {
                 // debugger;
                 continue;
             }
-            bizSpec.buds.push(bizBud);
+            bizFork.buds.push(bizBud);
             let coll = this.budsColl[id];
             if (coll === undefined) {
                 coll = {};

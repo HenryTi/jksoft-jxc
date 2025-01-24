@@ -249,15 +249,15 @@ export class SheetStore extends EntityStore<EntitySheet> {
             if (pendValue === undefined) continue;
             if (iBud !== undefined) {
                 this.valDivsOnPend[pend] = atom(undefined as ValDivRoot);
-                let iSpec = this.bizForkColl[i];
-                if (iSpec !== undefined) {
-                    (v as any).iBase = iSpec.seed.id;
+                let iFork = this.bizForkColl[i];
+                if (iFork !== undefined) {
+                    (v as any).iBase = iFork.seed.id;
                 }
             }
             if (xBud !== undefined) {
-                let xSpec = this.bizForkColl[x];
-                if (xSpec !== undefined) {
-                    (v as any).xBase = xSpec.seed.id;
+                let xFork = this.bizForkColl[x];
+                if (xFork !== undefined) {
+                    (v as any).xBase = xFork.seed.id;
                 }
             }
             let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);

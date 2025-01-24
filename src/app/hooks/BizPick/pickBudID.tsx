@@ -7,11 +7,12 @@ import { BizPhraseType, ParamGetIDList } from "uqs/UqDefault";
 import { BudEditing, ViewForkAtomBold } from "..";
 import { RowColsSm, ViewAtomTitles, ViewShowBuds } from "../tool";
 import { FA, SearchBox } from "tonwa-com";
+import { AtomStore } from "../BizAtom";
 
 export async function pickBudID(modal: Modal, budEditing: BudEditing) {
     return await modal.open(<PagePickBudID budEditing={budEditing} />);
 }
-
+/*
 class BudIDStore extends EntityStore {
     constructor(modal: Modal, bud: BizBud) {
         super(modal, bud.entity);
@@ -22,7 +23,7 @@ class BudIDStore extends EntityStore {
         return $page;
     }
 }
-
+*/
 function ViewID({ id, store }: { id: number; store: EntityStore; }) {
     const cnRow = ' px-3 py-2 cursor-pointer ';
     return <div className={cnRow}>
@@ -45,7 +46,7 @@ function PagePickBudID({ budEditing }: { budEditing: BudEditing; }) {
     let [entityAtom, setEntityAtom] = useState(entityID);
     const [searchKey, setSearchKey] = useState<string>();
     const { caption } = entityAtom;
-    const { current: store } = useRef(new BudIDStore(modal, bizBud));
+    const { current: store } = useRef(new AtomStore(modal, entityID));
     const defaultParam: ParamGetIDList = {
         phrase: entityID.id,
         tie: undefined,
@@ -83,7 +84,7 @@ function PagePickBudID({ budEditing }: { budEditing: BudEditing; }) {
         modal.close(item);
     }
     return <PageQueryMore header={caption}
-        query={store.query}
+        query={store.searchItems}
         ViewItem={ViewItem}
         sortField="id"
         param={param}

@@ -104,7 +104,7 @@ export class BudDec extends BudDataNumber {
         this.fraction = ui?.fraction;
     }
     override getUIValue(value: number) {
-        if (value === undefined) return;
+        if (value === undefined || value === null) return;
         return value.toFixed(this.fraction ?? 2);
     }
     fromSchema(schema: any) {

@@ -42,11 +42,11 @@ export function buildPathAtom(main: string) {
 
 export const pathAtom = buildPathAtom(atom);
 
-export class AtomStore extends EntityStore<EntityAtom> {
+export class AtomStore extends EntityStore<EntityID> {
     readonly pathView: string;
     readonly pathList: string;
 
-    constructor(modal: Modal, entity: EntityAtom) {
+    constructor(modal: Modal, entity: EntityID) {
         super(modal, entity);
         this.pathView = entity.name;
         this.pathList = entity.name + '-list';
