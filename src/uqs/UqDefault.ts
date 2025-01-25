@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Jan 23 2025 20:39:39 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Sat Jan 25 2025 08:52:04 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -493,6 +493,50 @@ export interface ResultSubmitSheetDebug {
 	logs: ReturnSubmitSheetDebugLogs[];
 	checkPend: ReturnSubmitSheetDebugCheckPend[];
 	checkBin: ReturnSubmitSheetDebugCheckBin[];
+}
+
+export interface ParamExecQuery {
+	query: number;
+	json: any;
+	pageStart: number;
+	pageSize: number;
+}
+export interface ReturnExecQueryMain {
+	rowId: number;
+	ban: number;
+	ids: any;
+	values: any;
+}
+export interface ReturnExecQueryDetail {
+	mainId: number;
+	rowId: number;
+	ban: number;
+	ids: any;
+	values: any;
+	cols: any;
+}
+export interface ReturnExecQueryProps {
+	id: number;
+	bud: number;
+	value: any;
+}
+export interface ReturnExecQueryAtoms {
+	id: number;
+	phrase: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnExecQueryForks {
+	id: number;
+	phrase: number;
+	seed: number;
+}
+export interface ResultExecQuery {
+	main: ReturnExecQueryMain[];
+	detail: ReturnExecQueryDetail[];
+	props: ReturnExecQueryProps[];
+	atoms: ReturnExecQueryAtoms[];
+	forks: ReturnExecQueryForks[];
 }
 
 export interface ParamDoQuery {
@@ -1886,6 +1930,7 @@ export interface UqExt extends Uq {
 	DeleteBin: UqAction<ParamDeleteBin, ResultDeleteBin>;
 	SubmitSheet: UqAction<ParamSubmitSheet, ResultSubmitSheet>;
 	SubmitSheetDebug: UqAction<ParamSubmitSheetDebug, ResultSubmitSheetDebug>;
+	ExecQuery: UqAction<ParamExecQuery, ResultExecQuery>;
 	DoQuery: UqAction<ParamDoQuery, ResultDoQuery>;
 	RemoveDraft: UqAction<ParamRemoveDraft, ResultRemoveDraft>;
 	GetMyDrafts: UqQuery<ParamGetMyDrafts, ResultGetMyDrafts>;
@@ -3289,6 +3334,140 @@ export const uqSchema={
                         "name": "message",
                         "type": "char",
                         "size": 200
+                    }
+                ]
+            }
+        ]
+    },
+    "execquery": {
+        "name": "ExecQuery",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "query",
+                "type": "id"
+            },
+            {
+                "name": "json",
+                "type": "json"
+            },
+            {
+                "name": "pageStart",
+                "type": "int"
+            },
+            {
+                "name": "pageSize",
+                "type": "int"
+            }
+        ],
+        "jsoned": true,
+        "returns": [
+            {
+                "name": "main",
+                "fields": [
+                    {
+                        "name": "rowId",
+                        "type": "id"
+                    },
+                    {
+                        "name": "ban",
+                        "type": "tinyint"
+                    },
+                    {
+                        "name": "ids",
+                        "type": "json"
+                    },
+                    {
+                        "name": "values",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "detail",
+                "fields": [
+                    {
+                        "name": "mainId",
+                        "type": "id"
+                    },
+                    {
+                        "name": "rowId",
+                        "type": "id"
+                    },
+                    {
+                        "name": "ban",
+                        "type": "tinyint"
+                    },
+                    {
+                        "name": "ids",
+                        "type": "json"
+                    },
+                    {
+                        "name": "values",
+                        "type": "json"
+                    },
+                    {
+                        "name": "cols",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "props",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "forks",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "seed",
+                        "type": "id"
                     }
                 ]
             }

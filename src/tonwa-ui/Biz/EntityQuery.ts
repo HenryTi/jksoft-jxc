@@ -19,7 +19,7 @@ export class EntityQuery extends Entity {
     asc: 'asc' | 'desc';
     ids: IDColumn[];
     showIds: IDColumn[];
-    groupByBase: boolean;
+    // groupByBase: boolean;
     ban: string | true;
     params: BizBud[];
     idFrom: FromEntity;
@@ -38,7 +38,7 @@ export class EntityQuery extends Entity {
             case 'from': this.fromEntity = val; break;
             case 'ids': this.ids = val; break;
             case 'showIds': this.showIds = val; break;
-            case 'groupByBase': this.groupByBase = val; break;
+            // case 'groupByBase': this.groupByBase = val; break;
         }
     }
 

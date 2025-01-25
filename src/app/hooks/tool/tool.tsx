@@ -117,7 +117,16 @@ export interface Prop<T = any> {
     bud: BizBud;
     value: T;
 }
-export interface Picked { [name: string]: Prop | any; }
+export interface NamedProps { [name: string]: Prop | any; }
+export type QueryRowCol = [BizBud, string | number];
+export interface QueryRow {
+    rowId: number;              // 主从关系
+    ban: number;
+    ids: number[];
+    values: [BizBud, number][];
+    cols: QueryRowCol[];
+    subs: QueryRow[];         // 从array
+}
 
 export function arrFromJsonArr(entity: Entity, arr: any[], hiddenBuds: Set<number>) {
     let propArr: Prop[] = [];

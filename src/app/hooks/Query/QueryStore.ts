@@ -1,9 +1,75 @@
 import { BizBud, EntityQuery } from "app/Biz";
 import { EntityStore } from "app/tool";
-import { Picked, Prop } from "../tool";
+import { NamedProps, Prop, QueryRow } from "../tool";
 
 export class QueryStore extends EntityStore<EntityQuery> {
     async query(param: any) {
+        let jsonParams: any = {};
+        const { params: paramBuds } = this.entity;
+        for (let bud of paramBuds) {
+            jsonParams[bud.id] = param[bud.name];
+        }
+        let retQuery = await this.uq.ExecQuery.submitReturns({
+            query: this.entity.id,
+            json: jsonParams,
+            pageStart: undefined,
+            pageSize: 100
+        });
+        let { main, detail: details, props, forks, atoms } = retQuery;
+        this.cacheIdAndBuds(props, atoms, forks);
+
+        let rows: QueryRow[] = [];
+        let coll: { [id: number]: QueryRow } = {};
+        let lastId = 0;
+        // const mainColl: { [mainId: number]: ReturnExecQueryMain } = {};
+        if (main.length === 0) {
+            let queryRow: QueryRow = {
+                rowId: 0,
+                ban: 0,
+                ids: undefined,
+                values: undefined,
+                cols: undefined,
+                subs: [],
+            }
+            coll[0] = queryRow;
+            rows.push(queryRow);
+        }
+        else {
+            for (let row of main) {
+                const { rowId, ban, ids, values } = row;
+                let queryRow: QueryRow = {
+                    rowId,
+                    ban,
+                    ids,
+                    values,
+                    cols: undefined,
+                    subs: [],
+                }
+                rows.push(queryRow);
+                coll[rowId] = queryRow;
+            }
+        }
+
+        for (let detail of details) {
+            let { mainId, rowId, ban, ids, values, cols } = detail;
+            let { subs } = coll[mainId];
+            subs.push({
+                rowId,
+                ban,
+                ids,
+                values,
+                cols: cols.map((v: [number, number]) => {
+                    const [bud, value] = v;
+                    return [this.biz.budFromId(bud), value];
+                }),
+                subs: undefined,
+            });
+        }
+        // if (main.length === 0) return coll[0].subs;
+        return rows;
+    }
+
+    async queryOld(param: any) {
         let json: any = {};
         const { params: paramBuds, subCols } = this.entity;
         for (let bud of paramBuds) {
@@ -11,13 +77,13 @@ export class QueryStore extends EntityStore<EntityQuery> {
         }
         let retQuery = await this.uq.DoQuery.submitReturns({ query: this.entity.id, json, pageStart: undefined, pageSize: 100 });
         let { ret: retItems, details, props, forks, atoms } = retQuery;
-        let pickedArr: Picked[] = [];
-        let coll: { [id: number]: Picked } = {};
+        let pickedArr: NamedProps[] = [];
+        let coll: { [id: number]: NamedProps } = {};
         let lastId = 0;
         for (let row of retItems) {
             let idArr: Prop[] = [];
             const { id, ban, value, json } = row;
-            let picked: Picked = {
+            let picked: NamedProps = {
                 $: idArr as any,
                 $id: id,
                 id: json[0], //: row.id as any,
@@ -40,32 +106,10 @@ export class QueryStore extends EntityStore<EntityQuery> {
             coll[id] = picked;
         }
 
-        /*
-        let forksForCache = forks.map(v => {
-            const { id, atom: rowId, seed } = v;
-            return {
-                id,
-                atom: coll[rowId]?.json[0],
-                seed,
-            }
-            const { id, phrase, seed } = v;
-            return {
-                id,
-                // atom: coll[seed]?.json[0],
-                phrase,
-                seed,
-                // base,
-            }
-        });
-        this.cacheIdAndBuds(props, atoms, forksForCache);
-        */
         this.cacheIdAndBuds(props, atoms, forks);
 
         let specSerial = 1;
         for (let detail of details) {
-            /*let { atom, id, ban, value, json } = forkRow;
-            let picked = coll[atom];
-            */
             let { seed, id, ban, value, json } = detail;
             let picked = coll[seed];
             if (picked === undefined) continue;
@@ -113,7 +157,7 @@ export class QueryStore extends EntityStore<EntityQuery> {
         return pickedArr;
     }
 
-    private fromJsonArr(propArr: Prop[], picked: Picked, arr: any[]) {
+    private fromJsonArr(propArr: Prop[], picked: NamedProps, arr: any[]) {
         if (arr === undefined) return;
         const { biz, budColl } = this.entity;
         for (let v of arr) {

@@ -1,9 +1,9 @@
 import { EntityQuery, IDColumn, PickQuery } from "app/Biz";
 import { ChangeEvent, useState } from "react";
 import { Page } from "tonwa-app";
-import { List, Sep, theme } from "tonwa-com";
+import { LabelRow, List, Sep, theme } from "tonwa-com";
 import { RearPickResultType } from "../Sheet/store";
-import { LabelBox, Picked, Prop, RowCols } from "app/hooks/tool";
+import { LabelBox, Prop, QueryRow, QueryRowCol, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
 import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtom, ViewForkAtomBold } from "../View";
@@ -22,8 +22,8 @@ async function pickFromQueryBase(
     const { modal } = editing;
     let queryStore = new QueryStore(modal, query);
     let ret = await modal.open(<PageFromQuery />);
-
     if (ret === undefined) return;
+    /*
     function toRet(v: any) {
         let obj = {} as any;
         for (let i in v) {
@@ -37,27 +37,38 @@ async function pickFromQueryBase(
         }
         return obj;
     }
+    */
+    function toRet(queryRow: QueryRow) {
+        let { ids, cols } = queryRow;
+        let ret: any = { id: ids[ids.length - 1] };
+        if (cols !== undefined) {
+            for (let [bud, value] of cols) {
+                ret[bud.name] = value;
+            }
+        }
+        return ret;
+    }
     if (pickResultType === RearPickResultType.scalar) {
         return toRet(ret);
     }
     else {
-        return (ret as any[]).map(v => toRet(v));
+        // return (ret as any[]).map(v => toRet(v));
+        return (ret as QueryRow[]).map(v => toRet(v));
     }
     // return ret;
 
     function PageFromQuery() {
-        let isPick = true;
+        //let isPick = false;
         const { caption, name, ids: idCols, showIds: showIdCols, idFrom, value: budValue, hideCols, subCols } = query;
         const header = caption ?? name;
         const { bizPhraseType } = idFrom;
-        let [list, setList] = useState(null as Picked[]);
-        let [selectedItems, setSelectedItems] = useState<{ [id: number]: Picked; }>({});
+        let [list, setList] = useState(null as QueryRow[]);
+        let [selectedItems, setSelectedItems] = useState<{ [id: number]: QueryRow; }>({});
         async function onSearch(params: any) {
             let queryResults = await queryStore.query(params);
-            let pickedArr = queryResults as Picked[];
-            setList(pickedArr);
+            setList(queryResults);
         }
-        function modalClose(results: any) {
+        function closeModal(results: any) {
             // Object.assign(editing.store.bizAtomColl, queryStore.bizAtomColl);
             editing.store.mergeStoreColl(queryStore);
             modal.close(results);
@@ -65,28 +76,28 @@ async function pickFromQueryBase(
         function onPick() {
             let values = Object.values(selectedItems);
             values.sort((a, b) => {
-                let a$Id = a.$id, b$Id = b.$id;
-                if (a$Id === b$Id) return 0;
-                return a$Id < b$Id ? -1 : 1;
+                let aRowId = a.rowId, bRowId = b.rowId;
+                if (aRowId === bRowId) return 0;
+                return aRowId < bRowId ? -1 : 1;
             });
-            modalClose(values);
+            closeModal(values);
         }
-        function onMultipleClick(item: Picked, isSelected: boolean) {
-            const { $id } = item;  // $id 是序号
+        function onMultipleClick(item: QueryRow, isSelected: boolean) {
+            const { rowId } = item;  // $id 是序号
             if (isSelected === true) {
-                selectedItems[$id] = item;
+                selectedItems[rowId] = item;
             }
             else {
-                delete selectedItems[$id];
+                delete selectedItems[rowId];
             }
             setSelectedItems({ ...selectedItems });
         }
-        function onSingleClick(item: Picked) {
-            modalClose(item);
+        function onSingleClick(item: QueryRow) {
+            closeModal(item);
         }
-        function itemBan(item: Picked) {
+        function itemBan(item: QueryRow) {
             const { ban } = item;
-            if (ban.value > 0) {
+            if (ban > 0) {
                 let { ban: banCaption } = query;
                 if (banCaption === true) banCaption = '不可选';
                 return banCaption;
@@ -96,28 +107,30 @@ async function pickFromQueryBase(
         let cnViewItem = 'd-flex flex-wrap ';
         let cnItem: string;
         let btnOk: any;
-        if (isPick === true) {
-            if (pickResultType === RearPickResultType.array) {
-                onItemSelect = onMultipleClick;
-                cnItem = ' my-2 ';
-                btnOk = <button className="btn btn-primary m-3" onClick={onPick}>选入</button>;
-            }
-            else {
-                onItemClick = onSingleClick;
-                cnViewItem += 'ps-3 ';
-                cnItem = 'py-2 px-3 border-bottom ';
-            }
+        //if (isPick === true) {
+        if (pickResultType === RearPickResultType.array) {
+            onItemSelect = onMultipleClick;
+            cnItem = ' my-2 ';
+            btnOk = <button className="btn btn-primary m-3" onClick={onPick}>选入</button>;
         }
-        function ViewPropArr({ propArr }: { propArr: Prop[]; }) {
+        else {
+            onItemClick = onSingleClick;
+            cnViewItem += 'ps-3 ';
+            cnItem = 'py-2 px-3 border-bottom ';
+        }
+        //}
+        function ViewPropArr({ propArr }: { propArr: QueryRowCol[]; }) {
             if (propArr === undefined) return null;
             return <>
                 {propArr.map((v, index) => {
-                    const { id } = v.bud;
-                    if (hideCols[id] === true) return null;
+                    const [bud, value] = v;
+                    if (hideCols[bud.id] === true) return null;
+                    /*
                     if (subCols !== undefined) {
                         if (subCols[id] !== true) return null;
                     }
-                    return <ViewBud key={index} {...v} store={queryStore} />;
+                    */
+                    return <ViewBud key={index} bud={bud} value={value} store={queryStore} />;
                 })}
             </>;
         }
@@ -149,9 +162,10 @@ async function pickFromQueryBase(
                 </LabelBox>;
             })}</>;
         }
-        function ViewItemAtomContent({ value: picked }: { value: Picked }) {
-            const ids = picked.json as number[];
-            let propArr: Prop[] = picked.$ as any;
+        function ViewItemAtomContent({ value: picked }: { value: QueryRow }) {
+            const { ids, cols } = picked;
+            if (ids === undefined) return null;
+            // let propArr: Prop[] = picked.$ as any;
             function ViewIdOne({ id, col }: { id: number; col: IDColumn; }) {
                 let colFromEntity = query.getFromEntityFromAlias(col.alias);
                 const { bizPhraseType } = colFromEntity;
@@ -162,17 +176,21 @@ async function pickFromQueryBase(
                         if (id === undefined) return null;
                         return <ViewForkId id={id} />;
                     case BizPhraseType.atom:
-                        return <>
+                        return <div>
                             <div>
                                 <ViewForkAtomBold id={id} store={queryStore} />
                                 <ViewAtomTitlesOfStore id={id} store={queryStore} />
                             </div>
                             <RowCols contentClassName="">
                                 <ViewAtomPrimesOfStore id={id} store={queryStore} />
-                                <ViewPropArr propArr={propArr} />
+                                <ViewPropArr propArr={cols} />
                             </RowCols>
-                        </>;
+                        </div>;
                 }
+            }
+            function onCheckChange(evt: ChangeEvent<HTMLInputElement>) {
+                const { checked } = evt.currentTarget;
+                onMultipleClick(picked, checked);
             }
             return <>
                 {idCols.map((v, index) => {
@@ -191,135 +209,55 @@ async function pickFromQueryBase(
                 <div>{value}</div>
             </div>;
         }
-        function ViewItemAtom({ value: picked }: { value: Picked }) {
-            return <div className={cnItem + ' d-flex '}>
-                <div className="flex-fill">
-                    <ViewItemAtomContent value={picked} />
-                </div>
-                <ViewValue value={picked.sum} caption="数量" />
-            </div>
-        }
-        function ViewItemSpec({ value: picked }: { value: Picked }) {
-            const { $specs, atomOnly } = picked;
-            const cQuantity = '数量';
-            let cSum = '合计';
-            function ViewSpec({ spec: v, index }: { spec: any; index: number }) {
-                const { $, $id, id, $ids } = v; // $id 是序号
-                let propArr: Prop[] = $ as any;
-                let cn = 'py-1 px-3 d-flex align-items-end ';
-                function onCheckChange(evt: ChangeEvent<HTMLInputElement>) {
-                    const { checked } = evt.currentTarget;
-                    onMultipleClick(v, checked);
-                }
-                if (index > 0) cn += ' border-top';
-                let vInput: any;
-                if (isPick === true) {
-                    vInput = <input type="checkbox" className="form-check-input me-3 mb-2 align-self-end"
-                        defaultChecked={selectedItems[$id] !== undefined}
-                        onChange={onCheckChange}
-                    />;
-                }
-                return <label className={cn}>
-                    {vInput}
-                    <div className="flex-fill">
-                        <RowCols contentClassName="">
-                            <ViewShowIds ids={$ids} />
-                            <ViewPropArr propArr={propArr} />
-                        </RowCols>
-                    </div>
-                    <ViewValue value={v.value} caption={cQuantity} />
-                </label>
-            }
-            let vSpecs: any;
-            if ($specs !== undefined) {
-                vSpecs = <div className="">
-                    {($specs as any[]).map((v, index) => <ViewSpec key={v.$id} spec={v} index={index} />)}
-                </div>
-            }
-            let vSumValue: any, cnBase: string = 'px-3 d-flex ';
-            if (atomOnly === true) {
-            }
-            else {
-                cnBase += ' border-bottom pb-1 ';
-                vSumValue = <ViewValue value={picked.sum} caption={cSum} />;
-            }
-            return <div className="pt-2">
-                <div className={cnBase}>
+        function ViewItem({ value: picked }: { value: QueryRow }) {
+            const { rowId } = picked;
+            let vHead: any;
+            if (rowId > 0) {
+                vHead = <div className={cnItem + ' d-flex '}>
                     <div className="flex-fill">
                         <ViewItemAtomContent value={picked} />
                     </div>
-                    {vSumValue}
-                </div>
-                {vSpecs}
-            </div>;
-        }
-        function ViewItemHead({ value: picked }: { value: Picked }) {
-            if (subCols === undefined) return null;
-            const { $, $id, id, $ids, group } = picked; // $id 是序号
-            if (group === undefined) return null;
-            let propArr: Prop[] = $ as any;
-            return <div className="px-3 tonwa-bg-gray-1 border-bottom">
-                <RowCols contentClassName="">
-                    <ViewShowIds ids={$ids} />
-                    {(propArr as Prop[]).map((v, index) => {
-                        const { id } = v.bud;
-                        if (hideCols[id] === true) return null;
-                        if (subCols[id] === true) return null;
-                        return <ViewBud key={index} {...v} store={queryStore} />;
-                    })}
-                </RowCols>
-            </div>;
-        }
-        function ViewItemSheet({ value: picked }: { value: Picked }) {
-            const { $, $id, id, $ids } = picked; // $id 是序号
-            let propArr: Prop[] = $ as any;
-            return <>
-                <div>
-                    <RowCols contentClassName="">
-                        <ViewShowIds ids={$ids} />
-                        <ViewPropArr propArr={propArr} />
-                    </RowCols>
-                </div>
-            </>;
-        }
-        let vList: any, cnList = ' bg-white ';
-        let vSep = <Sep className="border-bottom" />;
-        switch (bizPhraseType) {
-            default:
-                vList = <div>can not show bizPhraseType {bizPhraseType}</div>;
-                break;
-            case BizPhraseType.sheet:
-                vList = <List items={list} ViewItem={ViewItemSheet}
-                    ViewItemHead={ViewItemHead}
+                    <ViewValue value={picked.values?.[0]?.[1]} caption="数量" />
+                </div>;
+            }
+            function ViewItemSub({ value }: { value: QueryRow }) {
+                function onCheckChange(evt: ChangeEvent<HTMLInputElement>) {
+                    const { checked } = evt.currentTarget;
+                    onMultipleClick(value, checked);
+                }
+                const cn = 'py-1 px-3 ';
+                if (pickResultType === RearPickResultType.array) {
+                    return <label className={cn + 'd-flex align-items-end'}>
+                        <input type="checkbox" className="form-check-input me-3 mb-2 align-self-end"
+                            defaultChecked={selectedItems[value.rowId] !== undefined}
+                            onChange={onCheckChange}
+                        />
+                        <ViewItemAtomContent value={value} />
+                    </label>;
+                }
+                return <div className={cn}><ViewItemAtomContent value={value} /></div>;
+            }
+            // onItemSelect={onItemSelect}
+            return <div>
+                {vHead}
+                <List items={picked.subs} ViewItem={ViewItemSub}
                     className={cnList}
-                    onItemSelect={onItemSelect}
                     onItemClick={onItemClick}
                     itemBan={itemBan}
                     sep={vSep} />
-                break;
-            case BizPhraseType.atom:
-                vList = <List items={list} ViewItem={ViewItemAtom}
-                    ViewItemHead={ViewItemHead}
-                    className={cnList}
-                    onItemSelect={onItemSelect}
-                    onItemClick={onItemClick}
-                    itemBan={itemBan}
-                    sep={vSep} />
-                break;
-            case BizPhraseType.fork:
-                vList = <List items={list} ViewItem={ViewItemSpec} className={cnList}
-                    ViewItemHead={ViewItemHead}
-                    sep={vSep} />
-                break;
+            </div>;
         }
 
+        let cnList = ' bg-white ';
+        let vSep = <Sep className="border-bottom" />;
         return <Page header={header} footer={btnOk}>
             <ViewQueryParams query={query} binPick={binPick} editing={editing} onSearch={onSearch} />
-            {vList}
+            <List items={list} ViewItem={ViewItem}
+                className={cnList}
+                itemBan={itemBan}
+                sep={vSep} />
         </Page>
     }
-
-    // let ret = await doQuery(editing, query, retParam, true, pickResultType);
 }
 
 export async function pickFromQueryScalar(
@@ -338,237 +276,3 @@ export async function pickFromQuery(
     : Promise<PickResult[]> {
     return await pickFromQueryBase(editing, binPick, lastPickResultType) as PickResult[];
 };
-
-export async function doQuery(editing: BudsEditing, query: EntityQuery, params: any, isPick?: boolean, pickResultType?: RearPickResultType) {
-    const { modal } = editing;
-    let queryStore = new QueryStore(modal, query);
-    let queryResults = await queryStore.query(params);
-    let pickedArr = queryResults as Picked[];
-
-    let ret = await modal.open(<PageFromQuery />);
-    return ret;
-    function PageFromQuery() {
-        const { caption, name, ids: idCols, showIds: showIdCols, idFrom, value: budValue, subCols, hideCols } = query;
-        const header = caption ?? name;
-        const { bizPhraseType } = idFrom;
-        let [selectedItems, setSelectedItems] = useState<{ [id: number]: Picked; }>({});
-        function modalClose(results: any) {
-            editing.store.mergeStoreColl(queryStore);
-            modal.close(results);
-        }
-        function onPick() {
-            let values = Object.values(selectedItems);
-            values.sort((a, b) => {
-                let a$Id = a.$id, b$Id = b.$id;
-                if (a$Id === b$Id) return 0;
-                return a$Id < b$Id ? -1 : 1;
-            });
-            modalClose(values);
-        }
-        function onMultipleClick(item: Picked, isSelected: boolean) {
-            const { $id } = item;  // $id 是序号
-            if (isSelected === true) {
-                selectedItems[$id] = item;
-            }
-            else {
-                delete selectedItems[$id];
-            }
-            setSelectedItems({ ...selectedItems });
-        }
-        function onSingleClick(item: Picked) {
-            modalClose(item);
-        }
-        function itemBan(item: Picked) {
-            const { ban } = item;
-            if (ban.value > 0) {
-                let { ban: banCaption } = query;
-                if (banCaption === true) banCaption = '不可选';
-                return banCaption;
-            }
-        }
-        let onItemSelect: any, onItemClick: any;
-        let cnViewItem = 'd-flex flex-wrap ';
-        let cnItem: string;
-        let btnOk: any;
-        if (isPick === true) {
-            if (pickResultType === RearPickResultType.array) {
-                onItemSelect = onMultipleClick;
-                cnItem = ' my-2 ';
-                btnOk = <button className="btn btn-primary m-3" onClick={onPick}>选入</button>;
-            }
-            else {
-                onItemClick = onSingleClick;
-                cnViewItem += 'ps-3 ';
-                cnItem = 'py-2 px-3 border-bottom ';
-            }
-        }
-        function ViewPropArr({ propArr }: { propArr: Prop[]; }) {
-            if (propArr === undefined) return null;
-            return <>
-                {propArr.map((v, index) => {
-                    const { id } = v.bud;
-                    if (hideCols[id] === true) return null;
-                    if (subCols !== undefined) {
-                        if (subCols[id] !== true) return null;
-                    }
-                    return <ViewBud key={index} {...v} store={queryStore} />;
-                })}
-            </>;
-        }
-        function ViewShowIds({ ids }: { ids: number[]; }) {
-            if (ids === undefined) return null;
-            return <>{showIdCols.map((v, index) => {
-                const { ui, alias } = v;
-                let caption: string;
-                if (ui === undefined) {
-                    caption = alias;
-                }
-                else {
-                    caption = ui.caption ?? alias;
-                }
-                function ViewId({ id, col }: { id: number; col: IDColumn; }) {
-                    let colFromEntity = query.getFromEntityFromAlias(col.alias);
-                    const { bizPhraseType } = colFromEntity;
-                    switch (bizPhraseType) {
-                        default:
-                            return <>unknown bizPhraseType {bizPhraseType}</>
-                        case BizPhraseType.fork:
-                            return <ViewForkId id={id} />;
-                        case BizPhraseType.atom:
-                            return <ViewForkAtom id={id} store={queryStore} />;
-                    }
-                }
-                return <LabelBox key={index} label={caption}>
-                    <ViewId id={ids[index]} col={v} />
-                </LabelBox>;
-            })}</>;
-        }
-        function ViewItemAtomContent({ value: picked }: { value: Picked }) {
-            const ids = picked.json as number[];
-            let propArr: Prop[] = picked.$ as any;
-            function ViewIdOne({ id, col }: { id: number; col: IDColumn; }) {
-                let colFromEntity = query.getFromEntityFromAlias(col.alias);
-                const { bizPhraseType } = colFromEntity;
-                switch (bizPhraseType) {
-                    default:
-                        return <>unknown bizPhraseType {bizPhraseType}</>
-                    case BizPhraseType.fork:
-                        if (id === undefined) return null;
-                        return <ViewForkId id={id} />;
-                    case BizPhraseType.atom:
-                        return <>
-                            <div>
-                                <ViewForkAtomBold id={id} store={queryStore} />
-                                <ViewAtomTitlesOfStore id={id} store={queryStore} />
-                            </div>
-                            <RowCols contentClassName="">
-                                <ViewAtomPrimesOfStore id={id} store={queryStore} />
-                                <ViewPropArr propArr={propArr} />
-                            </RowCols>
-                        </>;
-                }
-            }
-            return <>
-                {idCols.map((v, index) => {
-                    let col = v;
-                    let val = ids[index];
-                    if (index >= idCols.length) return null;
-                    return <ViewIdOne key={index} id={val} col={col} />
-                })}
-            </>;
-        }
-        function ViewValue({ value, caption }: { value: number; caption: string; }) {
-            if (budValue === undefined) return null;
-            if (value === undefined) return null;
-            return <div className="w-min-8c text-end">
-                <div className={theme.labelColor}>{caption}</div>
-                <div>{value}</div>
-            </div>;
-        }
-        function ViewItemAtom({ value: picked }: { value: Picked }) {
-            return <div className={cnItem + ' d-flex '}>
-                <div className="flex-fill">
-                    <ViewItemAtomContent value={picked} />
-                </div>
-                <ViewValue value={picked.sum} caption="数量" />
-            </div>
-        }
-        function ViewItemSpec({ value: picked }: { value: Picked }) {
-            const { $specs, atomOnly } = picked;
-            const cQuantity = '数量';
-            let cSum = '合计';
-            function ViewSpec({ spec: v, index }: { spec: any; index: number }) {
-                const { $, $id, id, $ids } = v; // $id 是序号
-                let propArr: Prop[] = $ as any;
-                let cn = 'py-1 px-3 d-flex align-items-end ';
-                function onCheckChange(evt: ChangeEvent<HTMLInputElement>) {
-                    const { checked } = evt.currentTarget;
-                    onMultipleClick(v, checked);
-                }
-                if (index > 0) cn += ' border-top';
-                let vInput: any;
-                if (isPick === true) {
-                    vInput = <input type="checkbox" className="form-check-input me-3 mb-2 align-self-end"
-                        defaultChecked={selectedItems[$id] !== undefined}
-                        onChange={onCheckChange}
-                    />;
-                }
-                return <label className={cn}>
-                    {vInput}
-                    <div className="flex-fill">
-                        <RowCols contentClassName="">
-                            <ViewShowIds ids={$ids} />
-                            <ViewPropArr propArr={propArr} />
-                        </RowCols>
-                    </div>
-                    <ViewValue value={v.value} caption={cQuantity} />
-                </label>
-            }
-            let vSpecs: any;
-            if ($specs !== undefined) {
-                vSpecs = <div className="">
-                    {($specs as any[]).map((v, index) => <ViewSpec key={v.$id} spec={v} index={index} />)}
-                </div>
-            }
-            let vSumValue: any, cnBase: string = 'px-3 d-flex ';
-            if (atomOnly === true) {
-            }
-            else {
-                cnBase += ' border-bottom ';
-                vSumValue = <ViewValue value={picked.sum} caption={cSum} />;
-            }
-            return <div className="pt-2">
-                <div className={cnBase}>
-                    <div className="flex-fill">
-                        <ViewItemAtomContent value={picked} />
-                    </div>
-                    {vSumValue}
-                </div>
-                {vSpecs}
-            </div>;
-        }
-
-        let vList: any;
-        let vSep = <Sep className="border-bottom" />;
-        switch (bizPhraseType) {
-            default:
-                vList = <div>can not show bizPhraseType {bizPhraseType}</div>;
-                break;
-            case BizPhraseType.atom:
-                vList = <List items={pickedArr} ViewItem={ViewItemAtom} className=""
-                    onItemSelect={onItemSelect}
-                    onItemClick={onItemClick}
-                    itemBan={itemBan}
-                    sep={vSep} />
-                break;
-            case BizPhraseType.fork:
-                vList = <List items={pickedArr} ViewItem={ViewItemSpec} className=""
-                    sep={vSep} />
-                break;
-        }
-
-        return <Page header={header} footer={btnOk}>
-            {vList}
-        </Page>
-    }
-}
