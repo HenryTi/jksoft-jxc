@@ -5,7 +5,7 @@ import { NamedProps, Prop, QueryRow } from "../tool";
 export class QueryStore extends EntityStore<EntityQuery> {
     async query(param: any) {
         let jsonParams: any = {};
-        const { params: paramBuds } = this.entity;
+        const { params: paramBuds, value: budValue } = this.entity;
         for (let bud of paramBuds) {
             jsonParams[bud.id] = param[bud.name];
         }
@@ -41,7 +41,7 @@ export class QueryStore extends EntityStore<EntityQuery> {
                     rowId,
                     ban,
                     ids,
-                    values,
+                    values: [budValue, values?.[0]],
                     cols: undefined,
                     subs: [],
                 }
@@ -57,7 +57,7 @@ export class QueryStore extends EntityStore<EntityQuery> {
                 rowId,
                 ban,
                 ids,
-                values,
+                values: [budValue, values?.[0]],
                 cols: cols.map((v: [number, number]) => {
                     const [bud, value] = v;
                     return [this.biz.budFromId(bud), value];

@@ -142,7 +142,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
             modal.open(<Page header="调试结果">
                 <div className="px-3 py-2">
                     <FA className="text-danger me-2" name="info-circle" />
-                    <span className="text-info">写账过程自动回滚。只保留LOG语句的结果。</span>
+                    <span className="text-info">调试写账过程自动回滚，不会影响数据库。只保留LOG语句的结果。</span>
                 </div>
                 {error.length > 0 && <div className="m-3">
                     <div>错误：</div>

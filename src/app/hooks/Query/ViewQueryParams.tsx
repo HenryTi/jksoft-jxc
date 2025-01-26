@@ -1,4 +1,4 @@
-import { BizBud, EntityQuery, PickParam, PickQuery, ValueSetType } from "app/Biz";
+import { BinPick, BizBud, EntityQuery, PickParam, PickQuery, ValueSetType } from "app/Biz";
 import { Page, useModal } from "tonwa-app";
 import { FA, theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";
@@ -74,53 +74,55 @@ interface PageParamsProps {
     inputParams: ValuesBudsEditing;
 }
 */
-export function ViewQueryParams({ editing, query, binPick, onSearch }: {
+export function ViewQueryParams({ query, editing, binPick, onSearch }: {
     query: EntityQuery;
-    binPick: PickQuery;
+    binPick: BinPick;
     editing: BudsEditing;
     onSearch: (params: any) => Promise<void>;
 }) {
     const modal = useModal();
     const { params: queryParams } = query;
-    const { pickParams } = binPick;
-    const { biz } = editing;
-    if (pickParams !== undefined) {
-        for (let pickParam of pickParams) {
-            editing.addFormula(pickParam.name, pickParam.valueSet, pickParam.valueSetType === ValueSetType.init);
-        }
-    }
-    const { valueSpace } = editing;
+    const { biz } = query;
+    // const { valueSpace } = editing;
     const valueParams: [PickParam, BizBud, any][] = [];
     const inputParams: BizBud[] = [];
-    for (let param of queryParams) {
-        let { name, budDataType } = param;
-        let pickParam = pickParams?.find(v => v.name === name);
-        if (pickParam !== undefined) {
-            // let { bud, prop } = pickParam;
-            // if (bud === undefined) debugger;
-            // let namedResult = valueSpace.getValue(bud); // namedResults[bud]; // as NamedResults;
-            // if (namedResult === undefined) {
-            //     debugger;
-            //     valueSpace.getValue(bud);
-            // }
-            // if (prop === undefined) prop = 'id';
-            // let v = (namedResult as any)[prop];
-            let v = editing.getValue(name);
-            valueParams.push([pickParam, param, v]);
+    if (binPick !== undefined) {
+        const { pickParams } = binPick;
+        if (editing !== undefined && pickParams !== undefined) {
+            for (let pickParam of pickParams) {
+                editing.addFormula(pickParam.name, pickParam.valueSet, pickParam.valueSetType === ValueSetType.init);
+            }
         }
-        else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {
-            inputParams.push(param);
+        for (let param of queryParams) {
+            let { name, budDataType } = param;
+            let pickParam = pickParams?.find(v => v.name === name);
+            if (pickParam !== undefined && editing !== undefined) {
+                let v = editing.getValue(name);
+                valueParams.push([pickParam, param, v]);
+            }
+            else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {
+                inputParams.push(param);
+            }
+        }
+    }
+    else {
+        for (let param of queryParams) {
+            let { name, budDataType } = param;
+            if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {
+                inputParams.push(param);
+            }
         }
     }
     if (inputParams.length === 0) {
         /*
+        ???? 这些代码干什么的呢？
         let retParam : any = {};
         for (let [pickParam, bizBud, value] of valueParams) {
             retParam[pickParam.name] = value;
         }
         */
-        let retParam = stripParams(undefined, valueParams);
-        return retParam;
+        // let retParam = stripParams(undefined, valueParams);
+        // return retParam;
     }
     let { current: paramBudsEditing } = useRef(new ValuesBudsEditing(modal, biz, inputParams));
 
