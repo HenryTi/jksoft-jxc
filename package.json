@@ -30,15 +30,15 @@
         "react-bootstrap": "^2.9.1",
         "react-dom": "^19.0.0",
         "react-hook-form": "^7.54.1",
-        "react-query": "^3.39.3",
         "react-router-dom": "^6.9.0",
         "react-simple-code-editor": "^0.13.1",
         "react-to-print": "3.0",
         "vite-tsconfig-paths": "^4.2.1"
     },
     "devDependencies": {
-        "@types/react": "^18.2.37",
-        "@types/react-dom": "^18.2.15",
+        "@tanstack/react-query": "^5.65.0",
+        "@types/react": "^19.0.8",
+        "@types/react-dom": "^19.0.3",
         "@typescript-eslint/eslint-plugin": "^6.10.0",
         "@typescript-eslint/parser": "^6.10.0",
         "@vitejs/plugin-react-swc": "^3.5.0",
@@ -46,6 +46,6 @@
         "eslint-plugin-react-hooks": "^4.6.0",
         "eslint-plugin-react-refresh": "^0.4.4",
         "typescript": "^5.2.2",
-        "vite": "^5.4.11"
+        "vite": "^5.4.14"
     }
 }

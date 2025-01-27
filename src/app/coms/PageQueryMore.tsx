@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState, JSX } from "react";
 import { List, Sep, Spinner, useEffectOnce } from "tonwa-com";
 import { isPromise, UqQuery } from "tonwa-uq";
 import { ModalContext, Page, PageProps, Scroller } from "tonwa-app";
@@ -22,7 +22,8 @@ interface PageQueryMoreProps<P, R> extends PageProps {
     itemKey?: ((item: any) => string | number);
 }
 
-const defaultPageSize = 1000;
+// const defaultPageSize = 1000;
+const defaultPageSize = 50;
 
 export class PageMoreCacheData {
     start: any;

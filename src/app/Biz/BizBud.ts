@@ -1,4 +1,4 @@
-import { EntityAtom, EntityFork, EntityID, EntityPick } from "./EntityAtom";
+import { EntityAtom, EntityFork, EntityID, EntityPick } from "./EntityID";
 import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";

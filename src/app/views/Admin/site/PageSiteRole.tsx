@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { EnumSysRole } from "tonwa-uq";
 import { ViewOwner } from "../../Site/owner";
 import { roleT } from "../../Site/res";

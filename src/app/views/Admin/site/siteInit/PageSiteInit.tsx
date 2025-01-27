@@ -1,12 +1,12 @@
 import { EntityBook } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Route } from "react-router-dom";
 import { BudValue, Page, useModal } from "tonwa-app";
 import { List, Sep } from "tonwa-com";
 import { RegisterOptions } from "react-hook-form";
 import { BudEditing, EditBudLabelRow, ValuesBudsEditing } from "app/hooks";
-import { UseQueryOptions, readBuds } from "app/tool";
+import { readBuds } from "app/tool";
 
 export const pathSiteInit = 'site-init';
 export const captionSiteInit = '初始设置';
@@ -53,11 +53,12 @@ export function PageSiteInit() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const modal = useModal();
-    const { data } = useQuery(
-        [],
-        getInit,
-        UseQueryOptions
-    );
+    const { data } = useQuery({
+        queryKey: [],
+        queryFn: getInit,
+        refetchOnWindowFocus: false,
+        // UseQueryOptions
+    });
     return <Page header={captionSiteInit}>
         <List items={data} ViewItem={ViewAssign} onItemClick={undefined} />
         <Sep />

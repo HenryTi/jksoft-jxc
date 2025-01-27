@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { theme } from "tonwa-com";
 import { FA, Sep } from "tonwa-com";
 

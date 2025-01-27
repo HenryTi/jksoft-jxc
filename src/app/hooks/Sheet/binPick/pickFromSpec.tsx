@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { EntityFork, PickSpec } from "app/Biz";
 import { ViewAtomId } from "app/hooks/BizAtom";
 import { useForm } from "react-hook-form";

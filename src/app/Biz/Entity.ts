@@ -1,7 +1,7 @@
 import { BizBud } from "./BizBud";
 import { BizBase } from "./BizBase";
 import { Biz } from "./Biz";
-import { EntityID } from "./EntityAtom";
+import { EntityID } from "./EntityID";
 
 export class BudGroup extends BizBase {
     groupName: string;      // not phrase, only name part

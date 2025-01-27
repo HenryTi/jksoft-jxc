@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, JSX } from "react";
 import { BandTemplateProps } from "./Band";
 import { BandContext } from "./BandContext";
 import { FieldItem } from "../fields";
@@ -19,10 +19,10 @@ export interface BandContainerProps {
     onValuesChanged?: OnValuesChanged;
 }
 
-const defaultStringClassName = 'form-control';
+const defaultStringClassName = 'form-control form-control-sm ';
 const defaultCheckClassName = 'form-check-input';
-const defaultSelectClassName = 'form-select';
-const defaultPickClassName = 'form-control';
+const defaultSelectClassName = 'form-select form-select-sm ';
+const defaultPickClassName = 'form-control font-control-sm ';
 const defaultRangeClassName = 'form-range';
 
 export abstract class BandContainerContext<P extends BandContainerProps> {

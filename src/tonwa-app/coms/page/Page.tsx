@@ -17,7 +17,7 @@ const scrollEdgeGap = 30;
 export function PageBase(props: PageProps) {
     const uqApp = useUqAppBase();
     let { children, header, back, right, top, footer, onClosed, hideScroll } = props;
-    const divRef = useRef<HTMLDivElement>();
+    const divRef = useRef<HTMLDivElement>(undefined);
     useEffectOnce(() => {
         let { current: div } = divRef;
         if (!div) return;

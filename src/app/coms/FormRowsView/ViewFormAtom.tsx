@@ -1,6 +1,6 @@
 import { EntityAtom } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { useCallback, useState } from "react";
+import { useCallback, useState, JSX } from "react";
 import {
     UseFormRegisterReturn, FieldError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";
@@ -74,7 +74,7 @@ export function ViewFormAtom({ row, label, error, inputProps, clearErrors, setVa
         }
     }
     let onClick: () => void;
-    let cnInput = 'form-control ';
+    let cnInput = 'form-control form-control-sm ';
     if (readOnly !== true || onPick !== undefined) {
         cnInput += ' cursor-pointer ';
         onClick = onSelectAtom;

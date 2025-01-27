@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, JSX } from "react";
 import { FA, LabelRow, LabelRowPropsBase } from "tonwa-com";
 import { UqAppBase, useUqAppBase } from "../UqAppBase";
 import { RegisterOptions } from "react-hook-form";

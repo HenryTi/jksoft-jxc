@@ -2,7 +2,7 @@ import { Page, PageConfirm, useModal } from "tonwa-app";
 import { SheetStore, SubmitState, upload } from "../store";
 import { detailNewLoop, ViewDiv, ViewMain } from "../binEdit";
 import { useAtomValue } from "jotai";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, JSX } from "react";
 import { headerSheet, buttonDefs } from "../headerSheet";
 import { ViewReaction } from "app/hooks/View/ViewReaction";
 import { env, FA, getAtomValue, setAtomValue, SpinnerSmall, theme } from "tonwa-com";

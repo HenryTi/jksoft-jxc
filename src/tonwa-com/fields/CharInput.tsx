@@ -35,7 +35,7 @@ export function CharInput(props: CharInputBaseProps) {
 
 export function CharInputBase({ name, className, readOnly, placeholder, maxLength, rule, isValidKey, initValue, type, disabled }
     : CharInputBaseProps & { initValue: any; }) {
-    let input = useRef<HTMLInputElement>();
+    let input = useRef<HTMLInputElement>(undefined);
     let [hasError, setHasError] = useState(false);
     let band = useBand();
     let bandContainer = useBandContainer();

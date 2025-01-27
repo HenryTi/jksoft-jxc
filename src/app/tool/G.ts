@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { EntityAtom } from "app/Biz";
 import { AtomData } from "./Store";
 

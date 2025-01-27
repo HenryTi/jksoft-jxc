@@ -1,4 +1,5 @@
-import { IDView, Page, SelectUser, ViewUserAssigned, useModal } from "tonwa-app";
+import { JSX } from "react";
+import { IDView, ViewUserAssigned } from "tonwa-app";
 import { Uq, User } from "tonwa-uq";
 
 export function IDViewUserSite({ uq, userSite, Template }: { uq: Uq; userSite: number; Template?: ({ user, assigned }: { user: User; assigned: string; }) => JSX.Element; }) {

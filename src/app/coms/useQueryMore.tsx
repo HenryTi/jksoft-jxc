@@ -1,9 +1,6 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { List, Sep, Spinner, SpinnerSmall, getAtomValue, setAtomValue, useEffectOnce } from "tonwa-com";
-import { isPromise, UqQuery } from "tonwa-uq";
-import { ModalContext, Page, PageProps, Scroller } from "tonwa-app";
-import { useNavigationType } from "react-router-dom";
-import { useUqApp } from "app/UqApp";
+import React, { useEffect, useMemo, useRef, JSX } from "react";
+import { Sep, SpinnerSmall, getAtomValue, setAtomValue } from "tonwa-com";
+import { UqQuery } from "tonwa-uq";
 import { QueryMore } from "app/tool";
 import { atom, useAtomValue } from "jotai";
 

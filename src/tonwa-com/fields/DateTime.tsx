@@ -27,7 +27,7 @@ interface DtProps extends FieldProps {
 }
 
 function Picker(props: DtProps & { type: 'date' | 'time'; }) {
-    let input = useRef<HTMLInputElement>();
+    let input = useRef<HTMLInputElement>(undefined);
     let band = useBand();
     let bandContainer = useBandContainer();
     let [hasError, setHasError] = useState(false);

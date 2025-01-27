@@ -1,5 +1,6 @@
+import { JSX } from "react";
 import { Tuid, BoxId, uqStringify } from 'tonwa-uq';
-
+/*
 const TuidContent = (tuidName: string, values: any, x?: any) => {
     return <>{tuidName}: {uqStringify(values)}</>;
 };
@@ -130,3 +131,4 @@ const Tv = ({ tuidValue, ui, x, nullUI }: Props) => {
 export const tv = (tuidValue: number | BoxId, ui?: TvTemplet, x?: any, nullUI?: () => JSX.Element): JSX.Element => {
     return <Tv tuidValue={tuidValue} ui={ui} x={x} nullUI={nullUI} />;
 };
+*/

@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Jan 26 2025 20:51:47 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Mon Jan 27 2025 11:44:06 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -202,13 +202,16 @@ export interface ResultClearPend {
 }
 
 export interface ParamClearBook {
+	i: number;
 	bud: number;
 }
 export interface ResultClearBook {
 }
 
 export interface ParamGetAdminBook {
+	i: number;
 	bud: number;
+	keys: any;
 }
 export interface ReturnGetAdminBook$page {
 	i: number;
@@ -2438,6 +2441,10 @@ export const uqSchema={
         "sys": true,
         "fields": [
             {
+                "name": "i",
+                "type": "id"
+            },
+            {
                 "name": "bud",
                 "type": "id"
             }
@@ -2452,8 +2459,16 @@ export const uqSchema={
         "sys": true,
         "fields": [
             {
+                "name": "i",
+                "type": "id"
+            },
+            {
                 "name": "bud",
                 "type": "id"
+            },
+            {
+                "name": "keys",
+                "type": "json"
             }
         ],
         "returns": [

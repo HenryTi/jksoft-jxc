@@ -1,9 +1,7 @@
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
-import { UseQueryOptions, path, pathTo } from "app/tool";
-import { useQuery } from "react-query";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { Page } from "tonwa-app";
+import { pathTo } from "app/tool";
+import { Link, useParams } from "react-router-dom";
 import { EasyTime, FA, from62 } from "tonwa-com";
 import { ParamGetHistory, ReturnGetHistory$page } from "uqs/UqDefault";
 import { ViewFork } from "../View";

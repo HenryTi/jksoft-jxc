@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { FA, LMR, MutedSmall } from "tonwa-com";
 import { roleT } from "./res";
 import { useUqAppBase } from "tonwa-app";

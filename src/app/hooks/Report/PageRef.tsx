@@ -1,6 +1,5 @@
 import { useUqApp } from "app/UqApp";
-import { UseQueryOptions } from "app/tool";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { EasyTime, from62 } from "tonwa-com";
@@ -13,11 +12,15 @@ export function PageRef() {
 
 export function PageRefId({ id }: { id: number; }) {
     const { uq } = useUqApp();
-    const { data } = useQuery([id], async () => {
-        // id 可以是sheetId，也可以是detailId
-        let ret = await uq.GetSheet.query({ id /*, detail*/ });
-        return ret;
-    }, UseQueryOptions);
+    const { data } = useQuery({
+        queryKey: [id],
+        queryFn: async () => {
+            // id 可以是sheetId，也可以是detailId
+            let ret = await uq.GetSheet.query({ id /*, detail*/ });
+            return ret;
+        },
+        refetchOnWindowFocus: false
+    });
 
     const { main: [main], details, origins } = data;
     const header = '单据详情';

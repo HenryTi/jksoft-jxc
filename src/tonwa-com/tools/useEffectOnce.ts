@@ -2,7 +2,7 @@ import { EffectCallback, useEffect, useRef, useState } from "react"
 
 export function useEffectOnce(effect: EffectCallback) {
     const effectFn = useRef(effect);
-    const destroyFn = useRef<any>();
+    const destroyFn = useRef<any>(undefined);
     const effectCalled = useRef(false)
     const rendered = useRef(false)
     const [, refresh] = useState(0)

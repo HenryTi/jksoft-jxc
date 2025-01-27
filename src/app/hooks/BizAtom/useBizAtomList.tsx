@@ -7,8 +7,8 @@ import { OptionsUseBizAtom } from './useBizAtom';
 import { pathAtom, useAtomStore } from './AtomStore';
 import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtomBold } from '../View';
 import { RowCols } from '../tool';
-import { PageAtomView, useBizAtomView } from './useBizAtomView';
-import { useState } from 'react';
+import { PageAtomView } from './useBizAtomView';
+import { useState, JSX } from 'react';
 import { ButtonAtomBase } from './atomBase';
 
 interface OptionsList {

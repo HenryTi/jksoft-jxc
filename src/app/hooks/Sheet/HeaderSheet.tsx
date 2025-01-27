@@ -1,5 +1,5 @@
+import { JSX } from "react";
 import { FA } from "tonwa-com";
-// import { useSheetHeader } from "./useSheetStore";
 import { SheetStore } from "./store";
 import { ItemDef, ToolGroup, ToolItem, Toolbar, toolButtonDef, toolIconDef } from "app/coms";
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, JSX } from "react";
 import { SpinnerSmall } from "tonwa-com";
 import { Uq } from "tonwa-uq";
 

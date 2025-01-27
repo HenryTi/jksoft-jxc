@@ -1,5 +1,5 @@
-import React, { ReactNode, Suspense, useMemo, useContext, useEffect, useState } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import React, { ReactNode, Suspense, useMemo, useContext, JSX, useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { atom, useAtom } from 'jotai';
 import jwtDecode from 'jwt-decode';
 import { Spinner, getAtomValue, setAtomValue, useEffectOnce } from 'tonwa-com';
@@ -260,7 +260,7 @@ export function useUqAppBase() {
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            suspense: true,
+            // suspense: true,
         },
     },
 });

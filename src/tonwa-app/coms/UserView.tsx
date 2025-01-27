@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, JSX } from "react";
 import { User } from "tonwa-uq";
 import { useUqAppBase } from "../UqAppBase";
 

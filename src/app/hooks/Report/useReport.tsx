@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { EntityReport } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useParams } from "react-router-dom";

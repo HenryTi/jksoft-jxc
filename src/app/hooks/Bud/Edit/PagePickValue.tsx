@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { FormRow, FormRowsView } from "app/coms";
 import { useForm, RegisterOptions } from "react-hook-form";
 import { Page, PickProps, UqAppBase, uqAppModal, useModal } from "tonwa-app";

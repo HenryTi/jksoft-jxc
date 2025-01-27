@@ -1,5 +1,5 @@
 import { SheetStore } from "../store";
-import { EditBudInline, ViewForkR } from "app/hooks";
+import { EditBudInline, ViewFork, ViewForkAtom, ViewForkAtomBold, ViewForkR } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "../../ViewSheetTime";
 import { BizBud, ValueSetType } from "app/Biz";
@@ -8,7 +8,7 @@ import { theme } from "tonwa-com";
 import { BudCheckValue } from "tonwa-app";
 import { LabelBox, RowCols } from "app/hooks/tool";
 
-export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup: boolean; readOnly?: boolean; }) {
+export function ViewMain({ store, readOnly }: { store: SheetStore; popup: boolean; readOnly?: boolean; }) {
     const { mainStore: main } = store;
     const { no, entity: entityMain, _valRow: _binRow, budEditings } = main;
     const { i: budI, x: budX } = entityMain;
@@ -34,7 +34,7 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
             if (readOnly === true) budReadOnly = readOnly;
             else budReadOnly = valueSetType === ValueSetType.equ;
             let view = <LabelBox key={id} label={caption} required={required} title={value as any} className="mb-2">
-                <EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} readOnly={budReadOnly} />
+                <EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} readOnly={budReadOnly} store={store} />
             </LabelBox>;
             if (budReadOnly === true) {
                 topBuds.push(view);
@@ -54,7 +54,8 @@ export function ViewMain({ store, popup, readOnly }: { store: SheetStore; popup:
     function ViewIdField({ bud, value }: { bud: BizBud; value: number }) {
         if (bud === undefined) return null;
         const { caption } = bud;
-        let content = value ? <ViewForkR id={value} /> : <>&nbsp;</>;
+        //let content = value ? <ViewForkR id={value} /> : <>&nbsp;</>;
+        let content = value ? <ViewForkAtom store={store} id={value} /> : <>&nbsp;</>;
         return <LabelBox label={caption} editable={false}>
             {content}
         </LabelBox>

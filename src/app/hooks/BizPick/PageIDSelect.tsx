@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, JSX } from "react";
 import { SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { Page, PageError, useModal } from "tonwa-app";

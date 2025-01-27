@@ -17,8 +17,8 @@ export function PageImportAtom() {
     const { biz } = useUqApp();
     const modal = useModal();
     const [code, setCode] = useState('');
-    const fileInput = useRef<HTMLInputElement>();
-    const elSelect = useRef<HTMLSelectElement>();
+    const fileInput = useRef<HTMLInputElement>(undefined);
+    const elSelect = useRef<HTMLSelectElement>(undefined);
     async function onImport() {
         let atomData = new AtomData(biz, code);
         atomData.parseHead();
@@ -61,7 +61,7 @@ export function PageImportAtom() {
                 <button className="col-auto btn btn-sm btn-link" onClick={onMemo}>导入格式说明</button>
                 <button className="col-auto ms-auto btn btn-outline-primary" onClick={onLoadFile}>打开文件</button>
                 <div className="col-auto">
-                    <select ref={elSelect} className="form-select">
+                    <select ref={elSelect} className="form-select form-select-sm ">
                         <option value={undefined} selected>文本编码</option>
                         <option value="utf8">utf8编码</option>
                         <option value="gbk">简体中文编码</option>

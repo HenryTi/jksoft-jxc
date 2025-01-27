@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef } from "react";
+import { ChangeEvent, useEffect, useRef, JSX } from "react";
 import { Band, BandContentType, BandProps, useBand, useBandContainer } from '../band';
 import { FieldProps, FieldItem } from './field';
 
@@ -27,7 +27,7 @@ class CheckFieldItem implements FieldItem {
 }
 
 function CheckInput({ name, id, readOnly, indeterminate, checkedValue, uncheckedValue }: CheckInputProps & { id: string; }) {
-    let input = useRef<HTMLInputElement>();
+    let input = useRef<HTMLInputElement>(undefined);
     let band = useBand();
     let bandContainer = useBandContainer();
     let { props } = bandContainer;

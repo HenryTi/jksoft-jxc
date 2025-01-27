@@ -6,7 +6,7 @@ import { Band, FormContext, FormFork } from "./FormRowsView";
 import { Page, useModal } from "tonwa-app";
 import { FA, LabelRow, theme } from "tonwa-com";
 import { budContent, FormBudsEditing, LabelRowEdit, ValuesBudsEditing, ViewAtom, ViewForkAtomBold, ViewForkAtomTitles } from "app/hooks";
-import { useRef, useState } from "react";
+import { useRef, useState, JSX } from "react";
 import { EntityStore } from "app/tool";
 
 export function ViewFormForkObj({ row, label, error, inputProps, formContext, setValue, onChange }: {
@@ -24,7 +24,7 @@ export function ViewFormForkObj({ row, label, error, inputProps, formContext, se
     let defaultValue = formContext.getValue(name);
     const [forkObj, setForkObj] = useState(defaultValue);
     // if (defaultValue === undefined) return null;
-    let cnInput = 'form-control ';
+    let cnInput = 'form-control form-control-sm ';
     if (readOnly !== true) {
         cnInput += ' cursor-pointer ';
     }

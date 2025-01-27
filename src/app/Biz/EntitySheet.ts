@@ -2,7 +2,7 @@ import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
 import { BizBud, BizBudBinValue, BudFork, BudID, BudRadio, EnumBudType, ValueSetType } from "./BizBud";
 import { Entity } from "./Entity";
-import { EntityAtom, EntityFork } from "./EntityAtom";
+import { EntityAtom, EntityFork } from "./EntityID";
 import { EntityQuery } from "./EntityQuery";
 import { UI } from "app/ui";
 import { BudValue } from "tonwa-app";

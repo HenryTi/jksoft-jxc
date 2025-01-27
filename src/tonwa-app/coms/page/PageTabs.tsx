@@ -1,4 +1,4 @@
-import React, { ReactElement, Suspense, useRef } from "react";
+import React, { ReactElement, Suspense, useRef, JSX } from "react";
 import { atom, useAtomValue, WritableAtom } from 'jotai';
 import { PageSpinner } from "./PageSpinner";
 import { setAtomValue } from "tonwa-com";
@@ -34,7 +34,7 @@ function createTabsFromChildren(children: React.ReactNode) {
             `[${typeof elType === "string" ? elType : elType.name
             }] is not a <Tab> component. All component children of <PageTabs> must be a <Tab>`
         );
-        let { props } = element as ReactElement;
+        let { props } = element as JSX.Element;
         let tab: TabObject = {
             id: tabId++,
             name: props.name,
@@ -89,7 +89,7 @@ export function PageTabs({ children }: { children: React.ReactNode; }) {
         let mountable = useAtomValue(atomMoutable);
         if (mountable === false) return null;
         return <Suspense fallback={<PageSpinner />}>
-            <div ref={div => tabs[index].element = div} className={'tonwa-pane ' + (active === index ? 'active' : '')}>
+            <div ref={div => { tabs[index].element = div; }} className={'tonwa-pane ' + (active === index ? 'active' : '')}>
                 {content}
                 <Tags cur={index} />
             </div>

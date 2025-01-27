@@ -25,7 +25,7 @@ interface SelectProps extends FieldProps {
 }
 
 export function Select(props: SelectProps) {
-    let select = useRef<HTMLSelectElement>();
+    let select = useRef<HTMLSelectElement>(undefined);
     let band = useBand();
     let bandContainer = useBandContainer();
     useEffect(() => {

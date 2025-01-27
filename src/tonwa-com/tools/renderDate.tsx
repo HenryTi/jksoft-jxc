@@ -1,3 +1,5 @@
+import { JSX } from "react";
+
 export function renderDate(date: string): JSX.Element {
     if (!date) return null;
     let arr = date.split('-');

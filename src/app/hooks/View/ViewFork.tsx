@@ -1,8 +1,8 @@
 import { BizBud, EntityID, EntityFork } from "app/Biz";
 import { useGetSpec } from "../Uq";
 import { useUqApp } from "app/UqApp";
-import { ViewBudUIType } from "..";
-import React from "react";
+import { ViewBudUIType } from "../Bud";
+import React, { JSX } from "react";
 import { LabelBox } from "../tool";
 
 export function ViewForkBase({ id, ViewAtom, uiType, noLabel, bold }: {
@@ -12,8 +12,10 @@ export function ViewForkBase({ id, ViewAtom, uiType, noLabel, bold }: {
     noLabel?: boolean;
     bold?: boolean;
 }) {
-    const { atom, specs } = useGetSpec(id);
-    if (atom === undefined) return null;
+    // const { atom, specs } = useGetSpec(id);
+    // if (atom === undefined) return null;
+    return <span>FORK:{id}</span>;
+    let atom: any, specs: any;
     const { value: atomValue, entity } = atom;
     let viewAtom: any;
     if (atomValue !== undefined) {
@@ -25,7 +27,7 @@ export function ViewForkBase({ id, ViewAtom, uiType, noLabel, bold }: {
     function ViewForks() {
         if (specs.length === 0) return null;
         return <>
-            {specs.map(v => {
+            {specs.map((v: any) => {
                 const { id, keys, props, entity } = v;
                 let bands: any[] = [];
                 function buildBands(buds: BizBud[], values: (string | number)[]) {

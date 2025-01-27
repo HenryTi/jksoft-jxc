@@ -2,9 +2,9 @@ import { useUqApp } from "app";
 import { EntityIOSite } from "app/Biz";
 import { ButtonRightAdd, PageQueryMore } from "app/coms";
 import { ViewAtom, useIDSelect } from "app/hooks";
-import { AtomData, UseQueryOptions } from "app/tool";
+import { AtomData } from "app/tool";
 import { useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Page, useModal } from "tonwa-app";
 import { ButtonAsync, FA } from "tonwa-com";
 import { ReturnGetIOAtomAppsRet } from "uqs/UqDefault";
@@ -50,26 +50,30 @@ function PageSetApp({ atom, ioSite }: { atom: AtomData; ioSite: EntityIOSite; })
     const { uq } = uqApp;
     const modal = useModal();
     const { caption, name, tie, apps } = ioSite;
-    const { data } = useQuery(['GetIOAtomApps'], async () => {
-        let { ret } = await uq.GetIOAtomApps.query({ ioSite: ioSite.id, atom: atom.id });
-        const coll: { [app: number]: ReturnGetIOAtomAppsRet } = {};
-        for (let r of ret) coll[r.ioApp] = r;
-        const appsChecked: IOApp[] = [], appsUnchecked: IOApp[] = [];
-        for (let app of apps) {
-            let appVal = coll[app.id];
-            if (appVal !== undefined && appVal.valid === 1) {
-                appsChecked.push({
+    const { data } = useQuery({
+        queryKey: ['GetIOAtomApps'],
+        queryFn: async () => {
+            let { ret } = await uq.GetIOAtomApps.query({ ioSite: ioSite.id, atom: atom.id });
+            const coll: { [app: number]: ReturnGetIOAtomAppsRet } = {};
+            for (let r of ret) coll[r.ioApp] = r;
+            const appsChecked: IOApp[] = [], appsUnchecked: IOApp[] = [];
+            for (let app of apps) {
+                let appVal = coll[app.id];
+                if (appVal !== undefined && appVal.valid === 1) {
+                    appsChecked.push({
+                        entity: app,
+                        val: appVal,
+                    });
+                }
+                else appsUnchecked.push({
                     entity: app,
-                    val: appVal,
+                    val: undefined
                 });
             }
-            else appsUnchecked.push({
-                entity: app,
-                val: undefined
-            });
-        }
-        return { appsChecked, appsUnchecked };
-    }, UseQueryOptions);
+            return { appsChecked, appsUnchecked };
+        },
+        refetchOnWindowFocus: false
+    });
 
     const { appsChecked: initChecked, appsUnchecked: initUnchecked } = data;
     const [appsChecked, setAppsChecked] = useState(initChecked);

@@ -3,13 +3,13 @@ import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { FormRow, FormRowsView } from "app/coms";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { useEffectOnce } from "tonwa-com";
 import { BizBud, EntityAtom, ValueSetType } from "app/Biz";
 import { useState } from "react";
 import { Atom } from "uqs/UqDefault";
-import { UseQueryOptions } from "app/tool";
+// import { UseQueryOptions } from "app/tool";
 import { BinBudsEditing } from "../Sheet/store";
 import { BudsEditing, ValuesBudsEditing } from "../BudsEditing";
 import { pathAtom } from "./AtomStore";
@@ -107,10 +107,15 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
             };
         }
 
-        const { data: { no, formRows } } = useQuery('PageAtomNew', async () => {
-            let ret = await buildNew();
-            return ret;
-        }, UseQueryOptions);
+        const { data: { no, formRows } } = useQuery({
+            queryKey: ['PageAtomNew'],
+            queryFn: async () => {
+                let ret = await buildNew();
+                return ret;
+            }
+        }
+            //    , UseQueryOptions
+        );
         const { register, handleSubmit, formState: { errors }, } = useForm({ mode: 'onBlur' });
         async function onSubmit(data: any) {
             const { buds } = entity;

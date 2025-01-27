@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { from62, to62 } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { ViewAtom } from "../BizAtom";
-import { FocusEvent, useCallback, useState } from "react";
+import { FocusEvent, useCallback, useState, JSX } from "react";
 import { ReturnGetAssigns$page } from "uqs/UqDefault";
 
 function assignInPath(phrase: number | string) {

@@ -29,7 +29,7 @@ interface RangeProps extends FieldProps {
 }
 
 export function Range(props: RangeProps) {
-    let input = useRef<HTMLInputElement>();
+    let input = useRef<HTMLInputElement>(undefined);
     let [value, setValue] = useState<number>();
     let band = useBand();
     let bandContainer = useBandContainer();

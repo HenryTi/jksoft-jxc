@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { useModal } from "tonwa-app/UqAppBase";
 import { Page } from "./page";
 import { ViewMessage } from "./ViewMessage";

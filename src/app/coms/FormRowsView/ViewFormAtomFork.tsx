@@ -1,6 +1,6 @@
 import { EntityFork } from "app/Biz";
 import { useUqApp } from "app/UqApp";
-import { useState } from "react";
+import { useState, JSX } from "react";
 import {
     UseFormRegisterReturn, FieldError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";

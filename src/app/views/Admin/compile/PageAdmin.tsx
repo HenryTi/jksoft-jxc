@@ -2,10 +2,10 @@ import React from "react";
 import { Page, useModal } from "tonwa-app";
 import { FA, Sep } from "tonwa-com";
 import { PageCmdClearCode, PageCmdClearPend } from "./PageCmdClear";
-import { PageCmdLog } from "./PageLog";
 import { PageCmdPrintTemplate } from "./template";
 import { PageCmdDataTemplate } from "./template";
 import { ViewCurSiteHeader } from "app/views/Site";
+import { PageCmdLog } from "app/hooks";
 
 interface Cmd {
     icon: string;

@@ -1,6 +1,6 @@
 import { BizBud } from "./BizBud";
 import { Entity } from "./Entity";
-import { EntityAtom } from "./EntityAtom";
+import { EntityAtom } from "./EntityID";
 
 export class EntityAssign extends Entity {
     atoms: EntityAtom[];

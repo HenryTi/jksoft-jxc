@@ -1,7 +1,7 @@
 import { useUqApp } from "app";
 import { EntityIOApp, EntityIOSite, IOAppID } from "app/Biz";
 import { LabelRowEdit, PagePickValue, ViewAtom } from "app/hooks";
-import { AtomData, UseQueryOptions } from "app/tool";
+import { AtomData } from "app/tool";
 import React, { useState } from "react";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
@@ -9,7 +9,7 @@ import { FA, Sep } from "tonwa-com";
 import { PageAtomMap } from "./PageAtomMap";
 import md5 from "md5";
 import { PageIOError } from "./PageIOError";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 export interface AppVal {
     siteAtomApp: number;
@@ -38,14 +38,17 @@ export function PageApp({ atom, ioSite, ioApp }: { atom: AtomData; ioSite: Entit
     const { IDs, ins, outs } = appEntity;
     const labelSize = 1;
 
-    let { data: hasError } = useQuery(['GetIOError'], async () => {
-        const { $page } = await uq.GetIOError.page({ siteAtomApp }, undefined, 1);
-        // setHasError($page.length > 0);
-        if ($page.length > 0) {
-            console.error($page);
-        }
-        return $page.length > 0;
-    }, UseQueryOptions);
+    let { data: hasError } = useQuery({
+        queryKey: ['GetIOError'],
+        queryFn: async () => {
+            const { $page } = await uq.GetIOError.page({ siteAtomApp }, undefined, 1);
+            // setHasError($page.length > 0);
+            if ($page.length > 0) {
+                console.error($page);
+            }
+            return $page.length > 0;
+        }, refetchOnWindowFocus: false
+    });
 
     async function onSetOutValue(label: string, name: string, maxLength: number) {
         let ret = await modal.open(<PagePickValue label={label} type="text" value={(appVal as any)[name]} options={{ maxLength, }} />);

@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, JSX } from "react";
 import { Link } from "react-router-dom";
 
 export interface ContainerProps {

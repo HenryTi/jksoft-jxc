@@ -31,25 +31,37 @@ export function InlineEdit(props: EditProps) {
         let right: any;
         if (onEditClick !== null) {
             if (readOnly !== true) {
+                /*
                 right = <div onClick={onEditClick} className="cursor-pointer pb-2 pt-1 px-1 align-self-start">
+                    <PencilLg />
+                </div>;
+                */
+                right = <div onClick={onEditClick} className="cursor-pointer">
                     <PencilLg />
                 </div>;
             }
             else {
-                right = <span className="p-2">&nbsp;</span>;
+                right = <span className="">&nbsp;</span>;
             }
         }
         function onClick() {
             setAtomValue(error, undefined);
         }
         if (right === undefined) {
+            /*
             content = <div className={'border rounded ' + cn} onClick={onClick}>
                 {children}
             </div>;
+            */
+            content = <div className="form-control form-control-sm position-relative" onClick={onClick}>
+                {children}
+            </div>
         }
         else {
-            content = <div className={'d-flex align-items-center border rounded ' + cn} onClick={onClick}>
-                <div className="flex-fill py-0 ps-2">{children}</div>
+            //const cnFormControl = 'd-flex align-items-center border rounded ';
+            const cnFormControl = 'form-control form-control-sm d-flex position-relative ';
+            content = <div className={cnFormControl + cn} onClick={onClick}>
+                <div className="flex-fill">{children}</div>
                 {right}
             </div>;
         }

@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai/react";
 import { Link } from "react-router-dom";
@@ -6,8 +7,8 @@ import { Image, Page, useModal } from "tonwa-app";
 import { appT, ResApp } from "../../res";
 import { pathEditMe } from "./routeMe";
 import { PageSys } from "../Site";
-import { useQuery } from "react-query";
-import { UseQueryOptions } from "app/tool";
+import { useQuery } from "@tanstack/react-query";
+// import { UseQueryOptions } from "app/tool";
 
 const pathAbout = 'about';
 
@@ -41,7 +42,12 @@ export function TabMe() {
     }
     function SysAdmin() {
         const { uq } = useUqApp();
-        const { data: adminIsMe } = useQuery(['adminIsMe'], async () => await uq.AdminIsMe(), UseQueryOptions);
+        const { data: adminIsMe } = useQuery({
+            queryKey: ['adminIsMe'],
+            queryFn: async () => await uq.AdminIsMe(),
+            // UseQueryOptions
+            refetchOnWindowFocus: false
+        });
         if (adminIsMe === false) return null;
         let { userSite0 } = uqSites;
         if (userSite0 === undefined) return null;

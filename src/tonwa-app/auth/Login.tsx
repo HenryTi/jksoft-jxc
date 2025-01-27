@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { Form } from 'tonwa-com';
 import { User } from 'tonwa-uq';
 import { BandString, ruleIsRequired } from 'tonwa-com';

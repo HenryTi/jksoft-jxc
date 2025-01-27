@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { OnValuesChanged } from "tonwa-com";
 import { PropEdit } from "../coms";
 import { createBandsFromFields, FieldsBandsProps } from "./FieldsBands";

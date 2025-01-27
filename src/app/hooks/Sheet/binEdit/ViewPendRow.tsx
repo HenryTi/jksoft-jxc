@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { Prop, RowCols, RowColsSm, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { getAtomValue, theme } from "tonwa-com";
 import { BinStore, PendRow } from "../store";

@@ -15,7 +15,7 @@ export function PageCode() {
     const uqApp = useUqApp();
     const modal = useModal();
     const [code, setCode] = useState('');
-    const fileInput = useRef<HTMLInputElement>();
+    const fileInput = useRef<HTMLInputElement>(undefined);
 
     async function onCompile() {
         const { uqMan, biz } = uqApp;

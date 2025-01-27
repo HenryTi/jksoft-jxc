@@ -1,4 +1,5 @@
-import { EntityAtom, EntityID, EntityTie } from "app/Biz";
+import { JSX } from "react";
+import { EntityID, EntityTie } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { useParams } from "react-router-dom";
 import { FA, from62, to62 } from "tonwa-com";

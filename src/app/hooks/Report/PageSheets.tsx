@@ -1,8 +1,8 @@
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
-import { Period, UseQueryOptions, ViewPeriodHeader, pathTo, usePeriod } from "app/tool";
+import { Period, ViewPeriodHeader, pathTo, usePeriod } from "app/tool";
 import { useAtomValue } from "jotai";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { Page, useModal } from "tonwa-app";
 import { FA, List, from62, getAtomValue } from "tonwa-com";
@@ -19,11 +19,14 @@ export function PageSheets() {
     let unitBizDate: number = 1;
     const [period, setEnumPeriod] = usePeriod(timeZone, unitBizMonth, unitBizDate, onChanged);
     const state = useAtomValue(period.state);
-    const { data } = useQuery([state.from, state.to], async () => {
-        // let dateStart = new Date().to
-        let { ret } = await uq.GetSiteSheets.query({ from: state.from, to: state.to, timeZone });
-        return ret;
-    }, UseQueryOptions);
+    const { data } = useQuery({
+        queryKey: [state.from, state.to],
+        queryFn: async () => {
+            // let dateStart = new Date().to
+            let { ret } = await uq.GetSiteSheets.query({ from: state.from, to: state.to, timeZone });
+            return ret;
+        }, refetchOnWindowFocus: false
+    });
     async function onChanged(period: Period) {
     }
     function ViewItem({ value }: { value: ReturnGetSiteSheetsRet; }) {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { Link } from "react-router-dom";
 
 export interface DropdownAction {
@@ -85,7 +85,7 @@ export class DropdownActions extends React.Component<DropdownActionsProps, Dropd
         if (isRight === true) cnMenu += ' dropend dropdown-menu-end';
         if (dropdownOpen === true) cnMenu += ' show';
         return <div className={'btn-group ' + containerClass}>
-            <button ref={v => this.button = v}
+            <button ref={v => { this.button = v; }}
                 className={cn}
                 data-toggle="dropdown"
                 aria-expanded={dropdownOpen}
@@ -93,7 +93,7 @@ export class DropdownActions extends React.Component<DropdownActionsProps, Dropd
                 {icon !== null && <i className={'fa fa-fw fa-' + (icon ?? 'ellipsis-v')} />}
                 {content && <span className="ms-1">{content}</span>}
             </button>
-            <div ref={v => this.menu = v} className={cnMenu}>
+            <div ref={v => { this.menu = v; }} className={cnMenu}>
                 {
                     actions.map((v, index) => {
                         if (!v) {

@@ -1,8 +1,8 @@
 import { Biz, EntityAtom } from "app/Biz";
-import { EntityFork } from "app/Biz/EntityAtom";
+import { EntityFork } from "app/Biz/EntityID";
 import { useUqApp } from "app/UqApp";
-import { UseQueryOptions } from "app/tool";
-import { useQuery } from "react-query";
+// import { UseQueryOptions } from "app/tool";
+import { useQuery } from "@tanstack/react-query";
 import { isPromise } from "tonwa-uq";
 import { Atom, ReturnGetForkProps, UqExt } from "uqs/UqDefault";
 
@@ -25,9 +25,14 @@ interface SpecItems {
 export function useGetSpec(specId: number) {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
-    let { data } = useQuery([specId], async () => {
-        return await loadSpec(uq, biz, specId);
-    }, UseQueryOptions);
+    let { data } = useQuery({
+        queryKey: [specId],
+        queryFn: async () => {
+            return await loadSpec(uq, biz, specId);
+        },
+        refetchOnWindowFocus: false
+        // UseQueryOptions
+    });
     return data;
 }
 

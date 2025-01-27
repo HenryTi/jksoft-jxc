@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState, JSX } from "react";
 import { FA, Sep, Spinner, SpinnerSmall } from "../coms";
 
 interface ItemProps<T> {

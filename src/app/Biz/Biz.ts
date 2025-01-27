@@ -1,10 +1,10 @@
 import { UqApp } from 'app/UqApp';
 import { UqExt } from 'uqs/UqDefault';
 import { Entity } from './Entity';
-import { EntityAtom, EntityCombo, EntityDuo, EntityPick, EntityFork } from './EntityAtom';
+import { EntityAtom, EntityCombo, EntityDuo, EntityPick, EntityFork } from './EntityID';
 import { EntityTree } from './EntityTree';
 import { EntityBin, EntityPend, EntitySheet } from './EntitySheet';
-import { EntityBook } from './EntityTitle';
+import { EntityBook } from './EntityBook';
 import { EntityTie } from './EntityTie';
 import { EntityRole } from './EntityPermit';
 import { EntityOptions } from './EntityOptions';

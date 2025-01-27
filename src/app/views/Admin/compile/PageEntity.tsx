@@ -382,7 +382,7 @@ function PageLogs({ entity, code }: { entity: Entity, code: string; }) {
     const { uq, uqMan, biz } = uqApp;
     const { uqApi } = uqMan;
     const atomLogs = useMemo(() => atom(''), []);
-    const refInterval = useRef<number>();
+    const refInterval = useRef<number>(undefined);
     const { id, caption, name } = entity;
     useEffectOnce(() => {
         (async () => {

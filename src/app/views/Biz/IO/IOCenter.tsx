@@ -6,8 +6,7 @@ import { FA, LMR, List } from "tonwa-com";
 import { PageIODef, PageIOList, pathDef } from "./IODef";
 import { Page, useModal } from "tonwa-app";
 import { PageSiteAtoms } from "./PageSiteAtoms";
-import { useQuery } from "react-query";
-import { UseQueryOptions } from "app/tool";
+import { useQuery } from "@tanstack/react-query";
 import { ViewCurSiteHeader } from "app/views/Site";
 
 const pathList = `${centers.io.path}/list`;
@@ -35,15 +34,18 @@ function PageIOCenter() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const modal = useModal();
-    const { data } = useQuery(['GetIOErrorCounts'], async () => {
-        let { ret } = await uq.GetIOErrorCounts.query({});
-        const coll: { [ioSite: number]: number } = {};
-        for (let row of ret) {
-            const { ioSite, errorCount, siteAtomApp } = row;
-            coll[ioSite] = errorCount;
-        }
-        return coll;
-    }, UseQueryOptions);
+    const { data } = useQuery({
+        queryKey: ['GetIOErrorCounts'],
+        queryFn: async () => {
+            let { ret } = await uq.GetIOErrorCounts.query({});
+            const coll: { [ioSite: number]: number } = {};
+            for (let row of ret) {
+                const { ioSite, errorCount, siteAtomApp } = row;
+                coll[ioSite] = errorCount;
+            }
+            return coll;
+        }, refetchOnWindowFocus: false
+    });
     function ViewIOSite({ value: { id, caption, name } }: { value: EntityIOSite; }) {
         let errorCount = data[id];
         return <LMR className="py-2 align-items-center">

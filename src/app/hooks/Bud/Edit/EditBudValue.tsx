@@ -88,7 +88,8 @@ interface InputProps {
 function Input({ onChange, value, options, type, onEdited, readOnly }: InputProps) {
     const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm({ mode: 'onBlur' });
     const [waiting, setWaiting] = useState(false);
-    const cn = 'form-control border-0 ';
+    //const cn = 'form-control border-0 ';
+    const cn = 'border-0 w-100 ';
     async function triggerInputChange(newValue: string) {
         if (newValue.trim() === '') newValue = undefined;
         if (newValue !== value) {
@@ -107,7 +108,7 @@ function Input({ onChange, value, options, type, onEdited, readOnly }: InputProp
             <SpinnerSmall />
         </div>;
     }
-    return <div className="position-relative">
+    return <>
         <input type={type} className={cn} placeholder="-" disabled={waiting}
             defaultValue={value} readOnly={readOnly}
             {...register('noname', options)}
@@ -115,7 +116,7 @@ function Input({ onChange, value, options, type, onEdited, readOnly }: InputProp
             onChange={onChange}
         />
         {vWaiting}
-    </div>;
+    </>;
 }
 
 export function EditBudString(props: EditBudTemplateProps) {

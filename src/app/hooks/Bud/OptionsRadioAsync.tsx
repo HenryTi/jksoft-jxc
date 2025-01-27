@@ -107,7 +107,7 @@ export function OptionsRadioAsync({ radioUI, options, value: initValue, onCheckC
             if (defaultCheck === true) defaultValue = item;
             return <option key={index} value={item}>{caption}</option>;
         });
-        return <select onChange={onSelectChange} defaultValue={defaultValue} className="form-select" >
+        return <select onChange={onSelectChange} defaultValue={defaultValue} className="form-select form-select-sm " >
             <option value={0}>/</option>
             {viewOptions}
         </select>;

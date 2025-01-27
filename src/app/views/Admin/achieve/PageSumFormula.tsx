@@ -1,13 +1,12 @@
 import { useForm } from "react-hook-form";
 import { useUqApp } from "app/UqApp";
 import { FormRow, FormRowsView } from "app/coms";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { IDView, Page, PropEdit, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { BandCom, BandContainerContext, BandDecimal, BandString, ButtonAsync, FA, List, Sep } from "tonwa-com";
 import { EnumAtom, SumFormula, SumFormulaType } from "uqs/UqDefault";
 import React, { useState } from "react";
-import { UseQueryOptions } from "app/tool";
 
 export const pathSumFormula = 'admin-sum-formula';
 
@@ -51,22 +50,25 @@ const groupArr: [string, string][] = [
 export function PageSumFormula() {
     const { uq } = useUqApp();
     const modal = useModal();
-    const { data: [persons, groups] } = useQuery('formulas', async () => {
-        let { ret } = await uq.GetAllFormula.query({});
-        let persons: SumFormula[] = [];
-        let groups: SumFormula[] = [];
-        for (let r of ret) {
-            switch (r.formulaType) {
-                case SumFormulaType.person:
-                    persons.push(r);
-                    break;
-                case SumFormulaType.group:
-                    groups.push(r);
-                    break;
+    const { data: [persons, groups] } = useQuery({
+        queryKey: ['formulas'],
+        queryFn: async () => {
+            let { ret } = await uq.GetAllFormula.query({});
+            let persons: SumFormula[] = [];
+            let groups: SumFormula[] = [];
+            for (let r of ret) {
+                switch (r.formulaType) {
+                    case SumFormulaType.person:
+                        persons.push(r);
+                        break;
+                    case SumFormulaType.group:
+                        groups.push(r);
+                        break;
+                }
             }
-        }
-        return [persons, groups]
-    }, UseQueryOptions);
+            return [persons, groups]
+        }, refetchOnWindowFocus: false
+    });
 
     function viewArr(arr: [string, number][]) {
         return arr.map(([title, id], index) => {

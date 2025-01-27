@@ -1,6 +1,5 @@
-import React, { CSSProperties, MouseEvent, MouseEventHandler, ReactNode, useRef } from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { MouseEvent, MouseEventHandler, ReactNode, useRef } from "react";
+import { useEffect, JSX, useState } from "react";
 import { ComAsync } from "./ComAsync";
 
 interface Props extends React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {

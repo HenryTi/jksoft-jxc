@@ -5,17 +5,20 @@ import { Entity, EntitySheet } from "app/Biz";
 import { PageSheetEdit, PageSheetNew } from "./PageSheetEntry";
 import { DashConsole, getUserBudValue } from "../store";
 import { Sheet } from "uqs/UqDefault";
-import { Bin, ViewNotifyCount } from "app/tool";
+import { Bin, EntityStore, ViewNotifyCount } from "app/tool";
 import { PageSheetList } from "./PageSheetList";
 import { useAtomValue } from "jotai";
 import { ViewReaction, ViewItemMain } from "app/hooks/View";
-import { ViewBud } from "app/hooks";
+import { PageCmdLog, ViewBud } from "app/hooks";
+import { useSiteRole } from "app/views/Site/useSiteRole";
 
 export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const modal = useModal();
     const [visible, setVisible] = useState(true);
     const { caption, name, uq, biz, coreDetail } = entitySheet;
     const { current: dashConsole } = useRef(new DashConsole(modal, entitySheet));
+    let useSiteRoleReturn = useSiteRole();
+    let { isAdmin } = useSiteRoleReturn.userSite;
     const sheetStore = dashConsole.createSheetStore();
     const { myDraftsStore } = dashConsole;
     const myDrafts = useAtomValue(myDraftsStore.atomMyDrafts);
@@ -100,6 +103,16 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         </Page>
     }
 
+    let btnLog: any;
+    if (isAdmin === true) {
+        btnLog = <button className="btn btn-outline-primary me-2" onClick={onLog}>
+            Log
+        </button>;
+        function onLog() {
+            modal.open(<PageCmdLog />);
+        }
+    }
+
     return <Page header={pageHeader}>
         <div className="d-flex px-3 py-2 tonwa-bg-gray-1 border-bottom">
             <button className="btn btn-primary me-3" onClick={onNew}>
@@ -109,12 +122,13 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
             <div className="flex-fill">
                 <ViewNotifyCount phrase={coreDetail?.pend?.id} />
             </div>
+            {btnLog}
             <button className="btn btn-outline-primary" onClick={onList}>
                 已归档
             </button>
         </div>
         <ViewReaction atomContent={dashConsole.atomViewSubmited} className="ms-3 mt-3 me-auto" />
-        <ViewUserDefaults entity={entitySheet} />
+        <ViewUserDefaults entity={entitySheet} store={sheetStore} />
         <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-1 mt-2 align-items-end">
             <div className="pb-1 flex-grow-1">
                 草稿 <small className="text-secondary ms-3">(最多10份)</small>
@@ -134,7 +148,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     </Page>;
 }
 
-function ViewUserDefaults({ entity }: { entity: Entity; }) {
+function ViewUserDefaults({ entity, store }: { entity: Entity; store: EntityStore; }) {
     let { biz, userBuds } = entity;
     let { userDefaults } = biz;
     if (userBuds === undefined || userDefaults === undefined) return null;
@@ -142,7 +156,7 @@ function ViewUserDefaults({ entity }: { entity: Entity; }) {
         <div className="row row-cols-6">
             {userBuds.map(v => {
                 let userBudValue = getUserBudValue(entity, v);
-                return <ViewBud key={v.id} bud={v} value={userBudValue} />;
+                return <ViewBud key={v.id} bud={v} value={userBudValue} store={store} />;
             })}
         </div>
     </div>;

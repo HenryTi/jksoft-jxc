@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, JSX } from "react";
 import { useParams } from "react-router-dom";
 import { Page, PageSpinner, ViewSpinner, useModal } from "tonwa-app";
 import { FA, Sep, from62, useEffectOnce } from "tonwa-com";

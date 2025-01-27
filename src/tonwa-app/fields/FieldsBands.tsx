@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { Pick, Int, Decimal, String, Band, TextArea } from "tonwa-com";
 import { Field } from "tonwa-uq";
 

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, JSX } from "react";
 import { Form, Submit } from "tonwa-com";
 import { theme } from "tonwa-com";
 import { Page } from "../page";

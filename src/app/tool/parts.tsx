@@ -1,3 +1,5 @@
+import { JSX } from "react";
+
 export const cnAmount = ' w-min-6c text-end ms-2';
 export const weekday = '日一二三四五六';
 const numberFormat0 = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });

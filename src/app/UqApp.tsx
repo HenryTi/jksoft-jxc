@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { use, useContext } from 'react';
 import * as jsonpack from 'jsonpack';
 import { getAtomValue, setAtomValue } from 'tonwa-com';
 import { AppConfig, UqAppBase, UqAppContext, ViewUqApp } from "tonwa-app";
@@ -172,7 +172,6 @@ export class UqApp extends UqAppBase<UQs> {
 }
 
 const uqConfigs = uqConfigsFromJson(uqconfigJson);
-
 export function ViewMain() {
     const createUqApp = () => new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
     return <ViewUqApp createUqApp={createUqApp}>

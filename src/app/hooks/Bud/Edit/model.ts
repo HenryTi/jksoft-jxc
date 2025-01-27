@@ -1,8 +1,10 @@
+import { JSX } from "react";
 import { BizBud } from "app/Biz";
 import { RegisterOptions } from "react-hook-form";
 import { BudCheckValue, BudValue, OnValueChanged, PickProps, UqAppBase } from "tonwa-app";
 import { BudEditing } from "./EditBud";
 import { WritableAtom } from "jotai";
+import { EntityStore } from "app/tool";
 
 export interface EditBudValue {
     pickValue: (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) => Promise<string | number>;
@@ -43,6 +45,7 @@ export interface EditBudProps {
     id: number;
     value: BudValue;
     budEditing: BudEditing;
+    store?: EntityStore;
     labelSize?: 0 | 1 | 2;
     flag?: JSX.Element;             // 重要字段标志
     readOnly?: boolean;

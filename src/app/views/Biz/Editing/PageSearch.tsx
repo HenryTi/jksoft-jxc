@@ -3,7 +3,7 @@ import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { EditBudInline, OnBudChanged, PageRefId, ValuesBudsEditing } from "app/hooks";
 import { IDViewUserSite } from "app/tool";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState, JSX } from "react";
 import { BudCheckValue, Page, useModal } from "tonwa-app";
 import { ButtonAsync, EasyTime, FA, SearchBox, Sep } from "tonwa-com";
 import { User } from "tonwa-uq";

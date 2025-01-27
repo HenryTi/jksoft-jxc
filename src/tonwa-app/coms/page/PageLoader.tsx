@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, JSX } from "react";
 import { useEffectOnce } from "tonwa-com";
 import { PageSpinner } from "./PageSpinner";
 

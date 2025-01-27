@@ -1,3 +1,5 @@
+import { JSX } from "react";
+
 const scrollAfter = 20; // 20ms之后，scroll执行
 export class Scroller {
     private el: HTMLBaseElement;

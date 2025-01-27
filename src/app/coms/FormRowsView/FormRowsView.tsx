@@ -1,6 +1,6 @@
 import { EntityAtom, EntityFork, BizBud, Entity, BudID, BinPick, EnumBudType } from "app/Biz";
 import { Atom, atom } from "jotai";
-import { HTMLInputTypeAttribute, ReactNode } from "react";
+import { HTMLInputTypeAttribute, ReactNode, JSX } from "react";
 import {
     UseFormRegisterReturn, FieldErrorsImpl,
     RegisterOptions, UseFormRegister,
@@ -65,7 +65,7 @@ export function BandInput(props: BandInputProps) {
     let { label } = props;
     const { name } = inputProps;
     let error = errors[name];
-    let cnInput = 'form-control ';
+    let cnInput = 'form-control form-control-sm ';
     if (error) cnInput += 'is-invalid';
     let vInput = <input defaultValue={defaultValue} {...inputProps} className={cnInput} type={type} step={step} />;
     if (right !== undefined && !error) {
@@ -272,7 +272,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     if (items !== undefined) {
         const { name, multiple, placeHolder, options, readOnly } = row as FormSelect;
         let error = errors[name];
-        let cnInput = 'form-select ';
+        let cnInput = 'form-select form-select-sm ';
         if (error) cnInput += 'is-invalid';
         const n = '\n';
         if (options !== undefined) {
@@ -369,7 +369,7 @@ function FormRowView({ row, register, errors, labelClassName, clearErrors, setVa
     function buildBandDateInput() {
         let label = bandLabel();
         let error = errors[name];
-        let cnInput = 'form-control ';
+        let cnInput = 'form-control form-control-sm ';
         if (error) cnInput += 'is-invalid';
         let newOptions = registerOptions(type, label, options);
         let defaultValue = contentFromDays(options?.value);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { theme } from "tonwa-com";
 
 export function RowCols({ children, contentClassName }: { children: React.ReactNode; contentClassName?: string; }) {

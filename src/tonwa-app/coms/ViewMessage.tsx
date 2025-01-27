@@ -1,3 +1,5 @@
+import { JSX } from "react";
+
 interface ViewMessageProps {
     message: string | JSX.Element;
     children: React.ReactNode;

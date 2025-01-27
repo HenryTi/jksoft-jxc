@@ -43,7 +43,7 @@ function useScalar(onPicked: (result: any) => void, value: any) {
 }
 
 export function InputScalar({ binPick, value, onPicked }: { binPick: BinPick; value: any; onPicked: (result: any) => void; }) {
-    const refInput = useRef<HTMLInputElement>();
+    const refInput = useRef<HTMLInputElement>(undefined);
     const { onKeyDown, onChange, onBlur } = useScalar(onPicked, value);
     const { caption } = binPick;
     useEffect(() => {

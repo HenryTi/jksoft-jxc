@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { BizBud, EntitySheet } from "app/Biz";
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
@@ -6,7 +7,6 @@ import { BudCheckValue, Page, useModal } from "tonwa-app";
 import { ButtonAsync, FA, SearchBox, Sep, theme } from "tonwa-com";
 import { User } from "tonwa-uq";
 import { ViewSheetItem } from "./ViewSheetItem";
-import { SheetConsole } from "../store";
 import { EditBudInline, OnBudChanged, ValuesBudsEditing } from "app/hooks";
 import { DashConsole } from "../store";
 

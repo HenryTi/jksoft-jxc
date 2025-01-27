@@ -1,5 +1,6 @@
+import { JSX } from "react";
 import { ButtonAsync, FA } from "tonwa-com";
-import { Atom, WritableAtom, atom, useAtomValue } from "jotai";
+import { WritableAtom, atom, useAtomValue } from "jotai";
 import React from "react";
 
 export interface ToolItemDef {

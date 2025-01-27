@@ -9,10 +9,11 @@ import { ViewForkId } from "app/coms/ViewForkId";
 import { pickBudID } from "app/hooks/BizPick/pickBudID";
 import { useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
+import { ViewForkAtom } from "app/hooks/View";
 
 export function EditBudAtom(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
-    const { id, readOnly, labelSize, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
+    const { id, readOnly, labelSize, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged, store } = props;
     const { bizBud, error } = budEditing;
     const [value, setValue] = useState<number>(initValue as number);
     const { caption, budDataType, atomParams } = bizBud;
@@ -49,11 +50,14 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     }
     let vContent: any;
     if (entityID !== undefined) {
+        vContent = <ViewForkAtom id={value} store={store} />;
+        /*
         switch (entityID.bizPhraseType) {
             default: debugger; break;
             case BizPhraseType.atom: vContent = <ViewAtomId id={value} />; break;
             case BizPhraseType.fork: vContent = <ViewForkId id={value} />; break;
         }
+        */
     }
     else {
         vContent = <span className="text-danger">

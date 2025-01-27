@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, JSX } from 'react';
 import { BandContext, VBandContext } from './BandContext';
 import { FA } from '../coms';
 import { useBandContainer } from './BandContainer';

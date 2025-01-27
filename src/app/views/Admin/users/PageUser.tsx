@@ -7,7 +7,7 @@ import { ValuesBudsEditing, ViewBud } from "app/hooks";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
 import { ViewUser } from "./ViewUser";
-import { ChangeEvent } from "react";
+import { ChangeEvent, JSX } from "react";
 import { useAtomValue } from "jotai";
 import { RowColsSm } from "app/hooks/tool";
 

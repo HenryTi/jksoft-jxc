@@ -1,3 +1,5 @@
+import { JSX } from "react";
+
 export type OpenModal = <T = any>(element: JSX.Element, onClosed?: (result: any) => void) => Promise<T>;
 
 export interface Modal {

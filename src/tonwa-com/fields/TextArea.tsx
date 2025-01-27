@@ -25,7 +25,7 @@ class TextFieldItem implements FieldItem {
 }
 
 export function TextArea({ name, className, readOnly, placeholder, maxLength, rule, rows }: TextProps) {
-    let input = useRef<HTMLTextAreaElement>();
+    let input = useRef<HTMLTextAreaElement>(undefined);
     let band = useBand();
     let bandContainer = useBandContainer();
     useEffect(() => {

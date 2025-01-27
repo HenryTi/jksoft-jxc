@@ -7,19 +7,24 @@ import { AdminStore } from "./AdminStore";
 import { RowCols, RowColsSm } from "app/hooks/tool";
 import { BizPhraseType } from "uqs/UqDefault";
 import { ViewBud } from "app/hooks";
+import { ViewCurSiteHeader } from "app/views/Site";
 
 export function PageBook({ entity }: { entity: EntityBook; }) {
     const modal = useModal();
     const { uq } = useUqApp();
-    const { caption, name, buds } = entity;
+    const { caption, name, buds, i } = entity;
     function ViewBudItem({ bud }: { bud: BizBud; }) {
         const { caption, name } = bud;
         function onClick() {
+            if (i === undefined) {
+                modal.open(<PageNoEntity entity={entity} message="无法直接显示数据" />);
+                return;
+            }
             const store = new AdminStore(modal, entity)
             modal.open(<PageData bud={bud} store={store} />);
         }
         return <div className="px-3 py-2 border-bottom d-flex align-items-center">
-            <div>
+            <div className="text-primary">
                 <FA name="file" className="me-3 text-info" /> {caption ?? name}
             </div>
             <div className="flex-fill" />
@@ -30,8 +35,19 @@ export function PageBook({ entity }: { entity: EntityBook; }) {
             </div>
         </div>;
     }
-    return <Page header={caption ?? name}>
+    return <Page header={<ViewCurSiteHeader caption={caption ?? name} />}>
+        <div className="p-3 border-bottom">
+            {i === undefined ? <span className="text-danger">无类型!</span> : i.caption}
+        </div>
         {buds.map(v => <ViewBudItem key={v.id} bud={v} />)}
+    </Page>;
+}
+
+function PageNoEntity({ entity, message }: { entity: EntityBook; message: string; }) {
+    return <Page header={entity.caption}>
+        <div className="p-3 text-danger">
+            {entity.caption}没有定义I，{message}
+        </div>
     </Page>;
 }
 
@@ -44,9 +60,14 @@ function budCaption(bud: BizBud) {
 function PageData({ bud, store }: { bud: BizBud; store: AdminStore; }) {
     const modal = useModal();
     const header = budCaption(bud);
-    const { biz } = store;
+    const { biz, entity } = store;
+    const { i } = entity;
     async function onClear() {
-        await modal.open(<PageClear bud={bud} />);
+        if (i === undefined) {
+            modal.open(<PageNoEntity entity={entity} message="无法直接清除数据" />);
+            return;
+        }
+        await modal.open(<PageClear entity={entity} bud={bud} />);
         modal.close();
         modal.open(<PageData bud={bud} store={store} />);
     }
@@ -86,21 +107,27 @@ function PageData({ bud, store }: { bud: BizBud; store: AdminStore; }) {
             }
         }
     }
+    function ViewParams() {
+        return <div className="px-3 py-2 border bottom">
+            <span className="text-info">输入查询参数，正在实现中...</span>
+        </div>
+    }
     return <PageQueryMore header={header} right={right}
         query={store.load}
-        param={{ bud: bud.id }}
+        param={{ i: entity.i, bud: bud.id }}
         sortField="i"
         pageSize={100}
         ViewItem={ViewItem}
     >
+        <ViewParams />
     </PageQueryMore>;
 }
 
-function PageClear({ bud }: { bud: BizBud; }) {
+function PageClear({ entity, bud }: { entity: EntityBook, bud: BizBud; }) {
     const modal = useModal();
     const { uq } = useUqApp();
     async function onClear() {
-        await uq.ClearBook.submit({ bud: bud.id });
+        await uq.ClearBook.submit({ i: entity.i.id, bud: bud.id });
         modal.close();
         const header = budCaption(bud);
         modal.open(<Page header={header}>

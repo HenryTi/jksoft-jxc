@@ -55,7 +55,7 @@ export function InputNumber({ className, errorClassName, defaultValue, min, max,
     return <>
         <input type="text"
             disabled={disabled}
-            className={(className ?? 'form-control w-8c text-end') + (error === undefined ? '' : ' is-invalid')}
+            className={(className ?? 'form-control form-control-sm w-8c text-end') + (error === undefined ? '' : ' is-invalid')}
             defaultValue={defaultValue}
             onFocus={onFocus}
             onChange={onChange}

@@ -34,7 +34,7 @@ class RadioFieldItem implements FieldItem {
 
 function RadioInput({ name, className, readOnly, item, itemIndex, defaultChecked }: RadioInputProps) {
     let { label, value } = item;
-    let input = useRef<HTMLInputElement>();
+    let input = useRef<HTMLInputElement>(undefined);
     let band = useBand();
     let bandContainer = useBandContainer();
     useEffect(() => {

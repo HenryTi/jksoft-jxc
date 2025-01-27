@@ -1,16 +1,15 @@
 import { EasyTime } from "tonwa-com";
 import { Sheet } from "uqs/UqDefault";
-import { ViewFork } from "./ViewFork";
 import { ViewOperator } from "./ViewOperator";
 import { Bin } from "app/tool";
 import { SheetStore } from "../Sheet/store";
-import { LabelBox, RowCols } from "../tool";
+import { RowCols } from "../tool";
 import { ViewBud } from "..";
 
 export function ViewItemMain({ value, isMy, store }: { value: Sheet & Bin & { rowCount: number; }; isMy: boolean; store: SheetStore; }) {
     const { entity } = store;
     const { main } = entity;
-    const { primeBuds } = main;
+    const { i: IBud, x: XBud, primeBuds } = main;
     const { id: binId, no, i, x, operator, rowCount } = value;
     const vTime = <span className="me-3"><EasyTime date={binId / (1024 * 1024) * 60} /></span>;
     let vNo: any, vRowCount: any;
@@ -61,8 +60,9 @@ export function ViewItemMain({ value, isMy, store }: { value: Sheet & Bin & { ro
                 }
                 <small className="text-secondary"></small>
             </div>
-            {i > 0 && <ViewFork id={i} />}
-            {x > 0 && <ViewFork id={x} />}
+
+            {i > 0 && <ViewBud bud={IBud} value={i} store={store} />}
+            {x > 0 && <ViewBud bud={XBud} value={x} store={store} />}
             {vPrimeBuds}
         </RowCols>
     </div>;
