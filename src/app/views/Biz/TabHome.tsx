@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { IDView, Page, useModal } from "tonwa-app";
+import { Page, useModal } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
 import { FA } from "tonwa-com";
 import { Permit, ViewSite } from "../Site";
@@ -30,7 +30,7 @@ export function TabHome() {
         <div className="d-flex border-bottom tonwa-bg-gray-1">
             <div className="ps-5 py-2 flex-grow-1 text-center">
                 <FA name="university" className="me-3 text-info" />
-                <IDView uq={uq} id={userSite.site} Template={ViewSite} />
+                <ViewSite value={userSite} />
                 {vDesign}
             </div>
             {vSiteRight}

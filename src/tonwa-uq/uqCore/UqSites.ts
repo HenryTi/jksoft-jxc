@@ -12,6 +12,9 @@ export interface UserSite<T = any> {
     isOwner: boolean;
     isAdmin: boolean;
     assigned: string;
+    phrase: number;         // default undefined, just to be compatible with AtomData
+    no: string;
+    ex: string;
     name: string;
     nick: string;
     icon: string;
@@ -132,7 +135,7 @@ export class UqSites {
         await this.reloadMyRoles();
     }
 
-    private getMySite(site: number) {
+    getMySite(site: number) {
         let mySite = this.mySitesColl[site];
         if (mySite === undefined) {
             mySite = {
@@ -162,7 +165,7 @@ export class UqSites {
         if (localSiteId === 0) localSiteId = undefined;
         let userSiteDef: UserSite, localSite: UserSite;
         for (let siteRow of sites) {
-            let { id, site, admin, entity, assigned, def } = siteRow;
+            let { id, site, admin, entity, assigned, def, no, ex } = siteRow;
             let mySite = this.getMySite(site);
             mySite.id = id;
             mySite.siteId = site;
@@ -170,6 +173,8 @@ export class UqSites {
             mySite.isOwner = ((admin & 2) === 2);
             mySite.entity = entity;
             mySite.assigned = assigned;
+            mySite.no = no;
+            mySite.ex = ex;
 
             if (site === localSiteId) {
                 localSite = mySite;

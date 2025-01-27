@@ -123,7 +123,7 @@ export function useBuildViewBiz() {
     return {
         header: <>
             {compile.caption} -
-            <IDView uq={uq} id={userSite.site} Template={ViewSite} />
+            <ViewSite value={userSite} />
         </>,
         right: <button className="btn btn-primary btn-sm me-1" onClick={onCode}>
             <FA name="bars" />

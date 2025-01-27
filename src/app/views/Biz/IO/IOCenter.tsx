@@ -8,6 +8,7 @@ import { Page, useModal } from "tonwa-app";
 import { PageSiteAtoms } from "./PageSiteAtoms";
 import { useQuery } from "react-query";
 import { UseQueryOptions } from "app/tool";
+import { ViewCurSiteHeader } from "app/views/Site";
 
 const pathList = `${centers.io.path}/list`;
 const fs = ' ';
@@ -29,6 +30,7 @@ function FolderLink({ path, className, icon, iconColor, onClick, caption }: Fold
     </Link>
 }
 
+// 数据接口
 function PageIOCenter() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
@@ -63,7 +65,7 @@ function PageIOCenter() {
     function onItemClick(item: EntityIOSite) {
         modal.open(<PageSiteAtoms ioSite={item} />);
     }
-    return <Page header={centers.io.caption}>
+    return <Page header={<ViewCurSiteHeader caption={centers.io.caption} />}>
         <List items={biz.ioSites} ViewItem={ViewIOSite} onItemClick={onItemClick} />
     </Page>;
 }

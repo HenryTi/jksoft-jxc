@@ -14,7 +14,7 @@ import { FormRow, FormRowsView, Band, ToolItem, Toolbar, ToolButton } from 'app/
 import { atom, useAtomValue, WritableAtom } from 'jotai';
 import { BizPhraseType, UqExt } from 'uqs/UqDefault';
 import { adminData } from '../adminData';
-import { ViewSite } from 'app/views/Site';
+import { ViewCurSite, ViewSite } from 'app/views/Site';
 import { PageImportAtom } from './importData';
 
 class Nav {
@@ -266,7 +266,8 @@ export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
         {store.nav.showView()}
         {deleted === false && <Toolbar groups={groups} />}
     </div>;
-    const header = <>{entity.caption} - <IDView uq={uq} id={userSite.site} Template={ViewSite} /></>;
+    // const header = <>{entity.caption} - <IDView uq={uq} id={userSite.site} Template={ViewSite} /></>;
+    const header = <>{entity.caption} - <ViewCurSite /></>;
     return <Page header={header} hideScroll={true} top={top}>
         <div className="d-flex flex-column">
             <div className="border-info rounded flex-grow-1">

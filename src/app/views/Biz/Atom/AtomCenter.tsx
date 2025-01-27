@@ -11,6 +11,7 @@ import { UqApp, useUqApp } from "app/UqApp";
 import { Entity } from "app/Biz";
 import { BI } from "app/coms";
 import { centers } from "app/views/center";
+import { ViewCurSiteHeader } from "app/views/Site";
 
 function PageAtomCenter() {
     const { biz } = useUqApp();
@@ -24,7 +25,7 @@ function PageAtomCenter() {
             </div>
         </Link>;
     }
-    return <Page header={centers.atom.caption}>
+    return <Page header={<ViewCurSiteHeader caption={centers.atom.caption} />} >
         <Sep />
         <List items={atomEntities} ViewItem={ViewItem} />
     </Page>;

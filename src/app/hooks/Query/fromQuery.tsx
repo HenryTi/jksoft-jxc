@@ -72,6 +72,7 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
     const header = caption ?? name;
     let [list, setList] = useState(null as QueryRow[]);
     let [selectedItems, setSelectedItems] = useState<{ [id: number]: QueryRow; }>({});
+    const indexLast = idCols.length - 1;
     async function onSearch(params: any) {
         let queryResults = await queryStore.query(params);
         setList(queryResults);
@@ -147,6 +148,13 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
         switch (bizPhraseType) {
             default:
                 return <>unknown bizPhraseType {bizPhraseType}</>
+            case BizPhraseType.main:    // should be bin
+                return <div>
+                    <div>bin: {id}</div>
+                    <RowCols contentClassName="">
+                        <ViewPropArr propArr={cols} />
+                    </RowCols>
+                </div>;
             case BizPhraseType.fork:
                 if (id === undefined) return null;
                 return <ViewForkBuds id={id} store={queryStore} />;
@@ -167,7 +175,7 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
         const { ids, cols } = picked;
         return <>
             {idCols.map((v, index) => {
-                if (index >= idCols.length) return null;
+                if (index >= indexLast) return null;
                 let col = v;
                 let val = ids[index];
                 return <ViewIdOne key={index} id={val} col={col} cols={cols} />
@@ -176,7 +184,6 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
     }
     function ViewItemDetail({ value: picked }: { value: QueryRow }) {
         const { ids, cols } = picked;
-        let indexLast = idCols.length - 1;
         return <ViewIdOne id={ids[0]} col={idCols[indexLast]} cols={cols} />
     }
     function ViewValue({ value, caption }: { value: number; caption: string; }) {
@@ -210,7 +217,9 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
                         defaultChecked={selectedItems[value.rowId] !== undefined}
                         onChange={onCheckChange}
                     />
-                    <ViewItemDetail value={value} />
+                    <div className="flex-fill">
+                        <ViewItemDetail value={value} />
+                    </div>
                 </label>;
             }
             return <div className={cn}><ViewItemDetail value={value} /></div>;

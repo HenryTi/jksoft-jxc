@@ -5,6 +5,7 @@ import { PageCmdClearCode, PageCmdClearPend } from "./PageCmdClear";
 import { PageCmdLog } from "./PageLog";
 import { PageCmdPrintTemplate } from "./template";
 import { PageCmdDataTemplate } from "./template";
+import { ViewCurSiteHeader } from "app/views/Site";
 
 interface Cmd {
     icon: string;
@@ -57,7 +58,7 @@ export function PageAdmin() {
             }
         },
     ];
-    return <Page header="管理">
+    return <Page header={<ViewCurSiteHeader caption="管理" />}>
         {cmdArr.map((v, index) => {
             return <React.Fragment key={index}>
                 <VCmd {...v} />

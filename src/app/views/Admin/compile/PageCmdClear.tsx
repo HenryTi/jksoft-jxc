@@ -1,4 +1,5 @@
 import { useUqApp } from "app/UqApp";
+import { ViewCurSiteHeader } from "app/views/Site";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { ButtonAsync } from "tonwa-com";
 
@@ -27,7 +28,7 @@ function PageCmdClear({ caption, cmd }: Props) {
             document.location.reload();
         }
     }
-    return <Page header={'清空' + caption}>
+    return <Page header={<ViewCurSiteHeader caption={'清空' + caption} />}>
         <div className="m-3 p-3 border border-danger text-info rounded-2">
             <div className="fw-bold">
                 严重提醒

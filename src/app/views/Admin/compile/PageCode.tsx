@@ -9,6 +9,7 @@ import { editorStyle, uqGrammar } from './grammar';
 import { PageAdmin } from './PageAdmin';
 import { ButtonAsyncIcon } from 'app/tool/ButtonAsyncIcon';
 import { loadFiles } from './loadFiles';
+import { ViewCurSite, ViewCurSiteHeader } from 'app/views/Site';
 
 export function PageCode() {
     const uqApp = useUqApp();
@@ -99,7 +100,7 @@ export function PageCode() {
         modal.open(<PageAdmin />);
     }
 
-    return <Page header={'脚本'}>
+    return <Page header={<ViewCurSiteHeader caption="脚本" />}>
         <div className="px-3 py-1 tonwa-bg-gray-2 d-flex">
             <ButtonAsyncIcon onClick={onCompile} icon="send-o">提交</ButtonAsyncIcon>
             <div className="flex-grow-1" />

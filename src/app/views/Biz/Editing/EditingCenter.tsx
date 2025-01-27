@@ -7,7 +7,9 @@ import { useState } from "react";
 import { ViewNotifyCount } from "app/tool";
 import { centers } from "app/views/center";
 import { PageSearch } from "./PageSearch";
+import { ViewCurSiteHeader } from "app/views/Site";
 
+// 操作中心
 function PageEditingCenter() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
@@ -43,8 +45,7 @@ function PageEditingCenter() {
     return visible === false ?
         <PageSpinner />
         :
-        <Page header={centers.editing.caption}
-        >
+        <Page header={<ViewCurSiteHeader caption={centers.editing.caption} />}>
             <List items={sheetEntities} ViewItem={ViewSheetType} className={cnList} sep={null} />
         </Page>;
 }

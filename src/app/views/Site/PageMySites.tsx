@@ -7,6 +7,7 @@ import React from "react";
 import { pathSiteAdmin } from "../Admin/site";
 import { UserSite } from "tonwa-uq";
 import { Atom } from "uqs/UqDefault";
+import { AtomData } from "app/tool";
 
 export function PageMySites() {
     return <Page header="我的机构">
@@ -40,20 +41,21 @@ function ViewMySites() {
         color = '';
         iconColor = ' text-success ';
 
-        function ViewCurSite({ value }: { value: Atom; }) {
+        function ViewCurSite({ value }: { value: AtomData; }) {
             let { no, ex } = value;
             return <div className="d-flex align-items-end">
                 <b className="fs-larger me-3">{ex ?? '(无名机构)'}</b>
                 <div className="text-secondary">{no}</div>
             </div>;
         }
+        // <IDView uq={uq} id={siteId} Template={ViewCurSite} />
         return <div className="px-3 py-3 d-flex align-items-end">
             <FA name="university" size="lg" className="text-primary me-3 mb-1" />
             <div className="flex-grow-1">
                 <div className="small text-secondary">
                     当前机构
                 </div>
-                <IDView uq={uq} id={siteId} Template={ViewCurSite} />
+                <ViewCurSite value={curSite} />
             </div>
             <Permit permit={[]}>
                 <Link to={`/${pathSiteAdmin}/${siteId}`}>
@@ -63,7 +65,7 @@ function ViewMySites() {
         </div>;
     }
 
-    function ViewSite({ value }: { value: Atom }) {
+    function ViewSite({ value }: { value: AtomData }) {
         let { no, ex } = value;
         return <div className="d-flex align-items-center">
             <FA name="university" fixWidth={true} className={' me-3 text-info '} />
@@ -81,9 +83,10 @@ function ViewMySites() {
                 navigate('../');
                 document.location.reload();
             }
+            // <IDView uq={uq} id={siteId} Template={ViewSite} />
             let content = <LMR className={'p-3 align-items-center  tonwa-bg-gray-1 text-primary '} onClick={onSiteSelect}>
                 <FA name="hand-o-right" className="me-3 text-warning" />
-                <IDView uq={uq} id={siteId} Template={ViewSite} />
+                <ViewSite value={v} />
                 <div />
             </LMR>;
             return <React.Fragment key={index}>

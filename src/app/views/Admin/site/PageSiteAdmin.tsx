@@ -54,8 +54,9 @@ function PageSiteAdmin() {
         { label: users.caption, path: users.path },
         { label: compile.caption, path: compile.path },
     ];
-    //{ label: <CaptionAtom atom={EnumAtom.UomI} />, path: pathAtomList(gUomI.name) },
-    return <Page header={<IDView uq={uq} id={Number(site)} Template={ViewSite} />}>
+    // { label: <CaptionAtom atom={EnumAtom.UomI} />, path: pathAtomList(gUomI.name) },
+    // <IDView uq={uq} id={Number(site)} Template={ViewSite} />
+    return <Page header={<ViewSite value={uqSites.getMySite(Number(site))} />}>
         <SiteRoleAdmin />
         {cmds.map((v, index) => {
             const { label, path } = v;

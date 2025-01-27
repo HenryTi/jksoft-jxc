@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Jan 25 2025 08:52:04 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Sun Jan 26 2025 20:51:47 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -68,6 +68,8 @@ export interface Return$role_MySites {
 	entity: string;
 	assigned: string;
 	def: number;
+	no: string;
+	ex: string;
 }
 export interface Return$role_MyRoles {
 	site: number;
@@ -2087,6 +2089,16 @@ export const uqSchema={
                     {
                         "name": "def",
                         "type": "tinyint"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 200
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
                     }
                 ]
             },

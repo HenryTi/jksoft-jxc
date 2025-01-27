@@ -1,5 +1,6 @@
 import { PageQueryMore } from "app/coms";
 import { UqApp, useUqApp } from "app/UqApp";
+import { ViewCurSiteHeader } from "app/views/Site";
 import { useRef } from "react";
 import { dateFromMinuteId, EasyTime } from "tonwa-com";
 import { UqExt } from "uqs/UqDefault";
@@ -38,6 +39,6 @@ export function PageCmdLog() {
         sortField="id"
         ViewItem={ViewItem}
         pageSize={100}
-        header="日志">
+        header={<ViewCurSiteHeader caption="日志" />}>
     </PageQueryMore>;
 }

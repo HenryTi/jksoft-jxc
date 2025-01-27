@@ -6,6 +6,7 @@ import { Image, useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { PageUser } from "./PageUser";
 import { ViewUser } from "./ViewUser";
+import { ViewCurSiteHeader } from "app/views/Site";
 
 export function PageUsers() {
     const modal = useModal();
@@ -15,7 +16,7 @@ export function PageUsers() {
         await usersStore.loadUserBuds(item.userSite);
         modal.open(<PageUser user={item} usersStore={usersStore} />);
     }
-    return <PageQueryMore header={users.caption}
+    return <PageQueryMore header={<ViewCurSiteHeader caption={users.caption} />}
         query={usersStore.getUserBuds}
         param={{}}
         sortField="id"
