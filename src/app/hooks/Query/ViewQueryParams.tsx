@@ -1,4 +1,4 @@
-import { BinPick, BizBud, EntityQuery, PickParam, PickQuery, ValueSetType } from "app/Biz";
+import { BinPick, BizBud, EntityQuery, EnumBudType, PickParam, PickQuery, ValueSetType } from "app/Biz";
 import { Page, useModal } from "tonwa-app";
 import { FA, theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";
@@ -86,6 +86,7 @@ export function ViewQueryParams({ query, editing, binPick, onSearch }: {
     // const { valueSpace } = editing;
     const valueParams: [PickParam, BizBud, any][] = [];
     const inputParams: BizBud[] = [];
+    let noIdDefined = false;
     if (binPick !== undefined) {
         const { pickParams } = binPick;
         if (editing !== undefined && pickParams !== undefined) {
@@ -113,51 +114,31 @@ export function ViewQueryParams({ query, editing, binPick, onSearch }: {
             }
         }
     }
-    if (inputParams.length === 0) {
-        /*
-        ???? 这些代码干什么的呢？
-        let retParam : any = {};
-        for (let [pickParam, bizBud, value] of valueParams) {
-            retParam[pickParam.name] = value;
-        }
-        */
-        // let retParam = stripParams(undefined, valueParams);
-        // return retParam;
+    for (let param of inputParams) {
+        const { budDataType } = param;
+        if (budDataType === undefined) continue;
+        if (budDataType.type !== EnumBudType.atom) continue;
+        if ((budDataType as any).entityID !== undefined) continue;
+        noIdDefined = true;
     }
     let { current: paramBudsEditing } = useRef(new ValuesBudsEditing(modal, biz, inputParams));
-
-    // { header, valueParams, inputParams }: PageParamsProps
-    const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
-    let formRows: FormRow[] = [
-        ...paramBudsEditing.buildFormRows(),
-        { type: 'submit', label: '查找', options: {}, className: undefined }
-    ];
+    const { handleSubmit } = useForm({ mode: 'onBlur' });
     async function onSubmitForm(data: any) {
         let values = await paramBudsEditing.getBudsNameValues();
         let ret = stripParams(values, valueParams);
         onSearch(ret);
     }
-    // <FormRowsView rows={formRows} register={register} errors={errors} context={paramBudsEditing} />
     return <form className={theme.bootstrapContainer + ' py-3 border-bottom'} onSubmit={handleSubmit(onSubmitForm)}>
         <RowColsSm>
             {valueParams.map((v, index) => {
                 const [pickParam, bizBud, value] = v;
-                // const budEditing = new BudEditing(undefined, bizBud, false);
-                // <EditBudInline budEditing={budEditing} id={0} value={value} onChanged={undefined} readOnly={false} options={{}} />
-                // <ViewBud bud={bizBud} value={value} />
                 return <LabelBox key={bizBud.id} label={pickParam.name} className="mb-2">
                     <ViewBud bud={bizBud} value={value} noLabel={true} />
                 </LabelBox>;
-                //                const { name } = pickParam;
-                //    return <ViewBud bud={bizBud} value={value} />;
-                // <Band key={index} label={} className="px-3 py-2">
-                // </Band>
             })}
-            {
-                paramBudsEditing.buildEditBuds()
-            }
+            {paramBudsEditing.buildEditBuds()}
             <div className="d-flex align-items-end">
-                <button type="submit" className="btn btn-primary mb-2">
+                <button type="submit" className="btn btn-primary mb-2" disabled={noIdDefined}>
                     <FA name="search" className="me-1" />
                     查找
                 </button>

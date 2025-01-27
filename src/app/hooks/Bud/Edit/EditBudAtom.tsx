@@ -8,6 +8,7 @@ import { BizPhraseType } from "uqs/UqDefault";
 import { ViewForkId } from "app/coms/ViewForkId";
 import { pickBudID } from "app/hooks/BizPick/pickBudID";
 import { useModal } from "tonwa-app";
+import { FA } from "tonwa-com";
 
 export function EditBudAtom(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
@@ -47,10 +48,18 @@ export function EditBudAtom(props: EditBudTemplateProps) {
         onChanged?.(bizBud, atomId);
     }
     let vContent: any;
-    switch (entityID.bizPhraseType) {
-        default: debugger; break;
-        case BizPhraseType.atom: vContent = <ViewAtomId id={value} />; break;
-        case BizPhraseType.fork: vContent = <ViewForkId id={value} />; break;
+    if (entityID !== undefined) {
+        switch (entityID.bizPhraseType) {
+            default: debugger; break;
+            case BizPhraseType.atom: vContent = <ViewAtomId id={value} />; break;
+            case BizPhraseType.fork: vContent = <ViewForkId id={value} />; break;
+        }
+    }
+    else {
+        vContent = <span className="text-danger">
+            <FA name="exclamation-circle" className="me-1" />
+            未定义类型
+        </span>;
     }
     return <ValueEdit label={label}
         readOnly={readOnly}

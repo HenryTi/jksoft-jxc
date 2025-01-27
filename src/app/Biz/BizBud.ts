@@ -125,6 +125,7 @@ export class BudID extends BudDataNumber {
         this.baseFormula = schema.base;
     }
     override scan(biz: Biz, bud: BizBud) {
+        if (this.entityID === undefined) return;
         this.entityID = biz.entities[this.entityID as unknown as string] as EntityID;
     }
     getTitleBuds(): BizBud[] { return this.entityID?.titleBuds; }
