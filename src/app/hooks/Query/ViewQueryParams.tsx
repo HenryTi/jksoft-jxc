@@ -83,7 +83,7 @@ export function ViewQueryParams({ query, editing, binPick, onSearch }: {
     const modal = useModal();
     const { params: queryParams } = query;
     const { biz } = query;
-    // const { valueSpace } = editing;
+    const { store } = editing;
     const valueParams: [PickParam, BizBud, any][] = [];
     const inputParams: BizBud[] = [];
     let noIdDefined = false;
@@ -133,7 +133,7 @@ export function ViewQueryParams({ query, editing, binPick, onSearch }: {
             {valueParams.map((v, index) => {
                 const [pickParam, bizBud, value] = v;
                 return <LabelBox key={bizBud.id} label={pickParam.name} className="mb-2">
-                    <ViewBud bud={bizBud} value={value} noLabel={true} />
+                    <ViewBud bud={bizBud} value={value} noLabel={true} store={store} />
                 </LabelBox>;
             })}
             {paramBudsEditing.buildEditBuds()}

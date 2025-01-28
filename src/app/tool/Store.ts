@@ -1,6 +1,6 @@
 import { Biz, BizBud, Entity, EntityFork, EntityID } from "app/Biz";
 import { BudCheckValue, BudValue, Modal } from "tonwa-app";
-import { Atom, ReturnGetPendProps, ReturnGetSheetAtoms, ReturnGetSheetProps, ReturnGetSheetForks, UqExt, BizPhraseType } from "uqs/UqDefault";
+import { Atom, ReturnGetPendProps, ReturnGetSheetAtoms, ReturnGetSheetProps, ReturnGetSheetForks, UqExt, BizPhraseType, Sheet } from "uqs/UqDefault";
 
 abstract class KeyIdObject {
     private static __keyId = 0;
@@ -62,6 +62,7 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
     protected readonly budsColl: BudsColl = {};
     private readonly bizAtomColl: AtomColl = {};
     protected readonly bizForkColl: ForkColl = {};
+    readonly sheetsColl: { [id: number]: Sheet } = {};
 
     constructor(modal: Modal, entity: E) {
         const { biz } = entity;
@@ -117,8 +118,8 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
             if (c0 !== 0) return c0;
             return aBud - bBud;
         });
-        const budsColl = budValuesFromProps(props);
-        Object.assign(this.budsColl, budsColl);
+        this.budValuesFromProps(props);
+        // Object.assign(this.budsColl, budsColl);
         this.addBizAtoms(atoms);
         this.addBizForks(forks, props);
     }
@@ -196,26 +197,22 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
         }
         return;
     }
-}
 
-interface PropData {
-    id: number;
-    bud: number;
-    value: any;
-    //    owner: number;
-}
-
-function budValuesFromProps(props: PropData[]) {
-    const budsColl: BudsColl = {};
-    for (let { id, bud, value } of props) {
-        let budValues = budsColl[id];
-        if (budValues === undefined) {
-            budsColl[id] = budValues = {};
-        }
-        if (Array.isArray(value) === false) {
-            budValues[bud] = value;
-        }
-        else {
+    private budValuesFromProps(props: PropData[]) {
+        for (let { id, bud, value } of props) {
+            if (bud === 0) {
+                const [base, no, operator] = value;
+                this.sheetsColl[id] = { id, base, no, operator };
+                continue;
+            }
+            let budValues = this.budsColl[id];
+            if (budValues === undefined) {
+                this.budsColl[id] = budValues = {};
+            }
+            if (Array.isArray(value) === false) {
+                budValues[bud] = value;
+                continue;
+            }
             switch (value.length) {
                 default:
                 case 0: debugger; break;
@@ -240,5 +237,11 @@ function budValuesFromProps(props: PropData[]) {
             }
         }
     }
-    return budsColl;
+}
+
+interface PropData {
+    id: number;
+    bud: number;
+    value: any;
+    //    owner: number;
 }

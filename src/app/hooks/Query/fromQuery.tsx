@@ -3,14 +3,15 @@ import { ChangeEvent, useState } from "react";
 import { Page, useModal } from "tonwa-app";
 import { List, Sep, theme } from "tonwa-com";
 import { RearPickResultType } from "../Sheet/store";
-import { QueryRow, QueryRowCol, RowCols } from "app/hooks/tool";
+import { LabelBox, QueryRow, QueryRowCol, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
-import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtomBold, ViewForkBuds } from "../View";
+import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtom, ViewForkAtomBold, ViewForkBuds } from "../View";
 import { ViewBud } from "../Bud";
 import { BudsEditing } from "../BudsEditing";
 import { PickResult } from "../Calc";
 import { ViewQueryParams } from "./ViewQueryParams";
+import { EntityStore } from "app/tool";
 
 async function pickFromQueryBase(
     editing: BudsEditing
@@ -122,7 +123,7 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
             break;
         case RearPickResultType.array:
             onItemSelect = onMultipleClick;
-            cnItem = ' px-3 my-2 ';
+            cnItem = ' px-3 py-2 ';
             btnOk = <button className="btn btn-primary m-3" onClick={onPick}>选入</button>;
             break;
         case RearPickResultType.scalar:
@@ -149,9 +150,21 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
             default:
                 return <>unknown bizPhraseType {bizPhraseType}</>
             case BizPhraseType.main:    // should be bin
+                const sheetData = queryStore.sheetsColl[id];
+                let vSheet: any;
+                if (sheetData !== undefined) {
+                    const { no, base, operator } = sheetData;
+                    const sheetEntity = queryStore.biz.entities[base];
+                    vSheet = <>
+                        <LabelBox label={sheetEntity.caption}>
+                            <b>{no}</b>
+                        </LabelBox>
+                    </>;
+                    // <div><ViewForkAtom id={operator} store={queryStore} /></div>
+                }
                 return <div>
-                    <div>bin: {id}</div>
                     <RowCols contentClassName="">
+                        {vSheet}
                         <ViewPropArr propArr={cols} />
                     </RowCols>
                 </div>;
@@ -198,7 +211,7 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
         const { rowId, values } = picked;
         let vHead: any;
         if (rowId > 0) {
-            vHead = <div className={cnItem + ' d-flex '}>
+            vHead = <div className={cnItem + ' d-flex border-bottom'}>
                 <div className="flex-fill">
                     <ViewItemMain value={picked} />
                 </div>

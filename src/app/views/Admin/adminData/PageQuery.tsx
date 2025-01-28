@@ -56,7 +56,7 @@ async function doQuery(editing: BudsEditing, query: EntityQuery, params: any, is
     let ret = await modal.open(<PageFromQuery />);
     return ret;
     function PageFromQuery() {
-        const { caption, name, ids: idCols, showIds: showIdCols, idFrom, value: budValue, subCols, hideCols } = query;
+        const { caption, name, ids: idCols, showIds: showIdCols, idFrom, value: budValue, mainCols, hideCols } = query;
         const header = caption ?? name;
         const { bizPhraseType } = idFrom;
         let [selectedItems, setSelectedItems] = useState<{ [id: number]: QueryRow; }>({});

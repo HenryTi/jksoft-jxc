@@ -773,7 +773,7 @@ export class EntityPend extends Entity {
     private cols: BizBud[];
     hasPrice: boolean;
     hasAmount: boolean;
-    subCols: { [budId: number]: boolean };
+    mainCols: { [budId: number]: boolean };
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -786,7 +786,7 @@ export class EntityPend extends Entity {
             case 'i': this.i = val; break;
             case 'x': this.x = val; break;
             case 'predefinedFields': this.setPredefinedFields(val); break;
-            case 'subCols': this.subCols = val; break;
+            case 'mainCols': this.mainCols = val; break;
         }
     }
 
@@ -809,11 +809,11 @@ export class EntityPend extends Entity {
                 this.budColl[bud.id] = bud;
             }
         }
-        let subCols = this.subCols;
-        this.subCols = {};
-        if (subCols !== undefined) {
-            for (let id of subCols as unknown as number[]) {
-                this.subCols[id] = true;
+        let mainCols = this.mainCols;
+        this.mainCols = {};
+        if (mainCols !== undefined) {
+            for (let id of mainCols as unknown as number[]) {
+                this.mainCols[id] = true;
             }
         }
         if (this.params !== undefined) {
