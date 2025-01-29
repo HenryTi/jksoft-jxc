@@ -242,11 +242,11 @@ export class Biz {
             let entityArr = arr[i];
             if (entityArr === undefined) continue;
             for (let [bizEntity] of entityArr) {
-                // if (bizEntity.name === '采购收货单明细') debugger;
                 bizEntity.scanBuds();
             }
         }
         this.buildAtomHierachy(arr[EnumEntity.atom]);
+        this.buildBinPickBound();
         this.groups.push(
             {
                 name: 'sheet',
@@ -503,6 +503,12 @@ export class Biz {
             if (_extends !== undefined) continue;
             this.atomRoots.push(atom);
             atom.hierarchy();
+        }
+    }
+
+    private buildBinPickBound() {
+        for (let bin of this.bins) {
+            bin.setPickBound();
         }
     }
 

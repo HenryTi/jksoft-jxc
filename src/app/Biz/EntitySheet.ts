@@ -23,34 +23,47 @@ export abstract class BinPick extends BizBud {
 
     abstract get fromPhraseType(): BizPhraseType;
     getRefEntities(entitySet: Set<Entity>) { return; }
+    abstract getBud(name: string): BizBud;
 }
 
 export class PickScalar extends BinPick {
     readonly fromPhraseType = BizPhraseType.any;
+    override getBud(name: string): BizBud { return; }
 }
 
 export class PickQuery extends BinPick {
     readonly fromPhraseType = BizPhraseType.query;
     query: EntityQuery;
     override getRefEntities(entitySet: Set<Entity>) { entitySet.add(this.query); }
+    override getBud(name: string): BizBud { return this.query.budColl[name]; }
 }
 export class PickAtom extends BinPick {
     readonly fromPhraseType = BizPhraseType.atom;
     from: EntityAtom[];
+    override getBud(name: string): BizBud {
+        for (let f of this.from) {
+            let b = f.budColl[name];
+            if (b !== undefined) return b;
+        }
+        return;
+    }
 }
 export class PickSpec extends BinPick {
     readonly fromPhraseType = BizPhraseType.fork;
     baseParam: string;
     from: EntityFork;
+    override getBud(name: string): BizBud { return this.from.budColl[name]; }
 }
 export class PickPend extends BinPick {
     readonly fromPhraseType = BizPhraseType.pend;
     from: EntityPend;
     override getRefEntities(entitySet: Set<Entity>) { entitySet.add(this.from); }
+    override getBud(name: string): BizBud { return this.from.budColl[name]; }
 }
 export class PickOptions extends BinPick {
     readonly fromPhraseType = BizPhraseType.options;
     from: EntityOptions;
+    override getBud(name: string): BizBud { return; }
 }
 
 export abstract class BinInput extends BizBud {
@@ -651,10 +664,24 @@ export class EntityBin extends Entity {
                     bdt.setBase(this.biz.budFromId(base as unknown as number));
                 }
             }
-            if (valueSetType === ValueSetType.bound) {
+        }
+    }
+
+    private getBoundBud() {
+        for (let bud of this.buds) {
+            if (bud.valueSetType === ValueSetType.bound) {
                 bud.valueSetType = ValueSetType.equ;
+                return bud;
             }
         }
+    }
+    setPickBound() {
+        let bud: BizBud = this.getBoundBud();
+        if (bud === undefined) return;
+        const { valueSet } = bud;
+        const [pick, budName] = valueSet.split('.');
+        let pickBud = this.rearPick.getBud(budName);
+        this.pickBound = [pickBud, bud];
     }
 
     private scanDiv(binDiv: BinDiv, divSchema: any) {

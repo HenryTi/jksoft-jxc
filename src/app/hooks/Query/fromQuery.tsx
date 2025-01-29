@@ -2,7 +2,7 @@ import { BinPick, EntityQuery, IDColumn, PickQuery } from "app/Biz";
 import { ChangeEvent, useState } from "react";
 import { Page, useModal } from "tonwa-app";
 import { List, Sep, theme } from "tonwa-com";
-import { RearPickResultType } from "../Sheet/store";
+import { BinStore, RearPickResultType, SheetStore } from "../Sheet/store";
 import { LabelBox, QueryRow, QueryRowCol, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
@@ -111,7 +111,8 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
             return banCaption;
         }
     }
-    let onItemSelect: any, onItemClick: any;
+    // let onItemSelect: any, 
+    let onItemClick: any;
     let cnViewItem = 'd-flex flex-wrap ';
     let cnItem: string;
     let btnOk: any;
@@ -121,7 +122,7 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
             cnItem = 'py-2 px-3 border-bottom ';
             break;
         case RearPickResultType.array:
-            onItemSelect = onMultipleClick;
+            // onItemSelect = onMultipleClick;
             cnItem = ' px-3 py-2 ';
             btnOk = <button className="btn btn-primary m-3" onClick={onPick}>选入</button>;
             break;
@@ -224,10 +225,26 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
             }
             const cn = 'py-1 px-3 ';
             if (pickResultType === RearPickResultType.array) {
+                let defaultChecked = (selectedItems[value.rowId] !== undefined);
+                let checkDisabeld = false;
+                let sheetStore = editing.store as SheetStore;
+                if (sheetStore !== undefined) {
+                    const { queryRowColl, entity } = sheetStore.binStore;
+                    const { pickBound } = entity;
+                    if (pickBound !== undefined) {
+                        let queryBud = entity.pickBound[0];
+                        let [, boundValue] = value.cols.find(([b, v]) => b === queryBud);
+                        if (queryRowColl[boundValue as number] === true) {
+                            checkDisabeld = true;
+                            defaultChecked = true;
+                        }
+                    }
+                }
                 return <label className={cn + 'd-flex align-items-end'}>
                     <input type="checkbox" className="form-check-input me-3 mb-2 align-self-end"
-                        defaultChecked={selectedItems[value.rowId] !== undefined}
+                        defaultChecked={defaultChecked}
                         onChange={onCheckChange}
+                        disabled={checkDisabeld}
                     />
                     <div className="flex-fill">
                         <ViewItemDetail value={value} />
@@ -236,7 +253,6 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
             }
             return <div className={cn}><ViewItemDetail value={value} /></div>;
         }
-        // onItemSelect={onItemSelect}
         return <div>
             {vHead}
             <List items={picked.subs} ViewItem={ViewItemSub}

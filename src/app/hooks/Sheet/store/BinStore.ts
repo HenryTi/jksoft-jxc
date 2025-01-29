@@ -1,5 +1,5 @@
 import { PendRow, SheetStore } from "./SheetStore";
-import { BinDiv, EntityBin, EnumDetailOperate, PickPend } from "app/Biz";
+import { BinDiv, BizBud, EntityBin, EnumDetailOperate, PickPend } from "app/Biz";
 import { Getter, WritableAtom, atom } from "jotai";
 import { getValRowPropArr, PendProxyHandler, ValRow } from "./tool";
 import { getAtomValue, setAtomValue } from "tonwa-com";
@@ -33,7 +33,7 @@ export class BinStore extends EntityStore<EntityBin> {
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
     readonly budEditings: BudEditing[];
     readonly pickPendStores: { [id: number]: PickPendStore; } = {};
-    readonly queryRowColl: { [id: number]: boolean } = {}
+    queryRowColl: { [id: number]: boolean } = {}
 
     constructor(sheetStore: SheetStore, entityBin: EntityBin, operate: EnumDetailOperate) {
         const { modal, biz } = sheetStore;
@@ -165,6 +165,7 @@ export class BinStore extends EntityStore<EntityBin> {
         for (let sub of valDiv.valDivs) {
             this.deletedIds(ids, sub);
         }
+
     }
 
     private subIds(ids: number[], valDiv: ValDivBase) {
@@ -241,6 +242,7 @@ export class BinStore extends EntityStore<EntityBin> {
     private async delDetail(ids: number[]) {
         if (ids.length === 0) return;
         await this.uq.DeleteBin.submit({ ids });
+        this.setPickBound();
     }
 
     private setPend(pend: number, val: ValDivRoot, trigger: boolean) {
@@ -361,6 +363,43 @@ export class BinStore extends EntityStore<EntityBin> {
             let valRow = valRows[i];
             valRow.id = id;
         }
+        this.setPickBound();
+    }
+
+    private setPickBound() {
+        const { pickBound } = this.entity;
+        if (pickBound === undefined) return;
+        this.queryRowColl = {};
+        let boundBud = pickBound[1];
+        for (let i in this.valDivColl) {
+            let { valRow, atomDeleted } = this.valDivColl[i];
+            let deleted = getAtomValue(atomDeleted);
+            if (deleted === true) continue;
+            this.setQueryBound(valRow, boundBud);
+        }
+    }
+
+    hasPickBound(valRow: ValRow) {
+        const { pickBound } = this.entity;
+        if (pickBound === undefined) return false;
+        let boundBud = pickBound[1];
+        let v = this.getDetailBudValue(valRow, boundBud);
+        return this.queryRowColl[v as number] === true;
+    }
+
+    private getDetailBudValue(valRow: ValRow, bud: BizBud) {
+        if (bud === this.entity.i) return valRow.i;
+        if (bud === this.entity.x) return valRow.x;
+        if (bud === this.entity.value) return valRow.value;
+        if (bud === this.entity.price) return valRow.price;
+        if (bud === this.entity.amount) return valRow.amount;
+        return valRow.buds[bud.id];
+    }
+
+    private setQueryBound(valRow: ValRow, bud: BizBud) {
+        let v = this.getDetailBudValue(valRow, bud);
+        if (v === undefined) debugger;
+        this.queryRowColl[v as number] = true;
     }
 
     protected async uqSaveDetails(phrase: number, inDetails: InDetail[]) {
@@ -382,6 +421,7 @@ export class BinStore extends EntityStore<EntityBin> {
         for (let valRow of valRows) {
             this.setValRowRoot(valRow, true);
         }
+        this.setPickBound();
     }
 
     replaceValDiv(valDiv: ValDivBase, newValDiv: ValDivRoot) {

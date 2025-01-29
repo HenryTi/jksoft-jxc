@@ -1,11 +1,7 @@
 import { BudID } from "app/Biz";
 import { EditBudTemplateProps } from "./model";
 import { useUqApp } from "app/UqApp";
-import { ViewAtomId } from "../../BizAtom";
 import { useState } from "react";
-// import { useIDSelect } from "../../BizPick";
-import { BizPhraseType } from "uqs/UqDefault";
-import { ViewForkId } from "app/coms/ViewForkId";
 import { pickBudID } from "app/hooks/BizPick/pickBudID";
 import { useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
@@ -20,7 +16,6 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     const { entityID } = budDataType as BudID;
     const label = caption;
     const modal = useModal();
-    // const IDSelect = useIDSelect();
     async function onEditClick() {
         if (entityID === undefined) {
             alert('查询字段，必须声明Atom类型');
@@ -51,13 +46,6 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     let vContent: any;
     if (entityID !== undefined) {
         vContent = <ViewForkAtom id={value} store={store} />;
-        /*
-        switch (entityID.bizPhraseType) {
-            default: debugger; break;
-            case BizPhraseType.atom: vContent = <ViewAtomId id={value} />; break;
-            case BizPhraseType.fork: vContent = <ViewForkId id={value} />; break;
-        }
-        */
     }
     else {
         vContent = <span className="text-danger">

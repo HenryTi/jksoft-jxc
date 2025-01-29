@@ -58,13 +58,6 @@ export async function detailNew(sheetStore: SheetStore): Promise<number> {
             }
             if (rearResult.length === 1) {
                 let ret = await rowEdit(modal, binEditing, undefined);
-                /*
-                if (ret === true) {
-                    const { values: valRow } = binEditing;
-                    if (valRow.id !== undefined) debugger;
-                    valRows.push(valRow);
-                }
-                */
             }
 
             let { values: valRow } = binEditing;
@@ -77,7 +70,9 @@ export async function detailNew(sheetStore: SheetStore): Promise<number> {
             valRow.pend = pend as number;
             valRow.pendValue = pendValue as number;
             if (valRow.id !== undefined) debugger;
-            valRows.push(valRow);
+            if (binStore.hasPickBound(valRow) === false) {
+                valRows.push(valRow);
+            }
         }
     }
     else {
