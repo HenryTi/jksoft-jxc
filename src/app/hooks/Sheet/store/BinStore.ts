@@ -33,6 +33,7 @@ export class BinStore extends EntityStore<EntityBin> {
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
     readonly budEditings: BudEditing[];
     readonly pickPendStores: { [id: number]: PickPendStore; } = {};
+    readonly queryRowColl: { [id: number]: boolean } = {}
 
     constructor(sheetStore: SheetStore, entityBin: EntityBin, operate: EnumDetailOperate) {
         const { modal, biz } = sheetStore;
@@ -451,7 +452,7 @@ export class BinStore extends EntityStore<EntityBin> {
 
     addNewPendRow(pendId: number) {
         let atomValDiv = this.valDivsOnPend[pendId];
-        let valRow: ValRow = { id: -pendId, buds: {}, owned: {}, pend: pendId };
+        let valRow: ValRow = { id: -pendId, buds: {}, /*owned: {}, */pend: pendId };
         let retValDiv = new ValDivRoot(this.binDivRoot, valRow);
         this.valDivsRoot.addValDiv(retValDiv, true);
         setAtomValue(atomValDiv, retValDiv);

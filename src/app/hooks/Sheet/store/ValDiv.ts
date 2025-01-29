@@ -144,7 +144,7 @@ export abstract class ValDivBase extends ValDivs {
     constructor(binDiv: BinDiv, valRow: ValRow) {
         super();
         this.binDiv = binDiv;
-        let vt: ValRow = { id: undefined, buds: {}, owned: {}, pend: undefined };
+        let vt: ValRow = { id: undefined, buds: {}, /*owned: {}, */pend: undefined };
         this.internalMergeValRow(vt, valRow)
         this.atomValRow = atom<any>(vt);
         this.setValRowIXBase(vt);
@@ -312,7 +312,7 @@ export abstract class ValDivBase extends ValDivs {
 
     private internalMergeValRow(dest: ValRow, src: ValRow) {
         if (src === undefined) return;
-        const { id, i, x, value, price, amount, buds, owned, pend, pendValue, origin } = src;
+        const { id, i, x, value, price, amount, buds, /*owned, */pend, pendValue, origin } = src;
         if (id !== undefined) dest.id = id;
         if (i !== undefined) dest.i = i;
         if (x !== undefined) dest.x = x;
@@ -320,7 +320,7 @@ export abstract class ValDivBase extends ValDivs {
         if (price !== undefined) dest.price = price;
         if (amount !== undefined) dest.amount = amount;
         if (buds !== undefined) Object.assign(dest.buds, buds);
-        if (owned !== undefined) Object.assign(dest.owned, owned);
+        // if (owned !== undefined) Object.assign(dest.owned, owned);
         if (pend !== undefined) dest.pend = pend;
         if (pendValue !== undefined) dest.pendValue = pendValue;
         if (origin !== undefined) dest.origin = origin;

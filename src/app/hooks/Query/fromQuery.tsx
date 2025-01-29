@@ -6,12 +6,11 @@ import { RearPickResultType } from "../Sheet/store";
 import { LabelBox, QueryRow, QueryRowCol, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
-import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtom, ViewForkAtomBold, ViewForkBuds } from "../View";
+import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtomBold, ViewForkBuds } from "../View";
 import { ViewBud } from "../Bud";
 import { BudsEditing } from "../BudsEditing";
 import { PickResult } from "../Calc";
 import { ViewQueryParams } from "./ViewQueryParams";
-import { EntityStore } from "app/tool";
 
 async function pickFromQueryBase(
     editing: BudsEditing

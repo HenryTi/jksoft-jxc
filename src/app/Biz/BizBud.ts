@@ -244,6 +244,7 @@ export enum ValueSetType {
     init = 2,
     equ = 1,
     show = 3,
+    bound = 4,          // Bin 字段跟pick字段的绑定，功能是equ
 }
 
 export class BizBud extends BizBase {

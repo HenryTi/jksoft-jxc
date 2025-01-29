@@ -5,8 +5,7 @@ import { Entity } from "./Entity";
 import { EntityAtom, EntityFork } from "./EntityID";
 import { EntityQuery } from "./EntityQuery";
 import { UI } from "app/ui";
-import { BudValue } from "tonwa-app";
-import { EntityOptions, OptionsItem } from ".";
+import { EntityOptions, OptionsItem } from "./EntityOptions";
 import { BudsEditing } from "app/hooks";
 
 export class PickParam extends BizBud {
@@ -177,7 +176,7 @@ export interface BinRow {
     price?: number;
     amount?: number;
     buds?: { [bud: number]: string | number };
-    owned?: { [bud: number]: [number, BudValue][] };
+    // owned?: { [bud: number]: [number, BudValue][] };
 };
 
 abstract class BinBudValue {
@@ -370,6 +369,7 @@ export class EntityBin extends Entity {
     binPicks: BinPick[];
     rearPick: BinPick;          // endmost pick
     readonly onPicks: { [bud: number]: BinPick } = {};
+    pickBound: [BizBud, BizBud];        // 相互绑定。选过之后，不再选择 0: QueryBud, 1: BinBud
     binDivRoot: BinDiv;
     divLevels: number;
     i: BizBud;
@@ -637,19 +637,22 @@ export class EntityBin extends Entity {
         this.binDivRoot = new BinDiv(this, undefined);
         this.divLevels = 0;
         this.scanDiv(this.binDivRoot as any, divSchema);
-        this.scanForkBase();
+        this.scanBudsForkBaseAndBound();
         this.primeBuds = this.idArrToBudArr(this.primeBuds as unknown as number[]);
     }
 
-    private scanForkBase() {
+    private scanBudsForkBaseAndBound() {
         for (let bud of this.buds) {
-            const { budDataType } = bud;
+            const { budDataType, valueSetType } = bud;
             if (budDataType.type === EnumBudType.fork) {
                 let bdt = budDataType as BudFork;
                 const { base } = bdt;
                 if (typeof base === 'number') {
                     bdt.setBase(this.biz.budFromId(base as unknown as number));
                 }
+            }
+            if (valueSetType === ValueSetType.bound) {
+                bud.valueSetType = ValueSetType.equ;
             }
         }
     }

@@ -263,7 +263,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
             let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);
             let pendRow: PendRow = {
                 pend,
-                detail: { ...v, buds: {}, owned: undefined },
+                detail: { ...v, buds: {}, /*owned: undefined */ },
                 origin: id,
                 bin: id,
                 sheet,
