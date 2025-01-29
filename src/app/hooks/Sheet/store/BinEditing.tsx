@@ -14,7 +14,7 @@ import { BinStore } from "./BinStore";
 import { SheetStore } from "./SheetStore";
 import { ValDivBase } from "./ValDiv";
 import { RearPickResultType } from "./PickResult";
-import { ValRow } from "./tool";
+import { ValRow } from "./ValRow";
 import { BudsEditing } from "app/hooks/BudsEditing";
 import { PickResult, ViewBud, ViewBudUIType } from "app/hooks";
 import { getAtomValue, setAtomValue } from "tonwa-com";
@@ -42,7 +42,7 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
         super(sheetStore.modal, sheetStore.biz, buds);
         this.sheetStore = sheetStore;
         this.entityBin = bin;
-        this.setBudValuesTool(new BinRowValuesTool(this, bin, buds));
+        this.setBudValuesTool(new BinRowValuesTool(/*this, */bin, buds));
         const { userProxy, mainProxy } = sheetStore;
         this.setNamedValues(undefined, {
             'user': userProxy,
@@ -67,7 +67,7 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
     }
 
     protected createBudValuesTool(): BudValuesToolBase<ValRow> {
-        return new BinRowValuesTool(this, this.entityBin, this.buds);
+        return new BinRowValuesTool(/*this, */this.entityBin, this.buds);
     }
 
     private setValues(binRow: BinRow) {

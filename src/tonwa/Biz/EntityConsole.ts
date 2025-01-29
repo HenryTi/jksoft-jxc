@@ -1,4 +1,4 @@
-import { UIStyle } from "app/ui";
+import { UIStyle } from "./Defines";
 import { Entity } from "./Entity";
 
 export class EntityConsole extends Entity {

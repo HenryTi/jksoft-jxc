@@ -5,7 +5,7 @@ import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { RearPickResultType, ReturnUseBinPicks } from "./PickResult";
 import { Formulas } from "app/hooks/Calc";
 import { BudEditing } from "../../Bud";
-import { getValRowPropArr, ValRow } from "./tool";
+import { getValRowPropArr, ValRow } from "./ValRow";
 import { BinStore, BinStorePendDirect, SubmitState } from "./BinStore";
 import { ValDivRoot } from "./ValDiv";
 import { Modal } from "tonwa-app";

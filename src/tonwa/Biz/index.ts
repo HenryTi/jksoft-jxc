@@ -12,3 +12,4 @@ export * from './EntityReport';
 export * from './EntityQuery';
 export * from './EntityConsole';
 export * from './EntityInOut';
+export * from './Defines';

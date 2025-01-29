@@ -1,9 +1,9 @@
+import { contentFromDays } from "../tools";
 import { EntityAtom, EntityFork, EntityID, EntityPick } from "./EntityAtom";
 import { Biz } from "./Biz";
 import { BizBase } from "./BizBase";
 import { Entity } from "./Entity";
 import { EntityOptions } from './EntityOptions';
-import { contentFromDays } from "app/tool";
 import { EntityBin } from "./EntitySheet";
 import { EntityTie } from "./EntityTie";
 
@@ -237,6 +237,7 @@ export enum ValueSetType {
     init = 2,
     equ = 1,
     show = 3,
+    bound = 4,
 }
 
 export class BizBud extends BizBase {

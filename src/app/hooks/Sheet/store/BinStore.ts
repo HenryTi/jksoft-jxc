@@ -1,7 +1,7 @@
 import { PendRow, SheetStore } from "./SheetStore";
 import { BinDiv, BizBud, EntityBin, EnumDetailOperate, PickPend } from "app/Biz";
 import { Getter, WritableAtom, atom } from "jotai";
-import { getValRowPropArr, PendProxyHandler, ValRow } from "./tool";
+import { getValRowPropArr, PendProxyHandler, ValRow } from "./ValRow";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsBase, ValDivsRoot } from './ValDiv';
 import { BudEditing, ValuesBudsEditing, ValueSpace } from "app/hooks";

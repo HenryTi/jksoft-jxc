@@ -1,7 +1,6 @@
-import { BizPhraseType, UqExt } from "uqs/UqDefault";
 import { Biz } from "./Biz";
+import { BizPhraseType, UIStyle } from "./Defines";
 import { EntityID } from "./EntityAtom";
-import { UIStyle } from "app/ui";
 
 export class BizBase {
     protected scaned: boolean;

@@ -1,7 +1,6 @@
-import { BizPhraseType } from "uqs/UqDefault";
 import { BizBud } from "./BizBud";
+import { BizPhraseType, UI } from "./Defines";
 import { Entity } from "./Entity";
-import { UI } from "app/ui";
 
 export interface FromEntity {
     arr: Entity[];
@@ -26,6 +25,7 @@ export class EntityQuery extends Entity {
     fromEntity: FromEntity;
     value: BizBud;
     hideCols: { [budId: number]: boolean } = {};
+    mainCols: { [budId: number]: boolean };
     private cols: [number, number][];
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -38,7 +38,7 @@ export class EntityQuery extends Entity {
             case 'from': this.fromEntity = val; break;
             case 'ids': this.ids = val; break;
             case 'showIds': this.showIds = val; break;
-            // case 'groupByBase': this.groupByBase = val; break;
+            case 'mainCols': this.mainCols = val; break;
         }
     }
 
@@ -65,6 +65,13 @@ export class EntityQuery extends Entity {
             this.budColl[bud.id] = bud;
         }
         this.cols = undefined;
+        let mainCols = this.mainCols;
+        if (mainCols !== undefined) {
+            this.mainCols = {};
+            for (let id of mainCols as unknown as number[]) {
+                this.mainCols[id] = true;
+            }
+        }
 
         this.fromEntity = this.scanFrom(this.fromEntity);
         if (this.ids === undefined || this.ids.length === 0) {

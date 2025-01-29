@@ -1,4 +1,3 @@
-import { BizPhraseType } from "uqs/UqDefault";
 import { Biz } from "./Biz";
 import { BizBud, BizBudBinValue, BudFork, BudID, BudRadio, EnumBudType, ValueSetType } from "./BizBud";
 import { Entity } from "./Entity";
@@ -6,7 +5,7 @@ import { EntityAtom, EntityFork } from "./EntityID";
 import { EntityQuery } from "./EntityQuery";
 import { UI } from "app/ui";
 import { EntityOptions, OptionsItem } from "./EntityOptions";
-import { BudsEditing } from "app/hooks";
+import { BizPhraseType } from "uqs/UqDefault";
 
 export class PickParam extends BizBud {
 }
@@ -226,12 +225,14 @@ class BinAmount extends BinBudValue {
 }
 
 export abstract class BudValuesToolBase<T> {
-    protected readonly editing: BudsEditing;
+    // protected readonly editing: BudsEditing;
     allFields: BizBud[];
     fields: BizBud[];
+    /*
     constructor(editing: BudsEditing) {
-        this.editing = editing;
+        // this.editing = editing;
     }
+    */
     abstract has(bud: BizBud): boolean;
     abstract getBudValue(bud: BizBud, binRow: T): any;
     abstract setBudValue(bud: BizBud, binRow: T, value: any): void;
@@ -242,8 +243,8 @@ export abstract class BudValuesToolBase<T> {
 
 export class BudValuesTool extends BudValuesToolBase<any> {
     readonly coll: { [budId: number]: BizBud; } = {};
-    constructor(editing: BudsEditing, buds: BizBud[]) {
-        super(editing);
+    constructor(/*editing: BudsEditing, */buds: BizBud[]) {
+        super(/*editing*/);
         this.allFields = buds;
         this.fields = buds;
         if (buds !== undefined) {
@@ -273,8 +274,8 @@ export class BinRowValuesTool extends BudValuesToolBase<BinRow> {
     readonly budAmount: BizBud;
     readonly budPrice: BizBud;
 
-    constructor(editing: BudsEditing, bin: EntityBin, buds: BizBud[]) {
-        super(editing);
+    constructor(/*editing: BudsEditing, */bin: EntityBin, buds: BizBud[]) {
+        super(/*editing*/);
         this.entityBin = bin;
         if (bin === undefined) debugger;
         const { i, iBase, x, xBase, value, price, amount } = bin;
@@ -366,9 +367,9 @@ export class BinDivBuds extends BinRowValuesTool {
     readonly binDiv: BinDiv;
     keyField: BizBud;
 
-    constructor(editing: BudsEditing, binDiv: BinDiv) {
+    constructor(/*editing: BudsEditing, */binDiv: BinDiv) {
         const { buds, key } = binDiv;
-        super(editing, binDiv.entityBin, buds);
+        super(/*editing, */binDiv.entityBin, buds);
         this.binDiv = binDiv;
         if (key !== undefined) {
             this.keyField = key;
@@ -702,7 +703,7 @@ export class EntityBin extends Entity {
                 return [bud, withLabel === 1, item]
             });
         }
-        binDiv.binDivBuds = new BinDivBuds(undefined, binDiv);
+        binDiv.binDivBuds = new BinDivBuds(/*undefined, */binDiv);
         if (subDivSchema !== undefined) {
             ++this.divLevels;
             let subBinDiv = binDiv.subBinDiv = new BinDiv(this, binDiv);

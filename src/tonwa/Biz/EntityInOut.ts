@@ -1,4 +1,4 @@
-import { EntityAtom } from ".";
+import { EntityAtom } from "./EntityAtom";
 import { Entity } from "./Entity";
 
 export class EntityIn extends Entity {

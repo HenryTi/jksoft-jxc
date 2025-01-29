@@ -494,7 +494,7 @@ export abstract class BudsEditing<R = any> extends BizStore implements FormConte
 export class ValuesBudsEditing extends BudsEditing<{ [id: number]: any }> {
     constructor(modal: Modal, biz: Biz, buds: BizBud[]) {
         super(modal, biz, buds);
-        this.setBudValuesTool(new BudValuesTool(this, buds));
+        this.setBudValuesTool(new BudValuesTool(/*this, */buds));
     }
 
     initBudValues(initValues: any) {

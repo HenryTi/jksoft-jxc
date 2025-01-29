@@ -1,4 +1,3 @@
-import { EntityAtom, EntityFork, BizBud, Entity, BudID, BinPick, EnumBudType } from "app/Biz";
 import { Atom, atom } from "jotai";
 import { HTMLInputTypeAttribute, ReactNode, JSX } from "react";
 import {
@@ -6,12 +5,16 @@ import {
     RegisterOptions, UseFormRegister,
     FieldError, UseFormSetError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";
-import { BizPhraseType } from "uqs/UqDefault";
+import {
+    EntityAtom, EntityFork, BizBud
+    , Entity, BudID, BinPick, EnumBudType
+} from "../../Biz";
 import { contentFromDays, EntityStore } from "app/tool";
 import { ViewFormForkObj } from "./ViewFormForkObj";
 import { ViewFormAtom } from "./ViewFormAtom";
 import { ViewFormAtomFork } from "./ViewFormAtomFork";
 import { ViewFormBin } from "./ViewFormBin";
+import { BizPhraseType } from "uqs/UqDefault";
 
 export interface BandProps {
     label?: string | JSX.Element;

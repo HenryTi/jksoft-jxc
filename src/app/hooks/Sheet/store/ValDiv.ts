@@ -1,6 +1,6 @@
 import { BinDiv } from "app/Biz";
 import { Getter, WritableAtom, atom } from "jotai";
-import { cloneValRow, ValRow } from "./tool";
+import { cloneValRow, ValRow } from "./ValRow";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { PendRow, SheetStore } from "./SheetStore";
 

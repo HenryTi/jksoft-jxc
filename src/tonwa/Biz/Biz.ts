@@ -1,3 +1,7 @@
+import { atom } from 'jotai';
+import { getAtomValue, setAtomValue } from 'tonwa-com';
+import { Client } from '../Client';
+import { from62 } from '../tools';
 import { EntityAtom, EntityCombo, EntityDuo, EntityPick, EntityFork } from './EntityAtom';
 import { EntityTree } from './EntityTree';
 import { EntityBin, EntityPend, EntitySheet } from './EntitySheet';
@@ -5,17 +9,14 @@ import { EntityBook } from './EntityTitle';
 import { EntityTie } from './EntityTie';
 import { EntityRole } from './EntityPermit';
 import { EntityOptions } from './EntityOptions';
-import { from62, getAtomValue, setAtomValue } from 'tonwa-com';
 import { EntityReport } from './EntityReport';
 import { EntityQuery } from './EntityQuery';
 import { EntityAssign } from './EntityAssign';
 import { BizBud } from './BizBud';
 import { EntityConsole } from './EntityConsole';
 import { EntityIOApp, EntityIOSite, EntityIn, EntityOut } from './EntityInOut';
-import { atom } from 'jotai';
 import { EntityPrint, EntityTemplet } from './EntityPrint';
 import { Entity } from './Entity';
-import { Client } from '../Client';
 
 enum EnumEntity {
     sheet,
@@ -54,8 +55,6 @@ export interface BizGroup {
 }
 
 export class Biz {
-    //readonly uqApp: UqApp;
-    //readonly uq: UqExt;
     readonly client: Client;
     readonly atoms: EntityAtom[] = [];
     readonly atomRoots: EntityAtom[] = [];
@@ -103,6 +102,7 @@ export class Biz {
         // this.uq = uqApp.uq;
         this.client = client;
         this.errorLogs = errorLogs;
+
         this.buildEntities(bizSchema);
     }
 
@@ -242,11 +242,11 @@ export class Biz {
             let entityArr = arr[i];
             if (entityArr === undefined) continue;
             for (let [bizEntity] of entityArr) {
-                // if (bizEntity.name === '采购收货单明细') debugger;
                 bizEntity.scanBuds();
             }
         }
         this.buildAtomHierachy(arr[EnumEntity.atom]);
+        this.buildBinPickBound();
         this.groups.push(
             {
                 name: 'sheet',
@@ -506,9 +506,14 @@ export class Biz {
         }
     }
 
+    private buildBinPickBound() {
+        for (let bin of this.bins) {
+            bin.setPickBound();
+        }
+    }
+
     async loadUserDefaults() {
         if (this.userDefaults === undefined) {
-            // let { buds } = await this.uq.GetUserBuds.query({ userId: undefined });
             let buds = await this.client.GetUserBuds(undefined);
             this.userDefaults = {};
             for (let { bud, value } of buds) {

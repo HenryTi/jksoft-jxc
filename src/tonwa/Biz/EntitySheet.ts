@@ -1,13 +1,11 @@
-import { BizPhraseType } from "uqs/UqDefault";
-import { Biz } from ".";
+import { Biz } from "./Biz";
 import { BizBud, BizBudBinValue, BudFork, BudID, BudRadio, EnumBudType, ValueSetType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntityFork } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
-import { UI } from "app/ui";
-import { BudValue } from "tonwa-app";
-import { EntityOptions, OptionsItem } from ".";
-import { BudsEditing } from "app/hooks";
+import { EntityOptions, OptionsItem } from "./EntityOptions";
+import { BizPhraseType, UI } from "./Defines";
+
 
 export class PickParam extends BizBud {
 }
@@ -24,34 +22,47 @@ export abstract class BinPick extends BizBud {
 
     abstract get fromPhraseType(): BizPhraseType;
     getRefEntities(entitySet: Set<Entity>) { return; }
+    abstract getBud(name: string): BizBud;
 }
 
 export class PickScalar extends BinPick {
     readonly fromPhraseType = BizPhraseType.any;
+    override getBud(name: string): BizBud { return; }
 }
 
 export class PickQuery extends BinPick {
     readonly fromPhraseType = BizPhraseType.query;
     query: EntityQuery;
     override getRefEntities(entitySet: Set<Entity>) { entitySet.add(this.query); }
+    override getBud(name: string): BizBud { return this.query.budColl[name]; }
 }
 export class PickAtom extends BinPick {
     readonly fromPhraseType = BizPhraseType.atom;
     from: EntityAtom[];
+    override getBud(name: string): BizBud {
+        for (let f of this.from) {
+            let b = f.budColl[name];
+            if (b !== undefined) return b;
+        }
+        return;
+    }
 }
 export class PickSpec extends BinPick {
     readonly fromPhraseType = BizPhraseType.fork;
     baseParam: string;
     from: EntityFork;
+    override getBud(name: string): BizBud { return this.from.budColl[name]; }
 }
 export class PickPend extends BinPick {
     readonly fromPhraseType = BizPhraseType.pend;
     from: EntityPend;
     override getRefEntities(entitySet: Set<Entity>) { entitySet.add(this.from); }
+    override getBud(name: string): BizBud { return this.from.budColl[name]; }
 }
 export class PickOptions extends BinPick {
     readonly fromPhraseType = BizPhraseType.options;
     from: EntityOptions;
+    override getBud(name: string): BizBud { return; }
 }
 
 export abstract class BinInput extends BizBud {
@@ -68,7 +79,7 @@ export interface InputSpecParam {
 }
 
 export class BinInputFork extends BinInput {
-    spec: EntityFork;
+    fork: EntityFork;
     baseExp: string;
     baseBud: BizBud;        // 以后不允许表达式。只能是bud id
     params: InputSpecParam[];
@@ -76,11 +87,11 @@ export class BinInputFork extends BinInput {
         super.build(val);
         const { spec, base, params } = val;
         if (spec !== undefined) {
-            this.spec = this.biz.entityFromId(spec) as EntityFork;
-            this.bizPhraseType = this.spec.bizPhraseType;
+            this.fork = this.biz.entityFromId(spec) as EntityFork;
+            this.bizPhraseType = this.fork.bizPhraseType;
             this.params = (params as [number, string, string][]).map(([budId, formula, setType]) => {
                 return {
-                    bud: this.spec.getBud(budId),
+                    bud: this.fork.getBud(budId),
                     valueSet: formula,
                     valueSetType: setType === '=' ? ValueSetType.equ : ValueSetType.init,
                 };
@@ -177,7 +188,7 @@ export interface BinRow {
     price?: number;
     amount?: number;
     buds?: { [bud: number]: string | number };
-    owned?: { [bud: number]: [number, BudValue][] };
+    // owned?: { [bud: number]: [number, BudValue][] };
 };
 
 abstract class BinBudValue {
@@ -214,11 +225,11 @@ class BinAmount extends BinBudValue {
 }
 
 export abstract class BudValuesToolBase<T> {
-    protected readonly editing: BudsEditing;
+    // protected readonly editing: BudsEditing;
     allFields: BizBud[];
     fields: BizBud[];
-    constructor(editing: BudsEditing) {
-        this.editing = editing;
+    constructor(/*editing: BudsEditing*/) {
+        // this.editing = editing;
     }
     abstract has(bud: BizBud): boolean;
     abstract getBudValue(bud: BizBud, binRow: T): any;
@@ -230,8 +241,8 @@ export abstract class BudValuesToolBase<T> {
 
 export class BudValuesTool extends BudValuesToolBase<any> {
     readonly coll: { [budId: number]: BizBud; } = {};
-    constructor(editing: BudsEditing, buds: BizBud[]) {
-        super(editing);
+    constructor(/*editing: BudsEditing, */buds: BizBud[]) {
+        super(/*editing*/);
         this.allFields = buds;
         this.fields = buds;
         if (buds !== undefined) {
@@ -261,8 +272,8 @@ export class BinRowValuesTool extends BudValuesToolBase<BinRow> {
     readonly budAmount: BizBud;
     readonly budPrice: BizBud;
 
-    constructor(editing: BudsEditing, bin: EntityBin, buds: BizBud[]) {
-        super(editing);
+    constructor(/*editing: BudsEditing, */bin: EntityBin, buds: BizBud[]) {
+        super(/*editing*/);
         this.entityBin = bin;
         if (bin === undefined) debugger;
         const { i, iBase, x, xBase, value, price, amount } = bin;
@@ -354,9 +365,9 @@ export class BinDivBuds extends BinRowValuesTool {
     readonly binDiv: BinDiv;
     keyField: BizBud;
 
-    constructor(editing: BudsEditing, binDiv: BinDiv) {
+    constructor(/*editing: BudsEditing, */binDiv: BinDiv) {
         const { buds, key } = binDiv;
-        super(editing, binDiv.entityBin, buds);
+        super(/*editing, */binDiv.entityBin, buds);
         this.binDiv = binDiv;
         if (key !== undefined) {
             this.keyField = key;
@@ -370,6 +381,7 @@ export class EntityBin extends Entity {
     binPicks: BinPick[];
     rearPick: BinPick;          // endmost pick
     readonly onPicks: { [bud: number]: BinPick } = {};
+    pickBound: [BizBud, BizBud];        // 相互绑定。选过之后，不再选择 0: QueryBud, 1: BinBud
     binDivRoot: BinDiv;
     divLevels: number;
     i: BizBud;
@@ -637,11 +649,11 @@ export class EntityBin extends Entity {
         this.binDivRoot = new BinDiv(this, undefined);
         this.divLevels = 0;
         this.scanDiv(this.binDivRoot as any, divSchema);
-        this.scanForkBase();
+        this.scanBudsForkBase();
         this.primeBuds = this.idArrToBudArr(this.primeBuds as unknown as number[]);
     }
 
-    private scanForkBase() {
+    private scanBudsForkBase() {
         for (let bud of this.buds) {
             const { budDataType } = bud;
             if (budDataType.type === EnumBudType.fork) {
@@ -652,6 +664,23 @@ export class EntityBin extends Entity {
                 }
             }
         }
+    }
+
+    private getBoundBud() {
+        for (let bud of this.buds) {
+            if (bud.valueSetType === ValueSetType.bound) {
+                bud.valueSetType = ValueSetType.equ;
+                return bud;
+            }
+        }
+    }
+    setPickBound() {
+        let bud: BizBud = this.getBoundBud();
+        if (bud === undefined) return;
+        const { valueSet } = bud;
+        const [pick, budName] = valueSet.split('.');
+        let pickBud = this.rearPick.getBud(budName);
+        this.pickBound = [pickBud, bud];
     }
 
     private scanDiv(binDiv: BinDiv, divSchema: any) {
@@ -672,7 +701,7 @@ export class EntityBin extends Entity {
                 return [bud, withLabel === 1, item]
             });
         }
-        binDiv.binDivBuds = new BinDivBuds(undefined, binDiv);
+        binDiv.binDivBuds = new BinDivBuds(/*undefined, */binDiv);
         if (subDivSchema !== undefined) {
             ++this.divLevels;
             let subBinDiv = binDiv.subBinDiv = new BinDiv(this, binDiv);
@@ -773,6 +802,7 @@ export class EntityPend extends Entity {
     private cols: BizBud[];
     hasPrice: boolean;
     hasAmount: boolean;
+    mainCols: { [budId: number]: boolean };
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -785,6 +815,7 @@ export class EntityPend extends Entity {
             case 'i': this.i = val; break;
             case 'x': this.x = val; break;
             case 'predefinedFields': this.setPredefinedFields(val); break;
+            case 'mainCols': this.mainCols = val; break;
         }
     }
 
@@ -805,6 +836,13 @@ export class EntityPend extends Entity {
             for (let bud of this.cols) {
                 if (bud === undefined) continue;
                 this.budColl[bud.id] = bud;
+            }
+        }
+        let mainCols = this.mainCols;
+        this.mainCols = {};
+        if (mainCols !== undefined) {
+            for (let id of mainCols as unknown as number[]) {
+                this.mainCols[id] = true;
             }
         }
         if (this.params !== undefined) {
