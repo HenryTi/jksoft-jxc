@@ -1,4 +1,4 @@
-import { EntityReport } from "app/Biz";
+import { EntityReport } from "tonwa";
 import { useCallback, useMemo, useRef } from "react";
 import { Page, useModal } from "tonwa-app";
 import { ReportConsole } from "../store";

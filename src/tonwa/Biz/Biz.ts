@@ -5,7 +5,7 @@ import { from62 } from '../tools';
 import { EntityAtom, EntityCombo, EntityDuo, EntityPick, EntityFork } from './EntityAtom';
 import { EntityTree } from './EntityTree';
 import { EntityBin, EntityPend, EntitySheet } from './EntitySheet';
-import { EntityBook } from './EntityTitle';
+import { EntityBook } from './EntityBook';
 import { EntityTie } from './EntityTie';
 import { EntityRole } from './EntityPermit';
 import { EntityOptions } from './EntityOptions';

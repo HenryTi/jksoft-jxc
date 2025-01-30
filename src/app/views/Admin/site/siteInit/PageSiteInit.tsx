@@ -1,4 +1,4 @@
-import { EntityBook } from "app/Biz";
+import { EntityBook } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { useQuery } from "@tanstack/react-query";
 import { Route } from "react-router-dom";

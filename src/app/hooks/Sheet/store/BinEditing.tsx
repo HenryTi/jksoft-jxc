@@ -9,7 +9,7 @@ import {
     PickPend,
     Entity,
     PickOptions
-} from "app/Biz";
+} from "tonwa";
 import { BinStore } from "./BinStore";
 import { SheetStore } from "./SheetStore";
 import { ValDivBase } from "./ValDiv";

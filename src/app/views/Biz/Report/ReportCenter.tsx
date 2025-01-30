@@ -4,7 +4,7 @@ import { Page } from "tonwa-app";
 import { PageHistory, PageSheetList, PageSheets, RouteReportDash, pathReport, pathSheetRef, pathSheets, pathSheetsList, useReport } from "app/hooks";
 import React from "react";
 import { FA, Sep } from "tonwa-com";
-import { EntityReport } from "app/Biz";
+import { EntityReport } from "tonwa";
 import { path } from "app/tool";
 import { PageRef, headerSheets } from "app/hooks";
 import { centers } from "app/views/center";

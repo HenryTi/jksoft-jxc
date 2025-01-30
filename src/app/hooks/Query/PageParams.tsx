@@ -1,4 +1,4 @@
-import { BizBud, PickParam, ValueSetType } from "app/Biz";
+import { BizBud, PickParam, ValueSetType } from "tonwa";
 import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";

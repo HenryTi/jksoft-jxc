@@ -1,3 +1,5 @@
+import { EntityID } from "./EntityAtom";
+
 export enum BizPhraseType {
     any = 0,
     atom = 11,

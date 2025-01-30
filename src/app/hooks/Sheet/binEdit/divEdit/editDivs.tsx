@@ -1,4 +1,4 @@
-import { BinInputAtom, BinInputFork } from "app/Biz";
+import { BinInputAtom, BinInputFork } from "tonwa";
 import { inputAtom } from "./inputAtom";
 import { inputFork } from "./inputFork";
 import { BizPhraseType } from "uqs/UqDefault";

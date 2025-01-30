@@ -1,4 +1,4 @@
-import { BizBud, BudBin, BudFork, BudID, BudRadio, EntityAtom, EntityFork, EnumBudType, EnumSysBud } from "app/Biz";
+import { BizBud, BudBin, BudFork, BudID, BudRadio, EntityAtom, EntityFork, EnumBudType, EnumSysBud } from "tonwa";
 import { ViewBudFork, ViewForkAtom, ViewForkNoAtom } from "app/hooks";
 import { AtomData, EntityStore, contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";

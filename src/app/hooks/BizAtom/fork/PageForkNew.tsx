@@ -2,7 +2,7 @@ import { Page, useModal } from "tonwa-app";
 import { BudValues, EnumSaveFork, ForkStore, ViewForkTop } from "./ForkStore";
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { EnumBudType } from "app/Biz";
+import { EnumBudType } from "tonwa";
 import { getDays } from "app/tool";
 import { theme } from "tonwa-com";
 import { ValuesBudsEditing } from "app/hooks/BudsEditing";

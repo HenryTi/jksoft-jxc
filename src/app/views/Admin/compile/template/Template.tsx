@@ -1,4 +1,4 @@
-import { Entity } from "app/Biz";
+import { Entity } from "tonwa";
 import { UqApp } from "app/UqApp";
 import { theme } from "tonwa-com";
 

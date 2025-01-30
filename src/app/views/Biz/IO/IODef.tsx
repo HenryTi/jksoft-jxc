@@ -1,6 +1,6 @@
 import { useUqApp } from "app";
-import { BizBud, BudArr, Entity, EnumBudType } from "app/Biz";
-import { EntityIn, EntityOut } from "app/Biz/EntityInOut";
+import { BizBud, BudArr, Entity, EnumBudType } from "tonwa";
+import { EntityIn, EntityOut } from "tonwa";
 import { centers } from "app/views/center";
 import { Link, useParams } from "react-router-dom";
 import { Page } from "tonwa-app";

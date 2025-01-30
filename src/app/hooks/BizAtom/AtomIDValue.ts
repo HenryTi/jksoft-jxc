@@ -1,4 +1,4 @@
-import { EntityID } from "app/Biz";
+import { EntityID } from "tonwa";
 import { BudValue } from "tonwa-app";
 
 export interface AtomIDValue {

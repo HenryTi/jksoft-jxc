@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from "react";
 import { BudCheckEditValue, BudCheckValue, BudValue, Page, useModal } from "tonwa-app";
 import { RadioAsync } from "tonwa-com";
 import { ViewBudEmpty } from "../tool";
-import { EntityOptions, OptionsItem } from "app/Biz";
+import { EntityOptions, OptionsItem } from "tonwa";
 
 export type RadioUIType = 'pop' | 'dropdown' | 'radio';
 

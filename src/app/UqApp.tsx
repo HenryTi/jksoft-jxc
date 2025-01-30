@@ -4,13 +4,14 @@ import { getAtomValue, setAtomValue } from 'tonwa-com';
 import { AppConfig, UqAppBase, UqAppContext, ViewUqApp } from "tonwa-app";
 import { UqConfig, UqMan, UqQuery, UqSites } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
+import { atom } from 'jotai';
+import { Biz, Client } from 'tonwa';
 import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
 import { BizPhraseType, UqExt } from 'uqs/UqDefault';
-import { atom } from 'jotai';
-import { Biz } from './Biz';
 import { ViewsRoutes } from './views';
 import { RoleStore } from './RoleStore';
+import { UqClient } from './UqClient';
 
 // const pathBase = 'jksoft-jxc';
 const pathBase = '';
@@ -125,6 +126,7 @@ export class UqApp extends UqAppBase<UQs> {
     }
 
     atomSiteLogined = atom(false);
+    client: Client;
     loginSite = async () => {
         if (this.uqSites !== undefined) return this.biz;
         this.uqSites = new UqSites(this.uqMan);
@@ -136,15 +138,16 @@ export class UqApp extends UqAppBase<UQs> {
             siteLogined = true;
             let { uqApi } = this.uqMan;
             let { schemas, logs } = await uqApi.biz();
+            let client = new UqClient(this.uq);
             if (schemas === undefined) {
                 debugger;
                 console.error('uq-api compile saved bizobject error', logs);
-                this.biz = new Biz(this, undefined, logs);
+                this.biz = new Biz(client, undefined, logs);
             }
             else {
                 console.log('schemas size: ', schemas.length);
                 let bizSchema = jsonpack.unpack(schemas);
-                this.biz = new Biz(this, bizSchema, undefined);
+                this.biz = new Biz(client, bizSchema, undefined);
             }
             await this.initRoleStore();
         }

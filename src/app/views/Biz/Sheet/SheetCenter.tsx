@@ -2,7 +2,7 @@ import { useUqApp } from "app/UqApp";
 import { BI } from "app/coms";
 import { Link, Route } from "react-router-dom";
 import { Page, PageSpinner, useModal } from "tonwa-app";
-import { EntitySheet } from "app/Biz";
+import { EntitySheet } from "tonwa";
 import { List, to62 } from "tonwa-com";
 import { RouteSheetDash, RouteSheetEdit, RouteSheetNew } from "app/hooks";
 import { useState } from "react";

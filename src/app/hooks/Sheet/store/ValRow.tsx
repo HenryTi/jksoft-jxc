@@ -1,4 +1,4 @@
-import { BinRow, BizBud, EntityPend, predefinedPendFields } from "app/Biz";
+import { BinRow, BizBud, EntityPend, predefinedPendFields } from "tonwa";
 import { FA } from "tonwa-com";
 
 const sheetFields = ['si', 'sx', 'svalue', 'sprice', 'samount'];

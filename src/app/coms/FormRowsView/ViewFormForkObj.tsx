@@ -1,4 +1,4 @@
-import { BizBud, EntityAtom, EntityFork } from "app/Biz";
+import { BizBud, EntityAtom, EntityFork } from "tonwa";
 import {
     UseFormRegisterReturn, FieldError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";

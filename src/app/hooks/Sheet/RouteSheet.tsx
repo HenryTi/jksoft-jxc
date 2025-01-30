@@ -4,7 +4,7 @@ import { PageSheetEdit, PageSheetNew } from "./dash";
 import { SheetConsole, SheetSteps, SheetStore } from "./store";
 import { from62, to62 } from "tonwa-com";
 import { useRef } from "react";
-import { EntitySheet } from "app/Biz";
+import { EntitySheet } from "tonwa";
 import { PageMoreCacheData } from "app/coms";
 import { UqApp, useUqApp } from "app/UqApp";
 import { Modal, Page, useModal } from "tonwa-app";
@@ -30,10 +30,11 @@ function useEntitySheet() {
 }
 
 function useSheetStore() {
+    const uqApp = useUqApp();
     const entitySheet = useEntitySheet();
     const navigate = useNavigate();
     const modal = useModal();
-    const routeConsole = useRef(new RouteConsole(navigate, modal, entitySheet));
+    const routeConsole = useRef(new RouteConsole(uqApp, navigate, modal, entitySheet));
     return routeConsole.current.createSheetStore();
 }
 
@@ -52,9 +53,9 @@ class RouteConsole extends SheetConsole {
     private readonly uqApp: UqApp;
     private readonly navigate: NavigateFunction;
 
-    constructor(navigate: NavigateFunction, modal: Modal, entitySheet: EntitySheet) {
+    constructor(uqApp: UqApp, navigate: NavigateFunction, modal: Modal, entitySheet: EntitySheet) {
         super(modal, entitySheet);
-        this.uqApp = entitySheet.biz.uqApp;
+        this.uqApp = uqApp;
         this.navigate = navigate;
     }
     close(): void {

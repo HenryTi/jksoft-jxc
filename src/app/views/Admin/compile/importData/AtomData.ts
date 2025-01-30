@@ -1,4 +1,4 @@
-import { Biz, BizBud, BudID, BudOptions, EntityAtom, EnumBudType } from "app/Biz";
+import { Biz, BizBud, BudID, BudOptions, Client, EntityAtom, EnumBudType } from "tonwa";
 import { atom } from "jotai";
 import { setAtomValue } from "tonwa-com";
 import { Parser, Sep } from "./Parser";
@@ -30,6 +30,7 @@ export interface State {
 export class AtomData {
     // readonly importAtom: ImportAtom;
     private readonly biz: Biz;
+    private readonly client: Client;
     private readonly parser: Parser;
     entityRoot: EntityAtom;
     entityLeaf: EntityAtom;
@@ -46,6 +47,7 @@ export class AtomData {
 
     constructor(biz: Biz, csv: string) {
         this.biz = biz;
+        this.client = biz.client;
         this.parser = new Parser(this, csv);
         this.rows = [];
         this.errorRows = [];
@@ -225,7 +227,7 @@ export class AtomData {
         const phrase = entityLeaf.id;
         const rootEntity = entityLeaf.rootClass;
         const rootPhrase = rootEntity.id;
-        const { uq } = entityLeaf.biz;
+        const { biz } = entityLeaf;
         let serverError: any;
         const { stateAtom } = this;
         async function uploadOneRow(row: AtomRow) {
@@ -240,13 +242,13 @@ export class AtomData {
                 row,
             });
             try {
-                let ret = await uq.SaveAtomAndProps.submit({
+                let ret = await biz.client.SaveAtomAndProps(
                     rootPhrase,
                     phrase,
                     no,
                     ex,
-                    props: arrProps
-                });
+                    arrProps
+                );
             }
             catch (e) {
                 serverError = e;
@@ -292,11 +294,14 @@ export class AtomData {
             arrRowIndex.push(i);
         }
 
+        /*
         let results = await rootEntity.biz.uq.GetAtomIds.submitReturns({
             entity: atom.id,
             arrNo,
         });
         const { ret } = results;
+        */
+        let ret = await this.client.GetAtomIds(atom.id, arrNo);
         const errorAtomRows: number[] = [];
         for (let { no, id } of ret) {
             let rows = noColl[no];

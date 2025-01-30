@@ -1,5 +1,5 @@
 import { useUqApp } from "app";
-import { EntityIOApp, EntityIOSite, IOAppID } from "app/Biz";
+import { EntityIOApp, EntityIOSite, IOAppID } from "tonwa";
 import { ButtonRight, ButtonRightAdd, PageQueryMore } from "app/coms";
 import { useIDSelect } from "app/hooks";
 import { AtomData } from "app/tool";

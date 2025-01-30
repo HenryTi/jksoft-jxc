@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { Modal } from "tonwa-app";
 import { setAtomValue } from "tonwa-com";
-import { EntityReport } from "app/Biz";
+import { Client, EntityReport } from "tonwa";
 import { Console, EntityStore } from "../../../tool";
 import { ParamGetReport } from "uqs/UqDefault";
 
@@ -33,11 +33,13 @@ export class ReportStore extends EntityStore<EntityReport> {
 
 export class ReportConsole extends Console {
     readonly entityReport: EntityReport;
+    readonly client: Client;
     atomBizScript = atom(undefined as string);
 
     constructor(modal: Modal, entityReport: EntityReport) {
-        super(entityReport.uq, modal);
+        super(/*entityReport.uq, */modal);
         this.entityReport = entityReport;
+        this.client = entityReport.biz.client;
     }
 
     createReportStore() {
@@ -45,10 +47,10 @@ export class ReportConsole extends Console {
     }
 
     async loadBizScript() {
-        let { id } = this.entityReport;
-        let { ret } = await this.uq.GetEntityCode.query({ id });
-        let data = ret[0];
-        const { code, schema } = data;
+        let { id, biz } = this.entityReport;
+        // let { ret } = await this.uq.GetEntityCode.query({ id });
+        // let data = ret[0];
+        const { code, schema } = await biz.client.GetEntityCode(id);
         setAtomValue(this.atomBizScript, code);
     }
 
@@ -65,7 +67,8 @@ export class ReportConsole extends Console {
             dateEnd: to,
             params: { a: 1 }
         };
-        let { $page, forks } = await this.uq.GetReport.page(queryParam, pageStart, pageSize);
+        //let { $page, forks } = await this.uq.GetReport.page(queryParam, pageStart, pageSize);
+        let { $page, forks } = await this.client.GetReport(queryParam, pageStart, pageSize);
         let ret: ReportRow[] = [];
         let coll: { [id: number]: ReportRow } = {};
         for (let row of $page) {

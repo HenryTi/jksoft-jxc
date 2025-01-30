@@ -1,6 +1,6 @@
 import { QueryMore, readBuds } from "app/tool";
 import { UqApp, useUqApp } from "app/UqApp";
-import { Biz, BizBud, EntityAtom, EntityID, EnumBudType } from "app/Biz";
+import { Biz, BizBud, EntityAtom, EntityID, EnumBudType } from "tonwa";
 import { BudValue, uqAppModal } from "tonwa-app";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { UqExt } from "uqs/UqDefault";

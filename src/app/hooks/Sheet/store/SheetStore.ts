@@ -1,6 +1,6 @@
 import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { EntitySheet, EntityBin, EntityPend, BinRow, Entity, EnumDetailOperate, BizBud } from "app/Biz";
+import { EntitySheet, EntityBin, EntityPend, BinRow, Entity, EnumDetailOperate, BizBud } from "tonwa";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { RearPickResultType, ReturnUseBinPicks } from "./PickResult";
 import { Formulas } from "app/hooks/Calc";
@@ -218,7 +218,9 @@ export class SheetStore extends EntityStore<EntitySheet> {
 
     // whole sheet or row detail
     async loadBinData(binId: number) {
-        let { main, details, props, atoms: bizAtoms, forks } = await this.uq.GetSheet.query({ id: binId });
+        let { main, details, props, atoms: bizAtoms, forks } =
+            //await this.uq.GetSheet.query({ id: binId });
+            await this.client.GetSheet(binId);
         this.cacheIdAndBuds(props, bizAtoms, forks);
         let mainRow = main[0];
         if (mainRow !== undefined) {
@@ -234,7 +236,8 @@ export class SheetStore extends EntityStore<EntitySheet> {
     async loadPend(params: any, pendId: number) {
         let { pend: entityPend, rearPick } = this.entity.coreDetail;
         if (entityPend === undefined) debugger;
-        let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
+        //let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
+        let ret = await this.client.GetPend({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
         let { $page, retSheet, props: showBuds, atoms, forks } = ret;
         this.cacheIdAndBuds(showBuds, atoms, forks);
         let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
@@ -284,7 +287,8 @@ export class SheetStore extends EntityStore<EntitySheet> {
         // 作废草稿单据
         let { valRow: { id } } = this.mainStore;
         if (id >= 0) {
-            await this.uq.RemoveDraft.submit({ id });
+            //await this.uq.RemoveDraft.submit({ id });
+            this.client.RemoveDraft(id);
             this.sheetConsole.removeFromCache(id);
             return id;
         }
@@ -297,8 +301,8 @@ export class SheetStore extends EntityStore<EntitySheet> {
     async saveSheet(valRow: ValRow) {
         let propArr = getValRowPropArr(valRow, this.mainStore.entity.buds);
         let { id: sheetId, i, x } = valRow;
-        const { uq, entity: entitySheet } = this;
-        let ret = await uq.SaveSheet.submit({
+        const { entity: entitySheet } = this;
+        let ret = await this.client.SaveSheet({
             phrase: entitySheet.id,
             mainPhrase: entitySheet.main?.id,
             no: undefined,
@@ -309,8 +313,9 @@ export class SheetStore extends EntityStore<EntitySheet> {
             amount: undefined,
             props: propArr,
         });
-        let { id, no } = ret;
-        return { id, no };
+        return ret;
+        // let { id, no } = ret;
+        // return { id, no };
     }
 
     notifyRowChange() {
@@ -318,7 +323,8 @@ export class SheetStore extends EntityStore<EntitySheet> {
     }
 
     async setSheetAsDraft() {
-        await this.uq.SetSheetPreToDraft.submit({ id: this.mainStore.valRow.id });
+        // await this.uq.SetSheetPreToDraft.submit({ id: this.mainStore.valRow.id });
+        this.client.SetSheetPreToDraft(this.mainStore.valRow.id);
         setAtomValue(this.atomLoaded, true);
     }
 
@@ -346,14 +352,16 @@ export class SheetStore extends EntityStore<EntitySheet> {
     async submit() {
         // let { checkPend, checkBin } = 
         let sheetId = this.mainStore.valRow.id;
-        let ret = await this.uq.SubmitSheet.submitReturns({ id: sheetId });
+        // let ret = await this.uq.SubmitSheet.submitReturns({ id: sheetId });
+        let ret = await this.client.SubmitSheet(sheetId);
         return ret;
     }
 
     async submitDebug() {
         // let { checkPend, checkBin } = 
         let sheetId = this.mainStore.valRow.id;
-        let ret = await this.uq.SubmitSheetDebug.submitReturns({ id: sheetId });
+        // let ret = await this.uq.SubmitSheetDebug.submitReturns({ id: sheetId });
+        let ret = await this.client.SubmitSheetDebug(sheetId);
         return ret;
     }
 
@@ -408,7 +416,7 @@ export abstract class SheetConsole extends Console {
     readonly entitySheet: EntitySheet;
 
     constructor(modal: Modal, entitySheet: EntitySheet) {
-        super(entitySheet.uq, modal);
+        super(/*entitySheet.uq, */modal);
         this.entitySheet = entitySheet;
     }
 

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { FA, List, useEffectOnce, wait } from "tonwa-com";
-import { Entity, EntitySheet } from "app/Biz";
+import { Entity, EntitySheet } from "tonwa";
 import { PageSheetEdit, PageSheetNew } from "./PageSheetEntry";
 import { DashConsole, getUserBudValue } from "../store";
 import { Sheet } from "uqs/UqDefault";
@@ -15,7 +15,7 @@ import { useSiteRole } from "app/views/Site/useSiteRole";
 export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const modal = useModal();
     const [visible, setVisible] = useState(true);
-    const { caption, name, uq, biz, coreDetail } = entitySheet;
+    const { caption, name, biz, coreDetail } = entitySheet;
     const { current: dashConsole } = useRef(new DashConsole(modal, entitySheet));
     let useSiteRoleReturn = useSiteRole();
     let { isAdmin } = useSiteRoleReturn.userSite;
@@ -58,7 +58,8 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         if (entitySheetInView === undefined) {
             async function onDelMyDraft() {
                 setDel(1);
-                await uq.RemoveDraft.submit({ id });
+                // await uq.RemoveDraft.submit({ id });
+                await biz.client.RemoveDraft(id);
                 setDel(2);
             }
             let cnText = 'px-3 py-2 small text-secondary flex-fill ';

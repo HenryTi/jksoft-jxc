@@ -1,4 +1,4 @@
-import { EntityAssign } from "app/Biz";
+import { EntityAssign } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { useParams } from "react-router-dom";
 import { from62, to62 } from "tonwa-com";

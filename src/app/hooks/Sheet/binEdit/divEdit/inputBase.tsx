@@ -1,4 +1,4 @@
-import { BinInput } from "app/Biz";
+import { BinInput } from "tonwa";
 import { DivEditing, PendRow } from "../../store";
 
 export interface InputProps<T extends BinInput = any> {

@@ -1,4 +1,4 @@
-import { IxField } from "./BizBase";
+import { IxField } from "./EntityAtom";
 import { Entity } from "./Entity";
 
 export class EntityTie extends Entity {

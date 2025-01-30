@@ -2,8 +2,8 @@ import { Link, Route } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { PagePermits } from "./PagePermits";
 import { FA, List, Sep } from "tonwa-com";
+import { EntityPermit, EntityRole, PermitItem } from "tonwa";
 import { useUqApp } from "app/UqApp";
-import { EntityPermit, EntityRole, PermitItem } from "app/Biz/EntityPermit";
 import { centers } from "app/views/center";
 
 const pathPermits = 'permits';

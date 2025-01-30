@@ -9,7 +9,7 @@ const cnColumns2 = 'gx-0 row row-cols-1 row-cols-md-2 row-cols-lg-3';
 
 export function PageForkEdit({ store, value }: { store: ForkStore; value: any; }) {
     const modal = useModal();
-    const { uq, entity } = store;
+    const { client, entity } = store;
     const { id, no, ex, buds } = value;
     const { caption, keys, fork } = entity;
     let vTitle: any;
@@ -55,7 +55,7 @@ export function PageForkEdit({ store, value }: { store: ForkStore; value: any; }
             fieldRows.push({ name: 'ex', label: '名称', type: 'string', });
         }
         async function saveField(id: number, name: string, value: string | number) {
-            await uq.SaveBudValue.submit({
+            await client.SaveBudValue({
                 phraseId: exBud.id,
                 id,
                 int: undefined,

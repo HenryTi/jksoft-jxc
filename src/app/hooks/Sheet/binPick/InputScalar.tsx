@@ -1,4 +1,4 @@
-import { BinPick } from "app/Biz";
+import { BinPick } from "tonwa";
 import { PickResult } from "app/hooks/Calc";
 import { ChangeEvent, KeyboardEvent, FocusEvent, useRef, useEffect, MouseEvent } from "react";
 import { FA } from "tonwa-com";

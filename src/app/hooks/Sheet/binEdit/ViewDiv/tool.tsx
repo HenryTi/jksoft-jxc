@@ -1,4 +1,4 @@
-import { BizBud } from "app/Biz";
+import { BizBud } from "tonwa";
 import { BinStore, ValDivBase } from "../../store";
 import { ViewForkNoAtom } from "app/hooks";
 import { FA, theme } from "tonwa-com";

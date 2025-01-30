@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { useEffectOnce } from "tonwa-com";
-import { BizBud, EntityAtom, ValueSetType } from "app/Biz";
+import { BizBud, EntityAtom, ValueSetType } from "tonwa";
 import { useState } from "react";
 import { Atom } from "uqs/UqDefault";
 // import { UseQueryOptions } from "app/tool";

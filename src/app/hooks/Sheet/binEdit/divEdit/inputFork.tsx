@@ -1,9 +1,9 @@
-import { BinInputFork, BizBud, EntityID, ValueSetType } from "app/Biz";
+import { BinInputFork, BizBud, EntityID, ValueSetType } from "tonwa";
 import { Page } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band } from "app/coms";
 import { Atom, ParamSaveFork } from "uqs/UqDefault";
-import { EnumBudType } from "app/Biz";
+import { EnumBudType } from "tonwa";
 import { getDays } from "app/tool";
 import { btnNext, cnNextClassName } from "../../store";
 import { InputProps } from "./inputBase";
@@ -19,7 +19,7 @@ export interface PropsInputFork extends InputProps<BinInputFork> {
 export async function inputFork(props: PropsInputFork): Promise<PickResult> {
     const { binInput, editing } = props;
     const { valDiv, binStore } = editing;
-    const { sheetStore, uq, modal, biz } = binStore;
+    const { sheetStore, client, modal, biz } = binStore;
     const { baseExp, baseBud, params } = binInput;
     const seedName = '.i';
     editing.addFormula(seedName, baseExp ?? baseBud.valueSet, false); // baseBud.valueSetType === ValueSetType.init);
@@ -96,7 +96,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
             base: seed,
             values,
         };
-        let results = await uq.SaveFork.submit(param);
+        let results = await client.SaveFork(param);
         let { id } = results;
         if (id < 0) id = -id;
         let retSpec = Object.assign(data, { id, base: seed });
@@ -118,7 +118,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         ret = await saveFork(false, paramValues);
     }
     else if (preset === true) {
-        let { ret } = await uq.GetSpecsFromBase.query({ base: seed });
+        let ret = await client.GetSpecsFromBase(seed);
         let retSpec: any;
         switch (ret.length) {
             default:

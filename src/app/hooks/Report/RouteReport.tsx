@@ -1,4 +1,4 @@
-import { EntityReport } from "app/Biz";
+import { EntityReport } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { useParams } from "react-router-dom";
 import { PageReportDash } from "./dash";

@@ -1,4 +1,4 @@
-import { BudID } from "app/Biz";
+import { BudID } from "tonwa";
 import { EditBudTemplateProps } from "./model";
 import { useUqApp } from "app/UqApp";
 import { useState } from "react";

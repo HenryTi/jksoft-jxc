@@ -1,4 +1,4 @@
-import { BinPick, EnumDetailOperate, PickOptions, PickPend } from "app/Biz";
+import { BinPick, EnumDetailOperate, PickOptions, PickPend } from "tonwa";
 import { useRef, useState, JSX } from "react";
 import { BinBudsEditing, doBinPick, doBinPickRear, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../../store";
 import { getAtomValue } from "tonwa-com";

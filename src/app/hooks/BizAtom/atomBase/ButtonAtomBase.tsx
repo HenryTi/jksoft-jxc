@@ -1,5 +1,5 @@
 import { FA, List, RadioAsync, SearchBox, useEffectOnce } from 'tonwa-com';
-import { EntityAtom, EntityID } from 'app/Biz';
+import { EntityAtom, EntityID } from "tonwa";
 import { Page, useModal } from 'tonwa-app';
 import { useState } from 'react';
 import { AtomStore } from '../AtomStore';

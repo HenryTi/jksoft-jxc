@@ -1,4 +1,4 @@
-import { PickAtom } from "app/Biz";
+import { PickAtom } from "tonwa";
 import { AtomData } from "app/tool";
 import { BudsEditing, PageIDSelect, PickResult } from "app/hooks";
 

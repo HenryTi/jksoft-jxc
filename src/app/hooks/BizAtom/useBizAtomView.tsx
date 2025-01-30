@@ -5,7 +5,7 @@ import { FA, Sep, from62, useEffectOnce } from "tonwa-com";
 import { OptionsUseBizAtom, useBizAtom } from "./useBizAtom";
 import { EditBudLabelRow, EditAtomField } from "../Bud";
 import { ViewBudRowProps } from "../Bud";
-import { BizBud, EntityAtom, EntityID } from "app/Biz";
+import { BizBud, EntityAtom, EntityID } from "tonwa";
 import { Tabs, Tab } from "react-bootstrap";
 import { ViewForkListAutoLoad } from "./fork";
 import { AtomIDValue } from "./AtomIDValue";

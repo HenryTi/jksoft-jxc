@@ -1,4 +1,4 @@
-import { BizBud, EntityAtom, EntityID, EntityFork } from "app/Biz";
+import { BizBud, EntityAtom, EntityID, EntityFork } from "tonwa";
 import { EntityStore } from "app/tool";
 import { WritableAtom, atom } from "jotai";
 import { Modal } from "tonwa-app";
@@ -17,8 +17,8 @@ export abstract class IDSelectStore<E extends EntityID> extends EntityStore<E> {
 
 class SpecSelectStore extends IDSelectStore<EntityFork> {
     async search(param: any, pageStart: any, pageSize: number): Promise<any[]> {
-        let results = await this.uq.GetSpecListFromBase.query({ base: param.base, phrase: this.entity.id });
-        let { ret } = results;
+        let ret = await this.client.GetSpecListFromBase(param.base, this.entity.id);
+        // let { ret } = results;
         return ret;
     }
 }
@@ -31,7 +31,7 @@ class AtomSelectStore extends IDSelectStore<EntityAtom> {
             key: param?.key,
         }
         let rowMeds: RowMed[] = [];
-        let result = await this.uq.SearchAtomBuds.page(searchParam, pageStart, pageSize);
+        let result = await this.client.SearchAtomBuds(searchParam, pageStart, pageSize);
         let { $page, meds, budsInt, budsDec, budsStr } = result;
         let rowMedColl: { [id: number]: RowMed } = {};
         let medColl: { [id: number]: Med } = {};

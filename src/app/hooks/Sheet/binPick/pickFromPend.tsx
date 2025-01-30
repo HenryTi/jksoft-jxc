@@ -1,4 +1,4 @@
-import { PickPend } from "app/Biz";
+import { PickPend } from "tonwa";
 import { PendProxyHandler, ValRow } from "../store";
 import { BinStore } from "../store";
 import { PagePend } from "./PagePend";

@@ -4,7 +4,7 @@ import { ButtonAsync, FA, setAtomValue } from "tonwa-com";
 import { AtomData } from "./AtomData";
 import { useState } from "react";
 import { useAtomValue } from "jotai";
-import { EnumBudType } from "app/Biz";
+import { EnumBudType } from "tonwa";
 
 export function PageImportInfo({ atomData }: { atomData: AtomData; }) {
     const { hasErrorAtom } = atomData;

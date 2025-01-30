@@ -8,7 +8,7 @@ import {
 } from "app/hooks";
 import { Atom } from "uqs/UqDefault";
 import { UqApp, useUqApp } from "app/UqApp";
-import { Entity } from "app/Biz";
+import { Entity } from "tonwa";
 import { BI } from "app/coms";
 import { centers } from "app/views/center";
 import { ViewCurSiteHeader } from "app/views/Site";

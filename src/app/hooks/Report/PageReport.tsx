@@ -1,4 +1,4 @@
-import { EntityDuo, EntityID, EntityReport, ReportTitle } from "app/Biz";
+import { EntityDuo, EntityID, EntityReport, ReportTitle } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { useCallback } from "react";

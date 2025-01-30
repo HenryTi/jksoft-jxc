@@ -1,6 +1,10 @@
-import { IxField } from "./BizBase";
 import { BizBud } from "./BizBud";
 import { BudGroup, Entity } from "./Entity";
+
+export interface IxField {
+    caption: string;
+    atoms: EntityID[];
+}
 
 export abstract class EntityID extends Entity {
     private _fork: EntityFork;

@@ -1,8 +1,9 @@
 import { Entity } from "./Entity";
-import { EntityID } from "./EntityID";
+import { EntityID } from "./EntityAtom";
 
 export class EntityBook extends Entity {
     i: EntityID;
+
     override fromSchema(schema: any) {
         super.fromSchema(schema);
     }

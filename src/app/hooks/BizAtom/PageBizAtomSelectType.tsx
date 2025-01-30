@@ -1,5 +1,5 @@
 import { Page, useModal } from "tonwa-app";
-import { EntityAtom, EntityID } from "app/Biz";
+import { EntityAtom, EntityID } from "tonwa";
 import { List } from "tonwa-com";
 
 export function PageBizAtomSelectType({ caption, entityAtom }: { caption: string; entityAtom: EntityAtom; }) {

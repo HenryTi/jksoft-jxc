@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { EntityAtom } from "app/Biz";
+import { EntityAtom } from "tonwa";
 import { AtomData } from "./Store";
 
 export interface GAtom {

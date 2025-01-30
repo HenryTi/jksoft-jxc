@@ -1,4 +1,4 @@
-import { BizBud, BudRadio, OptionsItem } from "app/Biz";
+import { BizBud, BudRadio, OptionsItem } from "tonwa";
 import { RadioAsync } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { EditBudTemplateProps } from "./model";

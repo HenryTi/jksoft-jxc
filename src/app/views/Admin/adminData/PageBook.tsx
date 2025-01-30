@@ -1,4 +1,4 @@
-import { BizBud, EntityBook, EntityCombo } from "app/Biz";
+import { BizBud, EntityBook, EntityCombo } from "tonwa";
 import { PageQueryMore } from "app/coms";
 import { useUqApp } from "app/UqApp";
 import { Page, useModal } from "tonwa-app";

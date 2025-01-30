@@ -2,7 +2,7 @@ import { useRef, useState, JSX } from "react";
 import { SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { Page, PageError, useModal } from "tonwa-app";
-import { BizBud, EntityID, EntityFork } from "app/Biz";
+import { BizBud, EntityID, EntityFork } from "tonwa";
 import { Atom, BizPhraseType } from "uqs/UqDefault";
 import { RowMed, createIDSelectStore } from "./IDSelectStore";
 import { RowColsSm } from "../tool";

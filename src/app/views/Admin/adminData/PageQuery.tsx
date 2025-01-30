@@ -1,11 +1,11 @@
-import { EntityQuery } from "app/Biz";
+import { EntityQuery } from "tonwa";
 import { BudsEditing, ValuesBudsEditing } from "../../../hooks/BudsEditing";
 import { Page, useModal } from "tonwa-app";
 import { useForm } from "react-hook-form";
 import { FormRow, FormRowsView } from "app/coms";
 import { theme } from "tonwa-com";
 import { ChangeEvent, useRef } from "react";
-import { IDColumn, PickQuery } from "app/Biz";
+import { IDColumn, PickQuery } from "tonwa";
 import { useState } from "react";
 import { List, Sep } from "tonwa-com";
 import { LabelBox, Prop, QueryRow, QueryRowCol, RowCols } from "app/hooks/tool";

@@ -1,4 +1,4 @@
-import { Biz, BizBud, BudOptions, Entity, EntityAtom, EnumBudType } from "app/Biz";
+import { Biz, BizBud, BudOptions, Entity, EntityAtom, EnumBudType } from "tonwa";
 import { AtomData, AtomRow, Col, EnumError, ErrorCol, ErrorRow, PropValue } from "./AtomData";
 import { getDays } from "app/tool";
 import { BizPhraseType } from "uqs/UqDefault";

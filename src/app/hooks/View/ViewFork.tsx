@@ -1,4 +1,4 @@
-import { BizBud, EntityID, EntityFork } from "app/Biz";
+import { BizBud, EntityID, EntityFork } from "tonwa";
 import { useGetSpec } from "../Uq";
 import { useUqApp } from "app/UqApp";
 import { ViewBudUIType } from "../Bud";

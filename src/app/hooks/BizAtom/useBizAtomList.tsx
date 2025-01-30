@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { PageQueryMore } from '../../coms';
 import { FA, List, SearchBox } from 'tonwa-com';
-import { EntityID } from 'app/Biz';
+import { EntityID } from "tonwa";
 import { Page } from 'tonwa-app';
 import { OptionsUseBizAtom } from './useBizAtom';
 import { pathAtom, useAtomStore } from './AtomStore';

@@ -1,4 +1,4 @@
-import { EntityID } from "app/Biz";
+import { EntityID } from "tonwa";
 import { ViewAtom } from "../BizAtom";
 import { useCallback } from "react";
 import { useIDSelect } from "./PageIDSelect";

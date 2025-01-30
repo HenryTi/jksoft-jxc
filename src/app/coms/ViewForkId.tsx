@@ -1,4 +1,4 @@
-import { BizBud, EntityFork } from "app/Biz";
+import { BizBud, EntityFork } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { ViewBudEmpty } from "app/hooks/tool";
 import { useEffect, useState } from "react";

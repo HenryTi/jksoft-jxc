@@ -1,4 +1,4 @@
-import { BinPick } from "app/Biz";
+import { BinPick } from "tonwa";
 import { BudsEditing } from "app/hooks/BudsEditing";
 import { PickResult } from "app/hooks/Calc";
 import { BinBudsEditing } from "./BinEditing";

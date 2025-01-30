@@ -1,4 +1,4 @@
-import { BizBud, EntityQuery } from "app/Biz";
+import { BizBud, EntityQuery } from "tonwa";
 import { EntityStore } from "app/tool";
 import { NamedProps, Prop, QueryRow, QueryRowCol } from "../tool";
 
@@ -9,7 +9,7 @@ export class QueryStore extends EntityStore<EntityQuery> {
         for (let bud of paramBuds) {
             jsonParams[bud.id] = param[bud.name];
         }
-        let retQuery = await this.uq.ExecQuery.submitReturns({
+        let retQuery = await this.client.ExecQuery({
             query: this.entity.id,
             json: jsonParams,
             pageStart: undefined,

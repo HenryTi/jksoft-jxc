@@ -1,4 +1,4 @@
-import { EntityIOApp } from "app/Biz";
+import { EntityIOApp } from "tonwa";
 
 export interface BudColl {
     [id: number]: string | number;

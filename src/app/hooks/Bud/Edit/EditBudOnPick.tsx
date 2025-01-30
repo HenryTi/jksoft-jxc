@@ -1,4 +1,4 @@
-import { BinPick, BudID } from "app/Biz";
+import { BinPick, BudID } from "tonwa";
 import { EditBudTemplateProps } from "./model";
 import { ViewAtomId } from "../../BizAtom";
 import { useState } from "react";
@@ -23,9 +23,9 @@ export function EditBudOnPick(props: EditBudTemplateProps & { pick: BinPick; }) 
         }
         if (atomId === undefined) return;
         if (id !== undefined) {
-            await entityID.uq.SaveBudValue.submit({
-                phraseId: bizBud.id,
-                id,
+            await entityID.biz.client.SaveBudValue({
+                id: bizBud.id,
+                phraseId: id,
                 int: atomId,
                 dec: undefined as number,
                 str: undefined as string,

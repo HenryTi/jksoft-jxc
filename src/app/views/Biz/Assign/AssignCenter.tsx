@@ -1,4 +1,4 @@
-import { Entity } from "app/Biz";
+import { Entity } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { BI } from "app/coms";
 import { pathAssign } from "app/hooks/Assign";

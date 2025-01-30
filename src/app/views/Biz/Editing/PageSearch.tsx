@@ -1,4 +1,4 @@
-import { BizBud, EntitySheet } from "app/Biz";
+import { BizBud, EntitySheet } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
 import { EditBudInline, OnBudChanged, PageRefId, ValuesBudsEditing } from "app/hooks";

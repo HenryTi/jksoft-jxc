@@ -1,4 +1,4 @@
-import { BinInputAtom } from "app/Biz";
+import { BinInputAtom } from "tonwa";
 import { InputProps } from "./inputBase";
 import { PickResult } from "app/hooks/Calc";
 

@@ -2,7 +2,7 @@ import { EditBudAtom } from "./EditBudAtom";
 import { EditBudRadio } from "./EditBudRadio";
 import { EditBudCheck } from "./EditBudCheck";
 import { EditBudString, EditBudInt, EditBudDec, EditBudDate } from "./EditBudValue";
-import { BinPick, BizBud, EnumBudType } from "app/Biz";
+import { BinPick, BizBud, EnumBudType } from "tonwa";
 import { EditBudProps, EditBudTemplateProps } from "./model";
 import { LabelRowEdit } from "./LabelRowEdit";
 import { atom } from "jotai";

@@ -1,6 +1,5 @@
 import { Biz } from "./Biz";
 import { BizPhraseType, UIStyle } from "./Defines";
-import { EntityID } from "./EntityAtom";
 
 export class BizBase {
     protected scaned: boolean;
@@ -57,9 +56,4 @@ export class BizBase {
                 break;
         }
     }
-}
-
-export interface IxField {
-    caption: string;
-    atoms: EntityID[];
 }

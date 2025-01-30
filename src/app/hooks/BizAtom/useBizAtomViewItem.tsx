@@ -1,4 +1,4 @@
-import { EntityAtom } from "app/Biz";
+import { EntityAtom } from "tonwa";
 
 export function useBizAtomViewItem(atom: EntityAtom) {
     return function ({ value }: { value: any; }) {

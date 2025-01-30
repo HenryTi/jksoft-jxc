@@ -1,5 +1,5 @@
 import { CheckAsync, FA } from "tonwa-com";
-import { BudCheck, OptionsItem } from "app/Biz";
+import { BudCheck, OptionsItem } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { EditBudTemplateProps } from "./model";
 import { BudCheckEditValue, BudCheckValue, Page, useModal } from "tonwa-app";

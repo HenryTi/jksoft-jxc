@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { EntityID, EntityTie } from "app/Biz";
+import { EntityID, EntityTie, IxField } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { useParams } from "react-router-dom";
 import { FA, from62, to62 } from "tonwa-com";
@@ -7,7 +7,6 @@ import { PageQueryMore } from "app/coms";
 import { useCallback, useState } from "react";
 import { ReturnGetTies$page } from "uqs/UqDefault";
 import { usePickID } from "../BizPick";
-import { IxField } from "app/Biz/BizBase";
 
 function tieInPath(phrase: number | string) {
     if (typeof phrase === 'string') {

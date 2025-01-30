@@ -4,7 +4,7 @@ import { ReturnGetMyDrafts$page } from "uqs/UqDefault";
 import { atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Modal } from "tonwa-app";
-import { EntitySheet } from "app/Biz";
+import { EntitySheet } from "tonwa";
 
 const maxDraftsCount = 10;
 
@@ -64,7 +64,8 @@ export class SheetMyDraftsStore extends SheetListStore {
     }
 
     async deleteAllMyDrafts(): Promise<void> {
-        await this.uq.DeleteMyDrafts.submit({ entitySheet: this.entity.id });
+        //await this.uq.DeleteMyDrafts.submit({ entitySheet: this.entity.id });
+        await this.client.DeleteMyDrafts(this.entity.id);
         setAtomValue(this.atomMyDrafts, []);
     }
 
@@ -83,7 +84,7 @@ export class SheetMyDraftsStore extends SheetListStore {
         if (length > maxDraftsCount) {
             let arr: number[] = [];
             for (let i = maxDraftsCount; i < length; i++) arr.push(myDrafts[i].id);
-            await Promise.all(arr.map(v => this.uq.RemoveDraft.submit({ id: v })));
+            await Promise.all(arr.map(v => this.client.RemoveDraft(v)));
             myDrafts.splice(maxDraftsCount);
         }
         setAtomValue(this.atomMyDrafts, [...myDrafts]);
@@ -115,7 +116,7 @@ export class SheetMyDraftsStore extends SheetListStore {
 
     readonly atomMyDrafts = atom(undefined as ReturnGetMyDrafts$page[]);
     async loadMyDrafts(): Promise<void> {
-        let { $page, props, atoms, forks } = await this.uq.GetMyDrafts.page({
+        let { $page, props, atoms, forks } = await this.client.GetMyDrafts({
             entitySheet: this.entity.id,
             entityMain: this.entity.main.id,
         }, undefined, 100);
@@ -126,7 +127,7 @@ export class SheetMyDraftsStore extends SheetListStore {
 
 export class SheetMyListStore extends SheetListStore {
     readonly loadMyList = async (param: any, pageStart: any, pageSize: number): Promise<any[]> => {
-        const { $page, props, atoms, forks } = await this.uq.GetMySheetList.page(param, pageStart, pageSize);
+        const { $page, props, atoms, forks } = await this.client.GetMySheetList(param, pageStart, pageSize);
         this.cacheIdAndBuds(props, atoms, forks);
         return $page;
     }

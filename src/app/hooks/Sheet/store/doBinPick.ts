@@ -1,4 +1,4 @@
-import { BinPick, PickAtom, PickOptions, PickPend, PickQuery, PickSpec } from "app/Biz";
+import { BinPick, PickAtom, PickOptions, PickPend, PickQuery, PickSpec } from "tonwa";
 import { PickResult } from "app/hooks/Calc";
 import { BizPhraseType } from "uqs/UqDefault";
 import { pickFromAtom } from "../binPick/pickFromAtom";

@@ -5,7 +5,7 @@ import { EnumSysRole, UserSite } from "tonwa-uq";
 import { roleT } from "./res";
 // import { GenSiteRole } from "./useSiteRole";
 import { Image, Page, PageConfirm, useModal } from "tonwa-app";
-// import { Biz } from "app/Biz";
+// import { Biz } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { UseSiteRoleReturn } from "./useSiteRole";
 

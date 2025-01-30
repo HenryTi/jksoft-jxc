@@ -1,4 +1,4 @@
-import { BinPick, BizBud, EntityQuery, EnumBudType, PickParam, PickQuery, ValueSetType } from "app/Biz";
+import { BinPick, BizBud, EntityQuery, EnumBudType, PickParam, PickQuery, ValueSetType } from "tonwa";
 import { Page, useModal } from "tonwa-app";
 import { FA, theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";

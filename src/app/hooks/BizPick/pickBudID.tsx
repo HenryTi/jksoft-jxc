@@ -1,4 +1,4 @@
-import { BizBud, BudID, EntityAtom } from "app/Biz";
+import { BizBud, BudID, EntityAtom } from "tonwa";
 import { FormContext, PageQueryMore } from "app/coms";
 import { EntityStore } from "app/tool";
 import { useRef, useState } from "react";

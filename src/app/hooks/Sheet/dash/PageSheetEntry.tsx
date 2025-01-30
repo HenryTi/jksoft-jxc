@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import { PageSheet } from "./PageSheet";
 import { useCallback } from "react";
 import { ToolItem } from "app/coms";
-import { buttonDefs, headerSheet } from "../headerSheet";
+import { buttonDefs, headerSheet } from "../HeaderSheet";
 import { ViewMainPicks } from "../binPick";
 import { ViewSteps } from "./ViewSteps";
 import { detailNew } from "../binEdit";

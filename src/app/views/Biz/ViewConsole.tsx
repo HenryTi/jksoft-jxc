@@ -3,7 +3,7 @@ import { useUqApp } from "app/UqApp";
 import { ViewNotifyCount } from "app/tool";
 import { FA, Sep } from "tonwa-com";
 import { CenterItem, centers } from "../center";
-import { EntitySheet, File, Folder } from "app/Biz";
+import { EntitySheet, File, Folder } from "tonwa";
 import { Accordion, AccordionItem } from "react-bootstrap";
 import React, { useState } from "react";
 import { UI } from "app/ui";

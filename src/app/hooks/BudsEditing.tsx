@@ -7,7 +7,7 @@ import {
     BudFork,
     Entity,
     BinPick,
-} from "app/Biz";
+} from "tonwa";
 import { Calc, CalcResult, ValueSpace, Formulas } from "./Calc";
 import { EntityStore, getDays, BizStore } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";

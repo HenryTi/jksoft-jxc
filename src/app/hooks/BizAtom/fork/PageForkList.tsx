@@ -1,7 +1,7 @@
 import { Page, useModal } from "tonwa-app";
 import { ForkStore, useForkStore, ViewForkTop } from "./ForkStore";
 import { FA, List, useEffectOnce } from "tonwa-com";
-import { BizBud, EntityFork } from "app/Biz";
+import { BizBud, EntityFork } from "tonwa";
 import { useAtomValue } from "jotai";
 import { PageForkNew } from "./PageForkNew";
 import { RowColsSm } from "app/hooks/tool";

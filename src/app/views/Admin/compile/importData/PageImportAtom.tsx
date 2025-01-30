@@ -1,4 +1,4 @@
-import { EntityAtom } from "app/Biz";
+import { EntityAtom } from "tonwa";
 import React, { KeyboardEvent, useRef, useState } from "react";
 import { Page, useModal } from "tonwa-app";
 import '../code-editor-style.css';

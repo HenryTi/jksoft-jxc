@@ -1,4 +1,4 @@
-import { BinPick, EntityQuery, IDColumn, PickQuery } from "app/Biz";
+import { BinPick, EntityQuery, IDColumn, PickQuery } from "tonwa";
 import { ChangeEvent, useState } from "react";
 import { Page, useModal } from "tonwa-app";
 import { List, Sep, theme } from "tonwa-com";

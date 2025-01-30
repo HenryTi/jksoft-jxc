@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { BizBud } from "app/Biz";
+import { BizBud } from "tonwa";
 import { RegisterOptions } from "react-hook-form";
 import { BudCheckValue, BudValue, OnValueChanged, PickProps, UqAppBase } from "tonwa-app";
 import { BudEditing } from "./EditBud";

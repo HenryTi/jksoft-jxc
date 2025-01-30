@@ -1,10 +1,10 @@
 import * as jsonpack from 'jsonpack';
 import { useForm } from "react-hook-form";
-import { Biz, Entity, EntityAtom, EntityID, EntityQuery } from "app/Biz";
+import { Biz, Client, Entity, EntityAtom, EntityID } from "tonwa";
 import { UqApp, useUqApp } from "app/UqApp";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { IDView, Modal, Page, useModal } from "tonwa-app";
-import { theme, wait } from "tonwa-com";
+import { Modal, Page, useModal } from "tonwa-app";
+import { theme } from "tonwa-com";
 import { FA, getAtomValue, setAtomValue, useEffectOnce } from 'tonwa-com';
 import { Grammar, highlight } from "prismjs";
 import './code-editor-style.css'
@@ -14,7 +14,7 @@ import { FormRow, FormRowsView, Band, ToolItem, Toolbar, ToolButton } from 'app/
 import { atom, useAtomValue, WritableAtom } from 'jotai';
 import { BizPhraseType, UqExt } from 'uqs/UqDefault';
 import { adminData } from '../adminData';
-import { ViewCurSite, ViewSite } from 'app/views/Site';
+import { ViewCurSite } from 'app/views/Site';
 import { PageImportAtom } from './importData';
 
 class Nav {
@@ -95,8 +95,9 @@ class Nav {
 const codeWaiting = '...';
 class EntityStore {
     readonly uqApp: UqApp;
-    readonly uq: UqExt;
+    // readonly uq: UqExt;
     readonly biz: Biz;
+    readonly client: Client;
     readonly modal: Modal;
     readonly atomEntity: WritableAtom<Entity, any, any>;
     readonly atomCode = atom(codeWaiting);
@@ -105,8 +106,9 @@ class EntityStore {
 
     constructor(uqApp: UqApp, modal: Modal, entity: Entity) {
         this.uqApp = uqApp;
-        this.uq = entity.uq;
+        // this.uq = entity.uq;
         this.biz = entity.biz;
+        this.client = this.biz.client;
         this.modal = modal;
         this.atomEntity = atom(entity);
         this.nav = new Nav(entity, this.onEntityChange);
@@ -134,8 +136,9 @@ class EntityStore {
         this.setSubmitDisabled(true);
         setAtomValue(this.atomCode, codeWaiting);
         let entity = getAtomValue(this.atomEntity);
-        let { ret } = await this.uq.GetEntityCode.query({ id: entity.id });
-        let data = ret[0];
+        //let { ret } = await this.uq.GetEntityCode.query({ id: entity.id });
+        //let data = ret[0];
+        let data = await this.client.GetEntityCode(entity.id);
         setAtomValue(this.atomCode, data.code);
         this.setSubmitDisabled(false);
         // return data;

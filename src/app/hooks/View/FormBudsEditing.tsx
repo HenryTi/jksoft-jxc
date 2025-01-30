@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { BudsEditing } from "../BudsEditing";
 import { ChangeEvent, useState, JSX } from "react";
-import { ValueSetType } from "app/Biz";
+import { ValueSetType } from "tonwa";
 import { FormRowsView } from "app/coms";
 
 interface Props {

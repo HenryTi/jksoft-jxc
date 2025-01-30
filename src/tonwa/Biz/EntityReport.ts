@@ -1,7 +1,7 @@
 import { BizBud, EnumBudType } from "./BizBud";
 import { Entity } from "./Entity";
 import { EntityAtom, EntityID, EntityDuo } from "./EntityAtom";
-import { EntityBook } from "./EntityTitle";
+import { EntityBook } from "./EntityBook";
 
 export class ReportList extends BizBud {
     atom: EntityID;
@@ -39,7 +39,7 @@ export class EntityReport extends Entity {
             const { caption, title: [v0, v1] } = v;
             return {
                 caption,
-                entity: this.biz.entities[v0],
+                entity: this.biz.entities[v0] as EntityBook,
                 bud: v1 as any,
             }
         });

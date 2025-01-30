@@ -1,4 +1,4 @@
-import { Biz, BizBud, Entity, EntityFork, EntityID } from "app/Biz";
+import { Biz, BizBud, Client, Entity, EntityFork, EntityID } from "tonwa";
 import { BudCheckValue, BudValue, Modal } from "tonwa-app";
 import { Atom, ReturnGetPendProps, ReturnGetSheetAtoms, ReturnGetSheetProps, ReturnGetSheetForks, UqExt, BizPhraseType, Sheet } from "uqs/UqDefault";
 
@@ -48,12 +48,14 @@ export abstract class Store extends KeyIdObject {
 export abstract class BizStore extends Store {
     readonly modal: Modal;
     readonly biz: Biz;
-    readonly uq: UqExt;
+    readonly client: Client;
+    // readonly uq: UqExt;
     constructor(modal: Modal, biz: Biz) {
         super();
         this.modal = modal;
         this.biz = biz;
-        this.uq = biz.uq;
+        this.client = biz.client;
+        // this.uq = biz.uq;
     }
 }
 

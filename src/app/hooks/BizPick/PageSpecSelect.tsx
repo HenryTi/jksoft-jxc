@@ -1,6 +1,6 @@
 import { Page, PageSpinner, useModal } from "tonwa-app";
 import { RowColsSm } from "../tool";
-import { EntityFork } from "app/Biz";
+import { EntityFork } from "tonwa";
 import { useState } from "react";
 import { ViewBud } from "..";
 import { List, useEffectOnce } from "tonwa-com";

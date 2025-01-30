@@ -1,5 +1,5 @@
 import { useUqApp } from "app";
-import { EntityIOSite } from "app/Biz";
+import { EntityIOSite } from "tonwa";
 import { centers } from "app/views/center";
 import { Link, Route } from "react-router-dom";
 import { FA, LMR, List } from "tonwa-com";

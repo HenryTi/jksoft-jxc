@@ -8,7 +8,7 @@ import {
 import {
     EntityAtom, EntityFork, BizBud
     , Entity, BudID, BinPick, EnumBudType
-} from "../../Biz";
+} from "tonwa";
 import { contentFromDays, EntityStore } from "app/tool";
 import { ViewFormForkObj } from "./ViewFormForkObj";
 import { ViewFormAtom } from "./ViewFormAtom";

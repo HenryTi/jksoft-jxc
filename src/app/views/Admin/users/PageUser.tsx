@@ -2,7 +2,7 @@ import { ReturnGetUsers$page } from "uqs/UqDefault";
 import { UsersStore } from "./UsersStore";
 import { Image, Page, useModal } from "tonwa-app";
 import { FA, getAtomValue, setAtomValue, theme } from "tonwa-com";
-import { Entity, EnumBudType } from "app/Biz";
+import { Entity, EnumBudType } from "tonwa";
 import { ValuesBudsEditing, ViewBud } from "app/hooks";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";

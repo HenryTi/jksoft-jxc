@@ -1,12 +1,12 @@
 import { JSX } from "react";
-import { EntityFork, PickSpec } from "app/Biz";
+import { EntityFork, PickSpec } from "tonwa";
 import { ViewAtomId } from "app/hooks/BizAtom";
 import { useForm } from "react-hook-form";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { Page } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { ParamSaveFork } from "uqs/UqDefault";
-import { EnumBudType } from "app/Biz";
+import { EnumBudType } from "tonwa";
 import { getDays } from "app/tool";
 import { BudsEditing, ValuesBudsEditing } from "app/hooks/BudsEditing";
 import { PagePickSelect, PickResult } from "app/hooks";
@@ -20,7 +20,8 @@ export interface PropsPickSpec {
 };
 
 export async function pickFromSpec(editing: BudsEditing, binPick: PickSpec): Promise<PickResult> {
-    const { modal, biz, uq } = editing;
+    const { modal, biz } = editing;
+    const { client } = biz;
     let { pickParams, from } = binPick;
     const pickName = binPick.name;
     // const calc = new Calc([[pickName, binPick.baseParam]], editing.namedResults);
@@ -84,7 +85,7 @@ export async function pickFromSpec(editing: BudsEditing, binPick: PickSpec): Pro
                 base,
                 values,
             };
-            let results = await uq.SaveFork.submit(param);
+            let results = await client.SaveFork(param);
             let { id } = results;
             if (id < 0) id = -id;
             let retSpec = Object.assign({ id, base }, data);

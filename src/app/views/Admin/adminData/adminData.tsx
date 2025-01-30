@@ -1,4 +1,4 @@
-import { Entity, EntityQuery, EntityBook } from "app/Biz";
+import { Entity, EntityQuery, EntityBook } from "tonwa";
 import { ToolButton } from "app/coms";
 import { Modal } from "tonwa-app";
 import { BizPhraseType } from "uqs/UqDefault";

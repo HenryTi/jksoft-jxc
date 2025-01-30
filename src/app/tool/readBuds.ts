@@ -1,4 +1,4 @@
-import { Biz, EnumBudType } from "app/Biz";
+import { Biz, EnumBudType } from "tonwa";
 import { BudValue } from "tonwa-app";
 import { ReturnGetAtomProps } from "uqs/UqDefault";
 

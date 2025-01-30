@@ -1,5 +1,5 @@
 import { PendRow, SheetStore } from "./SheetStore";
-import { BinDiv, BizBud, EntityBin, EnumDetailOperate, PickPend } from "app/Biz";
+import { BinDiv, BizBud, EntityBin, EnumDetailOperate, PickPend } from "tonwa";
 import { Getter, WritableAtom, atom } from "jotai";
 import { getValRowPropArr, PendProxyHandler, ValRow } from "./ValRow";
 import { getAtomValue, setAtomValue } from "tonwa-com";
@@ -241,7 +241,8 @@ export class BinStore extends EntityStore<EntityBin> {
 
     private async delDetail(ids: number[]) {
         if (ids.length === 0) return;
-        await this.uq.DeleteBin.submit({ ids });
+        //await this.uq.DeleteBin.submit({ ids });
+        await this.client.DeleteBin(ids);
         this.setPickBound();
     }
 
@@ -403,12 +404,15 @@ export class BinStore extends EntityStore<EntityBin> {
     }
 
     protected async uqSaveDetails(phrase: number, inDetails: InDetail[]) {
+        /*
         let param: ParamSaveDetails = {
             base: this.sheetStore.mainId,
             phrase,
             inDetails,
         };
-        let results = await this.uq.SaveDetails.submitReturns(param);
+        */
+        // let results = await this.uq.SaveDetails.submitReturns(param);
+        let results = await this.client.SaveDetails(this.sheetStore.mainId, phrase, inDetails);
         let { details: retDetails } = results;
         if (retDetails.length === 0) {
             console.error('*************** SaveDetails something wrong *******************');

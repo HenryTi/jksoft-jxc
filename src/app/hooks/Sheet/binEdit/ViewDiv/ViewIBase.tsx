@@ -2,7 +2,7 @@ import { SheetStore, ValDivBase } from "../../store";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { Atom as BizAtom } from "uqs/UqDefault";
 import { ViewForkAtomBold } from "app/hooks/View";
-import { BizBud } from "app/Biz";
+import { BizBud } from "tonwa";
 import { AtomData } from "app/tool";
 
 export function ViewIBase({ sheetStore, valDiv, index }: { sheetStore: SheetStore; valDiv: ValDivBase; index: number; }) {

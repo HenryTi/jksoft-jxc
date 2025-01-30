@@ -1,7 +1,7 @@
 import { useUqApp } from "app/UqApp";
 import { Link, Route } from "react-router-dom";
 import { Page, PageSpinner } from "tonwa-app";
-import { EntitySheet } from "app/Biz";
+import { EntitySheet } from "tonwa";
 import { FA, List, to62 } from "tonwa-com";
 import { useState } from "react";
 import { ViewNotifyCount } from "app/tool";

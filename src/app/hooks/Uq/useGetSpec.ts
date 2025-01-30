@@ -1,7 +1,5 @@
-import { Biz, EntityAtom } from "app/Biz";
-import { EntityFork } from "app/Biz/EntityID";
+import { Biz, EntityAtom, EntityFork } from "tonwa";
 import { useUqApp } from "app/UqApp";
-// import { UseQueryOptions } from "app/tool";
 import { useQuery } from "@tanstack/react-query";
 import { isPromise } from "tonwa-uq";
 import { Atom, ReturnGetForkProps, UqExt } from "uqs/UqDefault";

@@ -1,4 +1,4 @@
-import { BizBud, EntityFork, EnumBudType } from "app/Biz";
+import { BizBud, EntityFork, EnumBudType } from "tonwa";
 import { EntityStore } from "app/tool";
 import { atom } from "jotai";
 import { useRef } from "react";
@@ -29,7 +29,7 @@ export class ForkStore extends EntityStore<EntityFork> {
     }
 
     async load() {
-        let { ret } = await this.uq.GetSpecListFromBase.query({ base: this.baseValue.id, phrase: this.entity.id });
+        let ret = await this.client.GetSpecListFromBase(this.baseValue.id, this.entity.id);
         let values: any[] = [];
         this.loadItems(values, ret);
         setAtomValue(this.itemsAtom, values);
@@ -96,7 +96,7 @@ export class ForkStore extends EntityStore<EntityFork> {
             base: this.baseValue.id,
             values: budValues,
         };
-        let results = await this.uq.SaveFork.submit(param);
+        let results = await this.client.SaveFork(param);
         const { id: retId } = results;
         if (retId === 0) {
             console.error('input error');
@@ -105,8 +105,11 @@ export class ForkStore extends EntityStore<EntityFork> {
         if (retId < 0) {
             return EnumSaveFork.duplicateKey;
         }
-        results.values = budValues;
-        this.addFork(results);
+        // results.values = budValues;
+        this.addFork({
+            id: retId,
+            values: budValues,
+        });
         return EnumSaveFork.success;
     }
 }

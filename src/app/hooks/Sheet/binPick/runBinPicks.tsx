@@ -1,4 +1,4 @@
-import { EntityBin } from "app/Biz";
+import { EntityBin } from "tonwa";
 import { BinBudsEditing, doBinPick, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../store";
 import { PickResult } from "app/hooks/Calc";
 

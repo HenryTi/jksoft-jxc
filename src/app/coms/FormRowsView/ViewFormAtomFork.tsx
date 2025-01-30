@@ -1,4 +1,4 @@
-import { EntityFork } from "app/Biz";
+import { EntityFork } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { useState, JSX } from "react";
 import {

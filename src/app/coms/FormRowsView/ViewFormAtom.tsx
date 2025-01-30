@@ -1,4 +1,4 @@
-import { EntityAtom } from "app/Biz";
+import { EntityAtom } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { useCallback, useState, JSX } from "react";
 import {

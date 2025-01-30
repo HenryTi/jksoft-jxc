@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { EnumSysBud } from "app/Biz";
+import { EnumSysBud } from "tonwa";
 import { Band, FormBin, FormContext } from "./FormRowsView";
 
 export function ViewFormBin({ row, label, formContext }: {

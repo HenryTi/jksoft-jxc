@@ -1,5 +1,5 @@
 import { from62, to62 } from "tonwa-com";
-import { BizBud, EntityAtom, EntityID, EnumBudType } from "app/Biz";
+import { BizBud, EntityAtom, EntityID, EnumBudType } from "tonwa";
 import { EntityStore, QueryMore, readBuds } from "app/tool";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { useParams } from "react-router-dom";
@@ -53,7 +53,7 @@ export class AtomStore extends EntityStore<EntityID> {
     }
 
     async getAtom(id: number) {
-        const { biz, uq } = this.entity;
+        const { biz } = this.entity;
         let ret = await this.getAtomBase(id);
         let { main } = ret;
         let { phrase } = main;
@@ -64,8 +64,8 @@ export class AtomStore extends EntityStore<EntityID> {
     }
 
     private async getAtomBase(id: number) {
-        const { uq, biz } = this.entity;
-        let { props } = await uq.GetAtom.query({ id });
+        const { biz } = this.entity;
+        let props = await biz.client.GetAtom(id);
         let { main, buds } = readBuds(biz, id, props);
         return {
             main, buds
@@ -73,8 +73,8 @@ export class AtomStore extends EntityStore<EntityID> {
     }
 
     saveField = async (id: number, name: string, value: string | number) => {
-        const { uq } = this.entity;
-        await uq.ActIDProp(uq.Atom, id, name, value);
+        const { biz } = this.entity;
+        await biz.client.ActIDProp(id, name, value);
     }
 
     saveBudValue = async (id: number, bizBud: BizBud, value: string | number) => {
@@ -86,18 +86,14 @@ export class AtomStore extends EntityStore<EntityID> {
             case EnumBudType.dec: dec = value as number; break;
             case EnumBudType.str: str = value as string; break;
         }
-        const { uq } = this.entity;
-        await uq.SaveBudValue.submit({
-            id,
-            phraseId,
-            int, dec, str
-        });
+        const { biz } = this.entity;
+        await biz.client.SaveBudValue({ id, phraseId, int, dec, str });
     }
 
     readonly searchItems: QueryMore = async (param: any, pageStart: any, pageSize: number) => {
         let newParam = { phrase: this.entity.id, ...param };
-        let query = this.entity.uq.GetIDList;
-        let { $page, props, atoms, forks } = await query.page(newParam, pageStart, pageSize);
+        let { $page, props, atoms, forks } = await this.client.GetIDList(newParam, pageStart, pageSize);
+        // let { $page, props, atoms, forks } = await query.page(newParam, pageStart, pageSize);
         this.cacheIdAndBuds(props, atoms, forks);
         return $page;
     }
@@ -119,12 +115,14 @@ export class AtomStore extends EntityStore<EntityID> {
     }
 
     async directListCount(): Promise<number> {
-        let ret = await this.entity.uq.GetIDListCount.query({ phrase: this.entity.id });
-        return ret.ret[0].count;
+        return this.client.GetIDListCount(this.entity.id);
+        // let ret = await this.entity.uq.GetIDListCount.query({ phrase: this.entity.id });
+        // return ret.ret[0].count;
     }
 
     async setIDBase(id: number, base: number) {
-        await this.entity.uq.SetIDBase.submit({ id, base });
+        // await this.entity.uq.SetIDBase.submit({ id, base });
+        this.client.SetIDBase(id, base);
     }
 }
 

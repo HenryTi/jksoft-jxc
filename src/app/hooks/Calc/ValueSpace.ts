@@ -1,4 +1,4 @@
-import { Biz, EntityOptions } from "app/Biz";
+import { Biz, EntityOptions } from "tonwa";
 import { CalcIdObj } from "./Calc";
 
 export type PickResult = { [prop: string]: number | string | object };

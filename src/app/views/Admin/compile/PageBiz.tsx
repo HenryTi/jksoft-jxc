@@ -3,7 +3,7 @@ import { Route } from "react-router-dom";
 import { IDView, Page, useModal } from "tonwa-app";
 import { PageCode } from './PageCode';
 import { useUqApp } from "app/UqApp";
-import { BizGroup, Entity, EntityQuery } from "app/Biz";
+import { BizGroup, Entity, EntityQuery } from "tonwa";
 import { PageEntity } from "./PageEntity";
 import { FA, theme } from "tonwa-com";
 import { useAtomValue } from "jotai";

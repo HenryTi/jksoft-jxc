@@ -1,4 +1,4 @@
-import { EntityPermit, EntityRole, PermitItem } from "app/Biz/EntityPermit";
+import { EntityPermit, EntityRole, PermitItem } from "tonwa";
 import { Permit } from "../../Site";
 import { useUqApp } from "app/UqApp";
 import { useAtomValue } from "jotai";
