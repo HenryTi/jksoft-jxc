@@ -1,6 +1,6 @@
 import { BinPick, EnumDetailOperate, PickOptions, PickPend } from "tonwa";
 import { useRef, useState, JSX } from "react";
-import { BinBudsEditing, doBinPick, doBinPickRear, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../../store";
+import { BinBudsEditing, doBinPick, doBinPickRear, FormBudsStore, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../../../../Store";
 import { getAtomValue } from "tonwa-com";
 import { FA, Sep } from "tonwa-com";
 import { PickResult, ViewAtomId, ViewBud } from "app/hooks";
@@ -9,6 +9,7 @@ import { BizPhraseType } from "uqs/UqDefault";
 import { InputScalar } from "../InputScalar";
 import { RowCols } from "app/hooks/tool";
 import { PickRow } from "./PickRow";
+import { useModal } from "tonwa-app";
 
 interface Props {
     subHeader?: string;
@@ -17,10 +18,12 @@ interface Props {
 }
 
 export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
+    const modal = useModal();
     const rearPickResultType = RearPickResultType.scalar;
     const { mainStore: main, binStore, sheetConsole } = sheetStore;
     const { steps } = sheetConsole;
-    let { current: editing } = useRef(new BinBudsEditing(sheetStore, main.entity, []));
+    let { current: formBudsStore } = useRef(new FormBudsStore(modal, new BinBudsEditing(sheetStore, main.entity, [])));
+    let { budsEditing } = formBudsStore;
     const [cur, setCur] = useState(0);
 
     const { binPicks, rearPick } = main.entity;
@@ -32,13 +35,13 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
 
     function clearTailPicks(curSerial: number) {
         for (let i = curSerial + 1; i < binPicks.length; i++) {
-            editing.clearNameValues(binPicks[i].name);
+            formBudsStore.clearNameValues(binPicks[i].name);
         }
     }
 
     function afterPicked(curSerial: number) {
         clearTailPicks(curSerial);
-        editing.setChanging();
+        budsEditing.setChanging();
         setCur(curSerial + 1);
         binStore.setReload();
     }
@@ -49,7 +52,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
         let rearResult: PickResult[] = Array.isArray(rearPickResult) === false ?
             [rearPickResult as PickResult] : rearPickResult as PickResult[];
         let ret: ReturnUseBinPicks = {
-            editing,
+            editing: formBudsStore,
             rearBinPick: rearPick,           // endmost pick
             rearResult,
             rearPickResultType: rearPickResultType,
@@ -77,15 +80,15 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
     </div>;
     function ViewPick({ binPick, serial }: { binPick: BinPick; serial: number; }) {
         const [message, setMessage] = useState(undefined as string);
-        useAtomValue(editing.atomChanging);
+        useAtomValue(budsEditing.atomChanging);
         if (binPick.fromPhraseType === BizPhraseType.any) {
             if (serial === cur) {
                 const { caption, name } = binPick;
-                const defaultValue = editing.getValue(name);
+                const defaultValue = formBudsStore.getValue(name);
                 async function onPicked(scalarResult: PickResult) {
                     if (scalarResult === undefined) return;
-                    editing.setNamedValue(binPick.to[0][0].name, scalarResult as any);
-                    editing.setNamedValue(binPick.name, scalarResult as any);
+                    formBudsStore.setNamedValue(binPick.to[0][0].name, scalarResult as any);
+                    formBudsStore.setNamedValue(binPick.name, scalarResult as any);
                     let nextPick = getNextPick();
                     afterPicked(serial);
                     if (nextPick.fromPhraseType === BizPhraseType.pend) {
@@ -97,11 +100,11 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                     const { binStore, mainStore } = sheetStore;
                     const { atomPendRows, operate, entity } = binStore;
                     const { divLevels } = entity;
-                    let pendStore = binStore.getPickPendStore(nextPick as PickPend, editing.valueSpace);
+                    let pendStore = binStore.getPickPendStore(nextPick as PickPend);
                     const { paramsEditing } = pendStore;
                     for (let bud of mainStore.entity.buds) {
                         let { name } = bud;
-                        let editingValue = editing.getValue(name);
+                        let editingValue = formBudsStore.getValue(name);
                         paramsEditing.setNamedValues(name, editingValue);
                     }
                     await pendStore.searchPend();
@@ -119,7 +122,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                                 colVal = midValue.value; // pendRow.mid[]
                             }
                         }
-                        editing.setNamedValue(bud.name, colVal);
+                        formBudsStore.setNamedValue(bud.name, colVal);
                     }
                     afterPicked(serial + 1);
                     // 直接写入单据明细
@@ -157,7 +160,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
             }
         }
         async function pick() {
-            if (await doBinPick(editing, binPick) !== undefined) {
+            if (await doBinPick(formBudsStore, binPick) !== undefined) {
                 afterPicked(serial);
             }
         }
@@ -175,7 +178,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
         </PickRow>;
     }
     function ViewPicked({ binPick, pick }: { binPick: BinPick; pick: () => Promise<void>; }) {
-        let val = editing.getValue(binPick.name);
+        let val = formBudsStore.getValue(binPick.name);
         let vVal: any;
         if (val === undefined) {
             vVal = <span className="text-secondary">-</span>;
@@ -219,7 +222,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
         </PickRow>;
     }
     function ViewPickRear() {
-        useAtomValue(editing.atomChanging);
+        useAtomValue(budsEditing.atomChanging);
         let serial = binPicks.length;
         if (rearPick.fromPhraseType === BizPhraseType.pend) {
             let cnAngle: string, iconPrefix: string, vContent: any;
@@ -240,7 +243,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                     vContent = <div className="py-2">
                         <RowCols>
                             {to.map(([bud]) => {
-                                return <ViewBud key={bud.id} bud={bud} value={editing.getValue(bud.name)} />;
+                                return <ViewBud key={bud.id} bud={bud} value={formBudsStore.getValue(bud.name)} />;
                             })}
                         </RowCols>
                     </div>
@@ -252,7 +255,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
         }
         if (serial > cur) return <ViewToPick binPick={rearPick} />;
         async function pick() {
-            let pickResult = await doBinPickRear(binStore, editing, rearPick, rearPickResultType);
+            let pickResult = await doBinPickRear(binStore, formBudsStore, rearPick, rearPickResultType);
             if (pickResult !== undefined) {
                 refRearPickResult.current = pickResult;
                 afterPicked(serial + 1);

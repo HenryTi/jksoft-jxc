@@ -1,5 +1,5 @@
 import { Page, PageConfirm, useModal } from "tonwa-app";
-import { SheetStore, SubmitState, upload } from "../store";
+import { SheetStore, SubmitState, upload } from "../../../Store";
 import { detailNewLoop, ViewDiv, ViewMain } from "../binEdit";
 import { useAtomValue } from "jotai";
 import React, { useRef, useState, JSX } from "react";
@@ -26,7 +26,8 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     });
     async function onSubmit() {
         function checkTrigger() {
-            if (mainStore.trigger() === false) return false;
+            console.error('if (mainStore.trigger() === false) return false;');
+            // if (mainStore.trigger() === false) return false;
             if (binStore !== undefined) {
                 if (binStore.trigger() === false) return false;
             }

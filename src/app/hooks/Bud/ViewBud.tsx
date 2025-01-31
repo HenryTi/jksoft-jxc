@@ -1,8 +1,7 @@
-import { BizBud, BudBin, BudFork, BudID, BudRadio, EntityAtom, EntityFork, EnumBudType, EnumSysBud } from "tonwa";
+import { AtomData, BizBud, BudBin, BudFork, BudID, BudRadio, EntityAtom, EntityFork, EntityStore, EnumBudType, EnumSysBud } from "tonwa";
 import { ViewBudFork, ViewForkAtom, ViewForkNoAtom } from "app/hooks";
-import { AtomData, EntityStore, contentFromDays } from "app/tool";
+import { contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
-import { Atom as BizAtom, BizPhraseType } from "uqs/UqDefault";
 import { ViewForkId } from "app/coms/ViewForkId";
 import { dateFromMinuteId, EasyDate } from "tonwa-com";
 

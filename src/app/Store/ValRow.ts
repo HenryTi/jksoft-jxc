@@ -1,5 +1,4 @@
 import { BinRow, BizBud, EntityPend, predefinedPendFields } from "tonwa";
-import { FA } from "tonwa-com";
 
 const sheetFields = ['si', 'sx', 'svalue', 'sprice', 'samount'];
 export class PendProxyHandler implements ProxyHandler<any> {
@@ -62,9 +61,6 @@ export function getValRowPropArr(valRow: ValRow, buds: BizBud[]) {
     }
     return propArr;
 }
-
-export const btnNext = <>下一步 <FA name="arrow-right" className="ms-2" /></>;
-export const cnNextClassName: string = "btn btn-primary";
 
 export function mergeValRow(dest: ValRow, src: ValRow) {
     if (src === undefined) return;

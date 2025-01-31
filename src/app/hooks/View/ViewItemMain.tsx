@@ -2,7 +2,7 @@ import { EasyTime } from "tonwa-com";
 import { Sheet } from "uqs/UqDefault";
 import { ViewOperator } from "./ViewOperator";
 import { Bin } from "app/tool";
-import { SheetStore } from "../Sheet/store";
+import { SheetStore } from "../../Store";
 import { RowCols } from "../tool";
 import { ViewBud } from "..";
 

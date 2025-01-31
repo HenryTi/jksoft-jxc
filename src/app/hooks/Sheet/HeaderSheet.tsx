@@ -1,6 +1,6 @@
 import { JSX } from "react";
 import { FA } from "tonwa-com";
-import { SheetStore } from "./store";
+import { SheetStore } from "../../Store";
 import { ItemDef, ToolGroup, ToolItem, Toolbar, toolButtonDef, toolIconDef } from "app/coms";
 
 const btn = ' btn ';

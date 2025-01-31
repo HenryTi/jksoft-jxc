@@ -2,12 +2,11 @@ import { useRef, useState, JSX } from "react";
 import { SearchBox } from "tonwa-com";
 import { PageQueryMore } from "app/coms";
 import { Page, PageError, useModal } from "tonwa-app";
-import { BizBud, EntityID, EntityFork } from "tonwa";
+import { BizBud, EntityID, EntityFork, AtomData } from "tonwa";
 import { Atom, BizPhraseType } from "uqs/UqDefault";
 import { RowMed, createIDSelectStore } from "./IDSelectStore";
 import { RowColsSm } from "../tool";
 import { ViewAtomId, ViewBud } from "..";
-import { AtomData } from "app/tool";
 
 export function useIDSelect() {
     const modal = useModal();

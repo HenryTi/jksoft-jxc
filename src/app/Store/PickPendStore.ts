@@ -7,13 +7,13 @@ import { contentFromDays, fromDays } from "app/tool";
 export class PickPendStore {
     readonly binStore: BinStore;
     readonly pickPend: PickPend;
-    readonly valueSpace: ValueSpace;
+    // readonly valueSpace: ValueSpace;
     readonly paramsEditing: BinBudsEditing;
 
-    constructor(binStore: BinStore, pickPend: PickPend, valueSpace: ValueSpace) {
+    constructor(binStore: BinStore, pickPend: PickPend/*, valueSpace: ValueSpace*/) {
         this.binStore = binStore;
         this.pickPend = pickPend;
-        this.valueSpace = valueSpace;
+        // this.valueSpace = valueSpace;
         this.paramsEditing = this.createParamsEditing();
         this.paramsEditing.calcAll();
     }

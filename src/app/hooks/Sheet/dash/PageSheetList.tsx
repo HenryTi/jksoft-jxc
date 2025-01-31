@@ -3,9 +3,8 @@ import { useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { PageSheetSearch } from "./PageSheetSearch";
 import { ViewSheetItem } from "./ViewSheetItem";
-import { DashConsole } from "../store";
+import { DashConsole, FormBudsStore, ValuesBudsEditing } from "../../../Store";
 import { LabelBox, RowCols } from "app/hooks/tool";
-import { BudsEditing, LabelRowEdit, ValuesBudsEditing, ViewBud } from "app/hooks";
 import { ChangeEvent, useRef, useState } from "react";
 
 export function PageSheetList({ dashConsole }: { dashConsole: DashConsole; }) {
@@ -28,7 +27,7 @@ export function PageSheetList({ dashConsole }: { dashConsole: DashConsole; }) {
     }
     let { current: no } = useRef(undefined as string);
     const [param, setParam] = useState(initParam);
-    const { current: budsEditing } = useRef(new ValuesBudsEditing(modal, biz, primeBuds));
+    const { current: budsEditing } = useRef(new FormBudsStore(modal, new ValuesBudsEditing(biz, primeBuds)));
     async function onSearch() {
         modal.open(<PageSheetSearch dashConsole={dashConsole} />);
     }
@@ -48,7 +47,7 @@ export function PageSheetList({ dashConsole }: { dashConsole: DashConsole; }) {
         no = e.currentTarget.value;
     }
     function onSearchList() {
-        let p = { ...budsEditing.values, no };
+        let p = { /*...budsEditing.values,*/ no };
         alert('查询实现中，参数：' + JSON.stringify(p));
     }
     return <PageQueryMore

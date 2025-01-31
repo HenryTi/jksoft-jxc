@@ -1,8 +1,8 @@
-import { PickAtom } from "tonwa";
-import { AtomData } from "app/tool";
-import { BudsEditing, PageIDSelect, PickResult } from "app/hooks";
+import { AtomData, PickAtom } from "tonwa";
+import { PageIDSelect, PickResult } from "app/hooks";
+import { FormBudsStore } from "app/Store";
 
-export async function pickFromAtom(editing: BudsEditing, binPick: PickAtom): Promise<PickResult> {
+export async function pickFromAtom(editing: FormBudsStore, binPick: PickAtom): Promise<PickResult> {
     const { modal } = editing;
     let { caption, from } = binPick;
     let ret = await modal.open<AtomData>(<PageIDSelect entity={from[0]} caption={caption} />);

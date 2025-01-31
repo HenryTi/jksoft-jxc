@@ -1,10 +1,10 @@
 import { Page, useModal } from "tonwa-app";
 import { ButtonAsync, FA, List, Sep, setAtomValue, theme, wait } from "tonwa-com";
-import { PendRow } from "../store";
+import { FormBudsStore, PendRow } from "../../../Store";
 import { ViewPendRowEdit } from "../binEdit/ViewPendRowEdit";
 import { ViewSteps } from "../dash/ViewSteps";
 import { RowCols } from "app/hooks/tool";
-import { PickPendStore } from "../store/PickPendStore";
+import { PickPendStore } from "../../../Store/PickPendStore";
 import { useAtomValue } from "jotai";
 
 export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
@@ -69,9 +69,10 @@ export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
 
     function ViewParams() {
         let { paramsEditing } = pendStore;
+        let formBudsStore = new FormBudsStore(modal, paramsEditing);
         return <div className={'border-bottom border-primary py-2 tonwa-bg-gray-2 ' + theme.bootstrapContainer}>
             <RowCols>
-                {paramsEditing.buildEditBuds()}
+                {formBudsStore.buildEditBuds()}
                 <div className="d-flex align-items-end mb-2">
                     <ButtonAsync className="btn btn-outline-primary" onClick={onSearch}>
                         <FA name="search" /> 查询

@@ -9,9 +9,10 @@ import { BizBud, EntityAtom, EntityID } from "tonwa";
 import { Tabs, Tab } from "react-bootstrap";
 import { ViewForkListAutoLoad } from "./fork";
 import { AtomIDValue } from "./AtomIDValue";
-import { ValuesBudsEditing } from "../BudsEditing";
+// import { FormBudsStore, ValuesBudsEditing } from "../../Store/BudsEditing";
 import { ViewIDLabel } from "../tool";
 import { AtomStore } from "./AtomStore";
+import { FormBudsStore, ValuesBudsEditing } from "app/Store";
 
 export function useBizAtomView(options: OptionsUseBizAtom & { id?: number; bottom?: any; }) {
     const { id: pageId } = useParams();
@@ -199,8 +200,9 @@ export function ViewIDEdit({ entity, value, readOnly }: { entity: EntityID; valu
     let { buds: atomProps, budGroups } = entity;
     const { id, buds } = value;
     function buildVPropRows(props: BizBud[], flag: JSX.Element = undefined) {
-        const valuesBudsEditing = new ValuesBudsEditing(modal, entity.biz, props);
+        const valuesBudsEditing = new ValuesBudsEditing(entity.biz, props);
         const budEditings = valuesBudsEditing.createBudEditings();
+        const formBudsStore = new FormBudsStore(modal, valuesBudsEditing);
         return budEditings.map(v => {
             if (v === undefined) debugger;
             let budEditing = v; // valuesBudsEditing.createBudEditing(v); // new BudEditing(v);
@@ -215,6 +217,7 @@ export function ViewIDEdit({ entity, value, readOnly }: { entity: EntityID; valu
                     id={id}
                     flag={flag}
                     labelSize={2}
+                    formBudsStore={formBudsStore}
                     budEditing={budEditing} value={prop as any}
                     readOnly={readOnly}
                 />

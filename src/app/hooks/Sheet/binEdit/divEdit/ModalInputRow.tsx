@@ -3,7 +3,7 @@ import { theme } from "tonwa-com";
 import { Band } from "app/coms";
 import { ViewForkAtomBold } from "app/hooks/View";
 import { ButtonAsync, FA } from "tonwa-com";
-import { BinBudsEditing, ValDivBase } from "../../store";
+import { BinBudsEditing, FormBudsStore, ValDivBase } from "../../../../Store";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { FormBudsEditing } from "../../../View";
 
@@ -54,13 +54,14 @@ export function ModalInputRow({ binEditing, valDiv }: { binEditing: BinBudsEditi
         </Band>;
     }
 
+    const formBudsStore = new FormBudsStore(modal, binEditing);
     return <Page header={caption} right={right}>
         <div className={' py-1 tonwa-bg-gray-2 mb-3 ' + theme.bootstrapContainer}>
             <ViewIdField value={binDetail.i} base={valDiv?.iBase} />
             <ViewIdField value={binDetail.x} base={valDiv?.xBase} />
         </div>
         <FormBudsEditing className={theme.bootstrapContainer}
-            budsEditing={binEditing}
+            formBudsStore={formBudsStore}
             onSubmit={onSubmit}
             submit="确认明细"
             validate={validate} />

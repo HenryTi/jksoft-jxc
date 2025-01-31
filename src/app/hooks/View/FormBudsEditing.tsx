@@ -1,11 +1,13 @@
 import { useForm } from "react-hook-form";
-import { BudsEditing } from "../BudsEditing";
+// import { BudsEditing, FormBudsStore } from "../../Store/BudsEditing";
 import { ChangeEvent, useState, JSX } from "react";
 import { ValueSetType } from "tonwa";
 import { FormRowsView } from "app/coms";
+import { FormBudsStore } from "app/Store";
 
 interface Props {
-    budsEditing: BudsEditing;
+    formBudsStore: FormBudsStore;
+    // budsEditing: BudsEditing;
     className?: string;
     onSubmit(data: any): Promise<void>;
     submit?: string | JSX.Element;
@@ -16,8 +18,9 @@ interface Props {
     validate?(data: any): [string, string][];
 }
 
-export function FormBudsEditing({ className, budsEditing, onSubmit, submit: submitCaption, submitClassName, validate }: Props) {
+export function FormBudsEditing({ className, formBudsStore, onSubmit, submit: submitCaption, submitClassName, validate }: Props) {
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
+    const { budsEditing } = formBudsStore;
     const [submitable, setSubmitable] = useState(budsEditing.submitable());
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {
         const { type, value: valueInputText, name } = evt.target;
@@ -30,7 +33,7 @@ export function FormBudsEditing({ className, budsEditing, onSubmit, submit: subm
     }
     const options = { onChange };
     budsEditing.buildCalcBuds();
-    const formRows = budsEditing.buildFormRows(true);
+    const formRows = formBudsStore.buildFormRows(true);
     formRows.forEach(v => {
         if (v === undefined) return null;
         return (v as any).options = { ...(v as any).options, ...options };

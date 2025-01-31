@@ -1,7 +1,7 @@
 import { JSX } from "react";
 import { Prop, RowCols, RowColsSm, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { getAtomValue, theme } from "tonwa-com";
-import { BinStore, PendRow } from "../store";
+import { BinStore, PendRow } from "../../../Store";
 import { ViewForkAtomBold, ViewForkAtomTitles, ViewForkBuds } from "app/hooks/View";
 import { ViewBud } from "app/hooks";
 

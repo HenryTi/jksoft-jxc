@@ -1,6 +1,6 @@
 import { Page, PageSpinner, useModal } from "tonwa-app";
 import { useEffectOnce } from "tonwa-com";
-import { RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetSteps, SheetStore } from "../store";
+import { BinEditing, FormBudsStore, RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetSteps, SheetStore } from "../../../Store";
 import { useAtomValue } from "jotai";
 import { PageSheet } from "./PageSheet";
 import { useCallback } from "react";
@@ -9,6 +9,7 @@ import { buttonDefs, headerSheet } from "../HeaderSheet";
 import { ViewMainPicks } from "../binPick";
 import { ViewSteps } from "./ViewSteps";
 import { detailNew } from "../binEdit";
+import { Modal } from "tonwa";
 
 export function PageSheetEdit({ store, sheetId, readonly }: { store: SheetStore; sheetId: number; readonly?: boolean; }) {
     const loaded = useAtomValue(store.atomLoaded);
@@ -78,10 +79,11 @@ function PageMainPend({ store }: { store: SheetStore; }) {
 }
 
 function PageSheetDirect({ store }: { store: SheetStore; }) {
+    const modal = useModal();
     const { caption } = store;
     useEffectOnce(() => {
         (async function () {
-            await nothingPicked(store);
+            await nothingPicked(modal, store);
             await store.setSheetAsDraft();
         })();
     });
@@ -151,7 +153,7 @@ function PageDirectPend({ store }: { store: SheetStore; }) {
     const subCaption = '批选待处理';
     useEffectOnce(() => {
         (async function () {
-            await nothingPicked(store);
+            await nothingPicked(modal, store);
             let added = await detailNew(store);
             if (added > 0) {
                 await store.setSheetAsDraft();
@@ -167,10 +169,14 @@ function PageDirectPend({ store }: { store: SheetStore; }) {
     </Page>;
 }
 
-async function nothingPicked(store: SheetStore) {
-    let { budsEditing: editing } = store.mainStore;
+async function nothingPicked(modal: Modal, store: SheetStore) {
+    let { entity } = store.mainStore;
+    const budsEditing = new BinEditing(store, entity);
+    // const budEditings = budsEditing.createBudEditings();
+    const formBudsStore = new FormBudsStore(modal, budsEditing);
+
     let results: ReturnUseBinPicks = {
-        editing,
+        editing: formBudsStore,
         rearBinPick: undefined,
         rearResult: [],
         rearPickResultType: RearPickResultType.scalar,

@@ -1,8 +1,7 @@
-import { EntityID } from "tonwa";
+import { AtomData, EntityID } from "tonwa";
 import { ViewAtom } from "../BizAtom";
 import { useCallback } from "react";
 import { useIDSelect } from "./PageIDSelect";
-import { AtomData } from "app/tool";
 
 export function usePickID() {
     const IDSelect = useIDSelect();

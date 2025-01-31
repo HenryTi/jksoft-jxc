@@ -58,6 +58,7 @@ export class UqApp extends UqAppBase<UQs> {
     uq: UqExt;
     roleStore: RoleStore;
     roleStore0: RoleStore;
+    client: Client;
     readonly cache: any = {};
 
     get pathLogin() { return '/login'; }
@@ -88,6 +89,7 @@ export class UqApp extends UqAppBase<UQs> {
 
     protected onLoadUQs() {
         this.uq = this.uqs.UqDefault;
+        this.client = new UqClient(this.uq);
     }
 
     // 1. 可以支持多个site
@@ -126,7 +128,7 @@ export class UqApp extends UqAppBase<UQs> {
     }
 
     atomSiteLogined = atom(false);
-    client: Client;
+    // client: Client;
     loginSite = async () => {
         if (this.uqSites !== undefined) return this.biz;
         this.uqSites = new UqSites(this.uqMan);
@@ -138,16 +140,15 @@ export class UqApp extends UqAppBase<UQs> {
             siteLogined = true;
             let { uqApi } = this.uqMan;
             let { schemas, logs } = await uqApi.biz();
-            let client = new UqClient(this.uq);
             if (schemas === undefined) {
                 debugger;
                 console.error('uq-api compile saved bizobject error', logs);
-                this.biz = new Biz(client, undefined, logs);
+                this.biz = new Biz(this.client, undefined, logs);
             }
             else {
                 console.log('schemas size: ', schemas.length);
                 let bizSchema = jsonpack.unpack(schemas);
-                this.biz = new Biz(client, bizSchema, undefined);
+                this.biz = new Biz(this.client, bizSchema, undefined);
             }
             await this.initRoleStore();
         }

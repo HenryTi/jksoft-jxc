@@ -10,9 +10,10 @@ import { BizBud, EntityAtom, ValueSetType } from "tonwa";
 import { useState } from "react";
 import { Atom } from "uqs/UqDefault";
 // import { UseQueryOptions } from "app/tool";
-import { BinBudsEditing } from "../Sheet/store";
-import { BudsEditing, ValuesBudsEditing } from "../BudsEditing";
+//import { BinBudsEditing } from "../../Store";
+//import { BudsEditing, ValuesBudsEditing } from "../../Store/BudsEditing";
 import { pathAtom } from "./AtomStore";
+import { ValuesBudsEditing } from "app/Store";
 
 interface OptionsNew {
 }
@@ -119,7 +120,7 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
         const { register, handleSubmit, formState: { errors }, } = useForm({ mode: 'onBlur' });
         async function onSubmit(data: any) {
             const { buds } = entity;
-            let budsEditing = new ValuesBudsEditing(modal, biz, entity.buds);
+            let budsEditing = new ValuesBudsEditing(biz, entity.buds);
             budsEditing.calcAll();
             let budValues: [BizBud, number | string][] = [];
             for (let bud of buds) {

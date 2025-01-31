@@ -1,37 +1,38 @@
-import React, { MouseEvent, MouseEventHandler, useRef, useState } from "react";
+import { MouseEvent, useState } from "react";
 import { Route } from "react-router-dom";
-import { IDView, Page, useModal } from "tonwa-app";
+import { Page, useModal } from "tonwa-app";
 import { PageCode } from './PageCode';
 import { useUqApp } from "app/UqApp";
-import { BizGroup, Entity, EntityQuery } from "tonwa";
+import { BizGroup, Entity } from "tonwa";
 import { PageEntity } from "./PageEntity";
 import { FA, theme } from "tonwa-com";
-import { useAtomValue } from "jotai";
+// import { useAtomValue } from "jotai";
 import { centers } from "app/views/center";
 import { ViewSite } from "app/views/Site";
 
-function PageBiz() {
-    const { header, right, view } = useBuildViewBiz();
-    return <Page header={header} right={right}>
-        {view}
-    </Page>;
-}
-
 const rowCols = ' gx-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 ';
-export function useBuildViewBiz() {
+export function PageBiz({ back }: { back?: 'close' | 'back' | 'none' | string; }) {
+    // const { header, right, view } = useBuildViewBiz();
+    //}
+
+    // export function useBuildViewBiz() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
     const modal = useModal();
     const { compile } = centers;
     const { uq, uqSites } = uqApp;
     let { userSite } = uqSites;
-    useAtomValue(biz.atomSchemasChanged);
+    // useAtomValue(biz.atomSchemasChanged);
+    const [bizChanged, setBizChanged] = useState(false);
 
-    function onCode() {
-        modal.open(<PageCode />);
+    function onCompiled() {
+        setBizChanged(!bizChanged);
     }
-    function onEntity(entity: Entity) {
-        modal.open(<PageEntity entity={entity} />);
+    async function onCode() {
+        await modal.open(<PageCode onCompiled={onCompiled} />);
+    }
+    async function onEntity(entity: Entity) {
+        await modal.open(<PageEntity entity={entity} onCompiled={onCompiled} />);
     }
     function ViewEntityItem({ value, icon, onEntity }: { value: Entity; icon: string; onEntity: (entity: Entity) => void; }) {
         let { id, caption, name } = value;
@@ -120,15 +121,15 @@ export function useBuildViewBiz() {
         })}
         </div>;
     }
-    return {
-        header: <>
-            {compile.caption} -
-            <ViewSite value={userSite} />
-        </>,
-        right: <button className="btn btn-primary btn-sm me-1" onClick={onCode}>
-            <FA name="bars" />
-        </button>,
-        view: <div className="">
+    const header = <>
+        {compile.caption} -
+        <ViewSite value={userSite} />
+    </>;
+    const right = <button className="btn btn-primary btn-sm me-1" onClick={onCode}>
+        <FA name="bars" />
+    </button>;
+    return <Page header={header} right={right} back={back}>
+        <div className="">
             <div className="">{
                 biz.hasEntity === false ?
                     <div className="small text-secondary p-3">
@@ -137,8 +138,8 @@ export function useBuildViewBiz() {
                     :
                     biz.groups.map((group, index) => <ViewGroup key={index} group={group} />)
             }</div>
-        </div>,
-    };
+        </div>
+    </Page>;
 }
 
 export const routeCompile = <Route path={`${centers.compile.path}`} element={<PageBiz />}></Route>;

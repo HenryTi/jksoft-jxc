@@ -5,14 +5,16 @@ import { Route } from "react-router-dom";
 import { BudValue, Page, useModal } from "tonwa-app";
 import { List, Sep } from "tonwa-com";
 import { RegisterOptions } from "react-hook-form";
-import { BudEditing, EditBudLabelRow, ValuesBudsEditing } from "app/hooks";
+import { BudEditing, EditBudLabelRow } from "app/hooks";
 import { readBuds } from "app/tool";
+import { FormBudsStore, ValuesBudsEditing } from "app/Store";
 
 export const pathSiteInit = 'site-init';
 export const captionSiteInit = '初始设置';
 
 interface InitValue {
     // bud: BizBud;
+    formBudsStore: FormBudsStore;
     budEditing: BudEditing;
     //value: { bud: number; value: BudValue; }
     value: BudValue;
@@ -69,7 +71,8 @@ export function PageSiteInit() {
         const { buds: budsValues } = readBuds(biz, undefined, result as any);
         const siteSetting = biz.entities['sitesetting'] as EntityBook;
         const { buds } = siteSetting;
-        const valuesBudsEditing = new ValuesBudsEditing(modal, biz, buds);
+        const valuesBudsEditing = new ValuesBudsEditing(biz, buds);
+        const formBudsStore = new FormBudsStore(modal, valuesBudsEditing);
         valuesBudsEditing.initBudValues(budsValues);
         const budEditings = valuesBudsEditing.createBudEditings();
         // let ret: InitValue[] = buds.map(v => { // }) initBuds.map(v => {
@@ -81,6 +84,7 @@ export function PageSiteInit() {
             const value = budsValues[id];
             // const bud = bizBuds[id];
             const initValue: InitValue = {
+                formBudsStore,
                 budEditing: v,
                 value,
                 options,
@@ -91,11 +95,12 @@ export function PageSiteInit() {
     }
 
     function ViewAssign({ value: item }: { value: InitValue; }) {
-        const { value, options, budEditing } = item;
+        const { value, options, formBudsStore, budEditing } = item;
         let site: number = undefined; // uqApp.uqSites.userSite.siteId;
         // let budEditing = new BudEditing(undefined, bud);
         return <EditBudLabelRow
             id={site}
+            formBudsStore={formBudsStore}
             budEditing={budEditing}
             value={value}
             options={options}

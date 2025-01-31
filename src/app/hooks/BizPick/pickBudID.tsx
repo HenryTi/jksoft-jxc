@@ -1,6 +1,5 @@
-import { BizBud, BudID, EntityAtom } from "tonwa";
+import { BizBud, BudID, EntityAtom, EntityStore } from "tonwa";
 import { FormContext, PageQueryMore } from "app/coms";
-import { EntityStore } from "app/tool";
 import { useRef, useState } from "react";
 import { Modal, useModal } from "tonwa-app";
 import { BizPhraseType, ParamGetIDList } from "uqs/UqDefault";

@@ -1,8 +1,12 @@
+import { ReturnAtoms, ReturnForks, ReturnProps } from "../Biz";
+
 export interface Client {
     GetUserBuds(userId: number): Promise<{
-        bud: number;
-        value: any;
-    }[]>;
+        buds: {
+            bud: number;
+            value: any;
+        }[]; atoms: ReturnAtoms[]; props: ReturnProps[]; forks: ReturnForks[];
+    }>;
     GetAtom(id: number): Promise<{
         phrase: number;
         value: any;
@@ -75,7 +79,7 @@ export interface Client {
     ): Promise<{
         main: ReturnSheetMain[];
         details: ReturnSheetDetails[];
-        origins: ReturnOrigins[];
+        origins: ReturnSheetBin[];
         props: ReturnProps[];
         atoms: ReturnAtoms[];
         forks: ReturnForks[];
@@ -83,7 +87,7 @@ export interface Client {
     GetSheet(id: number): Promise<{
         main: ReturnSheetMain[];
         details: ReturnSheetDetails[];
-        origins: ReturnOrigins[];
+        origins: ReturnSheetBin[];
         props: ReturnProps[];
         atoms: ReturnAtoms[];
         forks: ReturnForks[];
@@ -192,34 +196,22 @@ export interface ReturnGetIDList {
     phrase: number;
     seed: number;
 }
-export interface ReturnProps {
+export interface ReturnBin {
     id: number;
-    bud: number;
-    value: any;
-}
-export interface ReturnAtoms {
-    id: number;
-    phrase: number;
-    no: string;
-    ex: string;
-}
-export interface ReturnForks {
-    id: number;
-    phrase: number;
-    seed: number;
-}
-export interface ReturnSheetMainBase {
-    id: number;
-    base: number;
-    no: string;
-    operator: number;
-    sheet: number;
-    origin: number;
     i: number;
     x: number;
     value: number;
     amount: number;
     price: number;
+}
+export interface ReturnSheetBin extends ReturnBin {
+    base: number;
+    sheet: number;
+    origin: number;
+}
+export interface ReturnSheetMainBase extends ReturnSheetBin {
+    no: string;
+    operator: number;
 }
 export interface ReturnSheetMain extends ReturnSheetMainBase {
     phrase: number;
@@ -227,52 +219,20 @@ export interface ReturnSheetMain extends ReturnSheetMainBase {
 export interface ReturnSheetList$page extends ReturnSheetMainBase {
     rowCount: number;
 }
-export interface ReturnSheetDetails {
-    id: number;
-    sheet: number;
-    base: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
+export interface ReturnSheetDetails extends ReturnSheetBin {
     pend: number;
     pendValue: number;
     phrase: number;
 }
-export interface ReturnOrigins {
-    id: number;
-    sheet: number;
-    base: number;
-    origin: number;
-    i: number;
-    x: number;
-    value: number;
-    amount: number;
-    price: number;
-}
-export interface ReturnGetPend$page {
+export interface ReturnGetPend$page extends ReturnBin {
     pend: number;
     sheet: number;
-    id: number;
-    i: number;
-    x: number;
-    value: number;
-    price: number;
-    amount: number;
     pendValue: number;
     mid: any;
     cols: any;
 }
-export interface ReturnGetPendRetSheet {
-    id: number;
+export interface ReturnGetPendRetSheet extends ReturnBin {
     no: string;
-    i: number;
-    x: number;
-    value: number;
-    price: number;
-    amount: number;
 }
 export interface ReturnSubmitSheetDebugLogs {
     id: number;

@@ -1,13 +1,13 @@
-import { BizBud, EntityAtom, EntityFork } from "tonwa";
+import { BizBud, EntityAtom, EntityFork, EntityStore } from "tonwa";
 import {
     UseFormRegisterReturn, FieldError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";
 import { Band, FormContext, FormFork } from "./FormRowsView";
 import { Page, useModal } from "tonwa-app";
 import { FA, LabelRow, theme } from "tonwa-com";
-import { budContent, FormBudsEditing, LabelRowEdit, ValuesBudsEditing, ViewAtom, ViewForkAtomBold, ViewForkAtomTitles } from "app/hooks";
+import { budContent, FormBudsEditing, ViewAtom, ViewForkAtomBold, ViewForkAtomTitles } from "app/hooks";
 import { useRef, useState, JSX } from "react";
-import { EntityStore } from "app/tool";
+import { FormBudsStore, ValuesBudsEditing } from "app/Store";
 
 export function ViewFormForkObj({ row, label, error, inputProps, formContext, setValue, onChange }: {
     row: FormFork;
@@ -97,7 +97,8 @@ export function ViewFormForkObj({ row, label, error, inputProps, formContext, se
 function PageFork({ fork, value, baseId, store }: { fork: EntityFork; value: object; baseId: number; store: EntityStore; }) {
     const modal = useModal();
     const buds = [...fork.keys, ...fork.buds];
-    const { current: budsEditing } = useRef(new ValuesBudsEditing(modal, fork.biz, buds));
+    const { current: formBudsStore } = useRef(new FormBudsStore(modal, new ValuesBudsEditing(fork.biz, buds)));
+    const { budsEditing } = formBudsStore;
     budsEditing.setNamedValue('%base', baseId);
     budsEditing.initBudValues(value);
     async function onSubmit(data: any) {
@@ -116,6 +117,6 @@ function PageFork({ fork, value, baseId, store }: { fork: EntityFork; value: obj
                 </div>
             </Band>
         </div>
-        <FormBudsEditing budsEditing={budsEditing} onSubmit={onSubmit} className="px-3 pb-3" />
+        <FormBudsEditing formBudsStore={formBudsStore} onSubmit={onSubmit} className="px-3 pb-3" />
     </Page>;
 }

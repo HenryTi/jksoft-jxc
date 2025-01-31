@@ -1,11 +1,11 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { FA, List, useEffectOnce, wait } from "tonwa-com";
-import { Entity, EntitySheet } from "tonwa";
+import { Entity, EntitySheet, EntityStore } from "tonwa";
 import { PageSheetEdit, PageSheetNew } from "./PageSheetEntry";
-import { DashConsole, getUserBudValue } from "../store";
+import { DashConsole, getUserBudValue } from "../../../Store";
 import { Sheet } from "uqs/UqDefault";
-import { Bin, EntityStore, ViewNotifyCount } from "app/tool";
+import { Bin, ViewNotifyCount } from "app/tool";
 import { PageSheetList } from "./PageSheetList";
 import { useAtomValue } from "jotai";
 import { ViewReaction, ViewItemMain } from "app/hooks/View";
@@ -19,16 +19,17 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
     const { current: dashConsole } = useRef(new DashConsole(modal, entitySheet));
     let useSiteRoleReturn = useSiteRole();
     let { isAdmin } = useSiteRoleReturn.userSite;
-    const sheetStore = dashConsole.createSheetStore();
+    const sheetStore = useMemo(() => dashConsole.createSheetStore(), []);
     const { myDraftsStore } = dashConsole;
     const myDrafts = useAtomValue(myDraftsStore.atomMyDrafts);
     const [hasUserDefaults, setHasUserDefaults] = useState(undefined as boolean);
     useEffectOnce(() => {
         (async () => {
-            Promise.all([
-                dashConsole.loadUserDefaults(),
+            await Promise.all([
+                dashConsole.loadUserDefaults(sheetStore),
                 myDraftsStore.loadMyDrafts(),
             ]);
+            setHasUserDefaults(true);
         })();
     });
     async function onNew() {
@@ -114,6 +115,21 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
         }
     }
 
+    function viewUserDefaults() {
+        if (hasUserDefaults === undefined) return;
+        let { biz, userBuds } = entitySheet;
+        let { userDefaults } = biz;
+        if (userBuds === undefined || userDefaults === undefined) return null;
+        return <div className="container-fluid pt-2">
+            <div className="row row-cols-6">
+                {userBuds.map(v => {
+                    let userBudValue = getUserBudValue(entitySheet, v);
+                    return <ViewBud key={v.id} bud={v} value={userBudValue} store={sheetStore} />;
+                })}
+            </div>
+        </div>;
+    }
+
     return <Page header={pageHeader}>
         <div className="d-flex px-3 py-2 tonwa-bg-gray-1 border-bottom">
             <button className="btn btn-primary me-3" onClick={onNew}>
@@ -129,7 +145,7 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
             </button>
         </div>
         <ViewReaction atomContent={dashConsole.atomViewSubmited} className="ms-3 mt-3 me-auto" />
-        <ViewUserDefaults entity={entitySheet} store={sheetStore} />
+        {viewUserDefaults()}
         <div className="d-flex tonwa-bg-gray-2 ps-3 pe-2 pt-1 mt-2 align-items-end">
             <div className="pb-1 flex-grow-1">
                 草稿 <small className="text-secondary ms-3">(最多10份)</small>
@@ -147,18 +163,4 @@ export function PageSheetDash({ entitySheet }: { entitySheet: EntitySheet; }) {
             none={<div className="small text-secondary p-3">[无]</div>}
         />
     </Page>;
-}
-
-function ViewUserDefaults({ entity, store }: { entity: Entity; store: EntityStore; }) {
-    let { biz, userBuds } = entity;
-    let { userDefaults } = biz;
-    if (userBuds === undefined || userDefaults === undefined) return null;
-    return <div className="container-fluid pt-2">
-        <div className="row row-cols-6">
-            {userBuds.map(v => {
-                let userBudValue = getUserBudValue(entity, v);
-                return <ViewBud key={v.id} bud={v} value={userBudValue} store={store} />;
-            })}
-        </div>
-    </div>;
 }

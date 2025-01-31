@@ -7,9 +7,10 @@ import {
 } from "react-hook-form";
 import {
     EntityAtom, EntityFork, BizBud
-    , Entity, BudID, BinPick, EnumBudType
+    , Entity, BudID, BinPick, EnumBudType,
+    EntityStore
 } from "tonwa";
-import { contentFromDays, EntityStore } from "app/tool";
+import { contentFromDays } from "app/tool";
 import { ViewFormForkObj } from "./ViewFormForkObj";
 import { ViewFormAtom } from "./ViewFormAtom";
 import { ViewFormAtomFork } from "./ViewFormAtomFork";
@@ -183,7 +184,6 @@ export interface FormContext {
     setBudValue(bud: BizBud, value: any): void;
     store: EntityStore;
     calcValue(formula: string): number | string | object;
-    // getOnPick(bud: BizBud): (() => number | Promise<number>);
     getPick(bud: BizBud): BinPick;
 }
 

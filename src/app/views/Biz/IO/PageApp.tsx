@@ -1,7 +1,6 @@
 import { useUqApp } from "app";
-import { EntityIOApp, EntityIOSite, IOAppID } from "tonwa";
+import { AtomData, EntityIOApp, EntityIOSite, IOAppID } from "tonwa";
 import { LabelRowEdit, PagePickValue, ViewAtom } from "app/hooks";
-import { AtomData } from "app/tool";
 import React, { useState } from "react";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";

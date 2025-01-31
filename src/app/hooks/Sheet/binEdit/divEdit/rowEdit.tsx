@@ -1,5 +1,5 @@
 import { Modal, Page } from "tonwa-app";
-import { BinEditing, ValDivBase } from "../../store";
+import { BinEditing, ValDivBase } from "../../../../Store";
 import { ModalInputRow } from "./ModalInputRow";
 
 export async function rowEdit(modal: Modal, binEditing: BinEditing, valDiv: ValDivBase) {

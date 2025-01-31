@@ -3,13 +3,14 @@ import { UsersStore } from "./UsersStore";
 import { Image, Page, useModal } from "tonwa-app";
 import { FA, getAtomValue, setAtomValue, theme } from "tonwa-com";
 import { Entity, EnumBudType } from "tonwa";
-import { ValuesBudsEditing, ViewBud } from "app/hooks";
+import { ViewBud } from "app/hooks";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { useForm } from "react-hook-form";
 import { ViewUser } from "./ViewUser";
 import { ChangeEvent, JSX } from "react";
 import { useAtomValue } from "jotai";
 import { RowColsSm } from "app/hooks/tool";
+import { FormBudsStore, ValuesBudsEditing } from "app/Store";
 
 export function PageUser({ user, usersStore }: { user: ReturnGetUsers$page; usersStore: UsersStore; }) {
     const modal = useModal();
@@ -104,7 +105,7 @@ function PageEditUser({ user, usersStore, entity, userBudValues }: { user: Retur
     const { register, handleSubmit, setValue, setError, trigger, formState: { errors } } = useForm({ mode: 'onBlur' });
     const { bootstrapContainer } = theme;
     const { caption, name, userBuds: userBuds, biz } = entity;
-    const budsEditing = new ValuesBudsEditing(modal, biz, userBuds);
+    const budsEditing = new FormBudsStore(modal, new ValuesBudsEditing(biz, userBuds));
     budsEditing.initBudValues(userBudValues);
     const inputRows = budsEditing.buildFormRows();
     async function onChange(evt: ChangeEvent<HTMLInputElement>) {

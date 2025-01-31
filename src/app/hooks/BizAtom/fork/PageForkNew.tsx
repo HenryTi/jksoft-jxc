@@ -5,17 +5,17 @@ import { Band, FormRow, FormRowsView } from "app/coms";
 import { EnumBudType } from "tonwa";
 import { getDays } from "app/tool";
 import { theme } from "tonwa-com";
-import { ValuesBudsEditing } from "app/hooks/BudsEditing";
+import { FormBudsStore, ValuesBudsEditing } from "app/Store";
 
 export function PageForkNew({ store }: { store: ForkStore; }) {
     const modal = useModal();
-    const { caption, name, keys, buds: props } = store.entity;
+    const { caption, name, keys, buds: props, biz } = store.entity;
     const { register, handleSubmit, formState: { errors }, setError } = useForm({ mode: 'onBlur' });
     const submitCaption = '提交';
     const submitClassName: string = undefined;
     let buds = [...keys];
     if (props !== undefined) buds.push(...props);
-    const budsEditing = new ValuesBudsEditing(modal, store.biz, buds);
+    const budsEditing = new FormBudsStore(modal, new ValuesBudsEditing(store.biz, buds));
     let formRows: FormRow[] = [
         ...budsEditing.buildFormRows(),
         { type: 'submit', label: submitCaption, options: {}, className: submitClassName }

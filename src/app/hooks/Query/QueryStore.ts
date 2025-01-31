@@ -1,5 +1,5 @@
-import { BizBud, EntityQuery } from "tonwa";
-import { EntityStore } from "app/tool";
+import { BizBud, EntityQuery, EntityStore } from "tonwa";
+// import { EntityStore } from "app/tool";
 import { NamedProps, Prop, QueryRow, QueryRowCol } from "../tool";
 
 export class QueryStore extends EntityStore<EntityQuery> {
@@ -56,7 +56,7 @@ export class QueryStore extends EntityStore<EntityQuery> {
             for (let col of cols) {
                 const [bud, value] = col;
                 let colVal: QueryRowCol = [this.biz.budFromId(bud), value];
-                if (mainColsDef[bud] === true)
+                if (mainColsDef !== undefined && mainColsDef[bud] === true)
                     mainCols.push(colVal);
                 else {
                     subCols.push(colVal);

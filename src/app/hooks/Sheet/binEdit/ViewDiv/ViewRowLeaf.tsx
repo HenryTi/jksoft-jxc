@@ -3,7 +3,7 @@ import { theme } from "tonwa-com";
 import { RowColsSm } from "../../../tool";
 import { PAV, ViewDivProps, ViewDivRight, ViewPendValue, cn } from "./tool";
 import { ViewIBase } from "./ViewIBase";
-import { DivEditing } from "../../store";
+import { DivEditing } from "../../../../Store";
 import { ViewAtomPrimesOfStore, ViewForkBuds } from "app/hooks/View";
 
 export function ViewRowLeaf(props: ViewDivProps) {

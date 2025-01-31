@@ -1,7 +1,6 @@
 import { BinPick } from "tonwa";
-import { BudsEditing } from "app/hooks/BudsEditing";
 import { PickResult } from "app/hooks/Calc";
-import { BinBudsEditing } from "./BinEditing";
+import { FormBudsStore } from "./BinEditing";
 
 /*
 export interface NamedResults {
@@ -12,7 +11,7 @@ export interface NamedResults {
 export type PickResult = { [prop: string]: any };
 */
 export interface ReturnUseBinPicks {
-    editing: BinBudsEditing;
+    editing: FormBudsStore;
     // namedResults: NamedResults;
     rearBinPick: BinPick;           // rear pick = the endmost pick
     rearResult: PickResult[];

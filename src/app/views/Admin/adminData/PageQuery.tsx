@@ -1,10 +1,9 @@
 import { EntityQuery } from "tonwa";
-import { BudsEditing, ValuesBudsEditing } from "../../../hooks/BudsEditing";
 import { Page, useModal } from "tonwa-app";
 import { useForm } from "react-hook-form";
 import { FormRow, FormRowsView } from "app/coms";
 import { theme } from "tonwa-com";
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, useMemo, useRef } from "react";
 import { IDColumn, PickQuery } from "tonwa";
 import { useState } from "react";
 import { List, Sep } from "tonwa-com";
@@ -14,13 +13,14 @@ import { BizPhraseType } from "uqs/UqDefault";
 // import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtom, ViewForkAtomBold } from "../View";
 import { ViewForkId } from "app/coms/ViewForkId";
 import { RearPickResultType, ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewBud, ViewForkAtom, ViewForkAtomBold } from "app/hooks";
+import { FormBudsStore, ValuesBudsEditing } from "app/Store";
 
 // to be removed
 // use only in adminData
 export function PageQuery({ entity }: { entity: EntityQuery; }) {
     const modal = useModal();
-    const { caption, name, params } = entity;
-    let paramBudsEditing = new ValuesBudsEditing(modal, entity.biz, params);
+    const { caption, name, params, biz } = entity;
+    let paramBudsEditing = useMemo(() => new FormBudsStore(modal, new ValuesBudsEditing(entity.biz, params)), []);
     const { current: paramsData } = useRef({} as any);
     const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     let formRows: FormRow[] = [
@@ -47,7 +47,7 @@ export function PageQuery({ entity }: { entity: EntityQuery; }) {
     </Page>;
 }
 
-async function doQuery(editing: BudsEditing, query: EntityQuery, params: any, isPick?: boolean, pickResultType?: RearPickResultType) {
+async function doQuery(editing: FormBudsStore, query: EntityQuery, params: any, isPick?: boolean, pickResultType?: RearPickResultType) {
     const { modal } = editing;
     let queryStore = new QueryStore(modal, query);
     let queryResults = await queryStore.query(params);

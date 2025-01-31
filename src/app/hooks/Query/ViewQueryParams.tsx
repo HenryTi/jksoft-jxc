@@ -1,12 +1,14 @@
 import { BinPick, BizBud, EntityQuery, EnumBudType, PickParam, PickQuery, ValueSetType } from "tonwa";
 import { Page, useModal } from "tonwa-app";
 import { FA, theme } from "tonwa-com";
-import { Band, FormRow, FormRowsView } from "app/coms";
-import { BudEditing, BudsEditing, EditBudInline, LabelRowEdit, ValuesBudsEditing, ViewBud } from "app/hooks";
+// import { Band, FormRow, FormRowsView } from "app/coms";
+// import { BudEditing, BudsEditing, EditBudInline, FormBudsStore, LabelRowEdit, ValuesBudsEditing, ViewBud } from "app/hooks";
 import { useForm } from "react-hook-form";
 import { LabelBox, RowColsSm } from "../tool";
-import { InlineEdit } from "../Bud/Edit/InlineEdit";
+// import { InlineEdit } from "../Bud/Edit/InlineEdit";
 import { useRef } from "react";
+import { FormBudsStore, ValuesBudsEditing } from "app/Store";
+import { ViewBud } from "../Bud";
 
 /*
 interface Props {
@@ -77,7 +79,7 @@ interface PageParamsProps {
 export function ViewQueryParams({ query, editing, binPick, onSearch }: {
     query: EntityQuery;
     binPick: BinPick;
-    editing: BudsEditing;
+    editing: FormBudsStore; // BudsEditing;
     onSearch: (params: any) => Promise<void>;
 }) {
     const modal = useModal();
@@ -121,7 +123,7 @@ export function ViewQueryParams({ query, editing, binPick, onSearch }: {
         if ((budDataType as any).entityID !== undefined) continue;
         noIdDefined = true;
     }
-    let { current: paramBudsEditing } = useRef(new ValuesBudsEditing(modal, biz, inputParams));
+    let { current: paramBudsEditing } = useRef(new FormBudsStore(modal, new ValuesBudsEditing(biz, inputParams)));
     const { handleSubmit } = useForm({ mode: 'onBlur' });
     async function onSubmitForm(data: any) {
         let values = await paramBudsEditing.getBudsNameValues();

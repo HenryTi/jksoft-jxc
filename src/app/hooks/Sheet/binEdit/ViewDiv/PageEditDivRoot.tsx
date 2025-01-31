@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { DivEditing, BinStore, ValDivBase } from "../../store";
+import { DivEditing, BinStore, ValDivBase } from "../../../../Store";
 import { FA, setAtomValue } from "tonwa-com";
 import { Page, useModal } from "tonwa-app";
 import { ViewDivUndo } from "./ViewDivUndo";

@@ -1,8 +1,9 @@
-import { BizBud, Entity, EntityID } from "../Biz";
+import { Client } from "../Client";
+import { BizBud, Entity, EntityID, ReturnAtoms, ReturnForks, ReturnProps } from "../Biz";
 import { Biz } from "../Biz";
 import { Modal } from "../UI";
 
-abstract class KeyIdObject {
+export abstract class KeyIdObject {
     private static __keyId = 0;
     readonly keyId: number;
     constructor() {
@@ -24,26 +25,30 @@ export interface BudValueColl {
     [bud: number]: BudValue;
 }
 
-export interface ID {
-    id?: number;
+export interface AtomData {
+    id: number;
+    phrase: number;
+    no: string;
+    ex: string;
 }
 
-export interface Atom extends ID {
+export interface SheetData {
+    id: number;
     base: number;
-    no?: string;
-    ex: string;
+    no: string;
+    operator: number;
 }
 
 export interface AtomColl {
     [id: number]: {
-        atom: Atom;
+        atom: AtomData;
         entityID: EntityID;
     }
 }
 
 export interface ForkColl {
     [id: number]: {
-        atom: Atom;
+        seed: AtomData;
         entityID: EntityID;
         buds: BizBud[];
     }
@@ -55,15 +60,17 @@ export abstract class Store extends KeyIdObject {
 export abstract class BizStore extends Store {
     readonly modal: Modal;
     readonly biz: Biz;
+    readonly client: Client;
     //    readonly uq: UqExt;
     constructor(modal: Modal, biz: Biz) {
         super();
         this.modal = modal;
         this.biz = biz;
+        this.client = biz.client;
         //        this.uq = biz.uq;
     }
 }
-
+/*
 interface CacheProp {
     id: number;
     phrase: number;
@@ -79,11 +86,13 @@ interface CacheFork {
     id: number;
     atom: number;
 }
+*/
 export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
     readonly entity: E;
     readonly budsColl: BudsColl = {};
     readonly bizAtomColl: AtomColl = {};
     readonly bizForkColl: ForkColl = {};
+    readonly sheetsColl: { [id: number]: SheetData } = {};
 
     constructor(modal: Modal, entity: E) {
         const { biz } = entity;
@@ -91,34 +100,70 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
         this.entity = entity;
     }
 
-    cacheIdAndBuds(props: CacheProp[],
-        atoms: CacheAtom[],
-        forks: CacheFork[],
+    getCacheAtom(id: number) { return this.bizAtomColl[id]; }
+    getCacheFork(id: number) { return this.bizForkColl[id]; }
+    getCacheBudProps(id: number) { return this.budsColl[id]; }
+    getCacheBudValue(id: number, bud: BizBud) { return this.budsColl[id][bud.id]; }
+    getCacheAtomOrForkBudProps(id: number) {
+        let budValueColl: BudValueColl;
+        let bizAtom = this.bizAtomColl[id];
+        let entityID: EntityID;
+        if (bizAtom === undefined) {
+            let bizFork = this.bizForkColl[id];
+            if (bizFork === undefined) return null;
+            entityID = bizFork.entityID;
+            const { seed } = bizFork;
+            if (seed === undefined) return null;
+            budValueColl = this.budsColl[bizFork.seed.id];
+        }
+        else {
+            entityID = bizAtom.entityID;
+            budValueColl = this.budsColl[id];
+        }
+        return { budValueColl, entityID };
+    }
+    setCacheFork(id: number, base: number, buds: BizBud[]) {
+        let pAtom = this.getCacheAtom(base);
+        let atom: AtomData;
+        let entityID: EntityID;
+        if (pAtom !== undefined) {
+            atom = pAtom.atom;
+            entityID = pAtom.entityID;
+        }
+        this.bizForkColl[id] = {
+            seed: atom,
+            entityID,
+            buds,
+        }
+    }
+    cacheIdAndBuds(props: ReturnProps[],
+        atoms: ReturnAtoms[],
+        forks: ReturnForks[],
     ) {
         props.sort((a, b) => {
-            const { id: aId, phrase: aPhrase } = a;
-            const { id: bId, phrase: bPhrase } = b;
+            const { id: aId, bud: aPhrase } = a;
+            const { id: bId, bud: bPhrase } = b;
             let c0 = aId - bId;
             if (c0 !== 0) return c0;
             return aPhrase - bPhrase;
         });
-        const budsColl = budValuesFromProps(props);
-        Object.assign(this.budsColl, budsColl);
+        this.budValuesFromProps(props);
         this.addBizAtoms(atoms);
-        this.addBizSpecs(forks, props);
+        this.addBizForks(forks, props);
     }
 
-    private addBizAtoms(bizAtoms: Atom[]) {
+    private addBizAtoms(bizAtoms: ReturnAtoms[]) {
         for (let atom of bizAtoms) {
-            this.mergeAtom(atom);
+            this.cacheAtom(atom);
         }
     }
 
-    mergeAtom(atom: Atom) {
-        const { id, base } = atom;
+    cacheAtom(atom: ReturnAtoms) {
+        const { id, phrase } = atom;
+        let entityID = this.biz.entities[phrase] as EntityID;
         this.bizAtomColl[id] = {
             atom,
-            entityID: this.biz.entities[base] as EntityID,
+            entityID,
         };
     }
 
@@ -135,37 +180,37 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
         }
     }
 
-    public addBizSpecs(bizSpecs: { id: number; atom: number; }[], props: CacheProp[]) {
-        for (let bizSpec of bizSpecs) {
-            const { id, atom: atomId } = bizSpec;
-            const pAtom = this.bizAtomColl[atomId];
-            let atom: Atom;
+    public addBizForks(bizForks: ReturnForks[], props: ReturnProps[]) {
+        for (let bizFork of bizForks) {
+            const { id, seed } = bizFork;
+            const pAtom = this.bizAtomColl[seed];
+            let atom: AtomData;
             let entityID: EntityID;
             if (pAtom !== undefined) {
                 atom = pAtom.atom;
                 entityID = pAtom.entityID;
             }
             this.bizForkColl[id] = {
-                atom,
+                seed: atom,
                 entityID,
                 buds: [],
             }
         }
-        for (let { id, phrase, value } of props) {
-            let bizSpec = this.bizForkColl[id];
-            if (bizSpec === undefined) continue;
-            let bud = this.biz.budFromId(phrase);
+        for (let { id, bud, value } of props) {
+            let bizFork = this.bizForkColl[id];
+            if (bizFork === undefined) continue;
+            let bizBud = this.biz.budFromId(bud);
             if (bud === undefined) {
                 // debugger;
                 continue;
             }
-            bizSpec.buds.push(bud);
+            bizFork.buds.push(bizBud);
             let coll = this.budsColl[id];
             if (coll === undefined) {
                 coll = {};
                 this.budsColl[id] = coll;
             }
-            coll[phrase] = value;
+            coll[bud] = value;
         }
     }
 
@@ -180,35 +225,75 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
         }
         return;
     }
-}
 
+    private budValuesFromProps(props: ReturnProps[]) {
+        for (let { id, bud, value } of props) {
+            if (bud === 0) {
+                const [base, no, operator] = value;
+                this.sheetsColl[id] = { id, base, no, operator };
+                continue;
+            }
+            let budValues = this.budsColl[id];
+            if (budValues === undefined) {
+                this.budsColl[id] = budValues = {};
+            }
+            if (Array.isArray(value) === false) {
+                budValues[bud] = value;
+                continue;
+            }
+            switch (value.length) {
+                default:
+                case 0: debugger; break;
+                case 1: budValues[bud] = value[0]; break;
+                case 2:
+                    let v1 = value[1];
+                    let checks = budValues[bud] as BudCheckValue;
+                    if (checks === undefined) {
+                        budValues[bud] = checks = [v1];
+                    }
+                    else {
+                        // 可能重复，去重。具体为什么会重复，随后再找原因
+                        if (checks.findIndex(v => v === v1) < 0) {
+                            checks.push(v1);
+                        }
+                        else {
+                            console.error('budValuesFromProps duplicate ', v1);
+                            // debugger;
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+}
+/*
 interface PropData {
     id: number;
     phrase: number;
     value: any;
     //    owner: number;
 }
-
-function budValuesFromProps(props: PropData[]) {
+*/
+function budValuesFromProps(props: ReturnProps[]) {
     const budsColl: BudsColl = {};
-    for (let { id, phrase, value } of props) {
+    for (let { id, bud, value } of props) {
         let budValues = budsColl[id];
         if (budValues === undefined) {
             budsColl[id] = budValues = {};
         }
         if (Array.isArray(value) === false) {
-            budValues[phrase] = value;
+            budValues[bud] = value;
         }
         else {
             switch (value.length) {
                 default:
                 case 0: debugger; break;
-                case 1: budValues[phrase] = value[0]; break;
+                case 1: budValues[bud] = value[0]; break;
                 case 2:
                     let v1 = value[1];
-                    let checks = budValues[phrase] as BudCheckValue;
+                    let checks = budValues[bud] as BudCheckValue;
                     if (checks === undefined) {
-                        budValues[phrase] = checks = [v1];
+                        budValues[bud] = checks = [v1];
                     }
                     else {
                         // 可能重复，去重。具体为什么会重复，随后再找原因

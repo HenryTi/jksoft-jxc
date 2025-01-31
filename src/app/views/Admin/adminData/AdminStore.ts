@@ -1,5 +1,4 @@
-import { EntityBook } from "tonwa";
-import { EntityStore } from "app/tool";
+import { EntityBook, EntityStore } from "tonwa";
 
 export class AdminStore extends EntityStore<EntityBook> {
     readonly load = async (param: { i: number; bud: number; keys: object; }, pageStart: number, pageSize: number,) => {

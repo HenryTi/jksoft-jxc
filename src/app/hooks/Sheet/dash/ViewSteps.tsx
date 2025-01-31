@@ -1,6 +1,6 @@
 import React from "react";
 import { FA } from "tonwa-com";
-import { SheetSteps } from "../store";
+import { SheetSteps } from "../../../Store";
 
 export function ViewSteps({ sheetSteps }: { sheetSteps: SheetSteps; }) {
     if (sheetSteps === undefined) return null;

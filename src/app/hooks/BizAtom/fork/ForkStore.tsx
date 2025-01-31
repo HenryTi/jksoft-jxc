@@ -1,5 +1,5 @@
-import { BizBud, EntityFork, EnumBudType } from "tonwa";
-import { EntityStore } from "app/tool";
+import { BizBud, EntityFork, EntityStore, EnumBudType } from "tonwa";
+//import { EntityStore } from "app/tool";
 import { atom } from "jotai";
 import { useRef } from "react";
 import { BudValue, Modal } from "tonwa-app";

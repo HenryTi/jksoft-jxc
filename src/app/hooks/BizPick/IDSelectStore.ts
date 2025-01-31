@@ -1,5 +1,5 @@
-import { BizBud, EntityAtom, EntityID, EntityFork } from "tonwa";
-import { EntityStore } from "app/tool";
+import { BizBud, EntityAtom, EntityID, EntityFork, EntityStore } from "tonwa";
+// import { EntityStore } from "app/tool";
 import { WritableAtom, atom } from "jotai";
 import { Modal } from "tonwa-app";
 import { Atom, BizPhraseType, ParamSearchAtomBuds } from "uqs/UqDefault";

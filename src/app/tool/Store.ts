@@ -1,7 +1,7 @@
 import { Biz, BizBud, Client, Entity, EntityFork, EntityID } from "tonwa";
 import { BudCheckValue, BudValue, Modal } from "tonwa-app";
 import { Atom, ReturnGetPendProps, ReturnGetSheetAtoms, ReturnGetSheetProps, ReturnGetSheetForks, UqExt, BizPhraseType, Sheet } from "uqs/UqDefault";
-
+/*
 abstract class KeyIdObject {
     private static __keyId = 0;
     readonly keyId: number;
@@ -247,3 +247,4 @@ interface PropData {
     value: any;
     //    owner: number;
 }
+*/

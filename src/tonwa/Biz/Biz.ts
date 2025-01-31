@@ -1,7 +1,6 @@
-import { atom } from 'jotai';
-import { getAtomValue, setAtomValue } from 'tonwa-com';
+// import { atom } from 'jotai';
+// import { getAtomValue, setAtomValue } from 'tonwa-com';
 import { Client } from '../Client';
-import { from62 } from '../tools';
 import { EntityAtom, EntityCombo, EntityDuo, EntityPick, EntityFork } from './EntityAtom';
 import { EntityTree } from './EntityTree';
 import { EntityBin, EntityPend, EntitySheet } from './EntitySheet';
@@ -17,6 +16,7 @@ import { EntityConsole } from './EntityConsole';
 import { EntityIOApp, EntityIOSite, EntityIn, EntityOut } from './EntityInOut';
 import { EntityPrint, EntityTemplet } from './EntityPrint';
 import { Entity } from './Entity';
+import { ReturnAtoms, ReturnForks, ReturnProps } from './Defines';
 
 enum EnumEntity {
     sheet,
@@ -94,8 +94,13 @@ export class Biz {
     hasEntity: boolean;
     entities: { [name: string | number]: Entity } = {};
     // atomBuilder: AtomsBuilder;
-    userDefaults: { [bud: number]: string | number | (string | number)[]; };
-    atomSchemasChanged = atom(false);
+    userDefaults: {
+        buds: { [bud: number]: string | number | (string | number)[]; };
+        props: ReturnProps[];
+        atoms: ReturnAtoms[];
+        forks: ReturnForks[];
+    };
+    // atomSchemasChanged = atom(false);
 
     constructor(client: Client, bizSchema: any, errorLogs: any) {
         // this.uqApp = uqApp;
@@ -108,12 +113,13 @@ export class Biz {
 
     init() { }
 
+    /*
     entityFrom62<T extends Entity>(base62: string): T {
         let entityId = from62(base62);
         let entity = this.ids[entityId];
         return entity as T;
     }
-
+    */
     entityFromId<T extends Entity>(id: number): T {
         if (id === undefined) return;
         let entity = this.ids[id];
@@ -345,7 +351,7 @@ export class Biz {
         }
         this.hasEntity = allHasEntity;
         // this.atomBuilder = undefined;
-        setAtomValue(this.atomSchemasChanged, !getAtomValue(this.atomSchemasChanged));
+        //setAtomValue(this.atomSchemasChanged, !getAtomValue(this.atomSchemasChanged));
     }
 
     addBudIds(bizBud: BizBud) {
@@ -514,10 +520,12 @@ export class Biz {
 
     async loadUserDefaults() {
         if (this.userDefaults === undefined) {
-            let buds = await this.client.GetUserBuds(undefined);
-            this.userDefaults = {};
+            let { buds, props, atoms, forks } = await this.client.GetUserBuds(undefined);
+            this.userDefaults = {
+                buds: {}, props, atoms, forks
+            };
             for (let { bud, value } of buds) {
-                this.userDefaults[bud] = JSON.parse(value);
+                this.userDefaults.buds[bud] = JSON.parse(value);
             }
         }
     }

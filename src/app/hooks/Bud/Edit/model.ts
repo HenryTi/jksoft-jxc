@@ -1,10 +1,11 @@
 import { JSX } from "react";
-import { BizBud } from "tonwa";
+import { BizBud, EntityStore } from "tonwa";
 import { RegisterOptions } from "react-hook-form";
 import { BudCheckValue, BudValue, OnValueChanged, PickProps, UqAppBase } from "tonwa-app";
 import { BudEditing } from "./EditBud";
 import { WritableAtom } from "jotai";
-import { EntityStore } from "app/tool";
+import { FormBudsStore } from "app/Store";
+//import { FormBudsStore } from "app/Store/BudsEditing";
 
 export interface EditBudValue {
     pickValue: (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) => Promise<string | number>;
@@ -44,6 +45,7 @@ export type OnBudChanged = (bud: BizBud, value: string | number | BudCheckValue)
 export interface EditBudProps {
     id: number;
     value: BudValue;
+    formBudsStore: FormBudsStore;
     budEditing: BudEditing;
     store?: EntityStore;
     labelSize?: 0 | 1 | 2;

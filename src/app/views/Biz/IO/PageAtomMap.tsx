@@ -1,8 +1,7 @@
 import { useUqApp } from "app";
-import { EntityIOApp, EntityIOSite, IOAppID } from "tonwa";
+import { AtomData, EntityIOApp, EntityIOSite, IOAppID } from "tonwa";
 import { ButtonRight, ButtonRightAdd, PageQueryMore } from "app/coms";
 import { useIDSelect } from "app/hooks";
-import { AtomData } from "app/tool";
 import { FormEvent, useState, JSX } from "react";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { FA, List } from "tonwa-com";

@@ -1,15 +1,16 @@
 import { PickPend } from "tonwa";
-import { PendProxyHandler, ValRow } from "../store";
-import { BinStore } from "../store";
+import { FormBudsStore, PendProxyHandler, ValRow } from "../../../Store";
+import { BinStore } from "../../../Store";
 import { PagePend } from "./PagePend";
-import { BudsEditing } from "app/hooks/BudsEditing";
 import { PickResult } from "app/hooks/Calc";
 
-export async function pickFromPend(binStore: BinStore, editing: BudsEditing, binPick: PickPend): Promise<PickResult[]> {
+export async function pickFromPend(binStore: BinStore
+    , editing: FormBudsStore // BudsEditing
+    , binPick: PickPend): Promise<PickResult[]> {
     let { /*from: entityPend, */bin } = binPick;
     // const pendProxyHander = new PendProxyHandler(entityPend);
     const { modal } = editing;
-    let pendStore = binStore.getPickPendStore(binPick, editing.valueSpace);
+    let pendStore = binStore.getPickPendStore(binPick/*, editing.valueSpace*/);
     await pendStore.searchPend();
     let inputed = await modal.open<ValRow[]>(<PagePend pendStore={pendStore} />);
     if (inputed === undefined) return;

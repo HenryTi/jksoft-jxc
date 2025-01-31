@@ -1,4 +1,4 @@
-import { BinEditing, RearPickResultType, ReturnUseBinPicks, SheetStore, ValRow } from "../store";
+import { BinEditing, RearPickResultType, ReturnUseBinPicks, SheetStore, ValRow } from "../../../Store";
 import { runBinPicks } from "../binPick";
 import { rowEdit } from "./divEdit";
 import { PickResult } from "app/hooks/Calc";
@@ -29,14 +29,14 @@ export async function detailNew(sheetStore: SheetStore): Promise<number> {
         return 0;
     }
     const { entity: entityBin, binDivRoot } = binStore;
-    let ret = await runBinPicks(sheetStore, entityBin);
+    let ret = await runBinPicks(modal, sheetStore, entityBin);
     if (ret === undefined) return 0;
     let { editing, rearBinPick, rearResult, rearPickResultType } = ret;
     if (rearBinPick.fromPhraseType === BizPhraseType.pend) {
         // 中断输入循环
         return 2;
     }
-    const { valueSpace } = editing;
+    const { valueSpace } = editing.budsEditing;
     const valRows: ValRow[] = [];
     binStore.setWaiting(true);
     if (rearPickResultType === RearPickResultType.array) {

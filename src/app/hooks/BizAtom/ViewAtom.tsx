@@ -1,4 +1,4 @@
-import { AtomData } from "app/tool";
+import { AtomData } from "tonwa";
 
 export function ViewAtom({ value }: { value: AtomData; }) {
     let { no, ex } = value;

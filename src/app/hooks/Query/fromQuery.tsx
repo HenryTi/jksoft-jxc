@@ -2,18 +2,18 @@ import { BinPick, EntityQuery, IDColumn, PickQuery } from "tonwa";
 import { ChangeEvent, useState } from "react";
 import { Page, useModal } from "tonwa-app";
 import { List, Sep, theme } from "tonwa-com";
-import { BinStore, RearPickResultType, SheetStore } from "../Sheet/store";
+import { BinStore, FormBudsStore, RearPickResultType, SheetStore } from "../../Store";
 import { LabelBox, QueryRow, QueryRowCol, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
 import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtomBold, ViewForkBuds } from "../View";
 import { ViewBud } from "../Bud";
-import { BudsEditing } from "../BudsEditing";
+// import { BudsEditing, FormBudsStore } from "../../Store/BudsEditing";
 import { PickResult } from "../Calc";
 import { ViewQueryParams } from "./ViewQueryParams";
 
 async function pickFromQueryBase(
-    editing: BudsEditing
+    editing: FormBudsStore // BudsEditing
     , binPick: PickQuery
     , pickResultType: RearPickResultType)
     : Promise<PickResult | PickResult[]> {
@@ -46,14 +46,14 @@ async function pickFromQueryBase(
 export async function pickFromQueryScalar(
     // modal: Modal
     // , namedResults: NamedResults
-    editing: BudsEditing
+    editing: FormBudsStore // BudsEditing
     , binPick: PickQuery)
     : Promise<PickResult> {
     return await pickFromQueryBase(editing, binPick, RearPickResultType.scalar) as PickResult;
 };
 
 export async function pickFromQuery(
-    editing: BudsEditing
+    editing: FormBudsStore // BudsEditing
     , binPick: PickQuery
     , lastPickResultType: RearPickResultType)
     : Promise<PickResult[]> {
@@ -63,7 +63,7 @@ export async function pickFromQuery(
 export function PageFromQuery({ query, queryStore, editing, binPick, pickResultType }: {
     query: EntityQuery;
     queryStore: QueryStore;
-    editing: BudsEditing;
+    editing: FormBudsStore; // BudsEditing;
     binPick: BinPick;
     pickResultType: RearPickResultType;
 }) {

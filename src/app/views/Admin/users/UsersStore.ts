@@ -24,7 +24,7 @@ export class UsersStore {
     async loadUserBuds(userId: number) {
         setAtomValue(this.atomUserBuds, undefined);
         // let { buds } = await this.uq.GetUserBuds.query({ userId });
-        let buds = await this.uqApp.client.GetUserBuds(userId);
+        let { buds } = await this.uqApp.client.GetUserBuds(userId);
         let coll: { [bud: number]: (string | number)[]; } = {};
         for (let { bud, value } of buds) {
             coll[bud] = JSON.parse(value);

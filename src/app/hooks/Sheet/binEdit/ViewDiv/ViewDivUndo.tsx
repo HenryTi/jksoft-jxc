@@ -3,7 +3,7 @@ import { ViewRow } from "./ViewRow";
 import { ViewDivProps } from "./tool";
 import { useRef } from "react";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
-import { BinStore, ValDivBase } from "../../store";
+import { BinStore, ValDivBase } from "../../../../Store";
 
 export function ViewDivUndo(props: ViewDivProps) {
     const { binStore, valDiv } = props;

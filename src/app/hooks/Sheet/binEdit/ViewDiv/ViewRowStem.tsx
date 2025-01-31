@@ -4,7 +4,7 @@ import { RowColsSm, ViewShowBuds } from "../../../tool";
 import { PAV, ViewDivProps, ViewDivRight, ViewPendValue, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
 import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
-import { DivEditing } from "../../store";
+import { DivEditing } from "../../../../Store";
 
 export function ViewRowStem(props: ViewDivProps) {
     const { valDiv, binStore, buttons, hidePivot, index } = props;

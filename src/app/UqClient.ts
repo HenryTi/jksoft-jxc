@@ -1,4 +1,13 @@
-import { Client, ReturnAtoms, ReturnForks, ReturnGetIDList, ReturnSheetList$page, ReturnGetPend$page, ReturnGetPendRetSheet, ReturnGetReport$page, ReturnGetReportForks, ReturnOrigins, ReturnProps, ReturnSheetDetails, ReturnSheetMain, ReturnSubmitSheetCheckBin, ReturnSubmitSheetCheckPend, ReturnSubmitSheetDebugLogs, ReturnExecQueryDetail, ReturnExecQueryMain, ReturnGetAdminBook$page, ReturnSearchAtomBuds$page, ReturnSearchAtomBudsMeds, ReturnSearchAtomBudsBudsInt, ReturnSearchAtomBudsBudsDec, ReturnSearchAtomBudsBudsStr } from "tonwa";
+import {
+    Client, ReturnAtoms, ReturnForks, ReturnGetIDList, ReturnSheetList$page
+    , ReturnGetPend$page, ReturnGetPendRetSheet, ReturnGetReport$page, ReturnGetReportForks
+    , ReturnProps, ReturnSheetDetails, ReturnSheetMain, ReturnSubmitSheetCheckBin
+    , ReturnSubmitSheetCheckPend, ReturnSubmitSheetDebugLogs, ReturnExecQueryDetail
+    , ReturnExecQueryMain, ReturnGetAdminBook$page, ReturnSearchAtomBuds$page
+    , ReturnSearchAtomBudsMeds, ReturnSearchAtomBudsBudsInt, ReturnSearchAtomBudsBudsDec
+    , ReturnSearchAtomBudsBudsStr,
+    ReturnSheetBin
+} from "tonwa";
 import { UqExt } from "uqs/UqDefault";
 
 export class UqClient implements Client {
@@ -7,9 +16,13 @@ export class UqClient implements Client {
         this.uq = uq;
     }
 
-    async GetUserBuds(userId: number): Promise<{ bud: number; value: any; }[]> {
-        let { buds } = await this.uq.GetUserBuds.query({ userId });
-        return buds;
+    async GetUserBuds(userId: number): Promise<{
+        buds: {
+            bud: number;
+            value: any;
+        }[]; atoms: ReturnAtoms[]; props: ReturnProps[]; forks: ReturnForks[];
+    }> {
+        return await this.uq.GetUserBuds.query({ userId });
     }
     async GetAtom(id: number): Promise<{ phrase: number; value: any; }[]> {
         const { props } = await this.uq.GetAtom.query({ id });
@@ -128,7 +141,7 @@ export class UqClient implements Client {
     ): Promise<{
         main: ReturnSheetMain[];
         details: ReturnSheetDetails[];
-        origins: ReturnOrigins[];
+        origins: ReturnSheetBin[];
         props: ReturnProps[];
         atoms: ReturnAtoms[];
         forks: ReturnForks[];
@@ -141,7 +154,7 @@ export class UqClient implements Client {
     async GetSheet(id: number): Promise<{
         main: ReturnSheetMain[];
         details: ReturnSheetDetails[];
-        origins: ReturnOrigins[];
+        origins: ReturnSheetBin[];
         props: ReturnProps[];
         atoms: ReturnAtoms[];
         forks: ReturnForks[];
@@ -199,7 +212,7 @@ export class UqClient implements Client {
         checkPend: ReturnSubmitSheetCheckPend[];
         checkBin: ReturnSubmitSheetCheckBin[];
     }> {
-        let ret = await this.uq.SubmitSheet.submit({ id });
+        let ret = await this.uq.SubmitSheet.submitReturns({ id });
         return ret;
     }
     async SubmitSheetDebug(id: number): Promise<{
@@ -207,7 +220,7 @@ export class UqClient implements Client {
         checkPend: ReturnSubmitSheetCheckPend[];
         checkBin: ReturnSubmitSheetCheckBin[];
     }> {
-        let ret = await this.uq.SubmitSheetDebug.submit({ id });
+        let ret = await this.uq.SubmitSheetDebug.submitReturns({ id });
         return ret;
     }
     async SetSheetPreToDraft(id: number): Promise<void> {

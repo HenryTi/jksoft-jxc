@@ -1,134 +1,17 @@
 import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { EntitySheet, EntityBin, EntityPend, BinRow, Entity, EnumDetailOperate, BizBud } from "tonwa";
+import { EntitySheet, EntityBin, EntityPend, BinRow, Entity, EnumDetailOperate, BizBud, EntityStore, ReturnProps, ReturnAtoms, ReturnForks } from "tonwa";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { RearPickResultType, ReturnUseBinPicks } from "./PickResult";
 import { Formulas } from "app/hooks/Calc";
-import { BudEditing } from "../../Bud";
+import { BudEditing } from "../hooks/Bud";
 import { getValRowPropArr, ValRow } from "./ValRow";
 import { BinStore, BinStorePendDirect, SubmitState } from "./BinStore";
 import { ValDivRoot } from "./ValDiv";
 import { Modal } from "tonwa-app";
-import { Console, EntityStore } from "app/tool";
+import { Console } from "app/tool";
 import { arrFromJsonMid } from "app/hooks/tool";
-import { BinBudsEditing, BinEditing } from "./BinEditing";
-import { runBinPicks } from "../binPick";
-
-export class SheetMainStore extends EntityStore<EntityBin> {
-    readonly sheetStore: SheetStore;
-    budsEditing: BinBudsEditing;
-    budEditings: BudEditing[];
-
-    readonly _valRow = atom<ValRow>({ buds: {} } as ValRow);
-    get valRow() { return getAtomValue(this._valRow) }
-    no: string;
-
-    constructor(sheetStore: SheetStore) {
-        const { main } = sheetStore.entity;
-        super(sheetStore.modal, main);
-        this.sheetStore = sheetStore;
-    }
-
-    init() {
-        this.budsEditing = new BinEditing(this.sheetStore, this.entity);
-        this.budEditings = this.budsEditing.createBudEditings();
-    }
-
-    async start() {
-        const row = this.valRow;
-        const { id } = row;
-        if (id > 0) return;
-        const pickResults = await runBinPicks(this.sheetStore, this.entity, RearPickResultType.scalar);
-        let ret = await this.startFromPickResults(pickResults);
-        setAtomValue(this.sheetStore.atomLoaded, true);
-        return ret;
-    }
-
-    async startFromPickResults(pickResults: ReturnUseBinPicks) {
-        if (pickResults === undefined) return;
-        const row = this.valRow;
-        const { i, x, buds: mainProps } = this.entity;
-        const formulas: Formulas = [];
-        function getFormulaText(text: string) {
-            if (text === undefined) return;
-            let parts = text.split('\n');
-            return parts[0];
-        }
-        if (i !== undefined) {
-            formulas.push(['i', getFormulaText(i.valueSet ?? 'i$pick'), undefined]);
-        }
-        if (x !== undefined) {
-            formulas.push(['x', getFormulaText(x.valueSet ?? 'x$pick'), undefined]);
-        }
-        for (let mp of mainProps) {
-            const { name, valueSet } = mp;
-            if (valueSet === undefined) continue;
-            formulas.push([name, getFormulaText(valueSet), undefined]);
-        }
-        let { editing, rearBinPick, rearResult } = pickResults;
-        editing.addFormulas(formulas);
-        if (rearBinPick !== undefined) {
-            if (rearResult !== undefined) {
-                editing.setNamedValues(rearBinPick.name, rearResult[0]);
-            }
-        }
-        if (i !== undefined) {
-            row.i = editing.getValue('i') as number;
-        }
-        if (x !== undefined) {
-            row.x = editing.getValue('x') as number;
-        }
-        for (let mp of mainProps) {
-            let v = editing.getValueNumber(mp.name);
-            if (Number.isNaN(v) === true) {
-                debugger;
-                editing.getValueNumber(mp.name);
-            }
-            row.buds[mp.id] = v;
-        }
-        setAtomValue(this._valRow, row);
-        return await this.createIfNotExists();
-    }
-
-    private async createIfNotExists() {
-        const row = this.valRow;
-        let { id: sheetId, i, x } = row;
-        if (sheetId > 0) {
-            return {
-                id: sheetId,
-                no: this.no,
-                i,
-                x,
-            };
-        }
-        let ret = await this.sheetStore.saveSheet(this.valRow);
-        let { id, no } = ret;
-        row.id = id;
-        setAtomValue(this._valRow, { ...row });
-        this.no = no;
-        return Object.assign(ret, { i, ...row });
-    }
-
-    setValue(value: any) {
-        const { no } = value;
-        this.no = no;
-        setAtomValue(this._valRow, value);
-    }
-
-    setId(id: number) {
-        let row = this.valRow;
-        setAtomValue(this._valRow, { ...row, id });
-    }
-
-    trigger() {
-        let ok = true;
-        const { buds } = this.valRow;
-        for (let be of this.budEditings) {
-            if (be.trigger(buds[be.bizBud.id]) === false) ok = false;
-        }
-        return ok;
-    }
-}
+import { SheetMainStore } from "./SheetMainStore";
 
 export interface SheetRow extends ValRow {
     no: string;
@@ -143,7 +26,7 @@ export interface PendRow {
     value: number;
     mid: any[];
 }
-
+/*
 class Detail extends BinStore {
     readonly caption: string;
     constructor(sheetStore: SheetStore, entityBin: EntityBin, caption: string, operate: EnumDetailOperate) {
@@ -155,17 +38,17 @@ class Detail extends BinStore {
 // 多余的Detail，只能手工输入
 export class ExDetail extends Detail {
 }
-
+*/
 export class SheetStore extends EntityStore<EntitySheet> {
     private readonly cachePendRows: { [id: number]: PendRow } = {};
     readonly sheetConsole: SheetConsole;
     readonly mainStore: SheetMainStore;
+    readonly binStore: BinStore;
     readonly caption: string;
     readonly backIcon = 'file-text-o';
     readonly isPend: boolean;
     readonly isMainPend: boolean;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> } = {};
-    readonly binStore: BinStore;
     readonly atomLoaded = atom(false);
     readonly atomReaction = atom(undefined as any);
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
@@ -173,7 +56,8 @@ export class SheetStore extends EntityStore<EntitySheet> {
     readonly atomSum = atom(get => {
         return this.binStore.sum(get);
     });
-    constructor(entitySheet: EntitySheet, sheetConsole: SheetConsole) {
+    constructor(sheetConsole: SheetConsole) {
+        const { entitySheet } = sheetConsole;
         super(sheetConsole.modal, entitySheet);
         this.sheetConsole = sheetConsole;
         this.mainStore = new SheetMainStore(this);
@@ -323,7 +207,6 @@ export class SheetStore extends EntityStore<EntitySheet> {
     }
 
     async setSheetAsDraft() {
-        // await this.uq.SetSheetPreToDraft.submit({ id: this.mainStore.valRow.id });
         this.client.SetSheetPreToDraft(this.mainStore.valRow.id);
         setAtomValue(this.atomLoaded, true);
     }
@@ -350,9 +233,7 @@ export class SheetStore extends EntityStore<EntitySheet> {
     }
 
     async submit() {
-        // let { checkPend, checkBin } = 
         let sheetId = this.mainStore.valRow.id;
-        // let ret = await this.uq.SubmitSheet.submitReturns({ id: sheetId });
         let ret = await this.client.SubmitSheet(sheetId);
         return ret;
     }
@@ -399,19 +280,20 @@ class UserProxyHander implements ProxyHandler<any> {
 
 export function getUserBudValue(entity: Entity, bud: BizBud) {
     const { biz } = entity;
-    const { userDefaults } = biz;
-    let v = userDefaults[bud.id];
+    const { userDefaults: { buds } } = biz;
+    let v = buds[bud.id];
     if (v === undefined) {
         let budName = bud.name;
         let console = biz.bizConsole;
         let consoleUserBud = console.userBuds.find(v => v.name === budName);
         if (consoleUserBud === undefined) return;
-        v = userDefaults[consoleUserBud.id];
+        v = buds[consoleUserBud.id];
     }
     if (Array.isArray(v) === true) v = v[0];
     return v;
 }
 
+// 操作某种单据的控制台
 export abstract class SheetConsole extends Console {
     readonly entitySheet: EntitySheet;
 
@@ -429,20 +311,23 @@ export abstract class SheetConsole extends Console {
     abstract removeFromCache(sheetId: number): void;
     abstract steps: SheetSteps;
     createSheetStore() {
-        let ret = new SheetStore(this.entitySheet, this);
+        let ret = new SheetStore(this);
+        // ret.cacheIdAndBuds(this.props, this.atoms, this.forks);
         ret.mainStore.init();
         return ret;
     }
 
-    async loadUserDefaults(): Promise<boolean> {
+    async loadUserDefaults(sheetStore: SheetStore): Promise<boolean> {
         const { biz, userBuds: user } = this.entitySheet;
         if (user === undefined) return true;
         if (user.length === 0) return true;
         await biz.loadUserDefaults();
         let { userDefaults } = biz;
         if (userDefaults === undefined) return false;
+        const { buds, props, atoms, forks } = userDefaults;
+        sheetStore.cacheIdAndBuds(props, atoms, forks);
         for (let bud of user) {
-            if (userDefaults[bud.id] === undefined) return false;
+            if (buds[bud.id] === undefined) return false;
         }
         return true;
     }

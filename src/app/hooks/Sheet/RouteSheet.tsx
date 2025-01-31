@@ -1,7 +1,7 @@
 import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
 import { PageSheetDash } from "./dash";
 import { PageSheetEdit, PageSheetNew } from "./dash";
-import { SheetConsole, SheetSteps, SheetStore } from "./store";
+import { SheetConsole, SheetSteps, SheetStore } from "../../Store";
 import { from62, to62 } from "tonwa-com";
 import { useRef } from "react";
 import { EntitySheet } from "tonwa";
@@ -25,7 +25,8 @@ function useEntitySheet() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const { sheet: entityId62, id } = useParams();
-    const entitySheet = biz.entityFrom62<EntitySheet>(entityId62);
+    let entityId = from62(entityId62);
+    const entitySheet = biz.entityFromId<EntitySheet>(entityId);
     return entitySheet;
 }
 

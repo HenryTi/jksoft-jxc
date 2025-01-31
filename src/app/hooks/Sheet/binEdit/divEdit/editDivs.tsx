@@ -2,8 +2,8 @@ import { BinInputAtom, BinInputFork } from "tonwa";
 import { inputAtom } from "./inputAtom";
 import { inputFork } from "./inputFork";
 import { BizPhraseType } from "uqs/UqDefault";
-import { DivEditing, BinStore, PendRow, ValDivBase, ValRow } from "../../store";
-import { PendProxyHandler } from "../../store";
+import { DivEditing, BinStore, PendRow, ValDivBase, ValRow } from "../../../../Store";
+import { PendProxyHandler } from "../../../../Store";
 import { ModalInputRow } from "./ModalInputRow";
 
 export interface UseEditDivsProps {

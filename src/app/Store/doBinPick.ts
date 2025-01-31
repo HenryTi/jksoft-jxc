@@ -1,16 +1,16 @@
 import { BinPick, PickAtom, PickOptions, PickPend, PickQuery, PickSpec } from "tonwa";
 import { PickResult } from "app/hooks/Calc";
 import { BizPhraseType } from "uqs/UqDefault";
-import { pickFromAtom } from "../binPick/pickFromAtom";
-import { pickFromSpec } from "../binPick/pickFromSpec";
+import { pickFromAtom } from "../hooks/Sheet/binPick/pickFromAtom";
+import { pickFromSpec } from "../hooks/Sheet/binPick/pickFromSpec";
 import { pickFromQuery, pickFromQueryScalar } from "app/hooks/Query";
-import { pickFromOptions } from "../binPick/pickFromOptions";
-import { BinBudsEditing } from "./BinEditing";
+import { pickFromOptions } from "../hooks/Sheet/binPick/pickFromOptions";
 import { RearPickResultType } from "./PickResult";
 import { BinStore } from "./BinStore";
-import { pickFromPend } from "../binPick/pickFromPend";
+import { pickFromPend } from "../hooks/Sheet/binPick/pickFromPend";
+import { FormBudsStore } from "./BinEditing";
 
-export async function doBinPick(editing: BinBudsEditing, binPick: BinPick) {
+export async function doBinPick(editing: FormBudsStore, binPick: BinPick) {
     const { name, fromPhraseType } = binPick;
     if (fromPhraseType === undefined) return; // break;
     let pickResult: PickResult = await switchPhraseType(editing, binPick);
@@ -19,7 +19,7 @@ export async function doBinPick(editing: BinBudsEditing, binPick: BinPick) {
     return pickResult;
 }
 
-export async function doBinPickRear(binStore: BinStore, editing: BinBudsEditing, rearPick: BinPick, rearPickResultType: RearPickResultType) {
+export async function doBinPickRear(binStore: BinStore, editing: FormBudsStore, rearPick: BinPick, rearPickResultType: RearPickResultType) {
     const { name, fromPhraseType } = rearPick;
     switch (fromPhraseType) {
         default: break;
@@ -37,7 +37,7 @@ export async function doBinPickRear(binStore: BinStore, editing: BinBudsEditing,
     return pickResult;
 }
 
-async function switchPhraseType(editing: BinBudsEditing, pick: BinPick) {
+async function switchPhraseType(editing: FormBudsStore, pick: BinPick) {
     let pickResult: PickResult;
     switch (pick.fromPhraseType) {
         default: break;

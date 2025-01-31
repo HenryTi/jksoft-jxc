@@ -9,8 +9,10 @@ import { useAtomValue } from 'jotai';
 import { PageNoSite, routeAdmin } from './Admin';
 import { routeSiteAdmin } from './Admin/site';
 import { useSiteRole } from './Site/useSiteRole';
-import { PageCode, TabCode } from './Biz/TabCode';
+// import { PageCode, TabCode } from './Biz/TabCode';
 import { PageMySites } from './Site/PageMySites';
+import { PageBiz } from './Admin/compile';
+import { PageSheetDash } from 'tonwa';
 
 function RoutesContainer({ children }: { children: React.ReactNode; }) {
     let uqApp = useUqApp();
@@ -61,15 +63,16 @@ export function ViewsRoutes() {
         <Route path="/" element={homeLayout}>
             <Route index element={<TabHome />} />
             <Route path={pathHome + '/*'} element={<TabHome />} />
-            <Route path={'bizTab' + '/*'} element={<TabCode />} />
+            <Route path={'bizTab' + '/*'} element={<PageBiz back="none" />} />
             <Route path={pathMe + '/*'} element={<TabMe />} />
         </Route>
-        <Route path={'biz' + '/*'} element={<PageCode />} />
+        <Route path={'biz' + '/*'} element={<PageBiz />} />
         {routeMe}
         {routeApp()}
         {routeAdmin(uqApp)}
         {routeSiteAdmin}
         <Route path={'sites'} element={<PageMySites />} />
         <Route path="/test" element={<Page header="Test">test</Page>} />
+        <Route path="test-mvc-sheet/:sheet" element={<PageSheetDash />} />
     </RoutesContainer>;
 }

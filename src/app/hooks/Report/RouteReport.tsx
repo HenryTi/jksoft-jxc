@@ -1,4 +1,4 @@
-import { EntityReport } from "tonwa";
+import { EntityReport, from62 } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { useParams } from "react-router-dom";
 import { PageReportDash } from "./dash";
@@ -12,7 +12,8 @@ function useEntityReport() {
     const uqApp = useUqApp();
     const { uq, biz } = uqApp;
     const { report: entityId62, id } = useParams();
-    const entity = biz.entityFrom62<EntityReport>(entityId62);
+    const entityId = from62(entityId62);
+    const entity = biz.entityFromId<EntityReport>(entityId);
     return entity;
 }
 

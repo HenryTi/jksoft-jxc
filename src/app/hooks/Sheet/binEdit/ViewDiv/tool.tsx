@@ -1,5 +1,5 @@
 import { BizBud } from "tonwa";
-import { BinStore, ValDivBase } from "../../store";
+import { BinStore, ValDivBase } from "../../../../Store";
 import { ViewForkNoAtom } from "app/hooks";
 import { FA, theme } from "tonwa-com";
 import { useAtomValue } from "jotai";

@@ -3,8 +3,8 @@ import { BudValue } from "tonwa-app";
 import { ViewBud, budContent } from "../Bud";
 import { FA, theme } from "tonwa-com";
 import React from "react";
-import { BizBud, Entity, EntityFork, EntityID } from "tonwa";
-import { BudsColl, BudValueColl, EntityStore } from "app/tool";
+import { BizBud, BudValueColl, Entity, EntityFork, EntityID, EntityStore } from "tonwa";
+// import { BudsColl, BudValueColl, EntityStore } from "app/tool";
 import { BizPhraseType } from "uqs/UqDefault";
 
 // atom field owns buds

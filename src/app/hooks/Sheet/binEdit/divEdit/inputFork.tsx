@@ -1,17 +1,19 @@
 import { BinInputFork, BizBud, EntityID, ValueSetType } from "tonwa";
 import { Page } from "tonwa-app";
-import { theme } from "tonwa-com";
+import { FA, theme } from "tonwa-com";
 import { Band } from "app/coms";
 import { Atom, ParamSaveFork } from "uqs/UqDefault";
 import { EnumBudType } from "tonwa";
 import { getDays } from "app/tool";
-import { btnNext, cnNextClassName } from "../../store";
 import { InputProps } from "./inputBase";
 import { ViewIBaseFromId } from "../ViewDiv/ViewIBase";
-import { ValuesBudsEditing } from "app/hooks/BudsEditing";
 import { PickResult } from "app/hooks/Calc";
 import { FormBudsEditing } from "app/hooks/View";
+import { FormBudsStore, ValuesBudsEditing } from "app/Store";
 
+
+const btnNext = <>下一步 <FA name="arrow-right" className="ms-2" /></>;
+const cnNextClassName: string = "btn btn-primary";
 
 export interface PropsInputFork extends InputProps<BinInputFork> {
 };
@@ -131,7 +133,8 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
     else {
         let buds = [...keys];
         if (forkBuds !== undefined) buds.push(...forkBuds);
-        let budsEditing = new ValuesBudsEditing(modal, biz, buds);
+        let budsEditing = new ValuesBudsEditing(biz, buds);
+        let formBudsStore = new FormBudsStore(modal, budsEditing);
         budsEditing.setNamedValue('%base', seed);
         budsEditing.initBudValues(paramValues);
         ret = await modal.open(<PagePickSpec />);
@@ -153,7 +156,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
                 <div className="m-3">
                     <FormBudsEditing
                         className={bootstrapContainer}
-                        budsEditing={budsEditing}
+                        formBudsStore={formBudsStore}
                         onSubmit={onSubmitForm}
                         submit={btnNext}
                         submitClassName={cnNextClassName} />

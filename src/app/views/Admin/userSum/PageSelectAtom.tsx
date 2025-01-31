@@ -3,7 +3,7 @@ import { ChangeEvent, useRef } from "react";
 import { Page, useModal } from "tonwa-app";
 import { List } from "tonwa-com";
 import { Selection } from "./UserSumStore";
-import { AtomData } from "app/tool";
+import { AtomData } from "tonwa";
 
 export function PageSelectAtom({ atoms, selected: selectedList, onSelectChanged }: {
     atoms: AtomData[];

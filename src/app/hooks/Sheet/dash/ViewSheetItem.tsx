@@ -3,8 +3,8 @@ import { useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { ReturnGetMySheetList$page } from "uqs/UqDefault";
 import { PageSheetEdit } from "./PageSheetEntry";
-import { SheetConsole } from "../store";
-import { SheetListStore } from "../store";
+import { SheetConsole } from "../../../Store";
+import { SheetListStore } from "../../../Store";
 
 export function ViewSheetItem({ value, sheetConsole, listStore }: {
     value: ReturnGetMySheetList$page;

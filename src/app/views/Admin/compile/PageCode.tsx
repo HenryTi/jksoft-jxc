@@ -11,7 +11,7 @@ import { ButtonAsyncIcon } from 'app/tool/ButtonAsyncIcon';
 import { loadFiles } from './loadFiles';
 import { ViewCurSite, ViewCurSiteHeader } from 'app/views/Site';
 
-export function PageCode() {
+export function PageCode({ onCompiled }: { onCompiled: () => void; }) {
     const uqApp = useUqApp();
     const modal = useModal();
     const [code, setCode] = useState('');
@@ -32,6 +32,7 @@ export function PageCode() {
         if (hasError === false) {
             allSchemas = jsonpack.unpack(schemas);
             biz.buildEntities(allSchemas);
+            onCompiled();
             top = <Top icon="check-circle" color="text-success">编译成功</Top>;
         }
         else {

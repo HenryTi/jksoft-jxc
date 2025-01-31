@@ -1,8 +1,8 @@
 import { atom } from "jotai";
 import { Modal } from "tonwa-app";
 import { setAtomValue } from "tonwa-com";
-import { Client, EntityReport } from "tonwa";
-import { Console, EntityStore } from "../../../tool";
+import { Client, EntityReport, EntityStore } from "tonwa";
+import { Console } from "../../../tool";
 import { ParamGetReport } from "uqs/UqDefault";
 
 interface SpecRow {

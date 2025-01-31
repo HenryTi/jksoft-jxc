@@ -8,8 +8,8 @@ import { theme } from "tonwa-com";
 import { ParamSaveFork } from "uqs/UqDefault";
 import { EnumBudType } from "tonwa";
 import { getDays } from "app/tool";
-import { BudsEditing, ValuesBudsEditing } from "app/hooks/BudsEditing";
 import { PagePickSelect, PickResult } from "app/hooks";
+import { FormBudsStore, ValuesBudsEditing } from "app/Store";
 
 export interface PropsPickSpec {
     base: number;
@@ -19,7 +19,7 @@ export interface PropsPickSpec {
     buttonClassName: string;
 };
 
-export async function pickFromSpec(editing: BudsEditing, binPick: PickSpec): Promise<PickResult> {
+export async function pickFromSpec(editing: FormBudsStore, binPick: PickSpec): Promise<PickResult> {
     const { modal, biz } = editing;
     const { client } = biz;
     let { pickParams, from } = binPick;
@@ -54,7 +54,7 @@ export async function pickFromSpec(editing: BudsEditing, binPick: PickSpec): Pro
     const { buds: props } = entitySpec;
     let buds = [...keys];
     if (props !== undefined) buds.push(...props);
-    let budsEditing = new ValuesBudsEditing(modal, biz, buds)
+    let budsEditing = new FormBudsStore(modal, new ValuesBudsEditing(biz, buds));
     let ret = await modal.open(<PagePickSpec />);
     return ret;
 

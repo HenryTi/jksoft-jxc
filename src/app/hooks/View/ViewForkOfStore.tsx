@@ -1,7 +1,6 @@
 import { ViewBud, budContent } from "app/hooks";
 import { theme } from "tonwa-com";
-import { EntityAtom } from "tonwa";
-import { EntityStore } from "app/tool";
+import { EntityAtom, EntityStore } from "tonwa";
 import { ViewForkId } from "app/coms/ViewForkId";
 
 export function ViewForkAtomBold({ id, store }: { id: number; store: EntityStore; }) {

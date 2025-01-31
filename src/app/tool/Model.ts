@@ -1,7 +1,5 @@
 import { atom } from "jotai";
 import { setAtomValue } from "tonwa-com";
-import { Atom } from "uqs/UqDefault";
-import { AtomData } from "./Store";
 
 /*
 export interface Spec {

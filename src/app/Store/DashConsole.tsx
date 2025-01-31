@@ -1,10 +1,9 @@
-import { PageSheetNew } from "../dash/PageSheetEntry";
-import { SheetConsole, SheetSteps, SheetStore } from ".";
-import { ReturnGetMyDrafts$page } from "uqs/UqDefault";
+import { PageSheetNew } from "../hooks/Sheet/dash/PageSheetEntry";
+import { SheetConsole, SheetSteps, SheetStore } from "./SheetStore";
 import { atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Modal } from "tonwa-app";
-import { EntitySheet } from "tonwa";
+import { EntitySheet, ReturnSheetList$page } from "tonwa";
 
 const maxDraftsCount = 10;
 
@@ -15,8 +14,8 @@ export class DashConsole extends SheetConsole {
 
     constructor(modal: Modal, entitySheet: EntitySheet) {
         super(modal, entitySheet);
-        this.myDraftsStore = new SheetMyDraftsStore(entitySheet, this);
-        this.myArchiveList = new SheetMyListStore(entitySheet, this);
+        this.myDraftsStore = new SheetMyDraftsStore(this);
+        this.myArchiveList = new SheetMyListStore(this);
     }
 
     discard(sheetId: number): void {
@@ -114,7 +113,7 @@ export class SheetMyDraftsStore extends SheetListStore {
         }
     }
 
-    readonly atomMyDrafts = atom(undefined as ReturnGetMyDrafts$page[]);
+    readonly atomMyDrafts = atom(undefined as ReturnSheetList$page[]);
     async loadMyDrafts(): Promise<void> {
         let { $page, props, atoms, forks } = await this.client.GetMyDrafts({
             entitySheet: this.entity.id,

@@ -1,5 +1,3 @@
-import { EntityID } from "./EntityAtom";
-
 export enum BizPhraseType {
     any = 0,
     atom = 11,
@@ -97,3 +95,20 @@ export interface UIStyle {
     show: boolean;
     required: boolean;
 };
+
+export interface ReturnProps {
+    id: number;
+    bud: number;
+    value: any;
+}
+export interface ReturnAtoms {
+    id: number;
+    phrase: number;
+    no: string;
+    ex: string;
+}
+export interface ReturnForks {
+    id: number;
+    phrase: number;
+    seed: number;
+}

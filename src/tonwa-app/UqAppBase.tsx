@@ -49,7 +49,7 @@ export abstract class UqAppBase<UQS = any> {
     readonly mustLogin: boolean;
     readonly refreshTime = atom(Date.now() / 1000);
     readonly user = atom(undefined as User);
-    readonly modal = {
+    readonly modalStack = {
         stack: atom([] as [JSX.Element, (value: any | PromiseLike<any>) => void, (result: any) => void][]),
     }
     readonly pageCache: PageCache;
@@ -111,7 +111,7 @@ export abstract class UqAppBase<UQS = any> {
         this.uqSites.logoutUnit();
     }
     closeAllModal() {
-        setAtomValue(this.modal.stack, []);
+        setAtomValue(this.modalStack.stack, []);
     }
     onModalClose: () => void;
 
@@ -224,8 +224,8 @@ export interface Modal {
     close: (result?: any) => void;
 }
 export function uqAppModal(uqApp: UqAppBase): Modal {
-    const { modal } = uqApp;
-    const { stack: modalStackAtom } = modal;
+    const { modalStack } = uqApp;
+    const { stack: modalStackAtom } = modalStack;
     async function open<T = any>(element: JSX.Element, onClosed?: (result: any) => void): Promise<T> {
         return new Promise<T>(async (resolve, reject) => {
             let modalStack = getAtomValue(modalStackAtom);
@@ -267,7 +267,7 @@ const queryClient = new QueryClient({
 
 export function ViewUqApp({ createUqApp, children }: { createUqApp: () => UqAppBase; children: ReactNode; }) {
     let uqApp = useMemo(createUqApp, []);
-    const [modalStack] = useAtom(uqApp.modal.stack);
+    const [modalStack] = useAtom(uqApp.modalStack.stack);
     let [appInited, setAppInited] = useState<boolean>(false);
     useEffectOnce(() => {
         (async function () {

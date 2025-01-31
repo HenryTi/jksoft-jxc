@@ -6,8 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import React from "react";
 import { pathSiteAdmin } from "../Admin/site";
 import { UserSite } from "tonwa-uq";
-import { Atom } from "uqs/UqDefault";
-import { AtomData } from "app/tool";
+import { AtomData } from "tonwa";
 
 export function PageMySites() {
     return <Page header="我的机构">

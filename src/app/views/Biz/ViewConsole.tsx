@@ -58,6 +58,9 @@ export function ViewConsole() {
         {viewFolder}
         {viewEditing}
         {arr.map((v, index) => <ViewFolderLink key={index} center={v} />)}
+        <Link to={`test-mvc-sheet/${biz.sheets[0].id}`} className={cn} onClick={undefined}>
+            TestMVC
+        </Link>
     </div>;
 }
 interface FolderProps {

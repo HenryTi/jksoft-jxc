@@ -4,10 +4,10 @@ import { ViewAtomId } from "../../BizAtom";
 import { useState } from "react";
 import { BizPhraseType } from "uqs/UqDefault";
 import { ViewForkId } from "app/coms/ViewForkId";
-import { BinBudsEditing, doBinPick } from "app/hooks/Sheet/store";
+import { BinBudsEditing, doBinPick } from "app/Store";
 
 export function EditBudOnPick(props: EditBudTemplateProps & { pick: BinPick; }) {
-    const { id, pick, readOnly, labelSize, flag, value: initValue, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
+    const { id, pick, readOnly, labelSize, flag, value: initValue, formBudsStore, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
     const { budsEditing, bizBud } = budEditing;
     const [value, setValue] = useState<number>(initValue as number);
     const { caption, budDataType } = bizBud;
@@ -15,7 +15,7 @@ export function EditBudOnPick(props: EditBudTemplateProps & { pick: BinPick; }) 
     const label = caption;
     async function onEditClick() {
         // let retPick = await onPick();
-        let retPick = await doBinPick(budsEditing as BinBudsEditing, pick);
+        let retPick = await doBinPick(formBudsStore, pick);
         if (retPick === null || retPick === undefined) return;
         let atomId = retPick as any;
         if (typeof retPick === 'object') {

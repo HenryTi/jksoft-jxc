@@ -1,9 +1,7 @@
-import { SheetStore, ValDivBase } from "../../store";
+import { SheetStore, ValDivBase } from "../../../../Store";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
-import { Atom as BizAtom } from "uqs/UqDefault";
 import { ViewForkAtomBold } from "app/hooks/View";
-import { BizBud } from "tonwa";
-import { AtomData } from "app/tool";
+import { AtomData, BizBud } from "tonwa";
 
 export function ViewIBase({ sheetStore, valDiv, index }: { sheetStore: SheetStore; valDiv: ValDivBase; index: number; }) {
     const { binDiv } = valDiv;

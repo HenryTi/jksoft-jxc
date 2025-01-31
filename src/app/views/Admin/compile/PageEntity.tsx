@@ -103,8 +103,9 @@ class EntityStore {
     readonly atomCode = atom(codeWaiting);
     readonly atomDeleted = atom(false);
     readonly nav: Nav;
+    private readonly onCompiled: () => void;
 
-    constructor(uqApp: UqApp, modal: Modal, entity: Entity) {
+    constructor(uqApp: UqApp, modal: Modal, entity: Entity, onCompiled: () => void) {
         this.uqApp = uqApp;
         // this.uq = entity.uq;
         this.biz = entity.biz;
@@ -112,12 +113,13 @@ class EntityStore {
         this.modal = modal;
         this.atomEntity = atom(entity);
         this.nav = new Nav(entity, this.onEntityChange);
+        this.onCompiled = onCompiled;
     }
 
     private readonly onSubmit = async () => {
         let entity = getAtomValue(this.atomEntity);
         let code = getAtomValue(this.atomCode);
-        this.modal.open(<PageLogs entity={entity} code={code} />);
+        this.modal.open(<PageLogs entity={entity} code={code} onCompiled={this.onCompiled} />);
         this.setSubmitDisabled(false);
     }
 
@@ -168,12 +170,12 @@ class EntityStore {
         this.biz.delEntity(this.entity);
     }
 }
-export function PageEntity({ entity: orgEntity }: { entity: Entity }) {
+export function PageEntity({ entity: orgEntity, onCompiled }: { entity: Entity; onCompiled: () => void; }) {
     const uqApp = useUqApp();
     const modal = useModal();
     const { uq, uqSites } = uqApp;
     let { userSite } = uqSites;
-    const { current: store } = useRef(new EntityStore(uqApp, modal, orgEntity));
+    const { current: store } = useRef(new EntityStore(uqApp, modal, orgEntity, onCompiled));
     const { atomEntity, atomCode, atomDeleted } = store;
     const entity = useAtomValue(atomEntity);
     const code = useAtomValue(atomCode);
@@ -380,7 +382,7 @@ function PageUnique({ entity }: { entity: EntityAtom; }) {
     </Page>;
 }
 
-function PageLogs({ entity, code }: { entity: Entity, code: string; }) {
+function PageLogs({ entity, code, onCompiled }: { entity: Entity, code: string; onCompiled: () => void; }) {
     const uqApp = useUqApp();
     const { uq, uqMan, biz } = uqApp;
     const { uqApi } = uqMan;
@@ -411,6 +413,7 @@ function PageLogs({ entity, code }: { entity: Entity, code: string; }) {
             else {
                 let bizSchema = jsonpack.unpack(schemas);
                 biz.buildEntities(bizSchema);
+                onCompiled();
                 ret = '编译成功!\n' + JSON.stringify(bizSchema, null, 4);
             }
             setAtomValue(atomLogs, ret);

@@ -23,9 +23,6 @@ export function TabHome() {
         </Link>;
     }
 
-    function onTest() {
-        modal.open(<PageTest />);
-    }
     return <Page header="同花" back="none">
         <div className="d-flex border-bottom tonwa-bg-gray-1">
             <div className="ps-5 py-2 flex-grow-1 text-center">

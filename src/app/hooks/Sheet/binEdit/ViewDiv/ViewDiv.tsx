@@ -1,7 +1,7 @@
 import { useAtomValue } from "jotai";
 import { setAtomValue } from "tonwa-com";
 import { useModal } from "tonwa-app";
-import { DivEditing, ValDivRoot } from "../../store";
+import { DivEditing, ValDivRoot } from "../../../../Store";
 import { editDivs, UseEditDivsProps } from "../divEdit";
 import { PageEditDivRoot } from "./PageEditDivRoot";
 import { ViewPendRow } from "../ViewPendRow";

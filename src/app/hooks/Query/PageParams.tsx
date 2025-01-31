@@ -2,11 +2,13 @@ import { BizBud, PickParam, ValueSetType } from "tonwa";
 import { Page, useModal } from "tonwa-app";
 import { theme } from "tonwa-com";
 import { Band, FormRow, FormRowsView } from "app/coms";
-import { BudsEditing, ValuesBudsEditing, ViewBud } from "app/hooks";
+// import { BudsEditing, FormBudsStore, ValuesBudsEditing, ViewBud } from "app/hooks";
 import { useForm } from "react-hook-form";
+import { FormBudsStore, ValuesBudsEditing } from "app/Store";
+import { ViewBud } from "../Bud";
 
 interface Props {
-    editing: BudsEditing;
+    editing: FormBudsStore; // BudsEditing;
     header: string;
     // namedResults: NamedResults;
     queryParams: BizBud[];
@@ -58,7 +60,7 @@ export async function pickQueryParams(props: Props) {
             editing.addFormula(pickParam.name, pickParam.valueSet, pickParam.valueSetType === ValueSetType.init);
         }
     }
-    const { valueSpace } = editing;
+    const { modal } = editing;
     const valueParams: [PickParam, BizBud, any][] = [];
     const inputParams: BizBud[] = [];
     for (let param of queryParams) {
@@ -91,8 +93,8 @@ export async function pickQueryParams(props: Props) {
         let retParam = stripParams(undefined, valueParams);
         return retParam;
     }
-    const { modal, biz } = editing;
-    let paramBudsEditing = new ValuesBudsEditing(modal, biz, inputParams);
+    const { biz } = editing;
+    let paramBudsEditing = new FormBudsStore(modal, new ValuesBudsEditing(biz, inputParams));
     return await modal.open(<PageParams header={header}
         valueParams={valueParams}
         inputParams={paramBudsEditing} />);
@@ -110,7 +112,7 @@ function stripParams(initData: any, valueParams: [PickParam, BizBud, any][]) {
 interface PageParamsProps {
     header: string;
     valueParams: [PickParam, BizBud, any][];
-    inputParams: ValuesBudsEditing;
+    inputParams: FormBudsStore;
 }
 function PageParams({ header, valueParams, inputParams }: PageParamsProps) {
     const modal = useModal();

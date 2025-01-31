@@ -1,19 +1,24 @@
-import { SheetStore } from "../store";
-import { EditBudInline, ViewFork, ViewForkAtom, ViewForkAtomBold, ViewForkR } from "app/hooks";
+import { BinEditing, FormBudsStore, SheetStore } from "../../../Store";
+import { EditBudInline, ViewForkAtom, ViewForkAtomBold, ViewForkR } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "../../ViewSheetTime";
 import { BizBud, ValueSetType } from "tonwa";
 import { setAtomValue } from "tonwa-com";
 import { theme } from "tonwa-com";
-import { BudCheckValue } from "tonwa-app";
+import { BudCheckValue, useModal } from "tonwa-app";
 import { LabelBox, RowCols } from "app/hooks/tool";
 
 export function ViewMain({ store, readOnly }: { store: SheetStore; popup: boolean; readOnly?: boolean; }) {
+    const modal = useModal();
     const { mainStore: main } = store;
-    const { no, entity: entityMain, _valRow: _binRow, budEditings } = main;
+    const { no, entity: entityMain, _valRow: _binRow } = main;
     const { i: budI, x: budX } = entityMain;
     const binRow = useAtomValue(_binRow);
     const { id: idBin, i, x, buds } = binRow;
+    const budsEditing = new BinEditing(store, entityMain);
+    const budEditings = budsEditing.createBudEditings();
+    const formBudsStore = new FormBudsStore(modal, budsEditing);
+
     let { length } = budEditings;
     function onBudChanged(bud: BizBud, value: string | number | BudCheckValue) {
         buds[bud.id] = value as any;
@@ -34,7 +39,7 @@ export function ViewMain({ store, readOnly }: { store: SheetStore; popup: boolea
             if (readOnly === true) budReadOnly = readOnly;
             else budReadOnly = valueSetType === ValueSetType.equ;
             let view = <LabelBox key={id} label={caption} required={required} title={value as any} className="mb-2">
-                <EditBudInline budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} readOnly={budReadOnly} store={store} />
+                <EditBudInline formBudsStore={formBudsStore} budEditing={budEditing} id={idBin} value={value} onChanged={onBudChanged} readOnly={budReadOnly} store={store} />
             </LabelBox>;
             if (budReadOnly === true) {
                 topBuds.push(view);

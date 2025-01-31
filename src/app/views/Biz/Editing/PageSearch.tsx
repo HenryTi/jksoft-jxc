@@ -1,12 +1,13 @@
 import { BizBud, EntitySheet } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { PageQueryMore } from "app/coms";
-import { EditBudInline, OnBudChanged, PageRefId, ValuesBudsEditing } from "app/hooks";
+import { EditBudInline, OnBudChanged, PageRefId } from "app/hooks";
 import { IDViewUserSite } from "app/tool";
 import { ChangeEvent, useRef, useState, JSX } from "react";
 import { BudCheckValue, Page, useModal } from "tonwa-app";
 import { ButtonAsync, EasyTime, FA, SearchBox, Sep } from "tonwa-com";
 import { User } from "tonwa-uq";
+import { FormBudsStore, ValuesBudsEditing } from "app/Store";
 
 export function PageSearch() {
     const modal = useModal();
@@ -153,7 +154,9 @@ export function PageSearchSheet({ sheet }: { sheet: EntitySheet; }) {
 function ViewParams({ vSearchNo, budArr, onBudChanged }: { vSearchNo: any; budArr: BizBud[]; onBudChanged: OnBudChanged; }) {
     const modal = useModal();
     const uqApp = useUqApp();
-    let valuesBudsEditing = new ValuesBudsEditing(modal, uqApp.biz, budArr);
+    const { biz } = uqApp;
+    let valuesBudsEditing = new ValuesBudsEditing(biz, budArr);
+    let formBudsStore = new FormBudsStore(modal, valuesBudsEditing);
     let budEditings = valuesBudsEditing.createBudEditings();
     let { length } = budEditings;
     let propRow: any[] = [vSearchNo];
@@ -165,7 +168,11 @@ function ViewParams({ vSearchNo, budArr, onBudChanged }: { vSearchNo: any; budAr
         let { id, caption, name } = bizBud;
         propRow.push(<div key={id} className="col-3">
             <div className={'small ' + cn}>{caption ?? name}</div>
-            <div className="py-1"><EditBudInline budEditing={budEditing} id={undefined} value={undefined} onChanged={onBudChanged} /></div>
+            <div className="py-1">
+                <EditBudInline formBudsStore={formBudsStore}
+                    budEditing={budEditing} id={undefined} value={undefined}
+                    onChanged={onBudChanged} />
+            </div>
         </div>);
         if (i === length - 1) break;
         if (propRow.length % 4 === 0) {

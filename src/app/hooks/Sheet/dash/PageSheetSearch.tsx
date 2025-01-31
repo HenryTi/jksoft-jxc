@@ -7,8 +7,8 @@ import { BudCheckValue, Page, useModal } from "tonwa-app";
 import { ButtonAsync, FA, SearchBox, Sep, theme } from "tonwa-com";
 import { User } from "tonwa-uq";
 import { ViewSheetItem } from "./ViewSheetItem";
-import { EditBudInline, OnBudChanged, ValuesBudsEditing } from "app/hooks";
-import { DashConsole } from "../store";
+import { EditBudInline, OnBudChanged } from "app/hooks";
+import { DashConsole, FormBudsStore, ValuesBudsEditing } from "../../../Store";
 
 export function PageSearch() {
     const modal = useModal();
@@ -168,7 +168,8 @@ export function PageSheetSearch({ dashConsole }: { dashConsole: DashConsole; }) 
 function ViewParams({ budArr, onBudChanged }: { budArr: BizBud[]; onBudChanged: OnBudChanged; }) {
     const modal = useModal();
     const uqApp = useUqApp();
-    let valuesBudsEditing = new ValuesBudsEditing(modal, uqApp.biz, budArr);
+    let valuesBudsEditing = new ValuesBudsEditing(uqApp.biz, budArr);
+    let formBudsStore = new FormBudsStore(modal, valuesBudsEditing);
     valuesBudsEditing.setStopRequired();
     let budEditings = valuesBudsEditing.createBudEditings(); // budArr.map(v => new BudEditing(v, false));
     let { length } = budEditings;
@@ -181,7 +182,7 @@ function ViewParams({ budArr, onBudChanged }: { budArr: BizBud[]; onBudChanged: 
         let { id, caption } = bizBud;
         propRow.push(<div key={id} className="col-3">
             <div className={cn}>{caption}</div>
-            <div className="py-1"><EditBudInline budEditing={budEditing} id={undefined} value={undefined} onChanged={onBudChanged} /></div>
+            <div className="py-1"><EditBudInline formBudsStore={formBudsStore} budEditing={budEditing} id={undefined} value={undefined} onChanged={onBudChanged} /></div>
         </div>);
         if (i === length - 1) break;
         if (propRow.length % 4 === 0) {

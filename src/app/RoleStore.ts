@@ -1,6 +1,6 @@
-import { Store } from "./tool";
 import { UqApp } from "./UqApp";
 import { atom } from "jotai";
+import { Store } from "tonwa";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Action, EnumSysRole, Query, UnitRoles, UqMan, UserSite } from "tonwa-uq";
 

@@ -1,13 +1,10 @@
 import { PendRow, SheetStore } from "./SheetStore";
-import { BinDiv, BizBud, EntityBin, EnumDetailOperate, PickPend } from "tonwa";
+import { BinDiv, BizBud, EntityBin, EntityStore, EnumDetailOperate, PickPend } from "tonwa";
 import { Getter, WritableAtom, atom } from "jotai";
 import { getValRowPropArr, PendProxyHandler, ValRow } from "./ValRow";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsBase, ValDivsRoot } from './ValDiv';
-import { BudEditing, ValuesBudsEditing, ValueSpace } from "app/hooks";
 import { PickPendStore } from "./PickPendStore";
-import { EntityStore } from "app/tool";
-import { ParamSaveDetails } from "uqs/UqDefault";
 import { DivEditing } from "./BinEditing";
 
 enum PendLoadState {
@@ -31,7 +28,7 @@ export class BinStore extends EntityStore<EntityBin> {
     readonly atomPendRows = atom(undefined as PendRow[]);
     readonly valDivsRoot: ValDivsRoot;
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
-    readonly budEditings: BudEditing[];
+    // readonly budEditings: BudEditing[];
     readonly pickPendStores: { [id: number]: PickPendStore; } = {};
     queryRowColl: { [id: number]: boolean } = {}
 
@@ -65,10 +62,12 @@ export class BinStore extends EntityStore<EntityBin> {
             let ret = hasValue === true ? SubmitState.enable : SubmitState.disable; // .hide;
             return ret;
         }, null);
+        /*
         if (pend !== undefined) {
             const valuesBudsEditing = new ValuesBudsEditing(modal, biz, pend.params);
             this.budEditings = valuesBudsEditing.createBudEditings();
         }
+        */
     }
 
     setWaiting(waiting: boolean) {
@@ -473,11 +472,11 @@ export class BinStore extends EntityStore<EntityBin> {
         return undefined;
     }
 
-    getPickPendStore(pickPend: PickPend, valueSpace: ValueSpace) {
+    getPickPendStore(pickPend: PickPend/*, valueSpace: ValueSpace*/) {
         let { id } = pickPend;
         let pps = this.pickPendStores[id];
         if (pps === undefined) {
-            this.pickPendStores[id] = pps = new PickPendStore(this, pickPend, valueSpace);
+            this.pickPendStores[id] = pps = new PickPendStore(this, pickPend/*, valueSpace*/);
         }
         return pps;
     }

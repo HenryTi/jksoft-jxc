@@ -1,8 +1,7 @@
 import { useUqApp } from "app";
-import { EntityIOSite } from "tonwa";
+import { AtomData, EntityIOSite } from "tonwa";
 import { ButtonRightAdd, PageQueryMore } from "app/coms";
 import { ViewAtom, useIDSelect } from "app/hooks";
-import { AtomData } from "app/tool";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Page, useModal } from "tonwa-app";

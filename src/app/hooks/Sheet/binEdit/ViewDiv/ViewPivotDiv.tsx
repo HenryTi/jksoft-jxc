@@ -1,7 +1,7 @@
 import { useAtomValue } from "jotai";
 import { theme } from "tonwa-com";
 import { budContent } from "../../../Bud";
-import { ValDiv } from "../../store";
+import { ValDiv } from "../../../../Store";
 import { ViewDivProps } from "./tool";
 
 export function ViewPivotDiv({ valDiv, binStore }: ViewDivProps) {
