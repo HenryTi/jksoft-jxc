@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { Page, PageConfirm, PageSpinner, useModal } from "tonwa-app";
 import { FA, List, useEffectOnce, wait } from "tonwa-com";
-import { Entity, EntitySheet, EntityStore } from "tonwa";
+import { Entity, EntitySheet, StoreEntity } from "tonwa";
 import { PageSheetEdit, PageSheetNew } from "./PageSheetEntry";
 import { DashConsole, getUserBudValue } from "../../../Store";
 import { Sheet } from "uqs/UqDefault";

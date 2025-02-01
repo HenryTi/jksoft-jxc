@@ -3,7 +3,7 @@ import { useUqApp } from "app/UqApp";
 import { ViewNotifyCount } from "app/tool";
 import { FA, Sep } from "tonwa-com";
 import { CenterItem, centers } from "../center";
-import { EntitySheet, File, Folder } from "tonwa";
+import { EntitySheet, File, Folder, to62 } from "tonwa";
 import { Accordion, AccordionItem } from "react-bootstrap";
 import React, { useState } from "react";
 import { UI } from "app/ui";
@@ -58,7 +58,7 @@ export function ViewConsole() {
         {viewFolder}
         {viewEditing}
         {arr.map((v, index) => <ViewFolderLink key={index} center={v} />)}
-        <Link to={`test-mvc-sheet/${biz.sheets[0].id}`} className={cn} onClick={undefined}>
+        <Link to={`test-mvc-sheet/${to62(biz.sheets[0].id)}`} className={cn} onClick={undefined}>
             TestMVC
         </Link>
     </div>;

@@ -1,10 +1,10 @@
-import { BizBud, EntityAtom, EntityID, EntityFork, EntityStore } from "tonwa";
+import { BizBud, EntityAtom, EntityID, EntityFork, StoreEntity } from "tonwa";
 // import { EntityStore } from "app/tool";
 import { WritableAtom, atom } from "jotai";
 import { Modal } from "tonwa-app";
 import { Atom, BizPhraseType, ParamSearchAtomBuds } from "uqs/UqDefault";
 
-export abstract class IDSelectStore<E extends EntityID> extends EntityStore<E> {
+export abstract class IDSelectStore<E extends EntityID> extends StoreEntity<E> {
     protected bizBuds: BizBud[];
 
     constructor(modal: Modal, entity: E, buds: number[], noMedsMessage?: string) {

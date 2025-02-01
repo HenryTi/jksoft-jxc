@@ -1,6 +1,5 @@
 import { Client } from "../Client";
-import { BizBud, Entity, EntityID, ReturnAtoms, ReturnForks, ReturnProps } from "../Biz";
-import { Biz } from "../Biz";
+import { Biz, BizBud, Entity, EntityID, ReturnAtoms, ReturnForks, ReturnProps } from "../Biz";
 import { Modal } from "../UI";
 
 export abstract class KeyIdObject {
@@ -39,6 +38,16 @@ export interface SheetData {
     operator: number;
 }
 
+export interface BinData {
+    id: number;
+    origin: number;
+    i: number;
+    x: number;
+    value: number;
+    amount: number;
+    price: number;
+}
+
 export interface AtomColl {
     [id: number]: {
         atom: AtomData;
@@ -57,47 +66,21 @@ export interface ForkColl {
 export abstract class Store extends KeyIdObject {
 }
 
-export abstract class BizStore extends Store {
+export abstract class StoreBase extends Store {
     readonly modal: Modal;
     readonly biz: Biz;
     readonly client: Client;
-    //    readonly uq: UqExt;
+    readonly budsColl: BudsColl = {};
+    readonly bizAtomColl: AtomColl = {};
+    readonly bizForkColl: ForkColl = {};
+    readonly sheetsColl: { [id: number]: SheetData } = {};
+
     constructor(modal: Modal, biz: Biz) {
         super();
         this.modal = modal;
         this.biz = biz;
         this.client = biz.client;
         //        this.uq = biz.uq;
-    }
-}
-/*
-interface CacheProp {
-    id: number;
-    phrase: number;
-    value: any;
-}
-interface CacheAtom {
-    id: number;
-    base: number;
-    no: string;
-    ex: string;
-}
-interface CacheFork {
-    id: number;
-    atom: number;
-}
-*/
-export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
-    readonly entity: E;
-    readonly budsColl: BudsColl = {};
-    readonly bizAtomColl: AtomColl = {};
-    readonly bizForkColl: ForkColl = {};
-    readonly sheetsColl: { [id: number]: SheetData } = {};
-
-    constructor(modal: Modal, entity: E) {
-        const { biz } = entity;
-        super(modal, biz);
-        this.entity = entity;
     }
 
     getCacheAtom(id: number) { return this.bizAtomColl[id]; }
@@ -167,7 +150,7 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
         };
     }
 
-    mergeStoreColl(store: EntityStore) {
+    mergeStoreColl(store: StoreEntity) {
         const { bizAtomColl, bizForkColl, budsColl } = store;
         for (let i in bizAtomColl) {
             this.bizAtomColl[i] = bizAtomColl[i];
@@ -267,47 +250,64 @@ export abstract class EntityStore<E extends Entity = Entity> extends BizStore {
     }
 }
 /*
-interface PropData {
+interface CacheProp {
     id: number;
     phrase: number;
     value: any;
-    //    owner: number;
+}
+interface CacheAtom {
+    id: number;
+    base: number;
+    no: string;
+    ex: string;
+}
+interface CacheFork {
+    id: number;
+    atom: number;
 }
 */
-function budValuesFromProps(props: ReturnProps[]) {
-    const budsColl: BudsColl = {};
-    for (let { id, bud, value } of props) {
-        let budValues = budsColl[id];
-        if (budValues === undefined) {
-            budsColl[id] = budValues = {};
-        }
-        if (Array.isArray(value) === false) {
-            budValues[bud] = value;
-        }
-        else {
-            switch (value.length) {
-                default:
-                case 0: debugger; break;
-                case 1: budValues[bud] = value[0]; break;
-                case 2:
-                    let v1 = value[1];
-                    let checks = budValues[bud] as BudCheckValue;
-                    if (checks === undefined) {
-                        budValues[bud] = checks = [v1];
-                    }
-                    else {
-                        // 可能重复，去重。具体为什么会重复，随后再找原因
-                        if (checks.findIndex(v => v === v1) < 0) {
-                            checks.push(v1);
-                        }
-                        else {
-                            console.error('budValuesFromProps duplicate ', v1);
-                            // debugger;
-                        }
-                    }
-                    break;
-            }
+
+export abstract class StoreEntity<E extends Entity = Entity> extends StoreBase {
+    readonly entity: E;
+    constructor(modal: Modal, entity: E) {
+        super(modal, entity.biz);
+        this.entity = entity;
+    }
+}
+
+// 这里是将就老版本
+export class StoreBiz extends StoreBase {
+    async loadUserDefaults(): Promise<boolean> {
+        await this.biz.loadUserDefaults();
+        let { userDefaults } = this.biz;
+        if (userDefaults === undefined) return false;
+        const { buds, props, atoms, forks } = userDefaults;
+        this.cacheIdAndBuds(props, atoms, forks);
+        return true;
+    }
+}
+
+export abstract class StoreEntityNew<E extends Entity = Entity> extends StoreBase {
+    readonly storeBiz: StoreBiz;
+    readonly entity: E;
+
+    constructor(storeBiz: StoreBiz, entity: E) {
+        const { modal, biz } = storeBiz;
+        super(modal, biz);
+        this.storeBiz = storeBiz;
+        this.entity = entity;
+    }
+    /*
+    async loadUserDefaults(): Promise<boolean> {
+        const { userBuds: user } = this.entity;
+        if (user === undefined) return true;
+        if (user.length === 0) return true;
+        await this.storeBiz.loadUserDefaults();
+        let { userDefaults } = this.biz;
+        const { buds } = userDefaults;
+        for (let bud of user) {
+            if (buds[bud.id] === undefined) return false;
         }
     }
-    return budsColl;
+    */
 }

@@ -1,8 +1,8 @@
-import { BizBud, EntityQuery, EntityStore } from "tonwa";
+import { BizBud, EntityQuery, StoreEntity } from "tonwa";
 // import { EntityStore } from "app/tool";
 import { NamedProps, Prop, QueryRow, QueryRowCol } from "../tool";
 
-export class QueryStore extends EntityStore<EntityQuery> {
+export class QueryStore extends StoreEntity<EntityQuery> {
     async query(param: any) {
         let jsonParams: any = {};
         const { params: paramBuds, value: budValue, mainCols: mainColsDef } = this.entity;

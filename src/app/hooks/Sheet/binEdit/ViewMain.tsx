@@ -1,4 +1,4 @@
-import { BinEditing, FormBudsStore, SheetStore } from "../../../Store";
+import { BinEditing, FormBudsStore, StoreSheet } from "../../../Store";
 import { EditBudInline, ViewForkAtom, ViewForkAtomBold, ViewForkR } from "app/hooks";
 import { useAtomValue } from "jotai";
 import { ViewSheetTime } from "../../ViewSheetTime";
@@ -8,7 +8,7 @@ import { theme } from "tonwa-com";
 import { BudCheckValue, useModal } from "tonwa-app";
 import { LabelBox, RowCols } from "app/hooks/tool";
 
-export function ViewMain({ store, readOnly }: { store: SheetStore; popup: boolean; readOnly?: boolean; }) {
+export function ViewMain({ store, readOnly }: { store: StoreSheet; popup: boolean; readOnly?: boolean; }) {
     const modal = useModal();
     const { mainStore: main } = store;
     const { no, entity: entityMain, _valRow: _binRow } = main;

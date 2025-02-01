@@ -1,11 +1,11 @@
 import { EntityBin } from "tonwa";
-import { BinBudsEditing, doBinPick, FormBudsStore, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../../../Store";
+import { BinBudsEditing, doBinPick, FormBudsStore, RearPickResultType, ReturnUseBinPicks, StoreSheet } from "../../../Store";
 import { PickResult } from "app/hooks/Calc";
 import { Modal } from "tonwa/UI";
 
 export async function runBinPicks(
     modal: Modal
-    , sheetStore: SheetStore
+    , sheetStore: StoreSheet
     , bin: EntityBin
     , rearPickResultType: RearPickResultType = RearPickResultType.array) {
     const { binPicks, rearPick } = bin;

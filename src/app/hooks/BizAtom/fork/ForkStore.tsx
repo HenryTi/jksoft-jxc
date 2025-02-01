@@ -1,4 +1,4 @@
-import { BizBud, EntityFork, EntityStore, EnumBudType } from "tonwa";
+import { BizBud, EntityFork, StoreEntity, EnumBudType } from "tonwa";
 //import { EntityStore } from "app/tool";
 import { atom } from "jotai";
 import { useRef } from "react";
@@ -19,7 +19,7 @@ export interface BudValues {
     [bud: string | number]: BudValue;
 }
 
-export class ForkStore extends EntityStore<EntityFork> {
+export class ForkStore extends StoreEntity<EntityFork> {
     readonly itemsAtom = atom(undefined as any[]);
     readonly baseValue: AtomIDValue;
 

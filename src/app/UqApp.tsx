@@ -5,7 +5,7 @@ import { AppConfig, UqAppBase, UqAppContext, ViewUqApp } from "tonwa-app";
 import { UqConfig, UqMan, UqQuery, UqSites } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import { atom } from 'jotai';
-import { Biz, Client } from 'tonwa';
+import { Biz, Client } from "tonwa";
 import uqconfigJson from '../uqconfig.json';
 import { appEnv } from './appEnv';
 import { BizPhraseType, UqExt } from 'uqs/UqDefault';

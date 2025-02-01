@@ -10,8 +10,8 @@ import {
     PickPend,
     Entity,
     PickOptions,
-    BizStore,
-    EntityStore,
+    StoreBase,
+    StoreEntity,
     EnumBudType,
     BudID,
     BudFork,
@@ -24,7 +24,7 @@ import {
     BudValuesTool
 } from "tonwa";
 import { BinStore } from "./BinStore";
-import { SheetStore } from "./SheetStore";
+import { StoreSheet } from "./SheetStore";
 import { ValDivBase } from "./ValDiv";
 // import { RearPickResultType } from "./PickResult";
 import { ValRow } from "./ValRow";
@@ -54,7 +54,7 @@ import { pickFromOptions } from "../binPick/pickFromOptions";
 */
 // import { SheetEditing } from "../binPick";
 
-export class FormBudsStore extends BizStore implements FormContext {
+export class FormBudsStore extends StoreBase implements FormContext {
     readonly budsEditing: BudsEditing;
     constructor(modal: Modal, budsEditing: BudsEditing) {
         super(modal, budsEditing.biz);
@@ -81,7 +81,7 @@ export class FormBudsStore extends BizStore implements FormContext {
     setBudValue(bud: BizBud, value: any): void {
         this.budsEditing.setBudValue(bud, value);
     }
-    get store(): EntityStore<Entity> { return this.budsEditing.store; }
+    get store(): StoreEntity<Entity> { return this.budsEditing.store; }
     calcValue(formula: string): number | string | object {
         return this.budsEditing.calcValue(formula);
     }
@@ -355,7 +355,7 @@ export abstract class BudsEditing<R = any> {
         return ret;
     }
 
-    get store(): EntityStore { return undefined; }
+    get store(): StoreEntity { return undefined; }
 
     getNameValues(name: string) {
         return this.calc.getValues(name);
@@ -672,14 +672,14 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
     // readonly values: ValRow = { buds: {} } as any;
     readonly atomChanging = atom(0);
     readonly entityBin: EntityBin;
-    readonly sheetStore: SheetStore;
+    readonly sheetStore: StoreSheet;
     iValue: number;
     iBase: number;
     xValue: number;
     xBase: number;
     onDel: () => Promise<void>;
 
-    constructor(sheetStore: SheetStore, bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
+    constructor(sheetStore: StoreSheet, bin: EntityBin, buds: BizBud[], initBinRow?: BinRow) {
         super(sheetStore.biz, buds);
         this.sheetStore = sheetStore;
         this.entityBin = bin;
@@ -818,7 +818,7 @@ export class DivEditing extends BinBudsEditing {
 
 // 跟当前行相关的编辑，计算，状态
 export class BinEditing extends BinBudsEditing {
-    constructor(sheetStore: SheetStore, bin: EntityBin, initValRow?: ValRow) {
+    constructor(sheetStore: StoreSheet, bin: EntityBin, initValRow?: ValRow) {
         const { i: iBud, x: xBud, value: valueBud, price: priceBud, amount: amountBud, buds: budArr } = bin;
         let buds: BizBud[] = [];
         if (iBud !== undefined) buds.push(iBud);

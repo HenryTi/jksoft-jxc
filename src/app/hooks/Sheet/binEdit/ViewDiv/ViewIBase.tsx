@@ -1,9 +1,9 @@
-import { SheetStore, ValDivBase } from "../../../../Store";
+import { StoreSheet, ValDivBase } from "../../../../Store";
 import { RowCols, ViewAtomTitles, ViewShowBuds } from "app/hooks/tool";
 import { ViewForkAtomBold } from "app/hooks/View";
 import { AtomData, BizBud } from "tonwa";
 
-export function ViewIBase({ sheetStore, valDiv, index }: { sheetStore: SheetStore; valDiv: ValDivBase; index: number; }) {
+export function ViewIBase({ sheetStore, valDiv, index }: { sheetStore: StoreSheet; valDiv: ValDivBase; index: number; }) {
     const { binDiv } = valDiv;
     const { binDivBuds, entityBin } = binDiv;
     const { budIBase: iBaseBudInDiv } = binDivBuds;
@@ -36,7 +36,7 @@ function ViewAtom({ value }: { value: AtomData; }) {
     return <><b>{ex}</b> <span className="ms-3">{no}</span></>;
 }
 
-export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, valDiv: ValDivBase }) {
+export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: StoreSheet, valDiv: ValDivBase }) {
     const { binDiv } = valDiv;
     const { binDivBuds } = binDiv;
     const { budIBase } = binDivBuds;
@@ -48,7 +48,7 @@ export function ViewIBaseBuds({ sheetStore, valDiv }: { sheetStore: SheetStore, 
     return <ViewShowBuds bud={budIBase} id={iBase} store={sheetStore} />;
 }
 
-export function ViewIBaseFromId({ sheetStore, valDiv, iBase }: { sheetStore: SheetStore, valDiv: ValDivBase; iBase: number; }) {
+export function ViewIBaseFromId({ sheetStore, valDiv, iBase }: { sheetStore: StoreSheet, valDiv: ValDivBase; iBase: number; }) {
     let { iBase: budIBase } = valDiv.binDiv.entityBin
     let bizAtomValue = sheetStore.getCacheAtom(iBase)?.atom;
     return <div>

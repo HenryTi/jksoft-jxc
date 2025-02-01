@@ -1,5 +1,5 @@
-import { PendRow, SheetStore } from "./SheetStore";
-import { BinDiv, BizBud, EntityBin, EntityStore, EnumDetailOperate, PickPend } from "tonwa";
+import { PendRow, StoreSheet } from "./SheetStore";
+import { BinDiv, BizBud, EntityBin, StoreEntity, EnumDetailOperate, PickPend } from "tonwa";
 import { Getter, WritableAtom, atom } from "jotai";
 import { getValRowPropArr, PendProxyHandler, ValRow } from "./ValRow";
 import { getAtomValue, setAtomValue } from "tonwa-com";
@@ -17,11 +17,11 @@ export enum SubmitState {
     disable,
     enable,
 }
-export class BinStore extends EntityStore<EntityBin> {
+export class BinStore extends StoreEntity<EntityBin> {
     private valDivColl: { [id: number]: ValDivBase };
     private pendLoadState: PendLoadState;
     readonly atomWaiting = atom(false);
-    readonly sheetStore: SheetStore;
+    readonly sheetStore: StoreSheet;
     readonly operate: EnumDetailOperate;
     readonly binDivRoot: BinDiv;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> };
@@ -32,14 +32,14 @@ export class BinStore extends EntityStore<EntityBin> {
     readonly pickPendStores: { [id: number]: PickPendStore; } = {};
     queryRowColl: { [id: number]: boolean } = {}
 
-    constructor(sheetStore: SheetStore, entityBin: EntityBin, operate: EnumDetailOperate) {
-        const { modal, biz } = sheetStore;
+    constructor(storeSheet: StoreSheet, entityBin: EntityBin, operate: EnumDetailOperate) {
+        const { modal, biz } = storeSheet;
         super(modal, entityBin);
-        this.sheetStore = sheetStore;
+        this.sheetStore = storeSheet;
         this.operate = operate;
         const { pend, binDivRoot } = entityBin;
         this.binDivRoot = binDivRoot;
-        this.valDivsOnPend = sheetStore.valDivsOnPend;
+        this.valDivsOnPend = storeSheet.valDivsOnPend;
         this.valDivsRoot = new ValDivsRoot();
         this.valDivColl = {};
         this.pendLoadState = PendLoadState.none;

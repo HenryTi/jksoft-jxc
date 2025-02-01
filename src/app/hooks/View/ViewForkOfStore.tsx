@@ -1,9 +1,9 @@
 import { ViewBud, budContent } from "app/hooks";
 import { theme } from "tonwa-com";
-import { EntityAtom, EntityStore } from "tonwa";
+import { EntityAtom, StoreBase, StoreEntity } from "tonwa";
 import { ViewForkId } from "app/coms/ViewForkId";
 
-export function ViewForkAtomBold({ id, store }: { id: number; store: EntityStore; }) {
+export function ViewForkAtomBold({ id, store }: { id: number; store: StoreEntity; }) {
     let bizAtom = store.getCacheAtom(id)?.atom;
     if (bizAtom === undefined) {
         let bizSpec = store.getCacheFork(id);
@@ -17,7 +17,7 @@ export function ViewForkAtomBold({ id, store }: { id: number; store: EntityStore
     return <><b>{ex}</b> <span className="mx-3">{no}</span></>;
 }
 
-export function ViewForkAtom({ id, store }: { id: number; store: EntityStore; }) {
+export function ViewForkAtom({ id, store }: { id: number; store: StoreBase; }) {
     if (store === undefined) {
         return <ViewForkId id={id} />;
     }
@@ -31,7 +31,7 @@ export function ViewForkAtom({ id, store }: { id: number; store: EntityStore; })
     return <>{ex ?? no}</>;
 }
 
-export function ViewForkBuds({ id, store }: { id: number; store: EntityStore; }) {
+export function ViewForkBuds({ id, store }: { id: number; store: StoreEntity; }) {
     let bizSpec = store.getCacheFork(id);
     if (bizSpec === undefined) return null;
     let { buds } = bizSpec;
@@ -43,7 +43,7 @@ export function ViewForkBuds({ id, store }: { id: number; store: EntityStore; })
     })}</>;
 }
 
-export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: EntityStore; }) {
+export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: StoreEntity; }) {
     const { biz } = store;
     const atom = store.getCacheAtom(id)?.atom;
     const noLabel: boolean = undefined;
@@ -74,7 +74,7 @@ export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: Entity
     }</>;
 }
 
-export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: EntityStore; }) {
+export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: StoreEntity; }) {
     const { biz } = store;
     const atom = store.getCacheAtom(id)?.atom;
     // const noLabel: boolean = undefined;
@@ -97,7 +97,7 @@ export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: Entity
     }</>;
 }
 
-export function ViewForkAtomTitles({ id, store }: { id: number; store: EntityStore; }) {
+export function ViewForkAtomTitles({ id, store }: { id: number; store: StoreEntity; }) {
     const { biz } = store;
     const noLabel: boolean = undefined;
     let bizFork = store.getCacheFork(id);

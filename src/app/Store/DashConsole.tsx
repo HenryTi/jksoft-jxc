@@ -1,5 +1,5 @@
 import { PageSheetNew } from "../hooks/Sheet/dash/PageSheetEntry";
-import { SheetConsole, SheetSteps, SheetStore } from "./SheetStore";
+import { SheetConsole, SheetSteps, StoreSheet } from "./SheetStore";
 import { atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Modal } from "tonwa-app";
@@ -21,10 +21,10 @@ export class DashConsole extends SheetConsole {
     discard(sheetId: number): void {
         this.myDraftsStore.discardDraft(sheetId);
     }
-    async onSheetAdded(store: SheetStore): Promise<void> {
+    async onSheetAdded(store: StoreSheet): Promise<void> {
         await this.myDraftsStore.onSheetAdded(store);
     }
-    sheetRowCountChanged(store: SheetStore): void {
+    sheetRowCountChanged(store: StoreSheet): void {
         this.myDraftsStore.sheetRowCountChanged(store);
     }
     removeFromCache(sheetId: number): void {
@@ -41,7 +41,7 @@ export class DashConsole extends SheetConsole {
 
     steps: SheetSteps;
 
-    async onSubmited(store: SheetStore): Promise<void> {
+    async onSubmited(store: StoreSheet): Promise<void> {
         const { mainStore: main } = store;
         const { no, valRow } = main;
         const { id } = valRow;
@@ -53,7 +53,7 @@ export class DashConsole extends SheetConsole {
     }
 }
 
-export abstract class SheetListStore extends SheetStore {
+export abstract class SheetListStore extends StoreSheet {
 }
 
 export class SheetMyDraftsStore extends SheetListStore {
@@ -68,7 +68,7 @@ export class SheetMyDraftsStore extends SheetListStore {
         setAtomValue(this.atomMyDrafts, []);
     }
 
-    async onSheetAdded(store: SheetStore): Promise<void> {
+    async onSheetAdded(store: StoreSheet): Promise<void> {
         const { mainStore } = store;
         const { valRow, no } = mainStore;
         let { id, i, x, origin, price, value, amount } = valRow;
@@ -89,7 +89,7 @@ export class SheetMyDraftsStore extends SheetListStore {
         setAtomValue(this.atomMyDrafts, [...myDrafts]);
     }
 
-    sheetRowCountChanged(store: SheetStore) {
+    sheetRowCountChanged(store: StoreSheet) {
         const { mainStore: main, binStore } = store;
         const { valRow } = main;
         let { id } = valRow;

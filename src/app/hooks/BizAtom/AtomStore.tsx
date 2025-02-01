@@ -1,5 +1,5 @@
 import { from62, to62 } from "tonwa-com";
-import { BizBud, EntityAtom, EntityID, EntityStore, EnumBudType } from "tonwa";
+import { BizBud, EntityAtom, EntityID, StoreEntity, EnumBudType } from "tonwa";
 import { QueryMore, readBuds } from "app/tool";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { useParams } from "react-router-dom";
@@ -42,7 +42,7 @@ export function buildPathAtom(main: string) {
 
 export const pathAtom = buildPathAtom(atom);
 
-export class AtomStore extends EntityStore<EntityID> {
+export class AtomStore extends StoreEntity<EntityID> {
     readonly pathView: string;
     readonly pathList: string;
 

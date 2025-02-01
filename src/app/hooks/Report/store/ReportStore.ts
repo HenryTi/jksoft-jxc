@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { Modal } from "tonwa-app";
 import { setAtomValue } from "tonwa-com";
-import { Client, EntityReport, EntityStore } from "tonwa";
+import { Client, EntityReport, StoreEntity } from "tonwa";
 import { Console } from "../../../tool";
 import { ParamGetReport } from "uqs/UqDefault";
 
@@ -23,7 +23,7 @@ interface ReportRow {
     specs: SpecRow[];
 }
 
-export class ReportStore extends EntityStore<EntityReport> {
+export class ReportStore extends StoreEntity<EntityReport> {
     readonly console: ReportConsole;
     constructor(modal: Modal, entityReport: EntityReport, console: ReportConsole) {
         super(modal, entityReport);

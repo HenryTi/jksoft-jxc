@@ -2,7 +2,7 @@ import { BinDiv } from "tonwa";
 import { Getter, WritableAtom, atom } from "jotai";
 import { cloneValRow, ValRow } from "./ValRow";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { PendRow, SheetStore } from "./SheetStore";
+import { PendRow, StoreSheet } from "./SheetStore";
 
 export class ValDivsBase<T extends ValDivBase> {
     private readonly _atomValDivs = atom([] as T[]);
@@ -187,7 +187,7 @@ export abstract class ValDivBase extends ValDivs {
         return subValDivs[0].getIValue();
     }
 
-    getIBase(sheetStore: SheetStore, iValue: number): number {
+    getIBase(sheetStore: StoreSheet, iValue: number): number {
         if (this.iBase !== undefined) return this.iBase;
         let bizFork = sheetStore.getCacheFork(iValue);
         if (bizFork === undefined) return;

@@ -1,7 +1,7 @@
 import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
 import { PageSheetDash } from "./dash";
 import { PageSheetEdit, PageSheetNew } from "./dash";
-import { SheetConsole, SheetSteps, SheetStore } from "../../Store";
+import { SheetConsole, SheetSteps, StoreSheet } from "../../Store";
 import { from62, to62 } from "tonwa-com";
 import { useRef } from "react";
 import { EntitySheet } from "tonwa";
@@ -79,7 +79,7 @@ class RouteConsole extends SheetConsole {
         }
     }
 
-    async onSheetAdded(store: SheetStore): Promise<void> {
+    async onSheetAdded(store: StoreSheet): Promise<void> {
         const { mainStore: main } = store;
         const { valRow, no } = main;
         let { id, i, x, origin, price, value, amount } = valRow;
@@ -97,13 +97,13 @@ class RouteConsole extends SheetConsole {
         });
     }
 
-    sheetRowCountChanged(store: SheetStore) {
+    sheetRowCountChanged(store: StoreSheet) {
     }
 
     get steps() { return undefined as SheetSteps; }
     set steps(value: SheetSteps) { }
 
-    async onSubmited(store: SheetStore): Promise<void> {        // 单据已提交
+    async onSubmited(store: StoreSheet): Promise<void> {        // 单据已提交
         // removeSheetFromCache();
         const { mainStore: main } = store;
         const { valRow, no } = main;

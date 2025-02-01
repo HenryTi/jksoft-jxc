@@ -1,6 +1,6 @@
 import { BinPick, EnumDetailOperate, PickOptions, PickPend } from "tonwa";
 import { useRef, useState, JSX } from "react";
-import { BinBudsEditing, doBinPick, doBinPickRear, FormBudsStore, RearPickResultType, ReturnUseBinPicks, SheetStore } from "../../../../Store";
+import { BinBudsEditing, doBinPick, doBinPickRear, FormBudsStore, RearPickResultType, ReturnUseBinPicks, StoreSheet } from "../../../../Store";
 import { getAtomValue } from "tonwa-com";
 import { FA, Sep } from "tonwa-com";
 import { PickResult, ViewAtomId, ViewBud } from "app/hooks";
@@ -13,7 +13,7 @@ import { useModal } from "tonwa-app";
 
 interface Props {
     subHeader?: string;
-    sheetStore: SheetStore;
+    sheetStore: StoreSheet;
     onPicked: (results: ReturnUseBinPicks) => Promise<void>;
 }
 

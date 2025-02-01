@@ -1,11 +1,11 @@
-import { BinEditing, RearPickResultType, ReturnUseBinPicks, SheetStore, ValRow } from "../../../Store";
+import { BinEditing, RearPickResultType, ReturnUseBinPicks, StoreSheet, ValRow } from "../../../Store";
 import { runBinPicks } from "../binPick";
 import { rowEdit } from "./divEdit";
 import { PickResult } from "app/hooks/Calc";
 import { BizPhraseType } from "uqs/UqDefault";
 // import { PageConfirm } from "tonwa-app";
 
-export async function detailNewLoop(sheetStore: SheetStore): Promise<void> {
+export async function detailNewLoop(sheetStore: StoreSheet): Promise<void> {
     // const { modal, binStore } = sheetStore;
     for (; ;) {
         let ret = await detailNew(sheetStore);
@@ -22,7 +22,7 @@ export async function detailNewLoop(sheetStore: SheetStore): Promise<void> {
     }
 }
 
-export async function detailNew(sheetStore: SheetStore): Promise<number> {
+export async function detailNew(sheetStore: StoreSheet): Promise<number> {
     const { modal, binStore } = sheetStore;
     if (binStore === undefined) {
         alert('Pick Pend on main not implemented');

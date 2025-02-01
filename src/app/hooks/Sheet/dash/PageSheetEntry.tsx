@@ -1,6 +1,6 @@
 import { Page, PageSpinner, useModal } from "tonwa-app";
 import { useEffectOnce } from "tonwa-com";
-import { BinEditing, FormBudsStore, RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetSteps, SheetStore } from "../../../Store";
+import { BinEditing, FormBudsStore, RearPickResultType, ReturnUseBinPicks, SheetConsole, SheetSteps, StoreSheet } from "../../../Store";
 import { useAtomValue } from "jotai";
 import { PageSheet } from "./PageSheet";
 import { useCallback } from "react";
@@ -11,7 +11,7 @@ import { ViewSteps } from "./ViewSteps";
 import { detailNew } from "../binEdit";
 import { Modal } from "tonwa";
 
-export function PageSheetEdit({ store, sheetId, readonly }: { store: SheetStore; sheetId: number; readonly?: boolean; }) {
+export function PageSheetEdit({ store, sheetId, readonly }: { store: StoreSheet; sheetId: number; readonly?: boolean; }) {
     const loaded = useAtomValue(store.atomLoaded);
     useEffectOnce(() => {
         store.load(sheetId);
@@ -26,7 +26,7 @@ const stepSheet = '录入单据';
 function sheetSteps(steps: string[]): SheetSteps {
     return new SheetSteps(steps, stepSheet);
 };
-export function PageSheetNew({ store }: { store: SheetStore; }) {
+export function PageSheetNew({ store }: { store: StoreSheet; }) {
     const { sheetConsole } = store;
     const loaded = useAtomValue(store.atomLoaded);
     if (loaded === true) {
@@ -56,7 +56,7 @@ export function PageSheetNew({ store }: { store: SheetStore; }) {
     return <PageSheetDirect store={store} />;
 }
 
-function PageMainPend({ store }: { store: SheetStore; }) {
+function PageMainPend({ store }: { store: StoreSheet; }) {
     const { sheetConsole } = store;
     const { btnSubmit, btnExit } = buttons(sheetConsole);
     const group0: ToolItem[] = [btnSubmit];
@@ -78,7 +78,7 @@ function PageMainPend({ store }: { store: SheetStore; }) {
     */
 }
 
-function PageSheetDirect({ store }: { store: SheetStore; }) {
+function PageSheetDirect({ store }: { store: StoreSheet; }) {
     const modal = useModal();
     const { caption } = store;
     useEffectOnce(() => {
@@ -116,7 +116,7 @@ function buttons(sheetConsole: SheetConsole) {
     return { btnSubmit, btnExit };
 }
 
-function PageStartPicks({ store }: { store: SheetStore; }) {
+function PageStartPicks({ store }: { store: StoreSheet; }) {
     const { sheetConsole } = store;
     const { btnSubmit, btnExit } = buttons(sheetConsole);
     const group0: ToolItem[] = [btnSubmit];
@@ -131,7 +131,7 @@ function PageStartPicks({ store }: { store: SheetStore; }) {
     </Page>;
 }
 
-function PageStartPend({ store }: { store: SheetStore; }) {
+function PageStartPend({ store }: { store: StoreSheet; }) {
     const { caption, sheetConsole } = store;
     const subCaption = '批选待处理';
     const onPend = useCallback(async (results: ReturnUseBinPicks) => {
@@ -147,7 +147,7 @@ function PageStartPend({ store }: { store: SheetStore; }) {
     </Page>;
 }
 
-function PageDirectPend({ store }: { store: SheetStore; }) {
+function PageDirectPend({ store }: { store: StoreSheet; }) {
     const modal = useModal();
     const { caption, sheetConsole } = store;
     const subCaption = '批选待处理';
@@ -169,7 +169,7 @@ function PageDirectPend({ store }: { store: SheetStore; }) {
     </Page>;
 }
 
-async function nothingPicked(modal: Modal, store: SheetStore) {
+async function nothingPicked(modal: Modal, store: StoreSheet) {
     let { entity } = store.mainStore;
     const budsEditing = new BinEditing(store, entity);
     // const budEditings = budsEditing.createBudEditings();

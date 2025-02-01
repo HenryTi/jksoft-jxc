@@ -2,7 +2,7 @@ import { BinPick, EntityQuery, IDColumn, PickQuery } from "tonwa";
 import { ChangeEvent, useState } from "react";
 import { Page, useModal } from "tonwa-app";
 import { List, Sep, theme } from "tonwa-com";
-import { BinStore, FormBudsStore, RearPickResultType, SheetStore } from "../../Store";
+import { BinStore, FormBudsStore, RearPickResultType, StoreSheet } from "../../Store";
 import { LabelBox, QueryRow, QueryRowCol, RowCols } from "app/hooks/tool";
 import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
@@ -227,7 +227,7 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
             if (pickResultType === RearPickResultType.array) {
                 let defaultChecked = (selectedItems[value.rowId] !== undefined);
                 let checkDisabeld = false;
-                let sheetStore = editing.store as SheetStore;
+                let sheetStore = editing.store as StoreSheet;
                 if (sheetStore !== undefined) {
                     const { queryRowColl, entity } = sheetStore.binStore;
                     const { pickBound } = entity;

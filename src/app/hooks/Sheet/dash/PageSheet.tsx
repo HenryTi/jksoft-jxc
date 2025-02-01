@@ -1,5 +1,5 @@
 import { Page, PageConfirm, useModal } from "tonwa-app";
-import { SheetStore, SubmitState, upload } from "../../../Store";
+import { StoreSheet, SubmitState, upload } from "../../../Store";
 import { detailNewLoop, ViewDiv, ViewMain } from "../binEdit";
 import { useAtomValue } from "jotai";
 import React, { useRef, useState, JSX } from "react";
@@ -13,7 +13,7 @@ import { download } from "app/tool";
 import { useSiteRole } from "app/views/Site/useSiteRole";
 import { buttonDefs, headerSheet } from "../HeaderSheet";
 
-export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: boolean; }) {
+export function PageSheet({ store, readonly }: { store: StoreSheet; readonly?: boolean; }) {
     const { mainStore, binStore, caption, sheetConsole, atomReaction, atomSubmitState } = store;
     const modal = useModal();
     const [editable, setEditable] = useState(true);
@@ -173,7 +173,7 @@ export function PageSheet({ store, readonly }: { store: SheetStore; readonly?: b
     </Page>;
 }
 
-function ViewSheetPrint({ store, refPrint }: { store: SheetStore; refPrint: React.Ref<HTMLDivElement> }) {
+function ViewSheetPrint({ store, refPrint }: { store: StoreSheet; refPrint: React.Ref<HTMLDivElement> }) {
     const __html = `<div class="text-center">${store.caption}</div>`;
     return <div className="d-none">
         <div ref={refPrint} className="print-container" style={{ margin: "0", padding: "0" }}>
@@ -184,7 +184,7 @@ function ViewSheetPrint({ store, refPrint }: { store: SheetStore; refPrint: Reac
     </div>;
 }
 
-function ViewSheetContent({ store, readonly }: { store: SheetStore; readonly: boolean; }) {
+function ViewSheetContent({ store, readonly }: { store: StoreSheet; readonly: boolean; }) {
     const { binStore } = store;
     if (binStore === undefined) {
         return <ViewMain store={store} popup={false} readOnly={readonly} />
@@ -253,7 +253,7 @@ function ViewSheetContent({ store, readonly }: { store: SheetStore; readonly: bo
     </div>;
 }
 
-export async function startSheetStore(sheetStore: SheetStore) {
+export async function startSheetStore(sheetStore: StoreSheet) {
     const { sheetConsole } = sheetStore;
     let ret = await sheetStore.start();
     if (ret === undefined) {

@@ -1,4 +1,4 @@
-import { AtomData, BizBud, BudBin, BudFork, BudID, BudRadio, EntityAtom, EntityFork, EntityStore, EnumBudType, EnumSysBud } from "tonwa";
+import { AtomData, BizBud, BudBin, BudFork, BudID, BudRadio, EntityAtom, EntityFork, StoreEntity, EnumBudType, EnumSysBud } from "tonwa";
 import { ViewBudFork, ViewForkAtom, ViewForkNoAtom } from "app/hooks";
 import { contentFromDays } from "app/tool";
 import { LabelBox, ViewBudEmpty } from "../tool";
@@ -16,7 +16,7 @@ export function ViewBud({ bud, value, uiType, noLabel, store, colon }: {
     bud: BizBud;
     value: any; uiType?: ViewBudUIType; noLabel?: boolean;
     colon?: boolean;
-    store?: EntityStore;
+    store?: StoreEntity;
 }) {
     if (value === undefined) return null;
     if (value === null) return null;
@@ -58,7 +58,7 @@ export function ViewBud({ bud, value, uiType, noLabel, store, colon }: {
     return <LabelBox label={caption} colon={colon} className={cnViewBud}>{content}</LabelBox>;
 }
 
-export function budContent(bud: BizBud, value: any, store: EntityStore, colon: boolean = undefined) {
+export function budContent(bud: BizBud, value: any, store: StoreEntity, colon: boolean = undefined) {
     let content: any;
     const { budDataType } = bud;
     if (value === undefined) {
@@ -94,7 +94,7 @@ export function budContent(bud: BizBud, value: any, store: EntityStore, colon: b
     return content;
 }
 
-function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, noLabel: boolean, store: EntityStore) {
+function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, noLabel: boolean, store: StoreEntity) {
     function view() {
         switch (bud.name) {
             default:
@@ -214,7 +214,7 @@ function ID(bud: BizBud, value: any) {
     return <>ID: {value}</>;
 }
 
-function bin(bud: BizBud, value: any, store: EntityStore) {
+function bin(bud: BizBud, value: any, store: StoreEntity) {
     const showBuds = bud.getPrimeBuds();
     // const { budsColl } = store;
     let budVals = store.getCacheBudProps(value); // budsColl[value];
@@ -271,7 +271,7 @@ function bin(bud: BizBud, value: any, store: EntityStore) {
     };
 }
 
-function fork(bud: BizBud, value: any, store: EntityStore) {
+function fork(bud: BizBud, value: any, store: StoreEntity) {
     let { $ } = value;
     let entityFork: EntityFork;
     if ($ !== undefined) {

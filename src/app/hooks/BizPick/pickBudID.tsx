@@ -1,4 +1,4 @@
-import { BizBud, BudID, EntityAtom, EntityStore } from "tonwa";
+import { BizBud, BudID, EntityAtom, StoreEntity } from "tonwa";
 import { FormContext, PageQueryMore } from "app/coms";
 import { useRef, useState } from "react";
 import { Modal, useModal } from "tonwa-app";
@@ -23,7 +23,7 @@ class BudIDStore extends EntityStore {
     }
 }
 */
-function ViewID({ id, store }: { id: number; store: EntityStore; }) {
+function ViewID({ id, store }: { id: number; store: StoreEntity; }) {
     const cnRow = ' px-3 py-2 cursor-pointer ';
     return <div className={cnRow}>
         <div>

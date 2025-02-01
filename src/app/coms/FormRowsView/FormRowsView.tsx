@@ -8,7 +8,7 @@ import {
 import {
     EntityAtom, EntityFork, BizBud
     , Entity, BudID, BinPick, EnumBudType,
-    EntityStore
+    StoreEntity
 } from "tonwa";
 import { contentFromDays } from "app/tool";
 import { ViewFormForkObj } from "./ViewFormForkObj";
@@ -182,7 +182,7 @@ export interface FormContext {
     getEntityFromId(id: number): Entity;
     getEntity(entityId: number): Entity;
     setBudValue(bud: BizBud, value: any): void;
-    store: EntityStore;
+    store: StoreEntity;
     calcValue(formula: string): number | string | object;
     getPick(bud: BizBud): BinPick;
 }

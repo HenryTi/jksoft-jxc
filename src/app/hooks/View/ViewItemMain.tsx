@@ -2,11 +2,11 @@ import { EasyTime } from "tonwa-com";
 import { Sheet } from "uqs/UqDefault";
 import { ViewOperator } from "./ViewOperator";
 import { Bin } from "app/tool";
-import { SheetStore } from "../../Store";
+import { StoreSheet } from "../../Store";
 import { RowCols } from "../tool";
 import { ViewBud } from "..";
 
-export function ViewItemMain({ value, isMy, store }: { value: Sheet & Bin & { rowCount: number; }; isMy: boolean; store: SheetStore; }) {
+export function ViewItemMain({ value, isMy, store }: { value: Sheet & Bin & { rowCount: number; }; isMy: boolean; store: StoreSheet; }) {
     const { entity } = store;
     const { main } = entity;
     const { i: IBud, x: XBud, primeBuds } = main;

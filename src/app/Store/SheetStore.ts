@@ -1,6 +1,6 @@
 import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { EntitySheet, EntityBin, EntityPend, BinRow, Entity, EnumDetailOperate, BizBud, EntityStore, ReturnProps, ReturnAtoms, ReturnForks } from "tonwa";
+import { EntitySheet, EntityBin, EntityPend, BinRow, Entity, EnumDetailOperate, BizBud, StoreEntity, ReturnProps, ReturnAtoms, ReturnForks } from "tonwa";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { RearPickResultType, ReturnUseBinPicks } from "./PickResult";
 import { Formulas } from "app/hooks/Calc";
@@ -39,7 +39,7 @@ class Detail extends BinStore {
 export class ExDetail extends Detail {
 }
 */
-export class SheetStore extends EntityStore<EntitySheet> {
+export class StoreSheet extends StoreEntity<EntitySheet> {
     private readonly cachePendRows: { [id: number]: PendRow } = {};
     readonly sheetConsole: SheetConsole;
     readonly mainStore: SheetMainStore;
@@ -304,20 +304,20 @@ export abstract class SheetConsole extends Console {
 
     abstract close(): void;                      // 关闭当前页面
     abstract restart(): void;                    // 关闭并新开单
-    abstract onSubmited(store: SheetStore): Promise<void>;        // 单据已提交
+    abstract onSubmited(store: StoreSheet): Promise<void>;        // 单据已提交
     abstract discard(sheetId: number): void;     // 废弃当前单据
-    abstract onSheetAdded(store: SheetStore): Promise<void>;
-    abstract sheetRowCountChanged(store: SheetStore): void;
+    abstract onSheetAdded(store: StoreSheet): Promise<void>;
+    abstract sheetRowCountChanged(store: StoreSheet): void;
     abstract removeFromCache(sheetId: number): void;
     abstract steps: SheetSteps;
     createSheetStore() {
-        let ret = new SheetStore(this);
+        let ret = new StoreSheet(this);
         // ret.cacheIdAndBuds(this.props, this.atoms, this.forks);
         ret.mainStore.init();
         return ret;
     }
 
-    async loadUserDefaults(sheetStore: SheetStore): Promise<boolean> {
+    async loadUserDefaults(sheetStore: StoreSheet): Promise<boolean> {
         const { biz, userBuds: user } = this.entitySheet;
         if (user === undefined) return true;
         if (user.length === 0) return true;

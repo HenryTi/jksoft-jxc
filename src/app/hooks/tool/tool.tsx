@@ -3,12 +3,12 @@ import { BudValue } from "tonwa-app";
 import { ViewBud, budContent } from "../Bud";
 import { FA, theme } from "tonwa-com";
 import React from "react";
-import { BizBud, BudValueColl, Entity, EntityFork, EntityID, EntityStore } from "tonwa";
+import { BizBud, BudValueColl, Entity, EntityFork, EntityID, StoreEntity } from "tonwa";
 // import { BudsColl, BudValueColl, EntityStore } from "app/tool";
 import { BizPhraseType } from "uqs/UqDefault";
 
 // atom field owns buds
-export function OwnedBuds({ values, noLabel, store }: { values: [number, BudValue][]; noLabel?: boolean; store: EntityStore; }) {
+export function OwnedBuds({ values, noLabel, store }: { values: [number, BudValue][]; noLabel?: boolean; store: StoreEntity; }) {
     if (values === undefined) return null;
     const { biz } = useUqApp();
     return <>{
@@ -32,7 +32,7 @@ export function OwnedBuds({ values, noLabel, store }: { values: [number, BudValu
     </>;
 }
 
-export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: number; store: EntityStore; noLabel?: boolean; }) {
+export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: number; store: StoreEntity; noLabel?: boolean; }) {
     // const { budsColl } = store;
     const budValueColl = store.getCacheBudProps(id);
     if (budValueColl === undefined) return null;
@@ -68,7 +68,7 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: nu
     }
 }
 
-export function ViewAtomTitles({ id, noLabel, store }: { id: number; noLabel?: boolean; store: EntityStore; }) {
+export function ViewAtomTitles({ id, noLabel, store }: { id: number; noLabel?: boolean; store: StoreEntity; }) {
     /* const { budsColl, bizForkColl, bizAtomColl } = store;
     let budValueColl: BudValueColl;
     let bizAtom = store.getCacheAtom(id);

@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { BizBud, EntityStore } from "tonwa";
+import { BizBud, StoreEntity } from "tonwa";
 import { RegisterOptions } from "react-hook-form";
 import { BudCheckValue, BudValue, OnValueChanged, PickProps, UqAppBase } from "tonwa-app";
 import { BudEditing } from "./EditBud";
@@ -47,7 +47,7 @@ export interface EditBudProps {
     value: BudValue;
     formBudsStore: FormBudsStore;
     budEditing: BudEditing;
-    store?: EntityStore;
+    store?: StoreEntity;
     labelSize?: 0 | 1 | 2;
     flag?: JSX.Element;             // 重要字段标志
     readOnly?: boolean;

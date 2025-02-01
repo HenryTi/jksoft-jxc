@@ -1,6 +1,6 @@
 import { WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
-import { EntitySheet, EntityBin, EntityPend, BinRow, Entity, EnumDetailOperate, BizBud, EntityStore } from "tonwa";
+import { EntitySheet, EntityBin, EntityPend, BinRow, Entity, EnumDetailOperate, BizBud, StoreEntity } from "tonwa";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { RearPickResultType, ReturnUseBinPicks } from "./PickResult";
 import { Formulas } from "app/hooks/Calc";
@@ -13,10 +13,10 @@ import { Console } from "app/tool";
 import { arrFromJsonMid } from "app/hooks/tool";
 import { BinBudsEditing, BinEditing } from "./BinEditing";
 import { runBinPicks } from "../hooks/Sheet/binPick";
-import { SheetStore } from "./SheetStore";
+import { StoreSheet } from "./SheetStore";
 
-export class SheetMainStore extends EntityStore<EntityBin> {
-    readonly sheetStore: SheetStore;
+export class SheetMainStore extends StoreEntity<EntityBin> {
+    readonly sheetStore: StoreSheet;
     // budsEditing: BinBudsEditing;
     // budEditings: BudEditing[];
 
@@ -24,7 +24,7 @@ export class SheetMainStore extends EntityStore<EntityBin> {
     get valRow() { return getAtomValue(this._valRow) }
     no: string;
 
-    constructor(sheetStore: SheetStore) {
+    constructor(sheetStore: StoreSheet) {
         const { main } = sheetStore.entity;
         super(sheetStore.modal, main);
         this.sheetStore = sheetStore;

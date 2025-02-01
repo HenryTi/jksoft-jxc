@@ -1,4 +1,4 @@
-import { BizBud, EntityAtom, EntityFork, EntityStore } from "tonwa";
+import { BizBud, EntityAtom, EntityFork, StoreEntity } from "tonwa";
 import {
     UseFormRegisterReturn, FieldError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";
@@ -94,7 +94,7 @@ export function ViewFormForkObj({ row, label, error, inputProps, formContext, se
     </Band>
 }
 
-function PageFork({ fork, value, baseId, store }: { fork: EntityFork; value: object; baseId: number; store: EntityStore; }) {
+function PageFork({ fork, value, baseId, store }: { fork: EntityFork; value: object; baseId: number; store: StoreEntity; }) {
     const modal = useModal();
     const buds = [...fork.keys, ...fork.buds];
     const { current: formBudsStore } = useRef(new FormBudsStore(modal, new ValuesBudsEditing(fork.biz, buds)));
