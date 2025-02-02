@@ -1,5 +1,5 @@
 import { BinPick } from "tonwa";
-import { PickResult } from "app/hooks/Calc";
+// import { PickResult } from "app/hooks/Calc";
 import { FormBudsStore } from "./BinEditing";
 
 /*
@@ -10,6 +10,8 @@ export interface NamedResults {
 /*
 export type PickResult = { [prop: string]: any };
 */
+export type PickResult = { [prop: string]: number | string | object };
+
 export interface ReturnUseBinPicks {
     editing: FormBudsStore;
     // namedResults: NamedResults;

@@ -3,3 +3,4 @@ export * from "./StoreSheet";
 export * from "./StoreSheetList";
 export * from "./SheetMainStore";
 export * from "./BinStore";
+export * from "./PickResult";

@@ -1,4 +1,7 @@
-import { atom } from "jotai";
+import { ChangeEvent } from "react";
+import { RegisterOptions } from "react-hook-form";
+import { Atom, atom, WritableAtom } from "jotai";
+import { getAtomValue, setAtomValue } from "tonwa-com";
 import {
     BinRow, BizBud, EntityBin, BinRowValuesTool,
     ValueSetType,
@@ -10,38 +13,33 @@ import {
     PickPend,
     Entity,
     PickOptions,
-    StoreBase,
-    StoreEntity,
     EnumBudType,
     BudID,
     BudFork,
     BudDec,
     BudRadio,
-    BudCheckValue,
-    getDays,
     BizPhraseType,
     Biz,
     BudValuesTool
-} from "tonwa";
-import { BinStore } from "./BinStore";
-import { StoreSheet } from "./SheetStore";
-import { ValDivBase } from "./ValDiv";
-import { ValRow } from "./ValRow";
-import { BudEditing, Calc, CalcResult, EditBudInline, Formulas, ValueSpace, ViewBud, ViewBudUIType } from "app/hooks";
-import { getAtomValue, setAtomValue } from "tonwa-com";
-import { FormContext, FormRow } from "app/coms";
-import { Modal } from "tonwa";
-import { Atom } from "jotai";
-import { RegisterOptions } from "react-hook-form";
-import { ChangeEvent } from "react";
-import { LabelBox } from "app/hooks/tool";
-import { pickFromAtom } from "app/hooks/Sheet/binPick/pickFromAtom";
-import { pickFromSpec } from "app/hooks/Sheet/binPick/pickFromSpec";
-import { pickFromQuery, pickFromQueryScalar } from "app/hooks/Query";
-import { pickFromOptions } from "app/hooks/Sheet/binPick/pickFromOptions";
-import { RearPickResultType, PickResult } from "./PickResult";
-import { pickFromPend } from "app/hooks/Sheet/binPick/pickFromPend";
-import { WritableAtom } from "jotai";
+} from "../../Biz";
+import { StoreBase, StoreEntity, BinStore, StoreSheet, BudCheckValue, PickResult, RearPickResultType } from "../../Store";
+import { ValDivBase } from "../../Store/ValDiv";
+import { ValRow } from "../../Store/ValRow";
+// import { BudEditing, Calc, CalcResult, EditBudInline, Formulas, ValueSpace, ViewBud, ViewBudUIType } from "app/hooks";
+// import { FormContext, FormRow } from "app/coms";
+import { Modal } from "../../UI";
+import { getDays } from "../../tools";
+import { BudEditing, EditBudInline, LabelBox, ViewBud, ViewBudUIType } from "../../View";
+import { Calc, CalcResult, Formulas, ValueSpace } from "../../Calc";
+import { FormContext, FormRow } from "../../View/Form";
+// import { LabelBox } from "app/hooks/tool";
+
+// import { pickFromAtom } from "app/hooks/Sheet/binPick/pickFromAtom";
+// import { pickFromSpec } from "app/hooks/Sheet/binPick/pickFromSpec";
+// import { pickFromQuery, pickFromQueryScalar } from "app/hooks/Query";
+// import { pickFromOptions } from "app/hooks/Sheet/binPick/pickFromOptions";
+// import { RearPickResultType, PickResult } from "./PickResult";
+// import { pickFromPend } from "app/hooks/Sheet/binPick/pickFromPend";
 /*
 import { BizPhraseType } from "uqs/UqDefault";
 import { pickFromAtom } from "../binPick/pickFromAtom";
@@ -238,22 +236,17 @@ export class FormBudsStore extends StoreBase implements FormContext {
         let pickResult: PickResult;
         switch (pick.fromPhraseType) {
             default: break;
-            /*
-            case BizPhraseType.any:
-                pickResult = this.getBudComposingValue(pick);
-                break;
-            */
             case BizPhraseType.atom:
-                pickResult = await pickFromAtom(this, pick as PickAtom);
+                // pickResult = await pickFromAtom(this, pick as PickAtom);
                 break;
             case BizPhraseType.fork:
-                pickResult = await pickFromSpec(this, pick as PickSpec);
+                // pickResult = await pickFromSpec(this, pick as PickSpec);
                 break;
             case BizPhraseType.query:
-                pickResult = await pickFromQueryScalar(this, pick as PickQuery);
+                // pickResult = await pickFromQueryScalar(this, pick as PickQuery);
                 break;
             case BizPhraseType.options:
-                pickResult = await pickFromOptions(this.modal, pick as PickOptions);
+                // pickResult = await pickFromOptions(this.modal, pick as PickOptions);
                 break;
         }
         return pickResult;
@@ -265,11 +258,11 @@ export class FormBudsStore extends StoreBase implements FormContext {
             default: break;
             case BizPhraseType.query:
                 if (rearPickResultType === RearPickResultType.array) {
-                    return await pickFromQuery(this, rearPick as PickQuery, rearPickResultType);
+                    return; // await pickFromQuery(this, rearPick as PickQuery, rearPickResultType);
                 }
                 break;
             case BizPhraseType.pend:
-                return await pickFromPend(binStore, this, rearPick as PickPend);
+                return; // await pickFromPend(binStore, this, rearPick as PickPend);
         }
         let pickResult = await this.switchPhraseType(rearPick);
         if (pickResult !== undefined) return pickResult;

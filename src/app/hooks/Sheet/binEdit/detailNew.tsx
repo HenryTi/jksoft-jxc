@@ -1,7 +1,7 @@
-import { BinEditing, RearPickResultType, ReturnUseBinPicks, StoreSheet, ValRow } from "../../../Store";
+import { BinEditing, RearPickResultType, PickResult, StoreSheet, ValRow } from "../../../Store";
 import { runBinPicks } from "../binPick";
 import { rowEdit } from "./divEdit";
-import { PickResult } from "app/hooks/Calc";
+import { } from "app/hooks/Calc";
 import { BizPhraseType } from "uqs/UqDefault";
 // import { PageConfirm } from "tonwa-app";
 

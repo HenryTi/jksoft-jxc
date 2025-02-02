@@ -1,13 +1,14 @@
 import { Biz, EntityOptions } from "../Biz";
 import { CalcIdObj } from "./Calc";
 
+/*
 export type PickResult = { [prop: string]: number | string | object };
 
 export enum RearPickResultType {
     scalar,
     array,
 }
-
+*/
 type NamedValue = { [name: string]: string | number; };
 
 interface NamedValues { [name: string]: NamedValue | string | number }

@@ -1,13 +1,14 @@
 import { atom } from "jotai";
-import { EntitySheet, EnumDetailOperate } from "../../Biz";
-import { StoreSheet, SheetMainStore, BinStore, SheetSteps } from "../../Store";
+import { BinRow, EntityBin, EntitySheet, EnumDetailOperate } from "../../Biz";
+import { StoreSheet, SheetMainStore, BinStore, SheetSteps, BinStorePendDirect } from "../../Store";
 import { ControllerBiz, ControllerEntity } from "../../Controller";
 import { ReturnUseBinPicks } from "../../Store/PickResult";
+import { ControllerBinPicks } from "tonwa/Controller/ControllerBuds";
 
 abstract class ControllerSheet extends ControllerEntity<EntitySheet> {
     readonly storeSheet: StoreSheet
     readonly mainStore: SheetMainStore;
-    readonly binStore: BinStore;
+    binStore: BinStore;
 
     constructor(controllerBiz: ControllerBiz, entitySheet: EntitySheet) {
         super(controllerBiz, entitySheet);
@@ -17,6 +18,10 @@ abstract class ControllerSheet extends ControllerEntity<EntitySheet> {
     }
     async discard() {
         await this.storeSheet.discard();
+    }
+
+    createControllerPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
+        return new ControllerBinPicks(this.controllerBiz, this.storeSheet, entityBin, initBinRow);
     }
 }
 
@@ -41,12 +46,10 @@ export class ControllerSheetNew extends ControllerSheet {
             let detail = details[0];
             const { bin } = detail;
             this.isPend = bin.pend !== undefined;
-            /*
             switch (detail.operate) {
-                default: this.binStore = new BinStore(this, detail.bin, detail.operate); break;
-                case EnumDetailOperate.direct: this.binStore = new BinStorePendDirect(this, detail.bin, detail.operate); break;
+                default: this.binStore = new BinStore(this.storeSheet, detail.bin, detail.operate); break;
+                case EnumDetailOperate.direct: this.binStore = new BinStorePendDirect(this.storeSheet, detail.bin, detail.operate); break;
             }
-            */
         }
         else {
             this.isPend = false;

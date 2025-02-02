@@ -1,15 +1,18 @@
-import { BinPick, EntityQuery, IDColumn, PickQuery } from "tonwa";
 import { ChangeEvent, useState } from "react";
 import { Page, useModal } from "tonwa-app";
 import { List, Sep, theme } from "tonwa-com";
-import { PickResult, FormBudsStore, RearPickResultType, StoreSheet } from "../../Store";
-import { LabelBox, QueryRow, QueryRowCol, RowCols } from "app/hooks/tool";
-import { QueryStore } from "app/hooks/Query";
-import { BizPhraseType } from "uqs/UqDefault";
-import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtomBold, ViewForkBuds } from "../View";
-import { ViewBud } from "../Bud";
+import { BinPick, BizPhraseType, EntityQuery, IDColumn, PickQuery } from "../../Biz";
+import { PickResult, RearPickResultType, StoreSheet } from "../../Store";
+import { LabelBox, RowCols, ViewBud } from "../../View";
+//import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewBud, ViewForkAtomBold, ViewForkBuds } from "../../View";
 // import { BudsEditing, FormBudsStore } from "../../Store/BudsEditing";
 import { ViewQueryParams } from "./ViewQueryParams";
+import { QueryStore } from "./QueryStore";
+import {
+    ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtomBold, ViewForkBuds
+} from "../../View/Form/ViewForkOfStore";
+import { FormBudsStore } from "../../Controller/ControllerBuds/BinEditing";
+import { QueryRow, QueryRowCol } from "../../tools";
 
 async function pickFromQueryBase(
     editing: FormBudsStore // BudsEditing

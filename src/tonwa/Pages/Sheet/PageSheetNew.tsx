@@ -5,7 +5,6 @@ import { useEffectOnce } from "tonwa-com";
 import { SheetSteps, StoreSheet } from "../../Store";
 import { Modal } from "../../UI";
 import { ToolItem, ViewCurSiteHeader } from "../../View";
-import { RearPickResultType } from "../../Calc";
 import { ReturnUseBinPicks } from "../../Store/PickResult";
 import { ControllerSheetNew } from "./ControllerSheet";
 import { buttonDefs, headerSheet } from "./HeaderSheet";

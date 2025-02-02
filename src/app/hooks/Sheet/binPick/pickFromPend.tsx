@@ -1,8 +1,7 @@
 import { PickPend } from "tonwa";
 import { FormBudsStore, PendProxyHandler, ValRow } from "../../../Store";
-import { BinStore } from "../../../Store";
+import { BinStore, PickResult } from "../../../Store";
 import { PagePend } from "./PagePend";
-import { PickResult } from "app/hooks/Calc";
 
 export async function pickFromPend(binStore: BinStore
     , editing: FormBudsStore // BudsEditing

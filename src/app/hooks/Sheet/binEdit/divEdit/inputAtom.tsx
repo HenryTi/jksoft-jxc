@@ -1,6 +1,6 @@
 import { BinInputAtom } from "tonwa";
 import { InputProps } from "./inputBase";
-import { PickResult } from "app/hooks/Calc";
+import { PickResult } from "app/Store";
 
 export interface InputAtomProps extends InputProps<BinInputAtom> {
 }

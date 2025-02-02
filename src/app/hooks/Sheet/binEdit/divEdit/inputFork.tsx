@@ -7,9 +7,8 @@ import { EnumBudType } from "tonwa";
 import { getDays } from "app/tool";
 import { InputProps } from "./inputBase";
 import { ViewIBaseFromId } from "../ViewDiv/ViewIBase";
-import { PickResult } from "app/hooks/Calc";
 import { FormBudsEditing } from "app/hooks/View";
-import { FormBudsStore, ValuesBudsEditing } from "app/Store";
+import { PickResult, FormBudsStore, ValuesBudsEditing } from "app/Store";
 
 
 const btnNext = <>下一步 <FA name="arrow-right" className="ms-2" /></>;

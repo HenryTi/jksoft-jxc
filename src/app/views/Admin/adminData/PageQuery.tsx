@@ -12,8 +12,8 @@ import { QueryStore } from "app/hooks/Query";
 import { BizPhraseType } from "uqs/UqDefault";
 // import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtom, ViewForkAtomBold } from "../View";
 import { ViewForkId } from "app/coms/ViewForkId";
-import { RearPickResultType, ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewBud, ViewForkAtom, ViewForkAtomBold } from "app/hooks";
-import { FormBudsStore, ValuesBudsEditing } from "app/Store";
+import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewBud, ViewForkAtom, ViewForkAtomBold } from "app/hooks";
+import { FormBudsStore, RearPickResultType, ValuesBudsEditing } from "app/Store";
 
 // to be removed
 // use only in adminData

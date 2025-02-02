@@ -6,13 +6,14 @@ import { useAtomValue } from "jotai";
 import { BizPhraseType } from "uqs/UqDefault";
 import { useModal } from "tonwa-app";
 import { RowCols } from "../../View";
-import { RearPickResultType, ReturnUseBinPicks } from "../../Store/PickResult";
+import { PickResult, RearPickResultType, ReturnUseBinPicks } from "../../Store/PickResult";
 import { BinPick, EnumDetailOperate, PickOptions, PickPend } from "../../Biz";
-import { PickResult } from "../../Calc";
 import { ViewBud } from "../../View";
-import { StoreSheet } from "../../Store";
 import { PickRow } from "./PickRow";
 import { ControllerSheetNew } from "./ControllerSheet";
+import { ControllerBinPicks } from "../../Controller/ControllerBuds";
+import { BinBudsEditing, FormBudsStore } from "../../Controller/ControllerBuds/BinEditing";
+import { InputScalar } from "./InputScalar";
 // import { InputScalar } from "../InputScalar";
 
 interface Props {
@@ -25,13 +26,14 @@ export function ViewMainPicks({ controller, onPicked, subHeader }: Props) {
     const modal = useModal();
     const rearPickResultType = RearPickResultType.scalar;
     const { storeSheet, mainStore: main, binStore, steps/*, sheetConsole*/ } = controller;
+    const { entity: entityBin } = main;
     // const { steps } = sheetConsole;
-    // let { current: formBudsStore } = useRef(new FormBudsStore(modal, new BinBudsEditing(sheetStore, main.entity, [])));
-    let formBudsStore: any;
+    let { current: formBudsStore } = useRef(new FormBudsStore(modal, new BinBudsEditing(storeSheet, main.entity, [])));
+    // let formBudsStore: any;
     // let { budsEditing } = formBudsStore;
     const [cur, setCur] = useState(0);
 
-    const { binPicks, rearPick } = main.entity;
+    const { binPicks, rearPick } = entityBin;
     let refRearPickResult = useRef(undefined as PickResult[] | PickResult);
     function getNextPick() {
         if (cur < binPicks.length - 1) return binPicks[cur + 1];
@@ -152,7 +154,7 @@ export function ViewMainPicks({ controller, onPicked, subHeader }: Props) {
                     }
                 }
                 return <ViewLabelRowPicking cn="d-flex align-items-stretch g-0" caption={caption} message={message}>
-                    {<></>/*<InputScalar binPick={binPick} onPicked={onPicked} value={defaultValue} />*/}
+                    <InputScalar binPick={binPick} onPicked={onPicked} value={defaultValue} />
                 </ViewLabelRowPicking>;
             }
             else if (serial < cur) {
@@ -165,6 +167,10 @@ export function ViewMainPicks({ controller, onPicked, subHeader }: Props) {
             }
         }
         async function pick() {
+            let controllerBinPicks: ControllerBinPicks = controller.createControllerPinPicks(entityBin);
+            if (await controllerBinPicks.doBinPick(binPick) !== undefined) {
+                afterPicked(serial);
+            }
             /*
             if (await doBinPick(formBudsStore, binPick) !== undefined) {
                 afterPicked(serial);
@@ -262,7 +268,9 @@ export function ViewMainPicks({ controller, onPicked, subHeader }: Props) {
         }
         if (serial > cur) return <ViewToPick binPick={rearPick} />;
         async function pick() {
-            let pickResult; // = await doBinPickRear(binStore, formBudsStore, rearPick, rearPickResultType);
+            // let pickResult; // = await doBinPickRear(binStore, formBudsStore, rearPick, rearPickResultType);
+            let controllerBinPicks: ControllerBinPicks = controller.createControllerPinPicks(entityBin);
+            let pickResult = await controllerBinPicks.doBinPickRear(rearPickResultType);
             if (pickResult !== undefined) {
                 refRearPickResult.current = pickResult;
                 afterPicked(serial + 1);

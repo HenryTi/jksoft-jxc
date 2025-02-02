@@ -1,8 +1,8 @@
 import { EntityOptions, PickOptions } from "tonwa";
-import { PickResult } from "app/hooks";
 import { Modal, Page, useModal } from "tonwa-app";
 import { OptionsRadioAsync } from "app/hooks/Bud/OptionsRadioAsync";
 import { useRef } from "react";
+import { PickResult } from "app/Store";
 
 export async function pickFromOptions(modal: Modal, binPick: PickOptions): Promise<PickResult> {
     let { caption, from } = binPick;

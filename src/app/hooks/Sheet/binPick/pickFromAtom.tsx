@@ -1,6 +1,6 @@
 import { AtomData, PickAtom } from "tonwa";
-import { PageIDSelect, PickResult } from "app/hooks";
-import { FormBudsStore } from "app/Store";
+import { PageIDSelect } from "app/hooks";
+import { FormBudsStore, PickResult } from "app/Store";
 
 export async function pickFromAtom(editing: FormBudsStore, binPick: PickAtom): Promise<PickResult> {
     const { modal } = editing;

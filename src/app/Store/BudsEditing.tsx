@@ -18,7 +18,7 @@ import {
     PickOptions,
     PickPend
 } from "tonwa";
-import { Calc, CalcResult, ValueSpace, Formulas, PickResult } from "../hooks/Calc";
+import { Calc, CalcResult, ValueSpace, Formulas } from "../hooks/Calc";
 // import { getDays } from "app/tool";
 import { BudEditing, EditBudInline } from "app/hooks";
 import { LabelBox } from "app/hooks/tool";

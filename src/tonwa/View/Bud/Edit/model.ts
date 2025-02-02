@@ -5,9 +5,10 @@ import { BudCheckValue, BudValue, OnValueChanged, PickProps, UqAppBase } from "t
 import { BizBud } from "../../../Biz";
 import { StoreEntity } from "../../../Store";
 import { BudEditing } from "./EditBud";
+import { FormBudsStore } from "../../../Controller/ControllerBuds/BinEditing";
 // import { FormBudsStore } from "app/Store";
 
-type FormBudsStore = any;
+// type FormBudsStore = any;
 
 export interface EditBudValue {
     pickValue: (uqApp: UqAppBase, props: PickProps, options: RegisterOptions) => Promise<string | number>;

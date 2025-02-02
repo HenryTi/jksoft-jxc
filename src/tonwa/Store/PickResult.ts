@@ -1,4 +1,4 @@
-import { PickResult } from "../Calc";
+import { FormBudsStore } from "../Controller/ControllerBuds/BinEditing";
 import { BinPick } from "../Biz";
 // import { FormBudsStore } from "./BinEditing";
 
@@ -7,10 +7,8 @@ export interface NamedResults {
     [name: string]: PickResult;
 }
 */
-/*
 export type PickResult = { [prop: string]: any };
-*/
-export type FormBudsStore = any;
+// export type FormBudsStore = any;
 
 export interface ReturnUseBinPicks {
     editing: FormBudsStore;

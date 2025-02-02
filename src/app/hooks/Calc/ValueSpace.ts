@@ -1,12 +1,7 @@
 import { Biz, EntityOptions } from "tonwa";
 import { CalcIdObj } from "./Calc";
 
-export type PickResult = { [prop: string]: number | string | object };
-
-export enum RearPickResultType {
-    scalar,
-    array,
-}
+// export type PickResult = { [prop: string]: number | string | object };
 
 type NamedValue = { [name: string]: string | number; };
 

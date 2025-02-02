@@ -12,8 +12,8 @@ export class Controller extends KeyIdObject {
         this.biz = biz;
     }
 
-    async openModal(element: JSX.Element, onClosed?: (result: any) => void) {
-        return await this.modal.open(element, onClosed);
+    async openModal<T>(element: JSX.Element, onClosed?: (result: any) => void) {
+        return await this.modal.open<T>(element, onClosed);
     }
 
     closeModal(result?: any) {
