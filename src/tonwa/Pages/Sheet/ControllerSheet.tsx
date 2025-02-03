@@ -3,12 +3,14 @@ import { BinRow, EntityBin, EntitySheet, EnumDetailOperate } from "../../Biz";
 import { StoreSheet, SheetMainStore, BinStore, SheetSteps, BinStorePendDirect } from "../../Store";
 import { ControllerBiz, ControllerEntity } from "../../Controller";
 import { ReturnUseBinPicks } from "../../Store/PickResult";
-import { ControllerBinPicks } from "tonwa/Controller/ControllerBuds";
+import { ControllerBinPicks } from "../../Controller/ControllerBuds";
+import { setAtomValue, getAtomValue } from "../../tools";
 
 abstract class ControllerSheet extends ControllerEntity<EntitySheet> {
     readonly storeSheet: StoreSheet
     readonly mainStore: SheetMainStore;
     binStore: BinStore;
+    readonly atomChanging = atom(1);
 
     constructor(controllerBiz: ControllerBiz, entitySheet: EntitySheet) {
         super(controllerBiz, entitySheet);
@@ -22,6 +24,10 @@ abstract class ControllerSheet extends ControllerEntity<EntitySheet> {
 
     createControllerPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
         return new ControllerBinPicks(this.controllerBiz, this.storeSheet, entityBin, initBinRow);
+    }
+
+    setChanging() {
+        setAtomValue(this.atomChanging, getAtomValue(this.atomChanging) + 1);
     }
 }
 

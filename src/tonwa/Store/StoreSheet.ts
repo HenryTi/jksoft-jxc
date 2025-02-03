@@ -40,6 +40,7 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
     private readonly cachePendRows: { [id: number]: PendRow } = {};
     // readonly sheetConsole: SheetConsole;
     readonly mainStore: SheetMainStore;
+    readonly mainBinStore: BinStore;
     readonly binStore: BinStore;
     readonly caption: string;
     readonly backIcon = 'file-text-o';
@@ -61,6 +62,7 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
         if (main.pend !== undefined) {
             this.isMainPend = true;
         }
+        this.mainBinStore = new BinStore(this, main, undefined);
         let detail = details[0];
         let len = details.length;
         if (len > 0) {

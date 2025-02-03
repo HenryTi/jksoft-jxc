@@ -1,19 +1,22 @@
-import { BinPick, BinRow, BizPhraseType, EntityBin, PickAtom, PickQuery } from "../../Biz";
-import { AtomData, StoreSheet } from "../../Store";
+import { BinPick, BinRow, BizPhraseType, EntityBin, PickAtom, PickPend, PickQuery } from "../../Biz";
+import { AtomData, BinStore, StoreSheet } from "../../Store";
 import { PageIDSelect } from "../../Pages";
 import { PickResult, RearPickResultType, ReturnUseBinPicks } from "../../Store/PickResult";
 import { ControllerBiz } from "../ControllerBiz";
 import { ControllerBuds } from "./ControllerBuds";
 import { BinBudsEditing, FormBudsStore } from "./BinEditing";
-import { pickFromQueryScalar } from "tonwa/Pages/Query";
+import { pickFromQuery, pickFromQueryScalar } from "tonwa/Pages/Query";
+import { pickFromPend } from "tonwa/Pages/Sheet/pickFromPend";
 
 export class ControllerBinPicks extends ControllerBuds {
     protected readonly binPicks: BinPick[];
     protected readonly rearPick: BinPick;
     protected readonly storeSheet: StoreSheet;
     protected readonly editing: BinBudsEditing;
-    protected readonly formBudsStore: FormBudsStore;
     protected readonly bin: EntityBin;
+    protected readonly storeBin: BinStore;
+    readonly formBudsStore: FormBudsStore;
+
     constructor(controllerBiz: ControllerBiz, storeSheet: StoreSheet, bin: EntityBin, initBinRow?: BinRow) {
         const { binPicks, rearPick } = bin;
         super(controllerBiz, [...binPicks, rearPick]);
@@ -23,6 +26,8 @@ export class ControllerBinPicks extends ControllerBuds {
         this.storeSheet = storeSheet;
         this.editing = new BinBudsEditing(storeSheet, bin, bin.buds, initBinRow);
         this.formBudsStore = new FormBudsStore(this.modal, new BinBudsEditing(this.storeSheet, bin, []));
+        const { mainBinStore, binStore } = storeSheet;
+        this.storeBin = bin === mainBinStore.entity ? mainBinStore : binStore;
     }
 
     async pick(rearPickResultType: RearPickResultType = RearPickResultType.array) {
@@ -56,8 +61,8 @@ export class ControllerBinPicks extends ControllerBuds {
         return pickResult;
     }
 
-    async doBinPickRear(rearPickResultType: RearPickResultType) {
-        const { fromPhraseType } = this.rearPick;
+    async doBinPickRear(rearPickResultType: RearPickResultType): Promise<PickResult | PickResult[]> {
+        const { name, fromPhraseType } = this.rearPick;
         switch (fromPhraseType) {
             default: break;
             case BizPhraseType.query:
@@ -66,10 +71,14 @@ export class ControllerBinPicks extends ControllerBuds {
                 }
                 break;
             case BizPhraseType.pend:
-                return undefined as any; // await pickFromPend(binStore, this, rearPick as PickPend);
+                return await this.pickFromPend(this.rearPick as PickPend);
         }
         let pickResult = await this.switchPhraseType(this.rearPick);
-        if (pickResult !== undefined) return pickResult;
+        if (pickResult !== undefined) {
+            this.formBudsStore.setNamedValues(name, pickResult);
+            return pickResult;
+        }
+        return undefined;
     }
 
     private async switchPhraseType(pick: BinPick) {
@@ -94,7 +103,8 @@ export class ControllerBinPicks extends ControllerBuds {
 
     private async pickFromAtom(pick: PickAtom) {
         let ret = await this.openModal<AtomData>(this.PageAtomSelect(pick));
-        this.editing.store.cacheAtom(ret);
+        // this.editing.store.cacheAtom(ret);
+        this.storeSheet.cacheAtom(ret);
         return ret as any as PickResult;
     }
 
@@ -114,7 +124,12 @@ export class ControllerBinPicks extends ControllerBuds {
     }
 
     private async pickFromQuery(pick: PickQuery, rearPickResultType: RearPickResultType) {
+        let ret = await pickFromQuery(this.formBudsStore, pick, rearPickResultType);
+        return ret;
     }
 
-
+    private async pickFromPend(pick: PickPend) {
+        let ret = await pickFromPend(this.storeBin, this.formBudsStore, pick);
+        return ret;
+    }
 }
