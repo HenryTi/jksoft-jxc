@@ -38,7 +38,6 @@ export class ExDetail extends Detail {
 */
 export class StoreSheet extends StoreEntityNew<EntitySheet> {
     private readonly cachePendRows: { [id: number]: PendRow } = {};
-    // readonly sheetConsole: SheetConsole;
     readonly mainStore: SheetMainStore;
     readonly mainBinStore: BinStore;
     readonly binStore: BinStore;
@@ -47,13 +46,6 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
     readonly isPend: boolean;
     readonly isMainPend: boolean;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> } = {};
-    readonly atomLoaded = atom(false);
-    readonly atomReaction = atom(undefined as any);
-    readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
-    readonly atomError = atom(undefined as { [id: number]: { pend: number; overValue: number; } | { bin: number; message: string; } });
-    readonly atomSum = atom(get => {
-        return this.binStore.sum(get);
-    });
     constructor(storeBiz: StoreBiz, entitySheet: EntitySheet) {
         super(storeBiz, entitySheet);
         // this.sheetConsole = sheetConsole;
@@ -78,10 +70,6 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
             }
             this.binStore = binStore;
         }
-        this.atomSubmitState = atom((get) => {
-            if (this.binStore === undefined) return SubmitState.enable;
-            return get(this.binStore.atomSubmitState);
-        }, null);
     }
 
     async load(sheetId: number) {
@@ -91,7 +79,7 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
         if (this.binStore !== undefined) {
             this.binStore.setValRowArrayToRoot(details);//, false);
         }
-        setAtomValue(this.atomLoaded, true);
+        // setAtomValue(this.atomLoaded, true);
     }
 
     get mainId() {
@@ -201,7 +189,7 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
 
     async setSheetAsDraft() {
         this.client.SetSheetPreToDraft(this.mainStore.valRow.id);
-        setAtomValue(this.atomLoaded, true);
+        // setAtomValue(this.atomLoaded, true);
     }
 
     get mainProxy() {
@@ -211,18 +199,6 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
 
     get userProxy() {
         return new Proxy(this, new UserProxyHander(this.entity));
-    }
-
-    setSubmitError(checkPend: { pend: number; overValue: number; }[], checkBin: { bin: number; message: string; }[]) {
-        let error: any = getAtomValue(this.atomError);
-        if (error === undefined) error = {};
-        for (let row of checkPend) {
-            error[row.pend] = row;
-        }
-        for (let row of checkBin) {
-            error[row.bin] = row;
-        }
-        setAtomValue(this.atomError, error);
     }
 
     async submit() {
@@ -257,6 +233,10 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
         }
         sheetConsole.onSheetAdded(this);
         */
+    }
+
+    notifyRowChange() {
+        alert('row change');
     }
 }
 

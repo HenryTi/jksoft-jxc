@@ -3,12 +3,14 @@ import { PageConfirm } from "tonwa-app";
 import { wait } from "tonwa-com";
 import { EntitySheet } from "../../Biz";
 import { StoreSheetMyDrafts, StoreSheetMyList } from "../../Store";
-import { ControllerSheetEdit, ControllerSheetNew } from "./ControllerSheet";
+import { ControllerSheetNew, EnumSheetEditReturn } from "./ControllerSheet";
 import { ControllerSheetList } from "./ControllerSheetList";
 import { ControllerBiz, ControllerEntity } from "../../Controller";
 import { PageSheetNew } from "./PageSheetNew";
 import { PageSheetEdit } from "./PageSheetEdit";
 import { PageSheetList } from "./PageSheetList";
+import { ControllerSheetEdit } from "./ControllerSheetEdit";
+import { setAtomValue } from "../../tools";
 
 export class ControllerSheetDash extends ControllerEntity<EntitySheet> {
     readonly atomViewSubmited = atom(undefined as any);
@@ -24,12 +26,35 @@ export class ControllerSheetDash extends ControllerEntity<EntitySheet> {
 
     onPageSheetNew = async () => {
         const controllerSheetNew = new ControllerSheetNew(this.controllerBiz, this.entity);
-        await this.modal.open(this.PageSheetNew(controllerSheetNew));
+        let newSheetId = await this.modal.open(this.PageSheetNew(controllerSheetNew));
+        if (newSheetId === undefined) return;
+        await this.onPageSheetEdit(newSheetId);
     }
 
-    onPageSheetEdit = async () => {
+    onPageSheetEdit = async (id: number) => {
         const controllerSheetEdit = new ControllerSheetEdit(this.controllerBiz, this.entity);
-        await this.modal.open(this.PageSheetEdit(controllerSheetEdit));
+        let ret = await this.modal.open<EnumSheetEditReturn>(this.PageSheetEdit(controllerSheetEdit));
+        switch (ret) {
+            case EnumSheetEditReturn.submit:
+                this.afterSubmited(controllerSheetEdit, id);
+                break;
+            case EnumSheetEditReturn.discard:
+                this.afterDiscard(id);
+                break;
+        }
+    }
+
+    private async afterSubmited(controllerSheetEdit: ControllerSheetEdit, sheetId: number) {
+        const { mainStore, storeSheet } = controllerSheetEdit;
+        const { no } = mainStore;
+        this.myDraftsStore.removeMyDraft(sheetId);
+        let { caption } = storeSheet;
+        let viewSubmited = <>{caption} <b>{no}</b> 提交成功!</>;
+        setAtomValue(this.atomViewSubmited, viewSubmited);
+    }
+
+    private async afterDiscard(sheetId: number) {
+        this.myDraftsStore.discardDraft(sheetId);
     }
 
     onPageSheetList = async () => {

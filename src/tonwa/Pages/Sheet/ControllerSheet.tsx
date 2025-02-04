@@ -5,12 +5,35 @@ import { ControllerBiz, ControllerEntity } from "../../Controller";
 import { ReturnUseBinPicks } from "../../Store/PickResult";
 import { ControllerBinPicks } from "../../Controller/ControllerBuds";
 import { setAtomValue, getAtomValue } from "../../tools";
+import { WritableAtom } from "jotai";
 
-abstract class ControllerSheet extends ControllerEntity<EntitySheet> {
+enum PendLoadState {
+    none,
+    loading,
+    loaded,
+}
+export enum SubmitState {
+    none,
+    disable,
+    enable,
+}
+export enum EnumSheetEditReturn {
+    submit,
+    exit,
+    discard,
+}
+
+export abstract class ControllerSheet extends ControllerEntity<EntitySheet> {
     readonly storeSheet: StoreSheet
     readonly mainStore: SheetMainStore;
     binStore: BinStore;
     readonly atomChanging = atom(1);
+    readonly atomReaction = atom(undefined as any);
+    readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
+    readonly atomError = atom(undefined as { [id: number]: { pend: number; overValue: number; } | { bin: number; message: string; } });
+    readonly atomSum = atom(get => {
+        return this.binStore.sum(get);
+    });
 
     constructor(controllerBiz: ControllerBiz, entitySheet: EntitySheet) {
         super(controllerBiz, entitySheet);
@@ -97,9 +120,9 @@ export class ControllerSheetNew extends ControllerSheet {
         }
     }
 
-    atomLoaded = atom(false);
+    // atomLoaded = atom(false);
     atomContent = atom<EnumSheetNewContent>(get => {
-        if (get(this.atomLoaded) === true) return EnumSheetNewContent.sheet;
+        // if (get(this.atomLoaded) === true) return EnumSheetNewContent.sheet;
         const { main, details } = this.entity;
         if (main.pend !== undefined) return EnumSheetNewContent.mainPend;
 
@@ -123,6 +146,16 @@ export class ControllerSheetNew extends ControllerSheet {
     onPickedNew = async (results: ReturnUseBinPicks) => {
         await this.onPicked(results);
         await this.setSheetAsDraft();
+        // setAtomValue(this.atomLoaded, true);
+        this.closeModal(this.storeSheet.mainId);
+    }
+
+    onMainPendPicked = async (results: ReturnUseBinPicks) => {
+        await this.onPicked(results);
+        await this.setSheetAsDraft();
+        await this.binStore.saveDetailsDirect();
+        // setAtomValue(this.atomLoaded, true);
+        this.closeModal(this.storeSheet.mainId);
     }
 
     async onPicked(results: ReturnUseBinPicks) {
@@ -132,7 +165,4 @@ export class ControllerSheetNew extends ControllerSheet {
     async setSheetAsDraft() {
 
     }
-}
-
-export class ControllerSheetEdit extends ControllerSheet {
 }

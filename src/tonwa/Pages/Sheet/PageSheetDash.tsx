@@ -21,7 +21,7 @@ export function PageSheetDash() {
     const { caption, name, coreDetail } = entitySheet;
     const controllerBiz = useMemo(() => new ControllerBiz(modal, biz), []);
     const controllerSheetDash = useMemo(() => new ControllerSheetDash(controllerBiz, entitySheet), []);
-    const { onPageSheetNew, onPageSheetEdit, onPageSheetList, atomViewSubmited } = controllerSheetDash;
+    const { onPageSheetNew, onPageSheetList, atomViewSubmited } = controllerSheetDash;
     const [visible, setVisible] = useState(true);
     //const dashConsole = useMemo(() => new DashConsole(modal, entitySheet), []);
     let useSiteRoleReturn = useSiteRole();
@@ -83,6 +83,9 @@ export function PageSheetDash() {
             modal.open(<PageSheetEdit sheetId={id} store={dashConsole.createSheetStore()} />);
         }
         */
+        async function onPageSheetEdit() {
+            await controllerSheetDash.onPageSheetEdit(id);
+        }
         return <div className="d-flex cursor-pointer" onClick={onPageSheetEdit}>
             <FA name="file" className="ps-4 pt-3 pe-2 text-info" size="lg" />
             <div className="flex-fill">

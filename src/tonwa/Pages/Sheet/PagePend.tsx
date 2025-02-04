@@ -15,7 +15,7 @@ export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
     let { binStore, pickPend } = pendStore;
     let { caption, name } = pickPend;
     let { entity: { pend: entityPend }, atomPendRows, sheetStore } = binStore;
-    const { /*sheetConsole: { steps },*/ atomLoaded } = sheetStore;
+    // const { /*sheetConsole: { steps },*/ atomLoaded } = sheetStore;
     let steps: any;
     const modal = useModal();
     let pendRows = useAtomValue(atomPendRows);
@@ -44,7 +44,7 @@ export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
             let ret: any = undefined;
             if (steps !== undefined) {
                 steps.prev();
-                setAtomValue(atomLoaded, false);
+                // setAtomValue(atomLoaded, false);
             }
             else {
                 ret = [];

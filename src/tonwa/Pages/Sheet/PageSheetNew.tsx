@@ -10,7 +10,7 @@ import { ControllerSheetNew } from "./ControllerSheet";
 import { buttonDefs, headerSheet } from "./HeaderSheet";
 import { ViewSteps } from "./ViewSteps";
 import { ViewMainPicks } from "./ViewMainPicks";
-import { PageSheet } from "./PageSheet";
+import { PageSheetEdit } from "./PageSheetEdit";
 
 const stepPick = '录入条件';
 const stepPend = '批选待处理';
@@ -19,12 +19,15 @@ function sheetSteps(steps: string[]): SheetSteps {
     return new SheetSteps(steps, stepSheet);
 };
 export function PageSheetNew({ controller }: { controller: ControllerSheetNew }) {
-    const { storeSheet: store } = controller;
+    const { /*atomLoaded, */storeSheet: store } = controller;
     // const { sheetConsole } = store;
-    const loaded = useAtomValue(store.atomLoaded);
+    /*
+    const loaded = useAtomValue(atomLoaded);
     if (loaded === true) {
-        return <PageSheet controller={controller} />;
+
+        return <PageSheetEdit controller={controller} />;
     }
+    */
     const { mainStore, isPend, isMainPend } = store;
     const { entity } = mainStore;
     if (isMainPend === true) {
@@ -50,20 +53,15 @@ export function PageSheetNew({ controller }: { controller: ControllerSheetNew })
 }
 
 function PageMainPend({ controller }: { controller: ControllerSheetNew; }) {
-    const { storeSheet: store } = controller;
+    const { storeSheet: store, onMainPendPicked } = controller;
     // const { sheetConsole } = store;
     // const { btnSubmit, btnExit } = buttons(sheetConsole);
     // const group0: ToolItem[] = [btnSubmit];
     // let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
-    async function onPickedNew(results: ReturnUseBinPicks) {
-        await store.onPicked(results);
-        await store.setSheetAsDraft();
-        await store.binStore.saveDetailsDirect();
-    }
     // header={pageHeader} back={null} top={top} right={right}>
     return <Page header="PageMainPend">
         {/*<ViewSteps sheetSteps={sheetConsole.steps} />*/}
-        <ViewMainPicks subHeader="新开单据" controller={controller} onPicked={onPickedNew} />
+        <ViewMainPicks subHeader="新开单据" controller={controller} onPicked={onMainPendPicked} />
     </Page>;
     /*
     const { caption } = store;
