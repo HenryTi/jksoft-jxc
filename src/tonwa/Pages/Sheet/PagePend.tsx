@@ -7,7 +7,7 @@ import { ButtonAsync, FA, List, Sep, setAtomValue, theme, wait } from "tonwa-com
 import { PickPendStore } from "../../Store/PickPendStore";
 import { PendRow } from "../../Store";
 import { RowCols } from "../../View";
-import { FormBudsStore } from "../../Controller/ControllerBuds/BinEditing";
+import { FormBudsStore } from "../../Control/ControlBuds/BinEditing";
 import { ViewSteps } from "./ViewSteps";
 import { ViewPendRowEdit } from "./ViewPendRowEdit";
 

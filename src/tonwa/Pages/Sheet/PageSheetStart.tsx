@@ -6,11 +6,10 @@ import { SheetSteps, StoreSheet } from "../../Store";
 import { Modal } from "../../UI";
 import { ToolItem, ViewCurSiteHeader } from "../../View";
 import { ReturnUseBinPicks } from "../../Store/PickResult";
-import { ControllerSheetNew } from "./ControllerSheet";
 import { buttonDefs, headerSheet } from "./HeaderSheet";
 import { ViewSteps } from "./ViewSteps";
 import { ViewMainPicks } from "./ViewMainPicks";
-import { PageSheetEdit } from "./PageSheetEdit";
+import { BControlSheetStart } from "../../Control";
 
 const stepPick = '录入条件';
 const stepPend = '批选待处理';
@@ -18,8 +17,8 @@ const stepSheet = '录入单据';
 function sheetSteps(steps: string[]): SheetSteps {
     return new SheetSteps(steps, stepSheet);
 };
-export function PageSheetNew({ controller }: { controller: ControllerSheetNew }) {
-    const { /*atomLoaded, */storeSheet: store } = controller;
+export function PageSheetStart({ control }: { control: BControlSheetStart }) {
+    const { /*atomLoaded, */storeSheet: store } = control;
     // const { sheetConsole } = store;
     /*
     const loaded = useAtomValue(atomLoaded);
@@ -31,29 +30,29 @@ export function PageSheetNew({ controller }: { controller: ControllerSheetNew })
     const { mainStore, isPend, isMainPend } = store;
     const { entity } = mainStore;
     if (isMainPend === true) {
-        return <PageMainPend controller={controller} />;
+        return <PageMainPend control={control} />;
     }
     const { binPicks, rearPick } = entity;
     if (rearPick === undefined && (binPicks === undefined || binPicks.length === 0)) {
         if (isPend === true) {
             // sheetConsole.steps = sheetSteps([stepPend]);
-            return <PageDirectPend controller={controller} />;
+            return <PageDirectPend control={control} />;
         }
-        return <PageSheetDirect controller={controller} />;
+        return <PageSheetDirect control={control} />;
     }
     if (isPend === true) {
         // sheetConsole.steps = sheetSteps([stepPick, stepPend]);
-        return <PageStartPend controller={controller} />;
+        return <PageStartPend control={control} />;
     }
     if (binPicks !== undefined) {
         // sheetConsole.steps = sheetSteps([stepPick]);
-        return <PageStartPicks controller={controller} />;
+        return <PageStartPicks control={control} />;
     }
-    return <PageSheetDirect controller={controller} />;
+    return <PageSheetDirect control={control} />;
 }
 
-function PageMainPend({ controller }: { controller: ControllerSheetNew; }) {
-    const { storeSheet: store, onMainPendPicked } = controller;
+function PageMainPend({ control }: { control: BControlSheetStart; }) {
+    const { storeSheet: store, onMainPendPicked } = control;
     // const { sheetConsole } = store;
     // const { btnSubmit, btnExit } = buttons(sheetConsole);
     // const group0: ToolItem[] = [btnSubmit];
@@ -61,7 +60,7 @@ function PageMainPend({ controller }: { controller: ControllerSheetNew; }) {
     // header={pageHeader} back={null} top={top} right={right}>
     return <Page header="PageMainPend">
         {/*<ViewSteps sheetSteps={sheetConsole.steps} />*/}
-        <ViewMainPicks subHeader="新开单据" controller={controller} onPicked={onMainPendPicked} />
+        <ViewMainPicks subHeader="新开单据" controller={control} onPicked={onMainPendPicked} />
     </Page>;
     /*
     const { caption } = store;
@@ -71,13 +70,13 @@ function PageMainPend({ controller }: { controller: ControllerSheetNew; }) {
     */
 }
 
-function PageSheetDirect({ controller }: { controller: ControllerSheetNew; }) {
+function PageSheetDirect({ control }: { control: BControlSheetStart; }) {
     const modal = useModal();
-    const { storeSheet } = controller;
+    const { storeSheet } = control;
     const { caption } = storeSheet;
     useEffectOnce(() => {
         (async function () {
-            await nothingPicked(modal, controller);
+            await nothingPicked(modal, control);
             await storeSheet.setSheetAsDraft();
         })();
     });
@@ -103,17 +102,17 @@ async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
 }
 */
 
-function buttons(controller: ControllerSheetNew) {
+function buttons(control: BControlSheetStart) {
     let btnSubmit = buttonDefs.submit(undefined, true);
-    const navBack = () => controller.closeModal();
+    const navBack = () => control.closeModal();
     let btnExit = buttonDefs.exit(navBack, false);
     return { btnSubmit, btnExit };
 }
 
-function PageStartPicks({ controller }: { controller: ControllerSheetNew; }) {
+function PageStartPicks({ control }: { control: BControlSheetStart; }) {
     // const { sheetConsole } = store;
-    const { storeSheet, onPickedNew, steps } = controller;
-    const { btnSubmit, btnExit } = buttons(controller);
+    const { onPickedNew, storeSheet, steps } = control;
+    const { btnSubmit, btnExit } = buttons(control);
     const group0: ToolItem[] = [btnSubmit];
     let { header: pageHeader, top, right } = headerSheet({ store: storeSheet, toolGroups: [group0], headerGroup: [btnExit] });
     /*
@@ -124,16 +123,16 @@ function PageStartPicks({ controller }: { controller: ControllerSheetNew; }) {
     */
     return <Page header={pageHeader} back={null} top={top} right={right}>
         <ViewSteps sheetSteps={steps} />
-        <ViewMainPicks subHeader="新开单据" controller={controller} onPicked={onPickedNew} />
+        <ViewMainPicks subHeader="新开单据" controller={control} onPicked={onPickedNew} />
     </Page>;
 }
 
-function PageStartPend({ controller }: { controller: ControllerSheetNew; }) {
-    const { storeSheet } = controller;
+function PageStartPend({ control }: { control: BControlSheetStart; }) {
+    const { storeSheet } = control;
     const { caption/*, sheetConsole*/ } = storeSheet;
     const subCaption = '批选待处理';
     const onPend = useCallback(async (results: ReturnUseBinPicks) => {
-        await controller.onPicked(results);
+        await control.onPickedNew(results);
         /*
         let added = await detailNew(store);
         if (added > 0) {
@@ -143,24 +142,24 @@ function PageStartPend({ controller }: { controller: ControllerSheetNew; }) {
     }, []);
     return <Page header={caption + ' - ' + subCaption}>
         {/*<ViewSteps sheetSteps={sheetConsole.steps} />*/}
-        <ViewMainPicks subHeader={'批选条件'} controller={controller} onPicked={onPend} />
+        <ViewMainPicks subHeader={'批选条件'} controller={control} onPicked={onPend} />
     </Page>;
 }
 
-function PageDirectPend({ controller }: { controller: ControllerSheetNew; }) {
+function PageDirectPend({ control }: { control: BControlSheetStart; }) {
     const modal = useModal();
-    const { storeSheet } = controller;
+    const { storeSheet } = control;
     const { caption/*, sheetConsole*/ } = storeSheet;
     const subCaption = '批选待处理';
     useEffectOnce(() => {
         (async function () {
-            await nothingPicked(modal, controller);
+            await nothingPicked(modal, control);
             let added: any; // = await detailNew(store);
             if (added > 0) {
-                await controller.setSheetAsDraft();
+                // await controller.setSheetAsDraft();
             }
             else {
-                await controller.discard();
+                await control.discard();
                 modal.close();
             }
         })();
@@ -170,8 +169,8 @@ function PageDirectPend({ controller }: { controller: ControllerSheetNew; }) {
     </Page>;
 }
 
-async function nothingPicked(modal: Modal, controller: ControllerSheetNew) {
-    const { storeSheet } = controller;
+async function nothingPicked(modal: Modal, control: BControlSheetStart) {
+    const { storeSheet } = control;
     let { entity } = storeSheet.mainStore;
     /*
     const budsEditing = new BinEditing(store, entity);

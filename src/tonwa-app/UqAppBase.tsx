@@ -213,6 +213,7 @@ class LocalStorageDb extends LocalDb {
 }
 
 export type OpenModal = <T = any>(element: JSX.Element, onClosed?: (result: any) => void) => Promise<T>;
+export type OpenModalAsync = <T = any>(element: JSX.Element, promise: Promise<any>, onClosed?: (result: any) => void) => Promise<T>;
 export const ModalContext = React.createContext(undefined);
 export function useModal() {
     const uqApp = useUqAppBase();
@@ -221,7 +222,9 @@ export function useModal() {
 
 export interface Modal {
     open: OpenModal;
+    openAsync: OpenModalAsync;
     close: (result?: any) => void;
+
 }
 export function uqAppModal(uqApp: UqAppBase): Modal {
     const { modalStack } = uqApp;
@@ -241,6 +244,23 @@ export function uqAppModal(uqApp: UqAppBase): Modal {
             setAtomValue(modalStackAtom, [...modalStack, [modal, resolve, onClosed]]);
         })
     }
+    async function openAsync<T = any>(element: JSX.Element, promise: Promise<any>, onClosed?: (result: any) => void): Promise<T> {
+        return new Promise<T>(async (resolve, reject) => {
+            let modalStack = getAtomValue(modalStackAtom);
+            if (React.isValidElement(element) !== true) {
+                alert('is not valid element');
+                return;
+            }
+            setAtomValue(modalStackAtom, [...modalStack, [<PageSpinner />, undefined, undefined]]);
+            await promise;
+            let modal = <ModalContext.Provider value={true}>
+                <Suspense fallback={<PageSpinner />}>
+                    {element}
+                </Suspense>
+            </ModalContext.Provider>;
+            setAtomValue(modalStackAtom, [...modalStack, [modal, resolve, onClosed]]);
+        });
+    }
     function close(result?: any) {
         let modalStack = getAtomValue(modalStackAtom);
         let [, resolve, onClosed] = modalStack.pop();
@@ -249,7 +269,7 @@ export function uqAppModal(uqApp: UqAppBase): Modal {
         onClosed?.(result);
         uqApp.onModalClose?.();
     }
-    return { open, close }
+    return { open, close, openAsync }
 }
 
 export const UqAppContext = React.createContext(undefined);

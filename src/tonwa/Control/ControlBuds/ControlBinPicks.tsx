@@ -2,13 +2,13 @@ import { BinPick, BinRow, BizPhraseType, EntityBin, PickAtom, PickPend, PickQuer
 import { AtomData, BinStore, StoreSheet } from "../../Store";
 import { PageIDSelect } from "../../Pages";
 import { PickResult, RearPickResultType, ReturnUseBinPicks } from "../../Store/PickResult";
-import { ControllerBiz } from "../ControllerBiz";
-import { ControllerBuds } from "./ControllerBuds";
+import { ControlBiz } from "../ControlBiz";
+import { ControlBuds } from "./ControlBuds";
 import { BinBudsEditing, FormBudsStore } from "./BinEditing";
-import { pickFromQuery, pickFromQueryScalar } from "tonwa/Pages/Query";
-import { pickFromPend } from "tonwa/Pages/Sheet/pickFromPend";
+import { pickFromQuery, pickFromQueryScalar } from "../../Pages/Query";
+import { pickFromPend } from "../../Pages/Sheet/pickFromPend";
 
-export class ControllerBinPicks extends ControllerBuds {
+export class ControlBinPicks extends ControlBuds {
     protected readonly binPicks: BinPick[];
     protected readonly rearPick: BinPick;
     protected readonly storeSheet: StoreSheet;
@@ -17,7 +17,7 @@ export class ControllerBinPicks extends ControllerBuds {
     protected readonly storeBin: BinStore;
     readonly formBudsStore: FormBudsStore;
 
-    constructor(controllerBiz: ControllerBiz, storeSheet: StoreSheet, bin: EntityBin, initBinRow?: BinRow) {
+    constructor(controllerBiz: ControlBiz, storeSheet: StoreSheet, bin: EntityBin, initBinRow?: BinRow) {
         const { binPicks, rearPick } = bin;
         super(controllerBiz, [...binPicks, rearPick]);
         this.binPicks = binPicks;

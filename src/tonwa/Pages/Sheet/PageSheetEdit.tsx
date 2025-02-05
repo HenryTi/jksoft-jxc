@@ -7,14 +7,14 @@ import { BizBud } from "../../Biz";
 import { Toolbar, ToolItem, ViewReaction } from "../../View";
 import { setAtomValue, getAtomValue } from "../../tools";
 import { buttonDefs, headerSheet } from "./HeaderSheet";
-import { SubmitState } from "./ControllerSheet";
-import { ControllerSheetEdit } from "./ControllerSheetEdit";
+import { SubmitState } from "./ControlSheet";
 import { ViewSheetContent } from "./ViewSheetContent";
 import { useSiteRole } from "../../Site";
-import { detailNewLoop } from "./detailNew";
+// import { detailNewLoop } from "./detailNew";
+import { BControlSheetEdit } from "tonwa/Control";
 
-export function PageSheetEdit({ controller }: { controller: ControllerSheetEdit; }) {
-    const { modal, storeSheet, mainStore, binStore, atomReaction, atomSubmitState } = controller;
+export function PageSheetEdit({ control }: { control: BControlSheetEdit; }) {
+    const { modal, storeSheet, mainStore, binStore, atomReaction, atomSubmitState } = control;
     const { caption } = storeSheet;
     const [editable, setEditable] = useState(true);
     let submitState = useAtomValue(atomSubmitState);
@@ -22,7 +22,7 @@ export function PageSheetEdit({ controller }: { controller: ControllerSheetEdit;
     let { isAdmin } = useSiteRoleReturn.userSite;
     async function onSubmit() {
         setEditable(false);
-        await controller.onSubmit();
+        await control.onSubmit();
         setEditable(true);
     }
 
@@ -30,11 +30,11 @@ export function PageSheetEdit({ controller }: { controller: ControllerSheetEdit;
         let message = `${caption} ${mainStore.no} 真的要作废吗？`;
         let ret = await modal.open(<PageConfirm header="确认" message={message} yes="单据作废" no="不作废" />);
         if (ret === true) {
-            await controller.onDiscard();
+            await control.onDiscard();
         }
     }
     async function onExit() {
-        controller.closeModal();
+        control.closeModal();
     }
 
     // let { id } = useAtomValue(mainStore._valRow);
@@ -50,10 +50,15 @@ export function PageSheetEdit({ controller }: { controller: ControllerSheetEdit;
     }
 
     function mainDetailEdit() {
+        // const controllerDetailEdit: ControllerDetailEdit = new ControllerDetailEdit(controller, binStore.entity);
+        const { controlDetailEdit } = control;
         const { entity: entityBin } = binStore;
+        const { onAddRow } = controlDetailEdit;
+        /*
         async function onAddRow() {
             await detailNewLoop(storeSheet);
         }
+        */
         let submitHidden: boolean;
         submitHidden = false;
         let submitDisabled = (function () {
@@ -76,6 +81,6 @@ export function PageSheetEdit({ controller }: { controller: ControllerSheetEdit;
         top={top}
         right={right}
     >
-        <ViewSheetContent controller={controller} readonly={false} />
+        <ViewSheetContent control={control} readonly={false} />
     </Page>;
 }

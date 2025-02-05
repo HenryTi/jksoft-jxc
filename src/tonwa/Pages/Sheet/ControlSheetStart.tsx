@@ -1,58 +1,13 @@
 import { atom } from "jotai";
 import { BinRow, EntityBin, EntitySheet, EnumDetailOperate } from "../../Biz";
 import { StoreSheet, SheetMainStore, BinStore, SheetSteps, BinStorePendDirect } from "../../Store";
-import { ControllerBiz, ControllerEntity } from "../../Controller";
+import { BControlSheet, BControlSheetStart, ControlBiz, ControlEntity } from "../../Control";
 import { ReturnUseBinPicks } from "../../Store/PickResult";
-import { ControllerBinPicks } from "../../Controller/ControllerBuds";
+import { ControlBinPicks } from "../../Control/ControlBuds";
 import { setAtomValue, getAtomValue } from "../../tools";
 import { WritableAtom } from "jotai";
-
-enum PendLoadState {
-    none,
-    loading,
-    loaded,
-}
-export enum SubmitState {
-    none,
-    disable,
-    enable,
-}
-export enum EnumSheetEditReturn {
-    submit,
-    exit,
-    discard,
-}
-
-export abstract class ControllerSheet extends ControllerEntity<EntitySheet> {
-    readonly storeSheet: StoreSheet
-    readonly mainStore: SheetMainStore;
-    binStore: BinStore;
-    readonly atomChanging = atom(1);
-    readonly atomReaction = atom(undefined as any);
-    readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
-    readonly atomError = atom(undefined as { [id: number]: { pend: number; overValue: number; } | { bin: number; message: string; } });
-    readonly atomSum = atom(get => {
-        return this.binStore.sum(get);
-    });
-
-    constructor(controllerBiz: ControllerBiz, entitySheet: EntitySheet) {
-        super(controllerBiz, entitySheet);
-        this.storeSheet = new StoreSheet(controllerBiz.storeBiz, entitySheet);
-        this.mainStore = new SheetMainStore(this.storeSheet);
-        console.log('ControllerSheet', entitySheet.caption, this.keyId);
-    }
-    async discard() {
-        await this.storeSheet.discard();
-    }
-
-    createControllerPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
-        return new ControllerBinPicks(this.controllerBiz, this.storeSheet, entityBin, initBinRow);
-    }
-
-    setChanging() {
-        setAtomValue(this.atomChanging, getAtomValue(this.atomChanging) + 1);
-    }
-}
+import { ControlSheet as ControlSheet } from "./ControlSheet";
+import { ControllerSheetDash } from "./ControlSheetDash";
 
 enum EnumSheetNewContent {
     sheet, mainPend, directPend, direct, startPend, startPicks
@@ -63,27 +18,17 @@ const stepSheet = '录入单据';
 function sheetSteps(steps: string[]): SheetSteps {
     return new SheetSteps(steps, stepSheet);
 };
-export class ControllerSheetNew extends ControllerSheet {
-    protected readonly isPend: boolean;
+
+export class ControlSheetStart extends BControlSheetStart {
+    /*
+    protected readonly controllerSheetDash: ControllerSheetDash;
+    readonly atomChanging = atom(1);
     readonly steps: SheetSteps;
 
-    constructor(controllerBiz: ControllerBiz, entitySheet: EntitySheet) {
+    constructor(controllerSheetDash: ControllerSheetDash) {
+        const { controlBiz: controllerBiz, entity: entitySheet } = controllerSheetDash;
         super(controllerBiz, entitySheet);
-        const { main, details } = this.entity;
-        let len = details.length;
-        if (len > 0) {
-            let detail = details[0];
-            const { bin } = detail;
-            this.isPend = bin.pend !== undefined;
-            switch (detail.operate) {
-                default: this.binStore = new BinStore(this.storeSheet, detail.bin, detail.operate); break;
-                case EnumDetailOperate.direct: this.binStore = new BinStorePendDirect(this.storeSheet, detail.bin, detail.operate); break;
-            }
-        }
-        else {
-            this.isPend = false;
-        }
-
+        this.controllerSheetDash = controllerSheetDash;
         const { mainStore, isPend, isMainPend } = this.storeSheet;
         const { entity } = mainStore;
         let enumSheetNewContent: EnumSheetNewContent;
@@ -123,46 +68,46 @@ export class ControllerSheetNew extends ControllerSheet {
     // atomLoaded = atom(false);
     atomContent = atom<EnumSheetNewContent>(get => {
         // if (get(this.atomLoaded) === true) return EnumSheetNewContent.sheet;
+        const { isPend } = this.storeSheet;
         const { main, details } = this.entity;
         if (main.pend !== undefined) return EnumSheetNewContent.mainPend;
 
         const { binPicks, rearPick } = main;
         if (rearPick === undefined && (binPicks === undefined || binPicks.length === 0)) {
-            if (this.isPend === true) {
+            if (isPend === true) {
                 // sheetConsole.steps = sheetSteps([stepPend]);
                 return EnumSheetNewContent.directPend;
             }
             return EnumSheetNewContent.direct;
         }
-        if (this.isPend === true) {
+        if (isPend === true) {
             return EnumSheetNewContent.directPend;
         }
     });
+
     atomSubmitState = atom((get) => {
         //if (this.binStore === undefined) return SubmitState.enable;
         return get(this.binStore.atomSubmitState);
     }, null);
 
-    onPickedNew = async (results: ReturnUseBinPicks) => {
-        await this.onPicked(results);
-        await this.setSheetAsDraft();
-        // setAtomValue(this.atomLoaded, true);
-        this.closeModal(this.storeSheet.mainId);
+    createControllerPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
+        return new ControlBinPicks(this.controlBiz, this.storeSheet, entityBin, initBinRow);
+    }
+
+    setChanging() {
+        setAtomValue(this.atomChanging, getAtomValue(this.atomChanging) + 1);
     }
 
     onMainPendPicked = async (results: ReturnUseBinPicks) => {
-        await this.onPicked(results);
-        await this.setSheetAsDraft();
-        await this.binStore.saveDetailsDirect();
-        // setAtomValue(this.atomLoaded, true);
-        this.closeModal(this.storeSheet.mainId);
+        await this.controllerSheetDash.onMainPendPicked(results);
+    }
+
+    onPickedNew = async (results: ReturnUseBinPicks) => {
+        await this.controllerSheetDash.onPickedNew(results);
     }
 
     async onPicked(results: ReturnUseBinPicks) {
-
+        return await this.controllerSheetDash.onPicked(results);
     }
-
-    async setSheetAsDraft() {
-
-    }
+    */
 }

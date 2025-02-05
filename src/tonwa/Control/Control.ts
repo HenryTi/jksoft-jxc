@@ -3,7 +3,7 @@ import { Modal } from "../UI";
 import { Biz } from "../Biz";
 import { KeyIdObject } from "../Store";
 
-export class Controller extends KeyIdObject {
+export class Control extends KeyIdObject {
     readonly modal: Modal;
     readonly biz: Biz;
     constructor(modal: Modal, biz: Biz) {

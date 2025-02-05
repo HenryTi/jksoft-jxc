@@ -48,28 +48,19 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> } = {};
     constructor(storeBiz: StoreBiz, entitySheet: EntitySheet) {
         super(storeBiz, entitySheet);
-        // this.sheetConsole = sheetConsole;
         this.mainStore = new SheetMainStore(this);
         const { main, details } = this.entity;
         if (main.pend !== undefined) {
             this.isMainPend = true;
         }
         this.mainBinStore = new BinStore(this, main, undefined);
-        let detail = details[0];
         let len = details.length;
         if (len > 0) {
-            const { bin } = details[0];
+            const { bin, operate } = details[0];
             this.isPend = bin.pend !== undefined;
+            this.binStore = new BinStore(this, bin, operate);
         }
         this.caption = entitySheet.caption;
-        if (detail !== undefined) {
-            let binStore: BinStore;
-            switch (detail.operate) {
-                default: binStore = new BinStore(this, detail.bin, detail.operate); break;
-                case EnumDetailOperate.direct: binStore = new BinStorePendDirect(this, detail.bin, detail.operate); break;
-            }
-            this.binStore = binStore;
-        }
     }
 
     async load(sheetId: number) {

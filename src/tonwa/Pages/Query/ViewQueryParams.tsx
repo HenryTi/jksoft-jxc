@@ -7,7 +7,7 @@ import { BinPick, BizBud, EntityQuery, EnumBudType, PickParam, PickQuery, ValueS
 // import { LabelBox, RowColsSm } from "../tool";
 // import { InlineEdit } from "../Bud/Edit/InlineEdit";
 import { useRef } from "react";
-import { FormBudsStore, ValuesBudsEditing } from "../../Controller/ControllerBuds/BinEditing";
+import { FormBudsStore, ValuesBudsEditing } from "../../Control/ControlBuds/BinEditing";
 import { LabelBox, RowColsSm, ViewBud } from "../../View";
 // import { FormBudsStore, ValuesBudsEditing } from "app/Store";
 

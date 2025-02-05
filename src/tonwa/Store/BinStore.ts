@@ -1,7 +1,7 @@
 import { Getter, WritableAtom, atom } from "jotai";
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { getValRowPropArr, PendProxyHandler, ValRow } from "./ValRow";
-import { BinDiv, BizBud, EntityBin, EnumDetailOperate, PickPend } from "../Biz";
+import { BinDiv, BizBud, EntityBin, EnumDetailOperate, PickPend, SheetDetail } from "../Biz";
 import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsBase, ValDivsRoot } from './ValDiv';
 import { PickPendStore } from "./PickPendStore";
 import { PendRow, StoreSheet } from "./StoreSheet";
@@ -23,6 +23,7 @@ export class BinStore extends StoreEntity<EntityBin> {
     private pendLoadState: PendLoadState;
     readonly atomWaiting = atom(false);
     readonly sheetStore: StoreSheet;
+    readonly detail: SheetDetail;
     readonly operate: EnumDetailOperate;
     readonly binDivRoot: BinDiv;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> };
@@ -522,75 +523,6 @@ export class BinStore extends StoreEntity<EntityBin> {
     }
 
     async allPendsToValRows(): Promise<void> {
-    }
-}
-
-interface InDetail {
-    id: number;
-    i: number;
-    x: number;
-    origin: number;
-    value: number;
-    price: number;
-    amount: number;
-    pend: number;
-    props: any;
-}
-
-class PendToValDiv {
-    readonly vId: number;
-    readonly parent: PendToValDiv;
-    readonly valDiv: ValDivBase;
-    readonly children: PendToValDiv[] = [];
-    iValue: number;
-    iBase: number;
-    xValue: number;
-    xBase: number;
-
-    constructor(vId: number, parent: PendToValDiv, valDiv: ValDivBase) {
-        this.vId = vId;
-        this.parent = parent;
-        this.valDiv = valDiv;
-        if (this.parent !== undefined) this.parent.children.push(this);
-    }
-
-    getValRows(inDetails: InDetail[], valRows: ValRow[]) {
-        const { valRow, binDiv: { buds } } = this.valDiv;
-        let { id, i, x, value, price, amount, pend, origin } = valRow;
-        let propArr = getValRowPropArr(valRow, buds);
-        inDetails.push({
-            id,
-            i,
-            x,
-            value,
-            price,
-            amount,
-            origin,
-            pend,
-            props: propArr,
-        });
-        valRows.push(valRow);
-        for (let p of this.children) {
-            p.getValRows(inDetails, valRows);
-        }
-    }
-
-    setIXBaseFromInput() {
-        // const { valDiv } = row;
-        // const { valRow } = valDiv;
-        // valDiv.setValRow(valRow);
-        // valDiv.setIXBaseFromInput(divEditing);
-        this.valDiv.setIXBaseFromInput(this);
-        for (let p of this.children) {
-            p.setIXBaseFromInput();
-        }
-    }
-}
-
-// 待选之后，不需要处理待选属性值，直接生成Detail。
-export class BinStorePendDirect extends BinStore {
-    // pendRows 已经在单据上了
-    async allPendsToValRows(): Promise<void> {
         const { valDivs } = this.valDivsRoot;
         const { length } = valDivs;
         if (length === 0) return;
@@ -679,4 +611,71 @@ export class BinStorePendDirect extends BinStore {
             valRow.id = id;
         }
     }
+}
+
+interface InDetail {
+    id: number;
+    i: number;
+    x: number;
+    origin: number;
+    value: number;
+    price: number;
+    amount: number;
+    pend: number;
+    props: any;
+}
+
+class PendToValDiv {
+    readonly vId: number;
+    readonly parent: PendToValDiv;
+    readonly valDiv: ValDivBase;
+    readonly children: PendToValDiv[] = [];
+    iValue: number;
+    iBase: number;
+    xValue: number;
+    xBase: number;
+
+    constructor(vId: number, parent: PendToValDiv, valDiv: ValDivBase) {
+        this.vId = vId;
+        this.parent = parent;
+        this.valDiv = valDiv;
+        if (this.parent !== undefined) this.parent.children.push(this);
+    }
+
+    getValRows(inDetails: InDetail[], valRows: ValRow[]) {
+        const { valRow, binDiv: { buds } } = this.valDiv;
+        let { id, i, x, value, price, amount, pend, origin } = valRow;
+        let propArr = getValRowPropArr(valRow, buds);
+        inDetails.push({
+            id,
+            i,
+            x,
+            value,
+            price,
+            amount,
+            origin,
+            pend,
+            props: propArr,
+        });
+        valRows.push(valRow);
+        for (let p of this.children) {
+            p.getValRows(inDetails, valRows);
+        }
+    }
+
+    setIXBaseFromInput() {
+        // const { valDiv } = row;
+        // const { valRow } = valDiv;
+        // valDiv.setValRow(valRow);
+        // valDiv.setIXBaseFromInput(divEditing);
+        this.valDiv.setIXBaseFromInput(this);
+        for (let p of this.children) {
+            p.setIXBaseFromInput();
+        }
+    }
+}
+
+// 待选之后，不需要处理待选属性值，直接生成Detail。
+export class BinStorePendDirect extends BinStore {
+    // pendRows 已经在单据上了
 }

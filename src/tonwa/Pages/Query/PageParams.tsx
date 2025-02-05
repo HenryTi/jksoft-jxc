@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { BizBud, PickParam, ValueSetType } from "../../Biz";
 import { Band, FormRow, FormRowsView } from "../../View/Form";
 import { ViewBud } from "../../View";
-import { FormBudsStore, ValuesBudsEditing } from "../../Controller/ControllerBuds/BinEditing";
+import { FormBudsStore, ValuesBudsEditing } from "../../Control/ControlBuds/BinEditing";
 
 interface Props {
     editing: FormBudsStore; // BudsEditing;

@@ -3,7 +3,7 @@ import { useReactToPrint } from "react-to-print";
 import { Page, useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { Toolbar, ViewCurSiteHeader } from "../../View";
-import { ControllerSheetEdit } from "./ControllerSheetEdit";
+import { ControllerSheetEdit } from "./ControlSheetEdit";
 import { ViewSheetContent } from "./ViewSheetContent";
 import { buttonDefs } from "./HeaderSheet";
 import { useSiteRole } from "../../Site";
@@ -63,7 +63,7 @@ export function PageSheetView({ controller }: { controller: ControllerSheetEdit;
     let toolGroups = [leftGroup, null, [btnDownload, btnPrint]];
     let top = <Toolbar groups={toolGroups} />;
     return <Page header={<ViewCurSiteHeader caption={caption} />}>
-        <ViewSheetContent controller={controller} readonly={true} />
+        <ViewSheetContent control={controller} readonly={true} />
         <ViewSheetPrint controller={controller} refPrint={refPrint} />
     </Page>;
 }
@@ -76,7 +76,7 @@ function ViewSheetPrint({ controller, refPrint }: { controller: ControllerSheetE
         <div ref={refPrint} className="print-container" style={{ margin: "0", padding: "0" }}>
             <div className="border-bottom px-3 py-2 mb-1 fs-larger text-center border-dark">{caption}</div>
             <div dangerouslySetInnerHTML={{ __html }} />
-            <ViewSheetContent controller={controller} readonly={true} />
+            <ViewSheetContent control={controller} readonly={true} />
         </div>
     </div>;
 }

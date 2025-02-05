@@ -2,13 +2,14 @@ import React from "react";
 import { useAtomValue } from "jotai";
 import { SpinnerSmall, theme } from "tonwa-com";
 import { BizBud } from "../../Biz";
-import { ControllerSheetEdit } from "./ControllerSheetEdit";
+import { ControllerSheetEdit } from "./ControlSheetEdit";
 import { ViewMain } from "./ViewMain";
 import { PAV } from "./tool";
 import { ViewDiv } from "./ViewDiv";
+import { BControlSheetEdit } from "../../Control";
 
-export function ViewSheetContent({ controller, readonly }: { controller: ControllerSheetEdit; readonly: boolean; }) {
-    const { storeSheet: store, atomSum } = controller;
+export function ViewSheetContent({ control, readonly }: { control: BControlSheetEdit; readonly: boolean; }) {
+    const { storeSheet: store, atomSum } = control;
     const { binStore } = store;
     if (binStore === undefined) {
         return <ViewMain store={store} popup={false} readOnly={readonly} />
@@ -63,7 +64,7 @@ export function ViewSheetContent({ controller, readonly }: { controller: Control
                     return <React.Fragment key={id}>
                         <div className="page-break" />
                         <div className={cn} style={{ marginTop: '1px', marginBottom: '1px' }}>
-                            <ViewDiv binStore={binStore} valDiv={v} readonly={readonly} index={index + 1} />
+                            <ViewDiv controller={control.controlDetailEdit} valDiv={v} readonly={readonly} index={index + 1} />
                         </div>
                     </React.Fragment>;
                 })}

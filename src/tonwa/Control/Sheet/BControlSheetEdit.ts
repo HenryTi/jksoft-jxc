@@ -1,9 +1,30 @@
 import { atom } from "jotai";
+import { ControlBiz } from "..";
+import { BinRow, EntityBin, EntitySheet } from "../../Biz";
 import { getAtomValue, setAtomValue } from "../../tools";
-import { ControllerSheet, EnumSheetEditReturn, SubmitState } from "./ControllerSheet";
-import { ViewSubmitReaction } from "./ViewSubmitReaction";
+import { BControlSheet, EnumSheetEditReturn, SubmitState } from "./BControlSheet";
+// import { ViewSubmitReaction } from "./ViewSubmitReaction";
+import { BControlDetailEdit } from "./BControlDetailEdit";
+import { BControlSheetDash } from "./BControlSheetDash";
+import { JSX } from "react";
 
-export class ControllerSheetEdit extends ControllerSheet {
+export abstract class BControlSheetEdit extends BControlSheet {
+    protected readonly controlSheetDash: BControlSheetDash;
+    readonly controlDetailEdit: BControlDetailEdit;
+    readonly atomReaction = atom(undefined as any);
+    readonly atomError = atom(undefined as { [id: number]: { pend: number; overValue: number; } | { bin: number; message: string; } });
+    readonly atomSum = atom(get => {
+        return this.binStore.sum(get);
+    });
+    constructor(controlSheetDash: BControlSheetDash) {
+        const { controlBiz: controllerBiz, entity: entitySheet } = controlSheetDash;
+        super(controllerBiz, entitySheet);
+        this.controlDetailEdit = this.createControlDetailEdit();
+        // new ControlDetailEdit(this, this.binStore.entity);
+    }
+
+    protected abstract createControlDetailEdit(): BControlDetailEdit;
+
     atomSubmitState = atom((get) => {
         if (this.binStore === undefined) return SubmitState.enable;
         return get(this.binStore.atomSubmitState);
@@ -43,9 +64,10 @@ export class ControllerSheetEdit extends ControllerSheet {
         this.modal.close(EnumSheetEditReturn.submit);
     }
 
-    protected ViewSubmitReaction() {
+    protected abstract ViewSubmitReaction(): JSX.Element;
+    /* {
         return <ViewSubmitReaction />;
-    }
+    } */
 
     private setSubmitError(checkPend: { pend: number; overValue: number; }[], checkBin: { bin: number; message: string; }[]) {
         let error: any = getAtomValue(this.atomError);

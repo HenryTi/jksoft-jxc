@@ -2,7 +2,7 @@ import { PickPend } from "../../Biz";
 import { BinStore, PickResult } from "../../Store";
 import { PagePend } from "./PagePend";
 import { ValRow } from "../../Store/ValRow";
-import { FormBudsStore } from "../../Controller/ControllerBuds/BinEditing";
+import { FormBudsStore } from "../../Control/ControlBuds/BinEditing";
 
 export async function pickFromPend(binStore: BinStore
     , editing: FormBudsStore // BudsEditing

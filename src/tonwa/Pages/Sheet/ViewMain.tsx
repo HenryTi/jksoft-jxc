@@ -10,7 +10,7 @@ import { EditBudInline, LabelBox, RowCols } from "../../View";
 import { ViewForkAtom } from "../../View/Form/ViewForkOfStore";
 import { ViewSheetTime } from "./ViewSheetTime";
 import { StoreSheet } from "../../Store";
-import { BinEditing, FormBudsStore } from "../../Controller/ControllerBuds/BinEditing";
+import { BinEditing, FormBudsStore } from "../../Control/ControlBuds/BinEditing";
 
 export function ViewMain({ store, readOnly }: { store: StoreSheet; popup: boolean; readOnly?: boolean; }) {
     const modal = useModal();

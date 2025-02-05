@@ -3,12 +3,13 @@ import { theme } from "tonwa-com";
 import { PAV, ViewDivProps, ViewDivRight, ViewPendValue, cn } from "./tool";
 import { ViewPivotDiv } from "./ViewPivotDiv";
 import { ViewIBase, ViewIBaseBuds } from "./ViewIBase";
-import { DivEditing } from "../../Controller/ControllerBuds/BinEditing";
+import { DivEditing } from "../../Control/ControlBuds/BinEditing";
 import { RowColsSm } from "../../View";
 import { ViewShowBuds } from "../../tools";
 
 export function ViewRowStem(props: ViewDivProps) {
-    const { valDiv, binStore, buttons, hidePivot, index } = props;
+    const { controller, valDiv, buttons, hidePivot, index } = props;
+    const { binStore } = controller.controlSheet;
     const { sheetStore } = binStore;
     const { atomSum, binDiv } = valDiv;
     const { entityBin } = binDiv;
@@ -23,7 +24,7 @@ export function ViewRowStem(props: ViewDivProps) {
     const { pivot, i: budI, value: budValue } = entityBin;
     let viewPivot: any;
     if (pivot !== undefined && pivot === binDiv.subBinDiv && hidePivot !== true) {
-        viewPivot = <ViewPivotDiv binStore={binStore} valDiv={valDiv} />;
+        viewPivot = <ViewPivotDiv controller={controller} valDiv={valDiv} />;
     }
 
     const divEditing = new DivEditing(binStore, valDiv);

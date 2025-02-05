@@ -5,7 +5,7 @@ import { BudCheckValue, BudValue, OnValueChanged, PickProps, UqAppBase } from "t
 import { BizBud } from "../../../Biz";
 import { StoreEntity } from "../../../Store";
 import { BudEditing } from "./EditBud";
-import { FormBudsStore } from "../../../Controller/ControllerBuds/BinEditing";
+import { FormBudsStore } from "../../../Control/ControlBuds/BinEditing";
 // import { FormBudsStore } from "app/Store";
 
 // type FormBudsStore = any;

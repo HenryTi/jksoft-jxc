@@ -5,11 +5,11 @@ import { Page, PageSpinner, useModal } from "tonwa-app";
 import { FA, from62, List, useEffectOnce } from "tonwa-com";
 import { EntitySheet } from "../../Biz";
 import { BinData, getUserBudValue, SheetData } from "../../Store";
-import { ControllerBiz } from "../../Controller";
+import { ControlBiz } from "../../Control";
 import { useSiteRole } from "../../Site";
 import { useBiz } from "../../Hooks";
 import { ViewBud, ViewReaction, ViewNotifyCount } from "../../View";
-import { ControllerSheetDash } from "./ControllerSheetDash";
+import { ControllerSheetDash } from "./ControlSheetDash";
 
 export function PageSheetDash() {
     const modal = useModal();
@@ -19,7 +19,7 @@ export function PageSheetDash() {
     const sheetId = from62(sheet);
     const entitySheet = biz.entityFromId(sheetId) as EntitySheet;
     const { caption, name, coreDetail } = entitySheet;
-    const controllerBiz = useMemo(() => new ControllerBiz(modal, biz), []);
+    const controllerBiz = useMemo(() => new ControlBiz(modal, biz), []);
     const controllerSheetDash = useMemo(() => new ControllerSheetDash(controllerBiz, entitySheet), []);
     const { onPageSheetNew, onPageSheetList, atomViewSubmited } = controllerSheetDash;
     const [visible, setVisible] = useState(true);

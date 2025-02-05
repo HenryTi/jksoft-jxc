@@ -7,16 +7,16 @@ import { RowCols, ViewBud } from "../../View";
 import { ViewAtomId } from "../../View/Form/ViewAtomId";
 import { getAtomValue } from "../../tools";
 import { PickRow } from "./PickRow";
-import { ControllerSheetNew } from "./ControllerSheet";
 import { InputScalar } from "./InputScalar";
+import { ControlSheetStart } from "./ControlSheetStart";
 
 interface Props {
     subHeader?: string;
-    controller: ControllerSheetNew;
+    controller: ControlSheetStart;
     onPicked: (results: ReturnUseBinPicks) => Promise<void>;
 }
 
-export function ViewMainPicks({ controller, onPicked, subHeader }: Props) {
+export function ViewMainPicks({ controller, subHeader }: Props) {
     // const modal = useModal();
     const rearPickResultType = RearPickResultType.scalar;
     const { storeSheet, mainStore: main, binStore, steps/*, sheetConsole*/ } = controller;
@@ -60,7 +60,7 @@ export function ViewMainPicks({ controller, onPicked, subHeader }: Props) {
             rearResult,
             rearPickResultType: rearPickResultType,
         };
-        await onPicked(ret);
+        await controller.onPickedNew(ret);
         steps?.next();
     }
     let viewBinPicks: any;
@@ -101,7 +101,7 @@ export function ViewMainPicks({ controller, onPicked, subHeader }: Props) {
                 async function autoPickPend(nextPick: PickPend) {
                     let pickPend = nextPick as PickPend;
                     const { binStore, mainStore } = storeSheet;
-                    const { atomPendRows, operate, entity } = binStore;
+                    const { atomPendRows, entity, operate } = binStore;
                     const { divLevels } = entity;
                     let pendStore = binStore.getPickPendStore(nextPick as PickPend);
                     const { paramsEditing } = pendStore;

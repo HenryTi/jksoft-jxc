@@ -1,4 +1,4 @@
-import { FormBudsStore } from "../Controller/ControllerBuds/BinEditing";
+import { FormBudsStore } from "../Control/ControlBuds/BinEditing";
 import { BinPick } from "../Biz";
 // import { FormBudsStore } from "./BinEditing";
 

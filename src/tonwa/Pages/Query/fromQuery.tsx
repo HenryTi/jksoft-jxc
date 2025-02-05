@@ -11,7 +11,7 @@ import { QueryStore } from "./QueryStore";
 import {
     ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewForkAtomBold, ViewForkBuds
 } from "../../View/Form/ViewForkOfStore";
-import { FormBudsStore } from "../../Controller/ControllerBuds/BinEditing";
+import { FormBudsStore } from "../../Control/ControlBuds/BinEditing";
 import { QueryRow, QueryRowCol } from "../../tools";
 
 async function pickFromQueryBase(

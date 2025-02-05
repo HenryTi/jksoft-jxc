@@ -3,21 +3,16 @@ import { ValRow } from "../../Store/ValRow";
 import { PickResult, RearPickResultType, StoreSheet } from "../../Store";
 // import { runBinPicks } from "../binPick";
 // import { rowEdit } from "./divEdit";
-import { BinEditing } from "../../Controller/ControllerBuds/BinEditing";
+import { BinEditing } from "../../Control/ControlBuds/BinEditing";
 import { BizPhraseType } from "../../Biz";
 // import { PageConfirm } from "tonwa-app";
 
+/*
 export async function detailNewLoop(sheetStore: StoreSheet): Promise<void> {
     // const { modal, binStore } = sheetStore;
     for (; ;) {
         let ret = await detailNew(sheetStore);
         if (ret !== 1) break;
-        /*
-        const binEditing = new BinEditing(sheetStore, binStore.entity);
-        binEditing.addNamedParams(ret.editing.valueSpace);
-        let retEdit = await rowEdit(modal, binEditing, undefined);
-        if (retEdit !== true) break;
-        */
         // if (await modal.open(<PageConfirm header="输入明细" auth={false} message="继续输入明细吗？" yes="继续" no="不继续" />) !== true) {
         //    break;
         //}
@@ -98,3 +93,4 @@ export async function detailNew(sheetStore: StoreSheet): Promise<number> {
     sheetStore.notifyRowChange();
     return valRows.length;
 }
+*/

@@ -2,12 +2,13 @@ import { useAtomValue } from "jotai";
 import { theme } from "tonwa-com";
 import { PAV, ViewDivProps, ViewDivRight, ViewPendValue, cn } from "./tool";
 import { ViewIBase } from "./ViewIBase";
-import { DivEditing } from "../../Controller/ControllerBuds/BinEditing";
+import { DivEditing } from "../../Control/ControlBuds/BinEditing";
 import { ViewAtomPrimesOfStore, ViewForkBuds } from "../../View/Form/ViewForkOfStore";
 import { RowColsSm } from "../../View";
 
 export function ViewRowLeaf(props: ViewDivProps) {
-    const { binStore: binStore, valDiv, buttons, index } = props;
+    const { controller, valDiv, buttons, index } = props;
+    const { binStore } = controller.controlSheet;
     const { sheetStore } = binStore;
     const { atomValue, binDiv } = valDiv;
     const { binDivBuds } = binDiv;

@@ -9,13 +9,15 @@ import { ViewDivProps } from "./tool";
 import { ViewRow } from "./ViewRow";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
-import { DivEditing } from "../../Controller/ControllerBuds/BinEditing";
+import { DivEditing } from "../../Control/ControlBuds/BinEditing";
 import { ValDivRoot } from "../../Store/ValDiv";
+import { ControllerDetailEdit } from "./ControlDetailEdit";
 // import { rowEdit } from "../divEdit";
 
 export function ViewDiv(props: ViewDivProps) {
-    const modal = useModal();
-    const { binStore, valDiv, readonly } = props;
+    const { controller, valDiv, readonly } = props;
+    const controllerDetailEdit = controller as ControllerDetailEdit;
+    const { binStore } = controllerDetailEdit.controlSheet;
     const { binDiv, atomDeleted } = valDiv;
     const { entityBin, level } = binDiv;
     const divs = useAtomValue(valDiv.atomValDivs);
@@ -25,7 +27,7 @@ export function ViewDiv(props: ViewDivProps) {
         // pivot直接在末尾级stem显示value list
         return null;
     }
-    if (deleted === true) return <ViewDivUndo binStore={binStore} valDiv={valDiv} />;
+    if (deleted === true) return <ViewDivUndo controller={controller} valDiv={valDiv} />;
 
     const { pend, id } = valRow;
     const { sheetStore } = binStore;
@@ -35,31 +37,11 @@ export function ViewDiv(props: ViewDivProps) {
 
     function ViewDivPendRow() {
         async function onDelSub() {
-            // 候选还没有输入行内容
-            binStore.removePend(pend);
+            await controllerDetailEdit.onDelSub(valDiv, pend);
         }
         async function onEdit() {
-            // 候选还没有输入行内容
-            let pendRow = sheetStore.getPendRow(pend);
-            let valDivClone = valDiv.clone() as ValDivRoot;
-            let { valRow } = valDivClone;
-            valDivClone.id = undefined;
-            valRow.id = undefined;
-            valRow.origin = pendRow.origin;
-            valRow.pend = pendRow.pend;
-            valRow.pendValue = pendRow.value;
-            valDivClone.setValRow(valRow);
-            const useInputsProps: UseEditDivsProps = {
-                binStore: binStore,
-                valDiv: valDivClone,
-                pendRow,
-                skipInputs: false,
-            }
-            let retHasValue = await editDivs(useInputsProps);
-            if (retHasValue !== true) return;
-            binStore.replaceValDiv(valDiv, valDivClone);
+            await controllerDetailEdit.onPendEdit(valDiv, pend);
         }
-
         let buttons = divRightButtons(id, deleted, onDelSub, onEdit);
         let { tops, bottoms } = buttons;
         let viewDivRightButtons = <ViewDivRightButtons tops={tops} bottoms={bottoms} />;
@@ -75,30 +57,13 @@ export function ViewDiv(props: ViewDivProps) {
 
     function ViewDivBinRow() {
         async function onDelSub() {
-            setAtomValue(atomDeleted, !deleted);
-            sheetStore.notifyRowChange();
+            await controllerDetailEdit.onDivDelSub();
         }
-        async function onEdit() {
-            if (divs.length === 0) {
-                // 无Div明细, 叶div
-                try {
-                    const editing = new DivEditing(binStore, valDiv);
-                    let ret = await rowEdit(modal, editing, valDiv);
-                    if (ret !== true) return;
-                    const { values: newValRow } = editing;
-                    await binStore.saveDetails(binDiv, [newValRow]);
-                    valDiv.setValRow(newValRow);
-                    return;
-                }
-                catch (e) {
-                    console.error(e);
-                    alert('error');
-                }
-            }
-            await modal.open(<PageEditDivRoot binStore={binStore} valDiv={valDiv} />);
+        async function onDivEdit() {
+            await controllerDetailEdit.onDivEdit(valDiv);
         }
 
-        let buttons = divRightButtons(id, deleted, onDelSub, onEdit);
+        let buttons = divRightButtons(id, deleted, onDelSub, onDivEdit);
         let viewDivRightButtons: any;
         if (readonly !== true) {
             if (level === 0) {
