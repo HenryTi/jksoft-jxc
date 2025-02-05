@@ -1,13 +1,13 @@
 import { atom } from "jotai";
 import { BinRow, EntityBin, EntitySheet, EnumDetailOperate } from "../../Biz";
 import { StoreSheet, SheetMainStore, BinStore, SheetSteps, BinStorePendDirect } from "../../Store";
-import { BControlSheet, BControlSheetStart, ControlBiz, ControlEntity } from "../../Control";
+import { ControlSheet, ControlSheetStart, ControlBiz, ControlEntity } from "../../Control";
 import { ReturnUseBinPicks } from "../../Store/PickResult";
 import { ControlBinPicks } from "../../Control/ControlBuds";
 import { setAtomValue, getAtomValue } from "../../tools";
 import { WritableAtom } from "jotai";
-import { ControlSheet as ControlSheet } from "./ControlSheet";
-import { ControllerSheetDash } from "./ControlSheetDash";
+import { TControlSheet as TControlSheet } from "./TControlSheet";
+import { TControllerSheetDash } from "./TControlSheetDash";
 
 enum EnumSheetNewContent {
     sheet, mainPend, directPend, direct, startPend, startPicks
@@ -19,7 +19,7 @@ function sheetSteps(steps: string[]): SheetSteps {
     return new SheetSteps(steps, stepSheet);
 };
 
-export class ControlSheetStart extends BControlSheetStart {
+export class TControlSheetStart extends ControlSheetStart {
     /*
     protected readonly controllerSheetDash: ControllerSheetDash;
     readonly atomChanging = atom(1);

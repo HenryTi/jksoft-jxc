@@ -7,13 +7,13 @@ import { BizBud } from "../../Biz";
 import { Toolbar, ToolItem, ViewReaction } from "../../View";
 import { setAtomValue, getAtomValue } from "../../tools";
 import { buttonDefs, headerSheet } from "./HeaderSheet";
-import { SubmitState } from "./ControlSheet";
+import { SubmitState } from "./TControlSheet";
 import { ViewSheetContent } from "./ViewSheetContent";
 import { useSiteRole } from "../../Site";
 // import { detailNewLoop } from "./detailNew";
-import { BControlSheetEdit } from "tonwa/Control";
+import { ControlSheetEdit } from "tonwa/Control";
 
-export function PageSheetEdit({ control }: { control: BControlSheetEdit; }) {
+export function PageSheetEdit({ control }: { control: ControlSheetEdit; }) {
     const { modal, storeSheet, mainStore, binStore, atomReaction, atomSubmitState } = control;
     const { caption } = storeSheet;
     const [editable, setEditable] = useState(true);

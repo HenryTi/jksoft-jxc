@@ -9,7 +9,7 @@ import { ReturnUseBinPicks } from "../../Store/PickResult";
 import { buttonDefs, headerSheet } from "./HeaderSheet";
 import { ViewSteps } from "./ViewSteps";
 import { ViewMainPicks } from "./ViewMainPicks";
-import { BControlSheetStart } from "../../Control";
+import { ControlSheetStart } from "../../Control";
 
 const stepPick = '录入条件';
 const stepPend = '批选待处理';
@@ -17,7 +17,7 @@ const stepSheet = '录入单据';
 function sheetSteps(steps: string[]): SheetSteps {
     return new SheetSteps(steps, stepSheet);
 };
-export function PageSheetStart({ control }: { control: BControlSheetStart }) {
+export function PageSheetStart({ control }: { control: ControlSheetStart }) {
     const { /*atomLoaded, */storeSheet: store } = control;
     // const { sheetConsole } = store;
     /*
@@ -51,7 +51,7 @@ export function PageSheetStart({ control }: { control: BControlSheetStart }) {
     return <PageSheetDirect control={control} />;
 }
 
-function PageMainPend({ control }: { control: BControlSheetStart; }) {
+function PageMainPend({ control }: { control: ControlSheetStart; }) {
     const { storeSheet: store, onMainPendPicked } = control;
     // const { sheetConsole } = store;
     // const { btnSubmit, btnExit } = buttons(sheetConsole);
@@ -70,7 +70,7 @@ function PageMainPend({ control }: { control: BControlSheetStart; }) {
     */
 }
 
-function PageSheetDirect({ control }: { control: BControlSheetStart; }) {
+function PageSheetDirect({ control }: { control: ControlSheetStart; }) {
     const modal = useModal();
     const { storeSheet } = control;
     const { caption } = storeSheet;
@@ -102,14 +102,14 @@ async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
 }
 */
 
-function buttons(control: BControlSheetStart) {
+function buttons(control: ControlSheetStart) {
     let btnSubmit = buttonDefs.submit(undefined, true);
     const navBack = () => control.closeModal();
     let btnExit = buttonDefs.exit(navBack, false);
     return { btnSubmit, btnExit };
 }
 
-function PageStartPicks({ control }: { control: BControlSheetStart; }) {
+function PageStartPicks({ control }: { control: ControlSheetStart; }) {
     // const { sheetConsole } = store;
     const { onPickedNew, storeSheet, steps } = control;
     const { btnSubmit, btnExit } = buttons(control);
@@ -127,7 +127,7 @@ function PageStartPicks({ control }: { control: BControlSheetStart; }) {
     </Page>;
 }
 
-function PageStartPend({ control }: { control: BControlSheetStart; }) {
+function PageStartPend({ control }: { control: ControlSheetStart; }) {
     const { storeSheet } = control;
     const { caption/*, sheetConsole*/ } = storeSheet;
     const subCaption = '批选待处理';
@@ -146,7 +146,7 @@ function PageStartPend({ control }: { control: BControlSheetStart; }) {
     </Page>;
 }
 
-function PageDirectPend({ control }: { control: BControlSheetStart; }) {
+function PageDirectPend({ control }: { control: ControlSheetStart; }) {
     const modal = useModal();
     const { storeSheet } = control;
     const { caption/*, sheetConsole*/ } = storeSheet;
@@ -169,7 +169,7 @@ function PageDirectPend({ control }: { control: BControlSheetStart; }) {
     </Page>;
 }
 
-async function nothingPicked(modal: Modal, control: BControlSheetStart) {
+async function nothingPicked(modal: Modal, control: ControlSheetStart) {
     const { storeSheet } = control;
     let { entity } = storeSheet.mainStore;
     /*

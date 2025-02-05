@@ -3,14 +3,14 @@ import { useReactToPrint } from "react-to-print";
 import { Page, useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { Toolbar, ViewCurSiteHeader } from "../../View";
-import { ControllerSheetEdit } from "./ControlSheetEdit";
+import { TControllerSheetEdit } from "./TControlSheetEdit";
 import { ViewSheetContent } from "./ViewSheetContent";
 import { buttonDefs } from "./HeaderSheet";
 import { useSiteRole } from "../../Site";
 import { download } from "../../tools/download";
 import { upload } from "./upload";
 
-export function PageSheetView({ controller }: { controller: ControllerSheetEdit; }) {
+export function PageSheetView({ controller }: { controller: TControllerSheetEdit; }) {
     const modal = useModal();
     const refPrint = useRef(null);
     const handlePrint = useReactToPrint({
@@ -68,7 +68,7 @@ export function PageSheetView({ controller }: { controller: ControllerSheetEdit;
     </Page>;
 }
 
-function ViewSheetPrint({ controller, refPrint }: { controller: ControllerSheetEdit; refPrint: React.Ref<HTMLDivElement> }) {
+function ViewSheetPrint({ controller, refPrint }: { controller: TControllerSheetEdit; refPrint: React.Ref<HTMLDivElement> }) {
     const { storeSheet } = controller;
     const { caption } = storeSheet;
     const __html = `<div class="text-center">${caption}</div>`;

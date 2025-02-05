@@ -2,13 +2,13 @@ import React from "react";
 import { useAtomValue } from "jotai";
 import { SpinnerSmall, theme } from "tonwa-com";
 import { BizBud } from "../../Biz";
-import { ControllerSheetEdit } from "./ControlSheetEdit";
+import { TControllerSheetEdit } from "./TControlSheetEdit";
 import { ViewMain } from "./ViewMain";
 import { PAV } from "./tool";
 import { ViewDiv } from "./ViewDiv";
-import { BControlSheetEdit } from "../../Control";
+import { ControlSheetEdit } from "../../Control";
 
-export function ViewSheetContent({ control, readonly }: { control: BControlSheetEdit; readonly: boolean; }) {
+export function ViewSheetContent({ control, readonly }: { control: ControlSheetEdit; readonly: boolean; }) {
     const { storeSheet: store, atomSum } = control;
     const { binStore } = store;
     if (binStore === undefined) {

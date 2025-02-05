@@ -6,11 +6,11 @@ import { ViewDivUndo } from "./ViewDivUndo";
 import { ViewRow } from "./ViewRow";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
 // import { editDivs, rowEdit } from "../divEdit";
-import { ControllerDetailEdit } from "./ControlDetailEdit";
+import { TControllerDetailEdit } from "./TControlDetailEdit";
 import { ValDivBase } from "../../Store/ValDiv";
 
 // 编辑div任意层
-export function PageEditDivRoot({ controller, valDiv }: { controller: ControllerDetailEdit; valDiv: ValDivBase; }) {
+export function PageEditDivRoot({ controller, valDiv }: { controller: TControllerDetailEdit; valDiv: ValDivBase; }) {
     const { binStore } = controller.controlSheet;
     const { sheetStore } = binStore;
     const { entity, mainStore } = sheetStore;
@@ -20,7 +20,7 @@ export function PageEditDivRoot({ controller, valDiv }: { controller: Controller
 }
 
 interface EditDivProps {
-    controller: ControllerDetailEdit;
+    controller: TControllerDetailEdit;
     // binStore: BinStore;
     valDiv: ValDivBase;
 }

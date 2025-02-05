@@ -6,8 +6,8 @@ import { ReturnUseBinPicks } from "../../Store/PickResult";
 import { ControlBinPicks } from "../ControlBuds";
 import { setAtomValue, getAtomValue } from "../../tools";
 import { WritableAtom } from "jotai";
-import { BControlSheet as BControlSheet } from "./BControlSheet";
-import { BControlSheetDash } from "./BControlSheetDash";
+import { ControlSheet as ControlSheet } from "./ControlSheet";
+import { ControlSheetDash } from "./ControlSheetDash";
 
 enum EnumSheetNewContent {
     sheet, mainPend, directPend, direct, startPend, startPicks
@@ -19,12 +19,12 @@ function sheetSteps(steps: string[]): SheetSteps {
     return new SheetSteps(steps, stepSheet);
 };
 
-export abstract class BControlSheetStart extends BControlSheet {
-    protected readonly controlSheetDash: BControlSheetDash;
+export abstract class ControlSheetStart extends ControlSheet {
+    protected readonly controlSheetDash: ControlSheetDash;
     readonly atomChanging = atom(1);
     readonly steps: SheetSteps;
 
-    constructor(controlSheetDash: BControlSheetDash) {
+    constructor(controlSheetDash: ControlSheetDash) {
         const { controlBiz: controllerBiz, entity: entitySheet } = controlSheetDash;
         super(controllerBiz, entitySheet);
         this.controlSheetDash = controlSheetDash;

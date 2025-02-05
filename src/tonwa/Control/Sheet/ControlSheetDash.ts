@@ -6,18 +6,18 @@ import { EntitySheet } from "../../Biz";
 import { ReturnUseBinPicks, StoreSheetMyDrafts, StoreSheetMyList } from "../../Store";
 import { ControlBiz, ControlEntity } from "..";
 import { setAtomValue } from "../../tools";
-import { EnumSheetEditReturn } from "./BControlSheet";
-import { BControlSheetList } from "./BControlSheetList";
+import { EnumSheetEditReturn } from "./ControlSheet";
+import { ControlSheetList } from "./ControlSheetList";
 // import { PageSheetStart } from "./PageSheetStart";
 // import { PageSheetEdit } from "./PageSheetEdit";
 // import { PageSheetList } from "./PageSheetList";
-import { BControlSheetEdit } from "./BControlSheetEdit";
-import { BControlSheetStart } from "./BControlSheetStart";
+import { ControlSheetEdit } from "./ControlSheetEdit";
+import { ControlSheetStart } from "./ControlSheetStart";
 
-export abstract class BControlSheetDash extends ControlEntity<EntitySheet> {
-    readonly controlSheetStart: BControlSheetStart;
-    readonly controlSheetEdit: BControlSheetEdit;
-    readonly controlSheetList: BControlSheetList;
+export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
+    readonly controlSheetStart: ControlSheetStart;
+    readonly controlSheetEdit: ControlSheetEdit;
+    readonly controlSheetList: ControlSheetList;
     readonly atomViewSubmited = atom(undefined as any);
     readonly myDraftsStore: StoreSheetMyDrafts;
     readonly myArchiveList: StoreSheetMyList;
@@ -32,9 +32,9 @@ export abstract class BControlSheetDash extends ControlEntity<EntitySheet> {
         console.log('ControllerSheetDash', entitySheet.caption, this.keyId);
     }
 
-    protected abstract createControlSheetStart(): BControlSheetStart;
-    protected abstract createControlSheetEdit(): BControlSheetEdit;
-    protected abstract createControlSheetList(): BControlSheetList;
+    protected abstract createControlSheetStart(): ControlSheetStart;
+    protected abstract createControlSheetEdit(): ControlSheetEdit;
+    protected abstract createControlSheetList(): ControlSheetList;
 
     onPageSheetNew = async () => {
         let newSheetId = await this.modal.open<number>(this.PageSheetNew());

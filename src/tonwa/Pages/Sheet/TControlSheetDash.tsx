@@ -3,18 +3,18 @@ import { PageConfirm } from "tonwa-app";
 import { wait } from "tonwa-com";
 import { EntitySheet } from "../../Biz";
 import { ReturnUseBinPicks, StoreSheetMyDrafts, StoreSheetMyList } from "../../Store";
-import { EnumSheetEditReturn } from "./ControlSheet";
-import { ControllerSheetList } from "./ControlSheetList";
-import { ControlBiz, ControlEntity, BControlSheetDash, BControlSheetEdit, BControlSheetList, BControlSheetStart } from "../../Control";
+import { EnumSheetEditReturn } from "./TControlSheet";
+import { TControllerSheetList } from "./TControlSheetList";
+import { ControlBiz, ControlEntity, ControlSheetDash, ControlSheetEdit, ControlSheetList, ControlSheetStart } from "../../Control";
 import { PageSheetStart } from "./PageSheetStart";
 import { PageSheetEdit } from "./PageSheetEdit";
 import { PageSheetList } from "./PageSheetList";
-import { ControllerSheetEdit } from "./ControlSheetEdit";
+import { TControllerSheetEdit } from "./TControlSheetEdit";
 import { setAtomValue } from "../../tools";
-import { ControlSheetStart } from "./ControlSheetStart";
+import { TControlSheetStart } from "./TControlSheetStart";
 import { JSX } from "react";
 
-export class ControllerSheetDash extends BControlSheetDash { // ControlEntity<EntitySheet> {
+export class TControllerSheetDash extends ControlSheetDash { // ControlEntity<EntitySheet> {
     /*
     readonly controllerSheetNew: ControlSheetStart;
     readonly controllerSheetEdit: ControllerSheetEdit;
@@ -74,14 +74,14 @@ export class ControllerSheetDash extends BControlSheetDash { // ControlEntity<En
         await wait(10);
     }
     */
-    protected createControlSheetStart(): BControlSheetStart {
-        return new ControlSheetStart(this);
+    protected createControlSheetStart(): ControlSheetStart {
+        return new TControlSheetStart(this);
     }
-    protected createControlSheetEdit(): BControlSheetEdit {
-        return new ControllerSheetEdit(this);
+    protected createControlSheetEdit(): ControlSheetEdit {
+        return new TControllerSheetEdit(this);
     }
-    protected createControlSheetList(): BControlSheetList {
-        return new ControllerSheetList(this.controlBiz, this.entity);
+    protected createControlSheetList(): ControlSheetList {
+        return new TControllerSheetList(this.controlBiz, this.entity);
     }
 
     protected PageSheetNew() {

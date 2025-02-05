@@ -1,15 +1,15 @@
 import { atom } from "jotai";
-import { BControlDetailEdit, BControlSheetEdit, ControlBiz } from "../../Control";
+import { ControlDetailEdit, ControlSheetEdit, ControlBiz } from "../../Control";
 import { BinRow, EntityBin, EntitySheet } from "../../Biz";
 import { getAtomValue, setAtomValue } from "../../tools";
-import { ControlSheet, EnumSheetEditReturn, SubmitState } from "./ControlSheet";
+import { TControlSheet, EnumSheetEditReturn, SubmitState } from "./TControlSheet";
 import { ViewSubmitReaction } from "./ViewSubmitReaction";
-import { ControllerDetailEdit } from "./ControlDetailEdit";
-import { ControllerSheetDash } from "./ControlSheetDash";
+import { TControllerDetailEdit } from "./TControlDetailEdit";
+import { TControllerSheetDash } from "./TControlSheetDash";
 
-export class ControllerSheetEdit extends BControlSheetEdit {
-    protected createControlDetailEdit(): BControlDetailEdit {
-        return new ControllerDetailEdit(this, this.binStore.entity);
+export class TControllerSheetEdit extends ControlSheetEdit {
+    protected createControlDetailEdit(): ControlDetailEdit {
+        return new TControllerDetailEdit(this, this.binStore.entity);
     }
     /*
     protected readonly controllerSheetDash: ControllerSheetDash;

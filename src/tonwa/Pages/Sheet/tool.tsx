@@ -4,11 +4,11 @@ import { BinStore } from "../../Store";
 import { ValDivBase } from "../../Store/ValDiv";
 import { ViewForkNoAtom } from "../../View/Form/ViewFork";
 import { BizBud } from "../../Biz";
-import { BControlDetail } from "../../Control";
+import { ControlDetail } from "../../Control";
 // import { ControlDetail } from "./ControlDetailEdit";
 
 export interface ViewDivProps {
-    controller: BControlDetail,
+    controller: ControlDetail,
     valDiv: ValDivBase;
     readonly?: boolean;
     hidePivot?: boolean;

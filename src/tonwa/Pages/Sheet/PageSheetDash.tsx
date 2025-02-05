@@ -9,7 +9,7 @@ import { ControlBiz } from "../../Control";
 import { useSiteRole } from "../../Site";
 import { useBiz } from "../../Hooks";
 import { ViewBud, ViewReaction, ViewNotifyCount } from "../../View";
-import { ControllerSheetDash } from "./ControlSheetDash";
+import { TControllerSheetDash } from "./TControlSheetDash";
 
 export function PageSheetDash() {
     const modal = useModal();
@@ -20,7 +20,7 @@ export function PageSheetDash() {
     const entitySheet = biz.entityFromId(sheetId) as EntitySheet;
     const { caption, name, coreDetail } = entitySheet;
     const controllerBiz = useMemo(() => new ControlBiz(modal, biz), []);
-    const controllerSheetDash = useMemo(() => new ControllerSheetDash(controllerBiz, entitySheet), []);
+    const controllerSheetDash = useMemo(() => new TControllerSheetDash(controllerBiz, entitySheet), []);
     const { onPageSheetNew, onPageSheetList, atomViewSubmited } = controllerSheetDash;
     const [visible, setVisible] = useState(true);
     //const dashConsole = useMemo(() => new DashConsole(modal, entitySheet), []);

@@ -11,12 +11,12 @@ import { ViewDivUndo } from "./ViewDivUndo";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
 import { DivEditing } from "../../Control/ControlBuds/BinEditing";
 import { ValDivRoot } from "../../Store/ValDiv";
-import { ControllerDetailEdit } from "./ControlDetailEdit";
+import { TControllerDetailEdit } from "./TControlDetailEdit";
 // import { rowEdit } from "../divEdit";
 
 export function ViewDiv(props: ViewDivProps) {
     const { controller, valDiv, readonly } = props;
-    const controllerDetailEdit = controller as ControllerDetailEdit;
+    const controllerDetailEdit = controller as TControllerDetailEdit;
     const { binStore } = controllerDetailEdit.controlSheet;
     const { binDiv, atomDeleted } = valDiv;
     const { entityBin, level } = binDiv;
