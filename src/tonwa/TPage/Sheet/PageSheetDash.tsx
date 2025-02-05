@@ -8,8 +8,8 @@ import { BinData, getUserBudValue, SheetData } from "../../Store";
 import { ControlBiz } from "../../Control";
 import { useSiteRole } from "../../Site";
 import { useBiz } from "../../Hooks";
-import { ViewBud, ViewReaction, ViewNotifyCount } from "../../View";
-import { TControllerSheetDash } from "./TControlSheetDash";
+import { ViewBud, ViewReaction, ViewNotifyCount, ViewItemMain } from "../../View";
+import { TControlSheetDash } from "./TControlSheetDash";
 
 export function PageSheetDash() {
     const modal = useModal();
@@ -19,26 +19,28 @@ export function PageSheetDash() {
     const sheetId = from62(sheet);
     const entitySheet = biz.entityFromId(sheetId) as EntitySheet;
     const { caption, name, coreDetail } = entitySheet;
-    const controllerBiz = useMemo(() => new ControlBiz(modal, biz), []);
-    const controllerSheetDash = useMemo(() => new TControllerSheetDash(controllerBiz, entitySheet), []);
-    const { onPageSheetNew, onPageSheetList, atomViewSubmited } = controllerSheetDash;
+    const controlBiz = useMemo(() => new ControlBiz(modal, biz), []);
+    const controlSheetDash = useMemo(() => new TControlSheetDash(controlBiz, entitySheet), []);
+    const { onPageSheetStart, onPageSheetList, atomViewSubmited } = controlSheetDash;
     const [visible, setVisible] = useState(true);
     //const dashConsole = useMemo(() => new DashConsole(modal, entitySheet), []);
     let useSiteRoleReturn = useSiteRole();
     let { isAdmin } = useSiteRoleReturn.userSite;
     // const sheetStore = useMemo(() => dashConsole.createSheetStore(), []);
-    const { myDraftsStore } = controllerSheetDash;
+    const { myDraftsStore, hasUserDefaults } = controlSheetDash;
     const myDrafts = useAtomValue(myDraftsStore.atomMyDrafts);
-    const [hasUserDefaults, setHasUserDefaults] = useState(undefined as boolean);
-    useEffectOnce(() => {
+    // const [hasUserDefaults, setHasUserDefaults] = useState(undefined as boolean);
+    useEffectOnce(() => { controlSheetDash.start(); });
+    /*
         (async () => {
             await Promise.all([
-                controllerBiz.loadUserDefaults(),
+                controlBiz.loadUserDefaults(),
                 myDraftsStore.loadMyDrafts(),
             ]);
             setHasUserDefaults(true);
         })();
     });
+    */
     function ViewSheetItem({ value }: { value: (SheetData & BinData & { rowCount: number; }) }) {
         const { id, no, base, i } = value;
         const [del, setDel] = useState(0);
@@ -84,12 +86,12 @@ export function PageSheetDash() {
         }
         */
         async function onPageSheetEdit() {
-            await controllerSheetDash.onPageSheetEdit(id);
+            await controlSheetDash.onPageSheetEdit(id);
         }
         return <div className="d-flex cursor-pointer" onClick={onPageSheetEdit}>
             <FA name="file" className="ps-4 pt-3 pe-2 text-info" size="lg" />
             <div className="flex-fill">
-                {/*<ViewItemMain value={value} isMy={true} store={myDraftsStore} />*/}
+                <ViewItemMain value={value} isMy={true} store={myDraftsStore} />
             </div>
         </div>;
     }
@@ -106,7 +108,7 @@ export function PageSheetDash() {
 
     let btnLog: any;
     if (isAdmin === true) {
-        btnLog = <button className="btn btn-outline-primary me-2" onClick={controllerBiz.onPageCmdLog}>
+        btnLog = <button className="btn btn-outline-primary me-2" onClick={controlBiz.onPageCmdLog}>
             Log
         </button>;
     }
@@ -120,19 +122,19 @@ export function PageSheetDash() {
             <div className="row row-cols-6">
                 {userBuds.map(v => {
                     let userBudValue = getUserBudValue(entitySheet, v);
-                    return <ViewBud key={v.id} bud={v} value={userBudValue} store={controllerBiz.storeBiz} />;
+                    return <ViewBud key={v.id} bud={v} value={userBudValue} store={controlBiz.storeBiz} />;
                 })}
             </div>
         </div>;
     }
     async function onRemoveDraft() {
         setVisible(false);
-        await controllerSheetDash.onRemoveDraft();
+        await controlSheetDash.onRemoveDraft();
         setVisible(true);
     }
     return <Page header={pageHeader}>
         <div className="d-flex px-3 py-2 tonwa-bg-gray-1 border-bottom">
-            <button className="btn btn-primary me-3" onClick={onPageSheetNew}>
+            <button className="btn btn-primary me-3" onClick={onPageSheetStart}>
                 <FA name="file" className="me-2" />
                 新开单
             </button>

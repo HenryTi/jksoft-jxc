@@ -2,7 +2,7 @@ import React from "react";
 import { useAtomValue } from "jotai";
 import { SpinnerSmall, theme } from "tonwa-com";
 import { BizBud } from "../../Biz";
-import { TControllerSheetEdit } from "./TControlSheetEdit";
+import { TControlSheetEdit } from "./TControlSheetEdit";
 import { ViewMain } from "./ViewMain";
 import { PAV } from "./tool";
 import { ViewDiv } from "./ViewDiv";
@@ -64,7 +64,7 @@ export function ViewSheetContent({ control, readonly }: { control: ControlSheetE
                     return <React.Fragment key={id}>
                         <div className="page-break" />
                         <div className={cn} style={{ marginTop: '1px', marginBottom: '1px' }}>
-                            <ViewDiv controller={control.controlDetailEdit} valDiv={v} readonly={readonly} index={index + 1} />
+                            <ViewDiv control={control.controlDetailEdit} valDiv={v} readonly={readonly} index={index + 1} />
                         </div>
                     </React.Fragment>;
                 })}

@@ -17,10 +17,10 @@ export abstract class ControlSheetEdit extends ControlSheet {
         return this.binStore.sum(get);
     });
     constructor(controlSheetDash: ControlSheetDash) {
-        const { controlBiz: controllerBiz, entity: entitySheet } = controlSheetDash;
-        super(controllerBiz, entitySheet);
+        const { controlBiz: controlBiz, entity: entitySheet } = controlSheetDash;
+        super(controlBiz, entitySheet);
+        this.controlSheetDash = controlSheetDash;
         this.controlDetailEdit = this.createControlDetailEdit();
-        // new ControlDetailEdit(this, this.binStore.entity);
     }
 
     protected abstract createControlDetailEdit(): ControlDetailEdit;
@@ -32,7 +32,7 @@ export abstract class ControlSheetEdit extends ControlSheet {
 
     private checkTrigger() {
         console.error('if (mainStore.trigger() === false) return false;');
-        // if (mainStore.trigger() === false) return false;
+        // if (this.mainStore.trigger() === false) return false;
         if (this.binStore !== undefined) {
             if (this.binStore.trigger() === false) return false;
         }
@@ -59,9 +59,9 @@ export abstract class ControlSheetEdit extends ControlSheet {
             return;
         }
         // await sheetConsole.onSubmited(store);
-        // 转到 ControllerSheetDash中操作
+        // 转到 ControlSheetDash中操作
         // const { mainStore: main } = store;
-        this.modal.close(EnumSheetEditReturn.submit);
+        this.closeModal(EnumSheetEditReturn.submit);
     }
 
     protected abstract ViewSubmitReaction(): JSX.Element;
@@ -103,4 +103,10 @@ export abstract class ControlSheetEdit extends ControlSheet {
         }
         return { error, logs };
     }
+
+
+    notifyRowChange() {
+        this.controlSheetDash.notifyRowChange(this.storeSheet);
+    }
+
 }

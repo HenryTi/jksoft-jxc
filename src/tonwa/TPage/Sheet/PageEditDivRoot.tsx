@@ -6,29 +6,29 @@ import { ViewDivUndo } from "./ViewDivUndo";
 import { ViewRow } from "./ViewRow";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
 // import { editDivs, rowEdit } from "../divEdit";
-import { TControllerDetailEdit } from "./TControlDetailEdit";
+import { TControlDetailEdit } from "./TControlDetailEdit";
 import { ValDivBase } from "../../Store/ValDiv";
 
 // 编辑div任意层
-export function PageEditDivRoot({ controller, valDiv }: { controller: TControllerDetailEdit; valDiv: ValDivBase; }) {
-    const { binStore } = controller.controlSheet;
+export function PageEditDivRoot({ control, valDiv }: { control: TControlDetailEdit; valDiv: ValDivBase; }) {
+    const { binStore } = control.controlSheet;
     const { sheetStore } = binStore;
     const { entity, mainStore } = sheetStore;
     return <Page header={`${(entity.caption)} - ${mainStore.no}`}>
-        <EditDiv controller={controller} valDiv={valDiv} />
+        <EditDiv control={control} valDiv={valDiv} />
     </Page>;
 }
 
 interface EditDivProps {
-    controller: TControllerDetailEdit;
+    control: TControlDetailEdit;
     // binStore: BinStore;
     valDiv: ValDivBase;
 }
 
 function EditDiv(props: EditDivProps) {
     const modal = useModal();
-    const { controller, valDiv } = props;
-    const { binStore } = controller.controlSheet;
+    const { control, valDiv } = props;
+    const { binStore } = control.controlSheet;
     const { binDiv, atomDeleted } = valDiv;
     const { level, entityBin, subBinDiv: div } = binDiv;
     const { divLevels, pivot } = entityBin;
@@ -49,7 +49,7 @@ function EditDiv(props: EditDivProps) {
     let viewDivs: any;
     if (divs.length > 0) {
         async function onAddNew() {
-            await controller.onAddNew(valDiv);
+            await control.onAddNew(valDiv);
         }
         viewDivs = <div className="ms-4 border-start">
             {
@@ -62,8 +62,7 @@ function EditDiv(props: EditDivProps) {
     }
     async function onDel() {
         setAtomValue(atomDeleted, !deleted);
-        const { sheetStore } = binStore;
-        sheetStore.notifyRowChange();
+        control.controlSheet.notifyRowChange();
         if (level === 0) {
             modal.close();
             return;
@@ -72,13 +71,13 @@ function EditDiv(props: EditDivProps) {
     const btnDel: DivRightButton = { onClick: onDel, icon: 'trash-o', color: ' text-body-secondary ' }
 
     if (deleted === true) {
-        return <ViewDivUndo controller={controller} valDiv={valDiv} />;
+        return <ViewDivUndo control={control} valDiv={valDiv} />;
     }
 
     let tops: DivRightButton[], bottoms: DivRightButton[];
     if (level === divLevels) {
         async function onEdit() {
-            await controller.onLeafEdit(valDiv);
+            await control.onLeafEdit(valDiv);
         }
         tops = [{
             icon: 'pencil-square-o',

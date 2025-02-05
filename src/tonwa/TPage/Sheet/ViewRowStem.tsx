@@ -8,8 +8,8 @@ import { RowColsSm } from "../../View";
 import { ViewShowBuds } from "../../tools";
 
 export function ViewRowStem(props: ViewDivProps) {
-    const { controller, valDiv, buttons, hidePivot, index } = props;
-    const { binStore } = controller.controlSheet;
+    const { control: control, valDiv, buttons, hidePivot, index } = props;
+    const { binStore } = control.controlSheet;
     const { sheetStore } = binStore;
     const { atomSum, binDiv } = valDiv;
     const { entityBin } = binDiv;
@@ -24,7 +24,7 @@ export function ViewRowStem(props: ViewDivProps) {
     const { pivot, i: budI, value: budValue } = entityBin;
     let viewPivot: any;
     if (pivot !== undefined && pivot === binDiv.subBinDiv && hidePivot !== true) {
-        viewPivot = <ViewPivotDiv controller={controller} valDiv={valDiv} />;
+        viewPivot = <ViewPivotDiv control={control} valDiv={valDiv} />;
     }
 
     const divEditing = new DivEditing(binStore, valDiv);

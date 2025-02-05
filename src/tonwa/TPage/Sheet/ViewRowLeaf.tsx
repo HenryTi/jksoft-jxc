@@ -7,8 +7,8 @@ import { ViewAtomPrimesOfStore, ViewForkBuds } from "../../View/Form/ViewForkOfS
 import { RowColsSm } from "../../View";
 
 export function ViewRowLeaf(props: ViewDivProps) {
-    const { controller, valDiv, buttons, index } = props;
-    const { binStore } = controller.controlSheet;
+    const { control: control, valDiv, buttons, index } = props;
+    const { binStore } = control.controlSheet;
     const { sheetStore } = binStore;
     const { atomValue, binDiv } = valDiv;
     const { binDivBuds } = binDiv;

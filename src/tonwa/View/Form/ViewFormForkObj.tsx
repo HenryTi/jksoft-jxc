@@ -1,13 +1,17 @@
-import { BizBud, EntityAtom, EntityFork, StoreEntity } from "tonwa";
+import { useRef, useState, JSX } from "react";
 import {
     UseFormRegisterReturn, FieldError, UseFormClearErrors, UseFormSetValue
 } from "react-hook-form";
-import { Band, FormContext, FormFork } from "./FormRowsView";
 import { Page, useModal } from "tonwa-app";
 import { FA, LabelRow, theme } from "tonwa-com";
-import { budContent, FormBudsEditing, ViewAtom, ViewForkAtomBold, ViewForkAtomTitles } from "app/hooks";
-import { useRef, useState, JSX } from "react";
-import { FormBudsStore, ValuesBudsEditing } from "app/Store";
+import { Band, FormContext, FormFork } from "./FormRowsView";
+import { BizBud, EntityAtom, EntityFork } from "../../Biz";
+// import { budContent, FormBudsEditing, ViewAtom, ViewForkAtomBold, ViewForkAtomTitles } from "app/hooks";
+import { StoreEntity } from "../../Store";
+import { FormBudsStore, ValuesBudsEditing } from "../../Control/ControlBuds/BinEditing";
+import { budContent } from "../Bud";
+import { ViewForkAtomBold, ViewForkAtomTitles } from "./ViewForkOfStore";
+import { FormBudsEditing } from "./FormBudsEditing";
 
 export function ViewFormForkObj({ row, label, error, inputProps, formContext, setValue, onChange }: {
     row: FormFork;

@@ -1,9 +1,9 @@
 import { atom } from "jotai";
 import { ValRow } from "../../Store/ValRow";
-import { BinRow, BizPhraseType, EntityBin } from "../../Biz";
+import { BinPick, BinRow, BizPhraseType, EntityBin } from "../../Biz";
 import { ControlEntity } from "..";
-import { PickResult, RearPickResultType } from "../../Store";
-import { BinEditing, DivEditing } from "../ControlBuds/BinEditing";
+import { PickResult, RearPickResultType, ReturnUseBinPicks } from "../../Store";
+import { BinBudsEditing, BinEditing, DivEditing, FormBudsStore } from "../ControlBuds/BinEditing";
 import { ControlSheetEdit } from "./ControlSheetEdit";
 import { ControlSheet } from "./ControlSheet";
 // import { PageEditDivRoot } from "./PageEditDivRoot";
@@ -27,7 +27,7 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
         await this.detailNewLoop();
     }
 
-    createControllerPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
+    createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
         return new ControlBinPicks(this.controlBiz, this.controlSheet.storeSheet, entityBin, initBinRow);
     }
 
@@ -86,7 +86,7 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
                 }
                 if (rearResult.length === 1) {
                     // let ret = await rowEdit(modal, binEditing, undefined);
-                    let ret = await this.editRow(undefined);
+                    let ret = await this.editRow(binEditing, undefined);
                 }
 
                 let { values: valRow } = binEditing;
@@ -109,7 +109,7 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
             const binEditing = new BinEditing(storeSheet, entityBin);
             binEditing.addNamedParams(valueSpace);
             // let ret = await rowEdit(modal, binEditing, undefined);
-            let ret = await this.editRow(undefined);
+            let ret = await this.editRow(binEditing, undefined);
             if (ret === true) {
                 const { values: valRow } = binEditing;
                 if (valRow.id !== undefined) debugger;
@@ -123,20 +123,68 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
         }
 
         binStore.setWaiting(false);
-        storeSheet.notifyRowChange();
+        this.controlSheet.notifyRowChange();
         return valRows.length;
     }
 
-    private async editRow(valDiv: ValDivBase) {
-        return false;
+    private async editRow(binEditing: BinEditing, valDiv: ValDivBase) {
+        const { entityBin } = binEditing;
+        const { i: budI, x: budX } = entityBin;
+        const { atomParams } = budI;
+        if (atomParams !== undefined) {
+            const { caption } = budI;
+            await this.openModal(this.PageInputRow(binEditing, valDiv));
+        }
+
+        let ret = await this.openModal(this.PageInputRow(binEditing, valDiv));
+        return ret;
     }
+
+    protected abstract PageInputRow(binEditing: BinEditing, valDiv: ValDivBase): JSX.Element;
 
     async editDivs(valDiv: ValDivBase) {
         return true;
     }
 
     async runBinPicks() {
-        return undefined as any;
+        const { storeSheet } = this.controlSheet;
+        const { binPicks } = this.entity;
+        const controlBinPicks = this.createControlPinPicks(this.entity);
+        let ret = await controlBinPicks.pick();
+        return ret;
+    }
+
+    async runBinPicks1() {
+        const { controlSheet, entity: entityBin } = this;
+        const { storeSheet } = controlSheet;
+        const { binPicks, rearPick } = entityBin;
+        if (binPicks === undefined) return;
+        let editing = new FormBudsStore(this.modal, new BinBudsEditing(storeSheet, entityBin, []));
+        let rearPickResultType: RearPickResultType = RearPickResultType.array;
+        for (const binPick of binPicks) {
+            await this.doBinPick(editing, binPick);
+        }
+
+        let ret: ReturnUseBinPicks = {
+            editing,
+            rearBinPick: rearPick,           // endmost pick
+            rearResult: undefined,
+            rearPickResultType,
+        };
+
+        const { binStore } = storeSheet;
+        let rearPickResult = await editing.runBinPickRear(binStore, rearPick, rearPickResultType);
+        if (rearPickResult === undefined) return undefined;
+
+        let rearResult: PickResult[] = Array.isArray(rearPickResult) === false ?
+            [rearPickResult as PickResult] : rearPickResult as PickResult[];
+
+        ret.rearResult = rearResult;
+        return ret;
+    }
+
+    private async doBinPick(editing: FormBudsStore, binPick: BinPick) {
+
     }
 
     async onDelSub(valDiv: ValDivBase, pend: number) {
@@ -172,7 +220,7 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
     async onDivDelSub() {
         const { storeSheet, binStore } = this.controlSheet;
         // setAtomValue(atomDeleted, !deleted);
-        storeSheet.notifyRowChange();
+        this.controlSheet.notifyRowChange();
     }
 
     async onDivEdit(valDiv: ValDivBase) {
@@ -183,7 +231,7 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
             // 无Div明细, 叶div
             try {
                 const editing = new DivEditing(binStore, valDiv);
-                let ret = await this.editRow(valDiv);
+                let ret = await this.editRow(editing, valDiv);
                 if (ret !== true) return;
                 const { values: newValRow } = editing;
                 await binStore.saveDetails(binDiv, [newValRow]);
@@ -200,14 +248,14 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
 
     protected abstract PageEditDivRoot(valDiv: ValDivBase): JSX.Element;
     /* {
-        return <PageEditDivRoot controller={this} valDiv={valDiv} />;
+        return <PageEditDivRoot control={this} valDiv={valDiv} />;
     } */
 
     async onLeafEdit(valDiv: ValDivBase) {
         const { binStore } = this.controlSheet;
         const { binDiv } = valDiv;
         const editing = new DivEditing(binStore, valDiv);
-        let ret = await this.editRow(valDiv);
+        let ret = await this.editRow(editing, valDiv);
         if (ret !== true) return;
         const { values: newValRow } = editing;
         if (valDiv.isPivotKeyDuplicate(newValRow) === true) {

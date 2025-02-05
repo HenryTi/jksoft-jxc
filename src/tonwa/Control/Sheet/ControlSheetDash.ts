@@ -3,7 +3,7 @@ import { atom } from "jotai";
 import { PageConfirm } from "tonwa-app";
 import { wait } from "tonwa-com";
 import { EntitySheet } from "../../Biz";
-import { ReturnUseBinPicks, StoreSheetMyDrafts, StoreSheetMyList } from "../../Store";
+import { ReturnUseBinPicks, StoreSheet, StoreSheetMyDrafts, StoreSheetMyList } from "../../Store";
 import { ControlBiz, ControlEntity } from "..";
 import { setAtomValue } from "../../tools";
 import { EnumSheetEditReturn } from "./ControlSheet";
@@ -15,36 +15,51 @@ import { ControlSheetEdit } from "./ControlSheetEdit";
 import { ControlSheetStart } from "./ControlSheetStart";
 
 export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
-    readonly controlSheetStart: ControlSheetStart;
-    readonly controlSheetEdit: ControlSheetEdit;
-    readonly controlSheetList: ControlSheetList;
     readonly atomViewSubmited = atom(undefined as any);
     readonly myDraftsStore: StoreSheetMyDrafts;
     readonly myArchiveList: StoreSheetMyList;
+    hasUserDefaults: boolean;
+    #controlSheetStart: ControlSheetStart;
+    #controlSheetEdit: ControlSheetEdit;
+    #controlSheetList: ControlSheetList;
 
-    constructor(controllerBiz: ControlBiz, entitySheet: EntitySheet) {
-        super(controllerBiz, entitySheet);
-        this.controlSheetStart = this.createControlSheetStart(); // new ControlSheetStart(this);
-        this.controlSheetEdit = this.createControlSheetEdit(); // new ControlSheetEdit(this);
-        this.controlSheetList = this.createControlSheetList(); // new ControlSheetList(this.controllerBiz, this.entity);
-        this.myDraftsStore = new StoreSheetMyDrafts(this.modal, entitySheet);
-        this.myArchiveList = new StoreSheetMyList(this.modal, entitySheet);
-        console.log('ControllerSheetDash', entitySheet.caption, this.keyId);
+    constructor(controlBiz: ControlBiz, entitySheet: EntitySheet) {
+        super(controlBiz, entitySheet);
+        const { storeBiz } = controlBiz;
+        this.myDraftsStore = new StoreSheetMyDrafts(storeBiz, entitySheet);
+        this.myArchiveList = new StoreSheetMyList(storeBiz, entitySheet);
+        console.log('ControlSheetDash', entitySheet.caption, this.keyId);
     }
 
     protected abstract createControlSheetStart(): ControlSheetStart;
     protected abstract createControlSheetEdit(): ControlSheetEdit;
     protected abstract createControlSheetList(): ControlSheetList;
 
-    onPageSheetNew = async () => {
-        let newSheetId = await this.modal.open<number>(this.PageSheetNew());
+    get controlSheetStart() { return this.#controlSheetStart; }
+    get controlSheetEdit() { return this.#controlSheetEdit; }
+    get controlSheetList() { return this.#controlSheetList; }
+
+    async start() {
+        await Promise.all([
+            this.loadUserDefaults(),
+            this.myDraftsStore.loadMyDrafts(),
+        ]);
+    }
+
+    private async loadUserDefaults() {
+        this.hasUserDefaults = await this.controlBiz.loadUserDefaults();
+    }
+
+    onPageSheetStart = async () => {
+        this.#controlSheetStart = this.createControlSheetStart();
+        let newSheetId = await this.openModal<number>(this.PageSheetNew());
         if (newSheetId === undefined) return;
         await this.onPageSheetEdit(newSheetId);
     }
 
     onPageSheetEdit = async (id: number) => {
-        // await this.controlSheetEdit.storeSheet.load(id);
-        let ret = await this.modal.openAsync<EnumSheetEditReturn>(
+        this.#controlSheetEdit = this.createControlSheetEdit();
+        let ret = await this.openModalAsync<EnumSheetEditReturn>(
             this.PageSheetEdit(),
             this.controlSheetEdit.storeSheet.load(id)
         );
@@ -71,33 +86,24 @@ export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
 
     private async afterDiscard(sheetId: number) {
         this.myDraftsStore.discardDraft(sheetId);
+        // this.closeModal(); allready closed
     }
 
     onPageSheetList = async () => {
-        await this.modal.open(this.PageSheetList());
+        this.#controlSheetList = this.createControlSheetList();
+        await this.openModal(this.PageSheetList());
     }
 
     async onRemoveDraft() {
-        if (await this.modal.open(this.PageConfirmClearDrafts()) !== true) return;
+        if (await this.openModal(this.PageConfirmClearDrafts()) !== true) return;
         await this.myDraftsStore.deleteAllMyDrafts();
         await wait(10);
     }
 
     protected abstract PageConfirmClearDrafts(): JSX.Element;
     protected abstract PageSheetNew(): JSX.Element;
-    /* {
-        return <PageSheetStart controller={this.controllerSheetNew} />;
-    } */
-
     protected abstract PageSheetEdit(): JSX.Element;
-    /* {
-        return <PageSheetEdit controller={this.controllerSheetEdit} />;
-    } */
-
     protected abstract PageSheetList(): JSX.Element;
-    /* {
-        return <PageSheetList controller={this.controllerSheetList} />;
-    } */
 
     onPickedNew = async (results: ReturnUseBinPicks) => {
         await this.onPicked(results);
@@ -144,5 +150,9 @@ export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
 
     async setSheetAsDraft() {
 
+    }
+
+    notifyRowChange(storeSheet: StoreSheet) {
+        this.myDraftsStore.sheetRowCountChanged(storeSheet);
     }
 }

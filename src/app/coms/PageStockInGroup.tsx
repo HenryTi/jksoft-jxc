@@ -12,9 +12,9 @@ export function PageStockInGroup() {
 
     header() {return '设置分组'}
     right() {
-        return <button className="btn btn-sm btn-info me-2" onClick={this.controller.manageGroups}>管理分组</button>;
+        return <button className="btn btn-sm btn-info me-2" onClick={this.control.manageGroups}>管理分组</button>;
     }
-            let {stock, cApp, setGroup, setStockToAccount, stockInAccounts} = this.controller;
+            let {stock, cApp, setGroup, setStockToAccount, stockInAccounts} = this.control;
             if (!stock) return <div>no stock, can set group</div>;
             let {id:stockId, name, no} = stock;
             let {store} = cApp;
@@ -79,7 +79,7 @@ export function PageStockInGroup() {
         let callbackWhenRemoved = () => {
             this.closePage(this.closeLevelWhenRemoved);
         }
-        await this.controller.removeMyAll(stock,  callbackWhenRemoved);
+        await this.control.removeMyAll(stock,  callbackWhenRemoved);
         btn.disabled = false;
     }
     */

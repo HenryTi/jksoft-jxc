@@ -225,10 +225,6 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
         sheetConsole.onSheetAdded(this);
         */
     }
-
-    notifyRowChange() {
-        alert('row change');
-    }
 }
 
 class UserProxyHander implements ProxyHandler<any> {

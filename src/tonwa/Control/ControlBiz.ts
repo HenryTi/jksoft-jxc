@@ -21,17 +21,17 @@ export class ControlBiz extends Control {
 
 export class ControlBaseWithBiz extends Control {
     readonly controlBiz: ControlBiz;
-    constructor(controllerBiz: ControlBiz) {
-        const { modal, biz } = controllerBiz
+    constructor(controlBiz: ControlBiz) {
+        const { modal, biz } = controlBiz
         super(modal, biz);
-        this.controlBiz = controllerBiz;
+        this.controlBiz = controlBiz;
     }
 }
 
 export abstract class ControlEntity<T extends Entity> extends ControlBaseWithBiz {
     readonly entity: T;
-    constructor(controllerBiz: ControlBiz, entity: T) {
-        super(controllerBiz);
+    constructor(controlBiz: ControlBiz, entity: T) {
+        super(controlBiz);
         this.entity = entity;
     }
 }

@@ -263,7 +263,8 @@ export function uqAppModal(uqApp: UqAppBase): Modal {
     }
     function close(result?: any) {
         let modalStack = getAtomValue(modalStackAtom);
-        let [, resolve, onClosed] = modalStack.pop();
+        let ret = modalStack.pop();
+        let [, resolve, onClosed] = ret;
         setAtomValue(modalStackAtom, [...modalStack]);
         resolve(result);
         onClosed?.(result);

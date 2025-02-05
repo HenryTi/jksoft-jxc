@@ -1,12 +1,12 @@
 import { BinPick, BinRow, BizPhraseType, EntityBin, PickAtom, PickPend, PickQuery } from "../../Biz";
 import { AtomData, BinStore, StoreSheet } from "../../Store";
-import { PageIDSelect } from "../../Pages";
+import { PageIDSelect } from "../../TPage";
 import { PickResult, RearPickResultType, ReturnUseBinPicks } from "../../Store/PickResult";
 import { ControlBiz } from "../ControlBiz";
 import { ControlBuds } from "./ControlBuds";
 import { BinBudsEditing, FormBudsStore } from "./BinEditing";
-import { pickFromQuery, pickFromQueryScalar } from "../../Pages/Query";
-import { pickFromPend } from "../../Pages/Sheet/pickFromPend";
+import { pickFromQuery, pickFromQueryScalar } from "../../TPage/Query";
+import { pickFromPend } from "../../TPage/Sheet/pickFromPend";
 
 export class ControlBinPicks extends ControlBuds {
     protected readonly binPicks: BinPick[];
@@ -17,15 +17,16 @@ export class ControlBinPicks extends ControlBuds {
     protected readonly storeBin: BinStore;
     readonly formBudsStore: FormBudsStore;
 
-    constructor(controllerBiz: ControlBiz, storeSheet: StoreSheet, bin: EntityBin, initBinRow?: BinRow) {
+    constructor(controlBiz: ControlBiz, storeSheet: StoreSheet, bin: EntityBin, initBinRow?: BinRow) {
         const { binPicks, rearPick } = bin;
-        super(controllerBiz, [...binPicks, rearPick]);
+        super(controlBiz, [...binPicks, rearPick]);
         this.binPicks = binPicks;
         this.rearPick = rearPick;
         this.bin = bin;
         this.storeSheet = storeSheet;
-        this.editing = new BinBudsEditing(storeSheet, bin, bin.buds, initBinRow);
-        this.formBudsStore = new FormBudsStore(this.modal, new BinBudsEditing(this.storeSheet, bin, []));
+        // this.editing = new BinBudsEditing(storeSheet, bin, bin.buds, initBinRow);
+        this.editing = new BinBudsEditing(this.storeSheet, bin, []);
+        this.formBudsStore = new FormBudsStore(this.modal, this.editing);
         const { mainBinStore, binStore } = storeSheet;
         this.storeBin = bin === mainBinStore.entity ? mainBinStore : binStore;
     }

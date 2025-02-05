@@ -31,9 +31,9 @@ export abstract class ControlSheet extends ControlEntity<EntitySheet> {
     constructor(controlBiz: ControlBiz, entitySheet: EntitySheet) {
         super(controlBiz, entitySheet);
         this.storeSheet = new StoreSheet(controlBiz.storeBiz, entitySheet);
-        this.mainStore = new SheetMainStore(this.storeSheet);
+        this.mainStore = this.storeSheet.mainStore; // new SheetMainStore(this.storeSheet);
         this.binStore = this.storeSheet.binStore;
-        console.log('ControllerSheet', entitySheet.caption, this.keyId);
+        console.log('ControlSheet', entitySheet.caption, this.keyId);
     }
     async discard() {
         await this.storeSheet.discard();

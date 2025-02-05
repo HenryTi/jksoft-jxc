@@ -4,33 +4,33 @@ import { wait } from "tonwa-com";
 import { EntitySheet } from "../../Biz";
 import { ReturnUseBinPicks, StoreSheetMyDrafts, StoreSheetMyList } from "../../Store";
 import { EnumSheetEditReturn } from "./TControlSheet";
-import { TControllerSheetList } from "./TControlSheetList";
+import { TControlSheetList } from "./TControlSheetList";
 import { ControlBiz, ControlEntity, ControlSheetDash, ControlSheetEdit, ControlSheetList, ControlSheetStart } from "../../Control";
 import { PageSheetStart } from "./PageSheetStart";
 import { PageSheetEdit } from "./PageSheetEdit";
 import { PageSheetList } from "./PageSheetList";
-import { TControllerSheetEdit } from "./TControlSheetEdit";
+import { TControlSheetEdit } from "./TControlSheetEdit";
 import { setAtomValue } from "../../tools";
 import { TControlSheetStart } from "./TControlSheetStart";
 import { JSX } from "react";
 
-export class TControllerSheetDash extends ControlSheetDash { // ControlEntity<EntitySheet> {
+export class TControlSheetDash extends ControlSheetDash { // ControlEntity<EntitySheet> {
     /*
-    readonly controllerSheetNew: ControlSheetStart;
-    readonly controllerSheetEdit: ControllerSheetEdit;
-    readonly controllerSheetList: ControllerSheetList;
+    readonly controlSheetNew: ControlSheetStart;
+    readonly controlSheetEdit: ControlSheetEdit;
+    readonly controlSheetList: ControlSheetList;
     readonly atomViewSubmited = atom(undefined as any);
     readonly myDraftsStore: StoreSheetMyDrafts;
     readonly myArchiveList: StoreSheetMyList;
 
-    constructor(controllerBiz: ControlBiz, entitySheet: EntitySheet) {
-        super(controllerBiz, entitySheet);
-        this.controllerSheetNew = new ControlSheetStart(this);
-        this.controllerSheetEdit = new ControllerSheetEdit(this);
-        this.controllerSheetList = new ControllerSheetList(this.controlBiz, this.entity);
+    constructor(controlBiz: ControlBiz, entitySheet: EntitySheet) {
+        super(controlBiz, entitySheet);
+        this.controlSheetNew = new ControlSheetStart(this);
+        this.controlSheetEdit = new ControlSheetEdit(this);
+        this.controlSheetList = new ControlSheetList(this.controlBiz, this.entity);
         this.myDraftsStore = new StoreSheetMyDrafts(this.modal, entitySheet);
         this.myArchiveList = new StoreSheetMyList(this.modal, entitySheet);
-        console.log('ControllerSheetDash', entitySheet.caption, this.keyId);
+        console.log('ControlSheetDash', entitySheet.caption, this.keyId);
     }
 
     onPageSheetNew = async () => {
@@ -52,7 +52,7 @@ export class TControllerSheetDash extends ControlSheetDash { // ControlEntity<En
     }
 
     private async afterSubmited(sheetId: number) {
-        const { mainStore, storeSheet } = this.controllerSheetEdit;
+        const { mainStore, storeSheet } = this.controlSheetEdit;
         const { no } = mainStore;
         this.myDraftsStore.removeMyDraft(sheetId);
         let { caption } = storeSheet;
@@ -78,10 +78,10 @@ export class TControllerSheetDash extends ControlSheetDash { // ControlEntity<En
         return new TControlSheetStart(this);
     }
     protected createControlSheetEdit(): ControlSheetEdit {
-        return new TControllerSheetEdit(this);
+        return new TControlSheetEdit(this);
     }
     protected createControlSheetList(): ControlSheetList {
-        return new TControllerSheetList(this.controlBiz, this.entity);
+        return new TControlSheetList(this.controlBiz, this.entity);
     }
 
     protected PageSheetNew() {
@@ -93,7 +93,7 @@ export class TControllerSheetDash extends ControlSheetDash { // ControlEntity<En
     }
 
     protected PageSheetList() {
-        return <PageSheetList controller={this.controlSheetList} />;
+        return <PageSheetList control={this.controlSheetList} />;
     }
 
     protected override PageConfirmClearDrafts(): JSX.Element {
@@ -112,21 +112,21 @@ export class TControllerSheetDash extends ControlSheetDash { // ControlEntity<En
         await this.onPicked(results);
         await this.setSheetAsDraft();
         // setAtomValue(this.atomLoaded, true);
-        const { mainStore } = this.controllerSheetNew;
+        const { mainStore } = this.controlSheetNew;
         this.closeModal(mainStore.valRow.id);
     }
 
     onMainPendPicked = async (results: ReturnUseBinPicks) => {
         await this.onPicked(results);
         await this.setSheetAsDraft();
-        const { storeSheet, binStore } = this.controllerSheetNew;
+        const { storeSheet, binStore } = this.controlSheetNew;
         await binStore.saveDetailsDirect();
         // setAtomValue(this.atomLoaded, true);
         this.closeModal(storeSheet.mainId);
     }
 
     async onPicked(results: ReturnUseBinPicks) {
-        const { mainStore } = this.controllerSheetNew;
+        const { mainStore } = this.controlSheetNew;
         let ret = await mainStore.startFromPickResults(results);
         if (ret === undefined) {
             return;
@@ -149,7 +149,7 @@ export class TControllerSheetDash extends ControlSheetDash { // ControlEntity<En
 }
 
 private async onSheetAdded() {
-    const { storeSheet } = this.controllerSheetNew;
+    const { storeSheet } = this.controlSheetNew;
     await this.myDraftsStore.onSheetAdded(storeSheet);
 }
 

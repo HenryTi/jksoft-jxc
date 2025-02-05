@@ -5,7 +5,7 @@ import { getAtomValue, setAtomValue } from "../tools";
 import { StoreEntity } from "./Store";
 import { StoreSheet } from "./StoreSheet";
 
-export abstract class StoreSheetList extends StoreEntity<EntitySheet> {
+export abstract class StoreSheetList extends StoreSheet {
 }
 
 const maxDraftsCount = 10;
@@ -13,7 +13,6 @@ const maxDraftsCount = 10;
 export class StoreSheetMyDrafts extends StoreSheetList {
     discardDraft(sheetId: number): void {
         this.removeMyDraft(sheetId);
-        this.modal.close();
     }
 
     async deleteAllMyDrafts(): Promise<void> {

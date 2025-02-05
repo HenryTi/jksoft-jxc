@@ -7,8 +7,8 @@ import { ViewDivProps } from "./tool";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
 
 export function ViewDivUndo(props: ViewDivProps) {
-    const { controller, valDiv } = props;
-    const { binStore } = controller.controlSheet;
+    const { control, valDiv } = props;
+    const { binStore } = control.controlSheet;
     const { current: undoStore } = useRef(new UndoStore(binStore, valDiv));
     const bottoms: DivRightButton[] = [
         {

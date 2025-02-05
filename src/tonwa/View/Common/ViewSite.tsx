@@ -1,5 +1,5 @@
 import { useUqApp } from "app/UqApp";
-import { AtomData } from "tonwa";
+import { AtomData } from "../../Store";
 
 export function ViewSite({ value }: { value: AtomData }) {
     let { no, ex } = value;

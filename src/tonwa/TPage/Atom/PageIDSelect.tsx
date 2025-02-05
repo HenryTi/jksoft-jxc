@@ -1,14 +1,13 @@
 import { useRef, useState, JSX } from "react";
 import { SearchBox } from "tonwa-com";
-import { PageQueryMore } from "app/coms";
 import { Page, PageError, useModal } from "tonwa-app";
-import { BizBud, EntityID, EntityFork } from "../../Biz";
-import { Atom, BizPhraseType } from "uqs/UqDefault";
+import { BizBud, EntityID, EntityFork, BizPhraseType } from "../../Biz";
 import { RowMed, createIDSelectStore } from "./IDSelectStore";
 import { AtomData } from "../../Store";
 import { RowColsSm, ViewBud } from "../../View";
-import { ViewAtomId } from "app/hooks";
 import { ViewAtom } from "../../View/Form/ViewAtom";
+import { PageQueryMore } from "../../View/Common/PageQueryMore";
+import { ViewAtomId } from "../../View/Form/ViewAtomId";
 
 export function useIDSelect() {
     const modal = useModal();

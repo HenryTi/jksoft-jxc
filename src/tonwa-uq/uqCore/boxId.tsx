@@ -5,15 +5,15 @@ import * as React from 'react';
 import { Tuid } from './tuid/tuid';
 import { TuidDiv } from './tuid/tuidDiv';
 import { TvTemplet } from '../tools';
-import { PureJSONContent } from '../controllers';
+import { PureJSONContent } from '../controls';
 */
 
-export type CreateBoxId = (tuid:Tuid, id:number) => BoxId;
+export type CreateBoxId = (tuid: Tuid, id: number) => BoxId;
 
 export interface BoxId {
     readonly id: number;
     obj: any;
-    boxName:string;
+    boxName: string;
     isUndefined: boolean;
     assure(): Promise<void>;
 }

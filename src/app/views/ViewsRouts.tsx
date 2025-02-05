@@ -12,7 +12,7 @@ import { useSiteRole } from './Site/useSiteRole';
 // import { PageCode, TabCode } from './Biz/TabCode';
 import { PageMySites } from './Site/PageMySites';
 import { PageBiz } from './Admin/compile';
-import { PageSheetDash } from 'tonwa/Pages';
+import { PageSheetDash } from 'tonwa/TPage';
 
 function RoutesContainer({ children }: { children: React.ReactNode; }) {
     let uqApp = useUqApp();

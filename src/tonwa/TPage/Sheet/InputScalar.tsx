@@ -1,6 +1,6 @@
-import { BinPick } from "tonwa";
 import { ChangeEvent, KeyboardEvent, FocusEvent, useRef, useEffect, MouseEvent } from "react";
 import { FA } from "tonwa-com";
+import { BinPick } from "../../Biz";
 
 interface Scalar {
     value: any;

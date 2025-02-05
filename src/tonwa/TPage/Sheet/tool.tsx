@@ -8,7 +8,7 @@ import { ControlDetail } from "../../Control";
 // import { ControlDetail } from "./ControlDetailEdit";
 
 export interface ViewDivProps {
-    controller: ControlDetail,
+    control: ControlDetail,
     valDiv: ValDivBase;
     readonly?: boolean;
     hidePivot?: boolean;

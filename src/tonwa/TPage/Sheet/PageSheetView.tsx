@@ -3,14 +3,14 @@ import { useReactToPrint } from "react-to-print";
 import { Page, useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
 import { Toolbar, ViewCurSiteHeader } from "../../View";
-import { TControllerSheetEdit } from "./TControlSheetEdit";
+import { TControlSheetEdit } from "./TControlSheetEdit";
 import { ViewSheetContent } from "./ViewSheetContent";
 import { buttonDefs } from "./HeaderSheet";
 import { useSiteRole } from "../../Site";
 import { download } from "../../tools/download";
 import { upload } from "./upload";
 
-export function PageSheetView({ controller }: { controller: TControllerSheetEdit; }) {
+export function PageSheetView({ control }: { control: TControlSheetEdit; }) {
     const modal = useModal();
     const refPrint = useRef(null);
     const handlePrint = useReactToPrint({
@@ -18,9 +18,9 @@ export function PageSheetView({ controller }: { controller: TControllerSheetEdit
     });
     let useSiteRoleReturn = useSiteRole();
     let { isAdmin } = useSiteRoleReturn.userSite;
-    const { caption } = controller.storeSheet;
+    const { caption } = control.storeSheet;
     async function onSubmitDebug() {
-        let { error, logs } = await controller.onSubmitDebug();
+        let { error, logs } = await control.onSubmitDebug();
         modal.open(<Page header="调试结果">
             <div className="px-3 py-2">
                 <FA className="text-danger me-2" name="info-circle" />
@@ -50,7 +50,7 @@ export function PageSheetView({ controller }: { controller: TControllerSheetEdit
         upload();
     }
     async function onExit() {
-        controller.closeModal();
+        control.closeModal();
     }
     let btnPrint = buttonDefs.print(onPrint);
     let btnDownload = buttonDefs.download(onDownload);
@@ -63,20 +63,20 @@ export function PageSheetView({ controller }: { controller: TControllerSheetEdit
     let toolGroups = [leftGroup, null, [btnDownload, btnPrint]];
     let top = <Toolbar groups={toolGroups} />;
     return <Page header={<ViewCurSiteHeader caption={caption} />}>
-        <ViewSheetContent control={controller} readonly={true} />
-        <ViewSheetPrint controller={controller} refPrint={refPrint} />
+        <ViewSheetContent control={control} readonly={true} />
+        <ViewSheetPrint control={control} refPrint={refPrint} />
     </Page>;
 }
 
-function ViewSheetPrint({ controller, refPrint }: { controller: TControllerSheetEdit; refPrint: React.Ref<HTMLDivElement> }) {
-    const { storeSheet } = controller;
+function ViewSheetPrint({ control, refPrint }: { control: TControlSheetEdit; refPrint: React.Ref<HTMLDivElement> }) {
+    const { storeSheet } = control;
     const { caption } = storeSheet;
     const __html = `<div class="text-center">${caption}</div>`;
     return <div className="d-none">
         <div ref={refPrint} className="print-container" style={{ margin: "0", padding: "0" }}>
             <div className="border-bottom px-3 py-2 mb-1 fs-larger text-center border-dark">{caption}</div>
             <div dangerouslySetInnerHTML={{ __html }} />
-            <ViewSheetContent control={controller} readonly={true} />
+            <ViewSheetContent control={control} readonly={true} />
         </div>
     </div>;
 }

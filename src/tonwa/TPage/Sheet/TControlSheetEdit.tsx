@@ -4,25 +4,25 @@ import { BinRow, EntityBin, EntitySheet } from "../../Biz";
 import { getAtomValue, setAtomValue } from "../../tools";
 import { TControlSheet, EnumSheetEditReturn, SubmitState } from "./TControlSheet";
 import { ViewSubmitReaction } from "./ViewSubmitReaction";
-import { TControllerDetailEdit } from "./TControlDetailEdit";
-import { TControllerSheetDash } from "./TControlSheetDash";
+import { TControlDetailEdit } from "./TControlDetailEdit";
+import { TControlSheetDash } from "./TControlSheetDash";
 
-export class TControllerSheetEdit extends ControlSheetEdit {
+export class TControlSheetEdit extends ControlSheetEdit {
     protected createControlDetailEdit(): ControlDetailEdit {
-        return new TControllerDetailEdit(this, this.binStore.entity);
+        return new TControlDetailEdit(this, this.binStore.entity);
     }
     /*
-    protected readonly controllerSheetDash: ControllerSheetDash;
-    readonly controllerDetailEdit: ControllerDetailEdit;
+    protected readonly controlSheetDash: ControlSheetDash;
+    readonly controlDetailEdit: ControlDetailEdit;
     readonly atomReaction = atom(undefined as any);
     readonly atomError = atom(undefined as { [id: number]: { pend: number; overValue: number; } | { bin: number; message: string; } });
     readonly atomSum = atom(get => {
         return this.binStore.sum(get);
     });
-    constructor(controllerSheetDash: ControllerSheetDash) {
-        const { controlBiz: controllerBiz, entity: entitySheet } = controllerSheetDash;
-        super(controllerBiz, entitySheet);
-        this.controllerDetailEdit = new ControllerDetailEdit(this, this.binStore.entity);
+    constructor(controlSheetDash: ControlSheetDash) {
+        const { controlBiz: controlBiz, entity: entitySheet } = controlSheetDash;
+        super(controlBiz, entitySheet);
+        this.controlDetailEdit = new ControlDetailEdit(this, this.binStore.entity);
     }
 
     atomSubmitState = atom((get) => {
@@ -59,7 +59,7 @@ export class TControllerSheetEdit extends ControlSheetEdit {
             return;
         }
         // await sheetConsole.onSubmited(store);
-        // 转到 ControllerSheetDash中操作
+        // 转到 ControlSheetDash中操作
         // const { mainStore: main } = store;
         this.modal.close(EnumSheetEditReturn.submit);
     }

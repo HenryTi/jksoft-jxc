@@ -1,4 +1,3 @@
-import { EntityFork } from "tonwa";
 import { useUqApp } from "app/UqApp";
 import { useState, JSX } from "react";
 import {
@@ -6,10 +5,11 @@ import {
 } from "react-hook-form";
 import { useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
-import { pickBudID } from "app/hooks/BizPick";
+import { EntityFork } from "../../Biz";
 import { Band, FormAtom, FormContext } from "./FormRowsView";
-import { BudEditing } from "app/hooks";
 import { ViewForkId } from "./ViewForkId";
+import { BudEditing } from "../Bud";
+import { pickBudID } from "../Common/pickBudID";
 
 export function ViewFormAtomFork({ row, label, error, inputProps, clearErrors, setValue, entity, onChange, formContext }: {
     row: FormAtom;

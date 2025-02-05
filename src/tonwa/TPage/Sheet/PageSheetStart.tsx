@@ -24,7 +24,7 @@ export function PageSheetStart({ control }: { control: ControlSheetStart }) {
     const loaded = useAtomValue(atomLoaded);
     if (loaded === true) {
 
-        return <PageSheetEdit controller={controller} />;
+        return <PageSheetEdit control={control} />;
     }
     */
     const { mainStore, isPend, isMainPend } = store;
@@ -60,7 +60,7 @@ function PageMainPend({ control }: { control: ControlSheetStart; }) {
     // header={pageHeader} back={null} top={top} right={right}>
     return <Page header="PageMainPend">
         {/*<ViewSteps sheetSteps={sheetConsole.steps} />*/}
-        <ViewMainPicks subHeader="新开单据" controller={control} onPicked={onMainPendPicked} />
+        <ViewMainPicks subHeader="新开单据" control={control} onPicked={onMainPendPicked} />
     </Page>;
     /*
     const { caption } = store;
@@ -117,13 +117,13 @@ function PageStartPicks({ control }: { control: ControlSheetStart; }) {
     let { header: pageHeader, top, right } = headerSheet({ store: storeSheet, toolGroups: [group0], headerGroup: [btnExit] });
     /*
     async function onPickedNew(results: ReturnUseBinPicks) {
-        await controller.onPicked(results);
-        await controller.setSheetAsDraft();
+        await control.onPicked(results);
+        await control.setSheetAsDraft();
     }
     */
     return <Page header={pageHeader} back={null} top={top} right={right}>
         <ViewSteps sheetSteps={steps} />
-        <ViewMainPicks subHeader="新开单据" controller={control} onPicked={onPickedNew} />
+        <ViewMainPicks subHeader="新开单据" control={control} onPicked={onPickedNew} />
     </Page>;
 }
 
@@ -142,7 +142,7 @@ function PageStartPend({ control }: { control: ControlSheetStart; }) {
     }, []);
     return <Page header={caption + ' - ' + subCaption}>
         {/*<ViewSteps sheetSteps={sheetConsole.steps} />*/}
-        <ViewMainPicks subHeader={'批选条件'} controller={control} onPicked={onPend} />
+        <ViewMainPicks subHeader={'批选条件'} control={control} onPicked={onPend} />
     </Page>;
 }
 
@@ -156,7 +156,7 @@ function PageDirectPend({ control }: { control: ControlSheetStart; }) {
             await nothingPicked(modal, control);
             let added: any; // = await detailNew(store);
             if (added > 0) {
-                // await controller.setSheetAsDraft();
+                // await control.setSheetAsDraft();
             }
             else {
                 await control.discard();

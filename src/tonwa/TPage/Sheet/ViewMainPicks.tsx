@@ -12,17 +12,17 @@ import { TControlSheetStart } from "./TControlSheetStart";
 
 interface Props {
     subHeader?: string;
-    controller: TControlSheetStart;
+    control: TControlSheetStart;
     onPicked: (results: ReturnUseBinPicks) => Promise<void>;
 }
 
-export function ViewMainPicks({ controller, subHeader }: Props) {
+export function ViewMainPicks({ control, subHeader }: Props) {
     // const modal = useModal();
     const rearPickResultType = RearPickResultType.scalar;
-    const { storeSheet, mainStore: main, binStore, steps/*, sheetConsole*/ } = controller;
+    const { storeSheet, mainStore: main, binStore, steps/*, sheetConsole*/ } = control;
     const { entity: entityBin } = main;
-    const { current: controllerBinPicks } = useRef(controller.createControllerPinPicks(entityBin));
-    const { formBudsStore } = controllerBinPicks;
+    const { current: controlBinPicks } = useRef(control.createControlPinPicks(entityBin));
+    const { formBudsStore } = controlBinPicks;
     // const { steps } = sheetConsole;
     // let { current: formBudsStore } = useRef(new FormBudsStore(modal, new BinBudsEditing(storeSheet, main.entity, [])));
     // let formBudsStore: any;
@@ -44,7 +44,7 @@ export function ViewMainPicks({ controller, subHeader }: Props) {
 
     function afterPicked(curSerial: number) {
         clearTailPicks(curSerial);
-        controller.setChanging();
+        control.setChanging();
         setCur(curSerial + 1);
         binStore.setReload();
     }
@@ -60,7 +60,7 @@ export function ViewMainPicks({ controller, subHeader }: Props) {
             rearResult,
             rearPickResultType: rearPickResultType,
         };
-        await controller.onPickedNew(ret);
+        await control.onPickedNew(ret);
         steps?.next();
     }
     let viewBinPicks: any;
@@ -83,7 +83,7 @@ export function ViewMainPicks({ controller, subHeader }: Props) {
     </div>;
     function ViewPick({ binPick, serial }: { binPick: BinPick; serial: number; }) {
         const [message, setMessage] = useState(undefined as string);
-        useAtomValue(controller.atomChanging);
+        useAtomValue(control.atomChanging);
         if (binPick.fromPhraseType === BizPhraseType.any) {
             if (serial === cur) {
                 const { caption, name } = binPick;
@@ -163,7 +163,7 @@ export function ViewMainPicks({ controller, subHeader }: Props) {
             }
         }
         async function pick() {
-            if (await controllerBinPicks.doBinPick(binPick) !== undefined) {
+            if (await controlBinPicks.doBinPick(binPick) !== undefined) {
                 afterPicked(serial);
             }
             /*
@@ -230,7 +230,7 @@ export function ViewMainPicks({ controller, subHeader }: Props) {
         </PickRow>;
     }
     function ViewPickRear() {
-        useAtomValue(controller.atomChanging);
+        useAtomValue(control.atomChanging);
         let serial = binPicks.length;
         if (rearPick.fromPhraseType === BizPhraseType.pend) {
             let cnAngle: string, iconPrefix: string, vContent: any;
@@ -264,8 +264,8 @@ export function ViewMainPicks({ controller, subHeader }: Props) {
         if (serial > cur) return <ViewToPick binPick={rearPick} />;
         async function pick() {
             // let pickResult; // = await doBinPickRear(binStore, formBudsStore, rearPick, rearPickResultType);
-            // let controllerBinPicks: ControllerBinPicks = controller.createControllerPinPicks(entityBin);
-            let pickResult = await controllerBinPicks.doBinPickRear(rearPickResultType);
+            // let controlBinPicks: ControlBinPicks = control.createControlPinPicks(entityBin);
+            let pickResult = await controlBinPicks.doBinPickRear(rearPickResultType);
             if (pickResult !== undefined) {
                 refRearPickResult.current = pickResult;
                 afterPicked(serial + 1);

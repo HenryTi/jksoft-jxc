@@ -16,6 +16,10 @@ export class Control extends KeyIdObject {
         return await this.modal.open<T>(element, onClosed);
     }
 
+    async openModalAsync<T>(element: JSX.Element, promise: Promise<any>, onClosed?: (result: any) => void) {
+        return await this.modal.openAsync<T>(element, promise, onClosed);
+    }
+
     closeModal(result?: any) {
         this.modal.close(result);
     }

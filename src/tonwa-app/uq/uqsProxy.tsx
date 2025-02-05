@@ -33,7 +33,7 @@ export function uqsProxy(uqsMan: UQsMan) {
             let ret = target[lk];
             if (ret !== undefined) return ret;
             debugger;
-            console.error(`controller.uqs.${String(key)} undefined`);
+            console.error(`control.uqs.${String(key)} undefined`);
             onUqProxyError(String(key));
             return undefined;
         },

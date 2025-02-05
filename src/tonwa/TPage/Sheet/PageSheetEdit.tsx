@@ -11,7 +11,7 @@ import { SubmitState } from "./TControlSheet";
 import { ViewSheetContent } from "./ViewSheetContent";
 import { useSiteRole } from "../../Site";
 // import { detailNewLoop } from "./detailNew";
-import { ControlSheetEdit } from "tonwa/Control";
+import { ControlSheetEdit } from "../../Control";
 
 export function PageSheetEdit({ control }: { control: ControlSheetEdit; }) {
     const { modal, storeSheet, mainStore, binStore, atomReaction, atomSubmitState } = control;
@@ -50,7 +50,7 @@ export function PageSheetEdit({ control }: { control: ControlSheetEdit; }) {
     }
 
     function mainDetailEdit() {
-        // const controllerDetailEdit: ControllerDetailEdit = new ControllerDetailEdit(controller, binStore.entity);
+        // const controlDetailEdit: ControlDetailEdit = new ControlDetailEdit(control, binStore.entity);
         const { controlDetailEdit } = control;
         const { entity: entityBin } = binStore;
         const { onAddRow } = controlDetailEdit;

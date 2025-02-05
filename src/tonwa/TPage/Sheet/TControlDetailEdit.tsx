@@ -4,26 +4,27 @@ import { BinRow, BizPhraseType, EntityBin } from "../../Biz";
 import { ControlDetailEdit, ControlEntity } from "../../Control";
 import { PickResult, RearPickResultType } from "../../Store";
 import { BinEditing, DivEditing } from "../../Control/ControlBuds/BinEditing";
-import { TControllerSheetEdit } from "./TControlSheetEdit";
+import { TControlSheetEdit } from "./TControlSheetEdit";
 import { TControlSheet } from "./TControlSheet";
 import { PageEditDivRoot } from "./PageEditDivRoot";
 import { getAtomValue, setAtomValue } from "../../tools";
 import { ValDivBase, ValDivRoot } from "../../Store/ValDiv";
 import { ControlBinPicks } from "../../Control/ControlBuds";
 import { JSX } from "react";
+import { PageInputRow } from "./PageInputRow";
 
 /*
 export class ControlDetail<C extends ControlSheet = any> extends ControlEntity<EntityBin> {
-    readonly controllerSheet: C;
-    constructor(controllerSheet: C, entityBin: EntityBin) {
-        super(controllerSheet.controlBiz, entityBin);
-        this.controllerSheet = controllerSheet;
+    readonly controlSheet: C;
+    constructor(controlSheet: C, entityBin: EntityBin) {
+        super(controlSheet.controlBiz, entityBin);
+        this.controlSheet = controlSheet;
     }
 }
 */
-export class TControllerDetailEdit extends ControlDetailEdit {
+export class TControlDetailEdit extends ControlDetailEdit {
     protected override PageEditDivRoot(valDiv: ValDivBase): JSX.Element {
-        return <PageEditDivRoot controller={this} valDiv={valDiv} />;
+        return <PageEditDivRoot control={this} valDiv={valDiv} />;
     }
     /*
     readonly atomError = atom<any>(undefined);
@@ -32,9 +33,14 @@ export class TControllerDetailEdit extends ControlDetailEdit {
         await this.detailNewLoop();
     }
     */
-    override createControllerPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
+    override createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
         return new ControlBinPicks(this.controlBiz, this.controlSheet.storeSheet, entityBin, initBinRow);
     }
+
+    protected override PageInputRow(binEditing: BinEditing, valDiv: ValDivBase): JSX.Element {
+        return <PageInputRow binEditing={binEditing} valDiv={valDiv} />;
+    }
+
     /*
     private async detailNewLoop(): Promise<void> {
         // const { modal, binStore } = sheetStore;
@@ -45,7 +51,7 @@ export class TControllerDetailEdit extends ControlDetailEdit {
     }
 
     private async detailNew(): Promise<number> {
-        const { storeSheet } = this.controllerSheet;
+        const { storeSheet } = this.controlSheet;
         const { modal, binStore } = storeSheet;
         if (binStore === undefined) {
             alert('Pick Pend on main not implemented');
@@ -137,12 +143,12 @@ export class TControllerDetailEdit extends ControlDetailEdit {
 
     async onDelSub(valDiv: ValDivBase, pend: number) {
         // 候选还没有输入行内容
-        this.controllerSheet.binStore.removePend(pend);
+        this.controlSheet.binStore.removePend(pend);
     }
 
     async onPendEdit(valDiv: ValDivBase, pend: number) {
         // 候选还没有输入行内容
-        const { storeSheet, binStore } = this.controllerSheet;
+        const { storeSheet, binStore } = this.controlSheet;
         let pendRow = storeSheet.getPendRow(pend);
         let valDivClone = valDiv.clone() as ValDivRoot;
         let { valRow } = valDivClone;
@@ -158,13 +164,13 @@ export class TControllerDetailEdit extends ControlDetailEdit {
     }
 
     async onDivDelSub() {
-        const { storeSheet, binStore } = this.controllerSheet;
+        const { storeSheet, binStore } = this.controlSheet;
         // setAtomValue(atomDeleted, !deleted);
         storeSheet.notifyRowChange();
     }
 
     async onDivEdit(valDiv: ValDivBase) {
-        const { storeSheet, binStore } = this.controllerSheet;
+        const { storeSheet, binStore } = this.controlSheet;
         const { binDiv } = valDiv;
         const divs = getAtomValue(valDiv.atomValDivs);
         if (divs.length === 0) {
@@ -187,11 +193,11 @@ export class TControllerDetailEdit extends ControlDetailEdit {
     }
 
     protected PageEditDivRoot(valDiv: ValDivBase) {
-        return <PageEditDivRoot controller={this} valDiv={valDiv} />;
+        return <PageEditDivRoot control={this} valDiv={valDiv} />;
     }
 
     async onLeafEdit(valDiv: ValDivBase) {
-        const { binStore } = this.controllerSheet;
+        const { binStore } = this.controlSheet;
         const { binDiv } = valDiv;
         const editing = new DivEditing(binStore, valDiv);
         let ret = await this.editRow(valDiv);
@@ -201,12 +207,12 @@ export class TControllerDetailEdit extends ControlDetailEdit {
             alert('Pivot key duplicate'); // 这个界面要改
             return;
         }
-        await this.controllerSheet.binStore.saveDetails(binDiv, [newValRow]);
+        await this.controlSheet.binStore.saveDetails(binDiv, [newValRow]);
         valDiv.setValRow(newValRow);
     }
 
     onAddNew = async (valDiv: ValDivBase) => {
-        const { binStore } = this.controllerSheet;
+        const { binStore } = this.controlSheet;
         const { valRow } = valDiv;
         let pendRow = await binStore.loadPendRow(valRow.pend);
         let valDivNew = valDiv.createValDivSub(pendRow);

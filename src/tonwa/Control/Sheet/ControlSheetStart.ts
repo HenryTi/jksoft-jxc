@@ -25,8 +25,8 @@ export abstract class ControlSheetStart extends ControlSheet {
     readonly steps: SheetSteps;
 
     constructor(controlSheetDash: ControlSheetDash) {
-        const { controlBiz: controllerBiz, entity: entitySheet } = controlSheetDash;
-        super(controllerBiz, entitySheet);
+        const { controlBiz: controlBiz, entity: entitySheet } = controlSheetDash;
+        super(controlBiz, entitySheet);
         this.controlSheetDash = controlSheetDash;
         const { mainStore, isPend, isMainPend } = this.storeSheet;
         const { entity } = mainStore;
@@ -89,7 +89,7 @@ export abstract class ControlSheetStart extends ControlSheet {
         return get(this.binStore.atomSubmitState);
     }, null);
 
-    createControllerPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
+    createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
         return new ControlBinPicks(this.controlBiz, this.storeSheet, entityBin, initBinRow);
     }
 

@@ -7,7 +7,7 @@ import { ControlBinPicks } from "../../Control/ControlBuds";
 import { setAtomValue, getAtomValue } from "../../tools";
 import { WritableAtom } from "jotai";
 import { TControlSheet as TControlSheet } from "./TControlSheet";
-import { TControllerSheetDash } from "./TControlSheetDash";
+import { TControlSheetDash } from "./TControlSheetDash";
 
 enum EnumSheetNewContent {
     sheet, mainPend, directPend, direct, startPend, startPicks
@@ -21,14 +21,14 @@ function sheetSteps(steps: string[]): SheetSteps {
 
 export class TControlSheetStart extends ControlSheetStart {
     /*
-    protected readonly controllerSheetDash: ControllerSheetDash;
+    protected readonly controlSheetDash: ControlSheetDash;
     readonly atomChanging = atom(1);
     readonly steps: SheetSteps;
 
-    constructor(controllerSheetDash: ControllerSheetDash) {
-        const { controlBiz: controllerBiz, entity: entitySheet } = controllerSheetDash;
-        super(controllerBiz, entitySheet);
-        this.controllerSheetDash = controllerSheetDash;
+    constructor(controlSheetDash: ControlSheetDash) {
+        const { controlBiz: controlBiz, entity: entitySheet } = controlSheetDash;
+        super(controlBiz, entitySheet);
+        this.controlSheetDash = controlSheetDash;
         const { mainStore, isPend, isMainPend } = this.storeSheet;
         const { entity } = mainStore;
         let enumSheetNewContent: EnumSheetNewContent;
@@ -90,7 +90,7 @@ export class TControlSheetStart extends ControlSheetStart {
         return get(this.binStore.atomSubmitState);
     }, null);
 
-    createControllerPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
+    createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
         return new ControlBinPicks(this.controlBiz, this.storeSheet, entityBin, initBinRow);
     }
 
@@ -99,15 +99,15 @@ export class TControlSheetStart extends ControlSheetStart {
     }
 
     onMainPendPicked = async (results: ReturnUseBinPicks) => {
-        await this.controllerSheetDash.onMainPendPicked(results);
+        await this.controlSheetDash.onMainPendPicked(results);
     }
 
     onPickedNew = async (results: ReturnUseBinPicks) => {
-        await this.controllerSheetDash.onPickedNew(results);
+        await this.controlSheetDash.onPickedNew(results);
     }
 
     async onPicked(results: ReturnUseBinPicks) {
-        return await this.controllerSheetDash.onPicked(results);
+        return await this.controlSheetDash.onPicked(results);
     }
     */
 }
