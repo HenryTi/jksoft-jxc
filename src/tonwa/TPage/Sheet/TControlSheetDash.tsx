@@ -84,10 +84,6 @@ export class TControlSheetDash extends ControlSheetDash { // ControlEntity<Entit
         return new TControlSheetList(this.controlBiz, this.entity);
     }
 
-    protected PageSheetNew() {
-        return <PageSheetStart control={this.controlSheetStart} />;
-    }
-
     protected PageSheetEdit() {
         return <PageSheetEdit control={this.controlSheetEdit} />;
     }

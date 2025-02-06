@@ -5,11 +5,12 @@ import { useEffectOnce } from "tonwa-com";
 import { SheetSteps, StoreSheet } from "../../Store";
 import { Modal } from "../../UI";
 import { ToolItem, ViewCurSiteHeader } from "../../View";
-import { ReturnUseBinPicks } from "../../Store/PickResult";
+import { RearPickResultType, ReturnUseBinPicks } from "../../Store/PickResult";
 import { buttonDefs, headerSheet } from "./HeaderSheet";
 import { ViewSteps } from "./ViewSteps";
 import { ViewMainPicks } from "./ViewMainPicks";
 import { ControlSheetStart } from "../../Control";
+import { BinEditing, FormBudsStore } from "tonwa/Control/ControlBuds/BinEditing";
 
 const stepPick = '录入条件';
 const stepPend = '批选待处理';
@@ -154,9 +155,9 @@ function PageDirectPend({ control }: { control: ControlSheetStart; }) {
     useEffectOnce(() => {
         (async function () {
             await nothingPicked(modal, control);
-            let added: any; // = await detailNew(store);
+            let added = await detailNew(store);
             if (added > 0) {
-                // await control.setSheetAsDraft();
+                await control.setSheetAsDraft();
             }
             else {
                 await control.discard();
@@ -172,8 +173,7 @@ function PageDirectPend({ control }: { control: ControlSheetStart; }) {
 async function nothingPicked(modal: Modal, control: ControlSheetStart) {
     const { storeSheet } = control;
     let { entity } = storeSheet.mainStore;
-    /*
-    const budsEditing = new BinEditing(store, entity);
+    const budsEditing = new BinEditing(storeSheet, entity);
     // const budEditings = budsEditing.createBudEditings();
     const formBudsStore = new FormBudsStore(modal, budsEditing);
 
@@ -183,6 +183,5 @@ async function nothingPicked(modal: Modal, control: ControlSheetStart) {
         rearResult: [],
         rearPickResultType: RearPickResultType.scalar,
     };
-    await store.onPicked(results);
-    */
+    await storeSheet.onPicked(results);
 }

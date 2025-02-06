@@ -31,16 +31,6 @@ export function PageSheetDash() {
     const myDrafts = useAtomValue(myDraftsStore.atomMyDrafts);
     // const [hasUserDefaults, setHasUserDefaults] = useState(undefined as boolean);
     useEffectOnce(() => { controlSheetDash.start(); });
-    /*
-        (async () => {
-            await Promise.all([
-                controlBiz.loadUserDefaults(),
-                myDraftsStore.loadMyDrafts(),
-            ]);
-            setHasUserDefaults(true);
-        })();
-    });
-    */
     function ViewSheetItem({ value }: { value: (SheetData & BinData & { rowCount: number; }) }) {
         const { id, no, base, i } = value;
         const [del, setDel] = useState(0);

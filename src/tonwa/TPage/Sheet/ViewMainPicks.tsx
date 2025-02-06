@@ -8,11 +8,11 @@ import { ViewAtomId } from "../../View/Form/ViewAtomId";
 import { getAtomValue } from "../../tools";
 import { PickRow } from "./PickRow";
 import { InputScalar } from "./InputScalar";
-import { TControlSheetStart } from "./TControlSheetStart";
+import { ControlSheetStart } from "../../Control";
 
 interface Props {
     subHeader?: string;
-    control: TControlSheetStart;
+    control: ControlSheetStart;
     onPicked: (results: ReturnUseBinPicks) => Promise<void>;
 }
 

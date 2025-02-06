@@ -52,7 +52,8 @@ export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
 
     onPageSheetStart = async () => {
         this.#controlSheetStart = this.createControlSheetStart();
-        let newSheetId = await this.openModal<number>(this.PageSheetNew());
+        let newSheetId = await this.#controlSheetStart.start();
+        // await this.openModal<number>(this.PageSheetStart());
         if (newSheetId === undefined) return;
         await this.onPageSheetEdit(newSheetId);
     }
@@ -101,7 +102,7 @@ export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
     }
 
     protected abstract PageConfirmClearDrafts(): JSX.Element;
-    protected abstract PageSheetNew(): JSX.Element;
+    // protected abstract PageSheetStart(): JSX.Element;
     protected abstract PageSheetEdit(): JSX.Element;
     protected abstract PageSheetList(): JSX.Element;
 

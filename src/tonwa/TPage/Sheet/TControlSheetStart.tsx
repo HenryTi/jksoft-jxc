@@ -8,6 +8,7 @@ import { setAtomValue, getAtomValue } from "../../tools";
 import { WritableAtom } from "jotai";
 import { TControlSheet as TControlSheet } from "./TControlSheet";
 import { TControlSheetDash } from "./TControlSheetDash";
+import { PageSheetStart } from "./PageSheetStart";
 
 enum EnumSheetNewContent {
     sheet, mainPend, directPend, direct, startPend, startPicks
@@ -20,6 +21,9 @@ function sheetSteps(steps: string[]): SheetSteps {
 };
 
 export class TControlSheetStart extends ControlSheetStart {
+    protected PageSheetStart() {
+        return <PageSheetStart control={this} />;
+    }
     /*
     protected readonly controlSheetDash: ControlSheetDash;
     readonly atomChanging = atom(1);

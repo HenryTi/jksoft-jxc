@@ -8,6 +8,7 @@ import { setAtomValue, getAtomValue } from "../../tools";
 import { WritableAtom } from "jotai";
 import { ControlSheet as ControlSheet } from "./ControlSheet";
 import { ControlSheetDash } from "./ControlSheetDash";
+import { JSX } from "react";
 
 enum EnumSheetNewContent {
     sheet, mainPend, directPend, direct, startPend, startPicks
@@ -108,4 +109,11 @@ export abstract class ControlSheetStart extends ControlSheet {
     async onPicked(results: ReturnUseBinPicks) {
         return await this.controlSheetDash.onPicked(results);
     }
+
+    async start(): Promise<number> {
+        let sheetId: number = await this.openModal<number>(this.PageSheetStart());
+        return sheetId;
+    }
+
+    protected abstract PageSheetStart(): JSX.Element;
 }

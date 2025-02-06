@@ -1,23 +1,18 @@
 import { useAtomValue } from "jotai";
-import { setAtomValue } from "tonwa-com";
-import { useModal } from "tonwa-app";
 // import { DivEditing, ValDivRoot } from "../../../../Store";
 // import { editDivs, UseEditDivsProps } from "./divEdit";
-import { PageEditDivRoot } from "./PageEditDivRoot";
 import { ViewPendRow } from "./ViewPendRow";
 import { ViewDivProps } from "./tool";
 import { ViewRow } from "./ViewRow";
 import { ViewDivUndo } from "./ViewDivUndo";
 import { DivRightButton, ViewDivRightButtons } from "./ViewDivRightButtons";
-import { DivEditing } from "../../Control/ControlBuds/BinEditing";
-import { ValDivRoot } from "../../Store/ValDiv";
 import { TControlDetailEdit } from "./TControlDetailEdit";
 // import { rowEdit } from "../divEdit";
 
 export function ViewDiv(props: ViewDivProps) {
     const { control: control, valDiv, readonly } = props;
     const controlDetailEdit = control as TControlDetailEdit;
-    const { binStore } = controlailEdit.controlSheet;
+    const { binStore } = controlDetailEdit.controlSheet;
     const { binDiv, atomDeleted } = valDiv;
     const { entityBin, level } = binDiv;
     const divs = useAtomValue(valDiv.atomValDivs);
