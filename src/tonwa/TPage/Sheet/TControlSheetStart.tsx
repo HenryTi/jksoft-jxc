@@ -1,14 +1,13 @@
-import { atom } from "jotai";
-import { BinRow, EntityBin, EntitySheet, EnumDetailOperate } from "../../Biz";
-import { StoreSheet, SheetMainStore, BinStore, SheetSteps, BinStorePendDirect } from "../../Store";
-import { ControlSheet, ControlSheetStart, ControlBiz, ControlEntity } from "../../Control";
+import { SheetSteps } from "../../Store";
+import { ControlSheetStart } from "../../Control";
 import { ReturnUseBinPicks } from "../../Store/PickResult";
-import { ControlBinPicks } from "../../Control/ControlBuds";
-import { setAtomValue, getAtomValue } from "../../tools";
-import { WritableAtom } from "jotai";
-import { TControlSheet as TControlSheet } from "./TControlSheet";
-import { TControlSheetDash } from "./TControlSheetDash";
-import { PageSheetStart } from "./PageSheetStart";
+import { JSX, useCallback } from "react";
+import { Page, PageSpinner } from "tonwa-app";
+import { useEffectOnce } from "tonwa-com";
+import { buttonDefs, headerSheet } from "./HeaderSheet";
+import { ToolItem } from "tonwa/View";
+import { ViewMainPicks } from "./ViewMainPicks";
+import { ViewSteps } from "./ViewSteps";
 
 enum EnumSheetNewContent {
     sheet, mainPend, directPend, direct, startPend, startPicks
@@ -21,9 +20,26 @@ function sheetSteps(steps: string[]): SheetSteps {
 };
 
 export class TControlSheetStart extends ControlSheetStart {
-    protected PageSheetStart() {
-        return <PageSheetStart control={this} />;
+    // protected PageSheetStart() {
+    //    return <PageSheetStart control={this} />;
+    // }
+
+    protected override PageMainPend(): JSX.Element {
+        return <PageMainPend control={this} />;
     }
+    protected override PageDirectPend(): JSX.Element {
+        return <PageDirectPend control={this} />;
+    }
+    protected override PageSheetDirect(): JSX.Element {
+        return <PageSheetDirect control={this} />;
+    }
+    protected override PageStartPend(): JSX.Element {
+        return <PageStartPend control={this} />;
+    }
+    protected override PageStartPicks(): JSX.Element {
+        return <PageStartPicks control={this} />;
+    }
+
     /*
     protected readonly controlSheetDash: ControlSheetDash;
     readonly atomChanging = atom(1);
@@ -115,3 +131,140 @@ export class TControlSheetStart extends ControlSheetStart {
     }
     */
 }
+
+
+function PageMainPend({ control }: { control: ControlSheetStart; }) {
+    const { storeSheet: store, onMainPendPicked } = control;
+    // const { sheetConsole } = store;
+    // const { btnSubmit, btnExit } = buttons(sheetConsole);
+    // const group0: ToolItem[] = [btnSubmit];
+    // let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
+    // header={pageHeader} back={null} top={top} right={right}>
+    return <Page header="PageMainPend">
+        {/*<ViewSteps sheetSteps={sheetConsole.steps} />*/}
+        <ViewMainPicks subHeader="新开单据" control={control} onPicked={onMainPendPicked} />
+    </Page>;
+    /*
+    const { caption } = store;
+    return <Page header={caption + ' - 新开'}>
+        PageMainPend
+    </Page>;
+    */
+}
+
+function PageSheetDirect({ control }: { control: ControlSheetStart; }) {
+    const { modal, storeSheet } = control;
+    const { caption } = storeSheet;
+    useEffectOnce(() => {
+        (async function () {
+            //await nothingPicked(modal, control);
+            //await storeSheet.setSheetAsDraft();
+        })();
+    });
+    return <PageSpinner header={caption + ' 创建中...'} />
+}
+
+/*
+async function onPicked(store: SheetStore, results: ReturnUseBinPicks) {
+    const { sheetConsole, mainStore, binStore } = store;
+    let ret = await mainStore.startFromPickResults(results);
+    if (ret === undefined) {
+        if (store.mainId === undefined) {
+            // 还没有创建单据
+            if (sheetConsole.steps === undefined) {
+                setTimeout(() => {
+                    sheetConsole.close();
+                }, 100);
+            }
+        }
+        return; // 已有单据，不需要pick. 或者没有创建新单据
+    }
+    sheetConsole.onSheetAdded(store);
+}
+*/
+
+function buttons(control: ControlSheetStart) {
+    let btnSubmit = buttonDefs.submit(undefined, true);
+    const navBack = () => control.closeModal();
+    let btnExit = buttonDefs.exit(navBack, false);
+    return { btnSubmit, btnExit };
+}
+
+function PageStartPicks({ control }: { control: ControlSheetStart; }) {
+    // const { sheetConsole } = store;
+    const { onPickedNew, storeSheet, steps } = control;
+    const { btnSubmit, btnExit } = buttons(control);
+    const group0: ToolItem[] = [btnSubmit];
+    let { header: pageHeader, top, right } = headerSheet({ store: storeSheet, toolGroups: [group0], headerGroup: [btnExit] });
+    /*
+    async function onPickedNew(results: ReturnUseBinPicks) {
+        await control.onPicked(results);
+        await control.setSheetAsDraft();
+    }
+    */
+    return <Page header={pageHeader} back={null} top={top} right={right}>
+        <ViewSteps sheetSteps={steps} />
+        <ViewMainPicks subHeader="新开单据" control={control} onPicked={onPickedNew} />
+    </Page>;
+}
+
+function PageStartPend({ control }: { control: ControlSheetStart; }) {
+    const { storeSheet } = control;
+    const { caption/*, sheetConsole*/ } = storeSheet;
+    const subCaption = '批选待处理';
+    const onPend = useCallback(async (results: ReturnUseBinPicks) => {
+        await control.onPickedNew(results);
+        /*
+        let added = await detailNew(store);
+        if (added > 0) {
+            await store.setSheetAsDraft();
+        }
+        */
+    }, []);
+    return <Page header={caption + ' - ' + subCaption}>
+        {/*<ViewSteps sheetSteps={sheetConsole.steps} />*/}
+        <ViewMainPicks subHeader={'批选条件'} control={control} onPicked={onPend} />
+    </Page>;
+}
+
+function PageDirectPend({ control }: { control: ControlSheetStart; }) {
+    const { modal, storeSheet } = control;
+    const { caption/*, sheetConsole*/ } = storeSheet;
+    const subCaption = '批选待处理';
+    /*
+    useEffectOnce(() => {
+        (async function () {
+            await nothingPicked(modal, control);
+            let added = await detailNew(store);
+            if (added > 0) {
+                await control.setSheetAsDraft();
+            }
+            else {
+                await control.discard();
+                modal.close();
+            }
+        })();
+    });
+    */
+    return <Page header={caption + ' - ' + subCaption}>
+        direct pend
+        {/*<ViewSteps sheetSteps={sheetConsole.steps} />*/}
+    </Page>;
+}
+/*
+async function nothingPicked(modal: Modal, control: ControlSheetStart) {
+    const { storeSheet } = control;
+    let { entity } = storeSheet.mainStore;
+    const budsEditing = new BinEditing(storeSheet, entity);
+    // const budEditings = budsEditing.createBudEditings();
+    const formBudsStore = new FormBudsStore(modal, budsEditing);
+
+    let results: ReturnUseBinPicks = {
+        editing: formBudsStore,
+        rearBinPick: undefined,
+        rearResult: [],
+        rearPickResultType: RearPickResultType.scalar,
+    };
+    await storeSheet.onPicked(results);
+}
+*/

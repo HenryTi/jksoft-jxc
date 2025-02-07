@@ -18,51 +18,25 @@ interface Props {
 
 export function ViewMainPicks({ control, subHeader }: Props) {
     // const modal = useModal();
-    const rearPickResultType = RearPickResultType.scalar;
-    const { storeSheet, mainStore: main, binStore, steps/*, sheetConsole*/ } = control;
+    const { storeSheet, mainStore: main, binStore, steps, controlBinPicks, atomCur } = control;
     const { entity: entityBin } = main;
-    const { current: controlBinPicks } = useRef(control.createControlPinPicks(entityBin));
+    // const { current: controlBinPicks } = useRef(control.createControlPinPicks(entityBin));
     const { formBudsStore } = controlBinPicks;
     // const { steps } = sheetConsole;
     // let { current: formBudsStore } = useRef(new FormBudsStore(modal, new BinBudsEditing(storeSheet, main.entity, [])));
     // let formBudsStore: any;
     // let { budsEditing } = formBudsStore;
-    const [cur, setCur] = useState(0);
+    // const [cur, setCur] = useState(0);
+    const cur = useAtomValue(atomCur);
 
     const { binPicks, rearPick } = entityBin;
-    let refRearPickResult = useRef(undefined as PickResult[] | PickResult);
+    // let refRearPickResult = useRef(undefined as PickResult[] | PickResult);
+    /*
     function getNextPick() {
         if (cur < binPicks.length - 1) return binPicks[cur + 1];
         return rearPick;
     }
-
-    function clearTailPicks(curSerial: number) {
-        for (let i = curSerial + 1; i < binPicks.length; i++) {
-            // formBudsStore.clearNameValues(binPicks[i].name);
-        }
-    }
-
-    function afterPicked(curSerial: number) {
-        clearTailPicks(curSerial);
-        control.setChanging();
-        setCur(curSerial + 1);
-        binStore.setReload();
-    }
-
-    async function onNext() {
-        let rearPickResult = refRearPickResult.current;
-        // if (rearPickResult === undefined) return;
-        let rearResult: PickResult[] = Array.isArray(rearPickResult) === false ?
-            [rearPickResult as PickResult] : rearPickResult as PickResult[];
-        let ret: ReturnUseBinPicks = {
-            editing: formBudsStore,
-            rearBinPick: rearPick,           // endmost pick
-            rearResult,
-            rearPickResultType: rearPickResultType,
-        };
-        await control.onPickedNew(ret);
-        steps?.next();
-    }
+    */
     let viewBinPicks: any;
     let viewBinPicksNext: any;
     if (binPicks !== undefined) {
@@ -73,7 +47,7 @@ export function ViewMainPicks({ control, subHeader }: Props) {
             <ViewPickRear />
         </>;
         viewBinPicksNext = <PickRow label={null} >
-            <button className="btn btn-primary my-3" onClick={onNext} disabled={cur < binPicks.length}>
+            <button className="btn btn-primary my-3" onClick={control.onNextMainPicks} disabled={cur < binPicks.length}>
                 <FA name="arrow-right me-2" />下一步
             </button>
         </PickRow>;
@@ -88,6 +62,7 @@ export function ViewMainPicks({ control, subHeader }: Props) {
             if (serial === cur) {
                 const { caption, name } = binPick;
                 const defaultValue = formBudsStore.getValue(name);
+                /*
                 async function onPicked(scalarResult: PickResult) {
                     if (scalarResult === undefined) return;
                     formBudsStore.setNamedValue(binPick.to[0][0].name, scalarResult as any);
@@ -149,29 +124,20 @@ export function ViewMainPicks({ control, subHeader }: Props) {
                             break;
                     }
                 }
+                */
+                async function onPicked(scalarResult: PickResult) {
+                    await control.onPickedInputScalar(binPick, serial, scalarResult, setMessage);
+                }
                 return <ViewLabelRowPicking cn="d-flex align-items-stretch g-0" caption={caption} message={message}>
                     <InputScalar binPick={binPick} onPicked={onPicked} value={defaultValue} />
                 </ViewLabelRowPicking>;
             }
             else if (serial < cur) {
-                async function pick() {
-                    setCur(serial);
-                    clearTailPicks(serial);
-                    binStore.setReload();
-                }
+                async function pick() { control.picked(serial); }
                 return <ViewPicked binPick={binPick} pick={pick} />;
             }
         }
-        async function pick() {
-            if (await controlBinPicks.doBinPick(binPick) !== undefined) {
-                afterPicked(serial);
-            }
-            /*
-            if (await doBinPick(formBudsStore, binPick) !== undefined) {
-                afterPicked(serial);
-            }
-            */
-        }
+        async function pick() { await control.pick(binPick, serial); }
         if (serial < cur) return <ViewPicked binPick={binPick} pick={pick} />;
         if (serial === cur) {
             return <ViewPicking binPick={binPick} pick={pick} message={message} />;
@@ -261,16 +227,10 @@ export function ViewMainPicks({ control, subHeader }: Props) {
                 {vContent}
             </PickRow>;
         }
-        if (serial > cur) return <ViewToPick binPick={rearPick} />;
         async function pick() {
-            // let pickResult; // = await doBinPickRear(binStore, formBudsStore, rearPick, rearPickResultType);
-            // let controlBinPicks: ControlBinPicks = control.createControlPinPicks(entityBin);
-            let pickResult = await controlBinPicks.doBinPickRear(rearPickResultType);
-            if (pickResult !== undefined) {
-                refRearPickResult.current = pickResult;
-                afterPicked(serial + 1);
-            }
+            await control.pickRear(serial);
         }
+        if (serial > cur) return <ViewToPick binPick={rearPick} />;
         if (serial < cur) {
             return <ViewPicked binPick={rearPick} pick={pick} />;
         }

@@ -124,21 +124,20 @@ export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
     }
 
     async onPicked(results: ReturnUseBinPicks) {
-        const { mainStore } = this.controlSheetStart;
+        const { storeSheet, mainStore } = this.controlSheetStart;
         let ret = await mainStore.startFromPickResults(results);
         if (ret === undefined) {
-            return;
             /*
-            if (this.mainId === undefined) {
+            if (storeSheet.mainId === undefined) {
                 // 还没有创建单据
-                if (sheetConsole.steps === undefined) {
+                if (this.steps === undefined) {
                     setTimeout(() => {
                         sheetConsole.close();
                     }, 100);
                 }
             }
-            return; // 已有单据，不需要pick. 或者没有创建新单据
             */
+            return; // 已有单据，不需要pick. 或者没有创建新单据
         }
         this.onSheetAdded();
         return ret;

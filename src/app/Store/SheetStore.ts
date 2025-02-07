@@ -207,7 +207,7 @@ export class StoreSheet extends StoreEntity<EntitySheet> {
     }
 
     async setSheetAsDraft() {
-        this.client.SetSheetPreToDraft(this.mainStore.valRow.id);
+        await this.client.SetSheetPreToDraft(this.mainStore.valRow.id);
         setAtomValue(this.atomLoaded, true);
     }
 
