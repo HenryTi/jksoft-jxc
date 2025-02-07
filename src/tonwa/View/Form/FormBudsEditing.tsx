@@ -1,11 +1,8 @@
 import { ChangeEvent, useState, JSX } from "react";
 import { useForm } from "react-hook-form";
-// import { BudsEditing, FormBudsStore } from "../../Store/BudsEditing";
 import { ValueSetType } from "../../Biz";
 import { FormBudsStore } from "../../Control/ControlBuds/BinEditing";
 import { FormRowsView } from "./FormRowsView";
-// import { FormRowsView } from "app/coms";
-// import { FormBudsStore } from "app/Store";
 
 interface Props {
     formBudsStore: FormBudsStore;

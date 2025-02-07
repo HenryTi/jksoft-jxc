@@ -1,8 +1,8 @@
-import { ViewBud, budContent } from "app/hooks";
 import { theme } from "tonwa-com";
 import { StoreBase, StoreEntity } from "../../Store";
 import { EntityAtom } from "../../Biz";
 import { ViewForkId } from "./ViewForkId";
+import { budContent, ViewBud } from "../Bud";
 
 export function ViewForkAtomBold({ id, store }: { id: number; store: StoreEntity; }) {
     let bizAtom = store.getCacheAtom(id)?.atom;

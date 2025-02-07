@@ -1,5 +1,5 @@
 import { ViewAtom } from "app/hooks";
-import { Pencil } from "app/hooks/tool";
+import { Pencil } from "tonwa-app";
 
 export function ListHeader({ caption, onEdit }: { caption: string; onEdit: () => Promise<void>; }) {
     const cnHeader = ' tonwa-bg-gray-1 small d-flex align-items-end';

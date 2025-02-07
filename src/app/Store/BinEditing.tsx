@@ -681,7 +681,7 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
         super(sheetStore.biz, buds);
         this.sheetStore = sheetStore;
         this.entityBin = bin;
-        this.setBudValuesTool(new BinRowValuesTool(/*this, */bin, buds));
+        this.setBudValuesTool(new BinRowValuesTool(bin, buds));
         const { userProxy, mainProxy } = sheetStore;
         this.setNamedValues(undefined, {
             'user': userProxy,

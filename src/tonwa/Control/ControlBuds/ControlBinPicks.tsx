@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { BinPick, BinRow, BizPhraseType, EntityBin, PickAtom, PickPend, PickQuery } from "../../Biz";
 import { AtomData, BinStore, StoreSheet } from "../../Store";
 import { PageIDSelect } from "../../TPage";
@@ -6,9 +7,11 @@ import { ControlBiz } from "../ControlBiz";
 import { ControlBuds } from "./ControlBuds";
 import { BinBudsEditing, FormBudsStore } from "./BinEditing";
 import { pickFromQuery, pickFromQueryScalar } from "../../TPage/Query";
-import { pickFromPend } from "../../TPage/Sheet/pickFromPend";
+// import { pickFromPend } from "../../TPage/Sheet/pickFromPend";
+import { ValRow } from "../../Store/ValRow";
+import { PickPendStore } from "../../Store/PickPendStore";
 
-export class ControlBinPicks extends ControlBuds {
+export abstract class ControlBinPicks extends ControlBuds {
     protected readonly binPicks: BinPick[];
     protected readonly rearPick: BinPick;
     protected readonly storeSheet: StoreSheet;
@@ -129,8 +132,24 @@ export class ControlBinPicks extends ControlBuds {
         return ret;
     }
 
-    private async pickFromPend(pick: PickPend) {
+    private async pickFromPend(binPick: PickPend) {
+        let { bin } = binPick;
+        // const { modal } = this.formBudsStore;
+        let storePend = this.storeBin.getPickPendStore(binPick);
+        await storePend.searchPend();
+        let inputed = await this.openModal<ValRow[]>(this.PagePend(storePend));
+        if (inputed === undefined) return;
+        await this.storeBin.allPendsToValRows();
+        if (bin.binDivRoot.inputs !== undefined) return;
+        let iArr: (ValRow | [number, ValRow[]])[] = [];
+        // 随后的pickFromPend，不再显示步骤
+        // binStore.sheetStore.sheetConsole.steps = undefined;
+        return iArr as any;
+        /*
         let ret = await pickFromPend(this.storeBin, this.formBudsStore, pick);
         return ret;
+        */
     }
+
+    protected abstract PagePend(storePend: PickPendStore): JSX.Element;
 }

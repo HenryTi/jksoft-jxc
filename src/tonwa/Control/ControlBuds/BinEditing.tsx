@@ -25,30 +25,11 @@ import {
 import { StoreBase, StoreEntity, BinStore, StoreSheet, BudCheckValue, PickResult, RearPickResultType } from "../../Store";
 import { ValDivBase } from "../../Store/ValDiv";
 import { ValRow } from "../../Store/ValRow";
-// import { BudEditing, Calc, CalcResult, EditBudInline, Formulas, ValueSpace, ViewBud, ViewBudUIType } from "app/hooks";
-// import { FormContext, FormRow } from "app/coms";
 import { Modal } from "../../UI";
 import { getDays } from "../../tools";
 import { BudEditing, EditBudInline, LabelBox, ViewBud, ViewBudUIType } from "../../View";
 import { Calc, CalcResult, Formulas, ValueSpace } from "../../Calc";
 import { FormContext, FormRow } from "../../View/Form";
-// import { LabelBox } from "app/hooks/tool";
-
-// import { pickFromAtom } from "app/hooks/Sheet/binPick/pickFromAtom";
-// import { pickFromSpec } from "app/hooks/Sheet/binPick/pickFromSpec";
-// import { pickFromQuery, pickFromQueryScalar } from "app/hooks/Query";
-// import { pickFromOptions } from "app/hooks/Sheet/binPick/pickFromOptions";
-// import { RearPickResultType, PickResult } from "./PickResult";
-// import { pickFromPend } from "app/hooks/Sheet/binPick/pickFromPend";
-/*
-import { BizPhraseType } from "uqs/UqDefault";
-import { pickFromAtom } from "../binPick/pickFromAtom";
-import { pickFromSpec } from "../binPick/pickFromSpec";
-import { pickFromQuery, pickFromQueryScalar } from "app/hooks/Query";
-import { pickFromPend } from "../binPick/pickFromPend";
-import { pickFromOptions } from "../binPick/pickFromOptions";
-*/
-// import { SheetEditing } from "../binPick";
 
 export class FormBudsStore extends StoreBase implements FormContext {
     readonly budsEditing: BudsEditing;
@@ -674,7 +655,7 @@ export class BinBudsEditing extends BudsEditing<ValRow> {
         super(sheetStore.biz, buds);
         this.sheetStore = sheetStore;
         this.entityBin = bin;
-        this.setBudValuesTool(new BinRowValuesTool(/*this, */bin, buds));
+        this.setBudValuesTool(new BinRowValuesTool(bin, buds));
         const { userProxy, mainProxy } = sheetStore;
         this.setNamedValues(undefined, {
             'user': userProxy,

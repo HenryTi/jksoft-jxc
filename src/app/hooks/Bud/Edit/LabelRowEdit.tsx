@@ -1,6 +1,6 @@
 import { LabelRow } from "tonwa-com";
+import { Pencil } from "tonwa-app";
 import { EditProps } from "./model";
-import { Pencil } from "app/hooks/tool";
 
 export function LabelRowEdit(props: EditProps) {
     let { label, flag, children, onEditClick, readOnly, popup, noBorder } = props;

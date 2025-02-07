@@ -9,8 +9,6 @@ import {
 } from "../../View";
 import { AtomData, StoreBase, StoreEntity } from "../../Store";
 import { contentFromDays } from "../../tools";
-// import { ViewBudFork, ViewForkAtom, ViewForkNoAtom } from "app/hooks";
-// import { ViewForkId } from "app/coms/ViewForkId";
 
 export enum ViewBudUIType {
     notInDiv = 0,

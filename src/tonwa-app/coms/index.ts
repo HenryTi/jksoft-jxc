@@ -9,3 +9,4 @@ export * from './IDView';
 export * from './LinkModal';
 export * from './ViewMessage';
 export * from './PageConfirm';
+export * from "./Pencil";

@@ -1,17 +1,11 @@
-import { atom } from "jotai";
-import { ValRow } from "../../Store/ValRow";
-import { BinRow, BizPhraseType, EntityBin } from "../../Biz";
-import { ControlDetailEdit, ControlEntity } from "../../Control";
-import { PickResult, RearPickResultType } from "../../Store";
-import { BinEditing, DivEditing } from "../../Control/ControlBuds/BinEditing";
-import { TControlSheetEdit } from "./TControlSheetEdit";
-import { TControlSheet } from "./TControlSheet";
+import { BinRow, EntityBin } from "../../Biz";
+import { ControlDetailEdit } from "../../Control";
+import { BinEditing } from "../../Control/ControlBuds/BinEditing";
 import { PageEditDivRoot } from "./PageEditDivRoot";
-import { getAtomValue, setAtomValue } from "../../tools";
-import { ValDivBase, ValDivRoot } from "../../Store/ValDiv";
-import { ControlBinPicks } from "../../Control/ControlBuds";
+import { ValDivBase } from "../../Store/ValDiv";
 import { JSX } from "react";
 import { PageInputRow } from "./PageInputRow";
+import { TControlBinPicks } from "./TControlBinPicks";
 
 /*
 export class ControlDetail<C extends ControlSheet = any> extends ControlEntity<EntityBin> {
@@ -34,7 +28,7 @@ export class TControlDetailEdit extends ControlDetailEdit {
     }
     */
     override createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
-        return new ControlBinPicks(this.controlBiz, this.controlSheet.storeSheet, entityBin, initBinRow);
+        return new TControlBinPicks(this.controlBiz, this.controlSheet.storeSheet, entityBin, initBinRow);
     }
 
     protected override PageInputRow(binEditing: BinEditing, valDiv: ValDivBase): JSX.Element {

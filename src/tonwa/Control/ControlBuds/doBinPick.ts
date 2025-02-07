@@ -1,11 +1,6 @@
 import { BinPick, PickAtom, PickOptions, PickPend, PickQuery, PickSpec } from "../../Biz";
 import { BizPhraseType } from "uqs/UqDefault";
-//import { pickFromAtom } from "../hooks/Sheet/binPick/pickFromAtom";
-//import { pickFromSpec } from "../hooks/Sheet/binPick/pickFromSpec";
-//import { pickFromQuery, pickFromQueryScalar } from "app/hooks/Query";
-//import { pickFromOptions } from "../hooks/Sheet/binPick/pickFromOptions";
 import { BinStore, RearPickResultType, PickResult } from "../../Store";
-//import { pickFromPend } from "../hooks/Sheet/binPick/pickFromPend";
 import { FormBudsStore } from "./BinEditing";
 
 export async function doBinPick(editing: FormBudsStore, binPick: BinPick) {

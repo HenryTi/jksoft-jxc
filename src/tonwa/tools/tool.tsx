@@ -5,7 +5,6 @@ import { FA, theme } from "tonwa-com";
 import React from "react";
 import { BizBud, BizPhraseType, Entity, EntityFork, EntityID } from "../Biz";
 import { BudValueColl, StoreEntity } from "../Store";
-// import { BudsColl, BudValueColl, EntityStore } from "app/tool";
 
 // atom field owns buds
 export function OwnedBuds({ values, noLabel, store }: { values: [number, BudValue][]; noLabel?: boolean; store: StoreEntity; }) {

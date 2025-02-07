@@ -2,7 +2,7 @@ import { useState, JSX } from "react";
 import { FA, LabelRow, LabelRowPropsBase } from "tonwa-com";
 import { UqAppBase, useUqAppBase } from "../UqAppBase";
 import { RegisterOptions } from "react-hook-form";
-import { Pencil } from "app/hooks/tool";
+import { Pencil } from "./Pencil";
 
 export type OnValueChanged = (value: string | number, checked?: boolean) => Promise<void>;
 

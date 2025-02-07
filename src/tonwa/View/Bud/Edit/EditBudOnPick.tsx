@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { BinPick, BizPhraseType, BudID } from "../../../Biz";
 import { EditBudTemplateProps } from "./model";
-/*
-import { ViewForkId } from "app/coms/ViewForkId";
-import { BinBudsEditing, doBinPick } from "app/Store";
-import { ViewAtomId } from "../../BizAtom";
-*/
 
 export function EditBudOnPick(props: EditBudTemplateProps & { pick: BinPick; }) {
     const { id, pick, readOnly, labelSize, flag, value: initValue, formBudsStore, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;

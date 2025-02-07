@@ -1,10 +1,9 @@
-import { useUqApp } from "app/UqApp";
 import { useCallback, useState, JSX } from "react";
 import { UseFormRegisterReturn, FieldError, UseFormClearErrors, UseFormSetValue } from "react-hook-form";
 import { useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
+import { useUqApp } from "app/UqApp";
 import { EntityAtom } from "../../Biz";
-// import { pickBudID } from "app/hooks/BizPick";
 import { BudEditing } from "../../View";
 import { Band, FormAtom, FormContext } from "./FormRowsView";
 import { ViewForkAtom } from "./ViewForkOfStore";

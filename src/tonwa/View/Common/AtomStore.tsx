@@ -5,7 +5,6 @@ import { from62, to62 } from "tonwa-com";
 import { useUqApp } from "app/UqApp";
 import { BizBud, EntityAtom, EntityID, EnumBudType } from "../../Biz";
 import { StoreEntity } from "../../Store";
-// import { QueryMore, readBuds } from "app/tool";
 import { QueryMore } from "./PageQueryMore";
 import { PageBizAtomSelectType } from "./PageBizAtomSelectType";
 import { readBuds } from "./readBuds";

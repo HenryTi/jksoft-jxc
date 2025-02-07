@@ -1,11 +1,10 @@
-import { useUqApp } from "app/UqApp";
 import { useState } from "react";
-// import { pickBudID } from "app/hooks/BizPick/pickBudID";
 import { useModal } from "tonwa-app";
 import { FA } from "tonwa-com";
+import { useUqApp } from "app/UqApp";
 import { BudID } from "../../../Biz";
-// import { ViewForkAtom } from "app/hooks/View";
 import { EditBudTemplateProps } from "./model";
+import { ViewForkAtom } from "../../../View/Form/ViewForkOfStore";
 
 export function EditBudAtom(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
@@ -44,7 +43,7 @@ export function EditBudAtom(props: EditBudTemplateProps) {
     }
     let vContent: any;
     if (entityID !== undefined) {
-        // vContent = <ViewForkAtom id={value} store={store} />;
+        vContent = <ViewForkAtom id={value} store={store} />;
     }
     else {
         vContent = <span className="text-danger">

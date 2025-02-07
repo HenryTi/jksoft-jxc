@@ -1,13 +1,16 @@
 import { SheetSteps } from "../../Store";
-import { ControlSheetStart } from "../../Control";
+import { ControlSheetDash, ControlSheetStart } from "../../Control";
 import { ReturnUseBinPicks } from "../../Store/PickResult";
 import { JSX, useCallback } from "react";
 import { Page, PageSpinner } from "tonwa-app";
 import { useEffectOnce } from "tonwa-com";
 import { buttonDefs, headerSheet } from "./HeaderSheet";
-import { ToolItem } from "tonwa/View";
+import { ToolItem } from "../../View";
 import { ViewMainPicks } from "./ViewMainPicks";
 import { ViewSteps } from "./ViewSteps";
+import { TControlBinPicks } from "./TControlBinPicks";
+import { BinRow, EntityBin } from "../../Biz";
+import { ControlBinPicks } from "../../Control/ControlBuds";
 
 enum EnumSheetNewContent {
     sheet, mainPend, directPend, direct, startPend, startPicks
@@ -38,6 +41,10 @@ export class TControlSheetStart extends ControlSheetStart {
     }
     protected override PageStartPicks(): JSX.Element {
         return <PageStartPicks control={this} />;
+    }
+
+    protected createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow): ControlBinPicks {
+        return new TControlBinPicks(this.controlBiz, this.storeSheet, entityBin, initBinRow);
     }
 
     /*

@@ -27,9 +27,7 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
         await this.detailNewLoop();
     }
 
-    createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
-        return new ControlBinPicks(this.controlBiz, this.controlSheet.storeSheet, entityBin, initBinRow);
-    }
+    abstract createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow): ControlBinPicks;
 
     private async detailNewLoop(/*sheetStore*/): Promise<void> {
         // const { modal, binStore } = sheetStore;

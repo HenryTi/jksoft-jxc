@@ -40,7 +40,10 @@ export abstract class ControlSheetStart extends ControlSheet {
         this.controlSheetDash = controlSheetDash;
         const { mainStore, isPend, isMainPend } = this.storeSheet;
         const { entity } = mainStore;
-        this.controlBinPicks = this.createControlPinPicks(entity);
+        const { binPicks, rearPick } = entity;
+        if (binPicks !== undefined) {
+            this.controlBinPicks = this.createControlPinPicks(entity);
+        }
         /*
         let enumSheetNewContent: EnumSheetNewContent;
         if (isMainPend === true) {
@@ -104,11 +107,14 @@ export abstract class ControlSheetStart extends ControlSheet {
         return get(this.binStore.atomSubmitState);
     }, null);
 
-    createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
-        const { binPicks, rearPick } = entityBin;
-        if (binPicks === undefined) return null;
+    protected abstract createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow): ControlBinPicks;
+    /*
+    {
+        // const { binPicks, rearPick } = entityBin;
+        // if (binPicks === undefined) return null;
         return new ControlBinPicks(this.controlBiz, this.storeSheet, entityBin, initBinRow);
     }
+    */
 
     setChanging() {
         setAtomValue(this.atomChanging, getAtomValue(this.atomChanging) + 1);

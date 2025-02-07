@@ -1,12 +1,9 @@
 import { useRef, useState, JSX } from "react";
-import {
-    UseFormRegisterReturn, FieldError, UseFormClearErrors, UseFormSetValue
-} from "react-hook-form";
+import { UseFormRegisterReturn, FieldError, UseFormClearErrors, UseFormSetValue } from "react-hook-form";
 import { Page, useModal } from "tonwa-app";
 import { FA, LabelRow, theme } from "tonwa-com";
 import { Band, FormContext, FormFork } from "./FormRowsView";
 import { BizBud, EntityAtom, EntityFork } from "../../Biz";
-// import { budContent, FormBudsEditing, ViewAtom, ViewForkAtomBold, ViewForkAtomTitles } from "app/hooks";
 import { StoreEntity } from "../../Store";
 import { FormBudsStore, ValuesBudsEditing } from "../../Control/ControlBuds/BinEditing";
 import { budContent } from "../Bud";

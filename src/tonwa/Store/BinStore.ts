@@ -32,7 +32,7 @@ export class BinStore extends StoreEntity<EntityBin> {
     readonly valDivsRoot: ValDivsRoot;
     readonly atomSubmitState: WritableAtom<SubmitState, any, any>;
     // readonly budEditings: BudEditing[];
-    readonly pickPendStores: { [id: number]: PickPendStore; } = {};
+    readonly pickPendStores: { [name: string]: PickPendStore; } = {}; // Pick id因为可能跟Prop重名，所以没有生成
     queryRowColl: { [id: number]: boolean } = {}
 
     constructor(storeSheet: StoreSheet, entityBin: EntityBin, operate: EnumDetailOperate) {
@@ -476,10 +476,10 @@ export class BinStore extends StoreEntity<EntityBin> {
     }
 
     getPickPendStore(pickPend: PickPend/*, valueSpace: ValueSpace*/) {
-        let { id } = pickPend;
-        let pps = this.pickPendStores[id];
+        let { name } = pickPend;
+        let pps = this.pickPendStores[name];
         if (pps === undefined) {
-            this.pickPendStores[id] = pps = new PickPendStore(this, pickPend/*, valueSpace*/);
+            this.pickPendStores[name] = pps = new PickPendStore(this, pickPend/*, valueSpace*/);
         }
         return pps;
     }

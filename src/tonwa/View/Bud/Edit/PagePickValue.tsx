@@ -1,8 +1,6 @@
 import { JSX } from "react";
 import { useForm, RegisterOptions } from "react-hook-form";
 import { Page, PickProps, UqAppBase, uqAppModal, useModal } from "tonwa-app";
-import { theme } from "tonwa-com";
-// import { FormRow, FormRowsView } from "app/coms";
 
 export async function pickValue(uqApp: UqAppBase, pickProps: PickProps, options: RegisterOptions) {
     const { label, value, type } = pickProps;

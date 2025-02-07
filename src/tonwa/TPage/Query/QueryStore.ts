@@ -1,7 +1,6 @@
 import { QueryRow, QueryRowCol } from "../../tools";
 import { BizBud, EntityQuery } from "../../Biz";
 import { StoreEntity } from "../../Store";
-// import { EntityStore } from "app/tool";
 
 export class QueryStore extends StoreEntity<EntityQuery> {
     async query(param: any) {

@@ -1,10 +1,9 @@
+import { useState } from "react";
 import { RegisterOptions } from "react-hook-form";
 import { LabelRowEdit, PickProps, UqAppBase } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
-import { useState } from "react";
 import { pickValue } from "./PagePickValue";
 import { ViewBudProps } from "./model";
-// import { PageMoreCacheData } from "app/coms";
 
 interface OpProps {
     saveBud: (newValue: string | number) => Promise<void>;

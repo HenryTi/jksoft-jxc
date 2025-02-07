@@ -9,7 +9,6 @@ import { EditBudProps, EditBudTemplateProps } from "./model";
 import { LabelRowEdit } from "./LabelRowEdit";
 import { InlineEdit } from "./InlineEdit";
 import { EditBudOnPick } from "./EditBudOnPick";
-// import { FormContext } from "app/coms";
 
 type FormContext = any;
 

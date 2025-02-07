@@ -4,7 +4,7 @@ import { theme } from "tonwa-com";
 import { Page } from "../page";
 import { Band, BandContainerContext, BandContainerProps, BandContentType, BandFieldErrors, BandMemos, BandTemplateProps, useBand, useBandContainer, VBandContainerContext } from "tonwa-com";
 import { useModal } from "../../UqAppBase";
-import { Pencil } from "app/hooks/tool";
+import { Pencil } from "../Pencil";
 // import { Link, Route, Routes, useNavigate } from "react-router-dom";
 
 interface DetailProps extends BandContainerProps {

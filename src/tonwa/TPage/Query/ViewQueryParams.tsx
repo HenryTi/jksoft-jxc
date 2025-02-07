@@ -1,15 +1,10 @@
+import { useRef } from "react";
 import { Page, useModal } from "tonwa-app";
 import { FA, theme } from "tonwa-com";
-// import { Band, FormRow, FormRowsView } from "app/coms";
-// import { BudEditing, BudsEditing, EditBudInline, FormBudsStore, LabelRowEdit, ValuesBudsEditing, ViewBud } from "app/hooks";
 import { useForm } from "react-hook-form";
 import { BinPick, BizBud, EntityQuery, EnumBudType, PickParam, PickQuery, ValueSetType } from "../../Biz";
-// import { LabelBox, RowColsSm } from "../tool";
-// import { InlineEdit } from "../Bud/Edit/InlineEdit";
-import { useRef } from "react";
 import { FormBudsStore, ValuesBudsEditing } from "../../Control/ControlBuds/BinEditing";
 import { LabelBox, RowColsSm, ViewBud } from "../../View";
-// import { FormBudsStore, ValuesBudsEditing } from "app/Store";
 
 /*
 interface Props {

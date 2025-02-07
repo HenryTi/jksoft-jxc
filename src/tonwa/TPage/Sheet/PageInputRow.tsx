@@ -1,6 +1,5 @@
 import { Page, useModal } from "tonwa-app";
 import { ButtonAsync, FA, theme } from "tonwa-com";
-// import { Band } from "app/coms";
 import { RowCols } from "../../View";
 import { ViewAtomTitlesOfStore, ViewForkAtomBold } from "../../View/Form/ViewForkOfStore";
 import { ViewShowBuds } from "../../tools";
