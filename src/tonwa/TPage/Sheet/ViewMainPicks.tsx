@@ -1,11 +1,10 @@
-import { useRef, useState, JSX } from "react";
+import { useState, JSX } from "react";
 import { FA, Sep } from "tonwa-com";
 import { useAtomValue } from "jotai";
-import { PickResult, RearPickResultType, ReturnUseBinPicks } from "../../Store/PickResult";
-import { BinPick, BizPhraseType, EnumDetailOperate, PickOptions, PickPend } from "../../Biz";
+import { PickResult, ReturnUseBinPicks } from "../../Store/PickResult";
+import { BinPick, BizPhraseType, PickOptions } from "../../Biz";
 import { RowCols, ViewBud } from "../../View";
 import { ViewAtomId } from "../../View/Form/ViewAtomId";
-import { getAtomValue } from "../../tools";
 import { PickRow } from "./PickRow";
 import { InputScalar } from "./InputScalar";
 import { ControlSheetStart } from "../../Control";
@@ -17,26 +16,13 @@ interface Props {
 }
 
 export function ViewMainPicks({ control, subHeader }: Props) {
-    // const modal = useModal();
-    const { storeSheet, mainStore: main, binStore, steps, controlBinPicks, atomCur } = control;
-    const { entity: entityBin } = main;
-    // const { current: controlBinPicks } = useRef(control.createControlPinPicks(entityBin));
-    const { formBudsStore } = controlBinPicks;
-    // const { steps } = sheetConsole;
-    // let { current: formBudsStore } = useRef(new FormBudsStore(modal, new BinBudsEditing(storeSheet, main.entity, [])));
-    // let formBudsStore: any;
-    // let { budsEditing } = formBudsStore;
-    // const [cur, setCur] = useState(0);
+    const { storeSheet, mainStore: main, binStore, steps, controlBinPicks, atomCur, atomChanging } = control;
     const cur = useAtomValue(atomCur);
-
+    if (controlBinPicks === undefined) return null;
+    const { entity: entityBin } = main;
+    const { formBudsStore } = controlBinPicks;
     const { binPicks, rearPick } = entityBin;
-    // let refRearPickResult = useRef(undefined as PickResult[] | PickResult);
-    /*
-    function getNextPick() {
-        if (cur < binPicks.length - 1) return binPicks[cur + 1];
-        return rearPick;
-    }
-    */
+
     let viewBinPicks: any;
     let viewBinPicksNext: any;
     if (binPicks !== undefined) {
@@ -57,74 +43,11 @@ export function ViewMainPicks({ control, subHeader }: Props) {
     </div>;
     function ViewPick({ binPick, serial }: { binPick: BinPick; serial: number; }) {
         const [message, setMessage] = useState(undefined as string);
-        useAtomValue(control.atomChanging);
+        useAtomValue(atomChanging);
         if (binPick.fromPhraseType === BizPhraseType.any) {
             if (serial === cur) {
                 const { caption, name } = binPick;
                 const defaultValue = formBudsStore.getValue(name);
-                /*
-                async function onPicked(scalarResult: PickResult) {
-                    if (scalarResult === undefined) return;
-                    formBudsStore.setNamedValue(binPick.to[0][0].name, scalarResult as any);
-                    formBudsStore.setNamedValue(binPick.name, scalarResult as any);
-                    let nextPick = getNextPick();
-                    afterPicked(serial);
-                    if (nextPick.fromPhraseType === BizPhraseType.pend) {
-                        await autoPickPend(nextPick as PickPend);
-                    }
-                }
-                async function autoPickPend(nextPick: PickPend) {
-                    let pickPend = nextPick as PickPend;
-                    const { binStore, mainStore } = storeSheet;
-                    const { atomPendRows, entity, operate } = binStore;
-                    const { divLevels } = entity;
-                    let pendStore = binStore.getPickPendStore(nextPick as PickPend);
-                    const { paramsEditing } = pendStore;
-                    for (let bud of mainStore.entity.buds) {
-                        let { name } = bud;
-                        let editingValue = formBudsStore.getValue(name);
-                        paramsEditing.setNamedValues(name, editingValue);
-                    }
-                    await pendStore.searchPend();
-                    let pendRows = getAtomValue(atomPendRows);
-                    if (pendRows.length === 0) {
-                        setMessage('无待处理');
-                        return;
-                    }
-                    let pendRow = pendRows[0];
-                    let { to: toArr } = pickPend;
-                    for (let [bud, col] of toArr) {
-                        let colVal: any;
-                        for (let midValue of pendRow.mid) {
-                            if (midValue.bud.name === col) {
-                                colVal = midValue.value; // pendRow.mid[]
-                            }
-                        }
-                        formBudsStore.setNamedValue(bud.name, colVal);
-                    }
-                    afterPicked(serial + 1);
-                    // 直接写入单据明细
-                    switch (operate) {
-                        default:
-                        case EnumDetailOperate.default:
-                            if (divLevels <= 1) {
-                                await binStore.addAllPendRowsDirect();
-                            }
-                            else {
-                                binStore.addAllPendRowsToSelect();
-                            }
-                            break;
-                        case EnumDetailOperate.direct:
-                            await binStore.addAllPendRowsDirect();
-                            break;
-                        case EnumDetailOperate.pend:
-                            binStore.addAllPendRowsToSelect();
-                            break;
-                        case EnumDetailOperate.scan:
-                            break;
-                    }
-                }
-                */
                 async function onPicked(scalarResult: PickResult) {
                     await control.onPickedInputScalar(binPick, serial, scalarResult, setMessage);
                 }
@@ -153,25 +76,15 @@ export function ViewMainPicks({ control, subHeader }: Props) {
     }
     function ViewPicked({ binPick, pick }: { binPick: BinPick; pick: () => Promise<void>; }) {
         let val = formBudsStore.getValue(binPick.name);
-        let vVal: any;
+        let vVal: any = val;
         if (val === undefined) {
             vVal = <span className="text-secondary">-</span>;
         }
-        else {
-            switch (typeof val) {
-                case 'object':
-                    vVal = <ViewAtomId id={(val as any).id} />;
-                    break;
-                default:
-                    if (binPick.fromPhraseType === BizPhraseType.options) {
-                        let item = (binPick as PickOptions).from.items.find(v => v.id === val);
-                        vVal = item.caption ?? item.name;
-                    }
-                    else {
-                        vVal = val;
-                    }
-                    break;
-            }
+        else if (binPick.fromPhraseType === BizPhraseType.options) {
+            vVal = (binPick as PickOptions).itemCaptionFromId(val);
+        }
+        else if (typeof val === 'object') {
+            vVal = <ViewAtomId id={(val as any).id} />;
         }
         return <PickRow label={binPick.caption} cnAngle="text-success" iconPrefix="check-circle-o">
             <div className="d-flex py-3 cursor-pointer" onClick={pick}>
@@ -217,7 +130,8 @@ export function ViewMainPicks({ control, subHeader }: Props) {
                     vContent = <div className="py-2">
                         <RowCols>
                             {to.map(([bud]) => {
-                                return <ViewBud key={bud.id} bud={bud} value={formBudsStore.getValue(bud.name)} />;
+                                let v = formBudsStore.getValue(bud.name);
+                                return <ViewBud key={bud.id} bud={bud} value={v} />;
                             })}
                         </RowCols>
                     </div>
@@ -227,14 +141,14 @@ export function ViewMainPicks({ control, subHeader }: Props) {
                 {vContent}
             </PickRow>;
         }
-        async function pick() {
+        async function pickRear() {
             await control.pickRear(serial);
         }
         if (serial > cur) return <ViewToPick binPick={rearPick} />;
         if (serial < cur) {
-            return <ViewPicked binPick={rearPick} pick={pick} />;
+            return <ViewPicked binPick={rearPick} pick={pickRear} />;
         }
-        return <ViewPicking binPick={rearPick} pick={pick} />;
+        return <ViewPicking binPick={rearPick} pick={pickRear} />;
     }
     return <>
         <div className="border rounded-3 mt-3">

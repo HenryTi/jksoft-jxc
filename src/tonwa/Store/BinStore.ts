@@ -6,6 +6,7 @@ import { ValDiv, ValDivBase, ValDivRoot, ValDivs, ValDivsBase, ValDivsRoot } fro
 import { PickPendStore } from "./PickPendStore";
 import { PendRow, StoreSheet } from "./StoreSheet";
 import { StoreEntity } from "./Store";
+import { DivEditing } from "../Control/ControlBuds/BinEditing";
 // import { DivEditing } from "./BinEditing";
 
 enum PendLoadState {
@@ -555,8 +556,6 @@ export class BinStore extends StoreEntity<EntityBin> {
         let parent: PendToValDiv;
         let ret: PendToValDiv;
         for (; ;) {
-            break;
-            /*
             let divEditing = new DivEditing(this, valDiv);
             if (rearPick !== undefined) {
                 divEditing.setNamedValues(rearPick.name, pendResult);
@@ -585,7 +584,6 @@ export class BinStore extends StoreEntity<EntityBin> {
             valDiv.addValDiv(valDivNew, true);
             valDiv = valDivNew;
             parent = ret;
-            */
         }
         for (; ret !== undefined;) {
             let p = ret.parent;

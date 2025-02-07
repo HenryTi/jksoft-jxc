@@ -1,10 +1,10 @@
-import { EnumBudType, PickPend } from "../Biz";
+import { BinBudsEditing } from "../Control/ControlBuds/BinEditing";
+import { EnumBudType, PickPend, ValueSetType } from "../Biz";
 import { contentFromDays } from "../tools";
 // import {EnumBudType, PickPend, ValueSetType} from 
 import { BinStore } from "./BinStore";
 // import { BinBudsEditing } from "./BinEditing";
 
-type BinBudsEditing = any;
 export class PickPendStore {
     readonly binStore: BinStore;
     readonly pickPend: PickPend;
@@ -24,7 +24,6 @@ export class PickPendStore {
         const { sheetStore, entity: entityBin } = this.binStore;
         const { pend: entityPend } = entityBin;
         let { params } = entityPend;
-        /*
         let ret = new BinBudsEditing(sheetStore, entityBin, params);
         for (let bud of params) {
             let pickParam = pickParams.find(v => v.name === bud.name);
@@ -33,7 +32,6 @@ export class PickPendStore {
             }
         }
         return ret;
-        */
     }
 
     async searchPend() {

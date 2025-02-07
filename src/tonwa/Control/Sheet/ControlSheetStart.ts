@@ -11,9 +11,11 @@ import { ControlSheetDash } from "./ControlSheetDash";
 import { JSX } from "react";
 import { BinEditing, FormBudsStore } from "../ControlBuds/BinEditing";
 
+/*
 enum EnumSheetNewContent {
     sheet, mainPend, directPend, direct, startPend, startPicks
 }
+*/
 const stepPick = '录入条件';
 const stepPend = '批选待处理';
 const stepSheet = '录入单据';
@@ -25,10 +27,12 @@ export abstract class ControlSheetStart extends ControlSheet {
     protected readonly controlSheetDash: ControlSheetDash;
     readonly atomChanging = atom(1);
     readonly atomCur = atom(0);         // pick main 的操作顺序
-    readonly steps: SheetSteps;
     readonly controlBinPicks: ControlBinPicks;
     readonly rearPickResultType = RearPickResultType.scalar;
     refRearPickResult: PickResult[] | PickResult;
+    steps: SheetSteps;
+    sheetId: number;
+    directStartDetailNew: boolean = false;
 
     constructor(controlSheetDash: ControlSheetDash) {
         const { controlBiz: controlBiz, entity: entitySheet } = controlSheetDash;
@@ -37,6 +41,7 @@ export abstract class ControlSheetStart extends ControlSheet {
         const { mainStore, isPend, isMainPend } = this.storeSheet;
         const { entity } = mainStore;
         this.controlBinPicks = this.createControlPinPicks(entity);
+        /*
         let enumSheetNewContent: EnumSheetNewContent;
         if (isMainPend === true) {
             enumSheetNewContent = EnumSheetNewContent.mainPend; // return <PageMainPend store={store} />;
@@ -69,9 +74,11 @@ export abstract class ControlSheetStart extends ControlSheet {
                 // return <PageSheetDirect store={store} />;
             }
         }
+        */
     }
 
     // atomLoaded = atom(false);
+    /*
     atomContent = atom<EnumSheetNewContent>(get => {
         // if (get(this.atomLoaded) === true) return EnumSheetNewContent.sheet;
         const { isPend } = this.storeSheet;
@@ -90,6 +97,7 @@ export abstract class ControlSheetStart extends ControlSheet {
             return EnumSheetNewContent.directPend;
         }
     });
+    */
 
     atomSubmitState = atom((get) => {
         //if (this.binStore === undefined) return SubmitState.enable;
@@ -97,6 +105,8 @@ export abstract class ControlSheetStart extends ControlSheet {
     }, null);
 
     createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
+        const { binPicks, rearPick } = entityBin;
+        if (binPicks === undefined) return null;
         return new ControlBinPicks(this.controlBiz, this.storeSheet, entityBin, initBinRow);
     }
 
@@ -120,45 +130,51 @@ export abstract class ControlSheetStart extends ControlSheet {
         this.storeSheet.setSheetAsDraft();
     }
 
-    async start(): Promise<number> {
-        let sheetId: number;
-        const { /*atomLoaded, */storeSheet: store } = this;
+    async start(): Promise<void> {
+        // let sheetId: number;
+        const { storeSheet: store } = this;
         const { mainStore, isPend, isMainPend } = store;
         const { entity } = mainStore;
         if (isMainPend === true) {
-            sheetId = await this.openModal(this.PageMainPend());
-            return sheetId;
+            this.sheetId = await this.openModalAsync(this.PageMainPend(), this.startMainPend());
+            return;
         }
         const { binPicks, rearPick } = entity;
         if (rearPick === undefined && (binPicks === undefined || binPicks.length === 0)) {
             if (isPend === true) {
-                // sheetConsole.steps = sheetSteps([stepPend]);
-                sheetId = await this.openModalAsync(this.PageDirectPend(), this.startDirectPend());
-                return sheetId;
+                this.steps = sheetSteps([stepPend]);
+                this.sheetId = await this.startDirectPend();
+                this.directStartDetailNew = true;
+                // let sheetId = await this.openModalAsync<number>(this.PageDirectPend(), this.startDirectPend());
+                return;
             }
-            sheetId = await this.openModalAsync(this.PageSheetDirect(), this.startSheetDirect());
-            return sheetId;
+            this.sheetId = await this.openModalAsync(this.PageSheetDirect(), this.startSheetDirect());
+            return;
         }
         if (isPend === true) {
-            sheetId = await this.openModalAsync(this.PageStartPend(), this.startPend());
-            return sheetId;
+            this.steps = sheetSteps([stepPick, stepPend]);
+            this.sheetId = await this.openModalAsync(this.PageStartPend(), this.startPend());
+            return;
         }
         if (binPicks !== undefined) {
-            sheetId = await this.openModalAsync(this.PageStartPicks(), this.startPicks());
-            return sheetId;
+            this.steps = sheetSteps([stepPick]);
+            this.sheetId = await this.openModalAsync(this.PageStartPicks(), this.startPicks());
+            return;
         }
-        sheetId = await this.openModalAsync(this.PageSheetDirect(), this.startSheetDirect());
-        return sheetId;
+        this.sheetId = await this.openModalAsync(this.PageSheetDirect(), this.startSheetDirect());
+        return;
     }
 
-    // protected abstract PageSheetStart(): JSX.Element;
     protected abstract PageMainPend(): JSX.Element;
     protected abstract PageDirectPend(): JSX.Element;
     protected abstract PageSheetDirect(): JSX.Element;
     protected abstract PageStartPend(): JSX.Element;
     protected abstract PageStartPicks(): JSX.Element;
 
-    private async startDirectPend(): Promise<void> {
+    private async startMainPend(): Promise<void> {
+    }
+
+    private async startDirectPend(): Promise<number> {
         const { storeSheet, modal } = this;
         let { entity } = storeSheet.mainStore;
         const budsEditing = new BinEditing(storeSheet, entity);
@@ -178,7 +194,9 @@ export abstract class ControlSheetStart extends ControlSheet {
                     this.closeModal();
                 }, 100);
             }
+            return;
         }
+        return ret.id;
     }
 
     private async startSheetDirect(): Promise<void> {

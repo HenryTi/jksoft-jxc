@@ -63,6 +63,10 @@ export class PickOptions extends BinPick {
     readonly fromPhraseType = BizPhraseType.options;
     from: EntityOptions;
     override getBud(name: string): BizBud { return; }
+    itemCaptionFromId(optionId: number) {
+        let item = this.from.items.find(v => v.id === optionId);
+        return item.caption ?? item.name;
+    }
 }
 
 export abstract class BinInput extends BizBud {

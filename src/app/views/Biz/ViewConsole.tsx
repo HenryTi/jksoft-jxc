@@ -58,7 +58,7 @@ export function ViewConsole() {
         {viewFolder}
         {viewEditing}
         {arr.map((v, index) => <ViewFolderLink key={index} center={v} />)}
-        <div>
+        <div className="container-fluid">
             <RowColsSm>
                 {
                     biz.sheets.map(v => <Link key={v.id}

@@ -52,17 +52,24 @@ export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
 
     onPageSheetStart = async () => {
         this.#controlSheetStart = this.createControlSheetStart();
-        let newSheetId = await this.#controlSheetStart.start();
+        await this.#controlSheetStart.start();
         // await this.openModal<number>(this.PageSheetStart());
-        if (newSheetId === undefined) return;
-        await this.onPageSheetEdit(newSheetId);
+        const { sheetId, directStartDetailNew } = this.#controlSheetStart;
+        if (sheetId === undefined) return;
+        await this.onPageSheetEdit(sheetId, directStartDetailNew);
     }
 
-    onPageSheetEdit = async (id: number) => {
+    onPageSheetEdit = async (id: number, directStartDetailNew?: boolean) => {
         this.#controlSheetEdit = this.createControlSheetEdit();
+        const startDetail = async () => {
+            await this.controlSheetEdit.storeSheet.load(id);
+            if (directStartDetailNew === true) {
+                await this.#controlSheetEdit.controlDetailEdit.detailNew();
+            }
+        }
         let ret = await this.openModalAsync<EnumSheetEditReturn>(
             this.PageSheetEdit(),
-            this.controlSheetEdit.storeSheet.load(id)
+            startDetail(),
         );
         switch (ret) {
             case EnumSheetEditReturn.submit:

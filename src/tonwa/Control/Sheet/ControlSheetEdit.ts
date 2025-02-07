@@ -58,20 +58,17 @@ export abstract class ControlSheetEdit extends ControlSheet {
             this.setSubmitError(checkPend, checkBin);
             return;
         }
-        // await sheetConsole.onSubmited(store);
+        // await this.controlSheetDash.onSubmited(store);
         // 转到 ControlSheetDash中操作
         // const { mainStore: main } = store;
         this.closeModal(EnumSheetEditReturn.submit);
     }
 
     protected abstract ViewSubmitReaction(): JSX.Element;
-    /* {
-        return <ViewSubmitReaction />;
-    } */
 
     private setSubmitError(checkPend: { pend: number; overValue: number; }[], checkBin: { bin: number; message: string; }[]) {
-        let error: any = getAtomValue(this.atomError);
-        if (error === undefined) error = {};
+        // let error: any = getAtomValue(this.atomError);
+        let error: { [id: number]: { pend: number; overValue: number; } | { bin: number; message: string; } } = {};
         for (let row of checkPend) {
             error[row.pend] = row;
         }

@@ -210,17 +210,18 @@ function PageStartPicks({ control }: { control: ControlSheetStart; }) {
 
 function PageStartPend({ control }: { control: ControlSheetStart; }) {
     const { storeSheet } = control;
-    const { caption/*, sheetConsole*/ } = storeSheet;
+    const { caption } = storeSheet;
     const subCaption = '批选待处理';
+    /*
     const onPend = useCallback(async (results: ReturnUseBinPicks) => {
         await control.onPickedNew(results);
-        /*
         let added = await detailNew(store);
         if (added > 0) {
             await store.setSheetAsDraft();
         }
-        */
     }, []);
+    */
+    const onPend = control.onPickedNew;
     return <Page header={caption + ' - ' + subCaption}>
         {/*<ViewSteps sheetSteps={sheetConsole.steps} />*/}
         <ViewMainPicks subHeader={'批选条件'} control={control} onPicked={onPend} />
@@ -228,7 +229,7 @@ function PageStartPend({ control }: { control: ControlSheetStart; }) {
 }
 
 function PageDirectPend({ control }: { control: ControlSheetStart; }) {
-    const { modal, storeSheet } = control;
+    const { modal, storeSheet, steps } = control;
     const { caption/*, sheetConsole*/ } = storeSheet;
     const subCaption = '批选待处理';
     /*
@@ -247,10 +248,10 @@ function PageDirectPend({ control }: { control: ControlSheetStart; }) {
     });
     */
     return <Page header={caption + ' - ' + subCaption}>
-        direct pend
-        {/*<ViewSteps sheetSteps={sheetConsole.steps} />*/}
+        <ViewSteps sheetSteps={steps} />
     </Page>;
 }
+
 /*
 async function nothingPicked(modal: Modal, control: ControlSheetStart) {
     const { storeSheet } = control;

@@ -21,7 +21,7 @@ export abstract class ControlDetail<C extends ControlSheet = any> extends Contro
 }
 
 export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> {
-    readonly atomError = atom<any>(undefined);
+    // readonly atomError = atom<any>(undefined);
 
     onAddRow = async () => {
         await this.detailNewLoop();
@@ -48,7 +48,7 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
         }
     }
 
-    private async detailNew(): Promise<number> {
+    async detailNew(): Promise<number> {
         const { storeSheet } = this.controlSheet;
         const { modal, binStore } = storeSheet;
         if (binStore === undefined) {
@@ -247,9 +247,6 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
     }
 
     protected abstract PageEditDivRoot(valDiv: ValDivBase): JSX.Element;
-    /* {
-        return <PageEditDivRoot control={this} valDiv={valDiv} />;
-    } */
 
     async onLeafEdit(valDiv: ValDivBase) {
         const { binStore } = this.controlSheet;
