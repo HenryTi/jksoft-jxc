@@ -132,6 +132,7 @@ export abstract class ControlSheetStart extends ControlSheet {
         return await this.controlSheetDash.onPicked(results);
     }
 
+    // 刚开始，sheet 在 ixState 中，存放的是preDraft。必须调用这个，才转换为draft
     async setSheetAsDraft() {
         this.storeSheet.setSheetAsDraft();
     }

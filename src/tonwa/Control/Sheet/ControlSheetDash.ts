@@ -156,7 +156,7 @@ export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
     }
 
     async setSheetAsDraft() {
-
+        await this.controlSheetStart.setSheetAsDraft();
     }
 
     notifyRowChange(storeSheet: StoreSheet) {
