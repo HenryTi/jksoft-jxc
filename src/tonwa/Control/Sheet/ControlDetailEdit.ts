@@ -1,8 +1,8 @@
 import { atom } from "jotai";
-import { ValRow } from "../../Store/ValRow";
-import { BinPick, BinRow, BizPhraseType, EntityBin } from "../../Biz";
+import { PendProxyHandler, ValRow } from "../../Store/ValRow";
+import { BinInputAtom, BinInputFork, BinPick, BinRow, BizPhraseType, EntityBin } from "../../Biz";
 import { ControlEntity } from "..";
-import { PickResult, RearPickResultType, ReturnUseBinPicks } from "../../Store";
+import { PendRow, PickResult, RearPickResultType, ReturnUseBinPicks } from "../../Store";
 import { BinBudsEditing, BinEditing, DivEditing, FormBudsStore } from "../ControlBuds/BinEditing";
 import { ControlSheetEdit } from "./ControlSheetEdit";
 import { ControlSheet } from "./ControlSheet";
@@ -11,6 +11,8 @@ import { getAtomValue, setAtomValue } from "../../tools";
 import { ValDivBase, ValDivRoot } from "../../Store/ValDiv";
 import { ControlBinPicks } from "../ControlBuds";
 import { JSX } from "react";
+import { inputFork } from "./inputFork";
+import { inputAtom } from "./inputAtom";
 
 export abstract class ControlDetail<C extends ControlSheet = any> extends ControlEntity<EntityBin> {
     readonly controlSheet: C;
@@ -140,7 +142,104 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
 
     protected abstract PageInputRow(binEditing: BinEditing, valDiv: ValDivBase): JSX.Element;
 
-    async editDivs(valDiv: ValDivBase) {
+    async editDivs(valDiv: ValDivBase, pendRow: PendRow) {
+        // let { binStore, pendRow, valDiv } = props;
+        const { binStore } = this.controlSheet;
+        let { entity: entityBin, sheetStore } = binStore;
+        let { rearPick, pend: entityPend } = entityBin;
+        let pendResult = new Proxy(pendRow, new PendProxyHandler(entityPend));
+        let valRows: ValRow[] = [];
+        for (; ;) {
+            let divEditing = new DivEditing(binStore, valDiv);
+            if (rearPick !== undefined) {
+                divEditing.setNamedValues(rearPick.name, pendResult);
+            }
+            divEditing.setPendResult(pendResult);
+            divEditing.calcAll();
+            let valRow = await this.runInputDiv(divEditing, pendRow);
+            if (valRow === undefined) {
+                // 删去已经输入的行
+                binStore.deleteValRows(valRows);
+                return;
+            }
+            valRows.push(valRow);
+            let { binDiv } = valDiv;
+            // 无下级，退出
+            if (binDiv.subBinDiv === undefined) {
+                // 仅仅表示有值
+                // return true;
+                break;
+            }
+            let valDivNew = valDiv.createValDivSub(pendRow);
+            valDiv.addValDiv(valDivNew, true);
+            valDiv = valDivNew;
+        }
+        this.controlSheet.notifyRowChange();
+        return true;
+    }
+
+    private async runInputDiv(divEditing: DivEditing, pendRow: PendRow) {
+        const { binStore } = this.controlSheet;
+        const { modal } = binStore;
+        const { valDiv } = divEditing;
+        let { binDiv, valRow } = valDiv;
+        let retInputs = await this.runInputs(/*props, */divEditing, pendRow);
+        if (retInputs === false) return;
+
+        valDiv.mergeValRow(divEditing.values);
+        // if (skipInputs !== true) {
+        if (divEditing.isInputNeeded() === true) {
+            //if (await modal.open(<ModalInputRow binEditing={divEditing} valDiv={valDiv} />) !== true) {
+            if (await modal.open(this.PageInputRow(divEditing, valDiv)) !== true) {
+                return;
+            }
+            valDiv.mergeValRow(divEditing.values);
+        }
+        // }
+        valRow = valDiv.valRow;
+        await binStore.saveDetails(binDiv, [valRow]);
+        valDiv.setValRow(valRow);
+        valDiv.setIXBaseFromInput(divEditing);
+        return valRow;
+    }
+
+    private async runInputs(editing: DivEditing, pendRow: PendRow) {
+        const { valDiv } = editing;
+        const { binDiv } = valDiv;
+        const { inputs } = binDiv;
+        if (inputs === undefined) {
+            return;
+        }
+        // let { skipInputs } = props;
+        // if (skipInputs == true) {
+        //     return;
+        // }
+        for (let input of inputs) {
+            const { bizPhraseType } = input;
+            let retInput: any = undefined;
+            switch (bizPhraseType) {
+                default:
+                case BizPhraseType.fork:
+                    retInput = await inputFork({
+                        pendRow,
+                        editing,
+                        binInput: input as BinInputFork,
+                    });
+                    break;
+                case BizPhraseType.atom:
+                    retInput = await inputAtom({
+                        pendRow,
+                        editing,
+                        binInput: input as BinInputAtom,
+                    });
+                    break;
+            }
+            if (retInput === undefined) {
+                return false;
+            }
+            editing.setNamedValue(input.name, retInput);
+        }
+        editing.calcAll();
         return true;
     }
 
@@ -210,7 +309,7 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
             skipInputs: false,
         }
         */
-        let retHasValue = await this.editDivs(valDivClone);
+        let retHasValue = await this.editDivs(valDivClone, pendRow);
         if (retHasValue !== true) return;
         binStore.replaceValDiv(valDiv, valDivClone);
     }
@@ -266,7 +365,7 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
         const { valRow } = valDiv;
         let pendRow = await binStore.loadPendRow(valRow.pend);
         let valDivNew = valDiv.createValDivSub(pendRow);
-        let ret = await this.editDivs(valDivNew);
+        let ret = await this.editDivs(valDivNew, pendRow);
         if (ret !== true) return;
         if (valDivNew.isPivotKeyDuplicate() === true) {
             alert('Pivot key duplicate'); // 这个界面要改

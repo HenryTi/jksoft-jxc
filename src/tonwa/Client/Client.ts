@@ -1,6 +1,7 @@
 import { ReturnAtoms, ReturnForks, ReturnProps } from "../Biz";
 
 export interface Client {
+    triggerRefresh(): Promise<void>;
     GetUserBuds(userId: number): Promise<{
         buds: {
             bud: number;

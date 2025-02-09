@@ -1,11 +1,6 @@
-import { atom } from "jotai";
-import { BinRow, EntityBin, EntitySheet, EnumDetailOperate } from "../../Biz";
-import { StoreSheet, SheetMainStore, BinStore, SheetSteps, BinStorePendDirect } from "../../Store";
+import { EntitySheet } from "../../Biz";
+import { StoreSheet, SheetMainStore, BinStore } from "../../Store";
 import { ControlBiz, ControlEntity as ControlEntity } from "..";
-import { ReturnUseBinPicks } from "../../Store/PickResult";
-import { ControlBinPicks } from "../ControlBuds";
-import { setAtomValue, getAtomValue } from "../../tools";
-import { WritableAtom } from "jotai";
 
 enum PendLoadState {
     none,
@@ -33,7 +28,6 @@ export abstract class ControlSheet extends ControlEntity<EntitySheet> {
         this.storeSheet = new StoreSheet(controlBiz.storeBiz, entitySheet);
         this.mainStore = this.storeSheet.mainStore; // new SheetMainStore(this.storeSheet);
         this.binStore = this.storeSheet.binStore;
-        console.log('ControlSheet', entitySheet.caption, this.keyId);
     }
     async discard() {
         await this.storeSheet.discard();

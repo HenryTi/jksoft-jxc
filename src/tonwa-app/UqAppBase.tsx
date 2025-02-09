@@ -88,6 +88,10 @@ export abstract class UqAppBase<UQS = any> {
         this.autoRefresh = new AutoRefresh(this);
     }
 
+    async triggerRefresh() {
+        await this.autoRefresh.trigger();
+    }
+
     abstract get pathLogin(): string;
     get pathBase(): string {
         let { pathBase } = this.appConfig;

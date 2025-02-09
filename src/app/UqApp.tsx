@@ -89,7 +89,7 @@ export class UqApp extends UqAppBase<UQs> {
 
     protected onLoadUQs() {
         this.uq = this.uqs.UqDefault;
-        this.client = new UqClient(this.uq);
+        this.client = new UqClient(this);
     }
 
     // 1. 可以支持多个site

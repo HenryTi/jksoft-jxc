@@ -1,12 +1,12 @@
 import { JSX } from "react";
 import { FA } from "tonwa-com";
 import { StoreSheet } from "../../Store";
-import { ItemDef, ToolGroup, ToolItem, Toolbar, toolButtonDef, toolIconDef } from "../../View";
+import { ItemDef, ToolButton, ToolGroup, ToolItem, Toolbar, toolButtonDef, toolIconDef } from "../../View";
 
 const btn = ' btn ';
 const btnSm = ' btn btn-sm ';
 interface ButtonDefs {
-    submit: ItemDef<any>;
+    submit: ItemDef<ToolButton>;
     submitDebug: ItemDef<any>;
     batchSelect: ItemDef<any>;
     print: ItemDef<any>;

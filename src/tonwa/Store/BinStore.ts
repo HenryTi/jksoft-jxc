@@ -524,6 +524,8 @@ export class BinStore extends StoreEntity<EntityBin> {
     }
 
     async allPendsToValRows(): Promise<void> {
+        // 在老版本中，是通过加载BinStore和BinStorePendDirect两个类来区分的
+        if (this.operate !== EnumDetailOperate.pend) return;
         const { valDivs } = this.valDivsRoot;
         const { length } = valDivs;
         if (length === 0) return;

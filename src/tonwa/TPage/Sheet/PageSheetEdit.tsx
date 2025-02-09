@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import { Page, PageConfirm } from "tonwa-app";
 import { env, FA, SpinnerSmall, theme } from "tonwa-com";
 import { BizBud } from "../../Biz";
-import { Toolbar, ToolItem, ViewReaction } from "../../View";
+import { EnumToolButtonState, Toolbar, ToolButton, ToolItem, ViewReaction } from "../../View";
 import { setAtomValue, getAtomValue } from "../../tools";
 import { buttonDefs, headerSheet } from "./HeaderSheet";
 import { SubmitState } from "./TControlSheet";
@@ -14,9 +14,10 @@ import { useSiteRole } from "../../Site";
 import { ControlSheetEdit } from "../../Control";
 
 export function PageSheetEdit({ control }: { control: ControlSheetEdit; }) {
-    const { modal, storeSheet, mainStore, binStore, atomReaction, atomSubmitState } = control;
+    const { modal, storeSheet, mainStore, binStore, atomReaction, atomSubmitState, atomError } = control;
     const { caption } = storeSheet;
     const [editable, setEditable] = useState(true);
+    let error = useAtomValue(atomError);
     let submitState = useAtomValue(atomSubmitState);
     let useSiteRoleReturn = useSiteRole();
     let { isAdmin } = useSiteRoleReturn.userSite;
@@ -43,8 +44,9 @@ export function PageSheetEdit({ control }: { control: ControlSheetEdit; }) {
     let toolGroups: (ToolItem[] | JSX.Element)[];
     let reaction = <ViewReaction atomContent={atomReaction} />;
 
+    let btnSubmit: ToolButton;
     function mainOnlyEdit() {
-        let btnSubmit = buttonDefs.submit(onSubmit);
+        btnSubmit = buttonDefs.submit(onSubmit);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, true, editable === false);
         toolGroups = [[btnSubmit], reaction, null, [btnDiscard]];
     }
@@ -65,7 +67,7 @@ export function PageSheetEdit({ control }: { control: ControlSheetEdit; }) {
             submitState = getAtomValue(atomSubmitState);
             return submitState === SubmitState.none || submitState === SubmitState.disable;
         })();
-        let btnSubmit = buttonDefs.submit(onSubmit, submitDisabled, submitHidden);
+        btnSubmit = buttonDefs.submit(onSubmit, submitDisabled, submitHidden);
         let btnAddDetail = entityBin.pend === undefined ?
             buttonDefs.addDetail(onAddRow) : buttonDefs.addPend(onAddRow);
         let btnDiscard = buttonDefs.discard(onDiscardSheet, false, editable === false);
@@ -76,6 +78,7 @@ export function PageSheetEdit({ control }: { control: ControlSheetEdit; }) {
 
     if (binStore === undefined) mainOnlyEdit();
     else mainDetailEdit();
+    if (error !== undefined) btnSubmit.state = EnumToolButtonState.error;
     let { header, top, right } = headerSheet({ store: storeSheet, toolGroups, headerGroup });
     return <Page header={header} back={null}
         top={top}

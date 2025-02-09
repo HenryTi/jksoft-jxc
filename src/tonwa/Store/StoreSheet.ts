@@ -79,9 +79,7 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
 
     // whole sheet or row detail
     async loadBinData(binId: number) {
-        let { main, details, props, atoms: bizAtoms, forks } =
-            //await this.uq.GetSheet.query({ id: binId });
-            await this.client.GetSheet(binId);
+        let { main, details, props, atoms: bizAtoms, forks } = await this.client.GetSheet(binId);
         this.cacheIdAndBuds(props, bizAtoms, forks);
         let mainRow = main[0];
         if (mainRow !== undefined) {
@@ -148,7 +146,7 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
         // 作废草稿单据
         let { valRow: { id } } = this.mainStore;
         if (id >= 0) {
-            this.client.RemoveDraft(id);
+            await this.client.RemoveDraft(id);
             // this.sheetConsole.removeFromCache(id);
             return id;
         }

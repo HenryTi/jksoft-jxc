@@ -1,17 +1,18 @@
 import { UqAppBase } from "./UqAppBase";
 
-const gaps = [10, 4, 8, 8, 16, 16, 32, 32, 60];
+// const gaps = [10, 4, 8, 8, 16, 16, 32, 32, 60];
+// 每次单据提交操作，都会做一次refresh, 并重启这个循环
+const gaps = [30, 60];
 
 export class AutoRefresh {
     private readonly uqApp: UqAppBase;
-    // private readonly refreshAction: () => Promise<void>;
     private timer: any;
     private paused: boolean;
 
     constructor(uqApp: UqAppBase) {
         this.uqApp = uqApp;
-        // this.refreshAction = refreshAction;
         this.paused = true;
+        this.paused = false;
     }
 
     start() {
@@ -34,6 +35,13 @@ export class AutoRefresh {
 
     resume() {
         this.paused = false;
+    }
+
+    // 激发refresh操作
+    async trigger() {
+        this.paused = false;
+        this.gapIndex = 0;
+        await this.refresh(); // 直接调用，不用await
     }
 
     private refreshTime: number = Date.now() / 1000;

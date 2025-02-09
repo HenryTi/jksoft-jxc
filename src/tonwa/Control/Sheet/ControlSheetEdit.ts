@@ -61,6 +61,7 @@ export abstract class ControlSheetEdit extends ControlSheet {
         // await this.controlSheetDash.onSubmited(store);
         // 转到 ControlSheetDash中操作
         // const { mainStore: main } = store;
+        await this.controlBiz.storeBiz.client.triggerRefresh();
         this.closeModal(EnumSheetEditReturn.submit);
     }
 

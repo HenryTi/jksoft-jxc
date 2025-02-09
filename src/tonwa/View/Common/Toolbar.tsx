@@ -16,7 +16,7 @@ export abstract class ToolItem {
 }
 
 function ViewToolButton({ toolButton }: { toolButton: ToolButton; }) {
-    const { atomHidden, atomDisabled, def, onAct } = toolButton;
+    const { atomHidden, atomDisabled, def, onAct, state } = toolButton;
     const hidden = useAtomValue(atomHidden);
     const disabled = useAtomValue(atomDisabled);
     if (hidden === true) return null;
@@ -25,17 +25,25 @@ function ViewToolButton({ toolButton }: { toolButton: ToolButton; }) {
     if (icon !== undefined) {
         vIcon = <FA name={icon} className="me-2" />;
     }
+    let vError: any;
+    if (state === EnumToolButtonState.error) {
+        vError = <FA name="exclamation-circle" className="text-danger ms-1 fw-light" />;
+    }
     return <ButtonAsync
         className={(className ?? 'btn btn-outline-primary')}
         disabled={disabled} onClick={onAct as any}>
-        {vIcon}{caption}
+        {vIcon}{caption}{vError}
     </ButtonAsync>;
+}
+export enum EnumToolButtonState {
+    error,
 }
 export class ToolButton extends ToolItem {
     readonly def: ToolItemDef;
     readonly onAct: OnAct;
     readonly atomDisabled: WritableAtom<any, any, any>;
     readonly atomHidden: WritableAtom<any, any, any>;
+    state: EnumToolButtonState;
     constructor(def: ToolItemDef, onAct: OnAct, disabled?: boolean, hidden?: boolean) {
         super();
         this.def = def;
@@ -92,7 +100,7 @@ export type ItemOnAct = () => void | Promise<void>;
 export type ItemDef<T extends ToolItem> = (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean) => T;
 
 export function toolButtonDef(def: ToolItemDef) {
-    return function (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean): ToolItem {
+    return function (onAct: ItemOnAct, disabled?: boolean, hidden?: boolean): ToolButton {
         return new ToolButton(def, onAct, disabled, hidden);
     }
 }

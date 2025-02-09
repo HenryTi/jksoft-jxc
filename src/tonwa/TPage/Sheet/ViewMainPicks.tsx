@@ -33,7 +33,7 @@ export function ViewMainPicks({ control, subHeader }: Props) {
             <ViewPickRear />
         </>;
         viewBinPicksNext = <PickRow label={null} >
-            <button className="btn btn-primary my-3" onClick={control.onNextMainPicks} disabled={cur < binPicks.length}>
+            <button className="btn btn-primary my-3" onClick={control.onNextMainPicks} disabled={cur <= binPicks.length}>
                 <FA name="arrow-right me-2" />下一步
             </button>
         </PickRow>;

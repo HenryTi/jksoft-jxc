@@ -31,7 +31,7 @@ export function ViewForkId({ id }: { id: number; }) {
         })();
     }, [id]);
     if (id === undefined || value === undefined) return <ViewBudEmpty />;
-    if (value === null) return <>null</>;
+    if (value === null) return <>/</>;
 
     function viewFork(value: any) {
         const { phrase } = value;

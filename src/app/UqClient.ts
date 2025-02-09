@@ -9,11 +9,18 @@ import {
     ReturnSheetBin
 } from "tonwa";
 import { UqExt } from "uqs/UqDefault";
+import { UqApp } from "./UqApp";
 
 export class UqClient implements Client {
+    private readonly uqApp: UqApp;
     private readonly uq: UqExt;
-    constructor(uq: UqExt) {
-        this.uq = uq;
+    constructor(uqApp: UqApp) {
+        this.uqApp = uqApp;
+        this.uq = uqApp.uq;
+    }
+
+    async triggerRefresh() {
+        await this.uqApp.triggerRefresh();
     }
 
     async GetUserBuds(userId: number): Promise<{

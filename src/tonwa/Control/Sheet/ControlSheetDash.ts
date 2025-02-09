@@ -28,7 +28,6 @@ export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
         const { storeBiz } = controlBiz;
         this.myDraftsStore = new StoreSheetMyDrafts(storeBiz, entitySheet);
         this.myArchiveList = new StoreSheetMyList(storeBiz, entitySheet);
-        console.log('ControlSheetDash', entitySheet.caption, this.keyId);
     }
 
     protected abstract createControlSheetStart(): ControlSheetStart;
@@ -64,7 +63,11 @@ export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
         const startDetail = async () => {
             await this.controlSheetEdit.storeSheet.load(id);
             if (directStartDetailNew === true) {
-                await this.#controlSheetEdit.controlDetailEdit.detailNew();
+                let newDetailRowCount = await this.#controlSheetEdit.controlDetailEdit.detailNew();
+                if (newDetailRowCount > 0) {
+                    // 加入第一行明细，成为有效的草稿单
+                    await this.setSheetAsDraft();
+                }
             }
         }
         let ret = await this.openModalAsync<EnumSheetEditReturn>(

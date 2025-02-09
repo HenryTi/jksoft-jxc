@@ -1,27 +1,17 @@
 import { atom } from "jotai";
-import { BinPick, BinRow, BizPhraseType, EntityBin, EntitySheet, EnumDetailOperate, PickPend } from "../../Biz";
-import { StoreSheet, SheetMainStore, BinStore, SheetSteps, BinStorePendDirect } from "../../Store";
-import { ControlBiz, ControlEntity } from "..";
+import { BinPick, BinRow, BizPhraseType, EntityBin, EnumDetailOperate, PickPend } from "../../Biz";
+import { SheetSteps } from "../../Store";
 import { PickResult, RearPickResultType, ReturnUseBinPicks } from "../../Store/PickResult";
 import { ControlBinPicks } from "../ControlBuds";
 import { setAtomValue, getAtomValue } from "../../tools";
-import { WritableAtom } from "jotai";
 import { ControlSheet as ControlSheet } from "./ControlSheet";
 import { ControlSheetDash } from "./ControlSheetDash";
 import { JSX } from "react";
 import { BinEditing, FormBudsStore } from "../ControlBuds/BinEditing";
 
-/*
-enum EnumSheetNewContent {
-    sheet, mainPend, directPend, direct, startPend, startPicks
-}
-*/
 const stepPick = '录入条件';
 const stepPend = '批选待处理';
 const stepSheet = '录入单据';
-function sheetSteps(steps: string[]): SheetSteps {
-    return new SheetSteps(steps, stepSheet);
-};
 
 export abstract class ControlSheetStart extends ControlSheet {
     protected readonly controlSheetDash: ControlSheetDash;
@@ -44,63 +34,7 @@ export abstract class ControlSheetStart extends ControlSheet {
         if (binPicks !== undefined) {
             this.controlBinPicks = this.createControlPinPicks(entity);
         }
-        /*
-        let enumSheetNewContent: EnumSheetNewContent;
-        if (isMainPend === true) {
-            enumSheetNewContent = EnumSheetNewContent.mainPend; // return <PageMainPend store={store} />;
-        }
-        else {
-            const { binPicks, rearPick } = entity;
-            if (rearPick === undefined && (binPicks === undefined || binPicks.length === 0)) {
-                if (isPend === true) {
-                    this.steps = sheetSteps([stepPend]);
-                    enumSheetNewContent = EnumSheetNewContent.directPend;
-                    // return <PageDirectPend store={store} />;
-                }
-                else {
-                    enumSheetNewContent = EnumSheetNewContent.direct;
-                    // return <PageSheetDirect store={store} />;
-                }
-            }
-            else if (isPend === true) {
-                this.steps = sheetSteps([stepPick, stepPend]);
-                enumSheetNewContent = EnumSheetNewContent.startPend;
-                // return <PageStartPend store={store} />;
-            }
-            else if (binPicks !== undefined) {
-                this.steps = sheetSteps([stepPick]);
-                enumSheetNewContent = EnumSheetNewContent.startPicks;
-                // return <PageStartPicks store={store} />;
-            }
-            else {
-                enumSheetNewContent = EnumSheetNewContent.direct;
-                // return <PageSheetDirect store={store} />;
-            }
-        }
-        */
     }
-
-    // atomLoaded = atom(false);
-    /*
-    atomContent = atom<EnumSheetNewContent>(get => {
-        // if (get(this.atomLoaded) === true) return EnumSheetNewContent.sheet;
-        const { isPend } = this.storeSheet;
-        const { main, details } = this.entity;
-        if (main.pend !== undefined) return EnumSheetNewContent.mainPend;
-
-        const { binPicks, rearPick } = main;
-        if (rearPick === undefined && (binPicks === undefined || binPicks.length === 0)) {
-            if (isPend === true) {
-                // sheetConsole.steps = sheetSteps([stepPend]);
-                return EnumSheetNewContent.directPend;
-            }
-            return EnumSheetNewContent.direct;
-        }
-        if (isPend === true) {
-            return EnumSheetNewContent.directPend;
-        }
-    });
-    */
 
     atomSubmitState = atom((get) => {
         //if (this.binStore === undefined) return SubmitState.enable;
@@ -108,13 +42,6 @@ export abstract class ControlSheetStart extends ControlSheet {
     }, null);
 
     protected abstract createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow): ControlBinPicks;
-    /*
-    {
-        // const { binPicks, rearPick } = entityBin;
-        // if (binPicks === undefined) return null;
-        return new ControlBinPicks(this.controlBiz, this.storeSheet, entityBin, initBinRow);
-    }
-    */
 
     setChanging() {
         setAtomValue(this.atomChanging, getAtomValue(this.atomChanging) + 1);
@@ -149,7 +76,7 @@ export abstract class ControlSheetStart extends ControlSheet {
         const { binPicks, rearPick } = entity;
         if (rearPick === undefined && (binPicks === undefined || binPicks.length === 0)) {
             if (isPend === true) {
-                this.steps = sheetSteps([stepPend]);
+                this.steps = new SheetSteps([stepPend], stepSheet);
                 this.sheetId = await this.startDirectPend();
                 this.directStartDetailNew = true;
                 // let sheetId = await this.openModalAsync<number>(this.PageDirectPend(), this.startDirectPend());
@@ -159,12 +86,12 @@ export abstract class ControlSheetStart extends ControlSheet {
             return;
         }
         if (isPend === true) {
-            this.steps = sheetSteps([stepPick, stepPend]);
+            this.steps = new SheetSteps([stepPick, stepPend], stepSheet);
             this.sheetId = await this.openModalAsync(this.PageStartPend(), this.startPend());
             return;
         }
         if (binPicks !== undefined) {
-            this.steps = sheetSteps([stepPick]);
+            this.steps = new SheetSteps([stepPick], stepSheet);
             this.sheetId = await this.openModalAsync(this.PageStartPicks(), this.startPicks());
             return;
         }
@@ -233,7 +160,6 @@ export abstract class ControlSheetStart extends ControlSheet {
         await this.onPickedNew(ret);
         this.steps?.next();
     }
-
 
     async pick(binPick: BinPick, serial: number) {
         if (await this.controlBinPicks.doBinPick(binPick) !== undefined) {
