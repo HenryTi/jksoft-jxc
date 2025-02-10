@@ -98,6 +98,9 @@ export function ViewAtomTitles({ id, noLabel, store }: { id: number; noLabel?: b
     let buds: BizBud[] = entityID.titleBuds;
     if (buds === undefined) return null;
     const budValueColl = store.getCacheBudProps(atom.id);
+    if (budValueColl === undefined) {
+        return <span className="text-danger">?{atom.ex}titleBuds not fetched?</span>;
+    }
     const { labelColor } = theme;
     return <>{
         buds.map(v => {

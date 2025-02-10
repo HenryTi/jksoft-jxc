@@ -97,6 +97,10 @@ export function ViewQueryParams({ query, editing, binPick, onSearch }: {
             let pickParam = pickParams?.find(v => v.name === name);
             if (pickParam !== undefined && editing !== undefined) {
                 let v = editing.getValue(name);
+                if (v !== null && v !== undefined && Array.isArray(v) !== true && typeof v === 'object') {
+                    v = v.id;
+                    if (v === undefined) debugger;
+                }
                 valueParams.push([pickParam, param, v]);
             }
             else if (budDataType !== undefined && budDataType.type !== 0 && name !== undefined) {

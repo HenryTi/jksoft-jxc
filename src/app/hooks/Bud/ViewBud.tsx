@@ -110,53 +110,86 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, no
         vContent = view();
     }
     else {
-        // const { bizAtomColl } = store;
-        let pAtom = store.getCacheAtom(value); // bizAtomColl[value];
-        let bizAtom: AtomData = pAtom?.atom;
-        if (bizAtom !== undefined) {
-            let { no, ex } = bizAtom
-            title = `${ex} ${no}`;
-            vContent = ex;
+        let IDFork = store.getCacheFork(value); // bizForkColl[value];
+        if (IDFork === undefined) {
+            vContent = `? ${value} not fetched ?`;
         }
         else {
-            // const { budsColl } = store;
-            let forkValue = store.getCacheFork(value); // bizForkColl[value];
-            if (forkValue !== undefined) {
-                const { atom, entityFork } = forkValue;
+            const { atom, entityFork } = IDFork;
+            if (entityFork === undefined) {
                 if (atom === undefined) {
                     vContent = <ViewForkId id={value} />;
                 }
                 else {
-                    // vContent = <ViewSpecId id={atom.id} />;
-                    vContent = <ViewFork />;
-                    function ViewFork() {
-                        const { no, ex } = atom;
-                        let ret: string = (ex ?? no);
-                        let sep = ' '
-                        for (let bud of entityFork.keys) {
-                            let budValue = store.getCacheBudValue(value, bud); // budsColl[value][bud.id];
-                            if (budValue !== undefined) {
-                                ret += sep;
-                                ret += bud.getUIValue(budValue);
-                                sep = '/';
-                            }
-                        }
-                        return <>{ret}</>;
-                    }
+                    let { no, ex } = atom;
+                    title = `${ex} ${no}`;
+                    vContent = ex;
+
                 }
             }
             else {
-                const { entityID } = bud.budDataType as BudID;
-                if (entityID === undefined) {
-                    vContent = view();
+                const { no, ex } = atom;
+                let ret: string = (ex ?? no);
+                let sep = ' '
+                for (let bud of entityFork.keys) {
+                    let budValue = store.getCacheBudValue(value, bud); // budsColl[value][bud.id];
+                    if (budValue !== undefined) {
+                        ret += sep;
+                        ret += bud.getUIValue(budValue);
+                        sep = '/';
+                    }
                 }
-                else // if (entityID.bizPhraseType === BizPhraseType.fork) {
-                    vContent = <ViewForkAtom id={value} store={store} />
-                // else {
-                // vContent = <ViewForkId id={value} />;
-                // }
+                vContent = <>{ret}</>;
             }
         }
+        /*
+            let pAtom = store.getCacheFork(value); // bizAtomColl[value];
+            let bizAtom: AtomData = pAtom?.atom;
+            if (bizAtom !== undefined) {
+                let { no, ex } = bizAtom
+                title = `${ex} ${no}`;
+                vContent = ex;
+            }
+            else {
+                // const { budsColl } = store;
+                let forkValue = store.getCacheFork(value); // bizForkColl[value];
+                if (forkValue !== undefined) {
+                    const { atom, entityFork } = forkValue;
+                    if (atom === undefined) {
+                        vContent = <ViewForkId id={value} />;
+                    }
+                    else {
+                        // vContent = <ViewSpecId id={atom.id} />;
+                        vContent = <ViewFork />;
+                        function ViewFork() {
+                            const { no, ex } = atom;
+                            let ret: string = (ex ?? no);
+                            let sep = ' '
+                            for (let bud of entityFork.keys) {
+                                let budValue = store.getCacheBudValue(value, bud); // budsColl[value][bud.id];
+                                if (budValue !== undefined) {
+                                    ret += sep;
+                                    ret += bud.getUIValue(budValue);
+                                    sep = '/';
+                                }
+                            }
+                            return <>{ret}</>;
+                        }
+                    }
+                }
+                else {
+                    const { entityID } = bud.budDataType as BudID;
+                    if (entityID === undefined) {
+                        vContent = view();
+                    }
+                    else // if (entityID.bizPhraseType === BizPhraseType.fork) {
+                        vContent = <ViewForkAtom id={value} store={store} />
+                    // else {
+                    // vContent = <ViewForkId id={value} />;
+                    // }
+                }
+            }
+            */
     }
     if (noLabel === true) {
         return <span title={title}>{vContent}</span>;

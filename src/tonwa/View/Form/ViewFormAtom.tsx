@@ -7,6 +7,7 @@ import { EntityAtom } from "../../Biz";
 import { BudEditing } from "../../View";
 import { Band, FormAtom, FormContext } from "./FormRowsView";
 import { ViewForkAtom } from "./ViewForkOfStore";
+import { pickBudID } from "../Common/pickBudID";
 
 export function ViewFormAtom({ row, label, error, inputProps, clearErrors, setValue, entityAtom, onChange, formContext }: {
     row: FormAtom;
@@ -42,7 +43,7 @@ export function ViewFormAtom({ row, label, error, inputProps, clearErrors, setVa
         else {
             // let ret = await IDSelect(entityAtom, undefined);
             let budEditing = new BudEditing(formContext, bud);
-            let ret: any; // = await pickBudID(modal, budEditing);
+            let ret: any = await pickBudID(modal, budEditing);
             if (ret === undefined) return;
             retAtomId = ret.id;
         }

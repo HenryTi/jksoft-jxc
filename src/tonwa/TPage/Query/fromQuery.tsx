@@ -172,7 +172,9 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
                 </div>;
             case BizPhraseType.fork:
                 if (id === undefined) return null;
-                return <ViewForkBuds id={id} store={queryStore} />;
+                return <RowCols>
+                    <ViewForkBuds id={id} store={queryStore} />
+                </RowCols>;
             case BizPhraseType.atom:
                 return <div>
                     <div>
