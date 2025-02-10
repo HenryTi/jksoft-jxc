@@ -229,8 +229,12 @@ export class BinStore extends StoreEntity<EntityBin> {
         if (valDiv === undefined) {
             // top div
             const { pend } = valRow;
-            let _valDiv = this.valDivsOnPend[pend];
-            setAtomValue(_valDiv, undefined);
+            if (pend !== undefined) {
+                let _valDiv = this.valDivsOnPend[pend];
+                if (_valDiv !== undefined) {
+                    setAtomValue(_valDiv, undefined);
+                }
+            }
         }
         let valDivs = this.getOwnerAtomValDivs(valRow);
         valDivs.delValRow(id);
@@ -525,7 +529,7 @@ export class BinStore extends StoreEntity<EntityBin> {
 
     async allPendsToValRows(): Promise<void> {
         // 在老版本中，是通过加载BinStore和BinStorePendDirect两个类来区分的
-        if (this.operate !== EnumDetailOperate.pend) return;
+        if (this.operate !== EnumDetailOperate.direct) return;
         const { valDivs } = this.valDivsRoot;
         const { length } = valDivs;
         if (length === 0) return;

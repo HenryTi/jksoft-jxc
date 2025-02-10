@@ -52,7 +52,7 @@ export function ViewDiv(props: ViewDivProps) {
 
     function ViewDivBinRow() {
         async function onDelSub() {
-            await controlDetailEdit.onDivDelSub();
+            await controlDetailEdit.onDivDelSub(valDiv);
         }
         async function onDivEdit() {
             await controlDetailEdit.onDivEdit(valDiv);

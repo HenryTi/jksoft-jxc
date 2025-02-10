@@ -141,22 +141,14 @@ export class TControlSheetStart extends ControlSheetStart {
 
 
 function PageMainPend({ control }: { control: ControlSheetStart; }) {
-    const { storeSheet: store, onMainPendPicked } = control;
-    // const { sheetConsole } = store;
-    // const { btnSubmit, btnExit } = buttons(sheetConsole);
-    // const group0: ToolItem[] = [btnSubmit];
-    // let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
-    // header={pageHeader} back={null} top={top} right={right}>
-    return <Page header="PageMainPend">
-        {/*<ViewSteps sheetSteps={sheetConsole.steps} />*/}
+    const { storeSheet: store, onMainPendPicked, steps } = control;
+    const { btnSubmit, btnExit } = buttons(control);
+    const group0: ToolItem[] = [btnSubmit];
+    let { header: pageHeader, top, right } = headerSheet({ store, toolGroups: [group0], headerGroup: [btnExit] });
+    return <Page header={pageHeader} back={null} top={top} right={right}>
+        <ViewSteps sheetSteps={steps} />
         <ViewMainPicks subHeader="新开单据" control={control} onPicked={onMainPendPicked} />
     </Page>;
-    /*
-    const { caption } = store;
-    return <Page header={caption + ' - 新开'}>
-        PageMainPend
-    </Page>;
-    */
 }
 
 function PageSheetDirect({ control }: { control: ControlSheetStart; }) {

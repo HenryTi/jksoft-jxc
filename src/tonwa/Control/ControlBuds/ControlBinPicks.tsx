@@ -22,8 +22,11 @@ export abstract class ControlBinPicks extends ControlBuds {
 
     constructor(controlBiz: ControlBiz, storeSheet: StoreSheet, bin: EntityBin, initBinRow?: BinRow) {
         const { binPicks, rearPick } = bin;
-        super(controlBiz, [...binPicks, rearPick]);
-        this.binPicks = binPicks;
+        const pickArr: BinPick[] = [];
+        if (binPicks !== undefined) pickArr.push(...binPicks);
+        if (rearPick !== undefined) pickArr.push(rearPick);
+        super(controlBiz, pickArr);
+        this.binPicks = binPicks ?? [];
         this.rearPick = rearPick;
         this.bin = bin;
         this.storeSheet = storeSheet;
@@ -35,6 +38,7 @@ export abstract class ControlBinPicks extends ControlBuds {
     }
 
     async pick(rearPickResultType: RearPickResultType = RearPickResultType.array) {
+        if (this.buds.length === 0) return;
         for (const binPick of this.binPicks) {
             await this.doBinPick(binPick);
         }

@@ -245,7 +245,7 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
 
     async runBinPicks() {
         const { storeSheet } = this.controlSheet;
-        const { binPicks } = this.entity;
+        const { binPicks, rearPick } = this.entity;
         const controlBinPicks = this.createControlPinPicks(this.entity);
         let ret = await controlBinPicks.pick();
         return ret;
@@ -314,9 +314,11 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
         binStore.replaceValDiv(valDiv, valDivClone);
     }
 
-    async onDivDelSub() {
+    async onDivDelSub(valDiv: ValDivBase) {
         const { storeSheet, binStore } = this.controlSheet;
-        // setAtomValue(atomDeleted, !deleted);
+        const { atomDeleted } = valDiv;
+        const deleted = getAtomValue(atomDeleted);
+        setAtomValue(atomDeleted, !deleted);
         this.controlSheet.notifyRowChange();
     }
 

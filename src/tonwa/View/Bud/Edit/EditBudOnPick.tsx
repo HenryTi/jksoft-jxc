@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { BinPick, BizPhraseType, BudID } from "../../../Biz";
 import { EditBudTemplateProps } from "./model";
+import { ViewAtomId } from "../../../View/Form/ViewAtomId";
+import { ViewForkId } from "../../../View/Form/ViewForkId";
 
 export function EditBudOnPick(props: EditBudTemplateProps & { pick: BinPick; }) {
     const { id, pick, readOnly, labelSize, flag, value: initValue, formBudsStore, budEditing, ViewValueEdit: ValueEdit, onChanged } = props;
@@ -36,10 +38,8 @@ export function EditBudOnPick(props: EditBudTemplateProps & { pick: BinPick; }) 
     else {
         switch (entityID.bizPhraseType) {
             default: debugger; break;
-            /*
             case BizPhraseType.atom: vContent = <ViewAtomId id={value} />; break;
             case BizPhraseType.fork: vContent = <ViewForkId id={value} />; break;
-            */
         }
     }
     return <ValueEdit label={label}

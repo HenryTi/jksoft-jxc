@@ -24,11 +24,11 @@ export function ViewForkAtomBold({ id, store }: { id: number; store: StoreEntity
 }
 
 export function ViewForkAtom({ id, store }: { id: number; store: StoreBase; }) {
+    if (id === undefined) return <>-</>;
     if (store === undefined) {
         return <ViewForkId id={id} />;
     }
     let IDAtom = store.getCacheAtom(id);
-    if (IDAtom === undefined) debugger;
     /*
     if (bizAtom === undefined) {
         let bizSpec = store.getCacheFork(id);
