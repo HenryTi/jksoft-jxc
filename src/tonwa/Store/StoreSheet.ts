@@ -97,8 +97,8 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
         if (entityPend === undefined) debugger;
         //let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
         let ret = await this.client.GetPend({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
-        let { $page, retSheet, props: showBuds, atoms, forks } = ret;
-        this.cacheIdAndBuds(showBuds, atoms, forks);
+        let { $page, retSheet, props, atoms, forks } = ret;
+        this.cacheIdAndBuds(props, atoms, forks);
         let collSheet: { [id: number]: ReturnGetPendRetSheet } = {};
         for (let v of retSheet) {
             collSheet[v.id] = v;

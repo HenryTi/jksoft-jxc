@@ -300,12 +300,14 @@ export class BinStore extends StoreEntity<EntityBin> {
         let { binDiv } = valDiv;
         let { binDivBuds: { budIBase, budXBase } } = binDiv;
         if (budIBase !== undefined) {
-            let bizAtom = this.sheetStore.getCacheAtom(budIBase.id)?.atom;
-            if (bizAtom !== undefined) valDiv.iBase = bizAtom.id;
+            let { i } = valRow;
+            let IDFork = this.sheetStore.getCacheFork(i);
+            valDiv.iBase = IDFork?.seedId;
         }
         if (budXBase !== undefined) {
-            let bizAtom = this.sheetStore.getCacheAtom(budXBase.id)?.atom;
-            if (bizAtom !== undefined) valDiv.xBase = bizAtom.id;
+            let { x } = valRow;
+            let IDFork = this.sheetStore.getCacheFork(x);
+            valDiv.xBase = IDFork?.seedId;
         }
         return rootValDiv;
     }

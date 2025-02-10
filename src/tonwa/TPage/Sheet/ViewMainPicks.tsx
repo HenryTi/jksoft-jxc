@@ -15,7 +15,7 @@ interface Props {
     onPicked: (results: ReturnUseBinPicks) => Promise<void>;
 }
 
-export function ViewMainPicks({ control, subHeader }: Props) {
+export function ViewMainPicks({ control, subHeader, onPicked }: Props) {
     const { storeSheet, mainStore: main, binStore, steps, controlBinPicks, atomCur, atomChanging } = control;
     const cur = useAtomValue(atomCur);
     if (controlBinPicks === undefined) return null;
@@ -23,6 +23,9 @@ export function ViewMainPicks({ control, subHeader }: Props) {
     const { formBudsStore } = controlBinPicks;
     const { binPicks, rearPick } = entityBin;
 
+    async function onNext() {
+        await control.onNextMainPicks(onPicked);
+    }
     let viewBinPicks: any;
     let viewBinPicksNext: any;
     if (binPicks !== undefined) {
@@ -33,7 +36,7 @@ export function ViewMainPicks({ control, subHeader }: Props) {
             <ViewPickRear />
         </>;
         viewBinPicksNext = <PickRow label={null} >
-            <button className="btn btn-primary my-3" onClick={control.onNextMainPicks} disabled={cur <= binPicks.length}>
+            <button className="btn btn-primary my-3" onClick={onNext} disabled={cur <= binPicks.length}>
                 <FA name="arrow-right me-2" />下一步
             </button>
         </PickRow>;

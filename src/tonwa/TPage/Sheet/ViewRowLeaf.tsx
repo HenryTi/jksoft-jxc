@@ -20,7 +20,11 @@ export function ViewRowLeaf(props: ViewDivProps) {
         value: cnValue, price: cnPrice, amount: cnAmount
     } = theme;
 
-    if (value === undefined) return null;
+    /*
+    if (value === undefined) {
+        return <>value===undefined</>;
+    }
+    */
     let viewIBud: any;
     if (budI !== undefined) {
         viewIBud = <>

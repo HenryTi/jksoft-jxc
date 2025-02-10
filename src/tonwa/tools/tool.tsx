@@ -42,10 +42,10 @@ export function ViewShowBuds({ bud, id, noLabel, store }: { bud?: BizBud; id: nu
                 debugger;
                 break;
             case BizPhraseType.fork:
-                const { seed, entityID: entityAtom, } = store.getCacheFork(id);
+                const { seedId, entityID: entityAtom, } = store.getCacheFork(id);
                 const { showKeys, showBuds } = entity as EntityFork;
                 return <>
-                    {viewBuds(store.getCacheBudProps(seed.id), entityAtom.primeBuds)}
+                    {viewBuds(store.getCacheBudProps(seedId), entityAtom.primeBuds)}
                     {viewBuds(budValueColl, showKeys)}
                     {viewBuds(budValueColl, showBuds)}
                 </>;

@@ -55,7 +55,7 @@ export abstract class ControlSheetStart extends ControlSheet {
         await this.controlSheetDash.onPickedNew(results);
     }
 
-    async onPicked(results: ReturnUseBinPicks) {
+    onPicked = async (results: ReturnUseBinPicks) => {
         return await this.controlSheetDash.onPicked(results);
     }
 
@@ -144,7 +144,7 @@ export abstract class ControlSheetStart extends ControlSheet {
     private async startPicks(): Promise<void> {
     }
 
-    onNextMainPicks = async () => {
+    onNextMainPicks = async (onPicked: (results: ReturnUseBinPicks) => Promise<any>) => {
         const { binPicks, rearPick } = this.mainStore.entity;
         const { formBudsStore } = this.controlBinPicks;
         let rearPickResult = this.refRearPickResult;
@@ -157,7 +157,8 @@ export abstract class ControlSheetStart extends ControlSheet {
             rearResult,
             rearPickResultType: this.rearPickResultType,
         };
-        await this.onPickedNew(ret);
+        // await this.onPickedNew(ret);
+        await onPicked(ret);
         this.steps?.next();
     }
 
