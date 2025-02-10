@@ -131,7 +131,7 @@ export interface QueryRow {
     rowId: number;              // 主从关系
     ban: number;
     ids: number[];
-    values: [BizBud, number][];
+    values: [BizBud, number];
     cols: QueryRowCol[];
     subs: QueryRow[];         // 从array
 }

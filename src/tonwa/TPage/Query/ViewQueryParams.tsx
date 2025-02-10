@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Page, useModal } from "tonwa-app";
-import { FA, theme } from "tonwa-com";
+import { ButtonAsync, FA, theme } from "tonwa-com";
 import { useForm } from "react-hook-form";
 import { BinPick, BizBud, EntityQuery, EnumBudType, PickParam, PickQuery, ValueSetType } from "../../Biz";
 import { FormBudsStore, ValuesBudsEditing } from "../../Control/ControlBuds/BinEditing";
@@ -84,6 +84,7 @@ export function ViewQueryParams({ query, editing, binPick, onSearch }: {
     const { store } = editing;
     const valueParams: [PickParam, BizBud, any][] = [];
     const inputParams: BizBud[] = [];
+    const [busy, setBusy] = useState(false);
     let noIdDefined = false;
     if (binPick !== undefined) {
         const { pickParams } = binPick;
@@ -126,9 +127,11 @@ export function ViewQueryParams({ query, editing, binPick, onSearch }: {
     let { current: paramBudsEditing } = useRef(new FormBudsStore(modal, new ValuesBudsEditing(biz, inputParams)));
     const { handleSubmit } = useForm({ mode: 'onBlur' });
     async function onSubmitForm(data: any) {
+        setBusy(true);
         let values = await paramBudsEditing.getBudsNameValues();
         let ret = stripParams(values, valueParams);
-        onSearch(ret);
+        await onSearch(ret);
+        setBusy(false);
     }
     return <form className={theme.bootstrapContainer + ' py-3 border-bottom'} onSubmit={handleSubmit(onSubmitForm)}>
         <RowColsSm>
@@ -140,10 +143,10 @@ export function ViewQueryParams({ query, editing, binPick, onSearch }: {
             })}
             {paramBudsEditing.buildEditBuds()}
             <div className="d-flex align-items-end">
-                <button type="submit" className="btn btn-primary mb-2" disabled={noIdDefined}>
+                <ButtonAsync type="submit" className="btn btn-primary mb-2" disabled={noIdDefined} onClick={undefined} busy={busy}>
                     <FA name="search" className="me-1" />
                     查找
-                </button>
+                </ButtonAsync>
             </div>
         </RowColsSm>
     </form>;

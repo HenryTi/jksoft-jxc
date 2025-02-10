@@ -6,11 +6,12 @@ interface Props extends React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLB
     children: React.ReactNode;
     tag?: string;
     overtime?: number;
+    busy?: boolean;
 }
 
 export function ButtonAsync(props: { onClick: (evt: MouseEvent<HTMLButtonElement>) => Promise<void> } & Props): JSX.Element {
+    let { children, onClick, tag, overtime, busy } = props;
     const [isWaiting, setIsWaiting] = useState<boolean>(false);
-    let { children, onClick, tag, overtime } = props;
     let isMounted = useRef<boolean>(false);
     let newOnClick: MouseEventHandler<HTMLButtonElement> | undefined;
     useEffect(() => {
@@ -41,7 +42,7 @@ export function ButtonAsync(props: { onClick: (evt: MouseEvent<HTMLButtonElement
             }
         };
     }
-    if (isWaiting === true) {
+    if (busy === true || isWaiting === true) {
         let { className } = props;
         className = (className ?? '') + ' position-relative';
         return <button {...props} disabled={true} className={className}>

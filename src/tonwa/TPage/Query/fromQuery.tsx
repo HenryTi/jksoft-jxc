@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import { Page, useModal } from "tonwa-app";
 import { List, Sep, theme } from "tonwa-com";
-import { BinPick, BizPhraseType, EntityQuery, IDColumn, PickQuery } from "../../Biz";
+import { BinPick, BizBud, BizPhraseType, EntityQuery, IDColumn, PickQuery } from "../../Biz";
 import { PickResult, RearPickResultType, StoreSheet } from "../../Store";
 import { LabelBox, RowCols, ViewBud } from "../../View";
 //import { ViewAtomPrimesOfStore, ViewAtomTitlesOfStore, ViewBud, ViewForkAtomBold, ViewForkBuds } from "../../View";
@@ -200,14 +200,20 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
         </>;
     }
     function ViewItemDetail({ value: picked }: { value: QueryRow }) {
-        const { ids, cols } = picked;
-        return <ViewIdOne id={ids[0]} col={idCols[indexLast]} cols={cols} />
+        const { ids, cols, values } = picked;
+        return <div className="d-flex">
+            <div className="flex-fill">
+                <ViewIdOne id={ids[0]} col={idCols[indexLast]} cols={cols} />
+            </div>
+            <ViewValue values={values} />
+        </div>;
     }
-    function ViewValue({ value, caption }: { value: number; caption: string; }) {
-        if (budValue === undefined) return null;
-        if (value === undefined) return null;
+    function ViewValue({ values }: { values: [BizBud, number]; }) {
+        if (values === undefined) return null;
+        const [bud, value] = values;
+        if (bud === undefined) return null;
         return <div className="w-min-8c text-end">
-            <div className={theme.labelColor}>{caption}</div>
+            <div className={theme.labelColor}>{bud.caption}</div>
             <div>{value}</div>
         </div>;
     }
@@ -219,7 +225,7 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
                 <div className="flex-fill">
                     <ViewItemMain value={picked} />
                 </div>
-                <ViewValue value={values?.[0]?.[1]} caption="数量" />
+                <ViewValue values={values} />
             </div>;
         }
         function ViewItemSub({ value }: { value: QueryRow }) {
