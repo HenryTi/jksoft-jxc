@@ -136,16 +136,24 @@ export class StoreSheet extends StoreEntity<EntitySheet> {
             if (pendValue === undefined) continue;
             if (iBud !== undefined) {
                 this.valDivsOnPend[pend] = atom(undefined as ValDivRoot);
+                let iValue = this.bizIDColl[i];
+                if (iValue !== undefined) (v as any).iBase = iValue.seedId;
+                /*
                 let iFork = this.bizForkColl[i];
                 if (iFork !== undefined) {
                     (v as any).iBase = iFork.seed.id;
                 }
+                */
             }
             if (xBud !== undefined) {
+                let xValue = this.bizIDColl[x];
+                if (xValue !== undefined) (v as any).xBase = xValue.seedId;
+                /*
                 let xFork = this.bizForkColl[x];
                 if (xFork !== undefined) {
                     (v as any).xBase = xFork.seed.id;
                 }
+                */
             }
             let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);
             let pendRow: PendRow = {

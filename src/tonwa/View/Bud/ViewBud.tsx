@@ -118,47 +118,45 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, no
     }
     else {
         // const { bizAtomColl } = store;
-        let pAtom = store.getCacheAtom(value); // bizAtomColl[value];
-        let bizAtom: AtomData = pAtom?.atom;
-        if (bizAtom !== undefined) {
-            let { no, ex } = bizAtom
-            title = `${ex} ${no}`;
-            vContent = ex;
-        }
-        else {
-            // const { budsColl } = store;
-            let forkValue = store.getCacheFork(value); // bizForkColl[value];
-            if (forkValue !== undefined) {
-                const { seed, buds } = forkValue;
-                if (seed === undefined) {
-                    // vContent = <ViewForkId id={value} />;
-                }
-                else {
-                    // vContent = <ViewSpecId id={atom.id} />;
-                    vContent = <ViewFork />;
-                    function ViewFork() {
-                        const { no, ex } = seed;
-                        let ret: string = (ex ?? no);
-                        let sep = ' '
-                        for (let bud of buds) {
-                            let budValue = store.getCacheBudValue(value, bud); // budsColl[value][bud.id];
-                            if (budValue !== undefined) {
-                                ret += sep;
-                                ret += bud.getUIValue(budValue);
-                                sep = '/';
-                            }
-                        }
-                        return <>{ret}</>;
-                    }
-                }
+        let pAtom = store.getCacheFork(value); // bizAtomColl[value];
+        if (pAtom === undefined) {
+            const { entityID } = bud.budDataType as BudID;
+            if (entityID === undefined) {
+                vContent = view();
             }
             else {
-                const { entityID } = bud.budDataType as BudID;
-                if (entityID === undefined) {
-                    vContent = view();
-                }
-                else {
-                    //vContent = <ViewForkAtom id={value} store={store} />
+                //vContent = <ViewForkAtom id={value} store={store} />
+            }
+        }
+        else {
+            const { atom, entityFork } = pAtom;
+            // let bizAtom: AtomData = pAtom?.atom;
+            if (entityFork === undefined) {
+                let { no, ex } = atom
+                title = `${ex} ${no}`;
+                vContent = ex;
+            }
+            else {
+                // const { budsColl } = store;
+                const { atom } = pAtom;
+                const { keys } = entityFork;
+                if (atom === undefined) debugger;
+                vContent = <ViewFork />;
+                function ViewFork() {
+                    const { no, ex } = atom;
+                    let ret: string = (ex ?? no);
+                    let sep = '/'
+                    for (let bud of keys) {
+                        let budValue = store.getCacheBudValue(value, bud); // budsColl[value][bud.id];
+                        ret += sep;
+                        if (budValue !== undefined) {
+                            ret += bud.getUIValue(budValue);
+                        }
+                        else {
+                            ret += '?';
+                        }
+                    }
+                    return <>{ret}</>;
                 }
             }
         }

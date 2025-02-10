@@ -1,4 +1,5 @@
 import { BizBud } from "./BizBud";
+import { BizPhraseType } from "./Defines";
 import { BudGroup, Entity } from "./Entity";
 
 export interface IxField {
@@ -196,6 +197,7 @@ export class EntityFork extends EntityID {
     readonly keys: BizBud[] = [];
     readonly showKeys: BizBud[] = [];
     readonly showBuds: BizBud[] = [];
+    #atom: EntityAtom;
     base: EntityID;
     noBud: BizBud;
     exBud: BizBud;
@@ -205,6 +207,21 @@ export class EntityFork extends EntityID {
         let ret = this.keyColl[id];
         if (ret !== undefined) return ret;
         return this.budColl[id];
+    }
+
+    get entityAtom() {
+        if (this.#atom !== undefined) return this.#atom;
+        for (let p = this.base; ;) {
+            if (p === undefined) debugger;
+            switch (p.bizPhraseType) {
+                default: debugger; return;
+                case BizPhraseType.atom:
+                    return this.#atom = p;
+                case BizPhraseType.fork:
+                    p = (p as EntityFork).base;
+                    continue;
+            }
+        }
     }
 
     protected override fromSwitch(i: string, val: any) {

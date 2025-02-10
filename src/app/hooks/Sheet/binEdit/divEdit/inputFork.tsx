@@ -102,16 +102,16 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
         if (id < 0) id = -id;
         let retSpec = Object.assign(data, { id, base: seed });
 
+        sheetStore.addBizProps([...keys, ...forkBuds].map(v => ({
+            id,
+            bud: v.id,
+            value: budValueFromData(v),
+        })));
         sheetStore.addBizForks([{
             id,
             seed,
             phrase: entityId,
-        }],
-            [...keys, ...forkBuds].map(v => ({
-                id,
-                bud: v.id,
-                value: budValueFromData(v),
-            })));
+        }]);
         return retSpec;
     }
     let ret: any;
@@ -165,23 +165,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
     }
     if (ret !== undefined) {
         const { id, base } = ret;
-        // const { bizForkColl } = sheetStore;
         sheetStore.setCacheFork(id, base, keys);
-        /*
-        let pAtom = sheetStore.getCacheAtom(base);
-        let atom: Atom;
-        let entityID: EntityID;
-        if (pAtom !== undefined) {
-            atom = pAtom.atom;
-            entityID = pAtom.entityID;
-        }
-        // sheetStore.set
-        bizForkColl[id] = {
-            atom,
-            entityID,
-            buds: keys,
-        }
-        */
     }
     return ret;
 

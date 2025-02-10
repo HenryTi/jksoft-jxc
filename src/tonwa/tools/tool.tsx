@@ -85,13 +85,19 @@ export function ViewAtomTitles({ id, noLabel, store }: { id: number; noLabel?: b
         budValueColl = budsColl[id];
     }
     */
-    let ret = store.getCacheAtomOrForkBudProps(id);
-    if (ret === null) return null;
-    let { budValueColl, entityID } = ret;
+    // let ret = store.getCacheIDBudProps(id);
+    // if (ret === null) return null;
+    // let { budValueColl, entityID } = ret;
+    const IDValue = store.getCacheFork(id);
+    if (IDValue === undefined) return null;
+    /*
     if (budValueColl === undefined) return null;
     if (entityID === undefined) return null;
+    */
+    const { entityID, atom } = IDValue;
     let buds: BizBud[] = entityID.titleBuds;
     if (buds === undefined) return null;
+    const budValueColl = store.getCacheBudProps(atom.id);
     const { labelColor } = theme;
     return <>{
         buds.map(v => {

@@ -86,7 +86,7 @@ export function ViewAtomTitles({ id, noLabel, store }: { id: number; noLabel?: b
         budValueColl = budsColl[id];
     }
     */
-    let ret = store.getCacheAtomOrForkBudProps(id);
+    let ret = store.getCacheIDBudProps(id);
     if (ret === null) return null;
     let { budValueColl, entityID } = ret;
     if (budValueColl === undefined) return null;

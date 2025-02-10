@@ -122,18 +122,18 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, no
             // const { budsColl } = store;
             let forkValue = store.getCacheFork(value); // bizForkColl[value];
             if (forkValue !== undefined) {
-                const { seed, buds } = forkValue;
-                if (seed === undefined) {
+                const { atom, entityFork } = forkValue;
+                if (atom === undefined) {
                     vContent = <ViewForkId id={value} />;
                 }
                 else {
                     // vContent = <ViewSpecId id={atom.id} />;
                     vContent = <ViewFork />;
                     function ViewFork() {
-                        const { no, ex } = seed;
+                        const { no, ex } = atom;
                         let ret: string = (ex ?? no);
                         let sep = ' '
-                        for (let bud of buds) {
+                        for (let bud of entityFork.keys) {
                             let budValue = store.getCacheBudValue(value, bud); // budsColl[value][bud.id];
                             if (budValue !== undefined) {
                                 ret += sep;
