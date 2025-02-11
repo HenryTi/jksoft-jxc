@@ -82,7 +82,8 @@ export abstract class ControlSheetStart extends ControlSheet {
                 // let sheetId = await this.openModalAsync<number>(this.PageDirectPend(), this.startDirectPend());
                 return;
             }
-            this.sheetId = await this.openModalAsync(this.PageSheetDirect(), this.startSheetDirect());
+            // this.sheetId = await this.openModalAsync(this.PageSheetDirect(), this.startSheetDirect());
+            this.sheetId = await this.startSheetDirect();
             return;
         }
         if (isPend === true) {
@@ -95,7 +96,8 @@ export abstract class ControlSheetStart extends ControlSheet {
             this.sheetId = await this.openModalAsync(this.PageStartPicks(), this.startPicks());
             return;
         }
-        this.sheetId = await this.openModalAsync(this.PageSheetDirect(), this.startSheetDirect());
+        // this.sheetId = await this.openModalAsync(this.PageSheetDirect(), this.startSheetDirect());
+        this.sheetId = await this.startSheetDirect();
         return;
     }
 
@@ -133,9 +135,11 @@ export abstract class ControlSheetStart extends ControlSheet {
         return ret.id;
     }
 
-    private async startSheetDirect(): Promise<void> {
+    private async startSheetDirect(): Promise<number> {
         // await nothingPicked(modal, control);
-        //await storeSheet.setSheetAsDraft();
+        let sheetId = await this.startDirectPend();
+        await this.setSheetAsDraft();
+        return sheetId;
     }
 
     private async startPend(): Promise<void> {

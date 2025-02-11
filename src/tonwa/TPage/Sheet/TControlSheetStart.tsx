@@ -156,8 +156,8 @@ function PageSheetDirect({ control }: { control: ControlSheetStart; }) {
     const { caption } = storeSheet;
     useEffectOnce(() => {
         (async function () {
-            //await nothingPicked(modal, control);
-            //await storeSheet.setSheetAsDraft();
+            // await nothingPicked(modal, control);
+            // await storeSheet.setSheetAsDraft();
         })();
     });
     return <PageSpinner header={caption + ' 创建中...'} />
