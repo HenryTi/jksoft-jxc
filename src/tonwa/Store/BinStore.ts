@@ -520,7 +520,7 @@ export class BinStore extends StoreEntity<EntityBin> {
 
     async addAllPendRowsDirect() {
         this.addAllPendRowsToSelect();
-        await this.allPendsToValRows();
+        return await this.allPendsToValRows();
     }
 
     deletePendThoroughly(pendId: number) {
@@ -529,7 +529,7 @@ export class BinStore extends StoreEntity<EntityBin> {
         setAtomValue(atomValDiv, undefined);
     }
 
-    async allPendsToValRows(): Promise<void> {
+    async allPendsToValRows(): Promise<boolean> {
         // 在老版本中，是通过加载BinStore和BinStorePendDirect两个类来区分的
         if (this.operate !== EnumDetailOperate.direct) return;
         const { valDivs } = this.valDivsRoot;

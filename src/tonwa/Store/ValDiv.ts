@@ -19,6 +19,11 @@ export class ValDivsBase<T extends ValDivBase> {
         return false;
     }
 
+    triggerRender() {
+        let divs = getAtomValue(this._atomValDivs);
+        setAtomValue(this._atomValDivs, [...divs]);
+    }
+
     setValDivs(valDivs: ValDivBase[]) {
         setAtomValue(this._atomValDivs, valDivs);
     }

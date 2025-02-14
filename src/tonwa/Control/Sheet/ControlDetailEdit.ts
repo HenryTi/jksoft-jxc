@@ -244,10 +244,12 @@ export abstract class ControlDetailEdit extends ControlDetail<ControlSheetEdit> 
     }
 
     async runBinPicks() {
-        const { storeSheet } = this.controlSheet;
+        const { storeSheet, binStore } = this.controlSheet;
         const { binPicks, rearPick } = this.entity;
         const controlBinPicks = this.createControlPinPicks(this.entity);
         let ret = await controlBinPicks.pick();
+        this.controlSheet.notifyRowChange();
+        binStore.valDivsRoot.triggerRender();
         return ret;
     }
 
