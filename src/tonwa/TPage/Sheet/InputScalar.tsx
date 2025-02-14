@@ -41,15 +41,19 @@ function useScalar(onPicked: (result: any) => void, value: any) {
     return refScalar.current;
 }
 
-export function InputScalar({ binPick, value, onPicked }: { binPick: BinPick; value: any; onPicked: (result: any) => void; }) {
+export function InputScalar({ binPick, value, onPicked, onInputing }: { binPick: BinPick; value: any; onPicked: (result: any) => void; onInputing: () => void; }) {
     const refInput = useRef<HTMLInputElement>(undefined);
-    const { onKeyDown, onChange, onBlur } = useScalar(onPicked, value);
+    const { onKeyDown, onChange: onUseChange, onBlur } = useScalar(onPicked, value);
     const { caption } = binPick;
     useEffect(() => {
         refInput.current.focus();
     });
     function onMouseUp(e: MouseEvent<HTMLInputElement>) {
         e.currentTarget.focus();
+    }
+    async function onChange(e: ChangeEvent<HTMLInputElement>): Promise<void> {
+        onUseChange(e);
+        onInputing?.();
     }
     return <div className="input-group ">
         <input ref={refInput} className="form-control" type="text"

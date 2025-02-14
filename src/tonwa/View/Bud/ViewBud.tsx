@@ -9,6 +9,7 @@ import {
 } from "../../View";
 import { AtomData, StoreBase, StoreEntity } from "../../Store";
 import { contentFromDays } from "../../tools";
+import { ViewForkAtom } from "../Form/ViewForkOfStore";
 
 export enum ViewBudUIType {
     notInDiv = 0,
@@ -51,7 +52,7 @@ export function ViewBud({ bud, value, uiType, noLabel, store, colon }: {
             break;
         case EnumBudType.datetime: content = datetime(bud, value); break;
         case EnumBudType.atom:
-            return atom(bud, value, uiType, colon, noLabel, store);
+            return atom(bud, value, colon, noLabel, store);
         case EnumBudType.bin:
             return bin(bud, value, store);
         case EnumBudType.fork:
@@ -61,6 +62,30 @@ export function ViewBud({ bud, value, uiType, noLabel, store, colon }: {
         return <div className="col my-2 ">{content}</div>;
     }
     return <LabelBox label={caption} colon={colon} className={cnViewBud}>{content}</LabelBox>;
+}
+
+function contentFromType(bud: BizBud, value: any, store: StoreBase, colon: boolean = undefined) {
+    const { budDataType } = bud;
+    let type = budDataType?.type;
+    switch (type) {
+        default:
+        case EnumBudType.dec:
+        case EnumBudType.none:
+        case EnumBudType.int:
+            return <>{value}</>;
+        case EnumBudType.char:
+        case EnumBudType.str:
+            return <span title={value}>{value}</span>;
+        case EnumBudType.radio: return radio(bud, value);
+        case EnumBudType.check: return check(bud, value);
+        case EnumBudType.pick: return pick(bud, value);
+        case EnumBudType.ID: return ID(bud, value);
+        case EnumBudType.date: return date(bud, value);
+        case EnumBudType.datetime: return datetime(bud, value);
+        case EnumBudType.atom: return atom(bud, value, colon, true, store);
+        case EnumBudType.bin: return bin(bud, value, store);
+        case EnumBudType.fork: return fork(bud, value, store);
+    }
 }
 
 export function budContent(bud: BizBud, value: any, store: StoreBase, colon: boolean = undefined) {
@@ -89,7 +114,7 @@ export function budContent(bud: BizBud, value: any, store: StoreBase, colon: boo
                 break;
             case EnumBudType.datetime: content = datetime(bud, value); break;
             case EnumBudType.atom:
-                return atom(bud, value, ViewBudUIType.notInDiv, colon, true, store);
+                return atom(bud, value, colon, true, store);
             case EnumBudType.bin:
                 return bin(bud, value, store);
             case EnumBudType.fork:
@@ -99,7 +124,7 @@ export function budContent(bud: BizBud, value: any, store: StoreBase, colon: boo
     return content;
 }
 
-function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, noLabel: boolean, store: StoreBase) {
+function atom(bud: BizBud, value: any, colon: boolean, noLabel: boolean, store: StoreBase) {
     function view() {
         switch (bud.name) {
             default:
@@ -125,7 +150,7 @@ function atom(bud: BizBud, value: any, uiType: ViewBudUIType, colon: boolean, no
                 vContent = view();
             }
             else {
-                //vContent = <ViewForkAtom id={value} store={store} />
+                vContent = <ViewForkAtom id={value} store={store} />
             }
         }
         else {
@@ -286,7 +311,7 @@ function fork(bud: BizBud, value: any, store: StoreBase) {
     const { showKeys, showBuds } = entityFork;
     function viewBud(bud: BizBud) {
         const { id } = bud;
-        return <ViewBud key={id} bud={bud} value={value[id]} />;
+        return <ViewBud key={id} bud={bud} value={value[id]} store={store} />;
     }
     return <>
         {showKeys.map(v => viewBud(v))}

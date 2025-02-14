@@ -52,7 +52,15 @@ export function ViewForkId({ id }: { id: number; }) {
 
     let contents: any[] = [];
     let { length } = value;
-    contents.push(value[0].value[1]);
+    let v0 = value[0];
+    let v0Value = v0.value;
+    if (v0Value === undefined) {
+        contents.push(v0);
+    }
+    else {
+        contents.push(v0Value);
+    }
+    // contents.push(value[0].value[1]);
     for (let i = length - 1; i > 0; i--) {
         let v = value[i];
         contents.push(<span key={v.id}>{viewFork(v)}<small className="text-body-tertiary">/</small></span>);
@@ -77,15 +85,22 @@ async function idFork(uq: UqExt, id: number) {
             console.error(err);
         }
         if (ret !== undefined) {
-            for (let prop of ret.props) {
-                const { id: forkId } = prop;
-                if (forkId === id) {
-                    obj = prop;
+            if (ret.props.length === 0) {
+                obj = id;
+                cache.add(id, id);
+            }
+            else {
+                for (let prop of ret.props) {
+                    const { id: forkId } = prop;
+                    if (forkId === id) {
+                        obj = prop;
+                    }
+                    cache.add(forkId, prop === undefined ? null : prop);
                 }
-                cache.add(forkId, prop === undefined ? null : prop);
             }
         }
         else {
+            obj = id;
             cache.add(id, null);
         }
         delete cachePromise[id];

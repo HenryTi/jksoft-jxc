@@ -80,7 +80,7 @@ interface SearchSheetParam {
 }
 export function PageSheetSearch({ control }: { control: ControlSheetList; }) {
     const { uq } = useUqApp();
-    let { entity: entitySheet } = control;
+    let { entity: entitySheet, storeSheet } = control;
     let { name, caption, search } = entitySheet;
     if (caption === undefined) caption = name;
     const { current: paramValues } = useRef<any>({});
@@ -143,7 +143,7 @@ export function PageSheetSearch({ control }: { control: ControlSheetList; }) {
         for (let { bin, buds } of search) {
             budArr.push(...buds);
         }
-        vBudParams = <ViewParams budArr={budArr} onBudChanged={onBudChanged} />;
+        vBudParams = <ViewParams control={control} budArr={budArr} onBudChanged={onBudChanged} />;
     }
     function ViewItem({ value }: { value: any; }) {
         return <ViewSheetItem value={value} control={control} />;
@@ -167,10 +167,11 @@ export function PageSheetSearch({ control }: { control: ControlSheetList; }) {
     </PageQueryMore>
 }
 
-function ViewParams({ budArr, onBudChanged }: { budArr: BizBud[]; onBudChanged: OnBudChanged; }) {
+function ViewParams({ control, budArr, onBudChanged }: { control: ControlSheetList; budArr: BizBud[]; onBudChanged: OnBudChanged; }) {
     const modal = useModal();
     const uqApp = useUqApp();
-    let valuesBudsEditing = new ValuesBudsEditing(uqApp.biz, budArr);
+    const { storeSheet } = control;
+    let valuesBudsEditing = new ValuesBudsEditing(uqApp.biz, storeSheet, budArr);
     let formBudsStore = new FormBudsStore(modal, valuesBudsEditing);
     valuesBudsEditing.setStopRequired();
     let budEditings = valuesBudsEditing.createBudEditings(); // budArr.map(v => new BudEditing(v, false));

@@ -59,7 +59,7 @@ export async function pickQueryParams(props: Props) {
             editing.addFormula(pickParam.name, pickParam.valueSet, pickParam.valueSetType === ValueSetType.init);
         }
     }
-    const { modal } = editing;
+    const { modal, budsEditing: { store } } = editing;
     const valueParams: [PickParam, BizBud, any][] = [];
     const inputParams: BizBud[] = [];
     for (let param of queryParams) {
@@ -93,7 +93,7 @@ export async function pickQueryParams(props: Props) {
         return retParam;
     }
     const { biz } = editing;
-    let paramBudsEditing = new FormBudsStore(modal, new ValuesBudsEditing(biz, inputParams));
+    let paramBudsEditing = new FormBudsStore(modal, new ValuesBudsEditing(biz, store, inputParams));
     return await modal.open(<PageParams header={header}
         valueParams={valueParams}
         inputParams={paramBudsEditing} />);

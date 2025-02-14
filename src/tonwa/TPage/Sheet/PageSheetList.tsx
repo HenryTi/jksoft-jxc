@@ -10,7 +10,7 @@ import { PageSheetSearch } from "./PageSheetSearch";
 
 export function PageSheetList({ control }: { control: TControlSheetList }) {
     // const { entitySheet, myArchiveList } = dashConsole;
-    const { entity, myArchiveList } = control;
+    const { entity, myArchiveList, storeSheet } = control;
     const { biz, caption, id, main } = entity;
     const { primeBuds } = main;
     const modal = useModal();
@@ -29,7 +29,7 @@ export function PageSheetList({ control }: { control: TControlSheetList }) {
     }
     let { current: no } = useRef(undefined as string);
     const [param, setParam] = useState(initParam);
-    const { current: budsEditing } = useRef(new FormBudsStore(modal, new ValuesBudsEditing(biz, primeBuds)));
+    const { current: budsEditing } = useRef(new FormBudsStore(modal, new ValuesBudsEditing(biz, storeSheet, primeBuds)));
     async function onSearch() {
         await modal.open(<PageSheetSearch control={control} />);
     }

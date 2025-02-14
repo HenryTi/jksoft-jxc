@@ -1,9 +1,6 @@
 import { useAtomValue } from "jotai";
 import { Page, useModal } from "tonwa-app";
 import { ButtonAsync, FA, List, Sep, setAtomValue, theme, wait } from "tonwa-com";
-// import { FormBudsStore, PendRow } from "../../../Store";
-// import { ViewPendRowEdit } from "../binEdit/ViewPendRowEdit";
-// import { ViewSteps } from "../dash/ViewSteps";
 import { PickPendStore } from "../../Store/PickPendStore";
 import { PendRow } from "../../Store";
 import { RowCols } from "../../View";
@@ -15,7 +12,6 @@ export function PagePend({ pendStore }: { pendStore: PickPendStore; }) {
     let { binStore, pickPend } = pendStore;
     let { caption, name } = pickPend;
     let { entity: { pend: entityPend }, atomPendRows, sheetStore } = binStore;
-    // const { /*sheetConsole: { steps },*/ atomLoaded } = sheetStore;
     let steps: any;
     const modal = useModal();
     let pendRows = useAtomValue(atomPendRows);

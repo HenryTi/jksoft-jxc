@@ -124,7 +124,7 @@ export function ViewQueryParams({ query, editing, binPick, onSearch }: {
         if ((budDataType as any).entityID !== undefined) continue;
         noIdDefined = true;
     }
-    let { current: paramBudsEditing } = useRef(new FormBudsStore(modal, new ValuesBudsEditing(biz, inputParams)));
+    let { current: paramBudsEditing } = useRef(new FormBudsStore(modal, new ValuesBudsEditing(biz, store, inputParams)));
     const { handleSubmit } = useForm({ mode: 'onBlur' });
     async function onSubmitForm(data: any) {
         setBusy(true);

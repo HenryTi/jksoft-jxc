@@ -1,5 +1,5 @@
 import { useState, JSX } from "react";
-import { FA, Sep } from "tonwa-com";
+import { FA, Sep, setAtomValue } from "tonwa-com";
 import { useAtomValue } from "jotai";
 import { PickResult, ReturnUseBinPicks } from "../../Store/PickResult";
 import { BinPick, BizPhraseType, PickOptions } from "../../Biz";
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export function ViewMainPicks({ control, subHeader, onPicked }: Props) {
-    const { storeSheet, mainStore: main, binStore, steps, controlBinPicks, atomCur, atomChanging } = control;
+    const { mainStore: main, storeSheet, controlBinPicks, atomCur, atomChanging, atomError } = control;
     const cur = useAtomValue(atomCur);
     if (controlBinPicks === undefined) return null;
     const { entity: entityBin } = main;
@@ -45,17 +45,21 @@ export function ViewMainPicks({ control, subHeader, onPicked }: Props) {
         <FA name="search" fixWidth={true} className="small text-info" />
     </div>;
     function ViewPick({ binPick, serial }: { binPick: BinPick; serial: number; }) {
-        const [message, setMessage] = useState(undefined as string);
+        // const [message, setMessage] = useState(undefined as string);
+        const error = useAtomValue(atomError);
         useAtomValue(atomChanging);
         if (binPick.fromPhraseType === BizPhraseType.any) {
             if (serial === cur) {
                 const { caption, name } = binPick;
                 const defaultValue = formBudsStore.getValue(name);
                 async function onPicked(scalarResult: PickResult) {
-                    await control.onPickedInputScalar(binPick, serial, scalarResult, setMessage);
+                    await control.onPickedInputScalar(binPick, serial, scalarResult);
                 }
-                return <ViewLabelRowPicking cn="d-flex align-items-stretch g-0" caption={caption} message={message}>
-                    <InputScalar binPick={binPick} onPicked={onPicked} value={defaultValue} />
+                function onInputing() {
+                    setAtomValue(atomError, undefined);
+                }
+                return <ViewLabelRowPicking cn="d-flex align-items-stretch g-0" caption={caption} message={error}>
+                    <InputScalar binPick={binPick} onPicked={onPicked} value={defaultValue} onInputing={onInputing} />
                 </ViewLabelRowPicking>;
             }
             else if (serial < cur) {
@@ -66,14 +70,14 @@ export function ViewMainPicks({ control, subHeader, onPicked }: Props) {
         async function pick() { await control.pick(binPick, serial); }
         if (serial < cur) return <ViewPicked binPick={binPick} pick={pick} />;
         if (serial === cur) {
-            return <ViewPicking binPick={binPick} pick={pick} message={message} />;
+            return <ViewPicking binPick={binPick} pick={pick} />;
         }
         return <ViewToPick binPick={binPick} />;
     }
     function ViewLabelRowPicking({ cn, children, caption, message }: { cn?: string; children: any; caption: string; message?: string | JSX.Element; }) {
         return <PickRow label={caption} cn={cn}
             cnLabel="text-primary fw-bold"
-            cnAngle="text-primary" iconPrefix="hand-o-right" message={message}>
+            cnAngle="text-primary" iconPrefix="hand-o-right" error={message}>
             {children}
         </PickRow>;
     }
@@ -134,7 +138,7 @@ export function ViewMainPicks({ control, subHeader, onPicked }: Props) {
                         <RowCols>
                             {to.map(([bud]) => {
                                 let v = formBudsStore.getValue(bud.name);
-                                return <ViewBud key={bud.id} bud={bud} value={v} />;
+                                return <ViewBud key={bud.id} bud={bud} value={v} store={storeSheet} />;
                             })}
                         </RowCols>
                     </div>

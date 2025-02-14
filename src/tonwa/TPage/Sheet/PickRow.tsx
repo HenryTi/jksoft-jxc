@@ -2,11 +2,11 @@ import { JSX } from "react";
 import { theme } from "tonwa-com";
 import { FA, Sep } from "tonwa-com";
 
-export function PickRow({ children, label, cn, iconPrefix, cnAngle, cnLabel, message }: {
+export function PickRow({ children, label, cn, iconPrefix, cnAngle, cnLabel, error }: {
     children: React.ReactNode;
     label?: string;
     cn?: string; iconPrefix?: string; cnAngle?: string; cnLabel?: string;
-    message?: string | JSX.Element;
+    error?: string | JSX.Element;
 }) {
     let cnLabelContainer: string, vLabel: any;
     if (label === null) {
@@ -21,20 +21,19 @@ export function PickRow({ children, label, cn, iconPrefix, cnAngle, cnLabel, mes
         </>;
     }
     let vContent: any;
-    if (message === undefined) {
+    if (error === undefined) {
         vContent = children;
     }
     else {
         let vMessage: any;
-        if (typeof message === 'string') {
-            vMessage = <div className="text-danger small">{message}</div>;
+        if (typeof error === 'string') {
+            vMessage = <span className="text-danger small ms-3">{error}</span>;
         }
         else {
-            vMessage = message;
+            vMessage = error;
         }
         vContent = <>
-            <div>{children}</div>
-            {vMessage}
+            <div className="w-100">{children} {vMessage}</div>
         </>;
     }
     return <>

@@ -612,9 +612,11 @@ export abstract class BudsEditing<R = any> {
 }
 
 export class ValuesBudsEditing extends BudsEditing<{ [id: number]: any }> {
-    constructor(biz: Biz, buds: BizBud[]) {
+    #store: StoreEntity;
+    constructor(biz: Biz, store: StoreEntity, buds: BizBud[]) {
         super(biz, buds);
-        this.setBudValuesTool(new BudValuesTool(/*this, */buds));
+        this.#store = store;
+        this.setBudValuesTool(new BudValuesTool(buds));
     }
 
     get atomChanging(): WritableAtom<any, any, any> { return undefined; }
@@ -628,6 +630,8 @@ export class ValuesBudsEditing extends BudsEditing<{ [id: number]: any }> {
         if (initValues === undefined) return;
         for (let bud of this.buds) this.setBudValue(bud, initValues[bud.name]);
     }
+
+    get store() { return this.#store; }
 }
 
 function budRadios(budDataType: BudRadio): { label: string; value: string | number }[] {

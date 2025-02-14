@@ -98,7 +98,7 @@ export function ViewFormForkObj({ row, label, error, inputProps, formContext, se
 function PageFork({ fork, value, baseId, store }: { fork: EntityFork; value: object; baseId: number; store: StoreEntity; }) {
     const modal = useModal();
     const buds = [...fork.keys, ...fork.buds];
-    const { current: formBudsStore } = useRef(new FormBudsStore(modal, new ValuesBudsEditing(fork.biz, buds)));
+    const { current: formBudsStore } = useRef(new FormBudsStore(modal, new ValuesBudsEditing(fork.biz, store, buds)));
     const { budsEditing } = formBudsStore;
     budsEditing.setNamedValue('%base', baseId);
     budsEditing.initBudValues(value);

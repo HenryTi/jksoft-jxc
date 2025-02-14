@@ -17,6 +17,7 @@ export abstract class ControlSheetStart extends ControlSheet {
     protected readonly controlSheetDash: ControlSheetDash;
     readonly atomChanging = atom(1);
     readonly atomCur = atom(0);         // pick main 的操作顺序
+    readonly atomError = atom(undefined as string);
     readonly controlBinPicks: ControlBinPicks;
     readonly rearPickResultType = RearPickResultType.scalar;
     refRearPickResult: PickResult[] | PickResult;
@@ -211,17 +212,17 @@ export abstract class ControlSheetStart extends ControlSheet {
 
     async onPickedInputScalar(binPick: BinPick
         , serial: number
-        , scalarResult: PickResult
-        , setMessage: (message: string) => void) {
+        , scalarResult: PickResult) {
         if (scalarResult === undefined) return;
         const { formBudsStore } = this.controlBinPicks;
         formBudsStore.setNamedValue(binPick.to[0][0].name, scalarResult as any);
         formBudsStore.setNamedValue(binPick.name, scalarResult as any);
         let nextPick = this.getNextPick();
-        this.afterPicked(serial);
-        if (nextPick.fromPhraseType !== BizPhraseType.pend) return;
-        {
-            await this.autoPickPend(serial, nextPick as PickPend, setMessage);
+        if (nextPick.fromPhraseType === BizPhraseType.pend) {
+            await this.autoPickPend(serial, nextPick as PickPend);
+        }
+        else {
+            this.afterPicked(serial);
         }
     }
 
@@ -232,7 +233,7 @@ export abstract class ControlSheetStart extends ControlSheet {
         return rearPick;
     }
 
-    private async autoPickPend(serial: number, nextPick: PickPend, setMessage: (message: string) => void) {
+    private async autoPickPend(serial: number, nextPick: PickPend) {
         let pickPend = nextPick as PickPend;
         const { binStore, mainStore } = this.storeSheet;
         const { atomPendRows, entity, operate } = binStore;
@@ -248,7 +249,7 @@ export abstract class ControlSheetStart extends ControlSheet {
         await pendStore.searchPend();
         let pendRows = getAtomValue(atomPendRows);
         if (pendRows.length === 0) {
-            setMessage('无待处理');
+            setAtomValue(this.atomError, '无待处理');
             return;
         }
         let pendRow = pendRows[0];

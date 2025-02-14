@@ -9,7 +9,7 @@ import { EntityFork } from "../../Biz";
 import { Band, FormAtom, FormContext } from "./FormRowsView";
 import { ViewForkId } from "./ViewForkId";
 import { BudEditing } from "../Bud";
-import { pickBudID } from "../Common/pickBudID";
+import { PagePickBudID } from "../Common/pickBudID";
 
 export function ViewFormAtomFork({ row, label, error, inputProps, clearErrors, setValue, entity, onChange, formContext }: {
     row: FormAtom;
@@ -33,7 +33,7 @@ export function ViewFormAtomFork({ row, label, error, inputProps, clearErrors, s
         let params = formContext.getParams(name);
         // let ret = await IDSelect(entity, params);
         let budEditing = new BudEditing(formContext, bud);
-        let ret = await pickBudID(modal, budEditing);
+        let ret = await modal.open(<PagePickBudID budEditing={budEditing} />);
         if (ret === undefined) return;
         const { id } = ret;
         if (setValue !== undefined) {

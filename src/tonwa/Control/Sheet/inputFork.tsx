@@ -137,7 +137,7 @@ export async function inputFork(props: PropsInputFork): Promise<PickResult> {
     else {
         let buds = [...keys];
         if (forkBuds !== undefined) buds.push(...forkBuds);
-        let budsEditing = new ValuesBudsEditing(biz, buds);
+        let budsEditing = new ValuesBudsEditing(biz, sheetStore, buds);
         let formBudsStore = new FormBudsStore(modal, budsEditing);
         budsEditing.setNamedValue('%base', seed);
         budsEditing.initBudValues(paramValues);

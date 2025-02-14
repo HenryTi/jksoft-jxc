@@ -9,8 +9,9 @@ import { EditBudProps, EditBudTemplateProps } from "./model";
 import { LabelRowEdit } from "./LabelRowEdit";
 import { InlineEdit } from "./InlineEdit";
 import { EditBudOnPick } from "./EditBudOnPick";
+import { FormContext } from "../../../View/Form";
 
-type FormContext = any;
+// type FormContext = any;
 
 export function EditBudLabelRow(editProps: EditBudProps) {
     const ValueEdit = LabelRowEdit

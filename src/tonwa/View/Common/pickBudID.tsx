@@ -12,9 +12,11 @@ import { PageQueryMore } from "./PageQueryMore";
 import { AtomStore } from "./AtomStore";
 // import { AtomStore } from "../BizAtom";
 
+/*
 export async function pickBudID(modal: Modal, budEditing: BudEditing) {
     return await modal.open(<PagePickBudID budEditing={budEditing} />);
 }
+*/
 /*
 class BudIDStore extends EntityStore {
     constructor(modal: Modal, bud: BizBud) {
@@ -40,8 +42,8 @@ function ViewID({ id, store }: { id: number; store: StoreEntity; }) {
     </div>;
 }
 
-function PagePickBudID({ budEditing }: { budEditing: BudEditing; }) {
-    const { bizBud } = budEditing;
+export function PagePickBudID({ budEditing }: { budEditing: BudEditing; }) {
+    const { bizBud, budsEditing: { store } } = budEditing;
     const modal = useModal();
     const { budDataType, tie: budTie } = bizBud;
     const budID = budDataType as BudID;
@@ -49,7 +51,7 @@ function PagePickBudID({ budEditing }: { budEditing: BudEditing; }) {
     let [entityAtom, setEntityAtom] = useState(entityID);
     const [searchKey, setSearchKey] = useState<string>();
     const { caption } = entityAtom;
-    const { current: store } = useRef(new AtomStore(modal, entityID));
+    const { current: storeAtom } = useRef(new AtomStore(modal, entityID));
     const defaultParam: ParamGetIDList = {
         phrase: entityID.id,
         tie: undefined,
@@ -73,7 +75,7 @@ function PagePickBudID({ budEditing }: { budEditing: BudEditing; }) {
         onSearch(searchKey ?? '');
     }
     function ViewItem({ value }: { value: any; }) {
-        return <ViewID id={value.id} store={store} />;
+        return <ViewID id={value.id} store={storeAtom} />;
     }
     async function onSearch(key: string) {
         setSearchKey(key);
@@ -84,10 +86,11 @@ function PagePickBudID({ budEditing }: { budEditing: BudEditing; }) {
         });
     }
     async function onItemSelect(item: any) {
+        store.mergeStoreColl(storeAtom);
         modal.close(item);
     }
     return <PageQueryMore header={caption}
-        query={store.searchItems}
+        query={storeAtom.searchItems}
         ViewItem={ViewItem}
         sortField="id"
         param={param}

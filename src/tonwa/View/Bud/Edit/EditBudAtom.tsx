@@ -5,6 +5,7 @@ import { useUqApp } from "app/UqApp";
 import { BudID } from "../../../Biz";
 import { EditBudTemplateProps } from "./model";
 import { ViewForkAtom } from "../../../View/Form/ViewForkOfStore";
+import { PagePickBudID } from "tonwa/View/Common/pickBudID";
 
 export function EditBudAtom(props: EditBudTemplateProps) {
     const { uq } = useUqApp();
@@ -26,7 +27,7 @@ export function EditBudAtom(props: EditBudTemplateProps) {
                 params[i] = budEditing.calcValue(atomParams[i]);
             }
         }
-        let ret: any; // = await pickBudID(modal, budEditing);
+        let ret = await modal.open(<PagePickBudID budEditing={budEditing} />);
         if (ret === undefined) return;
         let atomId = ret === null ? undefined : ret.id;
         if (id !== undefined) {
