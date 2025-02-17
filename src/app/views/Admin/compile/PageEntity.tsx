@@ -414,7 +414,8 @@ function PageLogs({ entity, code, onCompiled }: { entity: Entity, code: string; 
                 let bizSchema = jsonpack.unpack(schemas);
                 biz.buildEntities(bizSchema);
                 onCompiled();
-                ret = '编译成功!\n' + JSON.stringify(bizSchema, null, 4);
+                let arr = (bizSchema as any).biz as [];
+                ret = '编译成功!\n' + JSON.stringify(arr.slice(0, 10), null, 4);
             }
             setAtomValue(atomLogs, ret);
             clearInterval(interval);

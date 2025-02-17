@@ -12,6 +12,7 @@ import { ViewSheetContent } from "./ViewSheetContent";
 import { useSiteRole } from "../../Site";
 // import { detailNewLoop } from "./detailNew";
 import { ControlSheetEdit } from "../../Control";
+import { ViewSheetEdit } from "./ViewSheetEdit";
 
 export function PageSheetEdit({ control }: { control: ControlSheetEdit; }) {
     const { modal, storeSheet, mainStore, binStore, atomReaction, atomSubmitState, atomError } = control;
@@ -84,6 +85,6 @@ export function PageSheetEdit({ control }: { control: ControlSheetEdit; }) {
         top={top}
         right={right}
     >
-        <ViewSheetContent control={control} readonly={false} />
+        <ViewSheetEdit control={control} readonly={false} />
     </Page>;
 }

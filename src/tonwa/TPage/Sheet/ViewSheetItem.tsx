@@ -3,6 +3,9 @@ import { ReturnGetMySheetList$page } from "uqs/UqDefault";
 import { PageSheetEdit } from "./PageSheetEdit";
 import { ControlSheetEdit, ControlSheetList } from "../../Control";
 import { ViewItemMain } from "../../View";
+import { TControlSheetEdit } from "./TControlSheetEdit";
+import { TControlSheetView } from "./TControlSheetView";
+import { PageSheetView } from "./PageSheetView";
 
 export function ViewSheetItem({ control, value }: {
     value: ReturnGetMySheetList$page;
@@ -14,8 +17,8 @@ export function ViewSheetItem({ control, value }: {
     // const store = sheetConsole.createSheetStore(); // for edit
     const { storeSheet } = control;
     async function onSheet() {
-        // await control.openModal(<PageSheetEdit control={control} />);
-        alert('building...');
+        let controlSheetView = new TControlSheetView(control.controlBiz, control.entity);
+        await control.openModalAsync(<PageSheetView control={controlSheetView} />, controlSheetView.load(value.id));
     }
 
     return <div className="d-flex cursor-pointer" onClick={onSheet}>

@@ -17,7 +17,7 @@ export abstract class ControlSheetStart extends ControlSheet {
     protected readonly controlSheetDash: ControlSheetDash;
     readonly atomChanging = atom(1);
     readonly atomCur = atom(0);         // pick main 的操作顺序
-    readonly atomError = atom(undefined as string);
+    readonly atomStartError = atom(undefined as string);
     readonly controlBinPicks: ControlBinPicks;
     readonly rearPickResultType = RearPickResultType.scalar;
     refRearPickResult: PickResult[] | PickResult;
@@ -249,7 +249,7 @@ export abstract class ControlSheetStart extends ControlSheet {
         await pendStore.searchPend();
         let pendRows = getAtomValue(atomPendRows);
         if (pendRows.length === 0) {
-            setAtomValue(this.atomError, '无待处理');
+            setAtomValue(this.atomStartError, '无待处理');
             return;
         }
         let pendRow = pendRows[0];

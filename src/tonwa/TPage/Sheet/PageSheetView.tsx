@@ -9,8 +9,9 @@ import { buttonDefs } from "./HeaderSheet";
 import { useSiteRole } from "../../Site";
 import { download } from "../../tools/download";
 import { upload } from "./upload";
+import { TControlSheetView } from "./TControlSheetView";
 
-export function PageSheetView({ control }: { control: TControlSheetEdit; }) {
+export function PageSheetView({ control }: { control: TControlSheetView; }) {
     const modal = useModal();
     const refPrint = useRef(null);
     const handlePrint = useReactToPrint({
@@ -62,13 +63,13 @@ export function PageSheetView({ control }: { control: TControlSheetEdit; }) {
     if (isAdmin === true) leftGroup.push(btnSubmitDebug);
     let toolGroups = [leftGroup, null, [btnDownload, btnPrint]];
     let top = <Toolbar groups={toolGroups} />;
-    return <Page header={<ViewCurSiteHeader caption={caption} />}>
-        <ViewSheetContent control={control} readonly={true} />
+    return <Page header={<ViewCurSiteHeader caption={caption} />} top={top}>
+        <ViewSheetContent control={control} />
         <ViewSheetPrint control={control} refPrint={refPrint} />
     </Page>;
 }
 
-function ViewSheetPrint({ control, refPrint }: { control: TControlSheetEdit; refPrint: React.Ref<HTMLDivElement> }) {
+function ViewSheetPrint({ control, refPrint }: { control: TControlSheetView; refPrint: React.Ref<HTMLDivElement> }) {
     const { storeSheet } = control;
     const { caption } = storeSheet;
     const __html = `<div class="text-center">${caption}</div>`;
@@ -76,7 +77,7 @@ function ViewSheetPrint({ control, refPrint }: { control: TControlSheetEdit; ref
         <div ref={refPrint} className="print-container" style={{ margin: "0", padding: "0" }}>
             <div className="border-bottom px-3 py-2 mb-1 fs-larger text-center border-dark">{caption}</div>
             <div dangerouslySetInnerHTML={{ __html }} />
-            <ViewSheetContent control={control} readonly={true} />
+            <ViewSheetContent control={control} />
         </div>
     </div>;
 }

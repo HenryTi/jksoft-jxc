@@ -58,7 +58,13 @@ export function ViewForkId({ id }: { id: number; }) {
         contents.push(v0);
     }
     else {
-        contents.push(v0Value);
+        if (Array.isArray(v0Value) === true && v0Value.length === 2) {
+            const [no, ex] = v0Value;
+            contents.push(ex ?? no);
+        }
+        else {
+            contents.push(v0Value);
+        }
     }
     // contents.push(value[0].value[1]);
     for (let i = length - 1; i > 0; i--) {

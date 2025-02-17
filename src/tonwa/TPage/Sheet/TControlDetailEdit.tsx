@@ -9,7 +9,7 @@ import { TControlBinPicks } from "./TControlBinPicks";
 
 export class TControlDetailEdit extends ControlDetailEdit {
     protected override PageEditDivRoot(valDiv: ValDivBase): JSX.Element {
-        return <PageEditDivRoot control={this} valDiv={valDiv} />;
+        return <PageEditDivRoot control={this.controlSheet} controlDetail={this} valDiv={valDiv} />;
     }
     override createControlPinPicks(entityBin: EntityBin, initBinRow?: BinRow) {
         return new TControlBinPicks(this.controlBiz, this.controlSheet.storeSheet, entityBin, initBinRow);

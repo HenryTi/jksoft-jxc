@@ -4,11 +4,10 @@ import { ViewRowLeaf } from "./ViewRowLeaf";
 import { ViewRowStem } from "./ViewRowStem";
 import { useAtomValue } from "jotai";
 import { FA } from "tonwa-com";
-import { TControlDetailEdit } from "./TControlDetailEdit";
 
 export function ViewRow(props: ViewDivProps) {
-    const { control: control, valDiv, index } = props;
-    const { atomError } = (control as TControlDetailEdit).controlSheet;
+    const { control, valDiv, index } = props;
+    const { atomError } = control;
     const { binDiv, valRow } = valDiv;
     const { level, entityBin, subBinDiv } = binDiv;
     const { id, pend } = valRow;

@@ -10,9 +10,9 @@ import { TControlDetailEdit } from "./TControlDetailEdit";
 // import { rowEdit } from "../divEdit";
 
 export function ViewDiv(props: ViewDivProps) {
-    const { control: control, valDiv, readonly } = props;
-    const controlDetailEdit = control as TControlDetailEdit;
-    const { binStore } = controlDetailEdit.controlSheet;
+    const { control, controlDetail, valDiv, readonly } = props;
+    const controlDetailEdit = controlDetail as TControlDetailEdit;
+    const { binStore } = control;
     const { binDiv, atomDeleted } = valDiv;
     const { entityBin, level } = binDiv;
     const divs = useAtomValue(valDiv.atomValDivs);
@@ -22,7 +22,7 @@ export function ViewDiv(props: ViewDivProps) {
         // pivot直接在末尾级stem显示value list
         return null;
     }
-    if (deleted === true) return <ViewDivUndo control={control} valDiv={valDiv} />;
+    if (deleted === true) return <ViewDivUndo control={control} controlDetail={undefined} valDiv={valDiv} />;
 
     const { pend, id } = valRow;
     const { sheetStore } = binStore;
@@ -32,10 +32,10 @@ export function ViewDiv(props: ViewDivProps) {
 
     function ViewDivPendRow() {
         async function onDelSub() {
-            await controlDetailEdit.onDelSub(valDiv, pend);
+            await controlDetailEdit?.onDelSub(valDiv, pend);
         }
         async function onEdit() {
-            await controlDetailEdit.onPendEdit(valDiv, pend);
+            await controlDetailEdit?.onPendEdit(valDiv, pend);
         }
         let buttons = divRightButtons(id, deleted, onDelSub, onEdit);
         let { tops, bottoms } = buttons;
@@ -52,10 +52,10 @@ export function ViewDiv(props: ViewDivProps) {
 
     function ViewDivBinRow() {
         async function onDelSub() {
-            await controlDetailEdit.onDivDelSub(valDiv);
+            await controlDetailEdit?.onDivDelSub(valDiv);
         }
         async function onDivEdit() {
-            await controlDetailEdit.onDivEdit(valDiv);
+            await controlDetailEdit?.onDivEdit(valDiv);
         }
 
         let buttons = divRightButtons(id, deleted, onDelSub, onDivEdit);

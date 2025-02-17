@@ -16,7 +16,7 @@ interface Props {
 }
 
 export function ViewMainPicks({ control, subHeader, onPicked }: Props) {
-    const { mainStore: main, storeSheet, controlBinPicks, atomCur, atomChanging, atomError } = control;
+    const { mainStore: main, storeSheet, controlBinPicks, atomCur, atomChanging, atomStartError } = control;
     const cur = useAtomValue(atomCur);
     if (controlBinPicks === undefined) return null;
     const { entity: entityBin } = main;
@@ -46,7 +46,7 @@ export function ViewMainPicks({ control, subHeader, onPicked }: Props) {
     </div>;
     function ViewPick({ binPick, serial }: { binPick: BinPick; serial: number; }) {
         // const [message, setMessage] = useState(undefined as string);
-        const error = useAtomValue(atomError);
+        const error = useAtomValue(atomStartError);
         useAtomValue(atomChanging);
         if (binPick.fromPhraseType === BizPhraseType.any) {
             if (serial === cur) {
@@ -56,7 +56,7 @@ export function ViewMainPicks({ control, subHeader, onPicked }: Props) {
                     await control.onPickedInputScalar(binPick, serial, scalarResult);
                 }
                 function onInputing() {
-                    setAtomValue(atomError, undefined);
+                    setAtomValue(atomStartError, undefined);
                 }
                 return <ViewLabelRowPicking cn="d-flex align-items-stretch g-0" caption={caption} message={error}>
                     <InputScalar binPick={binPick} onPicked={onPicked} value={defaultValue} onInputing={onInputing} />

@@ -61,7 +61,7 @@ export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
     onPageSheetEdit = async (id: number, directStartDetailNew?: boolean) => {
         this.#controlSheetEdit = this.createControlSheetEdit();
         const startDetail = async () => {
-            await this.controlSheetEdit.storeSheet.load(id);
+            await this.controlSheetEdit.load(id);
             if (directStartDetailNew === true) {
                 let newDetailRowCount = await this.#controlSheetEdit.controlDetailEdit.detailNew();
                 if (newDetailRowCount > 0) {

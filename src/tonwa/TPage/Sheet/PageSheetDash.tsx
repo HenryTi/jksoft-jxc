@@ -10,6 +10,7 @@ import { useSiteRole } from "../../Site";
 import { useBiz } from "../../Hooks";
 import { ViewBud, ViewReaction, ViewNotifyCount, ViewItemMain } from "../../View";
 import { TControlSheetDash } from "./TControlSheetDash";
+import { TControlBiz } from "./TControlBiz";
 
 export function PageSheetDash() {
     const modal = useModal();
@@ -19,7 +20,7 @@ export function PageSheetDash() {
     const sheetId = from62(sheet);
     const entitySheet = biz.entityFromId(sheetId) as EntitySheet;
     const { caption, name, coreDetail } = entitySheet;
-    const controlBiz = useMemo(() => new ControlBiz(modal, biz), []);
+    const controlBiz = useMemo(() => new TControlBiz(modal, biz), []);
     const controlSheetDash = useMemo(() => new TControlSheetDash(controlBiz, entitySheet), []);
     const { onPageSheetStart, onPageSheetList, atomViewSubmited } = controlSheetDash;
     const [visible, setVisible] = useState(true);

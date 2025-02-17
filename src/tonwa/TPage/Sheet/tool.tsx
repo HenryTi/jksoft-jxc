@@ -3,11 +3,12 @@ import { useAtomValue } from "jotai";
 import { ValDivBase } from "../../Store/ValDiv";
 import { ViewForkNoAtom } from "../../View/Form/ViewFork";
 import { BizBud } from "../../Biz";
-import { ControlDetail } from "../../Control";
+import { ControlDetail, ControlSheet } from "../../Control";
 // import { ControlDetail } from "./ControlDetailEdit";
 
 export interface ViewDivProps {
-    control: ControlDetail,
+    control: ControlSheet;
+    controlDetail: ControlDetail;
     valDiv: ValDivBase;
     readonly?: boolean;
     hidePivot?: boolean;

@@ -2,8 +2,10 @@ import { Modal } from "../UI";
 import { Biz, Entity } from "../Biz";
 import { StoreBiz } from "../Store";
 import { Control } from "./Control";
+import { PageCmdLog } from "tonwa/TPage/PageLog";
+import { JSX } from "react";
 
-export class ControlBiz extends Control {
+export abstract class ControlBiz extends Control {
     readonly storeBiz: StoreBiz;
     constructor(modal: Modal, biz: Biz) {
         super(modal, biz);
@@ -14,9 +16,10 @@ export class ControlBiz extends Control {
     }
 
     onPageCmdLog = async () => {
-        // this.openModal(<PageCmdLog />);
-        alert('this.openModal(<PageCmdLog />)');
+        this.openModal(this.PageCmdLog());
     }
+
+    protected abstract PageCmdLog(): JSX.Element;
 }
 
 export class ControlBaseWithBiz extends Control {
