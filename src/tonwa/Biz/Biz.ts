@@ -263,8 +263,8 @@ export class Biz {
                 name: 'sheet',
                 caption: '业务流程',
                 entities: [
+                    [this.flows, '流程定义', 'align-center'],
                     [this.sheets, '业务单据', 'file'],
-                    // [this.bins, '单据条', 'file-text-o'],
                     [this.pends, '待处理', 'clone'],
                 ],
             },

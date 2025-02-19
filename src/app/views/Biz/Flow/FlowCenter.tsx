@@ -40,18 +40,19 @@ function PageFlowCenter() {
     }
 
     function ViewItemFlow({ value }: { value: EntityFlow; }) {
-        const { caption, sheets } = value;
+        const { caption, sheets, memo } = value;
         return <div>
-            <div>{caption}</div>
+            <div className="px-3 py-2">{caption}</div>
+            <div>{memo}</div>
             <div className="">
-                <List items={sheets} ViewItem={ViewSheetType} className={undefined} sep={null} />
+                <List items={sheets} ViewItem={ViewSheetType} className={cnList} sep={null} />
             </div>
         </div>;
     }
 
     const cnList = ' my-1 row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 ';
     return <Page header={<ViewCurSiteHeader caption={centers.editing.caption} />}>
-        <List items={flows} ViewItem={ViewItemFlow} className={cnList} sep={null} />
+        <List items={flows} ViewItem={ViewItemFlow} className={undefined} sep={null} />
     </Page>;
 }
 

@@ -3,11 +3,13 @@ import { EntitySheet } from "./EntitySheet";
 
 export class EntityFlow extends Entity {
     sheets: EntitySheet[];
+    memo: string;
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
             default: super.fromSwitch(i, val); break;
             case 'sheets': this.sheets = val; break;
+            case 'memo': this.memo = val; break;
         }
     }
 
