@@ -1,4 +1,5 @@
 export * from './Biz';
+export * from "./EntityFlow";
 export * from './EntityAtom';
 export * from './EntitySheet';
 export * from './BizBud';

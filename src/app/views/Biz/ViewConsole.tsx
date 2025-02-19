@@ -25,8 +25,8 @@ const activeRoot: Active = {
 export function ViewConsole() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
-    const { editing, atom, report, assign, tie, io, users, me, setting } = centers;
-    const baseArr = [io, users, me, setting];
+    const { editing, flow, atom, report, assign, tie, io, users, me, setting } = centers;
+    const baseArr = [flow, io, users, me, setting];
     const { bizConsole, errorLogs } = biz;
     if (errorLogs !== undefined) {
         return <ViewBizLogErrors errorLogs={errorLogs} />;

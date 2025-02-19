@@ -17,9 +17,11 @@ import { EntityIOApp, EntityIOSite, EntityIn, EntityOut } from './EntityInOut';
 import { EntityPrint, EntityTemplet } from './EntityPrint';
 import { Entity } from './Entity';
 import { ReturnAtoms, ReturnForks, ReturnProps } from './Defines';
+import { EntityFlow } from './EntityFlow';
 
 enum EnumEntity {
     sheet,
+    flow,
     bin,
     pend,
     atom,
@@ -62,6 +64,7 @@ export class Biz {
     readonly duos: EntityDuo[] = [];
     readonly combos: EntityCombo[] = [];
 
+    readonly flows: EntityFlow[] = [];
     readonly sheets: EntitySheet[] = []
     readonly bins: EntityBin[] = [];
     readonly pends: EntityPend[] = [];
@@ -136,6 +139,7 @@ export class Biz {
         // this.atomBuilder = new AtomsBuilder(this);
         this.entityWithUser = [];
         const builders: { [type in EnumEntity]: (id: number, name: string, type: string) => Entity } = {
+            [EnumEntity.flow]: this.buildFlow,
             [EnumEntity.sheet]: this.buildSheet,
             [EnumEntity.bin]: this.buildBin,
             [EnumEntity.pend]: this.buildPend,
@@ -235,6 +239,7 @@ export class Biz {
             EnumEntity.tie,
             EnumEntity.in,
             EnumEntity.out,
+            EnumEntity.flow,
             EnumEntity.console,
         ];
         for (let i of typeSeq) {
@@ -373,6 +378,12 @@ export class Biz {
                 }
             }
         }
+    }
+
+    private buildFlow = (id: number, name: string, type: string): Entity => {
+        let bizEntity = new EntityFlow(this, id, name, type);
+        this.flows.push(bizEntity);
+        return bizEntity;
     }
 
     private buildSheet = (id: number, name: string, type: string): Entity => {

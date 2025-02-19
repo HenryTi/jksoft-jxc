@@ -19,6 +19,13 @@ const editing: CenterItem = {
     iconColor: 'text-danger',
     getPath: (id: number) => `sheet/${to62(id)}`,
 };
+const flow: CenterItem = {
+    path: 'flow-center',
+    caption: '流程中心',
+    icon: 'keyboard-o',
+    iconColor: 'text-success',
+    getPath: (id: number) => `flow/${to62(id)}`,
+};
 const atom: CenterItem = {
     path: 'atom-center',
     caption: '档案中心',
@@ -93,6 +100,7 @@ const compile: CenterItem = {
 export const centers: {
     editing: CenterItem,
     atom: CenterItem,
+    flow: CenterItem,
     sheet: CenterItem,
     report: CenterItem,
     assign: CenterItem,
@@ -105,5 +113,5 @@ export const centers: {
     achieve: CenterItem,
     compile: CenterItem,
 } = {
-    editing, atom, sheet, report, assign, tie, io, me, setting, users, userSum, achieve, compile
+    editing, atom, flow, sheet, report, assign, tie, io, me, setting, users, userSum, achieve, compile
 }

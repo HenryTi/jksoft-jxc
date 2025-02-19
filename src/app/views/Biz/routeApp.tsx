@@ -9,11 +9,13 @@ import { routeTieCenter } from "./Tie";
 import { routeEditingCenter } from "./Editing";
 import { routeIOCenter } from "./IO";
 import { routeSheetCenter } from "./Sheet";
+import { routeFlowCenter } from "./Flow";
 
 export const pathHome = 'home';
 export function routeApp() {
     const routes = <>
         {routeEditingCenter()}
+        {routeFlowCenter()}
         {routeAtomCenter()}
         {routeSheetCenter()}
         {routeReportCenter()}
