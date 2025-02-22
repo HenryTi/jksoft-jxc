@@ -100,6 +100,7 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
         }
     }
     function viewIdOne(parts: Parts, id: number, col: IDColumn, cols: QueryRowCol[]) {
+        const { subs } = parts;
         let colFromEntity = query.getFromEntityFromAlias(col.alias);
         const { bizPhraseType } = colFromEntity;
         switch (bizPhraseType) {
@@ -107,22 +108,21 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
                 return <>unknown bizPhraseType {bizPhraseType}</>
             case BizPhraseType.main:    // should be bin
                 const sheetData = queryStore.sheetsColl[id];
-                // let vSheet: any;
                 if (sheetData !== undefined) {
-                    const { no, base, operator } = sheetData;
+                    const { no, base } = sheetData;
                     const sheetEntity = queryStore.biz.entities[base];
-                    parts.subs.push(<>
+                    subs.push(<>
                         <LabelBox label={sheetEntity.caption}>
                             <b>{no}</b>
                         </LabelBox>
                     </>);
                 }
-                viewPropArr(parts.subs, cols);
+                viewPropArr(subs, cols);
                 return;
             case BizPhraseType.fork:
                 if (id === undefined) return;
                 let forkCaption = col.ui.caption;
-                viewForkBuds(parts.subs, id, queryStore, forkCaption);
+                viewForkBuds(subs, id, queryStore, forkCaption);
                 return;
             /*
             return <RowCols>
@@ -134,8 +134,8 @@ export function PageFromQuery({ query, queryStore, editing, binPick, pickResultT
                     <ViewForkAtomBold id={id} store={queryStore} />
                     <ViewAtomTitlesOfStore id={id} store={queryStore} />
                 </>;
-                viewAtomPrimesOfStore(parts.subs, id, queryStore);
-                viewPropArr(parts.subs, cols);
+                viewAtomPrimesOfStore(subs, id, queryStore);
+                viewPropArr(subs, cols);
             /*
             return <div>
                 <div>

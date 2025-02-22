@@ -8,6 +8,7 @@ import { RouteSheetDash, RouteSheetEdit, RouteSheetNew } from "app/hooks";
 import { useState } from "react";
 import { ViewNotifyCount } from "app/tool";
 import { centers } from "app/views/center";
+import { PageSheetDash } from "tonwa/TPage";
 
 function PageSheetCenter1() {
     console.log('PageSheetCenter');
@@ -63,9 +64,10 @@ export function pathSheet(phrase: number | string) {
 
 export function routeSheetCenter() {
     // <Route path={centers.sheet.path} element={<PageSheetCenter />} />
+    // <Route path={`${sheet}/:sheet`} element={<RouteSheetDash />} />
     return <>
         <Route path={`${sheet}/:sheet/:id`} element={<RouteSheetEdit />} />
-        <Route path={`${sheet}/:sheet`} element={<RouteSheetDash />} />
+        <Route path={`${sheet}/:sheet`} element={<PageSheetDash />} />
         <Route path={`${sheet}/:sheet`} element={<RouteSheetNew />} />
     </>;
 }
