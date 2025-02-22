@@ -21,8 +21,8 @@ function PageFlowCenter() {
         if (coreDetail !== undefined) {
             pendEntityId = coreDetail.pend?.id;
             if (pendEntityId !== undefined) {
-                vNotifyCount = <div className="position-absolute" style={{ right: "-0.3rem", top: "-0.5rem" }}>
-                    <div className="ms-3">
+                vNotifyCount = <div className="position-absolute" style={{ right: "0rem", top: "-0.5rem" }}>
+                    <div className="ms-1">
                         <ViewNotifyCount phrase={pendEntityId} />
                     </div>
                 </div>;
@@ -34,14 +34,14 @@ function PageFlowCenter() {
                 <FA name="arrow-right" fixWidth={true} />
             </div>;
         }
-        return <div className="d-flex align-items-center">
+        return <div className="d-flex align-items-center pe-3">
             {vArrow}
             <Link
                 to={`/test-mvc-sheet/${to62(entityId)}`} className="flex-fill"
             >
-                <div className="px-1 py-2 align-items-center d-flex border border-info rounded-3 my-2">
+                <div className="px-1 py-2 align-items-start d-flex border-info rounded-3 my-2">
                     <div className="position-relative">
-                        <FA name="file-text" className="my-2 mx-2 text-info" size="lg" />
+                        <FA name="file-text" className="my-1 me-2 text-info" size="2x" />
                         {vNotifyCount}
                     </div>
                     <span className="text-body">{caption ?? name}</span>
