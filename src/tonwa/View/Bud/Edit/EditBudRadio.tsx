@@ -140,9 +140,9 @@ export function EditBudRadio(props: EditBudTemplateProps) {
                 optionsItemPhrase,
             });
         }
-        //let checkItemArr: number[] = [];
-        //for (let i in checks) checkItemArr.push(Number(i));
-        onChanged?.(bizBud, [optionsItemPhrase]);
+        // radio 应该是单值，不应该是数组
+        // onChanged?.(bizBud, [optionsItemPhrase]);
+        onChanged?.(bizBud, optionsItemPhrase);
         setValue({ [optionsItemPhrase]: true });
     }
     return <ValueEdit label={caption}

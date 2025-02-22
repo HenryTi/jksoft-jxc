@@ -54,21 +54,21 @@ export function ViewConsole() {
             phrase={phrase} caption={caption} icon={icon} iconColor={iconColor}
         />
     }
+    const vTry = <div className="container-fluid">
+        <RowColsSm>
+            {
+                biz.sheets.map(v => <Link key={v.id}
+                    to={`test-mvc-sheet/${to62(v.id)}`}
+                    className={cn} onClick={undefined}>
+                    {v.caption}
+                </Link>)
+            }
+        </RowColsSm>
+    </div>;
     return <div>
-        {viewFolder}
-        {viewEditing}
         {arr.map((v, index) => <ViewFolderLink key={index} center={v} />)}
-        <div className="container-fluid">
-            <RowColsSm>
-                {
-                    biz.sheets.map(v => <Link key={v.id}
-                        to={`test-mvc-sheet/${to62(v.id)}`}
-                        className={cn} onClick={undefined}>
-                        {v.caption}
-                    </Link>)
-                }
-            </RowColsSm>
-        </div>
+        {viewEditing}
+        {viewFolder}
     </div>;
 }
 interface FolderProps {
@@ -85,7 +85,7 @@ interface FolderLinkProps extends FolderProps {
 function FolderLink({ path, className, icon, iconColor, onClick, caption, phrase }: FolderLinkProps) {
     return <Link to={path} className={className} onClick={onClick}>
         <FA name={icon ?? 'file'} className={(iconColor ?? 'text-primary') + " me-4"} fixWidth={true} size={iconSize} />
-        <span className={fs}>{caption}</span>
+        <span className={fs + '  fs-larger'}>{caption}</span>
         <div className="ms-3">
             <ViewNotifyCount phrase={phrase} />
         </div>

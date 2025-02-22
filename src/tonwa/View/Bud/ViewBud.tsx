@@ -1,13 +1,13 @@
-import { dateFromMinuteId, EasyDate } from "tonwa-com";
+import { dateFromMinuteId } from "tonwa-com";
 import {
-    BizBud, BudBin, BudID, BudRadio
-    , EntityFork, EnumBudType, EnumSysBud,
+    BizBud, BudBin, BudID, BudRadio,
+    EntityFork, EnumBudType, EnumSysBud,
 } from "../../Biz";
 import {
     LabelBox,
     ViewBudEmpty,
 } from "../../View";
-import { AtomData, StoreBase, StoreEntity } from "../../Store";
+import { StoreBase } from "../../Store";
 import { contentFromDays } from "../../tools";
 import { ViewForkAtom } from "../Form/ViewForkOfStore";
 
@@ -18,8 +18,9 @@ export enum ViewBudUIType {
 
 const cnViewBud = ' my-1 ';
 
-export function ViewBud({ bud, value, uiType, noLabel, store, colon }: {
+export function ViewBud({ bud, caption: assigned, value, uiType, noLabel, store, colon }: {
     bud: BizBud;
+    caption?: string;
     value: any; uiType?: ViewBudUIType; noLabel?: boolean;
     colon?: boolean;
     store?: StoreBase;
@@ -32,7 +33,8 @@ export function ViewBud({ bud, value, uiType, noLabel, store, colon }: {
         value = value;
     }
     let content: any;
-    const { caption, budDataType } = bud;
+    let { caption, budDataType } = bud;
+    if (assigned !== undefined) caption = assigned;
     let type = budDataType?.type;
     switch (type) {
         default:

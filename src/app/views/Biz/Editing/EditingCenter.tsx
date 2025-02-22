@@ -14,6 +14,8 @@ function PageEditingCenter() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
     const sheetEntities = biz.sheets;
+    const { editing } = centers;
+    const { caption: pageCaption } = editing;
     const [visible] = useState(true);
     function ViewSheetType({ value }: { value: EntitySheet; }) {
         let { caption, name, id: entityId, coreDetail } = value;
@@ -30,7 +32,7 @@ function PageEditingCenter() {
             }
         }
         return <Link
-            to={`/sheet/${to62(entityId)}`}
+            to={`/test-mvc-sheet/${to62(entityId)}`}
         >
             <div className="px-1 py-2 align-items-center d-flex border border-info rounded-3 my-2">
                 <div className="position-relative">
@@ -41,11 +43,11 @@ function PageEditingCenter() {
             </div>
         </Link>
     }
-    const cnList = ' my-1 row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 ';
+    const cnList = ' my-1 row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-6 ';
     return visible === false ?
         <PageSpinner />
         :
-        <Page header={<ViewCurSiteHeader caption={centers.editing.caption} />}>
+        <Page header={<ViewCurSiteHeader caption={pageCaption} />}>
             <List items={sheetEntities} ViewItem={ViewSheetType} className={cnList} sep={null} />
         </Page>;
 }

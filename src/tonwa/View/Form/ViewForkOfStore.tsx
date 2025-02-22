@@ -3,6 +3,7 @@ import { StoreBase, StoreEntity } from "../../Store";
 import { EntityAtom } from "../../Biz";
 import { ViewForkId } from "./ViewForkId";
 import { budContent, ViewBud } from "../Bud";
+import React from "react";
 
 export function ViewForkAtomBold({ id, store }: { id: number; store: StoreEntity; }) {
     let IDAtom = store.getCacheAtom(id);
@@ -42,16 +43,24 @@ export function ViewForkAtom({ id, store }: { id: number; store: StoreBase; }) {
 }
 
 export function ViewForkBuds({ id, store }: { id: number; store: StoreEntity; }) {
+    let arr: any[] = [];
+    viewForkBuds(arr, id, store, undefined);
+    return <>{arr.map((v, index) => {
+        return <React.Fragment key={index}>{v}</React.Fragment>;
+    })}</>;
+}
+
+export function viewForkBuds(arr: any[], id: number, store: StoreEntity, caption: string) {
     let bizFork = store.getCacheFork(id);
-    if (bizFork === undefined) return null;
+    if (bizFork === undefined) return;
     let { entityFork } = bizFork;
-    if (entityFork === undefined) return null;
+    if (entityFork === undefined) return;
     let specBudValueColl = store.getCacheBudProps(id);
-    return <>{entityFork.keys.map(v => {
+    for (let v of entityFork.keys) {
         let budId = v.id;
         let value = specBudValueColl[budId];
-        return <ViewBud key={budId} bud={v} value={value} />;
-    })}</>;
+        arr.push(<ViewBud bud={v} value={value} caption={caption} />);
+    };
 }
 
 export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: StoreEntity; }) {
@@ -86,26 +95,31 @@ export function ViewAtomTitlesOfStore({ id, store }: { id: number; store: StoreE
 }
 
 export function ViewAtomPrimesOfStore({ id, store }: { id: number; store: StoreEntity; }) {
+    const arr: any[] = [];
+    viewAtomPrimesOfStore(arr, id, store);
+    return <>{arr.map((v, index) => {
+        return <React.Fragment key={index}>{v}</React.Fragment>;
+    })}</>;
+}
+export function viewAtomPrimesOfStore(arr: any[], id: number, store: StoreEntity) {
     const { biz } = store;
     const atom = store.getCacheAtom(id)?.atom;
     // const noLabel: boolean = undefined;
-    if (atom === undefined) return null;
+    if (atom === undefined) return;
     let bizAtom = biz.entityFromId<EntityAtom>(atom.phrase);
-    if (bizAtom === undefined) return null;
+    if (bizAtom === undefined) return;
     let { primeBuds } = bizAtom;
     if (primeBuds === undefined) {
-        return null;
+        return;
     }
     const budValueColl = store.getCacheBudProps(id);
-    if (budValueColl === undefined) return null;
-    return <>{
-        primeBuds.map(v => {
-            let { id } = v;
-            let value = budValueColl[id];
-            if (value === undefined) return null;
-            return <ViewBud key={id} bud={v} value={value} />;
-        })
-    }</>;
+    if (budValueColl === undefined) return;
+    for (let v of primeBuds) {
+        let { id } = v;
+        let value = budValueColl[id];
+        if (value === undefined) continue;
+        arr.push(<ViewBud bud={v} value={value} />);
+    }
 }
 
 export function ViewForkAtomTitles({ id, store }: { id: number; store: StoreEntity; }) {

@@ -218,7 +218,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
     }
     function ViewToPick({ binPick }: { binPick: BinPick; }) {
         return <PickRow label={binPick.caption} cnLabel="text-secondary" cnAngle="text-secondary" iconPrefix="angle-right" >
-            <div className="py-3 text-body-tertiery small">-</div>
+            <div className="py-3 text-body-tertiary small">-</div>
         </PickRow>;
     }
     function ViewPickRear() {
@@ -230,7 +230,7 @@ export function ViewMainPicks({ sheetStore, onPicked, subHeader }: Props) {
                 // to pick
                 cnAngle = "text-secondary";
                 iconPrefix = "angle-right";
-                vContent = <div className="py-3 text-body-tertiery small">-</div>;
+                vContent = <div className="py-3 text-body-tertiary small">-</div>;
             }
             else {
                 cnAngle = "text-success";

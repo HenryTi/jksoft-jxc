@@ -63,7 +63,7 @@ class RouteConsole extends SheetConsole {
         this.navigate(-1);
     }
     restart(): void {
-        this.navigate(`/sheet/${to62(this.entitySheet.id)}`, { replace: true, state: locationState++ });
+        this.navigate(`/test-mvc-sheet/${to62(this.entitySheet.id)}`, { replace: true, state: locationState++ });
     }
 
     // 废弃当前单据
@@ -127,7 +127,7 @@ class RouteConsole extends SheetConsole {
             this.restart();
             /*
             const { entitySheet } = store;
-            navigate(`/sheet/${to62(entitySheet.id)}`, { replace: true, state: locationState++ });
+            navigate(`/test-mvc-sheet/${to62(entitySheet.id)}`, { replace: true, state: locationState++ });
             */
         }
         else {

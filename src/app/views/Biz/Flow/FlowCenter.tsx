@@ -11,8 +11,10 @@ function PageFlowCenter() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
     const { flows } = biz;
+    const { flow } = centers;
+    const { caption: pageCaption } = flow;
 
-    function ViewSheetType({ value }: { value: EntitySheet; }) {
+    function ViewSheetType({ value, index }: { value: EntitySheet; index?: number; }) {
         let { caption, name, id: entityId, coreDetail } = value;
         let pendEntityId: number;
         let vNotifyCount: any;
@@ -26,32 +28,41 @@ function PageFlowCenter() {
                 </div>;
             }
         }
-        return <Link
-            to={`/sheet/${to62(entityId)}`}
-        >
-            <div className="px-1 py-2 align-items-center d-flex border border-info rounded-3 my-2">
-                <div className="position-relative">
-                    <FA name="file-text" className="my-2 mx-2 text-info" size="lg" />
-                    {vNotifyCount}
+        let vArrow: any;
+        if (index > 0) {
+            vArrow = <div className="mx-2 text-body-tertiary small">
+                <FA name="arrow-right" fixWidth={true} />
+            </div>;
+        }
+        return <div className="d-flex align-items-center">
+            {vArrow}
+            <Link
+                to={`/test-mvc-sheet/${to62(entityId)}`} className="flex-fill"
+            >
+                <div className="px-1 py-2 align-items-center d-flex border border-info rounded-3 my-2">
+                    <div className="position-relative">
+                        <FA name="file-text" className="my-2 mx-2 text-info" size="lg" />
+                        {vNotifyCount}
+                    </div>
+                    <span className="text-body">{caption ?? name}</span>
                 </div>
-                <span className="text-body">{caption ?? name}</span>
-            </div>
-        </Link>
+            </Link>
+        </div>
     }
 
     function ViewItemFlow({ value }: { value: EntityFlow; }) {
         const { caption, sheets, memo } = value;
         return <div>
-            <div className="px-3 py-2">{caption}</div>
+            <div className="px-3 pt-1 py-1 border-bottom tonwa-bg-gray-2">{caption}</div>
             <div>{memo}</div>
-            <div className="">
+            <div className="mb-3">
                 <List items={sheets} ViewItem={ViewSheetType} className={cnList} sep={null} />
             </div>
         </div>;
     }
 
-    const cnList = ' my-1 row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 ';
-    return <Page header={<ViewCurSiteHeader caption={centers.editing.caption} />}>
+    const cnList = ' mx-3 my-1 row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-6 g-0 ';
+    return <Page header={<ViewCurSiteHeader caption={pageCaption} />}>
         <List items={flows} ViewItem={ViewItemFlow} className={undefined} sep={null} />
     </Page>;
 }

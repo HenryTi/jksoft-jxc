@@ -107,17 +107,19 @@ export function useBizAtomNew(options: OptionsUseBizAtom & OptionsNew) {
                 ],
             };
         }
-
-        const { data: { no, formRows } } = useQuery({
+        const { register, handleSubmit, formState: { errors }, } = useForm({ mode: 'onBlur' });
+        const { data } = useQuery({
             queryKey: ['PageAtomNew'],
             queryFn: async () => {
                 let ret = await buildNew();
                 return ret;
-            }
+            },
+            refetchOnWindowFocus: false
+        });
+        if (!data) {
+            return null;
         }
-            //    , UseQueryOptions
-        );
-        const { register, handleSubmit, formState: { errors }, } = useForm({ mode: 'onBlur' });
+        const { no, formRows } = data;
         async function onSubmit(data: any) {
             const { buds } = entity;
             let budsEditing = new ValuesBudsEditing(biz, entity.buds);

@@ -128,7 +128,7 @@ export function ViewQueryParams({ query, editing, binPick, onSearch }: {
     const { handleSubmit } = useForm({ mode: 'onBlur' });
     async function onSubmitForm(data: any) {
         setBusy(true);
-        let values = await paramBudsEditing.getBudsNameValues();
+        let values = paramBudsEditing.getBudsNameValues();
         let ret = stripParams(values, valueParams);
         await onSearch(ret);
         setBusy(false);
