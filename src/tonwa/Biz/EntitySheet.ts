@@ -798,6 +798,11 @@ export const predefinedPendFields = [
     , 'pendvalue', 'origin', 'pend'
 ];
 
+export enum PendValueType {
+    dec,                // 用于普通流程
+    bool,               // 审批流程
+}
+
 export class EntityPend extends Entity {
     predefined: { [name: string]: BizBud };
     i: BizBud;
@@ -807,6 +812,7 @@ export class EntityPend extends Entity {
     hasPrice: boolean;
     hasAmount: boolean;
     mainCols: { [budId: number]: boolean };
+    valueType: PendValueType;
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -820,6 +826,7 @@ export class EntityPend extends Entity {
             case 'x': this.x = val; break;
             case 'predefinedFields': this.setPredefinedFields(val); break;
             case 'mainCols': this.mainCols = val; break;
+            case 'valueType': this.valueType = val; break;
         }
     }
 
