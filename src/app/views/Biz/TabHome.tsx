@@ -5,6 +5,7 @@ import { FA } from "tonwa-com";
 import { Permit, ViewSite } from "../Site";
 import { ViewConsole } from "./ViewConsole";
 import { PageTest } from "../Test";
+import { SvgHome } from "svgs";
 
 export function TabHome() {
     const uqApp = useUqApp();
@@ -23,10 +24,11 @@ export function TabHome() {
         </Link>;
     }
 
+    // <FA name="university" className="me-3 text-info" />
     return <Page header="同花" back="none">
         <div className="d-flex border-bottom tonwa-bg-gray-1">
-            <div className="ps-5 py-2 flex-grow-1 text-center">
-                <FA name="university" className="me-3 text-info" />
+            <div className="ps-4 py-2 flex-grow-1 text-center d-flex align-items-center">
+                <span className="me-4"><SvgHome /></span>
                 <ViewSite value={userSite} />
                 {vDesign}
             </div>

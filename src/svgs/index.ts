@@ -1,3 +1,4 @@
+export * from "./home";
 export * from "./SvgSheet";
 export * from "./SvgFlow";
 export * from "./SvgLongArrow";

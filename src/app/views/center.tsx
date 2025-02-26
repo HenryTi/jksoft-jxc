@@ -2,11 +2,13 @@ import { pathAssign, pathAtom, pathReport, pathTie, } from "app/hooks";
 import { to62 } from "tonwa-com";
 import { BizPhraseType } from "uqs/UqDefault";
 import { pathSheet } from "./Biz/Sheet";
+import { SvgDataCenter, SvgRelationCenter, SvgSheetCenter, SvgUserManagement } from "svgs";
+import { JSX } from "react";
 
 export interface CenterItem {
     path: string;
     caption: string;
-    icon?: string;
+    icon?: string | JSX.Element;
     iconColor?: string;
     phrase?: BizPhraseType;
     getPath?: (id: number) => string;
@@ -22,7 +24,7 @@ const editing: CenterItem = {
 const flow: CenterItem = {
     path: 'flow-center',
     caption: '流程中心',
-    icon: 'keyboard-o',
+    icon: <SvgRelationCenter />, // 'keyboard-o',
     iconColor: 'text-success',
     getPath: (id: number) => `flow/${to62(id)}`,
 };
@@ -36,7 +38,7 @@ const atom: CenterItem = {
 const sheet: CenterItem = {
     path: 'sheet-center',
     caption: '单据中心',
-    icon: 'file-o',
+    icon: <SvgSheetCenter />,
     getPath: pathSheet, // (id: number) => `sheet/${to62(id)}`,
 };
 const report: CenterItem = {
@@ -57,14 +59,14 @@ const assign: CenterItem = {
 const tie: CenterItem = {
     path: 'tie-center',
     caption: '关系中心',
-    icon: 'link',
+    icon: <SvgRelationCenter />, // 'link',
     iconColor: 'text-success',
     getPath: pathTie,
 };
 const io: CenterItem = {
     path: 'io',
     caption: '数据接口',
-    icon: 'refresh',
+    icon: <SvgDataCenter />, // 'refresh',
     iconColor: 'text-info',
 };
 const me: CenterItem = {
@@ -82,7 +84,7 @@ const setting: CenterItem = {
 const users: CenterItem = {
     caption: '用户管理',
     path: 'users',
-    icon: 'users',
+    icon: <SvgUserManagement />, // 'users',
     iconColor: 'text-info',
 };
 const userSum: CenterItem = {

@@ -5,9 +5,10 @@ import { FA, Sep } from "tonwa-com";
 import { CenterItem, centers } from "../center";
 import { EntitySheet, File, Folder, RowColsSm, to62 } from "tonwa";
 import { Accordion, AccordionItem } from "react-bootstrap";
-import React, { useState } from "react";
+import React, { JSX, useState } from "react";
 import { UI } from "app/ui";
 import { BizPhraseType } from "uqs/UqDefault";
+import { SvgArchiveCenter, SvgAssignCenter, SvgMy, SvgOperationCenter, SvgPermision, SvgRelationCenter, SvgSheetCenter } from "svgs";
 
 const cn = ' d-flex px-4 py-3 border-bottom align-items-center ';
 const fs = ' ';
@@ -72,7 +73,7 @@ export function ViewConsole() {
     </div>;
 }
 interface FolderProps {
-    icon: string;
+    icon: string | JSX.Element;
     iconColor: string;
     caption: string;
     phrase: number;
@@ -83,8 +84,12 @@ interface FolderLinkProps extends FolderProps {
     onClick: () => void;
 }
 function FolderLink({ path, className, icon, iconColor, onClick, caption, phrase }: FolderLinkProps) {
-    return <Link to={path} className={className} onClick={onClick}>
+    const vIcon = (typeof icon === 'string') ?
         <FA name={icon ?? 'file'} className={(iconColor ?? 'text-primary') + " me-4"} fixWidth={true} size={iconSize} />
+        :
+        <span className="me-4">{icon}</span>;
+    return <Link to={path} className={className} onClick={onClick}>
+        {vIcon}
         <span className={fs + '  fs-larger'}>{caption}</span>
         <div className="ms-3">
             <ViewNotifyCount phrase={phrase} />
@@ -151,9 +156,24 @@ function ViewFolderContent({ folder, active }: { folder: Folder; active: Active;
     </Accordion>;
 }
 
+const consoleIcons: { [name: string]: JSX.Element } = {
+    "档案中心": <SvgArchiveCenter />,
+    "我的": <SvgMy />,
+    "权限设置": <SvgPermision />,
+    "操作中心": <SvgOperationCenter />,
+    "单据中心": <SvgSheetCenter />,
+    "赋值中心": <SvgAssignCenter />,
+    "关系中心": <SvgRelationCenter />,
+}
 function FolderHeader({ icon, iconColor, caption, phrase }: FolderProps) {
-    return <div className="d-flex align-items-center">
+    let ic = consoleIcons[caption];
+    if (ic !== undefined) icon = ic;
+    const vIcon = typeof icon === 'string' ?
         <FA name={icon} className={(iconColor ?? 'text-info') + " ms-1 me-4"} fixWidth={true} size={iconSize} />
+        :
+        <span className="me-4">{icon}</span>;
+    return <div className="d-flex align-items-center">
+        {vIcon}
         <span className={fs}>{caption}</span>
         <div className="ms-3">
             <ViewNotifyCount phrase={phrase} />
