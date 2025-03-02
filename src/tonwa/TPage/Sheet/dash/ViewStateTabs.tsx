@@ -64,8 +64,10 @@ function ViewState({ entitySheet, state }: { entitySheet: EntitySheet; state: Sh
     const stateList = useAtomValue(storeSheetState.atomStateList);
     useEffectOnce(() => { storeSheetState.loadStateList(state.id, undefined, 50); });
     function ViewSheetItem({ value }: { value: (SheetData & BinData & { rowCount: number; }) }) {
-        const { id, no, base, i } = value;
-        return <div className="d-flex cursor-pointer" onClick={undefined}>
+        async function onPageSheetEdit() {
+            await controlSheetDash.onPageSheetEdit(value.id);
+        }
+        return <div className="d-flex cursor-pointer" onClick={onPageSheetEdit}>
             <FA name="file" className="ps-4 pt-3 pe-2 text-info" size="lg" />
             <div className="flex-fill">
                 <ViewItemMain value={value} isMy={true} store={storeSheetState} />
