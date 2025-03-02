@@ -3,23 +3,18 @@ import { useAtomValue } from "jotai";
 import { useParams } from "react-router-dom";
 import { Page, PageSpinner, useModal } from "tonwa-app";
 import { FA, from62, List, useEffectOnce } from "tonwa-com";
-import { EntitySheet } from "../../Biz";
-import { BinData, getUserBudValue, SheetData } from "../../Store";
-import { ControlBiz } from "../../Control";
-import { useSiteRole } from "../../Site";
-import { useBiz } from "../../Hooks";
-import { ViewBud, ViewReaction, ViewNotifyCount, ViewItemMain } from "../../View";
-import { TControlSheetDash } from "./TControlSheetDash";
-import { TControlBiz } from "./TControlBiz";
+import { EntitySheet } from "../../../Biz";
+import { BinData, getUserBudValue, SheetData } from "../../../Store";
+import { ControlBiz } from "../../../Control";
+import { useSiteRole } from "../../../Site";
+import { useBiz } from "../../../Hooks";
+import { ViewBud, ViewReaction, ViewNotifyCount, ViewItemMain } from "../../../View";
+import { TControlSheetDash } from "../TControlSheetDash";
+import { TControlBiz } from "../TControlBiz";
 
-export function PageSheetDash() {
+export function ViewStateStart({ entitySheet }: { entitySheet: EntitySheet; }) {
     const modal = useModal();
-    const biz = useBiz();
-    const params = useParams();
-    const { sheet } = params;
-    const sheetId = from62(sheet);
-    const entitySheet = biz.entityFromId(sheetId) as EntitySheet;
-    const { caption, name, coreDetail } = entitySheet;
+    const { biz, caption, name, coreDetail } = entitySheet;
     const controlBiz = useMemo(() => new TControlBiz(modal, biz), []);
     const controlSheetDash = useMemo(() => new TControlSheetDash(controlBiz, entitySheet), []);
     const { onPageSheetStart, onPageSheetList, atomViewSubmited } = controlSheetDash;
@@ -123,7 +118,7 @@ export function PageSheetDash() {
         await controlSheetDash.onRemoveDraft();
         setVisible(true);
     }
-    return <Page header={pageHeader}>
+    return <>
         <div className="d-flex px-3 py-2 tonwa-bg-gray-1 border-bottom">
             <button className="btn btn-primary me-3" onClick={onPageSheetStart}>
                 <FA name="file" className="me-2" />
@@ -155,5 +150,5 @@ export function PageSheetDash() {
             items={myDrafts as any[]}
             none={<div className="small text-secondary p-3">[无]</div>}
         />
-    </Page>;
+    </>;
 }

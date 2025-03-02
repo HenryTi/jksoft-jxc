@@ -105,6 +105,12 @@ export interface Client {
         atoms: ReturnAtoms[];
         forks: ReturnForks[];
     }>;
+    GetStateSheets(state: number, pageStart: number, pageSize: number): Promise<{
+        $page: ReturnSheetList$page[];
+        props: ReturnProps[];
+        atoms: ReturnAtoms[];
+        forks: ReturnForks[];
+    }>;
     SaveSheet(param: {
         phrase: number;
         mainPhrase: number;

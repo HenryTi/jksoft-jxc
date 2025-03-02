@@ -184,6 +184,15 @@ export class UqClient implements Client {
         let ret = await this.uq.GetMySheetList.page(param, pageStart, pageSize);
         return ret;
     }
+    async GetStateSheets(state: number, pageStart: number, pageSize: number): Promise<{
+        $page: ReturnSheetList$page[];
+        props: ReturnProps[];
+        atoms: ReturnAtoms[];
+        forks: ReturnForks[];
+    }> {
+        let ret = await this.uq.GetStateSheets.page({ state }, pageStart, pageSize);
+        return ret;
+    }
     async SaveSheet(param: {
         phrase: number;
         mainPhrase: number;

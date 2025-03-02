@@ -1,1 +1,1 @@
-export * from "./PageSheetDash";
+export * from "./dash";

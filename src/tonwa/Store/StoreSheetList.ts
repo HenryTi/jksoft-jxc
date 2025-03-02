@@ -4,6 +4,7 @@ import { ReturnSheetList$page } from "../Client";
 import { getAtomValue, setAtomValue } from "../tools";
 import { StoreEntity } from "./Store";
 import { StoreSheet } from "./StoreSheet";
+import { ReturnGetStateSheets$page } from "uqs/UqDefault";
 
 export abstract class StoreSheetList extends StoreSheet {
 }
@@ -81,6 +82,16 @@ export class StoreSheetMyList extends StoreSheetList {
     readonly loadMyList = async (param: any, pageStart: any, pageSize: number): Promise<any[]> => {
         const { $page, props, atoms, forks } = await this.client.GetMySheetList(param, pageStart, pageSize);
         this.cacheIdAndBuds(props, atoms, forks);
+        return $page;
+    }
+}
+
+export class StoreSheetState extends StoreSheetList {
+    readonly atomStateList = atom(undefined as ReturnGetStateSheets$page[]);
+    readonly loadStateList = async (param: any, pageStart: any, pageSize: number): Promise<any[]> => {
+        const { $page, props, atoms, forks } = await this.client.GetStateSheets(param, pageStart, pageSize);
+        this.cacheIdAndBuds(props, atoms, forks);
+        setAtomValue(this.atomStateList, $page);
         return $page;
     }
 }

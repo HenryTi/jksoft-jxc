@@ -3,7 +3,7 @@ import { atom } from "jotai";
 import { PageConfirm } from "tonwa-app";
 import { wait } from "tonwa-com";
 import { EntitySheet } from "../../Biz";
-import { ReturnUseBinPicks, StoreSheet, StoreSheetMyDrafts, StoreSheetMyList } from "../../Store";
+import { ReturnUseBinPicks, StoreSheet, StoreSheetMyDrafts, StoreSheetMyList, StoreSheetState } from "../../Store";
 import { ControlBiz, ControlEntity } from "..";
 import { setAtomValue } from "../../tools";
 import { EnumSheetEditReturn } from "./ControlSheet";
@@ -18,6 +18,7 @@ export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
     readonly atomViewSubmited = atom(undefined as any);
     readonly myDraftsStore: StoreSheetMyDrafts;
     readonly myArchiveList: StoreSheetMyList;
+    readonly storeSheetState: StoreSheetState;
     hasUserDefaults: boolean;
     #controlSheetStart: ControlSheetStart;
     #controlSheetEdit: ControlSheetEdit;
@@ -28,6 +29,7 @@ export abstract class ControlSheetDash extends ControlEntity<EntitySheet> {
         const { storeBiz } = controlBiz;
         this.myDraftsStore = new StoreSheetMyDrafts(storeBiz, entitySheet);
         this.myArchiveList = new StoreSheetMyList(storeBiz, entitySheet);
+        this.storeSheetState = new StoreSheetState(storeBiz, entitySheet);
     }
 
     protected abstract createControlSheetStart(): ControlSheetStart;
