@@ -4,7 +4,7 @@ import { Entity } from "./Entity";
 import { EntityAtom, EntityFork } from "./EntityAtom";
 import { EntityQuery } from "./EntityQuery";
 import { EntityOptions, OptionsItem } from "./EntityOptions";
-import { BizPhraseType, UI } from "./Defines";
+import { BizPhraseType, UI, UIStyle } from "./Defines";
 
 
 export class PickParam extends BizBud {
@@ -888,12 +888,20 @@ export interface SheetDetail {
     caption: string;
     operate: EnumDetailOperate;
 }
+export interface SheetState {
+    id: number;
+    name: string;
+    ui: Partial<UIStyle>;
+}
 export class EntitySheet extends Entity {
     io: boolean;
     main: EntityBin;
     coreDetail: EntityBin;
     readonly details: SheetDetail[] = [];
     search: { bin: EntityBin; buds: BizBud[]; }[];
+    states: SheetState[];
+    stateStart: SheetState;
+    stateDiscard: SheetState;
 
     getRefEntities(entitySet: Set<Entity>) {
         if (this.main !== undefined) entitySet.add(this.main);
@@ -907,6 +915,7 @@ export class EntitySheet extends Entity {
             case 'main': this.fromMain(val); break;
             case 'details': this.fromDetails(val); break;
             case 'search': this.search = val; break;
+            case 'states': this.fromStates(val); break;
         }
     }
 
@@ -930,6 +939,18 @@ export class EntitySheet extends Entity {
             })
         }
         this.coreDetail = this.details[0]?.bin;
+    }
+
+    private fromStates(states: any[]) {
+        if (states === undefined) return;
+        this.states = [];
+        for (let state of states) {
+            switch (state.name) {
+                case '$': this.stateStart = state; break;
+                case '$discard': this.stateDiscard = state; break;
+                default: this.states.push(state); break;
+            }
+        }
     }
 
     scan(): void {

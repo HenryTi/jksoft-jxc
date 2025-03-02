@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri Jan 31 2025 00:39:12 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Sun Mar 02 2025 13:53:41 GMT+0800 (China Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1175,6 +1175,57 @@ export interface ResultGetHistory {
 	$page: ReturnGetHistory$page[];
 }
 
+export interface ParamGetStateSheetCount {
+	phrase: number;
+}
+export interface ReturnGetStateSheetCountRet {
+	state: number;
+	count: number;
+}
+export interface ResultGetStateSheetCount {
+	ret: ReturnGetStateSheetCountRet[];
+}
+
+export interface ParamGetStateSheets {
+	state: number;
+}
+export interface ReturnGetStateSheets$page {
+	id: number;
+	base: number;
+	no: string;
+	operator: number;
+	sheet: number;
+	origin: number;
+	i: number;
+	x: number;
+	value: number;
+	amount: number;
+	price: number;
+	rowCount: number;
+}
+export interface ReturnGetStateSheetsProps {
+	id: number;
+	bud: number;
+	value: any;
+}
+export interface ReturnGetStateSheetsAtoms {
+	id: number;
+	phrase: number;
+	no: string;
+	ex: string;
+}
+export interface ReturnGetStateSheetsForks {
+	id: number;
+	phrase: number;
+	seed: number;
+}
+export interface ResultGetStateSheets {
+	$page: ReturnGetStateSheets$page[];
+	props: ReturnGetStateSheetsProps[];
+	atoms: ReturnGetStateSheetsAtoms[];
+	forks: ReturnGetStateSheetsForks[];
+}
+
 export interface ParamSearchAllSheets {
 	no: string;
 	phrase: number;
@@ -1986,6 +2037,8 @@ export interface UqExt extends Uq {
 	GetReport1: UqQuery<ParamGetReport1, ResultGetReport1>;
 	GetReport: UqQuery<ParamGetReport, ResultGetReport>;
 	GetHistory: UqQuery<ParamGetHistory, ResultGetHistory>;
+	GetStateSheetCount: UqQuery<ParamGetStateSheetCount, ResultGetStateSheetCount>;
+	GetStateSheets: UqQuery<ParamGetStateSheets, ResultGetStateSheets>;
 	SearchAllSheets: UqQuery<ParamSearchAllSheets, ResultSearchAllSheets>;
 	GetEntityCode: UqQuery<ParamGetEntityCode, ResultGetEntityCode>;
 	CreateSiteForUser: UqAction<ParamCreateSiteForUser, ResultCreateSiteForUser>;
@@ -5482,6 +5535,166 @@ export const uqSchema={
                     }
                 ],
                 "order": "desc"
+            }
+        ]
+    },
+    "getstatesheetcount": {
+        "name": "GetStateSheetCount",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "phrase",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "state",
+                        "type": "id"
+                    },
+                    {
+                        "name": "count",
+                        "type": "int"
+                    }
+                ]
+            }
+        ]
+    },
+    "getstatesheets": {
+        "name": "GetStateSheets",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "state",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "base",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 20
+                    },
+                    {
+                        "name": "operator",
+                        "type": "id"
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
+                        "name": "origin",
+                        "type": "id"
+                    },
+                    {
+                        "name": "i",
+                        "type": "id"
+                    },
+                    {
+                        "name": "x",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "amount",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "price",
+                        "type": "dec",
+                        "scale": 6,
+                        "precision": 18
+                    },
+                    {
+                        "name": "rowCount",
+                        "type": "int"
+                    }
+                ],
+                "order": "asc"
+            },
+            {
+                "name": "props",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "bud",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "json"
+                    }
+                ]
+            },
+            {
+                "name": "atoms",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 30
+                    },
+                    {
+                        "name": "ex",
+                        "type": "char",
+                        "size": 200
+                    }
+                ]
+            },
+            {
+                "name": "forks",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "seed",
+                        "type": "id"
+                    }
+                ]
             }
         ]
     },
