@@ -8,7 +8,7 @@ import { ViewBud } from "..";
 
 export function ViewItemMain({ value, isMy, store }: { value: Sheet & Bin & { rowCount: number; }; isMy: boolean; store: StoreSheet; }) {
     const { entity } = store;
-    const { main } = entity;
+    const { main, details } = entity;
     const { i: IBud, x: XBud, primeBuds } = main;
     const { id: binId, no, i, x, operator, rowCount } = value;
     const vTime = <span className="me-3"><EasyTime date={binId / (1024 * 1024) * 60} /></span>;
@@ -23,10 +23,13 @@ export function ViewItemMain({ value, isMy, store }: { value: Sheet & Bin & { ro
     }
     else {
         vNo = <span>{no}</span>;
-        vRowCount = <>
-            {vTime}
-            <span className="text-body-tertiary small">无明细</span>
-        </>;
+        vRowCount = details.length > 0 ?
+            <>
+                {vTime}
+                <span className="text-body-tertiary small">无明细</span>
+            </>
+            :
+            vTime;
     }
     let vPrimeBuds: any[];
     if (primeBuds !== undefined) {

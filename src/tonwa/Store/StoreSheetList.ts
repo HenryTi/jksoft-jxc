@@ -4,7 +4,7 @@ import { ReturnSheetList$page } from "../Client";
 import { getAtomValue, setAtomValue } from "../tools";
 import { StoreEntity } from "./Store";
 import { StoreSheet } from "./StoreSheet";
-import { ReturnGetStateSheets$page } from "uqs/UqDefault";
+import { ReturnGetStateSheetCountRet, ReturnGetStateSheets$page } from "uqs/UqDefault";
 
 export abstract class StoreSheetList extends StoreSheet {
 }
@@ -87,11 +87,23 @@ export class StoreSheetMyList extends StoreSheetList {
 }
 
 export class StoreSheetState extends StoreSheetList {
-    readonly atomStateList = atom(undefined as ReturnGetStateSheets$page[]);
-    readonly loadStateList = async (param: any, pageStart: any, pageSize: number): Promise<any[]> => {
-        const { $page, props, atoms, forks } = await this.client.GetStateSheets(param, pageStart, pageSize);
+    readonly atomStateList = atom({} as {
+        counts: { [state: number]: number };
+        list: ReturnGetStateSheets$page[];
+    });
+    readonly loadStateList = async (param: any, pageStart: any, pageSize: number): Promise<void> => {
+        const [
+            { ret },
+            { $page, props, atoms, forks }
+        ] = await Promise.all([
+            this.client.GetStateSheetCount(this.entity.id),
+            this.client.GetStateSheets(param, pageStart, pageSize)
+        ]);
         this.cacheIdAndBuds(props, atoms, forks);
-        setAtomValue(this.atomStateList, $page);
-        return $page;
+        let counts: { [state: number]: number } = {};
+        for (let { state, count } of ret) {
+            counts[state] = count;
+        }
+        setAtomValue(this.atomStateList, { counts, list: $page });
     }
 }

@@ -8,7 +8,7 @@ import {
     , ReturnSearchAtomBudsBudsStr,
     ReturnSheetBin
 } from "tonwa";
-import { UqExt } from "uqs/UqDefault";
+import { ResultGetStateSheetCount, UqExt } from "uqs/UqDefault";
 import { UqApp } from "./UqApp";
 
 export class UqClient implements Client {
@@ -191,6 +191,10 @@ export class UqClient implements Client {
         forks: ReturnForks[];
     }> {
         let ret = await this.uq.GetStateSheets.page({ state }, pageStart, pageSize);
+        return ret;
+    }
+    async GetStateSheetCount(sheetPhrase: number): Promise<ResultGetStateSheetCount> {
+        let ret = await this.uq.GetStateSheetCount.query({ phrase: sheetPhrase });
         return ret;
     }
     async SaveSheet(param: {

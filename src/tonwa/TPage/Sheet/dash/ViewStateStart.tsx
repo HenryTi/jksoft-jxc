@@ -19,13 +19,10 @@ export function ViewStateStart({ entitySheet }: { entitySheet: EntitySheet; }) {
     const controlSheetDash = useMemo(() => new TControlSheetDash(controlBiz, entitySheet), []);
     const { onPageSheetStart, onPageSheetList, atomViewSubmited } = controlSheetDash;
     const [visible, setVisible] = useState(true);
-    //const dashConsole = useMemo(() => new DashConsole(modal, entitySheet), []);
     let useSiteRoleReturn = useSiteRole();
     let { isAdmin } = useSiteRoleReturn.userSite;
-    // const sheetStore = useMemo(() => dashConsole.createSheetStore(), []);
     const { myDraftsStore, hasUserDefaults } = controlSheetDash;
     const myDrafts = useAtomValue(myDraftsStore.atomMyDrafts);
-    // const [hasUserDefaults, setHasUserDefaults] = useState(undefined as boolean);
     useEffectOnce(() => { controlSheetDash.start(); });
     function ViewSheetItem({ value }: { value: (SheetData & BinData & { rowCount: number; }) }) {
         const { id, no, base, i } = value;
@@ -41,7 +38,6 @@ export function ViewStateStart({ entitySheet }: { entitySheet: EntitySheet; }) {
         if (entitySheetInView === undefined) {
             async function onDelMyDraft() {
                 setDel(1);
-                // await uq.RemoveDraft.submit({ id });
                 await biz.client.RemoveDraft(id);
                 setDel(2);
             }
@@ -66,11 +62,6 @@ export function ViewStateStart({ entitySheet }: { entitySheet: EntitySheet; }) {
                 {right}
             </div>;
         }
-        /*
-        function onSheet() {
-            modal.open(<PageSheetEdit sheetId={id} store={dashConsole.createSheetStore()} />);
-        }
-        */
         async function onPageSheetEdit() {
             await controlSheetDash.onPageSheetEdit(id);
         }

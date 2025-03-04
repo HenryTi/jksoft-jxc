@@ -1,29 +1,34 @@
-import { MouseEvent, useMemo, useState } from "react";
-import { useAtomValue } from "jotai";
-import { useParams } from "react-router-dom";
-import { Page, PageSpinner, useModal } from "tonwa-app";
-import { FA, from62, List, useEffectOnce } from "tonwa-com";
+import { MouseEvent, useMemo } from "react";
+import { atom, useAtomValue } from "jotai";
+import { useModal } from "tonwa-app";
+import { FA, List, setAtomValue, useEffectOnce } from "tonwa-com";
 import { EntitySheet, SheetState } from "../../../Biz";
-import { BinData, getUserBudValue, SheetData } from "../../../Store";
-import { ControlBiz } from "../../../Control";
-import { useSiteRole } from "../../../Site";
-import { useBiz } from "../../../Hooks";
-import { ViewBud, ViewReaction, ViewNotifyCount, ViewItemMain } from "../../../View";
+import { BinData, SheetData } from "../../../Store";
+import { ControlSheetDash } from "../../../Control";
+import { ViewItemMain } from "../../../View";
 import { TControlSheetDash } from "../TControlSheetDash";
 import { TControlBiz } from "../TControlBiz";
 import { ViewStateStart } from "./ViewStateStart";
 
 export function ViewStateTabs({ entitySheet }: { entitySheet: EntitySheet; }) {
     const { states, stateStart } = entitySheet;
-    const [state, setState] = useState(stateStart);
-    const [viewContent, setViewContent] = useState(<ViewStateStart entitySheet={entitySheet} />);
+    const modal = useModal();
+    const controlBiz = useMemo(() => new TControlBiz(modal, entitySheet.biz), []);
+    const controlSheetDash = useMemo(() => new TControlSheetDash(controlBiz, entitySheet), []);
+    const { storeSheetState } = controlSheetDash;
+    const atomState = useMemo(() => atom(stateStart), []);
+    const { counts } = useAtomValue(storeSheetState.atomStateList);
     function onStart(evt: MouseEvent<any>) {
-        setState(stateStart);
-        setViewContent(<ViewStateStart entitySheet={entitySheet} />);
+        setAtomValue(atomState, stateStart);
         evt.preventDefault();
     }
-    const cnActive = 'nav-link active';
-    const cnTab = 'nav-link';
+    const cnBase = 'nav-link ';
+    const cnActive = cnBase + 'active';
+    const cnTab = cnBase;
+    const state = useAtomValue(atomState);
+    useEffectOnce(() => {
+        storeSheetState.loadStateList(state.id, undefined, 50);
+    });
     const cnStart = state === stateStart ? cnActive : cnTab;
     return <>
         <ul className="nav nav-tabs px-3 pt-1">
@@ -32,40 +37,49 @@ export function ViewStateTabs({ entitySheet }: { entitySheet: EntitySheet; }) {
             </li>
             {
                 states.map(v => {
-                    let { name, ui } = v;
+                    let { id, name, ui } = v;
                     let caption = name;
                     if (ui !== undefined) {
                         let { caption: c } = ui;
                         if (c !== undefined) caption = c;
                     }
                     const cnState = state === v ? cnActive : cnTab;
-                    function onState(evt: MouseEvent<any>) {
-                        setState(v);
-                        setViewContent(<ViewState entitySheet={entitySheet} state={v} />);
+                    async function onState(evt: MouseEvent<any>) {
+                        setAtomValue(atomState, v);
+                        // setViewContent(<ViewState entitySheet={entitySheet} state={v} />);
                         evt.preventDefault();
+                        await storeSheetState.loadStateList(id, undefined, 50);
+                    }
+                    let vBadge: any;
+                    if (counts !== undefined) {
+                        vBadge = <span className="badge rounded-pill bg-warning">
+                            {counts[id]}
+                        </span>;
                     }
                     return <li className="nav-item">
-                        <a className={cnState} href="#" onClick={onState}>{caption}</a>
+                        <a className={cnState} href="#" onClick={onState}>{caption} {vBadge}</a>
                     </li>;
                 })
             }
         </ul>
         <div className="tab-content" id="myTabContent">
-            {viewContent}
+            {
+                state === stateStart ?
+                    <ViewStateStart entitySheet={entitySheet} />
+                    :
+                    <ViewState controlSheetDash={controlSheetDash} state={state} />
+            }
         </div>
     </>;
 }
 
-function ViewState({ entitySheet, state }: { entitySheet: EntitySheet; state: SheetState; }) {
-    const modal = useModal();
-    const controlBiz = useMemo(() => new TControlBiz(modal, entitySheet.biz), []);
-    const controlSheetDash = useMemo(() => new TControlSheetDash(controlBiz, entitySheet), []);
+function ViewState({ controlSheetDash, state }: { controlSheetDash: ControlSheetDash; state: SheetState; }) {
     const { storeSheetState } = controlSheetDash;
-    const stateList = useAtomValue(storeSheetState.atomStateList);
-    useEffectOnce(() => { storeSheetState.loadStateList(state.id, undefined, 50); });
+    const { list } = useAtomValue(storeSheetState.atomStateList);
     function ViewSheetItem({ value }: { value: (SheetData & BinData & { rowCount: number; }) }) {
         async function onPageSheetEdit() {
             await controlSheetDash.onPageSheetEdit(value.id);
+            await storeSheetState.loadStateList(state.id, undefined, 50);
         }
         return <div className="d-flex cursor-pointer" onClick={onPageSheetEdit}>
             <FA name="file" className="ps-4 pt-3 pe-2 text-info" size="lg" />
@@ -78,7 +92,7 @@ function ViewState({ entitySheet, state }: { entitySheet: EntitySheet; state: Sh
     return <div>
         <List
             ViewItem={ViewSheetItem}
-            items={stateList as any[]}
+            items={list as any[]}
             none={<div className="small text-secondary p-3">[无]</div>}
         />
     </div>;

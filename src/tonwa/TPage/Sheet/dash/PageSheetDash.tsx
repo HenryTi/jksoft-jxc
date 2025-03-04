@@ -15,7 +15,6 @@ import { ViewStateStart } from "./ViewStateStart";
 import { ViewStateTabs } from "./ViewStateTabs";
 
 export function PageSheetDash() {
-    const modal = useModal();
     const biz = useBiz();
     const params = useParams();
     const { sheet } = params;

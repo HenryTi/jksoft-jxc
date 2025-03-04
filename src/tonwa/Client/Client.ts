@@ -1,3 +1,4 @@
+import { ResultGetStateSheetCount } from "uqs/UqDefault";
 import { ReturnAtoms, ReturnForks, ReturnProps } from "../Biz";
 
 export interface Client {
@@ -111,6 +112,7 @@ export interface Client {
         atoms: ReturnAtoms[];
         forks: ReturnForks[];
     }>;
+    GetStateSheetCount(sheetPhrase: number): Promise<ResultGetStateSheetCount>;
     SaveSheet(param: {
         phrase: number;
         mainPhrase: number;

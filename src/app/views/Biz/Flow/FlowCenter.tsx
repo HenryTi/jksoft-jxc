@@ -132,11 +132,14 @@ function PageFlowCenter() {
         setStyle(Number(e.currentTarget.value));
     }
 
+    /*
     const right = <select onChange={onStyleChange} className="me-1">
         <option value={Style.style2}>风格1</option>
         <option value={Style.style1}>风格2</option>
     </select>;
-    return <Page header={<ViewCurSiteHeader caption={pageCaption} />} right={right}>
+     right={right}
+    */
+    return <Page header={<ViewCurSiteHeader caption={pageCaption} />}>
         <List items={flows} ViewItem={ViewItemFlow} className={undefined} sep={null} />
     </Page>;
 }
