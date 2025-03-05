@@ -2,7 +2,7 @@ import { useUqApp } from "app/UqApp";
 import { Link, Route } from "react-router-dom";
 import { Page, PageSpinner } from "tonwa-app";
 import { EntitySheet } from "tonwa";
-import { FA, List, to62 } from "tonwa-com";
+import { FA, List, SearchBox, to62 } from "tonwa-com";
 import { useState } from "react";
 import { ViewNotifyCount } from "app/tool";
 import { centers } from "app/views/center";
@@ -13,12 +13,29 @@ import { ViewCurSiteHeader } from "app/views/Site";
 function PageEditingCenter() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
-    const sheetEntities = biz.sheets;
     const { editing } = centers;
     const { caption: pageCaption } = editing;
     const [visible] = useState(true);
+    const [searchKey, setSearchKey] = useState(undefined);
+    const sheetEntities: EntitySheet[] = [];
+    for (let sheet of biz.sheets) {
+        let { caption, name } = sheet;
+        if (searchKey !== undefined && (
+            name.includes(searchKey) === false
+            || caption.includes(searchKey) === false
+        )) {
+            continue;
+        }
+        sheetEntities.push(sheet);
+    }
     function ViewSheetType({ value }: { value: EntitySheet; }) {
         let { caption, name, id: entityId, coreDetail } = value;
+        if (searchKey !== undefined && (
+            name.includes(searchKey) === false
+            || caption.includes(searchKey) === false
+        )) {
+            return null;
+        }
         let pendEntityId: number;
         let vNotifyCount: any;
         if (coreDetail !== undefined) {
@@ -43,11 +60,15 @@ function PageEditingCenter() {
             </div>
         </Link>
     }
+    async function onInputChange(key: string) {
+        setSearchKey(key);
+    }
     const cnList = ' my-1 row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-6 ';
     return visible === false ?
         <PageSpinner />
         :
         <Page header={<ViewCurSiteHeader caption={pageCaption} />}>
+            <SearchBox className="px-3 py-1" placeholder="名称" onSearch={undefined} onChange={onInputChange} />
             <List items={sheetEntities} ViewItem={ViewSheetType} className={cnList} sep={null} />
         </Page>;
 }

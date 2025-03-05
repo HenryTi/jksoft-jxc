@@ -12,12 +12,13 @@ export interface SearchBoxProps {
     size?: 'sm' | 'md' | 'lg';
     inputClassName?: string;
     onSearch: (key: string) => Promise<void>;
+    onChange?: (key: string) => Promise<void>;
     onFocus?: () => void;
     allowEmptySearch?: boolean;
 }
 
 export function SearchBox(props: SearchBoxProps) {
-    let { className, inputClassName, onFocus,
+    let { className, inputClassName, onFocus, onChange,
         label, placeholder, buttonText, maxLength, size } = props;
 
     const [isWaiting, setIsWaiting] = React.useState(false);
@@ -25,7 +26,7 @@ export function SearchBox(props: SearchBoxProps) {
     let button = React.useRef(null as HTMLButtonElement);
     let key: string = null;
 
-    function onChange(evt: React.ChangeEvent<any>) {
+    function onInputChange(evt: React.ChangeEvent<any>) {
         key = evt.target.value;
         if (key !== undefined) {
             key = key.trim();
@@ -36,9 +37,12 @@ export function SearchBox(props: SearchBoxProps) {
         else {
             button.current.disabled = key === undefined || key.length === 0;
         }
+        if (onChange !== undefined) onChange(key);
     }
     async function onSubmit(evt: React.FormEvent<any>) {
         evt.preventDefault();
+        const { onSearch } = props;
+        if (onSearch === undefined) return;
         if (key === null) key = props.initKey || '';
         if (props.allowEmptySearch !== true) {
             if (!key) return;
@@ -46,7 +50,7 @@ export function SearchBox(props: SearchBoxProps) {
             if (button.current) button.current.disabled = true;
         }
         setIsWaiting(true);
-        await props.onSearch(key);
+        await onSearch(key);
         if (input.current) input.current.disabled = false;
         if (button.current) button.current.disabled = false;
         setIsWaiting(false);
@@ -64,7 +68,7 @@ export function SearchBox(props: SearchBoxProps) {
     return <form className={className} onSubmit={onSubmit} autoComplete={autoComplete}>
         <div className={"input-group " + inputSize}>
             {label && <div className="input-group-addon align-self-center me-2">{label}</div>}
-            <input ref={input} onChange={onChange}
+            <input ref={input} onChange={onInputChange}
                 type="text"
                 name="key"
                 onFocus={onFocus}

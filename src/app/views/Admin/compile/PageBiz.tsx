@@ -5,25 +5,21 @@ import { PageCode } from './PageCode';
 import { useUqApp } from "app/UqApp";
 import { BizGroup, Entity } from "tonwa";
 import { PageEntity } from "./PageEntity";
-import { FA, theme } from "tonwa-com";
+import { FA, SearchBox, theme } from "tonwa-com";
 // import { useAtomValue } from "jotai";
 import { centers } from "app/views/center";
 import { ViewSite } from "app/views/Site";
 
 const rowCols = ' gx-3 row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 ';
 export function PageBiz({ back }: { back?: 'close' | 'back' | 'none' | string; }) {
-    // const { header, right, view } = useBuildViewBiz();
-    //}
-
-    // export function useBuildViewBiz() {
     const uqApp = useUqApp();
     const { biz } = uqApp;
     const modal = useModal();
     const { compile } = centers;
     const { uq, uqSites } = uqApp;
     let { userSite } = uqSites;
-    // useAtomValue(biz.atomSchemasChanged);
     const [bizChanged, setBizChanged] = useState(false);
+    const [searchKey, setSearchKey] = useState(undefined);
 
     function onCompiled() {
         setBizChanged(!bizChanged);
@@ -33,6 +29,9 @@ export function PageBiz({ back }: { back?: 'close' | 'back' | 'none' | string; }
     }
     async function onEntity(entity: Entity) {
         await modal.open(<PageEntity entity={entity} onCompiled={onCompiled} />);
+    }
+    async function onInputChange(key: string) {
+        setSearchKey(key);
     }
     function ViewEntityItem({ value, icon, onEntity }: { value: Entity; icon: string; onEntity: (entity: Entity) => void; }) {
         let { id, caption, name } = value;
@@ -70,9 +69,15 @@ export function PageBiz({ back }: { back?: 'close' | 'back' | 'none' | string; }
         }
         else {
             content = entitys.flatMap((v, index) => {
-                const { name, id } = v;
+                const { caption, name, id } = v;
                 if (name[0] === '$') {
                     if (name !== '$console') return null
+                }
+                if (searchKey !== undefined && (
+                    name.includes(searchKey) === false
+                    || caption.includes(searchKey) === false
+                )) {
+                    return null;
                 }
                 return <ViewEntityItem key={id} value={v} icon={icon} onEntity={onEntity} />;
             })
@@ -129,6 +134,7 @@ export function PageBiz({ back }: { back?: 'close' | 'back' | 'none' | string; }
         <FA name="bars" />
     </button>;
     return <Page header={header} right={right} back={back}>
+        <SearchBox className="px-3 py-1" placeholder="名称" onSearch={undefined} onChange={onInputChange} />
         <div className="">
             <div className="">{
                 biz.hasEntity === false ?
