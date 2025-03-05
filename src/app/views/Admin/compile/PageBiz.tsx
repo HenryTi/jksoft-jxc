@@ -55,9 +55,12 @@ export function PageBiz({ back }: { back?: 'close' | 'back' | 'none' | string; }
                 className={cnLink}
                 href="#"
                 onClick={onClick}>
-                <div className="py-1 rounded-3 px-2 bg-white">
-                    <div>{name}</div>
-                    <div className="small text-secondary">{vCaption}</div>
+                <div className="py-1 rounded-3 px-2 bg-white d-flex">
+                    <FA name={icon} className="mt-1 me-2 text-success" size="2x" fixWidth={true} />
+                    <div className="flex-fill">
+                        <div>{name}</div>
+                        <div className="small text-secondary">{vCaption}</div>
+                    </div>
                 </div>
             </a>
         </div>

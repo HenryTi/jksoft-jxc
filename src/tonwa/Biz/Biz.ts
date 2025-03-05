@@ -1,5 +1,3 @@
-// import { atom } from 'jotai';
-// import { getAtomValue, setAtomValue } from 'tonwa-com';
 import { Client } from '../Client';
 import { EntityAtom, EntityCombo, EntityDuo, EntityPick, EntityFork } from './EntityAtom';
 import { EntityTree } from './EntityTree';
@@ -25,7 +23,7 @@ enum EnumEntity {
     bin,
     pend,
     atom,
-    spec,       // obselete
+    //spec,       // obselete
     fork,
     duo,
     combo,
@@ -96,18 +94,14 @@ export class Biz {
     bizConsole: EntityConsole;
     hasEntity: boolean;
     entities: { [name: string | number]: Entity } = {};
-    // atomBuilder: AtomsBuilder;
     userDefaults: {
         buds: { [bud: number]: string | number | (string | number)[]; };
         props: ReturnProps[];
         atoms: ReturnAtoms[];
         forks: ReturnForks[];
     };
-    // atomSchemasChanged = atom(false);
 
     constructor(client: Client, bizSchema: any, errorLogs: any) {
-        // this.uqApp = uqApp;
-        // this.uq = uqApp.uq;
         this.client = client;
         this.errorLogs = errorLogs;
 
@@ -116,13 +110,6 @@ export class Biz {
 
     init() { }
 
-    /*
-    entityFrom62<T extends Entity>(base62: string): T {
-        let entityId = from62(base62);
-        let entity = this.ids[entityId];
-        return entity as T;
-    }
-    */
     entityFromId<T extends Entity>(id: number): T {
         if (id === undefined) return;
         let entity = this.ids[id];
@@ -136,7 +123,6 @@ export class Biz {
 
     buildEntities(bizSchema: any) {
         if (bizSchema === undefined) return;
-        // this.atomBuilder = new AtomsBuilder(this);
         this.entityWithUser = [];
         const builders: { [type in EnumEntity]: (id: number, name: string, type: string) => Entity } = {
             [EnumEntity.flow]: this.buildFlow,
@@ -144,7 +130,7 @@ export class Biz {
             [EnumEntity.bin]: this.buildBin,
             [EnumEntity.pend]: this.buildPend,
             [EnumEntity.atom]: this.buildAtom,
-            [EnumEntity.spec]: this.buildSpec,          // obsolete
+            //[EnumEntity.spec]: this.buildSpec,          // obsolete
             [EnumEntity.fork]: this.buildSpec,
             [EnumEntity.duo]: this.buildDuo,
             [EnumEntity.combo]: this.buildCombo,
@@ -226,7 +212,7 @@ export class Biz {
             EnumEntity.options,
             EnumEntity.permit,
             EnumEntity.atom,
-            EnumEntity.spec,
+            //EnumEntity.spec,
             EnumEntity.fork,
             EnumEntity.duo,
             EnumEntity.combo,
@@ -264,7 +250,7 @@ export class Biz {
                 caption: '业务流程',
                 entities: [
                     [this.flows, '流程定义', 'align-center'],
-                    [this.sheets, '业务单据', 'file'],
+                    [this.sheets, '业务单据', 'file-o'],
                     [this.pends, '待处理', 'clone'],
                 ],
             },
