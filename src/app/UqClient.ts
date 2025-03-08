@@ -8,7 +8,7 @@ import {
     , ReturnSearchAtomBudsBudsStr,
     ReturnSheetBin
 } from "tonwa";
-import { ResultGetStateSheetCount, UqExt } from "uqs/UqDefault";
+import { ResultGetStateSheetCount, ReturnGetSheetMain, UqExt } from "uqs/UqDefault";
 import { UqApp } from "./UqApp";
 
 export class UqClient implements Client {
@@ -159,7 +159,7 @@ export class UqClient implements Client {
         return ret;
     }
     async GetSheet(id: number): Promise<{
-        main: ReturnSheetMain[];
+        main: ReturnGetSheetMain[];
         details: ReturnSheetDetails[];
         origins: ReturnSheetBin[];
         props: ReturnProps[];

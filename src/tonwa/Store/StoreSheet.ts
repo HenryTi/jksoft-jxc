@@ -1,12 +1,11 @@
 import { WritableAtom, atom } from "jotai";
-import { getAtomValue, setAtomValue } from "tonwa-com";
 import { ReturnGetPendRetSheet } from "uqs/UqDefault";
 import { ReturnUseBinPicks } from "./PickResult";
 import { getValRowPropArr, ValRow } from "./ValRow";
-import { BinStore, BinStorePendDirect, SubmitState } from "./BinStore";
+import { BinStore } from "./BinStore";
 import { ValDivRoot } from "./ValDiv";
 import { SheetMainStore } from "./SheetMainStore";
-import { BinRow, BizBud, Entity, EntitySheet, EnumDetailOperate } from "../Biz";
+import { BinRow, BizBud, Entity, EntitySheet, SheetState } from "../Biz";
 import { StoreBiz, StoreEntityNew } from "./Store";
 import { arrFromJsonMid } from "../tools";
 
@@ -23,19 +22,7 @@ export interface PendRow {
     value: number;
     mid: any[];
 }
-/*
-class Detail extends BinStore {
-    readonly caption: string;
-    constructor(sheetStore: SheetStore, entityBin: EntityBin, caption: string, operate: EnumDetailOperate) {
-        super(sheetStore, entityBin, operate);
-        this.caption = caption ?? entityBin.caption;
-    }
-}
 
-// 多余的Detail，只能手工输入
-export class ExDetail extends Detail {
-}
-*/
 export class StoreSheet extends StoreEntityNew<EntitySheet> {
     private readonly cachePendRows: { [id: number]: PendRow } = {};
     readonly mainStore: SheetMainStore;
@@ -46,6 +33,8 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
     readonly isPend: boolean;
     readonly isMainPend: boolean;
     readonly valDivsOnPend: { [pend: number]: WritableAtom<ValDivRoot, any, any> } = {};
+    state: SheetState;
+
     constructor(storeBiz: StoreBiz, entitySheet: EntitySheet) {
         super(storeBiz, entitySheet);
         this.mainStore = new SheetMainStore(this);
@@ -66,11 +55,15 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
     async load(sheetId: number) {
         let { main, details } = await this.loadBinData(sheetId);
         if (main === undefined) return;
+        const { states } = this.entity;
+        let { state } = main;
+        if (state !== undefined && states !== undefined) {
+            this.state = states.find(v => v.id === state);
+        }
         this.mainStore.setValue(main);
         if (this.binStore !== undefined) {
             this.binStore.setValRowArrayToRoot(details);//, false);
         }
-        // setAtomValue(this.atomLoaded, true);
     }
 
     get mainId() {
@@ -95,7 +88,6 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
     async loadPend(params: any, pendId: number) {
         let { pend: entityPend, rearPick } = this.entity.coreDetail;
         if (entityPend === undefined) debugger;
-        //let ret = await this.uq.GetPend.page({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
         let ret = await this.client.GetPend({ pendEntity: entityPend.id, params, pendId }, undefined, 100);
         let { $page, retSheet, props, atoms, forks } = ret;
         this.cacheIdAndBuds(props, atoms, forks);
@@ -113,27 +105,15 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
                 this.valDivsOnPend[pend] = atom(undefined as ValDivRoot);
                 let iValue = this.bizIDColl[i];
                 if (iValue !== undefined) (v as any).iBase = iValue.seedId;
-                /*
-                let iFork = this.bizForkColl[i];
-                if (iFork !== undefined) {
-                    (v as any).iBase = iFork.seed.id;
-                }
-                */
             }
             if (xBud !== undefined) {
                 let xValue = this.bizIDColl[x];
                 if (xValue !== undefined) (v as any).xBase = xValue.seedId;
-                /*
-                let xFork = this.bizForkColl[x];
-                if (xFork !== undefined) {
-                    (v as any).xBase = xFork.seed.id;
-                }
-                */
             }
             let midArr = arrFromJsonMid(entityPend, mid, hiddenBuds);
             let pendRow: PendRow = {
                 pend,
-                detail: { ...v, buds: {}, /*owned: undefined */ },
+                detail: { ...v, buds: {} },
                 origin: id,
                 bin: id,
                 sheet,
@@ -155,7 +135,6 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
         let { valRow: { id } } = this.mainStore;
         if (id >= 0) {
             await this.client.RemoveDraft(id);
-            // this.sheetConsole.removeFromCache(id);
             return id;
         }
     }
@@ -180,13 +159,10 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
             props: propArr,
         });
         return ret;
-        // let { id, no } = ret;
-        // return { id, no };
     }
 
     async setSheetAsDraft() {
         await this.client.SetSheetPreToDraft(this.mainStore.valRow.id);
-        // setAtomValue(this.atomLoaded, true);
     }
 
     get mainProxy() {
@@ -205,9 +181,7 @@ export class StoreSheet extends StoreEntityNew<EntitySheet> {
     }
 
     async submitDebug() {
-        // let { checkPend, checkBin } = 
         let sheetId = this.mainStore.valRow.id;
-        // let ret = await this.uq.SubmitSheetDebug.submitReturns({ id: sheetId });
         let ret = await this.client.SubmitSheetDebug(sheetId);
         return ret;
     }

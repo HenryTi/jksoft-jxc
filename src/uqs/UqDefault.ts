@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Mar 02 2025 17:52:45 GMT+0800 (China Standard Time) ===//
+//=== UqApp builder created on Sat Mar 08 2025 10:32:26 GMT+0800 (China Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqID, UqQuery, UqAction, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -760,6 +760,7 @@ export interface ReturnGetSheetMain {
 	amount: number;
 	price: number;
 	phrase: number;
+	state: number;
 }
 export interface ReturnGetSheetDetails {
 	id: number;
@@ -4246,6 +4247,10 @@ export const uqSchema={
                     },
                     {
                         "name": "phrase",
+                        "type": "id"
+                    },
+                    {
+                        "name": "state",
                         "type": "id"
                     }
                 ]

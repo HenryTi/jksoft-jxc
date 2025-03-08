@@ -1,4 +1,4 @@
-import { ResultGetStateSheetCount } from "uqs/UqDefault";
+import { ResultGetStateSheetCount, ReturnGetSheetMain } from "uqs/UqDefault";
 import { ReturnAtoms, ReturnForks, ReturnProps } from "../Biz";
 
 export interface Client {
@@ -87,7 +87,7 @@ export interface Client {
         forks: ReturnForks[];
     }>;
     GetSheet(id: number): Promise<{
-        main: ReturnSheetMain[];
+        main: ReturnGetSheetMain[];
         details: ReturnSheetDetails[];
         origins: ReturnSheetBin[];
         props: ReturnProps[];

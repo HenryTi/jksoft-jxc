@@ -33,11 +33,22 @@ export const buttonDefs: ButtonDefs = {
 }
 
 export function headerSheet({ store, toolGroups, headerGroup }: { store: StoreSheet; toolGroups: (ToolItem[] | JSX.Element)[]; headerGroup?: ToolItem[]; }) {
-    const { caption, backIcon } = store;
+    const { caption, backIcon, state } = store;
+    let vState: any;
+    if (state !== undefined) {
+        const { ui, name } = state;
+        let stateCaption = name;
+        if (ui !== undefined) {
+            const { caption } = ui;
+            if (caption !== undefined) stateCaption = caption;
+        }
+        vState = <span className=""> - {stateCaption}</span>;
+    }
     return {
         header: <div className="py-2 px-3">
             <FA name={backIcon} className="me-3" />
             <span className="">{caption}</span>
+            {vState}
         </div>,
         right: <div className="">
             <ToolGroup group={headerGroup} />
