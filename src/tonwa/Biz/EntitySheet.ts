@@ -948,9 +948,27 @@ export class EntitySheet extends Entity {
             switch (state.name) {
                 case '$': this.stateStart = state; break;
                 case '$discard': this.stateDiscard = state; break;
-                default: this.states.push(state); break;
+                default: this.states.push(this.fromState(state)); break;
             }
         }
+    }
+
+    private fromState(state: any) {
+        const { main, details } = state;
+        return {
+            ...state,
+            main: this.fromStateBin(main),
+            details: (details as any[]).map(v => this.fromStateBin(v)),
+        };
+    }
+
+    private fromStateBin(stateBin: any) {
+        if (stateBin === undefined) return;
+        const { id, edit } = stateBin;
+        return {
+            id,
+            edit: (edit as number[])?.map(v => this.biz.budFromId(v)),
+        };
     }
 
     scan(): void {
