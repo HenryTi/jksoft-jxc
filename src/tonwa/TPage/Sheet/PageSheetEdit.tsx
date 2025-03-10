@@ -1,16 +1,11 @@
-import React, { useState, JSX, useRef } from "react";
-import { useReactToPrint } from "react-to-print";
+import { useState, JSX } from "react";
 import { useAtomValue } from "jotai";
 import { Page, PageConfirm } from "tonwa-app";
-import { env, FA, SpinnerSmall, theme } from "tonwa-com";
-import { BizBud } from "../../Biz";
-import { EnumToolButtonState, Toolbar, ToolButton, ToolItem, ViewReaction } from "../../View";
-import { setAtomValue, getAtomValue } from "../../tools";
+import { EnumToolButtonState, ToolButton, ToolItem, ViewReaction } from "../../View";
+import { getAtomValue } from "../../tools";
 import { buttonDefs, headerSheet } from "./HeaderSheet";
 import { SubmitState } from "./TControlSheet";
-import { ViewSheetContent } from "./ViewSheetContent";
 import { useSiteRole } from "../../Site";
-// import { detailNewLoop } from "./detailNew";
 import { ControlSheetEdit } from "../../Control";
 import { ViewSheetEdit } from "./ViewSheetEdit";
 
@@ -53,15 +48,9 @@ export function PageSheetEdit({ control }: { control: ControlSheetEdit; }) {
     }
 
     function mainDetailEdit() {
-        // const controlDetailEdit: ControlDetailEdit = new ControlDetailEdit(control, binStore.entity);
         const { controlDetailEdit } = control;
         const { entity: entityBin } = binStore;
         const { onAddRow } = controlDetailEdit;
-        /*
-        async function onAddRow() {
-            await detailNewLoop(storeSheet);
-        }
-        */
         let submitHidden: boolean;
         submitHidden = false;
         let submitDisabled = (function () {

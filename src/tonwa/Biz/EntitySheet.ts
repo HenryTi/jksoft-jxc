@@ -915,7 +915,7 @@ export class EntitySheet extends Entity {
             case 'main': this.fromMain(val); break;
             case 'details': this.fromDetails(val); break;
             case 'search': this.search = val; break;
-            case 'states': this.fromStates(val); break;
+            case 'states': this.states = val; break;
         }
     }
 
@@ -945,10 +945,11 @@ export class EntitySheet extends Entity {
         if (states === undefined) return;
         this.states = [];
         for (let state of states) {
+            let s = this.fromState(state);
             switch (state.name) {
-                case '$': this.stateStart = state; break;
-                case '$discard': this.stateDiscard = state; break;
-                default: this.states.push(this.fromState(state)); break;
+                case '$': this.stateStart = s; break;
+                case '$discard': this.stateDiscard = s; break;
+                default: this.states.push(s); break;
             }
         }
     }
@@ -965,9 +966,16 @@ export class EntitySheet extends Entity {
     private fromStateBin(stateBin: any) {
         if (stateBin === undefined) return;
         const { id, edit } = stateBin;
+        let editArr: any[];
+        if (edit !== undefined) {
+            editArr = (edit as number[]).map(v => {
+                let ret = this.biz.budFromId(v);
+                return ret;
+            });
+        }
         return {
             id,
-            edit: (edit as number[])?.map(v => this.biz.budFromId(v)),
+            edit: editArr,
         };
     }
 
@@ -1004,6 +1012,11 @@ export class EntitySheet extends Entity {
             }
             this.search = search;
         }
+    }
+
+    override scanBuds(): void {
+        super.scanBuds();
+        this.fromStates(this.states as any);
     }
 
     private budFromId(bin: EntityBin, budId: number) {
