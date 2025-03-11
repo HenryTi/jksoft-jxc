@@ -186,9 +186,12 @@ export abstract class BudOptions extends BudDataType {
     options: EntityOptions;
     get dataType(): 'string' | 'number' { return; }
     override scan(biz: Biz, bud: BizBud) {
+        // 有可能是undefined。直接推导出来的options
         this.options = biz.entityFromId(this.options as unknown as number);
+        // if (this.options === undefined) debugger;
     }
     fromSchema(schema: any) {
+        // 有可能是undefined。直接推导出来的options
         this.options = schema.options;
     }
 }
