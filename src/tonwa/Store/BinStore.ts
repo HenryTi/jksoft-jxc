@@ -481,11 +481,11 @@ export class BinStore extends StoreEntity<EntityBin> {
         return undefined;
     }
 
-    getPickPendStore(pickPend: PickPend/*, valueSpace: ValueSpace*/) {
+    getPickPendStore(pickPend: PickPend) {
         let { name } = pickPend;
         let pps = this.pickPendStores[name];
         if (pps === undefined) {
-            this.pickPendStores[name] = pps = new PickPendStore(this, pickPend/*, valueSpace*/);
+            this.pickPendStores[name] = pps = new PickPendStore(this, pickPend, undefined);
         }
         return pps;
     }

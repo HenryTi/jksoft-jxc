@@ -476,7 +476,7 @@ export class BinStore extends StoreEntity<EntityBin> {
         let { id } = pickPend;
         let pps = this.pickPendStores[id];
         if (pps === undefined) {
-            this.pickPendStores[id] = pps = new PickPendStore(this, pickPend/*, valueSpace*/);
+            this.pickPendStores[id] = pps = new PickPendStore(this, pickPend, undefined);
         }
         return pps;
     }

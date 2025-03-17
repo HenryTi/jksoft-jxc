@@ -803,16 +803,20 @@ export enum PendValueType {
     bool,               // 审批流程
 }
 
+export class PendQuery extends Entity {
+    cols: BizBud[];
+    params: BizBud[];
+    mainCols: { [budId: number]: boolean };
+}
+
 export class EntityPend extends Entity {
     predefined: { [name: string]: BizBud };
     i: BizBud;
     x: BizBud;
-    params: BizBud[];
-    private cols: BizBud[];
     hasPrice: boolean;
     hasAmount: boolean;
-    mainCols: { [budId: number]: boolean };
     valueType: PendValueType;
+    queries: PendQuery[];
 
     protected override fromSwitch(i: string, val: any) {
         switch (i) {
@@ -820,12 +824,15 @@ export class EntityPend extends Entity {
                 if (predefinedPendFields.includes(i) === true) break;
                 super.fromSwitch(i, val); break;
             case 'predefined': this.predefined = val; break;
+            case 'queries': this.queries = val; break;
+            /*
             case 'params': this.params = val; break;
             case 'cols': this.cols = val; break;
+            case 'mainCols': this.mainCols = val; break;
+            */
             case 'i': this.i = val; break;
             case 'x': this.x = val; break;
             case 'predefinedFields': this.setPredefinedFields(val); break;
-            case 'mainCols': this.mainCols = val; break;
             case 'valueType': this.valueType = val; break;
         }
     }
@@ -843,27 +850,33 @@ export class EntityPend extends Entity {
         if (this.x !== undefined) {
             this.x = this.buildBudFromProp(this.x);
         }
-        if (this.cols !== undefined) {
-            for (let bud of this.cols) {
-                if (bud === undefined) continue;
-                this.budColl[bud.id] = bud;
+        this.queries = (this.queries as any[]).map(v => {
+            const { id, name, ui, cols: sCols, mainCols: sMainCols, params: sParams } = v;
+            const ret = new PendQuery(this.biz, id, name, 'pendQuery');
+            if (sCols !== undefined) {
+                for (let bud of sCols) {
+                    if (bud === undefined) continue;
+                    this.budColl[bud.id] = bud;
+                }
             }
-        }
-        let mainCols = this.mainCols;
-        this.mainCols = {};
-        if (mainCols !== undefined) {
-            for (let id of mainCols as unknown as number[]) {
-                this.mainCols[id] = true;
+            if (sMainCols !== undefined) {
+                let mainCols: { [id: number]: boolean } = {};
+                for (let id of sMainCols as unknown as number[]) {
+                    mainCols[id] = true;
+                }
+                ret.mainCols = mainCols;
             }
-        }
-        if (this.params !== undefined) {
-            let params: BizBud[] = [];
-            for (let param of this.params) {
-                let bud = this.buildBudFromProp(param);
-                params.push(bud);
+            if (sParams !== undefined) {
+                let params: BizBud[] = [];
+                for (let param of sParams) {
+                    let bud = this.buildBudFromProp(param);
+                    params.push(bud);
+                }
+                ret.params = params;
             }
-            this.params = params;
-        }
+            // return { id, name, ui, cols: undefined, mainCols, params };
+            return ret;
+        });
     }
 
     private buildBudFromProp(prop: any): BizBud {

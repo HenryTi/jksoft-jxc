@@ -1,19 +1,18 @@
-import { EnumBudType, PickPend, ValueSetType } from "tonwa";
+import { EnumBudType, PendQuery, PickPend, ValueSetType } from "tonwa";
 import { BinStore } from "./BinStore";
-import { ValueSpace } from "app/hooks/Calc";
 import { BinBudsEditing } from "./BinEditing";
 import { contentFromDays, fromDays } from "app/tool";
 
 export class PickPendStore {
     readonly binStore: BinStore;
     readonly pickPend: PickPend;
-    // readonly valueSpace: ValueSpace;
     readonly paramsEditing: BinBudsEditing;
+    private readonly pendQuery: PendQuery;
 
-    constructor(binStore: BinStore, pickPend: PickPend/*, valueSpace: ValueSpace*/) {
+    constructor(binStore: BinStore, pickPend: PickPend, pendQueryId: number) {
         this.binStore = binStore;
         this.pickPend = pickPend;
-        // this.valueSpace = valueSpace;
+        this.pendQuery = this.pickPend.from.queries.find(v => v.id = pendQueryId);
         this.paramsEditing = this.createParamsEditing();
         this.paramsEditing.calcAll();
     }
@@ -21,8 +20,7 @@ export class PickPendStore {
     private createParamsEditing() {
         let { pickParams } = this.pickPend;
         const { sheetStore, entity: entityBin } = this.binStore;
-        const { pend: entityPend } = entityBin;
-        let { params } = entityPend;
+        let { params } = this.pendQuery;
         let ret = new BinBudsEditing(sheetStore, entityBin, params);
         for (let bud of params) {
             let pickParam = pickParams.find(v => v.name === bud.name);
@@ -37,7 +35,7 @@ export class PickPendStore {
         let params: { [budId: number]: number | string } = {};
         let { entity: { pend: entityPend } } = this.binStore;
         const { pickParams } = this.pickPend;
-        const { params: queryParams } = entityPend;
+        const { params: queryParams } = this.pendQuery;
         for (let param of queryParams) {
             let paramValue: any = undefined;
             let { id, name, budDataType } = param;
